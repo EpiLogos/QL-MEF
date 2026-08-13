@@ -25,7 +25,15 @@
       "additionalProperties": false,
       "required": ["frame", "position", "face", "depth"],
       "properties": {
-        "frame": { "$ref": "#/$defs/QLFormRef" },
+        "frame": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": { "const": "sixfold" },
+            "version": { "const": 1 }
+          }
+        },
         "position": { "type": "integer", "minimum": 0, "maximum": 5 },
         "face": { "type": "string", "enum": ["direct", "conjugate"] },
         "depth": { "type": "integer", "minimum": 0 }
