@@ -18,6 +18,7 @@ import {
 } from "../src/index.js";
 
 const cases = JSON.parse(await readFile(new URL("../fixtures/q1/cases.json", import.meta.url), "utf8"));
+const schemas = JSON.parse(await readFile(new URL("../schemas/v1/contracts.schema.json", import.meta.url), "utf8"));
 
 test("Q1 form registry is versioned and contains only the ratified minimal forms", () => {
   assert.deepEqual(QL_FORM_REGISTRY.map(({ id, version }) => `${id}@${version}`), [
@@ -25,6 +26,12 @@ test("Q1 form registry is versioned and contains only the ratified minimal forms
     "four-plus-two@1",
     "direct-conjugate@1"
   ]);
+});
+
+test("QLAddress schema constrains the address frame to sixfold@1", () => {
+  const frame = schemas.$defs.QLAddress.properties.frame;
+  assert.equal(frame.properties.id.const, "sixfold");
+  assert.equal(frame.properties.version.const, 1);
 });
 
 test("all twelve canonical MEF LensRefs are addressable without claiming Q2 sublens semantics", () => {
