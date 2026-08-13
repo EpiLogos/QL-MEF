@@ -1,0 +1,6 @@
+[
+  {"id":"L1","name":"Causal","sublenses":["Svātantrya","Material cause","Efficient cause","Formal cause","Final cause","Icchā Śakti / Will"]},
+  {"id":"L1′","name":"Phenomenal","sublenses":["Introversion","Sensation","Feeling","Thinking","Intuition","Extroversion"]},
+  {"id":"L4","name":"Phenomenological","sublenses":["Sein (Being)","Geworfenheit (Thrownness)","Dasein (Being-there)","Zeit (Temporality)","Besorge (Care)","Gelassenheit (Releasement)"]},
+  {"id":"L4′","name":"Scientific","sublenses":["Prompts","Traces","Challenges","Patterns","Discovery","Insight"]}
+]
