@@ -1,0 +1,15 @@
+{
+  "name": "@epilogos/ql-mef",
+  "version": "0.1.0-q1",
+  "private": false,
+  "type": "module",
+  "description": "Standalone executable QL/MEF reference kernel and provider contracts.",
+  "exports": "./src/index.js",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/*.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

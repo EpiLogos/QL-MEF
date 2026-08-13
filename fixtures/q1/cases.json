@@ -1,0 +1,20 @@
+{
+  "validAddresses": [
+    { "frame": { "id": "sixfold", "version": 1 }, "position": 0, "face": "direct", "depth": 0 },
+    { "frame": { "id": "sixfold", "version": 1 }, "position": 5, "face": "conjugate", "depth": 0 },
+    { "frame": { "id": "sixfold", "version": 1 }, "position": 2, "face": "direct", "depth": 3 }
+  ],
+  "invalidAddresses": [
+    { "case": "client noun is not a QL position", "value": { "position": "Project", "face": "direct", "depth": 0 } },
+    { "case": "position outside sixfold", "value": { "position": 6, "face": "direct", "depth": 0 } },
+    { "case": "unknown face", "value": { "position": 2, "face": "application", "depth": 0 } },
+    { "case": "negative depth", "value": { "position": 2, "face": "direct", "depth": -1 } },
+    { "case": "unsupported address frame", "value": { "frame": { "id": "four-plus-two", "version": 1 }, "position": 2, "face": "direct", "depth": 0 } }
+  ],
+  "operators": [
+    { "operator": "conjugate-address", "input": { "position": 1, "face": "direct", "depth": 0 }, "expected": { "position": 1, "face": "conjugate", "depth": 0 } },
+    { "operator": "complement-address", "input": { "position": 1, "face": "direct", "depth": 0 }, "expected": { "position": 4, "face": "direct", "depth": 0 } },
+    { "operator": "classify-four-plus-two", "input": { "position": 0, "face": "direct", "depth": 0 }, "expected": "implicate" },
+    { "operator": "classify-four-plus-two", "input": { "position": 3, "face": "direct", "depth": 0 }, "expected": "explicate" }
+  ]
+}
