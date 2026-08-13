@@ -3,3 +3,7 @@ export * from "./registry.js";
 export * from "./address.js";
 export * from "./operators.js";
 export * from "./provider.js";
+export * from "./mef-registry.js";
+export * from "./mef-squares.js";
+export * from "./mef-lookup.js";
+export * from "./contracts.js";

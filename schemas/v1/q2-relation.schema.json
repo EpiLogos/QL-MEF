@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"QLRelationReading","type":"object","required":["id","subjectRefs","lenses","relation","evidenceRefs","provenance"],"properties":{"subjectRefs":{"type":"array","minItems":2},"lenses":{"type":"array"},"relation":{},"provenance":{"type":"object"}}}

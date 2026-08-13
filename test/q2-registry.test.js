@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+import { MEF_MANIFOLD, MEF_SQUARES, QLValidationError, getMefComplement, getMefLens, getMefMobius, getMefSublens } from "../src/index.js";
+const fixtures = (await Promise.all(["a","b","c"].map(async (k) => JSON.parse(await readFile(new URL(`../fixtures/q2-square-${k}.json`, import.meta.url), "utf8"))))).flat();
+test("Q2 registry is exactly twelve lenses and seventy-two sublenses", () => { assert.equal(MEF_MANIFOLD.length,12); assert.equal(MEF_MANIFOLD.reduce((n,l)=>n+l.sublenses.length,0),72); });
+test("every lens and sublens name matches fixtures", () => { for (const e of fixtures) { const a=getMefLens(e.id); assert.equal(a.name,e.name); assert.deepEqual(a.sublenses.map(x=>x.name),e.sublenses); } });
+test("L4′ uses governing knowledge-work vocabulary", () => { assert.deepEqual(getMefLens("L4′").sublenses.map(x=>x.name),["Prompts","Traces","Challenges","Patterns","Discovery","Insight"]); });
+test("squares cover the manifold", () => { assert.deepEqual(MEF_SQUARES.A.lenses,["L0","L0′","L5","L5′"]); assert.deepEqual(MEF_SQUARES.B.lenses,["L1","L1′","L4","L4′"]); assert.deepEqual(MEF_SQUARES.C.lenses,["L2","L2′","L3","L3′"]); assert.equal(new Set(Object.values(MEF_SQUARES).flatMap(x=>x.lenses)).size,12); });
+test("complement is involutive and Möbius mapping is settled", () => { for (const l of MEF_MANIFOLD) assert.equal(getMefComplement(getMefComplement(l.id).id).id,l.id); assert.equal(getMefMobius("L0").id,"L5′"); assert.equal(getMefMobius("L4′").id,"L1"); assert.equal(getMefMobius("L3′").id,"L2"); });
+test("sublens coordinates validate .0-.5", () => { assert.equal(getMefSublens("L2",3).name,"BOTH"); assert.throws(()=>getMefSublens("L2",6),(e)=>e instanceof QLValidationError&&e.code==="INVALID_SUBLENS_POSITION"); });
+test("registry excludes harmonic and generated-role research fields", () => { for (const l of MEF_MANIFOLD) for (const k of ["tonic","notes","harmonic","state64","roleBinding","generatedReading"]) assert.ok(!(k in l)); });
