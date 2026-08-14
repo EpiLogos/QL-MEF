@@ -13,9 +13,7 @@ pub use capability::{
 };
 pub use error::ProviderError;
 pub use provider::QlProvider;
-pub use request::{
-    LocateRequest, RefractRequest, RelateRequest, SynthesiseRequest, TargetInput,
-};
+pub use request::{LocateRequest, RefractRequest, RelateRequest, SynthesiseRequest, TargetInput};
 pub use result::{
     LocateResult, LocateStatus, SemanticDisclosure, SemanticReading, SemanticRelationReading,
     SemanticStatus, SemanticSynthesis, SynthesisDisclosure,
