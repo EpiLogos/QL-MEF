@@ -15,7 +15,11 @@ fn factory_alpha_fixture_preserves_client_ref_and_uses_canonical_ql_mef_lens() {
 
 #[test]
 fn legacy_factory_ql_strings_are_rejected_instead_of_translated() {
-    assert!("qlform:factory-development/v1".parse::<QlFormRef>().is_err());
+    assert!(
+        "qlform:factory-development/v1"
+            .parse::<QlFormRef>()
+            .is_err()
+    );
     assert!("day:2.3".parse::<QlAddress>().is_err());
     assert!("lens:L3".parse::<LensRef>().is_err());
 

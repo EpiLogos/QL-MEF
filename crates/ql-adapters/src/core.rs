@@ -3,9 +3,7 @@ use ql_mef::{LensRef, RefractionContract, SublensRef};
 use ql_semantic::{ProviderHealth, SemanticReading};
 use ql_service::{QlService, ServiceError};
 
-use crate::{
-    AdapterError, AdapterResult, AdapterSubject, ClientRecord, QlAttachment, QlMode,
-};
+use crate::{AdapterError, AdapterResult, AdapterSubject, ClientRecord, QlAttachment, QlMode};
 
 pub(crate) struct AdapterCore<'a> {
     service: Option<&'a QlService>,
@@ -34,12 +32,9 @@ impl<'a> AdapterCore<'a> {
             });
         }
 
-        let contract = RefractionContract::new(
-            client.subject.client_subject().target(),
-            lens,
-            sublens,
-        )
-        .map_err(AdapterError::InvalidRefraction)?;
+        let contract =
+            RefractionContract::new(client.subject.client_subject().target(), lens, sublens)
+                .map_err(AdapterError::InvalidRefraction)?;
 
         let Some(service) = self.service else {
             return match self.mode {

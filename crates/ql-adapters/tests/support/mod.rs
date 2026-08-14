@@ -1,6 +1,4 @@
-use ql_mef::{
-    ClientRef, InputRefRevision, QlProvenance, QlProviderRef, QlReading, ResultClass,
-};
+use ql_mef::{ClientRef, InputRefRevision, QlProvenance, QlProviderRef, QlReading, ResultClass};
 use ql_semantic::{
     InputLimits, LocateRequest, LocateResult, Operation, ProviderCapabilities, ProviderClass,
     ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest, SemanticDisclosure,

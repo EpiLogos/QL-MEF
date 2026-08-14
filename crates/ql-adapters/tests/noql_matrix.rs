@@ -10,14 +10,22 @@ use ql_service::{QlService, ServiceError};
 
 use support::AdapterFixtureProvider;
 
-fn factory_record(reference: &str, revision: &str, payload: &str) -> ClientRecord<FactorySubject, String> {
+fn factory_record(
+    reference: &str,
+    revision: &str,
+    payload: &str,
+) -> ClientRecord<FactorySubject, String> {
     ClientRecord::new(
         FactorySubject::new(reference, Some(revision.into())).expect("factory subject"),
         payload.into(),
     )
 }
 
-fn aikit_record(reference: &str, revision: &str, payload: &str) -> ClientRecord<AiKitSubject, String> {
+fn aikit_record(
+    reference: &str,
+    revision: &str,
+    payload: &str,
+) -> ClientRecord<AiKitSubject, String> {
     ClientRecord::new(
         AiKitSubject::new(reference, Some(revision.into())).expect("aikit subject"),
         payload.into(),
@@ -29,15 +37,25 @@ fn factory_disabled_mode_preserves_client_data_exactly() {
     let adapter = FactoryAdapter::new(None, QlMode::Disabled);
     let result = adapter
         .refract(
-            factory_record("factory:claim:c-1", "sha256:claim-c-1-r1", "original payload"),
+            factory_record(
+                "factory:claim:c-1",
+                "sha256:claim-c-1-r1",
+                "original payload",
+            ),
             LensRef::canonical(LensId::L3),
             None,
             None,
         )
         .expect("disabled QL is non-fatal");
 
-    assert_eq!(result.client.subject.inner().reference().as_str(), "factory:claim:c-1");
-    assert_eq!(result.client.subject.inner().revision(), Some("sha256:claim-c-1-r1"));
+    assert_eq!(
+        result.client.subject.inner().reference().as_str(),
+        "factory:claim:c-1"
+    );
+    assert_eq!(
+        result.client.subject.inner().revision(),
+        Some("sha256:claim-c-1-r1")
+    );
     assert_eq!(result.client.payload, "original payload");
     assert_eq!(result.ql, QlAttachment::Disabled);
 }
@@ -54,8 +72,14 @@ fn aikit_disabled_mode_preserves_client_data_exactly() {
         )
         .expect("disabled QL is non-fatal");
 
-    assert_eq!(result.client.subject.inner().reference().as_str(), "aikit:context:ctx-1");
-    assert_eq!(result.client.subject.inner().revision(), Some("sha256:ctx-r1"));
+    assert_eq!(
+        result.client.subject.inner().reference().as_str(),
+        "aikit:context:ctx-1"
+    );
+    assert_eq!(
+        result.client.subject.inner().revision(),
+        Some("sha256:ctx-r1")
+    );
     assert_eq!(result.client.payload, "context payload");
     assert_eq!(result.ql, QlAttachment::Disabled);
 }
@@ -72,7 +96,10 @@ fn optional_mode_without_service_is_non_fatal_and_preserves_identity() {
         )
         .expect("optional absence is non-fatal");
 
-    assert_eq!(result.client.subject.inner().reference().as_str(), "factory:claim:c-1");
+    assert_eq!(
+        result.client.subject.inner().reference().as_str(),
+        "factory:claim:c-1"
+    );
     assert_eq!(result.client.payload, "payload");
     match result.ql {
         QlAttachment::Unavailable { health, .. } => assert_eq!(health.state, ProviderState::Absent),
@@ -100,7 +127,8 @@ fn optional_incompatible_and_unadvertised_provider_states_are_non_fatal() {
     ));
     assert_eq!(incompatible.client.payload, "payload");
 
-    let formal_service = QlService::with_provider(AdapterFixtureProvider::formal_only("formal-only"));
+    let formal_service =
+        QlService::with_provider(AdapterFixtureProvider::formal_only("formal-only"));
     let unadvertised = FactoryAdapter::new(Some(&formal_service), QlMode::Optional)
         .refract(
             factory_record("factory:claim:c-1", "r1", "payload"),
@@ -128,16 +156,32 @@ fn degraded_provider_can_enrich_without_becoming_a_prerequisite() {
         )
         .expect("degraded advertised refraction remains usable");
 
-    assert_eq!(result.client.subject.inner().reference().as_str(), "factory:claim:c-1");
+    assert_eq!(
+        result.client.subject.inner().reference().as_str(),
+        "factory:claim:c-1"
+    );
     match result.ql {
         QlAttachment::Reading { health, value } => {
             assert_eq!(health.state, ProviderState::Degraded);
             assert_eq!(value.target.subject.as_str(), "factory:claim:c-1");
             assert_eq!(value.provenance.provider.provider, "degraded");
             assert_eq!(value.provenance.provider.version, "0.1.0");
-            assert_eq!(value.provenance.result_class, ResultClass::SemanticStochastic);
-            assert_eq!(value.provenance.model.as_deref(), Some("adapter-fixture-model"));
-            assert_eq!(value.provenance.config_ref.as_ref().map(|value| value.as_str()), Some("fixture:config/q4"));
+            assert_eq!(
+                value.provenance.result_class,
+                ResultClass::SemanticStochastic
+            );
+            assert_eq!(
+                value.provenance.model.as_deref(),
+                Some("adapter-fixture-model")
+            );
+            assert_eq!(
+                value
+                    .provenance
+                    .config_ref
+                    .as_ref()
+                    .map(|value| value.as_str()),
+                Some("fixture:config/q4")
+            );
         }
         other => panic!("expected reading attachment, got {other:?}"),
     }
@@ -164,7 +208,10 @@ fn required_mode_fails_hard_when_ql_is_absent_or_provider_fails() {
             None,
         )
         .expect_err("required provider failure must be visible");
-    assert!(matches!(failure, AdapterError::QlRequired(ServiceError::Provider(_))));
+    assert!(matches!(
+        failure,
+        AdapterError::QlRequired(ServiceError::Provider(_))
+    ));
 }
 
 #[test]
@@ -210,8 +257,14 @@ fn factory_and_aikit_surfaces_preserve_the_same_shared_ref_without_translation()
         )
         .expect("aikit refraction");
 
-    assert_eq!(factory.client.subject.inner().reference().as_str(), shared_ref);
-    assert_eq!(aikit.client.subject.inner().reference().as_str(), shared_ref);
+    assert_eq!(
+        factory.client.subject.inner().reference().as_str(),
+        shared_ref
+    );
+    assert_eq!(
+        aikit.client.subject.inner().reference().as_str(),
+        shared_ref
+    );
     assert_eq!(factory.client.subject.inner().revision(), Some(revision));
     assert_eq!(aikit.client.subject.inner().revision(), Some(revision));
 
