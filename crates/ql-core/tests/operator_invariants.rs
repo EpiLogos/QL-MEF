@@ -1,6 +1,4 @@
-use ql_core::{
-    apply_operator, FourPlusTwoClass, OperatorValue, QlAddress, QlFace, QlOperator,
-};
+use ql_core::{FourPlusTwoClass, OperatorValue, QlAddress, QlFace, QlOperator, apply_operator};
 
 fn address_value(value: OperatorValue) -> QlAddress {
     match value {
@@ -15,7 +13,8 @@ fn conjugation_is_an_involution_and_preserves_position_and_depth() {
         for face in [QlFace::Direct, QlFace::Conjugate] {
             for depth in [0, 1, 21, u16::MAX as u32] {
                 let initial = QlAddress::sixfold(position, face, depth).expect("valid address");
-                let once = address_value(apply_operator(QlOperator::ConjugateAddress, initial).value);
+                let once =
+                    address_value(apply_operator(QlOperator::ConjugateAddress, initial).value);
                 let twice = address_value(apply_operator(QlOperator::ConjugateAddress, once).value);
                 assert_eq!(once.position(), initial.position());
                 assert_eq!(once.depth(), initial.depth());
@@ -58,7 +57,10 @@ fn deterministic_replay_is_byte_for_byte_equal_at_the_value_level() {
         QlOperator::ComplementAddress,
         QlOperator::ClassifyFourPlusTwo,
     ] {
-        assert_eq!(apply_operator(operator, address), apply_operator(operator, address));
+        assert_eq!(
+            apply_operator(operator, address),
+            apply_operator(operator, address)
+        );
     }
 }
 
