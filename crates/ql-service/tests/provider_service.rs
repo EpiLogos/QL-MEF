@@ -213,8 +213,14 @@ fn relate_preserves_each_caller_revision() {
         relation.provenance.result_class,
         ResultClass::SemanticStochastic
     );
-    assert_eq!(relation.provenance.input_refs[0].revision.as_deref(), Some("rev-a"));
-    assert_eq!(relation.provenance.input_refs[1].revision.as_deref(), Some("rev-b"));
+    assert_eq!(
+        relation.provenance.input_refs[0].revision.as_deref(),
+        Some("rev-a")
+    );
+    assert_eq!(
+        relation.provenance.input_refs[1].revision.as_deref(),
+        Some("rev-b")
+    );
 }
 
 #[test]
