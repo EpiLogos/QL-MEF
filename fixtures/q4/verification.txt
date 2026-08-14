@@ -1,0 +1,3 @@
+source_head=4a4528895ed9e85ed7c2b5007254802d89f93435
+gates=format,check,clippy,test
+result=passed
