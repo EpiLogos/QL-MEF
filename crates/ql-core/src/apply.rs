@@ -1,9 +1,12 @@
 use crate::{
-    DeterministicProvenance, DeterministicResult, FourPlusTwoClass, OperatorValue,
-    QlAddress, QlOperator, KERNEL_VERSION, SCHEMA_VERSION,
+    DeterministicProvenance, DeterministicResult, FourPlusTwoClass, KERNEL_VERSION, OperatorValue,
+    QlAddress, QlOperator, SCHEMA_VERSION,
 };
 
-pub fn apply_operator(operator: QlOperator, input: QlAddress) -> DeterministicResult<OperatorValue> {
+pub fn apply_operator(
+    operator: QlOperator,
+    input: QlAddress,
+) -> DeterministicResult<OperatorValue> {
     let value = match operator {
         QlOperator::ConjugateAddress => {
             OperatorValue::Address(input.with_face(input.face().conjugate()))
