@@ -32,7 +32,12 @@ fn language_neutral_capability_schema_names_the_stable_surface() {
     for class in ["formal-kernel", "semantic-refraction"] {
         assert!(schema.contains(&format!("\"{class}\"")));
     }
-    for result_class in ["canonical", "deterministic", "semantic-stochastic", "research"] {
+    for result_class in [
+        "canonical",
+        "deterministic",
+        "semantic-stochastic",
+        "research",
+    ] {
         assert!(schema.contains(&format!("\"{result_class}\"")));
     }
     assert!(schema.contains("\"schema_version\": {\"const\": \"1.1.0\"}"));
