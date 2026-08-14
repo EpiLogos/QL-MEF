@@ -11,24 +11,47 @@ pub struct QlAddress {
 }
 
 impl QlAddress {
-    pub fn new(frame: QlFormRef, position: QlPosition, face: QlFace, depth: u32) -> Result<Self, QlError> {
+    pub fn new(
+        frame: QlFormRef,
+        position: QlPosition,
+        face: QlFace,
+        depth: u32,
+    ) -> Result<Self, QlError> {
         if frame.form() != QlForm::Sixfold {
             return Err(QlError::UnsupportedAddressFrame {
                 form: frame.form().as_str(),
                 version: frame.version(),
             });
         }
-        Ok(Self { frame, position, face, depth })
+        Ok(Self {
+            frame,
+            position,
+            face,
+            depth,
+        })
     }
 
     pub fn sixfold(position: u8, face: QlFace, depth: u32) -> Result<Self, QlError> {
-        Self::new(QlFormRef::SIXFOLD_V1, QlPosition::new(position)?, face, depth)
+        Self::new(
+            QlFormRef::SIXFOLD_V1,
+            QlPosition::new(position)?,
+            face,
+            depth,
+        )
     }
 
-    pub const fn frame(self) -> QlFormRef { self.frame }
-    pub const fn position(self) -> QlPosition { self.position }
-    pub const fn face(self) -> QlFace { self.face }
-    pub const fn depth(self) -> u32 { self.depth }
+    pub const fn frame(self) -> QlFormRef {
+        self.frame
+    }
+    pub const fn position(self) -> QlPosition {
+        self.position
+    }
+    pub const fn face(self) -> QlFace {
+        self.face
+    }
+    pub const fn depth(self) -> u32 {
+        self.depth
+    }
 
     pub fn with_face(self, face: QlFace) -> Self {
         Self { face, ..self }
