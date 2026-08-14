@@ -23,10 +23,7 @@ fn one_opaque_subject_ref_survives_all_twelve_refractions_unchanged() {
         let provenance = QlProvenance::new(
             provider(),
             "refract",
-            vec![InputRefRevision::new(
-                subject.clone(),
-                Some("rev-7".into()),
-            )],
+            vec![InputRefRevision::new(subject.clone(), Some("rev-7".into()))],
             ResultClass::SemanticStochastic,
         );
         let reading_id = ClientRef::new(format!("reading:{}", lens.code())).expect("reading id");
