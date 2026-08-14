@@ -28,8 +28,10 @@ Both public adapter surfaces delegate to the same adapter core. There is no priv
 
 ## Shared-floor status
 
-Q4 consumes the Factory `factory.interop/v1-alpha` ref/revision shape as an alpha dependency while Factory #113 remains open. The Q4 fixture records the demonstrated shared subject `factory:claim:c-1` / `sha256:claim-c-1-r1` and uses standalone QL-MEF canonical `mef:lens:L3@1` with `targetRef` equal to the client-owned Factory ref.
+Q4 now consumes the Factory `factory.interop/v1` contract established by Factory #113. The cross-repo fixture records the demonstrated shared subject `factory:claim:c-1` / `sha256:claim-c-1-r1` and uses standalone QL-MEF canonical `mef:lens:L3@1` with `targetRef` equal to the client-owned Factory ref.
 
-The currently observed legacy Factory QL composition strings (`qlform:factory-development/v1`, `day:2.3`, `lens:L3`, `qltarget:claim-whole`) are explicitly rejected by QL-MEF tests rather than translated. Their resolution belongs to the shared interop floor in Factory #113 because the Factory schema identifies Standalone QL/MEF as semantic owner of that composition.
+Factory's parent `factory.interop` contract composes the standalone QL-MEF composition schema through an external `$ref`; the former Factory-local inline QL definition is not part of the parent contract. Factory's Python, Node, TypeScript and Rust conformance consumers are expected to resolve/enforce that same schema boundary rather than merely accepting arbitrary QL strings.
 
-Until #113 settles the cross-repo contract, Q4 may be implementation-complete on the QL-MEF side but must remain blocker-visible and must not be closed as the final cross-repo adapter slice.
+The legacy Factory QL composition strings (`qlform:factory-development/v1`, `day:2.3`, `lens:L3`, `qltarget:claim-whole`) remain explicit rejection cases in QL-MEF. They are not translated, aliased or silently normalised.
+
+Factory #113 therefore no longer blocks the QL-MEF-side adapter contract. Q4 remains open until its full cross-repository Closure is evidenced: the QL-MEF Rust gate must pass and both principal clients, including AIKit, must consume the standalone module through explicit optional adapters without semantic ownership transfer.
