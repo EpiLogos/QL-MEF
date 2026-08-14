@@ -7,7 +7,7 @@ use ql_semantic::{
     InputLimits, LocateRequest, LocateResult, LocateStatus, Operation, ProviderCapabilities,
     ProviderClass, ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest,
     SemanticDisclosure, SemanticReading, SemanticRelationReading, SemanticStatus,
-    SemanticSynthesis, SynthesisDisclosure, SynthesiseRequest,
+    SemanticSynthesis, SynthesisDisclosure, SynthesiseRequest, TargetInput,
 };
 
 #[derive(Debug, Clone)]
@@ -219,4 +219,8 @@ impl QlProvider for FixtureProvider {
 
 pub fn target(value: &str) -> QlTarget {
     QlTarget::new(ClientRef::new(value).expect("target ref"))
+}
+
+pub fn input(value: &str, revision: Option<&str>) -> TargetInput {
+    TargetInput::new(target(value), revision.map(str::to_owned))
 }
