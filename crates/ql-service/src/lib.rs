@@ -1,4 +1,6 @@
 //! Replaceable, transport-independent service boundary for QL/MEF operations.
+//!
+//! The stable operation family is capabilities, locate, refract, relate, and synthesise.
 
 mod combine_ops;
 mod error;
