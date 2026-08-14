@@ -1,0 +1,15 @@
+[package]
+name = "ql-service"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+ql-semantic = { path = "../ql-semantic" }
+
+[dev-dependencies]
+ql-core = { path = "../ql-core" }
+ql-mef = { path = "../ql-mef" }
+
+[lints]
+workspace = true
