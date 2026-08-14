@@ -14,16 +14,22 @@ Clients may call `capabilities` before advanced operations. Provider health is e
 
 Input limits are part of the capability contract and are enforced at the service boundary. `relate` requires at least two subjects and `synthesise` requires at least one prior reading.
 
+## Revision-bearing target input
+
+Operations that consume client subjects use `TargetInput { target, revision }`. `target` remains the QL/MEF view of the caller-owned identity; `revision` is the optional caller-owned source revision observed for that subject. `locate` and `refract` each receive one `TargetInput`; `relate` receives one for every subject.
+
+The provider may use these values to produce provenance, but it must not manufacture a substitute source revision or reinterpret client identity. An unversioned caller is represented explicitly by `revision: None` rather than by a fixture/provider revision.
+
 ## Provenance
 
-Q3 provenance identifies schema and MEF registry versions, provider/version, operation, input refs and revisions, optional model, optional provider configuration ref, result class, and warnings. Reading evidence refs remain explicit source references. Semantic/stochastic fixtures therefore carry model, configuration, source, and source-revision evidence together.
+Q3 provenance identifies schema and MEF registry versions, provider/version, operation, input refs and revisions, optional model, optional provider configuration ref, result class, and warnings. Reading evidence refs remain explicit source references. Deterministic locate, semantic refraction, and relation fixtures derive `InputRefRevision` directly from their received `TargetInput` values, so a caller revision reaches result provenance unchanged.
 
 ## Transport neutrality
 
 `ServiceRequest` and `ServiceResponse` are transport envelopes over the same Rust operations. Dispatch delegates to the same service methods used by direct in-process callers. Tests require a deterministic direct call and its dispatched equivalent to return the same semantic result.
 
-`schemas/q3/service.schema.json` provides a language-neutral capability and request contract. Q3 does not introduce HTTP, RPC, a daemon, a database, or a provider-specific service framework; those may be adapters later without redefining operation meaning.
+`schemas/q3/service.schema.json` provides a language-neutral capability and request contract, including the revision-bearing `TargetInput`. Q3 does not introduce HTTP, RPC, a daemon, a database, or a provider-specific service framework; those may be adapters later without redefining operation meaning.
 
 ## Ownership boundary
 
-QL-MEF continues to preserve client-owned references. It does not create Factory Project/Run/Action identities, AIKit context identities, Workcell materialisation identities, or Loop Runtime recurrence state.
+QL-MEF continues to preserve client-owned references and revisions. It does not create Factory Project/Run/Action identities, AIKit context identities, Workcell materialisation identities, or Loop Runtime recurrence state.

@@ -7,7 +7,7 @@ use ql_semantic::{
     InputLimits, LocateRequest, LocateResult, LocateStatus, Operation, ProviderCapabilities,
     ProviderClass, ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest,
     SemanticDisclosure, SemanticReading, SemanticRelationReading, SemanticStatus,
-    SemanticSynthesis, SynthesisDisclosure, SynthesiseRequest,
+    SemanticSynthesis, SynthesisDisclosure, SynthesiseRequest, TargetInput,
 };
 
 #[derive(Debug, Clone)]
@@ -94,16 +94,17 @@ impl QlProvider for FixtureProvider {
 
     fn locate(&self, request: LocateRequest) -> Result<LocateResult, ProviderError> {
         self.require(Operation::Locate)?;
+        let input = request.input;
         let provenance = self.provenance(
             Operation::Locate,
             vec![InputRefRevision::new(
-                request.target.subject.clone(),
-                Some("fixture-rev-1".into()),
+                input.target.subject.clone(),
+                input.revision,
             )],
             ResultClass::Deterministic,
         );
         Ok(LocateResult {
-            target: request.target,
+            target: input.target,
             candidates: vec![QlAddress::sixfold(2, QlFace::Direct, 0).expect("fixture address")],
             status: LocateStatus::Unique,
             provenance,
@@ -118,11 +119,12 @@ impl QlProvider for FixtureProvider {
         {
             return Err(ProviderError::InvalidRequest("sublens lens mismatch"));
         }
-        let subject = request.target.subject.clone();
+        let input = request.input;
+        let subject = input.target.subject.clone();
         let mut reading = QlReading::new(
             ClientRef::new(format!("fixture:reading/{}", request.lens.lens().code()))
                 .expect("reading id"),
-            request.target,
+            input.target,
             Some(request.lens),
             SemanticDisclosure {
                 text: "fixture semantic disclosure".into(),
@@ -131,7 +133,7 @@ impl QlProvider for FixtureProvider {
             },
             self.provenance(
                 Operation::Refract,
-                vec![InputRefRevision::new(subject, Some("fixture-rev-1".into()))],
+                vec![InputRefRevision::new(subject, input.revision)],
                 ResultClass::SemanticStochastic,
             ),
         );
@@ -144,20 +146,23 @@ impl QlProvider for FixtureProvider {
 
     fn relate(&self, request: RelateRequest) -> Result<SemanticRelationReading, ProviderError> {
         self.require(Operation::Relate)?;
-        if request.subjects.len() < 2 {
+        if request.inputs.len() < 2 {
             return Err(ProviderError::InvalidRequest(
                 "relate requires at least two subjects",
             ));
         }
-        let subjects = request
-            .subjects
+        let pairs = request
+            .inputs
             .into_iter()
-            .map(|target| target.subject)
+            .map(|input| (input.target.subject, input.revision))
             .collect::<Vec<_>>();
-        let refs = subjects
+        let subjects = pairs
             .iter()
-            .cloned()
-            .map(|reference| InputRefRevision::new(reference, Some("fixture-rev-1".into())))
+            .map(|(reference, _)| reference.clone())
+            .collect::<Vec<_>>();
+        let refs = pairs
+            .into_iter()
+            .map(|(reference, revision)| InputRefRevision::new(reference, revision))
             .collect();
         Ok(QlRelationReading {
             id: ClientRef::new("fixture:relation/1").expect("relation id"),
@@ -214,4 +219,8 @@ impl QlProvider for FixtureProvider {
 
 pub fn target(value: &str) -> QlTarget {
     QlTarget::new(ClientRef::new(value).expect("target ref"))
+}
+
+pub fn input(value: &str, revision: Option<&str>) -> TargetInput {
+    TargetInput::new(target(value), revision.map(str::to_owned))
 }
