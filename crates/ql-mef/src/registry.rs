@@ -105,8 +105,7 @@ pub const fn lens_definition(id: LensId) -> &'static LensDefinition {
     }
 }
 
-pub fn all_sublens_definitions(
-) -> impl Iterator<Item = Result<SublensDefinition, MefError>> {
+pub fn all_sublens_definitions() -> impl Iterator<Item = Result<SublensDefinition, MefError>> {
     LENS_DEFINITIONS
         .iter()
         .flat_map(|lens| (0_u8..=5).map(move |position| lens.sublens(position)))
