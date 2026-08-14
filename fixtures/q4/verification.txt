@@ -1,4 +1,4 @@
-source_head=9bb7043b82d285be9ddedc55f82627cc6b30096c
+source_head=2e901092537fe40792119a6b8cb26b1219ce7e2a
 gates=format,check,clippy,test
 result=passed
 consumer=q3-revision-hardening+q4-adapters
