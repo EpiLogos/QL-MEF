@@ -182,6 +182,10 @@ fn degraded_provider_can_enrich_without_becoming_a_prerequisite() {
                     .map(|value| value.as_str()),
                 Some("fixture:config/q4")
             );
+            assert_eq!(
+                value.provenance.input_refs[0].revision.as_deref(),
+                Some("sha256:claim-c-1-r1")
+            );
         }
         other => panic!("expected reading attachment, got {other:?}"),
     }
@@ -232,7 +236,7 @@ fn invalid_sublens_relation_is_never_coerced_even_in_optional_mode() {
 }
 
 #[test]
-fn factory_and_aikit_surfaces_preserve_the_same_shared_ref_without_translation() {
+fn factory_and_aikit_surfaces_preserve_the_same_shared_ref_and_revision_without_translation() {
     let service = QlService::with_provider(AdapterFixtureProvider::semantic(
         "fixture",
         ProviderHealth::available(),
@@ -268,14 +272,22 @@ fn factory_and_aikit_surfaces_preserve_the_same_shared_ref_without_translation()
     assert_eq!(factory.client.subject.inner().revision(), Some(revision));
     assert_eq!(aikit.client.subject.inner().revision(), Some(revision));
 
-    let factory_target = match factory.ql {
-        QlAttachment::Reading { value, .. } => value.target.subject,
+    let (factory_target, factory_revision) = match factory.ql {
+        QlAttachment::Reading { value, .. } => (
+            value.target.subject,
+            value.provenance.input_refs[0].revision.clone(),
+        ),
         other => panic!("expected factory reading, got {other:?}"),
     };
-    let aikit_target = match aikit.ql {
-        QlAttachment::Reading { value, .. } => value.target.subject,
+    let (aikit_target, aikit_revision) = match aikit.ql {
+        QlAttachment::Reading { value, .. } => (
+            value.target.subject,
+            value.provenance.input_refs[0].revision.clone(),
+        ),
         other => panic!("expected AIKit reading, got {other:?}"),
     };
     assert_eq!(factory_target.as_str(), shared_ref);
     assert_eq!(aikit_target.as_str(), shared_ref);
+    assert_eq!(factory_revision.as_deref(), Some(revision));
+    assert_eq!(aikit_revision.as_deref(), Some(revision));
 }
