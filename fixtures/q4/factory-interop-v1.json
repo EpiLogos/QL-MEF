@@ -1,0 +1,16 @@
+{
+  "sourceContractVersion": "factory.interop/v1",
+  "sourceRef": "factory:claim:c-1",
+  "sourceRevision": "sha256:claim-c-1-r1",
+  "qlComposition": {
+    "lensRef": "mef:lens:L3@1",
+    "targetRef": "factory:claim:c-1"
+  },
+  "rejectedLegacyRefs": [
+    "qlform:factory-development/v1",
+    "day:2.3",
+    "lens:L3",
+    "qltarget:claim-whole"
+  ],
+  "status": "factory-113-contract-consumed"
+}
