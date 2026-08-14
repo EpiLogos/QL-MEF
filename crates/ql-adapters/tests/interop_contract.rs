@@ -2,15 +2,15 @@ use ql_core::{QlAddress, QlFormRef};
 use ql_mef::LensRef;
 
 #[test]
-fn factory_alpha_fixture_preserves_client_ref_and_uses_canonical_ql_mef_lens() {
-    let fixture = include_str!("../../../fixtures/q4/factory-interop-alpha.json");
+fn factory_v1_fixture_preserves_client_ref_and_uses_canonical_ql_mef_lens() {
+    let fixture = include_str!("../../../fixtures/q4/factory-interop-v1.json");
 
-    assert!(fixture.contains("\"sourceContractVersion\": \"factory.interop/v1-alpha\""));
+    assert!(fixture.contains("\"sourceContractVersion\": \"factory.interop/v1\""));
     assert!(fixture.contains("\"sourceRef\": \"factory:claim:c-1\""));
     assert!(fixture.contains("\"sourceRevision\": \"sha256:claim-c-1-r1\""));
     assert!(fixture.contains("\"lensRef\": \"mef:lens:L3@1\""));
     assert!(fixture.contains("\"targetRef\": \"factory:claim:c-1\""));
-    assert!(fixture.contains("\"status\": \"alpha-pending-factory-113-closure\""));
+    assert!(fixture.contains("\"status\": \"factory-113-contract-consumed\""));
 }
 
 #[test]
@@ -23,7 +23,7 @@ fn legacy_factory_ql_strings_are_rejected_instead_of_translated() {
     assert!("day:2.3".parse::<QlAddress>().is_err());
     assert!("lens:L3".parse::<LensRef>().is_err());
 
-    let fixture = include_str!("../../../fixtures/q4/factory-interop-alpha.json");
+    let fixture = include_str!("../../../fixtures/q4/factory-interop-v1.json");
     assert!(fixture.contains("\"rejectedLegacyRefs\""));
     assert!(fixture.contains("\"qltarget:claim-whole\""));
 }
