@@ -7,7 +7,7 @@ use crate::{QlService, ServiceError, guard::provider_for};
 impl QlService {
     pub fn relate(&self, request: RelateRequest) -> Result<SemanticRelationReading, ServiceError> {
         let (provider, capabilities) = provider_for(self, Operation::Relate)?;
-        let actual = request.subjects.len();
+        let actual = request.inputs.len();
         if actual < 2 {
             return Err(ServiceError::InvalidRequest(
                 "relate requires at least two subjects",
