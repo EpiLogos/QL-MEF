@@ -15,9 +15,17 @@ fn language_neutral_schema_exposes_required_q2_contracts() {
         "QLRelationReading",
         "QLSynthesis",
     ] {
-        assert!(schema.contains(&format!("\"{definition}\"")), "missing schema definition: {definition}");
+        assert!(
+            schema.contains(&format!("\"{definition}\"")),
+            "missing schema definition: {definition}"
+        );
     }
-    for result_class in ["canonical", "deterministic", "semantic-stochastic", "research"] {
+    for result_class in [
+        "canonical",
+        "deterministic",
+        "semantic-stochastic",
+        "research",
+    ] {
         assert!(schema.contains(&format!("\"{result_class}\"")));
     }
     assert!(schema.contains("^mef:lens:L[0-5]'?@1$"));
