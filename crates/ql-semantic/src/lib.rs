@@ -1,4 +1,6 @@
 //! Transport-independent provider contracts for QL/MEF formal and semantic operations.
+//!
+//! Formal-kernel and semantic-refraction capabilities remain independently advertised.
 
 mod capability;
 mod error;
