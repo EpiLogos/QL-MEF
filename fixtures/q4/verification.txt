@@ -1,4 +1,4 @@
-source_head=8c62a8ca0c6df791011520bd3211718c7df158ec
+source_head=9bb7043b82d285be9ddedc55f82627cc6b30096c
 gates=format,check,clippy,test
 result=passed
-consumer=q4-client-adapters
+consumer=q3-revision-hardening+q4-adapters
