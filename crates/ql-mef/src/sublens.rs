@@ -17,8 +17,8 @@ impl SublensRef {
     }
 
     pub fn new(lens: LensRef, position: u8) -> Result<Self, MefError> {
-        let position = QlPosition::new(position)
-            .map_err(|_| MefError::InvalidSublensPosition(position))?;
+        let position =
+            QlPosition::new(position).map_err(|_| MefError::InvalidSublensPosition(position))?;
         Ok(Self { lens, position })
     }
 
