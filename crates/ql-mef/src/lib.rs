@@ -14,8 +14,13 @@ mod sublens;
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
 pub use lens::{LensFace, LensId, LensRef, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare};
-pub use provenance::{CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass};
+pub use provenance::{
+    CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
+};
 pub use reading::{QlReading, QlRelationReading, QlSynthesis};
 pub use refraction::RefractionContract;
-pub use registry::{LensDefinition, SublensDefinition, LENS_DEFINITIONS, all_lens_definitions, all_sublens_definitions, lens_definition};
+pub use registry::{
+    LENS_DEFINITIONS, LensDefinition, SublensDefinition, all_lens_definitions,
+    all_sublens_definitions, lens_definition,
+};
 pub use sublens::SublensRef;
