@@ -74,14 +74,12 @@ impl QlProvider for AdapterFixtureProvider {
             return Err(ProviderError::InvalidRequest("sublens lens mismatch"));
         }
 
-        let subject = request.target.subject.clone();
+        let input = request.input;
+        let subject = input.target.subject.clone();
         let mut provenance = QlProvenance::new(
             self.capabilities.provider.clone(),
             Operation::Refract.as_str(),
-            vec![InputRefRevision::new(
-                subject.clone(),
-                Some("source-rev-1".into()),
-            )],
+            vec![InputRefRevision::new(subject.clone(), input.revision)],
             ResultClass::SemanticStochastic,
         );
         provenance.model = Some("adapter-fixture-model".into());
@@ -90,7 +88,7 @@ impl QlProvider for AdapterFixtureProvider {
         let mut reading = QlReading::new(
             ClientRef::new(format!("fixture:reading/{}", request.lens.lens().code()))
                 .expect("reading ref"),
-            request.target,
+            input.target,
             Some(request.lens),
             SemanticDisclosure {
                 text: "adapter fixture disclosure".into(),
