@@ -16,7 +16,9 @@ impl QlService {
     }
 
     pub fn with_provider<P: QlProvider + 'static>(provider: P) -> Self {
-        Self { provider: Some(Box::new(provider)) }
+        Self {
+            provider: Some(Box::new(provider)),
+        }
     }
 
     pub fn replace_provider<P: QlProvider + 'static>(&mut self, provider: P) {

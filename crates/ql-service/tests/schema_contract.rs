@@ -21,13 +21,7 @@ fn language_neutral_capability_schema_names_the_stable_surface() {
     for state in ["absent", "available", "degraded", "incompatible"] {
         assert!(schema.contains(&format!("\"{state}\"")));
     }
-    for operation in [
-        "capabilities",
-        "locate",
-        "refract",
-        "relate",
-        "synthesise",
-    ] {
+    for operation in ["capabilities", "locate", "refract", "relate", "synthesise"] {
         assert!(schema.contains(&format!("\"{operation}\"")));
     }
     for class in ["formal-kernel", "semantic-refraction"] {

@@ -1,6 +1,6 @@
 use ql_semantic::{LocateRequest, LocateResult, Operation, RefractRequest, SemanticReading};
 
-use crate::{guard::provider_for, QlService, ServiceError};
+use crate::{QlService, ServiceError, guard::provider_for};
 
 impl QlService {
     pub fn locate(&self, request: LocateRequest) -> Result<LocateResult, ServiceError> {

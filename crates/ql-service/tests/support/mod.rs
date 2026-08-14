@@ -81,8 +81,7 @@ impl FixtureProvider {
         );
         if class == ResultClass::SemanticStochastic {
             provenance.model = Some("fixture-semantic-model".into());
-            provenance.config_ref =
-                Some(ClientRef::new("fixture:config/q3").expect("config ref"));
+            provenance.config_ref = Some(ClientRef::new("fixture:config/q3").expect("config ref"));
         }
         provenance
     }
@@ -105,9 +104,7 @@ impl QlProvider for FixtureProvider {
         );
         Ok(LocateResult {
             target: request.target,
-            candidates: vec![
-                QlAddress::sixfold(2, QlFace::Direct, 0).expect("fixture address")
-            ],
+            candidates: vec![QlAddress::sixfold(2, QlFace::Direct, 0).expect("fixture address")],
             status: LocateStatus::Unique,
             provenance,
         })
@@ -134,10 +131,7 @@ impl QlProvider for FixtureProvider {
             },
             self.provenance(
                 Operation::Refract,
-                vec![InputRefRevision::new(
-                    subject,
-                    Some("fixture-rev-1".into()),
-                )],
+                vec![InputRefRevision::new(subject, Some("fixture-rev-1".into()))],
                 ResultClass::SemanticStochastic,
             ),
         );
@@ -176,14 +170,8 @@ impl QlProvider for FixtureProvider {
             },
             addresses: vec![],
             lenses: request.lenses,
-            evidence_refs: vec![
-                ClientRef::new("fixture:source/corpus-1").expect("source ref")
-            ],
-            provenance: self.provenance(
-                Operation::Relate,
-                refs,
-                ResultClass::SemanticStochastic,
-            ),
+            evidence_refs: vec![ClientRef::new("fixture:source/corpus-1").expect("source ref")],
+            provenance: self.provenance(Operation::Relate, refs, ResultClass::SemanticStochastic),
         })
     }
 

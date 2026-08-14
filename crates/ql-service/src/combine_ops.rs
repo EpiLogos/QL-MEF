@@ -24,7 +24,10 @@ impl QlService {
         Ok(provider.relate(request)?)
     }
 
-    pub fn synthesise(&self, request: SynthesiseRequest) -> Result<SemanticSynthesis, ServiceError> {
+    pub fn synthesise(
+        &self,
+        request: SynthesiseRequest,
+    ) -> Result<SemanticSynthesis, ServiceError> {
         let (provider, capabilities) = provider_for(self, Operation::Synthesise)?;
         let actual = request.readings.len();
         if actual == 0 {

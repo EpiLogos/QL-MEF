@@ -53,10 +53,7 @@ fn formal_and_semantic_capability_classes_are_separable() {
     assert!(formal.negotiate(Operation::Locate).supported);
     assert!(!formal.negotiate(Operation::Refract).supported);
 
-    let full = QlService::with_provider(FixtureProvider::full(
-        "full",
-        ProviderHealth::available(),
-    ));
+    let full = QlService::with_provider(FixtureProvider::full("full", ProviderHealth::available()));
     let capabilities = full.capabilities().provider.expect("provider");
     assert!(capabilities.classes.contains(&ProviderClass::FormalKernel));
     assert!(

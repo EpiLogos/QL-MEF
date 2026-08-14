@@ -23,19 +23,31 @@ pub struct ProviderHealth {
 
 impl ProviderHealth {
     pub const fn available() -> Self {
-        Self { state: ProviderState::Available, detail: None }
+        Self {
+            state: ProviderState::Available,
+            detail: None,
+        }
     }
 
     pub const fn absent() -> Self {
-        Self { state: ProviderState::Absent, detail: None }
+        Self {
+            state: ProviderState::Absent,
+            detail: None,
+        }
     }
 
     pub fn degraded(detail: impl Into<String>) -> Self {
-        Self { state: ProviderState::Degraded, detail: Some(detail.into()) }
+        Self {
+            state: ProviderState::Degraded,
+            detail: Some(detail.into()),
+        }
     }
 
     pub fn incompatible(detail: impl Into<String>) -> Self {
-        Self { state: ProviderState::Incompatible, detail: Some(detail.into()) }
+        Self {
+            state: ProviderState::Incompatible,
+            detail: Some(detail.into()),
+        }
     }
 }
 
