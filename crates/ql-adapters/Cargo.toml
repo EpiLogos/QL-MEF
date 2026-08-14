@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+ql-core = { path = "../ql-core" }
 ql-mef = { path = "../ql-mef" }
 ql-semantic = { path = "../ql-semantic" }
 ql-service = { path = "../ql-service" }
