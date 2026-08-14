@@ -1,4 +1,4 @@
-use ql_core::{apply_operator, QlAddress, QlFace, QlOperator, KERNEL_VERSION, SCHEMA_VERSION};
+use ql_core::{KERNEL_VERSION, QlAddress, QlFace, QlOperator, SCHEMA_VERSION, apply_operator};
 
 #[test]
 fn deterministic_results_carry_versioned_replay_provenance() {
@@ -13,5 +13,9 @@ fn deterministic_results_carry_versioned_replay_provenance() {
 
 #[test]
 fn client_product_nouns_are_not_ql_positions() {
-    assert!("qladdr:sixfold@1/direct/Project/d0".parse::<QlAddress>().is_err());
+    assert!(
+        "qladdr:sixfold@1/direct/Project/d0"
+            .parse::<QlAddress>()
+            .is_err()
+    );
 }
