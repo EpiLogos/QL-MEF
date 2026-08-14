@@ -1,6 +1,6 @@
 use ql_core::QlFormRef;
 use ql_mef::{LensRef, RefractionContract, SublensRef};
-use ql_semantic::{ProviderHealth, SemanticReading};
+use ql_semantic::{ProviderHealth, SemanticReading, TargetInput};
 use ql_service::{QlService, ServiceError};
 
 use crate::{AdapterError, AdapterResult, AdapterSubject, ClientRecord, QlAttachment, QlMode};
@@ -32,9 +32,10 @@ impl<'a> AdapterCore<'a> {
             });
         }
 
-        let contract =
-            RefractionContract::new(client.subject.client_subject().target(), lens, sublens)
-                .map_err(AdapterError::InvalidRefraction)?;
+        let client_subject = client.subject.client_subject();
+        let revision = client_subject.revision().map(str::to_owned);
+        let contract = RefractionContract::new(client_subject.target(), lens, sublens)
+            .map_err(AdapterError::InvalidRefraction)?;
 
         let Some(service) = self.service else {
             return match self.mode {
@@ -52,7 +53,7 @@ impl<'a> AdapterCore<'a> {
 
         let health = service.capabilities().health;
         let request = ql_semantic::RefractRequest {
-            target: contract.target,
+            input: TargetInput::new(contract.target, revision),
             lens: contract.lens,
             sublens: contract.sublens,
             frame,
