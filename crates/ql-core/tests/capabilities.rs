@@ -1,4 +1,4 @@
-use ql_core::{kernel_capabilities, KERNEL_VERSION, SCHEMA_VERSION};
+use ql_core::{KERNEL_VERSION, SCHEMA_VERSION, kernel_capabilities};
 
 #[test]
 fn q1_capabilities_advertise_only_deterministic_surface() {
