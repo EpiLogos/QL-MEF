@@ -27,19 +27,35 @@ pub struct QlFormRef {
 }
 
 impl QlFormRef {
-    pub const SIXFOLD_V1: Self = Self { form: QlForm::Sixfold, version: 1 };
-    pub const FOUR_PLUS_TWO_V1: Self = Self { form: QlForm::FourPlusTwo, version: 1 };
-    pub const DIRECT_CONJUGATE_V1: Self = Self { form: QlForm::DirectConjugate, version: 1 };
+    pub const SIXFOLD_V1: Self = Self {
+        form: QlForm::Sixfold,
+        version: 1,
+    };
+    pub const FOUR_PLUS_TWO_V1: Self = Self {
+        form: QlForm::FourPlusTwo,
+        version: 1,
+    };
+    pub const DIRECT_CONJUGATE_V1: Self = Self {
+        form: QlForm::DirectConjugate,
+        version: 1,
+    };
 
     pub fn new(form: QlForm, version: u16) -> Result<Self, QlError> {
         if version != 1 {
-            return Err(QlError::UnsupportedFormVersion { form: form.as_str(), version });
+            return Err(QlError::UnsupportedFormVersion {
+                form: form.as_str(),
+                version,
+            });
         }
         Ok(Self { form, version })
     }
 
-    pub const fn form(self) -> QlForm { self.form }
-    pub const fn version(self) -> u16 { self.version }
+    pub const fn form(self) -> QlForm {
+        self.form
+    }
+    pub const fn version(self) -> u16 {
+        self.version
+    }
 }
 
 impl fmt::Display for QlFormRef {
@@ -52,15 +68,21 @@ impl FromStr for QlFormRef {
     type Err = QlError;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let raw = value.strip_prefix("qlform:").ok_or_else(|| QlError::InvalidAddress(value.to_owned()))?;
-        let (form, version) = raw.rsplit_once('@').ok_or_else(|| QlError::InvalidAddress(value.to_owned()))?;
+        let raw = value
+            .strip_prefix("qlform:")
+            .ok_or_else(|| QlError::InvalidAddress(value.to_owned()))?;
+        let (form, version) = raw
+            .rsplit_once('@')
+            .ok_or_else(|| QlError::InvalidAddress(value.to_owned()))?;
         let form = match form {
             "sixfold" => QlForm::Sixfold,
             "four-plus-two" => QlForm::FourPlusTwo,
             "direct-conjugate" => QlForm::DirectConjugate,
             other => return Err(QlError::UnknownForm(other.to_owned())),
         };
-        let version = version.parse::<u16>().map_err(|_| QlError::InvalidAddress(value.to_owned()))?;
+        let version = version
+            .parse::<u16>()
+            .map_err(|_| QlError::InvalidAddress(value.to_owned()))?;
         Self::new(form, version)
     }
 }
