@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QL-MEF Q3 Provider Service",
+  "$defs": {
+    "ProviderState": {"type": "string", "enum": ["absent", "available", "degraded", "incompatible"]},
+    "ProviderClass": {"type": "string", "enum": ["formal-kernel", "semantic-refraction"]},
+    "Operation": {"type": "string", "enum": ["capabilities", "locate", "refract", "relate", "synthesise"]},
+    "InputLimits": {
+      "type": "object",
+      "required": ["max_relation_subjects", "max_synthesis_readings"],
+      "properties": {
+        "max_relation_subjects": {"type": "integer", "minimum": 2},
+        "max_synthesis_readings": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "ProviderHealth": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ProviderState"},
+        "detail": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "ProviderCapabilities": {
+      "type": "object",
+      "required": ["provider", "health", "classes", "supported_forms", "supported_lenses", "operations", "extension_namespaces", "deterministic_operations", "input_limits", "output_schema_versions"],
+      "properties": {
+        "provider": {"type": "object"},
+        "health": {"$ref": "#/$defs/ProviderHealth"},
+        "classes": {"type": "array", "items": {"$ref": "#/$defs/ProviderClass"}},
+        "supported_forms": {"type": "array", "items": {"type": "string"}},
+        "supported_lenses": {"type": "array", "items": {"type": "string"}},
+        "operations": {"type": "array", "items": {"$ref": "#/$defs/Operation"}},
+        "extension_namespaces": {"type": "array", "items": {"type": "string"}},
+        "deterministic_operations": {"type": "array", "items": {"$ref": "#/$defs/Operation"}},
+        "input_limits": {"$ref": "#/$defs/InputLimits"},
+        "output_schema_versions": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "CapabilityDecision": {
+      "type": "object",
+      "required": ["health", "operation", "supported", "deterministic"],
+      "properties": {
+        "health": {"$ref": "#/$defs/ProviderHealth"},
+        "operation": {"$ref": "#/$defs/Operation"},
+        "supported": {"type": "boolean"},
+        "deterministic": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "ServiceRequest": {
+      "oneOf": [
+        {"type": "object", "required": ["operation"], "properties": {"operation": {"const": "capabilities"}}, "additionalProperties": false},
+        {"type": "object", "required": ["operation", "payload"], "properties": {"operation": {"enum": ["locate", "refract", "relate", "synthesise"]}, "payload": {"type": "object"}}, "additionalProperties": false}
+      ]
+    }
+  }
+}
