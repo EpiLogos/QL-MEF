@@ -1,7 +1,7 @@
 use ql_mef::{
-    ClientRef, InputRefRevision, LensId, LensRef, QlProvenance, QlProviderRef, QlReading,
-    QlRelationReading, QlSynthesis, QlTarget, RefractionContract, ResultClass, SublensRef,
-    CONTRACT_SCHEMA_VERSION, MEF_REGISTRY_VERSION,
+    CONTRACT_SCHEMA_VERSION, ClientRef, InputRefRevision, LensId, LensRef, MEF_REGISTRY_VERSION,
+    QlProvenance, QlProviderRef, QlReading, QlRelationReading, QlSynthesis, QlTarget,
+    RefractionContract, ResultClass, SublensRef,
 };
 
 fn provider() -> QlProviderRef {
@@ -23,11 +23,20 @@ fn one_opaque_subject_ref_survives_all_twelve_refractions_unchanged() {
         let provenance = QlProvenance::new(
             provider(),
             "refract",
-            vec![InputRefRevision::new(subject.clone(), Some("rev-7".into()))],
+            vec![InputRefRevision::new(
+                subject.clone(),
+                Some("rev-7".into()),
+            )],
             ResultClass::SemanticStochastic,
         );
         let reading_id = ClientRef::new(format!("reading:{}", lens.code())).expect("reading id");
-        let reading = QlReading::new(reading_id, target.clone(), Some(lens_ref), "derived", provenance);
+        let reading = QlReading::new(
+            reading_id,
+            target.clone(),
+            Some(lens_ref),
+            "derived",
+            provenance,
+        );
         assert_eq!(reading.target.subject, subject);
     }
 }
@@ -50,7 +59,10 @@ fn provenance_records_version_provider_operation_input_and_result_class() {
     let provenance = QlProvenance::new(
         provider(),
         "locate",
-        vec![InputRefRevision::new(subject.clone(), Some("sha256:abc".into()))],
+        vec![InputRefRevision::new(
+            subject.clone(),
+            Some("sha256:abc".into()),
+        )],
         ResultClass::Deterministic,
     );
     assert_eq!(provenance.schema_version, CONTRACT_SCHEMA_VERSION);
@@ -70,7 +82,13 @@ fn result_classes_are_explicit_and_round_trip() {
         ResultClass::SemanticStochastic,
         ResultClass::Research,
     ] {
-        assert_eq!(class.to_string().parse::<ResultClass>().expect("round trip"), class);
+        assert_eq!(
+            class
+                .to_string()
+                .parse::<ResultClass>()
+                .expect("round trip"),
+            class
+        );
     }
     assert!("semantic".parse::<ResultClass>().is_err());
 }
