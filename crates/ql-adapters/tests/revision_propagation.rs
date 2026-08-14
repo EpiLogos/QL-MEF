@@ -15,21 +15,13 @@ fn factory_client_revision_reaches_provider_provenance_unchanged() {
     ));
     let adapter = FactoryAdapter::new(Some(&service), QlMode::Optional);
     let client = ClientRecord::new(
-        FactorySubject::new(
-            "factory:claim:c-1",
-            Some("sha256:claim-c-1-r1".into()),
-        )
-        .expect("factory subject"),
+        FactorySubject::new("factory:claim:c-1", Some("sha256:claim-c-1-r1".into()))
+            .expect("factory subject"),
         "payload".to_owned(),
     );
 
     let result = adapter
-        .refract(
-            client,
-            LensRef::canonical(LensId::L3),
-            None,
-            None,
-        )
+        .refract(client, LensRef::canonical(LensId::L3), None, None)
         .expect("optional refraction");
 
     assert_eq!(
