@@ -19,6 +19,6 @@ pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
 pub use face::QlFace;
 pub use form::{QlForm, QlFormRef};
-pub use kernel::{kernel_capabilities, KernelCapabilities, KERNEL_VERSION, SCHEMA_VERSION};
+pub use kernel::{KERNEL_VERSION, KernelCapabilities, SCHEMA_VERSION, kernel_capabilities};
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
 pub use position::QlPosition;
