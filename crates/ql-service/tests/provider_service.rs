@@ -7,7 +7,7 @@ use ql_semantic::{
 };
 use ql_service::{QlService, ServiceError, ServiceRequest, ServiceResponse};
 
-use support::{FixtureProvider, target};
+use support::{FixtureProvider, input};
 
 #[test]
 fn absent_degraded_and_incompatible_states_are_explicit() {
@@ -15,7 +15,7 @@ fn absent_degraded_and_incompatible_states_are_explicit() {
     assert_eq!(absent.capabilities().health.state, ProviderState::Absent);
     assert_eq!(
         absent.locate(LocateRequest {
-            target: target("client:a"),
+            input: input("client:a", None),
             frame: None,
         }),
         Err(ServiceError::ProviderAbsent)
@@ -37,7 +37,7 @@ fn absent_degraded_and_incompatible_states_are_explicit() {
     assert!(!incompatible.negotiate(Operation::Locate).supported);
     assert!(matches!(
         incompatible.locate(LocateRequest {
-            target: target("client:a"),
+            input: input("client:a", None),
             frame: None,
         }),
         Err(ServiceError::ProviderIncompatible(_))
@@ -68,7 +68,7 @@ fn unadvertised_advanced_operation_is_not_inferred() {
     let service = QlService::with_provider(FixtureProvider::locate_only("formal-only"));
     let error = service
         .refract(RefractRequest {
-            target: target("client:a"),
+            input: input("client:a", None),
             lens: LensRef::canonical(LensId::L4),
             sublens: None,
             frame: None,
@@ -119,13 +119,17 @@ fn deterministic_locate_fixture_replays_identically() {
         ProviderHealth::available(),
     ));
     let request = LocateRequest {
-        target: target("client:artifact/a"),
+        input: input("client:artifact/a", Some("source-rev-a")),
         frame: None,
     };
     let first = service.locate(request.clone()).expect("first locate");
     let second = service.locate(request).expect("second locate");
     assert_eq!(first, second);
     assert_eq!(first.provenance.result_class, ResultClass::Deterministic);
+    assert_eq!(
+        first.provenance.input_refs[0].revision.as_deref(),
+        Some("source-rev-a")
+    );
     assert!(service.negotiate(Operation::Locate).deterministic);
 }
 
@@ -136,7 +140,7 @@ fn transport_envelope_preserves_deterministic_operation_semantics() {
         ProviderHealth::available(),
     ));
     let request = LocateRequest {
-        target: target("client:artifact/transport"),
+        input: input("client:artifact/transport", Some("transport-rev")),
         frame: None,
     };
     let direct = service.locate(request.clone()).expect("direct locate");
@@ -150,21 +154,21 @@ fn transport_envelope_preserves_deterministic_operation_semantics() {
 }
 
 #[test]
-fn stochastic_refraction_carries_model_config_source_and_subject_identity() {
+fn stochastic_refraction_carries_model_config_source_subject_and_revision() {
     let service = QlService::with_provider(FixtureProvider::full(
         "fixture",
         ProviderHealth::available(),
     ));
-    let subject = target("client:artifact/a");
+    let subject = input("client:artifact/a", Some("source-rev-a"));
     let reading = service
         .refract(RefractRequest {
-            target: subject.clone(),
+            input: subject.clone(),
             lens: LensRef::canonical(LensId::L4Prime),
             sublens: None,
             frame: None,
         })
         .expect("semantic reading");
-    assert_eq!(reading.target.subject, subject.subject);
+    assert_eq!(reading.target.subject, subject.target.subject);
     assert_eq!(
         reading.provenance.result_class,
         ResultClass::SemanticStochastic
@@ -183,9 +187,34 @@ fn stochastic_refraction_carries_model_config_source_and_subject_identity() {
     );
     assert_eq!(
         reading.provenance.input_refs[0].revision.as_deref(),
-        Some("fixture-rev-1")
+        Some("source-rev-a")
     );
     assert_eq!(reading.evidence_refs[0].as_str(), "fixture:source/corpus-1");
+}
+
+#[test]
+fn relate_preserves_each_caller_revision() {
+    let service = QlService::with_provider(FixtureProvider::full(
+        "fixture",
+        ProviderHealth::available(),
+    ));
+    let relation = service
+        .relate(RelateRequest {
+            inputs: vec![
+                input("client:a", Some("rev-a")),
+                input("client:b", Some("rev-b")),
+            ],
+            frame: None,
+            lenses: vec![LensRef::canonical(LensId::L2)],
+        })
+        .expect("relation");
+    assert_eq!(relation.subjects.len(), 2);
+    assert_eq!(
+        relation.provenance.result_class,
+        ResultClass::SemanticStochastic
+    );
+    assert_eq!(relation.provenance.input_refs[0].revision.as_deref(), Some("rev-a"));
+    assert_eq!(relation.provenance.input_refs[1].revision.as_deref(), Some("rev-b"));
 }
 
 #[test]
@@ -196,7 +225,7 @@ fn relate_and_synthesise_preserve_sources_differences_and_unresolved_material() 
     ));
     let relation = service
         .relate(RelateRequest {
-            subjects: vec![target("client:a"), target("client:b")],
+            inputs: vec![input("client:a", None), input("client:b", None)],
             frame: None,
             lenses: vec![LensRef::canonical(LensId::L2)],
         })
@@ -209,7 +238,7 @@ fn relate_and_synthesise_preserve_sources_differences_and_unresolved_material() 
 
     let reading_a = service
         .refract(RefractRequest {
-            target: target("client:a"),
+            input: input("client:a", None),
             lens: LensRef::canonical(LensId::L1),
             sublens: None,
             frame: None,
@@ -217,7 +246,7 @@ fn relate_and_synthesise_preserve_sources_differences_and_unresolved_material() 
         .expect("reading a");
     let reading_b = service
         .refract(RefractRequest {
-            target: target("client:b"),
+            input: input("client:b", None),
             lens: LensRef::canonical(LensId::L4),
             sublens: None,
             frame: None,
@@ -242,7 +271,7 @@ fn service_rejects_invalid_arity_before_provider_execution() {
     ));
     assert_eq!(
         service.relate(RelateRequest {
-            subjects: vec![target("client:only")],
+            inputs: vec![input("client:only", None)],
             frame: None,
             lenses: vec![],
         }),
@@ -269,8 +298,8 @@ fn service_enforces_advertised_input_limits() {
     ));
     let error = service
         .relate(RelateRequest {
-            subjects: (0..5)
-                .map(|index| target(&format!("client:{index}")))
+            inputs: (0..5)
+                .map(|index| input(&format!("client:{index}"), None))
                 .collect(),
             frame: None,
             lenses: vec![],
