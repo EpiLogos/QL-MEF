@@ -72,7 +72,10 @@ pub struct InputRefRevision {
 
 impl InputRefRevision {
     pub fn new(reference: ClientRef, revision: Option<String>) -> Self {
-        Self { reference, revision }
+        Self {
+            reference,
+            revision,
+        }
     }
 }
 
@@ -89,7 +92,12 @@ pub struct QlProvenance {
 }
 
 impl QlProvenance {
-    pub fn new(provider: QlProviderRef, operation: impl Into<String>, input_refs: Vec<InputRefRevision>, result_class: ResultClass) -> Self {
+    pub fn new(
+        provider: QlProviderRef,
+        operation: impl Into<String>,
+        input_refs: Vec<InputRefRevision>,
+        result_class: ResultClass,
+    ) -> Self {
         Self {
             schema_version: CONTRACT_SCHEMA_VERSION,
             mef_registry_version: MEF_REGISTRY_VERSION,
