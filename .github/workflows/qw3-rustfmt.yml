@@ -1,0 +1,30 @@
+name: QW3 rustfmt
+
+on:
+  push:
+    branches:
+      - agent/qw3-meta-portal
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw3-meta-portal
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Apply rustfmt
+        run: cargo fmt --all
+      - name: Commit formatting and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw3-rustfmt.yml
+          git add crates/ql-wiki
+          git commit -m "style(#11): apply rustfmt to meta-portal"
+          git push origin HEAD:agent/qw3-meta-portal
