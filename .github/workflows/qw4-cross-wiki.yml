@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
       - name: Build current QL-MEF Wiki refraction executable
         run: cargo build -p ql-wiki --bin ql-wiki-refraction
       - name: Prove independent Research Canvas contract locally
