@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.dev/contracts/ql-mef/meta-recognition/v1/schema.json",
+  "title": "QL-MEF Meta Recognition v1",
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "required": [
+        "observation_ref", "source_provider_ref", "source_target_ref",
+        "suggested_from_meta_ref", "suggested_to_meta_ref", "suggested_relation",
+        "rationale", "occurrences", "evidence_refs", "extensions"
+      ],
+      "properties": {
+        "observation_ref": {"type": "string", "minLength": 1},
+        "source_provider_ref": {"type": "string", "minLength": 1},
+        "source_target_ref": {"type": "string", "minLength": 1},
+        "source_revision": {"type": "string", "minLength": 1},
+        "suggested_from_meta_ref": {"type": "string", "minLength": 1},
+        "suggested_to_meta_ref": {"type": "string", "minLength": 1},
+        "suggested_relation": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "occurrences": {"type": "integer", "minimum": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "title": "MetaAmendmentCandidate",
+      "type": "object",
+      "required": ["contract", "candidate_ref", "observation", "state"],
+      "properties": {
+        "contract": {"const": "ql-mef/meta-recognition/v1"},
+        "candidate_ref": {"type": "string", "minLength": 1},
+        "observation": {"$ref": "#/$defs/observation"},
+        "state": {"const": "proposed"}
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "RecognisedMetaAmendment",
+      "type": "object",
+      "required": [
+        "contract", "candidate_ref", "observation_ref", "source_provider_ref",
+        "source_target_ref", "from_meta_ref", "to_meta_ref", "relation", "rationale",
+        "decision_ref", "reviewer_ref", "occurrences", "provenance"
+      ],
+      "properties": {
+        "contract": {"const": "ql-mef/meta-recognition/v1"},
+        "candidate_ref": {"type": "string", "minLength": 1},
+        "observation_ref": {"type": "string", "minLength": 1},
+        "source_provider_ref": {"type": "string", "minLength": 1},
+        "source_target_ref": {"type": "string", "minLength": 1},
+        "from_meta_ref": {"type": "string", "minLength": 1},
+        "to_meta_ref": {"type": "string", "minLength": 1},
+        "relation": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "decision_ref": {"type": "string", "minLength": 1},
+        "reviewer_ref": {"type": "string", "minLength": 1},
+        "occurrences": {"type": "integer", "minimum": 1},
+        "provenance": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    }
+  ]
+}
