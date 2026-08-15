@@ -1,0 +1,55 @@
+name: QW4 clippy repair
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw4-second-wiki-proof
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Apply exact lint repairs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('crates/ql-wiki/src/recognition.rs')
+          s = p.read_text(encoding='utf-8')
+          old = '''        if let Some(existing) = self.candidates.get(&candidate_ref) {\n            if existing == &candidate {\n                return Ok(existing.clone());\n            }\n            return Err(RecognitionError::DuplicateConflict(candidate_ref));\n        }\n'''
+          new = '''        if let Some(existing) = self.candidates.get(&candidate_ref)\n            && existing == &candidate\n        {\n            return Ok(existing.clone());\n        }\n        if self.candidates.contains_key(&candidate_ref) {\n            return Err(RecognitionError::DuplicateConflict(candidate_ref));\n        }\n'''
+          assert old in s, 'nested proposal branch not found'
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          p = Path('crates/ql-wiki/tests/second_wiki_conformance.rs')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(
+              '    RecognitionState, RefractionStatus, RegistryDisclosureProvider, StaticForeignResolver,\n',
+              '    RecognitionState, RefractionStatus, RegistryDisclosureProvider, RevisionValue,\n    StaticForeignResolver,\n',
+              1,
+          )
+          old = '''    assert!(\n        response.readings.iter().all(|reading| reading\n            .target_revision\n            .as_ref()\n            .unwrap()\n            .to_string()\n            == "5")\n    );\n'''
+          new = '''    assert!(response.readings.iter().all(|reading| {\n        matches!(reading.target_revision, Some(RevisionValue::Integer(5)))\n    }));\n'''
+          assert old in s, 'revision string comparison block not found'
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+          cargo fmt --all
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+      - name: Commit repair and remove failed helpers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw4-clippy-repair.yml .github/workflows/qw4-final-rustfix.yml
+          git add crates/ql-wiki/src/recognition.rs crates/ql-wiki/tests/second_wiki_conformance.rs
+          git commit -m "fix(#12): satisfy final QW4 clippy and test gates"
+          git push origin HEAD:agent/qw4-second-wiki-proof
