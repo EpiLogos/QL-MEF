@@ -8,8 +8,7 @@ use ql_mef::{
 use ql_semantic::{
     InputLimits, LocateRequest, LocateResult, Operation, ProviderCapabilities, ProviderClass,
     ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest, SemanticDisclosure,
-    SemanticReading, SemanticRelationReading, SemanticStatus, SemanticSynthesis,
-    SynthesiseRequest,
+    SemanticReading, SemanticRelationReading, SemanticStatus, SemanticSynthesis, SynthesiseRequest,
 };
 use ql_wiki::{
     FieldCoordinate, LensSelection, ProviderMode, RefractionStatus, RevisionValue,
@@ -28,7 +27,8 @@ impl LensProvider {
     fn full(health: ProviderHealth) -> Self {
         Self {
             capabilities: ProviderCapabilities {
-                provider: QlProviderRef::new("ql-mef:provider:registry-disclosure", "1.0.0").unwrap(),
+                provider: QlProviderRef::new("ql-mef:provider:registry-disclosure", "1.0.0")
+                    .unwrap(),
                 health,
                 classes: vec![ProviderClass::SemanticRefraction],
                 supported_forms: vec![QlFormRef::SIXFOLD_V1],
@@ -91,9 +91,13 @@ impl QlProvider for LensProvider {
             },
             provenance,
         );
-        reading
-            .evidence_refs
-            .push(ClientRef::new(format!("ql-mef:wiki:node:mef-{}", request.lens.lens().code())).unwrap());
+        reading.evidence_refs.push(
+            ClientRef::new(format!(
+                "ql-mef:wiki:node:mef-{}",
+                request.lens.lens().code()
+            ))
+            .unwrap(),
+        );
         Ok(reading)
     }
 
@@ -177,7 +181,11 @@ fn d3_target(family: RelationFamily, pair_index: u8) -> WikiRefractionTarget {
     }
 }
 
-fn request(target: WikiRefractionTarget, mode: ProviderMode, lenses: &[&str]) -> WikiRefractionRequest {
+fn request(
+    target: WikiRefractionTarget,
+    mode: ProviderMode,
+    lenses: &[&str],
+) -> WikiRefractionRequest {
     WikiRefractionRequest {
         contract: WIKI_REFRACTION_CONTRACT.into(),
         mode,
@@ -212,15 +220,31 @@ fn multi_node_d3_frame_yields_separate_mef_readings_without_identity_mutation() 
     assert_eq!(response.readings.len(), 3);
     assert_eq!(target, before);
     assert_eq!(response.readings[0].target_revision, target.target_revision);
-    assert!(response.readings.iter().all(|reading| reading.reading_type == "MEF-derived"));
+    assert!(
+        response
+            .readings
+            .iter()
+            .all(|reading| reading.reading_type == "MEF-derived")
+    );
     assert!(response.readings.iter().all(|reading| {
         reading.harmonic_field_ref.as_deref()
-            == target.structural_field.as_ref().map(|field| field.operator_ref.as_str())
+            == target
+                .structural_field
+                .as_ref()
+                .map(|field| field.operator_ref.as_str())
     }));
-    assert!(response.readings.iter().all(|reading| reading.relation_candidates.is_empty()));
-    assert!(response.readings.iter().all(|reading| {
-        reading.derived_subgraph.relations[0].origin == "QL-derived"
-    }));
+    assert!(
+        response
+            .readings
+            .iter()
+            .all(|reading| reading.relation_candidates.is_empty())
+    );
+    assert!(
+        response
+            .readings
+            .iter()
+            .all(|reading| { reading.derived_subgraph.relations[0].origin == "QL-derived" })
+    );
 }
 
 #[test]
@@ -238,7 +262,11 @@ fn less_technology_mapped_lenses_are_first_class_not_tags() {
         .iter()
         .map(|reading| reading.disclosure.as_str())
         .collect::<Vec<_>>();
-    assert!(disclosures.iter().any(|text| text.contains("Archetypal-Numerical")));
+    assert!(
+        disclosures
+            .iter()
+            .any(|text| text.contains("Archetypal-Numerical"))
+    );
     assert!(disclosures.iter().any(|text| text.contains("Processual")));
     assert!(disclosures.iter().any(|text| text.contains("Divine Logos")));
 }
@@ -267,7 +295,11 @@ fn node_frame_pair_d1_d2_d3_and_space_targets_are_valid_target_surfaces() {
     let provider = LensProvider::full(ProviderHealth::available());
     let mut targets = vec![];
 
-    for kind in [WikiTargetKind::NodeLocal, WikiTargetKind::Frame, WikiTargetKind::Space] {
+    for kind in [
+        WikiTargetKind::NodeLocal,
+        WikiTargetKind::Frame,
+        WikiTargetKind::Space,
+    ] {
         let mut target = d3_target(RelationFamily::A, 0);
         target.kind = kind;
         target.structural_field = None;
@@ -305,8 +337,14 @@ fn node_frame_pair_d1_d2_d3_and_space_targets_are_valid_target_surfaces() {
         degree: "D1".into(),
         expansion_side: None,
         coordinates: vec![
-            FieldCoordinate { position: 0, face: "direct".into() },
-            FieldCoordinate { position: 0, face: "conjugate".into() },
+            FieldCoordinate {
+                position: 0,
+                face: "direct".into(),
+            },
+            FieldCoordinate {
+                position: 0,
+                face: "conjugate".into(),
+            },
         ],
         provenance: vec![],
     });
@@ -359,24 +397,44 @@ fn disabled_optional_and_required_modes_have_distinct_failure_semantics() {
     assert!(disabled.readings.is_empty());
 
     let optional = WikiRefractionEngine::new(None)
-        .refract(&request(target.clone(), ProviderMode::Optional, &["mef:lens:L1@1"]))
+        .refract(&request(
+            target.clone(),
+            ProviderMode::Optional,
+            &["mef:lens:L1@1"],
+        ))
         .unwrap();
     assert_eq!(optional.status, RefractionStatus::Unavailable);
     assert!(optional.readings.is_empty());
 
-    let required = WikiRefractionEngine::new(None)
-        .refract(&request(target.clone(), ProviderMode::Required, &["mef:lens:L1@1"]));
-    assert!(matches!(required, Err(WikiRefractionError::ProviderRequired(_))));
+    let required = WikiRefractionEngine::new(None).refract(&request(
+        target.clone(),
+        ProviderMode::Required,
+        &["mef:lens:L1@1"],
+    ));
+    assert!(matches!(
+        required,
+        Err(WikiRefractionError::ProviderRequired(_))
+    ));
 
     let no_refract = LensProvider::no_refract();
     let optional = WikiRefractionEngine::new(Some(&no_refract))
-        .refract(&request(target.clone(), ProviderMode::Optional, &["mef:lens:L1@1"]))
+        .refract(&request(
+            target.clone(),
+            ProviderMode::Optional,
+            &["mef:lens:L1@1"],
+        ))
         .unwrap();
     assert_eq!(optional.status, RefractionStatus::Unavailable);
 
-    let required = WikiRefractionEngine::new(Some(&no_refract))
-        .refract(&request(target, ProviderMode::Required, &["mef:lens:L1@1"]));
-    assert!(matches!(required, Err(WikiRefractionError::ProviderRequired(_))));
+    let required = WikiRefractionEngine::new(Some(&no_refract)).refract(&request(
+        target,
+        ProviderMode::Required,
+        &["mef:lens:L1@1"],
+    ));
+    assert!(matches!(
+        required,
+        Err(WikiRefractionError::ProviderRequired(_))
+    ));
 }
 
 #[test]
@@ -384,9 +442,15 @@ fn invalid_structural_field_is_validation_error_even_when_provider_is_optional_o
     let mut target = d3_target(RelationFamily::A, 1);
     target.structural_field.as_mut().unwrap().operator_ref =
         "ql:structural:2.0.0:field:C:2:D3".into();
-    let result = WikiRefractionEngine::new(None)
-        .refract(&request(target, ProviderMode::Optional, &["mef:lens:L1@1"]));
-    assert!(matches!(result, Err(WikiRefractionError::InvalidStructuralField(_))));
+    let result = WikiRefractionEngine::new(None).refract(&request(
+        target,
+        ProviderMode::Optional,
+        &["mef:lens:L1@1"],
+    ));
+    assert!(matches!(
+        result,
+        Err(WikiRefractionError::InvalidStructuralField(_))
+    ));
 }
 
 #[test]
@@ -424,7 +488,16 @@ fn language_neutral_request_fixture_round_trips_without_project_ontology() {
     let request: WikiRefractionRequest = serde_json::from_str(raw).unwrap();
     request.validate().unwrap();
     assert_eq!(request.target.target_ref, "example:wiki:frame:decision-17");
-    assert_eq!(request.target.structural_field.as_ref().unwrap().family.as_deref(), Some("A"));
+    assert_eq!(
+        request
+            .target
+            .structural_field
+            .as_ref()
+            .unwrap()
+            .family
+            .as_deref(),
+        Some("A")
+    );
     assert!(!raw.to_lowercase().contains("glade"));
     assert!(!raw.to_lowercase().contains("aikit"));
     assert!(!raw.contains("Bimba Graph"));

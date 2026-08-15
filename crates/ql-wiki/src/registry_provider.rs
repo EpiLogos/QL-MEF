@@ -103,10 +103,13 @@ impl QlProvider for RegistryDisclosureProvider {
             },
             provenance,
         );
-        reading
-            .evidence_refs
-            .push(ClientRef::new(format!("ql-mef:wiki:node:mef-{}", request.lens.lens().code()))
-                .expect("canonical lens evidence ref is valid"));
+        reading.evidence_refs.push(
+            ClientRef::new(format!(
+                "ql-mef:wiki:node:mef-{}",
+                request.lens.lens().code()
+            ))
+            .expect("canonical lens evidence ref is valid"),
+        );
         Ok(reading)
     }
 

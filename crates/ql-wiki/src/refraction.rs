@@ -7,7 +7,8 @@ use ql_core::{
 };
 use ql_mef::{ClientRef, LensRef, QlTarget, SublensRef};
 use ql_semantic::{
-    Operation, ProviderError, ProviderState, QlProvider, RefractRequest, SemanticStatus, TargetInput,
+    Operation, ProviderError, ProviderState, QlProvider, RefractRequest, SemanticStatus,
+    TargetInput,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
@@ -34,7 +35,9 @@ impl core::fmt::Display for WikiRefractionError {
                 write!(f, "invalid Wiki structural field: {value}")
             }
             Self::InvalidLens(value) => write!(f, "invalid lens selection: {value}"),
-            Self::ProviderRequired(value) => write!(f, "required QL-MEF provider unavailable: {value}"),
+            Self::ProviderRequired(value) => {
+                write!(f, "required QL-MEF provider unavailable: {value}")
+            }
             Self::Provider(value) => write!(f, "QL-MEF provider failed: {value}"),
         }
     }
@@ -155,7 +158,10 @@ impl WikiStructuralField {
                 let _ = family;
             }
             "D1" => {
-                if self.family.is_some() || self.pair_index.is_some() || self.expansion_side.is_some() {
+                if self.family.is_some()
+                    || self.pair_index.is_some()
+                    || self.expansion_side.is_some()
+                {
                     return Err(WikiRefractionError::InvalidStructuralField(
                         "D1 is a family-independent same-position conjugation axis".into(),
                     ));
@@ -222,9 +228,9 @@ impl WikiStructuralField {
                 "pair/D2/D3 requires pair_index 0..2".into(),
             )
         })?;
-        let pair = family.pair(pair_index).map_err(|error| {
-            WikiRefractionError::InvalidStructuralField(error.to_string())
-        })?;
+        let pair = family
+            .pair(pair_index)
+            .map_err(|error| WikiRefractionError::InvalidStructuralField(error.to_string()))?;
         Ok((family, pair))
     }
 
@@ -629,7 +635,11 @@ impl<'a> WikiRefractionEngine<'a> {
             let mut target = QlTarget::new(target_ref);
             target.subject_type = Some(format!("wiki:{:?}", request.target.kind));
             target.frame_ref = request.target.target_frame_ref.clone();
-            let revision = request.target.target_revision.as_ref().map(ToString::to_string);
+            let revision = request
+                .target
+                .target_revision
+                .as_ref()
+                .map(ToString::to_string);
             let semantic = provider.refract(RefractRequest {
                 input: TargetInput::new(target, revision),
                 lens,
@@ -637,7 +647,9 @@ impl<'a> WikiRefractionEngine<'a> {
                 frame: None,
             });
             match semantic {
-                Ok(reading) => readings.push(wrap_reading(request, selection, &capabilities, reading)),
+                Ok(reading) => {
+                    readings.push(wrap_reading(request, selection, &capabilities, reading))
+                }
                 Err(ProviderError::InvalidRequest(message)) => {
                     return Err(WikiRefractionError::Provider(format!(
                         "provider rejected validated request: {message}"
@@ -656,7 +668,10 @@ impl<'a> WikiRefractionEngine<'a> {
             RefractionStatus::Unavailable
         } else if capabilities.health.state == ProviderState::Degraded || !notices.is_empty() {
             RefractionStatus::Degraded
-        } else if readings.iter().any(|reading| reading.disclosure_status != "complete") {
+        } else if readings
+            .iter()
+            .any(|reading| reading.disclosure_status != "complete")
+        {
             RefractionStatus::Partial
         } else {
             RefractionStatus::Complete
@@ -735,7 +750,10 @@ fn wrap_reading(
                 from_ref: relation.from_ref.clone(),
                 to_ref: relation.to_ref.clone(),
                 relation: relation.relation.clone(),
-                origin: relation.origin.clone().unwrap_or_else(|| "client-authored".into()),
+                origin: relation
+                    .origin
+                    .clone()
+                    .unwrap_or_else(|| "client-authored".into()),
                 origin_ref: relation.origin_ref.clone(),
                 provenance: relation.provenance.clone(),
             })
@@ -756,7 +774,11 @@ fn wrap_reading(
         },
         lens_ref: selection.lens_ref.clone(),
         sublens_ref: selection.sublens_ref.clone(),
-        ql_form_refs: reading.ql_form.map(|form| form.to_string()).into_iter().collect(),
+        ql_form_refs: reading
+            .ql_form
+            .map(|form| form.to_string())
+            .into_iter()
+            .collect(),
         operator_refs,
         harmonic_field_ref,
         disclosure: reading.reading.text,
