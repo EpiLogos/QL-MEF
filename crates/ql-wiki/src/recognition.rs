@@ -20,14 +20,22 @@ pub enum RecognitionError {
 impl core::fmt::Display for RecognitionError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            Self::InvalidObservation(value) => write!(f, "invalid recognition observation: {value}"),
+            Self::InvalidObservation(value) => {
+                write!(f, "invalid recognition observation: {value}")
+            }
             Self::DuplicateConflict(value) => {
-                write!(f, "observation already proposed with different content: {value}")
+                write!(
+                    f,
+                    "observation already proposed with different content: {value}"
+                )
             }
             Self::UnknownCandidate(value) => write!(f, "unknown amendment candidate {value}"),
             Self::AlreadyDecided(value) => write!(f, "amendment candidate already decided {value}"),
             Self::InvalidDecision(value) => write!(f, "invalid recognition decision: {value}"),
-            Self::MissingMetaRef(value) => write!(f, "recognised amendment references unknown meta ref {value}"),
+            Self::MissingMetaRef(value) => write!(
+                f,
+                "recognised amendment references unknown meta ref {value}"
+            ),
         }
     }
 }
@@ -66,7 +74,10 @@ impl ExternalObservation {
             ("observation_ref", self.observation_ref.as_str()),
             ("source_provider_ref", self.source_provider_ref.as_str()),
             ("source_target_ref", self.source_target_ref.as_str()),
-            ("suggested_from_meta_ref", self.suggested_from_meta_ref.as_str()),
+            (
+                "suggested_from_meta_ref",
+                self.suggested_from_meta_ref.as_str(),
+            ),
             ("suggested_to_meta_ref", self.suggested_to_meta_ref.as_str()),
             ("suggested_relation", self.suggested_relation.as_str()),
             ("rationale", self.rationale.as_str()),
@@ -82,7 +93,11 @@ impl ExternalObservation {
                 "occurrences must be at least one".into(),
             ));
         }
-        if self.evidence_refs.iter().any(|value| value.trim().is_empty()) {
+        if self
+            .evidence_refs
+            .iter()
+            .any(|value| value.trim().is_empty())
+        {
             return Err(RecognitionError::InvalidObservation(
                 "evidence refs cannot be empty".into(),
             ));
@@ -114,7 +129,11 @@ impl RecognitionDecision {
                 "decision_ref and reviewer_ref must be non-empty".into(),
             ));
         }
-        if self.evidence_refs.iter().any(|value| value.trim().is_empty()) {
+        if self
+            .evidence_refs
+            .iter()
+            .any(|value| value.trim().is_empty())
+        {
             return Err(RecognitionError::InvalidDecision(
                 "decision evidence refs cannot be empty".into(),
             ));
@@ -128,6 +147,8 @@ pub struct RecognisedMetaAmendment {
     pub contract: String,
     pub candidate_ref: String,
     pub observation_ref: String,
+    pub source_provider_ref: String,
+    pub source_target_ref: String,
     pub from_meta_ref: String,
     pub to_meta_ref: String,
     pub relation: String,
@@ -209,6 +230,8 @@ impl RecognitionLedger {
             contract: META_RECOGNITION_CONTRACT.into(),
             candidate_ref: candidate.candidate_ref.clone(),
             observation_ref: candidate.observation.observation_ref.clone(),
+            source_provider_ref: candidate.observation.source_provider_ref.clone(),
+            source_target_ref: candidate.observation.source_target_ref.clone(),
             from_meta_ref: candidate.observation.suggested_from_meta_ref.clone(),
             to_meta_ref: candidate.observation.suggested_to_meta_ref.clone(),
             relation: candidate.observation.suggested_relation.clone(),
@@ -243,9 +266,13 @@ pub fn apply_recognised_amendment(
     projection: &mut MetaKnowledgeProjection,
     amendment: &RecognisedMetaAmendment,
 ) -> Result<(), RecognitionError> {
-    let refs = projection.canonical_refs();
+    let refs = projection
+        .canonical_refs()
+        .into_iter()
+        .map(ToOwned::to_owned)
+        .collect::<std::collections::BTreeSet<_>>();
     for reference in [&amendment.from_meta_ref, &amendment.to_meta_ref] {
-        if !refs.contains(reference.as_str()) {
+        if !refs.contains(reference) {
             return Err(RecognitionError::MissingMetaRef(reference.clone()));
         }
     }

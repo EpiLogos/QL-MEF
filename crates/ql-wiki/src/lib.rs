@@ -5,6 +5,7 @@
 //! never copied into, or renamed by, the local projection.
 
 mod portal;
+mod recognition;
 mod refraction;
 mod registry_provider;
 
@@ -13,6 +14,11 @@ pub use portal::{
     ForeignTargetResolution, META_PORTAL_CONTRACT, ManifestationsResponse, MetaContextResponse,
     MetaManifestation, MetaPortal, MetaRoute, MetaRouteStep, MetaRouteSurface, PortalError,
     PortalScope, StaticForeignResolver, TargetAvailability,
+};
+pub use recognition::{
+    ExternalObservation, META_RECOGNITION_CONTRACT, MetaAmendmentCandidate,
+    RecognisedMetaAmendment, RecognitionDecision, RecognitionError, RecognitionLedger,
+    RecognitionState, apply_recognised_amendment,
 };
 pub use refraction::{
     DerivedRelation, DerivedSubgraph, DerivedVertex, FieldCoordinate, LensSelection, ProviderMode,
