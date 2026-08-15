@@ -1,9 +1,9 @@
 use std::collections::BTreeSet;
 
 use ql_wiki::{
-    ForeignTargetResolution, MappingOrigin, MetaBinding, MetaKnowledgeProjection, MetaPortal,
-    MetaRouteSurface, PortalScope, StaticForeignResolver, TargetAvailability,
-    CrossWikiTraversalRequest, parse_okf_wiki,
+    CrossWikiTraversalRequest, ForeignTargetResolution, MappingOrigin, MetaBinding,
+    MetaKnowledgeProjection, MetaPortal, MetaRouteSurface, PortalScope, StaticForeignResolver,
+    TargetAvailability, parse_okf_wiki,
 };
 use serde_json::{Value, json};
 
@@ -81,7 +81,10 @@ fn resolver() -> StaticForeignResolver {
 }
 
 fn scope(values: &[&str], allow_payload: bool) -> PortalScope {
-    PortalScope::new(values.iter().map(|value| (*value).to_owned()), allow_payload)
+    PortalScope::new(
+        values.iter().map(|value| (*value).to_owned()),
+        allow_payload,
+    )
 }
 
 fn projection() -> MetaKnowledgeProjection {
@@ -108,10 +111,12 @@ fn one_meta_node_has_multiple_foreign_manifestations_without_ownership_takeover(
     assert!(refs.contains("offline:wiki:frame:causal-review"));
     assert!(refs.contains("second:wiki:frame:experimental-causal"));
     assert!(refs.contains("public:wiki:frame:causal"));
-    assert!(response
-        .manifestations
-        .iter()
-        .all(|value| value.qualified_relation && !value.semantic_equivalence_asserted));
+    assert!(
+        response
+            .manifestations
+            .iter()
+            .all(|value| value.qualified_relation && !value.semantic_equivalence_asserted)
+    );
     assert!(!projection.contains_foreign_object("glade:wiki:frame:causal-review"));
     assert!(!projection.contains_foreign_object("second:wiki:frame:causal-review"));
 }
@@ -137,9 +142,12 @@ fn one_foreign_frame_can_enter_multiple_ql_mef_fields() {
             "ql-mef:wiki:node:relation-family-a"
         ])
     );
-    assert!(response.mappings.iter().any(|value| {
-        value.operator_ref.as_deref() == Some("ql:structural:2.0.0:pair:A:1")
-    }));
+    assert!(
+        response
+            .mappings
+            .iter()
+            .any(|value| { value.operator_ref.as_deref() == Some("ql:structural:2.0.0:pair:A:1") })
+    );
 }
 
 #[test]
@@ -147,10 +155,8 @@ fn unavailable_provider_preserves_binding_identity_but_has_no_payload() {
     let projection = projection();
     let resolver = resolver();
     let portal = MetaPortal::new(&projection, Some(&resolver));
-    let response = portal.manifestations(
-        "ql-mef:wiki:node:mef-l1",
-        &scope(&["scope:offline"], true),
-    );
+    let response =
+        portal.manifestations("ql-mef:wiki:node:mef-l1", &scope(&["scope:offline"], true));
     let offline = response
         .manifestations
         .iter()
@@ -158,7 +164,10 @@ fn unavailable_provider_preserves_binding_identity_but_has_no_payload() {
         .unwrap();
     assert_eq!(offline.availability, TargetAvailability::Unavailable);
     assert_eq!(offline.target_ref, "offline:wiki:frame:causal-review");
-    assert_eq!(offline.target_provider_ref.as_deref(), Some("knowledge:offline"));
+    assert_eq!(
+        offline.target_provider_ref.as_deref(),
+        Some("knowledge:offline")
+    );
     assert_eq!(offline.target_revision.as_deref(), Some("11"));
     assert!(offline.payload.is_none());
     assert_eq!(offline.origin, MappingOrigin::Recognised);
@@ -170,10 +179,7 @@ fn scope_controls_binding_visibility_and_payload_traversal_independently() {
     let resolver = resolver();
     let portal = MetaPortal::new(&projection, Some(&resolver));
 
-    let glade = portal.manifestations(
-        "ql-mef:wiki:node:mef-l1",
-        &scope(&["scope:glade"], true),
-    );
+    let glade = portal.manifestations("ql-mef:wiki:node:mef-l1", &scope(&["scope:glade"], true));
     let glade_refs = glade
         .manifestations
         .iter()
@@ -181,26 +187,27 @@ fn scope_controls_binding_visibility_and_payload_traversal_independently() {
         .collect::<BTreeSet<_>>();
     assert_eq!(
         glade_refs,
-        BTreeSet::from([
-            "glade:wiki:frame:causal-review",
-            "public:wiki:frame:causal"
-        ])
+        BTreeSet::from(["glade:wiki:frame:causal-review", "public:wiki:frame:causal"])
     );
 
     let empty = portal.manifestations("ql-mef:wiki:node:mef-l1", &scope(&[], true));
     assert_eq!(empty.manifestations.len(), 1);
-    assert_eq!(empty.manifestations[0].target_ref, "public:wiki:frame:causal");
-
-    let restricted = portal.manifestations(
-        "ql-mef:wiki:node:mef-l1",
-        &scope(&["scope:glade"], false),
+    assert_eq!(
+        empty.manifestations[0].target_ref,
+        "public:wiki:frame:causal"
     );
+
+    let restricted =
+        portal.manifestations("ql-mef:wiki:node:mef-l1", &scope(&["scope:glade"], false));
     let restricted_glade = restricted
         .manifestations
         .iter()
         .find(|value| value.binding_ref == "ql-mef:binding:glade-l1")
         .unwrap();
-    assert_eq!(restricted_glade.availability, TargetAvailability::Restricted);
+    assert_eq!(
+        restricted_glade.availability,
+        TargetAvailability::Restricted
+    );
     assert!(restricted_glade.payload.is_none());
 
     let all = portal.manifestations(
@@ -223,10 +230,7 @@ fn bidirectional_external_meta_external_route_preserves_every_ref_and_provider()
         max_hops: 6,
     };
     let response = portal
-        .cross_wiki_traverse(
-            &request,
-            &scope(&["scope:glade", "scope:second"], true),
-        )
+        .cross_wiki_traverse(&request, &scope(&["scope:glade", "scope:second"], true))
         .unwrap();
     let route = response
         .routes
@@ -242,12 +246,20 @@ fn bidirectional_external_meta_external_route_preserves_every_ref_and_provider()
     assert_eq!(route.steps[0].from_ref, "glade:wiki:frame:causal-review");
     assert_eq!(route.steps[1].to_ref, "ql-mef:wiki:node:mef-l1");
     assert_eq!(route.steps[3].to_ref, "second:wiki:frame:causal-review");
-    assert_eq!(route.steps[0].provider_ref.as_deref(), Some("knowledge:glade"));
-    assert_eq!(route.steps[3].provider_ref.as_deref(), Some("knowledge:second"));
-    assert!(route
-        .steps
-        .iter()
-        .all(|step| step.qualified_relation && !step.semantic_equivalence_asserted));
+    assert_eq!(
+        route.steps[0].provider_ref.as_deref(),
+        Some("knowledge:glade")
+    );
+    assert_eq!(
+        route.steps[3].provider_ref.as_deref(),
+        Some("knowledge:second")
+    );
+    assert!(
+        route
+            .steps
+            .iter()
+            .all(|step| step.qualified_relation && !step.semantic_equivalence_asserted)
+    );
     assert!(response.notices[0].contains("do not assert semantic equivalence"));
 }
 
@@ -270,14 +282,18 @@ fn meta_entry_and_reverse_entry_are_both_first_class() {
             &all_scope,
         )
         .unwrap();
-    assert!(from_meta
-        .routes
-        .iter()
-        .any(|route| route.destination_ref == "glade:wiki:frame:causal-review"));
-    assert!(from_meta
-        .routes
-        .iter()
-        .any(|route| route.destination_ref == "second:wiki:frame:causal-review"));
+    assert!(
+        from_meta
+            .routes
+            .iter()
+            .any(|route| route.destination_ref == "glade:wiki:frame:causal-review")
+    );
+    assert!(
+        from_meta
+            .routes
+            .iter()
+            .any(|route| route.destination_ref == "second:wiki:frame:causal-review")
+    );
 
     let reverse = portal
         .cross_wiki_traverse(
@@ -291,10 +307,12 @@ fn meta_entry_and_reverse_entry_are_both_first_class() {
             &all_scope,
         )
         .unwrap();
-    assert!(reverse
-        .routes
-        .iter()
-        .any(|route| route.destination_ref == "glade:wiki:frame:causal-review"));
+    assert!(
+        reverse
+            .routes
+            .iter()
+            .any(|route| route.destination_ref == "glade:wiki:frame:causal-review")
+    );
 }
 
 #[test]
@@ -302,10 +320,8 @@ fn proposed_binding_never_masquerades_as_recognised_mapping() {
     let projection = projection();
     let resolver = resolver();
     let portal = MetaPortal::new(&projection, Some(&resolver));
-    let response = portal.manifestations(
-        "ql-mef:wiki:node:mef-l1",
-        &scope(&["scope:second"], true),
-    );
+    let response =
+        portal.manifestations("ql-mef:wiki:node:mef-l1", &scope(&["scope:second"], true));
     let proposed = response
         .manifestations
         .iter()
@@ -326,8 +342,10 @@ fn projection_rebuild_preserves_portal_mapping_paths_without_local_id_leakage() 
     reversed_bindings.reverse();
     let second = MetaKnowledgeProjection::rebuild(&reversed_docs, &reversed_bindings, 2).unwrap();
     let scope = PortalScope::unrestricted_payload();
-    let first_response = MetaPortal::new(&first, None).manifestations("ql-mef:wiki:node:mef-l1", &scope);
-    let second_response = MetaPortal::new(&second, None).manifestations("ql-mef:wiki:node:mef-l1", &scope);
+    let first_response =
+        MetaPortal::new(&first, None).manifestations("ql-mef:wiki:node:mef-l1", &scope);
+    let second_response =
+        MetaPortal::new(&second, None).manifestations("ql-mef:wiki:node:mef-l1", &scope);
     let first_refs = first_response
         .manifestations
         .iter()
