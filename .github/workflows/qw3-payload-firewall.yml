@@ -1,0 +1,32 @@
+name: QW3 payload firewall
+
+on:
+  push:
+    branches:
+      - agent/qw3-meta-portal
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw3-meta-portal
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Require available resolver state before carrying payload
+        run: |
+          perl -0pi -e 's/payload: if scope\.allow_payload \{\n                resolution\.payload\n            \} else \{\n                None\n            \},/payload: if scope.allow_payload\n                \&\& resolution.availability == TargetAvailability::Available\n            {\n                resolution.payload\n            } else {\n                None\n            },/g' crates/ql-wiki/src/portal.rs
+          cargo fmt --all
+      - name: Commit patch and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw3-payload-firewall.yml
+          git add crates/ql-wiki/src/portal.rs
+          git commit -m "fix(#11): prevent stale payload leakage from unavailable targets"
+          git push origin HEAD:agent/qw3-meta-portal
