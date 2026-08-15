@@ -1,0 +1,65 @@
+name: QW4 final repair
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw4-second-wiki-proof
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Repair exact Clippy findings
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('crates/ql-wiki/src/recognition.rs')
+          s = p.read_text(encoding='utf-8')
+          pattern = re.compile(r'''        if let Some\(existing\) = self\.candidates\.get\(&candidate_ref\) \{\n            if existing == &candidate \{\n                return Ok\(existing\.clone\(\)\);\n            \}\n            return Err\(RecognitionError::DuplicateConflict\(candidate_ref\)\);\n        \}\n''')
+          replacement = '''        match self.candidates.get(&candidate_ref) {\n            Some(existing) if existing == &candidate => return Ok(existing.clone()),\n            Some(_) => return Err(RecognitionError::DuplicateConflict(candidate_ref)),\n            None => {}\n        }\n'''
+          s2, count = pattern.subn(replacement, s, count=1)
+          assert count == 1, 'proposal nested-if block not found'
+          p.write_text(s2, encoding='utf-8')
+
+          p = Path('crates/ql-wiki/tests/second_wiki_conformance.rs')
+          s = p.read_text(encoding='utf-8')
+          if 'RevisionValue,' not in s:
+              s = s.replace(
+                  'RecognitionState, RefractionStatus, RegistryDisclosureProvider, StaticForeignResolver,',
+                  'RecognitionState, RefractionStatus, RegistryDisclosureProvider, RevisionValue, StaticForeignResolver,',
+                  1,
+              )
+          pattern = re.compile(r'''    assert!\(response\.readings\.iter\(\)\.all\(\|reading\| \{?\n?\s*reading\n?\s*\.target_revision\n?\s*\.as_ref\(\)\n?\s*\.unwrap\(\)\n?\s*\.to_string\(\)\n?\s*== "5"\n?\s*\}?\)\);''')
+          replacement = '''    assert!(response.readings.iter().all(|reading| {\n        matches!(reading.target_revision, Some(RevisionValue::Integer(5)))\n    }));'''
+          s2, count = pattern.subn(replacement, s, count=1)
+          if count != 1:
+              old = '''    assert!(\n        response.readings.iter().all(|reading| reading\n            .target_revision\n            .as_ref()\n            .unwrap()\n            .to_string()\n            == "5")\n    );'''
+              assert old in s, 'revision allocation assertion not found'
+              s2 = s.replace(old, replacement, 1)
+          p.write_text(s2, encoding='utf-8')
+          PY
+          cargo fmt --all
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+      - name: Commit repaired source and remove helper workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f \
+            .github/workflows/qw4-final-repair.yml \
+            .github/workflows/qw4-clippy-repair.yml \
+            .github/workflows/qw4-final-rustfix.yml
+          git add crates/ql-wiki/src/recognition.rs crates/ql-wiki/tests/second_wiki_conformance.rs
+          git commit -m "fix(#12): satisfy final QW4 lint and workspace gates"
+          git push origin HEAD:agent/qw4-second-wiki-proof
