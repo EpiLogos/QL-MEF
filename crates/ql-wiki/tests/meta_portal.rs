@@ -73,7 +73,7 @@ fn resolver() -> StaticForeignResolver {
             provider_ref: Some("knowledge:offline".into()),
             revision: Some("11".into()),
             availability: TargetAvailability::Unavailable,
-            payload: None,
+            payload: Some(json!({"stale": "must-not-leak"})),
             notices: vec!["provider currently unavailable".into()],
         },
     );
