@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 
-use ql_core::{QlAddress, QlFace, QlFormRef, RelationFamily};
+use ql_core::{QlFormRef, RelationFamily};
 use ql_mef::{
     ClientRef, InputRefRevision, LensId, LensRef, QlProvenance, QlProviderRef, QlReading,
-    QlRelationReading, QlSynthesis, ResultClass, lens_definition,
+    ResultClass, lens_definition,
 };
 use ql_semantic::{
     InputLimits, LocateRequest, LocateResult, Operation, ProviderCapabilities, ProviderClass,

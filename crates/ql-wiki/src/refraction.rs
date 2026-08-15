@@ -2,8 +2,7 @@ use core::str::FromStr;
 use std::collections::BTreeMap;
 
 use ql_core::{
-    ConjugateOpposition, ConjugationDegree, ExpansionSide, QlCoordinate, QlFace, QlPosition,
-    RelationFamily,
+    ConjugateOpposition, ExpansionSide, QlCoordinate, QlFace, QlPosition, RelationFamily,
 };
 use ql_mef::{ClientRef, LensRef, QlTarget, SublensRef};
 use ql_semantic::{
