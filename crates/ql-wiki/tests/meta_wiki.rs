@@ -78,7 +78,8 @@ fn external_meta_binding_maps_foreign_frame_without_taking_ownership() {
     let binding: MetaBinding = serde_json::from_str(BINDING).unwrap();
     assert_eq!(binding.origin, MappingOrigin::Recognised);
     binding.validate().unwrap();
-    let projection = MetaKnowledgeProjection::rebuild(&documents(), &[binding.clone()], 4).unwrap();
+    let projection =
+        MetaKnowledgeProjection::rebuild(&documents(), std::slice::from_ref(&binding), 4).unwrap();
 
     assert_eq!(
         projection.mapped_targets("ql-mef:wiki:node:mef-l1"),
@@ -105,7 +106,8 @@ fn external_meta_binding_maps_foreign_frame_without_taking_ownership() {
 fn unavailable_foreign_provider_does_not_destroy_mapping_identity() {
     let binding: MetaBinding = serde_json::from_str(BINDING).unwrap();
     assert_eq!(binding.extensions["foreign_provider_state"], "unavailable");
-    let projection = MetaKnowledgeProjection::rebuild(&documents(), &[binding.clone()], 5).unwrap();
+    let projection =
+        MetaKnowledgeProjection::rebuild(&documents(), std::slice::from_ref(&binding), 5).unwrap();
     let observed_bindings = projection.mapped_targets("ql-mef:wiki:node:mef-l1");
     let [observed] = observed_bindings.as_slice() else {
         panic!("expected one mapping")
