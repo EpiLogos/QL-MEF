@@ -24,8 +24,8 @@ pub use kernel::{KERNEL_VERSION, KernelCapabilities, SCHEMA_VERSION, kernel_capa
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
 pub use position::QlPosition;
 pub use structural::{
-    AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain,
-    ExpansionSide, GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
-    STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralError,
-    StructuralParticipation, WHOLE_ANCHOR_SYMBOL, all_d3_fields,
+    AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
+    GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
+    STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralError, StructuralParticipation,
+    WHOLE_ANCHOR_SYMBOL, all_d3_fields,
 };

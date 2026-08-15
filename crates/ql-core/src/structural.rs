@@ -26,7 +26,10 @@ impl fmt::Display for StructuralError {
                 write!(f, "duplicate structural coordinate {position}/{face}")
             }
             Self::TooManyMembers(value) => {
-                write!(f, "constellation cannot exceed twelve positional members, got {value}")
+                write!(
+                    f,
+                    "constellation cannot exceed twelve positional members, got {value}"
+                )
             }
             Self::ConjugateWithoutDirect(position) => write!(
                 f,
@@ -402,7 +405,8 @@ impl StructuralConstellation {
         {
             let position = member.coordinate.position;
             if !members.iter().any(|candidate| {
-                candidate.coordinate.position == position && candidate.coordinate.face == QlFace::Direct
+                candidate.coordinate.position == position
+                    && candidate.coordinate.face == QlFace::Direct
             }) {
                 return Err(StructuralError::ConjugateWithoutDirect(position.value()));
             }

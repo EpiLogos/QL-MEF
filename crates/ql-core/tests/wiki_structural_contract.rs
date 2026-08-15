@@ -1,7 +1,7 @@
 use ql_core::{
     AnchorReturn, ConstellationGrain, ExpansionSide, GroundKind, QlFace, QlPosition,
-    RelationFamily, STRUCTURAL_CONTRACT_VERSION, StructuralConstellation,
-    StructuralParticipation, WHOLE_ANCHOR_SYMBOL, all_d3_fields,
+    RelationFamily, STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralParticipation,
+    WHOLE_ANCHOR_SYMBOL, all_d3_fields,
 };
 
 fn p(value: u8) -> QlPosition {
@@ -9,8 +9,12 @@ fn p(value: u8) -> QlPosition {
 }
 
 fn member(position: u8, face: QlFace) -> StructuralParticipation {
-    StructuralParticipation::new(format!("wiki:node:{position}:{}", face.as_str()), p(position), face)
-        .expect("valid fixture member")
+    StructuralParticipation::new(
+        format!("wiki:node:{position}:{}", face.as_str()),
+        p(position),
+        face,
+    )
+    .expect("valid fixture member")
 }
 
 #[test]
@@ -53,26 +57,33 @@ fn d2_has_two_explicit_one_sided_variants_and_d3_expands_both() {
             assert_eq!(right.coordinates.len(), 3);
             assert_eq!(d3.coordinates.len(), 4);
             assert_ne!(left.operator_ref(), right.operator_ref());
-            assert!(left
-                .coordinates
-                .iter()
-                .any(|c| c.position == pair.left && c.face == QlFace::Conjugate));
-            assert!(!left
-                .coordinates
-                .iter()
-                .any(|c| c.position == pair.right && c.face == QlFace::Conjugate));
-            assert!(right
-                .coordinates
-                .iter()
-                .any(|c| c.position == pair.right && c.face == QlFace::Conjugate));
-            assert!(d3
-                .coordinates
-                .iter()
-                .any(|c| c.position == pair.left && c.face == QlFace::Conjugate));
-            assert!(d3
-                .coordinates
-                .iter()
-                .any(|c| c.position == pair.right && c.face == QlFace::Conjugate));
+            assert!(
+                left.coordinates
+                    .iter()
+                    .any(|c| c.position == pair.left && c.face == QlFace::Conjugate)
+            );
+            assert!(
+                !left
+                    .coordinates
+                    .iter()
+                    .any(|c| c.position == pair.right && c.face == QlFace::Conjugate)
+            );
+            assert!(
+                right
+                    .coordinates
+                    .iter()
+                    .any(|c| c.position == pair.right && c.face == QlFace::Conjugate)
+            );
+            assert!(
+                d3.coordinates
+                    .iter()
+                    .any(|c| c.position == pair.left && c.face == QlFace::Conjugate)
+            );
+            assert!(
+                d3.coordinates
+                    .iter()
+                    .any(|c| c.position == pair.right && c.face == QlFace::Conjugate)
+            );
         }
     }
 }
@@ -81,7 +92,10 @@ fn d2_has_two_explicit_one_sided_variants_and_d3_expands_both() {
 fn all_nine_d3_fields_are_addressable_and_same_vertices_do_not_collapse_family() {
     let fields = all_d3_fields().unwrap();
     assert_eq!(fields.len(), 9);
-    let refs = fields.iter().map(|field| field.operator_ref()).collect::<std::collections::HashSet<_>>();
+    let refs = fields
+        .iter()
+        .map(|field| field.operator_ref())
+        .collect::<std::collections::HashSet<_>>();
     assert_eq!(refs.len(), 9);
 
     let a2 = RelationFamily::A.pair(1).unwrap().d3();
@@ -122,7 +136,10 @@ fn canonical_grains_and_partial_conjugate_8_to_11_are_formal_not_guessed_semanti
 
     let triad_123 = StructuralConstellation::new(
         "wiki:anchor:t",
-        [1, 2, 3].into_iter().map(|n| member(n, QlFace::Direct)).collect(),
+        [1, 2, 3]
+            .into_iter()
+            .map(|n| member(n, QlFace::Direct))
+            .collect(),
         vec![],
     )
     .unwrap();
@@ -130,7 +147,10 @@ fn canonical_grains_and_partial_conjugate_8_to_11_are_formal_not_guessed_semanti
 
     let triad_450 = StructuralConstellation::new(
         "wiki:anchor:t",
-        [4, 5, 0].into_iter().map(|n| member(n, QlFace::Direct)).collect(),
+        [4, 5, 0]
+            .into_iter()
+            .map(|n| member(n, QlFace::Direct))
+            .collect(),
         vec![],
     )
     .unwrap();
@@ -142,12 +162,17 @@ fn canonical_grains_and_partial_conjugate_8_to_11_are_formal_not_guessed_semanti
         (4, ConstellationGrain::PartialConjugate10),
         (5, ConstellationGrain::PartialConjugate11),
     ] {
-        let mut members = (0..6).map(|n| member(n, QlFace::Direct)).collect::<Vec<_>>();
+        let mut members = (0..6)
+            .map(|n| member(n, QlFace::Direct))
+            .collect::<Vec<_>>();
         members.extend((0..conjugates).map(|n| member(n, QlFace::Conjugate)));
         let constellation = StructuralConstellation::new("wiki:anchor:p", members, vec![]).unwrap();
         assert_eq!(constellation.grain(), expected);
         assert_eq!(constellation.direct_positions(), vec![0, 1, 2, 3, 4, 5]);
-        assert_eq!(constellation.conjugate_positions().len(), conjugates as usize);
+        assert_eq!(
+            constellation.conjugate_positions().len(),
+            conjugates as usize
+        );
     }
 }
 
@@ -158,9 +183,14 @@ fn return_is_a_two_hop_path_through_anchor_to_explicit_zero_ground() {
         (GroundKind::Parent, "wiki:ground:parent", QlFace::Direct),
         (GroundKind::Child, "wiki:ground:child", QlFace::Direct),
         (GroundKind::Other, "wiki:ground:other", QlFace::Direct),
-        (GroundKind::Conjugate, "wiki:ground:prime", QlFace::Conjugate),
+        (
+            GroundKind::Conjugate,
+            "wiki:ground:prime",
+            QlFace::Conjugate,
+        ),
     ] {
-        let route = AnchorReturn::new("wiki:node:p5", "wiki:anchor:whole", target, face, kind).unwrap();
+        let route =
+            AnchorReturn::new("wiki:node:p5", "wiki:anchor:whole", target, face, kind).unwrap();
         assert_eq!(route.through_anchor_ref, "wiki:anchor:whole");
         assert_eq!(route.target_ground_position.value(), 0);
         assert_eq!(route.target_face, face);
