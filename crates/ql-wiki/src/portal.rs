@@ -168,7 +168,9 @@ impl MetaManifestation {
                 .clone()
                 .or(resolution.revision.clone()),
             availability: resolution.availability,
-            payload: if scope.allow_payload {
+            payload: if scope.allow_payload
+                && resolution.availability == TargetAvailability::Available
+            {
                 resolution.payload
             } else {
                 None
