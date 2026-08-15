@@ -48,17 +48,15 @@ pub struct ForeignTargetResolution {
 }
 
 pub trait ForeignKnowledgeResolver {
-    fn resolve(
-        &self,
-        provider_ref: Option<&str>,
-        target_ref: &str,
-    ) -> ForeignTargetResolution;
+    fn resolve(&self, provider_ref: Option<&str>, target_ref: &str) -> ForeignTargetResolution;
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PortalScope {
     #[serde(default)]
     pub scope_refs: BTreeSet<String>,
+    #[serde(default)]
+    pub allow_all_scopes: bool,
     #[serde(default)]
     pub allow_payload: bool,
 }
@@ -67,6 +65,7 @@ impl PortalScope {
     pub fn new(scope_refs: impl IntoIterator<Item = String>, allow_payload: bool) -> Self {
         Self {
             scope_refs: scope_refs.into_iter().collect(),
+            allow_all_scopes: false,
             allow_payload,
         }
     }
@@ -74,13 +73,14 @@ impl PortalScope {
     pub fn unrestricted_payload() -> Self {
         Self {
             scope_refs: BTreeSet::new(),
+            allow_all_scopes: true,
             allow_payload: true,
         }
     }
 
     pub fn binding_visible(&self, binding: &MetaBinding) -> bool {
         binding.scope_refs.is_empty()
-            || self.scope_refs.is_empty()
+            || self.allow_all_scopes
             || binding
                 .scope_refs
                 .iter()
@@ -194,7 +194,7 @@ pub struct MetaContextResponse {
     pub mappings: Vec<MetaManifestation>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum MetaRouteSurface {
     Meta,
@@ -248,7 +248,9 @@ pub struct CrossWikiTraversalRequest {
 impl CrossWikiTraversalRequest {
     fn validate(&self) -> Result<(), PortalError> {
         if self.start_ref.trim().is_empty() {
-            return Err(PortalError::InvalidRequest("start_ref cannot be empty".into()));
+            return Err(PortalError::InvalidRequest(
+                "start_ref cannot be empty".into(),
+            ));
         }
         if self.max_hops == 0 || self.max_hops > 32 {
             return Err(PortalError::InvalidRequest(
@@ -284,11 +286,7 @@ impl<'a> MetaPortal<'a> {
         }
     }
 
-    pub fn manifestations(
-        &self,
-        meta_ref: &str,
-        scope: &PortalScope,
-    ) -> ManifestationsResponse {
+    pub fn manifestations(&self, meta_ref: &str, scope: &PortalScope) -> ManifestationsResponse {
         let manifestations = self
             .projection
             .meta_bindings
@@ -303,11 +301,7 @@ impl<'a> MetaPortal<'a> {
         }
     }
 
-    pub fn meta_context(
-        &self,
-        external_ref: &str,
-        scope: &PortalScope,
-    ) -> MetaContextResponse {
+    pub fn meta_context(&self, external_ref: &str, scope: &PortalScope) -> MetaContextResponse {
         let mappings = self
             .projection
             .meta_bindings
@@ -346,8 +340,7 @@ impl<'a> MetaPortal<'a> {
             for edge in self.portal_edges(&current, current_surface, request, scope) {
                 let mut next_path = path.clone();
                 next_path.push(edge.clone());
-                if edge.to_surface == MetaRouteSurface::External
-                    && edge.to_ref != request.start_ref
+                if edge.to_surface == MetaRouteSurface::External && edge.to_ref != request.start_ref
                 {
                     let destination = self
                         .projection
@@ -356,7 +349,9 @@ impl<'a> MetaPortal<'a> {
                         .find(|binding| {
                             edge.binding_ref.as_deref() == Some(binding.binding_ref.as_str())
                         })
-                        .map(|binding| MetaManifestation::from_binding(binding, scope, self.resolver));
+                        .map(|binding| {
+                            MetaManifestation::from_binding(binding, scope, self.resolver)
+                        });
                     routes.push(MetaRoute {
                         start_ref: request.start_ref.clone(),
                         destination_ref: edge.to_ref.clone(),
@@ -455,12 +450,9 @@ impl<'a> MetaPortal<'a> {
                 }
             }
             MetaRouteSurface::Binding => {
-                if let Some(binding) = self
-                    .projection
-                    .meta_bindings
-                    .iter()
-                    .find(|binding| binding.binding_ref == current && scope.binding_visible(binding))
-                {
+                if let Some(binding) = self.projection.meta_bindings.iter().find(|binding| {
+                    binding.binding_ref == current && scope.binding_visible(binding)
+                }) {
                     edges.push(step_binding_to_meta(binding));
                     edges.push(step_binding_to_external(binding));
                 }
@@ -504,11 +496,7 @@ fn binding_matches(binding: &MetaBinding, request: &CrossWikiTraversalRequest) -
             .is_none_or(|operator| binding.operator_ref.as_deref() == Some(operator.as_str()))
         && request.lens_ref.as_ref().is_none_or(|lens| {
             binding.operator_ref.as_deref() == Some(lens.as_str())
-                || binding
-                    .extensions
-                    .get("lens_ref")
-                    .and_then(Value::as_str)
-                    == Some(lens.as_str())
+                || binding.extensions.get("lens_ref").and_then(Value::as_str) == Some(lens.as_str())
         })
 }
 
@@ -602,11 +590,7 @@ impl StaticForeignResolver {
 }
 
 impl ForeignKnowledgeResolver for StaticForeignResolver {
-    fn resolve(
-        &self,
-        provider_ref: Option<&str>,
-        target_ref: &str,
-    ) -> ForeignTargetResolution {
+    fn resolve(&self, provider_ref: Option<&str>, target_ref: &str) -> ForeignTargetResolution {
         self.entries
             .get(&(provider_ref.map(ToOwned::to_owned), target_ref.to_owned()))
             .cloned()
