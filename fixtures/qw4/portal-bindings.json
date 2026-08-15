@@ -1,0 +1,35 @@
+[
+  {
+    "binding_ref": "ql-mef:binding:glade-processual",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l3",
+    "target_wiki_ref": "okf-concept-epi-as-the-instrument-of-mind-a796",
+    "target_provider_ref": "knowledge:glade",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L3@1",
+    "scope_refs": ["scope:glade"],
+    "origin": "recognised",
+    "provenance": [
+      {"source_ref": "okf-source-epi-objectification-e5f7", "source_revision": "7"}
+    ],
+    "ql_mef_revision": "1",
+    "target_revision": "1",
+    "extensions": {"lens_ref": "mef:lens:L3@1"}
+  },
+  {
+    "binding_ref": "ql-mef:binding:research-a1-d3",
+    "ql_mef_ref": "ql-mef:wiki:node:relation-family-a",
+    "target_wiki_ref": "research:space:canvas",
+    "target_frame_ref": "research:frame:transition-anomaly",
+    "target_provider_ref": "knowledge:research-canvas",
+    "relation": "grounds",
+    "operator_ref": "ql:structural:2.0.0:field:A:1:D3",
+    "scope_refs": ["scope:research"],
+    "origin": "authored",
+    "provenance": [
+      {"source_ref": "research:node:evidence", "source_revision": "8"}
+    ],
+    "ql_mef_revision": "2",
+    "target_revision": "5",
+    "extensions": {"structural_field": "A:1:D3"}
+  }
+]
