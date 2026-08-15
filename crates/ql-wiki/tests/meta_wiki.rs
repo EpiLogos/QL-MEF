@@ -101,10 +101,8 @@ fn unavailable_foreign_provider_does_not_destroy_mapping_identity() {
     let binding: MetaBinding = serde_json::from_str(BINDING).unwrap();
     assert_eq!(binding.extensions["foreign_provider_state"], "unavailable");
     let projection = MetaKnowledgeProjection::rebuild(&documents(), &[binding.clone()], 5).unwrap();
-    let [observed] = projection
-        .mapped_targets("ql-mef:wiki:node:mef-l1")
-        .as_slice()
-    else {
+    let observed_bindings = projection.mapped_targets("ql-mef:wiki:node:mef-l1");
+    let [observed] = observed_bindings.as_slice() else {
         panic!("expected one mapping")
     };
     assert_eq!(observed.binding_ref, binding.binding_ref);
