@@ -1,0 +1,39 @@
+name: QW3 contract patch
+
+on:
+  push:
+    branches:
+      - agent/qw3-meta-portal
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw3-meta-portal
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Export portal, extend MetaBinding, and harden empty scope
+        run: |
+          sed -i '/^mod refraction;$/a mod portal;' crates/ql-wiki/src/lib.rs
+          sed -i '/^pub use refraction::{/i pub use portal::{CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver, ForeignTargetResolution, META_PORTAL_CONTRACT, ManifestationsResponse, MetaContextResponse, MetaManifestation, MetaPortal, MetaRoute, MetaRouteStep, MetaRouteSurface, PortalError, PortalScope, StaticForeignResolver, TargetAvailability};' crates/ql-wiki/src/lib.rs
+          sed -i '/pub target_frame_ref: Option<String>,/a\    #[serde(default, skip_serializing_if = "Option::is_none")]\n    pub target_provider_ref: Option<String>,\n    #[serde(default, skip_serializing_if = "Option::is_none")]\n    pub operator_ref: Option<String>,' crates/ql-wiki/src/lib.rs
+          sed -i '/pub scope_refs: BTreeSet<String>,/a\    #[serde(default)]\n    pub allow_all_scopes: bool,' crates/ql-wiki/src/portal.rs
+          sed -i 's/scope_refs: scope_refs.into_iter().collect(),/scope_refs: scope_refs.into_iter().collect(),\n            allow_all_scopes: false,/' crates/ql-wiki/src/portal.rs
+          sed -i '0,/scope_refs: BTreeSet::new(),/s//scope_refs: BTreeSet::new(),\n            allow_all_scopes: true,/' crates/ql-wiki/src/portal.rs
+          sed -i 's/|| self.scope_refs.is_empty()/|| self.allow_all_scopes/' crates/ql-wiki/src/portal.rs
+          sed -i 's/PartialEq, Eq, Hash, Serialize/PartialEq, Eq, PartialOrd, Ord, Hash, Serialize/' crates/ql-wiki/src/portal.rs
+          cargo fmt --all
+      - name: Commit patch and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw3-contract-patch.yml
+          git add crates/ql-wiki/src/lib.rs crates/ql-wiki/src/portal.rs
+          git commit -m "feat(#11): export portal and harden scoped MetaBindings"
+          git push origin HEAD:agent/qw3-meta-portal
