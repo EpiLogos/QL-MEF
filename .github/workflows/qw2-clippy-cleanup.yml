@@ -1,0 +1,35 @@
+name: QW2 clippy cleanup
+
+on:
+  push:
+    branches:
+      - agent/qw2-wiki-refraction-contract
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw2-wiki-refraction-contract
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Remove unused imports and format
+        run: |
+          sed -i 's/ConjugateOpposition, ConjugationDegree, ExpansionSide/ConjugateOpposition, ExpansionSide/' crates/ql-wiki/src/refraction.rs
+          sed -i 's/QlRelationReading, QlSynthesis, ResultClass, lens_definition/ResultClass, lens_definition/' crates/ql-wiki/src/registry_provider.rs
+          sed -i 's/use ql_core::{QlAddress, QlFace, QlFormRef, RelationFamily};/use ql_core::{QlFormRef, RelationFamily};/' crates/ql-wiki/tests/wiki_refraction.rs
+          sed -i 's/QlRelationReading, QlSynthesis, ResultClass, lens_definition/ResultClass, lens_definition/' crates/ql-wiki/tests/wiki_refraction.rs
+          cargo fmt --all
+      - name: Commit cleanup and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw2-clippy-cleanup.yml
+          git add crates/ql-wiki
+          git commit -m "fix(#10): satisfy clippy and format QW2 acceptance"
+          git push origin HEAD:agent/qw2-wiki-refraction-contract
