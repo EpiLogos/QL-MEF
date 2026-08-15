@@ -1,0 +1,64 @@
+{
+  "version": "ql-mef-wiki-conformance-v1",
+  "contracts": {
+    "wiki": "okf-wiki/v1",
+    "structural": "ql:structural:2.0.0",
+    "refraction": "ql-mef/wiki-refraction/v1",
+    "portal": "ql-mef/meta-portal/v1",
+    "recognition": "ql-mef/meta-recognition/v1"
+  },
+  "clients": [
+    {
+      "client_ref": "knowledge:glade",
+      "ownership": "independent",
+      "proof_ref": "EpiLogos/glade@c4411ebb187983c3fdb1e0d1bdb3b480d1b391e2",
+      "target_ref": "okf-concept-epi-as-the-instrument-of-mind-a796"
+    },
+    {
+      "client_ref": "knowledge:research-canvas",
+      "ownership": "independent",
+      "profile": "research-canvas/wiki/v1",
+      "fixture_root": "fixtures/qw4/research-wiki",
+      "target_ref": "research:frame:transition-anomaly"
+    }
+  ],
+  "positive_cases": [
+    "research open-Wiki parsing and recursive node-as-whole",
+    "A1 D3 structural field validation and return-through-anchor",
+    "multiple real registry-provider MEF lens readings",
+    "Glade real subprocess QW2 compatibility",
+    "bidirectional qualified cross-wiki route after explicit recognition",
+    "recognised amendment reapplied after projection rebuild"
+  ],
+  "negative_cases": [
+    "invalid structural operator rejected before provider availability",
+    "proposed amendment does not mutate projection",
+    "shared QL structure does not assert semantic equivalence",
+    "unavailable provider payload is suppressed",
+    "foreign objects are not copied into QL-MEF projection",
+    "Bimba Graph identity is never inferred"
+  ],
+  "compatibility_cases": [
+    "Glade final proving-ground commit remains compatible with current QW4 binary",
+    "Research Canvas uses the same wire/structural contracts without client translation"
+  ],
+  "provider_loss_cases": [
+    "Research Canvas target provider unavailable while MetaBinding remains addressable"
+  ],
+  "stale_revision_cases": [
+    "binding expected target revision 5 while resolver reports unavailable revision 6; expected binding revision is preserved"
+  ],
+  "cross_wiki_path": {
+    "before_recognition": "no route",
+    "recognised_meta_relation": "ql-mef:wiki:node:mef-l3 --contextualised-by-structural-field--> ql-mef:wiki:node:relation-family-a",
+    "after_recognition": [
+      "okf-concept-epi-as-the-instrument-of-mind-a796",
+      "ql-mef:binding:glade-processual",
+      "ql-mef:wiki:node:mef-l3",
+      "ql-mef:wiki:node:relation-family-a",
+      "ql-mef:binding:research-a1-d3",
+      "research:frame:transition-anomaly"
+    ],
+    "semantic_equivalence_asserted": false
+  }
+}
