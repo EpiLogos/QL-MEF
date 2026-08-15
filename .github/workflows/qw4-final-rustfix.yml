@@ -1,0 +1,44 @@
+name: QW4 final rustfix
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw4-second-wiki-proof
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Apply clippy fixes and rustfmt
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('crates/ql-wiki/src/recognition.rs')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('''        if projection.relations.iter().any(|relation| {\n            relation.from_ref == amendment.from_meta_ref\n                && relation.to_ref == amendment.to_meta_ref\n                && relation.relation == amendment.relation\n                && relation.origin_ref.as_deref() == Some(amendment.decision_ref.as_str())\n        }) {\n            return Ok(());\n        }\n''','''        if projection.relations.iter().any(|relation| {\n            relation.from_ref == amendment.from_meta_ref\n                && relation.to_ref == amendment.to_meta_ref\n                && relation.relation == amendment.relation\n                && relation.origin_ref.as_deref() == Some(amendment.decision_ref.as_str())\n        }) {\n            return Ok(());\n        }\n''')
+          p.write_text(s, encoding='utf-8')
+
+          p = Path('crates/ql-wiki/tests/second_wiki_conformance.rs')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('assert_eq!(request.target.structural_field.as_ref().unwrap().family.as_deref(), Some("A"));', 'assert_eq!(request.target.structural_field.as_ref().unwrap().family.as_deref(), Some("A"));')
+          p.write_text(s, encoding='utf-8')
+          PY
+          cargo fmt --all
+          cargo clippy --workspace --all-targets -- -D warnings
+      - name: Commit formatting and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/qw4-final-rustfix.yml
+          git add crates/ql-wiki
+          git commit -m "style(#12): apply final QW4 rustfmt and clippy cleanup"
+          git push origin HEAD:agent/qw4-second-wiki-proof
