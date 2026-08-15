@@ -1,0 +1,55 @@
+name: QW4 Cross-Wiki Conformance
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+  pull_request:
+
+jobs:
+  second-wiki-and-glade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Build current QL-MEF Wiki refraction executable
+        run: cargo build -p ql-wiki --bin ql-wiki-refraction
+      - name: Prove independent Research Canvas contract locally
+        run: cargo test -p ql-wiki --test second_wiki_conformance --test second_wiki_external_cli
+      - name: Fetch final merged Glade proving-ground commit
+        run: |
+          git clone https://github.com/EpiLogos/glade.git /tmp/glade
+          git -C /tmp/glade checkout c4411ebb187983c3fdb1e0d1bdb3b480d1b391e2
+          test "$(git -C /tmp/glade rev-parse HEAD)" = "c4411ebb187983c3fdb1e0d1bdb3b480d1b391e2"
+      - name: Install pinned Glade client
+        run: python -m pip install -e /tmp/glade pytest
+      - name: Re-run Glade's real QL-MEF subprocess contract against current QW4 binary
+        working-directory: /tmp/glade
+        env:
+          QL_MEF_REFRACTION_BIN: ${{ github.workspace }}/target/debug/ql-wiki-refraction
+        run: pytest -q tests/test_ql_mef_external_real.py
+      - name: Prove the real Glade portal target remains addressable
+        working-directory: /tmp/glade
+        run: |
+          python - <<'PY'
+          import tempfile
+          from pathlib import Path
+          from glade_skills.knowledge_provider import GladeKnowledgeProvider
+
+          with tempfile.TemporaryDirectory() as td:
+              with GladeKnowledgeProvider.from_paths(
+                  Path("glade-vault-frank"),
+                  Path("."),
+                  wiki_db=Path(td) / "wiki.sqlite",
+                  actor="frank",
+                  source_provider="native",
+              ) as provider:
+                  record = provider.read("okf-concept-epi-as-the-instrument-of-mind-a796")
+                  assert record.ref == "okf-concept-epi-as-the-instrument-of-mind-a796"
+                  assert record.available
+          PY
