@@ -1,0 +1,21 @@
+{
+  "binding_ref": "ql-mef:binding:example-l1-frame",
+  "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+  "target_wiki_ref": "example:wiki:project-alpha",
+  "target_frame_ref": "example:wiki:frame:decision-17",
+  "relation": "refracts",
+  "scope_refs": ["example:scope:decision-review"],
+  "origin": "recognised",
+  "provenance": [
+    {
+      "source_ref": "example:evidence:review-42",
+      "source_revision": "sha256:abc"
+    }
+  ],
+  "ql_mef_revision": "1",
+  "target_revision": "7",
+  "extensions": {
+    "foreign_provider_state": "unavailable",
+    "note": "binding identity remains inspectable without copying the target wiki"
+  }
+}
