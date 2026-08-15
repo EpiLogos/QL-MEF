@@ -1,7 +1,6 @@
 use ql_wiki::{
     META_KNOWLEDGE_GRAPH_NAME, MappingOrigin, MetaBinding, MetaKnowledgeProjection,
-    OKF_WIKI_PROFILE, QL_MEF_WIKI_PROFILE, RESERVED_BIMBA_GRAPH_NAME, WikiError,
-    parse_okf_wiki,
+    OKF_WIKI_PROFILE, QL_MEF_WIKI_PROFILE, RESERVED_BIMBA_GRAPH_NAME, WikiError, parse_okf_wiki,
 };
 
 const SPACE: &str = include_str!("../../../fixtures/qw1/meta-wiki/ql-structural-space.md");
@@ -21,7 +20,10 @@ fn ql_mef_meta_wiki_uses_open_okf_wiki_profile_and_preserves_extensions() {
     let document = parse_okf_wiki(FAMILY_A).unwrap();
     assert_eq!(document.wiki.profile, OKF_WIKI_PROFILE);
     assert_eq!(document.ql_mef_profile(), Some(QL_MEF_WIKI_PROFILE));
-    assert_eq!(document.wiki.canonical_ref, "ql-mef:wiki:node:relation-family-a");
+    assert_eq!(
+        document.wiki.canonical_ref,
+        "ql-mef:wiki:node:relation-family-a"
+    );
     assert_eq!(document.wiki.revision, 2);
     assert_eq!(document.wiki.object_kind, "node");
     assert_eq!(document.wiki.title(), Some("Relation Family A"));
@@ -78,7 +80,10 @@ fn external_meta_binding_maps_foreign_frame_without_taking_ownership() {
     binding.validate().unwrap();
     let projection = MetaKnowledgeProjection::rebuild(&documents(), &[binding.clone()], 4).unwrap();
 
-    assert_eq!(projection.mapped_targets("ql-mef:wiki:node:mef-l1"), vec![&binding]);
+    assert_eq!(
+        projection.mapped_targets("ql-mef:wiki:node:mef-l1"),
+        vec![&binding]
+    );
     assert_eq!(
         projection.mappings_for_target("example:wiki:frame:decision-17"),
         vec![&binding]
@@ -137,7 +142,10 @@ fn mapping_origins_remain_distinct_in_projection() {
         .filter(|relation| relation.relation == "refracts")
         .map(|relation| relation.origin.as_str())
         .collect::<std::collections::BTreeSet<_>>();
-    assert_eq!(origins, std::collections::BTreeSet::from(["authored", "derived", "proposed"]));
+    assert_eq!(
+        origins,
+        std::collections::BTreeSet::from(["authored", "derived", "proposed"])
+    );
 }
 
 #[test]
@@ -166,7 +174,10 @@ wiki:
 
 #[test]
 fn meta_knowledge_projection_and_bimba_graph_names_are_explicitly_not_identified() {
-    assert_eq!(META_KNOWLEDGE_GRAPH_NAME, "QL-MEF Meta-Knowledge Graph Projection");
+    assert_eq!(
+        META_KNOWLEDGE_GRAPH_NAME,
+        "QL-MEF Meta-Knowledge Graph Projection"
+    );
     assert_eq!(RESERVED_BIMBA_GRAPH_NAME, "Epi-Logos Bimba Graph");
     assert_ne!(META_KNOWLEDGE_GRAPH_NAME, RESERVED_BIMBA_GRAPH_NAME);
     let source = format!("{SPACE}\n{FAMILY_A}\n{L1}\n{BINDING}");

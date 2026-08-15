@@ -38,7 +38,10 @@ impl fmt::Display for WikiError {
                 write!(f, "expected {OKF_WIKI_PROFILE}, got {value}")
             }
             Self::ProviderIdentityLeak(field) => {
-                write!(f, "provider/index identity cannot be canonical Wiki identity: {field}")
+                write!(
+                    f,
+                    "provider/index identity cannot be canonical Wiki identity: {field}"
+                )
             }
             Self::DuplicateCanonicalRef(value) => write!(f, "duplicate canonical Wiki ref {value}"),
             Self::InvalidMetaBinding(detail) => write!(f, "invalid MetaBinding: {detail}"),
@@ -130,14 +133,16 @@ impl WikiRecord {
 
 pub fn parse_okf_wiki(markdown: &str) -> Result<OkfWikiDocument, WikiError> {
     let (yaml, body) = split_frontmatter(markdown)?;
-    let yaml_value: serde_yaml::Value =
-        serde_yaml::from_str(yaml).map_err(|error| WikiError::InvalidFrontmatter(error.to_string()))?;
+    let yaml_value: serde_yaml::Value = serde_yaml::from_str(yaml)
+        .map_err(|error| WikiError::InvalidFrontmatter(error.to_string()))?;
     let json = serde_json::to_value(yaml_value)
         .map_err(|error| WikiError::InvalidFrontmatter(error.to_string()))?;
     let okf = json
         .as_object()
         .cloned()
-        .ok_or(WikiError::InvalidFrontmatter("root must be a mapping".to_owned()))?;
+        .ok_or(WikiError::InvalidFrontmatter(
+            "root must be a mapping".to_owned(),
+        ))?;
     let profile = okf
         .get("wiki_profile")
         .and_then(Value::as_str)
@@ -178,7 +183,14 @@ fn required_string(map: &Map<String, Value>, key: &'static str) -> Result<String
 }
 
 fn reject_provider_identity(map: &Map<String, Value>) -> Result<(), WikiError> {
-    for key in ["provider_id", "providerId", "row_id", "rowId", "db_id", "dbId"] {
+    for key in [
+        "provider_id",
+        "providerId",
+        "row_id",
+        "rowId",
+        "db_id",
+        "dbId",
+    ] {
         if map.contains_key(key) {
             return Err(WikiError::ProviderIdentityLeak(key.to_owned()));
         }
@@ -405,7 +417,8 @@ impl MetaKnowledgeProjection {
         self.meta_bindings
             .iter()
             .filter(|binding| {
-                binding.target_wiki_ref == target_ref || binding.target_frame_ref.as_deref() == Some(target_ref)
+                binding.target_wiki_ref == target_ref
+                    || binding.target_frame_ref.as_deref() == Some(target_ref)
             })
             .collect()
     }
