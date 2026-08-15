@@ -1,0 +1,80 @@
+name: QW4 source repair
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/qw4-second-wiki-proof
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Apply robust source repairs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('crates/ql-wiki/src/recognition.rs')
+          s = p.read_text(encoding='utf-8')
+          pattern = re.compile(
+              r'\s{8}if let Some\(existing\) = self\.candidates\.get\(&candidate_ref\) \{\s*'
+              r'if existing == &candidate \{\s*return Ok\(existing\.clone\(\)\);\s*\}\s*'
+              r'return Err\(RecognitionError::DuplicateConflict\(candidate_ref\)\);\s*\}',
+              re.S,
+          )
+          replacement = '''        match self.candidates.get(&candidate_ref) {
+            Some(existing) if existing == &candidate => return Ok(existing.clone()),
+            Some(_) => return Err(RecognitionError::DuplicateConflict(candidate_ref)),
+            None => {}
+        }'''
+          s2, count = pattern.subn(replacement, s, count=1)
+          assert count == 1, 'recognition proposal block not repaired'
+          p.write_text(s2, encoding='utf-8')
+
+          p = Path('crates/ql-wiki/tests/second_wiki_conformance.rs')
+          s = p.read_text(encoding='utf-8')
+          if 'RevisionValue' not in s.split(';', 1)[0]:
+              s = re.sub(
+                  r'(RegistryDisclosureProvider,\s*)',
+                  r'\1RevisionValue, ',
+                  s,
+                  count=1,
+              )
+          pattern = re.compile(
+              r'assert!\(\s*response\.readings\.iter\(\)\.all\(\|reading\|\s*'
+              r'reading\s*\.target_revision\s*\.as_ref\(\)\s*\.unwrap\(\)\s*'
+              r'\.to_string\(\)\s*==\s*"5"\s*\)\s*\);',
+              re.S,
+          )
+          replacement = '''assert!(response.readings.iter().all(|reading| {
+        matches!(reading.target_revision, Some(RevisionValue::Integer(5)))
+    }));'''
+          s2, count = pattern.subn(replacement, s, count=1)
+          assert count == 1, 'revision allocation assertion not repaired'
+          p.write_text(s2, encoding='utf-8')
+          PY
+          cargo fmt --all
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+      - name: Commit only repaired source and remove helpers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f \
+            .github/workflows/qw4-source-repair.yml \
+            .github/workflows/qw4-final-repair.yml \
+            .github/workflows/qw4-clippy-repair.yml \
+            .github/workflows/qw4-final-rustfix.yml
+          git add -A .github/workflows crates/ql-wiki/src/recognition.rs crates/ql-wiki/tests/second_wiki_conformance.rs
+          git commit -m "fix(#12): satisfy final QW4 Rust gates"
+          git push origin HEAD:agent/qw4-second-wiki-proof
