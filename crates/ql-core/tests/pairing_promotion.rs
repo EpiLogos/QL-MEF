@@ -26,5 +26,9 @@ fn pairing_promotion_manifest_keeps_formal_and_research_boundaries_explicit() {
     assert!(manifest.contains("\"factoryIssue\": 108"));
     assert!(manifest.contains("\"factoryPullRequest\": 130"));
     assert!(manifest.contains("\"factoryHead\": \"a654c62f68b82236061986d9215b23257fe53b17\""));
-    assert!(manifest.contains("\"factoryPairingGrammarBlob\": \"0d6aa49197dd4d06646ea5a5fb094c03b10a74e4\""));
+    assert!(
+        manifest.contains(
+            "\"factoryPairingGrammarBlob\": \"0d6aa49197dd4d06646ea5a5fb094c03b10a74e4\""
+        )
+    );
 }
