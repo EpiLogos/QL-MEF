@@ -1,0 +1,51 @@
+name: Q6 Context Frame Conformance
+
+on:
+  push:
+    branches:
+      - agent/q6-pairing-square-grammar
+  pull_request:
+    paths:
+      - "crates/ql-mef/src/context_frame.rs"
+      - "crates/ql-mef/src/lib.rs"
+      - "crates/ql-mef/tests/context_frame_promotion.rs"
+      - "fixtures/q6/context-frame-*"
+      - ".github/workflows/q6-context-frame-conformance.yml"
+
+jobs:
+  canonical-cf-cut:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Verify CF promotion boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("fixtures/q6/context-frame-promotion-v1.json").read_text())
+          assert manifest["capability"] == "ql.mef.context-frame"
+          assert manifest["version"] == "1.0.0"
+          assert manifest["status"] == "specified-formal-structure"
+          assert manifest["automaticInvocation"] is False
+          assert manifest["deterministicBoundary"]["canonicalSelection"] == "3 Name -> conjugate-cross -> 4 Power"
+          assert manifest["deterministicBoundary"]["selectedPartition"] == "5 inner-four + 2 outer-two"
+          assert manifest["deterministicBoundary"]["unselectedPartition"] == "3 inner-four hooks + 2 outer-two anchors"
+          assert manifest["deterministicBoundary"]["alternateConjugateSelection"] == "not-promoted"
+          assert manifest["deterministicBoundary"]["modalReanchoring"] == "not-promoted"
+          assert manifest["deterministicBoundary"]["semanticRoleBinding"] == "not-promoted"
+          assert manifest["deterministicBoundary"]["runtimePolicy"] == "not-promoted"
+          assert len(manifest["frames"]) == 7
+          assert len(manifest["promoted"]["canonicalProgression"]) == 7
+          assert len(manifest["promoted"]["complexificationHooks"]) == 3
+          assert len(manifest["promoted"]["unpickedOuterAnchors"]) == 2
+          assert manifest["promoted"]["completeFormAddresses"] == 12
+          assert manifest["provenance"]["factoryProgramme"]["issue"] == 121
+          assert manifest["provenance"]["factoryProgramme"]["crossRepoEvidence"] == "not-required-for-this-capability"
+          PY
+      - name: Run standalone context-frame acceptance
+        run: cargo test -p ql-mef --test context_frame_promotion
