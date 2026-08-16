@@ -100,11 +100,7 @@ impl<T> RuntimeEnvelope<T> {
         }
     }
 
-    pub fn with_event(
-        mut self,
-        channel: impl Into<String>,
-        event_type: impl Into<String>,
-    ) -> Self {
+    pub fn with_event(mut self, channel: impl Into<String>, event_type: impl Into<String>) -> Self {
         self.channel = Some(channel.into());
         self.event_type = Some(event_type.into());
         self
