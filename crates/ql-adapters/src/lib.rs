@@ -9,11 +9,15 @@ mod client;
 mod core;
 mod error;
 mod factory;
+mod runtime;
 
 pub use aikit::AiKitAdapter;
 pub use attachment::{AdapterResult, QlAttachment, QlMode};
 pub use client::{AdapterSubject, AiKitSubject, ClientRecord, ClientSubject, FactorySubject};
 pub use error::AdapterError;
 pub use factory::FactoryAdapter;
+pub use runtime::{
+    RuntimeEnvelope, RuntimeRefractionAdapter, RuntimeSelection, RuntimeStatus, RuntimeSubject,
+};
 
 pub(crate) use core::AdapterCore;
