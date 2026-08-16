@@ -11,6 +11,7 @@ mod face;
 mod form;
 mod kernel;
 mod operator;
+mod pairing;
 mod position;
 mod structural;
 
@@ -22,6 +23,11 @@ pub use face::QlFace;
 pub use form::{QlForm, QlFormRef};
 pub use kernel::{KERNEL_VERSION, KernelCapabilities, SCHEMA_VERSION, kernel_capabilities};
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
+pub use pairing::{
+    CanonicalCrossPass, D2CrossPassKind, PAIRING_GRAMMAR_VERSION, PairingError,
+    build_d_modulation_frame, canonical_cross_pass_d1, canonical_cross_pass_d2,
+    canonical_cross_pass_d3,
+};
 pub use position::QlPosition;
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
