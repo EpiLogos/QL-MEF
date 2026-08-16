@@ -1,5 +1,3 @@
-use std::collections::BTreeSet;
-
 use ql_wiki::{
     CrossWikiTraversalRequest, ExternalObservation, MappingOrigin, MetaBinding,
     MetaKnowledgeProjection, MetaPortal, PortalScope, RecognitionDecision, RecognitionLedger,
