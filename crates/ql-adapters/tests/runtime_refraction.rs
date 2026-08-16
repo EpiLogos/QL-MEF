@@ -62,12 +62,7 @@ fn classic_runtime_remains_ql_free_when_refraction_is_disabled() {
 fn optional_provider_absence_does_not_corrupt_runtime_state_or_event() {
     let adapter = RuntimeRefractionAdapter::new(None, QlMode::Optional);
     let result = adapter
-        .refract(
-            ql_event(),
-            LensRef::canonical(LensId::L3),
-            None,
-            None,
-        )
+        .refract(ql_event(), LensRef::canonical(LensId::L3), None, None)
         .expect("optional absence is nonfatal");
 
     assert_eq!(result.client.payload.runtime.id, "ql-core");
@@ -122,12 +117,7 @@ fn provider_failure_is_an_attachment_failure_not_a_runtime_failure() {
     let service = QlService::with_provider(AdapterFixtureProvider::failing("ql-provider:q5-fail"));
     let adapter = RuntimeRefractionAdapter::new(Some(&service), QlMode::Optional);
     let result = adapter
-        .refract(
-            ql_event(),
-            LensRef::canonical(LensId::L4Prime),
-            None,
-            None,
-        )
+        .refract(ql_event(), LensRef::canonical(LensId::L4Prime), None, None)
         .expect("optional provider failure is contained");
 
     assert_eq!(result.client.payload.status.execution, "completed");
@@ -139,12 +129,7 @@ fn provider_failure_is_an_attachment_failure_not_a_runtime_failure() {
 fn required_provider_absence_is_explicit_without_changing_the_runtime_contract() {
     let adapter = RuntimeRefractionAdapter::new(None, QlMode::Required);
     let error = adapter
-        .refract(
-            ql_event(),
-            LensRef::canonical(LensId::L1),
-            None,
-            None,
-        )
+        .refract(ql_event(), LensRef::canonical(LensId::L1), None, None)
         .expect_err("required mode must fail when no provider is supplied");
 
     assert_eq!(error, AdapterError::ServiceUnavailable);
@@ -165,4 +150,29 @@ fn run_event_and_closure_subjects_keep_client_owned_refs() {
     assert_eq!(run.inner().revision(), Some("r1"));
     assert_eq!(event.inner().revision(), Some("7"));
     assert_eq!(closure.inner().revision(), Some("c1"));
+}
+
+#[test]
+fn frozen_factory_seam_fixture_keeps_runtime_and_provider_axes_separate() {
+    let fixture = include_str!("../../../fixtures/q5/runtime-refraction-v1.json");
+
+    assert!(fixture.contains("\"sourceHead\": \"9b3de175afa8f130ca97fd65e7eaff1930ba20ff\""));
+    assert!(fixture.contains("\"mergeCommit\": \"7690069846eb6fc89f6aa78dcf7aab886ac7c737\""));
+    assert!(fixture.contains("\"loopRuntime\": \"run(request, host, observer, signal)\""));
+    for method in [
+        "callModel",
+        "executeCapability",
+        "receiveExternalInput",
+        "readContext",
+    ] {
+        assert!(fixture.contains(&format!("\"{method}\"")));
+    }
+    assert!(fixture.contains("\"qlOnlyCommonHostMethods\": []"));
+    assert!(fixture.contains("\"providerFailureChangesRuntimeStatus\": false"));
+    assert!(fixture.contains("\"classicRequiresQlProvider\": false"));
+    assert!(fixture.contains("\"heldConstantRef\": \"factory:runtime:match/q5-case-1\""));
+    assert!(fixture.contains("\"id\": \"classic\""));
+    assert!(fixture.contains("\"id\": \"ql-core\""));
+    assert!(fixture.contains("\"providerMode\": \"disabled\""));
+    assert!(fixture.contains("\"providerMode\": \"optional\""));
 }
