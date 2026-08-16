@@ -155,10 +155,7 @@ pub fn canonical_cross_pass_d1(position: QlPosition) -> CanonicalCrossPass {
 /// `transform`: `(n, (n+1)')`
 /// `require`: `(n, (n-1)')`
 /// `complete`: `(n, (5-n)')`
-pub fn canonical_cross_pass_d2(
-    kind: D2CrossPassKind,
-    position: QlPosition,
-) -> CanonicalCrossPass {
+pub fn canonical_cross_pass_d2(kind: D2CrossPassKind, position: QlPosition) -> CanonicalCrossPass {
     let n = position.value();
     let conjugate_position = match kind {
         D2CrossPassKind::Transform => (n + 1) % 6,
