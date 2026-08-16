@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 use ql_mef::{
-    CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCut, ContextFrameId, LensId, MefGrain,
-    MefUnitFace, canonical_context_frame_progression,
+    CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCut, ContextFrameId, LensId, MefGrain, MefUnitFace,
+    canonical_context_frame_progression,
 };
 
 #[test]
@@ -48,13 +48,48 @@ fn fixture_matches_the_complete_canonical_cf_partition() {
 fn canonical_progression_is_three_names_then_conjugate_cross_then_four_powers() {
     let progression = canonical_context_frame_progression();
     let expected = [
-        (ContextFrameId::Cf1, 0, MefUnitFace::Name, MefGrain::OuterTwo),
-        (ContextFrameId::Cf2, 1, MefUnitFace::Name, MefGrain::InnerFour),
-        (ContextFrameId::Cf3, 2, MefUnitFace::Name, MefGrain::InnerFour),
-        (ContextFrameId::Cf4, 2, MefUnitFace::Power, MefGrain::InnerFour),
-        (ContextFrameId::Cf5, 3, MefUnitFace::Power, MefGrain::InnerFour),
-        (ContextFrameId::Cf6, 4, MefUnitFace::Power, MefGrain::InnerFour),
-        (ContextFrameId::Cf7, 5, MefUnitFace::Power, MefGrain::OuterTwo),
+        (
+            ContextFrameId::Cf1,
+            0,
+            MefUnitFace::Name,
+            MefGrain::OuterTwo,
+        ),
+        (
+            ContextFrameId::Cf2,
+            1,
+            MefUnitFace::Name,
+            MefGrain::InnerFour,
+        ),
+        (
+            ContextFrameId::Cf3,
+            2,
+            MefUnitFace::Name,
+            MefGrain::InnerFour,
+        ),
+        (
+            ContextFrameId::Cf4,
+            2,
+            MefUnitFace::Power,
+            MefGrain::InnerFour,
+        ),
+        (
+            ContextFrameId::Cf5,
+            3,
+            MefUnitFace::Power,
+            MefGrain::InnerFour,
+        ),
+        (
+            ContextFrameId::Cf6,
+            4,
+            MefUnitFace::Power,
+            MefGrain::InnerFour,
+        ),
+        (
+            ContextFrameId::Cf7,
+            5,
+            MefUnitFace::Power,
+            MefGrain::OuterTwo,
+        ),
     ];
 
     for (selection, (frame, position, face, grain)) in progression.into_iter().zip(expected) {
@@ -81,19 +116,40 @@ fn every_lens_cut_partitions_all_twelve_form_addresses_once() {
         let mut addresses = HashSet::new();
         for selected in cut.selected() {
             let coordinate = selected.coordinate();
-            assert_eq!(selected.frame().canonical_selection().at_lens(lens), *selected);
-            assert_rotation(lens, coordinate.local_position().value(), coordinate.absolute_position().value());
-            assert!(addresses.insert((coordinate.local_position().value(), coordinate.unit_face())));
+            assert_eq!(
+                selected.frame().canonical_selection().at_lens(lens),
+                *selected
+            );
+            assert_rotation(
+                lens,
+                coordinate.local_position().value(),
+                coordinate.absolute_position().value(),
+            );
+            assert!(
+                addresses.insert((coordinate.local_position().value(), coordinate.unit_face()))
+            );
         }
         for coordinate in cut.complexification_hooks() {
             assert_eq!(coordinate.grain(), MefGrain::InnerFour);
-            assert_rotation(lens, coordinate.local_position().value(), coordinate.absolute_position().value());
-            assert!(addresses.insert((coordinate.local_position().value(), coordinate.unit_face())));
+            assert_rotation(
+                lens,
+                coordinate.local_position().value(),
+                coordinate.absolute_position().value(),
+            );
+            assert!(
+                addresses.insert((coordinate.local_position().value(), coordinate.unit_face()))
+            );
         }
         for coordinate in cut.unpicked_outer_anchors() {
             assert_eq!(coordinate.grain(), MefGrain::OuterTwo);
-            assert_rotation(lens, coordinate.local_position().value(), coordinate.absolute_position().value());
-            assert!(addresses.insert((coordinate.local_position().value(), coordinate.unit_face())));
+            assert_rotation(
+                lens,
+                coordinate.local_position().value(),
+                coordinate.absolute_position().value(),
+            );
+            assert!(
+                addresses.insert((coordinate.local_position().value(), coordinate.unit_face()))
+            );
         }
 
         assert_eq!(addresses.len(), 12);

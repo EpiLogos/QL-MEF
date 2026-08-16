@@ -65,12 +65,24 @@ impl ContextFrameId {
     pub fn canonical_selection(self) -> ContextFrameSelection {
         match self {
             Self::Cf1 => ContextFrameSelection::new(self, 0, MefUnitFace::Name, MefGrain::OuterTwo),
-            Self::Cf2 => ContextFrameSelection::new(self, 1, MefUnitFace::Name, MefGrain::InnerFour),
-            Self::Cf3 => ContextFrameSelection::new(self, 2, MefUnitFace::Name, MefGrain::InnerFour),
-            Self::Cf4 => ContextFrameSelection::new(self, 2, MefUnitFace::Power, MefGrain::InnerFour),
-            Self::Cf5 => ContextFrameSelection::new(self, 3, MefUnitFace::Power, MefGrain::InnerFour),
-            Self::Cf6 => ContextFrameSelection::new(self, 4, MefUnitFace::Power, MefGrain::InnerFour),
-            Self::Cf7 => ContextFrameSelection::new(self, 5, MefUnitFace::Power, MefGrain::OuterTwo),
+            Self::Cf2 => {
+                ContextFrameSelection::new(self, 1, MefUnitFace::Name, MefGrain::InnerFour)
+            }
+            Self::Cf3 => {
+                ContextFrameSelection::new(self, 2, MefUnitFace::Name, MefGrain::InnerFour)
+            }
+            Self::Cf4 => {
+                ContextFrameSelection::new(self, 2, MefUnitFace::Power, MefGrain::InnerFour)
+            }
+            Self::Cf5 => {
+                ContextFrameSelection::new(self, 3, MefUnitFace::Power, MefGrain::InnerFour)
+            }
+            Self::Cf6 => {
+                ContextFrameSelection::new(self, 4, MefUnitFace::Power, MefGrain::InnerFour)
+            }
+            Self::Cf7 => {
+                ContextFrameSelection::new(self, 5, MefUnitFace::Power, MefGrain::OuterTwo)
+            }
         }
     }
 }
@@ -90,7 +102,12 @@ pub struct ContextFrameSelection {
 }
 
 impl ContextFrameSelection {
-    fn new(frame: ContextFrameId, local_position: u8, unit_face: MefUnitFace, grain: MefGrain) -> Self {
+    fn new(
+        frame: ContextFrameId,
+        local_position: u8,
+        unit_face: MefUnitFace,
+        grain: MefGrain,
+    ) -> Self {
         Self {
             frame,
             local_position: position(local_position),
@@ -116,7 +133,8 @@ impl ContextFrameSelection {
     }
 
     pub fn at_lens(self, lens: LensId) -> ContextFrameCoordinate {
-        let coordinate = MefFormCoordinate::new(lens, self.local_position, self.unit_face, self.grain);
+        let coordinate =
+            MefFormCoordinate::new(lens, self.local_position, self.unit_face, self.grain);
         ContextFrameCoordinate {
             frame: self.frame,
             coordinate,
@@ -134,7 +152,12 @@ pub struct MefFormCoordinate {
 }
 
 impl MefFormCoordinate {
-    fn new(lens: LensId, local_position: QlPosition, unit_face: MefUnitFace, grain: MefGrain) -> Self {
+    fn new(
+        lens: LensId,
+        local_position: QlPosition,
+        unit_face: MefUnitFace,
+        grain: MefGrain,
+    ) -> Self {
         let rotation = MefRotation::new(lens, local_position);
         Self {
             lens,
@@ -192,7 +215,8 @@ pub struct ContextFrameCut {
 
 impl ContextFrameCut {
     pub fn canonical(lens: LensId) -> Self {
-        let selected = canonical_context_frame_progression().map(|selection| selection.at_lens(lens));
+        let selected =
+            canonical_context_frame_progression().map(|selection| selection.at_lens(lens));
         let complexification_hooks = [
             MefFormCoordinate::new(lens, position(3), MefUnitFace::Name, MefGrain::InnerFour),
             MefFormCoordinate::new(lens, position(4), MefUnitFace::Name, MefGrain::InnerFour),
