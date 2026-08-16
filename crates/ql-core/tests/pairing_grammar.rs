@@ -1,10 +1,9 @@
 use std::collections::HashSet;
 
 use ql_core::{
-    CanonicalCrossPass, ConjugationDegree, D2CrossPassKind, ExpansionSide,
-    PAIRING_GRAMMAR_VERSION, PairingError, QlFace, QlPosition, RelationFamily, all_d3_fields,
-    build_d_modulation_frame, canonical_cross_pass_d1, canonical_cross_pass_d2,
-    canonical_cross_pass_d3,
+    CanonicalCrossPass, ConjugationDegree, D2CrossPassKind, ExpansionSide, PAIRING_GRAMMAR_VERSION,
+    PairingError, QlFace, QlPosition, RelationFamily, all_d3_fields, build_d_modulation_frame,
+    canonical_cross_pass_d1, canonical_cross_pass_d2, canonical_cross_pass_d3,
 };
 
 fn p(value: u8) -> QlPosition {
@@ -21,13 +20,7 @@ fn promoted_pairing_grammar_has_its_own_version_boundary() {
 
 #[test]
 fn software_d1_d2_d3_modulation_is_exactly_two_three_four_coordinates() {
-    let d1 = build_d_modulation_frame(
-        RelationFamily::B,
-        1,
-        ConjugationDegree::D1,
-        None,
-    )
-    .unwrap();
+    let d1 = build_d_modulation_frame(RelationFamily::B, 1, ConjugationDegree::D1, None).unwrap();
     let d2_left = build_d_modulation_frame(
         RelationFamily::B,
         1,
@@ -42,13 +35,7 @@ fn software_d1_d2_d3_modulation_is_exactly_two_three_four_coordinates() {
         Some(ExpansionSide::Right),
     )
     .unwrap();
-    let d3 = build_d_modulation_frame(
-        RelationFamily::B,
-        1,
-        ConjugationDegree::D3,
-        None,
-    )
-    .unwrap();
+    let d3 = build_d_modulation_frame(RelationFamily::B, 1, ConjugationDegree::D3, None).unwrap();
 
     assert_eq!(d1.coordinates.len(), 2);
     assert_eq!(d1.coordinates[0].position, p(3));
@@ -71,7 +58,10 @@ fn software_d1_d2_d3_modulation_is_exactly_two_three_four_coordinates() {
     );
 
     assert_eq!(d3.coordinates.len(), 4);
-    assert_eq!(d3.vertex_key(), RelationFamily::B.pair(1).unwrap().d3().vertex_key());
+    assert_eq!(
+        d3.vertex_key(),
+        RelationFamily::B.pair(1).unwrap().d3().vertex_key()
+    );
 }
 
 #[test]
@@ -93,7 +83,11 @@ fn square_apparatus_preserves_nine_entries_eight_orientations_and_seven_tetrads(
                 .coordinates
                 .iter()
                 .map(|coordinate| {
-                    format!("{}:{}", coordinate.position.value(), coordinate.face.as_str())
+                    format!(
+                        "{}:{}",
+                        coordinate.position.value(),
+                        coordinate.face.as_str()
+                    )
                 })
                 .collect::<Vec<_>>();
             coordinates.sort();
@@ -131,10 +125,7 @@ fn canonical_cross_pass_d1_is_same_position_conjugation() {
         }
         other => panic!("expected D1, got {other:?}"),
     }
-    assert_eq!(
-        cross.operator_ref(),
-        "ql:pairing:1.0.0:cross:D1:position-4"
-    );
+    assert_eq!(cross.operator_ref(), "ql:pairing:1.0.0:cross:D1:position-4");
 }
 
 #[test]
@@ -186,12 +177,7 @@ fn canonical_cross_pass_d3_reproduces_each_family_on_conjugate_face() {
 #[test]
 fn ambiguous_modulation_requests_fail_instead_of_inventing_semantics() {
     assert!(matches!(
-        build_d_modulation_frame(
-            RelationFamily::A,
-            0,
-            ConjugationDegree::D2,
-            None,
-        ),
+        build_d_modulation_frame(RelationFamily::A, 0, ConjugationDegree::D2, None,),
         Err(PairingError::MissingD2ProjectionSide)
     ));
     assert!(matches!(
@@ -201,7 +187,9 @@ fn ambiguous_modulation_requests_fail_instead_of_inventing_semantics() {
             ConjugationDegree::D1,
             Some(ExpansionSide::Left),
         ),
-        Err(PairingError::UnexpectedProjectionSide(ConjugationDegree::D1))
+        Err(PairingError::UnexpectedProjectionSide(
+            ConjugationDegree::D1
+        ))
     ));
     assert!(matches!(
         build_d_modulation_frame(
@@ -210,6 +198,8 @@ fn ambiguous_modulation_requests_fail_instead_of_inventing_semantics() {
             ConjugationDegree::D3,
             Some(ExpansionSide::Right),
         ),
-        Err(PairingError::UnexpectedProjectionSide(ConjugationDegree::D3))
+        Err(PairingError::UnexpectedProjectionSide(
+            ConjugationDegree::D3
+        ))
     ));
 }
