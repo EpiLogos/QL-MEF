@@ -9,7 +9,9 @@ fn rotation_fixture_covers_all_72_mef_coordinates() {
         let fields: Vec<_> = row.split('\t').collect();
         assert_eq!(fields.len(), 4, "invalid rotation fixture row: {row}");
 
-        let lens = fields[0].parse::<LensId>().expect("fixture lens must parse");
+        let lens = fields[0]
+            .parse::<LensId>()
+            .expect("fixture lens must parse");
         let local = fields[1]
             .parse::<u8>()
             .expect("fixture local position must parse");
