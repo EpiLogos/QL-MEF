@@ -3,7 +3,7 @@ use core::str::FromStr;
 
 use ql_core::QlPosition;
 
-use crate::{LensId, LensRef, MefError};
+use crate::{coordinate::MefRotation, LensId, LensRef, MefError};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SublensRef {
@@ -28,6 +28,10 @@ impl SublensRef {
 
     pub const fn position(self) -> QlPosition {
         self.position
+    }
+
+    pub fn rotation(self) -> MefRotation {
+        MefRotation::new(self.lens.lens(), self.position)
     }
 }
 

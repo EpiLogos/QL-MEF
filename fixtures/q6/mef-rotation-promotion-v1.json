@@ -1,0 +1,65 @@
+{
+  "schema": "ql-mef/promotion-status/v1",
+  "capability": "ql.mef.rotation",
+  "version": "1.0.0",
+  "status": "specified-formal-structure",
+  "automaticInvocation": false,
+  "deterministicBoundary": {
+    "anchorSelection": "explicit-input",
+    "localToAbsolute": "(anchor + local) mod 6",
+    "faceOrdering": "deterministic-by-lens-face",
+    "semanticRoleBinding": "not-promoted",
+    "runtimePolicy": "not-promoted"
+  },
+  "promoted": {
+    "lensAnchors": 12,
+    "localPositionsPerLens": 6,
+    "manifoldCoordinates": 72,
+    "dayLeadingUnit": "Name",
+    "nightLeadingUnit": "Power",
+    "twinRotation": "same-index-same-absolute-position"
+  },
+  "researchExtensions": [
+    "ql.state64.runtime-semantics",
+    "ql.epogdoon.retained-difference-metric",
+    "ql.topology.control-rules",
+    "ql.mef.context-operational-roles"
+  ],
+  "provenance": {
+    "factoryProgramme": {
+      "repository": "EpiLogos/agent-system-design",
+      "issue": 121,
+      "crossRepoEvidence": "not-required-for-this-capability",
+      "reason": "the controlling rotation evidence is in the QL/MEF source corpus, not a Factory runtime implementation"
+    },
+    "evidenceCorpus": [
+      {
+        "source": "mef-12-lenses-sublens-reference.md",
+        "status": "derived-synthesis-reference",
+        "section": "2. What a lens is — tonic, rotation, sublens",
+        "claim": "sublens .k sits at absolute position (anchor + k); Day/Name and Night/Power twins share the same rotation",
+        "sha256": "1e1ee72c6445eea2e7df057798bd1b0441f6e5eeac289dddb65d680d7ca6bb51"
+      },
+      {
+        "source": "ql-musical-derivation-v3.md",
+        "status": "formal-derivation-corroboration",
+        "sections": [
+          "I-3",
+          "II-1.4",
+          "II-2.1",
+          "II-3",
+          "II-4"
+        ],
+        "claim": "the twelve lenses are structural anchorings/re-mappings over the invariant conjugate field",
+        "sha256": "61508658f871f232f554127052d683ecded15c28694cc79a110bcf7841492699"
+      },
+      {
+        "source": "epi_logos_coordinate_system.md",
+        "status": "coordinate-system-corroboration",
+        "section": "III",
+        "claim": "twelve lens parents each contain six internal positions, giving the 72-fold MEF manifold",
+        "sha256": "a674e3c0489b1e9bd27078a2ec6c2a0cb1158ea8e37628a9ed36a429c1ab454f"
+      }
+    ]
+  }
+}
