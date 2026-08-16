@@ -126,6 +126,26 @@ fn provider_failure_is_an_attachment_failure_not_a_runtime_failure() {
 }
 
 #[test]
+fn incompatible_formal_only_provider_is_nonfatal_and_preserves_runtime() {
+    let service = QlService::with_provider(AdapterFixtureProvider::formal_only(
+        "ql-provider:q5-formal-only",
+    ));
+    let adapter = RuntimeRefractionAdapter::new(Some(&service), QlMode::Optional);
+    let result = adapter
+        .refract(ql_event(), LensRef::canonical(LensId::L3), None, None)
+        .expect("optional incompatible provider is nonfatal");
+
+    assert_eq!(result.client.payload.runtime.id, "ql-core");
+    assert_eq!(result.client.payload.status.execution, "completed");
+    assert_eq!(result.client.payload.status.semantic, "closed");
+    assert_eq!(
+        result.client.payload.event_type.as_deref(),
+        Some("closure-attained")
+    );
+    assert!(matches!(result.ql, QlAttachment::Unavailable { .. }));
+}
+
+#[test]
 fn required_provider_absence_is_explicit_without_changing_the_runtime_contract() {
     let adapter = RuntimeRefractionAdapter::new(None, QlMode::Required);
     let error = adapter
