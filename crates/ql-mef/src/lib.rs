@@ -2,6 +2,7 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+mod context_frame;
 mod coordinate;
 mod error;
 mod identity;
@@ -12,6 +13,10 @@ mod refraction;
 mod registry;
 mod sublens;
 
+pub use context_frame::{
+    CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCoordinate, ContextFrameCut, ContextFrameId,
+    ContextFrameSelection, MefFormCoordinate, MefGrain, canonical_context_frame_progression,
+};
 pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
