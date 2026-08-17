@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QL-MEF Q2 Contracts",
+  "$defs": {
+    "ClientRef": {"type": "string", "minLength": 1},
+    "LensRef": {"type": "string", "pattern": "^mef:lens:L[0-5]'?@1$"},
+    "SublensRef": {"type": "string", "pattern": "^mef:sublens:L[0-5]'?\\.[0-5]@1$"},
+    "ResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
+    "QLTarget": {
+      "type": "object",
+      "required": ["subject"],
+      "properties": {
+        "subject": {"$ref": "#/$defs/ClientRef"},
+        "subject_type": {"type": ["string", "null"]},
+        "frame_ref": {"type": ["string", "null"]},
+        "context_refs": {"type": "array", "items": {"$ref": "#/$defs/ClientRef"}}
+      }
+    },
+    "QLProviderRef": {
+      "type": "object",
+      "required": ["provider", "version"],
+      "properties": {"provider": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}}
+    },
+    "InputRefRevision": {
+      "type": "object",
+      "required": ["reference"],
+      "properties": {"reference": {"$ref": "#/$defs/ClientRef"}, "revision": {"type": ["string", "null"]}}
+    },
+    "QLProvenance": {
+      "type": "object",
+      "required": ["schema_version", "mef_registry_version", "provider", "operation", "input_refs", "result_class", "warnings"],
+      "properties": {
+        "schema_version": {"const": "1.0.0"},
+        "mef_registry_version": {"const": "1.0.0-q2"},
+        "provider": {"$ref": "#/$defs/QLProviderRef"},
+        "operation": {"type": "string", "minLength": 1},
+        "input_refs": {"type": "array", "items": {"$ref": "#/$defs/InputRefRevision"}},
+        "model": {"type": ["string", "null"]},
+        "result_class": {"$ref": "#/$defs/ResultClass"},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "RefractionContract": {
+      "type": "object",
+      "required": ["target", "lens"],
+      "properties": {"target": {"$ref": "#/$defs/QLTarget"}, "lens": {"$ref": "#/$defs/LensRef"}, "sublens": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]}}
+    },
+    "QLReading": {"type": "object", "required": ["id", "target", "operation", "reading", "provenance"]},
+    "QLRelationReading": {"type": "object", "required": ["id", "subjects", "relation", "provenance"]},
+    "QLSynthesis": {"type": "object", "required": ["id", "input_readings", "synthesis", "retained_differences", "unresolved", "provenance"]}
+  }
+}
