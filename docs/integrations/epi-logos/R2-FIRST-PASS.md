@@ -1,5 +1,7 @@
 # Epi-Logos R2 relation map — first-pass review checkpoint
 
+> **Interpretive status changed after human review.** This document is preserved as the evidence-bearing first pass, but its architectural synthesis is **superseded by `R2-SECOND-PASS-VISION.md`**. The first pass over-weighted capability replacement and under-read Epi-Logos as a purpose-bearing agentic Pratibimba application. Its source inventory and machine evidence remain useful; its conclusions about the parent application, M2′, S/S′ and the O:I relation must not be treated as current R2 interpretation.
+
 **Status:** first pass; **awaiting human architectural review**  
 **Tracking:** QL-MEF #25; Epi source coordination #4; parent Epi #2  
 **Acceptance:** not claimed. Do not close #25 or derive implementation tranches from this snapshot without review.
@@ -246,21 +248,35 @@ This branch records:
 
 - **36 / 36** R1 M′ stable capability refs in the embodiment and O:I cross maps;
 - **18** high-value internal M↔M relations, intentionally not a filled 6×6 matrix;
-- **6** S/S′ stratum continuity readings;
-- **8** explicit Bimba bridge bindings plus distinct knowledge-function categories;
-- **13** technology/provider disposition records.
+- **six** S/S′ continuity readings;
+- **eight** explicit Bimba bridge bindings;
+- **thirteen** provider/technology disposition records.
 
-These are coverage counts, not acceptance statistics. Parity labels remain provisional until human review and any resulting source reread.
+These counts mean the accepted R1 stable refs have been represented. They do **not** mean the parity judgments are ratified.
 
-## 12. Review questions for the human author
+---
 
-The first correction pass should focus on:
+## 12. Mandatory human-review questions
 
-1. Is M5′/Epii itself intended as the semantic integrator of the other five M′ domains, or should it remain a peer under a distinct Epi application?
-2. Does “independent M′ software” mean primarily package/service ownership, or is independent product/repository identity part of the intended future?
-3. Where should shared Epi DAY/NOW/Kairos semantic service live after generic S3 mechanics move behind AIKit/Workcell?
-4. Is Hen best understood as a surviving Epi-specific authored-content law/service, or should more of it become generic source/wiki provider contract?
-5. Should VAK/CF in `ta-onta` be treated as enduring Epi agency semantics, an experimental profile over generic Actuation, or a source of patterns to re-derive selectively?
-6. Does the first-pass reading of M0 as likely owner of a clean canonical Bimba domain API fit the intended Bimba evolution?
+Before this becomes an accepted R2 map, I would particularly want correction on these interpretations:
 
-No implementation tranche or native ticket creation should proceed from this branch until these judgments have been reviewed.
+1. **M5′ versus Epi whole.** Is Epii itself intended to be the semantic integrating application, or is Epii one of six peer domains under a distinct Epi whole?
+2. **Independent M′ bodies.** Is “six substantial M′ products” meant principally as semantic/package independence, or is repository/release independence itself part of the intended architecture?
+3. **DAY/NOW/Kairos.** Is this a shared Epi application service with M4 as its deepest consumer, or is its semantic ownership differently centred?
+4. **Hen.** Which parts are enduring Epi authored-content law versus historical generic vault/wiki mechanism?
+5. **VAK/CF in ta-onta.** Is this enduring Epi constitutional agency semantics or developmental implementation scaffolding that should now be re-derived through Actuation/QL?
+6. **Bimba domain API.** Does the modern direction of a Bimba-owned application/domain seam with Neo4j/MCP/AIKit adapters match the intended future architecture?
+7. **M1/M2 versus standalone QL-MEF.** How much mathematical/MEF implementation should become generic QL-MEF versus remain specifically Paramasiva/Parashakti Epi software?
+8. **M4 versus Central.** Is Central correctly understood as durable human-owned substrate/support rather than any semantic owner of the Nara personal field?
+9. **Aletheia/Gnosis.** Is generic retrieval best pushed down behind AIKit providers while crystallisation/return stays Epii-specific, or does Gnosis itself remain a substantial Epi domain service?
+10. **O:I field reading.** Is it appropriate to keep PR #30's 12×12 field developmental-only until that line lands on accepted ancestry, or is there another accepted O:I relational source R2 should privilege now?
+
+The machine maps should be revised after this review rather than cited defensively against it.
+
+---
+
+## 13. Current first-pass conclusion
+
+**NOT READY FOR IMPLEMENTATION TRANCHES — awaiting human correction of package topology, shared Epi temporal/content-law placement, and the VAK/CF / Actuation relation.**
+
+No QL-MEF #25 closure and no implementation-ticket generation should happen from this first pass.
