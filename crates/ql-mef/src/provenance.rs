@@ -3,7 +3,7 @@ use core::str::FromStr;
 
 use crate::{ClientRef, MEF_REGISTRY_VERSION, MefError};
 
-pub const CONTRACT_SCHEMA_VERSION: &str = "1.0.0";
+pub const CONTRACT_SCHEMA_VERSION: &str = "1.1.0";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct QlProviderRef {
@@ -87,6 +87,7 @@ pub struct QlProvenance {
     pub operation: String,
     pub input_refs: Vec<InputRefRevision>,
     pub model: Option<String>,
+    pub config_ref: Option<ClientRef>,
     pub result_class: ResultClass,
     pub warnings: Vec<String>,
 }
@@ -105,6 +106,7 @@ impl QlProvenance {
             operation: operation.into(),
             input_refs,
             model: None,
+            config_ref: None,
             result_class,
             warnings: Vec::new(),
         }

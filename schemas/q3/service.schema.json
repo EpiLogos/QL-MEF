@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QL-MEF Q3 Provider Service",
+  "$defs": {
+    "ClientRef": {"type": "string", "minLength": 1},
+    "QlFormRef": {"type": "string", "pattern": "^qlform:(sixfold|four-plus-two|direct-conjugate)@1$"},
+    "LensRef": {"type": "string", "pattern": "^mef:lens:L[0-5]'?@1$"},
+    "SublensRef": {"type": "string", "pattern": "^mef:sublens:L[0-5]'?\\.[0-5]@1$"},
+    "QlTarget": {
+      "type": "object",
+      "required": ["subject", "subject_type", "frame_ref", "context_refs"],
+      "properties": {
+        "subject": {"$ref": "#/$defs/ClientRef"},
+        "subject_type": {"type": ["string", "null"]},
+        "frame_ref": {"type": ["string", "null"]},
+        "context_refs": {"type": "array", "items": {"$ref": "#/$defs/ClientRef"}}
+      },
+      "additionalProperties": false
+    },
+    "TargetInput": {
+      "type": "object",
+      "required": ["target", "revision"],
+      "properties": {
+        "target": {"$ref": "#/$defs/QlTarget"},
+        "revision": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "LocateRequest": {
+      "type": "object",
+      "required": ["input", "frame"],
+      "properties": {
+        "input": {"$ref": "#/$defs/TargetInput"},
+        "frame": {"oneOf": [{"$ref": "#/$defs/QlFormRef"}, {"type": "null"}]}
+      },
+      "additionalProperties": false
+    },
+    "RefractRequest": {
+      "type": "object",
+      "required": ["input", "lens", "sublens", "frame"],
+      "properties": {
+        "input": {"$ref": "#/$defs/TargetInput"},
+        "lens": {"$ref": "#/$defs/LensRef"},
+        "sublens": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]},
+        "frame": {"oneOf": [{"$ref": "#/$defs/QlFormRef"}, {"type": "null"}]}
+      },
+      "additionalProperties": false
+    },
+    "RelateRequest": {
+      "type": "object",
+      "required": ["inputs", "frame", "lenses"],
+      "properties": {
+        "inputs": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/TargetInput"}},
+        "frame": {"oneOf": [{"$ref": "#/$defs/QlFormRef"}, {"type": "null"}]},
+        "lenses": {"type": "array", "items": {"$ref": "#/$defs/LensRef"}}
+      },
+      "additionalProperties": false
+    },
+    "ProviderState": {"type": "string", "enum": ["absent", "available", "degraded", "incompatible"]},
+    "ProviderClass": {"type": "string", "enum": ["formal-kernel", "semantic-refraction"]},
+    "Operation": {"type": "string", "enum": ["capabilities", "locate", "refract", "relate", "synthesise"]},
+    "ResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
+    "QlProviderRef": {
+      "type": "object",
+      "required": ["provider", "version"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "InputRefRevision": {
+      "type": "object",
+      "required": ["reference"],
+      "properties": {
+        "reference": {"$ref": "#/$defs/ClientRef"},
+        "revision": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "QlProvenance": {
+      "type": "object",
+      "required": ["schema_version", "mef_registry_version", "provider", "operation", "input_refs", "result_class", "warnings"],
+      "properties": {
+        "schema_version": {"const": "1.1.0"},
+        "mef_registry_version": {"const": "1.0.0-q2"},
+        "provider": {"$ref": "#/$defs/QlProviderRef"},
+        "operation": {"type": "string", "minLength": 1},
+        "input_refs": {"type": "array", "items": {"$ref": "#/$defs/InputRefRevision"}},
+        "model": {"type": ["string", "null"]},
+        "config_ref": {"oneOf": [{"$ref": "#/$defs/ClientRef"}, {"type": "null"}]},
+        "result_class": {"$ref": "#/$defs/ResultClass"},
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "InputLimits": {
+      "type": "object",
+      "required": ["max_relation_subjects", "max_synthesis_readings"],
+      "properties": {
+        "max_relation_subjects": {"type": "integer", "minimum": 2},
+        "max_synthesis_readings": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "ProviderHealth": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": {"$ref": "#/$defs/ProviderState"},
+        "detail": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "ProviderCapabilities": {
+      "type": "object",
+      "required": ["provider", "health", "classes", "supported_forms", "supported_lenses", "operations", "extension_namespaces", "deterministic_operations", "input_limits", "output_schema_versions"],
+      "properties": {
+        "provider": {"$ref": "#/$defs/QlProviderRef"},
+        "health": {"$ref": "#/$defs/ProviderHealth"},
+        "classes": {"type": "array", "items": {"$ref": "#/$defs/ProviderClass"}},
+        "supported_forms": {"type": "array", "items": {"type": "string"}},
+        "supported_lenses": {"type": "array", "items": {"type": "string"}},
+        "operations": {"type": "array", "items": {"$ref": "#/$defs/Operation"}},
+        "extension_namespaces": {"type": "array", "items": {"type": "string"}},
+        "deterministic_operations": {"type": "array", "items": {"$ref": "#/$defs/Operation"}},
+        "input_limits": {"$ref": "#/$defs/InputLimits"},
+        "output_schema_versions": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "CapabilityDecision": {
+      "type": "object",
+      "required": ["health", "operation", "supported", "deterministic"],
+      "properties": {
+        "health": {"$ref": "#/$defs/ProviderHealth"},
+        "operation": {"$ref": "#/$defs/Operation"},
+        "supported": {"type": "boolean"},
+        "deterministic": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "ServiceRequest": {
+      "oneOf": [
+        {"type": "object", "required": ["operation"], "properties": {"operation": {"const": "capabilities"}}, "additionalProperties": false},
+        {"type": "object", "required": ["operation", "payload"], "properties": {"operation": {"const": "locate"}, "payload": {"$ref": "#/$defs/LocateRequest"}}, "additionalProperties": false},
+        {"type": "object", "required": ["operation", "payload"], "properties": {"operation": {"const": "refract"}, "payload": {"$ref": "#/$defs/RefractRequest"}}, "additionalProperties": false},
+        {"type": "object", "required": ["operation", "payload"], "properties": {"operation": {"const": "relate"}, "payload": {"$ref": "#/$defs/RelateRequest"}}, "additionalProperties": false},
+        {"type": "object", "required": ["operation", "payload"], "properties": {"operation": {"const": "synthesise"}, "payload": {"type": "object"}}, "additionalProperties": false}
+      ]
+    }
+  }
+}

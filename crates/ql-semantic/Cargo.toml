@@ -1,0 +1,12 @@
+[package]
+name = "ql-semantic"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+ql-core = { path = "../ql-core" }
+ql-mef = { path = "../ql-mef" }
+
+[lints]
+workspace = true
