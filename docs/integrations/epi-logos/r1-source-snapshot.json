@@ -1,0 +1,33 @@
+{
+  "snapshot_id": "epi-recon-r1-2026-08-17",
+  "source_repository": "EpiLogos/Epi-Logos-C-Experiments",
+  "source_issue": 3,
+  "source_pr": 7,
+  "source_merge_commit": "be54a505728eaa06ddcc268fa53df5dd756bfb5e",
+  "source_reading_head": "8608648f33e697dd5a8c5f499492619a02259af5",
+  "snapshot_not_project_freeze": true,
+  "coordinate_model": {
+    "domain_family": "M/M'",
+    "domains": ["M0", "M1", "M2", "M3", "M4", "M5"],
+    "technical_family": "S/S'"
+  },
+  "artifacts": [
+    "Idea/Bimba/Seeds/Reconstitution/R1/AUTHORITATIVE-SOURCE-MANIFEST.md",
+    "Idea/Bimba/Seeds/Reconstitution/R1/CYCLE3-M-MPRIME-CAPABILITY-MATRIX.md",
+    "Idea/Bimba/Seeds/Reconstitution/R1/S-SPRIME-TECHNICAL-CAPABILITY-MATRIX.md",
+    "Idea/Bimba/Seeds/Reconstitution/R1/BIMBA-CANONICAL-INVENTORY.md",
+    "Idea/Bimba/Seeds/Reconstitution/R1/LEGACY-TECHNOLOGY-LEDGER.md",
+    "Idea/Bimba/Seeds/Reconstitution/R1/CAPABILITY-INVENTORY.json",
+    "Idea/Bimba/Seeds/Reconstitution/R1/README.md"
+  ],
+  "living_map_issue": 25,
+  "related_ql_mef_issue": 7,
+  "authority_invariants": [
+    "Epi source semantics remain owned by EpiLogos/Epi-Logos-C-Experiments",
+    "QL-MEF owns formal/refractive mapping, not Epi domain semantics",
+    "QL-MEF Meta-Knowledge Graph Projection != Epi canonical Bimba Graph",
+    "Bimba != Neo4j",
+    "Bimba != MCP",
+    "M/M' domain identity != S/S' technical stratum identity"
+  ]
+}
