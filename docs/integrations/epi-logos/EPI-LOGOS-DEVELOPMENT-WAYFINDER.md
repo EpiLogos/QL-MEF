@@ -3,41 +3,39 @@
 **Parent:** QL-MEF #30  
 **Architecture / relation research:** #25 / PR #27  
 **Grounding account:** `EPI-LOGOS-SOURCE-OF-TRUTH.md`  
-**Relational field:** `epi-relational-field.csv`  
+**Epi relational field:** `epi-relational-field.csv`  
 **O:I relational field:** O:I #29 / `data/ql-relational-field.csv`
 
-This Wayfinder does not define another architecture above the grounded Epi system. It describes how development proceeds **through the same source account, QL relation field, primitive ownership and implementation evidence**.
+This Wayfinder does not define another architecture above Epi-Logos. It describes how development proceeds **through the same grounded system and its QL relation field**.
 
-The core practice is the same one already intended by the O:I 12×12 map:
+The working law is simple:
 
-> perceive a real concern, locate it in the field, inspect its relations/complements, develop only what becomes concretely useful, then return the result to the map and source account.
+> begin with a real concern; locate it in the field; inspect the relations, complements and return paths that make it intelligible; compare the corresponding O:I field where technological ownership matters; develop the smallest useful whole; let returned reality revise the field.
 
-QL generates questions across the field; it does not generate implementation obligations merely because a relation exists.
+**QL generates questions, not obligations.** A relation exists before there is necessarily anything to build between its terms.
 
 ---
 
-## 0. Destination
+## 1. Destination
 
-Reconstitute Epi-Logos through QL-MEF and the native O:I product suite so that:
+Reconstitute Epi-Logos through QL-MEF and the native O:I suite so that:
 
 - QL/MEF/harmonic/music theory is a first-class executable substrate in its own right and a constitutive formal basis of Epi;
 - M0–M5 computation, datasets, operators and provenance survive even if C/Rust/package boundaries change;
-- M0′–M5′ are rebuilt as serious Pratibimba instruments, not SaaS/dashboard approximations;
+- M0′–M5′ are rebuilt as serious Pratibimba instruments rather than dashboard approximations;
 - the six canonical Epi Agents operate through Actuation + AIKit + Workcell + Factory rather than a parallel generic runtime;
 - Ta-Onta's Epi inhabitation law survives while generic session/capability/provider/orchestration mechanics move to their native owners;
-- Central and Nara preserve human authorship, privacy, observation/inference distinctions and reviewed return;
-- the parent non-numbered 0/1 field composes Cosmic and Personal experience;
+- Central and Nara preserve human authorship, privacy, source/observation/inference distinctions and reviewed return;
+- the non-numbered 0/1 parent field composes Cosmic and Personal experience;
 - Epi can project into O:I shared fields without confusing Pratibimba with Projection;
 - Epii can return evidence and development pressure without silently rewriting human, Bimba or QL-MEF authority;
-- historical Theia/Pratibimba/CLI/gateway shells can be replaced once their real functions have been preserved, superseded or deliberately dropped with evidence.
+- historical Theia/Pratibimba/CLI/gateway shells can be replaced once the functions they carried are preserved, superseded or deliberately dropped with evidence.
 
 ---
 
-## 1. The development field
+## 2. One development field
 
-Development is not organised as EW0→EW7 stages.
-
-There is one grounded Epi relation field with several simultaneously active facets:
+Development is not an EW0→EW7 stage pipeline.
 
 ```text
                          EPI RELATIONAL FIELD
@@ -61,22 +59,22 @@ There is one grounded Epi relation field with several simultaneously active face
                     updated relation + source account
 ```
 
-The source inventory, primitive ownership map, migration disposition and readiness/parity rules accompany every facet. They are not preliminary phases.
+The source inventory, primitive ownership map, migration disposition and parity rules accompany work wherever it happens. They are not preliminary bureaucracy.
 
 ---
 
-## 2. The two interoperating 12×12 maps
+## 3. The interoperating 12×12 maps
 
-### Epi
+### Epi field
 
-`epi-relational-field.csv` carries the 12 faces:
+`epi-relational-field.csv` carries:
 
 ```text
 M0  M1  M2  M3  M4  M5
 M0′ M1′ M2′ M3′ M4′ M5′
 ```
 
-Each row begins with the same core fields as the O:I map:
+and deliberately uses the same core schema as the O:I field:
 
 ```text
 id
@@ -90,19 +88,19 @@ defined_in
 tracked_by
 ```
 
-and adds Epi-specific `src_face`, `dst_face`, `reading`, and `authority`.
+The Epi meaning of a row is carried by its named M/M′ faces, `seam` reading, source references and the grounding documents rather than by inventing a second matrix schema.
 
-Coverage follows the same developmental use as O:I:
+Coverage has the same developmental role as O:I:
 
 - `H` — canonical harmonic/conjugate relation strongly grounded by QL structure;
 - `S` — strongly supported functional relation even where no canonical QL family is assigned;
 - `L` — latent/open relation worth holding without implying implementation;
-- `W` — weak/speculative relation when used;
+- `W` — weak/speculative relation where useful;
 - `I` — reflexive accounting.
 
-The matrix is intentionally complete as a field while many cell readings remain open.
+The field is complete as a 12×12 field while many semantic readings remain deliberately open.
 
-### O:I
+### O:I field
 
 O:I #29 carries:
 
@@ -111,133 +109,144 @@ H0..H5 / A0..A5
 Central · Actuation · AIKit · Factory · Workcell · QL
 ```
 
-with the same QL A/B/C, D1/D2/D3 and CF grammar.
+using the same QL grammar:
 
-The matrices interoperate **formally**, not by pretending that M0=Central, M1=Actuation, etc.
+```text
+A / B / C
+D1 / D2-transform / D2-require / D2-complete / D3
+CF1–CF7 contextual views
+```
 
-The comparison questions are:
+### Why they interoperate
+
+The matrices are homologous **because the same QL harmonic grammar structures both fields**, not because same-numbered terms are semantically identical.
+
+Do not infer:
+
+```text
+M0 = Central
+M1 = Actuation
+...
+M/M′ = O:I H/A
+```
+
+Instead ask:
 
 ```text
 What QL relation is active here?
 What complement / conjugate / return relation sits beside it?
 What does that relation mean inside Epi?
-Which O:I product seam materialises or supports it?
-Does the comparison reveal a real missing seam, an existing native capability,
-a reusable abstraction, or merely an interesting formal resonance?
+What O:I product seam materialises or supports the relevant technological relation?
+Does comparison reveal a real missing seam, an existing native capability,
+a useful abstraction, or simply a relation worth holding in view?
 ```
 
-That is the main contemplative/development use of the maps.
+This is the principal contemplative and developmental use of the two matrices together.
 
 ---
 
-## 3. Matrix-grounded development loop
+## 4. Development loop through the grounded field
 
-Every substantial Epi development session should follow this loop, with depth proportional to the task.
-
-### 1 — perceive
+### Perceive
 
 Start from something real:
 
 - a desired lived capability;
-- an implementation defect;
-- a Seed function not represented in current software;
+- a Seed function missing from current software;
 - a computational body that needs reconstitution;
+- an implementation defect;
 - an architectural tension;
 - an observed experience/evidence discrepancy;
-- a cross-suite seam that seems weak.
+- a cross-suite seam that appears weak.
 
-Do not start from “we have an empty matrix cell”.
+Do **not** start from an empty matrix cell and turn it into work.
 
-### 2 — ground
+### Ground
 
-Read the smallest relevant source:
+Read only the source needed to understand the thing:
 
-- current grounding account;
-- relevant M/M′ Seed branch;
-- relevant S/S′ / Ta-Onta source;
-- QL-MEF formal source where the relation is formal/harmonic;
-- current O:I product position if ownership is involved.
+- `EPI-LOGOS-SOURCE-OF-TRUTH.md`;
+- the relevant M/M′ Seed branch;
+- the relevant S/S′ / Ta-Onta source;
+- `EPI-LOGOS-QL-MEF-FOUNDATION.md` where formal/harmonic meaning is active;
+- current O:I/product positions where ownership matters.
 
-Ask what the function is for, not merely where its old code lives.
+Ask what the function is and why it exists before deciding where its modern body belongs.
 
-### 3 — locate
+### Locate
 
 Locate the concern in `epi-relational-field.csv`.
 
-Usually that means:
+Usually inspect only:
 
-- one focal face;
-- its conjugate;
+- the focal face;
+- its M↔M′ conjugate;
 - direct A/B/C neighbours;
-- D2/D3 relations when relevant;
-- the enclosing CF view;
-- source/return relations.
+- relevant D2/D3 relation;
+- enclosing CF view;
+- source and return relations.
 
-The point is to hold the local field around the concern, not inspect 144 cells every time.
+### Relate
 
-### 4 — relate
-
-Use the native QL relation to ask:
+Use the QL relation to ask:
 
 - what does this facet require?
 - what does it contribute?
-- what is its complement?
+- what complements it?
 - where does it return?
-- what relation is currently one-sided?
-- what does its conjugate show that the focal face hides?
-- is there a triadic/fourfold relation that changes the reading?
+- what is currently one-sided?
+- what does its conjugate disclose?
+- does a triadic/fourfold relation change the reading?
 
-This is where the matrix performs the open-ended conceptual work it was made for.
+This is the open-ended conceptual work the matrix exists to support.
 
-### 5 — refract through O:I
+### Refract through O:I
 
-Inspect the corresponding neighbourhood in the O:I #29 field.
+Inspect the corresponding local neighbourhood in O:I #29, then use `EPI-OI-PRIMITIVE-OWNERSHIP-MAP.md` to decide what operates through what.
 
-Then use `EPI-OI-PRIMITIVE-OWNERSHIP-MAP.md` to ask which generic relations already exist:
+Current generic owners are:
 
 ```text
-Central      authored ground
+Central      authored human/operative ground
 Actuation    Agent / Agency / WorldBinding / Return
 AIKit        Context / Knowledge / Capability / Profile / SkillSet /
              model / harness / SessionSpace / Component / Surface
 Factory      Project / Run / Artifact / Evidence / Candidate / Recognition
-Workcell     material body / process / service / store / provider
-QL-MEF       formal relation / MEF / harmonic operation
+Workcell     provider / process / service / store / material body
+QL-MEF       formal relation / MEF / harmonic intelligence
 O:I parent   Projection / Participant / SharedField / Contribution / Encounter
 ```
 
-The map can reveal that:
+The comparison may show that Epi should:
 
-- Epi should simply operate through an existing primitive;
-- an Epi specialisation/binding is required;
-- a historical generic mechanism should be removed;
-- two seams need an explicit bridge;
-- a recurring Epi abstraction might deserve wider research;
-- no implementation change is warranted.
+- operate through an existing primitive;
+- specialise/bind it without losing Epi meaning;
+- remove duplicate generic machinery;
+- establish an explicit bridge;
+- investigate a recurring abstraction;
+- or do nothing beyond holding the relation clearly.
 
-### 6 — inspect reality
+### Inspect reality
 
-Use `EPI-LOGOS-SOURCE-SUBSTRATE-INVENTORY.md` to reach the actual current/historical body.
+Use `EPI-LOGOS-SOURCE-SUBSTRATE-INVENTORY.md` to reach the actual source, data and implementation body.
 
-Classify:
+Keep distinct:
 
 ```text
 authored source
 accepted architecture
-implemented fact
+implementation fact
 stub / incomplete
 historical shell
 research proposition
 migration inference
 ```
 
-Do not rewrite a working formal/computational substrate merely because the historical host is obsolete.
+### Reconstitute a vertical slice
 
-### 7 — choose the vertical slice
+Prefer a coherent function over a horizontal port.
 
-Prefer a coherent relation slice over horizontal migration.
-
-A slice may cross:
+A slice may run:
 
 ```text
 QL-MEF operator
@@ -249,27 +258,23 @@ QL-MEF operator
 → evidence / return
 ```
 
-Only the pieces required for the actual capability need to move together.
+Only include the pieces the function actually requires.
 
-### 8 — reconstitute
+Apply the stable dispositions from `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md`:
 
-Apply the stable dispositions:
+```text
+retain-domain
+operate-through
+delegate-generic
+adapt-transport
+rebuild-shell
+candidate-contract
+unresolved-authority
+```
 
-- `retain-domain`
-- `operate-through`
-- `delegate-generic`
-- `adapt-transport`
-- `rebuild-shell`
-- `candidate-contract`
-- `unresolved-authority`
+### Prove
 
-See `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md`.
-
-### 9 — prove
-
-Evidence should match the thing changed.
-
-Possible proof includes:
+Use evidence appropriate to what changed:
 
 ```text
 formal/operator correctness
@@ -283,65 +288,59 @@ reported human usefulness
 observable downstream effect
 ```
 
-Higher research claims do not follow automatically from lower implementation tests.
+Implementation success does not establish the stronger psychoid/flourishing research proposition.
 
-### 10 — return / remap
+### Return / remap
 
-After implementation or research:
+Update only what reality changed:
 
-- update a matrix cell when the relation reading/strength/evidence actually changed;
-- update grounding prose when understanding or authority actually changed;
-- update source inventory when an implementation/provenance body moved;
-- update the Wayfinder/ticket only when development state changed.
+- relation cell when the relation/evidence changed;
+- grounding prose when understanding/authority changed;
+- source inventory when bodies/provenance changed;
+- issue state when development state changed.
 
-Do not manufacture documentation churn after every code edit.
+No compulsory documentation churn follows every code edit.
 
 ---
 
-## 4. Development facets and live tickets
+## 5. Current development facets
 
-These are **facets of the same relation field**, not sequential phases.
+These are facets of the same field and can be crossed by a single vertical slice.
 
-### QL-MEF / formal-harmonic substrate
+### Formal / harmonic substrate — #31, #39, #49
 
-**#31, #39, #49**
-
-Develop and reconcile:
+Develop/reconcile:
 
 - QL position/relation/conjugation algebra;
 - A/B/C + D1/D2/D3;
 - 12-lens MEF field;
 - seven Context Frames;
-- three complementary lens-square structures;
+- complementary lens-square structures;
 - 84 lens-mode / mode-tonic field;
 - harmonic ratios, generators and musical derivation;
 - coordinate↔pitch and relational traversal;
 - voice-leading/rhythm/process;
 - later cymatic/microtonal operators where source/evidence supports them.
 
-The matrix should expose these relations rather than treating them as labels.
+The matrix exposes these relations; it does not reduce them to labels.
 
-### M0–M5 computational substrate
-
-**#33, #44, #45**
+### Computational substrate / evidence — #33, #38, #44, #45
 
 Preserve/reconstitute:
 
 - Bimba/coordinate roots and pointer relations;
-- M0 Anuttara tables and source structures;
+- M0 Anuttara tables/source structures;
 - M1 Ananda/Spanda/QL matrices and rings;
 - M2 72-fold MEF/correspondential structures and audio/nodal contracts;
 - M3 64-fold/codon/rotation/transcription structures;
-- M4 Nara root/safety/personal containers while marking current stubs honestly;
+- M4 Nara root/safety/personal structures while marking stubs honestly;
 - M5 Epii formal/Logos/return structures;
 - bioquaternionic and cross-cutting kernels;
 - datasets, provenance and golden fixtures.
 
 Implementation language/package is secondary to semantic/computational parity.
 
-### Epi inhabitation through O:I
-
-**#32, #46, #47, #48**
+### Epi inhabitation through O:I — #32, #46, #47, #48
 
 Recover Ta-Onta as the Epi law of inhabitation:
 
@@ -350,52 +349,34 @@ Khora     grounded encounter
 Hen       lawful form/residency
 Pleroma   affordance constitution
 Chronos   temporal/Kairos condition
-Anima     VAK/functional agency differentiation
+Anima     VAK/functional differentiation of agency
 Aletheia  disclosure/rehearing/crystallisation/return
 ```
 
-Use native O:I products for the generic mechanics.
+Use native O:I products for generic mechanics.
 
-`TemporalCondition`, the four-seam disclose/receive/recompose/query relation, and `Uptake` remain research candidates until independent evidence warrants wider promotion.
+`TemporalCondition`, disclose/receive/recompose/query and `Uptake` remain research candidates until broader evidence warrants promotion.
 
-### Pratibimba instruments / product experience
+### Pratibimba instruments / parent product — #34, #36, #40
 
-**#34, #40**
-
-Rebuild the six instruments with their actual functional depth.
-
-Theia and the current Pratibimba app are specimens/evidence, not preservation targets.
-
-Each instrument should be able to combine:
+Rebuild the six instruments with their actual functional depth and compose the non-numbered parent 0/1 field:
 
 ```text
-Epi semantic identity / address
-QL-MEF relations and operators
-domain state
-Actions
-AIKit Components / Surfaces / Knowledge / Context
-Actuation Agency
-Workcell material bodies
-readiness
-source / Explain / History
-return / proposal path
+Cosmic   = M1′ + M2′ + M3′
+Personal = M4′ + M5′ + M0′
 ```
 
-without turning the instrument into a generic dashboard.
+Theia and the current Pratibimba app are evidence/specimens, not preservation targets.
 
-### Six canonical Agents
+The rebuilt system should use native AIKit Actions/Components/Surfaces/Knowledge/Context, Actuation Agency and Workcell bodies without turning an Epi instrument into a generic dashboard.
 
-**#42**
+### Six canonical Agents — #42
 
 Anuttara, Paramasiva, Parashakti, Mahamaya, Nara and Epii remain persistent Epi Agent identities.
 
-Their M-domain identity is not reducible to an O:I product role or Factory phase.
+Their M-domain identity is not reducible to an O:I product role or Factory phase. Their generic agency/body operates through Actuation, AIKit, Workcell and Factory.
 
-Use Actuation/AIKit/Workcell/Factory for the generic body of their agency.
-
-### Central ↔ Nara
-
-**#35**
+### Central ↔ Nara — #35
 
 Preserve:
 
@@ -409,24 +390,9 @@ and the personal composition:
 Q_identity × Q_transit × Q_activity → Q_composed
 ```
 
-with explicit review/recognition before durable personal source change.
+with explicit review/recognition before durable personal-source change.
 
-### Parent Epi 0/1
-
-**#36**
-
-Rebuild one whole lived Epi field:
-
-```text
-Cosmic   = M1′ + M2′ + M3′
-Personal = M4′ + M5′ + M0′
-```
-
-with the six deep workspaces, cross-cutting actions/agent membrane and same-selection continuity across representations where meaningful.
-
-### Epii / return / shared projection
-
-**#37, #41**
+### Epii / return / shared relation — #37, #41
 
 Keep distinct:
 
@@ -440,74 +406,71 @@ Pratibimba is native lived operation. O:I Projection is selective external repre
 
 ---
 
-## 5. How a concrete slice should use the matrices
+## 6. Example: following a Parashakti relation
 
-Example: M2′ Parashakti.
+For M2′ Parashakti, inspect the local Epi field rather than “build #34” in isolation:
 
-Start at the M2′ cell and inspect:
+```text
+M2 ↔ M2′          conjugate / D1
+M1′ ↔ M2′         B1 / Prakasa–Vimarsa
+M2′ ↔ M3′         A2/C3 / refraction-transduction
+M2 ↔ M4           personal-prior relation where active
+M2/M2′ ↔ M5/M5′   return / improvement pressure
+```
 
-- M2↔M2′ D1;
-- M1′↔M2′ harmonic relation;
-- M2′↔M3′ transduction;
-- M2/M4 personal-prior relation where relevant;
-- M2/M5 return/improvement relation;
-- the relevant CF/lens context.
+Then inspect the germane O:I neighbourhood, for example:
 
-Then inspect the structurally corresponding O:I neighbourhood:
+```text
+QL-MEF ↔ AIKit
+AIKit ↔ Workcell
+Actuation ↔ AIKit
+Workcell ↔ QL-MEF
+Factory where the activity is developmental
+```
 
-- QL-MEF ↔ AIKit;
-- AIKit ↔ Workcell;
-- Actuation ↔ AIKit;
-- Workcell ↔ QL-MEF;
-- Factory only where the activity is developmental.
-
-That comparison should answer questions such as:
+The combined reading asks:
 
 ```text
 Which QL-MEF operators are canonical?
 Which Parashakti correspondences/state remain Epi-owned?
-Which AIKit capabilities/actions expose them?
+Which AIKit actions/surfaces expose them?
 What material body does Workcell provide?
-Which Agent/Agency is acting?
-What readiness condition makes the instrument truthful?
-What evidence returns if the implementation differs from the source expectation?
+Which Agent/Agency acts here?
+What readiness makes the instrument truthful?
+What returns if implementation reality differs from source expectation?
 ```
 
-The value is the relational reading across both fields, not a rule that these products must always integrate in the same way.
+The answer may be an implementation seam, a clarified relation, an abstraction worth testing, or no change.
 
 ---
 
-## 6. Primitive and abstraction development
+## 7. Primitive / abstraction development
 
-The primitive ownership map is not an exhaustive ontology and the matrices are not merely primitive tables.
+The primitive map is a semantic ownership aid, not the centre of the system.
 
-When a relation repeatedly exposes a useful Epi abstraction:
+When the relational field repeatedly exposes a useful Epi abstraction:
 
 ```text
 local domain pattern
     ↓ repeated across Epi
 Epi-level abstraction / binding
-    ↓ proven by several real uses
+    ↓ proven in several real uses
 possible cross-suite pattern
     ↓ independent non-Epi evidence
 native product / O:I candidate
 ```
 
-Examples currently worth testing rather than canonising:
+Current research candidates include `TemporalCondition`, the four-seam inhabitation relation and `Uptake`.
 
-- `TemporalCondition`;
-- disclose/receive/recompose/query inhabitation contract;
-- `Uptake`.
+Other concepts such as `DomainInstrument`, `EpiAddress`, `PersonalGroundBinding`, `MathemeProfile`, domain bridges and Nara state may remain properly Epi-level even while operating through native O:I primitives.
 
-Other Epi concepts such as `DomainInstrument`, `EpiAddress`, `PersonalGroundBinding`, `MathemeProfile`, domain bridges and Nara state may remain properly Epi-level even when built from native O:I primitives.
-
-The relation matrix is where their complements and technological seams can be contemplated without forcing premature universalisation.
+The relation matrices are where those abstractions can be held against their complements and technological seams without prematurely universalising them.
 
 ---
 
-## 7. Source / migration / parity law
+## 8. Preservation / retirement law
 
-Before retiring or replacing an old body, identify:
+Before replacing an old body, identify:
 
 ```text
 what function it carried
@@ -521,7 +484,7 @@ what is superseded
 parity/evidence
 ```
 
-The preservation order remains:
+Preserve in this order unless source/human authority says otherwise:
 
 1. source authority/provenance;
 2. formal/computational meaning and invariants;
@@ -534,13 +497,11 @@ The preservation order remains:
 9. transport/provider compatibility;
 10. historical shell/package identity.
 
-This is why Theia, a CLI command or a gateway may disappear while a small mathematical table or transform remains critical.
+This is why Theia, a CLI command or gateway may disappear while a small mathematical table or transform remains critical.
 
 ---
 
-## 8. Reading / execution entrypoint
-
-For a new development task:
+## 9. Entry point for a development session
 
 ```text
 EPI-LOGOS-SOURCE-OF-TRUTH.md
@@ -560,15 +521,13 @@ relevant live ticket / implementation
 
 Stop when enough context has been recovered to make the change correctly.
 
-The older R2 passes and JSON maps remain provenance and deeper evidence, not another required reading stack.
+The older R2 passes, cross-document matrix and JSON maps remain provenance/deeper evidence, not another required system to traverse.
 
 ---
 
-## 9. Completion meaning
+## 10. Completion meaning
 
-Reconstitution is complete when the old duplicated shells/runtime bodies can be removed without losing the Epi world they carried.
-
-The resulting system should make this cycle concrete:
+Reconstitution is complete when duplicated historical shells/runtime bodies can be removed without losing the Epi world they carried.
 
 ```text
 authored / formal ground
@@ -588,4 +547,4 @@ reviewed return
 renewed ground / relation / theory
 ```
 
-The matrix remains alive after migration. It is not a one-time port checklist; it is the QL-native development surface through which Epi and O:I can continue to understand and improve their relation.
+The relational field remains alive after migration. It is not a one-time port checklist; it is the QL-native development surface through which Epi and O:I can continue to understand and improve their relation.
