@@ -1,0 +1,48 @@
+name: Epi C reference
+
+on:
+  push:
+    branches:
+      - agent/epi-c-kernel-migration-floor
+    paths:
+      - vendor/epi-kernel/reference/**
+      - migration/epi-kernel/**
+      - scripts/build-epi-c-reference.sh
+      - scripts/sync-epi-c-reference.sh
+      - .github/workflows/epi-c-reference.yml
+  pull_request:
+    paths:
+      - vendor/epi-kernel/reference/**
+      - migration/epi-kernel/**
+      - scripts/build-epi-c-reference.sh
+      - scripts/sync-epi-c-reference.sh
+      - .github/workflows/epi-c-reference.yml
+
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out QL-MEF
+        uses: actions/checkout@v4
+
+      - name: Check out locked Epi source revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: .source/epi
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify frozen source identity
+        run: |
+          chmod +x scripts/sync-epi-c-reference.sh
+          scripts/sync-epi-c-reference.sh --check .source/epi
+
+      - name: Build and run C kernel smoke
+        run: |
+          chmod +x scripts/build-epi-c-reference.sh
+          scripts/build-epi-c-reference.sh
+
+      - name: Preserve current QL-MEF package tests
+        run: cargo test --workspace --locked

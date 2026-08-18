@@ -1,0 +1,75 @@
+{
+  "schema": "ql-mef.epi-c-kernel-source-lock/v1",
+  "status": "reference-frozen",
+  "source": {
+    "repository": "EpiLogos/Epi-Logos-C-Experiments",
+    "revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "root": "Body/S/S0/epi-lib",
+    "trees": {
+      "include": "f2b27d99197ee0f1cb9ed95ef52a5dd61a226e54",
+      "src": "a60dcda1427a6ab3cfcd44565a29f988938d0881",
+      "test": "9a6ef6505bb4e7622dba0922a07dced9bc49cd79"
+    }
+  },
+  "target": {
+    "repository": "EpiLogos/QL-MEF",
+    "base_revision": "d0e012b9a2080b75b9583d5fcc672775cce3a7ca",
+    "reference_root": "vendor/epi-kernel/reference"
+  },
+  "authority": {
+    "computational_reference": "Body/S/S0/epi-lib C body",
+    "preferred_computational_language": "C",
+    "semantic_ownership_rule": "implementation migration does not imply semantic ownership migration"
+  },
+  "secondary_reference": {
+    "path": "Body/S/S0/portal-core",
+    "status": "secondary-witness-not-target-architecture",
+    "use": "mine individual parity evidence, consumer contracts and later implementation facts only when provenance warrants it"
+  },
+  "bridge_witness": {
+    "repository": "EpiLogos/Epi-Logos-C-Experiments",
+    "pull_request": 8,
+    "head_revision": "b10e2e6fae2527a517abb684cd5425fdafab8ec3",
+    "fact": "primitive_bridge.c delegates into existing kernel_tick_from_epogdoon rather than reimplementing the kernel"
+  },
+  "cli_intent": {
+    "owner": "Epi",
+    "command": "epi",
+    "role": "thin human/machine entry into the C computational library",
+    "must_not_own": "domain computation"
+  },
+  "reference_inventory": {
+    "include": [
+      {"path":"arena.h","blob":"8e5ef4e7db8f4d203befb35d52b259ace7797d4b"},
+      {"path":"engine.h","blob":"bccc79a71958e383303e49ccc40add3fbf9d3fdf"},
+      {"path":"kernel.h","blob":"73159f16a9d11dd3c260d434b0ea0d4518147f3e"},
+      {"path":"m0.h","blob":"ae62bd6e8c587fbb94d44eb6e258a5f070eb0236"},
+      {"path":"m1.h","blob":"abd66e40d8f010c22ccb2cfef17c1c68d6f6286e"},
+      {"path":"m2.h","blob":"3b450b4fd057c2562f0946821c6c9c04f87743b1"},
+      {"path":"m3.h","blob":"5cfc92a22dd06f41e35855808450a1e3f9659229"},
+      {"path":"m4.h","blob":"1a4d896ced9b6963541dcf9bf6dc14e0602519c0"},
+      {"path":"m5.h","blob":"99d557632a2951f0caef16e8e7a4aeb2889f872d"},
+      {"path":"ontology.h","blob":"6ab46404571495ede44a14f6238158d8b7ed3b98"},
+      {"path":"pointer_web.h","blob":"4136f90e1a1c0ee35c079978d0ea9b1b844bc87c"},
+      {"path":"psychoid_numbers.h","blob":"e8971e47aa38a05a64ffc68ab0bfeaab3ebe847a"},
+      {"path":"vak.h","blob":"ef647224522ee7b94b943f2deb4220309c8ea88e"}
+    ],
+    "src": [
+      {"path":"arena.c","blob":"fb350c0f973375e80f8ee46d0f17658195f9de53"},
+      {"path":"engine.c","blob":"dc636fd3d7638e418311359c7134d8aac2786f2a"},
+      {"path":"families.c","blob":"18ee38f200befcce21f02f0c06420fcd3bd19f0b"},
+      {"path":"kernel.c","blob":"028c7a919249a3a549d5b0ba1b3d9a67d4efa791"},
+      {"path":"m0.c","blob":"4c6cc55df340014ae412cd218bdb520ec1e8aafa"},
+      {"path":"m1.c","blob":"d7a86a16113bc13b156a79cafeeb6303c3e5a790"},
+      {"path":"m2.c","blob":"911b8ce9cdb922d12422de91949d2a64c8ad7ace"},
+      {"path":"m3.c","blob":"d7f2c2e7001be3883efc43fc2c6a9983a1dfe6c1"},
+      {"path":"m3_clock_lut.c","blob":"254574be8e152231d8e36728d7852a52205c3b4e"},
+      {"path":"m4.c","blob":"a96d62285b3a66b71df64f752ee4aa6802edfe87"},
+      {"path":"m5.c","blob":"fe730882814a4c99c87115a97d64f5bd8dd62617"},
+      {"path":"main.c","blob":"1661e64a1c1ce76ea996e4a8fb89cf89f3a17a8a"},
+      {"path":"pointer_web.c","blob":"3eeae6f9c8cc65c5a610df1a49143b3c65bdd320"},
+      {"path":"psychoid_numbers.c","blob":"d6afd9eaea15d9598025bcc427e863fb51d1aea6"},
+      {"path":"qv_data.c","blob":"45001d22ade83f029faaff08726d0f027a5f16c9"}
+    ]
+  }
+}
