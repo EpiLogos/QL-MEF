@@ -19,7 +19,7 @@
     ]
   },
   "product_invariants": {
-    "host": "O:I desktop is the generic local human-agent application/SessionSpace/Surface host; Epi does not rebuild a second generic desktop or harness.",
+    "host": "The O:I desktop programme owns the generic local human-agent application host and is the intended SessionSpace/Surface host; current implementation capability must be read from O:I main and must not be presumed complete. Epi does not rebuild a second generic desktop or harness.",
     "experiential_root": "M4' Nara",
     "personal_composition": ["M4' Nara", "M5' Epii", "M0' Anuttara/Bimba"],
     "cosmic_composition": ["M1' Paramasiva", "M2' Parashakti", "M3' Mahamaya"],
@@ -27,6 +27,7 @@
     "deep_body": "M0'-M5' six deep workspaces",
     "formal_importance_not_build_order": true,
     "historical_shell_technology_is_not_current_host_authority": true,
+    "current_oi_implementation_must_be_reinspected": true,
     "oi_hosting_does_not_transfer_epi_semantic_authority": true,
     "ta_onta_only_when_agentic_inhabitation_is_active": true
   },
@@ -34,7 +35,7 @@
     {
       "phase": 0,
       "name": "consume-oi-host",
-      "goal": "Host Epi/Pratibimba as a native contribution/mode in the existing O:I Rust desktop and its stable regions/actions/refs.",
+      "goal": "Host Epi/Pratibimba as a native contribution/mode in the current O:I Rust desktop programme, using the stable regions/actions/refs that actually exist at implementation time.",
       "forbid": ["second Epi SessionSpace", "second generic agent/session store", "second capability registry", "old shell topology recreation"]
     },
     {
