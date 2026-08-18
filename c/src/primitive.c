@@ -94,7 +94,7 @@ float ql_ratio_ascending_fifth(void) {
     return 3.0f / 2.0f;
 }
 
-QL_Tick ql_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick) {
+QL_Primitive_Tick ql_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick) {
     static const float ratios[QL_TICK_COUNT] = {
         1.0f,
         4.0f / 3.0f,
@@ -110,7 +110,7 @@ QL_Tick ql_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick) {
         9.0f / 8.0f
     };
     uint8_t tick = ql_ring_wrap(sub_tick);
-    return (QL_Tick){
+    return (QL_Primitive_Tick){
         .cycle = cycle,
         .sub_tick = tick,
         .half = ql_ring_half(tick),
