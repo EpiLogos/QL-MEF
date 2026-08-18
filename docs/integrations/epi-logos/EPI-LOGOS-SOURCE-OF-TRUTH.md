@@ -33,7 +33,7 @@ The integration area is **one grounded relational development system**. Its pros
 M/M′ — EPI DOMAIN / PRODUCT FIELD
 M0..M5 / M0′..M5′
         ↓ capabilities are embodied by
-S/S′ — EPI TECHNICAL / INHABITATION FIELD
+S/S′ — EPI TECHNICAL / PRIME-LAW FIELD
 S0..S5 / S0′..S5′
         ↓ generic mechanics operate through / conform to
 O:I — TECHNOLOGICAL PRODUCT FIELD
@@ -151,8 +151,8 @@ QL-MEF executable QL / MEF / harmonic / musical substrate
 Epi M/M′ domain constitution
 Bimba · six domains · six canonical Agents
                          ↓ embodied through
-Epi S/S′ technical / inhabitation constitution
-execution · residency · relation · time · agency · return
+Epi S/S′ technical / prime-law constitution
+command · residency · graph · gateway/time · agency · world-return
                          ↓
 M0′–M5′ Pratibimba instruments + parent 0/1 field
                          ↓
@@ -252,47 +252,70 @@ The six M′ workspaces remain full-depth instruments in the wider 4+2 relation.
 
 ---
 
-## 5. S / S′ — technical embodiment and inhabitation field
+## 5. S / S′ — technical strata and their prime laws
 
-The current S Seed index defines:
+For current S/S′ meaning, authority order is:
 
-```text
-S0 makes the system executable
-S1 makes it resident and typed
-S2 makes it graph/vector/cache real
-S3 makes it temporal and routed
-S4 makes it agentically inhabited
-S5 makes it world-facing and reflective
-S5 returns to S0
-```
+1. the pinned R1 `S-SPRIME-TECHNICAL-CAPABILITY-MATRIX.md`;
+2. the six current `S0-SPEC.md` … `S5-SPEC.md` build references;
+3. `S-SYSTEM-INDEX.md` as a cross-level index.
 
-The S-family is therefore a **return circuit**, not a list of services.
+The high-level index sometimes names Khora/Hen/Pleroma/Chronos/Anima/Epii as **prime augmentations** of wider S folds. Those names express analogical participation and current implementation lineage; they must **not** be flattened into the claim that the six S′ coordinates are the six Ta-Onta carriers. The S4 spec explicitly places the full Ta-Onta carrier sequence *inside S4′*.
 
-The twelve S/S′ faces are:
+The wider S/S′ faces are:
 
-| Base face | Base function | Prime face | Prime augmentation |
+| Base | Base technical body | Prime | Current prime law |
 |---|---|---|---|
-| S0 | execution / command / process / kernel materialisation | S0′ | **Khora** — grounded runtime/tool/world surface |
-| S1 | files / vault / artifact residency | S1′ | **Hen** — compiler, CT, frontmatter, form/residency law |
-| S2 | graph / vector / cache / retrieval substrate | S2′ | **Pleroma** — coordinate-aware relation/retrieval law |
-| S3 | gateway / session / channel / temporal routing | S3′ | **Chronos** — Day/NOW/Kairos/presence/context law |
-| S4 | agent runtime / providers / skills / permissions / teams | S4′ | **Anima** — VAK/CF/CFP routing and inhabited agency law |
-| S5 | world-boundary / knowledge-return / review services | S5′ | **Epii return law** — review, pedagogy, improvement, promotion and Möbius return |
+| **S0** | command/process ground, executable discovery, build/bootstrap, local materialisation | **S0′** | reflective CLI/tool/environment/terminal contract; command shape, resolved tool surface, bootstrap/audit return |
+| **S1** | vault/filesystem/markdown/frontmatter/wikilink/canvas residency | **S1′** | **Hen** compiler/residency/content law: CT/frontmatter, mutation integrity, compile/query/inject, graduation/crystallisation |
+| **S2** | graph body: Neo4j persistence/schema/query/sync plus graph-cache substrate | **S2′** | coordinate-aware graph/retrieval law: relation registry, coordinate resolution, retrieve/rerank/enrich, GDS/ontology, context-pool assembly |
+| **S3** | gateway control plane: RPC, sessions, channels, routing, events and app/device control | **S3′** | shared temporal/state law: Day/NOW/Kairos, Redis live context, Graphiti temporal runtime, presence/subscriptions, SpaceTimeDB projection |
+| **S4** | harness-agnostic agent runtime: providers/models/auth, skills/tools, teams/subagents, bounded execution | **S4′** | **the full Ta-Onta agentic-inhabitation surface**, including VAK-mediated capability governance and constitutional actor mediation |
+| **S5** | integral world boundary: Gnosis/RAG/kbase/external return, M′ exposure, outward/inward exchange | **S5′** | **Epii** deep return/governance law: review, pedagogy, MEF/QL evaluation, episodic use, autoresearch, improvement and Möbius return |
 
-Aletheia remains load-bearing but is **not a seventh S face**. It is the crystallisation/disclosure/rehearing membrane around the S4.5′→S5′ return seam by which attributable encounter residue becomes reviewable rather than silently canonical.
-
-`epi-ssprime-relational-field.csv` makes these twelve faces available as the same complete 12×12 QL field used at the M and O:I scales.
-
-The common four-seam inhabitation pattern remains:
+The S-family remains a return circuit:
 
 ```text
-DISCLOSE / INJECT
-RECEIVE / EXTRACT
-COMPILE / RECOMPOSE
-QUERY
+S0 executable ground
+→ S1 lawful residence
+→ S2 relational/retrieval reality
+→ S3 shared temporal/routed state
+→ S4 agentic operation
+→ S5 world-facing return/review
+→ S0 changed executable ground
 ```
 
-It is a recurring relation across S′, not yet a reason to invent a universal O:I root primitive.
+### Ta-Onta is nested inside S4′
+
+This is the critical placement invariant:
+
+| Internal S4′ coordinate | Ta-Onta carrier | Wider S-fold internalised inside the agent |
+|---|---|---|
+| **S4.0′** | **Khora** | S0 — session ground, write authority, visibility, lifecycle hooks |
+| **S4.1′** | **Hen** | S1 — agent artifact/prompt/content form and CT context |
+| **S4.2′** | **Pleroma** | S2 — skills, bounded primitives, capability/tool surfaces, Techne mechanics |
+| **S4.3′** | **Chronos** | S3 — Day/NOW/Kairos as operative agent condition |
+| **S4.4′** | **Anima** | S4 — VAK evaluation, CF routing, team composition, Psyche state |
+| **S4.5′** | **Aletheia** | S5 — thought route, crystallisation trigger, Sophia disclosure, Epii handoff |
+
+The Ta-Onta modules correspond **analogically** to the wider S0–S5 folds because S4′ internalises the system so an agent can inhabit it. Their implementation residency is nevertheless S4′. This is why:
+
+```text
+S0′ != S4.0′ Khora
+S1′ != S4.1′ Hen
+S2′ != S4.2′ Pleroma
+S3′ != S4.3′ Chronos
+S4′ != S4.4′ Anima
+S5′ != S4.5′ Aletheia
+```
+
+There are genuine semantic relations between those pairs — and some wider S′ laws are themselves named through Hen/Chronos/Epii — but relation is not coordinate identity.
+
+**Aletheia is therefore not lopped off between S4′ and S5′. It is S4.5′, the final internal Ta-Onta carrier and crystallisation/handoff function.** The handoff then enters **S5′ Epii**, which owns deep world-return meaning, review, pedagogy, improvement and promotion governance.
+
+The recurring disclose / receive / recompose / query spine is evidenced primarily in Ta-Onta and Hen compiler architecture. Any wider O:I generalisation remains a research proposition, not a redefinition of the S′ branch.
+
+`epi-ssprime-relational-field.csv` must use the **wider S/S′ faces above**. Ta-Onta internals belong in the S4′ interpretation/evidence for relevant cells and in the M→S capability bridge; they are not the twelve top-level matrix faces.
 
 ---
 
@@ -323,6 +346,8 @@ An M/M′ capability may require one, several or all S strata.
 - M5 canon → S1/S1′ + S5/S5′;
 - M5 backend/reflected-app concerns → all six S strata.
 
+Where an M capability reaches S4′, the Ta-Onta carrier(s) actually involved should be recorded explicitly rather than inferred from the outer S coordinate number.
+
 This bridge is how product meaning becomes technical architecture without pretending the technical layer owns the domain.
 
 ---
@@ -349,23 +374,28 @@ Current generic ownership remains:
 
 ---
 
-## 8. Ta-Onta and the agentic inhabitation seam
+## 8. Ta-Onta as S4′ agentic inhabitation
 
-The older Ta-Onta bodies are not a second generic runtime that must survive literally.
+Ta-Onta is the S4′ operational body by which the wider Epi stack becomes inhabitable from within an acting agent.
 
-Their enduring contribution is the Epi constitution of the S′ face:
+Its six carriers internalise the S-family horizontally inside that agent:
 
-- Khora — grounded execution/world establishment;
-- Hen — lawful form/residency;
-- Pleroma — relational/capability affordance substrate;
-- Chronos — temporal/Kairos condition;
-- Anima — VAK/CF/CFP differentiation and dispatch;
-- Epii-return — review, pedagogy, improvement and return;
-- Aletheia — crystallisation/disclosure membrane inside the return path.
+```text
+Khora     establish/maintain the agent's ground
+Hen       give operative material lawful form
+Pleroma   apportion bounded powers and affordances
+Chronos   provide current temporal/Kairos condition
+Anima     differentiate and dispatch agency through VAK
+Aletheia  disclose/crystallise the encounter and hand it to return
+```
 
-Generic session, capability, provider, process and orchestration mechanics should operate through current O:I owners. Epi retains the reasons those powers are selected, related, timed, interpreted and returned.
+This is distinct from the wider S′ coordinates, even where names and functions recur analogically.
 
-`TemporalCondition`, disclose/receive/recompose/query and `Uptake` remain research pressures unless broader evidence justifies promotion.
+The modernisation question is therefore not “where does each Ta-Onta plugin become a top-level O:I primitive?” It is:
+
+> how does S4′ continue to internalise execution, residency, relational context, time, agency and return for an actor while the **generic mechanics** of those functions are increasingly supplied by Central, Actuation, AIKit, Factory, Workcell, QL-MEF and O:I?
+
+The recurring four-seam pattern — disclose/inject, receive/extract, recompose/compile, query — remains a candidate integration contract because Ta-Onta demonstrates it concretely. `TemporalCondition` and `Uptake` remain similarly provisional. None of these candidates changes the authored S/S′ coordinate structure by declaration.
 
 ---
 
@@ -401,7 +431,7 @@ The M4 capability bridge shows why this relation crosses S0/S1/S3 for identity a
 
 Anuttara, Paramasiva, Parashakti, Mahamaya, Nara and Epii remain canonical persistent **M-domain Agent identities**.
 
-They are not aliases for the six O:I products and are not the same thing as the six S′ prime functions.
+They are not aliases for the six O:I products, they are not the six wider S′ coordinates, and they are not the six Ta-Onta internal carriers.
 
 Their generic body is composed through:
 
@@ -419,7 +449,7 @@ Factory Run/Evidence when activity is developmental
 Epi/Aletheia/owning-source return
 ```
 
-S4′ Anima names the inhabitation/dispatch function through which such agents may be differentiated in an act; it does not replace their M-domain identities.
+S4.4′ Anima names the Ta-Onta dispatch function through which such agents may be differentiated in an act; it does not replace their M-domain identities. S5′ Epii is a separate return-spine embodiment and must likewise not be confused with M5 Epii merely because the same authored figure participates in both registers.
 
 ---
 
@@ -445,6 +475,8 @@ Use `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md` and the source inventory to make t
 M/M′ domain identity ≠ S/S′ technical stratum identity
 S/S′ technical identity ≠ O:I product identity
 M/M′ ≠ O:I H/A same-product face conjugacy
+Sx′ wider prime law ≠ S4.x′ Ta-Onta carrier
+Ta-Onta internal S-fold analogy ≠ top-level S-coordinate identity
 Pratibimba ≠ O:I Projection ≠ AIKit Projection ≠ WorldPresentation
 AIKit Profile ≠ MathemeProfile ≠ Nara PersonalIdentityProfile
 AIKit Context ≠ Nara PersonalField ≠ O:I SharedField ≠ Workcell world
@@ -452,7 +484,7 @@ HumanIdentity ≠ Central Control prose ≠ Nara IdentityModel ≠ Participant
 Bimba Graph ≠ QL-MEF Meta-Knowledge Graph ≠ AIKit Knowledge graph
 Encounter ≠ understanding / memory / belief / phenomenality
 Agent ≠ Agency ≠ AgentSession ≠ model/harness/body
-M-domain Agent ≠ S′ constitutional function
+M-domain Agent ≠ S4′ Ta-Onta carrier
 Bimba coordinate placement ≠ package/runtime ownership
 formal model return ≠ human-authorised source mutation
 ```
@@ -474,7 +506,9 @@ LOCATE focal M/M′ relation + harmonic neighbours
         ↓
 EMBODY via capability refs in epi-ssprime-embodiment.json
         ↓
-LOCATE relevant S/S′ relation + complements/return
+LOCATE relevant wider S/S′ relation + complements/return
+        ↓
+IF S4′ participates, identify the actual Ta-Onta carrier(s)
         ↓
 REFRACT through corresponding O:I #29 neighbourhood
         ↓
@@ -502,7 +536,7 @@ See `EPI-LOGOS-DEVELOPMENT-WAYFINDER.md` for the working procedure.
 #30 coordinates facets of the same field:
 
 - #31 / #39 / #49 — QL-MEF formal, harmonic and musical substrate;
-- #32 / #46 / #47 / #48 — S/S′↔O:I inhabitation, primitive and candidate-contract research;
+- #32 / #46 / #47 / #48 — S/S′↔O:I conformance, S4′ Ta-Onta inhabitation and candidate-contract research;
 - #33 / #38 / #44 / #45 — computation, source/data authority and parity;
 - #34 / #40 — M′ instrument reconstruction and shell retirement;
 - #35 — Central↔Nara personal internality;
@@ -524,11 +558,12 @@ For any development task, take the smallest sufficient route through the same sy
 3. relevant M/M′ Seed/source;
 4. focal `epi-relational-field.csv` neighbourhood;
 5. `epi-ssprime-embodiment.json` capability relation;
-6. focal `epi-ssprime-relational-field.csv` neighbourhood and relevant S/S′ Seed;
-7. corresponding O:I #29 matrix neighbourhood where native ownership matters;
-8. primitive ownership map;
-9. exact source/substrate inventory and live implementation;
-10. relevant Wayfinder ticket only once the concrete pressure is clear.
+6. relevant current Sx/Sx′ spec and focal `epi-ssprime-relational-field.csv` neighbourhood;
+7. if S4′ is active, the Ta-Onta S4.0′–S4.5′ carrier source actually involved;
+8. corresponding O:I #29 matrix neighbourhood where native ownership matters;
+9. primitive ownership map;
+10. exact source/substrate inventory and live implementation;
+11. relevant Wayfinder ticket only once the concrete pressure is clear.
 
 Stop when enough context has been recovered to make the change correctly.
 
