@@ -1,0 +1,109 @@
+{
+  "schema_version": "epi-pratibimba-build-order/0.1",
+  "status": "active-r2-human-review",
+  "purpose": "Prevent semantic/provenance traversal from being mistaken for chronological product build order.",
+  "authorities": {
+    "experience_design": [
+      "Epi:Idea/Bimba/Seeds/M/M'-SYSTEM-SPEC.md",
+      "Epi:Idea/Bimba/Seeds/M/M4'/M4'-SPEC.md",
+      "Epi:Idea/Bimba/Seeds/M/M'-TAURI-PORT-SPEC.md"
+    ],
+    "generic_host": [
+      "O-I#23",
+      "O-I#25",
+      "O-I#26"
+    ],
+    "computational_substrate": [
+      "Epi:Body/S/S0/epi-lib",
+      "Epi:Body/S/S0/portal-core"
+    ]
+  },
+  "product_invariants": {
+    "host": "O:I desktop is the generic local human-agent application/SessionSpace/Surface host; Epi does not rebuild a second generic desktop or harness.",
+    "experiential_root": "M4' Nara",
+    "personal_composition": ["M4' Nara", "M5' Epii", "M0' Anuttara/Bimba"],
+    "cosmic_composition": ["M1' Paramasiva", "M2' Parashakti", "M3' Mahamaya"],
+    "parent": "non-numbered 0/1 Pratibimba field",
+    "deep_body": "M0'-M5' six deep workspaces",
+    "formal_importance_not_build_order": true,
+    "historical_shell_technology_is_not_current_host_authority": true,
+    "oi_hosting_does_not_transfer_epi_semantic_authority": true,
+    "ta_onta_only_when_agentic_inhabitation_is_active": true
+  },
+  "build_order": [
+    {
+      "phase": 0,
+      "name": "consume-oi-host",
+      "goal": "Host Epi/Pratibimba as a native contribution/mode in the existing O:I Rust desktop and its stable regions/actions/refs.",
+      "forbid": ["second Epi SessionSpace", "second generic agent/session store", "second capability registry", "old shell topology recreation"]
+    },
+    {
+      "phase": 1,
+      "name": "kernel-primitive-bridge",
+      "goal": "Adopt existing epi-lib and portal-core before rewrite and expose the minimum typed/provenance-bearing primitives needed by Pratibimba.",
+      "minimum_outputs": [
+        "Bimba/EpiAddress/M-Mprime identity",
+        "six M-domain Agent identities",
+        "QL relation/lens/ContextFrame handles",
+        "VAK CPF-CT-CP-CF-CFP-CS",
+        "MathemeHarmonicProfile",
+        "DAY/NOW/tick handles",
+        "coordinate/source/provenance",
+        "Nara identity/current-field/day-episode handles",
+        "explicit implementation status"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "nara-first-lived-vertical",
+      "goal": "Build M4' Nara as the first genuine daily Pratibimba experience in the O:I host.",
+      "minimum_surface": ["flow/journal", "DAY/NOW", "resonance", "lean identity", "protected day episode", "highlight/sendoff", "situated agent co-reference", "Explain/provenance"]
+    },
+    {
+      "phase": 3,
+      "name": "personal-450",
+      "goal": "Complete Nara-Epii-Anuttara as the personal lived-return composition.",
+      "composition": ["M4'", "M5'", "M0'"]
+    },
+    {
+      "phase": 4,
+      "name": "cosmic-instrument-preview",
+      "goal": "Expose M1'-M2'-M3' first as one integrated cosmic/harmonic/cymatic/clock instrument feeding Nara and the Cosmic face, without requiring full deep subsystem completion.",
+      "composition": ["M1'", "M2'", "M3'"]
+    },
+    {
+      "phase": 5,
+      "name": "deep-mprime-workspaces",
+      "goal": "Expand M0'-M5' into their full source-designed instruments after the parent lived loop works."
+    },
+    {
+      "phase": 6,
+      "name": "deep-inhabitation-and-research",
+      "goal": "Deepen Ta-Onta, incomplete kernel faculties, autoresearch and advanced formal/cymatic work according to actual product dependency and evidence."
+    }
+  ],
+  "s4_prime_invariant": {
+    "residency": "S4'",
+    "internal": {
+      "S4.0'": "Khora",
+      "S4.1'": "Hen",
+      "S4.2'": "Pleroma",
+      "S4.3'": "Chronos",
+      "S4.4'": "Anima",
+      "S4.5'": "Aletheia"
+    },
+    "handoff": "S4.5' Aletheia -> S5' Epii"
+  },
+  "first_product_acceptance": [
+    "O:I desktop launches",
+    "Epi/Pratibimba contribution is hosted natively",
+    "existing Epi kernel/library is reachable through a typed tested bridge",
+    "M4' Nara daily surface is usable",
+    "protected journal/day episode persists",
+    "DAY/NOW and harmonic/VAK/coordinate context are real",
+    "situated O:I agent co-refers to the same stable Nara object/context",
+    "highlight/sendoff uses a governed Action",
+    "Epii/Anuttara explanation/review is summonable",
+    "restart preserves canonical state, privacy and provenance"
+  ]
+}
