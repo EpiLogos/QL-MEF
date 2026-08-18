@@ -34,7 +34,7 @@ typedef struct {
     uint8_t base_position;
     uint8_t traversal_stage;
     float harmonic_ratio;
-} QL_Tick;
+} QL_Primitive_Tick;
 
 const char* ql_c_api_version(void);
 const char* ql_c_reference_provenance(void);
@@ -57,7 +57,7 @@ float ql_ratio_ascending_fourth(void);
 float ql_ratio_descending_fourth(void);
 float ql_ratio_descending_fifth(void);
 float ql_ratio_ascending_fifth(void);
-QL_Tick ql_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick);
+QL_Primitive_Tick ql_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick);
 
 #ifdef __cplusplus
 }
