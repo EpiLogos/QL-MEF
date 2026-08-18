@@ -50,6 +50,7 @@ jobs:
           scripts/test-epi-c-parity.sh
 
       - name: Upload R1/R2 evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: epi-c-r1-r2-evidence
@@ -60,4 +61,5 @@ jobs:
           if-no-files-found: error
 
       - name: Preserve current QL-MEF package tests
+        if: always()
         run: cargo test --workspace --locked
