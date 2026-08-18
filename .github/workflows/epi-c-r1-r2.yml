@@ -44,6 +44,17 @@ jobs:
             -lm -o target/epi-c-historical-tests/test_kernel
           target/epi-c-historical-tests/test_kernel | tee target/epi-c-historical-tests/test_kernel.txt
 
+      - name: Run locked historical M1 test against frozen source
+        run: |
+          cc -std=c11 -Wall -Wextra \
+            -Ivendor/epi-kernel/reference/include \
+            .source/epi/Body/S/S0/epi-lib/test/m1/test_m1.c \
+            vendor/epi-kernel/reference/src/m1.c \
+            vendor/epi-kernel/reference/src/psychoid_numbers.c \
+            vendor/epi-kernel/reference/src/arena.c \
+            -lm -o target/epi-c-historical-tests/test_m1
+          target/epi-c-historical-tests/test_m1 | tee target/epi-c-historical-tests/test_m1.txt
+
       - name: Build native C primitive floor and prove parity
         run: |
           chmod +x scripts/test-epi-c-parity.sh
