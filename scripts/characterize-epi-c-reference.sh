@@ -51,17 +51,21 @@ if [[ "$compile_failures" -eq 0 ]]; then
 fi
 printf '%s\n' "$link_status" > "$OUT_DIR/link.status"
 
-# Symbol evidence exposes real cross-translation-unit dependencies even when
-# the aggregate historical link cannot be attempted.
+# Symbol evidence exposes real cross-translation-unit dependencies and both
+# exported and file-local state even when the aggregate historical link cannot
+# be attempted.
 : > "$OUT_DIR/undefined-symbols.tsv"
 : > "$OUT_DIR/defined-symbols.tsv"
+: > "$OUT_DIR/all-defined-symbols.tsv"
 for obj in "$OUT_DIR"/objects/*.o; do
   [[ -e "$obj" ]] || continue
   base=$(basename "$obj" .o)
   nm -u "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $NF}'
   nm -g --defined-only "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $2 "\t" $3}' >> "$OUT_DIR/defined-symbols.tsv"
+  nm --defined-only "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $2 "\t" $3}' >> "$OUT_DIR/all-defined-symbols.tsv"
 done | sort -u > "$OUT_DIR/undefined-symbols.tsv"
 sort -u -o "$OUT_DIR/defined-symbols.tsv" "$OUT_DIR/defined-symbols.tsv"
+sort -u -o "$OUT_DIR/all-defined-symbols.tsv" "$OUT_DIR/all-defined-symbols.tsv"
 
 python3 - "$OUT_DIR" "$SRC_ROOT" <<'PY'
 import json
@@ -86,6 +90,22 @@ for line in (out / "defined-symbols.tsv").read_text().splitlines():
     defined.setdefault(source, []).append({"symbol": symbol, "nm_type": kind})
     symbol_providers.setdefault(symbol, []).append(source)
 
+state_symbols = {}
+readonly_symbols = {}
+for line in (out / "all-defined-symbols.tsv").read_text().splitlines():
+    if not line.strip():
+        continue
+    source, kind, symbol = line.split("\t", 2)
+    record = {
+        "symbol": symbol,
+        "nm_type": kind,
+        "linkage": "file-local" if kind.islower() else "external"
+    }
+    if kind in "BbCcDdGgSs":
+        state_symbols.setdefault(source, []).append(record)
+    elif kind in "Rr":
+        readonly_symbols.setdefault(source, []).append(record)
+
 undefined = {}
 for line in (out / "undefined-symbols.tsv").read_text().splitlines():
     if not line.strip():
@@ -105,6 +125,16 @@ for source, symbols in undefined.items():
         else:
             external_unresolved.append({"source": source, "symbol": symbol})
 
+def classify_failure(log_text: str):
+    classes = []
+    if "expression in static assertion is not constant" in log_text:
+        classes.append("strict-c11-nonconstant-static-assert")
+    missing = sorted(set(re.findall(r"fatal error: ([^:]+): No such file or directory", log_text)))
+    classes.extend(f"missing-header:{header}" for header in missing)
+    if not classes and log_text.strip():
+        classes.append("other-compile-failure")
+    return classes
+
 rows = []
 for source_path in sorted(src_root.glob("*.c")):
     source = source_path.name
@@ -119,11 +149,17 @@ for source_path in sorted(src_root.glob("*.c")):
             generated.append({"line": lineno, "text": line.strip()})
         if re.search(r"TODO|FIXME|STUB|stub|PROVISIONAL|provisional|evolutionary gap", line):
             provisional.append({"line": lineno, "text": line.strip()})
+    log_path = out / "logs" / f"{source_path.stem}.log"
+    log_text = log_path.read_text(errors="replace") if log_path.exists() else ""
+    status = compile_status.get(source, "not-observed")
     rows.append({
         "source": source,
-        "compile": compile_status.get(source, "not-observed"),
+        "compile": status,
+        "compile_failure_classes": classify_failure(log_text) if status == "fail" else [],
         "local_headers": local_headers,
         "defined_global_symbols": defined.get(source, []),
+        "mutable_or_initialized_state_symbols": state_symbols.get(source, []),
+        "readonly_data_symbols": readonly_symbols.get(source, []),
         "generated_markers": generated,
         "provisional_markers": provisional,
         "log": f"logs/{source_path.stem}.log"
@@ -141,6 +177,8 @@ report = {
     "interpretation": {
         "compile_failures": "frozen-source build facts; never repaired in vendor/epi-kernel/reference",
         "link_failure": "distinguish missing build glue/external dependency/duplicate symbol from source syntax failures using logs and symbol map",
+        "state_symbols": "nm B/C/D/G/S or lowercase equivalents; mutability/semantic role still requires source-level classification",
+        "readonly_symbols": "nm R/r data; read-only representation does not by itself prove canonical source authority",
         "generated_markers": "classification evidence only; generator reproducibility must be proved separately before normalization",
         "provisional_markers": "research/provisional evidence only; marker presence is not itself a semantic judgement"
     }
