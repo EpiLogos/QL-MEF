@@ -8,12 +8,13 @@ on:
     paths:
       - .github/workflows/epi-c-r1-r2.yml
       - scripts/characterize-epi-c-reference.sh
+      - scripts/test-epi-c-parity.sh
       - migration/epi-kernel/**
       - c/**
       - vendor/epi-kernel/reference/**
 
 jobs:
-  characterize-reference:
+  characterize-and-parity:
     runs-on: ubuntu-latest
     steps:
       - name: Check out QL-MEF
@@ -24,11 +25,18 @@ jobs:
           chmod +x scripts/characterize-epi-c-reference.sh
           scripts/characterize-epi-c-reference.sh
 
-      - name: Upload characterization evidence
+      - name: Build native C primitive floor and prove parity
+        run: |
+          chmod +x scripts/test-epi-c-parity.sh
+          scripts/test-epi-c-parity.sh
+
+      - name: Upload R1/R2 evidence
         uses: actions/upload-artifact@v4
         with:
-          name: epi-c-reference-characterization
-          path: target/epi-c-characterization
+          name: epi-c-r1-r2-evidence
+          path: |
+            target/epi-c-characterization
+            target/epi-c-parity
           if-no-files-found: error
 
       - name: Preserve current QL-MEF package tests
