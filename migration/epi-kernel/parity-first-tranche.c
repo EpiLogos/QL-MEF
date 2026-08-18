@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "m3.h"
+#include "compat/m3-reference.h"
 #include "ql/primitive.h"
 
 #include <math.h>
@@ -110,7 +110,7 @@ int main(void) {
     for (unsigned raw = 0u; raw <= 255u; raw++) {
         uint8_t sub_tick = (uint8_t)raw;
         Kernel_Tick reference = kernel_tick_from_epogdoon(17u, sub_tick);
-        QL_Tick native = ql_tick_from_epogdoon(17u, sub_tick);
+        QL_Primitive_Tick native = ql_tick_from_epogdoon(17u, sub_tick);
         CHECK(native.cycle == reference.cycle, "tick.cycle", "uint8 exhaustive sub_tick");
         CHECK(native.sub_tick == reference.sub_tick, "tick.wrap", "uint8 exhaustive sub_tick");
         CHECK(native.base_position == reference.position6,
