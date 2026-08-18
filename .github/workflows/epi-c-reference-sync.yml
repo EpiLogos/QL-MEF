@@ -1,0 +1,49 @@
+name: Epi C reference sync
+
+on:
+  push:
+    branches:
+      - agent/epi-c-kernel-migration-floor
+    paths:
+      - .github/workflows/epi-c-reference-sync.yml
+      - scripts/sync-epi-c-reference.sh
+      - migration/epi-kernel/source-lock.json
+
+permissions:
+  contents: write
+
+jobs:
+  freeze-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out QL-MEF migration branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out locked Epi source revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: .source/epi
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Materialize exact C reference corpus
+        run: |
+          chmod +x scripts/sync-epi-c-reference.sh
+          scripts/sync-epi-c-reference.sh .source/epi
+          scripts/sync-epi-c-reference.sh --check .source/epi
+
+      - name: Commit frozen reference if needed
+        run: |
+          git add vendor/epi-kernel/reference/include vendor/epi-kernel/reference/src
+          if git diff --cached --quiet; then
+            echo "Reference corpus already matches the source lock."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "migration: vendor exact Epi C reference corpus"
+          git push origin HEAD:agent/epi-c-kernel-migration-floor
