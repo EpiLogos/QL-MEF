@@ -1,0 +1,35 @@
+name: Epi C R1 R2
+
+on:
+  push:
+    branches:
+      - agent/epi-c-r1-r2-native-floor
+  pull_request:
+    paths:
+      - .github/workflows/epi-c-r1-r2.yml
+      - scripts/characterize-epi-c-reference.sh
+      - migration/epi-kernel/**
+      - c/**
+      - vendor/epi-kernel/reference/**
+
+jobs:
+  characterize-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out QL-MEF
+        uses: actions/checkout@v4
+
+      - name: Characterize full frozen C corpus
+        run: |
+          chmod +x scripts/characterize-epi-c-reference.sh
+          scripts/characterize-epi-c-reference.sh
+
+      - name: Upload characterization evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: epi-c-reference-characterization
+          path: target/epi-c-characterization
+          if-no-files-found: error
+
+      - name: Preserve current QL-MEF package tests
+        run: cargo test --workspace --locked
