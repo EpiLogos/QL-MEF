@@ -1,14 +1,35 @@
 {
   "schema_version": "epi-r2-technology-capability-disposition/0.1-first-pass",
   "status": "awaiting-human-review",
+  "placement_invariants": {
+    "wider_s_prime": {
+      "S0'": "reflective CLI/tool/environment/terminal law",
+      "S1'": "Hen compiler/residency/content law",
+      "S2'": "coordinate-aware graph/retrieval law",
+      "S3'": "shared temporal/state law",
+      "S4'": "full Ta-Onta agentic-inhabitation surface",
+      "S5'": "Epii deep return/governance law"
+    },
+    "ta_onta_residency": "S4'",
+    "ta_onta_internal": {
+      "S4.0'": "Khora",
+      "S4.1'": "Hen",
+      "S4.2'": "Pleroma",
+      "S4.3'": "Chronos",
+      "S4.4'": "Anima",
+      "S4.5'": "Aletheia"
+    },
+    "aletheia_handoff": "S4.5' Aletheia -> S5' Epii",
+    "interpretation": "Ta-Onta carriers analogically internalise the wider S0-S5 folds inside S4'; they are not the wider S' coordinates."
+  },
   "records": [
     {"technology":"Obsidian","capabilities":["Markdown authoring","wikilinks/backlinks","human-first wiki navigation","canvas/graph views"],"semantic_owner":"Epi source/canon owners for Epi content","modern_generic_home":["AIKit Knowledge Navigation","Central authored ground where personal control applies"],"disposition":"retain optional provider/body; do not make architectural authority"},
     {"technology":"Neo4j","capabilities":["property graph persistence","Cypher/GDS execution","index/vector graph body"],"semantic_owner":"Bimba/S2 relation/schema owners","modern_generic_home":["Workcell materialisation","AIKit Knowledge provider access"],"disposition":"retain provider; never identify with Bimba"},
     {"technology":"MCP","capabilities":["tool/protocol exposure","client interoperability"],"semantic_owner":"underlying domain operation owners","modern_generic_home":["AIKit/adapter layer where appropriate"],"disposition":"retain/upgrade adapter only; never domain boundary"},
     {"technology":"Redis/RedisVL","capabilities":["live cache","session/context acceleration","semantic cache"],"semantic_owner":"owning session/knowledge domain","modern_generic_home":["Workcell material service","AIKit session/context where contracted"],"disposition":"retain provider if useful; no identity/authority role"},
     {"technology":"Graphiti","capabilities":["temporal episodic graph","episode retrieval/linking"],"semantic_owner":"M4/S3 protected episodic field when used for Nara","modern_generic_home":["AIKit provider access","Workcell material hosting"],"disposition":"retain provider behind privacy/authority adapter"},
-    {"technology":"PI","capabilities":["agent harness","tool registration","skills","subagents","session hooks"],"semantic_owner":"Actuation Agency semantics + AIKit harness/session/capability resolution; Epi profile owns Epi agent semantics","modern_generic_home":["AIKit","Actuation"],"disposition":"retain harness provider; extract ta-onta semantics from PI-specific hooks"},
-    {"technology":"ta-onta","capabilities":["session injection/extraction","bounded primitive membrane","VAK/CF dispatch","agent composition","temporal hooks","knowledge crystallisation"],"semantic_owner":"mixed: generic mechanisms across AIKit/Actuation/Workcell/Factory; Epi-specific VAK/agent/return semantics remain Epi","modern_generic_home":["AIKit","Actuation","Workcell","Software Factory"],"disposition":"do not port monolithically; extract generic mechanisms and preserve Epi profile/application semantics"},
+    {"technology":"PI","capabilities":["agent harness","tool registration","skills","subagents","session hooks"],"semantic_owner":"Actuation Agency semantics + AIKit harness/session/capability resolution; Epi profile owns Epi agent semantics","modern_generic_home":["AIKit","Actuation"],"disposition":"retain harness provider; preserve S4' Ta-Onta semantics while extracting PI-specific generic hooks"},
+    {"technology":"ta-onta","coordinate_residency":"S4'","internal_coordinates":{"S4.0'":"Khora","S4.1'":"Hen","S4.2'":"Pleroma","S4.3'":"Chronos","S4.4'":"Anima","S4.5'":"Aletheia"},"capabilities":["session/world grounding","agent-form/content law","bounded primitive membrane","temporal/Kairos condition","VAK/CF dispatch","agent composition","disclosure/rehearing/crystallisation","Epii handoff"],"semantic_owner":"S4' Epi agentic-inhabitation law; generic mechanisms may operate through AIKit/Actuation/Workcell/Factory while Epi-specific carrier semantics remain Epi","modern_generic_home":["AIKit","Actuation","Workcell","Software Factory"],"disposition":"do not flatten across S0'-S5' and do not port monolithically; preserve the six nested S4.0'-S4.5' carrier functions while extracting generic mechanisms"},
     {"technology":"tmux/cmux","capabilities":["multiplexer/session workspace","pane/surface topology"],"semantic_owner":"AIKit SessionSpace/provider seam","modern_generic_home":["AIKit"],"disposition":"retain providers"},
     {"technology":"Tauri/Theia","capabilities":["desktop/editor shell","workspace panes","reflected application UI"],"semantic_owner":"Epi application/domain owners","modern_generic_home":["AIKit Surfaces/SessionSpace plus future Epi application shell"],"disposition":"archive as migration evidence; retain only if independently useful provider"},
     {"technology":"SpaceTimeDB","capabilities":["live state/projection body"],"semantic_owner":"owning Epi temporal/application contract","modern_generic_home":["Workcell material hosting"],"disposition":"defer/retain optional provider; no semantic authority inferred"},
