@@ -8,6 +8,7 @@ on:
     paths:
       - 'crates/ql-mef/**'
       - 'scripts/compile-epi-bimba-map.py'
+      - 'scripts/compile-epi-bimba-map-live.py'
       - 'data/epi-bimba-map/**'
       - '.github/workflows/epi-bimba-map-conformance.yml'
 
@@ -45,8 +46,8 @@ jobs:
 
       - name: Compile recursive Bimba Map source pool
         run: |
-          python3 -m py_compile scripts/compile-epi-bimba-map.py
-          python3 scripts/compile-epi-bimba-map.py \
+          python3 -m py_compile scripts/compile-epi-bimba-map.py scripts/compile-epi-bimba-map-live.py
+          python3 scripts/compile-epi-bimba-map-live.py \
             --source-repo epi-source \
             --implementation-repo epi-implementation \
             --source-lock data/epi-bimba-map/source-lock.json \
@@ -65,6 +66,7 @@ jobs:
 
           assert summary['repository'] == 'EpiLogos/Epi-Logos-C-Experiments'
           assert summary['revision'] == 'daa660cbc1b8c5da83828698665a753852cb0287'
+          assert summary['json_failure_count'] == 0
           assert summary['source_coordinate_count'] > 44
           assert summary['source_relation_count'] > 0
           assert summary['source_relation_kind_count'] > 1
@@ -75,6 +77,7 @@ jobs:
           assert nara['source_coordinate_count'] > 44
           assert nara['exact_source_implementation_match_count'] > 0
           assert nara['source_coordinates_absent_from_executable_floor_count'] > 0
+          assert nara['implementation_coordinates_without_direct_source_basis_count'] == 0
           assert nara['relation_classes']['bimba_source_relation_kinds']
           assert nara['relation_classes']['implementation_relation_kinds']
 
