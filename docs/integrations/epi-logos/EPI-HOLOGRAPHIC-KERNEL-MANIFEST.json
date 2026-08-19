@@ -14,9 +14,13 @@
         "Idea/Bimba/Seeds/"
       ],
       "bimba_map_returned_state": {
-        "status": "whole-map-substrate-available-on-open-ql-pr",
-        "ql_mef_pr": 67,
-        "observed_head": "6ef7bccfc48f527004e6b8897693cb714a52bc49",
+        "status": "accepted-current-main-m-family-map-substrate",
+        "accepted_ql_main": "d418abfff6f9e001c8c5ff083206329b298eddcf",
+        "historical_producer_pr": 67,
+        "historical_producer_head": "6ef7bccfc48f527004e6b8897693cb714a52bc49",
+        "map_root": "Idea/Bimba/Map",
+        "coordinate_family_scope": ["M"],
+        "scope_law": "The accepted PRE-D Idea/Bimba/Map corpus is the M-family Map/Bimba source-relation substrate. It is not the complete Epi coordinate system and does not subsume raw psychoids or the P/L/C/S/T family manifestations.",
         "source_files": 57,
         "distinct_source_coordinates": 1875,
         "source_relations": 21083,
@@ -24,7 +28,7 @@
       },
       "graph_live_verification": {
         "status": "outstanding",
-        "reason": "The frozen repository declares a project-local Bimba MCP/Neo4j service, but that local runtime is not exposed in the current execution environment. The exact first-specimen identity is now recovered from repository Map source; live graph parity remains a separate evidence leg."
+        "reason": "The frozen repository declares a project-local Bimba MCP/Neo4j service, but that local runtime is not exposed in the current execution environment. The exact first-specimen identity is recovered from repository M-family Map source; live graph parity remains a separate evidence leg."
       }
     },
     "ql_mef": {
@@ -32,6 +36,7 @@
       "r0_main": "d030823584d35eca4e27df60e6385d67a531026b",
       "r1_r2_pr": 59,
       "r1_r2_merge": "75d4273060270de4771fe853875b798a1306c219",
+      "pre_d_main": "d418abfff6f9e001c8c5ff083206329b298eddcf",
       "returned_receipt_base": "385a0b8693cfa9f50b52410d484f04a70a702cde",
       "native_header": "c/include/ql/primitive.h",
       "native_source": "c/src/primitive.c",
@@ -39,6 +44,40 @@
     }
   },
   "orientation": {
+    "coordinate_system_ground": {
+      "implementation_standing": "observed-in-frozen-epi-c",
+      "raw_psychoid_root": {
+        "family": "FAMILY_NONE",
+        "coordinates": ["Psychoid_0", "Psychoid_1", "Psychoid_2", "Psychoid_3", "Psychoid_4", "Psychoid_5", "Psychoid_Hash"],
+        "source": "Body/S/S0/epi-lib/include/psychoid_numbers.h",
+        "law": "Raw psychoids are pre-categorical ground and are not C0-C5 or M0-M5 family manifestations."
+      },
+      "family_manifestations": [
+        {"family": "C", "implementation_name": "FAMILY_C", "role": "Category"},
+        {"family": "P", "implementation_name": "FAMILY_P", "role": "Position"},
+        {"family": "L", "implementation_name": "FAMILY_L", "role": "Lens"},
+        {"family": "S", "implementation_name": "FAMILY_S", "role": "Stack"},
+        {"family": "T", "implementation_name": "FAMILY_T", "role": "Thought"},
+        {"family": "M", "implementation_name": "FAMILY_M", "role": "Map (Bimba)"}
+      ],
+      "implementation_source": "Body/S/S0/epi-lib/include/ontology.h",
+      "ql_mef_kernel_relation": {
+        "source": "Body/S/S0/epi-lib/include/kernel.h",
+        "standing": "implementation-explicit",
+        "law": "The historical kernel names itself the QL/MEF computational meta-layer over the M-family C substrate."
+      },
+      "m1_inner_logic_relation": {
+        "source": "Body/S/S0/epi-lib/include/m1.h",
+        "standing": "implementation-explicit-plus-formal-reading",
+        "law": "Historical M1 is a generative mathematical/Spanda witness for the P/P-prime sixfold, 36/64 field and QL flowering. Its internal M1 coordinates can witness QL genesis and inner logic without making M1, or the M-family Map corpus, the whole coordinate ontology."
+      },
+      "formal_coordinate_reading": {
+        "position_family": "P/P-prime",
+        "lens_family": "L/L-prime",
+        "standing": "formal/research proposition corroborated by frozen family roles; richer semantic content remains with the QL/MEF source/formal corpus",
+        "law": "Core QL position and MEF lens/harmonic articulation is not exhausted by the accepted M-family PRE-D Map substrate."
+      }
+    },
     "category_family": [
       {"coordinate": "C0", "name": "Bimba"},
       {"coordinate": "C1", "name": "Form"},
@@ -97,7 +136,7 @@
     {"path": "src/m1.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M1 body containing ring mechanics plus Epi matrices/data", "semantic_owner": "mixed: generalized law candidates in QL-MEF, Epi semantic/data material in Epi", "migration": "low-level ring law promoted separately; M1/kernel inverted-half discrepancy remains open in QL-MEF #60", "epistemic_standing": "observed"},
     {"path": "src/m2.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M2 body containing 36/64/72 structures and authored correspondences", "semantic_owner": "mixed: generalized finite mechanics in QL-MEF, authored correspondence data in Epi", "migration": "finite addressing law promoted separately; correspondences stay Epi-owned", "epistemic_standing": "observed"},
     {"path": "src/m3.c", "compile_c11": "fail", "artifact_class": "research-provisional-stub", "reading": "Epi M3 body; strict-C11 blocked by non-constant static assertions; contains provisional evolutionary gaps", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "narrow complement/line-change parity uses migration-only compatibility header; source remains unchanged", "epistemic_standing": "observed"},
-    {"path": "src/m3_clock_lut.c", "compile_c11": "fail", "artifact_class": "generated-lut-optimization", "reading": "generated clock LUT transitively blocked by M3 header assertions", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments pending source-authority recovery", "migration": "generator tools/build_clock_degree_lut.py absent from locked revision; do not normalize representation", "epistemic_standing": "observed-source-gap"},
+    {"path": "src/m3_clock_lut.c", "compile_c11": "fail", "artifact_class": "generated-lut-optimization", "reading": "generated clock LUT transitively blocked by M3 header assertions", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments pending source-authority recovery", "migration": "historical generator lineage recovered at d101707c → f8c7cfbc → adec2d5d, but exact frozen generator revision/input state remains unresolved; do not normalize representation", "epistemic_standing": "observed-source-gap"},
     {"path": "src/m4.c", "compile_c11": "fail", "artifact_class": "research-provisional-stub", "reading": "Epi M4 body with BLAKE3 dependency plus explicit lens/protocol/alchemy/randomness provisional material", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "blocked by missing blake3.h in locked build; dependency placement does not determine semantic ownership", "epistemic_standing": "observed-source-gap"},
     {"path": "src/m5.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M5 return/synthesis body", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "semantic return remains Epi-owned", "epistemic_standing": "observed"},
     {"path": "src/main.c", "compile_c11": "fail", "artifact_class": "adapter-provider", "reading": "historical command-reach witness; transitively blocked by M3 header", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "not target CLI architecture", "epistemic_standing": "observed"},
@@ -147,10 +186,10 @@
           {"family": "Epi Bimba Map", "relation": "#1-4 CONTAINS_LOGIC_STAGE #1-4.2", "standing": "source-explicit"},
           {"family": "Epi Bimba Map", "relation": "#1-4.1 INVERTS_INTO #1-4.2", "standing": "source-explicit"}
         ],
-        "standing": "exact frozen repository-Map Bimba identity recovered; live Neo4j verification remains outstanding"
+        "standing": "exact frozen repository-M-Map Bimba identity recovered; live Neo4j verification remains outstanding"
       },
       "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": ["ql:m-coordinate:pratibimba:M1-4.2"], "providers": ["QL-MEF native C"]},
-      "authority": {"semantic": "Epi source owns #1-4.2; generalized QL law in QL-MEF; Epi historical manifestations remain Epi-owned", "computational": "QL-MEF", "data": "Epi Idea/Bimba/Map source records", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "authority": {"semantic": "Epi source owns #1-4.2; generalized QL law in QL-MEF; Epi historical manifestations remain Epi-owned", "computational": "QL-MEF", "data": "Epi Idea/Bimba/Map M-family source records", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
       "evidence": [
         {"kind": "source-coordinate", "ref": "EpiLogos/Epi-Logos-C-Experiments@daa660cbc1b8c5da83828698665a753852cb0287:Idea/Bimba/Map/datasets/low-detail/nodes_paramasiva.json#1-4.2", "result": "Principle of Inversion formulation explicitly names 0↔5, 1↔4, 2↔3"},
         {"kind": "source-relation", "ref": "Idea/Bimba/Map/datasets/low-detail/relations_paramasiva.json", "result": "#1-4.1 INVERTS_INTO #1-4.2; #1-4 CONTAINS_LOGIC_STAGE #1-4.2"},
@@ -189,7 +228,7 @@
       "artifact_class": "generalized-law",
       "formal_relation": "mod-six base-position projection from a 12-ring tick",
       "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1/kernel relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "projection operation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "tick → base position", "standing": "deterministic-derived"}], "standing": "explicitly one of two non-equivalent inverted-half projections"},
-      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "technology": {"s_products": ["S5"], "s_prime": [],"branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
       "authority": {"semantic": "QL-MEF preserves distinction pending #60", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
       "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::ring + epogdoon tick", "coverage": "all 256 uint8_t inputs", "result": "pass"}],
       "epistemic_standing": "deterministically-derived-and-parity-proven",
@@ -340,7 +379,7 @@
       "bimba_predecessor": "#1-4.1",
       "source_parent_relation": "#1-4 CONTAINS_LOGIC_STAGE #1-4.2",
       "source_transition_relation": "#1-4.1 INVERTS_INTO #1-4.2",
-      "standing": "exact frozen repository-Map Bimba identity recovered; live Bimba MCP/Neo4j verification remains outstanding",
+      "standing": "exact frozen repository-M-Map Bimba identity recovered; live Bimba MCP/Neo4j verification remains outstanding",
       "source_refs": [
         "EpiLogos/Epi-Logos-C-Experiments@daa660cbc1b8c5da83828698665a753852cb0287:Idea/Bimba/Map/datasets/low-detail/nodes_paramasiva.json#1-4.2",
         "EpiLogos/Epi-Logos-C-Experiments@daa660cbc1b8c5da83828698665a753852cb0287:Idea/Bimba/Map/datasets/low-detail/relations_paramasiva.json",
@@ -349,8 +388,8 @@
       "ql_map_projection": {
         "bimba_ref": "ql:m-coordinate:bimba:M1-4.2",
         "pratibimba_ref": "ql:m-coordinate:pratibimba:M1-4.2",
-        "owner_line": "QL-MEF PR #67",
-        "standing": "branch-level projection over source-owned identity; source spelling remains authoritative"
+        "owner_line": "QL-MEF current main d418abfff6f9e001c8c5ff083206329b298eddcf; historical producer PR #67",
+        "standing": "accepted-current-main M-family projection over source-owned identity; source spelling remains authoritative; this projection does not claim whole coordinate-system parity"
       }
     },
     "code_manifestation": {
@@ -373,7 +412,7 @@
     "reflection_contract": {
       "aikit": "ProjectMap preserves the external target-owned coordinate and exact CodeReference/verification route bidirectionally without parsing Bimba semantics.",
       "factory": "StructuralGround preserves exact source identity, parent/relation evidence and implementation revision separately from behavioural parity without parsing Bimba semantics.",
-      "status": "exact repository-source identity recovered; AIKit exact-coordinate conformance is on open PR #115; generic Factory conformance is accepted on main and exact-coordinate strengthening is on draft PR #160; live Bimba graph verification remains outstanding"
+      "status": "exact repository-source identity recovered; AIKit exact-coordinate conformance is accepted on current main; Factory exact-coordinate StructuralGround conformance is accepted on current main while wider #156 remains open; live Bimba graph verification remains outstanding"
     },
     "returned_evidence": {
       "bimba_map": {
@@ -382,30 +421,34 @@
         "coordinate": "#1-4.2",
         "parent": "#1-4",
         "relations": ["CONTAINS_LOGIC_STAGE", "INVERTS_INTO"],
-        "standing": "source-explicit-repository-map"
+        "standing": "source-explicit-repository-m-map"
       },
       "ql_map_projection": {
         "repository": "EpiLogos/QL-MEF",
-        "pr": 67,
-        "head": "6ef7bccfc48f527004e6b8897693cb714a52bc49",
-        "standing": "open-draft-map-substrate"
+        "accepted_main": "d418abfff6f9e001c8c5ff083206329b298eddcf",
+        "historical_producer_pr": 67,
+        "historical_producer_head": "6ef7bccfc48f527004e6b8897693cb714a52bc49",
+        "scope": "M-family",
+        "standing": "accepted-current-main-m-family-map-substrate"
       },
       "aikit": {
         "repository": "EpiLogos/ai-kit",
         "pr": 115,
-        "head": "49c2f1f42e5fd58c15d1677b933a919491528d11",
+        "candidate_head": "b0516fd566173af0e8be81cc9ae46f694df6c49c",
+        "accepted_main": "5308405e447b4a48e57fa2cfb2c5e6ef276ae343",
         "fixture": "crates/aikit-core/tests/epi_holographic_reflection.rs",
-        "standing": "open-ready-for-review-branch-conformance; exact-coordinate checks running",
-        "accepted_main": false
+        "workflow_runs": [32287246271, 32287246211, 32287246142, 32287246138, 32287246189],
+        "standing": "accepted-current-main-exact-coordinate-conformance"
       },
       "factory": {
         "repository": "EpiLogos/agent-system-design",
         "generic_merge": "dde3ddc7c666f740c022ab347100369563cce90b",
-        "main": "02627a2373ada04369e9d2d338cfd0809f49725c",
         "exact_binding_pr": 160,
-        "exact_binding_head": "fea16cf2e756eca872824f2d907be4e078a23b0e",
+        "exact_binding_head": "b93c59b4209505468f73d183f2b265f1b765b2e6",
+        "accepted_main": "06579aada01a77bd719c0c010a10f91084b4326f",
         "fixture": "factory/tests/epi_holographic_structural_ground.rs",
-        "standing": "generic-conformance-accepted-current-main; exact-source-coordinate strengthening open-draft"
+        "workflow_runs": [32287295358, 32287295425, 32287295364, 32287295491, 32287295518, 32287295580],
+        "standing": "accepted-current-main-exact-coordinate-conformance; wider Factory #156 remains open"
       }
     },
     "acceptance": {
@@ -418,9 +461,11 @@
       "numeric_parity": true,
       "relation_preserved": true,
       "aikit_bidirectional_traversal": true,
-      "aikit_acceptance_standing": "branch-level-exact-coordinate-conformance-not-main",
+      "aikit_acceptance_standing": "accepted-current-main-exact-coordinate-conformance",
       "factory_structural_evidence": true,
-      "factory_acceptance_standing": "generic-current-main-plus-exact-coordinate-draft-pr",
+      "factory_acceptance_standing": "accepted-current-main-exact-coordinate-conformance-with-wider-156-open",
+      "pre_d_map_scope_is_m_family_only": true,
+      "whole_coordinate_system_not_claimed_by_pre_d": true,
       "bimba_graph_live_verified": false,
       "s_product_visible_without_oi_redefinition": true,
       "duplicate_store_created": false,
@@ -428,16 +473,16 @@
     }
   },
   "known_gaps": [
-    {"id": "bimba-live", "owner": "EpiLogos/Epi-Logos-C-Experiments", "status": "repository-source-identity-recovered-live-graph-outstanding", "detail": "The first specimen is now exactly grounded at #1-4.2 in the frozen Map, with parentage and source relations recovered. Project-local Bimba MCP/Neo4j verification remains outstanding in this execution environment."},
+    {"id": "bimba-live", "owner": "EpiLogos/Epi-Logos-C-Experiments", "status": "repository-source-identity-recovered-live-graph-outstanding", "detail": "The first specimen is exactly grounded at #1-4.2 in the frozen M-family Map, with parentage and source relations recovered. Project-local Bimba MCP/Neo4j verification remains outstanding in this execution environment."},
+    {"id": "coordinate-family-ground-beyond-m-map", "owner": "EpiLogos/Epi-Logos-C-Experiments + EpiLogos/QL-MEF", "status": "scope-explicit-broader-family-reconciliation-open", "detail": "PRE-D #63 compiled Idea/Bimba/Map as the M-family source/relation substrate. Frozen C explicitly distinguishes pre-categorical raw psychoids from C/P/L/S/T/M family manifestations; the complete root/P/L/other-family source-relation field has not been claimed or compiled by PRE-D and must not be inferred from M-Map completion."},
     {"id": "m1-ring-discrepancy", "owner": "EpiLogos/QL-MEF#60", "status": "open", "detail": "Historical M1 mirrored traversal-stage and kernel modulo-six position projections disagree on inverted half; ascent/descent labels also conflict."},
-    {"id": "m3-clock-generator", "owner": "EpiLogos/QL-MEF#55 + Epi source owner", "status": "open", "detail": "m3_clock_lut.c names tools/build_clock_degree_lut.py but the generator is absent from the locked revision."},
+    {"id": "m3-clock-generator", "owner": "EpiLogos/QL-MEF#55 + Epi source owner", "status": "lineage-recovered-exact-generator-input-authority-open", "detail": "Historical generator lineage is recovered through d101707cfd5b52f76e6f21eb5a6ea9d3a4624689 → f8c7cfbc3ecb969f37b1151514ab253e167ad87d → adec2d5dea4f7b63347e46f9dff0adb4e714f4e1. The frozen 27-field LUT is not blob-identical to the adec2d5 output and announces computed fallback; exact generator revision, input mode/source state and per-field authority remain unresolved."},
     {"id": "qv-source-authority", "owner": "EpiLogos/QL-MEF#55 + Epi source owner", "status": "open", "detail": "qv_data.c is a managed/generated-style projection, but the underlying Quintessential View authority chain is unresolved."},
     {"id": "m4-blake3", "owner": "Epi source/build migration", "status": "open", "detail": "m4.c cannot compile from the locked tree because blake3.h is unavailable; dependency placement must not be confused with semantic ownership."},
     {"id": "provisional-regions", "owner": "Epi semantic owner", "status": "open", "detail": "M0 Siva operators, M3 evolutionary gaps, M4 lens/protocol/alchemy/randomness regions and Psychoid CF execute regions retain their explicit provisional/stub standing."},
-    {"id": "c-category-live-relations", "owner": "Epi Bimba + QL integration", "status": "open", "detail": "The first specimen now has exact Bimba identity, but C0..C5 qualification of other low-level laws beyond C5 pratibimba standing remains supported inference unless/until exact Bimba relation evidence is recovered."},
+    {"id": "c-category-live-relations", "owner": "Epi Bimba + QL integration", "status": "open", "detail": "The first specimen has exact Bimba identity, but C0..C5 qualification of other low-level laws beyond C5 pratibimba standing remains supported inference unless/until exact source relation evidence is recovered."},
     {"id": "s-prime-refraction", "owner": "Epi Bimba + O:I relational field", "status": "open", "detail": "Root S0..S5 mapping is locked; exact cross-product S-prime encoding must be derived from Bimba/O:I relations rather than generated by symmetry."},
     {"id": "t-t-prime", "owner": "Epi Bimba + project reflection programme", "status": "open", "detail": "#5-4 orientation is locked but the source evidence does not yet support a complete T/T-prime mapping; relation recovery must proceed from Map/live graph rather than empty Seed symmetry."},
-    {"id": "aikit-project-reflection", "owner": "EpiLogos/ai-kit#113 / PR #115", "status": "branch-exact-coordinate-conformance-running-not-main", "detail": "Generic bidirectional ProjectMap conformance was green on e36e8fc and the fixture is now rebound to exact source coordinate #1-4.2 at 49c2f1f; acceptance on AIKit main and the new exact-coordinate CI result remain outstanding."},
-    {"id": "factory-structural-ground", "owner": "EpiLogos/agent-system-design#156 / PR #160", "status": "generic-resolved-exact-coordinate-strengthening-open", "detail": "StructuralGround generic conformance is accepted on Factory main. Draft PR #160 binds #1-4.2 plus source parent/relation evidence to the exact C symbol without expanding Factory ontology; wider #156 work remains open."}
+    {"id": "factory-structural-fidelity-programme", "owner": "EpiLogos/agent-system-design#156", "status": "exact-conformance-accepted-wider-programme-open", "detail": "Exact #1-4.2 StructuralGround conformance is accepted on Factory main 06579aada01a77bd719c0c010a10f91084b4326f. Wider #156 Commission/planning, Recognition, HumanRequest and adversarial structural-fidelity acceptance remains open and is not closed by this specimen."}
   ]
 }
