@@ -2,43 +2,56 @@
 
 **Parent:** QL-MEF #30  
 **Architecture / relation research:** #25 / draft PR #27  
+**Fourfold authority:** #74 / #75 / `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md`  
+**Machine fourfold:** `epi-ms-fourfold.json`  
 **Grounding account:** `EPI-LOGOS-SOURCE-OF-TRUTH.md`  
 **Product build order:** `EPI-PRATIBIMBA-BUILD-ORDER.md`  
-**Machine guard:** `pratibimba-build-order.json`  
 **M/M′ field:** `epi-relational-field.csv`  
 **S/S′ field:** `epi-ssprime-relational-field.csv`  
-**M→S capability bridge:** `epi-ssprime-embodiment.json`  
+**M→S/S′ embodiment:** `epi-ssprime-embodiment.json`  
 **O:I field:** O:I #29 / `data/ql-relational-field.csv`
 
 ## 0. Read this correctly
 
-This Wayfinder has **two different orders** which must never be collapsed again.
+This Wayfinder has two different orders which must not be collapsed.
 
 ### A. Meaning / provenance traversal
 
-When we need to understand a capability, trace it through the architecture:
+When we need to understand a capability, trace it through the current fourfold:
 
 ```text
-Epi authored meaning / Seed sources
+Epi authored M / M′ meaning and source
         ↓
-M/M′ domain + lived relation
+canonical same-coordinate M / S / S′ / M′ home
         ↓
-wider S/S′ technical embodiment
+cross-coordinate harmonic / capability relations where actually needed
         ↓
-S4′ Ta-Onta only where agentic inhabitation is active
-        ↓
-current O:I-native owner/body
+current native product owner/body
         ↓
 actual implementation and evidence
         ↓
 returned reality
 ```
 
-This tells us **what a thing is, why it exists, where its meaning lives, and which current mechanism carries it**.
+For each index:
+
+```text
+M_i    semantic / ontological subsystem identity + guardian
+  ↓ dominant standing technological reflection
+S_i    current O:I product centre
+  ↕ conjugate technological pair
+S_i′   Ta-Onta operative/activity reflection
+  ↓ composition
+M_i′   recursive/deep Pratibimba
+```
+
+The register distinction tells us what kind of thing we are looking at. The common index tells us how the differentiated forms return together. Neither fact cancels the other.
+
+Historical command/runtime → residency → graph → gateway → agent-runtime → world-boundary S architecture remains source and implementation evidence. Historical `S4.0′..S4.5′` Ta-Onta nesting remains implementation/local-recursive provenance. Neither is current top-level coordinate authority after #74/#75.
 
 ### B. Product implementation order
 
-The chronological reconstitution order is different:
+Chronological reconstitution is a separate question:
 
 ```text
 O:I desktop / agent-IDE host
@@ -56,17 +69,61 @@ full M0′–M5′ deep workspaces
 deeper Ta-Onta / incomplete kernels / research loops as demanded
 ```
 
-**Formal importance is not build order.** QL/MEF, M1/M2 mathematics, the Bimba map and the wider S structure may be foundational to meaning without being the first user-facing engineering tranche.
-
-The first product question is not “which formal subsystem is deepest?” It is:
-
-> what is the smallest real O:I-hosted Pratibimba experience that lets a person live in the Epi system while consuming real Epi computation and provenance?
-
-The authored answer is **Nara M4′ outward**.
+**Formal importance is not build order.** The fourfold relation map is a reasoning/provenance system, not a demand to horizontally implement all coordinates before a real lived vertical can exist.
 
 ---
 
-## 1. Current product destination
+## 1. Current canonical fourfold
+
+```text
+0  Anuttara   / Central          / Khora     / epi.deep.m0
+1  Paramaśiva / Actuation        / Hen       / epi.deep.m1
+2  Paraśakti  / AIKit            / Pleroma   / epi.deep.m2
+3  Mahāmāyā   / Software Factory / Chronos   / epi.deep.m3
+4  Nara       / Workcell         / Anima     / epi.deep.m4
+5  Epii       / QL-MEF           / Aletheia  / epi.deep.m5
+```
+
+Current S layer:
+
+```text
+S0 Central
+S1 Actuation
+S2 AIKit
+S3 Software Factory
+S4 Workcell
+S5 QL-MEF
+```
+
+Current S′ layer:
+
+```text
+S0′ Khora
+S1′ Hen
+S2′ Pleroma
+S3′ Chronos
+S4′ Anima
+S5′ Aletheia
+```
+
+Current M/M′ guardian/deep identity:
+
+```text
+M0/M0′ Anuttara
+M1/M1′ Paramaśiva
+M2/M2′ Paraśakti
+M3/M3′ Mahāmāyā
+M4/M4′ Nara
+M5/M5′ Epii
+```
+
+The old `Epii = S5′` reading is superseded. Epii remains M5 guardian / M5′ deep identity; Aletheia is the S5′ disclosure/crystallisation/truth-return activity.
+
+The old whole-Ta-Onta-under-`S4′` reading is also superseded as top-level identity. The current source and implementation residency under `Body/S/S4/ta-onta/**` is preserved and cited as real evidence; it does not determine the top-level coordinate law.
+
+---
+
+## 2. Current product destination
 
 Epi-Logos is reconstituted as a serious Epi mode / Pratibimba contribution inside the current O:I local application rather than by recreating the generic application/harness machinery that the historical Epi shell had to own itself.
 
@@ -74,9 +131,9 @@ Epi-Logos is reconstituted as a serious Epi mode / Pratibimba contribution insid
 O:I DESKTOP / LOCAL AGENT IDE
 │
 ├─ global navigation / search / project-app rail
-├─ primary canvas
+├─ primary canvas / workbench
 ├─ situated/root-agent + context region
-└─ lower drawer for trajectory / terminal / events / processes / logs
+└─ lower material/evidence region
 
         ↓ hosts
 
@@ -86,62 +143,88 @@ PRATIBIMBA / EPI MODE
 │   └─ M4′ Nara + M5′ Epii + M0′ Anuttara/Bimba
 │
 ├─ Cosmic — integrated structural instrument
-│   └─ M1′ Paramasiva + M2′ Parashakti + M3′ Mahamaya
+│   └─ M1′ Paramaśiva + M2′ Paraśakti + M3′ Mahāmāyā
 │
 └─ Deep workspaces
     └─ M0′ M1′ M2′ M3′ M4′ M5′
 ```
 
-O:I owns the generic host/composition relation. Epi owns the Pratibimba world and instrument semantics.
+O:I owns generic host/composition relation. Epi owns Pratibimba world and instrument semantics.
 
-### Current host authority
+The current Eightfold successor keeps six complete recursive deep products but clarifies application embodiment:
 
-Use current O:I #23/#25/#26 as the generic application authority:
-
-- Rust-owned application lifecycle and privileged local bridge;
-- stable application regions;
-- native Surface/Component contribution hosting;
-- AIKit SessionSpace/provider relation;
-- situated/root-agent encounter;
-- command/search and stable refs;
-- terminal/trajectory/events region;
-- package/contribution composition;
-- cross-product application navigation.
-
-Do **not** build an Epi-only duplicate of those generic concerns.
-
-### Retained historical Epi shell authority
-
-The Epi M′ corpus remains authoritative for the **experience and function** of Pratibimba:
-
-- non-numbered 0/1 parent;
-- Personal versus Cosmic relation;
-- lean daily surface versus deep subsystem workspaces;
-- M4′ Nara flow/journal as the primary lived stream;
-- M5′ Epii conversational pedagogy/review/self-articulation;
-- M0′ Bimba/Anuttara source-ground orientation;
-- integrated M1′/M2′/M3′ cosmic clock/instrument;
-- technical detail summonable rather than permanently dumped into the default UX;
-- one shared `MathemeHarmonicProfile`/canonical successor rather than renderer-local matheme rules.
-
-Older Theia/Electron/dedicated-Tauri shell topology is **implementation evidence, not current host authority**. In particular, the May M5′ source still contains a dedicated-Theia-shell decision that is now superseded for generic host topology by the August O:I desktop programme. Preserve its Epi IDE/agent/pedagogy functions, not that stale ownership boundary.
+- M0′ and M5′ are normally implicit ground/return dimensions of the whole workbench and can also be foregrounded explicitly;
+- M1′–M4′ are the principal foreground deep instruments;
+- `epi.cosmic.123` and `epi.personal.450` remain the two parent 3:3 compositions;
+- there is no M6/M7 and no P6.
 
 ---
 
-## 2. Pratibimba experiential law
+## 3. Native product ownership inside S
 
-### 2.1 M′ is not a generic UI layer
+The standing S reflections do not move generic mechanics out of their native owners.
+
+### S0 — Central / Anuttara
+
+Durable authored/project ground, source-class mutation, provenance, ProjectCentral/Bimba orientation and sparse human-owned ground.
+
+### S1 — Actuation / Paramaśiva
+
+Agent identity and loop constitution, Agency, WorldBinding, authority, bounds, delegation, determination and Return.
+
+### S2 — AIKit / Paraśakti
+
+Context, capabilities, skills, tools, resources, models, harnesses, profiles, SessionSpace/AgentSession presentation, Surfaces/Components and provider fitness.
+
+### S3 — Software Factory / Mahāmāyā
+
+Project development, Runs, Methods, patterns of action, Artifacts, Evidence, Candidates, Recognition, playback and critique.
+
+### S4 — Workcell / Nara
+
+Material execution, providers, bindings, services, persistence, lifecycle, reachability and embodied/stable execution worlds.
+
+### S5 — QL-MEF / Epii
+
+Executable relation, conjugation, refraction, formal synthesis, MEF, harmonic intelligence, recursive structural fidelity and whole-system return.
+
+The six guardians are enduring stewards/prime organisers of these product worlds. #42 owns their native materialisation through Actuation + AIKit + Workcell/Factory mechanisms. A guardian is not defined as a mandatory coding stage.
+
+---
+
+## 4. S′ as operative Ta-Onta reflection
+
+Ta-Onta is the subdominant/operative face of the same sixfold:
+
+```text
+Khora      S0′ — operative ground / workspace / disclosure edge
+Hen        S1′ — lawful form / content / residency / unification
+Pleroma    S2′ — powers / capabilities / retrieval / abundance field
+Chronos    S3′ — temporal condition / sequence / DAY-NOW-Kairos relation
+Anima      S4′ — animation / dispatch / situated operative agency
+Aletheia   S5′ — disclosure / crystallisation / truth-return / evidence handoff
+```
+
+Current package co-residency under `Body/S/S4/ta-onta` is implementation fact. `composite-entry.ts` registers all six contributions as peers. Preserve that runtime/source structure where it is useful; do not project it back into a law that says only S4′ can own the six Ta-Onta top-level identities.
+
+A situated Agency or execution may use one or more Ta-Onta activities. The canonical guardian remains distinct from the module, Agency and Execution.
+
+---
+
+## 5. Pratibimba experiential law
+
+### 5.1 M′ is not a generic UI layer
 
 ```text
 M  = Bimba / canonical Epi coordinate image and domain constitution
-M′ = Pratibimba / lived-reflected operation of that image
+M′ = Pratibimba / lived-reflected operation and deep composition of that image
 ```
 
-The S layers and current O:I products supply bodies/protocols. M′ determines how Epi becomes experientially, visually, sonically and operationally present.
+The S/S′ reflections provide standing and operative technological worlds. M′ determines how the differentiated activity composes as the deeper Epi instrument/experience.
 
-### 2.2 Nara is the first lived root
+### 5.2 Nara is the first lived root
 
-M4′ is the primary daily surface:
+M4′ remains the primary daily surface:
 
 ```text
 journal / flow editor
@@ -153,13 +236,9 @@ quick agent reflection / sendoff
 Explain / provenance on demand
 ```
 
-Default UX is lived engagement, not a quaternion/correspondence dump. The person should encounter a journal that already knows its cosmic/harmonic condition without being forced to inspect the entire computational interior.
+Nara's constitutional technological home is Workcell/Anima, not because Nara is merely a material runtime, but because lived/embodied actuality is where this coordinate stands and operates technologically. Real Nara capability can still cross Central, Actuation, AIKit, Factory and QL-MEF.
 
-M4′ consumes upstream handles; it must not regenerate their laws locally.
-
-### 2.3 Personal is 4/5/0
-
-The first whole Epi daily composition is:
+### 5.3 Personal is 4/5/0
 
 ```text
 M4′ Nara
@@ -173,11 +252,7 @@ M0′ Anuttara / Bimba
         ↺
 ```
 
-This is the **Nara–Epii–Anuttara** experience around which the first reconstituted product loop should close.
-
-### 2.4 Cosmic is one instrument before it is three deep workspaces
-
-The first Cosmic face is an integrated reading of:
+### 5.4 Cosmic is one instrument before it is three deep workspaces
 
 ```text
 M1′ relational / mathematical movement
@@ -189,13 +264,11 @@ M3′ symbolic / clock / transcription field
 shared current Matheme / harmonic / temporal instrument state
 ```
 
-This feeds Nara and can be opened explicitly as the Cosmic face. Full M1′, M2′ and M3′ workspaces come later.
-
 ---
 
-## 3. First engineering dependency — adopt the real Epi kernel
+## 6. First engineering dependency — adopt the real Epi kernel
 
-The initial computational work is **not** a deep M1/M2 rewrite. It is an adoption/bridge tranche over the real existing substrate:
+The initial computational work is adoption/bridge over the real existing substrate:
 
 ```text
 Epi `Body/S/S0/epi-lib`       C domain/kernel implementation
@@ -206,212 +279,131 @@ small typed Epi-owned bridge/API
 O:I-hosted Pratibimba surfaces and Actions
 ```
 
-The bridge should expose the smallest stable/provenance-bearing primitives the first M′ surfaces consume:
+Expose only the stable/provenance-bearing primitives the first M′ surfaces consume:
 
 - Bimba / EpiAddress / M/M′ identity;
-- M0–M5 roots and the six canonical M-domain Agent identities;
-- QL relation/position/lens/Context-Frame handles from the accepted substrate;
+- M0–M5 roots and canonical guardian identities;
+- accepted QL relation/position/lens/Context-Frame handles;
 - VAK: `CPF / CT / CP / CF / CFP / CS`;
 - current `MathemeHarmonicProfile` or proven successor;
-- DAY/NOW / tick / Kairos/temporal handles needed by the lived surface;
-- coordinate/source/provenance handles;
+- DAY/NOW / tick / Kairos handles needed by lived surfaces;
+- source/provenance handles;
 - Nara protected identity/current-field/day-episode handles;
-- Mahamaya/oracle/transcription handles only where actually implemented;
+- implemented Mahāmāyā/oracle/transcription handles as needed;
 - implementation status: implemented / partial / stub / research.
 
-This is a **minimum floor for comprehension and state-sharing**, not a demand to finish every theoretical capability before the UI can exist.
-
-QL-MEF remains canonical for developed generalisable QL/MEF/relation/harmonic operators where authority has actually moved there. Epi retains Epi-specific psychoid, correspondential and instrument content. Open narrow QL-MEF dependencies when an experienced slice actually needs them.
+QL-MEF owns generalisable QL/MEF/relation/harmonic operators where that authority has actually moved. Epi retains Epi-specific psychoid, correspondential and instrument content.
 
 ---
 
-## 4. Product build phases
+## 7. Product build phases
 
 ### Phase 0 — O:I host integration
 
-Start at the current O:I desktop, not at a new Epi shell.
-
-Prove:
-
-- an Epi/Pratibimba native contribution or mode is discoverable;
-- it can occupy the primary canvas;
-- it shares stable object refs with the O:I context/agent region;
-- generic AgentSession/SessionSpace/harness/process/terminal state remains native O:I/AIKit/Actuation/Workcell state;
-- old Epi shell code is consumed only as renderer/interaction/function evidence.
+Prove Epi/Pratibimba is discoverable and hosted by current O:I workbench primitives without an Epi-only duplicate generic shell.
 
 ### Phase 1 — kernel / primitive bridge
 
-Link/adapt the existing Epi C/Rust computational body and expose the minimum primitive/profile state above.
-
-Acceptance is typed round-trip + provenance + restart + deterministic fixtures, not “all six M domains rewritten”.
+Link/adapt the existing C/Rust computational body and expose the minimum typed primitive/profile state. Acceptance is typed round-trip + provenance + restart + deterministic fixtures, not a deep rewrite of all six M domains.
 
 ### Phase 2 — Nara M4′ first lived vertical
 
-Implement in the O:I host:
-
-```text
-flow/journal
-protected day-as-episode
-DAY/NOW
-current Matheme/resonance/VAK/coordinate context
-lean identity
-highlight/sendoff
-situated Nara/Anima interaction through O:I agent region
-Explain/source/provenance
-```
-
-This is the first genuine Pratibimba acceptance target.
+Implement flow/journal, protected day-as-episode, DAY/NOW, current Matheme/resonance/VAK/coordinate context, lean identity, highlight/sendoff, situated interaction and Explain/source/provenance.
 
 ### Phase 3 — Personal 4/5/0
 
 Add summonable Epii review/pedagogy and Anuttara/Bimba source orientation around the same Nara object/state.
 
-Do not make Epii a second generic coding-agent control plane. O:I/AIKit/Factory supply generic development mechanics; Epii supplies Epi pedagogy, interpretation, review and return law.
-
 ### Phase 4 — Cosmic instrument preview
 
-Expose the real shared harmonic/temporal state as the integrated M1′/M2′/M3′ Cosmic instrument. Nara should already be able to consume the relevant handles before every deep visualisation exists.
+Expose real shared harmonic/temporal state as integrated M1′/M2′/M3′ Cosmic instrument.
 
 ### Phase 5 — deep M′ workspaces
 
-Expand according to actual source design and demand:
-
-- **M0′** — Bimba graph/map/source traceability;
-- **M1′** — mathematical-musical relational/topological instrument;
-- **M2′** — MEF/correspondential/cymatic instrument;
-- **M3′** — full clock/cosmos/transcription instrument;
-- **M4′** — deep Nara journal/dream/oracle/activity/personal-field/history tooling;
-- **M5′** — deep Epii pedagogy/canon/developer/Logos Atelier workbench.
+Expand M0′–M5′ according to actual source design and demand, preserving the Eightfold successor's application-role asymmetry.
 
 ### Phase 6 — deep inhabitation / research
 
-Deepen Ta-Onta, incomplete M4 faculties, advanced M1/M2/M3 operators, Epii autoresearch and self-development only according to real dependency/evidence.
+Deepen Ta-Onta, incomplete faculties, advanced operators and Epii autoresearch according to real dependency/evidence rather than matrix completeness.
 
 ---
 
-## 5. M/M′, S/S′ and O:I remain the reasoning/provenance system
+## 8. Relation-map use
 
-The corrected product sequence does **not** discard the three relational fields.
+### 8.1 M/M′ field
 
-### 5.1 M/M′ — domain and lived meaning
+Use `epi-relational-field.csv` for semantic/deep domain relations.
 
-```text
-M0  M1  M2  M3  M4  M5
-M0′ M1′ M2′ M3′ M4′ M5′
-```
+### 8.2 M/S/S′/M′ spine
 
-Use `epi-relational-field.csv` to understand domain relations, conjugates and harmonic neighbourhoods.
+Use `epi-ms-fourfold.json` to answer:
 
-### 5.2 Wider S/S′ — technical strata and prime law
+- which guardian/M identity owns this coordinate?
+- which standing product is its dominant technological reflection?
+- which Ta-Onta module is its operative conjugate?
+- which deep M′ product composes the differentiated activity?
 
-Authoritative current reading:
+### 8.3 S/S′ field
 
-```text
-S0   CommandRuntimeGround     S0′ ReflectiveCLILaw
-S1   VaultResidency           S1′ HenCompilerLaw
-S2   GraphBody                S2′ CoordinateGraphLaw
-S3   GatewayControl           S3′ TemporalStateLaw
-S4   AgentRuntime             S4′ TaOntaInhabitation
-S5   WorldBoundary            S5′ EpiiReturnLaw
-```
+Use `epi-ssprime-relational-field.csv` for A/B/C, D1/D2/D3 and CF relations across actual products and Ta-Onta faces.
 
-The wider S circuit remains:
+Historical aliases in that CSV exist for provenance only. They are not canonical face names.
 
-```text
-execute → reside/form → relate/retrieve → route/share-in-time
-        → act/inhabit → address-world/return → changed execution
-```
+### 8.4 Embodiment
 
-### 5.3 Ta-Onta is nested inside S4′
+Use `epi-ssprime-embodiment.json` for constitutional home plus cross-coordinate participation. Same-coordinate home is not exclusivity.
 
-Never flatten it across the wider S′ row:
+### 8.5 O:I H/A
+
+O:I #29 remains separately owned:
 
 ```text
-S4′ Ta-Onta
- ├─ S4.0′ Khora
- ├─ S4.1′ Hen
- ├─ S4.2′ Pleroma
- ├─ S4.3′ Chronos
- ├─ S4.4′ Anima
- └─ S4.5′ Aletheia
-             ↓
-          S5′ Epii
+H_i = human-facing encounter with product i
+A_i = agent-facing encounter with product i
 ```
 
-Protect:
-
-```text
-S0′ != S4.0′ Khora
-S1′ != S4.1′ Hen
-S2′ != S4.2′ Pleroma
-S3′ != S4.3′ Chronos
-S4′ != S4.4′ Anima
-S5′ != S4.5′ Aletheia
-```
-
-Ta-Onta participates only when an agent actually inhabits/acts through the Epi world. Generic model/harness/session/tool/material mechanics remain native O:I-product concerns.
-
-### 5.4 O:I native ownership
-
-```text
-Central      authored human/local ground
-Actuation    Agent / Agency / WorldBinding / determination / Return
-AIKit        Context / Knowledge / Capability / Profile / SkillSet /
-             model / harness / SessionSpace / Component / Surface
-Factory      Project / Run / Artifact / Evidence / Candidate / Recognition
-Workcell     provider / process / service / store / material body
-QL-MEF       formal relation / MEF / harmonic intelligence
-O:I parent   application composition + Projection / Participant /
-             SharedField / Contribution / Encounter
-```
-
-Epi domain semantics operate through these without being reduced to them.
+These are orthogonal encounter orientations over S. They do not replace canonical Epi Agent identity.
 
 ---
 
-## 6. Correct vertical-slice method
+## 9. Correct vertical-slice method
 
-For implementation, start from the **next missing experienced capability**, not from whichever mathematical subsystem appears most foundational.
+Start from the next missing experienced capability, not whichever subsystem appears most foundational.
 
 ```text
 EXPERIENCE
 What should the person/agent actually be able to do next?
         ↓
-M′ CONTRACT
-Which authored Pratibimba surface defines that experience?
+AUTHORED M / M′ CONTRACT
+What does the Epi source say this is and why does it exist?
         ↓
-MINIMUM DOMAIN SUBSTRATE
-Which existing M/kernel primitives are actually required?
+CONSTITUTIONAL HOME
+Which M / S / S′ / M′ coordinate is primary?
         ↓
-WIDER S/S′
-Which technical strata carry it?
+CROSS-COORDINATE NEEDS
+Which other products/Ta-Onta activities are actually required?
         ↓
-S4′ ONLY IF NEEDED
-Which Ta-Onta carrier is active because an agent is inhabiting the act?
-        ↓
-O:I OWNER
-Which current product supplies the generic mechanism/body?
+NATIVE OWNER
+Which current product owns each generic mechanism/body?
         ↓
 REALITY
-Inspect current code, tests, data, readiness and source authority.
+Inspect current code, tests, data, provider, privacy and readiness.
         ↓
 BUILD
 Smallest coherent vertical slice.
         ↓
 PROVE
-Interaction + computation + provenance + privacy/authority + restart parity.
+Interaction + computation + provenance + authority/privacy + restart parity.
         ↓
 RETURN
-Update only the maps/specs whose truth actually changed.
+Update only maps/specs whose truth actually changed.
 ```
 
-The QL relation fields generate questions and preserve structure; they do **not** generate chronological work merely because a cell exists.
+The QL fields generate questions and preserve relation; they do not generate chronological obligations merely because a relation exists.
 
 ---
 
-## 7. First product acceptance milestone
-
-The first Epi reconstitution milestone is:
+## 10. First product acceptance milestone
 
 ```text
 O:I desktop starts
@@ -435,52 +427,37 @@ Epii/Anuttara explanation/review can be summoned
 restart preserves canonical state, privacy and provenance
 ```
 
-That proves the product in the direction it is actually intended to be lived.
-
-The first milestone is **not**:
-
-- full M1′ mathematical instrument;
-- full M2′ 72-fold cymatic matrix;
-- full M3′ transcription cosmos;
-- full QL-MEF musical destination;
-- full Ta-Onta migration;
-- full Epii autoresearch.
-
-Those are later/deeper capabilities which can now grow from a functioning Pratibimba experience.
+That proves the product in the direction it is intended to be lived. It is not blocked on full M1′/M2′/M3′ depth, a complete Ta-Onta rewrite, or full Epii autoresearch.
 
 ---
 
-## 8. Current workstream interpretation
+## 11. Authority and return
 
-The existing QL-MEF issues remain useful, but they are not an implicit dependency waterfall.
+Preserve throughout:
 
-- **#31 / #39 / #49 — QL-MEF formal/harmonic work:** semantic/formal substrate; advance narrowly when current Pratibimba slices require missing canonical operators, and independently for QL-MEF's own product development.
-- **#33 / #38 / #44 / #45 — Epi computational substrate:** begin with adoption + primitive bridge + parity/provenance; do not require full rewrite before Nara.
-- **#34 — Pratibimba instruments:** implementation priority is M4′ first, then Personal 4/5/0, then integrated Cosmic, then deep workspaces.
-- **#35 — Central↔Nara:** early dependency for authored/protected personal ground and durable mutation law.
-- **#36 — parent 0/1:** establish the O:I-hosted parent around Nara first; Cosmic can grow from minimal real profile output.
-- **#32 / #46 / #47 / #48 — S/O:I/Ta-Onta conformance:** apply only to the mechanisms actually touched by each vertical slice.
-- **#37 / #41 — Epii return and shared Projection:** follow once the local personal-return loop exists.
-- **#42 — canonical Agents:** bind the six Epi identities through native Actuation/AIKit without recreating generic harness semantics.
+```text
+Authored source
+!= Observation
+!= Inference
+!= Derived state
+!= Proposal
+!= Accepted durable mutation
+```
 
-This changes **build priority**, not the semantic importance of the deeper workstreams.
+And also:
 
----
+```text
+M/S/S′/M′ typed distinction
+!= denial of same-coordinate identity
 
-## 9. Drift guards
+same-coordinate constitutional home
+!= one-product/one-capability exclusivity
 
-Reject or rewrite a tranche that:
+historical source / package residency
+!= current top-level coordinate authority
 
-- starts with deep M1/M2 work simply because those systems are formally foundational;
-- creates another general Epi desktop/harness/session system beside O:I;
-- treats the old Theia/Tauri process topology as a preservation target;
-- hides the existing C/Rust kernel behind fixtures instead of adopting it;
-- recomputes QL/VAK/Matheme rules in React/UI code;
-- turns Nara into a technical dashboard rather than a lived writing/continuity surface;
-- exposes protected personal material because the host can technically reach it;
-- treats Cosmic as three unrelated dashboards;
-- treats O:I hosting as O:I ownership of Bimba/Nara/Epii semantics;
-- flattens Ta-Onta across S0′–S5′;
-- requires every deep subsystem to be complete before the first useful Nara loop.
+O:I H/A encounter face
+!= canonical guardian Agent
+```
 
-The goal is not to rediscover Epi from its source tree. It is to let the **already-authored Pratibimba design** inhabit the **already-developed O:I application/agency cradle**, while bringing forward the real Epi computation and only rebuilding what current reality actually requires.
+Current code tells us what is real now. It does not retroactively define why the product exists. Authored source tells us what is meant. It does not prove what currently works. Returned reality can revise the design only through an explicit successor.
