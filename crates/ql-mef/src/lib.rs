@@ -19,9 +19,9 @@ pub use context_frame::{
     ContextFrameSelection, MefFormCoordinate, MefGrain, canonical_context_frame_progression,
 };
 pub use context_frame_target::{
-    read_external_context_frame, ContextFrameReadingOrigin, ContextFrameReadingStatus,
+    CONTEXT_FRAME_TARGET_READING_VERSION, ContextFrameReadingOrigin, ContextFrameReadingStatus,
     ContextFrameStructuralProbe, ExternalContextFrameError, ExternalContextFrameReading,
-    ExternalSixfoldMapping, CONTEXT_FRAME_TARGET_READING_VERSION,
+    ExternalSixfoldMapping, read_external_context_frame,
 };
 pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
