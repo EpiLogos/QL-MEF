@@ -1,0 +1,333 @@
+{
+  "schema_version": "epi.guardian-materialisation/v1",
+  "status": "current-native-composition",
+  "source_guardians": "docs/integrations/epi-logos/epi-guardians.json",
+  "owner_snapshots": {
+    "EpiLogos/Central": "a332b26eb08b95581533fc5053a2d16a22cf1f69",
+    "EpiLogos/Actuation": "0c6a9147a780329007733df643eb07108f589ac6",
+    "EpiLogos/ai-kit": "5308405e447b4a48e57fa2cfb2c5e6ef276ae343",
+    "EpiLogos/agent-system-design": "06579aada01a77bd719c0c010a10f91084b4326f",
+    "EpiLogos/Workcell": "8a744b1ddbdc694ad71b7aea72064f7def6620d2",
+    "EpiLogos/QL-MEF#27": "7011f660025e5194ff15d4edba50b306296216a8"
+  },
+  "native_contracts": {
+    "actuation": {
+      "repository": "EpiLogos/Actuation",
+      "revision": "0c6a9147a780329007733df643eb07108f589ac6",
+      "agency_schema": "contracts/agency-v1.schema.json",
+      "primitives": ["WorldBinding", "RootScope", "MetagencyGrant", "Determination", "Return"]
+    },
+    "aikit": {
+      "repository": "EpiLogos/ai-kit",
+      "revision": "5308405e447b4a48e57fa2cfb2c5e6ef276ae343",
+      "sources": [
+        "crates/aikit-core/src/profile.rs",
+        "crates/aikit-core/src/skillset.rs",
+        "crates/aikit-core/src/context.rs",
+        "crates/aikit-core/src/context_resolution.rs",
+        "crates/aikit-core/src/method.rs",
+        "crates/aikit-core/src/session_space.rs"
+      ],
+      "primitives": ["Profile", "SkillSet", "Context", "ContextResolution", "Method", "SessionSpace"]
+    },
+    "factory": {
+      "repository": "EpiLogos/agent-system-design",
+      "revision": "06579aada01a77bd719c0c010a10f91084b4326f",
+      "responsibility": "Run/Evidence only when the guardian act is developmental"
+    },
+    "workcell": {
+      "repository": "EpiLogos/Workcell",
+      "revision": "8a744b1ddbdc694ad71b7aea72064f7def6620d2",
+      "responsibility": "material body/provider resolution only when execution requires it"
+    }
+  },
+  "materialisations": [
+    {
+      "guardian_ref": "epi:agent:anuttara",
+      "native_product_repo": "EpiLogos/Central",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:anuttara:stewardship",
+          "agent_ref": "epi:agent:anuttara",
+          "agency_ref": "epi:agency:anuttara:stewardship",
+          "world_ref": "github:EpiLogos/Central",
+          "scope_ref": "epi:scope:anuttara:stewardship",
+          "purpose_ref": "epi:stewardship:anuttara",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/Central:native-actions-readings"]
+        },
+        "root_scope": {
+          "schema": "actuation.agency/v1",
+          "scope_ref": "epi:scope:anuttara:stewardship",
+          "enclosing_world_ref": "github:EpiLogos/Central"
+        }
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:anuttara",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:anuttara",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:anuttara:stewardship",
+        "context_world_binding_ref": "epi:binding:anuttara:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    },
+    {
+      "guardian_ref": "epi:agent:paramasiva",
+      "native_product_repo": "EpiLogos/Actuation",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:paramasiva:stewardship",
+          "agent_ref": "epi:agent:paramasiva",
+          "agency_ref": "epi:agency:paramasiva:stewardship",
+          "world_ref": "github:EpiLogos/Actuation",
+          "scope_ref": "epi:scope:paramasiva:stewardship",
+          "purpose_ref": "epi:stewardship:paramasiva",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/Actuation:native-actions-readings"]
+        },
+        "root_scope": {"schema": "actuation.agency/v1", "scope_ref": "epi:scope:paramasiva:stewardship", "enclosing_world_ref": "github:EpiLogos/Actuation"}
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:paramasiva",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:paramasiva",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:paramasiva:stewardship",
+        "context_world_binding_ref": "epi:binding:paramasiva:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    },
+    {
+      "guardian_ref": "epi:agent:parasakti",
+      "native_product_repo": "EpiLogos/ai-kit",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:parasakti:stewardship",
+          "agent_ref": "epi:agent:parasakti",
+          "agency_ref": "epi:agency:parasakti:stewardship",
+          "world_ref": "github:EpiLogos/ai-kit",
+          "scope_ref": "epi:scope:parasakti:stewardship",
+          "purpose_ref": "epi:stewardship:parasakti",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/ai-kit:native-actions-readings"]
+        },
+        "root_scope": {"schema": "actuation.agency/v1", "scope_ref": "epi:scope:parasakti:stewardship", "enclosing_world_ref": "github:EpiLogos/ai-kit"}
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:parasakti",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:parasakti",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:parasakti:stewardship",
+        "context_world_binding_ref": "epi:binding:parasakti:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    },
+    {
+      "guardian_ref": "epi:agent:mahamaya",
+      "native_product_repo": "EpiLogos/agent-system-design",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:mahamaya:stewardship",
+          "agent_ref": "epi:agent:mahamaya",
+          "agency_ref": "epi:agency:mahamaya:stewardship",
+          "world_ref": "github:EpiLogos/agent-system-design",
+          "scope_ref": "epi:scope:mahamaya:stewardship",
+          "purpose_ref": "epi:stewardship:mahamaya",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/agent-system-design:native-actions-readings"]
+        },
+        "root_scope": {"schema": "actuation.agency/v1", "scope_ref": "epi:scope:mahamaya:stewardship", "enclosing_world_ref": "github:EpiLogos/agent-system-design"}
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:mahamaya",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:mahamaya",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:mahamaya:stewardship",
+        "context_world_binding_ref": "epi:binding:mahamaya:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    },
+    {
+      "guardian_ref": "epi:agent:nara",
+      "native_product_repo": "EpiLogos/Workcell",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:nara:stewardship",
+          "agent_ref": "epi:agent:nara",
+          "agency_ref": "epi:agency:nara:stewardship",
+          "world_ref": "github:EpiLogos/Workcell",
+          "scope_ref": "epi:scope:nara:stewardship",
+          "purpose_ref": "epi:stewardship:nara",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/Workcell:native-actions-readings"]
+        },
+        "root_scope": {"schema": "actuation.agency/v1", "scope_ref": "epi:scope:nara:stewardship", "enclosing_world_ref": "github:EpiLogos/Workcell"}
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:nara",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:nara",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:nara:stewardship",
+        "context_world_binding_ref": "epi:binding:nara:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    },
+    {
+      "guardian_ref": "epi:agent:epii",
+      "native_product_repo": "EpiLogos/QL-MEF",
+      "actuation": {
+        "world_binding": {
+          "schema": "actuation.agency/v1",
+          "binding_ref": "epi:binding:epii:stewardship",
+          "agent_ref": "epi:agent:epii",
+          "agency_ref": "epi:agency:epii:stewardship",
+          "world_ref": "github:EpiLogos/QL-MEF",
+          "scope_ref": "epi:scope:epii:stewardship",
+          "purpose_ref": "epi:stewardship:epii",
+          "bounds_refs": ["epi:bound:native-owner-authority"],
+          "authority_refs": ["github:EpiLogos/QL-MEF:native-actions-readings"]
+        },
+        "root_scope": {"schema": "actuation.agency/v1", "scope_ref": "epi:scope:epii:stewardship", "enclosing_world_ref": "github:EpiLogos/QL-MEF"}
+      },
+      "aikit": {
+        "profile_ref": "epi:profile:epii",
+        "profile_mode": "effective-composition",
+        "skill_set_ref": "epi:skill-set:epii",
+        "skill_set_mode": "composed",
+        "context_ref": "epi:context:epii:stewardship",
+        "context_world_binding_ref": "epi:binding:epii:stewardship",
+        "method_resolution": "native-aikit-method",
+        "session_space_resolution": "native-aikit-session-space",
+        "model_harness_provider_selection": "resolved-at-execution",
+        "fixed_model": null,
+        "fixed_harness": null,
+        "fixed_provider": null
+      },
+      "material_body": {"owner": "EpiLogos/Workcell", "mode": "execution-demand-when-material-body-required", "fixed_provider": null},
+      "developmental_run": {"owner": "EpiLogos/agent-system-design", "mode": "factory-run-and-evidence-when-developmental"}
+    }
+  ],
+  "labouring_agency_specimen": {
+    "guardian_ref": "epi:agent:epii",
+    "ta_onta_ref": "Aletheia",
+    "determination": {
+      "schema": "actuation.agency/v1",
+      "determination_ref": "epi:determination:epii:ql-native-reading",
+      "kind": "self-differentiation",
+      "determining_agency_ref": "epi:agency:epii:stewardship",
+      "differentiated_agency_ref": "epi:agency:aletheia:ql-native-reading",
+      "world_binding_ref": "epi:binding:epii:stewardship",
+      "bounds_refs": ["epi:bound:ql-read-only"],
+      "authority_refs": ["ql-service:locate", "ql-service:refract"],
+      "delegated_autonomy": {
+        "allowed_action_refs": ["ql-service:locate", "ql-service:refract"],
+        "denied_action_refs": [],
+        "may_determine_within_bounds": false
+      },
+      "return_policy": {"mode": "required", "return_relation_ref": "epi:return:epii:ql-native-reading"}
+    },
+    "native_product_operation": {
+      "product_repo": "EpiLogos/QL-MEF",
+      "revision": "7011f660025e5194ff15d4edba50b306296216a8",
+      "readings": [
+        {"ref": "ql-service:locate", "source": "crates/ql-service/src/read_ops.rs", "operation": "Operation::Locate", "result": "LocateResult"},
+        {"ref": "ql-service:refract", "source": "crates/ql-service/src/read_ops.rs", "operation": "Operation::Refract", "result": "SemanticReading"}
+      ],
+      "executable_proof": "crates/ql-service/tests/guardian_epii.rs"
+    },
+    "return": {
+      "schema": "actuation.agency/v1",
+      "return_ref": "epi:return:epii:ql-native-reading",
+      "determination_ref": "epi:determination:epii:ql-native-reading",
+      "from_agency_ref": "epi:agency:aletheia:ql-native-reading",
+      "to_agency_ref": "epi:agency:epii:stewardship",
+      "difference_refs": ["epi:difference:ql-native-reading-proved"],
+      "artifact_refs": [],
+      "claim_refs": ["epi:claim:epii-can-operate-ql-mef-through-native-readings"],
+      "evidence_refs": ["crates/ql-service/src/read_ops.rs", "crates/ql-service/tests/guardian_epii.rs"],
+      "provenance": {
+        "agency_lineage_refs": ["epi:agent:epii", "epi:agency:epii:stewardship", "epi:agency:aletheia:ql-native-reading"],
+        "material_refs": ["ql-service:locate", "ql-service:refract"],
+        "external_source_refs": []
+      },
+      "received": true,
+      "recognition_state": "recognised",
+      "world_mutation_state": "not-applied"
+    }
+  },
+  "whole_field_guardian": {
+    "ref": "epi:metagency:0-1",
+    "kind": "whole-field-guardian-composition",
+    "numbered_coordinate": false,
+    "coordinate": null,
+    "composes_guardian_refs": ["epi:agent:anuttara", "epi:agent:paramasiva", "epi:agent:parasakti", "epi:agent:mahamaya", "epi:agent:nara", "epi:agent:epii"],
+    "metagency_grant": {
+      "schema": "actuation.agency/v1",
+      "grant_ref": "epi:grant:0-1:guardian-routing",
+      "agency_ref": "epi:agency:0-1:guardian-router",
+      "world_binding_ref": "epi:binding:0-1:whole-epi-oi-field",
+      "authority_ref": "epi:authority:guardian-discrepancy-routing",
+      "bounds_refs": ["epi:bound:routing-only"],
+      "operations": ["determine-agency", "reintegrate-return"]
+    },
+    "routes": [
+      {"discrepancy": "source/provenance/world-ground", "guardian_ref": "epi:agent:anuttara"},
+      {"discrepancy": "agency/authority/delegation", "guardian_ref": "epi:agent:paramasiva"},
+      {"discrepancy": "capability/context/provider", "guardian_ref": "epi:agent:parasakti"},
+      {"discrepancy": "development/praxis/source-code", "guardian_ref": "epi:agent:mahamaya"},
+      {"discrepancy": "material/provider/persistence", "guardian_ref": "epi:agent:nara"},
+      {"discrepancy": "formal/refractive/whole-system", "guardian_ref": "epi:agent:epii"}
+    ]
+  },
+  "invariants": [
+    "whole-field guardian is a composition/router, not a seventh coordinate",
+    "guardian identity survives Profile, SessionSpace, model, harness, provider and material-body rebinding",
+    "labouring Agency is attributable and returns evidence to guardian stewardship",
+    "O:I human/agent faces are encounter orientations, not guardian identities",
+    "no historical six-stage Factory-agent interpretation is encoded"
+  ]
+}

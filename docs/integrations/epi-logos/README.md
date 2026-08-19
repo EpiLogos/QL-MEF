@@ -9,7 +9,9 @@ For current M/S identity work, read first:
 - `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md` — current human-readable fourfold authority;
 - `epi-ms-fourfold.json` — canonical machine-readable six-row map;
 - `epi-ssprime-relational-field.csv` — current S/S′ harmonic/conjugate field;
-- `epi-ssprime-embodiment.json` — constitutional spine plus many-to-many capability embodiment.
+- `epi-ssprime-embodiment.json` — constitutional spine plus many-to-many capability embodiment;
+- `epi-guardians.json` — six enduring canonical Agent identities and stewardship metadata;
+- `epi-guardian-materialisation.json` — ordinary Actuation + AIKit materialisation, attributable labour/Return, Epii native-reading proof and non-numbered `0/1` metagency routing.
 
 `EPI-LOGOS-SOURCE-OF-TRUTH.md` and `EPI-LOGOS-DEVELOPMENT-WAYFINDER.md` remain the broader source/development entrypoints, but any older S/S′ wording in the R2 research corpus is subordinate to the explicit #74/#75 supersession above.
 
@@ -43,6 +45,27 @@ Canonical identities:
 The register distinction is load-bearing because it tells us **what kind of thing a ref is**. The same index is equally load-bearing because it tells us **how those differentiated forms belong to one QL position**.
 
 Do not collapse a guardian, software product, Ta-Onta module, deep instrument, situated Agency and Execution into one runtime object. Do not weaken the same-coordinate relation into a merely analogical correspondence either.
+
+## Guardian materialisation after #42
+
+The six guardian identities are durable M-register Agent refs. Their native operation is deliberately composed from existing owner primitives rather than from a parallel Epi runtime:
+
+```text
+epi:agent:<guardian>
+        ↓ Actuation WorldBinding / RootScope
+situated stewardship Agency
+        ↓ AIKit Profile / SkillSet / Context / Method / SessionSpace resolution
+labouring Agency or ordinary act
+        ↓ native product Action / Reading
+Actuation Return + evidence/provenance
+        ↺ guardian stewardship
+```
+
+`epi-guardian-materialisation.json` records one ordinary materialisation for each guardian and pins the owner revisions inspected for #42. Model, harness, provider and material execution remain execution-time choices. Workcell is invoked only when a material body is required; Factory Run/Evidence is invoked when the act is developmental.
+
+The executable acceptance specimen is Epii operating its standing QL-MEF product through the existing `QlService::locate` and `QlService::refract` Readings. A differentiated Aletheia labouring Agency performs that bounded act and Returns evidence to Epii's stewardship Agency. Provider rebinding is tested without changing `epi:agent:epii`.
+
+The whole-field `0/1` Guardian is represented as `epi:metagency:0-1`: a non-numbered routing composition over the six guardians. It is not P6, M6, M7 or a seventh Agent coordinate.
 
 ## The interoperating relation fields
 
