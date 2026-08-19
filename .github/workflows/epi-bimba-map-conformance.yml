@@ -1,0 +1,117 @@
+name: Epi Bimba Map conformance
+
+on:
+  push:
+    branches:
+      - agent/epi-pre-d-bimba-map-parity
+  pull_request:
+    paths:
+      - 'crates/ql-mef/**'
+      - 'scripts/compile-epi-bimba-map.py'
+      - 'scripts/compile-epi-bimba-map-live.py'
+      - 'data/epi-bimba-map/**'
+      - '.github/workflows/epi-bimba-map-conformance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ql-mef-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Prove granular coordinate/reflection core
+        run: cargo test -p ql-mef
+
+  bimba-map-conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out QL-MEF PRE-D
+        uses: actions/checkout@v4
+
+      - name: Check out exact Bimba source revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: epi-source
+
+      - name: Check out current Nara implementation floor
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: 52e7433bee54561a767833895b59f553cca62149
+          path: epi-implementation
+
+      - name: Compile recursive Bimba Map source pool
+        run: |
+          python3 -m py_compile scripts/compile-epi-bimba-map.py scripts/compile-epi-bimba-map-live.py
+          python3 scripts/compile-epi-bimba-map-live.py \
+            --source-repo epi-source \
+            --implementation-repo epi-implementation \
+            --source-lock data/epi-bimba-map/source-lock.json \
+            --out target/epi-bimba-map
+
+      - name: Enforce PRE-D structural acceptance floor
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('target/epi-bimba-map')
+          summary = json.loads((root / 'summary.json').read_text())
+          nara = json.loads((root / 'nara-conformance.json').read_text())
+          cosmic = json.loads((root / 'cosmic-readiness.json').read_text())
+          alternates = json.loads((root / 'alternate-notation-groups.json').read_text())
+          meta = json.loads((root / 'meta-source-records.json').read_text())
+          partial = json.loads((root / 'partial-source-relations.json').read_text())
+
+          assert summary['repository'] == 'EpiLogos/Epi-Logos-C-Experiments'
+          assert summary['revision'] == 'daa660cbc1b8c5da83828698665a753852cb0287'
+          assert summary['json_failure_count'] == 0
+          assert summary['coordinate_parse_failure_count'] == 0
+          assert summary['meta_source_coordinate_record_count'] == len(meta) > 0
+          assert summary['alternate_notation_group_count'] == len(alternates) > 0
+          assert all(group['status'] == 'alternate-source-spellings-retained' for group in alternates)
+          assert summary['partial_source_relation_count'] == partial['relation_record_count']
+          assert partial['endpoint_reason_counts']
+          assert summary['source_coordinate_count'] > 44
+          assert summary['source_relation_count'] > 0
+          assert summary['source_relation_kind_count'] > 1
+          assert summary['cross_m_relation_count'] > 0
+          for root_index in range(6):
+              assert summary['root_coordinate_counts'][str(root_index)] > 0, root_index
+
+          assert nara['source_coordinate_count'] > 44
+          assert nara['implementation_coordinate_ref_count'] == 44
+          assert nara['exact_source_implementation_match_count'] == 44
+          assert nara['source_coordinates_absent_from_executable_floor_count'] > 0
+          assert nara['implementation_coordinates_without_direct_source_basis_count'] == 0
+          assert not nara['alias_or_notation_mismatches']
+          assert not nara['parentage_mismatches']
+          assert nara['recursive_depth']['source_max_depth'] > nara['recursive_depth']['implementation_max_depth']
+          assert nara['relation_classes']['bimba_source_relation_kinds']
+          assert nara['relation_classes']['implementation_relation_kinds']
+
+          assert cosmic['m1_m2_m3_coordinate_count'] > 0
+          assert cosmic['relations_within_m1_m2_m3_count'] > 0
+          assert cosmic['cross_from_cosmic_to_other_m_count'] + cosmic['cross_into_cosmic_from_other_m_count'] > 0
+          assert cosmic['harmonic_temporal_transcription_relation_count'] > 0
+          PY
+
+      - name: Print returned reality
+        if: always()
+        run: |
+          for file in summary.json nara-conformance.json cosmic-readiness.json alternate-notation-groups.json meta-source-records.json partial-source-relations.json; do
+            echo "===== ${file} ====="
+            cat "target/epi-bimba-map/${file}" || true
+          done
+
+      - name: Upload deterministic conformance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: epi-bimba-map-conformance
+          path: target/epi-bimba-map
+          if-no-files-found: error
