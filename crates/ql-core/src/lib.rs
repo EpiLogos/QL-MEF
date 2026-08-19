@@ -12,6 +12,7 @@ mod form;
 mod kernel;
 mod operator;
 mod position;
+mod structural;
 
 pub use address::QlAddress;
 pub use apply::apply_operator;
@@ -22,3 +23,9 @@ pub use form::{QlForm, QlFormRef};
 pub use kernel::{KERNEL_VERSION, KernelCapabilities, SCHEMA_VERSION, kernel_capabilities};
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
 pub use position::QlPosition;
+pub use structural::{
+    AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
+    GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
+    STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralError, StructuralParticipation,
+    WHOLE_ANCHOR_SYMBOL, all_d3_fields,
+};

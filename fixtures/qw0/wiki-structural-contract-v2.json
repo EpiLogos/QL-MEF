@@ -1,0 +1,67 @@
+{
+  "contract": "ql-structural",
+  "version": "2.0.0",
+  "whole_anchor": {
+    "symbol": "0/1",
+    "counted_as_position": false
+  },
+  "pair_families": {
+    "A": [[0, 1], [2, 3], [4, 5]],
+    "B": [[1, 2], [3, 4], [5, 0]],
+    "C": [[0, 5], [1, 4], [2, 3]]
+  },
+  "conjugation": {
+    "D1": {
+      "meaning": "same-position conjugate opposition",
+      "shape": ["x", "x-prime"],
+      "family_independent": true
+    },
+    "D2": {
+      "meaning": "one-sided conjugate expansion of a selected pair",
+      "variants": [
+        ["x", "x-prime", "y"],
+        ["x", "y", "y-prime"]
+      ]
+    },
+    "D3": {
+      "meaning": "both-sided conjugate expansion of a selected pair",
+      "shape": ["x", "x-prime", "y", "y-prime"]
+    }
+  },
+  "d3_fields": [
+    {"family": "A", "pair_index": 0, "pair": [0, 1]},
+    {"family": "A", "pair_index": 1, "pair": [2, 3]},
+    {"family": "A", "pair_index": 2, "pair": [4, 5]},
+    {"family": "B", "pair_index": 0, "pair": [1, 2]},
+    {"family": "B", "pair_index": 1, "pair": [3, 4]},
+    {"family": "B", "pair_index": 2, "pair": [5, 0]},
+    {"family": "C", "pair_index": 0, "pair": [0, 5]},
+    {"family": "C", "pair_index": 1, "pair": [1, 4]},
+    {"family": "C", "pair_index": 2, "pair": [2, 3]}
+  ],
+  "canonical_grains": {
+    "anchor-only": {"direct": [], "conjugate": []},
+    "threefold-123": {"direct": [1, 2, 3], "conjugate": []},
+    "threefold-450": {"direct": [4, 5, 0], "conjugate": []},
+    "fourfold-1234": {"direct": [1, 2, 3, 4], "conjugate": []},
+    "four-plus-one-ground": {"direct": [0, 1, 2, 3, 4], "conjugate": []},
+    "four-plus-one-synthesis": {"direct": [1, 2, 3, 4, 5], "conjugate": []},
+    "sixfold": {"direct": [0, 1, 2, 3, 4, 5], "conjugate": []},
+    "partial-conjugate-8": {"direct_count": 6, "conjugate_count": 2},
+    "partial-conjugate-9": {"direct_count": 6, "conjugate_count": 3},
+    "partial-conjugate-10": {"direct_count": 6, "conjugate_count": 4},
+    "partial-conjugate-11": {"direct_count": 6, "conjugate_count": 5},
+    "twelvefold": {"direct_count": 6, "conjugate_count": 6}
+  },
+  "return": {
+    "path": ["source-ref", "whole-anchor-ref", "target-ground-ref"],
+    "target_position": 0,
+    "ground_kinds": ["own", "parent", "child", "other", "conjugate"]
+  },
+  "legacy_musical_reconciliation": {
+    "D1": "compatible same-position conjugate relation",
+    "D2": "not an alias: historical D2 means transform/require/complete cross-index pairing",
+    "D3": "not an alias: historical D3 means A/B/C repeated on the primed helix",
+    "policy": "preserve historical derivation; use versioned ql:structural:2.0.0 refs for Wiki structure"
+  }
+}
