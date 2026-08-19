@@ -461,10 +461,7 @@ mod tests {
                 MPathSeparator::Hyphen
             ]
         );
-        assert_eq!(
-            coordinate.parent_source_ref.as_deref(),
-            Some("#0-4.0/1/2")
-        );
+        assert_eq!(coordinate.parent_source_ref.as_deref(), Some("#0-4.0/1/2"));
         assert_eq!(
             coordinate.canonical_ref(),
             "ql:m-coordinate:bimba:M0-4.0/1/2-3"
