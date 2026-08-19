@@ -1,0 +1,48 @@
+{
+  "contract": "ql-mef/meta-portal/v1",
+  "scope": {
+    "scope_refs": ["example:scope:alpha", "example:scope:beta"],
+    "allow_all_scopes": false,
+    "allow_payload": true
+  },
+  "bindings": [
+    {
+      "binding_ref": "ql-mef:binding:alpha-l1",
+      "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+      "target_wiki_ref": "example:alpha:wiki",
+      "target_frame_ref": "example:alpha:frame:causal",
+      "target_provider_ref": "knowledge:alpha",
+      "relation": "refracts",
+      "operator_ref": "mef:lens:L1@1",
+      "scope_refs": ["example:scope:alpha"],
+      "origin": "recognised",
+      "provenance": [],
+      "ql_mef_revision": "1",
+      "target_revision": "4",
+      "extensions": {"lens_ref": "mef:lens:L1@1"}
+    },
+    {
+      "binding_ref": "ql-mef:binding:beta-l1",
+      "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+      "target_wiki_ref": "example:beta:wiki",
+      "target_frame_ref": "example:beta:frame:causal",
+      "target_provider_ref": "knowledge:beta",
+      "relation": "refracts",
+      "operator_ref": "mef:lens:L1@1",
+      "scope_refs": ["example:scope:beta"],
+      "origin": "recognised",
+      "provenance": [],
+      "ql_mef_revision": "1",
+      "target_revision": "9",
+      "extensions": {"lens_ref": "mef:lens:L1@1"}
+    }
+  ],
+  "traversal": {
+    "start_ref": "example:alpha:frame:causal",
+    "operator_ref": "mef:lens:L1@1",
+    "lens_ref": "mef:lens:L1@1",
+    "max_hops": 6
+  },
+  "expected_destination_ref": "example:beta:frame:causal",
+  "semantic_equivalence_asserted": false
+}

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.dev/contracts/ql-mef/meta-portal/v1/schema.json",
+  "title": "QL-MEF Meta Portal v1",
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "required": ["scope_refs", "allow_all_scopes", "allow_payload"],
+      "properties": {
+        "scope_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "allow_all_scopes": {"type": "boolean"},
+        "allow_payload": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "manifestation": {
+      "type": "object",
+      "required": [
+        "binding_ref", "ql_mef_ref", "target_wiki_ref", "target_ref",
+        "relation", "origin", "scope_refs", "provenance", "availability",
+        "notices", "qualified_relation", "semantic_equivalence_asserted"
+      ],
+      "properties": {
+        "binding_ref": {"type": "string", "minLength": 1},
+        "ql_mef_ref": {"type": "string", "minLength": 1},
+        "target_wiki_ref": {"type": "string", "minLength": 1},
+        "target_frame_ref": {"type": "string", "minLength": 1},
+        "target_ref": {"type": "string", "minLength": 1},
+        "target_provider_ref": {"type": "string", "minLength": 1},
+        "relation": {"type": "string", "minLength": 1},
+        "operator_ref": {"type": "string", "minLength": 1},
+        "origin": {"enum": ["authored", "recognised", "derived", "proposed"]},
+        "scope_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "provenance": {"type": "array", "items": {"type": "object"}},
+        "ql_mef_revision": {"type": "string", "minLength": 1},
+        "target_revision": {"type": "string", "minLength": 1},
+        "availability": {"enum": ["available", "unavailable", "restricted", "unknown"]},
+        "payload": {},
+        "notices": {"type": "array", "items": {"type": "string"}},
+        "qualified_relation": {"const": true},
+        "semantic_equivalence_asserted": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "routeStep": {
+      "type": "object",
+      "required": [
+        "from_ref", "from_surface", "to_ref", "to_surface", "relation", "origin",
+        "provenance", "qualified_relation", "semantic_equivalence_asserted"
+      ],
+      "properties": {
+        "from_ref": {"type": "string", "minLength": 1},
+        "from_surface": {"enum": ["meta", "binding", "external"]},
+        "to_ref": {"type": "string", "minLength": 1},
+        "to_surface": {"enum": ["meta", "binding", "external"]},
+        "relation": {"type": "string", "minLength": 1},
+        "origin": {"type": "string", "minLength": 1},
+        "binding_ref": {"type": "string", "minLength": 1},
+        "provider_ref": {"type": "string", "minLength": 1},
+        "from_revision": {"type": "string", "minLength": 1},
+        "to_revision": {"type": "string", "minLength": 1},
+        "provenance": {"type": "array", "items": {"type": "object"}},
+        "qualified_relation": {"const": true},
+        "semantic_equivalence_asserted": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "title": "CrossWikiTraversalRequest",
+      "type": "object",
+      "required": ["start_ref", "max_hops"],
+      "properties": {
+        "start_ref": {"type": "string", "minLength": 1},
+        "relation": {"type": "string", "minLength": 1},
+        "operator_ref": {"type": "string", "minLength": 1},
+        "lens_ref": {"type": "string", "minLength": 1},
+        "max_hops": {"type": "integer", "minimum": 1, "maximum": 32}
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "ManifestationsResponse",
+      "type": "object",
+      "required": ["contract", "meta_ref", "manifestations"],
+      "properties": {
+        "contract": {"const": "ql-mef/meta-portal/v1"},
+        "meta_ref": {"type": "string", "minLength": 1},
+        "manifestations": {"type": "array", "items": {"$ref": "#/$defs/manifestation"}}
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "MetaContextResponse",
+      "type": "object",
+      "required": ["contract", "external_ref", "mappings"],
+      "properties": {
+        "contract": {"const": "ql-mef/meta-portal/v1"},
+        "external_ref": {"type": "string", "minLength": 1},
+        "mappings": {"type": "array", "items": {"$ref": "#/$defs/manifestation"}}
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "CrossWikiTraversalResponse",
+      "type": "object",
+      "required": ["contract", "start_ref", "routes", "notices"],
+      "properties": {
+        "contract": {"const": "ql-mef/meta-portal/v1"},
+        "start_ref": {"type": "string", "minLength": 1},
+        "routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["start_ref", "destination_ref", "steps"],
+            "properties": {
+              "start_ref": {"type": "string", "minLength": 1},
+              "destination_ref": {"type": "string", "minLength": 1},
+              "steps": {"type": "array", "items": {"$ref": "#/$defs/routeStep"}},
+              "destination": {"$ref": "#/$defs/manifestation"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "notices": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  ]
+}

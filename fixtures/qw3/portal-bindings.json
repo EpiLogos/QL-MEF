@@ -1,0 +1,102 @@
+[
+  {
+    "binding_ref": "ql-mef:binding:glade-l1",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+    "target_wiki_ref": "glade:wiki:project",
+    "target_frame_ref": "glade:wiki:frame:causal-review",
+    "target_provider_ref": "knowledge:glade",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L1@1",
+    "scope_refs": ["scope:glade"],
+    "origin": "recognised",
+    "provenance": [
+      {"source_ref": "glade:evidence:review-7", "source_revision": "7"}
+    ],
+    "ql_mef_revision": "1",
+    "target_revision": "7",
+    "extensions": {"lens_ref": "mef:lens:L1@1"}
+  },
+  {
+    "binding_ref": "ql-mef:binding:second-l1",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+    "target_wiki_ref": "second:wiki:project",
+    "target_frame_ref": "second:wiki:frame:causal-review",
+    "target_provider_ref": "knowledge:second",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L1@1",
+    "scope_refs": ["scope:second"],
+    "origin": "recognised",
+    "provenance": [
+      {"source_ref": "second:evidence:review-2", "source_revision": "2"}
+    ],
+    "ql_mef_revision": "1",
+    "target_revision": "3",
+    "extensions": {"lens_ref": "mef:lens:L1@1"}
+  },
+  {
+    "binding_ref": "ql-mef:binding:glade-a1",
+    "ql_mef_ref": "ql-mef:wiki:node:relation-family-a",
+    "target_wiki_ref": "glade:wiki:project",
+    "target_frame_ref": "glade:wiki:frame:causal-review",
+    "target_provider_ref": "knowledge:glade",
+    "relation": "grounds",
+    "operator_ref": "ql:structural:2.0.0:pair:A:1",
+    "scope_refs": ["scope:glade"],
+    "origin": "authored",
+    "provenance": [
+      {"source_ref": "glade:evidence:structure-4", "source_revision": "4"}
+    ],
+    "ql_mef_revision": "2",
+    "target_revision": "7",
+    "extensions": {}
+  },
+  {
+    "binding_ref": "ql-mef:binding:offline-l1",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+    "target_wiki_ref": "offline:wiki:project",
+    "target_frame_ref": "offline:wiki:frame:causal-review",
+    "target_provider_ref": "knowledge:offline",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L1@1",
+    "scope_refs": ["scope:offline"],
+    "origin": "recognised",
+    "provenance": [
+      {"source_ref": "offline:evidence:last-seen", "source_revision": "11"}
+    ],
+    "ql_mef_revision": "1",
+    "target_revision": "11",
+    "extensions": {"lens_ref": "mef:lens:L1@1"}
+  },
+  {
+    "binding_ref": "ql-mef:binding:second-l1-proposal",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+    "target_wiki_ref": "second:wiki:project",
+    "target_frame_ref": "second:wiki:frame:experimental-causal",
+    "target_provider_ref": "knowledge:second",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L1@1",
+    "scope_refs": ["scope:second"],
+    "origin": "proposed",
+    "provenance": [
+      {"source_ref": "ql-mef:reading:candidate-91", "source_revision": "1"}
+    ],
+    "ql_mef_revision": "1",
+    "target_revision": "1",
+    "extensions": {"lens_ref": "mef:lens:L1@1"}
+  },
+  {
+    "binding_ref": "ql-mef:binding:public-l1",
+    "ql_mef_ref": "ql-mef:wiki:node:mef-l1",
+    "target_wiki_ref": "public:wiki:project",
+    "target_frame_ref": "public:wiki:frame:causal",
+    "target_provider_ref": "knowledge:public",
+    "relation": "refracts",
+    "operator_ref": "mef:lens:L1@1",
+    "scope_refs": [],
+    "origin": "authored",
+    "provenance": [],
+    "ql_mef_revision": "1",
+    "target_revision": "1",
+    "extensions": {"lens_ref": "mef:lens:L1@1"}
+  }
+]

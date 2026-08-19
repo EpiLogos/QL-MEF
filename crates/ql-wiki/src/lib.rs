@@ -4,9 +4,16 @@
 //! represented by [`MetaBinding`]. External Wiki identities stay foreign and are
 //! never copied into, or renamed by, the local projection.
 
+mod portal;
 mod refraction;
 mod registry_provider;
 
+pub use portal::{
+    CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver,
+    ForeignTargetResolution, META_PORTAL_CONTRACT, ManifestationsResponse, MetaContextResponse,
+    MetaManifestation, MetaPortal, MetaRoute, MetaRouteStep, MetaRouteSurface, PortalError,
+    PortalScope, StaticForeignResolver, TargetAvailability,
+};
 pub use refraction::{
     DerivedRelation, DerivedSubgraph, DerivedVertex, FieldCoordinate, LensSelection, ProviderMode,
     ReadingProvider, RefractionStatus, RelationCandidate, RevisionValue, TraversalCandidate,
@@ -245,6 +252,10 @@ pub struct MetaBinding {
     pub target_wiki_ref: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub target_frame_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_provider_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub operator_ref: Option<String>,
     pub relation: String,
     #[serde(default)]
     pub scope_refs: Vec<String>,
