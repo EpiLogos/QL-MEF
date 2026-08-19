@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - agent/epi-pre-d-main-convergence
+  pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'crates/**/Cargo.toml'
+      - '.github/workflows/pre-d-lock-repair.yml'
 
 permissions:
   contents: read
