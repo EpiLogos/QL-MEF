@@ -3,6 +3,7 @@
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
 mod context_frame;
+mod context_frame_target;
 mod coordinate;
 mod error;
 mod identity;
@@ -16,6 +17,11 @@ mod sublens;
 pub use context_frame::{
     CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCoordinate, ContextFrameCut, ContextFrameId,
     ContextFrameSelection, MefFormCoordinate, MefGrain, canonical_context_frame_progression,
+};
+pub use context_frame_target::{
+    read_external_context_frame, ContextFrameReadingOrigin, ContextFrameReadingStatus,
+    ContextFrameStructuralProbe, ExternalContextFrameError, ExternalContextFrameReading,
+    ExternalSixfoldMapping, CONTEXT_FRAME_TARGET_READING_VERSION,
 };
 pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
