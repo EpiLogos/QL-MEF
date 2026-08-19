@@ -30,3 +30,11 @@ pub use registry::{
     all_sublens_definitions, lens_definition,
 };
 pub use sublens::SublensRef;
+
+impl MCoordinate {
+    /// Project the coordinate face into the existing QL direct/conjugate floor
+    /// without collapsing the source-owned recursive M path into one QL address.
+    pub const fn ql_face(&self) -> ql_core::QlFace {
+        self.face.ql_face()
+    }
+}
