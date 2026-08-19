@@ -10,6 +10,131 @@
 **M→S capability bridge:** `epi-ssprime-embodiment.json`  
 **O:I field:** O:I #29 / `data/ql-relational-field.csv`
 
+## Returned reality — Prompt C, complete Personal 4/5/0 lived return
+
+**Development state, stacked on the accepted Prompt-B development branches rather than misreported as accepted-main state.** The current implementation chain is:
+
+```text
+Epi PR #8  Prompt A primitive bridge
+    ↓
+Epi PR #9  Prompt B protected Nara provider
+    ↓
+Epi PR #11 Prompt C Epii / Anuttara / Personal-return provider
+
+O:I PR #87 Prompt A Epi contribution host
+    ↓
+O:I PR #88 Prompt B Nara lived vertical
+    ↓
+O:I PR #89 Prompt C Nara-rooted Personal depth + Central NOW seam
+
+Central PR #75 current ProjectCentral NOW/DAY Action contract
+```
+
+The complete returned-reality account is kept in `EPI-PRATIBIMBA-C-PERSONAL-RETURNED-REALITY.md`. The essential change is that the first Personal loop now closes around **one protected Nara object** rather than merely being the next intended build phase:
+
+```text
+M4′ Nara
+protected lived episode / exact selected range
+        ↓
+M5′ Epii
+Explain / Review / pedagogical distinction / proposal
+        ↓
+M0′ Anuttara / Bimba
+Source / Bimba / Provenance / why-this-ground
+        ↓
+Central NOW return where configured
+proposal refs / review state, not silent source mutation
+        ↓
+reject, retain-derived, or separately human-recognised return
+        ↺
+same Nara episode + selection identity
+```
+
+### Epii now has a real bounded role
+
+The Epi-owned one-shot bridge exposes `epi.action.epii.review` through the canonical `epi:agent:epii` identity. It re-resolves the exact protected episode revision and byte range before returning anything. Its packet keeps **authored / observed / inferred / derived / formal / research** standing distinct, explains the current DAY/NOW/profile/QL/Epi-coordinate condition, keeps review questions open, and exposes deeper summons without treating generated interpretation as adoption.
+
+This is specifically Epii's Epi function. The bridge owns no `EpiiRuntime`, model chooser, harness, SessionSpace, terminal, process supervisor or generic coding-agent control plane. The returned agent record points those material concerns outward to current Actuation / AIKit / Workcell ownership.
+
+### Anuttara/Bimba now opens the germane ground, not a neighbouring dashboard
+
+The Epi-owned `epi.action.anuttara.ground` operation receives the same protected selection and returns an explicit:
+
+```text
+selectionRef
+    ↓ through reviewRef
+Bimba / source ground
+```
+
+relation with the reasons that ground was selected. It returns current Epi/Bimba semantic refs, source anchors and QL orientation while keeping:
+
+```text
+Bimba semantic identity
+!= Neo4j provider identity
+!= MCP transport identity
+!= QL-MEF Meta-Knowledge Graph identity
+```
+
+The Prompt-C one-shot slice does not claim graph traversal when none occurred. Provider status remains separate, and QL/refraction is labelled formal/advisory with `promotion=none` rather than silently becoming Epi canon.
+
+### Same-object co-reference is now the Personal invariant
+
+The shell's selected object remains the Prompt-B `nara-selection` Ref. Explain, Review, Source, Bimba, Provenance and Proposal send only stable episode identity, exact revision/range and germane prior refs back to Epi. The producer re-resolves the text from the protected store; O:I rejects a Personal response if its returned selection or episode identity drifts.
+
+The deeper Surface temporarily replaces the Nara canvas inside the same Nara experience and returns with `← Nara`. There is no copy-pasted “conversation document”, DOM-driven identity bridge, or separate Epii/Bimba product dashboard.
+
+`History` is the seventh explicit summon. It reads Central's current NOW/DAY working field through Central's own Action seam and labels that field correctly: temporal working context, **not canon**.
+
+### Personal authority is now materially protected
+
+A generated Personal return is represented as:
+
+```text
+sourceClass = proposal
+adoptionState = unreviewed
+sourceMutationPerformed = false
+```
+
+Where Central is configured, O:I calls `ctrl --json action run projectcentral.now.return ...`; it passes proposal/episode/selection/coordinate/evidence refs plus a safe status description. It does **not** copy the protected Nara passage or generated proposal body into Central's working field.
+
+Rejection is independently valid and resolves the NOW handoff without adoption. Durable human return is another path entirely: the desired wording must exist as human-owned `ProjectCentral/now/user/**` source, and Central's own `projectcentral.now.promote` continues to require `acceptance=human-accepted` before durable human-ground mutation.
+
+Therefore the four return classes remain non-interchangeable:
+
+```text
+formal-model return
+!= operative software return
+!= Epi theory/canon return
+!= human Personal return
+```
+
+No generic `return()` mutator was introduced.
+
+### Verification attached to Prompt C
+
+Epi PR #11 at the producer revision pinned by O:I passed the real bridge suite covering protected Nara persistence/restart, exact selection, Nara→Epii→Anuttara→proposal identity continuity, source non-mutation, stale-range failure, bounded private disclosure, restart-stable refs and absence of a parallel Epi runtime/provider-identity substitution.
+
+O:I PR #89's coordinated workflow checks out that exact Epi producer and exercises the real provider through O:I's provider, Personal/Central and Action-containment suites. During the first coordinated run, **all of those real Rust acceptance suites passed**; the run failed only at an invalid UI script name and was corrected to execute the checked-in Node presentation contract directly. A later full desktop run then exposed a real Rust type-inference defect in dead post-match code; the redundant binding was removed rather than annotated around. Current check state belongs to the PR head and should be read there rather than inferred from this historical paragraph.
+
+### Deliberate Prompt-C deferrals
+
+The first Personal loop is complete without pretending the deep systems are complete. Still intentionally deferred:
+
+- model-backed Epii AgentSession materialisation through native Actuation/AIKit machinery;
+- richer recursive Epii pedagogy and full theory/canon amendment workbench;
+- live Bimba graph neighbourhood traversal/editing through the actual Bimba application/provider contract;
+- richer source/canon history and provenance navigation;
+- deep M0′/M5′ technical workspaces;
+- the full M1′/M2′/M3′ Cosmic instrument.
+
+### Next handoff
+
+**PROMPT D = M1′ + M2′ + M3′ as ONE integrated Cosmic instrument, fed by real shared computation and feeding the same Nara world.**
+
+Do **not** hand off “build M1 next”. The three Cosmic domains are the next integrated experienced body; their deep independent workspaces remain later.
+
+---
+
 ## Returned reality — Prompt B, M4′ Nara first lived vertical
 
 **Development state, not accepted-main state.** Prompt A remains an explicit unmerged dependency: Epi PR #8 provides the real `epi-lib` / `portal-core` primitive bridge and O:I PR #87 hosts it. Prompt B is stacked rather than silently rebased around that fact:
@@ -278,7 +403,7 @@ M4′ is the primary daily surface:
 journal / flow editor
 DAY/NOW lived context
 resonance / harmonic context
-lean protected identity context
+lean protected identity
 dream / oracle / highlight / episode continuity
 quick agent reflection / sendoff
 Explain / provenance on demand
@@ -587,12 +712,12 @@ The existing QL-MEF issues remain useful, but they are not an implicit dependenc
 
 - **#31 / #39 / #49 — QL-MEF formal/harmonic work:** semantic/formal substrate; advance narrowly when current Pratibimba slices require missing canonical operators, and independently for QL-MEF's own product development.
 - **#33 / #38 / #44 / #45 — Epi computational substrate:** begin with adoption + primitive bridge + parity/provenance; do not require full rewrite before Nara.
-- **#34 — Pratibimba instruments:** implementation priority is M4′ first, then Personal 4/5/0, then integrated Cosmic, then deep workspaces.
-- **#35 — Central↔Nara:** early dependency for authored/protected personal ground and durable mutation law.
-- **#36 — parent 0/1:** establish the O:I-hosted parent around Nara first; Cosmic can grow from minimal real profile output.
+- **#34 — Pratibimba instruments:** M4′ and the first Personal 4/5/0 return are now implemented development reality; next implementation priority is the integrated Cosmic instrument, then deep workspaces.
+- **#35 — Central↔Nara:** current NOW/DAY return plumbing is now consumed for bounded proposal lineage/history while human durable mutation remains independently recognised.
+- **#36 — parent 0/1:** the O:I-hosted parent now contains a real Nara-rooted 4/5/0 lived return; Cosmic is the next missing experienced body.
 - **#32 / #46 / #47 / #48 — S/O:I/Ta-Onta conformance:** apply only to the mechanisms actually touched by each vertical slice.
-- **#37 / #41 — Epii return and shared Projection:** follow once the local personal-return loop exists.
-- **#42 — canonical Agents:** bind the six Epi identities through native Actuation/AIKit without recreating generic harness semantics.
+- **#37 / #41 — Epii return and shared Projection:** the local Personal proposal/return law is now materially present; public/shared Projection remains later.
+- **#42 — canonical Agents:** Epii/Anuttara identity is preserved in Prompt C while generic materialisation remains native Actuation/AIKit; deeper live agency can build through that seam rather than recreate harness semantics.
 
 This changes **build priority**, not the semantic importance of the deeper workstreams.
 
