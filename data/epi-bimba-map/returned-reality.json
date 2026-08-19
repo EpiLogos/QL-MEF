@@ -66,10 +66,18 @@
     "epi_nara_parity_pr": 14,
     "epi_pre_d_reconciliation_pr": 16,
     "epi_pre_d_head_at_recording": "947b6c5fea1f548301eba99dba5d2743657c9f9d",
+    "epi_pre_d_bridge_ci": {"run_id": 32276730017, "conclusion": "success"},
     "oi_prompt_c_pr": 89,
     "oi_nara_lineage_pr": 90,
     "oi_pre_d_reconciliation_pr": 100,
     "oi_pre_d_head_at_recording": "7bd18d15e367113fdd8be2410d1e3fecd8664408",
+    "oi_pre_d_acceptance_at_recording": {
+      "oi_verify": {"run_id": 32277154745, "conclusion": "success"},
+      "full_suite_preflight": {"run_id": 32277154824, "conclusion": "success"},
+      "epi_pratibimba_bridge": {"run_id": 32277154858, "conclusion": "success"},
+      "desktop": {"run_id": 32277154864, "conclusion": "queued"},
+      "pre_local": {"run_id": 32277154748, "conclusion": "queued"}
+    },
     "central_now_day_pr": 75,
     "central_now_day_head": "ab354c1278396b0d50620bf8a43c40eedc26b907",
     "standing": "same protected M4 selection carries exact Nara binding into M5 review/proposal and M0 ground; packet flow is implementation-flow, not a Bimba source relation; Central authority is unchanged"
@@ -100,16 +108,69 @@
     "cross_from_cosmic_to_other_m_count": 1505,
     "cross_into_cosmic_from_other_m_count": 1011,
     "harmonic_temporal_transcription_relation_count": 3665,
-    "standing": "source-ground-ready; application/readiness remains separate; Prompt D must build one integrated instrument rather than one workspace per root"
+    "standing": "source-ground-ready; application/readiness remains separate; one integrated Cosmic instrument is required rather than one workspace per root"
+  },
+  "concurrent_cosmic_implementation_readiness": {
+    "standing": "Prompt D began concurrently while PRE-D was running; PRE-D does not replace or extend it, but records it as the implementation body Prompt D must reconcile onto the Map-derived substrate",
+    "epi": {
+      "pr": 15,
+      "head": "b9a60aa4193a9b1654085b9c00591c367b830242",
+      "base": "agent/epi-pratibimba-c-personal-return",
+      "schema": "epi.cosmic-current/v1",
+      "shared_state": "the same one-shot EpiPrimitiveSnapshot / portal-core::MathemeHarmonicProfile already used by Nara/Personal",
+      "movement_m1": "implemented-derived bounded view over existing tick/chromatic/diatonic/context/qCosmic profile fields",
+      "resonance_m2": "implemented-derived bounded view over existing lens/72-field/Vimarsa numerical/correspondential profile fields",
+      "symbolic_m3": "implemented-partial bounded view over existing Mahamaya/binary/codon/hexagram/rotation/VAK projections",
+      "material_audio_cymatic": "research/provider-unbound; numerical readiness is not material actuation",
+      "bridge_ci": {"run_id": 32271222899, "conclusion": "success"},
+      "pre_d_gap": "based on Prompt-C before Epi PRE-D PR #16 and carries coarse local M1'/M2'/M3'/deep-workspace identities; must be reconciled with the QL-MEF Map-derived coordinate/relation/provenance substrate without creating a second Cosmic engine"
+    },
+    "oi": {
+      "pr": 98,
+      "head": "1241472ef3ca414abcd7e06c1a6d7799ff7c69c5",
+      "base": "agent/oi-epi-personal-450-return",
+      "surface": "one integrated CosmicSurface beside Nara; Nara remains default lived root",
+      "co_reference": "human canvas and situated/root-agent project the same Epi cosmicRef/profileRef and current state",
+      "shared_state_proof": "independent fixed-time nara-read and cosmic-current prove equal profileRef/qlAddress/coordinateRef/dayId/nowPath",
+      "renderer_recomputation": "prohibited/tested absent for cosmic calculation",
+      "ci": {
+        "epi_pratibimba_bridge": {"run_id": 32271248913, "conclusion": "success"},
+        "full_suite_preflight": {"run_id": 32271248834, "conclusion": "success"},
+        "oi_verify": {"run_id": 32271248815, "conclusion": "success"},
+        "desktop": {"run_id": 32271248865, "conclusion": "success"},
+        "pre_local": {"run_id": 32271248832, "conclusion": "success"}
+      },
+      "pre_d_gap": "based on Prompt-C before O:I PRE-D PR #100; must consume the reconciled Epi producer and Map-rooted refs while remaining an opaque host rather than a Map semantic owner"
+    }
+  },
+  "concurrent_ql_kernel_state": {
+    "ql_mef_main_at_recording": "385a0b8693cfa9f50b52410d484f04a70a702cde",
+    "r1_r2_pr": 59,
+    "r1_r2_merged": true,
+    "r1_r2_merge": "75d4273060270de4771fe853875b798a1306c219",
+    "accepted_floor": "ql-c/primitive 0.1.0 plus coordinate-bearing holographic manifest and exhaustive finite parity",
+    "remaining_separate_work": [
+      "#55 source/data/generator/state authority",
+      "#56 one-low-level-consumer-edge migration",
+      "#60 retained M1/kernel ring-stage semantics"
+    ],
+    "cosmic_rule": "Prompt D may consume accepted QL primitives where an actual dependency crosses them, but must not solve #55/#56/#60 opportunistically inside the product tranche"
+  },
+  "agency_owner_state": {
+    "actuation": "#16 with draft PR #17 realised-loop WHAT seam; do not move harness/model/session ownership into Actuation",
+    "aikit": "#114 with draft PR #116 harness-admission/activation-truth HOW seam; use only if a real situated Epi Agent projection crosses it",
+    "workcell": "consume only if the instrument or Agent needs a real material body/provider; structural Map readiness does not imply Workcell readiness"
   },
   "ql_mef_acceptance": {
-    "head": "46f83ed10866ab4391ec25c70c9c16c78281158e",
+    "implementation_head": "46f83ed10866ab4391ec25c70c9c16c78281158e",
+    "current_protocol_head_at_recording": "040983b8528c031230c25c313d07efaa84e1c5cf",
     "workflow_runs": {
       "ql_mef_rust": {"run_id": 32274940738, "conclusion": "success"},
       "ql_mef_rust_verify": {"run_id": 32274940731, "conclusion": "success"},
       "pre_local_release": {"run_id": 32274940702, "conclusion": "success"},
       "epi_bimba_map_conformance": {"run_id": 32274940726, "conclusion": "success"}
     },
+    "current_protocol_head_workflows_at_recording": "queued",
     "conformance_artifact": {
       "artifact_id": 9373903781,
       "digest": "sha256:8c5cd719aeec52c913f5d3591284d0dc96d70328a48e6eed552283fb2ad7697d"
@@ -120,6 +181,6 @@
     "Prompt B — M4′ Nara first lived vertical",
     "Prompt C — Personal M4′ / M5′ / M0′ return",
     "PRE-D — actual Bimba Map → QL-MEF granular parity",
-    "Prompt D — M1′ + M2′ + M3′ one integrated Cosmic instrument"
+    "Prompt D — reconcile/complete the already-started M1′ + M2′ + M3′ one integrated Cosmic instrument on the Map-derived ground"
   ]
 }
