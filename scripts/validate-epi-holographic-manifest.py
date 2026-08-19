@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Validate that the native Epi/QL C floor is not structurally orphaned.
 
-This validator deliberately does not decide unresolved Bimba semantics. It checks
+This validator deliberately does not invent unresolved Bimba semantics. It checks
 that every public native ql_* export has exactly one explicit manifestation
-account, that the frozen corpus remains exhaustively classified, and that the
-locked product/archetype orientation has not been silently flattened.
+account, that the frozen corpus remains exhaustively classified, that the locked
+product/archetype orientation has not been silently flattened, and that returned
+cross-repository evidence is represented at its actual acceptance standing.
 """
 
 from __future__ import annotations
@@ -29,6 +30,9 @@ EXPECTED_S_ROOTS = [
 ]
 
 EXPECTED_ARCHETYPES = {"Khora", "Hen", "Pleroma", "Chronos", "Anima", "Aletheia"}
+EXPECTED_FIRST_BIMBA_COORDINATE = "#1-4.2"
+EXPECTED_FIRST_BIMBA_PARENT = "#1-4"
+EXPECTED_FIRST_BIMBA_PREDECESSOR = "#1-4.1"
 
 EXPECTED_REFERENCE_TUS = {
     "src/arena.c",
@@ -116,6 +120,17 @@ def main() -> int:
         if "c_categories" not in bimba:
             fail(f"{symbol}: C-category account must be explicit")
 
+        if symbol == "ql_position_invert":
+            if bimba.get("coordinates") != [EXPECTED_FIRST_BIMBA_COORDINATE]:
+                fail("ql_position_invert must retain exact recovered Bimba coordinate #1-4.2")
+            if bimba.get("parent") != EXPECTED_FIRST_BIMBA_PARENT:
+                fail("ql_position_invert must retain exact recovered Bimba parent #1-4")
+            relation_text = " ".join(
+                str(item.get("relation", "")) for item in bimba.get("other_relations", [])
+            )
+            if "INVERTS_INTO" not in relation_text or "CONTAINS_LOGIC_STAGE" not in relation_text:
+                fail("ql_position_invert must retain recovered source relation and parentage evidence")
+
     roots = [(entry.get("coordinate"), entry.get("product")) for entry in data["orientation"]["s_roots"]]
     if roots != EXPECTED_S_ROOTS:
         fail(f"S root mapping changed: {roots!r}")
@@ -143,19 +158,53 @@ def main() -> int:
     semantic = specimen.get("semantic_subject", {})
     if "5-p" not in semantic.get("description", ""):
         fail("first specimen must name the six-position complement relation")
+    if semantic.get("bimba_coordinate") != EXPECTED_FIRST_BIMBA_COORDINATE:
+        fail("first specimen must retain exact frozen-Map Bimba coordinate #1-4.2")
+    if semantic.get("bimba_parent") != EXPECTED_FIRST_BIMBA_PARENT:
+        fail("first specimen must retain exact frozen-Map Bimba parent #1-4")
+    if semantic.get("bimba_predecessor") != EXPECTED_FIRST_BIMBA_PREDECESSOR:
+        fail("first specimen must retain exact inversion predecessor #1-4.1")
+    if "INVERTS_INTO" not in semantic.get("source_transition_relation", ""):
+        fail("first specimen must retain exact source INVERTS_INTO relation")
+    if "CONTAINS_LOGIC_STAGE" not in semantic.get("source_parent_relation", ""):
+        fail("first specimen must retain exact source parentage relation")
+
     parity = specimen.get("parity", {})
     if parity.get("result") != "pass" or "6 valid positions" not in parity.get("domain", ""):
         fail("first specimen must retain finite-domain parity evidence")
+
     acceptance = specimen.get("acceptance", {})
-    for required in ("source_revision_known", "code_symbol_exact", "numeric_parity", "relation_preserved", "unresolved_relations_explicit"):
+    for required in (
+        "semantic_identity_survives",
+        "source_coordinate_exact",
+        "source_parentage_exact",
+        "source_relation_exact",
+        "source_revision_known",
+        "code_symbol_exact",
+        "numeric_parity",
+        "relation_preserved",
+        "aikit_bidirectional_traversal",
+        "factory_structural_evidence",
+        "unresolved_relations_explicit",
+    ):
         if acceptance.get(required) is not True:
             fail(f"first specimen acceptance lost required evidence: {required}")
-    if acceptance.get("aikit_bidirectional_traversal") is not False:
-        fail("AIKit conformance must remain explicitly incomplete until executable proof lands")
-    if acceptance.get("factory_structural_evidence") is not False:
-        fail("Factory conformance must remain explicitly incomplete until executable proof lands")
+    if acceptance.get("aikit_acceptance_standing") != "branch-level-exact-coordinate-conformance-not-main":
+        fail("AIKit evidence must remain branch-level rather than being promoted to accepted main")
+    if acceptance.get("factory_acceptance_standing") != "generic-current-main-plus-exact-coordinate-draft-pr":
+        fail("Factory evidence must distinguish accepted generic ground from open exact-coordinate strengthening")
+    if acceptance.get("bimba_graph_live_verified") is not False:
+        fail("repository source recovery must not be promoted to live Bimba graph verification")
 
-    gap_ids = {gap.get("id") for gap in data.get("known_gaps", [])}
+    returned = specimen.get("returned_evidence", {})
+    if returned.get("bimba_map", {}).get("coordinate") != EXPECTED_FIRST_BIMBA_COORDINATE:
+        fail("returned Bimba evidence must point to the exact source coordinate")
+    if returned.get("aikit", {}).get("accepted_main") is not False:
+        fail("AIKit returned evidence must not claim accepted-main standing")
+    if returned.get("factory", {}).get("generic_merge") != "dde3ddc7c666f740c022ab347100369563cce90b":
+        fail("Factory returned evidence must retain the accepted StructuralGround merge")
+
+    gaps = {gap.get("id"): gap for gap in data.get("known_gaps", [])}
     required_gaps = {
         "bimba-live",
         "m1-ring-discrepancy",
@@ -166,13 +215,20 @@ def main() -> int:
         "aikit-project-reflection",
         "factory-structural-ground",
     }
-    if not required_gaps.issubset(gap_ids):
-        fail(f"required structural gaps were lost: {sorted(required_gaps - gap_ids)}")
+    if not required_gaps.issubset(gaps):
+        fail(f"required structural gaps were lost: {sorted(required_gaps - set(gaps))}")
+    if gaps["bimba-live"].get("status") != "repository-source-identity-recovered-live-graph-outstanding":
+        fail("Bimba gap must distinguish repository identity recovery from live graph verification")
+    if gaps["aikit-project-reflection"].get("status") != "branch-exact-coordinate-conformance-running-not-main":
+        fail("AIKit gap must record exact branch-level returned state")
+    if gaps["factory-structural-ground"].get("status") != "generic-resolved-exact-coordinate-strengthening-open":
+        fail("Factory gap must record generic acceptance without closing wider or exact-binding work")
 
     print(
         "holographic-manifest: PASS "
         f"exports={len(header_symbols)} reference_tus={len(corpus_set)} "
-        f"gaps={len(gap_ids)} specimen={specimen.get('id')}"
+        f"gaps={len(gaps)} specimen={specimen.get('id')} "
+        f"bimba={semantic.get('bimba_coordinate')}"
     )
     return 0
 
