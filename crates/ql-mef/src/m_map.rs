@@ -38,6 +38,7 @@ impl MFace {
 pub enum MPathSeparator {
     Dot,
     Hyphen,
+    Slash,
 }
 
 impl MPathSeparator {
@@ -45,6 +46,7 @@ impl MPathSeparator {
         match self {
             Self::Dot => '.',
             Self::Hyphen => '-',
+            Self::Slash => '/',
         }
     }
 }
@@ -74,8 +76,8 @@ pub struct SourcePayload {
 }
 
 /// A source-preserving M coordinate. `source_ref` and separator sequence are
-/// retained exactly because the historical Bimba corpus uses both dot and hyphen
-/// notation and those spellings must not be silently rewritten into one another.
+/// retained exactly because the historical Bimba corpus uses dot, hyphen, and
+/// slash notation and those spellings must not be silently rewritten.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MCoordinate {
     pub source_ref: String,
@@ -159,6 +161,7 @@ impl ParsedSourceCoordinate {
             let separator = match bytes[cursor] {
                 b'.' => MPathSeparator::Dot,
                 b'-' => MPathSeparator::Hyphen,
+                b'/' => MPathSeparator::Slash,
                 _ => return Err(format!("unsupported M path syntax in `{source_ref}`")),
             };
             cursor += 1;
@@ -290,7 +293,10 @@ impl MMapIndex {
 
     pub fn insert_coordinate(&mut self, coordinate: MCoordinate) -> Result<(), String> {
         if coordinate.face != MFace::Bimba {
-            return Err("MMapIndex stores source/Bimba identities; Pratibimba is reflected on demand".to_owned());
+            return Err(
+                "MMapIndex stores source/Bimba identities; Pratibimba is reflected on demand"
+                    .to_owned(),
+            );
         }
         if let Some(existing) = self.coordinates.get_mut(&coordinate.source_ref) {
             if existing.root != coordinate.root
@@ -314,13 +320,20 @@ impl MMapIndex {
         }
 
         for alias in &coordinate.aliases {
-            if let Some(previous) = self.aliases.insert(alias.clone(), coordinate.source_ref.clone()) {
+            if let Some(previous) = self
+                .aliases
+                .insert(alias.clone(), coordinate.source_ref.clone())
+            {
                 if previous != coordinate.source_ref {
-                    return Err(format!("alias `{alias}` resolves to both `{previous}` and `{}`", coordinate.source_ref));
+                    return Err(format!(
+                        "alias `{alias}` resolves to both `{previous}` and `{}`",
+                        coordinate.source_ref
+                    ));
                 }
             }
         }
-        self.coordinates.insert(coordinate.source_ref.clone(), coordinate);
+        self.coordinates
+            .insert(coordinate.source_ref.clone(), coordinate);
         Ok(())
     }
 
@@ -333,7 +346,11 @@ impl MMapIndex {
     }
 
     pub fn resolve(&self, source_or_alias: &str, face: MFace) -> Option<MCoordinate> {
-        let source_ref = self.aliases.get(source_or_alias).map(String::as_str).unwrap_or(source_or_alias);
+        let source_ref = self
+            .aliases
+            .get(source_or_alias)
+            .map(String::as_str)
+            .unwrap_or(source_or_alias);
         self.coordinates.get(source_ref).map(|coordinate| {
             if face == MFace::Bimba {
                 coordinate.clone()
@@ -360,24 +377,34 @@ impl MMapIndex {
     }
 
     pub fn roots(&self) -> BTreeSet<u8> {
-        self.coordinates.values().map(|coordinate| coordinate.root).collect()
+        self.coordinates
+            .values()
+            .map(|coordinate| coordinate.root)
+            .collect()
     }
 
     pub fn coordinates_in_root(&self, root: u8) -> Vec<&MCoordinate> {
-        self.coordinates.values().filter(|coordinate| coordinate.root == root).collect()
+        self.coordinates
+            .values()
+            .filter(|coordinate| coordinate.root == root)
+            .collect()
     }
 
     pub fn relations_for(&self, source_ref: &str) -> Vec<&MRelation> {
         self.relations
             .iter()
             .filter(|relation| {
-                relation.from.source_ref() == Some(source_ref) || relation.to.source_ref() == Some(source_ref)
+                relation.from.source_ref() == Some(source_ref)
+                    || relation.to.source_ref() == Some(source_ref)
             })
             .collect()
     }
 
     pub fn implementation_for(&self, coordinate_ref: &str) -> Vec<&ImplementationBinding> {
-        self.bindings.iter().filter(|binding| binding.coordinate_ref == coordinate_ref).collect()
+        self.bindings
+            .iter()
+            .filter(|binding| binding.coordinate_ref == coordinate_ref)
+            .collect()
     }
 
     pub fn prove_exact_reflection(&self, source_ref: &str) -> Result<ReflectionProof, String> {
@@ -386,7 +413,9 @@ impl MMapIndex {
             .ok_or_else(|| format!("unknown M source coordinate `{source_ref}`"))?;
         let pratibimba = bimba.reflected();
         if !bimba.same_structural_path(&pratibimba) {
-            return Err(format!("reflection changed structural path for `{source_ref}`"));
+            return Err(format!(
+                "reflection changed structural path for `{source_ref}`"
+            ));
         }
         Ok(ReflectionProof {
             source_ref: bimba.source_ref.clone(),
@@ -419,12 +448,27 @@ mod tests {
 
     #[test]
     fn mixed_source_notation_is_preserved_coordinate_for_coordinate() {
-        let coordinate = MCoordinate::parse_source("#4.4.3-1", MFace::Bimba).unwrap();
-        assert_eq!(coordinate.root, 4);
-        assert_eq!(coordinate.path, vec![4, 3, 1]);
-        assert_eq!(coordinate.separators, vec![MPathSeparator::Dot, MPathSeparator::Dot, MPathSeparator::Hyphen]);
-        assert_eq!(coordinate.parent_source_ref.as_deref(), Some("#4.4.3"));
-        assert_eq!(coordinate.canonical_ref(), "ql:m-coordinate:bimba:M4.4.3-1");
+        let coordinate = MCoordinate::parse_source("#0-4.0/1/2-3", MFace::Bimba).unwrap();
+        assert_eq!(coordinate.root, 0);
+        assert_eq!(coordinate.path, vec![4, 0, 1, 2, 3]);
+        assert_eq!(
+            coordinate.separators,
+            vec![
+                MPathSeparator::Hyphen,
+                MPathSeparator::Dot,
+                MPathSeparator::Slash,
+                MPathSeparator::Slash,
+                MPathSeparator::Hyphen
+            ]
+        );
+        assert_eq!(
+            coordinate.parent_source_ref.as_deref(),
+            Some("#0-4.0/1/2")
+        );
+        assert_eq!(
+            coordinate.canonical_ref(),
+            "ql:m-coordinate:bimba:M0-4.0/1/2-3"
+        );
     }
 
     #[test]
@@ -434,7 +478,10 @@ mod tests {
         assert!(coordinate.same_structural_path(&reflected));
         assert_eq!(coordinate.ql_face(), QlFace::Direct);
         assert_eq!(reflected.face.ql_face(), QlFace::Conjugate);
-        assert_eq!(reflected.canonical_ref(), "ql:m-coordinate:pratibimba:M2-2-2-4-4");
+        assert_eq!(
+            reflected.canonical_ref(),
+            "ql:m-coordinate:pratibimba:M2-2-2-4-4"
+        );
     }
 
     #[test]
@@ -444,13 +491,20 @@ mod tests {
         coordinate.provenance.push(record("nodes.json", 0));
         index.insert_coordinate(coordinate).unwrap();
         assert!(index.resolve("#1-2-3", MFace::Pratibimba).is_some());
-        assert!(index.implementation_for("ql:m-coordinate:pratibimba:M1-2-3").is_empty());
+        assert!(
+            index
+                .implementation_for("ql:m-coordinate:pratibimba:M1-2-3")
+                .is_empty()
+        );
     }
 
     #[test]
     fn source_relation_kind_direction_and_missing_endpoint_survive() {
         let source_record = record("relations.json", 4);
-        let payload = SourcePayload { record: source_record.clone(), property_keys: vec!["description".to_owned()] };
+        let payload = SourcePayload {
+            record: source_record.clone(),
+            property_keys: vec!["description".to_owned()],
+        };
         let relation = MRelation {
             relation_ref: "source-relation:4".to_owned(),
             class: MRelationClass::BimbaSource,
@@ -465,7 +519,10 @@ mod tests {
         let mut index = MMapIndex::new();
         index.insert_relation(relation);
         assert_eq!(index.relations()[0].source_kind, "HAS_QL_FRAME");
-        assert_eq!(index.relations()[0].orientation, RelationOrientation::Directed);
+        assert_eq!(
+            index.relations()[0].orientation,
+            RelationOrientation::Directed
+        );
         assert_eq!(index.relations()[0].to, MRelationEndpoint::Missing);
     }
 }
