@@ -1,0 +1,43 @@
+{
+  "schema": "ql.epi-bimba-map-source-lock/v1",
+  "repository": "EpiLogos/Epi-Logos-C-Experiments",
+  "revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+  "map_root": "Idea/Bimba/Map",
+  "dataset_tree": "cd4f4f77c13f27e2563c5a6753d2f8bf2b605f15",
+  "standing": "Git blob identity pins the exact live source body. Generated compiler output additionally records SHA-256 for every recursively inspected Map file and every parsed source payload.",
+  "required_sources": [
+    {"path":"Idea/Bimba/Map/datasets/hashtag_node_data.md","git_blob":"bd71ea8c13b6c09d4fe53bac0c9fe5dc5265dd07","record_class":"structural-markdown"},
+    {"path":"Idea/Bimba/Map/datasets/deep-property-map.md","git_blob":"e954d2b4b9d11ca275d9043db1ea75f1d9888232","record_class":"structural-markdown"},
+
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_anuttara.json","git_blob":"993686e9933d00f85c95691085df453fa575c97d","record_class":"source-node-json","m_root":0},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_anuttara.json","git_blob":"556b27f2e078fbd807f2e4f7ecc2492b04d428ae","record_class":"source-relation-json","m_root":0},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_paramasiva.json","git_blob":"431e371ba3efbea25b97877121b902d0e8ba90b0","record_class":"source-node-json","m_root":1},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_paramasiva.json","git_blob":"107f37edc1ea13626942d888fbd53504d62730d7","record_class":"source-relation-json","m_root":1},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_parashakti.json","git_blob":"6da950a674b375676303a6ad9bbe148561eb095d","record_class":"source-node-json","m_root":2},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_parashakti.json","git_blob":"3915d34d41f13295af8d26f8b0153c70b4877a9e","record_class":"source-relation-json","m_root":2},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/parashakti-stragglers-nodes.json","git_blob":"626c41d6316b987a5940be774dcd6969f780908b","record_class":"source-node-json","m_root":2,"status":"migration-residue-retained"},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/parashakti-stragglers-relations.json","git_blob":"7b05bc7b9a7c148443a5f85dc50d026fd4fd60ad","record_class":"source-relation-json","m_root":2,"status":"migration-residue-retained"},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_mahamaya.json","git_blob":"6e3f60210c0e862295bfbd854958c9edc622e2c6","record_class":"source-node-json","m_root":3},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_mahamaya.json","git_blob":"ea2c43f9c717256d3d947bc76a07d2e50b36e683","record_class":"source-relation-json","m_root":3},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_nara.json","git_blob":"218da1ebccdd0f10e8b478c7d60ea98c5aa8472d","record_class":"source-node-json","m_root":4},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_nara.json","git_blob":"830a3948ae35d515f2a3bdeed3e8add1540d0b14","record_class":"source-relation-json","m_root":4},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_epii.json","git_blob":"99eb19bc5a297b1f0786031fa115a09091ab40ad","record_class":"source-node-json","m_root":5},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_epii.json","git_blob":"af4edf201fa9cb249207972096d806c9bc80a8b2","record_class":"source-relation-json","m_root":5},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_foundation.json","git_blob":"cbd1377fa574c27d19288442c2b2e04343be5962","record_class":"source-relation-json","scope":"cross-domain-foundation"},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/nodes_hash.json","git_blob":"7a74948a1ddf4bfe723ed28091dc45bbc7c04a38","record_class":"source-node-json","scope":"meta-source"},
+    {"path":"Idea/Bimba/Map/datasets/low-detail/relations_hash.json","git_blob":"3dca5c553f84abe29a937d7945f65da74070d1b9","record_class":"source-relation-json","scope":"meta-source"},
+
+    {"path":"Idea/Bimba/Map/datasets/anuttara-deep/nodes-full-data.json","git_blob":"54fb915b09614a501b0d014e0ea901ce27cde309","record_class":"source-node-json","m_root":0,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/anuttara-deep/relations.json","git_blob":"778b5812917fafe44ebb271b01e2d1d22056bcb4","record_class":"source-relation-json","m_root":0,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/paramasiva-deep/nodes-full-detail.json","git_blob":"28f10e512735bc1e6f9de5ae595375bd728748d7","record_class":"source-node-json","m_root":1,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/paramasiva-deep/relations.json","git_blob":"28cb6694afe5732c936b5d71cd2dea15972b2628","record_class":"source-relation-json","m_root":1,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/parashakti-deep/nodes-full-detail.json","git_blob":"cad8b916589e5175d66272e15f5afaf935e21584","record_class":"source-node-json","m_root":2,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/parashakti-deep/relations.json","git_blob":"b18faa80ea4256f85cc51180934de7b21e3e4215","record_class":"source-relation-json","m_root":2,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/mahamaya-deep/nodes-full-detail.json","git_blob":"6fa149fea7e2be68b2a5da516e264de29567f255","record_class":"source-node-json","m_root":3,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/mahamaya-deep/relations.json","git_blob":"536e698106f04c60aaf94b41ffe71fa4ef5ac524","record_class":"source-relation-json","m_root":3,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/nara-deep/nodes-full-detail.json","git_blob":"93922ed4da6cf5ef9396368638d685f4764011af","record_class":"source-node-json","m_root":4,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/nara-deep/relations.json","git_blob":"e0e6ea42456573002cda20ca872b3f5f0f397ff5","record_class":"source-relation-json","m_root":4,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/epii-deep/nodes-full-details.json","git_blob":"f9604a1670c0cfd0b6f05319a4775997ffd429f9","record_class":"source-node-json","m_root":5,"depth":"deep"},
+    {"path":"Idea/Bimba/Map/datasets/epii-deep/relations.json","git_blob":"a99ca37bc0efc5d30d8609abd226d6f19ef0cada","record_class":"source-relation-json","m_root":5,"depth":"deep"}
+  ]
+}
