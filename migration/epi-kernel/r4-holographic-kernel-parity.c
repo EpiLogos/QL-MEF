@@ -67,18 +67,31 @@ int main(void) {
     CHECK((ql_relation_flags(p2->c) & QL_TAG_BRANCHING) != 0u, "relation.branching");
     CHECK(ql_relation_target(p4->cf) == p4, "reflective.cf-self");
 
-    QL_Holographic_Coordinate conjugate;
-    CHECK(ql_coordinate_conjugate(p2, &conjugate) == 0, "conjugate.P");
-    CHECK(conjugate.family == QL_FAMILY_P && conjugate.ql_position == 3u && conjugate.inversion_state == 1u, "conjugate.P-identity");
-    CHECK(ql_coordinate_topology(&conjugate) == QL_TOPO_KLEIN, "conjugate.P-topology");
+    /* Coordinate priming is a label over the same positional index. It must
+     * not smuggle the M1 p->5-p complement into P/P' or L/L' conjugacy. */
+    QL_Coordinate_Label p2_label = ql_coordinate_label(QL_FAMILY_P, 2u, QL_COORD_FACE_BIMBA);
+    QL_Coordinate_Label p2_prime = ql_coordinate_label_other_face(p2_label);
+    CHECK(ql_coordinate_label_valid(p2_label), "label.P-valid");
+    CHECK(p2_prime.family == QL_FAMILY_P && p2_prime.position == 2u &&
+          p2_prime.face == QL_COORD_FACE_PRATIBIMBA, "label.P-prime-same-position");
 
-    QL_Holographic_Coordinate* l1 = ql_holographic_field_get(&field, QL_FAMILY_L, 1u);
-    CHECK(ql_coordinate_conjugate(l1, &conjugate) == 0, "conjugate.L");
-    CHECK(conjugate.family == QL_FAMILY_L && conjugate.ql_position == 4u && conjugate.inversion_state == 1u, "conjugate.L-identity");
+    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_PRATIBIMBA) == 0, "face.P-set");
+    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_PRATIBIMBA,
+          "face.P-preserves-position");
+    CHECK(ql_coordinate_topology(p2) == QL_TOPO_KLEIN, "face.P-prime-klein");
+    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_BIMBA) == 0, "face.P-reset");
+    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_BIMBA,
+          "face.P-reset-same-position");
 
+    QL_Coordinate_Label l1_label = ql_coordinate_label(QL_FAMILY_L, 1u, QL_COORD_FACE_BIMBA);
+    QL_Coordinate_Label l1_prime = ql_coordinate_label_other_face(l1_label);
+    CHECK(l1_prime.family == QL_FAMILY_L && l1_prime.position == 1u &&
+          l1_prime.face == QL_COORD_FACE_PRATIBIMBA, "label.L-prime-same-position");
+
+    /* M remains a parent family address. R4 does not equate generic face
+     * toggling with the later/deeper M->M' compositional relation. */
     QL_Holographic_Coordinate* m1 = ql_holographic_field_get(&field, QL_FAMILY_M, 1u);
-    CHECK(ql_coordinate_conjugate(m1, &conjugate) == 0, "conjugate.M");
-    CHECK(conjugate.family == QL_FAMILY_M && conjugate.ql_position == 4u, "conjugate.M-family-preserved");
+    CHECK(m1 && m1->family == QL_FAMILY_M && m1->ql_position == 1u, "field.M1-address");
 
     QL_Pratibimba manifested;
     CHECK(ql_coordinate_materialize(ql_default_psychoid_bimba(1u), &manifested) == 0, "pratibimba.materialize");
@@ -99,6 +112,16 @@ int main(void) {
         for (uint8_t face = 0; face < QL_FACE_COUNT; face++) {
             for (uint8_t pos = 0; pos < QL_POSITION_COUNT; pos++) {
                 CHECK(ql_kernel_resonance_index(lens, face, pos) == kernel_resonance_index(lens, face, pos), "kernel.resonance-index");
+                QL_Kernel_Resonance_Map mapped;
+                CHECK(ql_kernel_resonance_map(lens, face, pos, &mapped) == 0, "kernel.resonance-map");
+                CHECK(mapped.lens.family == QL_FAMILY_L && mapped.lens.position == lens,
+                      "kernel.resonance-map-lens");
+                CHECK(mapped.lens.face == face, "kernel.resonance-map-face");
+                CHECK(mapped.inner_position == pos, "kernel.resonance-map-inner-position");
+                CHECK(mapped.resonance_index == kernel_resonance_index(lens, face, pos),
+                      "kernel.resonance-map-index");
+                CHECK(mapped.tritone_square == kernel_tritone_square_for_lens(lens),
+                      "kernel.resonance-map-square");
             }
         }
     }
@@ -138,16 +161,22 @@ int main(void) {
         CHECK(n.cycle == r.cycle && n.sub_tick == r.sub_tick, "kernel.tick.identity");
         CHECK((int)n.phase == (int)r.phase, "kernel.tick.phase");
         CHECK((int)n.element == (int)r.element, "kernel.tick.element");
-        CHECK(n.position6 == r.position6 && n.base_position == r.position6, "kernel.tick.position6");
+        CHECK(n.position6 == r.position6, "kernel.tick.position6");
         CHECK(exactf(n.harmonic_ratio, r.harmonic_ratio), "kernel.tick.ratio");
-        CHECK(n.traversal_stage == ql_ring_traversal_stage((uint8_t)raw), "kernel.tick.traversal-stage-distinct");
+
+        QL_Coordinate_Label tick_label = ql_kernel_tick_position_label(&n);
+        CHECK(tick_label.family == QL_FAMILY_P, "kernel.tick-map-family-P");
+        CHECK(tick_label.position == r.position6, "kernel.tick-map-same-position");
+        CHECK(tick_label.face == (n.sub_tick < QL_POSITION_COUNT
+              ? QL_COORD_FACE_BIMBA : QL_COORD_FACE_PRATIBIMBA),
+              "kernel.tick-map-face");
     }
 
     if (failures) {
         fprintf(stderr, "R4 parity failures: %u\n", failures);
         return 1;
     }
-    printf("R4 holographic/kernel parity: PASS\n");
+    printf("R4 holographic/kernel parity + coordinate mapping: PASS\n");
     printf("native-kernel-api: %s\n", ql_kernel_api_version());
     return 0;
 }

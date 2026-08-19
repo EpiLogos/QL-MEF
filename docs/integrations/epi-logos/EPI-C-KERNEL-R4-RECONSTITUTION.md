@@ -2,91 +2,91 @@
 
 Status: implementation/evidence receipt for QL-MEF issue #56, under programme #51.
 
-This tranche migrates the reusable computational substrate of the frozen Epi C kernel into QL-MEF-owned C. It does **not** move Epi's semantic ownership of M identities, named Bimba worlds, guardian identities, M′ products, or authored domain interpretation.
+This tranche reconstitutes the reusable historical Epi C coordinate/kernel substrate in QL-MEF-owned C. It does **not** reinterpret the mature inversion/conjugation dynamics as a positional complement rule, and it does not move Epi semantic ownership of M identities, named Bimba worlds, guardian identities, M′ products, or authored domain interpretation.
 
-Source authority is the frozen `Body/S/S0/epi-lib` corpus at Epi revision `daa660cbc1b8c5da83828698665a753852cb0287`. The pre-R4 QL base is `3e9fb929f0c34e8b4474eef59ce512b53082fba1`. The accepted scalar floor remains `ql-c/primitive 0.1.0` and is reused rather than copied or reimplemented.
+Source authority is the frozen `Body/S/S0/epi-lib` corpus at Epi revision `daa660cbc1b8c5da83828698665a753852cb0287`. The accepted scalar floor remains `ql-c/primitive 0.1.0` and is reused where it is genuinely scalar law.
+
+## Core correction: coordinate mapping is not conjugation
+
+The R4 kernel now keeps three things distinct:
+
+1. **coordinate identity / labelling** — family + six-position + Bimba/Pratibimba face;
+2. **kernel dynamics** — bioquaternion state, slash flip, 12-tick phasing, resonance, harmonic ratios and energy;
+3. **historical positional complement** — the separate M1-style `0↔5, 1↔4, 2↔3` relation exposed by the existing scalar helper.
+
+The positional complement is not used to manufacture P/P′ or L/L′.
+
+The mature conjugate-reflection mechanism is the kernel's bioquaternionic operation:
+
+```text
+bimba / pratibimba faces
+        ↓
+q_b / q_p
+        ↓
+slash flip
+        ↓
+q -> q*  (scalar preserved, vector sign reversed)
+```
+
+That is the operative `0/1 -> 1/0`-type conjugation relation. The coordinate layer labels where a state/aspect sits in the field; it does not replace this dynamics with `p -> 5-p`.
 
 ## Old → native movement
 
-| Historical substrate | Native QL-MEF C | Status / reason |
+| Historical substrate | Native QL-MEF C | R4 disposition |
 |---|---|---|
-| `ontology.h::Coordinate_Family` | `ql/holographic.h::QL_Coordinate_Family` | Migrated with exact `C/P/L/S/T/M/NONE` values. `NONE` remains pre-categorical. |
-| `ontology.h::Holographic_Coordinate` | `QL_Holographic_Coordinate` | Reconstituted as the 128-byte seed, retaining family + six-position identity, inversion state, weave state, semantic/source anchor, 6 base links, 6 reflective slots, execution hook, payload. |
-| tagged `#`, `.`, `-`, `()` pointer relations | `ql_relation_tag/target/flags/family/position` | Reconstituted with the historical upper-bit contract and source-determined nesting/branching rule. |
-| `families.c::FAMILIES[6][6]` and cross-links | `QL_Holographic_Field` | Native 6×6 field; all six parent families remain addressable and cross-linked. |
-| historical `cf`/`cs` wiring | native `cf`/`cs` links | Preserved where the frozen initializer actually wires them. `cpf/ct/cp/cfp` remain explicit slots but are not populated here: R4 does not create a second Context Frame system. |
-| `BIMBA` / `PRATIBIMBA` | `QL_Bimba` / `QL_Pratibimba` + materialize/source/bedrock | Source ↔ manifestation remains structurally recoverable. Native generic psychoid Bimba carries no Epi-owned semantic payload. |
-| P/P′ topology and inversion state | `ql_coordinate_toggle_cover`, `ql_coordinate_conjugate` | Conjugacy preserves the parent family and delegates positional inversion to accepted `ql_position_invert`. P′ is represented as the inverted/Klein cover; L/L′ uses the same family-preserving conjugacy without deriving it from M1. |
-| M-family coordinate identity | same universal field/conjugacy | `M1` is `family=M, position=1`; conjugation produces `family=M, position=4`, never a flattened generic index. |
-| `kernel.c` harmonic/resonance helpers | accepted `ql-c/primitive` calls | Ratios, 72-fold resonance indexing and tritone mapping reuse the accepted scalar floor. |
-| `Kernel_Bioquaternion`, slash flip, resonance emphasis, energy | `ql/kernel.h` + `c/src/kernel.c` | Migrated into QL-owned C with frozen-kernel parity tests. |
-| 12-tick kernel mechanics | `QL_Kernel_Tick` | Preserves historical `position6 = tick % 6` while also carrying accepted `base_position` and distinct `traversal_stage`; issue #60 is not resolved by this migration. |
-| no independent QL native-C distribution seam | `c/Makefile` static archive/install/package | Adds a deterministic `libql-mef-c.a`, headers, API version and exact build revision metadata so an independent Epi C consumer can pin and verify QL-owned C rather than copy source or rely on a sibling checkout. |
+| `ontology.h::Coordinate_Family` | `QL_Coordinate_Family` | Exact `C/P/L/S/T/M/NONE` family identity retained. |
+| `ontology.h::Holographic_Coordinate` | `QL_Holographic_Coordinate` | 128-byte historical seed retained as migration-compatible structure: family, position, historical inversion-state storage, weave, semantic/source anchor, six base links, six reflective slots, execution hook and payload. |
+| raw psychoids / Hash | `ql_default_psychoid_bimba`, `ql_default_hash_bimba` | Raw psychoids remain pre-categorical `FAMILY_NONE`; Hash remains generative/non-positional rather than being forced into the sixfold. |
+| tagged `#`, `.`, `-`, `()` relations | relation tagging/accessors | Historical relation metadata is retained for parity and addressability. The `#` tag is not reduced to positional complement. |
+| family field | `QL_Holographic_Field` | Native 6×6 family-bearing coordinate field with M retained as a full parent family. |
+| Bimba / Pratibimba source-manifestation | `QL_Bimba`, `QL_Pratibimba`, materialize/source/bedrock | Structural source ↔ manifestation remains recoverable. |
+| P/P′, L/L′ coordinate notation | `QL_Coordinate_Label` + face mapping | Prime/unprime is represented as a **face over the same positional index**. `P2′` remains position 2; `L1′` remains lens 1. No `5-i` remap is performed. |
+| `Kernel_Bioquaternion`, quaternion conjugation, slash flip | `ql/kernel.h`, `c/src/kernel.c` | Actual conjugate dynamics migrated with frozen-kernel parity. |
+| 12-tick kernel | `QL_Kernel_Tick` + `ql_kernel_tick_position_label` | Historical dynamics remain unchanged. Coordinate mapping reads ticks `0..5` as `P0..P5` Bimba-face and `6..11` as `P0′..P5′` Pratibimba-face using the kernel's own `position6 = tick % 6`. |
+| 72-fold resonance | `ql_kernel_resonance_map` | Existing `6 lens × 2 face × 6 inner-position` address is labelled as `L_i/L_i′ × inner-position`; no new conjugation math is introduced. |
+| harmonic/tritone/resonance scalar helpers | accepted `ql-c/primitive` calls | Reused beneath the kernel where they are genuinely the same finite law. |
+| energy evaluation | `ql_kernel_energy_evaluate` | Migrated with frozen-kernel parity. |
+| no independent native-C distribution seam | `c/Makefile` static archive/install/package | Deterministic QL-owned native-C artifact with API/revision metadata. Packaging supports consumption but is not itself the R4 product meaning. |
 
-## Structural invariants proved in QL-MEF
+## Coordinate mapping invariants
 
-`migration/epi-kernel/r4-holographic-kernel-parity.c` compares the promoted kernel against the frozen executable source where direct parity is meaningful and proves structural invariants where the frozen implementation is initializer-based:
+R4 now proves the mapping layer without claiming it is the generative mechanism:
 
-- all `C/P/L/S/T/M` family values and `FAMILY_NONE` match;
-- the 128-byte coordinate seed and critical offsets match;
-- raw psychoids remain `FAMILY_NONE` Bimba;
-- the complete 6×6 family field exists with family + position identity;
-- base family links retain tagged family and position identity;
-- nesting/branching follows the historical source-coordinate rule;
-- `cf` and `cs` links retain the frozen initializer behavior without introducing new CF semantics;
-- P, L and M conjugation preserves family identity and applies the accepted positional inversion law;
-- Bimba → Pratibimba materialisation retains a recoverable source link;
-- execution hooks remain callable;
-- harmonic ratio/log, 72-fold resonance, tritone squares, bioquaternion normalization, slash-flip conjugation, resonance emphasis, energy decomposition and the complete 256-byte tick input domain compare against the frozen kernel;
-- historical kernel `position6/base_position` and M1-style `traversal_stage` stay explicit and non-equated on the inverted half.
+- `C/P/L/S/T/M` and raw `FAMILY_NONE` remain addressable;
+- coordinate family and six-position identity remain separate;
+- P/P′ face change preserves the P index;
+- L/L′ face change preserves the L index;
+- P′ is labelled as the Klein/non-orientable face where the current coordinate account supports that topology;
+- M remains `family=M, position=i`; generic coordinate face metadata is not equated with the deeper `M_i′` compositional product relation;
+- Bimba → Pratibimba materialisation preserves recoverable source identity;
+- the 12-tick dynamics map onto P/P′ labels without injecting M1 traversal/complement semantics;
+- the 72-fold resonance dynamics map onto L/L′ labels plus the existing six inner positions;
+- actual slash-flip parity remains quaternion conjugation of the bioquaternionic state.
 
-`scripts/test-epi-c-r4.sh` also builds and installs only the QL-owned static library, then links an external smoke consumer against the installed prefix. This is the dependency seam the historical Epi C build can pin; source-relative includes or copied QL source are not part of the contract.
+## Kernel parity retained
 
-## First historical M1 edge — executed
+`migration/epi-kernel/r4-holographic-kernel-parity.c` still compares the promoted kernel to the frozen executable source for:
 
-The source identity was already resolved by the existing holographic provenance account:
+- harmonic ratios and epogdoon log;
+- 72-fold resonance indices and tritone squares;
+- bioquaternion initialization;
+- slash-flip conjugation;
+- resonance-square emphasis;
+- energy decomposition;
+- the complete `uint8_t` tick-input domain against the historical 12-tick behavior.
 
-```text
-M1 / #1-4.2 Principle of Inversion
-    → formal law p ↦ 5-p
-    → ql-c/primitive::ql_position_invert
-```
+The new assertions are mapping assertions: the same returned kernel states receive the expected coordinate labels. They do not alter those states to fit a coordinate theory.
 
-QL-MEF PR #76 publishes the native C seam at immutable commit `a3c33a2944fb2d90111afdf18f2afd6e871043e0`. The paired Epi PR #31 (`agent/ql-mef-r4-m1-inversion-consumer`, current head `da4ac68fe333aef755e976ea7c65f550d9a999b2`) pins that exact revision and switches one real historical runtime read only: `m1.c::m1_cli_dispatch(..., "ql", ...)` now obtains each inverse stage from `ql_position_invert(QL_FLOWERING[i].stage)`.
+## What R4 no longer does
 
-The Epi-owned `QL_INVERT[6]` and `QL_FLOWERING[].inverse` are deliberately retained as source/parity evidence. The Epi workflow materialises QL into an installed prefix, deletes the QL source checkout, then proves:
+R4 does **not** create or require an Epi M1 consumer switch through `ql_position_invert`.
 
-```text
-QL native C dependency verified: ql-c/primitive 0.1.0
-  @ a3c33a2944fb2d90111afdf18f2afd6e871043e0
+The earlier `#1-4.2 Principle of Inversion -> p -> 5-p -> M1 consumer` path conflated a semantic/source coordinate description and a finite positional complement with the mature conjugate-reflection mechanism. That path is withdrawn from R4. The separate Epi PR created for it is superseded/closed rather than treated as migration evidence.
 
-M1 #1-4.2 -> ql_position_invert parity: PASS
-  coverage: all six + involution + invalid boundaries
+The scalar positional-complement helper can remain as historical/generalized finite law until its naming/source articulation is revisited, but it is not the P/P′ or L/L′ conjugation engine.
 
-existing focused M1 regression: 190 passed, 0 failed
+## R5 handoff
 
-nm m1-r4.o:
-  U ql_position_invert
+Per parent programme #51, R5 is the later incremental rebase of M0–M5 consumers onto the now-real shared kernel. It should consume the kernel's actual coordinate maps and dynamics where concrete duplicate dependencies exist. It must not use M1's positional complement table to define the universal conjugate system.
 
-nm libql-mef-c.a:
-  T ql_position_invert
-```
-
-This is the required physical consumer proof: the Epi M1 translation unit imports the native operation and the pinned QL archive supplies it. No copied helper, sibling include path, or Rust wrapper is the implementation edge.
-
-## R5 consumer-edge ledger
-
-R4 intentionally stops after the first M1 specimen. The following are the remaining **evidenced** R5 dependency edges; this list does not promote authored domain data merely because its cardinality resembles a generalized QL structure.
-
-| Epi consumer | Remaining edge into native QL C | R5 constraint |
-|---|---|---|
-| **M0** | `m0.h` still consumes the historical `ontology.h` coordinate/link/execution contract directly. Rebase the structural HC/link/access edge onto `ql/holographic` (or a parity-preserving Epi boundary adapter) before changing any M0 VM semantics. | `VIMARSA_TABLE`, authored archetype/divine-act/Vāk data, Siva/Shakti semantics remain Epi-owned; no invented scalar replacement. |
-| **M1** | After the inversion read, historical ring helpers `RING_WRAP`, `IS_SHADOW_PHASE`, `GET_BASE_QL_POS`, and `ql_get_stage` still sit in M1. Rebase them incrementally to `ql_ring_wrap`, `ql_ring_half`, `ql_ring_base_position`, and `ql_ring_traversal_stage` with dual parity. Quaternion consumers are candidates for `ql/kernel` only where the signatures/parity line up. | Keep `base_position` and `traversal_stage` distinct; do not resolve #60 by choosing one. `QL_FLOWERING`, Spanda, Ananda, and M1 semantic tables stay Epi-owned. |
-| **M2** | The M2 body still owns its 72-condition semantic union and inline 12×6 lens routing (`get_mef_condition`, L-family linkage). Rebase only the generalized 6×2×6 address/index mechanics onto `ql_resonance_index` / native family-bearing L coordinates where a concrete call site is switched. | Do not move the M2 72-space semantic payload, Tattvas, decans, planets, elements, or authored lens names into QL just because the native index is 72-fold. |
-| **M3** | `m3_line_change(hex,line)` and `m3_complement(hex)` remain direct duplicate 6-bit operations; these are the clean next finite-domain edges to `ql_state6_line_change` and `ql_state6_complement`. | Preserve invalid-line behavior explicitly at the boundary. Do not pull `m3_clock_lut.c` / #55 data authority into this rebase. The existing strict-C11 M3 barrier is a separate source/build fact, not a reason to rewrite M3 here. |
-| **M4** | No additional generalized R4 primitive consumer is yet proven safe to flip. M4 still depends transitively on the historical coordinate/M1–M3 body and its own BLAKE3/oracle/lens semantics. | First resolve the concrete structural/kernel call edge encountered in R5; do not treat current stubs or deep Nara/M′ semantics as QL kernel mechanics. |
-| **M5** | No additional generalized scalar/kernel duplicate has been proven from the accepted R1/R2 floor. M5 still consumes historical HC/M-family integration paths. | Rebase structural HC/kernel calls only when encountered; preserve Epi Logos/synthesis semantics and do not execute deep M′/D work. |
-
-The R5 order implied by current evidence is therefore: **M1 remaining ring/tick edges and M3 finite 6-bit transforms first; M0/M2 structural/index edges where a real consumer is encountered; M4/M5 only after a concrete reusable kernel dependency is demonstrated.** This keeps R5 incremental rather than turning it into an M0–M5 rewrite.
-
-M3 LUT authority (#55), the tick-projection question (#60), fourfold M→S/S′→M′ work (#74/#75), #73, D, and deep M′ products remain outside R4/R5 primitive rebase unless separately authorized.
+#55 data authority, any remaining historical tick-description discrepancy, #74/#75 fourfold mapping, #73, D, and deep M′ products remain independent work unless separately authorized.

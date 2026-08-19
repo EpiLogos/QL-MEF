@@ -75,6 +75,30 @@ uint8_t ql_kernel_tritone_square_for_lens(uint8_t lens) {
     return ql_tritone_square_for_lens(lens);
 }
 
+int ql_kernel_resonance_map(
+    uint8_t lens,
+    uint8_t face,
+    uint8_t position,
+    QL_Kernel_Resonance_Map* out
+) {
+    if (!out || lens >= QL_POSITION_COUNT || face >= QL_FACE_COUNT ||
+        position >= QL_POSITION_COUNT) {
+        return -1;
+    }
+    uint8_t index = ql_kernel_resonance_index(lens, face, position);
+    if (index == QL_INVALID_U8) return -1;
+
+    out->lens = ql_coordinate_label(
+        QL_FAMILY_L,
+        lens,
+        face == 0u ? QL_COORD_FACE_BIMBA : QL_COORD_FACE_PRATIBIMBA
+    );
+    out->inner_position = position;
+    out->resonance_index = index;
+    out->tritone_square = ql_kernel_tritone_square_for_lens(lens);
+    return 0;
+}
+
 void ql_kernel_resonance_square_emphasis(
     const QL_Kernel_Resonance_Vector* vector,
     float out_square_emphasis[QL_KERNEL_TRITONE_SQUARES]
@@ -152,12 +176,22 @@ QL_Kernel_Tick ql_kernel_tick_from_epogdoon(uint64_t cycle, uint8_t sub_tick) {
     return (QL_Kernel_Tick){
         .cycle = primitive.cycle,
         .sub_tick = primitive.sub_tick,
-        .half = primitive.half,
         .phase = primitive.sub_tick < QL_POSITION_COUNT ? QL_KERNEL_PHASE_DESCENT : QL_KERNEL_PHASE_ASCENT,
         .element = elements[primitive.sub_tick],
         .position6 = primitive.base_position,
-        .base_position = primitive.base_position,
-        .traversal_stage = primitive.traversal_stage,
         .harmonic_ratio = primitive.harmonic_ratio
     };
+}
+
+QL_Coordinate_Label ql_kernel_tick_position_label(const QL_Kernel_Tick* tick) {
+    if (!tick || tick->sub_tick >= QL_TICK_COUNT || tick->position6 >= QL_POSITION_COUNT) {
+        return ql_coordinate_label(QL_FAMILY_P, QL_INVALID_U8, QL_COORD_FACE_BIMBA);
+    }
+    return ql_coordinate_label(
+        QL_FAMILY_P,
+        tick->position6,
+        tick->sub_tick < QL_POSITION_COUNT
+            ? QL_COORD_FACE_BIMBA
+            : QL_COORD_FACE_PRATIBIMBA
+    );
 }

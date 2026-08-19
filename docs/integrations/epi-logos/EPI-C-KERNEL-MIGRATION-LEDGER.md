@@ -88,33 +88,3 @@ Do not normalize source/data representations merely because the first primitive 
 ### R4/#56 handoff
 
 Rebase one low-level consumer edge at a time in dependency order. Do not turn a successful helper migration into a flag-day M0→M5 rewrite.
-
-## R4 returned-state update — 2026-08-19
-
-This section is the later execution evidence for #56 and supersedes the earlier `consumer proof still pending` / `R4 handoff` wording above without rewriting the historical ledger chronology.
-
-QL-MEF PR #76 reconstitutes the shared native C kernel. Its executable artifact commit is `a3c33a2944fb2d90111afdf18f2afd6e871043e0`; the PR's later documentation head may advance without changing that pinned artifact identity. The moved substrate is recorded in `EPI-C-KERNEL-R4-RECONSTITUTION.md` and includes:
-
-- `C/P/L/S/T/M` plus raw `FAMILY_NONE` in a family-bearing 128-byte `QL_Holographic_Coordinate` seed;
-- tagged inversion / nesting / branching / execution relations, weave-state interpretation, 6 base links, 6 reflective slots, execution hooks, and a native 6×6 holographic field;
-- family-preserving P/P′, L/L′ and M conjugacy using the accepted scalar `ql_position_invert` law;
-- structurally recoverable Bimba → Pratibimba source/manifestation;
-- promoted bioquaternion, slash-flip, resonance-square, energy and tick mechanics, with harmonic/resonance/tritone scalar work delegated to `ql-c/primitive 0.1.0`;
-- a deterministic QL-owned `libql-mef-c.a` install/package surface carrying API version and exact source revision.
-
-The QL R4 workflow passes frozen-kernel parity plus layout/family/link invariants and independently links a smoke consumer against the installed static library. The existing R1/R2 parity suite remains in the same workflow.
-
-The first real consumer flip is Epi PR #31, current tested head `da4ac68fe333aef755e976ea7c65f550d9a999b2`. It pins QL artifact commit `a3c33a2944fb2d90111afdf18f2afd6e871043e0`, then switches only the M1 `ql` CLI inversion read:
-
-```text
-#1-4.2 Principle of Inversion
-  → p ↦ 5-p
-  → ql_position_invert
-  → m1.c::m1_cli_dispatch("ql")
-```
-
-The historical `QL_INVERT[6]` and `QL_FLOWERING[].inverse` remain Epi-owned reference evidence. The Epi workflow passes all six inversion values, involution, invalid boundaries, the focused historical M1 regression (`190 passed, 0 failed`), and symbol provenance proving `m1.o` imports `ql_position_invert` while the pinned QL archive defines it.
-
-Implementation movement does not move semantic ownership: M0–M5 identities, named Bimba worlds, Spanda/Ananda/Tattva/etc. authored data, guardian identity and deep M′ interpretation remain Epi-owned.
-
-R5 is now the incremental consumer rebase described by the R4 receipt's `R5 consumer-edge ledger`. The next evidenced low-level edges are M1's remaining ring/tick helpers and M3's finite six-bit complement/line-change operations. M0/M2 structural/index edges follow only at concrete call sites; M4/M5 require a demonstrated reusable kernel edge rather than assumption. #55 data authority, #60 tick semantics, #74/#75, #73, D and deep M′ remain independent.

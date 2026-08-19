@@ -24,6 +24,20 @@ typedef enum {
     QL_FAMILY_NONE = 7
 } QL_Coordinate_Family;
 
+/* A coordinate face is a label over the same family+position substrate.
+ * It does not itself perform the bioquaternionic conjugation q -> q*.
+ * P_i/P_i' and L_i/L_i' therefore preserve i and differ by face. */
+typedef enum {
+    QL_COORD_FACE_BIMBA       = 0,
+    QL_COORD_FACE_PRATIBIMBA  = 1
+} QL_Coordinate_Face;
+
+typedef struct {
+    uint8_t family;
+    uint8_t position;
+    uint8_t face;
+} QL_Coordinate_Label;
+
 typedef enum {
     QL_TOPO_TORUS       = 0x00u,
     QL_TOPO_LEMNISCATE  = 0x40u,
@@ -57,7 +71,7 @@ typedef void (*QL_Context_Execution_Operator)(
 struct QL_Holographic_Coordinate {
     uint8_t ql_position;
     uint8_t family;
-    uint8_t inversion_state;
+    uint8_t inversion_state; /* historical storage; native reading is coordinate face */
     uint8_t flags;
     float weave_state;
 
@@ -124,6 +138,16 @@ bool ql_coordinate_is_bimba(const QL_Holographic_Coordinate* coordinate);
 QL_Topology_Mode ql_coordinate_topology(const QL_Holographic_Coordinate* coordinate);
 void ql_coordinate_set_topology(QL_Holographic_Coordinate* coordinate, QL_Topology_Mode mode);
 
+QL_Coordinate_Label ql_coordinate_label(
+    QL_Coordinate_Family family,
+    uint8_t position,
+    QL_Coordinate_Face face
+);
+bool ql_coordinate_label_valid(QL_Coordinate_Label label);
+QL_Coordinate_Label ql_coordinate_label_other_face(QL_Coordinate_Label label);
+QL_Coordinate_Face ql_coordinate_face(const QL_Holographic_Coordinate* coordinate);
+int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_Face face);
+
 bool ql_weave_is_identification_edge(float weave_state);
 bool ql_coordinate_has_nesting_access(const QL_Holographic_Coordinate* coordinate);
 uint8_t ql_weave_parent(float weave_state);
@@ -152,11 +176,6 @@ const QL_Holographic_Coordinate* ql_holographic_field_get_const(
     uint8_t position
 );
 
-void ql_coordinate_toggle_cover(QL_Holographic_Coordinate* coordinate);
-int ql_coordinate_conjugate(
-    const QL_Holographic_Coordinate* source,
-    QL_Holographic_Coordinate* conjugate
-);
 void ql_coordinate_execute(QL_Holographic_Coordinate* coordinate, void* context_state);
 
 #ifdef __cplusplus

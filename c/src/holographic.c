@@ -91,6 +91,61 @@ void ql_coordinate_set_topology(QL_Holographic_Coordinate* coordinate, QL_Topolo
     coordinate->flags = (uint8_t)((coordinate->flags & (uint8_t)~QL_TOPO_MODE_MASK) | (uint8_t)mode);
 }
 
+QL_Coordinate_Label ql_coordinate_label(
+    QL_Coordinate_Family family,
+    uint8_t position,
+    QL_Coordinate_Face face
+) {
+    QL_Coordinate_Label label = {
+        .family = (uint8_t)family,
+        .position = position,
+        .face = (uint8_t)face
+    };
+    if (!ql_coordinate_label_valid(label)) {
+        label.family = (uint8_t)QL_FAMILY_NONE;
+        label.position = QL_INVALID_U8;
+        label.face = (uint8_t)QL_COORD_FACE_BIMBA;
+    }
+    return label;
+}
+
+bool ql_coordinate_label_valid(QL_Coordinate_Label label) {
+    return ql_family_index((QL_Coordinate_Family)label.family) >= 0 &&
+           label.position < QL_POSITION_COUNT &&
+           label.face < QL_FACE_COUNT;
+}
+
+QL_Coordinate_Label ql_coordinate_label_other_face(QL_Coordinate_Label label) {
+    if (!ql_coordinate_label_valid(label)) return label;
+    label.face = (uint8_t)(label.face == (uint8_t)QL_COORD_FACE_BIMBA
+        ? QL_COORD_FACE_PRATIBIMBA
+        : QL_COORD_FACE_BIMBA);
+    return label;
+}
+
+QL_Coordinate_Face ql_coordinate_face(const QL_Holographic_Coordinate* coordinate) {
+    return coordinate && coordinate->inversion_state
+        ? QL_COORD_FACE_PRATIBIMBA
+        : QL_COORD_FACE_BIMBA;
+}
+
+int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_Face face) {
+    if (!coordinate || face > QL_COORD_FACE_PRATIBIMBA) return -1;
+    coordinate->inversion_state = (uint8_t)face;
+
+    /* Only P/P' has a topology change asserted by the current coordinate account.
+     * L/L' is a refractive face distinction and is not assigned a new topology here. */
+    if (coordinate->family == QL_FAMILY_P) {
+        if (face == QL_COORD_FACE_PRATIBIMBA) {
+            ql_coordinate_set_topology(coordinate, QL_TOPO_KLEIN);
+        } else {
+            ql_coordinate_set_topology(coordinate,
+                coordinate->ql_position == 4u ? QL_TOPO_LEMNISCATE : QL_TOPO_TORUS);
+        }
+    }
+    return 0;
+}
+
 bool ql_weave_is_identification_edge(float weave_state) {
     return weave_state == 0.0f || weave_state == 0.5f ||
            weave_state == 5.0f || weave_state == 5.5f;
@@ -200,30 +255,6 @@ int ql_holographic_field_init(QL_Holographic_Field* field) {
              * reflective link slots, not a second Context Frame authority. */
         }
     }
-    return 0;
-}
-
-void ql_coordinate_toggle_cover(QL_Holographic_Coordinate* coordinate) {
-    if (!coordinate) return;
-    coordinate->inversion_state = (uint8_t)(1u - (coordinate->inversion_state ? 1u : 0u));
-    if (coordinate->family == QL_FAMILY_P) {
-        if (coordinate->inversion_state) {
-            ql_coordinate_set_topology(coordinate, QL_TOPO_KLEIN);
-        } else {
-            ql_coordinate_set_topology(coordinate,
-                coordinate->ql_position == 4u ? QL_TOPO_LEMNISCATE : QL_TOPO_TORUS);
-        }
-    }
-}
-
-int ql_coordinate_conjugate(
-    const QL_Holographic_Coordinate* source,
-    QL_Holographic_Coordinate* conjugate
-) {
-    if (!source || !conjugate || source->ql_position >= QL_POSITION_COUNT) return -1;
-    *conjugate = *source;
-    conjugate->ql_position = ql_position_invert(source->ql_position);
-    ql_coordinate_toggle_cover(conjugate);
     return 0;
 }
 
