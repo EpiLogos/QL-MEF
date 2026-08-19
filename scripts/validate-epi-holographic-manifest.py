@@ -139,7 +139,8 @@ def main() -> int:
     m1_relation = coordinate_ground.get("m1_inner_logic_relation", {})
     if m1_relation.get("source") != "Body/S/S0/epi-lib/include/m1.h":
         fail("M1 inner-logic relation must retain frozen m1.h source")
-    if "not the whole coordinate ontology" not in m1_relation.get("law", ""):
+    m1_law = m1_relation.get("law", "")
+    if "whole coordinate ontology" not in m1_law or "without making" not in m1_law:
         fail("M1 must not be promoted into the whole coordinate ontology")
 
     header_symbols = public_ql_symbols(header)
