@@ -180,9 +180,23 @@ The real provider tests cover:
 - bounded selection disclosure without ambient private prefix/suffix or private identity;
 - no `EpiiRuntime`, generic return mutator or Bimba-provider identity collapse.
 
-### O:I consumer — implementation evidence
+### O:I consumer — observed result
 
-O:I #89's cross-repository workflow checks out that exact Epi producer and runs the real provider against O:I's `local_epi_provider`, `personal_return`, and Action-containment tests. The first run demonstrated that the full producer and O:I Rust acceptance suites passed before a workflow-only UI-script invocation error; the workflow was corrected to execute the checked-in Node presentation contract directly. Full current-head status belongs to the PR checks and should be read there rather than inferred from this note.
+O:I #89's corrected head `da7642c4a612887f85e9cdd77753bb8a7c259dc2` is green on the programme-relevant composed checks:
+
+- `O:I ↔ Epi Pratibimba bridge` — success;
+- `Full suite preflight` — success;
+- `O:I desktop` — success;
+- `OI Verify` — success.
+
+The successful cross-repository bridge workflow checks out the exact Epi producer revision above, executes its real C/Rust bridge suite, and then runs O:I against that built binary. Observed counts on that run were:
+
+- Epi bridge/lib + Nara + Personal tests: 15 passed across the producer suites;
+- O:I `local_epi_provider`: 5 passed;
+- O:I `personal_return`: 4 passed;
+- O:I Phase-4 Action/execution containment: 8 passed;
+- Nara Personal presentation contract: 4 passed;
+- desktop UI production build: passed.
 
 The O:I Personal/Central tests prove that:
 
@@ -194,6 +208,10 @@ The O:I Personal/Central tests prove that:
 - no parallel Epi runtime or Bimba provider-identity substitution is introduced.
 
 The Nara presentation contract keeps Nara as default and makes Explain, Review, Source, Bimba, Provenance, Proposal and History explicit summons. History is a read-only Central NOW temporal view and states that NOW is a working field, not canon.
+
+The first coordinated bridge attempt is retained as useful returned evidence: all real producer/O:I Rust acceptance suites passed before a workflow-only `npm test` invocation failed because the UI package had no such script. That was corrected to run the checked-in Node presentation contract directly. The first full-desktop run then exposed a real dead-binding/type-inference defect in the Personal dispatcher; the redundant post-match binding was removed, and the corrected head subsequently passed the composed bridge and desktop checks above.
+
+The broader `Pre-local O:I release` workflow is still an independent packaging/release gate; Prompt C does not use its transient running state to inflate or reduce the semantic acceptance evidence recorded here.
 
 ## 9. What remains intentionally deferred
 
