@@ -3,8 +3,8 @@ use core::fmt;
 use ql_core::QlPosition;
 
 use crate::{
-    canonical_context_frame_progression, ContextFrameId, MefGrain, MefUnitFace,
-    CONTEXT_FRAME_GRAMMAR_VERSION,
+    CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId, MefGrain, MefUnitFace,
+    canonical_context_frame_progression,
 };
 
 pub const CONTEXT_FRAME_TARGET_READING_VERSION: &str = "ql.mef.context-frame-reading/1.0.0";
@@ -64,7 +64,9 @@ impl ExternalSixfoldMapping {
         }
         for (index, reference) in external_position_refs.iter().enumerate() {
             if reference.trim().is_empty() {
-                return Err(ExternalContextFrameError::EmptyExternalPositionRef(index as u8));
+                return Err(ExternalContextFrameError::EmptyExternalPositionRef(
+                    index as u8,
+                ));
             }
             if external_position_refs[..index].contains(reference) {
                 return Err(ExternalContextFrameError::DuplicateExternalPositionRef(
@@ -72,7 +74,8 @@ impl ExternalSixfoldMapping {
                 ));
             }
         }
-        let mapping_digest = digest_mapping(&target_ref, &mapping_source_ref, &external_position_refs);
+        let mapping_digest =
+            digest_mapping(&target_ref, &mapping_source_ref, &external_position_refs);
         Ok(Self {
             target_ref,
             mapping_source_ref,
@@ -224,7 +227,10 @@ pub fn read_external_context_frame(
     if provider_ref.trim().is_empty() {
         return Err(ExternalContextFrameError::EmptyProviderRef);
     }
-    if evidence_refs.iter().any(|reference| reference.trim().is_empty()) {
+    if evidence_refs
+        .iter()
+        .any(|reference| reference.trim().is_empty())
+    {
         return Err(ExternalContextFrameError::EmptyEvidenceRef);
     }
 
@@ -281,7 +287,12 @@ fn digest_mapping(target: &str, source: &str, refs: &[String; 6]) -> String {
         .chain(core::iter::once(source))
         .chain(refs.iter().map(String::as_str))
     {
-        for byte in part.as_bytes().iter().copied().chain(core::iter::once(0xff)) {
+        for byte in part
+            .as_bytes()
+            .iter()
+            .copied()
+            .chain(core::iter::once(0xff))
+        {
             hash ^= u64::from(byte);
             hash = hash.wrapping_mul(0x100000001b3);
         }
