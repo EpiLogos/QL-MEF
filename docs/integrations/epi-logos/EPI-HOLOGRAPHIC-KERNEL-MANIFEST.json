@@ -1,0 +1,344 @@
+{
+  "schema": "ql-mef.epi-holographic-kernel-manifest/v1",
+  "status": "coordinate-bearing migration evidence",
+  "purpose": "Account for the frozen Epi C corpus and the native generalized C floor without collapsing Bimba semantic identity into implementation identity.",
+  "sources": {
+    "epi": {
+      "repository": "EpiLogos/Epi-Logos-C-Experiments",
+      "revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+      "historical_root": "Body/S/S0/epi-lib",
+      "bimba_map_fallbacks": [
+        "Idea/Bimba/Map/datasets/low-detail/nodes_epii.json",
+        "Idea/Bimba/Map/datasets/epii-deep/nodes-full-details.json",
+        "Idea/Bimba/Map/datasets/epii-deep/relations.json",
+        "Idea/Bimba/Seeds/"
+      ],
+      "graph_live_verification": {
+        "status": "outstanding",
+        "reason": "The frozen repository declares a project-local Bimba MCP/Neo4j service, but that local runtime is not exposed in the current execution environment. Repository Map/Seeds are used as provenance-preserving fallback evidence."
+      }
+    },
+    "ql_mef": {
+      "repository": "EpiLogos/QL-MEF",
+      "r0_main": "d030823584d35eca4e27df60e6385d67a531026b",
+      "r1_r2_pr": 59,
+      "native_header": "c/include/ql/primitive.h",
+      "native_source": "c/src/primitive.c",
+      "frozen_reference_root": "vendor/epi-kernel/reference"
+    }
+  },
+  "orientation": {
+    "category_family": [
+      {"coordinate": "C0", "name": "Bimba"},
+      {"coordinate": "C1", "name": "Form"},
+      {"coordinate": "C2", "name": "Entity"},
+      {"coordinate": "C3", "name": "Process"},
+      {"coordinate": "C4", "name": "Type"},
+      {"coordinate": "C5", "name": "Pratibimba"}
+    ],
+    "operative_family": {
+      "coordinate": "C-prime",
+      "name": "VĀK",
+      "historical_forms": ["CPF", "CT", "CP", "CF", "CFP", "CS"],
+      "law": "C-prime qualifies intentional articulation/composition/execution; mere callability does not make a scalar law VĀK."
+    },
+    "epi_branches": [
+      {"coordinate": "#5-2", "name": "Siva-", "present_reading": "S/S-prime technological/computational/infrastructural self-representation", "standing": "authored-integration-reading over repository-confirmed branch identity"},
+      {"coordinate": "#5-3", "name": "-Shakti", "present_reading": "M-prime embodied/instrumental/experiential manifestations", "standing": "authored-integration-reading over repository-confirmed branch identity"},
+      {"coordinate": "#5-4", "name": "Siva-Shakti", "present_reading": "T/T-prime thought/articulation/cognitive-emergence field", "standing": "authored-integration-reading over repository-confirmed branch identity"}
+    ],
+    "s_roots": [
+      {"coordinate": "S0", "product": "Central"},
+      {"coordinate": "S1", "product": "Actuation"},
+      {"coordinate": "S2", "product": "AIKit"},
+      {"coordinate": "S3", "product": "Software Factory"},
+      {"coordinate": "S4", "product": "Workcell"},
+      {"coordinate": "S5", "product": "Quaternal Logic"}
+    ],
+    "s_prime_law": "S-prime is cross-product lawful/reflective refraction, not six additional products and not one fixed technology stack.",
+    "product_face_axis": "O:I human H_i/P_i and Agent A_i/P_i-prime faces remain a separate axis from S/S-prime.",
+    "ta_onta_archetypes": ["Khora", "Hen", "Pleroma", "Chronos", "Anima", "Aletheia"],
+    "multiple_pratibimba_law": "One Bimba coordinate may have multiple mathematical, computational, data, Wiki, Agent, Method, Workcell, instrument and presentation manifestations.",
+    "context_frame_law": "Named Context Frame readings are referenced from the current QL-MEF projection owner; historical CF numbering is not silently identified with the current seven-frame grammar.",
+    "t_family_state": {
+      "status": "structurally-present-semantically-incomplete-in-fallback",
+      "evidence": ["Idea/Bimba/Seeds/T/T0", "Idea/Bimba/Seeds/T/T1", "Idea/Bimba/Seeds/T/T2", "Idea/Bimba/Seeds/T/T3", "Idea/Bimba/Seeds/T/T4", "Idea/Bimba/Seeds/T/T5"],
+      "next_ground": "Develop T/T-prime from #5-4 against live Bimba relations and the ProjectCentral/SemanticWiki/Method/Run/Claim/Evidence/Recognition field; do not infer the full map from empty directory symmetry."
+    }
+  },
+  "artifact_classes": [
+    "generalized-law",
+    "authored-canonical-data",
+    "deterministic-derived-data",
+    "generated-lut-optimization",
+    "runtime-mutable-state",
+    "adapter-provider",
+    "test-evidence-fixture",
+    "research-provisional-stub",
+    "mixed-historical-corpus"
+  ],
+  "reference_corpus": [
+    {"path": "src/arena.c", "compile_c11": "pass", "artifact_class": "adapter-provider", "reading": "allocation/lifetime infrastructure witness", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "generalized ownership requires API/lifetime review", "epistemic_standing": "observed"},
+    {"path": "src/engine.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi orchestration over Psychoid_0..5", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "not primitive floor", "epistemic_standing": "observed"},
+    {"path": "src/families.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "structural/semantic family wiring", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "requires source/data separation", "epistemic_standing": "observed"},
+    {"path": "src/kernel.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "least semantically coupled historical executable computational seam; libm only", "semantic_owner": "mixed: generalized law candidates in QL-MEF, Epi historical representation in Epi", "migration": "source for first parity-proven generalized law", "epistemic_standing": "observed"},
+    {"path": "src/m0.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M0 body including explicit Siva operator stubs", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "retain provisional/stub standing", "epistemic_standing": "observed"},
+    {"path": "src/m1.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M1 body containing ring mechanics plus Epi matrices/data", "semantic_owner": "mixed: generalized law candidates in QL-MEF, Epi semantic/data material in Epi", "migration": "low-level ring law promoted separately; M1/kernel inverted-half discrepancy remains open in QL-MEF #60", "epistemic_standing": "observed"},
+    {"path": "src/m2.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M2 body containing 36/64/72 structures and authored correspondences", "semantic_owner": "mixed: generalized finite mechanics in QL-MEF, authored correspondence data in Epi", "migration": "finite addressing law promoted separately; correspondences stay Epi-owned", "epistemic_standing": "observed"},
+    {"path": "src/m3.c", "compile_c11": "fail", "artifact_class": "research-provisional-stub", "reading": "Epi M3 body; strict-C11 blocked by non-constant static assertions; contains provisional evolutionary gaps", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "narrow complement/line-change parity uses migration-only compatibility header; source remains unchanged", "epistemic_standing": "observed"},
+    {"path": "src/m3_clock_lut.c", "compile_c11": "fail", "artifact_class": "generated-lut-optimization", "reading": "generated clock LUT transitively blocked by M3 header assertions", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments pending source-authority recovery", "migration": "generator tools/build_clock_degree_lut.py absent from locked revision; do not normalize representation", "epistemic_standing": "observed-source-gap"},
+    {"path": "src/m4.c", "compile_c11": "fail", "artifact_class": "research-provisional-stub", "reading": "Epi M4 body with BLAKE3 dependency plus explicit lens/protocol/alchemy/randomness provisional material", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "blocked by missing blake3.h in locked build; dependency placement does not determine semantic ownership", "epistemic_standing": "observed-source-gap"},
+    {"path": "src/m5.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "Epi M5 return/synthesis body", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "semantic return remains Epi-owned", "epistemic_standing": "observed"},
+    {"path": "src/main.c", "compile_c11": "fail", "artifact_class": "adapter-provider", "reading": "historical command-reach witness; transitively blocked by M3 header", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "not target CLI architecture", "epistemic_standing": "observed"},
+    {"path": "src/pointer_web.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "structural pointer web coupled to CF_TABLE/Psychoid identities", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "promising structural evidence but not generalized merely by shape", "epistemic_standing": "observed"},
+    {"path": "src/psychoid_numbers.c", "compile_c11": "pass", "artifact_class": "mixed-historical-corpus", "reading": "dependency hub for Psychoid and Context Frame globals with mixed data/state/stub concerns", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments", "migration": "QL-MEF #55 must separate data authority from mutable state", "epistemic_standing": "observed"},
+    {"path": "src/qv_data.c", "compile_c11": "pass", "artifact_class": "authored-canonical-data", "reading": "managed/generated-style Quintessential View projection marked do-not-edit", "semantic_owner": "EpiLogos/Epi-Logos-C-Experiments pending authority recovery", "migration": "projection mechanism is observed; underlying QV authority remains unresolved in QL-MEF #55", "epistemic_standing": "observed-source-gap"}
+  ],
+  "native_exports": [
+    {
+      "symbol": "ql_c_api_version",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "abi": "ql-c/primitive 0.1.0"},
+      "artifact_class": "adapter-provider",
+      "formal_relation": "version identity of the native primitive ABI",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": null, "c_categories": [{"coordinate": "C5", "standing": "supported-inference", "reason": "the version string identifies a technological pratibimba, not the Bimba subject itself"}], "c_prime_vak": null, "other_relations": [], "standing": "unresolved-beyond-pratibimba-qualification"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["native C ABI"]},
+      "authority": {"semantic": "QL-MEF ABI", "computational": "QL-MEF", "data": "QL-MEF", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "implementation", "ref": "c/src/primitive.c#ql_c_api_version"}],
+      "epistemic_standing": "explicit-in-native-source"
+    },
+    {
+      "symbol": "ql_c_reference_provenance",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "abi": "ql-c/primitive 0.1.0"},
+      "artifact_class": "adapter-provider",
+      "formal_relation": "source-revision provenance of the native primitive floor",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": null, "c_categories": [{"coordinate": "C5", "standing": "supported-inference", "reason": "the function exposes the provenance of a technological pratibimba"}], "c_prime_vak": null, "other_relations": [], "standing": "unresolved-beyond-pratibimba-qualification"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["native C ABI"]},
+      "authority": {"semantic": "source owners named by provenance", "computational": "QL-MEF", "data": "QL-MEF provenance literal", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "implementation", "ref": "c/src/primitive.c#ql_c_reference_provenance"}, {"kind": "source-revision", "ref": "EpiLogos/Epi-Logos-C-Experiments@daa660cbc1b8c5da83828698665a753852cb0287"}],
+      "epistemic_standing": "explicit-in-native-source"
+    },
+    {
+      "symbol": "ql_position_invert",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m1.c + sixfold complement law"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "six-position complement/inversion p ↦ 5-p, yielding pairs 0↔5, 1↔4, 2↔3",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1 low-level relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "the law expresses a transformation/process relation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "the native C function is a computational pratibimba of the generalized law"}], "c_prime_vak": null, "other_relations": [{"family": "P/P-prime", "relation": "complementary position pairs sum to 5", "standing": "formal/generalized"}], "standing": "exact Bimba graph node for this law not asserted from repository fallback"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "generalized QL law in QL-MEF; Epi historical manifestation remains Epi-owned", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::position inversion", "coverage": "6 valid positions + invalid boundary", "result": "pass at PR #59 pre-coordinate head e2b3498a6528eb3a737608cd879414f700437b3f"}, {"kind": "invariant", "ref": "involution ql_position_invert(ql_position_invert(p)) = p", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven",
+      "known_gaps": ["live Bimba graph relation for the exact computational subject not verified in this environment"]
+    },
+    {
+      "symbol": "ql_ring_wrap",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m1.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "12-ring modular addressing tick mod 12",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1 low-level relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "cyclic process/addressing law"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "mod-12 wrap", "standing": "deterministic-derived"}], "standing": "exact Bimba graph node unresolved"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized ring law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::ring", "coverage": "all 256 uint8_t inputs", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_ring_half",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m1.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "neutral direct/inverted partition of the 12-ring into two six-position halves",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1 low-level relation", "c_categories": [{"coordinate": "C4", "standing": "supported-inference", "reason": "classifies ring locus into one of two half types"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "two conjugate six-position halves", "standing": "deterministic-derived"}], "standing": "historical ascent/descent names intentionally not made canonical"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized neutral half distinction; historical labels remain Epi evidence", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::ring", "coverage": "all 256 uint8_t inputs", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven",
+      "known_gaps": ["M1 ascending/descending naming conflicts with historical kernel phase naming; QL-MEF #60 owns formal decision"]
+    },
+    {
+      "symbol": "ql_ring_base_position",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c + src/m1.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "mod-six base-position projection from a 12-ring tick",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1/kernel relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "projection operation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "tick → base position", "standing": "deterministic-derived"}], "standing": "explicitly one of two non-equivalent inverted-half projections"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF preserves distinction pending #60", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::ring + epogdoon tick", "coverage": "all 256 uint8_t inputs", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven",
+      "known_gaps": ["differs from historical M1 traversal_stage on inverted half; discrepancy intentionally retained"]
+    },
+    {
+      "symbol": "ql_ring_traversal_stage",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m1.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "mirrored six-stage traversal projection across the second half of the 12-ring",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M1 low-level relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "traversal/process projection"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "tick → traversal stage", "standing": "deterministic-derived"}], "standing": "explicitly one of two non-equivalent inverted-half projections"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF preserves distinction pending #60", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::ring", "coverage": "all 256 uint8_t inputs", "result": "pass versus M1 helpers"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven",
+      "known_gaps": ["differs from historical kernel mod-six position projection on inverted half; discrepancy intentionally retained"]
+    },
+    {
+      "symbol": "ql_relation_index",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "structural 6×6 addressing; no frozen generic callable index"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "ordered sixfold × sixfold relation addressing into 36 loci",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M2 structural family", "c_categories": [{"coordinate": "C2", "standing": "supported-inference", "reason": "addresses an individual relation locus"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "36-relation-field", "relation": "6×6 ordered address", "standing": "formal/generalized"}], "standing": "structural-native; exact Bimba graph relation unresolved"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized relation law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "finite-domain-invariant", "ref": "scripts/test-epi-c-parity.sh::relation index", "coverage": "all 36 ordered pairs", "result": "pass: bijection/range; structural-native only"}],
+      "epistemic_standing": "deterministically-derived-structural-native"
+    },
+    {
+      "symbol": "ql_state6_complement",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m3.c via migration/epi-kernel/compat/m3-reference.h"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "bitwise complement of the six-line 2^6 = 64 state field",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M3 low-level relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "state transformation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "64-state-field", "relation": "state complement", "standing": "formal/generalized"}], "standing": "exact Bimba semantic interpretation not promoted with bit mechanics"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized bit-state law; Epi I-Ching/codon interpretation remains Epi-owned", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::state complement", "coverage": "all 64 states", "result": "pass versus frozen m3_complement + involution"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_state6_line_change",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/m3.c via migration/epi-kernel/compat/m3-reference.h"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "single-line toggle within the six-line 64-state field",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical M3 low-level relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "state transformation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "64-state-field", "relation": "line change", "standing": "formal/generalized"}], "standing": "exact Bimba semantic interpretation not promoted with bit mechanics"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized bit-state law; Epi I-Ching/codon interpretation remains Epi-owned", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::state line change", "coverage": "64×6 = 384 valid changes", "result": "pass versus frozen m3_line_change + involution"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_resonance_index",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "6 lens anchors × 2 faces × 6 positions = 72 resonance addresses",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel/MEF low-level relation", "c_categories": [{"coordinate": "C2", "standing": "supported-inference", "reason": "addresses one resonance locus"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "L/L-prime", "relation": "72-space addressing only; lens semantics not encoded by index", "standing": "formal/generalized"}], "standing": "index law proven; semantic lens content remains external"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "MEF/QL formal owner for addressing; Epi domain lens manifestations remain Epi-owned", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::resonance index", "coverage": "all 72 valid addresses + invalid boundaries", "result": "pass versus frozen kernel"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_tritone_square_for_lens",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "six lens indices grouped by complementary pairs 0/5, 1/4, 2/3 into three tritone squares",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel/MEF relation", "c_categories": [{"coordinate": "C4", "standing": "supported-inference", "reason": "classifies a lens into a square relation type"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "L/L-prime", "relation": "complementary lens-pair square identity", "standing": "formal/generalized"}], "standing": "pairing law proven; no richer lens semantics inferred"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL/MEF formal relation", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::tritone square", "coverage": "all 6 lens indices + invalid", "result": "pass versus frozen kernel"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_epogdoon_ratio",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "epogdoon ratio 9/8",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel harmonic law", "c_categories": [{"coordinate": "C1", "standing": "supported-inference", "reason": "fixed ratio as formal relation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "harmonic", "relation": "9:8", "standing": "formal/generalized"}], "standing": "formal harmonic law; exact Bimba node not asserted"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF formal harmonic law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exact-parity", "ref": "scripts/test-epi-c-parity.sh::harmonic ratios", "coverage": "fixed ratio", "result": "pass exact IEEE-754 for identical rational expression"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_ratio_ascending_fourth",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "ascending fourth ratio 4/3",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel harmonic law", "c_categories": [{"coordinate": "C1", "standing": "supported-inference", "reason": "fixed formal ratio"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "harmonic", "relation": "4:3", "standing": "formal/generalized"}], "standing": "exact Bimba node not asserted"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF formal harmonic law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exact-parity", "ref": "scripts/test-epi-c-parity.sh::harmonic ratios", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_ratio_descending_fourth",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "descending fourth ratio 3/4",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel harmonic law", "c_categories": [{"coordinate": "C1", "standing": "supported-inference", "reason": "fixed formal ratio"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "harmonic", "relation": "3:4", "standing": "formal/generalized"}], "standing": "exact Bimba node not asserted"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF formal harmonic law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exact-parity", "ref": "scripts/test-epi-c-parity.sh::harmonic ratios", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_ratio_descending_fifth",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "descending fifth ratio 2/3",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel harmonic law", "c_categories": [{"coordinate": "C1", "standing": "supported-inference", "reason": "fixed formal ratio"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "harmonic", "relation": "2:3", "standing": "formal/generalized"}], "standing": "exact Bimba node not asserted"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF formal harmonic law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exact-parity", "ref": "scripts/test-epi-c-parity.sh::harmonic ratios", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_ratio_ascending_fifth",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "ascending fifth ratio 3/2",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel harmonic law", "c_categories": [{"coordinate": "C1", "standing": "supported-inference", "reason": "fixed formal ratio"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "harmonic", "relation": "3:2", "standing": "formal/generalized"}], "standing": "exact Bimba node not asserted"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF formal harmonic law", "computational": "QL-MEF", "data": "none", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exact-parity", "ref": "scripts/test-epi-c-parity.sh::harmonic ratios", "result": "pass"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven"
+    },
+    {
+      "symbol": "ql_tick_from_epogdoon",
+      "implementation": {"path": "c/src/primitive.c", "header": "c/include/ql/primitive.h", "reference": "vendor/epi-kernel/reference/src/kernel.c"},
+      "artifact_class": "generalized-law",
+      "formal_relation": "project cycle/sub-tick onto the 12-ring with explicit half, base position, traversal stage and harmonic ratio",
+      "bimba": {"coordinates": [], "parent": null, "m_domain": "historical kernel/M1 relation", "c_categories": [{"coordinate": "C3", "standing": "supported-inference", "reason": "composite projection operation"}, {"coordinate": "C5", "standing": "authored-integration-reading", "reason": "native computational manifestation"}], "c_prime_vak": null, "other_relations": [{"family": "12-ring", "relation": "epogdoon tick projection", "standing": "formal/generalized"}], "standing": "keeps base_position and traversal_stage distinct to preserve historical discrepancy"},
+      "technology": {"s_products": ["S5"], "s_prime": [], "branch": "#5-2", "named_archetypes": [], "m_prime_manifestations": [], "providers": ["QL-MEF native C"]},
+      "authority": {"semantic": "QL-MEF generalized projection with historical discrepancy preserved", "computational": "QL-MEF", "data": "deterministic ratio table in primitive.c", "provider": "QL-MEF native C", "standing": "PRATIBIMBA"},
+      "evidence": [{"kind": "exhaustive-parity", "ref": "scripts/test-epi-c-parity.sh::epogdoon tick", "coverage": "all 256 uint8_t sub-ticks at fixed cycle 17", "result": "pass for cycle/wrap/base-position/ratio versus frozen kernel"}],
+      "epistemic_standing": "deterministically-derived-and-parity-proven",
+      "known_gaps": ["traversal_stage is preserved as a second relation rather than claimed as frozen kernel position6 parity"]
+    }
+  ],
+  "first_holographic_specimen": {
+    "id": "epi-holographic-specimen/position-inversion/v1",
+    "semantic_subject": {
+      "description": "six-position complement/inversion law p ↦ 5-p",
+      "bimba_coordinate": null,
+      "bimba_parent": null,
+      "standing": "formal relation is exact; exact live Bimba graph node is intentionally unresolved",
+      "source_refs": ["QL-MEF generalized sixfold law", "Epi frozen M1 low-level relation"]
+    },
+    "code_manifestation": {"repository": "EpiLogos/QL-MEF", "path": "c/src/primitive.c", "symbol": "ql_position_invert", "header": "c/include/ql/primitive.h", "product": "S5", "branch": "#5-2"},
+    "parity": {"fixture": "migration/epi-kernel/parity-first-tranche.c", "runner": "scripts/test-epi-c-parity.sh", "domain": "6 valid positions + invalid boundary", "comparison": "exact + involution", "result": "pass", "observed_head": "e2b3498a6528eb3a737608cd879414f700437b3f"},
+    "reflection_contract": {
+      "aikit": "ProjectMap must preserve the external semantic ResourceRef and exact CodeReference/verification route bidirectionally without owning the semantic taxonomy.",
+      "factory": "StructuralGround must reference this manifest/source revision and retain coordinate/identity/relation fidelity evidence separately from behavioural parity.",
+      "status": "QL-MEF side materialized; AIKit/Factory conformance remains to be implemented/verified"
+    },
+    "acceptance": {
+      "semantic_identity_survives": "partial: formal subject named exactly; live Bimba node unresolved rather than fabricated",
+      "source_revision_known": true,
+      "code_symbol_exact": true,
+      "numeric_parity": true,
+      "relation_preserved": true,
+      "aikit_bidirectional_traversal": false,
+      "factory_structural_evidence": false,
+      "s_product_visible_without_oi_redefinition": true,
+      "duplicate_store_created": false,
+      "unresolved_relations_explicit": true
+    }
+  },
+  "known_gaps": [
+    {"id": "bimba-live", "owner": "EpiLogos/Epi-Logos-C-Experiments", "status": "outstanding", "detail": "Run project-local Bimba MCP/Neo4j verification for exact coordinate nodes/relations once the local graph runtime is available."},
+    {"id": "m1-ring-discrepancy", "owner": "EpiLogos/QL-MEF#60", "status": "open", "detail": "Historical M1 mirrored traversal-stage and kernel modulo-six position projections disagree on inverted half; ascent/descent labels also conflict."},
+    {"id": "m3-clock-generator", "owner": "EpiLogos/QL-MEF#55 + Epi source owner", "status": "open", "detail": "m3_clock_lut.c names tools/build_clock_degree_lut.py but the generator is absent from the locked revision."},
+    {"id": "qv-source-authority", "owner": "EpiLogos/QL-MEF#55 + Epi source owner", "status": "open", "detail": "qv_data.c is a managed/generated-style projection, but the underlying Quintessential View authority chain is unresolved."},
+    {"id": "m4-blake3", "owner": "Epi source/build migration", "status": "open", "detail": "m4.c cannot compile from the locked tree because blake3.h is unavailable; dependency placement must not be confused with semantic ownership."},
+    {"id": "provisional-regions", "owner": "Epi semantic owner", "status": "open", "detail": "M0 Siva operators, M3 evolutionary gaps, M4 lens/protocol/alchemy/randomness regions and Psychoid CF execute regions retain their explicit provisional/stub standing."},
+    {"id": "c-category-live-relations", "owner": "Epi Bimba + QL integration", "status": "open", "detail": "C0..C5 qualification of individual low-level laws beyond C5 pratibimba standing is presently supported inference unless/until exact Bimba relation evidence is recovered."},
+    {"id": "s-prime-refraction", "owner": "Epi Bimba + O:I relational field", "status": "open", "detail": "Root S0..S5 mapping is locked; exact cross-product S-prime encoding must be derived from Bimba/O:I relations rather than generated by symmetry."},
+    {"id": "t-t-prime", "owner": "Epi Bimba + project reflection programme", "status": "open", "detail": "#5-4 orientation is locked but the repository fallback does not support a complete T/T-prime mapping; live relation recovery is required."},
+    {"id": "aikit-project-reflection", "owner": "EpiLogos/ai-kit#113", "status": "open", "detail": "First specimen still needs a real external-semantic ↔ exact-code ↔ verification ProjectMap conformance path."},
+    {"id": "factory-structural-ground", "owner": "EpiLogos/agent-system-design#156", "status": "open", "detail": "First specimen still needs consumable StructuralGround/evidence conformance without Factory parsing or owning Epi ontology."}
+  ]
+}

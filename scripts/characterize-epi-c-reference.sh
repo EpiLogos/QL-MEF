@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+REFERENCE_ROOT="$REPO_ROOT/vendor/epi-kernel/reference"
+INCLUDE_ROOT="$REFERENCE_ROOT/include"
+SRC_ROOT="$REFERENCE_ROOT/src"
+OUT_DIR="$REPO_ROOT/target/epi-c-characterization"
+CC_BIN=${CC:-cc}
+
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR/objects" "$OUT_DIR/logs" "$OUT_DIR/deps"
+
+printf 'source\tcompile\n' > "$OUT_DIR/compile.tsv"
+
+compile_failures=0
+for source in "$SRC_ROOT"/*.c; do
+  name=$(basename "$source")
+  obj="$OUT_DIR/objects/${name%.c}.o"
+  log="$OUT_DIR/logs/${name%.c}.log"
+  dep="$OUT_DIR/deps/${name%.c}.d"
+
+  if "$CC_BIN" -std=c11 -Wall -Wextra -I"$INCLUDE_ROOT" -M -MF "$dep" "$source" >"$log" 2>&1 \
+      && "$CC_BIN" -std=c11 -Wall -Wextra -I"$INCLUDE_ROOT" -c "$source" -o "$obj" >>"$log" 2>&1; then
+    printf '%s\tok\n' "$name" >> "$OUT_DIR/compile.tsv"
+  else
+    printf '%s\tfail\n' "$name" >> "$OUT_DIR/compile.tsv"
+    compile_failures=$((compile_failures + 1))
+  fi
+done
+
+# Attempt the broadest honest historical link. This uses the frozen historical
+# main.c and every translation unit exactly as preserved. A failure is evidence
+# about the reference corpus, not a reason to edit it.
+link_status=not-attempted
+if [[ "$compile_failures" -eq 0 ]]; then
+  set +e
+  "$CC_BIN" "$OUT_DIR"/objects/*.o -lm -o "$OUT_DIR/epi-reference" \
+    >"$OUT_DIR/logs/link.log" 2>&1
+  link_rc=$?
+  set -e
+  if [[ "$link_rc" -eq 0 ]]; then
+    link_status=ok
+    set +e
+    "$OUT_DIR/epi-reference" --help >"$OUT_DIR/logs/run-help.log" 2>&1
+    echo $? > "$OUT_DIR/run-help.exit"
+    set -e
+  else
+    link_status=fail
+  fi
+fi
+printf '%s\n' "$link_status" > "$OUT_DIR/link.status"
+
+# Symbol evidence exposes real cross-translation-unit dependencies and both
+# exported and file-local state even when the aggregate historical link cannot
+# be attempted.
+: > "$OUT_DIR/undefined-symbols.tsv"
+: > "$OUT_DIR/defined-symbols.tsv"
+: > "$OUT_DIR/all-defined-symbols.tsv"
+for obj in "$OUT_DIR"/objects/*.o; do
+  [[ -e "$obj" ]] || continue
+  base=$(basename "$obj" .o)
+  nm -u "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $NF}'
+  nm -g --defined-only "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $2 "\t" $3}' >> "$OUT_DIR/defined-symbols.tsv"
+  nm --defined-only "$obj" 2>/dev/null | awk -v source="$base.c" '{print source "\t" $2 "\t" $3}' >> "$OUT_DIR/all-defined-symbols.tsv"
+done | sort -u > "$OUT_DIR/undefined-symbols.tsv"
+sort -u -o "$OUT_DIR/defined-symbols.tsv" "$OUT_DIR/defined-symbols.tsv"
+sort -u -o "$OUT_DIR/all-defined-symbols.tsv" "$OUT_DIR/all-defined-symbols.tsv"
+
+python3 - "$OUT_DIR" "$SRC_ROOT" <<'PY'
+import json
+from pathlib import Path
+import re
+import sys
+
+out = Path(sys.argv[1])
+src_root = Path(sys.argv[2])
+
+compile_status = {}
+for line in (out / "compile.tsv").read_text().splitlines()[1:]:
+    source, status = line.split("\t", 1)
+    compile_status[source] = status
+
+defined = {}
+symbol_providers = {}
+for line in (out / "defined-symbols.tsv").read_text().splitlines():
+    if not line.strip():
+        continue
+    source, kind, symbol = line.split("\t", 2)
+    defined.setdefault(source, []).append({"symbol": symbol, "nm_type": kind})
+    symbol_providers.setdefault(symbol, []).append(source)
+
+state_symbols = {}
+readonly_symbols = {}
+for line in (out / "all-defined-symbols.tsv").read_text().splitlines():
+    if not line.strip():
+        continue
+    source, kind, symbol = line.split("\t", 2)
+    record = {
+        "symbol": symbol,
+        "nm_type": kind,
+        "linkage": "file-local" if kind.islower() else "external"
+    }
+    if kind in "BbCcDdGgSs":
+        state_symbols.setdefault(source, []).append(record)
+    elif kind in "Rr":
+        readonly_symbols.setdefault(source, []).append(record)
+
+undefined = {}
+for line in (out / "undefined-symbols.tsv").read_text().splitlines():
+    if not line.strip():
+        continue
+    source, symbol = line.split("\t", 1)
+    undefined.setdefault(source, []).append(symbol)
+
+cross_tu_edges = []
+external_unresolved = []
+for source, symbols in undefined.items():
+    for symbol in symbols:
+        providers = symbol_providers.get(symbol, [])
+        if providers:
+            for provider in providers:
+                if provider != source:
+                    cross_tu_edges.append({"from": source, "to": provider, "symbol": symbol})
+        else:
+            external_unresolved.append({"source": source, "symbol": symbol})
+
+def classify_failure(log_text: str):
+    classes = []
+    if "expression in static assertion is not constant" in log_text:
+        classes.append("strict-c11-nonconstant-static-assert")
+    missing = sorted(set(re.findall(r"fatal error: ([^:]+): No such file or directory", log_text)))
+    classes.extend(f"missing-header:{header}" for header in missing)
+    if not classes and log_text.strip():
+        classes.append("other-compile-failure")
+    return classes
+
+rows = []
+for source_path in sorted(src_root.glob("*.c")):
+    source = source_path.name
+    dep_path = out / "deps" / (source_path.stem + ".d")
+    deps = dep_path.read_text().replace("\\\n", " ").split() if dep_path.exists() else []
+    local_headers = sorted({Path(x).name for x in deps if x.endswith(".h")})
+    text = source_path.read_text(errors="replace").splitlines()
+    generated = []
+    provisional = []
+    for lineno, line in enumerate(text, start=1):
+        if re.search(r"AUTO-GENERATED|auto-generated|generated by|Do not edit", line):
+            generated.append({"line": lineno, "text": line.strip()})
+        if re.search(r"TODO|FIXME|STUB|stub|PROVISIONAL|provisional|evolutionary gap", line):
+            provisional.append({"line": lineno, "text": line.strip()})
+    log_path = out / "logs" / f"{source_path.stem}.log"
+    log_text = log_path.read_text(errors="replace") if log_path.exists() else ""
+    status = compile_status.get(source, "not-observed")
+    rows.append({
+        "source": source,
+        "compile": status,
+        "compile_failure_classes": classify_failure(log_text) if status == "fail" else [],
+        "local_headers": local_headers,
+        "defined_global_symbols": defined.get(source, []),
+        "mutable_or_initialized_state_symbols": state_symbols.get(source, []),
+        "readonly_data_symbols": readonly_symbols.get(source, []),
+        "generated_markers": generated,
+        "provisional_markers": provisional,
+        "log": f"logs/{source_path.stem}.log"
+    })
+
+report = {
+    "schema": "ql-mef.epi-c-reference-characterization/v1",
+    "reference_revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "compiler": "cc -std=c11 -Wall -Wextra",
+    "translation_units": rows,
+    "aggregate_link": (out / "link.status").read_text().strip(),
+    "undefined_symbols": undefined,
+    "cross_translation_unit_edges": sorted(cross_tu_edges, key=lambda x: (x["from"], x["to"], x["symbol"])),
+    "external_or_unavailable_symbols": sorted(external_unresolved, key=lambda x: (x["source"], x["symbol"])),
+    "interpretation": {
+        "compile_failures": "frozen-source build facts; never repaired in vendor/epi-kernel/reference",
+        "link_failure": "distinguish missing build glue/external dependency/duplicate symbol from source syntax failures using logs and symbol map",
+        "state_symbols": "nm B/C/D/G/S or lowercase equivalents; mutability/semantic role still requires source-level classification",
+        "readonly_symbols": "nm R/r data; read-only representation does not by itself prove canonical source authority",
+        "generated_markers": "classification evidence only; generator reproducibility must be proved separately before normalization",
+        "provisional_markers": "research/provisional evidence only; marker presence is not itself a semantic judgement"
+    }
+}
+(out / "characterization.json").write_text(json.dumps(report, indent=2) + "\n")
+PY
+
+cat "$OUT_DIR/characterization.json"
+
+# Characterization itself succeeds even when portions of the historical corpus
+# do not compile/link. CI consumes the report; later parity jobs declare which
+# failures are blockers for their own promoted scope.
+exit 0
