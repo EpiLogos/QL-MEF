@@ -1,0 +1,61 @@
+name: Q5 Runtime Conformance
+
+on:
+  push:
+    branches:
+      - agent/q5-runtime-refraction
+  pull_request:
+    paths:
+      - "crates/ql-adapters/**"
+      - "fixtures/q5/**"
+      - ".github/workflows/q5-runtime-conformance.yml"
+
+jobs:
+  frozen-runtime-seam:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Fetch exact frozen Factory runtime foundation
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+          git -C /tmp/factory checkout --detach 7690069846eb6fc89f6aa78dcf7aab886ac7c737
+          test "$(git -C /tmp/factory rev-parse HEAD)" = "7690069846eb6fc89f6aa78dcf7aab886ac7c737"
+      - name: Run frozen Factory foundation acceptance
+        working-directory: /tmp/factory/ql-agent-experiments/foundation
+        run: npm test
+      - name: Verify Q5 fixture against the real frozen seam
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          fixture = json.loads(Path("fixtures/q5/runtime-refraction-v1.json").read_text())
+          factory = Path("/tmp/factory")
+          foundation = fixture["factoryRuntimeFoundation"]
+          assert foundation["mergeCommit"] == "7690069846eb6fc89f6aa78dcf7aab886ac7c737"
+          assert foundation["sourceHead"] == "9b3de175afa8f130ca97fd65e7eaff1930ba20ff"
+
+          contract = (factory / foundation["runtimeContractPath"]).read_text()
+          optics = (factory / foundation["opticsPath"]).read_text()
+          seam = fixture["frozenCommonSeam"]
+
+          for method in seam["runtimeHostMethods"]:
+              assert f"'{method}'" in contract, method
+          assert seam["qlOnlyCommonHostMethods"] == []
+          assert "QL-MEF" not in contract
+          assert "semantic closure" not in contract.lower()
+          assert "execution" in optics and "semantic" in optics
+          assert "not_applicable" in optics
+          assert "classic" in fixture["matchedTrace"] and "ql" in fixture["matchedTrace"]
+          assert fixture["integrationLaw"]["providerFailureChangesRuntimeStatus"] is False
+          assert fixture["integrationLaw"]["classicRequiresQlProvider"] is False
+          PY
+      - name: Run Q5 standalone runtime-refraction acceptance
+        run: cargo test -p ql-adapters --test runtime_refraction
