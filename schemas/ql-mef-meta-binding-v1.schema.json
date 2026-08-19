@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.dev/contracts/ql-mef/meta-binding/v1/schema.json",
+  "title": "QL-MEF MetaBinding v1",
+  "type": "object",
+  "required": [
+    "binding_ref",
+    "ql_mef_ref",
+    "target_wiki_ref",
+    "relation",
+    "origin",
+    "provenance"
+  ],
+  "properties": {
+    "binding_ref": {"type": "string", "minLength": 1},
+    "ql_mef_ref": {"type": "string", "minLength": 1},
+    "target_wiki_ref": {"type": "string", "minLength": 1},
+    "target_frame_ref": {"type": "string", "minLength": 1},
+    "relation": {"type": "string", "minLength": 1},
+    "scope_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "origin": {
+      "enum": ["authored", "recognised", "derived", "proposed"]
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_ref"],
+        "properties": {
+          "source_ref": {"type": "string", "minLength": 1},
+          "source_revision": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "ql_mef_revision": {"type": "string", "minLength": 1},
+    "target_revision": {"type": "string", "minLength": 1},
+    "extensions": {"type": "object"}
+  },
+  "not": {
+    "anyOf": [
+      {"required": ["provider_id"]},
+      {"required": ["row_id"]},
+      {"required": ["db_id"]},
+      {"required": ["neo4j_id"]}
+    ]
+  },
+  "additionalProperties": false
+}

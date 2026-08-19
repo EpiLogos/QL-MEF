@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/ql-core", "crates/ql-mef", "crates/ql-semantic", "crates/ql-service", "crates/ql-adapters"]
+members = ["crates/ql-core", "crates/ql-mef", "crates/ql-semantic", "crates/ql-service", "crates/ql-adapters", "crates/ql-wiki"]
 resolver = "2"
 
 [workspace.package]
