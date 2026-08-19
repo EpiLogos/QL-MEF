@@ -62,9 +62,8 @@ fn epii_guardian_operates_native_ql_readings_without_becoming_execution_identity
     assert_eq!(EPII_GUARDIAN_REF, guardian_before_rebind);
 
     // A narrower provider remains valid without being inferred to possess refraction.
-    let formal_only = QlService::with_provider(FixtureProvider::locate_only(
-        "guardian-proof-formal-only",
-    ));
+    let formal_only =
+        QlService::with_provider(FixtureProvider::locate_only("guardian-proof-formal-only"));
     assert!(formal_only.negotiate(Operation::Locate).supported);
     assert!(!formal_only.negotiate(Operation::Refract).supported);
 }
