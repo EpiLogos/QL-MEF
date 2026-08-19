@@ -1,145 +1,43 @@
-id,src_product,dst_product,ql,coverage,cf_view,seam,defined_in,tracked_by
-S0->S0,CommandRuntimeGround,CommandRuntimeGround,,I,CF1,self:CommandRuntimeGround,Epi:S0-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S1,CommandRuntimeGround,VaultResidency,A1,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S2,CommandRuntimeGround,GraphBody,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S3,CommandRuntimeGround,GatewayControl,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S4,CommandRuntimeGround,AgentRuntime,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S5,CommandRuntimeGround,WorldBoundary,B3|C1,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S0′,CommandRuntimeGround,ReflectiveCLILaw,D1,H,CF1,conjugation:CommandRuntimeGround↔ReflectiveCLILaw,Epi:S0-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S1′,CommandRuntimeGround,HenCompilerLaw,D2-transform,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S2′,CommandRuntimeGround,CoordinateGraphLaw,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S3′,CommandRuntimeGround,TemporalStateLaw,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S4′,CommandRuntimeGround,TaOntaInhabitation,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0->S5′,CommandRuntimeGround,EpiiReturnLaw,D2-require|D2-complete,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S0,VaultResidency,CommandRuntimeGround,A1,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S1,VaultResidency,VaultResidency,,I,CF2,self:VaultResidency,Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S2,VaultResidency,GraphBody,B1,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S3,VaultResidency,GatewayControl,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S4,VaultResidency,AgentRuntime,C2,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S5,VaultResidency,WorldBoundary,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S0′,VaultResidency,ReflectiveCLILaw,D2-require,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S1′,VaultResidency,HenCompilerLaw,D1,H,CF2,conjugation:VaultResidency↔HenCompilerLaw,Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S2′,VaultResidency,CoordinateGraphLaw,D2-transform,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S3′,VaultResidency,TemporalStateLaw,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S4′,VaultResidency,TaOntaInhabitation,D2-complete,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1->S5′,VaultResidency,EpiiReturnLaw,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S0,GraphBody,CommandRuntimeGround,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S1,GraphBody,VaultResidency,B1,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S2,GraphBody,GraphBody,,I,CF3,self:GraphBody,Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S3,GraphBody,GatewayControl,A2|C3,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S4,GraphBody,AgentRuntime,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S5,GraphBody,WorldBoundary,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S0′,GraphBody,ReflectiveCLILaw,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S1′,GraphBody,HenCompilerLaw,D2-require,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S2′,GraphBody,CoordinateGraphLaw,D1,H,CF3,conjugation:GraphBody↔CoordinateGraphLaw,Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S3′,GraphBody,TemporalStateLaw,D2-transform|D2-complete,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S4′,GraphBody,TaOntaInhabitation,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2->S5′,GraphBody,EpiiReturnLaw,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S0,GatewayControl,CommandRuntimeGround,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S1,GatewayControl,VaultResidency,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S2,GatewayControl,GraphBody,A2|C3,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S3,GatewayControl,GatewayControl,,I,CF4,self:GatewayControl,Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S4,GatewayControl,AgentRuntime,B2,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S5,GatewayControl,WorldBoundary,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S0′,GatewayControl,ReflectiveCLILaw,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S1′,GatewayControl,HenCompilerLaw,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S2′,GatewayControl,CoordinateGraphLaw,D2-require|D2-complete,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S3′,GatewayControl,TemporalStateLaw,D1,H,CF4,conjugation:GatewayControl↔TemporalStateLaw,Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S4′,GatewayControl,TaOntaInhabitation,D2-transform,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3->S5′,GatewayControl,EpiiReturnLaw,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S0,AgentRuntime,CommandRuntimeGround,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S1,AgentRuntime,VaultResidency,C2,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S2,AgentRuntime,GraphBody,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S3,AgentRuntime,GatewayControl,B2,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S4,AgentRuntime,AgentRuntime,,I,CF5,self:AgentRuntime,Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S5,AgentRuntime,WorldBoundary,A3,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S0′,AgentRuntime,ReflectiveCLILaw,D2-complete,H,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S1′,AgentRuntime,HenCompilerLaw,,S,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S2′,AgentRuntime,CoordinateGraphLaw,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S3′,AgentRuntime,TemporalStateLaw,D2-require,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S4′,AgentRuntime,TaOntaInhabitation,D1,H,CF5,conjugation:AgentRuntime↔TaOntaInhabitation,Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4->S5′,AgentRuntime,EpiiReturnLaw,D2-transform,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S0,WorldBoundary,CommandRuntimeGround,B3|C1,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S1,WorldBoundary,VaultResidency,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S2,WorldBoundary,GraphBody,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S3,WorldBoundary,GatewayControl,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S4,WorldBoundary,AgentRuntime,A3,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S5,WorldBoundary,WorldBoundary,,I,CF7,self:WorldBoundary,Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S0′,WorldBoundary,ReflectiveCLILaw,D2-transform|D2-complete,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S1′,WorldBoundary,HenCompilerLaw,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S2′,WorldBoundary,CoordinateGraphLaw,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S3′,WorldBoundary,TemporalStateLaw,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S4′,WorldBoundary,TaOntaInhabitation,D2-require,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5->S5′,WorldBoundary,EpiiReturnLaw,D1,H,CF7,conjugation:WorldBoundary↔EpiiReturnLaw,Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S0,ReflectiveCLILaw,CommandRuntimeGround,D1.inverse,H,CF1,conjugation:CommandRuntimeGround↔ReflectiveCLILaw,Epi:S0-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S1,ReflectiveCLILaw,VaultResidency,D2-require.inverse,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S2,ReflectiveCLILaw,GraphBody,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S3,ReflectiveCLILaw,GatewayControl,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S4,ReflectiveCLILaw,AgentRuntime,D2-complete.inverse,H,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S5,ReflectiveCLILaw,WorldBoundary,D2-transform.inverse|D2-complete.inverse,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S0′,ReflectiveCLILaw,ReflectiveCLILaw,,I,CF1,self:ReflectiveCLILaw,Epi:S0-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S1′,ReflectiveCLILaw,HenCompilerLaw,D3:A1,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S2′,ReflectiveCLILaw,CoordinateGraphLaw,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S3′,ReflectiveCLILaw,TemporalStateLaw,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S4′,ReflectiveCLILaw,TaOntaInhabitation,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S0′->S5′,ReflectiveCLILaw,EpiiReturnLaw,D3:B3|D3:C1,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S0,HenCompilerLaw,CommandRuntimeGround,D2-transform.inverse,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S1,HenCompilerLaw,VaultResidency,D1.inverse,H,CF2,conjugation:VaultResidency↔HenCompilerLaw,Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S2,HenCompilerLaw,GraphBody,D2-require.inverse,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S3,HenCompilerLaw,GatewayControl,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S4,HenCompilerLaw,AgentRuntime,,S,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S5,HenCompilerLaw,WorldBoundary,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S0′,HenCompilerLaw,ReflectiveCLILaw,D3:A1,H,CF2,01:command-residency,Epi:S0-SPEC|Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S1′,HenCompilerLaw,HenCompilerLaw,,I,CF2,self:HenCompilerLaw,Epi:S1-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S2′,HenCompilerLaw,CoordinateGraphLaw,D3:B1,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S3′,HenCompilerLaw,TemporalStateLaw,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S4′,HenCompilerLaw,TaOntaInhabitation,D3:C2,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S1′->S5′,HenCompilerLaw,EpiiReturnLaw,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S0,CoordinateGraphLaw,CommandRuntimeGround,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S1,CoordinateGraphLaw,VaultResidency,D2-transform.inverse,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S2,CoordinateGraphLaw,GraphBody,D1.inverse,H,CF3,conjugation:GraphBody↔CoordinateGraphLaw,Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S3,CoordinateGraphLaw,GatewayControl,D2-require.inverse|D2-complete.inverse,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S4,CoordinateGraphLaw,AgentRuntime,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S5,CoordinateGraphLaw,WorldBoundary,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S0′,CoordinateGraphLaw,ReflectiveCLILaw,,S,CF3,02:command-graph,Epi:S0-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S1′,CoordinateGraphLaw,HenCompilerLaw,D3:B1,H,CF3,12:residency-graph,Epi:S1-SPEC|Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S2′,CoordinateGraphLaw,CoordinateGraphLaw,,I,CF3,self:CoordinateGraphLaw,Epi:S2-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S3′,CoordinateGraphLaw,TemporalStateLaw,D3:A2|D3:C3,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S4′,CoordinateGraphLaw,TaOntaInhabitation,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S2′->S5′,CoordinateGraphLaw,EpiiReturnLaw,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S0,TemporalStateLaw,CommandRuntimeGround,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S1,TemporalStateLaw,VaultResidency,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S2,TemporalStateLaw,GraphBody,D2-transform.inverse|D2-complete.inverse,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S3,TemporalStateLaw,GatewayControl,D1.inverse,H,CF4,conjugation:GatewayControl↔TemporalStateLaw,Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S4,TemporalStateLaw,AgentRuntime,D2-require.inverse,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S5,TemporalStateLaw,WorldBoundary,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S0′,TemporalStateLaw,ReflectiveCLILaw,,S,CF4,03:command-gateway-state,Epi:S0-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S1′,TemporalStateLaw,HenCompilerLaw,,S,CF4,13:residency-temporal-state,Epi:S1-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S2′,TemporalStateLaw,CoordinateGraphLaw,D3:A2|D3:C3,H,CF4,23:graph-temporal-state,Epi:S2-SPEC|Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S3′,TemporalStateLaw,TemporalStateLaw,,I,CF4,self:TemporalStateLaw,Epi:S3-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S4′,TemporalStateLaw,TaOntaInhabitation,D3:B2,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S3′->S5′,TemporalStateLaw,EpiiReturnLaw,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S0,TaOntaInhabitation,CommandRuntimeGround,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S1,TaOntaInhabitation,VaultResidency,D2-complete.inverse,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S2,TaOntaInhabitation,GraphBody,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S3,TaOntaInhabitation,GatewayControl,D2-transform.inverse,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S4,TaOntaInhabitation,AgentRuntime,D1.inverse,H,CF5,conjugation:AgentRuntime↔TaOntaInhabitation,Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S5,TaOntaInhabitation,WorldBoundary,D2-require.inverse,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S0′,TaOntaInhabitation,ReflectiveCLILaw,,S,CF5/CF6-field,04:command-agent-runtime,Epi:S0-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S1′,TaOntaInhabitation,HenCompilerLaw,D3:C2,H,CF5-field,14:residency-agentic-inhabitation,Epi:S1-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S2′,TaOntaInhabitation,CoordinateGraphLaw,,S,CF5-field,24:graph-agentic-inhabitation,Epi:S2-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S3′,TaOntaInhabitation,TemporalStateLaw,D3:B2,H,CF5-field,34:temporal-agentic-inhabitation,Epi:S3-SPEC|Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S4′,TaOntaInhabitation,TaOntaInhabitation,,I,CF5,self:TaOntaInhabitation,Epi:S4-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S4′->S5′,TaOntaInhabitation,EpiiReturnLaw,D3:A3,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S0,EpiiReturnLaw,CommandRuntimeGround,D2-require.inverse|D2-complete.inverse,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S1,EpiiReturnLaw,VaultResidency,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S2,EpiiReturnLaw,GraphBody,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S3,EpiiReturnLaw,GatewayControl,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S4,EpiiReturnLaw,AgentRuntime,D2-transform.inverse,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S5,EpiiReturnLaw,WorldBoundary,D1.inverse,H,CF7,conjugation:WorldBoundary↔EpiiReturnLaw,Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S0′,EpiiReturnLaw,ReflectiveCLILaw,D3:B3|D3:C1,H,CF7,05/50:command-world-return,Epi:S0-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S1′,EpiiReturnLaw,HenCompilerLaw,,S,,15:residency-world-return,Epi:S1-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S2′,EpiiReturnLaw,CoordinateGraphLaw,,S,,25:graph-world-return,Epi:S2-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S3′,EpiiReturnLaw,TemporalStateLaw,,S,,35:temporal-world-return,Epi:S3-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S4′,EpiiReturnLaw,TaOntaInhabitation,D3:A3,H,CF5/CF6-field,45:agentic-world-return,Epi:S4-SPEC|Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
-S5′->S5′,EpiiReturnLaw,EpiiReturnLaw,,I,CF7,self:EpiiReturnLaw,Epi:S5-SPEC|Epi:R1-S-SPRIME-TECHNICAL-CAPABILITY-MATRIX,QL-MEF#25;QL-MEF#30;QL-MEF#32
+id,src_face,src_product,dst_face,dst_product,ql,orientation,cf_view,seam,defined_in,tracked_by,migration_aliases
+S0->S1:A1,S0,Central,S1,Actuation,A1,forward,CF2,harmonic:01:Central→Actuation,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0 formerly CommandRuntimeGround | S1 formerly VaultResidency
+S0′->S1′:D3-A1,S0′,Khora,S1′,Hen,D3:A1,forward,CF2,prime-harmonic:01:Khora→Hen,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0′ formerly ReflectiveCLILaw | S1′ formerly HenCompilerLaw
+S2->S3:A2,S2,AIKit,S3,Software Factory,A2,forward,CF4,harmonic:23:AIKit→Software Factory,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2 formerly GraphBody | S3 formerly GatewayControl
+S2′->S3′:D3-A2,S2′,Pleroma,S3′,Chronos,D3:A2,forward,CF4,prime-harmonic:23:Pleroma→Chronos,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2′ formerly CoordinateGraphLaw | S3′ formerly TemporalStateLaw
+S4->S5:A3,S4,Workcell,S5,QL-MEF,A3,forward,CF6,harmonic:45:Workcell→QL-MEF,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S4 formerly AgentRuntime | S5 formerly WorldBoundary
+S4′->S5′:D3-A3,S4′,Anima,S5′,Aletheia,D3:A3,forward,CF6,prime-harmonic:45:Anima→Aletheia,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S4′ formerly TaOntaInhabitation | S5′ formerly EpiiReturnLaw
+S1->S2:B1,S1,Actuation,S2,AIKit,B1,forward,CF3,harmonic:12:Actuation→AIKit,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1 formerly VaultResidency | S2 formerly GraphBody
+S1′->S2′:D3-B1,S1′,Hen,S2′,Pleroma,D3:B1,forward,CF3,prime-harmonic:12:Hen→Pleroma,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1′ formerly HenCompilerLaw | S2′ formerly CoordinateGraphLaw
+S3->S4:B2,S3,Software Factory,S4,Workcell,B2,forward,CF5,harmonic:34:Software Factory→Workcell,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S3 formerly GatewayControl | S4 formerly AgentRuntime
+S3′->S4′:D3-B2,S3′,Chronos,S4′,Anima,D3:B2,forward,CF5,prime-harmonic:34:Chronos→Anima,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S3′ formerly TemporalStateLaw | S4′ formerly TaOntaInhabitation
+S5->S0:B3,S5,QL-MEF,S0,Central,B3,forward,CF7,harmonic:50:QL-MEF→Central,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S5 formerly WorldBoundary | S0 formerly CommandRuntimeGround
+S5′->S0′:D3-B3,S5′,Aletheia,S0′,Khora,D3:B3,forward,CF7,prime-harmonic:50:Aletheia→Khora,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S5′ formerly EpiiReturnLaw | S0′ formerly ReflectiveCLILaw
+S0->S5:C1,S0,Central,S5,QL-MEF,C1,forward,CF7,harmonic:05:Central→QL-MEF,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0 formerly CommandRuntimeGround | S5 formerly WorldBoundary
+S0′->S5′:D3-C1,S0′,Khora,S5′,Aletheia,D3:C1,forward,CF7,prime-harmonic:05:Khora→Aletheia,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0′ formerly ReflectiveCLILaw | S5′ formerly EpiiReturnLaw
+S1->S4:C2,S1,Actuation,S4,Workcell,C2,forward,CF5,harmonic:14:Actuation→Workcell,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1 formerly VaultResidency | S4 formerly AgentRuntime
+S1′->S4′:D3-C2,S1′,Hen,S4′,Anima,D3:C2,forward,CF5,prime-harmonic:14:Hen→Anima,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1′ formerly HenCompilerLaw | S4′ formerly TaOntaInhabitation
+S2->S3:C3,S2,AIKit,S3,Software Factory,C3,forward,CF4,harmonic:23:AIKit→Software Factory,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2 formerly GraphBody | S3 formerly GatewayControl
+S2′->S3′:D3-C3,S2′,Pleroma,S3′,Chronos,D3:C3,forward,CF4,prime-harmonic:23:Pleroma→Chronos,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2′ formerly CoordinateGraphLaw | S3′ formerly TemporalStateLaw
+S0->S0′:D1,S0,Central,S0′,Khora,D1,forward,CF1,same-coordinate:0:Central→Khora,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S0 formerly CommandRuntimeGround | S0′ formerly ReflectiveCLILaw | nested alias S4.0′ Khora
+S1->S1′:D1,S1,Actuation,S1′,Hen,D1,forward,CF2,same-coordinate:1:Actuation→Hen,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S1 formerly VaultResidency | S1′ formerly HenCompilerLaw | nested alias S4.1′ Hen
+S2->S2′:D1,S2,AIKit,S2′,Pleroma,D1,forward,CF3,same-coordinate:2:AIKit→Pleroma,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S2 formerly GraphBody | S2′ formerly CoordinateGraphLaw | nested alias S4.2′ Pleroma
+S3->S3′:D1,S3,Software Factory,S3′,Chronos,D1,forward,CF4,same-coordinate:3:Software Factory→Chronos,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S3 formerly GatewayControl | S3′ formerly TemporalStateLaw | nested alias S4.3′ Chronos
+S4->S4′:D1,S4,Workcell,S4′,Anima,D1,forward,CF5,same-coordinate:4:Workcell→Anima,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S4 formerly AgentRuntime | S4′ formerly TaOntaInhabitation | nested alias S4.4′ Anima
+S5->S5′:D1,S5,QL-MEF,S5′,Aletheia,D1,forward,,same-coordinate:5:QL-MEF→Aletheia,QL-MEF#74|QL-MEF#75|EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md,QL-MEF#25;QL-MEF#32;QL-MEF#42;QL-MEF#74;QL-MEF#75,S5 formerly WorldBoundary | S5′ formerly EpiiReturnLaw | nested alias S4.5′ Aletheia
+S0->S1′:D2-transform,S0,Central,S1′,Hen,D2-transform,forward,CF2,D2-transform:01:Central→Hen,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0 formerly CommandRuntimeGround | S1′ formerly HenCompilerLaw
+S1->S2′:D2-transform,S1,Actuation,S2′,Pleroma,D2-transform,forward,CF3,D2-transform:12:Actuation→Pleroma,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1 formerly VaultResidency | S2′ formerly CoordinateGraphLaw
+S2->S3′:D2-transform,S2,AIKit,S3′,Chronos,D2-transform,forward,CF4,D2-transform:23:AIKit→Chronos,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2 formerly GraphBody | S3′ formerly TemporalStateLaw
+S3->S4′:D2-transform,S3,Software Factory,S4′,Anima,D2-transform,forward,CF5,D2-transform:34:Software Factory→Anima,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S3 formerly GatewayControl | S4′ formerly TaOntaInhabitation
+S4->S5′:D2-transform,S4,Workcell,S5′,Aletheia,D2-transform,forward,CF6,D2-transform:45:Workcell→Aletheia,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S4 formerly AgentRuntime | S5′ formerly EpiiReturnLaw
+S5->S0′:D2-transform,S5,QL-MEF,S0′,Khora,D2-transform,forward,CF7,D2-transform:50:QL-MEF→Khora,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S5 formerly WorldBoundary | S0′ formerly ReflectiveCLILaw
+S0->S5′:D2-require,S0,Central,S5′,Aletheia,D2-require,forward,CF7,D2-require:05:Central→Aletheia,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0 formerly CommandRuntimeGround | S5′ formerly EpiiReturnLaw
+S1->S0′:D2-require,S1,Actuation,S0′,Khora,D2-require,forward,CF2,D2-require:10:Actuation→Khora,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1 formerly VaultResidency | S0′ formerly ReflectiveCLILaw
+S2->S1′:D2-require,S2,AIKit,S1′,Hen,D2-require,forward,CF3,D2-require:21:AIKit→Hen,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2 formerly GraphBody | S1′ formerly HenCompilerLaw
+S3->S2′:D2-require,S3,Software Factory,S2′,Pleroma,D2-require,forward,CF4,D2-require:32:Software Factory→Pleroma,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S3 formerly GatewayControl | S2′ formerly CoordinateGraphLaw
+S4->S3′:D2-require,S4,Workcell,S3′,Chronos,D2-require,forward,CF5,D2-require:43:Workcell→Chronos,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S4 formerly AgentRuntime | S3′ formerly TemporalStateLaw
+S5->S4′:D2-require,S5,QL-MEF,S4′,Anima,D2-require,forward,CF6,D2-require:54:QL-MEF→Anima,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S5 formerly WorldBoundary | S4′ formerly TaOntaInhabitation
+S0->S5′:D2-complete,S0,Central,S5′,Aletheia,D2-complete,forward,CF7,D2-complete:05:Central→Aletheia,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S0 formerly CommandRuntimeGround | S5′ formerly EpiiReturnLaw
+S1->S4′:D2-complete,S1,Actuation,S4′,Anima,D2-complete,forward,CF5,D2-complete:14:Actuation→Anima,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S1 formerly VaultResidency | S4′ formerly TaOntaInhabitation
+S2->S3′:D2-complete,S2,AIKit,S3′,Chronos,D2-complete,forward,CF4,D2-complete:23:AIKit→Chronos,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S2 formerly GraphBody | S3′ formerly TemporalStateLaw
+S3->S2′:D2-complete,S3,Software Factory,S2′,Pleroma,D2-complete,forward,CF4,D2-complete:32:Software Factory→Pleroma,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S3 formerly GatewayControl | S2′ formerly CoordinateGraphLaw
+S4->S1′:D2-complete,S4,Workcell,S1′,Hen,D2-complete,forward,CF5,D2-complete:41:Workcell→Hen,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S4 formerly AgentRuntime | S1′ formerly HenCompilerLaw
+S5->S0′:D2-complete,S5,QL-MEF,S0′,Khora,D2-complete,forward,CF7,D2-complete:50:QL-MEF→Khora,QL-MEF#74|QL-MEF#75|O:I#29,QL-MEF#25;QL-MEF#32;QL-MEF#75,S5 formerly WorldBoundary | S0′ formerly ReflectiveCLILaw
