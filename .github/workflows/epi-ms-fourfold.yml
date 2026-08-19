@@ -5,6 +5,8 @@ on:
     paths:
       - "docs/integrations/epi-logos/**"
       - "scripts/verify-epi-ms-fourfold.py"
+      - "scripts/verify-epi-guardians.py"
+      - "crates/ql-service/**"
       - ".github/workflows/epi-ms-fourfold.yml"
   push:
     branches:
@@ -12,6 +14,8 @@ on:
     paths:
       - "docs/integrations/epi-logos/**"
       - "scripts/verify-epi-ms-fourfold.py"
+      - "scripts/verify-epi-guardians.py"
+      - "crates/ql-service/**"
       - ".github/workflows/epi-ms-fourfold.yml"
   workflow_dispatch:
 
@@ -28,3 +32,7 @@ jobs:
           python-version: "3.12"
       - name: Verify canonical M/S/S-prime/M-prime relation artifacts
         run: python scripts/verify-epi-ms-fourfold.py
+      - name: Verify canonical guardian identity and native composition
+        run: python scripts/verify-epi-guardians.py
+      - name: Verify Epii native QL reading operation
+        run: cargo test -p ql-service --test guardian_epii --locked
