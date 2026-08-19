@@ -42,9 +42,9 @@ Source authority is the frozen `Body/S/S0/epi-lib` corpus at Epi revision `daa66
 
 `scripts/test-epi-c-r4.sh` also builds and installs only the QL-owned static library, then links an external smoke consumer against the installed prefix. This is the dependency seam the historical Epi C build can pin; source-relative includes or copied QL source are not part of the contract.
 
-## First M1 edge
+## First historical M1 edge — executed
 
-The source identity is already resolved by the existing holographic provenance account:
+The source identity was already resolved by the existing holographic provenance account:
 
 ```text
 M1 / #1-4.2 Principle of Inversion
@@ -52,8 +52,41 @@ M1 / #1-4.2 Principle of Inversion
     → ql-c/primitive::ql_position_invert
 ```
 
-R4's QL side deliberately does not redefine that semantic identity. Once this branch has an immutable QL commit, the paired Epi consumer change pins that revision and switches one historical runtime edge only: the M1 `ql` CLI's inverse-stage read. The frozen `QL_INVERT[6]` / `QL_FLOWERING[].inverse` remains reference evidence for before/after all-six parity rather than being deleted or made into a second implementation.
+QL-MEF PR #76 publishes the native C seam at immutable commit `a3c33a2944fb2d90111afdf18f2afd6e871043e0`. The paired Epi PR #31 (`agent/ql-mef-r4-m1-inversion-consumer`, current head `da4ac68fe333aef755e976ea7c65f550d9a999b2`) pins that exact revision and switches one real historical runtime read only: `m1.c::m1_cli_dispatch(..., "ql", ...)` now obtains each inverse stage from `ql_position_invert(QL_FLOWERING[i].stage)`.
 
-## R5 handoff
+The Epi-owned `QL_INVERT[6]` and `QL_FLOWERING[].inverse` are deliberately retained as source/parity evidence. The Epi workflow materialises QL into an installed prefix, deletes the QL source checkout, then proves:
 
-R4 does not wholesale rebase M0–M5. After the first M1 inversion specimen, R5 remains the incremental consumer migration of the remaining M0–M5 call edges onto this shared coordinate/kernel body. Those consumers retain Epi semantic ownership; only reusable generalized computation moves behind the QL C API. M3 LUT authority (#55), the tick-projection question (#60), fourfold M→S/S′→M′ work (#74/#75), #73, D, and deep M′ products remain outside this tranche.
+```text
+QL native C dependency verified: ql-c/primitive 0.1.0
+  @ a3c33a2944fb2d90111afdf18f2afd6e871043e0
+
+M1 #1-4.2 -> ql_position_invert parity: PASS
+  coverage: all six + involution + invalid boundaries
+
+existing focused M1 regression: 190 passed, 0 failed
+
+nm m1-r4.o:
+  U ql_position_invert
+
+nm libql-mef-c.a:
+  T ql_position_invert
+```
+
+This is the required physical consumer proof: the Epi M1 translation unit imports the native operation and the pinned QL archive supplies it. No copied helper, sibling include path, or Rust wrapper is the implementation edge.
+
+## R5 consumer-edge ledger
+
+R4 intentionally stops after the first M1 specimen. The following are the remaining **evidenced** R5 dependency edges; this list does not promote authored domain data merely because its cardinality resembles a generalized QL structure.
+
+| Epi consumer | Remaining edge into native QL C | R5 constraint |
+|---|---|---|
+| **M0** | `m0.h` still consumes the historical `ontology.h` coordinate/link/execution contract directly. Rebase the structural HC/link/access edge onto `ql/holographic` (or a parity-preserving Epi boundary adapter) before changing any M0 VM semantics. | `VIMARSA_TABLE`, authored archetype/divine-act/Vāk data, Siva/Shakti semantics remain Epi-owned; no invented scalar replacement. |
+| **M1** | After the inversion read, historical ring helpers `RING_WRAP`, `IS_SHADOW_PHASE`, `GET_BASE_QL_POS`, and `ql_get_stage` still sit in M1. Rebase them incrementally to `ql_ring_wrap`, `ql_ring_half`, `ql_ring_base_position`, and `ql_ring_traversal_stage` with dual parity. Quaternion consumers are candidates for `ql/kernel` only where the signatures/parity line up. | Keep `base_position` and `traversal_stage` distinct; do not resolve #60 by choosing one. `QL_FLOWERING`, Spanda, Ananda, and M1 semantic tables stay Epi-owned. |
+| **M2** | The M2 body still owns its 72-condition semantic union and inline 12×6 lens routing (`get_mef_condition`, L-family linkage). Rebase only the generalized 6×2×6 address/index mechanics onto `ql_resonance_index` / native family-bearing L coordinates where a concrete call site is switched. | Do not move the M2 72-space semantic payload, Tattvas, decans, planets, elements, or authored lens names into QL just because the native index is 72-fold. |
+| **M3** | `m3_line_change(hex,line)` and `m3_complement(hex)` remain direct duplicate 6-bit operations; these are the clean next finite-domain edges to `ql_state6_line_change` and `ql_state6_complement`. | Preserve invalid-line behavior explicitly at the boundary. Do not pull `m3_clock_lut.c` / #55 data authority into this rebase. The existing strict-C11 M3 barrier is a separate source/build fact, not a reason to rewrite M3 here. |
+| **M4** | No additional generalized R4 primitive consumer is yet proven safe to flip. M4 still depends transitively on the historical coordinate/M1–M3 body and its own BLAKE3/oracle/lens semantics. | First resolve the concrete structural/kernel call edge encountered in R5; do not treat current stubs or deep Nara/M′ semantics as QL kernel mechanics. |
+| **M5** | No additional generalized scalar/kernel duplicate has been proven from the accepted R1/R2 floor. M5 still consumes historical HC/M-family integration paths. | Rebase structural HC/kernel calls only when encountered; preserve Epi Logos/synthesis semantics and do not execute deep M′/D work. |
+
+The R5 order implied by current evidence is therefore: **M1 remaining ring/tick edges and M3 finite 6-bit transforms first; M0/M2 structural/index edges where a real consumer is encountered; M4/M5 only after a concrete reusable kernel dependency is demonstrated.** This keeps R5 incremental rather than turning it into an M0–M5 rewrite.
+
+M3 LUT authority (#55), the tick-projection question (#60), fourfold M→S/S′→M′ work (#74/#75), #73, D, and deep M′ products remain outside R4/R5 primitive rebase unless separately authorized.
