@@ -9,6 +9,8 @@ on:
       - .github/workflows/epi-c-r1-r2.yml
       - scripts/characterize-epi-c-reference.sh
       - scripts/test-epi-c-parity.sh
+      - scripts/validate-epi-holographic-manifest.py
+      - docs/integrations/epi-logos/**
       - migration/epi-kernel/**
       - c/**
       - vendor/epi-kernel/reference/**
@@ -59,6 +61,9 @@ jobs:
         run: |
           chmod +x scripts/test-epi-c-parity.sh
           scripts/test-epi-c-parity.sh
+
+      - name: Validate holographic coordinate manifest
+        run: python3 scripts/validate-epi-holographic-manifest.py
 
       - name: Upload R1/R2 evidence
         if: always()
