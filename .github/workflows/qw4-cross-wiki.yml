@@ -1,0 +1,25 @@
+name: QW4 Independent-Wiki Conformance
+
+on:
+  push:
+    branches:
+      - agent/qw4-second-wiki-proof
+  pull_request:
+
+jobs:
+  second-wiki:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build current QL-MEF Wiki refraction executable
+        run: cargo build -p ql-wiki --bin ql-wiki-refraction
+      - name: Prove independent Research Canvas contract and executable boundary
+        run: cargo test -p ql-wiki --test second_wiki_conformance --test second_wiki_external_cli
+
+# Glade is a private independent client while QL-MEF is public. Real Glade
+# cross-process acceptance is therefore consumer-owned in EpiLogos/glade CI,
+# which checks out this public QL-MEF head at an exact SHA. This workflow proves
+# the second independent Wiki locally without granting provider CI access to a
+# private client repository.

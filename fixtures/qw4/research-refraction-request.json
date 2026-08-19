@@ -1,0 +1,64 @@
+{
+  "contract": "ql-mef/wiki-refraction/v1",
+  "mode": "required",
+  "target": {
+    "kind": "d3",
+    "target_ref": "research:frame:transition-anomaly",
+    "target_frame_ref": "research:frame:transition-anomaly",
+    "target_revision": 5,
+    "target_snapshot_hash": "sha256:research-transition-anomaly-v5",
+    "provenance": [
+      {"source_ref": "research:node:evidence", "source_revision": 8}
+    ],
+    "subjects": [
+      {"subject_ref": "research:node:p2", "revision": 2, "position": 2, "face": "direct"},
+      {"subject_ref": "research:node:p3", "revision": 2, "position": 3, "face": "direct"},
+      {"subject_ref": "research:node:p2-prime", "revision": 1, "position": 2, "face": "conjugate"},
+      {"subject_ref": "research:node:p3-prime", "revision": 1, "position": 3, "face": "conjugate"}
+    ],
+    "relations": [
+      {
+        "from_ref": "research:node:p2",
+        "to_ref": "research:node:p3",
+        "relation": "research:transition-tension",
+        "origin": "authored",
+        "origin_ref": "research:edge:transition-tension",
+        "provenance": [
+          {"source_ref": "research:node:evidence", "source_revision": 8}
+        ]
+      }
+    ],
+    "structural_field": {
+      "operator_ref": "ql:structural:2.0.0:field:A:1:D3",
+      "family": "A",
+      "pair_index": 1,
+      "degree": "D3",
+      "coordinates": [
+        {"position": 2, "face": "direct"},
+        {"position": 3, "face": "direct"},
+        {"position": 2, "face": "conjugate"},
+        {"position": 3, "face": "conjugate"}
+      ],
+      "provenance": [
+        {"source_ref": "ql-mef:contract:structural-v2", "source_revision": "2.0.0"}
+      ]
+    },
+    "material": {
+      "question_ref": "research:node:question",
+      "evidence_ref": "research:node:evidence",
+      "observation_count": 5
+    },
+    "extensions": {
+      "producer_profile": "research-canvas/wiki/v1"
+    }
+  },
+  "lenses": [
+    {"lens_ref": "mef:lens:L3@1"},
+    {"lens_ref": "mef:lens:L0'@1"},
+    {"lens_ref": "mef:lens:L5'@1"}
+  ],
+  "context": {
+    "purpose": "independent-wiki conformance and reciprocal-development evidence",
+    "scope_refs": ["scope:research"]
+  }
+}

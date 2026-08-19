@@ -450,6 +450,29 @@ impl<'a> MetaPortal<'a> {
                         semantic_equivalence_asserted: false,
                     });
                 }
+                // Incoming recognised/authored meta relations are also navigable.
+                // The inverse label denotes traversal direction only; it does not
+                // assert a new canonical semantic relation or symmetry law.
+                for relation in self.projection.relations.iter().filter(|relation| {
+                    relation.to_ref == current
+                        && self.surface_of(&relation.from_ref) == MetaRouteSurface::Meta
+                }) {
+                    edges.push(MetaRouteStep {
+                        from_ref: current.into(),
+                        from_surface: MetaRouteSurface::Meta,
+                        to_ref: relation.from_ref.clone(),
+                        to_surface: MetaRouteSurface::Meta,
+                        relation: format!("inverse:{}", relation.relation),
+                        origin: relation.origin.clone(),
+                        binding_ref: None,
+                        provider_ref: None,
+                        from_revision: self.meta_revision(current),
+                        to_revision: self.meta_revision(&relation.from_ref),
+                        provenance: vec![],
+                        qualified_relation: true,
+                        semantic_equivalence_asserted: false,
+                    });
+                }
             }
             MetaRouteSurface::Binding => {
                 if let Some(binding) = self.projection.meta_bindings.iter().find(|binding| {
