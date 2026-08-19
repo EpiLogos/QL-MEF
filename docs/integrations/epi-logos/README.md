@@ -1,118 +1,161 @@
 # Epi-Logos living relational development system
 
-Tracking: QL-MEF #25 / #30 · O:I #29 · Epi source #2/#3/#4
+Tracking: QL-MEF #25 / #30 / #32 / #42 / #74 / #75 · O:I #29
 
 This directory is the QL-MEF home for the **living relational development system** used to understand and reconstitute Epi-Logos through the current O:I suite.
 
-The normal entrypoint is:
+For current M/S identity work, read first:
 
-`EPI-LOGOS-SOURCE-OF-TRUTH.md`
+- `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md` — current human-readable fourfold authority;
+- `epi-ms-fourfold.json` — canonical machine-readable six-row map;
+- `epi-ssprime-relational-field.csv` — current S/S′ harmonic/conjugate field;
+- `epi-ssprime-embodiment.json` — constitutional spine plus many-to-many capability embodiment.
 
-The normal development procedure is:
+`EPI-LOGOS-SOURCE-OF-TRUTH.md` and `EPI-LOGOS-DEVELOPMENT-WAYFINDER.md` remain the broader source/development entrypoints, but any older S/S′ wording in the R2 research corpus is subordinate to the explicit #74/#75 supersession above.
 
-`EPI-LOGOS-DEVELOPMENT-WAYFINDER.md`
+## The current fourfold relation
 
-## The three interoperating QL fields
+The relation system is no longer read as three unrelated sixfolds.
 
-The system is organised around three 12×12 relation fields using the same native QL grammar:
-
-```text
-M/M′ — Epi product/domain field
-M0..M5 / M0′..M5′
-        ↓ capability embodiment
-S/S′ — Epi technical/inhabitation field
-S0..S5 / S0′..S5′
-        ↓ native ownership / conformance
-O:I — technological product field
-H0..H5 / A0..A5
-```
-
-Canonical manipulable files:
-
-- `epi-relational-field.csv` — M/M′ 12×12 domain/lived field;
-- `epi-ssprime-relational-field.csv` — S/S′ 12×12 stack/prime field;
-- O:I `data/ql-relational-field.csv` tracked by O:I #29 — H/A 12×12 suite field.
-
-All three use the same core schema:
+For every index `i`:
 
 ```text
-id, src_product, dst_product, ql, coverage,
-cf_view, seam, defined_in, tracked_by
+M_i    semantic / ontological subsystem identity + canonical guardian
+  ↓ dominant technological reflection
+S_i    standing O:I product centre
+  ↕ conjugate technological pair
+S_i′   operative Ta-Onta activity/module
+  ↓ differentiated activity participates in composition
+M_i′   deep recursive Pratibimba
 ```
 
-and the same underlying QL relation grammar:
+Canonical identities:
 
-- A/B/C families;
-- D1/D2/D3 conjugate relations;
-- CF1–CF7 contextual readings where germane;
-- `H/S/L/W/I` developmental coverage.
+```text
+0  Anuttara   / Central          / Khora     / epi.deep.m0
+1  Paramaśiva / Actuation        / Hen       / epi.deep.m1
+2  Paraśakti  / AIKit            / Pleroma   / epi.deep.m2
+3  Mahāmāyā   / Software Factory / Chronos   / epi.deep.m3
+4  Nara       / Workcell         / Anima     / epi.deep.m4
+5  Epii       / QL-MEF           / Aletheia  / epi.deep.m5
+```
 
-The shared QL form permits relation, complement and refraction across the three scales. It does **not** assert semantic identity between same-numbered faces.
+The register distinction is load-bearing because it tells us **what kind of thing a ref is**. The same index is equally load-bearing because it tells us **how those differentiated forms belong to one QL position**.
+
+Do not collapse a guardian, software product, Ta-Onta module, deep instrument, situated Agency and Execution into one runtime object. Do not weaken the same-coordinate relation into a merely analogical correspondence either.
+
+## The interoperating relation fields
+
+Canonical manipulable files now serve different scales:
+
+- `epi-relational-field.csv` — M/M′ semantic/deep relation field;
+- `epi-ms-fourfold.json` — constitutional M/S/S′/M′ identity spine;
+- `epi-ssprime-relational-field.csv` — S products × S′ Ta-Onta harmonic/conjugate field;
+- `epi-ssprime-embodiment.json` — capability embodiment across those faces;
+- O:I `data/ql-relational-field.csv`, tracked by O:I #29 — H/A encounter relations over the same six standing products.
+
+The fields share native QL grammar:
+
+- A/B/C harmonic families;
+- D1 same-coordinate conjugation;
+- D2 transform / require / complete cross-face relations;
+- D3 A/B/C on the conjugate face;
+- CF1–CF7 contextual readings where germane.
+
+The shared grammar permits relation, complement and refraction. It does not erase type, native ownership, privacy, authority or provenance.
+
+## S/S′ source model after #74/#75
+
+Current top-level S is the standing O:I product field:
+
+```text
+S0  Central
+S1  Actuation
+S2  AIKit
+S3  Software Factory
+S4  Workcell
+S5  QL-MEF
+```
+
+Current top-level S′ is the Ta-Onta operative field:
+
+```text
+S0′ Khora
+S1′ Hen
+S2′ Pleroma
+S3′ Chronos
+S4′ Anima
+S5′ Aletheia
+```
+
+Historical Epi S source still records a technical return circuit of command/runtime, residency/form, graph/retrieval, time/routing, agentic inhabitation and world/return. Current code also still co-resides the six Ta-Onta package bodies under `Body/S/S4/ta-onta`, with historical/local-recursive addresses `S4.0′..S4.5′`.
+
+That material is preserved as **history, architecture and implementation residency evidence**. It no longer controls current top-level S/S′ coordinate identity.
+
+In particular:
+
+```text
+S5′ = Aletheia
+M5 / M5′ = Epii
+```
+
+`Epii = S5′` is a superseded historical reading, not current coordinate authority.
 
 ## How the fields connect
 
-`epi-ssprime-embodiment.json` is the capability bridge between M/M′ and S/S′. It records which S strata embody each M′ capability, which authority remains Epi-native, and which modern generic O:I homes are implicated.
-
-`EPI-OI-PRIMITIVE-OWNERSHIP-MAP.md` is the semantic ownership bridge from those stack/capability concerns into current native O:I primitives and product responsibilities.
-
-So a real development concern can be followed as:
+A real development concern can be followed as:
 
 ```text
-M/M′ meaning + relation
+Epi authored M / M′ meaning
         ↓
-M capability refs
+canonical same-coordinate M / S / S′ / M′ home
         ↓
-S/S′ embodiment + relation
+cross-coordinate harmonic/capability relations as needed
         ↓
-O:I product/capability relation
+native O:I product owner / actual source / code / data / provider
         ↓
-actual source / code / data / provider
-        ↓
-vertical implementation + evidence
+vertical implementation + attributable evidence
         ↓
 returned remapping
 ```
 
-## S/S′ source model
+`epi-ssprime-embodiment.json` makes the important non-exclusivity rule explicit: constitutional home does not mean one product per capability. Nara, for example, is constitutionally M4 → Workcell/Anima while protected lived work can also require Central source ground, Actuation authority, AIKit context/capabilities and QL-MEF reflection.
 
-The current Seed index defines the sixfold stack as a return circuit:
+## O:I H/A is orthogonal
+
+O:I #29 owns the 12×12 human/agent encounter field over the same six product centres:
 
 ```text
-S0  execution            S0′ Khora
-S1  residency/form       S1′ Hen
-S2  graph/retrieval      S2′ Pleroma
-S3  time/routing         S3′ Chronos
-S4  agent runtime        S4′ Anima
-S5  world/return         S5′ Epii return law
+H_i = human-facing product relation
+A_i = agent-facing product relation
 ```
 
-S0 makes the system executable; S1 resident and typed; S2 graph/vector/cache real; S3 temporal and routed; S4 agentically inhabited; S5 world-facing and reflective; S5 returns to S0.
-
-Aletheia is a crystallisation/disclosure/return membrane in the S4.5′→S5′ region, not a seventh numbered S face.
+Those are encounter orientations. They do not replace `M/S/S′/M′`, and `A_i` is not the canonical Epi guardian Agent.
 
 ## Grounding and evidence
 
-Use these files only when the current concern needs their depth:
+Use these files when the current concern needs their depth:
 
 - `EPI-LOGOS-QL-MEF-FOUNDATION.md` — formal/harmonic/music substrate;
 - `EPI-OI-PRIMITIVE-OWNERSHIP-MAP.md` — primitive and native-owner semantics;
 - `EPI-LOGOS-SOURCE-SUBSTRATE-INVENTORY.md` — exact historical/current code, data and source bodies;
-- `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md` — preservation/rebuild/parity law.
+- `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md` — preservation/rebuild/parity law;
+- `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md` — explicit current disposition of conflicting S/S′ readings.
 
-The older R2 first/second/final passes, cross-document matrix and JSON relation maps are provenance/research companions. They explain how current readings were reached; they are not additional systems a normal implementation session must traverse.
+The older R2 first/second/final passes, cross-document matrix and JSON research maps remain provenance companions. When they contain the former `S4′ Ta-Onta` nesting or `Epii = S5′` law, read those statements as **PRESERVE-AS-HISTORY / IMPLEMENTATION-RESIDENCY-ONLY**, not as current coordinate authority.
 
 ## Development law
 
-Begin from an actual capability, discrepancy or desired experience. Locate it in M/M′, follow its embodiment into S/S′, inspect the relevant O:I relation neighbourhood, then reach the real code/data and build the smallest coherent whole.
+Begin from an actual capability, discrepancy or desired experience. Locate authored meaning, identify its canonical same-coordinate home, inspect the cross-coordinate neighbourhood actually needed, then reach real code/data and build the smallest coherent whole.
 
-**QL generates questions, not obligations.** Complete 12×12 fields make relations perceptible; they do not imply 144 integrations.
+**QL generates questions, not obligations.** Relation maps make co-necessities perceptible; they do not create work merely because a cell exists.
 
 Preserve throughout:
 
 ```text
-M/M′ domain identity != S/S′ technical identity
-S/S′ technical identity != O:I product identity
-M/M′ != O:I H/A
+same-coordinate relation != runtime-object collapse
+constitutional home != exclusive dependency
+historical implementation residency != current semantic authority
 provider/body != semantic owner
 projection != ownership
 availability != authority
