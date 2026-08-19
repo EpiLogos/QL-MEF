@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.dev/contracts/ql-mef/wiki-refraction/v1/schema.json",
+  "title": "QL-MEF Wiki Refraction v1",
+  "$defs": {
+    "revision": {"oneOf": [{"type": "integer", "minimum": 0}, {"type": "string", "minLength": 1}]},
+    "provenance": {
+      "type": "object",
+      "required": ["source_ref"],
+      "properties": {
+        "source_ref": {"type": "string", "minLength": 1},
+        "source_revision": {"$ref": "#/$defs/revision"}
+      },
+      "additionalProperties": true
+    },
+    "coordinate": {
+      "type": "object",
+      "required": ["position", "face"],
+      "properties": {
+        "position": {"type": "integer", "minimum": 0, "maximum": 5},
+        "face": {"enum": ["direct", "conjugate"]}
+      },
+      "additionalProperties": false
+    },
+    "structuralField": {
+      "type": "object",
+      "required": ["operator_ref", "degree", "coordinates", "provenance"],
+      "properties": {
+        "operator_ref": {"type": "string", "pattern": "^ql:structural:2\\.0\\.0:"},
+        "family": {"enum": ["A", "B", "C"]},
+        "pair_index": {"type": "integer", "minimum": 0, "maximum": 2},
+        "degree": {"enum": ["pair", "D1", "D2", "D3"]},
+        "expansion_side": {"enum": ["left", "right"]},
+        "coordinates": {"type": "array", "minItems": 2, "maxItems": 4, "items": {"$ref": "#/$defs/coordinate"}},
+        "provenance": {"type": "array", "items": {"$ref": "#/$defs/provenance"}}
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "required": ["kind", "target_ref", "target_snapshot_hash", "provenance", "subjects", "relations", "material", "extensions"],
+      "properties": {
+        "kind": {"enum": ["node-local", "frame", "pair", "d1", "d2", "d3", "space"]},
+        "target_ref": {"type": "string", "minLength": 1},
+        "target_frame_ref": {"type": "string", "minLength": 1},
+        "target_revision": {"$ref": "#/$defs/revision"},
+        "target_snapshot_hash": {"type": "string", "minLength": 1},
+        "provenance": {"type": "array", "items": {"$ref": "#/$defs/provenance"}},
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["subject_ref"],
+            "properties": {
+              "subject_ref": {"type": "string", "minLength": 1},
+              "revision": {"$ref": "#/$defs/revision"},
+              "position": {"type": "integer", "minimum": 0, "maximum": 5},
+              "face": {"enum": ["direct", "conjugate"]}
+            },
+            "additionalProperties": true
+          }
+        },
+        "relations": {"type": "array", "items": {"type": "object"}},
+        "structural_field": {"$ref": "#/$defs/structuralField"},
+        "material": {"type": "object"},
+        "extensions": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "lensSelection": {
+      "type": "object",
+      "required": ["lens_ref"],
+      "properties": {
+        "lens_ref": {"type": "string", "pattern": "^mef:lens:"},
+        "sublens_ref": {"type": "string", "pattern": "^mef:sublens:"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "title": "WikiRefractionRequest",
+      "type": "object",
+      "required": ["contract", "mode", "target", "lenses", "context"],
+      "properties": {
+        "contract": {"const": "ql-mef/wiki-refraction/v1"},
+        "mode": {"enum": ["disabled", "optional", "required"]},
+        "target": {"$ref": "#/$defs/target"},
+        "lenses": {"type": "array", "items": {"$ref": "#/$defs/lensSelection"}},
+        "context": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "WikiRefractionResponse",
+      "type": "object",
+      "required": ["contract", "status", "target_ref", "target_snapshot_hash", "readings", "notices"],
+      "properties": {
+        "contract": {"const": "ql-mef/wiki-refraction/v1"},
+        "status": {"enum": ["disabled", "unavailable", "degraded", "complete", "partial"]},
+        "target_ref": {"type": "string", "minLength": 1},
+        "target_snapshot_hash": {"type": "string", "minLength": 1},
+        "readings": {"type": "array", "items": {"type": "object"}},
+        "notices": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  ]
+}

@@ -4,6 +4,19 @@
 //! represented by [`MetaBinding`]. External Wiki identities stay foreign and are
 //! never copied into, or renamed by, the local projection.
 
+mod refraction;
+mod registry_provider;
+
+pub use refraction::{
+    DerivedRelation, DerivedSubgraph, DerivedVertex, FieldCoordinate, LensSelection, ProviderMode,
+    ReadingProvider, RefractionStatus, RelationCandidate, RevisionValue, TraversalCandidate,
+    WIKI_READING_TYPE, WIKI_REFRACTION_CONTRACT, WikiProvenanceRef, WikiReading,
+    WikiRefractionEngine, WikiRefractionError, WikiRefractionRequest, WikiRefractionResponse,
+    WikiRefractionTarget, WikiStructuralField, WikiSubjectSnapshot, WikiTargetKind,
+    WikiTargetRelation,
+};
+pub use registry_provider::RegistryDisclosureProvider;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
