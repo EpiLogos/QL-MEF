@@ -1,0 +1,82 @@
+{
+  "schema_version": "epi-r1-ms-fourfold-embodiment/1.0",
+  "status": "CURRENT-CANONICAL",
+  "authority": "QL-MEF#74/#75",
+  "source_snapshots": {
+    "epi_main": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "epi_eightfold_pr19_head": "cfd9899891fe4dfa923b8735f886d0478c23036f",
+    "pre_migration_embodiment_blob": "a626bc0fee8bdea10c4f2f112dfd8e46df3cec08"
+  },
+  "policy": {
+    "constitutional_home": "same-index M_i -> S_i and M_i -> S_i′; S_i/S_i′ activity participates in M_i′ composition",
+    "cross_coordinate_rule": "constitutional home is not exclusivity; capabilities may use several S products and S′ activities with provenance",
+    "guardian_rule": "Guardian_i stewards S_i, organises S_i′ activity and evaluates/coheres M_i′ return without becoming identical to product, module, Agency or Execution",
+    "historical_rule": "old technical S strata and nested S4.0′..S4.5′ addresses remain provenance/residency evidence only"
+  },
+  "constitutional_spine": [
+    {"index":0,"m":"Anuttara","guardian":"Anuttara","s_ref":"S0","s_product":"Central","s_prime_ref":"S0′","s_prime":"Khora","m_prime_ref":"M0′","m_prime_product":"epi.deep.m0","relations":["M0->S0","M0->S0′","S0<->S0′","S0/S0′->M0′","Guardian0->S0/S0′/M0′"]},
+    {"index":1,"m":"Paramaśiva","guardian":"Paramaśiva","s_ref":"S1","s_product":"Actuation","s_prime_ref":"S1′","s_prime":"Hen","m_prime_ref":"M1′","m_prime_product":"epi.deep.m1","relations":["M1->S1","M1->S1′","S1<->S1′","S1/S1′->M1′","Guardian1->S1/S1′/M1′"]},
+    {"index":2,"m":"Paraśakti","guardian":"Paraśakti","s_ref":"S2","s_product":"AIKit","s_prime_ref":"S2′","s_prime":"Pleroma","m_prime_ref":"M2′","m_prime_product":"epi.deep.m2","relations":["M2->S2","M2->S2′","S2<->S2′","S2/S2′->M2′","Guardian2->S2/S2′/M2′"]},
+    {"index":3,"m":"Mahāmāyā","guardian":"Mahāmāyā","s_ref":"S3","s_product":"Software Factory","s_prime_ref":"S3′","s_prime":"Chronos","m_prime_ref":"M3′","m_prime_product":"epi.deep.m3","relations":["M3->S3","M3->S3′","S3<->S3′","S3/S3′->M3′","Guardian3->S3/S3′/M3′"]},
+    {"index":4,"m":"Nara","guardian":"Nara","s_ref":"S4","s_product":"Workcell","s_prime_ref":"S4′","s_prime":"Anima","m_prime_ref":"M4′","m_prime_product":"epi.deep.m4","relations":["M4->S4","M4->S4′","S4<->S4′","S4/S4′->M4′","Guardian4->S4/S4′/M4′"]},
+    {"index":5,"m":"Epii","guardian":"Epii","s_ref":"S5","s_product":"QL-MEF","s_prime_ref":"S5′","s_prime":"Aletheia","m_prime_ref":"M5′","m_prime_product":"epi.deep.m5","relations":["M5->S5","M5->S5′","S5<->S5′","S5/S5′->M5′","Guardian5->S5/S5′/M5′"]}
+  ],
+  "historical_residency": [
+    {"coordinate":"S0/S0′","historical_identity":"CommandRuntimeGround / ReflectiveCLILaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S0 spec and Body/S/S0"},
+    {"coordinate":"S1/S1′","historical_identity":"VaultResidency / HenCompilerLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S1 spec and Body/S/S1"},
+    {"coordinate":"S2/S2′","historical_identity":"GraphBody / CoordinateGraphLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S2 spec and Body/S/S2"},
+    {"coordinate":"S3/S3′","historical_identity":"GatewayControl / TemporalStateLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S3 spec and Body/S/S3"},
+    {"coordinate":"S4/S4′","historical_identity":"AgentRuntime / TaOntaInhabitation","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S4 spec and Body/S/S4"},
+    {"coordinate":"S5/S5′","historical_identity":"WorldBoundary / EpiiReturnLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S5 spec and Body/S/S5"},
+    {"coordinate":"S4.0′..S4.5′","historical_identity":"Khora / Hen / Pleroma / Chronos / Anima / Aletheia nested under S4′","disposition":"IMPLEMENTATION-RESIDENCY-ONLY","evidence":"Epi@daa660cbc1b8c5da83828698665a753852cb0287:Body/S/S4/ta-onta/**"}
+  ],
+  "capability_embodiment": [
+    {
+      "owner":"M0","constitutional":{"s":"S0 Central","s_prime":"S0′ Khora"},
+      "capability_refs":["M0P-LANGUAGE","M0P-QL-STRUCTURE","M0P-RELATIONS","M0P-TIME-COMMUNITY","M0P-PERSONAL-ROUTE","M0P-PEDAGOGY-ROUTE"],
+      "cross_coordinate_products":["AIKit","Software Factory","Workcell","Central","QL-MEF"],
+      "cross_coordinate_ta_onta":["Pleroma","Chronos","Aletheia"],
+      "reading":"Anuttara has a Central/Khora constitutional home while source/relation, graph, temporal, protected-personal and pedagogical capabilities cross the field."
+    },
+    {
+      "owner":"M1","constitutional":{"s":"S1 Actuation","s_prime":"S1′ Hen"},
+      "capability_refs":["M1P-CANONICAL-SOURCE","M1P-INSTANCE","M1P-HARMONIC-ENGINE","M1P-SPANDA","M1P-QL-FLOWERING","M1P-TOPOLOGY"],
+      "cross_coordinate_products":["Actuation","AIKit","Software Factory","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos","Aletheia"],
+      "reading":"Paramaśiva is constitutionally Actuation/Hen while mathematical state, session state, harmonic traversal and material execution can require several product/activity coordinates."
+    },
+    {
+      "owner":"M2","constitutional":{"s":"S2 AIKit","s_prime":"S2′ Pleroma"},
+      "capability_refs":["M2P-PROFILE-SOURCE","M2P-VIMARSHA-AUDIO","M2P-ELEMENTAL-MEDIUM","M2P-DECANIC-FACE","M2P-SONIC-ARENA","M2P-DET-GATE"],
+      "cross_coordinate_products":["AIKit","Software Factory","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos"],
+      "reading":"Paraśakti is constitutionally AIKit/Pleroma while audio, correspondential retrieval and projection can cross execution, formal and temporal seams."
+    },
+    {
+      "owner":"M3","constitutional":{"s":"S3 Software Factory","s_prime":"S3′ Chronos"},
+      "capability_refs":["M3P-CLOCK","M3P-TRANSDUCTION","M3P-SYMBOLIC-CODEC","M3P-ROTATION","M3P-MEASUREMENT-INSPECTOR","M3P-WORLD-CLOCK"],
+      "cross_coordinate_products":["Software Factory","AIKit","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos"],
+      "reading":"Mahāmāyā is constitutionally Factory/Chronos while symbolic codecs, provider facts and material execution legitimately cross adjacent coordinates."
+    },
+    {
+      "owner":"M4","constitutional":{"s":"S4 Workcell","s_prime":"S4′ Anima"},
+      "capability_refs":["M4P-IDENTITY","M4P-DAY-EPISODE","M4P-ORACLE","M4P-ACTIVITY","M4P-EPISODIC","M4P-PROMOTION-SEAM"],
+      "cross_coordinate_products":["Workcell","Central","Actuation","AIKit","Software Factory","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Hen","Chronos","Anima","Aletheia"],
+      "reading":"Nara is constitutionally Workcell/Anima, but protected lived state requires durable source, authority, context, temporal and return relations without losing its M4 home."
+    },
+    {
+      "owner":"M5","constitutional":{"s":"S5 QL-MEF","s_prime":"S5′ Aletheia"},
+      "capability_refs":["M5P-LIBRARY","M5P-CANON","M5P-BACKEND-STUDIO","M5P-REFLECTED-APP","M5P-CONTROL-ROOM","M5P-ATELIER"],
+      "cross_coordinate_products":["QL-MEF","Central","Actuation","AIKit","Software Factory","Workcell"],
+      "cross_coordinate_ta_onta":["Khora","Hen","Pleroma","Chronos","Anima","Aletheia"],
+      "reading":"Epii is constitutionally QL-MEF/Aletheia and by design can inspect, explain and return across the complete system without becoming the owner of every native mutation."
+    }
+  ],
+  "legacy_capability_map": {
+    "disposition":"PRESERVE-AS-HISTORY",
+    "blob_sha":"a626bc0fee8bdea10c4f2f112dfd8e46df3cec08",
+    "note":"The pre-migration detailed M-capability -> historical S-strata matrix remains immutable Git provenance. Current capability refs above preserve its named capability inventory while interpreting embodiment through product/Ta-Onta faces."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": "epi.guardians/v1",
+  "status": "current-canonical",
+  "authority": {
+    "issue": "EpiLogos/QL-MEF#42",
+    "constitutional_fourfold": "EpiLogos/QL-MEF#74",
+    "source_backed_mapping": "EpiLogos/QL-MEF#75",
+    "standing_product_ownership": "EpiLogos/QL-MEF#32",
+    "relation_branch": "EpiLogos/QL-MEF#27@7011f660025e5194ff15d4edba50b306296216a8"
+  },
+  "identity_law": {
+    "m": "semantic/guardian identity",
+    "s": "standing product reflection",
+    "s_prime": "operative Ta-Onta reflection",
+    "m_prime": "deep Pratibimba",
+    "non_identities": [
+      "guardian != standing product",
+      "guardian != Ta-Onta module",
+      "guardian != situated Agency",
+      "guardian != Execution",
+      "standing product != Ta-Onta module"
+    ],
+    "model_harness_provider_independent": true,
+    "factory_stage_identity": false
+  },
+  "guardians": [
+    {
+      "index": 0,
+      "agent_ref": "epi:agent:anuttara",
+      "name": "Anuttara",
+      "m_identity": "Anuttara",
+      "s_product": "Central",
+      "s_repo": "EpiLogos/Central",
+      "s_prime": "Khora",
+      "m_prime": "epi.deep.m0",
+      "stewardship": ["ground", "source identity", "authored structure", "provenance", "ProjectCentral/Bimba orientation"]
+    },
+    {
+      "index": 1,
+      "agent_ref": "epi:agent:paramasiva",
+      "name": "Paramaśiva",
+      "m_identity": "Paramaśiva",
+      "s_product": "Actuation",
+      "s_repo": "EpiLogos/Actuation",
+      "s_prime": "Hen",
+      "m_prime": "epi.deep.m1",
+      "stewardship": ["agency constitution", "authority", "bounds", "delegation", "determination", "Return"]
+    },
+    {
+      "index": 2,
+      "agent_ref": "epi:agent:parasakti",
+      "name": "Paraśakti",
+      "m_identity": "Paraśakti",
+      "s_product": "AIKit",
+      "s_repo": "EpiLogos/ai-kit",
+      "s_prime": "Pleroma",
+      "m_prime": "epi.deep.m2",
+      "stewardship": ["capability/power ecology", "Context", "models", "harnesses", "skills", "providers", "selection", "fitness"]
+    },
+    {
+      "index": 3,
+      "agent_ref": "epi:agent:mahamaya",
+      "name": "Mahāmāyā",
+      "m_identity": "Mahāmāyā",
+      "s_product": "Software Factory",
+      "s_repo": "EpiLogos/agent-system-design",
+      "s_prime": "Chronos",
+      "m_prime": "epi.deep.m3",
+      "stewardship": ["developmental form", "Runs", "Methods", "patterns", "praxis", "implementation/evidence/playback/critique"]
+    },
+    {
+      "index": 4,
+      "agent_ref": "epi:agent:nara",
+      "name": "Nara",
+      "m_identity": "Nara",
+      "s_product": "Workcell",
+      "s_repo": "EpiLogos/Workcell",
+      "s_prime": "Anima",
+      "m_prime": "epi.deep.m4",
+      "stewardship": ["material actuality", "machines", "providers", "services", "bindings", "persistence", "embodied execution worlds"]
+    },
+    {
+      "index": 5,
+      "agent_ref": "epi:agent:epii",
+      "name": "Epii",
+      "m_identity": "Epii",
+      "s_product": "QL-MEF",
+      "s_repo": "EpiLogos/QL-MEF",
+      "s_prime": "Aletheia",
+      "m_prime": "epi.deep.m5",
+      "stewardship": ["formal/reflexive coherence", "refraction", "structural fidelity", "synthesis", "recursion", "whole-system return"]
+    }
+  ]
+}

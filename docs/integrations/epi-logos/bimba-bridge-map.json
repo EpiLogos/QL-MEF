@@ -1,0 +1,31 @@
+{
+  "schema_version": "epi-r2-bimba-bridge/0.1-first-pass",
+  "status": "awaiting-human-review",
+  "canonical_identity": {
+    "semantic_object": "Epi-Logos Bimba Graph / authored Bimba map",
+    "owner": "Epi M0/Bimba source field with per-relation/source-class authority",
+    "authored_source": "EpiLogos/Epi-Logos-C-Experiments:Idea/Bimba/Map",
+    "not_equal_to": ["Neo4j","MCP","QL-MEF Meta-Knowledge Graph Projection","AIKit Knowledge Navigation","O:I Explore/CommonReferent"]
+  },
+  "bindings": [
+    {"id":"bimba->neo4j","target":"Neo4j","relation":"material graph store/provider","authority":"no transfer","write_rule":"store writes only through Bimba/S2 authority and schema law","disposition":"retain provider while useful"},
+    {"id":"bimba->mcp","target":"MCP adapter","relation":"protocol projection","authority":"no transfer","write_rule":"adapter exposes only explicit canonical domain operations; protocol is not domain API identity","disposition":"retain/modernise adapter where clients need MCP"},
+    {"id":"bimba->aikit","target":"AIKit KnowledgeOperations/KnowledgeApplication","relation":"provider/federation bridge","authority":"AIKit may search/read/relate/route/frame/sources/explain; Bimba retains semantic and mutation authority","write_rule":"read/navigation by default; explicit Epi mutation contract required for writes","disposition":"implement Bimba KnowledgeProvider/adapter"},
+    {"id":"bimba->qlmef","target":"QL-MEF meta-wiki / Meta-Knowledge Graph Projection","relation":"MetaBinding/BimbaBinding-style mapping and refraction","authority":"neither graph owns the other","write_rule":"MEF readings are derived; promotion into Bimba requires Epi owner review","disposition":"explicit bridge only"},
+    {"id":"bimba->oi","target":"O:I SharedField/Explore/CommonReferent","relation":"projection/federation/common-referent participation","authority":"projection never changes Epi ownership","write_rule":"no implicit Bimba mutation from shared-field reconciliation","disposition":"project with source/authority provenance"},
+    {"id":"bimba->workcell","target":"Workcell","relation":"materialise graph/runtime providers","authority":"Workcell owns lifecycle/bindings only","write_rule":"material reachability does not grant semantic write authority","disposition":"reuse"},
+    {"id":"bimba->factory","target":"Software Factory","relation":"development/test/evidence subject","authority":"Factory owns developmental reason/evidence, not Bimba semantics","write_rule":"changes flow through Epi-owned source and review","disposition":"reuse for development"},
+    {"id":"bimba->central","target":"Central","relation":"human-authored proposal/control integration where personal authorship is involved","authority":"Central does not become Bimba owner","write_rule":"proposal/recognition can govern Epi-owned mutation, not bypass it","disposition":"adapter where useful"}
+  ],
+  "knowledge_function_distinctions": [
+    {"function":"semantic graph identity","owner":"Epi/Bimba","provider":"none inherent"},
+    {"function":"authored/source graph material","owner":"Epi source repository","provider":"Git/filesystem/Markdown"},
+    {"function":"material graph store","owner":"S2 material contract / Workcell lifecycle","provider":"Neo4j currently"},
+    {"function":"search/retrieval","owner":"provider-specific semantics; AIKit supplies generic operation vocabulary","provider":"graph-services/Neo4j/RAG providers"},
+    {"function":"wiki capability","owner":"source/project owner; generic navigation may be AIKit-supported","provider":"Markdown/Obsidian/OKF providers"},
+    {"function":"semantic navigation","owner":"AIKit generic navigation; Bimba provider retains native semantics","provider":"KnowledgeProvider adapter"},
+    {"function":"projection","owner":"projecting system only for the projection","provider":"O:I/QL-MEF/AIKit as applicable"},
+    {"function":"federation","owner":"federating horizon/composition","provider":"AIKit/O:I"},
+    {"function":"refraction","owner":"QL-MEF for formal operation/readings","provider":"QL-MEF service/library"}
+  ]
+}

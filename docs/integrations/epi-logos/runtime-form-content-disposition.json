@@ -1,0 +1,227 @@
+{
+  "schema": "epi.r2.runtime-form-content-disposition/v1",
+  "status": "working-human-review",
+  "tracking": {
+    "ql_mef_issue": 25,
+    "epi_coordination_issue": 4,
+    "pr": 27
+  },
+  "source": {
+    "epi_accepted_merge": "be54a505728eaa06ddcc268fa53df5dd756bfb5e",
+    "epi_reading_head": "8608648f33e697dd5a8c5f499492619a02259af5",
+    "target_heads": {
+      "oi": "3ef417a88b84fa9684a58caf968e863bf7671cd7",
+      "central": "d09864643f804ee169bbced36d5a0e09bc311c08",
+      "actuation": "0c6a9147a780329007733df643eb07108f589ac6",
+      "aikit": "c9919ac2b2bb775a19180300f2f4e14e3d34a4b1",
+      "factory": "4767d2873ce0c309816c1b333575323254eacd13",
+      "workcell": "8a744b1ddbdc694ad71b7aea72064f7def6620d2",
+      "quaternal_logic": "d0e012b9a2080b75b9583d5fcc672775cce3a7ca"
+    }
+  },
+  "dispositions": {
+    "retain-domain": "semantic/domain computation remains Epi-owned; O:I may expose or materialise it",
+    "operate-through": "Epi form composes native O:I capabilities without taking over their generic semantics",
+    "delegate-generic": "historical Epi code currently owns generic mechanics that should converge behind the native O:I owner once conformance is proved",
+    "adapt-transport": "provider/store/CLI/host implementation may be replaced while semantic contract remains",
+    "candidate-contract": "reusable pressure worth testing as an extension/provider contract before adding a root primitive",
+    "unresolved-authority": "overlap requires focused provenance/authority decision before migration"
+  },
+  "layers": {
+    "cradle_runtime": {
+      "owner": "O:I product field",
+      "meaning": "generic technological-agency machinery around available model capacity"
+    },
+    "epi_form": {
+      "owner": "Epi-Logos",
+      "meaning": "constitutional/refraction/inhabitation law that makes generic powers Epi-lawful in an encounter"
+    },
+    "epi_domain": {
+      "owner": "Epi-Logos",
+      "meaning": "Bimba/M/M-prime psychoid computation, content, datasets and lived instruments"
+    }
+  },
+  "ta_onta": [
+    {
+      "id": "khora",
+      "purpose": "grounded encounter / establishment of the inhabited Epi world",
+      "generic_owners": ["Central", "Actuation", "AIKit", "Workcell"],
+      "epi_form": ["Day", "NOW", "initial VAK condition", "coordinate path", "rehear-vs-force-closed return"],
+      "disposition": ["operate-through", "delegate-generic", "adapt-transport"]
+    },
+    {
+      "id": "hen",
+      "purpose": "lawful Epi form and residency",
+      "generic_owners": ["Central", "AIKit", "Software Factory", "Workcell"],
+      "epi_form": ["CT grammar", "coordinate-bearing form", "Bimba relation", "Seeds/Present/World residency", "promotion law"],
+      "disposition": ["operate-through", "adapt-transport"]
+    },
+    {
+      "id": "pleroma",
+      "purpose": "bounded affordance constitution",
+      "generic_owners": ["AIKit", "Actuation", "Workcell", "Software Factory"],
+      "epi_form": ["VAK capability relevance", "functional-locus binding", "Epi gate law", "thread/form relevance", "Techne classification"],
+      "disposition": ["operate-through", "delegate-generic", "adapt-transport"]
+    },
+    {
+      "id": "chronos",
+      "purpose": "operative temporal condition",
+      "generic_owners": ["AIKit", "Central", "Workcell"],
+      "epi_form": ["Day/Night-prime", "Day/NOW", "Kairos", "world-clock meaning", "return cadence/threshold"],
+      "disposition": ["operate-through", "candidate-contract"]
+    },
+    {
+      "id": "anima",
+      "purpose": "differentiated agency through Epi constitutional function",
+      "generic_owners": ["Actuation", "AIKit", "Workcell", "Software Factory"],
+      "epi_form": ["VAK", "CPF dialogical/mechanistic polarity", "CF functional binding", "CFP thread grammar", "CS Day/Night-prime sequence", "Epi guardrails"],
+      "disposition": ["operate-through", "delegate-generic"]
+    },
+    {
+      "id": "aletheia",
+      "purpose": "disciplined returned disclosure and crystallisation",
+      "generic_owners": ["Software Factory", "AIKit", "Actuation", "Central", "O:I"],
+      "epi_form": ["Anansi trace", "Janus threshold continuity", "Moirai rehearing", "Mercurius origin-preserving translation", "Agora plurality", "Zeithoven source-bound next-form", "Sophia-to-Epii return"],
+      "disposition": ["operate-through", "delegate-generic"]
+    }
+  ],
+  "technical_strata": [
+    {
+      "id": "S0",
+      "historical_mix": ["command surface", "C kernel", "Rust FFI", "portal/projection", "execution entry"],
+      "generic_owners": ["AIKit", "Workcell", "Software Factory"],
+      "epi_retained": ["epi-lib M0-M5", "bioquaternionic kernel", "formal coordinate web", "epi core/profile/portal domain semantics"],
+      "disposition": ["retain-domain", "operate-through"]
+    },
+    {
+      "id": "S1",
+      "historical_mix": ["vault", "authored world", "templates", "wiki/search"],
+      "generic_owners": ["Central", "AIKit", "Software Factory"],
+      "epi_retained": ["Hen form/residency", "CT/coordinate grammar"],
+      "disposition": ["operate-through", "adapt-transport"]
+    },
+    {
+      "id": "S2",
+      "historical_mix": ["graph", "retrieval", "semantic links"],
+      "generic_owners": ["AIKit", "Workcell"],
+      "epi_retained": ["Bimba identity", "Bimba authority", "Epi graph/correspondence semantics"],
+      "disposition": ["retain-domain", "operate-through", "adapt-transport"]
+    },
+    {
+      "id": "S3",
+      "historical_mix": ["gateway", "session store", "run snapshots", "chat processes", "subscriptions", "SpaceTimeDB", "Redis/Graphiti context"],
+      "generic_owners": ["AIKit", "Actuation", "Workcell", "O:I"],
+      "epi_retained": ["Day/NOW", "VAK-bearing live state", "Kairos/temporal projection", "Epi episodic/Bimba references"],
+      "disposition": ["delegate-generic", "operate-through", "adapt-transport"]
+    },
+    {
+      "id": "S4",
+      "historical_mix": ["agent runtime", "harness", "subagents", "capabilities", "orchestration"],
+      "generic_owners": ["Actuation", "AIKit", "Workcell", "Software Factory"],
+      "epi_retained": ["canonical Epi Agents", "S4 functional constellation", "VAK/CF/CFP/CS", "Epi gate law"],
+      "disposition": ["operate-through", "delegate-generic"]
+    },
+    {
+      "id": "S5",
+      "historical_mix": ["review", "retrieval", "autoresearch", "return"],
+      "generic_owners": ["Software Factory", "AIKit", "Actuation", "Central"],
+      "epi_retained": ["six-subsystem Epi evaluation", "Epii pedagogy", "Logos/Mobius return", "Bimba-aware recomposition", "Epi recognition"],
+      "disposition": ["retain-domain", "operate-through"]
+    }
+  ],
+  "domain_bodies": [
+    {
+      "id": "M0",
+      "agent": "Anuttara",
+      "implemented_evidence": ["m0.c", "immutable Bimba tables", "Vimarsa operators", "virtues", "Vak/zodiacal operators", "archetype language"],
+      "disposition": ["retain-domain"],
+      "notes": ["m0.c explicitly describes a future VM runtime; do not overclaim full M0 execution"]
+    },
+    {
+      "id": "M1",
+      "agent": "Paramasiva",
+      "implemented_evidence": ["m1.c", "Ananda Bimba/Pratibimba/sum/quintessence matrices", "Spanda", "QL flowering", "dual rings"],
+      "generic_relation": ["Quaternal Logic generic operators", "Workcell material/audio body", "AIKit capability/surface"],
+      "disposition": ["retain-domain", "operate-through", "unresolved-authority"]
+    },
+    {
+      "id": "M2",
+      "agent": "Parashakti",
+      "implemented_evidence": ["m2.c", "72-position MEF/vibrational space", "12 lenses", "Tattva/correspondence tables"],
+      "generic_relation": ["Quaternal Logic MEF registry/contracts", "Workcell audio/render body", "AIKit Surface"],
+      "disposition": ["retain-domain", "operate-through", "unresolved-authority"]
+    },
+    {
+      "id": "M3",
+      "agent": "Mahamaya",
+      "implemented_evidence": ["m3.c", "8 trigrams", "64 hexagrams/codons", "symbolic transcription operators", "rotation/clock projection in Rust portal-core"],
+      "generic_relation": ["Workcell compute/render", "AIKit Surface", "Quaternal Logic refraction"],
+      "disposition": ["retain-domain", "operate-through"]
+    },
+    {
+      "id": "M4",
+      "agent": "Nara",
+      "implemented_evidence": ["m4.c real root/safety/lens registry/voice/container/randomness"],
+      "incomplete_evidence": ["lens translation callbacks are stubs", "protocol cards use placeholder values", "alchemical operations are stubs"],
+      "generic_relation": ["Central residence", "Actuation/AIKit context", "Workcell compute"],
+      "disposition": ["retain-domain", "operate-through"]
+    },
+    {
+      "id": "M5",
+      "agent": "Epii",
+      "implemented_evidence": ["m5.c Logos FSM/Mobius return/self-view", "Rust epii-autoresearch-core six-subsystem evaluation", "Aletheia wire consumption"],
+      "generic_relation": ["Factory development/evidence", "AIKit Knowledge/History", "Actuation return", "Central reviewed return"],
+      "disposition": ["retain-domain", "operate-through"],
+      "authority_guard": "formal M5-to-M0 return does not authorize mutation of human-authored Central Control, Nara identity source or Epi canon"
+    }
+  ],
+  "application": {
+    "body": "Body/M/epi-theia",
+    "owned_instruments": ["M0-prime", "M1-prime", "M2-prime", "M3-prime", "M4-prime", "M5-prime"],
+    "integrated_compositions": ["1-2-3", "4-5-0"],
+    "parent": "non-numbered 0/1 Epi whole-field application",
+    "oi_desktop_relation": "host/Surface relation remains open; O:I desktop existence does not transfer M-prime semantic ownership",
+    "disposition": ["retain-domain", "operate-through"]
+  },
+  "cli": {
+    "native_entry": "epi",
+    "rule": "retain Epi semantic commands; delegate generic mechanics to native O:I owners rather than maintaining duplicate authority",
+    "likely_retained_semantic_surfaces": ["core", "nara", "profile", "portal", "M-domain computation"],
+    "likely_delegation_pressure": ["gate mechanics", "generic agent/session/harness mechanics", "Techne generic capability/material mechanics", "generic vault/source mechanics"],
+    "disposition": ["retain-domain", "delegate-generic", "adapt-transport"]
+  },
+  "candidate_contracts": [
+    {
+      "id": "InhabitationContribution",
+      "shape": ["disclose", "receive", "recompose", "query"],
+      "first_home_to_test": ["AIKit Component/ContextSource", "Actuation WorldBinding/return adapter"],
+      "disposition": ["candidate-contract"]
+    },
+    {
+      "id": "TemporalCondition",
+      "meaning": "operative temporal situation of a world available to Context/Agency, not merely time or scheduling",
+      "first_home_to_test": ["AIKit ContextSource/Resource provider"],
+      "epi_provider_fields": ["Day", "NOW", "Day/Night-prime", "Kairos", "world-clock", "return cadence"],
+      "disposition": ["candidate-contract"]
+    }
+  ],
+  "not_promoted": [
+    "Gate",
+    "Lineage",
+    "NextForm",
+    "Staging",
+    "Grounding",
+    "Translation",
+    "Rehearing",
+    "Residency",
+    "ClosureQuality"
+  ],
+  "open_questions": [
+    "M1/M2 versus standalone Quaternal Logic/MEF authority and dependency direction",
+    "whether TemporalCondition is fully expressible as current AIKit ContextSource/Resource",
+    "whether the four-seam inhabitation pattern belongs in AIKit, Actuation or a tiny cross-product contract",
+    "S3 gateway convergence after native O:I conformance is proved",
+    "M-prime Theia relation to O:I desktop/Surface hosting without premature package collapse",
+    "exact boundary between formal recurrence, Epi canon promotion, Nara personal continuity and human-authored Central return"
+  ]
+}
