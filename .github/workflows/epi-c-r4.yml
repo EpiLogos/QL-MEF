@@ -1,0 +1,26 @@
+name: Epi C R4 Holographic Kernel
+
+on:
+  pull_request:
+    paths:
+      - 'c/**'
+      - 'migration/epi-kernel/r4-**'
+      - 'scripts/test-epi-c-r4.sh'
+      - 'vendor/epi-kernel/reference/**'
+      - '.github/workflows/epi-c-r4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  holographic-kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: R4 holographic/kernel parity and native C package seam
+        run: scripts/test-epi-c-r4.sh
+      - name: Keep accepted R1/R2 scalar parity green
+        run: scripts/test-epi-c-parity.sh
+      - name: Keep holographic provenance manifest valid
+        run: python3 scripts/validate-epi-holographic-manifest.py
