@@ -68,6 +68,48 @@ The first native C floor is materially owned by **S5 / Quaternal Logic**. That s
 
 The human/agent `P/P′` product faces remain a separate axis. They are not renamed as S/S′.
 
+### 3.1 First S′ refraction model
+
+The first usable S′ model is a **cross-cutting relation**, not another list of six roots and not an automatic `Sx.y = archetype-y` equation.
+
+A refraction record has the logical shape:
+
+```text
+native product centre Sx
+    ×
+operative / architectural modality
+    ×
+actual manifestation or provider
+    ×
+source / evidence / standing
+```
+
+This permits one modality to appear through several native products while each product retains its own centre and ownership. It also permits a product to exhibit several modalities at once. The exact Bimba edge encoding remains source-owned and must be recovered from live relations rather than guessed from this engineering projection.
+
+The historical Ta-Onta sixfold gives the first named modal vocabulary worth carrying forward:
+
+| Archetype | Cross-product modal reading | Present examples; **not** a 1:1 coordinate assignment |
+|---|---|---|
+| **Khora** | ground / place / condition of material possibility | Central world/project ground; Actuation WorldBinding conditions; AIKit resolved context ground; Factory `StructuralGround`; Workcell material execution domain; QL formal/computational ground |
+| **Hen** | local unity / form held as one | authored Project/source whole; situated Agency identity; AIKit Resource/ProjectMap identity; Factory Run/Candidate whole; Workcell materialised world identity; QL law/kernel form |
+| **Pleroma** | potency / available capability fullness | project powers; Agency powers; AIKit Skills/Methods/Capabilities; Factory developmental powers; Workcell provider offers; QL executable operators |
+| **Chronos** | temporal articulation / history / sequence | Central NOW/DAY and project history; Actuation stream/return history; AIKit route/session history; Factory Run/evolution history; Workcell lifecycle; QL temporal/cyclic projections where formally grounded |
+| **Anima** | inhabited contextual organisation | lived/project world; situated Agency; AIKit actor Context; Factory Agent/Agency-in-Run; Workcell world as inhabited by an execution; QL context/readings when actually invoked |
+| **Aletheia** | disclosure / return / crystallised evidence | authored/source return; Actuation Return; AIKit verification/read-model disclosure; Factory Claims/evidence/Recognition return; Workcell observed-state evidence; QL parity/formal verification |
+
+These rows are a **design-level refraction account** grounded in the old S4/Ta-Onta operational semantics and current native product responsibilities. They are not claims that the Bimba graph already contains all 36 new edges, nor that every listed example is equally developed.
+
+The immediate specimen is intentionally narrower:
+
+```text
+S5 Quaternal Logic
+  → native C computational manifestation under #5-2
+  → exact ql_position_invert symbol
+  → parity + manifest evidence
+```
+
+No Ta-Onta archetype is attached to that scalar operation simply to fill a slot. The cross-product table tells later work how named archetypes may lawfully refract; the specimen records only what the current source proves.
+
 ## 4. Ta-Onta archetypes survive package dissolution
 
 Historical Bimba development gave the former S4/ta-onta package a sixfold operational articulation:
@@ -117,17 +159,52 @@ Current QL-MEF formal Context Frame work owns the named/provenance-bearing proje
 
 The C/C′ integration therefore records Context Frame references only where source evidence warrants them. VĀK may invoke or execute through a Context Frame reading, but PR #59 does not create another Context Frame operator.
 
+The current formal owner line is the Q6 / PR #19 grammar, which exposes the canonical seven-frame cut while explicitly leaving technological role bindings and runtime invocation policy unpromoted. C′/VĀK integration should call or reference that operator when a real act requires a named frame rather than reimplementing its grammar.
+
 ## 8. AIKit and Factory consumption boundary
 
 AIKit's generic job is identity-preserving semantic ↔ executable reflection through ProjectMap/CodeIndex/Knowledge surfaces. An Epi provider may present a Bimba coordinate as a semantic endpoint and the exact C symbol as a code endpoint; AIKit does not become the owner of the coordinate taxonomy.
 
 Factory's generic job is developmental fidelity. Where Structural Source Fidelity applies, Factory should consume the target-owned manifest as StructuralGround evidence, map the current implementation to it, and reject silent flattening, wrong parentage, stale reflection, or behavioural-only parity. Factory does not become the Bimba owner.
 
+The first cross-repository conformance specimen uses the target-owned manifest identity `epi-holographic-specimen/position-inversion/v1`, exact C symbol `ql_position_invert`, and explicit parity evidence. Until the AIKit/Factory owner branches are accepted, their receipts are branch-level conformance evidence rather than accepted QL-MEF dependencies.
+
 ## 9. T / T′ continuation
 
 The current seed tree preserves `T0..T5` and their conjugate directories, while the frozen repository fallback does not by itself supply enough current semantic relation detail to declare the full technological mapping.
 
-The next T/T′ tranche should start from `#5-4 Siva-Shakti` and relate thought/articulation to human-authored ground, Agent Wiki knowledge, SemanticWiki readings, source descriptions, Skills/Methods, Runs, Claims/Evidence, temporal return and Recognition. The present manifest preserves T/T′ relation slots without inventing those assignments now.
+The next T/T′ tranche starts from **`#5-4 Siva-Shakti`**, not from an invented Wiki taxonomy. Its first structural questions are already determinate:
+
+```text
+human-authored ground
+    ↕ source/provenance/return
+Agent-maintained Wiki knowledge
+    ↕
+SemanticWiki / WikiNode / WikiReading
+    ↕
+source descriptions / CodeReference / ProjectMap reflection
+    ↕
+Skill / Method / situated praxis
+    ↕
+Factory Run / Claim / Evidence / Decision
+    ↕
+episodic-temporal return
+    ↕
+Recognition / renewed ground
+```
+
+The task is to recover which T/T′ coordinates and relations actually own these thought/articulation movements in Bimba, then bind the existing generic objects to those identities. It is **not** to rename `WikiNode`, `Method`, `Run`, or `Evidence` as T coordinates or to create a second Wiki.
+
+At minimum the next programme must distinguish:
+
+- human-authored thought/source from Agent-maintained interpretation;
+- standing semantic identity from a local description and exact code manifestation;
+- processual development from chronological/episodic history;
+- evidence from the Claim it supports or challenges;
+- crystallised marks from renewed context;
+- Recognition/return from silent mutation of authored ground.
+
+Until live Bimba relation recovery supplies the exact T/T′ parentage, the present manifest keeps those relation fields open. Empty seed-directory symmetry is not evidence for six invented meanings.
 
 ## 10. Acceptance consequence for PR #59
 
