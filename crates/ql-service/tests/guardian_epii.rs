@@ -17,24 +17,28 @@ fn epii_guardian_operates_native_ql_readings_without_becoming_execution_identity
         ProviderHealth::available(),
     ));
 
+    let locate_input = input("epi:guardian-proof/locate", Some("issue-42"));
+    let locate_subject = locate_input.target.subject.clone();
     let located = service
         .locate(LocateRequest {
-            input: input("epi:guardian-proof/locate", Some("issue-42")),
+            input: locate_input,
             frame: None,
         })
         .expect("Epii stewardship must be able to locate through QL-MEF");
 
+    let refract_input = input("epi:guardian-proof/refract", Some("issue-42"));
+    let refract_subject = refract_input.target.subject.clone();
     let reading = service
         .refract(RefractRequest {
-            input: input("epi:guardian-proof/refract", Some("issue-42")),
+            input: refract_input,
             lens: LensRef::canonical(LensId::L4Prime),
             sublens: None,
             frame: None,
         })
         .expect("Epii stewardship must be able to refract through QL-MEF");
 
-    assert_eq!(located.target.subject, "epi:guardian-proof/locate");
-    assert_eq!(reading.target.subject, "epi:guardian-proof/refract");
+    assert_eq!(located.target.subject, locate_subject);
+    assert_eq!(reading.target.subject, refract_subject);
     assert_ne!(EPII_GUARDIAN_REF, EPII_STEWARDSHIP_AGENCY_REF);
     assert_ne!(EPII_GUARDIAN_REF, ALETHEIA_LABOURING_AGENCY_REF);
     assert_ne!(EPII_STEWARDSHIP_AGENCY_REF, ALETHEIA_LABOURING_AGENCY_REF);
@@ -45,13 +49,15 @@ fn epii_guardian_operates_native_ql_readings_without_becoming_execution_identity
         "guardian-proof-b",
         ProviderHealth::available(),
     ));
+    let rebound_input = input("epi:guardian-proof/rebound", Some("issue-42"));
+    let rebound_subject = rebound_input.target.subject.clone();
     let rebound = service
         .locate(LocateRequest {
-            input: input("epi:guardian-proof/rebound", Some("issue-42")),
+            input: rebound_input,
             frame: None,
         })
         .expect("provider rebinding must not change guardian identity");
 
-    assert_eq!(rebound.target.subject, "epi:guardian-proof/rebound");
+    assert_eq!(rebound.target.subject, rebound_subject);
     assert_eq!(EPII_GUARDIAN_REF, guardian_before_rebind);
 }
