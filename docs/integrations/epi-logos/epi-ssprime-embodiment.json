@@ -1,51 +1,82 @@
 {
-  "schema_version": "epi-r2-ssprime-embodiment/0.1-first-pass",
-  "status": "awaiting-human-review",
-  "source_snapshot": "epi-recon-r1-2026-08-17",
-  "strata": {
-    "S0/S0'": {"function":"command/process execution, build/bootstrap, executable/tool discovery, compiled kernel materialisation","modern_generic_home":["AIKit","Workcell","Software Factory"],"epi_residue":"Epi M0–M5 computational kernels, coordinate-native CLI/profile contracts","providers":["epi-cli","epi-lib","portal-core","OS shell","tmux/cmux"]},
-    "S1/S1'": {"function":"authored file/Markdown/frontmatter/wiki residency, mutation integrity, compilation/query/injection","modern_generic_home":["Central","AIKit","Software Factory"],"epi_residue":"Hen CT/residency/content law and Epi canon/vault mutation semantics","providers":["filesystem","Obsidian","obsidian-cli","hen-compiler-core"]},
-    "S2/S2'": {"function":"graph persistence/schema/relation registry/retrieval/rerank/enrichment/GDS/ontology","modern_generic_home":["AIKit","Workcell"],"epi_residue":"Bimba coordinate/relation semantics, namespace law and Epi correspondence provenance","providers":["Neo4j","graph-schema","graph-services","Redis cache","bimba-mcp"]},
-    "S3/S3'": {"function":"sessions, connections, gateway/events, live temporal/context state, episodic runtime and projections","modern_generic_home":["AIKit","Workcell"],"epi_residue":"DAY/NOW/Kairos and protected episodic meaning, Epi temporal subject resolution","providers":["WebSocket/JSON-RPC","ACP","Redis/RedisVL","Graphiti","SpaceTimeDB"]},
-    "S4/S4'": {"function":"agent/harness execution, skills/tools, model/provider/auth binding, team/subagent composition and governance","modern_generic_home":["Actuation","AIKit","Workcell","Software Factory"],"epi_residue":"VAK/CF dispatch, Epi constitutional/specialist agent semantics, Epi review/crystallisation routing","providers":["PI","ta-onta","plugins","tmux/cmux","worktrunk","bkmr"]},
-    "S5/S5'": {"function":"knowledge return/RAG/source pools, review/promotion, pedagogy, autoresearch and external exchange","modern_generic_home":["AIKit","Software Factory","Central","O:I"],"epi_residue":"Epii pedagogy, Logos Atelier, Bimba/Gnosis namespace meaning, Epi canon recognition/Möbius return","providers":["RAG-Anything","LightRAG","MinerU","Gnosis","kbase","Graphiti usage","external notebooks"]}
+  "schema_version": "epi-r1-ms-fourfold-embodiment/1.0",
+  "status": "CURRENT-CANONICAL",
+  "authority": "QL-MEF#74/#75",
+  "source_snapshots": {
+    "epi_main": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "epi_eightfold_pr19_head": "cfd9899891fe4dfa923b8735f886d0478c23036f",
+    "pre_migration_embodiment_blob": "a626bc0fee8bdea10c4f2f112dfd8e46df3cec08"
   },
-  "capabilities": [
-    {"ref":"M0P-LANGUAGE","owner":"M0","purpose":"Render source-provenanced Anuttara pre-math language and canonical absence states","s":["S0/S0'","S2/S2'"],"authority":"Epi M0 semantic source; S2 projection","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M0P-QL-STRUCTURE","owner":"M0","purpose":"Expose family/mirror/lens/inversion pointer law and position character","s":["S0/S0'","S2/S2'"],"authority":"M0 kernel + S2 pointer law","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M0P-RELATIONS","owner":"M0","purpose":"Inspect provenance-typed Bimba relation field","s":["S2/S2'"],"authority":"relation class owner in Bimba/S2","generic_home":["AIKit","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M0P-TIME-COMMUNITY","owner":"M0","purpose":"Overlay graph community/GDS and active NOW","s":["S2/S2'","S3/S3'"],"authority":"S2 GDS + Epi temporal state","generic_home":["AIKit","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M0P-PERSONAL-ROUTE","owner":"M0","purpose":"Route a public coordinate into protected Nara context","s":["S2/S2'","S3/S3'"],"authority":"M4 protected field","generic_home":["AIKit","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M0P-PEDAGOGY-ROUTE","owner":"M0","purpose":"Route a canonical coordinate into Epii teaching/review context","s":["S2/S2'","S5/S5'"],"authority":"M5/S5 pedagogical and review law","generic_home":["AIKit","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-CANONICAL-SOURCE","owner":"M1","purpose":"Expose immutable harmonic, matrix and Hopf source facts","s":["S0/S0'"],"authority":"M1 mathematical source","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-INSTANCE","owner":"M1","purpose":"Hold bounded session walk, coordinate and lens/mode state","s":["S3/S3'"],"authority":"M1 session state","generic_home":["AIKit","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-HARMONIC-ENGINE","owner":"M1","purpose":"Render Ananda matrix families and profile-driven harmonic state","s":["S0/S0'"],"authority":"M1 engine; M2 owns audio genesis","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-SPANDA","owner":"M1","purpose":"Enact profile/tick-driven phase, pulsation and inversion","s":["S0/S0'","S3/S3'"],"authority":"M1 kernel + Epi clock","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-QL-FLOWERING","owner":"M1","purpose":"Walk positions/relations and compose lens-as-scale traversal","s":["S0/S0'","S2/S2'"],"authority":"M1 harmonic law + Bimba relation law","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M1P-TOPOLOGY","owner":"M1","purpose":"Render played torus, Hopf and 4pi topology recognition","s":["S0/S0'"],"authority":"M1 mathematical engine","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-PROFILE-SOURCE","owner":"M2","purpose":"Validate and serve 72-space addresses and correspondential descriptors","s":["S0/S0'","S2/S2'"],"authority":"M2 mappings + source provenance","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-VIMARSHA-AUDIO","owner":"M2","purpose":"Read Prakasa profile through Vimarsha/MEF and produce shared 8+4 audio bus","s":["S0/S0'"],"authority":"M2 prime audio genesis","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-ELEMENTAL-MEDIUM","owner":"M2","purpose":"Resolve tattva/element/chakra/media response with provenance","s":["S0/S0'","S2/S2'"],"authority":"M2 source/correspondence authority","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-DECANIC-FACE","owner":"M2","purpose":"Resolve decan/zodiac/planet/body-zone light-shadow face","s":["S2/S2'"],"authority":"M2 source/correspondence authority","generic_home":["AIKit","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-SONIC-ARENA","owner":"M2","purpose":"Make sacred-sonic/maqam/mantra/planetary systems playable","s":["S0/S0'","S2/S2'"],"authority":"M2 sonic/correspondential authority","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M2P-DET-GATE","owner":"M2","purpose":"Project 72-space evidence into M3-ready 64-address evidence","s":["S0/S0'"],"authority":"M2 projection contract","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-CLOCK","owner":"M3","purpose":"Render shared harmonic clock without private renderer clock","s":["S0/S0'","S3/S3'"],"authority":"M3/kernel clock + shared Epi time","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-TRANSDUCTION","owner":"M3","purpose":"Display M2 72→DET→64 reception provenance","s":["S0/S0'"],"authority":"M2 projection + M3 reception","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-SYMBOLIC-CODEC","owner":"M3","purpose":"Render canonical codon/I-Ching/Tarot/line-change/amino-acid facts","s":["S0/S0'","S2/S2'"],"authority":"M3 symbolic canon","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-ROTATION","owner":"M3","purpose":"Project 84 lens/mode states into 472 codon/rotation landscape","s":["S0/S0'"],"authority":"M3 rotational algebra","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-MEASUREMENT-INSPECTOR","owner":"M3","purpose":"Expose disciplined symbolic/physics coupling-flow explanation/provenance","s":["S0/S0'","S2/S2'"],"authority":"M3 explanation/provenance","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M3P-WORLD-CLOCK","owner":"M3","purpose":"Render downstream double-torus world-clock synthesis","s":["S0/S0'","S3/S3'"],"authority":"M3 world-clock synthesis","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-IDENTITY","owner":"M4","purpose":"Protected personal identity and personal quaternion/resonance state","s":["S0/S0'","S1/S1'","S3/S3'"],"authority":"M4 protected personal authority","generic_home":["AIKit","Central","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-DAY-EPISODE","owner":"M4","purpose":"Canonical DAY container with NOW-stamped lived artifacts","s":["S1/S1'","S3/S3'"],"authority":"M4 meaning; S3 Epi temporal truth","generic_home":["AIKit","Central","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-ORACLE","owner":"M4","purpose":"Bounded oracle/transcription interpretation over M3 facts","s":["S0/S0'","S3/S3'"],"authority":"M4 lived interpretation; M3 symbolic facts","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-ACTIVITY","owner":"M4","purpose":"Trajectory/activity evidence and decayed perturbation","s":["S0/S0'","S3/S3'"],"authority":"M4 activity semantics","generic_home":["AIKit","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-EPISODIC","owner":"M4","purpose":"Protected temporal episodic retrieval through privacy classes","s":["S3/S3'","S5/S5'"],"authority":"M4 personal/privacy boundary","generic_home":["AIKit","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M4P-PROMOTION-SEAM","owner":"M4","purpose":"Produce identity-augment proposals and governed sendoff to M5 review","s":["S4/S4'","S5/S5'"],"authority":"M4 proposes; M5/S5 reviews; owning source applies","generic_home":["AIKit","Actuation","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-LIBRARY","owner":"M5","purpose":"Bimba pedagogy, Gnosis/RAG and kbase retrieval across distinct namespaces","s":["S2/S2'","S5/S5'"],"authority":"M5 pedagogy; S2/Bimba and S5/Gnosis native owners","generic_home":["AIKit","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-CANON","owner":"M5","purpose":"Philosophy/canon authoring and review with safe mutation","s":["S1/S1'","S5/S5'"],"authority":"Epi canon owner via S1/Hen + review","generic_home":["AIKit","Central","O:I","Software Factory"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-BACKEND-STUDIO","owner":"M5","purpose":"Inspect and operate Epi backend through governed tasks/tests/evidence","s":["S0/S0'","S1/S1'","S2/S2'","S3/S3'","S4/S4'","S5/S5'"],"authority":"respective S owners; M5 reflection only","generic_home":["AIKit","Actuation","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-REFLECTED-APP","owner":"M5","purpose":"Reflected application/workspace surface for M' capabilities","s":["S0/S0'","S1/S1'","S2/S2'","S3/S3'","S4/S4'","S5/S5'"],"authority":"M' domain owners; shell/provider replaceable","generic_home":["AIKit","Actuation","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-CONTROL-ROOM","owner":"M5","purpose":"Governed agent execution, capability selection, evidence and review handoff","s":["S4/S4'","S5/S5'"],"authority":"S4 execution governance + S5 review; M5 composes","generic_home":["AIKit","Actuation","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"},
-    {"ref":"M5P-ATELIER","owner":"M5","purpose":"Logos/etymological archaeology, source-following, crystallisation and return","s":["S1/S1'","S2/S2'","S5/S5'"],"authority":"M5 semantic owner; source owners apply","generic_home":["AIKit","Central","O:I","Software Factory","Workcell"],"reading":"generic mechanism may migrate/reuse; Epi semantic/write authority remains native"}
-  ]
+  "policy": {
+    "constitutional_home": "same-index M_i -> S_i and M_i -> S_i′; S_i/S_i′ activity participates in M_i′ composition",
+    "cross_coordinate_rule": "constitutional home is not exclusivity; capabilities may use several S products and S′ activities with provenance",
+    "guardian_rule": "Guardian_i stewards S_i, organises S_i′ activity and evaluates/coheres M_i′ return without becoming identical to product, module, Agency or Execution",
+    "historical_rule": "old technical S strata and nested S4.0′..S4.5′ addresses remain provenance/residency evidence only"
+  },
+  "constitutional_spine": [
+    {"index":0,"m":"Anuttara","guardian":"Anuttara","s_ref":"S0","s_product":"Central","s_prime_ref":"S0′","s_prime":"Khora","m_prime_ref":"M0′","m_prime_product":"epi.deep.m0","relations":["M0->S0","M0->S0′","S0<->S0′","S0/S0′->M0′","Guardian0->S0/S0′/M0′"]},
+    {"index":1,"m":"Paramaśiva","guardian":"Paramaśiva","s_ref":"S1","s_product":"Actuation","s_prime_ref":"S1′","s_prime":"Hen","m_prime_ref":"M1′","m_prime_product":"epi.deep.m1","relations":["M1->S1","M1->S1′","S1<->S1′","S1/S1′->M1′","Guardian1->S1/S1′/M1′"]},
+    {"index":2,"m":"Paraśakti","guardian":"Paraśakti","s_ref":"S2","s_product":"AIKit","s_prime_ref":"S2′","s_prime":"Pleroma","m_prime_ref":"M2′","m_prime_product":"epi.deep.m2","relations":["M2->S2","M2->S2′","S2<->S2′","S2/S2′->M2′","Guardian2->S2/S2′/M2′"]},
+    {"index":3,"m":"Mahāmāyā","guardian":"Mahāmāyā","s_ref":"S3","s_product":"Software Factory","s_prime_ref":"S3′","s_prime":"Chronos","m_prime_ref":"M3′","m_prime_product":"epi.deep.m3","relations":["M3->S3","M3->S3′","S3<->S3′","S3/S3′->M3′","Guardian3->S3/S3′/M3′"]},
+    {"index":4,"m":"Nara","guardian":"Nara","s_ref":"S4","s_product":"Workcell","s_prime_ref":"S4′","s_prime":"Anima","m_prime_ref":"M4′","m_prime_product":"epi.deep.m4","relations":["M4->S4","M4->S4′","S4<->S4′","S4/S4′->M4′","Guardian4->S4/S4′/M4′"]},
+    {"index":5,"m":"Epii","guardian":"Epii","s_ref":"S5","s_product":"QL-MEF","s_prime_ref":"S5′","s_prime":"Aletheia","m_prime_ref":"M5′","m_prime_product":"epi.deep.m5","relations":["M5->S5","M5->S5′","S5<->S5′","S5/S5′->M5′","Guardian5->S5/S5′/M5′"]}
+  ],
+  "historical_residency": [
+    {"coordinate":"S0/S0′","historical_identity":"CommandRuntimeGround / ReflectiveCLILaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S0 spec and Body/S/S0"},
+    {"coordinate":"S1/S1′","historical_identity":"VaultResidency / HenCompilerLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S1 spec and Body/S/S1"},
+    {"coordinate":"S2/S2′","historical_identity":"GraphBody / CoordinateGraphLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S2 spec and Body/S/S2"},
+    {"coordinate":"S3/S3′","historical_identity":"GatewayControl / TemporalStateLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S3 spec and Body/S/S3"},
+    {"coordinate":"S4/S4′","historical_identity":"AgentRuntime / TaOntaInhabitation","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S4 spec and Body/S/S4"},
+    {"coordinate":"S5/S5′","historical_identity":"WorldBoundary / EpiiReturnLaw","disposition":"PRESERVE-AS-HISTORY","evidence":"Epi S5 spec and Body/S/S5"},
+    {"coordinate":"S4.0′..S4.5′","historical_identity":"Khora / Hen / Pleroma / Chronos / Anima / Aletheia nested under S4′","disposition":"IMPLEMENTATION-RESIDENCY-ONLY","evidence":"Epi@daa660cbc1b8c5da83828698665a753852cb0287:Body/S/S4/ta-onta/**"}
+  ],
+  "capability_embodiment": [
+    {
+      "owner":"M0","constitutional":{"s":"S0 Central","s_prime":"S0′ Khora"},
+      "capability_refs":["M0P-LANGUAGE","M0P-QL-STRUCTURE","M0P-RELATIONS","M0P-TIME-COMMUNITY","M0P-PERSONAL-ROUTE","M0P-PEDAGOGY-ROUTE"],
+      "cross_coordinate_products":["AIKit","Software Factory","Workcell","Central","QL-MEF"],
+      "cross_coordinate_ta_onta":["Pleroma","Chronos","Aletheia"],
+      "reading":"Anuttara has a Central/Khora constitutional home while source/relation, graph, temporal, protected-personal and pedagogical capabilities cross the field."
+    },
+    {
+      "owner":"M1","constitutional":{"s":"S1 Actuation","s_prime":"S1′ Hen"},
+      "capability_refs":["M1P-CANONICAL-SOURCE","M1P-INSTANCE","M1P-HARMONIC-ENGINE","M1P-SPANDA","M1P-QL-FLOWERING","M1P-TOPOLOGY"],
+      "cross_coordinate_products":["Actuation","AIKit","Software Factory","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos","Aletheia"],
+      "reading":"Paramaśiva is constitutionally Actuation/Hen while mathematical state, session state, harmonic traversal and material execution can require several product/activity coordinates."
+    },
+    {
+      "owner":"M2","constitutional":{"s":"S2 AIKit","s_prime":"S2′ Pleroma"},
+      "capability_refs":["M2P-PROFILE-SOURCE","M2P-VIMARSHA-AUDIO","M2P-ELEMENTAL-MEDIUM","M2P-DECANIC-FACE","M2P-SONIC-ARENA","M2P-DET-GATE"],
+      "cross_coordinate_products":["AIKit","Software Factory","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos"],
+      "reading":"Paraśakti is constitutionally AIKit/Pleroma while audio, correspondential retrieval and projection can cross execution, formal and temporal seams."
+    },
+    {
+      "owner":"M3","constitutional":{"s":"S3 Software Factory","s_prime":"S3′ Chronos"},
+      "capability_refs":["M3P-CLOCK","M3P-TRANSDUCTION","M3P-SYMBOLIC-CODEC","M3P-ROTATION","M3P-MEASUREMENT-INSPECTOR","M3P-WORLD-CLOCK"],
+      "cross_coordinate_products":["Software Factory","AIKit","Workcell","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Pleroma","Chronos"],
+      "reading":"Mahāmāyā is constitutionally Factory/Chronos while symbolic codecs, provider facts and material execution legitimately cross adjacent coordinates."
+    },
+    {
+      "owner":"M4","constitutional":{"s":"S4 Workcell","s_prime":"S4′ Anima"},
+      "capability_refs":["M4P-IDENTITY","M4P-DAY-EPISODE","M4P-ORACLE","M4P-ACTIVITY","M4P-EPISODIC","M4P-PROMOTION-SEAM"],
+      "cross_coordinate_products":["Workcell","Central","Actuation","AIKit","Software Factory","QL-MEF"],
+      "cross_coordinate_ta_onta":["Khora","Hen","Chronos","Anima","Aletheia"],
+      "reading":"Nara is constitutionally Workcell/Anima, but protected lived state requires durable source, authority, context, temporal and return relations without losing its M4 home."
+    },
+    {
+      "owner":"M5","constitutional":{"s":"S5 QL-MEF","s_prime":"S5′ Aletheia"},
+      "capability_refs":["M5P-LIBRARY","M5P-CANON","M5P-BACKEND-STUDIO","M5P-REFLECTED-APP","M5P-CONTROL-ROOM","M5P-ATELIER"],
+      "cross_coordinate_products":["QL-MEF","Central","Actuation","AIKit","Software Factory","Workcell"],
+      "cross_coordinate_ta_onta":["Khora","Hen","Pleroma","Chronos","Anima","Aletheia"],
+      "reading":"Epii is constitutionally QL-MEF/Aletheia and by design can inspect, explain and return across the complete system without becoming the owner of every native mutation."
+    }
+  ],
+  "legacy_capability_map": {
+    "disposition":"PRESERVE-AS-HISTORY",
+    "blob_sha":"a626bc0fee8bdea10c4f2f112dfd8e46df3cec08",
+    "note":"The pre-migration detailed M-capability -> historical S-strata matrix remains immutable Git provenance. Current capability refs above preserve its named capability inventory while interpreting embodiment through product/Ta-Onta faces."
+  }
 }
