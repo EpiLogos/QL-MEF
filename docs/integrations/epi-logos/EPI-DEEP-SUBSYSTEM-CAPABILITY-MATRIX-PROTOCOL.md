@@ -21,7 +21,7 @@ The task for each `Mx` is first to recover the **subsystem itself** as a deep ca
 - what privacy, authority, safety, provenance and review constraints belong to it;
 - which technical choices are settled, which are only historical proposals, and which remain open.
 
-Only after that field is intelligible do we map its capabilities into the same-coordinate fourfold ratified by #74:
+Only after that field is intelligible do we map its capabilities into the same-coordinate fourfold ratified by #74/#75:
 
 ```text
 M_i   semantic / ontological subsystem + guardian identity
@@ -34,6 +34,35 @@ M_i′  deep compositional Pratibimba
 ```
 
 The fourfold is therefore a **projection target and constitutional relation**, not a shortcut for discovering what the subsystem means.
+
+## 0.1 Coordinate-family refraction — distinguish without separating
+
+The fourfold is not a set of exclusive owners and it is not four aliases for the same thing. A subsystem identity can be **refracted through several coordinate families** while preserving the reason each family exists.
+
+For every recovered capability, ask separately:
+
+```text
+M      what is the semantic / ontological identity or law here?
+S      how does that identity stand materially / technologically in the O:I product field?
+S′     how does it become operative activity in the Ta-Onta field?
+M′     how does it become a deep compositional / experiential instrument?
+```
+
+The same named identity may legitimately recur across these questions. That recurrence is relational, not substitutional.
+
+Therefore:
+
+- `M_i != S_i != S_i′ != M_i′` as coordinate roles;
+- same-index relations are constitutionally strong, not merely analogical;
+- cross-index capability dependencies remain legal and expected;
+- a current product body does not retroactively define the M subsystem;
+- an M′ experience does not become the standing S product merely because it is the most visible surface;
+- an S′ activity form does not become the Guardian identity merely because it performs work for that Guardian;
+- a historical shell or runtime residency does not gain semantic ownership by implementation convenience.
+
+Example: current Anuttara recovery must be able to say simultaneously that `M0 Anuttara` is the root formal/metaphysical language, `S0 Central` is its dominant standing O:I ground-world reflection, `S0′ Khora` is its same-coordinate operative ground reflection, and `M0′` is the deep wiki/graph/world instrument through which the ground-language can become inspectable/playable. Those are related claims, not interchangeable definitions.
+
+Every subsystem matrix therefore records a **coordinate-family refraction view** alongside semantic recovery. This is a many-to-many relation map over one recovered capability field, not a one-way `domain -> implementation` pipeline.
 
 ## 1. Source law — chronology is not semantic precedence
 
@@ -175,25 +204,25 @@ NEXT DECISION OR PARITY PROOF
 
 Current code tells us what is real now; it does not retroactively define why the subsystem exists.
 
-### Pass G — M′ / S / S′ projection
+### Pass G — coordinate-family refraction / current embodiment
 
 Only after Passes A–F are materially stable do we populate cross-register embodiment.
 
-For each capability record:
+For each capability record the views independently:
 
 ```text
-M semantic home
-M′ deep instrument expression
-S standing technological reflection / native product capabilities
-S′ operative Ta-Onta contribution
-cross-coordinate S/S′ dependencies
+M semantic home / identity / law
+S standing technological reflection / current O:I product expression
+S′ operative Ta-Onta reflection
+M′ deep compositional / experiential expression
+cross-coordinate S/S′/M′ dependencies
 native owner / write authority
 provider/body candidates
 ```
 
-The same-index `M/S/S′/M′` relation from #74 is the constitutional spine. Cross-coordinate capability embodiment remains legal and expected.
+The same-index `M/S/S′/M′` relation from #74/#75 is the constitutional spine. Cross-coordinate capability embodiment remains legal and expected.
 
-Do not use S/S′ mapping to redefine the subsystem feature set.
+Do not use S/S′/M′ mapping to redefine the subsystem feature set. Do not use M semantics to erase native product ownership. Record **what is preserved through the refraction and what changes because the coordinate-family question has changed**.
 
 ## 3. Canonical per-capability row
 
@@ -252,12 +281,24 @@ technical_decisions:
     status: RATIFIED | IMPLEMENTED-CURRENTLY | CANDIDATE | HISTORICAL-CANDIDATE | REPLACED | OPEN
     options_or_evidence: []
 
-cross_register_projection:
+coordinate_family_refraction:
   status: NOT-YET-MAPPED | PARTIAL | RATIFIED
-  m_prime: optional
-  s_product: optional
-  s_prime: optional
+  m:
+    identity_or_law: optional
+  s:
+    product: optional
+    preserved_relation: optional
+    changed_question: optional
+  s_prime:
+    operative_identity: optional
+    preserved_relation: optional
+    changed_question: optional
+  m_prime:
+    instrument: optional
+    preserved_relation: optional
+    changed_question: optional
   cross_coordinate_dependencies: []
+  non_substitution_notes: []
 ```
 
 ## 4. Per-coordinate summary matrix
@@ -298,7 +339,8 @@ A subsystem is ready for body/provider/UX implementation decisions only when a h
 7. which technical decisions are ratified versus still open;
 8. what currently exists in code and what does not;
 9. what privacy/authority/review laws constrain it;
-10. what must remain true when it is later projected into M′/S/S′.
+10. what must remain true when it is later refracted through M′/S/S′;
+11. why the M, S, S′ and M′ views are related without being substituted for one another.
 
 If these cannot be answered, the next action is more subsystem research, not renderer/provider selection.
 
@@ -314,6 +356,6 @@ recover one subsystem deeply
 → immediately begin research on the next subsystem
 ```
 
-The first instantiation is M4/Nara. M5/Epii follows using the same protocol.
+The first instantiation was M4/Nara. M5/Epii followed. M0/Anuttara continues the same protocol with the added coordinate-family refraction rule exposed by the first two recoveries.
 
 This protocol extends the R1 capability-matrix method: the R1 snapshot remains valuable as a six-domain loss-detection inventory, while these per-subsystem matrices descend recursively enough to guide real deep-product refactoring without turning implementation history into semantic authority.
