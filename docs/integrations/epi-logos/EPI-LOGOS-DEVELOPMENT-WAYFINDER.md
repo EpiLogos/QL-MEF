@@ -11,6 +11,137 @@
 **M→S/S′ embodiment:** `epi-ssprime-embodiment.json`  
 **O:I field:** O:I #29 / `data/ql-relational-field.csv`
 
+## Returned reality — Prompt B, M4′ Nara first lived vertical
+
+**Development state, not accepted-main state.** Prompt A remains an explicit unmerged dependency: Epi PR #8 provides the real `epi-lib` / `portal-core` primitive bridge and O:I PR #87 hosts it. Prompt B is stacked rather than silently rebased around that fact:
+
+```text
+Epi PR #8  Prompt A primitive bridge
+    ↓
+Epi PR #9  protected Nara daily provider + exact selection packets
+
+O:I PR #87 Prompt A Epi contribution host
+    ↓
+O:I PR #88 M4′ Nara lived desktop Surface + governed sendoff
+```
+
+The first actual Nara UX is now implemented on those dependent branches as one quiet daily Surface inside the existing O:I host:
+
+```text
+Epi destination
+   ↓
+Nara / Today
+   ↓
+large immediate journal canvas
+   + restrained DAY/NOW orientation
+   + concise harmonic/resonance state
+   + lean protected-local identity orientation
+   + Explain/provenance on demand
+   ↓
+select exact source range
+   ↓
+epi.action.nara.selection.sendoff
+   ↓
+existing situated/root-agent region receives the same stable selection object
+```
+
+This is deliberately not a kernel dashboard. The default page does not expose raw quaternion state, the full correspondence field, private identity, dreams, relationship/somatic history, or a second agent/session interface.
+
+### What the lived Surface really consumes
+
+The Epi-owned provider extends the existing one-shot Prompt-A bridge rather than creating another runtime. Its daily reading is derived from the same Prompt-A primitive snapshot and therefore carries:
+
+- real `epi-lib::kernel_tick_from_epogdoon` computation with `portal-core` parity;
+- the existing `portal-core::MathemeHarmonicProfile` as the shared harmonic/profile source;
+- canonical QL address, MEF lens/sublens and Context-Frame handles supplied through the existing QL provider seam;
+- canonical Epi/Bimba address (`epi:bimba:#-4/M4′` in the current first slice);
+- protected Prompt-A `day_id` / `now_path` state;
+- current VĀK readiness/status rather than a renderer-local reconstruction.
+
+The renderer formats these returned handles. It does not calculate cosmology.
+
+### Protected episode reality
+
+The current Epi-owned store binds the authored M4′ day-as-episode law at:
+
+```text
+<protected-vault>/Pratibimba/Nara/<day_id>/
+    daily-note.md
+    daily-note.episode.json
+```
+
+The body file is the protected-local human-authored journal text. The adjacent record contains stable episode/day identity, revision, source/privacy class, raw-body handle and `portal-core::NaraJournalParser` activity/derived-observation metadata; it does not duplicate the raw journal body. On Unix the day directory is `0700` and body/record files are `0600`.
+
+Restart/re-read preserves the same episode identity and revision. A selection is bound to the exact episode revision and UTF-8 source byte range; stale revisions fail closed.
+
+### Agent co-reference and disclosure
+
+The governed selection object carries only:
+
+```text
+selected text
++ stable episode ref
++ exact source range + episode revision
++ DAY/NOW
++ canonical QL address
++ Epi coordinate ref
++ shared harmonic-profile ref
+```
+
+It explicitly omits the ambient Nara world. O:I resolves the selection inside the privileged native process, then consumes a pre-issued Action + Capability grant through the existing `ActionAuthorityStore`. The Action subject is the exact provider-created selection ref; authority may be bounded to its stable parent episode. Only after that grant succeeds does the webview/situated region receive the packet and adopt the same `nara-selection` Ref.
+
+Generic Surface registration remains non-publishing, sandboxed contributions remain denied the privileged bridge, and O:I does not mint Nara authority merely because it hosts the Surface.
+
+### Central relation returned by this slice
+
+Prompt B does **not** mutate Central. Nara writing remains protected local human-authored Nara material. No inference, derived state or agent observation is promoted automatically to `Control/user` or another durable Central source.
+
+The standing distinction remains operative:
+
+```text
+Authored
+!= Observation
+!= Inference
+!= Derived
+!= Proposal
+!= Accepted mutation
+```
+
+A later durable Central change must still traverse Central's native proposal / human review / accepted-mutation mechanism.
+
+### Verification now attached to the implementation
+
+The Epi producer PR runs the real C/Rust bridge tests for persistence/restart, stable episode identity, file privacy, body-free derived metadata, exact selected disclosure, stale revision failure and no-context fail-closed behavior. O:I has a dedicated cross-repository workflow pinned to the exact Prompt-B Epi producer revision and exercises the actual binary, not a static happy-path fixture. The normal desktop workflow additionally builds the rendered layer, checks the native Rust shell, preserves bridge confinement and tests that Nara stays a write-first Surface with no renderer-local cosmology/private identity model.
+
+Where a focused cross-repository test and the full desktop suite disagreed during implementation, the full-suite failure was treated as returned reality: the pre-Nara destination invariant and one Rust ownership error were corrected before this Wayfinder update was considered complete.
+
+### Deliberate deferrals from historical/current Nara design
+
+Still deferred because they are not required to prove the first lived daily root:
+
+- dream/oracle capture and the wider Nara activity/history toolset;
+- rich protected identity and pattern graph surfaces;
+- deep M4′ trajectory/timeline workspace;
+- full M1′/M2′/M3′ Cosmic instrument;
+- full Bimba graph explorer;
+- Epii pedagogy/review and Anuttara/Bimba reviewed return;
+- public/shared Projection from Nara;
+- any generic agent-management/session runtime.
+
+These remain authored capabilities, not discarded designs. Their build order now has a real daily root to grow around.
+
+### Next handoff
+
+**PROMPT C** = complete the Personal 4/5/0 relation around the now-real Nara surface:
+
+```text
+Nara → Epii → Anuttara/Bimba → reviewed return
+```
+
+Prompt C should preserve the exact episode/selection/DAY-NOW/profile co-reference established here rather than introducing a parallel personal context path.
+
+---
+
 ## 0. Read this correctly
 
 This Wayfinder has two different orders which must not be collapsed.
