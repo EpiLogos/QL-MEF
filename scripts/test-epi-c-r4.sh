@@ -42,6 +42,7 @@ make -C "$REPO_ROOT/c" package SOURCE_REVISION="$SOURCE_REVISION"
 "$CC_BIN" \
   -std=c11 -Wall -Wextra -Werror -pedantic \
   -I"$OUT_DIR/install-root/ql-mef-c/include" \
+  -I"$REFERENCE_ROOT/include" \
   "$REPO_ROOT/migration/epi-kernel/r4-vak-parity.c" \
   "$OUT_DIR/install-root/ql-mef-c/lib/libql-mef-c.a" \
   -lm \
@@ -51,13 +52,16 @@ make -C "$REPO_ROOT/c" package SOURCE_REVISION="$SOURCE_REVISION"
 
 grep -Fx "$SOURCE_REVISION" "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/source-revision.txt"
 grep -Fx "0.1.0" "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/api-version.txt"
-grep -Fx "1.0.0" "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/kernel-contract-version.txt"
+grep -Fx "1.1.0" "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/kernel-contract-version.txt"
 grep -F $'family\tNONE\t7' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
 grep -F $'relation\tcross.same-position\tql.kernel.cross.same-position/v1' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
-grep -F $'relation\tvak.cf\tql.kernel.vak.cf/v1' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
-grep -F $'vak\tcpf\tdeclared-unwired\tCategory-Position-Frame' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
-grep -F $'vak\tcf\thistorical-wired\tContext-Frame' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
-grep -F $'vak\tcs\thistorical-wired\tContext-Sequence' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'relation\tcontext-frame\tql.kernel.context-frame/v1' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'vak\tcpf\t0\tql.kernel.vak.cpf/v1\tCategory-Position-Frame\tdiscrimination/inversion' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'vak\tcf\t3\tql.kernel.context-frame/v1\tContext-Frame\tContext-Frame/Vimarsa-invocation' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'vak\tcs\t5\tql.kernel.vak.cs/v1\tContext-Sequence\tLogos-cycle-completion' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'pointer-web\tcpf\tslot-unmaterialized' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'pointer-web\tcf\tslot-materialized' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
+grep -F $'square-degree\tD3\t4\tcomplete-conjugate-square' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
 grep -F $'mef\taddress-count\t72' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
 grep -F $'cf\tCF5\t3\tpower\tinner-four\t(4.0/1-4.4/5)' "$OUT_DIR/install-root/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv"
 

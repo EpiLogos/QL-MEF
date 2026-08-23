@@ -9,7 +9,7 @@ DIST_DIR ?= dist
 SOURCE_REVISION ?= $(shell git rev-parse HEAD 2>/dev/null || printf unversioned)
 
 API_VERSION = 0.1.0
-CONTRACT_VERSION = 1.0.0
+CONTRACT_VERSION = 1.1.0
 PACKAGE_BASENAME = ql-mef-c-$(API_VERSION)-$(SOURCE_REVISION).tar.gz
 LIB = $(BUILD_DIR)/libql-mef-c.a
 SRC = src/primitive.c src/holographic.c src/kernel.c

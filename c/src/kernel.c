@@ -41,12 +41,56 @@ static const char* const QL_KERNEL_RELATION_IDS[QL_KERNEL_RELATION_COUNT] = {
     "ql.kernel.vak.cpf/v1",
     "ql.kernel.vak.ct/v1",
     "ql.kernel.vak.cp/v1",
-    "ql.kernel.vak.cf/v1",
     "ql.kernel.vak.cfp/v1",
     "ql.kernel.vak.cs/v1",
     "ql.kernel.nesting/v1",
     "ql.kernel.branching/v1",
     "ql.kernel.source.provenance/v1"
+};
+
+static const QL_Kernel_VAK_Descriptor QL_KERNEL_VAK_DESCRIPTORS[QL_KERNEL_VAK_FAMILY_COUNT] = {
+    {
+        .family = QL_KERNEL_VAK_CPF,
+        .relation = QL_KERNEL_REL_VAK_CPF,
+        .code = "CPF",
+        .meaning = "Category-Position-Frame",
+        .m0_handler_role = "discrimination/inversion"
+    },
+    {
+        .family = QL_KERNEL_VAK_CT,
+        .relation = QL_KERNEL_REL_VAK_CT,
+        .code = "CT",
+        .meaning = "Context-Time / Content Types",
+        .m0_handler_role = "QL-frame-selection"
+    },
+    {
+        .family = QL_KERNEL_VAK_CP,
+        .relation = QL_KERNEL_REL_VAK_CP,
+        .code = "CP",
+        .meaning = "Context-Position",
+        .m0_handler_role = "void-arithmetic-position-anchor"
+    },
+    {
+        .family = QL_KERNEL_VAK_CF,
+        .relation = QL_KERNEL_REL_CONTEXT_FRAME,
+        .code = "CF",
+        .meaning = "Context-Frame",
+        .m0_handler_role = "Context-Frame/Vimarsa-invocation"
+    },
+    {
+        .family = QL_KERNEL_VAK_CFP,
+        .relation = QL_KERNEL_REL_VAK_CFP,
+        .code = "CFP",
+        .meaning = "Context-Frame-Position / Paths",
+        .m0_handler_role = "R-factor-thread"
+    },
+    {
+        .family = QL_KERNEL_VAK_CS,
+        .relation = QL_KERNEL_REL_VAK_CS,
+        .code = "CS",
+        .meaning = "Context-Sequence",
+        .m0_handler_role = "Logos-cycle-completion"
+    }
 };
 
 const char* ql_kernel_api_version(void) {
@@ -69,6 +113,54 @@ const char* ql_kernel_relation_id(QL_Kernel_Relation_Id relation) {
     return (unsigned)relation < QL_KERNEL_RELATION_COUNT
         ? QL_KERNEL_RELATION_IDS[(unsigned)relation]
         : NULL;
+}
+
+const QL_Kernel_VAK_Descriptor* ql_kernel_vak_descriptor(QL_Kernel_VAK_Family family) {
+    return (unsigned)family < QL_KERNEL_VAK_FAMILY_COUNT
+        ? &QL_KERNEL_VAK_DESCRIPTORS[(unsigned)family]
+        : NULL;
+}
+
+QL_Kernel_Relation_Id ql_kernel_vak_relation_id(QL_Kernel_VAK_Family family) {
+    const QL_Kernel_VAK_Descriptor* descriptor = ql_kernel_vak_descriptor(family);
+    return descriptor ? descriptor->relation : (QL_Kernel_Relation_Id)QL_KERNEL_RELATION_COUNT;
+}
+
+int ql_kernel_vak_instruction_init(
+    QL_Kernel_VAK_Family family,
+    uint8_t vak_index,
+    uint8_t target_branch,
+    uint8_t target_pos,
+    QL_Coordinate_Face face,
+    QL_Kernel_VAK_Instruction* out
+) {
+    if (!out || !ql_kernel_vak_descriptor(family) || target_branch >= QL_POSITION_COUNT ||
+        target_pos >= QL_POSITION_COUNT || face > QL_COORD_FACE_PRIME) {
+        return -1;
+    }
+    *out = (QL_Kernel_VAK_Instruction){
+        .vak_family = (uint8_t)family,
+        .vak_index = vak_index,
+        .target_branch = target_branch,
+        .target_pos = target_pos,
+        .is_inverted = face == QL_COORD_FACE_PRIME ? 1u : 0u
+    };
+    return 0;
+}
+
+int ql_kernel_vak_instruction_valid(const QL_Kernel_VAK_Instruction* instruction) {
+    return instruction &&
+        instruction->vak_family < QL_KERNEL_VAK_FAMILY_COUNT &&
+        instruction->target_branch < QL_POSITION_COUNT &&
+        instruction->target_pos < QL_POSITION_COUNT &&
+        instruction->is_inverted <= 1u;
+}
+
+QL_Coordinate_Face ql_kernel_vak_instruction_face(const QL_Kernel_VAK_Instruction* instruction) {
+    if (!ql_kernel_vak_instruction_valid(instruction)) {
+        return (QL_Coordinate_Face)QL_INVALID_U8;
+    }
+    return instruction->is_inverted ? QL_COORD_FACE_PRIME : QL_COORD_FACE_DIRECT;
 }
 
 uint8_t ql_kernel_pitch_class(uint8_t position, QL_Coordinate_Face face) {
@@ -266,42 +358,11 @@ int ql_kernel_relation_resolve(
             case QL_KERNEL_REL_VAK_CT:
             case QL_KERNEL_REL_VAK_CP:
             case QL_KERNEL_REL_VAK_CFP:
-                /* ontology.h declares these reflective C' slots, but the frozen
-                 * families_wire_reflective() does not populate them. */
-                return -1;
-            case QL_KERNEL_REL_VAK_CF:
-                /* Frozen VAK wiring is direct-face only. Do not synthesize a
-                 * prime-face pointer law that the historical source does not have. */
-                if (source.face != (uint8_t)QL_COORD_FACE_DIRECT) return -1;
-                if (source.family == (uint8_t)QL_FAMILY_NONE) {
-                    if (source.position != 3u && source.position != 4u) return -1;
-                    target = ql_kernel_position_address(4u, QL_COORD_FACE_DIRECT);
-                } else if (source.position == 4u) {
-                    target = source;
-                } else if (source.position == 3u) {
-                    target = ql_kernel_family_address(
-                        (QL_Coordinate_Family)source.family,
-                        4u,
-                        QL_COORD_FACE_DIRECT
-                    );
-                } else {
-                    /* families_init() seeds every family coordinate's cf to the
-                     * raw Lemniscate before the later pos3/pos4 rewiring. */
-                    target = ql_kernel_position_address(4u, QL_COORD_FACE_DIRECT);
-                }
-                break;
             case QL_KERNEL_REL_VAK_CS:
-                /* families_wire_reflective() wires every arena slot's cs to
-                 * position 5 in the same block. */
-                if (source.face != (uint8_t)QL_COORD_FACE_DIRECT) return -1;
-                target = source.family == (uint8_t)QL_FAMILY_NONE
-                    ? ql_kernel_position_address(5u, QL_COORD_FACE_DIRECT)
-                    : ql_kernel_family_address(
-                        (QL_Coordinate_Family)source.family,
-                        5u,
-                        QL_COORD_FACE_DIRECT
-                    );
-                break;
+                /* VAK is a parameterised reflective instruction language. Static
+                 * source->target resolution would discard vak_index, target branch,
+                 * target position and inversion; use ql_kernel_vak_instruction_*(). */
+                return -1;
             default:
                 return -1;
         }

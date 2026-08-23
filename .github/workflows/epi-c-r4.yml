@@ -27,8 +27,8 @@ jobs:
         run: scripts/test-epi-c-parity.sh
       - name: Verify exact shared C/Rust kernel contract and Q6 workspace
         env:
-          RUST_KERNEL_HEAD: ee3b34500d5b5f641dfc8c61ee82c31cf92cfcc5
-          KERNEL_CONTRACT_BLOB: 3f6b99a1e33c3d5401a95d134fb0cdceb2153873
+          RUST_KERNEL_HEAD: 28aa194c74938c111f277cbfa8cd43cf10db065a
+          KERNEL_CONTRACT_BLOB: 5112349d363a5c01e63418c91880af67c5e60ed1
         run: |
           set -euo pipefail
           RUST_WORKTREE="$RUNNER_TEMP/ql-mef-q6-kernel"

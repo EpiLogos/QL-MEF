@@ -14,11 +14,12 @@ extern "C" {
 #define QL_KERNEL_API_VERSION_MAJOR 0u
 #define QL_KERNEL_API_VERSION_MINOR 1u
 #define QL_KERNEL_API_VERSION_PATCH 0u
-#define QL_HOLOGRAPHIC_KERNEL_CONTRACT_VERSION "1.0.0"
+#define QL_HOLOGRAPHIC_KERNEL_CONTRACT_VERSION "1.1.0"
 #define QL_KERNEL_RESONANCE_DIM QL_RESONANCE_COUNT
 #define QL_KERNEL_TRITONE_SQUARES QL_TRITONE_SQUARE_COUNT
 #define QL_KERNEL_CONTEXT_FRAME_COUNT 7u
-#define QL_KERNEL_RELATION_COUNT 26u
+#define QL_KERNEL_RELATION_COUNT 25u
+#define QL_KERNEL_VAK_FAMILY_COUNT 6u
 
 typedef enum {
     QL_KERNEL_PHASE_DESCENT = 0,
@@ -55,13 +56,10 @@ typedef enum {
     QL_KERNEL_RATIO_OCTAVE    = 6
 } QL_Kernel_Ratio_Role;
 
-/* Stable semantic relation identities. The D1/D2/D3 historical/software names
- * remain provenance/aliases on the Rust side; the shared kernel contract uses
- * the unambiguous relation meaning established by #39.
- *
- * VAK relations name the six historical reflective C' slots in ontology.h.
- * VAK_CF is deliberately distinct from CONTEXT_FRAME: VAK_CF is the historical
- * pointer slot, while CONTEXT_FRAME addresses the seven canonical MEF/CF cuts. */
+/* Stable semantic relation identities shared with Rust. D1/D2/D3 retain their
+ * square/derivation coordinates, while callers resolve cross operations by these
+ * unambiguous semantic identities. VAK CF uses CONTEXT_FRAME itself: there is one
+ * Context-Frame relation and VAK-CF is the reflective operation over that system. */
 typedef enum {
     QL_KERNEL_REL_POSITION_IDENTITY = 0,
     QL_KERNEL_REL_FAMILY_SAME_POSITION = 1,
@@ -83,13 +81,15 @@ typedef enum {
     QL_KERNEL_REL_VAK_CPF = 17,
     QL_KERNEL_REL_VAK_CT = 18,
     QL_KERNEL_REL_VAK_CP = 19,
-    QL_KERNEL_REL_VAK_CF = 20,
-    QL_KERNEL_REL_VAK_CFP = 21,
-    QL_KERNEL_REL_VAK_CS = 22,
-    QL_KERNEL_REL_NESTING = 23,
-    QL_KERNEL_REL_BRANCHING = 24,
-    QL_KERNEL_REL_SOURCE_PROVENANCE = 25
+    QL_KERNEL_REL_VAK_CFP = 20,
+    QL_KERNEL_REL_VAK_CS = 21,
+    QL_KERNEL_REL_NESTING = 22,
+    QL_KERNEL_REL_BRANCHING = 23,
+    QL_KERNEL_REL_SOURCE_PROVENANCE = 24
 } QL_Kernel_Relation_Id;
+
+/* Source-compatible semantic alias: VAK CF and typed Context Frame are one relation. */
+#define QL_KERNEL_REL_VAK_CF QL_KERNEL_REL_CONTEXT_FRAME
 
 typedef struct {
     QL_Kernel_Relation_Id relation;
@@ -99,6 +99,39 @@ typedef struct {
     uint8_t ratio_role;
     uint8_t pitch_class;
 } QL_Kernel_Relation_Ref;
+
+/* Universal VAK reflective language from the frozen kernel. These values match
+ * VAK_FAMILY_* in vendor/epi-kernel/reference/include/vak.h. */
+typedef enum {
+    QL_KERNEL_VAK_CPF = 0,
+    QL_KERNEL_VAK_CT  = 1,
+    QL_KERNEL_VAK_CP  = 2,
+    QL_KERNEL_VAK_CF  = 3,
+    QL_KERNEL_VAK_CFP = 4,
+    QL_KERNEL_VAK_CS  = 5
+} QL_Kernel_VAK_Family;
+
+/* Native form of the historical 5-byte VAK_Instruction. `is_inverted` is the
+ * prime suffix carried by the instruction language, independent of whether an
+ * old arena materialised a separate reflective pointer. */
+typedef struct {
+    uint8_t vak_family;
+    uint8_t vak_index;
+    uint8_t target_branch;
+    uint8_t target_pos;
+    uint8_t is_inverted;
+} QL_Kernel_VAK_Instruction;
+
+_Static_assert(sizeof(QL_Kernel_VAK_Instruction) == 5u,
+               "QL_Kernel_VAK_Instruction must remain 5 bytes");
+
+typedef struct {
+    QL_Kernel_VAK_Family family;
+    QL_Kernel_Relation_Id relation;
+    const char* code;
+    const char* meaning;
+    const char* m0_handler_role;
+} QL_Kernel_VAK_Descriptor;
 
 typedef struct {
     float w;
@@ -123,9 +156,6 @@ typedef struct {
     float total_energy;
 } QL_Kernel_Energy;
 
-/* Keep the native kernel tick aligned with the historical computational
- * substrate. Coordinate interpretation is supplied separately by mapping
- * helpers below rather than by injecting M1 traversal semantics here. */
 typedef struct {
     uint64_t cycle;
     uint8_t sub_tick;
@@ -135,8 +165,6 @@ typedef struct {
     float harmonic_ratio;
 } QL_Kernel_Tick;
 
-/* 72-fold resonance is 6 lens anchors x 2 conjugate lens faces x 6 inner
- * positions. The legacy map is retained as a compact dynamics-facing view. */
 typedef struct {
     QL_Coordinate_Label lens;
     uint8_t inner_position;
@@ -144,8 +172,6 @@ typedef struct {
     uint8_t tritone_square;
 } QL_Kernel_Resonance_Map;
 
-/* Native MEF address over the same L/L' kernel field used by the resonance
- * body and Rust PR #19. `absolute_position = (lens + local) mod 6`. */
 typedef struct {
     QL_Kernel_Address lens;
     uint8_t local_position;
@@ -208,6 +234,19 @@ int ql_kernel_relation_resolve(
     QL_Coordinate_Family family_target,
     QL_Kernel_Relation_Ref* out
 );
+
+const QL_Kernel_VAK_Descriptor* ql_kernel_vak_descriptor(QL_Kernel_VAK_Family family);
+QL_Kernel_Relation_Id ql_kernel_vak_relation_id(QL_Kernel_VAK_Family family);
+int ql_kernel_vak_instruction_init(
+    QL_Kernel_VAK_Family family,
+    uint8_t vak_index,
+    uint8_t target_branch,
+    uint8_t target_pos,
+    QL_Coordinate_Face face,
+    QL_Kernel_VAK_Instruction* out
+);
+int ql_kernel_vak_instruction_valid(const QL_Kernel_VAK_Instruction* instruction);
+QL_Coordinate_Face ql_kernel_vak_instruction_face(const QL_Kernel_VAK_Instruction* instruction);
 
 QL_Quaternion ql_quat_normalize(QL_Quaternion q);
 QL_Quaternion ql_quat_conjugate(QL_Quaternion q);

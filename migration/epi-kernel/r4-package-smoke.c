@@ -8,7 +8,7 @@
 int main(void) {
     if (strcmp(ql_c_api_version(), "0.1.0") != 0) return 1;
     if (strcmp(ql_kernel_api_version(), "0.1.0") != 0) return 2;
-    if (strcmp(ql_kernel_contract_version(), "1.0.0") != 0) return 3;
+    if (strcmp(ql_kernel_contract_version(), "1.1.0") != 0) return 3;
 
     QL_Holographic_Field field;
     if (ql_holographic_field_init(&field) != 0) return 4;
@@ -64,9 +64,18 @@ int main(void) {
         cf5.grain != QL_KERNEL_MEF_GRAIN_INNER_FOUR ||
         strcmp(cf5.notation, "(4.0/1-4.4/5)") != 0) return 17;
 
+    if (QL_KERNEL_REL_VAK_CF != QL_KERNEL_REL_CONTEXT_FRAME) return 18;
+    if (ql_kernel_vak_relation_id(QL_KERNEL_VAK_CF) != QL_KERNEL_REL_CONTEXT_FRAME) return 19;
+    QL_Kernel_VAK_Instruction vak;
+    if (ql_kernel_vak_instruction_init(
+            QL_KERNEL_VAK_CFP, 4u, 2u, 3u, QL_COORD_FACE_PRIME, &vak) != 0) return 20;
+    if (!ql_kernel_vak_instruction_valid(&vak) ||
+        ql_kernel_vak_instruction_face(&vak) != QL_COORD_FACE_PRIME ||
+        vak.is_inverted != 1u) return 21;
+
     QL_Kernel_Contract_Provenance provenance = ql_kernel_contract_provenance();
     if (strcmp(provenance.historical_pointer_web_blob,
-               "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320") != 0) return 18;
+               "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320") != 0) return 22;
 
     printf("ql-c/primitive=%s ql-c/kernel=%s contract=%s revision=%s\n",
            ql_c_api_version(), ql_kernel_api_version(), ql_kernel_contract_version(),
