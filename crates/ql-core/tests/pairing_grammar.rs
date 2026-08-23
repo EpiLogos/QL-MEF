@@ -126,7 +126,10 @@ fn canonical_cross_pass_d1_is_same_position_conjugation() {
         }
         other => panic!("expected D1 derivation, got {other:?}"),
     }
-    assert_eq!(cross.operator_ref(), KernelRelationId::CrossSamePosition.as_str());
+    assert_eq!(
+        cross.operator_ref(),
+        KernelRelationId::CrossSamePosition.as_str()
+    );
     assert_eq!(
         cross.derivation_ref(),
         "ql:pairing:1.0.0:cross:D1:position-4"
@@ -136,9 +139,24 @@ fn canonical_cross_pass_d1_is_same_position_conjugation() {
 #[test]
 fn canonical_cross_pass_d2_transform_require_complete_are_exact() {
     for (kind, position, expected_conjugate, expected_relation) in [
-        (D2CrossPassKind::Transform, 5, 0, KernelRelationId::CrossTransform),
-        (D2CrossPassKind::Require, 0, 5, KernelRelationId::CrossRequire),
-        (D2CrossPassKind::Complete, 2, 3, KernelRelationId::CrossComplete),
+        (
+            D2CrossPassKind::Transform,
+            5,
+            0,
+            KernelRelationId::CrossTransform,
+        ),
+        (
+            D2CrossPassKind::Require,
+            0,
+            5,
+            KernelRelationId::CrossRequire,
+        ),
+        (
+            D2CrossPassKind::Complete,
+            2,
+            3,
+            KernelRelationId::CrossComplete,
+        ),
     ] {
         let cross = canonical_cross_pass_d2(kind, p(position));
         assert_eq!(cross.operator_ref(), expected_relation.as_str());
