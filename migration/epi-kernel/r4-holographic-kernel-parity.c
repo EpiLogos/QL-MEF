@@ -23,6 +23,268 @@ static void hook(QL_Holographic_Coordinate* self, void* ctx) {
     if (self && n) (*n)++;
 }
 
+static void check_address_field(QL_Holographic_Field* field) {
+    const QL_Coordinate_Family families[QL_KERNEL_ADDRESS_FAMILY_COUNT] = {
+        QL_FAMILY_C, QL_FAMILY_P, QL_FAMILY_L, QL_FAMILY_S,
+        QL_FAMILY_T, QL_FAMILY_M, QL_FAMILY_NONE
+    };
+
+    QL_Kernel_Address hash = ql_kernel_hash_address();
+    CHECK(ql_kernel_address_valid(hash), "address.hash-valid");
+    CHECK(ql_kernel_address_is_hash(hash), "address.hash-identity");
+    CHECK(ql_kernel_address_is_bedrock(hash), "address.hash-bedrock");
+    CHECK(ql_holographic_field_resolve(field, hash) == ql_default_hash_bimba(), "address.hash-resolve");
+    char formatted[32];
+    CHECK(ql_kernel_address_format(hash, formatted, sizeof(formatted)) == 0 && strcmp(formatted, "#") == 0,
+          "address.hash-format");
+
+    for (uint8_t f = 0u; f < QL_KERNEL_ADDRESS_FAMILY_COUNT; f++) {
+        for (uint8_t p = 0u; p < QL_POSITION_COUNT; p++) {
+            for (uint8_t face = 0u; face < QL_FACE_COUNT; face++) {
+                QL_Kernel_Address address = ql_kernel_family_address(
+                    families[f], p, (QL_Coordinate_Face)face);
+                CHECK(ql_kernel_address_valid(address), "address.full-field-valid");
+                const QL_Holographic_Coordinate* substrate =
+                    ql_holographic_field_resolve(field, address);
+                CHECK(substrate != NULL, "address.full-field-resolve");
+                if (families[f] == QL_FAMILY_NONE) {
+                    CHECK(substrate == ql_default_psychoid_bimba(p), "address.raw-resolve");
+                    CHECK(ql_kernel_address_is_bedrock(address), "address.raw-bedrock");
+                } else {
+                    CHECK(substrate == ql_holographic_field_get_const(field, families[f], p),
+                          "address.family-resolve");
+                }
+
+                QL_Kernel_Address conjugate = ql_coordinate_label_other_face(address);
+                CHECK(conjugate.family == address.family && conjugate.position == address.position &&
+                      conjugate.face != address.face, "address.face-conjugacy");
+                CHECK(ql_holographic_field_resolve(field, conjugate) == substrate,
+                      "address.face-shared-substrate");
+            }
+        }
+    }
+
+    QL_Kernel_Address p2p = ql_kernel_family_address(QL_FAMILY_P, 2u, QL_COORD_FACE_PRIME);
+    CHECK(ql_kernel_address_format(p2p, formatted, sizeof(formatted)) == 0 && strcmp(formatted, "P2'") == 0,
+          "address.family-format");
+    QL_Kernel_Address raw3p = ql_kernel_position_address(3u, QL_COORD_FACE_PRIME);
+    CHECK(ql_kernel_address_format(raw3p, formatted, sizeof(formatted)) == 0 && strcmp(formatted, "#3'") == 0,
+          "address.raw-format");
+}
+
+static void check_relation_field(void) {
+    const QL_Coordinate_Family families[QL_KERNEL_ADDRESS_FAMILY_COUNT] = {
+        QL_FAMILY_C, QL_FAMILY_P, QL_FAMILY_L, QL_FAMILY_S,
+        QL_FAMILY_T, QL_FAMILY_M, QL_FAMILY_NONE
+    };
+    const uint8_t pair_a[6] = {1u, 0u, 3u, 2u, 5u, 4u};
+    const uint8_t pair_b[6] = {5u, 2u, 1u, 4u, 3u, 0u};
+    const uint8_t pair_c[6] = {5u, 4u, 3u, 2u, 1u, 0u};
+
+    CHECK(strcmp(ql_kernel_contract_version(), "1.0.0") == 0, "contract.version");
+    CHECK(strcmp(ql_kernel_relation_id(QL_KERNEL_REL_CROSS_SAME_POSITION),
+                 "ql.kernel.cross.same-position/v1") == 0, "relation.id.conjugate");
+    CHECK(strcmp(ql_kernel_relation_id(QL_KERNEL_REL_CROSS_COMPLETE),
+                 "ql.kernel.cross.complete/v1") == 0, "relation.id.complete");
+    CHECK(strcmp(ql_kernel_relation_id(QL_KERNEL_REL_MIRROR_COMPLEMENT),
+                 "ql.kernel.mirror.complement/v1") == 0, "relation.id.mirror");
+
+    QL_Kernel_Contract_Provenance provenance = ql_kernel_contract_provenance();
+    CHECK(strcmp(provenance.historical_reference_revision,
+                 "daa660cbc1b8c5da83828698665a753852cb0287") == 0,
+          "contract.provenance.reference");
+    CHECK(strcmp(provenance.historical_pointer_web_blob,
+                 "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320") == 0,
+          "contract.provenance.pointer-web");
+
+    for (uint8_t f = 0u; f < QL_KERNEL_ADDRESS_FAMILY_COUNT; f++) {
+        for (uint8_t p = 0u; p < QL_POSITION_COUNT; p++) {
+            for (uint8_t face = 0u; face < QL_FACE_COUNT; face++) {
+                QL_Kernel_Address source = ql_kernel_family_address(
+                    families[f], p, (QL_Coordinate_Face)face);
+                QL_Kernel_Relation_Ref rel;
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_CROSS_SAME_POSITION, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.conjugate.resolve");
+                CHECK(rel.target.family == source.family && rel.target.position == p &&
+                      rel.target.face != source.face, "relation.conjugate.same-index");
+                CHECK(rel.interval_role == QL_KERNEL_INTERVAL_SEMITONE,
+                      "relation.conjugate.semitone");
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_MIRROR_COMPLEMENT, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.mirror.resolve");
+                CHECK(rel.target.position == (uint8_t)(5u - p) && rel.target.face == source.face,
+                      "relation.mirror.same-face");
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_CROSS_TRANSFORM, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.transform.resolve");
+                CHECK(rel.target.position == (uint8_t)((p + 1u) % 6u) && rel.target.face != source.face,
+                      "relation.transform.target");
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_CROSS_REQUIRE, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.require.resolve");
+                CHECK(rel.target.position == (uint8_t)((p + 5u) % 6u) && rel.target.face != source.face,
+                      "relation.require.target");
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_CROSS_COMPLETE, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.complete.resolve");
+                CHECK(rel.target.position == (uint8_t)(5u - p) && rel.target.face != source.face,
+                      "relation.complete.cross-face");
+
+                const QL_Kernel_Relation_Id pair_relations[3] = {
+                    QL_KERNEL_REL_PAIR_A, QL_KERNEL_REL_PAIR_B, QL_KERNEL_REL_PAIR_C
+                };
+                const uint8_t* pair_targets[3] = {pair_a, pair_b, pair_c};
+                for (uint8_t pair = 0u; pair < 3u; pair++) {
+                    CHECK(ql_kernel_relation_resolve(
+                        pair_relations[pair], source, QL_FAMILY_NONE, &rel) == 0,
+                        "relation.pair.resolve");
+                    CHECK(rel.target.position == pair_targets[pair][p] && rel.target.face == source.face,
+                          "relation.pair.target");
+                }
+
+                for (uint8_t target_family = 0u; target_family < QL_KERNEL_ADDRESS_FAMILY_COUNT; target_family++) {
+                    CHECK(ql_kernel_relation_resolve(
+                        QL_KERNEL_REL_FAMILY_SAME_POSITION,
+                        source,
+                        families[target_family],
+                        &rel) == 0,
+                        "relation.family.resolve");
+                    CHECK(rel.target.family == (uint8_t)families[target_family] &&
+                          rel.target.position == p && rel.target.face == source.face,
+                          "relation.family.same-position");
+                }
+
+                CHECK(ql_kernel_relation_resolve(
+                    QL_KERNEL_REL_LENS_ANCHOR, source, QL_FAMILY_NONE, &rel) == 0,
+                    "relation.lens-anchor.resolve");
+                CHECK(rel.target.family == QL_FAMILY_L && rel.target.position == p &&
+                      rel.target.face == source.face, "relation.lens-anchor.target");
+
+                if (p < 5u) {
+                    CHECK(ql_kernel_relation_resolve(
+                        QL_KERNEL_REL_POSITION_SUCCESSOR, source, QL_FAMILY_NONE, &rel) == 0,
+                        "relation.successor.resolve");
+                    CHECK(rel.target.position == (uint8_t)(p + 1u) && rel.target.face == source.face,
+                          "relation.successor.target");
+                    CHECK(rel.ratio_role == QL_KERNEL_RATIO_EPOGDOON,
+                          "relation.successor.epogdoon");
+                } else {
+                    CHECK(ql_kernel_relation_resolve(
+                        QL_KERNEL_REL_POSITION_SUCCESSOR, source, QL_FAMILY_NONE, &rel) != 0,
+                        "relation.successor.stops-at-return");
+                    CHECK(ql_kernel_relation_resolve(
+                        QL_KERNEL_REL_MOBIUS_RETURN, source, QL_FAMILY_NONE, &rel) == 0,
+                        "relation.return.resolve");
+                    CHECK(rel.target.position == 0u && rel.target.face != source.face,
+                          "relation.return.target");
+                    CHECK(rel.interval_role == QL_KERNEL_INTERVAL_OCTAVE &&
+                          rel.ratio_role == QL_KERNEL_RATIO_OCTAVE,
+                          "relation.return.octave");
+                }
+            }
+
+            QL_Kernel_Address prime = ql_kernel_family_address(families[f], p, QL_COORD_FACE_PRIME);
+            QL_Kernel_Relation_Ref invariant;
+            CHECK(ql_kernel_relation_resolve(
+                QL_KERNEL_REL_CONJUGATE_INVARIANCE_A, prime, QL_FAMILY_NONE, &invariant) == 0,
+                "relation.invariance.A");
+            CHECK(invariant.target.position == pair_a[p] && invariant.target.face == QL_COORD_FACE_PRIME,
+                  "relation.invariance.A-target");
+            CHECK(ql_kernel_relation_resolve(
+                QL_KERNEL_REL_CONJUGATE_INVARIANCE_B, prime, QL_FAMILY_NONE, &invariant) == 0,
+                "relation.invariance.B");
+            CHECK(invariant.target.position == pair_b[p], "relation.invariance.B-target");
+            CHECK(ql_kernel_relation_resolve(
+                QL_KERNEL_REL_CONJUGATE_INVARIANCE_C, prime, QL_FAMILY_NONE, &invariant) == 0,
+                "relation.invariance.C");
+            CHECK(invariant.target.position == pair_c[p], "relation.invariance.C-target");
+        }
+    }
+
+    /* Pair-C and mirror reach the same same-face vertex set, while complete
+     * reaches that positional complement across the other face. Operator
+     * identity/provenance remains distinct. */
+    QL_Kernel_Address p2 = ql_kernel_family_address(QL_FAMILY_P, 2u, QL_COORD_FACE_DIRECT);
+    QL_Kernel_Relation_Ref pair_c_ref, mirror_ref, complete_ref;
+    CHECK(ql_kernel_relation_resolve(QL_KERNEL_REL_PAIR_C, p2, QL_FAMILY_NONE, &pair_c_ref) == 0,
+          "relation.distinction.pair-c");
+    CHECK(ql_kernel_relation_resolve(QL_KERNEL_REL_MIRROR_COMPLEMENT, p2, QL_FAMILY_NONE, &mirror_ref) == 0,
+          "relation.distinction.mirror");
+    CHECK(ql_kernel_relation_resolve(QL_KERNEL_REL_CROSS_COMPLETE, p2, QL_FAMILY_NONE, &complete_ref) == 0,
+          "relation.distinction.complete");
+    CHECK(pair_c_ref.target.position == mirror_ref.target.position &&
+          pair_c_ref.target.face == mirror_ref.target.face,
+          "relation.distinction.same-vertices");
+    CHECK(pair_c_ref.relation != mirror_ref.relation && mirror_ref.relation != complete_ref.relation,
+          "relation.distinction.operator-identity");
+    CHECK(complete_ref.target.position == mirror_ref.target.position &&
+          complete_ref.target.face != mirror_ref.target.face,
+          "relation.distinction.complete-cross-face");
+}
+
+static void check_mef_and_context_frames(void) {
+    static const uint8_t cf_local[7] = {0u, 1u, 2u, 2u, 3u, 4u, 5u};
+    static const QL_Kernel_MEF_Unit_Face cf_unit[7] = {
+        QL_KERNEL_MEF_UNIT_NAME, QL_KERNEL_MEF_UNIT_NAME, QL_KERNEL_MEF_UNIT_NAME,
+        QL_KERNEL_MEF_UNIT_POWER, QL_KERNEL_MEF_UNIT_POWER, QL_KERNEL_MEF_UNIT_POWER,
+        QL_KERNEL_MEF_UNIT_POWER
+    };
+    static const QL_Kernel_MEF_Grain cf_grain[7] = {
+        QL_KERNEL_MEF_GRAIN_OUTER_TWO, QL_KERNEL_MEF_GRAIN_INNER_FOUR,
+        QL_KERNEL_MEF_GRAIN_INNER_FOUR, QL_KERNEL_MEF_GRAIN_INNER_FOUR,
+        QL_KERNEL_MEF_GRAIN_INNER_FOUR, QL_KERNEL_MEF_GRAIN_INNER_FOUR,
+        QL_KERNEL_MEF_GRAIN_OUTER_TWO
+    };
+    static const char* const cf_notation[7] = {
+        "(00/00)", "(0/1)", "(0/1/2)", "(0/1/2/3)",
+        "(4.0/1-4.4/5)", "(4.5/0)", "(5/0)"
+    };
+
+    for (uint8_t lens = 0u; lens < QL_POSITION_COUNT; lens++) {
+        for (uint8_t face = 0u; face < QL_FACE_COUNT; face++) {
+            for (uint8_t local = 0u; local < QL_POSITION_COUNT; local++) {
+                QL_Kernel_MEF_Address address;
+                CHECK(ql_kernel_mef_address(lens, (QL_Coordinate_Face)face, local, &address) == 0,
+                      "mef.address.resolve");
+                CHECK(address.lens.family == QL_FAMILY_L && address.lens.position == lens &&
+                      address.lens.face == face, "mef.address.lens");
+                CHECK(address.local_position == local &&
+                      address.absolute_position == (uint8_t)((lens + local) % 6u),
+                      "mef.address.rotation");
+                CHECK(address.resonance_index == kernel_resonance_index(lens, face, local),
+                      "mef.address.resonance-parity");
+                CHECK(address.tritone_square == kernel_tritone_square_for_lens(lens),
+                      "mef.address.square-parity");
+                char ref[64];
+                CHECK(ql_kernel_mef_address_format(&address, ref, sizeof(ref)) == 0,
+                      "mef.address.ref-format");
+            }
+
+            for (uint8_t cf = 0u; cf < QL_KERNEL_CONTEXT_FRAME_COUNT; cf++) {
+                QL_Kernel_Context_Frame_Address address;
+                CHECK(ql_kernel_context_frame_address(
+                    (QL_Kernel_Context_Frame_Id)cf,
+                    lens,
+                    (QL_Coordinate_Face)face,
+                    &address) == 0,
+                    "cf.address.resolve");
+                CHECK(address.frame == (QL_Kernel_Context_Frame_Id)cf,
+                      "cf.address.id");
+                CHECK(address.mef.local_position == cf_local[cf], "cf.address.local-position");
+                CHECK(address.unit_face == cf_unit[cf], "cf.address.unit-face");
+                CHECK(address.grain == cf_grain[cf], "cf.address.grain");
+                CHECK(strcmp(address.notation, cf_notation[cf]) == 0, "cf.address.notation");
+            }
+        }
+    }
+}
+
 int main(void) {
     CHECK((int)QL_FAMILY_C == (int)FAMILY_C, "family.C");
     CHECK((int)QL_FAMILY_P == (int)FAMILY_P, "family.P");
@@ -67,31 +329,23 @@ int main(void) {
     CHECK((ql_relation_flags(p2->c) & QL_TAG_BRANCHING) != 0u, "relation.branching");
     CHECK(ql_relation_target(p4->cf) == p4, "reflective.cf-self");
 
-    /* Coordinate priming is a label over the same positional index. It must
-     * not smuggle the M1 p->5-p complement into P/P' or L/L' conjugacy. */
-    QL_Coordinate_Label p2_label = ql_coordinate_label(QL_FAMILY_P, 2u, QL_COORD_FACE_BIMBA);
+    check_address_field(&field);
+    check_relation_field();
+    check_mef_and_context_frames();
+
+    QL_Coordinate_Label p2_label = ql_coordinate_label(QL_FAMILY_P, 2u, QL_COORD_FACE_DIRECT);
     QL_Coordinate_Label p2_prime = ql_coordinate_label_other_face(p2_label);
     CHECK(ql_coordinate_label_valid(p2_label), "label.P-valid");
     CHECK(p2_prime.family == QL_FAMILY_P && p2_prime.position == 2u &&
-          p2_prime.face == QL_COORD_FACE_PRATIBIMBA, "label.P-prime-same-position");
+          p2_prime.face == QL_COORD_FACE_PRIME, "label.P-prime-same-position");
 
-    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_PRATIBIMBA) == 0, "face.P-set");
-    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_PRATIBIMBA,
+    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_PRIME) == 0, "face.P-set");
+    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_PRIME,
           "face.P-preserves-position");
     CHECK(ql_coordinate_topology(p2) == QL_TOPO_KLEIN, "face.P-prime-klein");
-    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_BIMBA) == 0, "face.P-reset");
-    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_BIMBA,
+    CHECK(ql_coordinate_set_face(p2, QL_COORD_FACE_DIRECT) == 0, "face.P-reset");
+    CHECK(p2->ql_position == 2u && ql_coordinate_face(p2) == QL_COORD_FACE_DIRECT,
           "face.P-reset-same-position");
-
-    QL_Coordinate_Label l1_label = ql_coordinate_label(QL_FAMILY_L, 1u, QL_COORD_FACE_BIMBA);
-    QL_Coordinate_Label l1_prime = ql_coordinate_label_other_face(l1_label);
-    CHECK(l1_prime.family == QL_FAMILY_L && l1_prime.position == 1u &&
-          l1_prime.face == QL_COORD_FACE_PRATIBIMBA, "label.L-prime-same-position");
-
-    /* M remains a parent family address. R4 does not equate generic face
-     * toggling with the later/deeper M->M' compositional relation. */
-    QL_Holographic_Coordinate* m1 = ql_holographic_field_get(&field, QL_FAMILY_M, 1u);
-    CHECK(m1 && m1->family == QL_FAMILY_M && m1->ql_position == 1u, "field.M1-address");
 
     QL_Pratibimba manifested;
     CHECK(ql_coordinate_materialize(ql_default_psychoid_bimba(1u), &manifested) == 0, "pratibimba.materialize");
@@ -168,7 +422,7 @@ int main(void) {
         CHECK(tick_label.family == QL_FAMILY_P, "kernel.tick-map-family-P");
         CHECK(tick_label.position == r.position6, "kernel.tick-map-same-position");
         CHECK(tick_label.face == (n.sub_tick < QL_POSITION_COUNT
-              ? QL_COORD_FACE_BIMBA : QL_COORD_FACE_PRATIBIMBA),
+              ? QL_COORD_FACE_DIRECT : QL_COORD_FACE_PRIME),
               "kernel.tick-map-face");
     }
 
@@ -176,7 +430,7 @@ int main(void) {
         fprintf(stderr, "R4 parity failures: %u\n", failures);
         return 1;
     }
-    printf("R4 holographic/kernel parity + coordinate mapping: PASS\n");
-    printf("native-kernel-api: %s\n", ql_kernel_api_version());
+    printf("R4 native holographic kernel address/relation/MEF/CF + mature parity: PASS\n");
+    printf("native-kernel-api: %s contract: %s\n", ql_kernel_api_version(), ql_kernel_contract_version());
     return 0;
 }

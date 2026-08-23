@@ -12,6 +12,7 @@ extern "C" {
 #endif
 
 #define QL_COORDINATE_FAMILY_COUNT 6u
+#define QL_KERNEL_ADDRESS_FAMILY_COUNT 7u
 #define QL_HASH_POSITION QL_INVALID_U8
 
 typedef enum {
@@ -24,12 +25,14 @@ typedef enum {
     QL_FAMILY_NONE = 7
 } QL_Coordinate_Family;
 
-/* A coordinate face is a label over the same family+position substrate.
- * It does not itself perform the bioquaternionic conjugation q -> q*.
- * P_i/P_i' and L_i/L_i' therefore preserve i and differ by face. */
+/* Face is a structural address dimension over the same family+position
+ * substrate. It does not perform positional complement. The Bimba/Pratibimba
+ * names are retained as source-compatible aliases for direct/prime. */
 typedef enum {
-    QL_COORD_FACE_BIMBA       = 0,
-    QL_COORD_FACE_PRATIBIMBA  = 1
+    QL_COORD_FACE_DIRECT      = 0,
+    QL_COORD_FACE_PRIME       = 1,
+    QL_COORD_FACE_BIMBA       = QL_COORD_FACE_DIRECT,
+    QL_COORD_FACE_PRATIBIMBA  = QL_COORD_FACE_PRIME
 } QL_Coordinate_Face;
 
 typedef struct {
@@ -37,6 +40,11 @@ typedef struct {
     uint8_t position;
     uint8_t face;
 } QL_Coordinate_Label;
+
+/* Native semantic address. The historical coordinate object remains a parity
+ * substrate; direct and prime addresses may resolve to the same substrate
+ * object while remaining distinct semantic addresses. */
+typedef QL_Coordinate_Label QL_Kernel_Address;
 
 typedef enum {
     QL_TOPO_TORUS       = 0x00u,
@@ -148,6 +156,22 @@ QL_Coordinate_Label ql_coordinate_label_other_face(QL_Coordinate_Label label);
 QL_Coordinate_Face ql_coordinate_face(const QL_Holographic_Coordinate* coordinate);
 int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_Face face);
 
+/* Tap-root address constructors. `#` is NONE/invalid-position/direct; raw
+ * #0..#5 are NONE family addresses. Family addresses occupy the same positions. */
+QL_Kernel_Address ql_kernel_hash_address(void);
+QL_Kernel_Address ql_kernel_position_address(uint8_t position, QL_Coordinate_Face face);
+QL_Kernel_Address ql_kernel_family_address(
+    QL_Coordinate_Family family,
+    uint8_t position,
+    QL_Coordinate_Face face
+);
+bool ql_kernel_address_valid(QL_Kernel_Address address);
+bool ql_kernel_address_is_hash(QL_Kernel_Address address);
+bool ql_kernel_address_is_bedrock(QL_Kernel_Address address);
+const char* ql_kernel_family_code(QL_Coordinate_Family family);
+const char* ql_kernel_face_code(QL_Coordinate_Face face);
+int ql_kernel_address_format(QL_Kernel_Address address, char* out, size_t out_size);
+
 bool ql_weave_is_identification_edge(float weave_state);
 bool ql_coordinate_has_nesting_access(const QL_Holographic_Coordinate* coordinate);
 uint8_t ql_weave_parent(float weave_state);
@@ -174,6 +198,10 @@ const QL_Holographic_Coordinate* ql_holographic_field_get_const(
     const QL_Holographic_Field* field,
     QL_Coordinate_Family family,
     uint8_t position
+);
+const QL_Holographic_Coordinate* ql_holographic_field_resolve(
+    const QL_Holographic_Field* field,
+    QL_Kernel_Address address
 );
 
 void ql_coordinate_execute(QL_Holographic_Coordinate* coordinate, void* context_state);

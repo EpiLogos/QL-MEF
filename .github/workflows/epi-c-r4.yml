@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'c/**'
+      - 'fixtures/kernel/**'
       - 'migration/epi-kernel/r4-**'
       - 'scripts/test-epi-c-r4.sh'
       - 'vendor/epi-kernel/reference/**'
@@ -18,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: R4 holographic/kernel parity, coordinate mapping and native C package seam
+      - name: R4 native kernel address/relation/MEF/CF parity and package seam
         run: scripts/test-epi-c-r4.sh
       - name: Keep accepted R1/R2 scalar parity green
         run: scripts/test-epi-c-parity.sh

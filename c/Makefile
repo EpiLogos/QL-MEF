@@ -9,10 +9,12 @@ DIST_DIR ?= dist
 SOURCE_REVISION ?= $(shell git rev-parse HEAD 2>/dev/null || printf unversioned)
 
 API_VERSION = 0.1.0
+CONTRACT_VERSION = 1.0.0
 LIB = $(BUILD_DIR)/libql-mef-c.a
 SRC = src/primitive.c src/holographic.c src/kernel.c
 OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
 HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h
+CONTRACT_FIXTURE = ../fixtures/kernel/holographic-kernel-contract-v1.tsv
 
 .PHONY: all clean install package
 
@@ -28,10 +30,13 @@ $(LIB): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 
 install: $(LIB)
+	test -f $(CONTRACT_FIXTURE)
 	mkdir -p $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/lib $(DESTDIR)$(PREFIX)/share/ql-mef-c
 	cp $(HEADERS) $(DESTDIR)$(PREFIX)/include/ql/
 	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/libql-mef-c.a
+	cp $(CONTRACT_FIXTURE) $(DESTDIR)$(PREFIX)/share/ql-mef-c/holographic-kernel-contract-v1.tsv
 	printf '%s\n' '$(API_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/api-version.txt
+	printf '%s\n' '$(CONTRACT_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/kernel-contract-version.txt
 	printf '%s\n' '$(SOURCE_REVISION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/source-revision.txt
 
 package: $(LIB)

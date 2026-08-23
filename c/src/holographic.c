@@ -1,5 +1,6 @@
 #include "ql/holographic.h"
 
+#include <stdio.h>
 #include <string.h>
 
 static const QL_Holographic_Coordinate QL_PSYCHOID_BIMBA[QL_POSITION_COUNT] = {
@@ -22,6 +23,10 @@ static int ql_family_index(QL_Coordinate_Family family) {
     return family <= QL_FAMILY_M ? (int)family : -1;
 }
 
+static bool ql_address_family_valid(QL_Coordinate_Family family) {
+    return family == QL_FAMILY_NONE || ql_family_index(family) >= 0;
+}
+
 static QL_Topology_Mode ql_default_topology(QL_Coordinate_Family family, uint8_t position) {
     if (family == QL_FAMILY_P && position == 4u) return QL_TOPO_LEMNISCATE;
     if (family == QL_FAMILY_C && (position == 0u || position == 5u)) return QL_TOPO_ZERO_SPHERE;
@@ -41,8 +46,7 @@ int ql_coordinate_init(
     QL_Coordinate_Family family,
     uint8_t position
 ) {
-    if (!coordinate || position >= QL_POSITION_COUNT ||
-        (family != QL_FAMILY_NONE && ql_family_index(family) < 0)) {
+    if (!coordinate || position >= QL_POSITION_COUNT || !ql_address_family_valid(family)) {
         return -1;
     }
     memset(coordinate, 0, sizeof(*coordinate));
@@ -73,7 +77,7 @@ const QL_Bimba* ql_coordinate_source(const QL_Holographic_Coordinate* coordinate
 }
 
 const QL_Bimba* ql_coordinate_bedrock(const QL_Holographic_Coordinate* coordinate) {
-    if (!coordinate || coordinate->family == QL_FAMILY_NONE) return NULL;
+    if (!coordinate) return NULL;
     return ql_coordinate_source(coordinate);
 }
 
@@ -102,41 +106,41 @@ QL_Coordinate_Label ql_coordinate_label(
         .face = (uint8_t)face
     };
     if (!ql_coordinate_label_valid(label)) {
-        label.family = (uint8_t)QL_FAMILY_NONE;
+        label.family = QL_INVALID_U8;
         label.position = QL_INVALID_U8;
-        label.face = (uint8_t)QL_COORD_FACE_BIMBA;
+        label.face = (uint8_t)QL_COORD_FACE_DIRECT;
     }
     return label;
 }
 
 bool ql_coordinate_label_valid(QL_Coordinate_Label label) {
-    return ql_family_index((QL_Coordinate_Family)label.family) >= 0 &&
+    return ql_address_family_valid((QL_Coordinate_Family)label.family) &&
            label.position < QL_POSITION_COUNT &&
            label.face < QL_FACE_COUNT;
 }
 
 QL_Coordinate_Label ql_coordinate_label_other_face(QL_Coordinate_Label label) {
     if (!ql_coordinate_label_valid(label)) return label;
-    label.face = (uint8_t)(label.face == (uint8_t)QL_COORD_FACE_BIMBA
-        ? QL_COORD_FACE_PRATIBIMBA
-        : QL_COORD_FACE_BIMBA);
+    label.face = (uint8_t)(label.face == (uint8_t)QL_COORD_FACE_DIRECT
+        ? QL_COORD_FACE_PRIME
+        : QL_COORD_FACE_DIRECT);
     return label;
 }
 
 QL_Coordinate_Face ql_coordinate_face(const QL_Holographic_Coordinate* coordinate) {
     return coordinate && coordinate->inversion_state
-        ? QL_COORD_FACE_PRATIBIMBA
-        : QL_COORD_FACE_BIMBA;
+        ? QL_COORD_FACE_PRIME
+        : QL_COORD_FACE_DIRECT;
 }
 
 int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_Face face) {
-    if (!coordinate || face > QL_COORD_FACE_PRATIBIMBA) return -1;
+    if (!coordinate || face > QL_COORD_FACE_PRIME) return -1;
     coordinate->inversion_state = (uint8_t)face;
 
     /* Only P/P' has a topology change asserted by the current coordinate account.
      * L/L' is a refractive face distinction and is not assigned a new topology here. */
     if (coordinate->family == QL_FAMILY_P) {
-        if (face == QL_COORD_FACE_PRATIBIMBA) {
+        if (face == QL_COORD_FACE_PRIME) {
             ql_coordinate_set_topology(coordinate, QL_TOPO_KLEIN);
         } else {
             ql_coordinate_set_topology(coordinate,
@@ -144,6 +148,80 @@ int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_
         }
     }
     return 0;
+}
+
+QL_Kernel_Address ql_kernel_hash_address(void) {
+    return (QL_Kernel_Address){
+        .family = (uint8_t)QL_FAMILY_NONE,
+        .position = QL_HASH_POSITION,
+        .face = (uint8_t)QL_COORD_FACE_DIRECT
+    };
+}
+
+QL_Kernel_Address ql_kernel_position_address(uint8_t position, QL_Coordinate_Face face) {
+    return ql_kernel_family_address(QL_FAMILY_NONE, position, face);
+}
+
+QL_Kernel_Address ql_kernel_family_address(
+    QL_Coordinate_Family family,
+    uint8_t position,
+    QL_Coordinate_Face face
+) {
+    return ql_coordinate_label(family, position, face);
+}
+
+bool ql_kernel_address_is_hash(QL_Kernel_Address address) {
+    return address.family == (uint8_t)QL_FAMILY_NONE &&
+           address.position == QL_HASH_POSITION &&
+           address.face == (uint8_t)QL_COORD_FACE_DIRECT;
+}
+
+bool ql_kernel_address_valid(QL_Kernel_Address address) {
+    return ql_kernel_address_is_hash(address) || ql_coordinate_label_valid(address);
+}
+
+bool ql_kernel_address_is_bedrock(QL_Kernel_Address address) {
+    return ql_kernel_address_is_hash(address) ||
+           (ql_coordinate_label_valid(address) && address.family == (uint8_t)QL_FAMILY_NONE);
+}
+
+const char* ql_kernel_family_code(QL_Coordinate_Family family) {
+    switch (family) {
+        case QL_FAMILY_C: return "C";
+        case QL_FAMILY_P: return "P";
+        case QL_FAMILY_L: return "L";
+        case QL_FAMILY_S: return "S";
+        case QL_FAMILY_T: return "T";
+        case QL_FAMILY_M: return "M";
+        case QL_FAMILY_NONE: return "NONE";
+        default: return NULL;
+    }
+}
+
+const char* ql_kernel_face_code(QL_Coordinate_Face face) {
+    switch (face) {
+        case QL_COORD_FACE_DIRECT: return "direct";
+        case QL_COORD_FACE_PRIME: return "prime";
+        default: return NULL;
+    }
+}
+
+int ql_kernel_address_format(QL_Kernel_Address address, char* out, size_t out_size) {
+    if (!out || out_size == 0u || !ql_kernel_address_valid(address)) return -1;
+
+    int written;
+    if (ql_kernel_address_is_hash(address)) {
+        written = snprintf(out, out_size, "#");
+    } else if (address.family == (uint8_t)QL_FAMILY_NONE) {
+        written = snprintf(out, out_size, "#%u%s", (unsigned)address.position,
+            address.face == (uint8_t)QL_COORD_FACE_PRIME ? "'" : "");
+    } else {
+        const char* family = ql_kernel_family_code((QL_Coordinate_Family)address.family);
+        if (!family) return -1;
+        written = snprintf(out, out_size, "%s%u%s", family, (unsigned)address.position,
+            address.face == (uint8_t)QL_COORD_FACE_PRIME ? "'" : "");
+    }
+    return written >= 0 && (size_t)written < out_size ? 0 : -1;
 }
 
 bool ql_weave_is_identification_edge(float weave_state) {
@@ -221,6 +299,22 @@ const QL_Holographic_Coordinate* ql_holographic_field_get_const(
     return &field->coordinates[index][position];
 }
 
+const QL_Holographic_Coordinate* ql_holographic_field_resolve(
+    const QL_Holographic_Field* field,
+    QL_Kernel_Address address
+) {
+    if (!ql_kernel_address_valid(address)) return NULL;
+    if (ql_kernel_address_is_hash(address)) return ql_default_hash_bimba();
+    if (address.family == (uint8_t)QL_FAMILY_NONE) {
+        return ql_default_psychoid_bimba(address.position);
+    }
+    return ql_holographic_field_get_const(
+        field,
+        (QL_Coordinate_Family)address.family,
+        address.position
+    );
+}
+
 int ql_holographic_field_init(QL_Holographic_Field* field) {
     if (!field) return -1;
     memset(field, 0, sizeof(*field));
@@ -251,8 +345,8 @@ int ql_holographic_field_init(QL_Holographic_Field* field) {
                 (QL_Holographic_Coordinate*)(uintptr_t)ql_default_psychoid_bimba(4u);
             coordinate->cf = ql_relation_tag(coordinate, cf_target, 0u);
             coordinate->cs = ql_relation_tag(coordinate, &field->coordinates[family][5u], 0u);
-            /* cpf/ct/cp/cfp remain intentionally unresolved here. They are
-             * reflective link slots, not a second Context Frame authority. */
+            /* cpf/ct/cp/cfp remain source-layout witness slots. Their stable
+             * semantic relations are exposed through the native kernel field. */
         }
     }
     return 0;
