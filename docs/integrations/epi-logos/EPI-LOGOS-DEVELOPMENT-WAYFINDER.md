@@ -3,6 +3,8 @@
 **Parent:** QL-MEF #30  
 **Architecture / relation research:** #25 / draft PR #27  
 **Grounding account:** `EPI-LOGOS-SOURCE-OF-TRUTH.md`  
+**Deep subsystem recovery:** `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`  
+**Orienting historical Figure:** `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md`  
 **Product build order:** `EPI-PRATIBIMBA-BUILD-ORDER.md`  
 **Machine guard:** `pratibimba-build-order.json`  
 **M/M′ field:** `epi-relational-field.csv`  
@@ -16,10 +18,17 @@ This Wayfinder has **two different orders** which must never be collapsed again.
 
 ### A. Meaning / provenance traversal
 
-When we need to understand a capability, trace it through the architecture:
+When we need to understand a capability, begin by recovering the Whole it belongs to and then trace it through the architecture:
 
 ```text
-Epi authored meaning / Seed sources
+SOURCE-GROUND
+    authored Epi meaning / Seed sources / current returned ground
+        ↓
+MARK
+    what Whole is this capability or tranche answerable to?
+        ↓
+AIM
+    what is the present development undertaking contributing to that Whole?
         ↓
 M/M′ domain + lived relation
         ↓
@@ -31,10 +40,40 @@ current O:I-native owner/body
         ↓
 actual implementation and evidence
         ↓
-returned reality
+returned reality / Recognition
 ```
 
-This tells us **what a thing is, why it exists, where its meaning lives, and which current mechanism carries it**.
+This tells us **what a thing is, why it exists, what Whole gives the local work meaning, where that meaning lives, and which current mechanism carries it**.
+
+The Source/Mark/Aim relation is recursive:
+
+```text
+SOURCE
+   0
+   /
+MARK
+   1
+
+MARK
+   0
+   /
+AIM
+   1
+```
+
+The current Mark reading is interpretive. Preserve the authored/source material which disclosed it and keep consequential interpretations provenance-bearing rather than rewriting them as source.
+
+Where an orienting Figure materially clarifies the intended kind of instrument, carry both:
+
+```text
+ILLUMINATES
+    the relation of the Mark made more apprehensible
+
+BOUNDARY
+    what the Figure does not establish
+```
+
+For the Current Situated Matheme and especially the M2 Paraśakti → M3 Mahāmāyā → M4 Nara relation, `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md` supplies the current historical Figure. It is orientation, not formal/scientific proof.
 
 ### B. Product implementation order
 
@@ -63,6 +102,8 @@ The first product question is not “which formal subsystem is deepest?” It is
 > what is the smallest real O:I-hosted Pratibimba experience that lets a person live in the Epi system while consuming real Epi computation and provenance?
 
 The authored answer is **Nara M4′ outward**.
+
+Mark/Aim recovery does not change this build order. It keeps each chosen tranche answerable to the larger Epi Whole while that order is executed.
 
 ---
 
@@ -190,6 +231,8 @@ shared current Matheme / harmonic / temporal instrument state
 ```
 
 This feeds Nara and can be opened explicitly as the Cosmic face. Full M1′, M2′ and M3′ workspaces come later.
+
+The Alfonsine/zīj Figure is useful here because it makes a recognisable technical movement visible: a developed world-account becoming an operable situated computational instrument. The Epi relation is broader and more reflexive because the same event continues into Nara's situated identity/transit/activity composition. The Figure does not validate that ontology; it clarifies the Mark of the instrument being developed.
 
 ---
 
@@ -371,9 +414,14 @@ Epi domain semantics operate through these without being reduced to them.
 
 ## 6. Correct vertical-slice method
 
-For implementation, start from the **next missing experienced capability**, not from whichever mathematical subsystem appears most foundational.
+For implementation, start from the **next missing experienced capability** while retaining the Mark of the larger undertaking.
 
 ```text
+MARK / AIM
+What Whole is this slice answerable to?
+What source signals disclose it?
+What is the present Aim and Recognition condition?
+        ↓
 EXPERIENCE
 What should the person/agent actually be able to do next?
         ↓
@@ -399,11 +447,14 @@ BUILD
 Smallest coherent vertical slice.
         ↓
 PROVE
-Interaction + computation + provenance + privacy/authority + restart parity.
+Interaction + computation + provenance + privacy/authority + restart parity
++ whole-to-local Mark fidelity.
         ↓
 RETURN
-Update only the maps/specs whose truth actually changed.
+Update only the maps/specs/Mark readings whose truth actually changed.
 ```
+
+If an orienting Figure is active, use it to sharpen the destination and experience before building; carry its `BOUNDARY` so it cannot manufacture missing domain law.
 
 The QL relation fields generate questions and preserve structure; they do **not** generate chronological work merely because a cell exists.
 
@@ -462,6 +513,7 @@ The existing QL-MEF issues remain useful, but they are not an implicit dependenc
 - **#32 / #46 / #47 / #48 — S/O:I/Ta-Onta conformance:** apply only to the mechanisms actually touched by each vertical slice.
 - **#37 / #41 — Epii return and shared Projection:** follow once the local personal-return loop exists.
 - **#42 — canonical Agents:** bind the six Epi identities through native Actuation/AIKit without recreating generic harness semantics.
+- **deep subsystem matrix programme:** recover each M0–M5 field through the active matrix protocol before current body/provider/UX decisions are allowed to redefine it; the next M3 recovery consumes returned M2 boundary ground while recovering Mahāmāyā independently.
 
 This changes **build priority**, not the semantic importance of the deeper workstreams.
 
@@ -471,6 +523,9 @@ This changes **build priority**, not the semantic importance of the deeper works
 
 Reject or rewrite a tranche that:
 
+- cannot state the Mark / larger Whole it is contributing to when product meaning is material;
+- replaces authored/source ground with an Agent-generated Mark reading;
+- turns an orienting Figure into semantic/formal/scientific authority by analogy;
 - starts with deep M1/M2 work simply because those systems are formally foundational;
 - creates another general Epi desktop/harness/session system beside O:I;
 - treats the old Theia/Tauri process topology as a preservation target;
@@ -481,6 +536,7 @@ Reject or rewrite a tranche that:
 - treats Cosmic as three unrelated dashboards;
 - treats O:I hosting as O:I ownership of Bimba/Nara/Epii semantics;
 - flattens Ta-Onta across S0′–S5′;
-- requires every deep subsystem to be complete before the first useful Nara loop.
+- requires every deep subsystem to be complete before the first useful Nara loop;
+- projects Epi's M0–M5/Guardian matrix ontology upward into generic Factory response-matrix semantics.
 
 The goal is not to rediscover Epi from its source tree. It is to let the **already-authored Pratibimba design** inhabit the **already-developed O:I application/agency cradle**, while bringing forward the real Epi computation and only rebuilding what current reality actually requires.
