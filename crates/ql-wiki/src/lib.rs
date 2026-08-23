@@ -19,9 +19,10 @@ pub use living::{
 pub use living_methods::{
     LIVING_WIKI_COMPARISON_RUBRIC, LIVING_WIKI_METHOD_PROFILE, LivingWikiComparisonCase,
     LivingWikiComparisonError, LivingWikiComparisonEvidence, LivingWikiComparisonFinding,
-    LivingWikiMethodError, LivingWikiMethodFamily, LivingWikiMethodPass, LivingWikiMethodPassResult,
-    LivingWikiMethodProfile, LivingWikiMethodResult, LivingWikiPresentationDepth,
-    compare_living_wiki_entry, execute_living_wiki_methods, response_truth_state,
+    LivingWikiMethodError, LivingWikiMethodFamily, LivingWikiMethodPass,
+    LivingWikiMethodPassResult, LivingWikiMethodProfile, LivingWikiMethodResult,
+    LivingWikiPresentationDepth, compare_living_wiki_entry, execute_living_wiki_methods,
+    response_truth_state,
 };
 pub use portal::{
     CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver,
