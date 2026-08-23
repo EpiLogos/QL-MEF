@@ -210,6 +210,48 @@ pub const fn epogdoon_preimage_width(target_index: u8) -> Option<u8> {
     Some(count)
 }
 
+/// One of Mahāmāyā's sixteen static clock apertures.
+///
+/// These are 360-degree division grammars from the M3 transcription/world-clock
+/// field. They are deliberately named `ClockAperture`, not `LensId`: the latter
+/// is the canonical 12-lens L/L' MEF registry, while this table is an M3-local
+/// clock structure with its own reciprocal relation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct M3ClockAperture {
+    pub index: u8,
+    pub sectors: u16,
+    pub arc_degrees: u16,
+    pub reciprocal_index: u8,
+}
+
+pub const M3_CLOCK_APERTURES: [M3ClockAperture; 16] = [
+    M3ClockAperture { index: 0, sectors: 1, arc_degrees: 360, reciprocal_index: 15 },
+    M3ClockAperture { index: 1, sectors: 2, arc_degrees: 180, reciprocal_index: 14 },
+    M3ClockAperture { index: 2, sectors: 4, arc_degrees: 90, reciprocal_index: 13 },
+    M3ClockAperture { index: 3, sectors: 8, arc_degrees: 45, reciprocal_index: 12 },
+    M3ClockAperture { index: 4, sectors: 9, arc_degrees: 40, reciprocal_index: 11 },
+    M3ClockAperture { index: 5, sectors: 10, arc_degrees: 36, reciprocal_index: 10 },
+    M3ClockAperture { index: 6, sectors: 12, arc_degrees: 30, reciprocal_index: 9 },
+    M3ClockAperture { index: 7, sectors: 15, arc_degrees: 24, reciprocal_index: 8 },
+    M3ClockAperture { index: 8, sectors: 24, arc_degrees: 15, reciprocal_index: 7 },
+    M3ClockAperture { index: 9, sectors: 30, arc_degrees: 12, reciprocal_index: 6 },
+    M3ClockAperture { index: 10, sectors: 36, arc_degrees: 10, reciprocal_index: 5 },
+    M3ClockAperture { index: 11, sectors: 40, arc_degrees: 9, reciprocal_index: 4 },
+    M3ClockAperture { index: 12, sectors: 45, arc_degrees: 8, reciprocal_index: 3 },
+    M3ClockAperture { index: 13, sectors: 90, arc_degrees: 4, reciprocal_index: 2 },
+    M3ClockAperture { index: 14, sectors: 180, arc_degrees: 2, reciprocal_index: 1 },
+    M3ClockAperture { index: 15, sectors: 360, arc_degrees: 1, reciprocal_index: 0 },
+];
+
+pub fn m3_clock_aperture(index: u8) -> Option<&'static M3ClockAperture> {
+    M3_CLOCK_APERTURES.get(usize::from(index))
+}
+
+pub const M3_CLOCK_APERTURE_EVIDENCE: MusicalEvidenceClass =
+    MusicalEvidenceClass::AuthoredAccepted;
+pub const M3_CLOCK_APERTURE_PROVENANCE: &str =
+    "M3 current_human_ratification + clock_system.lenses/lens_reciprocals";
+
 /// One tonic-lens x Context-Frame/modal address in the authored 12 x 7 = 84
 /// landscape. This carries existing LensId and ContextFrameId identities rather
 /// than creating a second pitch/mode coordinate system.
