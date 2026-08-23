@@ -240,7 +240,10 @@ fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
         let position = QlPosition::new(value).unwrap();
         let d1 = canonical_cross_pass_d1(position);
         assert_eq!(d1.kernel_relation_id(), KernelRelationId::CrossSamePosition);
-        assert_eq!(d1.operator_ref(), KernelRelationId::CrossSamePosition.as_str());
+        assert_eq!(
+            d1.operator_ref(),
+            KernelRelationId::CrossSamePosition.as_str()
+        );
         assert!(d1.derivation_ref().contains(":cross:D1:"));
         match d1 {
             CanonicalCrossPass::D1 { coordinates, .. } => {
