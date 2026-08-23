@@ -261,9 +261,7 @@ pub fn plan_living_wiki_refraction(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        FieldCoordinate, LensSelection, WikiRefractionTarget, WikiStructuralField, WikiTargetKind,
-    };
+    use crate::{LensSelection, WikiRefractionTarget, WikiStructuralField, WikiTargetKind};
     use serde_json::Map;
 
     fn valid_formal_request() -> WikiRefractionRequest {
