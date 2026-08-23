@@ -23,7 +23,10 @@ fn row(kind: &str, key: &str) -> Vec<&'static str> {
 
 #[test]
 fn shared_contract_versions_and_provenance_match_native_c_contract() {
-    assert_eq!(row("meta", "contract-version")[2], HOLOGRAPHIC_KERNEL_CONTRACT_VERSION);
+    assert_eq!(
+        row("meta", "contract-version")[2],
+        HOLOGRAPHIC_KERNEL_CONTRACT_VERSION
+    );
     assert_eq!(
         row("meta", "historical-reference-revision")[2],
         HOLOGRAPHIC_KERNEL_REFERENCE_REVISION
@@ -32,8 +35,14 @@ fn shared_contract_versions_and_provenance_match_native_c_contract() {
         row("meta", "historical-pointer-web-blob")[2],
         HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB
     );
-    assert_eq!(row("meta", "rust-pairing-version")[2], PAIRING_GRAMMAR_VERSION);
-    assert_eq!(row("meta", "rust-mef-rotation-version")[2], MEF_ROTATION_VERSION);
+    assert_eq!(
+        row("meta", "rust-pairing-version")[2],
+        PAIRING_GRAMMAR_VERSION
+    );
+    assert_eq!(
+        row("meta", "rust-mef-rotation-version")[2],
+        MEF_ROTATION_VERSION
+    );
     assert_eq!(
         row("meta", "rust-context-frame-version")[2],
         CONTEXT_FRAME_GRAMMAR_VERSION
@@ -99,15 +108,30 @@ fn stable_relation_ids_preserve_pair_cross_mirror_and_return_distinctions() {
     }
 
     assert_ne!(KernelRelationId::PairC, KernelRelationId::MirrorComplement);
-    assert_ne!(KernelRelationId::MirrorComplement, KernelRelationId::CrossComplete);
+    assert_ne!(
+        KernelRelationId::MirrorComplement,
+        KernelRelationId::CrossComplete
+    );
 }
 
 #[test]
 fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
     let families = [
-        (RelationFamily::A, [(0, 1), (2, 3), (4, 5)], KernelRelationId::ConjugateInvarianceA),
-        (RelationFamily::B, [(1, 2), (3, 4), (5, 0)], KernelRelationId::ConjugateInvarianceB),
-        (RelationFamily::C, [(0, 5), (1, 4), (2, 3)], KernelRelationId::ConjugateInvarianceC),
+        (
+            RelationFamily::A,
+            [(0, 1), (2, 3), (4, 5)],
+            KernelRelationId::ConjugateInvarianceA,
+        ),
+        (
+            RelationFamily::B,
+            [(1, 2), (3, 4), (5, 0)],
+            KernelRelationId::ConjugateInvarianceB,
+        ),
+        (
+            RelationFamily::C,
+            [(0, 5), (1, 4), (2, 3)],
+            KernelRelationId::ConjugateInvarianceC,
+        ),
     ];
 
     for (family, pairs, invariant_id) in families {
@@ -122,7 +146,10 @@ fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
         match d3 {
             CanonicalCrossPass::D3 { pairs, .. } => {
                 for pair in pairs {
-                    assert!(pair.iter().all(|coordinate| coordinate.face == QlFace::Conjugate));
+                    assert!(
+                        pair.iter()
+                            .all(|coordinate| coordinate.face == QlFace::Conjugate)
+                    );
                 }
             }
             _ => unreachable!(),
@@ -180,7 +207,10 @@ fn twelve_lenses_and_seventy_two_mef_addresses_share_the_kernel_face_and_positio
     assert_eq!(row("mef", "lens-count")[2], "12");
     assert_eq!(row("mef", "local-positions-per-lens")[2], "6");
     assert_eq!(row("mef", "address-count")[2], "72");
-    assert_eq!(row("mef", "registry-revision")[2], MEF_REGISTRY_REVISION.to_string());
+    assert_eq!(
+        row("mef", "registry-revision")[2],
+        MEF_REGISTRY_REVISION.to_string()
+    );
 
     let mut coordinates = 0;
     for lens in LensId::ALL {
@@ -190,12 +220,18 @@ fn twelve_lenses_and_seventy_two_mef_addresses_share_the_kernel_face_and_positio
             LensFace::Night => assert_eq!(kernel_face, QlFace::Conjugate),
         }
         assert_eq!(lens.conjugate_twin().index(), lens.index());
-        assert_eq!(lens.conjugate_twin().face().kernel_face(), kernel_face.conjugate());
+        assert_eq!(
+            lens.conjugate_twin().face().kernel_face(),
+            kernel_face.conjugate()
+        );
 
         for local in 0..6 {
             let position = QlPosition::new(local).unwrap();
             let rotation = MefRotation::new(lens, position);
-            assert_eq!(rotation.absolute_position().value(), (lens.index() + local) % 6);
+            assert_eq!(
+                rotation.absolute_position().value(),
+                (lens.index() + local) % 6
+            );
 
             let sublens = SublensRef::canonical(lens, local).unwrap();
             assert_eq!(
@@ -215,7 +251,10 @@ fn canonical_context_frames_resolve_on_the_same_mef_rotation_field() {
 
     for selection in progression {
         let contract = row("cf", selection.frame().code());
-        assert_eq!(contract[2].parse::<u8>().unwrap(), selection.local_position().value());
+        assert_eq!(
+            contract[2].parse::<u8>().unwrap(),
+            selection.local_position().value()
+        );
         let unit = match selection.unit_face() {
             MefUnitFace::Name => "name",
             MefUnitFace::Power => "power",

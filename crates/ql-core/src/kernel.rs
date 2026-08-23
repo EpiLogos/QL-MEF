@@ -3,10 +3,8 @@ use crate::{QlFormRef, QlOperator};
 pub const KERNEL_VERSION: &str = "0.1.0-q1";
 pub const SCHEMA_VERSION: &str = "1.0.0";
 pub const HOLOGRAPHIC_KERNEL_CONTRACT_VERSION: &str = "1.0.0";
-pub const HOLOGRAPHIC_KERNEL_REFERENCE_REVISION: &str =
-    "daa660cbc1b8c5da83828698665a753852cb0287";
-pub const HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB: &str =
-    "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320";
+pub const HOLOGRAPHIC_KERNEL_REFERENCE_REVISION: &str = "daa660cbc1b8c5da83828698665a753852cb0287";
+pub const HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB: &str = "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
