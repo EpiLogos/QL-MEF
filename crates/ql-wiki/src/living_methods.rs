@@ -572,7 +572,7 @@ mod tests {
                 extensions: Map::new(),
             },
             lenses: vec![LensSelection {
-                lens_ref: "L0".into(),
+                lens_ref: "mef:lens:L0@1".into(),
                 sublens_ref: None,
             }],
             context: Map::new(),
@@ -609,7 +609,7 @@ mod tests {
         assert_eq!(result.passes.len(), 1);
         let reading = &result.passes[0].response.readings[0];
         assert_eq!(reading.operator_refs.len(), 1);
-        assert_eq!(reading.lens_ref, "L0");
+        assert_eq!(reading.lens_ref, "mef:lens:L0@1");
         assert_eq!(reading.target_ref, "wiki:frame:pair-a0");
         assert!(!reading.provenance.is_empty());
         assert!(reading.extensions.contains_key("living_wiki_method"));
