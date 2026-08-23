@@ -1,173 +1,254 @@
-# Epi C Kernel Migration Standard
+# Epi / QL-MEF Kernel Nativeisation Standard
 
-**Status:** migration authority for the deep Epi computational rebase  
-**Programme relation:** QL-MEF #30 / #33; parallel to, and not a gate on, the M4′ Nara lived-product build  
-**Reference Epi revision:** `daa660cbc1b8c5da83828698665a753852cb0287`  
-**QL-MEF migration base:** `d0e012b9a2080b75b9583d5fcc672775cce3a7ca`
+**Status:** migration/nativeisation authority for the existing Epi computational kernel  
+**Kernel Wayfinder:** QL-MEF #78  
+**Programme:** #51  
+**Active kernel implementation:** #56 / PR #76  
+**Reference Epi revision:** `daa660cbc1b8c5da83828698665a753852cb0287`
 
-## 1. Why this migration exists
+## 1. Purpose
 
-The historical Epi implementation already contains a substantial computational body. The purpose of this migration is not to replace that work with a new architecture because a newer repository or language exists. It is to make the existing computation legible, testable and progressively rebased onto the stable generalized QL/MEF primitive foundation so that future formal work is performed on one dependable computational ground.
+QL-MEF is not constructing a new kernel from extracted primitives. It is making the **existing Epi/QL holographic kernel native to QL-MEF and O:I**.
 
-The migration therefore begins from returned implementation reality: preserve the current C computation, establish evidence around it, separate reusable primitive law from Epi-specific semantic composition, and only then refactor.
+The historical implementation already contains the determined foundational structure, data and mature computation. The frozen source under `vendor/epi-kernel/reference/` is the executable source-shaped specimen against which the native implementation is developed and tested.
 
-## 2. Computational authority: C first
-
-`Body/S/S0/epi-lib` is the reference computational authority for this programme.
-
-The intended end-state remains C-centred unless a particular operation has a concrete reason to live elsewhere. QL-MEF being a Rust workspace today does **not** imply that the deep computational kernel should be translated into Rust.
-
-Rules:
-
-1. Preserve existing C data and algorithms before changing representation.
-2. Prefer a stable C library/API for deterministic kernel, relation, topology, harmonic, MEF and deep-domain computation where the existing implementation is already C.
-3. Rust may expose safe adapters, service contracts or host integration over the C ABI. It is not the default destination for computation.
-4. A C → Rust rewrite requires an explicit maintenance/runtime reason, a named owner decision and parity evidence. Language modernization is not a reason by itself.
-5. During rebasing, do not combine semantic redesign with implementation migration.
-
-## 3. `epi` is the computational front door
-
-The Epi CLI is intended to be the ordinary human- and machine-facing route into the computational heart across the library.
-
-The desired relation is:
+The migration therefore has one governing movement:
 
 ```text
-human / script / agent
-        ↓
-       epi
-thin command + query + serialization + provenance layer
-        ↓
-stable C library / QL-MEF computational API
-        ↓
-kernel + shared primitives + M0–M5 computation
+existing kernel meaning / data / algorithms
+        ↓ preserve provenance + parity
+native QL-MEF address / Ref / operator architecture
+        ↓ refactor historical coupling where useful
+same kernel, native long-lived form
 ```
 
-The CLI may provide human-readable and structured machine-readable forms, but it must not become a second implementation of the domain. Commands dispatch into the library; they do not carry hidden mathematical or semantic law of their own.
+Parity protects the system while allowing its implementation arrangement to improve.
 
-A TUI may consume the same CLI/library capabilities. It is optional presentation, not computational or semantic authority.
+## 2. The kernel being nativeised
 
-## 4. `portal-core` is evidence, not the target architecture
+The centre is the whole holographic field:
 
-`Body/S/S0/portal-core` contains useful later Rust work: projections, consumer-facing types, tests, Nara boundaries, VĀK representations and other implementation evidence. It was not, however, a satisfactory general computational/CLI architecture and is not the body being promoted here.
+```text
+# / 0/1 <-> 1/0
+        ↓
+#0 #1 #2 #3 #4 #5
+raw pre-family positional/psychoid bedrock
+        ↓
+C / P / L / S / T / M
+six family manifestations over the same positions
+        ↓
+direct / prime-conjugate face
+        ↓
+QL harmonic / relational grammar
+        ↓
+P/P' + L/L'
+        ↓
+MEF / Context Frames / deterministic musical derivation
+        ↓
+bioquaternion / harmonic / epogdoon / tick / resonance / energy dynamics
+```
 
-For this migration its status is:
+M0–M5/Epi semantic worlds and the current S/O:I technological reflection grow from this centre. They do not define its root.
 
-- **secondary implementation witness** where it demonstrates a useful computation, consumer expectation or parity oracle;
-- **adapter/projection evidence** where it has a later interface worth preserving;
-- **not canonical computational authority** merely because code is newer or Rust;
-- **not a bulk source to copy forward**;
-- **not the basis for resurrecting the old CLI/TUI design**.
+The complete source body must therefore be understood as more than `kernel.c`. Foundational source includes the psychoid bedrock, ontology, families, pointer/harmonic web, VĀK/Context Frames, kernel dynamics, supporting data and the M consumers in which some source-specific material currently resides.
 
-Any individual `portal-core` computation proposed for promotion must be classified on its own merits and traced to its source/provenance.
+## 3. Preserve law and data; refactor coupling
 
-## 5. Implementation ownership is not semantic ownership
+### Preserve by default
 
-Moving a generalized operation into QL-MEF does not automatically move the semantic world that uses it.
+- `#` / raw six-position identity;
+- six coordinate families and their positional correspondence;
+- direct/prime conjugate capacity;
+- harmonic relation structure;
+- P/P' and L/L' developed topology/relations;
+- MEF/lens/Context-Frame structure;
+- mature deterministic algorithms;
+- correct source data and LUT values;
+- source/version/provenance;
+- behaviour covered by parity evidence.
 
-A useful test is: *can this operation be stated and used without knowing that Paramasiva, Parashakti, Mahamaya, Nara or Epii exist?*
+### Refactor where the native architecture benefits
 
-If yes, it may be a generalized QL-MEF primitive. If no, it normally remains Epi-domain composition even if it consumes QL-MEF computation.
+- raw pointer identity as semantic identity;
+- tagged-pointer coupling exposed directly to consumers;
+- source-layout-dependent addressing;
+- duplicate module-local implementations of generalized QL/MEF law;
+- package residency used as ownership;
+- accidental C/Rust duplication;
+- opaque data without version/provenance.
 
-Examples:
+A refactor is accepted when the native form preserves the relation and passes the relevant evidence. Historical layout is not itself a semantic invariant unless an ABI/representation contract explicitly makes it one.
 
-- generalized position, conjugation, relation, modular/harmonic or MEF operations may be QL-MEF-owned after explicit promotion;
-- canonical Epi Agents, M/M′ identities, Nara, Mahamaya and other Epi semantic interpretation remain Epi-owned;
-- canonical datasets must retain their authored/source authority even if their storage or loader moves.
+## 4. C and Rust
 
-## 6. Frozen reference before refactor
+The migration is not a language-conversion programme.
 
-The reference corpus is locked in `migration/epi-kernel/source-lock.json` and copied under `vendor/epi-kernel/reference/`.
+### C
 
-The freeze exists so that "equivalent" keeps a concrete meaning after source begins to change. Reference files are never silently edited to make a parity test pass. If a new upstream reference is adopted, the source lock changes explicitly and the difference is reviewed as a source transition.
+The historical C body contains mature computation and remains the natural implementation for operations already real there, including the bioquaternionic/harmonic/tick/resonance/energy body.
 
-The Epi source tree SHA and file blob identities are provenance evidence. The migration may additionally maintain generated content hashes for local verification.
+### Rust
 
-## 7. Migration ladder
+QL-MEF already contains native Rust position, face, relation, MEF, refraction, service and Context-Frame work. PR #19 extends this with the current pairing/MEF/CF grammar.
 
-The chronological deep-computation programme is:
+### Shared contract
 
-### R0 — source freeze
+Where C and Rust represent the same structural object, they must agree on stable versioned meaning:
 
-Copy and lock the C headers/source and relevant original tests. Make the frozen reference buildable without semantic change.
+```text
+position
+family
+face
+relation/operator
+pair/square/cross relation
+lens/MEF address
+Context-Frame address
+source/provenance
+```
 
-### R1 — parity harness
+Use cross-language fixtures/conformance for that shared field. Do not duplicate mature computation merely to make the languages symmetrical.
 
-Run the old/reference computation and the promoted/native computation from the same canonical inputs. Exhaust finite domains where practical. Use explicit numeric tolerances and invariants for continuous/floating operations.
+## 5. `ql-c/primitive` is supporting infrastructure
 
-### R2 — primitive extraction
+Merged PR #59 / completed #54 introduced useful parity-proven finite helpers.
 
-Extract shared dependencies in dependency order rather than M-number order: coordinate/identity mechanics, relation/QL law, modular/numeric primitives, topology, harmonic/cycle/kernel, MEF/lens/context primitives.
+They are implementation dependencies available to the kernel. They are not the kernel architecture.
 
-### R3 — data normalization
+The native kernel may consume them for the laws they implement, while preserving the higher structure of family, position, face, relation, MEF/CF and holographic identity.
 
-Distinguish canonical source data, deterministic derived tables, implementation optimization LUTs, mutable runtime state and research propositions. Give each source/version/hash/provenance.
+## 6. `portal-core`
 
-### R4 — shared kernel reconstitution
+`Body/S/S0/portal-core` remains useful source implementation/consumer evidence from the historical Epi system: later Rust types, projections, tests and product-facing contracts can be retained or adapted where they express real requirements.
 
-Replace duplicated low-level computation with the stable C primitive/kernel floor under dual execution and parity.
+It is neither ignored nor promoted wholesale as the computational kernel.
 
-### R5 — deep module rebase
+For each useful piece, preserve its provenance and decide from actual current architecture whether it belongs in:
 
-Make M0–M5 consume the native primitive floor while preserving their existing computation and semantic ownership.
+- the native kernel contract;
+- an Epi-owned semantic/application layer;
+- an O:I-native owner;
+- historical evidence only.
 
-### R6 — internal refactor
+## 7. Semantic ownership
 
-Only after parity is strong enough, improve internal M0–M5 organization. This is where structural cleanup becomes safe rather than speculative.
+Implementation movement does not silently move semantic authority.
 
-### R7 — consumer flip
+QL-MEF owns the generalized QL/MEF/harmonic/kernel field and its native computational representation.
 
-Switch Epi production consumers to the promoted QL-MEF computational body. Retain the historical body as a reference oracle until confidence is sufficient to archive it.
+Epi retains authored semantic/genealogical ownership of M/M' worlds, guardians, deep instruments and source-specific correspondences.
 
-### R8 — research deepening
+The current O:I products may embody/refrect S-family relations and consume QL-MEF operators through their own native responsibilities.
 
-Resume richer musical, cymatic, topological and other formal development on the unified computational foundation, keeping research status explicit.
+## 8. Correct programme ladder
 
-## 8. Parity is a gate, not decoration
+### R0 — source freeze — completed
 
-For every promoted deterministic operation record:
+Lock the exact historical C source as a reproducible oracle. Never edit the reference to make native tests pass.
 
-- semantic/source authority;
-- reference implementation and revision;
-- promoted implementation and revision;
-- operation name/version;
+### R1 — parity / characterization
+
+Build deterministic evidence around the source corpus. Exhaust small finite domains and declare tolerances/invariants for continuous operations.
+
+### R2 — supporting primitives — completed for the first tranche
+
+Promote useful generalized finite helpers with parity. These support later kernel implementation and do not define its centre.
+
+### R3 — data / provenance classification
+
+Distinguish:
+
+```text
+authored/canonical source data
+deterministic derivation
+generated LUT / optimization data
+runtime state
+research/provisional material
+```
+
+Preserve exact values and source identity; recover or replace generators explicitly where needed.
+
+### R4 — kernel-core nativeisation — active
+
+Continue #56 / PR #76 until the whole foundational holographic field is native and coherent:
+
+```text
+# / #0..#5
+C/P/L/S/T/M
+face
+relation field
+P/P' / L/L'
+MEF / CF
+mature dynamics
+```
+
+Use native Ref/address/operator structures where they improve the source-shaped coupling. Join shared C/Rust meanings through versioned fixtures.
+
+### R5 — Epi consumer rebase
+
+After the relevant R4 scope is accepted, #57 moves real M0–M5/Epi consumers onto the native kernel operation-by-operation, preserving domain semantics and source data.
+
+### R6 — structural cleanup
+
+Remove superseded low-level duplicate paths and obsolete coupling after consumer/parity evidence makes retirement safe.
+
+### R7 — richer formal/musical development
+
+Continue #31/#39 and Q6 work on the accepted kernel centre. Deeper musical/cymatic/topological derivation extends the edges; it does not reopen the established tap-root.
+
+## 9. Parity and evidence
+
+For each promoted/reworked deterministic scope record:
+
+- source authority and revision;
+- native implementation revision;
+- stable operation/relation version;
 - canonical inputs;
 - comparison method;
-- exhaustive domain or fixture coverage;
-- tolerances/invariants where exact equality is inappropriate;
-- readiness status.
+- exhaustive domain or fixtures where feasible;
+- numeric tolerance/invariant where required;
+- current readiness;
+- intentional structural differences.
 
-Use exhaustive comparison for small finite spaces such as six positions, twelvefold structures, pair domains, codons and MEF cells where the actual operation permits it.
+Use parity to answer whether the native form still enacts the same law. Do not use parity as a reason to retain accidental pointer/package structure.
 
-A promoted path does not replace the reference production path until its declared parity gate passes.
+## 10. Data discipline
 
-## 9. Data survives the migration
+A C table is not disposable merely because a cleaner representation exists.
 
-Do not rewrite a dataset merely because its current representation is a C table.
+Classify it first. Preserve canonical values and provenance. Regenerate deterministic tables only from an accepted derivation/generator. Keep research/provisional standing explicit.
 
-Classify it first as one of:
+Where source data is largely correct and the problem is how it is connected, refactor the connection rather than rewriting the data.
 
-- canonical authored/source data;
-- deterministic derived data;
-- generated optimization/LUT;
-- mutable runtime state;
-- research/provisional data.
+## 11. Native Ref/address discipline
 
-Then preserve the values and provenance. A generated LUT should eventually be reproducible from its declared source where possible; a canonical authored table should remain recognizably the same authored object.
+Long-lived consumers should increasingly address kernel subjects through stable typed identity rather than source-memory topology.
 
-## 10. Drift guards
+A native relation must retain enough information to answer:
 
-The following are migration failures unless explicitly justified and reviewed:
+```text
+what kernel address is this?
+which relation/operator joins it to what?
+which face/family/position participates?
+which MEF/CF address is involved where applicable?
+what source/version establishes the relation?
+what implementation/evidence currently realises it?
+```
 
-- translating the kernel to Rust simply because QL-MEF currently uses Cargo;
-- treating `portal-core` as the new canonical kernel;
-- putting mathematical/domain computation into CLI/TUI presentation code;
-- redesigning M0–M5 semantics while claiming a parity migration;
-- moving Epi semantic authority into QL-MEF because an implementation dependency moved;
-- deleting the old implementation before the relevant parity evidence exists;
-- using deep-kernel completeness as a new blocker for the separately ordered M4′ Nara product vertical.
+Use existing QL-MEF Ref/operator abstractions where they satisfy this requirement. Add only the smallest missing kernel-specific contracts.
 
-## 11. Relationship to current Pratibimba work
+## 12. Development rule
 
-QL-MEF #33 and the Epi/O:I primitive bridge establish that the real existing C kernel can already be reached by current product work. This deeper migration follows from that evidence; it does not invalidate the bridge or change the authored product order.
+The source kernel is the tap-root specimen. Development proceeds outward from it:
 
-Prompt B / M4′ Nara should consume the smallest real primitives it needs while this programme independently makes the deeper computational substrate coherent.
+```text
+kernel centre
+    -> richer formal/music edge
+    -> Epi semantic composition
+    -> O:I technological embodiment
+    -> capability/development relations
+    -> returned evidence
+```
+
+When returned implementation reality shows a genuine defect in the old arrangement, fix it transparently. When the old source already encodes the correct law/data, preserve it and make the native form clearer.
+
+The goal is a QL-MEF kernel that a fresh human or agent can enter through one coherent centre without reconstructing the system from historical package boundaries.
