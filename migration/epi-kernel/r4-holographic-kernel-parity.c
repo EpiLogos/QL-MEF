@@ -81,7 +81,7 @@ static void check_relation_field(void) {
     const uint8_t pair_b[6] = {5u, 2u, 1u, 4u, 3u, 0u};
     const uint8_t pair_c[6] = {5u, 4u, 3u, 2u, 1u, 0u};
 
-    CHECK(strcmp(ql_kernel_contract_version(), "1.0.0") == 0, "contract.version");
+    CHECK(strcmp(ql_kernel_contract_version(), "1.1.0") == 0, "contract.version");
     CHECK(strcmp(ql_kernel_relation_id(QL_KERNEL_REL_CROSS_SAME_POSITION),
                  "ql.kernel.cross.same-position/v1") == 0, "relation.id.conjugate");
     CHECK(strcmp(ql_kernel_relation_id(QL_KERNEL_REL_CROSS_COMPLETE),
