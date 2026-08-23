@@ -2,9 +2,8 @@ use std::collections::HashSet;
 
 use ql_mef::{
     ContextFrameId, EPOGDOON_FOLD_SEMANTICS, HARMONIC_RELATIONS, HarmonicRatio, LensId,
-    M3_CLOCK_APERTURES, M3_CLOCK_APERTURE_EVIDENCE, MusicalEvidenceClass,
-    epogdoon_72_to_64, epogdoon_preimage_width, m3_clock_aperture,
-    tonic_context_frame_landscape,
+    M3_CLOCK_APERTURE_EVIDENCE, M3_CLOCK_APERTURES, MusicalEvidenceClass, epogdoon_72_to_64,
+    epogdoon_preimage_width, m3_clock_aperture, tonic_context_frame_landscape,
 };
 
 #[test]
@@ -107,10 +106,7 @@ fn m3_clock_aperture_fixture_is_exact_and_reciprocal() {
         assert_eq!(columns.len(), 6);
         assert_eq!(columns[0].parse::<u8>().ok(), Some(aperture.index));
         assert_eq!(columns[1].parse::<u16>().ok(), Some(aperture.sectors));
-        assert_eq!(
-            columns[2].parse::<u16>().ok(),
-            Some(aperture.arc_degrees)
-        );
+        assert_eq!(columns[2].parse::<u16>().ok(), Some(aperture.arc_degrees));
         assert_eq!(
             columns[3].parse::<u8>().ok(),
             Some(aperture.reciprocal_index)
@@ -118,8 +114,8 @@ fn m3_clock_aperture_fixture_is_exact_and_reciprocal() {
         assert_eq!(columns[4], M3_CLOCK_APERTURE_EVIDENCE.as_str());
         assert_eq!(aperture.sectors * aperture.arc_degrees, 360);
 
-        let reciprocal = m3_clock_aperture(aperture.reciprocal_index)
-            .expect("reciprocal aperture must exist");
+        let reciprocal =
+            m3_clock_aperture(aperture.reciprocal_index).expect("reciprocal aperture must exist");
         assert_eq!(reciprocal.reciprocal_index, aperture.index);
         assert_eq!(reciprocal.sectors, aperture.arc_degrees);
         assert_eq!(reciprocal.arc_degrees, aperture.sectors);
@@ -132,10 +128,7 @@ fn m3_clock_aperture_fixture_is_exact_and_reciprocal() {
 fn tonic_context_frame_landscape_is_the_existing_12_by_7_field() {
     let landscape: Vec<_> = tonic_context_frame_landscape().collect();
     assert_eq!(landscape.len(), 84);
-    assert_eq!(
-        landscape.iter().copied().collect::<HashSet<_>>().len(),
-        84
-    );
+    assert_eq!(landscape.iter().copied().collect::<HashSet<_>>().len(), 84);
 
     for lens in LensId::ALL {
         assert_eq!(
@@ -160,10 +153,7 @@ fn tonic_context_frame_landscape_is_the_existing_12_by_7_field() {
 
 #[test]
 fn implemented_epogdoon_mapping_does_not_promote_open_fold_semantics() {
-    assert_eq!(
-        EPOGDOON_FOLD_SEMANTICS,
-        MusicalEvidenceClass::OpenEdge
-    );
+    assert_eq!(EPOGDOON_FOLD_SEMANTICS, MusicalEvidenceClass::OpenEdge);
     assert!(
         HARMONIC_RELATIONS
             .iter()
