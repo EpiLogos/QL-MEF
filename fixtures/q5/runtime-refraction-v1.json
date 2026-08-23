@@ -1,0 +1,62 @@
+{
+  "contractVersion": "ql-mef/runtime-refraction-v1",
+  "factoryRuntimeFoundation": {
+    "repository": "EpiLogos/agent-system-design",
+    "foundationIssue": 100,
+    "foundationPullRequest": 112,
+    "sourceHead": "9b3de175afa8f130ca97fd65e7eaff1930ba20ff",
+    "mergeCommit": "7690069846eb6fc89f6aa78dcf7aab886ac7c737",
+    "runtimeContractPath": "ql-agent-experiments/foundation/runtime-contract/index.js",
+    "opticsPath": "ql-agent-experiments/foundation/optics/index.js"
+  },
+  "frozenCommonSeam": {
+    "loopRuntime": "run(request, host, observer, signal)",
+    "runtimeHostMethods": [
+      "callModel",
+      "executeCapability",
+      "receiveExternalInput",
+      "readContext"
+    ],
+    "runtimeObserver": "emit(event)",
+    "qlOnlyCommonHostMethods": []
+  },
+  "integrationLaw": {
+    "runtimeSelectionOwner": "Factory/runtime caller",
+    "providerSelectionOwner": "QL-MEF client adapter caller",
+    "providerFailureChangesRuntimeStatus": false,
+    "classicRequiresQlProvider": false,
+    "subjectIdentityOwner": "Factory/runtime caller"
+  },
+  "matchedTrace": {
+    "heldConstantRef": "factory:runtime:match/q5-case-1",
+    "taskRef": "factory:task:q5-case-1",
+    "hostRef": "factory:host:fixture-1",
+    "modelRef": "factory:model:fixture-1",
+    "capabilitySurfaceRef": "factory:capabilities:fixture-1",
+    "classic": {
+      "runtime": {
+        "id": "classic",
+        "revision": "foundation-freeze/1"
+      },
+      "eventRef": "factory:runtime:event/q5-case-1/classic/0",
+      "channel": "host",
+      "eventType": "model-returned",
+      "executionStatus": "completed",
+      "semanticStatus": "not_applicable",
+      "providerMode": "disabled"
+    },
+    "ql": {
+      "runtime": {
+        "id": "ql-core",
+        "revision": "foundation-freeze/1"
+      },
+      "eventRef": "factory:runtime:event/q5-case-1/ql/4",
+      "channel": "runtime-semantic",
+      "eventType": "closure-attained",
+      "executionStatus": "completed",
+      "semanticStatus": "closed",
+      "providerMode": "optional",
+      "lensRef": "mef:lens:L3@1"
+    }
+  }
+}
