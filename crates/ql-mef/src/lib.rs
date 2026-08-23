@@ -24,10 +24,11 @@ pub use identity::{ClientRef, QlTarget};
 pub use lens::{LensFace, LensId, LensRef, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare};
 pub use music::{
     EPOGDOON_FOLD_SEMANTICS, EPOGDOON_FOLD_SEMANTICS_PROVENANCE, HARMONIC_RELATIONS,
-    HarmonicRatio, HarmonicRelation, MUSICAL_HARMONIC_VERSION, MusicalEvidenceClass,
-    TONIC_CONTEXT_FRAME_EVIDENCE, TONIC_CONTEXT_FRAME_PROVENANCE, TonicContextFrame,
-    epogdoon_72_to_64, epogdoon_preimage_width, harmonic_relation,
-    tonic_context_frame_landscape,
+    HarmonicRatio, HarmonicRelation, M3_CLOCK_APERTURES, M3_CLOCK_APERTURE_EVIDENCE,
+    M3_CLOCK_APERTURE_PROVENANCE, M3ClockAperture, MUSICAL_HARMONIC_VERSION,
+    MusicalEvidenceClass, TONIC_CONTEXT_FRAME_EVIDENCE, TONIC_CONTEXT_FRAME_PROVENANCE,
+    TonicContextFrame, epogdoon_72_to_64, epogdoon_preimage_width, harmonic_relation,
+    m3_clock_aperture, tonic_context_frame_landscape,
 };
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
