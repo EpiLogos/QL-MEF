@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 
 use ql_core::{
-    CanonicalCrossPass, ConjugationDegree, D2CrossPassKind, ExpansionSide, PAIRING_GRAMMAR_VERSION,
-    PairingError, QlFace, QlPosition, RelationFamily, all_d3_fields, build_d_modulation_frame,
-    canonical_cross_pass_d1, canonical_cross_pass_d2, canonical_cross_pass_d3,
+    CanonicalCrossPass, ConjugationDegree, D2CrossPassKind, ExpansionSide, KernelRelationId,
+    PAIRING_GRAMMAR_VERSION, PairingError, QlFace, QlPosition, RelationFamily, all_d3_fields,
+    build_d_modulation_frame, canonical_cross_pass_d1, canonical_cross_pass_d2,
+    canonical_cross_pass_d3,
 };
 
 fn p(value: u8) -> QlPosition {
@@ -19,7 +20,7 @@ fn promoted_pairing_grammar_has_its_own_version_boundary() {
 }
 
 #[test]
-fn software_d1_d2_d3_modulation_is_exactly_two_three_four_coordinates() {
+fn d1_d2_d3_are_exact_square_completion_degrees() {
     let d1 = build_d_modulation_frame(RelationFamily::B, 1, ConjugationDegree::D1, None).unwrap();
     let d2_left = build_d_modulation_frame(
         RelationFamily::B,
@@ -123,19 +124,25 @@ fn canonical_cross_pass_d1_is_same_position_conjugation() {
             assert_eq!(coordinates[1].position, p(4));
             assert_eq!(coordinates[1].face, QlFace::Conjugate);
         }
-        other => panic!("expected D1, got {other:?}"),
+        other => panic!("expected D1 derivation, got {other:?}"),
     }
-    assert_eq!(cross.operator_ref(), "ql:pairing:1.0.0:cross:D1:position-4");
+    assert_eq!(cross.operator_ref(), KernelRelationId::CrossSamePosition.as_str());
+    assert_eq!(
+        cross.derivation_ref(),
+        "ql:pairing:1.0.0:cross:D1:position-4"
+    );
 }
 
 #[test]
 fn canonical_cross_pass_d2_transform_require_complete_are_exact() {
-    for (kind, position, expected_conjugate) in [
-        (D2CrossPassKind::Transform, 5, 0),
-        (D2CrossPassKind::Require, 0, 5),
-        (D2CrossPassKind::Complete, 2, 3),
+    for (kind, position, expected_conjugate, expected_relation) in [
+        (D2CrossPassKind::Transform, 5, 0, KernelRelationId::CrossTransform),
+        (D2CrossPassKind::Require, 0, 5, KernelRelationId::CrossRequire),
+        (D2CrossPassKind::Complete, 2, 3, KernelRelationId::CrossComplete),
     ] {
         let cross = canonical_cross_pass_d2(kind, p(position));
+        assert_eq!(cross.operator_ref(), expected_relation.as_str());
+        assert!(cross.derivation_ref().contains(":cross:D2:"));
         match cross {
             CanonicalCrossPass::D2 {
                 kind: actual_kind,
@@ -149,7 +156,7 @@ fn canonical_cross_pass_d2_transform_require_complete_are_exact() {
                 assert_eq!(coordinates[1].position, p(expected_conjugate));
                 assert_eq!(coordinates[1].face, QlFace::Conjugate);
             }
-            other => panic!("expected D2, got {other:?}"),
+            other => panic!("expected D2 derivation, got {other:?}"),
         }
     }
 }
@@ -169,9 +176,13 @@ fn canonical_cross_pass_d3_reproduces_each_family_on_conjugate_face() {
                 assert_eq!(coordinates[1].face, QlFace::Conjugate);
             }
         }
-        other => panic!("expected D3, got {other:?}"),
+        other => panic!("expected D3 derivation, got {other:?}"),
     }
-    assert_eq!(cross.operator_ref(), "ql:pairing:1.0.0:cross:D3:A");
+    assert_eq!(
+        cross.operator_ref(),
+        KernelRelationId::ConjugateInvarianceA.as_str()
+    );
+    assert_eq!(cross.derivation_ref(), "ql:pairing:1.0.0:cross:D3:A");
 }
 
 #[test]

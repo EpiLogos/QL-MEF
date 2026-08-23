@@ -1,8 +1,8 @@
 use ql_core::{
     CanonicalCrossPass, D2CrossPassKind, HOLOGRAPHIC_KERNEL_CONTRACT_VERSION,
     HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB, HOLOGRAPHIC_KERNEL_REFERENCE_REVISION, KernelRelationId,
-    PAIRING_GRAMMAR_VERSION, QlAddress, QlFace, QlFamily, QlPosition, RelationFamily,
-    canonical_cross_pass_d1, canonical_cross_pass_d2, canonical_cross_pass_d3,
+    PAIRING_GRAMMAR_VERSION, QlAddress, QlFace, QlFamily, QlPosition, RelationFamily, VakFamily,
+    VakInstruction, canonical_cross_pass_d1, canonical_cross_pass_d2, canonical_cross_pass_d3,
 };
 use ql_mef::{
     CONTEXT_FRAME_GRAMMAR_VERSION, LensFace, LensId, MEF_REGISTRY_REVISION, MEF_ROTATION_VERSION,
@@ -101,7 +101,6 @@ fn stable_relation_ids_preserve_pair_cross_mirror_vak_and_return_distinctions() 
         (KernelRelationId::VakCpf, "vak.cpf"),
         (KernelRelationId::VakCt, "vak.ct"),
         (KernelRelationId::VakCp, "vak.cp"),
-        (KernelRelationId::VakCf, "vak.cf"),
         (KernelRelationId::VakCfp, "vak.cfp"),
         (KernelRelationId::VakCs, "vak.cs"),
         (KernelRelationId::Nesting, "nesting"),
@@ -118,29 +117,83 @@ fn stable_relation_ids_preserve_pair_cross_mirror_vak_and_return_distinctions() 
         KernelRelationId::MirrorComplement,
         KernelRelationId::CrossComplete
     );
-    assert_ne!(KernelRelationId::ContextFrame, KernelRelationId::VakCf);
 }
 
 #[test]
-fn vak_contract_preserves_historical_reflective_slot_implementation_state() {
+fn vak_is_one_six_family_reflective_language_and_cf_is_the_context_frame_relation() {
     let expected = [
-        ("cpf", "declared-unwired", "Category-Position-Frame"),
-        ("ct", "declared-unwired", "Context-Type"),
-        ("cp", "declared-unwired", "Context-Position"),
-        ("cf", "historical-wired", "Context-Frame"),
-        ("cfp", "declared-unwired", "Context-Frame-Position"),
-        ("cs", "historical-wired", "Context-Sequence"),
+        (
+            VakFamily::Cpf,
+            "cpf",
+            "Category-Position-Frame",
+            "discrimination/inversion",
+            "slot-unmaterialized",
+        ),
+        (
+            VakFamily::Ct,
+            "ct",
+            "Context-Time / Content Types",
+            "QL-frame-selection",
+            "slot-unmaterialized",
+        ),
+        (
+            VakFamily::Cp,
+            "cp",
+            "Context-Position",
+            "void-arithmetic-position-anchor",
+            "slot-unmaterialized",
+        ),
+        (
+            VakFamily::Cf,
+            "cf",
+            "Context-Frame",
+            "Context-Frame/Vimarsa-invocation",
+            "slot-materialized",
+        ),
+        (
+            VakFamily::Cfp,
+            "cfp",
+            "Context-Frame-Position / Paths",
+            "R-factor-thread",
+            "slot-unmaterialized",
+        ),
+        (
+            VakFamily::Cs,
+            "cs",
+            "Context-Sequence",
+            "Logos-cycle-completion",
+            "slot-materialized",
+        ),
     ];
 
-    for (slot, status, meaning) in expected {
-        let contract = row("vak", slot);
-        assert_eq!(contract[2], status);
-        assert_eq!(contract[3], meaning);
+    for (family, key, meaning, m0_role, pointer_state) in expected {
+        let contract = row("vak", key);
+        assert_eq!(contract[2].parse::<u8>().unwrap(), family.value());
+        assert_eq!(contract[3], family.relation_id().as_str());
+        assert_eq!(contract[4], meaning);
+        assert_eq!(contract[5], m0_role);
+        assert_eq!(family.meaning(), meaning);
+        assert_eq!(family.m0_handler_role(), m0_role);
+        assert_eq!(row("pointer-web", key)[2], pointer_state);
     }
+
+    assert_eq!(VakFamily::Cf.relation_id(), KernelRelationId::ContextFrame);
+
+    let direct = VakInstruction::new(VakFamily::Cpf, 7, 2, 4, false).unwrap();
+    let prime = VakInstruction::new(VakFamily::Cpf, 7, 2, 4, true).unwrap();
+    assert_eq!(direct.face(), QlFace::Direct);
+    assert_eq!(prime.face(), QlFace::Conjugate);
+    assert_eq!(prime.relation_id(), KernelRelationId::VakCpf);
+    assert!(VakInstruction::new(VakFamily::Cs, 0, 6, 0, false).is_none());
+    assert!(VakInstruction::new(VakFamily::Cs, 0, 0, 6, false).is_none());
 }
 
 #[test]
 fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
+    assert_eq!(row("square-degree", "D1")[2], "2");
+    assert_eq!(row("square-degree", "D2")[2], "3");
+    assert_eq!(row("square-degree", "D3")[2], "4");
+
     let families = [
         (
             RelationFamily::A,
@@ -168,6 +221,8 @@ fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
 
         let d3 = canonical_cross_pass_d3(family);
         assert_eq!(d3.kernel_relation_id(), invariant_id);
+        assert_eq!(d3.operator_ref(), invariant_id.as_str());
+        assert!(d3.derivation_ref().contains(":cross:D3:"));
         match d3 {
             CanonicalCrossPass::D3 { pairs, .. } => {
                 for pair in pairs {
@@ -185,6 +240,8 @@ fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
         let position = QlPosition::new(value).unwrap();
         let d1 = canonical_cross_pass_d1(position);
         assert_eq!(d1.kernel_relation_id(), KernelRelationId::CrossSamePosition);
+        assert_eq!(d1.operator_ref(), KernelRelationId::CrossSamePosition.as_str());
+        assert!(d1.derivation_ref().contains(":cross:D1:"));
         match d1 {
             CanonicalCrossPass::D1 { coordinates, .. } => {
                 assert_eq!(coordinates[0].position, coordinates[1].position);
@@ -214,6 +271,8 @@ fn q6_pairing_grammar_resolves_through_the_shared_kernel_operator_ids() {
         for (kind, relation, target) in cases {
             let d2 = canonical_cross_pass_d2(kind, position);
             assert_eq!(d2.kernel_relation_id(), relation);
+            assert_eq!(d2.operator_ref(), relation.as_str());
+            assert!(d2.derivation_ref().contains(":cross:D2:"));
             match d2 {
                 CanonicalCrossPass::D2 { coordinates, .. } => {
                     assert_eq!(coordinates[0].position.value(), value);

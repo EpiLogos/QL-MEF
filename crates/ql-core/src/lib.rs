@@ -24,7 +24,7 @@ pub use form::{QlForm, QlFormRef};
 pub use kernel::{
     HOLOGRAPHIC_KERNEL_CONTRACT_VERSION, HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB,
     HOLOGRAPHIC_KERNEL_REFERENCE_REVISION, KERNEL_VERSION, KernelCapabilities, KernelRelationId,
-    QlFamily, SCHEMA_VERSION, kernel_capabilities,
+    QlFamily, SCHEMA_VERSION, VakFamily, VakInstruction, kernel_capabilities,
 };
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
 pub use pairing::{
