@@ -11,9 +11,9 @@ mod refraction;
 mod registry_provider;
 
 pub use living::{
-    plan_living_wiki_refraction, CanonicalReturnTransit, ContextFrameDepth, EntryAperture,
-    LivingWikiMode, LivingWikiRefractionError, LivingWikiRefractionPlan, LivingWikiRelevance,
-    LIVING_WIKI_ENTRY_APERTURE, LIVING_WIKI_REFRACTION_PROFILE,
+    CanonicalReturnTransit, ContextFrameDepth, EntryAperture, LIVING_WIKI_ENTRY_APERTURE,
+    LIVING_WIKI_REFRACTION_PROFILE, LivingWikiMode, LivingWikiRefractionError,
+    LivingWikiRefractionPlan, LivingWikiRelevance, plan_living_wiki_refraction,
 };
 pub use portal::{
     CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver,
