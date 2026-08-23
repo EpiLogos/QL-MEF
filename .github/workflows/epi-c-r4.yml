@@ -27,7 +27,7 @@ jobs:
         run: scripts/test-epi-c-parity.sh
       - name: Verify exact shared C/Rust kernel contract and Q6 workspace
         env:
-          RUST_KERNEL_HEAD: d442d917a626c2d8432542f293ab81cdfd108723
+          RUST_KERNEL_HEAD: b3cfed3f89d8581f5c1f0bd063a4562ac7bf0240
           KERNEL_CONTRACT_BLOB: 2383abf34ded9e3a409d6fdc112359ace057ea02
         run: |
           set -euo pipefail
