@@ -3,7 +3,8 @@
 Status: active research / conformance protocol  
 Tracks: #25, #30, #38, #73, #74, #75  
 Epi source owner: `EpiLogos/Epi-Logos-C-Experiments`  
-QL-MEF role: living relation / refraction / conformance map, not semantic ownership
+QL-MEF role: living relation / refraction / conformance map, not semantic ownership  
+Orienting Figure: `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md`
 
 ## Purpose
 
@@ -12,6 +13,8 @@ This protocol exists to stop subsystem reconstitution from collapsing into which
 The task for each `Mx` is first to recover the **subsystem itself** as a deep capability / coordinate field:
 
 - what human or agent concern the subsystem exists to answer;
+- what Whole / Mark makes the subsystem intelligible inside Epi;
+- what source material carries the leading signal of that Mark;
 - what its recursive coordinate tree contains;
 - what each branch does inside the subsystem;
 - what each branch contributes to the Epi whole;
@@ -19,7 +22,8 @@ The task for each `Mx` is first to recover the **subsystem itself** as a deep ca
 - what formal/computational laws are genuinely load-bearing;
 - what evidence or state enters and leaves the branch;
 - what privacy, authority, safety, provenance and review constraints belong to it;
-- which technical choices are settled, which are only historical proposals, and which remain open.
+- which technical choices are settled, which are only historical proposals, and which remain open;
+- which orienting Figures, precedents or examples materially clarify the intended kind of subsystem and where those analogies stop.
 
 Only after that field is intelligible do we map its capabilities into the same-coordinate fourfold ratified by #74/#75:
 
@@ -34,6 +38,93 @@ M_i′  deep compositional Pratibimba
 ```
 
 The fourfold is therefore a **projection target and constitutional relation**, not a shortcut for discovering what the subsystem means.
+
+### General matrix practice and this Epi instantiation
+
+The deep subsystem matrices are an **Epi-specific instantiation of a more general agentic capability/response-matrix practice**.
+
+The general practice can be used by any Project, Agent or collective with Project-native dimensions. It does not require Epi-Logos, M0–M5, the six Guardians, MEF or QL coordinates.
+
+This protocol specialises that general practice because Epi itself has an authored M/M′ coordinate system, Bimba source field, recursive subsystem architecture and constitutional M/S/S′/M′ relations worth recovering with precision.
+
+Therefore:
+
+```text
+generic matrix / recovery practice
+        ↓ instantiated for this Project
+Epi deep subsystem capability / coordinate matrix
+        ↓ uses native Epi ground
+M0–M5 · M′ · Bimba source · M/S/S′/M′ · Epi relations
+```
+
+Do not project Epi-specific ontology upward into Factory or generic response-matrix semantics merely because the Epi programme is a rich proving case.
+
+---
+
+## 0. Mark / Aim ground — recover the Whole before decomposing it
+
+Before Pass A and before local feature decomposition gains authority, establish a compact **Mark / Aim Ground** for the subsystem recovery.
+
+```text
+0 — SOURCE-GROUND
+    provenance-bearing authored / historical / current material
+    through which the intended subsystem Whole can become apprehensible
+/
+1 — MARK
+    the articulated apprehension of the Whole which this recovery
+    or implementation is answerable to
+```
+
+and then:
+
+```text
+0 — MARK
+    the prospective Whole / orienting integrity
+/
+1 — AIM
+    the present recovery/development undertaking taking bearing
+    toward that Whole
+```
+
+The recursion is deliberate:
+
+```text
+SOURCE / MARK / AIM
+```
+
+What becomes determination in one relation can become ground for the next.
+
+For each subsystem recovery record:
+
+```text
+MARK
+What Whole is this subsystem, matrix or tranche helping Epi make real?
+
+LARGER MARK / CONTEXT FRAME
+What Project / parent 3:3 / M-system / development Whole does it participate in?
+
+SOURCE SIGNALS
+Which authored sources, current positions, returned realities or other
+provenance-bearing marks disclose the intended Whole?
+
+MARK-READING CLAIM
+What are we presently taking that Whole to be?
+What source standing and Evidence support this interpretation?
+What remains open?
+
+AIM
+What is this research/development pass undertaking toward the Mark?
+
+RECOGNITION
+What should a human or Agent be able to encounter, understand, manipulate,
+inspect or do when this pass has genuinely contributed to the Mark?
+```
+
+The Mark-reading is interpretive. It does not replace the authored source from which it was recovered.
+
+The Mark is also scale-relative: subsystem, matrix, development tranche and local capability can each have a local Whole whose meaning comes from participation in the larger Epi composition.
+
+---
 
 ## 0.1 Coordinate-family refraction — distinguish without separating
 
@@ -64,6 +155,46 @@ Example: current Anuttara recovery must be able to say simultaneously that `M0 A
 
 Every subsystem matrix therefore records a **coordinate-family refraction view** alongside semantic recovery. This is a many-to-many relation map over one recovered capability field, not a one-way `domain -> implementation` pipeline.
 
+---
+
+## 0.2 Orienting Figures — make the Mark apprehensible without turning analogy into authority
+
+A subsystem may have a metaphor, historical precedent, exemplary object, image, scientific/technical practice or other **Figure of the Mark** which makes the intended kind of whole easier to apprehend.
+
+A Figure is part of Source-ground with its own standing. It carries two explicit relations:
+
+```text
+FIGURE
+   │
+   ├── ILLUMINATES ──► what relation/aspect of the subsystem Mark becomes clearer
+   │
+   └── BOUNDARY ─────► what the Figure does not establish
+```
+
+For a material Figure record:
+
+```text
+FIGURE SOURCE
+What is the historical/example object and what sources establish what it was/is?
+
+ILLUMINATES
+What relation of the subsystem/product Mark does it make apprehensible?
+
+BOUNDARY
+What Epi semantic, formal, scientific, metaphysical or implementation Claim
+remains independently answerable to Epi source and evidence?
+
+PRAXICAL EFFECT
+What does the Figure change about human/Agent understanding, product imagination,
+recovery questions, instrument operation or Recognition criteria?
+```
+
+A Figure may participate in a Mark-reading Claim. Historical Evidence about the Figure does not by itself become Evidence that the corresponding Epi ontology or research proposition is true.
+
+For the current M2→M3→M4 / Current Situated Matheme relation, see `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md`.
+
+---
+
 ## 1. Source law — chronology is not semantic precedence
 
 No generic rule of the form `newer document > older document` is permitted.
@@ -83,10 +214,15 @@ Every source claim is therefore classified by **role**, not by age alone.
 - `IMPLEMENTATION-FACT` — code/data/tests that exist now.
 - `OBSERVED-RESULT` — behaviour/evidence actually demonstrated.
 - `HISTORICAL-IMPLEMENTATION-EVIDENCE` — old body/shell/provider useful for recovering behaviour or feature richness.
+- `ORIENTING-FIGURE` — historical, exemplary, metaphorical or otherwise orienting source used to make a Mark/relation apprehensible, always paired with `ILLUMINATES` and `BOUNDARY`.
 - `SUPERSEDED-TECH-ASSUMPTION` — implementation choice no longer authoritative.
 - `UNRESOLVED-CONTRADICTION` — competing source claims that have not been ratified away.
 
 A single document may contribute claims in several classes.
+
+An `ORIENTING-FIGURE` is deliberately distinct from `HISTORICAL-IMPLEMENTATION-EVIDENCE`: a medieval astronomical instrument may illuminate the kind of technical object Epi is trying to become without ever having been an implementation ancestor of Epi.
+
+---
 
 ## 2. Recovery order
 
@@ -101,11 +237,14 @@ Read, in parallel rather than by a one-dimensional precedence ladder:
 3. current active domain spec and architecture/UX documents;
 4. current Cycle-3/deep research and development material;
 5. old implementation plans where they preserve feature or interaction detail;
-6. current code/tests only to establish what is real now.
+6. current code/tests only to establish what is real now;
+7. material orienting Figures where they clarify the subsystem Mark, with their boundary attached.
 
 The output of Pass A is a **union-with-provenance**, not a winner-takes-all summary.
 
 A capability found only in an old canonical feature source is not dropped because a later plan omitted it. It is retained as `FOUNDATIONAL-SIGNAL` until deliberately superseded with a reason.
+
+A Figure discovered in Pass A can enrich the questions asked of the subsystem. It does not add capabilities or ontology merely because the analogy is attractive.
 
 ### Pass B — recursive coordinate recovery
 
@@ -148,6 +287,8 @@ For every material capability, record what changes for a human or situated agent
 
 A capability is not considered understood merely because its data structure or computation is known.
 
+Where a Figure is active, ask what it changes about the **recognisable experience of the whole instrument**, not only the language used to describe it.
+
 ### Pass D — formal / computational / data law
 
 Record genuine invariants separately from proposed implementations:
@@ -161,6 +302,8 @@ Record genuine invariants separately from proposed implementations:
 - deterministic vs inferential steps;
 - privacy/safety/consent/review requirements;
 - readiness/degradation semantics.
+
+The Figure boundary is especially important here: historical analogy cannot supply a missing equation, operator, provider fact or empirical result.
 
 ### Pass E — technical decision register
 
@@ -189,6 +332,8 @@ specific model/training methods
 ```
 
 If the source corpus disagrees, the matrix records the disagreement and the decision remains `OPEN` until ratified.
+
+An orienting Figure can generate a design question or Candidate. It cannot make the decision `RATIFIED` by resemblance.
 
 ### Pass F — current reality and gap
 
@@ -224,6 +369,8 @@ The same-index `M/S/S′/M′` relation from #74/#75 is the constitutional spine
 
 Do not use S/S′/M′ mapping to redefine the subsystem feature set. Do not use M semantics to erase native product ownership. Record **what is preserved through the refraction and what changes because the coordinate-family question has changed**.
 
+---
+
 ## 3. Canonical per-capability row
 
 Each deep subsystem matrix uses at least these fields:
@@ -233,6 +380,14 @@ capability_ref: stable id
 coordinate: Mx[.y...]
 parent_coordinate: optional
 name: human-readable name
+
+mark_ground:
+  local_mark: what Whole this capability participates in locally
+  larger_mark_ref: optional Project / subsystem / 3:3 / parent Whole
+  source_signal_refs: []
+  mark_reading_claim: optional
+  aim: what this capability/recovery contributes toward the Whole
+  recognition: what adequate realisation makes possible
 
 meaning:
   purpose: why it exists
@@ -271,6 +426,13 @@ source_evidence:
     role: SOURCE-ROLE
     claim: concise claim
 
+orienting_figures:
+  - ref: source / artifact / integration doc
+    figure: human-readable identity
+    illuminates: relation made more apprehensible
+    boundary: what the Figure does not establish
+    praxical_effect: optional
+
 implementation:
   current_bodies: []
   observed_evidence: []
@@ -301,6 +463,10 @@ coordinate_family_refraction:
   non_substitution_notes: []
 ```
 
+The matrix need not mechanically populate `mark_ground` or `orienting_figures` on every row. These fields exist where the local relation materially helps preserve the Whole; subsystem-level Mark/Figure ground can remain the authoritative context for rows that do not require repetition.
+
+---
+
 ## 4. Per-coordinate summary matrix
 
 The human-readable document should also maintain a compact recursive table:
@@ -309,6 +475,10 @@ The human-readable document should also maintain a compact recursive table:
 |---|---|---|---|---|---|---|
 
 This is the loss-detection view. It should make a missing branch or collapsed capability obvious without reading every implementation plan.
+
+The compact table remains a projection of the recovered field. It is not the subsystem itself and it is not the generic definition of a response matrix.
+
+---
 
 ## 5. Contradiction / drift register
 
@@ -326,36 +496,49 @@ decision needed
 
 No contradiction is silently harmonised because a later document happens to be more detailed.
 
+Figures can appear in the drift register only as orienting context. A resemblance to a Figure does not resolve a source contradiction.
+
+---
+
 ## 6. Verification gate before implementation design
 
 A subsystem is ready for body/provider/UX implementation decisions only when a human reviewer can answer, from the matrix:
 
 1. what the subsystem is for;
-2. what its complete known recursive coordinate tree is;
-3. what each major branch does locally and systemically;
-4. what a human actually experiences or can do;
-5. what an agent can address or act on;
-6. which features come from foundational/canonical signal versus later proposals;
-7. which technical decisions are ratified versus still open;
-8. what currently exists in code and what does not;
-9. what privacy/authority/review laws constrain it;
-10. what must remain true when it is later refracted through M′/S/S′;
-11. why the M, S, S′ and M′ views are related without being substituted for one another.
+2. what Whole / Mark the subsystem recovery is answerable to and which source signals disclose it;
+3. what the current Mark-reading Claim is and where its interpretation remains open;
+4. what its complete known recursive coordinate tree is;
+5. what each major branch does locally and systemically;
+6. what a human actually experiences or can do;
+7. what an agent can address or act on;
+8. which features come from foundational/canonical signal versus later proposals;
+9. which technical decisions are ratified versus still open;
+10. what currently exists in code and what does not;
+11. what privacy/authority/review laws constrain it;
+12. what must remain true when it is later refracted through M′/S/S′;
+13. why the M, S, S′ and M′ views are related without being substituted for one another;
+14. which orienting Figures materially clarify the intended whole, what each `ILLUMINATES`, and where its `BOUNDARY` lies;
+15. why the Epi-specific coordinate/Guardian content of this matrix is a Project instantiation rather than generic Factory matrix ontology.
 
 If these cannot be answered, the next action is more subsystem research, not renderer/provider selection.
+
+---
 
 ## 7. Operating loop across M0–M5
 
 The research/development cadence is:
 
 ```text
-recover one subsystem deeply
+recover the subsystem Mark / source ground
+→ recover one subsystem deeply
 → produce compact verification packet for human ratification
 → incorporate corrections into its deep capability/coordinate matrix
 → only then update affected current specs/conformance language
 → immediately begin research on the next subsystem
 ```
 
-The first instantiation was M4/Nara. M5/Epii followed. M0/Anuttara continues the same protocol with the added coordinate-family refraction rule exposed by the first two recoveries.
+The first instantiation was M4/Nara. M5/Epii followed. M0/Anuttara, M1/Paramaśiva and M2/Paraśakti continue the same protocol, with coordinate-family refraction and Mark/Figure discipline added as the recovery itself has disclosed their value.
 
 This protocol extends the R1 capability-matrix method: the R1 snapshot remains valuable as a six-domain loss-detection inventory, while these per-subsystem matrices descend recursively enough to guide real deep-product refactoring without turning implementation history into semantic authority.
+
+The next M3/Mahāmāyā recovery should consume the returned M2 matrix and the Alfonsine orienting Figure specifically where they clarify the M2→M3→M4 / Current Situated Matheme relation, while independently recovering Mahāmāyā's own authored source and complete capability field.
