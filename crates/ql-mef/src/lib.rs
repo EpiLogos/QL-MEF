@@ -7,6 +7,7 @@ mod coordinate;
 mod error;
 mod identity;
 mod lens;
+mod music;
 mod provenance;
 mod reading;
 mod refraction;
@@ -21,6 +22,13 @@ pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
 pub use lens::{LensFace, LensId, LensRef, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare};
+pub use music::{
+    EPOGDOON_FOLD_SEMANTICS, EPOGDOON_FOLD_SEMANTICS_PROVENANCE, HARMONIC_RELATIONS,
+    HarmonicRatio, HarmonicRelation, MUSICAL_HARMONIC_VERSION, MusicalEvidenceClass,
+    TONIC_CONTEXT_FRAME_EVIDENCE, TONIC_CONTEXT_FRAME_PROVENANCE, TonicContextFrame,
+    epogdoon_72_to_64, epogdoon_preimage_width, harmonic_relation,
+    tonic_context_frame_landscape,
+};
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
 };
