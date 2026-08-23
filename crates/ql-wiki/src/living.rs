@@ -282,7 +282,7 @@ mod tests {
                 extensions: Map::new(),
             },
             lenses: vec![LensSelection {
-                lens_ref: "L0".into(),
+                lens_ref: "mef:lens:L0@1".into(),
                 sublens_ref: None,
             }],
             context: Map::new(),
