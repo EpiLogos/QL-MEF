@@ -31,9 +31,21 @@ relation	position.successor	ql.kernel.position.successor/v1
 relation	return.mobius	ql.kernel.return.mobius/v1
 relation	lens.anchor	ql.kernel.lens.anchor/v1
 relation	context-frame	ql.kernel.context-frame/v1
+relation	vak.cpf	ql.kernel.vak.cpf/v1
+relation	vak.ct	ql.kernel.vak.ct/v1
+relation	vak.cp	ql.kernel.vak.cp/v1
+relation	vak.cf	ql.kernel.vak.cf/v1
+relation	vak.cfp	ql.kernel.vak.cfp/v1
+relation	vak.cs	ql.kernel.vak.cs/v1
 relation	nesting	ql.kernel.nesting/v1
 relation	branching	ql.kernel.branching/v1
 relation	source.provenance	ql.kernel.source.provenance/v1
+vak	cpf	declared-unwired	Category-Position-Frame
+vak	ct	declared-unwired	Context-Type
+vak	cp	declared-unwired	Context-Position
+vak	cf	historical-wired	Context-Frame
+vak	cfp	declared-unwired	Context-Frame-Position
+vak	cs	historical-wired	Context-Sequence
 pair	A	0-1,2-3,4-5
 pair	B	1-2,3-4,5-0
 pair	C	0-5,1-4,2-3

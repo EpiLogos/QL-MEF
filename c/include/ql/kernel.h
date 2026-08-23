@@ -18,7 +18,7 @@ extern "C" {
 #define QL_KERNEL_RESONANCE_DIM QL_RESONANCE_COUNT
 #define QL_KERNEL_TRITONE_SQUARES QL_TRITONE_SQUARE_COUNT
 #define QL_KERNEL_CONTEXT_FRAME_COUNT 7u
-#define QL_KERNEL_RELATION_COUNT 20u
+#define QL_KERNEL_RELATION_COUNT 26u
 
 typedef enum {
     QL_KERNEL_PHASE_DESCENT = 0,
@@ -57,7 +57,11 @@ typedef enum {
 
 /* Stable semantic relation identities. The D1/D2/D3 historical/software names
  * remain provenance/aliases on the Rust side; the shared kernel contract uses
- * the unambiguous relation meaning established by #39. */
+ * the unambiguous relation meaning established by #39.
+ *
+ * VAK relations name the six historical reflective C' slots in ontology.h.
+ * VAK_CF is deliberately distinct from CONTEXT_FRAME: VAK_CF is the historical
+ * pointer slot, while CONTEXT_FRAME addresses the seven canonical MEF/CF cuts. */
 typedef enum {
     QL_KERNEL_REL_POSITION_IDENTITY = 0,
     QL_KERNEL_REL_FAMILY_SAME_POSITION = 1,
@@ -76,9 +80,15 @@ typedef enum {
     QL_KERNEL_REL_MOBIUS_RETURN = 14,
     QL_KERNEL_REL_LENS_ANCHOR = 15,
     QL_KERNEL_REL_CONTEXT_FRAME = 16,
-    QL_KERNEL_REL_NESTING = 17,
-    QL_KERNEL_REL_BRANCHING = 18,
-    QL_KERNEL_REL_SOURCE_PROVENANCE = 19
+    QL_KERNEL_REL_VAK_CPF = 17,
+    QL_KERNEL_REL_VAK_CT = 18,
+    QL_KERNEL_REL_VAK_CP = 19,
+    QL_KERNEL_REL_VAK_CF = 20,
+    QL_KERNEL_REL_VAK_CFP = 21,
+    QL_KERNEL_REL_VAK_CS = 22,
+    QL_KERNEL_REL_NESTING = 23,
+    QL_KERNEL_REL_BRANCHING = 24,
+    QL_KERNEL_REL_SOURCE_PROVENANCE = 25
 } QL_Kernel_Relation_Id;
 
 typedef struct {

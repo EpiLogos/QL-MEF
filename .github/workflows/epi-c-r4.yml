@@ -21,14 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: R4 native kernel address/relation/MEF/CF parity and package seam
+      - name: R4 native kernel address/relation/MEF/CF/VAK parity and package seam
         run: scripts/test-epi-c-r4.sh
       - name: Keep accepted R1/R2 scalar parity green
         run: scripts/test-epi-c-parity.sh
       - name: Verify exact shared C/Rust kernel contract and Q6 workspace
         env:
-          RUST_KERNEL_HEAD: b3cfed3f89d8581f5c1f0bd063a4562ac7bf0240
-          KERNEL_CONTRACT_BLOB: 2383abf34ded9e3a409d6fdc112359ace057ea02
+          RUST_KERNEL_HEAD: ee3b34500d5b5f641dfc8c61ee82c31cf92cfcc5
+          KERNEL_CONTRACT_BLOB: 3f6b99a1e33c3d5401a95d134fb0cdceb2153873
         run: |
           set -euo pipefail
           RUST_WORKTREE="$RUNNER_TEMP/ql-mef-q6-kernel"

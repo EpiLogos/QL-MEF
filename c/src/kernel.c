@@ -38,6 +38,12 @@ static const char* const QL_KERNEL_RELATION_IDS[QL_KERNEL_RELATION_COUNT] = {
     "ql.kernel.return.mobius/v1",
     "ql.kernel.lens.anchor/v1",
     "ql.kernel.context-frame/v1",
+    "ql.kernel.vak.cpf/v1",
+    "ql.kernel.vak.ct/v1",
+    "ql.kernel.vak.cp/v1",
+    "ql.kernel.vak.cf/v1",
+    "ql.kernel.vak.cfp/v1",
+    "ql.kernel.vak.cs/v1",
     "ql.kernel.nesting/v1",
     "ql.kernel.branching/v1",
     "ql.kernel.source.provenance/v1"
@@ -255,6 +261,46 @@ int ql_kernel_relation_resolve(
                     source.position,
                     (QL_Coordinate_Face)source.face
                 );
+                break;
+            case QL_KERNEL_REL_VAK_CPF:
+            case QL_KERNEL_REL_VAK_CT:
+            case QL_KERNEL_REL_VAK_CP:
+            case QL_KERNEL_REL_VAK_CFP:
+                /* ontology.h declares these reflective C' slots, but the frozen
+                 * families_wire_reflective() does not populate them. */
+                return -1;
+            case QL_KERNEL_REL_VAK_CF:
+                /* Frozen VAK wiring is direct-face only. Do not synthesize a
+                 * prime-face pointer law that the historical source does not have. */
+                if (source.face != (uint8_t)QL_COORD_FACE_DIRECT) return -1;
+                if (source.family == (uint8_t)QL_FAMILY_NONE) {
+                    if (source.position != 3u && source.position != 4u) return -1;
+                    target = ql_kernel_position_address(4u, QL_COORD_FACE_DIRECT);
+                } else if (source.position == 4u) {
+                    target = source;
+                } else if (source.position == 3u) {
+                    target = ql_kernel_family_address(
+                        (QL_Coordinate_Family)source.family,
+                        4u,
+                        QL_COORD_FACE_DIRECT
+                    );
+                } else {
+                    /* families_init() seeds every family coordinate's cf to the
+                     * raw Lemniscate before the later pos3/pos4 rewiring. */
+                    target = ql_kernel_position_address(4u, QL_COORD_FACE_DIRECT);
+                }
+                break;
+            case QL_KERNEL_REL_VAK_CS:
+                /* families_wire_reflective() wires every arena slot's cs to
+                 * position 5 in the same block. */
+                if (source.face != (uint8_t)QL_COORD_FACE_DIRECT) return -1;
+                target = source.family == (uint8_t)QL_FAMILY_NONE
+                    ? ql_kernel_position_address(5u, QL_COORD_FACE_DIRECT)
+                    : ql_kernel_family_address(
+                        (QL_Coordinate_Family)source.family,
+                        5u,
+                        QL_COORD_FACE_DIRECT
+                    );
                 break;
             default:
                 return -1;
