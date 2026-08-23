@@ -1,0 +1,31 @@
+{
+  "rubric": "ql-mef/living-wiki-comparison-rubric/v1",
+  "field_ref": "fixture:living-wiki:deep-structured-generic",
+  "note": "Controlled synthetic structural fixture. Same bounded field and context budget; retained as mixed research evidence, not a preferred-profile claim.",
+  "ordinary": {
+    "case_ref": "fixture:living-wiki:ordinary-focal",
+    "context_budget": 12,
+    "dependency_paths_recovered": 2,
+    "whole_part_links_recovered": 4,
+    "source_ground_refs_recovered": 2,
+    "context_position_four_recovered": false,
+    "tensions_surfaced": 2,
+    "unsupported_relations": 0,
+    "context_units_used": 8,
+    "duplicated_context_units": 0,
+    "provenance_refs_retained": 5
+  },
+  "aperture": {
+    "case_ref": "fixture:living-wiki:aperture-501-cf",
+    "context_budget": 12,
+    "dependency_paths_recovered": 4,
+    "whole_part_links_recovered": 5,
+    "source_ground_refs_recovered": 4,
+    "context_position_four_recovered": true,
+    "tensions_surfaced": 3,
+    "unsupported_relations": 0,
+    "context_units_used": 11,
+    "duplicated_context_units": 1,
+    "provenance_refs_retained": 7
+  }
+}
