@@ -200,10 +200,8 @@ pub const fn epogdoon_preimage_width(target_index: u8) -> Option<u8> {
     let mut source = 0_u8;
     let mut count = 0_u8;
     while source < 72 {
-        if let Some(target) = epogdoon_72_to_64(source) {
-            if target == target_index {
-                count += 1;
-            }
+        if epogdoon_72_to_64(source) == Some(target_index) {
+            count += 1;
         }
         source += 1;
     }
@@ -225,30 +223,109 @@ pub struct M3ClockAperture {
 }
 
 pub const M3_CLOCK_APERTURES: [M3ClockAperture; 16] = [
-    M3ClockAperture { index: 0, sectors: 1, arc_degrees: 360, reciprocal_index: 15 },
-    M3ClockAperture { index: 1, sectors: 2, arc_degrees: 180, reciprocal_index: 14 },
-    M3ClockAperture { index: 2, sectors: 4, arc_degrees: 90, reciprocal_index: 13 },
-    M3ClockAperture { index: 3, sectors: 8, arc_degrees: 45, reciprocal_index: 12 },
-    M3ClockAperture { index: 4, sectors: 9, arc_degrees: 40, reciprocal_index: 11 },
-    M3ClockAperture { index: 5, sectors: 10, arc_degrees: 36, reciprocal_index: 10 },
-    M3ClockAperture { index: 6, sectors: 12, arc_degrees: 30, reciprocal_index: 9 },
-    M3ClockAperture { index: 7, sectors: 15, arc_degrees: 24, reciprocal_index: 8 },
-    M3ClockAperture { index: 8, sectors: 24, arc_degrees: 15, reciprocal_index: 7 },
-    M3ClockAperture { index: 9, sectors: 30, arc_degrees: 12, reciprocal_index: 6 },
-    M3ClockAperture { index: 10, sectors: 36, arc_degrees: 10, reciprocal_index: 5 },
-    M3ClockAperture { index: 11, sectors: 40, arc_degrees: 9, reciprocal_index: 4 },
-    M3ClockAperture { index: 12, sectors: 45, arc_degrees: 8, reciprocal_index: 3 },
-    M3ClockAperture { index: 13, sectors: 90, arc_degrees: 4, reciprocal_index: 2 },
-    M3ClockAperture { index: 14, sectors: 180, arc_degrees: 2, reciprocal_index: 1 },
-    M3ClockAperture { index: 15, sectors: 360, arc_degrees: 1, reciprocal_index: 0 },
+    M3ClockAperture {
+        index: 0,
+        sectors: 1,
+        arc_degrees: 360,
+        reciprocal_index: 15,
+    },
+    M3ClockAperture {
+        index: 1,
+        sectors: 2,
+        arc_degrees: 180,
+        reciprocal_index: 14,
+    },
+    M3ClockAperture {
+        index: 2,
+        sectors: 4,
+        arc_degrees: 90,
+        reciprocal_index: 13,
+    },
+    M3ClockAperture {
+        index: 3,
+        sectors: 8,
+        arc_degrees: 45,
+        reciprocal_index: 12,
+    },
+    M3ClockAperture {
+        index: 4,
+        sectors: 9,
+        arc_degrees: 40,
+        reciprocal_index: 11,
+    },
+    M3ClockAperture {
+        index: 5,
+        sectors: 10,
+        arc_degrees: 36,
+        reciprocal_index: 10,
+    },
+    M3ClockAperture {
+        index: 6,
+        sectors: 12,
+        arc_degrees: 30,
+        reciprocal_index: 9,
+    },
+    M3ClockAperture {
+        index: 7,
+        sectors: 15,
+        arc_degrees: 24,
+        reciprocal_index: 8,
+    },
+    M3ClockAperture {
+        index: 8,
+        sectors: 24,
+        arc_degrees: 15,
+        reciprocal_index: 7,
+    },
+    M3ClockAperture {
+        index: 9,
+        sectors: 30,
+        arc_degrees: 12,
+        reciprocal_index: 6,
+    },
+    M3ClockAperture {
+        index: 10,
+        sectors: 36,
+        arc_degrees: 10,
+        reciprocal_index: 5,
+    },
+    M3ClockAperture {
+        index: 11,
+        sectors: 40,
+        arc_degrees: 9,
+        reciprocal_index: 4,
+    },
+    M3ClockAperture {
+        index: 12,
+        sectors: 45,
+        arc_degrees: 8,
+        reciprocal_index: 3,
+    },
+    M3ClockAperture {
+        index: 13,
+        sectors: 90,
+        arc_degrees: 4,
+        reciprocal_index: 2,
+    },
+    M3ClockAperture {
+        index: 14,
+        sectors: 180,
+        arc_degrees: 2,
+        reciprocal_index: 1,
+    },
+    M3ClockAperture {
+        index: 15,
+        sectors: 360,
+        arc_degrees: 1,
+        reciprocal_index: 0,
+    },
 ];
 
 pub fn m3_clock_aperture(index: u8) -> Option<&'static M3ClockAperture> {
     M3_CLOCK_APERTURES.get(usize::from(index))
 }
 
-pub const M3_CLOCK_APERTURE_EVIDENCE: MusicalEvidenceClass =
-    MusicalEvidenceClass::AuthoredAccepted;
+pub const M3_CLOCK_APERTURE_EVIDENCE: MusicalEvidenceClass = MusicalEvidenceClass::AuthoredAccepted;
 pub const M3_CLOCK_APERTURE_PROVENANCE: &str =
     "M3 current_human_ratification + clock_system.lenses/lens_reciprocals";
 
@@ -282,5 +359,4 @@ pub const TONIC_CONTEXT_FRAME_PROVENANCE: &str =
 /// The current M3 matrix explicitly leaves the interpretation of epogdoon fold
 /// collisions open even though the integer mapping is executable.
 pub const EPOGDOON_FOLD_SEMANTICS: MusicalEvidenceClass = MusicalEvidenceClass::OpenEdge;
-pub const EPOGDOON_FOLD_SEMANTICS_PROVENANCE: &str =
-    "M3-C02 state=implemented-fold-semantics-open";
+pub const EPOGDOON_FOLD_SEMANTICS_PROVENANCE: &str = "M3-C02 state=implemented-fold-semantics-open";
