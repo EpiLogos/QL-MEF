@@ -70,7 +70,7 @@ fn family_position_and_face_identities_are_shared_without_a_second_rust_address_
 }
 
 #[test]
-fn stable_relation_ids_preserve_pair_cross_mirror_and_return_distinctions() {
+fn stable_relation_ids_preserve_pair_cross_mirror_vak_and_return_distinctions() {
     let expected = [
         (KernelRelationId::PositionIdentity, "position.identity"),
         (KernelRelationId::FamilySamePosition, "family.same-position"),
@@ -98,6 +98,12 @@ fn stable_relation_ids_preserve_pair_cross_mirror_and_return_distinctions() {
         (KernelRelationId::MobiusReturn, "return.mobius"),
         (KernelRelationId::LensAnchor, "lens.anchor"),
         (KernelRelationId::ContextFrame, "context-frame"),
+        (KernelRelationId::VakCpf, "vak.cpf"),
+        (KernelRelationId::VakCt, "vak.ct"),
+        (KernelRelationId::VakCp, "vak.cp"),
+        (KernelRelationId::VakCf, "vak.cf"),
+        (KernelRelationId::VakCfp, "vak.cfp"),
+        (KernelRelationId::VakCs, "vak.cs"),
         (KernelRelationId::Nesting, "nesting"),
         (KernelRelationId::Branching, "branching"),
         (KernelRelationId::SourceProvenance, "source.provenance"),
@@ -112,6 +118,25 @@ fn stable_relation_ids_preserve_pair_cross_mirror_and_return_distinctions() {
         KernelRelationId::MirrorComplement,
         KernelRelationId::CrossComplete
     );
+    assert_ne!(KernelRelationId::ContextFrame, KernelRelationId::VakCf);
+}
+
+#[test]
+fn vak_contract_preserves_historical_reflective_slot_implementation_state() {
+    let expected = [
+        ("cpf", "declared-unwired", "Category-Position-Frame"),
+        ("ct", "declared-unwired", "Context-Type"),
+        ("cp", "declared-unwired", "Context-Position"),
+        ("cf", "historical-wired", "Context-Frame"),
+        ("cfp", "declared-unwired", "Context-Frame-Position"),
+        ("cs", "historical-wired", "Context-Sequence"),
+    ];
+
+    for (slot, status, meaning) in expected {
+        let contract = row("vak", slot);
+        assert_eq!(contract[2], status);
+        assert_eq!(contract[3], meaning);
+    }
 }
 
 #[test]
