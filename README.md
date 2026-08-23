@@ -10,11 +10,17 @@ The product architecture was developed in `EpiLogos/agent-system-design` draft P
 
 The move to this repository does **not** merge QL/MEF with the QL Loop Runtime. The Loop Runtime remains in `EpiLogos/agent-system-design` and consumes this product only through the explicitly versioned integration seam.
 
-## Implementation language
+## Implementation bodies
 
-**QL/MEF is a Rust product.** Production implementation in this repository is a Cargo workspace. The intended architectural modules are Rust crates/modules corresponding to `ql-core`, `ql-mef`, `ql-semantic`, `ql-service`, `ql-adapters`, and `ql-fixtures` as they become warranted by the Q1–Q7 programme.
+QL/MEF's service/product implementation is a Rust Cargo workspace. The historical holographic C kernel has also been nativeised here under `c/` as the source-proven foundational kernel body rather than rewritten into Rust. C and Rust share the versioned holographic-kernel semantic contract and conformance fixtures.
 
-Non-Rust prototype branches are non-authoritative and must not be used as Closure evidence for the implementation programme.
+The intended Rust architectural modules are crates/modules corresponding to `ql-core`, `ql-mef`, `ql-semantic`, `ql-service`, `ql-adapters`, and `ql-fixtures` as they become warranted by the Q1–Q7 programme.
+
+## Foundational kernel reference
+
+The compact human-readable authority for the current kernel field is [`docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md`](docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md), paired with the machine-readable `fixtures/kernel/holographic-kernel-contract-v1.tsv` contract.
+
+It records the current source-proven identities for Hash/raw bedrock, C/P/L/S/T/M × direct/prime, A/B/C and the 3×3 square grammar, VĀK, MEF and the seven Context Frames. Richer harmonic/musical development grows from that centre under the continuing formal programme.
 
 ## Product boundary
 
@@ -33,6 +39,8 @@ It does not own Factory `Project`/`Run`/`Action` identities, AIKit `ContextResol
 
 ## Governing sources
 
+- Native kernel Wayfinder #78 and kernel nativeisation #56
+- [`docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md`](docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md) + `fixtures/kernel/holographic-kernel-contract-v1.tsv`
 - Factory draft PR #111 — standalone QL/MEF target architecture
 - Factory #113 — cross-repository identity/provenance floor
 - Factory #100 — frozen Loop Runtime seam (required first at Q5)
@@ -45,4 +53,4 @@ It does not own Factory `Project`/`Run`/`Action` identities, AIKit `ContextResol
 
 Then `Q3 + frozen runtime seam → Q5 runtime integration`, followed by evidence-led Q6/Q7 deepening and promotion.
 
-Q1–Q4 do not depend on Loop Runtime implementation progress.
+The native holographic kernel is the shared foundational centre beneath those staged product surfaces; deeper QL/MEF work extends its returned relations rather than reconstructing another substrate.
