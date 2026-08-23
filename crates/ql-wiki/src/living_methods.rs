@@ -6,7 +6,7 @@
 //! `WikiRefractionEngine`, and retains the resulting provider/operator/lens provenance.
 
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use crate::{
     ContextFrameDepth, LivingWikiMode, LivingWikiRefractionPlan, ProviderMode, RefractionStatus,
@@ -101,9 +101,14 @@ impl core::fmt::Display for LivingWikiMethodError {
                 f,
                 "Living Wiki method profile must be {LIVING_WIKI_METHOD_PROFILE}, got {profile}"
             ),
-            Self::EmptyProfileRef => f.write_str("Living Wiki method profile_ref must be non-empty"),
+            Self::EmptyProfileRef => {
+                f.write_str("Living Wiki method profile_ref must be non-empty")
+            }
             Self::InvalidPassBudget(value) => {
-                write!(f, "Living Wiki method max_passes must be positive, got {value}")
+                write!(
+                    f,
+                    "Living Wiki method max_passes must be positive, got {value}"
+                )
             }
             Self::TooManyPasses { requested, budget } => write!(
                 f,
@@ -147,7 +152,10 @@ impl LivingWikiMethodPass {
                 }
             }
             LivingWikiMethodFamily::ConjugacyInvestigation => {
-                if !matches!(self.request.target.kind, WikiTargetKind::D1 | WikiTargetKind::D2) {
+                if !matches!(
+                    self.request.target.kind,
+                    WikiTargetKind::D1 | WikiTargetKind::D2
+                ) {
                     return Err(LivingWikiMethodError::MethodTargetMismatch(
                         "conjugacy investigation requires the accepted D1 or D2 target form".into(),
                     ));
@@ -163,13 +171,16 @@ impl LivingWikiMethodPass {
             LivingWikiMethodFamily::MefLensRefraction => {
                 if self.request.lenses.is_empty() || self.request.mode == ProviderMode::Disabled {
                     return Err(LivingWikiMethodError::MethodTargetMismatch(
-                        "MEF lens refraction requires an enabled request with a selected lens".into(),
+                        "MEF lens refraction requires an enabled request with a selected lens"
+                            .into(),
                     ));
                 }
             }
             LivingWikiMethodFamily::ContextFrameReading => {
-                if !matches!(self.request.target.kind, WikiTargetKind::Frame | WikiTargetKind::Space)
-                    || !non_empty_context_ref(&self.request, "context_frame_ref")
+                if !matches!(
+                    self.request.target.kind,
+                    WikiTargetKind::Frame | WikiTargetKind::Space
+                ) || !non_empty_context_ref(&self.request, "context_frame_ref")
                 {
                     return Err(LivingWikiMethodError::MethodTargetMismatch(
                         "Context-Frame reading requires a bounded Frame/Space plus explicit current context_frame_ref supplied by the caller"
@@ -371,8 +382,15 @@ pub struct LivingWikiComparisonEvidence {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum LivingWikiComparisonError {
-    BudgetMismatch { ordinary: usize, aperture: usize },
-    BudgetExceeded { case_ref: String, used: usize, budget: usize },
+    BudgetMismatch {
+        ordinary: usize,
+        aperture: usize,
+    },
+    BudgetExceeded {
+        case_ref: String,
+        used: usize,
+        budget: usize,
+    },
     EmptyFieldRef,
 }
 
@@ -442,7 +460,8 @@ pub fn compare_living_wiki_entry(
     compare_more!(provenance_refs_retained, "reading-basis provenance");
     if aperture.context_position_four_recovered && !ordinary.context_position_four_recovered {
         improvements.push("context-position-four recovery".into());
-    } else if ordinary.context_position_four_recovered && !aperture.context_position_four_recovered {
+    } else if ordinary.context_position_four_recovered && !aperture.context_position_four_recovered
+    {
         regressions.push("context-position-four recovery".into());
     }
     if aperture.unsupported_relations < ordinary.unsupported_relations {
@@ -490,11 +509,12 @@ mod tests {
     use std::collections::BTreeMap;
 
     use ql_core::{QlFace, RelationFamily};
+    use serde_json::Map;
 
     use crate::{
-        plan_living_wiki_refraction, FieldCoordinate, LensSelection, LivingWikiRelevance,
-        RegistryDisclosureProvider, RevisionValue, WikiProvenanceRef, WikiRefractionTarget,
-        WikiStructuralField, WikiSubjectSnapshot,
+        FieldCoordinate, LensSelection, LivingWikiRelevance, RegistryDisclosureProvider,
+        RevisionValue, WikiProvenanceRef, WikiRefractionTarget, WikiStructuralField,
+        WikiSubjectSnapshot, plan_living_wiki_refraction,
     };
 
     fn pair_request() -> WikiRefractionRequest {
@@ -548,14 +568,14 @@ mod tests {
                     ],
                     provenance: vec![],
                 }),
-                material: BTreeMap::new(),
-                extensions: BTreeMap::new(),
+                material: Map::new(),
+                extensions: Map::new(),
             },
             lenses: vec![LensSelection {
                 lens_ref: "L0".into(),
                 sublens_ref: None,
             }],
-            context: BTreeMap::new(),
+            context: Map::new(),
         }
     }
 
@@ -658,7 +678,10 @@ mod tests {
         };
         let engine = WikiRefractionEngine::new(None);
         let result = execute_living_wiki_methods(&engine, &plan, &profile).unwrap();
-        assert_eq!(response_truth_state(&result.passes[0].response), "unavailable");
+        assert_eq!(
+            response_truth_state(&result.passes[0].response),
+            "unavailable"
+        );
         assert!(result.passes[0].response.readings.is_empty());
     }
 
@@ -672,12 +695,9 @@ mod tests {
             serde_json::from_value(fixture["ordinary"].clone()).unwrap();
         let aperture: LivingWikiComparisonCase =
             serde_json::from_value(fixture["aperture"].clone()).unwrap();
-        let evidence = compare_living_wiki_entry(
-            fixture["field_ref"].as_str().unwrap(),
-            ordinary,
-            aperture,
-        )
-        .unwrap();
+        let evidence =
+            compare_living_wiki_entry(fixture["field_ref"].as_str().unwrap(), ordinary, aperture)
+                .unwrap();
         assert_eq!(evidence.finding, LivingWikiComparisonFinding::Mixed);
         assert!(!evidence.improvements.is_empty());
         assert!(!evidence.regressions.is_empty());
