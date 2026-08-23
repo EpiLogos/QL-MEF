@@ -71,7 +71,7 @@ fn epogdoon_map_has_64_targets_and_exactly_8_collision_targets() {
         .collect();
     assert_eq!(widths.iter().map(|width| usize::from(*width)).sum::<usize>(), 72);
     assert_eq!(widths.iter().filter(|width| **width == 2).count(), 8);
-    assert!(widths.iter().all(|width| matches!(width, 1 | 2)));
+    assert!(widths.iter().all(|width| matches!(*width, 1 | 2)));
 }
 
 #[test]
