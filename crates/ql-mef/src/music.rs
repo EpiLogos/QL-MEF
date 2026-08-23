@@ -192,7 +192,7 @@ pub const fn epogdoon_72_to_64(source_index: u8) -> Option<u8> {
 }
 
 /// Number of 72-space source indices mapping to a 64-space target.
-pub const fn epogdoon_preimage_width(target_index: u8) -> Option<u8> {
+pub fn epogdoon_preimage_width(target_index: u8) -> Option<u8> {
     if target_index >= 64 {
         return None;
     }
