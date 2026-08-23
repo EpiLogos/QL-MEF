@@ -6,8 +6,13 @@ on:
       - agent/q6-pairing-square-grammar
   pull_request:
     paths:
+      - "crates/ql-core/src/kernel.rs"
+      - "crates/ql-core/src/face.rs"
       - "crates/ql-core/src/pairing.rs"
       - "crates/ql-core/tests/pairing_*.rs"
+      - "crates/ql-mef/src/lens.rs"
+      - "crates/ql-mef/tests/holographic_kernel_contract.rs"
+      - "fixtures/kernel/**"
       - "fixtures/q6/**"
       - ".github/workflows/q6-pairing-conformance.yml"
 
@@ -59,3 +64,7 @@ jobs:
           PY
       - name: Run standalone promoted pairing grammar acceptance
         run: cargo test -p ql-core --test pairing_grammar --test pairing_promotion
+      - name: Run shared holographic kernel contract acceptance
+        run: cargo test -p ql-mef --test holographic_kernel_contract
+      - name: Run Rust workspace acceptance
+        run: cargo test --workspace

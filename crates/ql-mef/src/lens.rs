@@ -1,6 +1,8 @@
 use core::fmt;
 use core::str::FromStr;
 
+use ql_core::QlFace;
+
 use crate::MefError;
 
 pub const MEF_REGISTRY_REVISION: u16 = 1;
@@ -10,6 +12,17 @@ pub const MEF_REGISTRY_VERSION: &str = "1.0.0-q2";
 pub enum LensFace {
     Day,
     Night,
+}
+
+impl LensFace {
+    /// Bind the existing Day/Night lens face to the shared direct/prime kernel
+    /// face without creating a second MEF coordinate system.
+    pub const fn kernel_face(self) -> QlFace {
+        match self {
+            Self::Day => QlFace::Direct,
+            Self::Night => QlFace::Conjugate,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

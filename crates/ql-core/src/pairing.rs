@@ -1,8 +1,8 @@
 use core::fmt;
 
 use crate::{
-    ConjugationDegree, ExpansionSide, QlCoordinate, QlFace, QlPosition, RelationFamily,
-    RelationField, StructuralError,
+    ConjugationDegree, ExpansionSide, KernelRelationId, QlCoordinate, QlFace, QlPosition,
+    RelationFamily, RelationField, StructuralError,
 };
 
 /// Version of the promoted pairing/square grammar.
@@ -47,6 +47,8 @@ pub enum CanonicalCrossPass {
 }
 
 impl CanonicalCrossPass {
+    /// Historical Q6 spelling retained as an alias/provenance surface while
+    /// #39 owns the D-name reconciliation.
     pub fn operator_ref(&self) -> String {
         match self {
             Self::D1 { position, .. } => format!(
@@ -62,6 +64,24 @@ impl CanonicalCrossPass {
                 "ql:pairing:{PAIRING_GRAMMAR_VERSION}:cross:D3:{}",
                 family.as_str()
             ),
+        }
+    }
+
+    /// Unambiguous shared kernel relation identity. This is the C/Rust join;
+    /// it does not erase the historical D1/D2/D3 derivation names above.
+    pub const fn kernel_relation_id(&self) -> KernelRelationId {
+        match self {
+            Self::D1 { .. } => KernelRelationId::CrossSamePosition,
+            Self::D2 { kind, .. } => match kind {
+                D2CrossPassKind::Transform => KernelRelationId::CrossTransform,
+                D2CrossPassKind::Require => KernelRelationId::CrossRequire,
+                D2CrossPassKind::Complete => KernelRelationId::CrossComplete,
+            },
+            Self::D3 { family, .. } => match family {
+                RelationFamily::A => KernelRelationId::ConjugateInvarianceA,
+                RelationFamily::B => KernelRelationId::ConjugateInvarianceB,
+                RelationFamily::C => KernelRelationId::ConjugateInvarianceC,
+            },
         }
     }
 }

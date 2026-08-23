@@ -21,7 +21,11 @@ pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
 pub use face::QlFace;
 pub use form::{QlForm, QlFormRef};
-pub use kernel::{KERNEL_VERSION, KernelCapabilities, SCHEMA_VERSION, kernel_capabilities};
+pub use kernel::{
+    HOLOGRAPHIC_KERNEL_CONTRACT_VERSION, HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB,
+    HOLOGRAPHIC_KERNEL_REFERENCE_REVISION, KERNEL_VERSION, KernelCapabilities, KernelRelationId,
+    QlFamily, SCHEMA_VERSION, kernel_capabilities,
+};
 pub use operator::{FourPlusTwoClass, OperatorValue, QlOperator};
 pub use pairing::{
     CanonicalCrossPass, D2CrossPassKind, PAIRING_GRAMMAR_VERSION, PairingError,
