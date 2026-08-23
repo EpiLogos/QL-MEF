@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{ProviderMode, WikiRefractionRequest, WIKI_REFRACTION_CONTRACT};
+use crate::{ProviderMode, WIKI_REFRACTION_CONTRACT, WikiRefractionRequest};
 
 pub const LIVING_WIKI_REFRACTION_PROFILE: &str = "ql-mef/living-wiki-refraction/v1";
 pub const LIVING_WIKI_ENTRY_APERTURE: [u8; 3] = [5, 0, 1];
@@ -82,10 +82,7 @@ impl CanonicalReturnTransit {
             from_position: 5,
             through_anchor: true,
             to_position: 0,
-            anchor_relations: vec![
-                "#0 <-> anchor".into(),
-                "#5 <-> anchor".into(),
-            ],
+            anchor_relations: vec!["#0 <-> anchor".into(), "#5 <-> anchor".into()],
         }
     }
 }
@@ -121,11 +118,22 @@ pub enum LivingWikiRefractionError {
 impl core::fmt::Display for LivingWikiRefractionError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            Self::InvalidPosition(value) => write!(f, "Living Wiki relevance position {value} is outside 0..5"),
-            Self::PositionBudgetTooSmall(value) => write!(f, "Living Wiki position budget {value} cannot preserve the 5->0->1 entry aperture"),
-            Self::FormalRequestMissing => f.write_str("formal Living Wiki depth requires an existing WikiRefractionRequest"),
-            Self::FormalRequestDisabled => f.write_str("formal Living Wiki depth cannot carry a disabled WikiRefractionRequest"),
-            Self::InvalidRefraction(value) => write!(f, "invalid existing Wiki refraction request: {value}"),
+            Self::InvalidPosition(value) => {
+                write!(f, "Living Wiki relevance position {value} is outside 0..5")
+            }
+            Self::PositionBudgetTooSmall(value) => write!(
+                f,
+                "Living Wiki position budget {value} cannot preserve the 5->0->1 entry aperture"
+            ),
+            Self::FormalRequestMissing => {
+                f.write_str("formal Living Wiki depth requires an existing WikiRefractionRequest")
+            }
+            Self::FormalRequestDisabled => f.write_str(
+                "formal Living Wiki depth cannot carry a disabled WikiRefractionRequest",
+            ),
+            Self::InvalidRefraction(value) => {
+                write!(f, "invalid existing Wiki refraction request: {value}")
+            }
         }
     }
 }
@@ -185,7 +193,8 @@ pub fn plan_living_wiki_refraction(
             mode,
             entry: EntryAperture {
                 positions: LIVING_WIKI_ENTRY_APERTURE,
-                meaning: "available orientation only; ordinary Wiki correctness does not enter QL".into(),
+                meaning: "available orientation only; ordinary Wiki correctness does not enter QL"
+                    .into(),
                 is_return: false,
             },
             canonical_return: CanonicalReturnTransit::established(),
@@ -210,7 +219,9 @@ pub fn plan_living_wiki_refraction(
 
     let refraction = match mode {
         LivingWikiMode::Ordinary => None,
-        LivingWikiMode::Explain => refraction.filter(|request| request.mode != ProviderMode::Disabled),
+        LivingWikiMode::Explain => {
+            refraction.filter(|request| request.mode != ProviderMode::Disabled)
+        }
         LivingWikiMode::Formal => {
             let request = refraction.ok_or(LivingWikiRefractionError::FormalRequestMissing)?;
             if request.mode == ProviderMode::Disabled {
@@ -251,8 +262,7 @@ pub fn plan_living_wiki_refraction(
 mod tests {
     use super::*;
     use crate::{
-        FieldCoordinate, LensSelection, WikiRefractionTarget, WikiStructuralField,
-        WikiTargetKind,
+        FieldCoordinate, LensSelection, WikiRefractionTarget, WikiStructuralField, WikiTargetKind,
     };
     use serde_json::Map;
 
@@ -294,7 +304,10 @@ mod tests {
         assert_eq!(plan.canonical_return.from_position, 5);
         assert!(plan.canonical_return.through_anchor);
         assert_eq!(plan.canonical_return.to_position, 0);
-        assert_eq!(plan.canonical_return.anchor_relations, vec!["#0 <-> anchor", "#5 <-> anchor"]);
+        assert_eq!(
+            plan.canonical_return.anchor_relations,
+            vec!["#0 <-> anchor", "#5 <-> anchor"]
+        );
     }
 
     #[test]
@@ -391,7 +404,10 @@ mod tests {
             },
             None,
         );
-        assert_eq!(bad_position.unwrap_err(), LivingWikiRefractionError::InvalidPosition(6));
+        assert_eq!(
+            bad_position.unwrap_err(),
+            LivingWikiRefractionError::InvalidPosition(6)
+        );
 
         let bad_budget = plan_living_wiki_refraction(
             LivingWikiMode::Explain,
@@ -401,6 +417,9 @@ mod tests {
             },
             None,
         );
-        assert_eq!(bad_budget.unwrap_err(), LivingWikiRefractionError::PositionBudgetTooSmall(2));
+        assert_eq!(
+            bad_budget.unwrap_err(),
+            LivingWikiRefractionError::PositionBudgetTooSmall(2)
+        );
     }
 }
