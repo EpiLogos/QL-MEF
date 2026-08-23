@@ -1,0 +1,17 @@
+index	sectors	arc_degrees	reciprocal_index	evidence	provenance
+0	1	360	15	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+1	2	180	14	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+2	4	90	13	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+3	8	45	12	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+4	9	40	11	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+5	10	36	10	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+6	12	30	9	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+7	15	24	8	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+8	24	15	7	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+9	30	12	6	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+10	36	10	5	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+11	40	9	4	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+12	45	8	3	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+13	90	4	2	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+14	180	2	1	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
+15	360	1	0	authored-accepted	M3 current_human_ratification + clock_system.lenses/lens_reciprocals
