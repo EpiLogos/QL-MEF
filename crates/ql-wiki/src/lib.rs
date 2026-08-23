@@ -4,11 +4,17 @@
 //! represented by [`MetaBinding`]. External Wiki identities stay foreign and are
 //! never copied into, or renamed by, the local projection.
 
+mod living;
 mod portal;
 mod recognition;
 mod refraction;
 mod registry_provider;
 
+pub use living::{
+    plan_living_wiki_refraction, CanonicalReturnTransit, ContextFrameDepth, EntryAperture,
+    LivingWikiMode, LivingWikiRefractionError, LivingWikiRefractionPlan, LivingWikiRelevance,
+    LIVING_WIKI_ENTRY_APERTURE, LIVING_WIKI_REFRACTION_PROFILE,
+};
 pub use portal::{
     CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver,
     ForeignTargetResolution, META_PORTAL_CONTRACT, ManifestationsResponse, MetaContextResponse,
