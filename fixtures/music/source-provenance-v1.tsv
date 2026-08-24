@@ -1,7 +1,7 @@
-source_id	repository	ref	path	blob_sha	standing	role
-m1-capability-matrix	EpiLogos/Epi-Logos-C-Experiments	research/deep-subsystem-capability-matrices	Idea/Bimba/Seeds/M/M1'/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.json	c5421d9038c180f8dab39a6920d3a77f3d715fbf	research-matrix-current-human-review-incorporated	M1 ratio vocabulary, traversal bases, 12x7 landscape, M1->M2 handoff
-m2-capability-matrix	EpiLogos/Epi-Logos-C-Experiments	research/deep-subsystem-capability-matrices	Idea/Bimba/Seeds/M/M2'/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.json	20a75a7bdade833a4af9453135ea0f848a35e781	research-matrix-current-human-review-incorporated	72-space MEF/Vimarsa field and 9:8 M2->M3 handoff
-m3-capability-matrix	EpiLogos/Epi-Logos-C-Experiments	research/deep-subsystem-capability-matrices	Idea/Bimba/Seeds/M/M3'/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json	8278e3e6f49eb8fa402cecfd95066aba3d404c2d	research-matrix-current-human-review-incorporated	72->64 floor map, fold-semantics open edge, 16 static clock apertures
-m1-canonical-spec	EpiLogos/Epi-Logos-C-Experiments	research/deep-subsystem-capability-matrices	Idea/Bimba/Seeds/M/M1'/Legacy/specs/M/M1-paramasiva-mathematical-dna.md	29fb05edd5293262a7d4faab513d85bff6e83fed	Canonical Specification - Revision 2	Ananda 12x12/72-byte substrate, Spanda/QL/12-ring derivation
-m3-harmonic-mathematics-v2	EpiLogos/Epi-Logos-C-Experiments	research/deep-subsystem-capability-matrices	Idea/Bimba/Seeds/M/M3'/m3-prime-ql-harmonic-mathematics-v2.md	25d84e3be5a2a8d2ef34c76f54dd49fe836edf12	seed/research	4+2 harmonic mathematics, clock-aperture derivation, mixed-modular research field
-kernel-formal-head	EpiLogos/QL-MEF	agent/q6-pairing-square-grammar	docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md	1dd86f869441b324b1f063140979e9572afc63c0	accepted-kernel-head-5c781e87fa321b85c5d799d33d3eea7210d4ea58	A/B/C + D operators, VAK, MEF and Context-Frame authority
+authority	kind	ref	sha	standing
+canonical-musical-derivation	vendored-source	docs/sources/ql-musical-derivation-v3.md	6414c56c6241c3da46e1ea6fdcd7a09b6b66c5aa	authored-canonical
+canonical-musical-derivation	vendor-commit	main	9429a9fb5173f32138799046e8e2a4d7a2d86968	authored-canonical
+pairing-mef-kernel	Rust-Q6	PR #19	5c781e87fa321b85c5d799d33d3eea7210d4ea58	accepted-foundation
+holographic-kernel	C-R4	PR #76	e5f612653c71c8a9ae74199ef2e8b326e3e9deba	accepted-foundation
+pairing-square-grammar	issue	#39	completed	accepted-foundation
+holographic-kernel-programme	issue	#56	current	accepted-foundation

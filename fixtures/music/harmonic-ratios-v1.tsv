@@ -1,9 +1,9 @@
-id	numerator	denominator	evidence	provenance	musical_consequence
-ratio.1:1	1	1	authored-accepted	M1 musical_theory.ratios; M1-C13	identity / unison reference
-ratio.4:3	4	3	authored-accepted	M1 musical_theory.ratios; Second Spanda	primary 4:3 harmonic relation
-ratio.3:4	3	4	authored-accepted	M1 musical_theory.ratios	reciprocal of 4:3
-ratio.3:2	3	2	authored-accepted	M1 musical_theory.ratios	composes with 4:3 to close 2:1
-ratio.2:3	2	3	authored-accepted	M1 musical_theory.ratios	reciprocal of 3:2
-ratio.16:9	16	9	authored-accepted	M1 Second Spanda; musical_theory.ratios	Second-Spanda harmonic field; 9:8 completes it to 2:1
-ratio.9:8	9	8	authored-accepted	M1 musical_theory; M2-C17; M3 formal_laws.epogdoon	epogdoon generator and exact 72-to-64 handoff ratio
-ratio.2:1	2	1	authored-accepted	M1 musical_theory.ratios and derived_relations	octave closure of the authored ratio products
+id	numerator	denominator	provenance
+ratio.1:1	1	1	ql-musical-derivation-v3 Table 5
+ratio.4:3	4	3	ql-musical-derivation-v3 Table 5
+ratio.3:4	3	4	ql-musical-derivation-v3 Table 5
+ratio.3:2	3	2	ql-musical-derivation-v3 Table 5
+ratio.2:3	2	3	ql-musical-derivation-v3 Table 5
+ratio.16:9	16	9	ql-musical-derivation-v3 Table 5
+ratio.9:8	9	8	ql-musical-derivation-v3 Table 5
+ratio.2:1	2	1	ql-musical-derivation-v3 Table 5
