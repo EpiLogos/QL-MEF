@@ -1,0 +1,47 @@
+name: Epi C R4 Holographic Kernel
+
+on:
+  pull_request:
+    paths:
+      - 'c/**'
+      - 'fixtures/kernel/**'
+      - 'migration/epi-kernel/r4-**'
+      - 'scripts/test-epi-c-r4.sh'
+      - 'vendor/epi-kernel/reference/**'
+      - '.github/workflows/epi-c-r4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  holographic-kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: R4 native kernel address/relation/MEF/CF/VAK parity and package seam
+        run: scripts/test-epi-c-r4.sh
+      - name: Keep accepted R1/R2 scalar parity green
+        run: scripts/test-epi-c-parity.sh
+      - name: Verify exact shared C/Rust kernel contract and Q6 workspace
+        env:
+          RUST_KERNEL_HEAD: 5c781e87fa321b85c5d799d33d3eea7210d4ea58
+          KERNEL_CONTRACT_BLOB: 5112349d363a5c01e63418c91880af67c5e60ed1
+        run: |
+          set -euo pipefail
+          RUST_WORKTREE="$RUNNER_TEMP/ql-mef-q6-kernel"
+          git fetch --no-tags origin "$RUST_KERNEL_HEAD"
+          git worktree add --detach "$RUST_WORKTREE" "$RUST_KERNEL_HEAD"
+          test "$(git -C "$RUST_WORKTREE" rev-parse HEAD)" = "$RUST_KERNEL_HEAD"
+          test "$(git hash-object fixtures/kernel/holographic-kernel-contract-v1.tsv)" = "$KERNEL_CONTRACT_BLOB"
+          test "$(git -C "$RUST_WORKTREE" hash-object fixtures/kernel/holographic-kernel-contract-v1.tsv)" = "$KERNEL_CONTRACT_BLOB"
+          diff -u fixtures/kernel/holographic-kernel-contract-v1.tsv \
+            "$RUST_WORKTREE/fixtures/kernel/holographic-kernel-contract-v1.tsv"
+          cargo test --manifest-path "$RUST_WORKTREE/Cargo.toml" \
+            -p ql-core --test pairing_grammar --test pairing_promotion
+          cargo test --manifest-path "$RUST_WORKTREE/Cargo.toml" \
+            -p ql-mef --test holographic_kernel_contract \
+            --test rotation_promotion --test context_frame_promotion
+          cargo test --manifest-path "$RUST_WORKTREE/Cargo.toml" --workspace
