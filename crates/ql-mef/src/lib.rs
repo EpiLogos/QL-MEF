@@ -29,12 +29,12 @@ pub use music::{
     MUSICAL_DERIVATION_SOURCE_BLOB, MUSICAL_DERIVATION_SOURCE_PATH,
     MUSICAL_DERIVATION_VENDOR_COMMIT, MUSICAL_HARMONIC_VERSION, MajorMinorCharacterDegree,
     ModeKind, ModeTonicInstance, MusicalBasis, MusicalSquare, NAME_CONTENT, POWER_CONTENT,
-    PitchClass, PreMMusicalDerivation, SECOND_SPANDA_VERTICAL, c_p_l_family_views,
-    cf_diatonic_cut, cross_interval_deltas, d3_interval_deltas, d3_relation_id,
-    derive_pre_m_music, directed_pitch_delta, explicate_coordinates, implicate_coordinates,
-    lens_anchor, lens_anchors, lens_kernel_coordinate, mode_tonic_instance, mode_tonic_landscape,
-    musical_square, musical_squares, pair_interval_deltas, pitch_at_lens, pitch_name,
-    spanda_cross_reading_ratios, transpose,
+    PitchClass, PreMMusicalDerivation, SECOND_SPANDA_VERTICAL, c_p_l_family_views, cf_diatonic_cut,
+    cross_interval_deltas, d3_interval_deltas, d3_relation_id, derive_pre_m_music,
+    directed_pitch_delta, explicate_coordinates, implicate_coordinates, lens_anchor, lens_anchors,
+    lens_kernel_coordinate, mode_tonic_instance, mode_tonic_landscape, musical_square,
+    musical_squares, pair_interval_deltas, pitch_at_lens, pitch_name, spanda_cross_reading_ratios,
+    transpose,
 };
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
