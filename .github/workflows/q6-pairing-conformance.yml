@@ -11,9 +11,12 @@ on:
       - "crates/ql-core/src/pairing.rs"
       - "crates/ql-core/tests/pairing_*.rs"
       - "crates/ql-mef/src/lens.rs"
+      - "crates/ql-mef/src/music.rs"
       - "crates/ql-mef/tests/holographic_kernel_contract.rs"
+      - "crates/ql-mef/tests/musical_harmonic_system.rs"
       - "fixtures/kernel/**"
       - "fixtures/q6/**"
+      - "fixtures/music/**"
       - ".github/workflows/q6-pairing-conformance.yml"
 
 jobs:
