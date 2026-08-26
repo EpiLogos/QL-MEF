@@ -1,119 +1,187 @@
-# Epi-Logos living relation-map home
+# Epi-Logos living relational development system
 
-Tracking issue: #25. Related QL relation/meta-wiki programme: #7.
+Tracking: QL-MEF #25 / #30 / #32 / #42 / #74 / #75 · O:I #29
 
-This directory is the QL-MEF home for the **living relation and cross-field maps** used to integrate Epi-Logos into the newer O:I-era architecture.
+This directory is the QL-MEF home for the **living relational development system** used to understand and reconstitute Epi-Logos through the current O:I suite.
 
-It is deliberately not the canonical source of Epi-Logos domain truth. Epi source authority remains in `EpiLogos/Epi-Logos-C-Experiments`; this directory holds version-aware **mappings over that source**.
+For current M/S identity work, read first:
 
-## Coordinate model
+- `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md` — current human-readable fourfold authority;
+- `epi-ms-fourfold.json` — canonical machine-readable six-row map;
+- `epi-ssprime-relational-field.csv` — current S/S′ harmonic/conjugate field;
+- `epi-ssprime-embodiment.json` — constitutional spine plus many-to-many capability embodiment;
+- `epi-guardians.json` — six enduring canonical Agent identities and stewardship metadata;
+- `epi-guardian-materialisation.json` — ordinary Actuation + AIKit materialisation, attributable labour/Return, Epii native-reading proof and non-numbered `0/1` metagency routing.
+
+`EPI-LOGOS-SOURCE-OF-TRUTH.md` and `EPI-LOGOS-DEVELOPMENT-WAYFINDER.md` remain the broader source/development entrypoints, but any older S/S′ wording in the R2 research corpus is subordinate to the explicit #74/#75 supersession above.
+
+## The current fourfold relation
+
+The relation system is no longer read as three unrelated sixfolds.
+
+For every index `i`:
 
 ```text
-M / M' = Epi-Logos subsystem/domain field
-
-M0 Anuttara
-M1 Paramasiva
-M2 Parashakti
-M3 Mahamaya
-M4 Nara
-M5 Epii
-
-S / S' = Epi technical/runtime strata and their conjugate/augmentation laws
+M_i    semantic / ontological subsystem identity + canonical guardian
+  ↓ dominant technological reflection
+S_i    standing O:I product centre
+  ↕ conjugate technological pair
+S_i′   operative Ta-Onta activity/module
+  ↓ differentiated activity participates in composition
+M_i′   deep recursive Pratibimba
 ```
 
-Do not alias Anuttara→Epii to S0→S5.
-
-## Current accepted Epi source input
-
-R1 was merged in `EpiLogos/Epi-Logos-C-Experiments` by PR #7 / merge commit:
-
-`be54a505728eaa06ddcc268fa53df5dd756bfb5e`
-
-The R1 source reading itself is pinned to Epi source head:
-
-`8608648f33e697dd5a8c5f499492619a02259af5`
-
-Canonical R1 inputs:
-
-- `Idea/Bimba/Seeds/Reconstitution/R1/AUTHORITATIVE-SOURCE-MANIFEST.md`
-- `Idea/Bimba/Seeds/Reconstitution/R1/CYCLE3-M-MPRIME-CAPABILITY-MATRIX.md`
-- `Idea/Bimba/Seeds/Reconstitution/R1/S-SPRIME-TECHNICAL-CAPABILITY-MATRIX.md`
-- `Idea/Bimba/Seeds/Reconstitution/R1/BIMBA-CANONICAL-INVENTORY.md`
-- `Idea/Bimba/Seeds/Reconstitution/R1/LEGACY-TECHNOLOGY-LEDGER.md`
-- `Idea/Bimba/Seeds/Reconstitution/R1/CAPABILITY-INVENTORY.json`
-- `Idea/Bimba/Seeds/Reconstitution/R1/README.md`
-
-The local `r1-source-snapshot.json` records this linkage machine-readably.
-
-## Maps developed here
-
-The living R2 field should resolve into four linked maps rather than one overloaded matrix:
+Canonical identities:
 
 ```text
-Epi M/M' internal relations
-        │
-        ├── M/M' ↔ S/S' embodiment/authority
-        │
-        ├── O:I ↔ Epi ownership/parity
-        │
-        └── Bimba bridge/integration relations
+0  Anuttara   / Central          / Khora     / epi.deep.m0
+1  Paramaśiva / Actuation        / Hen       / epi.deep.m1
+2  Paraśakti  / AIKit            / Pleroma   / epi.deep.m2
+3  Mahāmāyā   / Software Factory / Chronos   / epi.deep.m3
+4  Nara       / Workcell         / Anima     / epi.deep.m4
+5  Epii       / QL-MEF           / Aletheia  / epi.deep.m5
 ```
 
-Expected machine-readable surfaces, when actually derived from evidence:
+The register distinction is load-bearing because it tells us **what kind of thing a ref is**. The same index is equally load-bearing because it tells us **how those differentiated forms belong to one QL position**.
 
-- `epi-mmprime-relations.json`
-- `epi-ssprime-embodiment.json`
-- `oi-epi-cross-map.json`
-- `bimba-bridge-map.json`
+Do not collapse a guardian, software product, Ta-Onta module, deep instrument, situated Agency and Execution into one runtime object. Do not weaken the same-coordinate relation into a merely analogical correspondence either.
 
-Human-readable views can be generated alongside them. These names are working homes, not an instruction to invent empty symmetry or pre-fill relation cells.
+## Guardian materialisation after #42
 
-## Mapping law
-
-Preserve:
+The six guardian identities are durable M-register Agent refs. Their native operation is deliberately composed from existing owner primitives rather than from a parallel Epi runtime:
 
 ```text
-Epi domain identity != O:I product identity
-M/M' domain identity != S/S' technical stratum identity
+epi:agent:<guardian>
+        ↓ Actuation WorldBinding / RootScope
+situated stewardship Agency
+        ↓ AIKit Profile / SkillSet / Context / Method / SessionSpace resolution
+labouring Agency or ordinary act
+        ↓ native product Action / Reading
+Actuation Return + evidence/provenance
+        ↺ guardian stewardship
+```
+
+`epi-guardian-materialisation.json` records one ordinary materialisation for each guardian and pins the owner revisions inspected for #42. Model, harness, provider and material execution remain execution-time choices. Workcell is invoked only when a material body is required; Factory Run/Evidence is invoked when the act is developmental.
+
+The executable acceptance specimen is Epii operating its standing QL-MEF product through the existing `QlService::locate` and `QlService::refract` Readings. A differentiated Aletheia labouring Agency performs that bounded act and Returns evidence to Epii's stewardship Agency. Provider rebinding is tested without changing `epi:agent:epii`.
+
+The whole-field `0/1` Guardian is represented as `epi:metagency:0-1`: a non-numbered routing composition over the six guardians. It is not P6, M6, M7 or a seventh Agent coordinate.
+
+## The interoperating relation fields
+
+Canonical manipulable files now serve different scales:
+
+- `epi-relational-field.csv` — M/M′ semantic/deep relation field;
+- `epi-ms-fourfold.json` — constitutional M/S/S′/M′ identity spine;
+- `epi-ssprime-relational-field.csv` — S products × S′ Ta-Onta harmonic/conjugate field;
+- `epi-ssprime-embodiment.json` — capability embodiment across those faces;
+- O:I `data/ql-relational-field.csv`, tracked by O:I #29 — H/A encounter relations over the same six standing products.
+
+The fields share native QL grammar:
+
+- A/B/C harmonic families;
+- D1 same-coordinate conjugation;
+- D2 transform / require / complete cross-face relations;
+- D3 A/B/C on the conjugate face;
+- CF1–CF7 contextual readings where germane.
+
+The shared grammar permits relation, complement and refraction. It does not erase type, native ownership, privacy, authority or provenance.
+
+## S/S′ source model after #74/#75
+
+Current top-level S is the standing O:I product field:
+
+```text
+S0  Central
+S1  Actuation
+S2  AIKit
+S3  Software Factory
+S4  Workcell
+S5  QL-MEF
+```
+
+Current top-level S′ is the Ta-Onta operative field:
+
+```text
+S0′ Khora
+S1′ Hen
+S2′ Pleroma
+S3′ Chronos
+S4′ Anima
+S5′ Aletheia
+```
+
+Historical Epi S source still records a technical return circuit of command/runtime, residency/form, graph/retrieval, time/routing, agentic inhabitation and world/return. Current code also still co-resides the six Ta-Onta package bodies under `Body/S/S4/ta-onta`, with historical/local-recursive addresses `S4.0′..S4.5′`.
+
+That material is preserved as **history, architecture and implementation residency evidence**. It no longer controls current top-level S/S′ coordinate identity.
+
+In particular:
+
+```text
+S5′ = Aletheia
+M5 / M5′ = Epii
+```
+
+`Epii = S5′` is a superseded historical reading, not current coordinate authority.
+
+## How the fields connect
+
+A real development concern can be followed as:
+
+```text
+Epi authored M / M′ meaning
+        ↓
+canonical same-coordinate M / S / S′ / M′ home
+        ↓
+cross-coordinate harmonic/capability relations as needed
+        ↓
+native O:I product owner / actual source / code / data / provider
+        ↓
+vertical implementation + attributable evidence
+        ↓
+returned remapping
+```
+
+`epi-ssprime-embodiment.json` makes the important non-exclusivity rule explicit: constitutional home does not mean one product per capability. Nara, for example, is constitutionally M4 → Workcell/Anima while protected lived work can also require Central source ground, Actuation authority, AIKit context/capabilities and QL-MEF reflection.
+
+## O:I H/A is orthogonal
+
+O:I #29 owns the 12×12 human/agent encounter field over the same six product centres:
+
+```text
+H_i = human-facing product relation
+A_i = agent-facing product relation
+```
+
+Those are encounter orientations. They do not replace `M/S/S′/M′`, and `A_i` is not the canonical Epi guardian Agent.
+
+## Grounding and evidence
+
+Use these files when the current concern needs their depth:
+
+- `EPI-LOGOS-QL-MEF-FOUNDATION.md` — formal/harmonic/music substrate;
+- `EPI-OI-PRIMITIVE-OWNERSHIP-MAP.md` — primitive and native-owner semantics;
+- `EPI-LOGOS-SOURCE-SUBSTRATE-INVENTORY.md` — exact historical/current code, data and source bodies;
+- `EPI-LOGOS-RECONSTITUTION-DISPOSITION.md` — preservation/rebuild/parity law;
+- `EPI-M-S-FOURFOLD-IDENTITY-AND-SUPERSESSION.md` — explicit current disposition of conflicting S/S′ readings.
+
+The older R2 first/second/final passes, cross-document matrix and JSON research maps remain provenance companions. When they contain the former `S4′ Ta-Onta` nesting or `Epii = S5′` law, read those statements as **PRESERVE-AS-HISTORY / IMPLEMENTATION-RESIDENCY-ONLY**, not as current coordinate authority.
+
+## Development law
+
+Begin from an actual capability, discrepancy or desired experience. Locate authored meaning, identify its canonical same-coordinate home, inspect the cross-coordinate neighbourhood actually needed, then reach real code/data and build the smallest coherent whole.
+
+**QL generates questions, not obligations.** Relation maps make co-necessities perceptible; they do not create work merely because a cell exists.
+
+Preserve throughout:
+
+```text
+same-coordinate relation != runtime-object collapse
+constitutional home != exclusive dependency
+historical implementation residency != current semantic authority
 provider/body != semantic owner
 projection != ownership
 availability != authority
-shared relation != canonical merge
-formal QL reading != application truth
-Bimba != Neo4j != MCP
+formal relation != application truth
+Bimba != Neo4j != QL-MEF Meta-Knowledge Graph
 ```
-
-A relation cell is evidence-bearing mapping information, not a backlog item.
-
-## Bimba / QL-MEF graph boundary
-
-QL-MEF #7 already fixes the key graph distinction:
-
-```text
-QL-MEF OKF meta-wiki / Meta-Knowledge Graph Projection
-    !=
-Epi-Logos canonical Bimba Graph
-```
-
-Any relation between them is an explicit bridge/mapping with source ref, revision, relation/operator, scope, authority and provenance.
-
-Shared coordinates or MEF refraction do not transfer Bimba ownership into QL-MEF and do not make an external WikiFrame part of Bimba.
-
-## Snapshot versus living map
-
-The R1 Epi capability map is intentionally versioned. It answers what the Epi source field said at one exact revision.
-
-The maps in this directory are intentionally **living**. A later Epi source snapshot may update implementation state, evidence or capability details while preserving stable relation identities and their history.
-
-This distinction lets Epi-Logos, QL/MEF and the O:I products continue developing without either losing reproducibility or treating a map as a project freeze.
-
-## Next work
-
-Execute #25 from current live target-platform state:
-
-1. consume the accepted R1 machine inventory;
-2. derive the Epi M/M' internal relation dataset;
-3. derive M/M'↔S/S' embodiment/authority relations;
-4. verify live O:I/native-product contracts and derive the cross-map;
-5. derive the explicit Bimba bridge map;
-6. only then derive bounded migration/reuse/supersession pressures.

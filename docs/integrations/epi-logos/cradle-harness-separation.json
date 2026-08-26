@@ -1,0 +1,79 @@
+{
+  "schema_version": "epi-r2-cradle-harness-separation/2",
+  "status": "second_pass_hypothesis_after_human_correction",
+  "terms": {
+    "cradle": "General O:I operating field that provides authored ground, Agency, context/body/harness resolution, developmental runtime, materialisation and formal/refraction powers. Final terminology still requires ratification.",
+    "epi_application_harness": "Higher Epi-specific inhabitation/application layer: six canonical agent identities, VAK/CF grammar, Bimba/Pratibimba semantics, domain Skills/tools, dialogue, lived surfaces and return. Distinct from AIKit Harness/HarnessComposition providers.",
+    "s_base": "Historical technical capability substrate; generic portions preferentially migrate into or bind to native O:I owners.",
+    "s_prime": "Historical Epi-aware augmentation/reflection law; candidate modern role is refractive/profile/application binding over O:I-native capability rather than a second generic substrate.",
+    "m_prime": "Lived semantic/domain Pratibimba software; never reduced to S-prime or to provider identity."
+  },
+  "pipeline": [
+    "M/Bimba/QL form",
+    "O:I Cradle capability",
+    "Epi/QL-aware S-prime binding/refraction",
+    "M-prime lived domain + canonical Agent/Agency",
+    "Epi-Logos 0/1 parent application",
+    "reviewed return develops Epi and may pressure native O:I owners"
+  ],
+  "strata": [
+    {
+      "s": "S0/S0'",
+      "historical_capabilities": ["command", "kernel materialisation", "tool/process discovery", "bootstrap", "coordinate-native execution"],
+      "cradle_targets": ["AIKit capability/context resolution", "Workcell process/material lifecycle", "Factory developmental execution"],
+      "epi_specific_residue": ["M0-M5 deterministic kernels", "coordinate-native domain operations", "QL/harmonic profile semantics"],
+      "modern_s_prime_reading": "Bind native Cradle execution to Epi mathematical/domain operations without making command/process substrate the semantic owner."
+    },
+    {
+      "s": "S1/S1'",
+      "historical_capabilities": ["vault/files", "Markdown/wikilinks", "content residency", "Hen compiler", "write integrity"],
+      "cradle_targets": ["Central authored ground", "AIKit source/wiki/Knowledge operations", "Factory typed artifact/canon workflows"],
+      "epi_specific_residue": ["Epi coordinate/frontmatter/CT law", "Pratibimba residency", "canon promotion discipline"],
+      "modern_s_prime_reading": "Retain Epi content/residency law as profile/domain binding over generic authored/source capabilities."
+    },
+    {
+      "s": "S2/S2'",
+      "historical_capabilities": ["Neo4j graph body", "relation registry", "coordinate retrieval", "semantic cache", "GDS/ontology overlays"],
+      "cradle_targets": ["AIKit Knowledge federation/navigation", "Workcell graph/store provider materialisation"],
+      "epi_specific_residue": ["Bimba identity", "canonical coordinate/relation classes", "Epi provenance and promotion rules"],
+      "modern_s_prime_reading": "Expose Bimba through Epi-owned application/provider contracts into AIKit Knowledge; QL-MEF mapping remains explicit bridge/refraction."
+    },
+    {
+      "s": "S3/S3'",
+      "historical_capabilities": ["gateway", "sessions", "connections", "events", "live context", "DAY/NOW/Kairos", "Graphiti temporal runtime"],
+      "cradle_targets": ["AIKit SessionSpace/connection/persistence", "Workcell service/network lifecycle", "Central durable residence"],
+      "epi_specific_residue": ["DAY/NOW/Kairos meaning", "world-clock relation", "protected episodic semantics"],
+      "modern_s_prime_reading": "Use Cradle-native sessions/services while preserving Epi temporal coordinates as application/domain state, especially across M3', M4' and M5'."
+    },
+    {
+      "s": "S4/S4'",
+      "historical_capabilities": ["Pi runtime", "tools", "skills", "teams/subagents", "Khora/Hen/Pleroma/Chronos/Anima/Aletheia", "VAK/CF dispatch"],
+      "cradle_targets": ["Actuation Agent/Agency/Return", "AIKit HarnessComposition/AgentSession/Capability", "Factory Run/agent/Skill/evidence choreography", "Workcell persistent material hosting"],
+      "epi_specific_residue": ["six canonical Epi agent identities", "Epi 0/1 reader", "VAK/CF grammar", "Epi SkillSets", "domain-specific dispatch/return"],
+      "modern_s_prime_reading": "Separate generic agentic substrate from Epi application/harness grammar. Ta-onta is evidence for the separation, not the target monolith."
+    },
+    {
+      "s": "S5/S5'",
+      "historical_capabilities": ["Gnosis/RAG", "external knowledge", "review", "autoresearch", "crystallisation", "pedagogy", "return"],
+      "cradle_targets": ["AIKit Knowledge providers", "Factory Evidence/Recognition/recursive development", "Central proposal/return surfaces", "O:I shared-field projection"],
+      "epi_specific_residue": ["Gnosis/Bimba namespace relation", "Epii pedagogy", "Logos Atelier", "Epi canon recognition", "Mobius return semantics"],
+      "modern_s_prime_reading": "Generic retrieval/review infrastructure moves down; Epii retains specifically Epi knowledge-development and pedagogical return."
+    }
+  ],
+  "ta_onta": [
+    {"carrier":"Khora","generic_cradle":"Central + AIKit SessionSpace + Actuation WorldBinding + Workcell material state","epi_harness":"Epi DAY/NOW path/visibility and coordinate-aware ground"},
+    {"carrier":"Hen","generic_cradle":"Central authored material + AIKit source/wiki + Factory typed artifacts","epi_harness":"Epi CT/frontmatter/wikilink/residency law"},
+    {"carrier":"Pleroma","generic_cradle":"AIKit capabilities/Actions/resources + Workcell execution + O:I permissions","epi_harness":"Epi SkillSets and capability choices; no duplicate generic registry"},
+    {"carrier":"Chronos","generic_cradle":"session lifecycle/scheduling/service clocks","epi_harness":"DAY/NOW/Kairos and world-clock meaning"},
+    {"carrier":"Anima","generic_cradle":"Actuation composition + Factory orchestration + AIKit execution bodies","epi_harness":"VAK/CF and six-agent dispatch grammar"},
+    {"carrier":"Aletheia","generic_cradle":"AIKit Knowledge + Factory evidence/recognition + Central return","epi_harness":"Gnosis crystallisation, Epi pedagogy and Epii/Logos return"}
+  ],
+  "invariants": [
+    "Cradle capability != Epi semantic ownership",
+    "AIKit HarnessComposition != Epi application/harness",
+    "Actuation Agent identity != model/harness/session identity",
+    "S-prime technical refraction != M-prime semantic domain",
+    "Bimba != Neo4j != MCP != AIKit Knowledge != QL-MEF Meta-Knowledge Graph",
+    "VAK as Epi profile/grammar != mandatory generic Factory ontology"
+  ]
+}
