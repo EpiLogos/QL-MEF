@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.ai/schemas/epi-vak-registry-v1.schema.json",
+  "title": "Epi Vāk Registry v1",
+  "description": "Source-pinned semantic registry for the Anuttara/Vāk language. Vāk identity remains distinct from native Action identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "registry_id", "source", "entries"],
+  "properties": {
+    "schema": {"const": "epi.vak-registry/v1"},
+    "registry_id": {"type": "string", "minLength": 1},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "paths", "entry_count"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "revision": {"type": "string", "minLength": 7},
+        "paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "entry_count": {"type": "integer", "minimum": 1},
+        "content_identity": {"type": ["string", "null"]}
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/vak_entry"}
+    },
+    "relations": {
+      "type": "array",
+      "default": [],
+      "items": {"$ref": "#/$defs/vak_relation"}
+    },
+    "action_bindings": {
+      "type": "array",
+      "default": [],
+      "items": {"$ref": "#/$defs/vak_action_binding"}
+    },
+    "siva_operators": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/siva_operator"}
+    },
+    "shakti_domains": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/shakti_domain"}
+    }
+  },
+  "$defs": {
+    "standing": {
+      "type": "string",
+      "enum": [
+        "SOURCE-BACKED",
+        "CURRENT-AUTHORED-POSITION",
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-MAPPING",
+        "RESEARCH-PROPOSITION",
+        "INFERENCE"
+      ]
+    },
+    "vak_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable Vāk semantic identity. Must not be a native ActionRef."
+    },
+    "source_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "path", "coordinate", "standing"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "revision": {"type": "string", "minLength": 7},
+        "path": {"type": "string", "minLength": 1},
+        "coordinate": {"type": "string", "minLength": 1},
+        "standing": {"$ref": "#/$defs/standing"}
+      }
+    },
+    "vak_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vak_ref", "source"],
+      "properties": {
+        "vak_ref": {"$ref": "#/$defs/vak_ref"},
+        "source": {"$ref": "#/$defs/source_provenance"},
+        "name": {"type": ["string", "null"]},
+        "symbol": {"type": ["string", "null"]},
+        "primary_designation": {"type": ["string", "null"]},
+        "complete_formulation": {"type": ["string", "null"]},
+        "formulation_breakdown": {"type": ["string", "null"]},
+        "metaphysical_names": {"type": "array", "default": [], "items": {"type": "string"}},
+        "description": {"type": ["string", "null"]},
+        "structural_roles": {"type": "array", "default": [], "items": {"type": "string"}},
+        "siva_operator": {"type": ["integer", "null"], "minimum": 0, "maximum": 5},
+        "shakti_domain": {"type": ["integer", "null"], "minimum": 0, "maximum": 5},
+        "r_factors": {"type": "array", "default": [], "items": {"type": "string"}},
+        "derived_search_terms": {"type": "array", "default": [], "items": {"type": "string"}}
+      }
+    },
+    "vak_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from_ref", "relation", "into_ref", "standing", "evidence"],
+      "properties": {
+        "from_ref": {"type": "string", "minLength": 1},
+        "relation": {"type": "string", "minLength": 1},
+        "into_ref": {"type": "string", "minLength": 1},
+        "standing": {"$ref": "#/$defs/standing"},
+        "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "vak_action_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vak_ref", "native_action_ref", "native_owner", "relation_kind", "standing", "evidence"],
+      "properties": {
+        "vak_ref": {"$ref": "#/$defs/vak_ref"},
+        "native_action_ref": {"type": "string", "minLength": 1},
+        "native_owner": {"type": "string", "minLength": 1},
+        "relation_kind": {
+          "type": "string",
+          "enum": ["expresses", "invokes-through", "transforms-through", "reads-through", "other"]
+        },
+        "standing": {"$ref": "#/$defs/standing"},
+        "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "binding_revision": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "description": "A relation between Vāk semantic identity and a canonical native ActionRef. The two identities must remain distinct. Availability and authority are runtime readings and are deliberately not encoded as static truth in the binding."
+    },
+    "siva_operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "source_formulation", "name"],
+      "properties": {
+        "position": {"type": "integer", "minimum": 0, "maximum": 5},
+        "source_formulation": {"type": "string", "minLength": 1},
+        "name": {
+          "type": "string",
+          "enum": ["Potential / In-pression", "Negation", "Affirmation", "Dialogic", "Dialectic / Context", "Expression"]
+        }
+      }
+    },
+    "shakti_domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "symbol", "source_relation", "name"],
+      "properties": {
+        "position": {"type": "integer", "minimum": 0, "maximum": 5},
+        "symbol": {"type": "string", "pattern": "^@[0-5]$"},
+        "source_relation": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "enum": ["Library", "Bimba", "Pratibimba", "Language", "Stories", "Techne"]}
+      }
+    }
+  }
+}
