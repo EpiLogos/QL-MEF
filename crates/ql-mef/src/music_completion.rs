@@ -3,8 +3,8 @@ use ql_core::{
     build_d_modulation_frame,
 };
 
-use crate::{LensId, MusicalBasis, PitchClass};
 use crate::music::pitch_at_lens;
+use crate::{LensId, MusicalBasis, PitchClass};
 
 /// Version of the musical projection of the canonical D1→D3 conjugate-completion grammar.
 pub const MUSICAL_COMPLETION_VERSION: &str = "1.0.0";
