@@ -11,7 +11,7 @@ Two statements are intentionally distinct.
 
 ### Historical instrument fact
 
-The Jankó keyboard, developed by Paul von Jankó in the nineteenth century, uses a six-row isomorphic surface made from two interleaved whole-tone row families repeated as three touch-points for each sounding note. Along a row the next key is a whole tone away; the neighbouring interleaved row provides the semitone-shifted complementary whole-tone collection.
+The Jankó keyboard, developed by Paul von Jankó in 1882, uses a six-row isomorphic surface made from two interleaved whole-tone row families repeated as three touch-points for each sounding note. Along a row the next key is a whole tone away; the neighbouring interleaved row provides the semitone-shifted complementary whole-tone collection.
 
 Traditional piano-derived colouring makes the two alternating six-note row families visibly different:
 
@@ -177,6 +177,15 @@ A controller implementation is faithful when:
 6. the `3:3` and `4:2` reading is represented explicitly as a project-level Figure with historical provenance kept separate from QL derivational provenance;
 7. no controller-specific representation becomes a new authority for the musical system.
 
-## 6. Historical reference note
+## 6. Historical references
 
-The historical facts above should be cited in publication-facing material from primary or specialist keyboard-history sources. The working project reference used in the current review includes descriptions of the original six-row Jankó construction as two interleaved whole-tone manuals with three touch-points per note, and specialist Jankó-layout documentation recording the traditional alternating `4 white : 2 black` and `3 white : 3 black` row colour distributions.
+The historical facts above are grounded independently from the QL interpretation.
+
+- **Smithsonian Institution — historical instrument/keyboard account.** Its Jankó description records six ranks of keys, each row tuned as a whole-tone scale, with rows 1/3/5 beginning on one whole-tone collection and the alternate rows on the semitone-shifted collection. This establishes the six-row / two-interleaved-whole-tone construction used by the Figure.  
+  https://repository.si.edu/bitstreams/76ab52f7-b896-4298-b070-7b7589bf32bc/download
+- **Daskin Uniform Keyboard Systems — specialist Jankó construction description.** It records the traditional natural/accidental colouring on the whole-tone rows: the first/third row family carries four white and two black keys per six-note cycle, while the alternating rows carry three of each colour.  
+  https://daskin.com/page5/page5.html
+- **General construction cross-check.** The standard Jankó description gives two interleaved manuals with three touch-points for each key lever, producing six rows; adjacent columns/alternate rows differ by semitone while movement within a row is by whole tone.  
+  https://en.wikipedia.org/wiki/Jank%C3%B3_keyboard
+
+These sources establish only the historical/instrumental side of the Figure. The correspondences `3:3 ↔ 3 white : 3 black`, `4:2 ↔ 4 white : 2 black`, and the relation of the Jankó geometry to QL direct/prime, Spanda and the accepted #31 musical object remain current Epi/QL interpretive and product-design propositions.
