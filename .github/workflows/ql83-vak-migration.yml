@@ -1,0 +1,42 @@
+name: QL83 Vāk runtime migration
+
+on:
+  push:
+    branches:
+      - feat/epi-vak-agent-native-runtime
+    paths:
+      - 'scripts/ql83-vak-migrate.py'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/epi-vak-agent-native-runtime
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Apply bounded Vāk migration
+        run: python3 scripts/ql83-vak-migrate.py
+      - name: Format
+        run: cargo fmt --all
+      - name: Verify Vāk runtime
+        run: |
+          cargo check --workspace --all-targets
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+      - name: Commit verified runtime delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add crates/ql-mef/src/vak.rs crates/ql-mef/tests/vak_language.rs
+          git diff --cached --quiet && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m '[QL83] Bind exact Vāk source coordinates and verify runtime'
+          git push origin HEAD:feat/epi-vak-agent-native-runtime
