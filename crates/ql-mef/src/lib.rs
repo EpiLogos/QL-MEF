@@ -8,6 +8,7 @@ mod error;
 mod identity;
 mod lens;
 mod music;
+mod music_completion;
 mod provenance;
 mod reading;
 mod refraction;
@@ -35,6 +36,9 @@ pub use music::{
     lens_kernel_coordinate, mode_tonic_instance, mode_tonic_landscape, musical_square,
     musical_squares, pair_interval_deltas, pitch_at_lens, pitch_name, spanda_cross_reading_ratios,
     transpose,
+};
+pub use music_completion::{
+    MUSICAL_COMPLETION_VERSION, MusicalCompletionFrame, musical_completion_frame,
 };
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
