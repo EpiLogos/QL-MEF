@@ -3,8 +3,7 @@ use std::fmt;
 
 pub const VAK_SOURCE_REPOSITORY: &str = "EpiLogos/Epi-Logos-C-Experiments";
 pub const VAK_SOURCE_REVISION: &str = "daa660cbc1b8c5da83828698665a753852cb0287";
-pub const VAK_SOURCE_PATH: &str =
-    "Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md";
+pub const VAK_SOURCE_PATH: &str = "Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md";
 pub const VAK_SOURCE_GIT_BLOB: &str = "22835042d4d2c4ba821c252bd4fbfe52f39712ef";
 pub const VAK_ENTRY_COUNT: usize = 109;
 
@@ -193,6 +192,17 @@ impl VakRelationOp {
             Self::Express => "Express",
         }
     }
+
+    pub const fn source_coordinate(self) -> &'static str {
+        match self {
+            Self::Potential => "M0-5-(0/1)-0",
+            Self::Distinguish => "M0-5-(0/1)-1",
+            Self::Affirm => "M0-5-(0/1)-2",
+            Self::Relate => "M0-5-(0/1)-3",
+            Self::Contextualise => "M0-5-(0/1)-4",
+            Self::Express => "M0-5-(0/1)-5",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -238,6 +248,17 @@ impl VakAddressHorizon {
             Self::H3 => "N#",
             Self::H4 => "M#",
             Self::H5 => "R#",
+        }
+    }
+
+    pub const fn source_coordinate(self) -> &'static str {
+        match self {
+            Self::H0 => "M0-5-(5/0)-0",
+            Self::H1 => "M0-5-(5/0)-1",
+            Self::H2 => "M0-5-(5/0)-2",
+            Self::H3 => "M0-5-(5/0)-3",
+            Self::H4 => "M0-5-(5/0)-4",
+            Self::H5 => "M0-5-(5/0)-5",
         }
     }
 
@@ -502,7 +523,10 @@ impl VakRegistry {
     pub fn children(&self, reference: &VakRef) -> Vec<&VakRef> {
         self.entries
             .keys()
-            .filter(|candidate| self.parent(candidate).is_some_and(|parent| parent == reference))
+            .filter(|candidate| {
+                self.parent(candidate)
+                    .is_some_and(|parent| parent == reference)
+            })
             .collect()
     }
 
@@ -587,41 +611,55 @@ impl VakRegistry {
         })
     }
 
-    pub fn bind_operator(&self, operator: VakRelationOp) -> VakOperatorBinding {
-        let support = self
-            .entries()
-            .filter(|entry| entry.raw_source_row.contains(operator.glyph()))
-            .map(|entry| entry.vak_ref.clone())
-            .collect::<Vec<_>>();
-        VakOperatorBinding {
+    pub fn bind_operator(&self, operator: VakRelationOp) -> Result<VakOperatorBinding, VakError> {
+        let source_ref = VakRef::new(operator.source_coordinate())?;
+        let entry = self
+            .locate(&source_ref)
+            .ok_or_else(|| VakError::UnknownRef(source_ref.to_string()))?;
+        if !entry.raw_source_row.contains(operator.glyph()) {
+            return Err(VakError::InvalidRef(format!(
+                "{} does not carry Śiva operator glyph {}",
+                source_ref,
+                operator.glyph()
+            )));
+        }
+        Ok(VakOperatorBinding {
             operator,
-            standing: VakStanding::DesignCommitment,
-            source_support: support,
+            standing: VakStanding::ImplementationMapping,
+            source_support: vec![source_ref.clone()],
             evidence: vec![format!(
-                "PR #84 architecture binds Śiva position {} to `{}` / {}; source rows remain independently source-backed",
+                "PR #84 maps general O:I relation position {} to exact source-backed Śiva node {}: `{}` / {}",
                 operator.position(),
+                source_ref,
                 operator.glyph(),
                 operator.name()
             )],
-        }
+        })
     }
 
-    pub fn bind_horizon(&self, horizon: VakAddressHorizon) -> VakHorizonBinding {
-        let support = self
-            .locate_symbol(horizon.source_symbol())
-            .into_iter()
-            .map(|entry| entry.vak_ref.clone())
-            .collect::<Vec<_>>();
-        VakHorizonBinding {
-            horizon,
-            standing: VakStanding::DesignCommitment,
-            source_support: support,
-            evidence: vec![format!(
-                "PR #84 architecture binds {} to source symbol `{}`; matching Vāk entries retain source provenance",
-                horizon.address(),
-                horizon.source_symbol()
-            )],
+    pub fn bind_horizon(&self, horizon: VakAddressHorizon) -> Result<VakHorizonBinding, VakError> {
+        let source_ref = VakRef::new(horizon.source_coordinate())?;
+        let entry = self
+            .locate(&source_ref)
+            .ok_or_else(|| VakError::UnknownRef(source_ref.to_string()))?;
+        let source_relation = format!("{} = {}", horizon.address(), horizon.source_symbol());
+        if !entry.raw_source_row.contains(&source_relation) {
+            return Err(VakError::InvalidRef(format!(
+                "{} does not carry Śakti horizon relation {}",
+                source_ref, source_relation
+            )));
         }
+        Ok(VakHorizonBinding {
+            horizon,
+            standing: VakStanding::ImplementationMapping,
+            source_support: vec![source_ref.clone()],
+            evidence: vec![format!(
+                "PR #84 maps general O:I horizon {} to exact source-backed Śakti node {}: {}",
+                horizon.address(),
+                source_ref,
+                source_relation
+            )],
+        })
     }
 
     pub fn self_other_entry(&self, form: SelfOtherForm) -> Result<&VakEntry, VakError> {
@@ -770,7 +808,8 @@ fn clean_cell(value: &str) -> Option<String> {
 fn extract_r_factors(value: &str) -> Vec<String> {
     let mut factors = BTreeSet::new();
     for token in value.split(|ch: char| ch.is_whitespace() || matches!(ch, ',' | ';' | '—')) {
-        let token = token.trim_matches(|ch: char| matches!(ch, '`' | '.' | ':' | '(' | ')' | '[' | ']'));
+        let token =
+            token.trim_matches(|ch: char| matches!(ch, '`' | '.' | ':' | '(' | ')' | '[' | ']'));
         let bytes = token.as_bytes();
         if bytes.len() >= 2 && bytes[0] == b'R' && bytes[1].is_ascii_digit() {
             factors.insert(token.to_owned());

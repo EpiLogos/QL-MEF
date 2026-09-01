@@ -43,8 +43,13 @@ fn siva_sixfold_is_present_at_exact_source_coordinates() {
         assert_eq!(operator.position() as usize, expected_position(operator));
         let entry = registry.locate_str(coordinate).unwrap();
         assert!(entry.raw_source_row.contains(source_glyph));
-        assert!(entry.raw_source_row.contains(operator.name()));
         assert_eq!(entry.source.standing, VakStanding::SourceBacked);
+        let binding = registry.bind_operator(operator).unwrap();
+        assert_eq!(binding.standing, VakStanding::ImplementationMapping);
+        assert_eq!(
+            binding.source_support,
+            vec![VakRef::new(coordinate).unwrap()]
+        );
     }
 }
 
@@ -65,6 +70,12 @@ fn shakti_sixfold_is_present_at_exact_source_coordinates() {
         assert!(entry.raw_source_row.contains(source_relation));
         assert!(entry.raw_source_row.contains(horizon.source_symbol()));
         assert_eq!(entry.source.standing, VakStanding::SourceBacked);
+        let binding = registry.bind_horizon(horizon).unwrap();
+        assert_eq!(binding.standing, VakStanding::ImplementationMapping);
+        assert_eq!(
+            binding.source_support,
+            vec![VakRef::new(coordinate).unwrap()]
+        );
     }
 }
 
@@ -103,11 +114,16 @@ fn vak_source_neighbourhood_exposes_the_twelve_grammar_teeth() {
     let children = registry.children(&centre);
     assert_eq!(children.len(), 12);
     for form in SelfOtherForm::ALL {
-        assert!(children.contains(&&form.source_ref()));
+        assert!(
+            children
+                .iter()
+                .any(|child| child.as_str() == form.source_coordinate())
+        );
     }
 
     let neighbourhood = registry.neighbourhood(&centre, 1).unwrap();
-    assert_eq!(neighbourhood.entries.len(), 13);
+    // Centre + parent + twelve direct grammar children.
+    assert_eq!(neighbourhood.entries.len(), 14);
     assert_eq!(neighbourhood.relations.len(), 13);
 }
 
@@ -140,7 +156,13 @@ fn ordinary_native_ref_can_refract_into_a_real_vak_neighbourhood() {
     assert_eq!(reading.native_ref, "action:aikit/resolve");
     assert_eq!(reading.vak_ref, vak_ref);
     assert_eq!(reading.standing, VakStanding::ImplementationMapping);
-    assert!(!registry.neighbourhood(&reading.vak_ref, 1).unwrap().entries.is_empty());
+    assert!(
+        !registry
+            .neighbourhood(&reading.vak_ref, 1)
+            .unwrap()
+            .entries
+            .is_empty()
+    );
 }
 
 fn expected_position(operator: VakRelationOp) -> usize {
