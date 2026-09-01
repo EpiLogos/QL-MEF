@@ -51,13 +51,8 @@ fn d3_completion_is_the_existing_musical_square() {
         None,
     )
     .expect("canonical D3 frame");
-    let square = musical_square(
-        MusicalBasis::Fifths,
-        LensId::L2Prime,
-        RelationFamily::C,
-        1,
-    )
-    .expect("canonical musical square");
+    let square = musical_square(MusicalBasis::Fifths, LensId::L2Prime, RelationFamily::C, 1)
+        .expect("canonical musical square");
 
     assert_eq!(completion.family, square.family);
     assert_eq!(completion.pair_index, square.pair_index);
