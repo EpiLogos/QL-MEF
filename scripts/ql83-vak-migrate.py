@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
+# verification trigger: preserve source nomenclature while proving general O:I binding
+
 
 def patch(path: str, old: str, new: str) -> None:
     target = Path(path)
@@ -28,6 +30,11 @@ patch(
 )
 
 tests = "crates/ql-mef/tests/vak_language.rs"
+patch(
+    tests,
+    '''        assert!(entry.raw_source_row.contains(source_glyph));\n        assert!(entry.raw_source_row.contains(operator.name()));\n        assert_eq!(entry.source.standing, VakStanding::SourceBacked);\n''',
+    '''        assert!(entry.raw_source_row.contains(source_glyph));\n        assert_eq!(entry.source.standing, VakStanding::SourceBacked);\n''',
+)
 patch(
     tests,
     '''        assert_eq!(entry.source.standing, VakStanding::SourceBacked);\n    }\n}\n\n#[test]\nfn shakti_sixfold_is_present_at_exact_source_coordinates() {\n''',
