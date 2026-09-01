@@ -11,6 +11,7 @@ mod reading;
 mod refraction;
 mod registry;
 mod sublens;
+mod vak;
 
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
@@ -30,6 +31,13 @@ pub use registry::{
     all_sublens_definitions, lens_definition,
 };
 pub use sublens::SublensRef;
+pub use vak::{
+    SelfOtherForm, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
+    VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon, VakEntry,
+    VakError, VakHorizonBinding, VakNeighbourhood, VakOperatorBinding, VakPath, VakPraxisAspect,
+    VakPraxisReading, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind,
+    VakRelationOp, VakSourceProvenance, VakStanding,
+};
 
 impl MCoordinate {
     /// Project the coordinate face into the existing QL direct/conjugate floor
