@@ -1,0 +1,16 @@
+{
+  "schema": "ql-mef.epi-vak-source-provenance/v1",
+  "source": {
+    "repository": "EpiLogos/Epi-Logos-C-Experiments",
+    "revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "path": "Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md",
+    "git_blob_sha": "22835042d4d2c4ba821c252bd4fbfe52f39712ef"
+  },
+  "local": {
+    "path": "data/epi-bimba-map/anuttara-language-map.md",
+    "git_blob_sha": "22835042d4d2c4ba821c252bd4fbfe52f39712ef"
+  },
+  "entry_count": 109,
+  "authority": "semantic-formal-source",
+  "parity": "exact-git-blob-identity"
+}
