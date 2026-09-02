@@ -1,0 +1,220 @@
+from pathlib import Path
+
+path = Path("crates/ql-mef/src/vak.rs")
+source = path.read_text()
+
+anchor = "use std::fmt;\n"
+addition = '''use ql_core::{
+    QlShapeAddress, RELATIONAL_SIXFOLD_OPERATOR_REF, RelationalSixfold, SixBySixField,
+};
+'''
+if source.count(anchor) != 1:
+    raise SystemExit("vak import anchor missing")
+source = source.replace(anchor, anchor + "\n" + addition, 1)
+
+marker = '#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]\npub enum SelfOtherForm {'
+types = '''/// One source-provenanced address in the six Śiva operations × six Śakti horizons field.
+///
+/// The inherited QL `6×6` coordinates are used as the canonical accounting carrier. This is an
+/// implementation mapping of two Vāk sixfolds onto that shape; it does not claim that the source
+/// text itself names Śiva as the kernel Direct face or Śakti as the Conjugate face.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VakSivaSaktiCell {
+    pub operator: VakRelationOp,
+    pub horizon: VakAddressHorizon,
+    pub ql_address: QlShapeAddress,
+    pub operator_source_ref: VakRef,
+    pub horizon_source_ref: VakRef,
+    pub standing: VakStanding,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VakSivaSaktiField {
+    pub ql_shape_ref: String,
+    pub cells: Vec<VakSivaSaktiCell>,
+    pub standing: VakStanding,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VakSivaSaktiGenerationSite {
+    pub position: u8,
+    pub operator: VakRelationOp,
+    pub horizon: VakAddressHorizon,
+    pub operator_source_ref: VakRef,
+    pub horizon_source_ref: VakRef,
+    pub ql_operator_ref: String,
+    pub standing: VakStanding,
+}
+
+/// Source-grounded Vāk reading of the canonical kernel `6 / 6′ -> 6+6′` operation.
+///
+/// The kernel supplies six same-position generation sites and Return. Vāk supplies the exact
+/// Śiva/Śakti source identities at those positions. Semantic generated content remains an
+/// attributable Agent/client return and is deliberately absent from this deterministic reading.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VakSivaSaktiRelationalSixfold {
+    pub ql_shape_ref: String,
+    pub ql_operator_ref: String,
+    pub contextualise_source_ref: VakRef,
+    pub return_anchor_symbol: String,
+    pub sites: Vec<VakSivaSaktiGenerationSite>,
+    pub semantic_generation_requires_attributable_return: bool,
+    pub standing: VakStanding,
+}
+
+'''
+if source.count(marker) != 1:
+    raise SystemExit("SelfOtherForm marker missing")
+source = source.replace(marker, types + marker, 1)
+
+marker = "    pub fn refract(\n"
+methods = '''    /// Compose the exact M0-5 Śiva operation sixfold with the exact M0-5 Śakti horizon
+    /// sixfold through the canonical QL 6×6 accounting shape.
+    pub fn siva_sakti_operative_field(&self) -> Result<VakSivaSaktiField, VakError> {
+        let ql_field = SixBySixField::canonical();
+        let mut cells = Vec::with_capacity(36);
+        for operator in VakRelationOp::ALL {
+            self.bind_operator(operator)?;
+            for horizon in VakAddressHorizon::ALL {
+                self.bind_horizon(horizon)?;
+                let index = usize::from(operator.position()) * 6 + usize::from(horizon.position());
+                let ql_address = *ql_field.addresses.get(index).ok_or_else(|| {
+                    VakError::InvalidRef(format!(
+                        "canonical QL 6x6 address missing at Śiva {} × Śakti {}",
+                        operator.position(),
+                        horizon.position()
+                    ))
+                })?;
+                cells.push(VakSivaSaktiCell {
+                    operator,
+                    horizon,
+                    ql_address,
+                    operator_source_ref: VakRef::new(operator.source_coordinate())?,
+                    horizon_source_ref: VakRef::new(horizon.source_coordinate())?,
+                    standing: VakStanding::ImplementationMapping,
+                });
+            }
+        }
+        Ok(VakSivaSaktiField {
+            ql_shape_ref: ql_field.shape_ref().into(),
+            cells,
+            standing: VakStanding::ImplementationMapping,
+        })
+    }
+
+    /// Bind the source sixfolds to the kernel's six same-position relational-generation sites.
+    /// `/` remains the exact Vāk contextual/dialectical operator while the kernel supplies the
+    /// deterministic site/operator identity and Return law.
+    pub fn siva_sakti_relational_sixfold(
+        &self,
+    ) -> Result<VakSivaSaktiRelationalSixfold, VakError> {
+        let ql_shape = RelationalSixfold::canonical();
+        let contextualise = self.bind_operator(VakRelationOp::Contextualise)?;
+        let contextualise_source_ref = contextualise
+            .source_support
+            .first()
+            .cloned()
+            .ok_or_else(|| VakError::UnknownRef(VakRelationOp::Contextualise.source_coordinate().into()))?;
+        let mut sites = Vec::with_capacity(6);
+        for ql_site in &ql_shape.sites {
+            let position = ql_site.position.value();
+            let operator = VakRelationOp::ALL[usize::from(position)];
+            let horizon = VakAddressHorizon::ALL[usize::from(position)];
+            self.bind_operator(operator)?;
+            self.bind_horizon(horizon)?;
+            sites.push(VakSivaSaktiGenerationSite {
+                position,
+                operator,
+                horizon,
+                operator_source_ref: VakRef::new(operator.source_coordinate())?,
+                horizon_source_ref: VakRef::new(horizon.source_coordinate())?,
+                ql_operator_ref: ql_site.operator_ref(),
+                standing: VakStanding::ImplementationMapping,
+            });
+        }
+        Ok(VakSivaSaktiRelationalSixfold {
+            ql_shape_ref: ql_shape.shape_ref().into(),
+            ql_operator_ref: RELATIONAL_SIXFOLD_OPERATOR_REF.into(),
+            contextualise_source_ref,
+            return_anchor_symbol: ql_shape.return_anchor_symbol.into(),
+            sites,
+            semantic_generation_requires_attributable_return: true,
+            standing: VakStanding::ImplementationMapping,
+        })
+    }
+
+'''
+if source.count(marker) != 1:
+    raise SystemExit("refract method marker missing")
+source = source.replace(marker, methods + marker, 1)
+path.write_text(source)
+
+lib = Path("crates/ql-mef/src/lib.rs")
+source = lib.read_text()
+old = '''    VakPraxisReading, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind,
+    VakRelationOp, VakSourceProvenance, VakStanding,
+};'''
+new = '''    VakPraxisReading, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind,
+    VakRelationOp, VakSivaSaktiCell, VakSivaSaktiField, VakSivaSaktiGenerationSite,
+    VakSivaSaktiRelationalSixfold, VakSourceProvenance, VakStanding,
+};'''
+if source.count(old) != 1:
+    raise SystemExit("vak export anchor drifted")
+lib.write_text(source.replace(old, new, 1))
+
+tests = Path("crates/ql-mef/tests/vak_language.rs")
+source = tests.read_text()
+marker = "\nfn expected_position(operator: VakRelationOp) -> usize {"
+additions = r'''
+#[test]
+fn siva_times_sakti_is_a_source_provenanced_canonical_six_by_six_field() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let field = registry.siva_sakti_operative_field().unwrap();
+    assert_eq!(field.ql_shape_ref, ql_core::SIX_BY_SIX_SHAPE_REF);
+    assert_eq!(field.cells.len(), 36);
+    assert_eq!(field.standing, VakStanding::ImplementationMapping);
+
+    for operator in VakRelationOp::ALL {
+        for horizon in VakAddressHorizon::ALL {
+            let cell = field
+                .cells
+                .iter()
+                .find(|cell| cell.operator == operator && cell.horizon == horizon)
+                .unwrap();
+            assert_eq!(cell.ql_address.row.position.value(), operator.position());
+            assert_eq!(cell.ql_address.column.position.value(), horizon.position());
+            assert_eq!(cell.operator_source_ref.as_str(), operator.source_coordinate());
+            assert_eq!(cell.horizon_source_ref.as_str(), horizon.source_coordinate());
+            assert!(registry.locate(&cell.operator_source_ref).is_some());
+            assert!(registry.locate(&cell.horizon_source_ref).is_some());
+        }
+    }
+}
+
+#[test]
+fn slash_binds_the_two_vak_sixfolds_to_kernel_generation_without_inventing_content() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let field = registry.siva_sakti_relational_sixfold().unwrap();
+    assert_eq!(field.ql_shape_ref, ql_core::RELATIONAL_SIXFOLD_SHAPE_REF);
+    assert_eq!(field.ql_operator_ref, ql_core::RELATIONAL_SIXFOLD_OPERATOR_REF);
+    assert_eq!(field.contextualise_source_ref.as_str(), "M0-5-(0/1)-4");
+    assert_eq!(field.return_anchor_symbol, "0/1");
+    assert_eq!(field.sites.len(), 6);
+    assert!(field.semantic_generation_requires_attributable_return);
+
+    for (position, site) in field.sites.iter().enumerate() {
+        assert_eq!(site.position, position as u8);
+        assert_eq!(site.operator.position(), position as u8);
+        assert_eq!(site.horizon.position(), position as u8);
+        assert_eq!(site.operator_source_ref.as_str(), site.operator.source_coordinate());
+        assert_eq!(site.horizon_source_ref.as_str(), site.horizon.source_coordinate());
+        assert_eq!(
+            site.ql_operator_ref,
+            format!("{}:position-{position}", ql_core::RELATIONAL_SIXFOLD_OPERATOR_REF)
+        );
+    }
+}
+'''
+if source.count(marker) != 1:
+    raise SystemExit("vak test tail marker missing")
+tests.write_text(source.replace(marker, additions + marker, 1))
