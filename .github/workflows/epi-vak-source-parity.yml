@@ -1,0 +1,99 @@
+name: Epi Vāk source parity
+
+on:
+  push:
+    branches:
+      - feat/epi-vak-agent-native-runtime
+  pull_request:
+    paths:
+      - 'data/epi-bimba-map/anuttara-language-map.md'
+      - 'data/epi-bimba-map/anuttara-language-map.provenance.json'
+      - '.github/workflows/epi-vak-source-parity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  exact-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out QL-MEF head
+        uses: actions/checkout@v4
+        with:
+          ref: feat/epi-vak-agent-native-runtime
+          fetch-depth: 0
+
+      - name: Check out authoritative Epi source revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: epi-source
+
+      - name: Synchronise the authoritative Anuttara language byte-for-byte
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE='epi-source/Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md'
+          LOCAL='data/epi-bimba-map/anuttara-language-map.md'
+          cp "$SOURCE" "$LOCAL"
+
+          source_blob="$(git -C epi-source hash-object 'Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md')"
+          local_blob="$(git hash-object "$LOCAL")"
+          test "$source_blob" = '22835042d4d2c4ba821c252bd4fbfe52f39712ef'
+          test "$local_blob" = "$source_blob"
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('data/epi-bimba-map/anuttara-language-map.md')
+          rows = [line for line in path.read_text().splitlines() if line.startswith('| `M0')]
+          assert len(rows) == 109, len(rows)
+          provenance = {
+              'schema': 'ql-mef.epi-vak-source-provenance/v1',
+              'source': {
+                  'repository': 'EpiLogos/Epi-Logos-C-Experiments',
+                  'revision': 'daa660cbc1b8c5da83828698665a753852cb0287',
+                  'path': 'Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md',
+                  'git_blob_sha': '22835042d4d2c4ba821c252bd4fbfe52f39712ef',
+              },
+              'local': {
+                  'path': 'data/epi-bimba-map/anuttara-language-map.md',
+                  'git_blob_sha': '22835042d4d2c4ba821c252bd4fbfe52f39712ef',
+              },
+              'entry_count': 109,
+              'authority': 'semantic-formal-source',
+              'parity': 'exact-git-blob-identity',
+          }
+          Path('data/epi-bimba-map/anuttara-language-map.provenance.json').write_text(
+              json.dumps(provenance, ensure_ascii=False, indent=2) + '\n'
+          )
+          PY
+
+      - name: Commit source correction when branch differs
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add data/epi-bimba-map/anuttara-language-map.md data/epi-bimba-map/anuttara-language-map.provenance.json
+          if git diff --cached --quiet; then
+            echo 'Source is already exactly identical.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m '[EPI-VAK] Synchronise exact 109-node Anuttara source'
+          git push origin HEAD:feat/epi-vak-agent-native-runtime
+
+      - name: Prove returned source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_blob="$(git -C epi-source hash-object 'Idea/Bimba/Map/datasets/anuttara-deep/anuttara-language-map.md')"
+          local_blob="$(git hash-object data/epi-bimba-map/anuttara-language-map.md)"
+          rows="$(grep -c '^| `M0' data/epi-bimba-map/anuttara-language-map.md)"
+          printf 'source_revision=%s\nsource_blob=%s\nlocal_blob=%s\nentries=%s\n' \
+            'daa660cbc1b8c5da83828698665a753852cb0287' "$source_blob" "$local_blob" "$rows"
+          test "$source_blob" = "$local_blob"
+          test "$rows" = '109'

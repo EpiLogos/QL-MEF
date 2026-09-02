@@ -1,0 +1,70 @@
+name: Q6 Pairing Conformance
+
+on:
+  push:
+    branches:
+      - agent/q6-pairing-square-grammar
+  pull_request:
+    paths:
+      - "crates/ql-core/src/kernel.rs"
+      - "crates/ql-core/src/face.rs"
+      - "crates/ql-core/src/pairing.rs"
+      - "crates/ql-core/tests/pairing_*.rs"
+      - "crates/ql-mef/src/lens.rs"
+      - "crates/ql-mef/tests/holographic_kernel_contract.rs"
+      - "fixtures/kernel/**"
+      - "fixtures/q6/**"
+      - ".github/workflows/q6-pairing-conformance.yml"
+
+jobs:
+  corrected-formal-grammar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Fetch exact Factory Deep QL evidence source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+          git -C /tmp/factory checkout --detach a654c62f68b82236061986d9215b23257fe53b17
+          test "$(git -C /tmp/factory rev-parse HEAD)" = "a654c62f68b82236061986d9215b23257fe53b17"
+          test "$(git -C /tmp/factory hash-object ql-agent-experiments/deep-ql/formal/pairing-grammar.js)" = "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4"
+      - name: Run Factory corrected pairing evidence
+        working-directory: /tmp/factory/ql-agent-experiments/deep-ql
+        run: node --test test/pairing.test.js
+      - name: Verify promotion boundary against the pinned Factory source
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("fixtures/q6/pairing-promotion-v1.json").read_text())
+          assert manifest["capability"] == "ql.pairing"
+          assert manifest["version"] == "1.0.0"
+          assert manifest["status"] == "specified-formal-structure"
+          assert manifest["automaticTraversal"] is False
+          assert manifest["promoted"]["withinPassFamilies"] == ["A", "B", "C"]
+          assert manifest["promoted"]["softwareModulation"] == ["D1", "D2", "D3"]
+          assert manifest["promoted"]["squareApparatus"] == {
+              "entries": 9,
+              "orientedStructures": 8,
+              "unorderedAddressTetrads": 7,
+          }
+          assert "ql.state64.runtime-semantics" in manifest["researchExtensions"]
+          assert "ql.epogdoon.retained-difference-metric" in manifest["researchExtensions"]
+          assert "ql.topology.control-rules" in manifest["researchExtensions"]
+          assert "ql.mef.context-operational-roles" in manifest["researchExtensions"]
+          assert manifest["provenance"]["factoryHead"] == "a654c62f68b82236061986d9215b23257fe53b17"
+          assert manifest["provenance"]["factoryPairingGrammarBlob"] == "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4"
+          PY
+      - name: Run standalone promoted pairing grammar acceptance
+        run: cargo test -p ql-core --test pairing_grammar --test pairing_promotion
+      - name: Run shared holographic kernel contract acceptance
+        run: cargo test -p ql-mef --test holographic_kernel_contract
+      - name: Run Rust workspace acceptance
+        run: cargo test --workspace

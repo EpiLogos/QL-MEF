@@ -154,6 +154,12 @@ The product architecture was developed in `EpiLogos/agent-system-design`, especi
 
 The move to this repository does not merge QL/MEF with the QL Loop Runtime. Runtime recurrence is a separate experimental concern now developed under Actuation and consumes this product only through explicit versioned seams.
 
+## Foundational executable kernel
+
+The current executable centre is the native holographic QL kernel shared across the Rust and source-proven C bodies. Its compact human reference is [`docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md`](docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md), paired with `fixtures/kernel/holographic-kernel-contract-v1.tsv`. The same kernel now exposes the versioned `ql.shape@1.0.0` contract in `fixtures/kernel/ql-shape-contract-v1.json`: positive partial/developed wholes, A/B/C pair provenance, D1→D3 conjugate completion, D3 `4×4`, direct/conjugate `6×6`, `6 / 6′ → 6+6′` relational-generation sites and Return through the `0/1` anchor.
+
+Vāk, MEF, Context Frames, SemanticWiki clients and richer harmonic development all operate or refract this same kernel field; they do not establish parallel shape vocabularies.
+
 ## Current development state
 
 The repository is a Rust product. The intended implementation modules include `ql-core`, `ql-mef`, `ql-semantic`, `ql-service`, adapters and fixtures as warranted by the accepted development programme.

@@ -45,6 +45,18 @@ This is epistemic/ontological qualification: what sort of thing, knowing, or man
 
 The primitive scalar C functions in PR #59 do **not** become VĀK merely because they are callable. The manifest therefore permits C′/VĀK to be absent or unresolved on a low-level law. VĀK becomes germane when those laws enter an intentionally composed act, Method, Context Frame reading, Run, instrument, or other operative circuit.
 
+The later deep M0/M5 capability-matrix pass now adds a complementary runtime determination without weakening that distinction. Anuttara already contains a source-level Vāk language with exact semantic identities, formulations and operative relations. `EPI-VAK-AGENT-NATIVE-RUNTIME.md` therefore specifies how QL-MEF can materialise that **source-level language itself** as a source-pinned registry/refraction field and bind an entry to a canonical native Action only where the relation is explicitly established.
+
+Preserve throughout:
+
+```text
+VākRef != ActionRef
+source-level Vāk identity != callable implementation symbol
+addressability != executability != availability != authority
+```
+
+A low-level C primitive does not become Vāk by callability; conversely, a genuine Vāk source entry does not cease to be Vāk merely because no current native Action implements it. The binding between source language and executable manifestation is its own provenance-bearing relation.
+
 Where the repository fallback does not carry enough live Bimba evidence to assign a C category confidently, the manifest records the assignment as `supported-inference` or leaves it unresolved. It never fills a coordinate for visual symmetry.
 
 ## 3. S / S′ and the current product field
@@ -65,6 +77,8 @@ The old Bimba S lattice remains developmental evidence but its former roots (CLI
 `S′` is the lawful/reflexive technological refraction **across** those products. A capability may therefore appear through several product centres without becoming owned by the relation or by one implementation technology.
 
 The first native C floor is materially owned by **S5 / Quaternal Logic**. That statement does not mean every consumer manifestation is S5, nor does it define a final S′ encoding. Cross-product refraction is recorded only where there is actual present evidence.
+
+The same rule applies to the Vāk runtime: generalized Vāk registry/refraction machinery may live in S5/QL-MEF because that product owns QL formal law and semantic runtime, while the Anuttara language remains M0/Epi source authority and the canonical `M0 -> S0 Central` same-index relation remains unchanged.
 
 The human/agent `P/P′` product faces remain a separate axis. They are not renamed as S/S′.
 
@@ -165,6 +179,8 @@ The current formal owner line is the Q6 / PR #19 grammar, which exposes the cano
 
 AIKit's generic job is identity-preserving semantic ↔ executable reflection through ProjectMap/CodeIndex/Knowledge surfaces. An Epi provider may present a Bimba coordinate as a semantic endpoint and the exact C symbol as a code endpoint; AIKit does not become the owner of the coordinate taxonomy.
 
+The Vāk runtime follows the same pattern. QL-MEF can present a `VākRef` and its source relations; an explicit binding may point to a canonical native `ActionRef`; AIKit can resolve current capability/Context/Method eligibility around that Action. None of those steps transfers Vāk or Action ownership into AIKit.
+
 Factory's generic job is developmental fidelity. Where Structural Source Fidelity applies, Factory should consume the target-owned manifest as StructuralGround evidence, map the current implementation to it, and reject silent flattening, wrong parentage, stale reflection, or behavioural-only parity. Factory does not become the Bimba owner.
 
 The first cross-repository conformance specimen uses the target-owned manifest identity `epi-holographic-specimen/position-inversion/v1`, exact C symbol `ql_position_invert`, and explicit parity evidence. Until the AIKit/Factory owner branches are accepted, their receipts are branch-level conformance evidence rather than accepted QL-MEF dependencies.
@@ -221,3 +237,5 @@ richer Epi coordinate kernel and product manifestations later
 ```
 
 The manifest validator makes it an error for a public native primitive to exist without an explicit structural account. Unresolved semantic relations remain valid data in that account; silent orphaning does not.
+
+The Vāk runtime does not change this acceptance. It adds a higher semantic/runtime layer above the primitive floor: source-level Vāk identities are registered and related, and concrete executable manifestations may be explicitly bound to native Actions while primitive-law parity remains independently evidenced.
