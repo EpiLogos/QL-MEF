@@ -27,7 +27,6 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
           path = Path('scripts/ql83-vak-migrate.py')
           lines = path.read_text().splitlines()
           inside = False
@@ -39,11 +38,7 @@ jobs:
                   inside = True
               if inside:
                   stripped = line.strip()
-                  if stripped.startswith('current.push(') and stripped not in {
-                      "current.push('|');",
-                      'current.push(ch);',
-                      "current.push('`');",
-                  }:
+                  if stripped.startswith('current.push(') and stripped not in {"current.push('|');", 'current.push(ch);', "current.push('`');"}:
                       line = f"{line[:len(line) - len(line.lstrip())]}current.push(char::from(92));"
                       push_rewrites += 1
                   elif stripped.startswith('if ch ==') and "'|'" not in stripped and "'`'" not in stripped:
@@ -53,40 +48,71 @@ jobs:
                   inside = False
               rewritten.append(line)
           if push_rewrites != 2 or compare_rewrites != 1:
-              raise SystemExit(
-                  f'unexpected generated-backslash rewrite count: push={push_rewrites} compare={compare_rewrites}'
-              )
+              raise SystemExit(f'unexpected generated-backslash rewrite count: push={push_rewrites} compare={compare_rewrites}')
           path.write_text('\n'.join(rewritten) + '\n')
           PY
-      - name: Apply bounded Vāk migration
+      - name: Lift current shape methods around the authored migration anchor
         shell: bash
         run: |
-          python3 scripts/ql83-vak-migrate.py
           python3 - <<'PY'
           from pathlib import Path
-
           path = Path('crates/ql-mef/src/vak.rs')
           source = path.read_text()
-          old = 'r_factors: extract_r_factors(trimmed),'
-          new = 'r_factors: extract_r_factors(line),'
-          if source.count(old) != 1:
-              raise SystemExit(f'unexpected stale R-factor extraction count: {source.count(old)}')
-          path.write_text(source.replace(old, new, 1))
+          start_marker = '    /// Compose the exact M0-5 Śiva operation sixfold'
+          end_marker = '    pub fn refract(\n'
+          start = source.find(start_marker)
+          end = source.find(end_marker, start)
+          if start < 0 or end < 0:
+              raise SystemExit('current Vāk shape-method block not found')
+          Path('/tmp/ql83-shape-methods.rs').write_text(source[start:end])
+          path.write_text(source[:start] + source[end:])
           PY
-      - name: Format
-        run: cargo fmt --all
-      - name: Verify Vāk runtime
-        run: |
-          cargo check --workspace --all-targets
-          cargo clippy --workspace --all-targets -- -D warnings
-          cargo test --workspace
-      - name: Commit verified runtime delta
+      - name: Apply the existing full Vāk migration
         shell: bash
         run: |
           set -euo pipefail
-          git add crates/ql-mef/src/vak.rs crates/ql-mef/tests/vak_language.rs
-          git diff --cached --quiet && exit 0
+          python3 scripts/ql83-vak-migrate.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('crates/ql-mef/src/vak.rs')
+          source = path.read_text()
+          old = 'r_factors: extract_r_factors(trimmed),'
+          if source.count(old) != 1:
+              raise SystemExit(f'unexpected stale R-factor extraction count: {source.count(old)}')
+          source = source.replace(old, 'r_factors: extract_r_factors(line),', 1)
+          shape_methods = Path('/tmp/ql83-shape-methods.rs').read_text().replace('VakStanding::ImplementationMapping', 'VakStanding::Implementation')
+          marker = '    pub fn refract(\n'
+          if source.count(marker) != 1:
+              raise SystemExit('migrated refract marker missing')
+          source = source.replace(marker, shape_methods + marker, 1)
+          path.write_text(source)
+
+          lib = Path('crates/ql-mef/src/lib.rs')
+          text = lib.read_text()
+          old = '    VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon, VakEntry,\n    VakError, VakHorizonBinding, VakNeighbourhood, VakOperatorBinding, VakPath, VakPraxisAspect,\n'
+          new = '    VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon, VakContextField,\n    VakDivineAct, VakEntry, VakError, VakFormalCoverage, VakHorizonBinding, VakNeighbourhood,\n    VakOperatorBinding, VakPath, VakPraxisAspect, VakRPath, VakRPathStep,\n'
+          if text.count(old) != 1:
+              raise SystemExit('Vāk export head anchor drifted')
+          text = text.replace(old, new, 1)
+          old = '    VakSivaSaktiRelationalSixfold, VakSourceProvenance, VakStanding,\n'
+          new = '    VakSivaSaktiRelationalSixfold, VakSourceProvenance, VakSpeechAct, VakSpeechStance, VakStanding,\n'
+          if text.count(old) != 1:
+              raise SystemExit('Vāk export tail anchor drifted')
+          lib.write_text(text.replace(old, new, 1))
+          PY
+      - name: Verify complete Vāk runtime
+        run: |
+          cargo fmt --all
+          cargo check --workspace --all-targets
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+      - name: Commit verified runtime and retire migration scaffolding
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m '[QL83] Bind exact Vāk source coordinates and verify runtime'
+          git rm .github/workflows/ql83-vak-migration.yml scripts/ql83-vak-migrate.py
+          git add crates/ql-mef/src/vak.rs crates/ql-mef/src/lib.rs crates/ql-mef/tests/vak_language.rs
+          git commit -m '[QL83] Land exact M0-3 M0-4 and source-faithful Vāk runtime'
           git push origin HEAD:feat/epi-vak-agent-native-runtime
