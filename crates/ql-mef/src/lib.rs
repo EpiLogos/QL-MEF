@@ -38,7 +38,8 @@ pub use music::{
     transpose,
 };
 pub use music_completion::{
-    MUSICAL_COMPLETION_VERSION, MusicalCompletionFrame, musical_completion_frame,
+    MUSICAL_COMPLETION_VERSION, MusicalCompletionFrame, MusicalTraversalCandidate,
+    TraversalExpansionSide, classify_musical_traversal, musical_completion_frame,
 };
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
