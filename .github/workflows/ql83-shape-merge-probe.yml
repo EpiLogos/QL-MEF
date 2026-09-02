@@ -1,0 +1,36 @@
+name: QL83 shape-kernel merge probe
+
+on:
+  push:
+    branches:
+      - feat/epi-vak-agent-native-runtime
+    paths:
+      - '.github/workflows/ql83-shape-merge-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/epi-vak-agent-native-runtime
+          fetch-depth: 0
+      - name: Probe exact QL85 ancestry merge
+        shell: bash
+        run: |
+          set -uo pipefail
+          git fetch origin agent/85-ql-shape-algebra
+          if git merge --no-commit --no-ff origin/agent/85-ql-shape-algebra; then
+            echo 'QL85_MERGE_RESULT=clean'
+            git status --short
+            git merge --abort
+            exit 0
+          fi
+          echo 'QL85_MERGE_RESULT=conflict'
+          git diff --name-only --diff-filter=U
+          git status --short
+          git merge --abort || true
+          exit 1
