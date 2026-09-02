@@ -13,6 +13,7 @@ mod kernel;
 mod operator;
 mod pairing;
 mod position;
+mod shape;
 mod structural;
 
 pub use address::QlAddress;
@@ -33,6 +34,11 @@ pub use pairing::{
     canonical_cross_pass_d3,
 };
 pub use position::QlPosition;
+pub use shape::{
+    FourByFourField, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShapeAddress, QlShapeKind,
+    RELATIONAL_SIXFOLD_OPERATOR_REF, RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold,
+    SIX_BY_SIX_SHAPE_REF, SixBySixField,
+};
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
