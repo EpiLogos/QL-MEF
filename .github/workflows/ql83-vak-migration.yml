@@ -112,7 +112,8 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm .github/workflows/ql83-vak-migration.yml scripts/ql83-vak-migrate.py
+          git rm .github/workflows/ql83-vak-migration.yml
+          git rm -f scripts/ql83-vak-migrate.py
           git add crates/ql-mef/src/vak.rs crates/ql-mef/src/lib.rs crates/ql-mef/tests/vak_language.rs
           git commit -m '[QL83] Land exact M0-3 M0-4 and source-faithful Vāk runtime'
           git push origin HEAD:feat/epi-vak-agent-native-runtime
