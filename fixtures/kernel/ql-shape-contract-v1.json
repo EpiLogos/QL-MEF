@@ -3,25 +3,6 @@
   "version": "1.0.0",
   "structural_contract_version": "2.0.0",
   "whole_anchor": "0/1",
-  "constellation": {
-    "grain_source": "ConstellationGrain",
-    "shape_ref_template": "ql:shape:1.0.0:constellation:{grain}",
-    "canonical_grains": [
-      "anchor-only",
-      "twofold",
-      "threefold-123",
-      "threefold-450",
-      "fourfold-1234",
-      "four-plus-one-ground",
-      "four-plus-one-synthesis",
-      "sixfold",
-      "partial-conjugate-8",
-      "partial-conjugate-9",
-      "partial-conjugate-10",
-      "partial-conjugate-11",
-      "twelvefold"
-    ]
-  },
   "pair_families": {
     "A": [[0, 1], [2, 3], [4, 5]],
     "B": [[1, 2], [3, 4], [5, 0]],
