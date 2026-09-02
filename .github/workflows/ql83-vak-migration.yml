@@ -59,7 +59,20 @@ jobs:
           path.write_text('\n'.join(rewritten) + '\n')
           PY
       - name: Apply bounded Vāk migration
-        run: python3 scripts/ql83-vak-migrate.py
+        shell: bash
+        run: |
+          python3 scripts/ql83-vak-migrate.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('crates/ql-mef/src/vak.rs')
+          source = path.read_text()
+          old = 'r_factors: extract_r_factors(trimmed),'
+          new = 'r_factors: extract_r_factors(line),'
+          if source.count(old) != 1:
+              raise SystemExit(f'unexpected stale R-factor extraction count: {source.count(old)}')
+          path.write_text(source.replace(old, new, 1))
+          PY
       - name: Format
         run: cargo fmt --all
       - name: Verify Vāk runtime
