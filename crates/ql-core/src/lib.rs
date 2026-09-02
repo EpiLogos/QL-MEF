@@ -13,6 +13,7 @@ mod kernel;
 mod operator;
 mod pairing;
 mod position;
+mod relation_classification;
 mod structural;
 
 pub use address::QlAddress;
@@ -33,6 +34,7 @@ pub use pairing::{
     canonical_cross_pass_d3,
 };
 pub use position::QlPosition;
+pub use relation_classification::{RelationPairMatch, classify_relation_pair};
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
