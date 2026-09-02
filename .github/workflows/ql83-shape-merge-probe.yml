@@ -22,6 +22,8 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          git config user.name 'ql83-merge-probe'
+          git config user.email 'ql83-merge-probe@users.noreply.github.com'
           git fetch origin agent/85-ql-shape-algebra
           if git merge --no-commit --no-ff origin/agent/85-ql-shape-algebra; then
             echo 'QL85_MERGE_RESULT=clean'
