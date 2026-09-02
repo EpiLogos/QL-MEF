@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/ql83-final-semantic-hardening.yml'
       - 'scripts/ql83-final-semantic-hardening.py'
+      - 'scripts/ql83-final-semantic-fix.py'
 
 permissions:
   contents: write
@@ -49,7 +50,11 @@ jobs:
 
       - name: Apply final semantic-boundary hardening
         working-directory: ql-mef
-        run: python3 scripts/ql83-final-semantic-hardening.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ql83-final-semantic-hardening.py
+          python3 scripts/ql83-final-semantic-fix.py
 
       - name: Prove exact expressions are AIKit-owned AST/render/path identities
         working-directory: aikit-owner
@@ -110,7 +115,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm .github/workflows/ql83-final-semantic-hardening.yml scripts/ql83-final-semantic-hardening.py
+          git rm .github/workflows/ql83-final-semantic-hardening.yml scripts/ql83-final-semantic-hardening.py scripts/ql83-final-semantic-fix.py
           git add crates/ql-mef/src/vak_oi.rs crates/ql-mef/src/lib.rs crates/ql-mef/tests/vak_oi_runtime.rs
           git commit -m '[QL83] Close expression ownership and observed praxis return'
           git push origin HEAD:feat/epi-vak-agent-native-runtime
