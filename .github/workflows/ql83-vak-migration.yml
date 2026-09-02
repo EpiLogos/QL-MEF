@@ -6,6 +6,7 @@ on:
       - feat/epi-vak-agent-native-runtime
     paths:
       - 'scripts/ql83-vak-migrate.py'
+      - '.github/workflows/ql83-vak-migration.yml'
 
 permissions:
   contents: write
@@ -21,6 +22,42 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      - name: Stabilize generated Rust backslash literals
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/ql83-vak-migrate.py')
+          lines = path.read_text().splitlines()
+          inside = False
+          rewritten = []
+          push_rewrites = 0
+          compare_rewrites = 0
+          for line in lines:
+              if 'fn split_markdown_row(line: &str)' in line:
+                  inside = True
+              if inside:
+                  stripped = line.strip()
+                  if stripped.startswith('current.push(') and stripped not in {
+                      "current.push('|');",
+                      'current.push(ch);',
+                      "current.push('`');",
+                  }:
+                      line = f"{line[:len(line) - len(line.lstrip())]}current.push(char::from(92));"
+                      push_rewrites += 1
+                  elif stripped.startswith('if ch ==') and "'|'" not in stripped and "'`'" not in stripped:
+                      line = f"{line[:len(line) - len(line.lstrip())]}if ch == char::from(92) {{"
+                      compare_rewrites += 1
+              if inside and 'fn parse_source_entry(line: &str' in line:
+                  inside = False
+              rewritten.append(line)
+          if push_rewrites != 2 or compare_rewrites != 1:
+              raise SystemExit(
+                  f'unexpected generated-backslash rewrite count: push={push_rewrites} compare={compare_rewrites}'
+              )
+          path.write_text('\n'.join(rewritten) + '\n')
+          PY
       - name: Apply bounded Vāk migration
         run: python3 scripts/ql83-vak-migrate.py
       - name: Format
