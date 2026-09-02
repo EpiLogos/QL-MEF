@@ -22,13 +22,29 @@ fn every_declared_family_pair_is_recovered() {
 fn classifier_preserves_real_family_overlap() {
     let zero_five = classify_relation_pair(p(0), p(5));
     assert_eq!(zero_five.len(), 2);
-    assert!(zero_five.iter().any(|m| m.family == RelationFamily::B && m.pair_index == 2 && m.reversed));
-    assert!(zero_five.iter().any(|m| m.family == RelationFamily::C && m.pair_index == 0 && !m.reversed));
+    assert!(
+        zero_five
+            .iter()
+            .any(|m| m.family == RelationFamily::B && m.pair_index == 2 && m.reversed)
+    );
+    assert!(
+        zero_five
+            .iter()
+            .any(|m| m.family == RelationFamily::C && m.pair_index == 0 && !m.reversed)
+    );
 
     let two_three = classify_relation_pair(p(2), p(3));
     assert_eq!(two_three.len(), 2);
-    assert!(two_three.iter().any(|m| m.family == RelationFamily::A && m.pair_index == 1));
-    assert!(two_three.iter().any(|m| m.family == RelationFamily::C && m.pair_index == 2));
+    assert!(
+        two_three
+            .iter()
+            .any(|m| m.family == RelationFamily::A && m.pair_index == 1)
+    );
+    assert!(
+        two_three
+            .iter()
+            .any(|m| m.family == RelationFamily::C && m.pair_index == 2)
+    );
 }
 
 #[test]
