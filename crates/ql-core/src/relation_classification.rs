@@ -34,10 +34,7 @@ impl RelationPairMatch {
 ///
 /// It does not infer a relation family from arithmetic residue, pitch, matrix
 /// family, or any other downstream projection.
-pub fn classify_relation_pair(
-    left: QlPosition,
-    right: QlPosition,
-) -> Vec<RelationPairMatch> {
+pub fn classify_relation_pair(left: QlPosition, right: QlPosition) -> Vec<RelationPairMatch> {
     let left = left.value();
     let right = right.value();
     let mut matches = Vec::with_capacity(2);
