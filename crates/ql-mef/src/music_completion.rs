@@ -82,10 +82,12 @@ fn canonical_expansion_side(
     traversal_side: TraversalExpansionSide,
 ) -> ExpansionSide {
     match (traversal_side, relation.reversed) {
-        (TraversalExpansionSide::Source, false)
-        | (TraversalExpansionSide::Target, true) => ExpansionSide::Left,
-        (TraversalExpansionSide::Target, false)
-        | (TraversalExpansionSide::Source, true) => ExpansionSide::Right,
+        (TraversalExpansionSide::Source, false) | (TraversalExpansionSide::Target, true) => {
+            ExpansionSide::Left
+        }
+        (TraversalExpansionSide::Target, false) | (TraversalExpansionSide::Source, true) => {
+            ExpansionSide::Right
+        }
     }
 }
 
@@ -108,8 +110,9 @@ pub fn classify_musical_traversal(
 
     for relation in matches {
         let expansion_side = match degree {
-            ConjugationDegree::D2 => d2_expansion
-                .map(|side| canonical_expansion_side(relation, side)),
+            ConjugationDegree::D2 => {
+                d2_expansion.map(|side| canonical_expansion_side(relation, side))
+            }
             ConjugationDegree::D1 | ConjugationDegree::D3 => None,
         };
         let frame = musical_completion_frame(
