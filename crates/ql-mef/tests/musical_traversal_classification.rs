@@ -1,4 +1,4 @@
-use ql_core::{ConjugationDegree, ExpansionSide, QlPosition, RelationFamily};
+use ql_core::{ConjugationDegree, ExpansionSide, QlFace, QlPosition, RelationFamily};
 use ql_mef::{
     LensId, MusicalBasis, TraversalExpansionSide, classify_musical_traversal,
 };
@@ -67,7 +67,7 @@ fn d2_source_expansion_survives_reverse_traversal() {
     assert_eq!(candidate.frame.expansion_side, Some(ExpansionSide::Right));
     assert_eq!(candidate.frame.coordinates.len(), 3);
     assert!(candidate.frame.coordinates.iter().any(|coordinate| {
-        coordinate.position == p(5) && coordinate.face.as_str() == "prime"
+        coordinate.position == p(5) && coordinate.face == QlFace::Conjugate
     }));
 }
 
@@ -85,7 +85,7 @@ fn d2_target_expansion_survives_reverse_traversal() {
 
     assert_eq!(candidates[0].frame.expansion_side, Some(ExpansionSide::Left));
     assert!(candidates[0].frame.coordinates.iter().any(|coordinate| {
-        coordinate.position == p(4) && coordinate.face.as_str() == "prime"
+        coordinate.position == p(4) && coordinate.face == QlFace::Conjugate
     }));
 }
 
