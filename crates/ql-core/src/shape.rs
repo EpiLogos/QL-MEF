@@ -249,10 +249,7 @@ mod tests {
             partial.shape_ref(),
             "ql:shape:1.0.0:constellation:partial-conjugate-9"
         );
-        assert_eq!(
-            direct.shape_ref(),
-            "ql:shape:1.0.0:constellation:sixfold"
-        );
+        assert_eq!(direct.shape_ref(), "ql:shape:1.0.0:constellation:sixfold");
     }
 
     #[test]
