@@ -20,6 +20,23 @@ impl QlFace {
             Self::Conjugate => "conjugate",
         }
     }
+
+    /// Stable holographic-kernel face identity shared with the native C core.
+    /// Rust keeps its established `Conjugate` spelling; the common contract
+    /// names that same face `prime`.
+    pub const fn kernel_code(self) -> &'static str {
+        match self {
+            Self::Direct => "direct",
+            Self::Conjugate => "prime",
+        }
+    }
+
+    pub const fn kernel_value(self) -> u8 {
+        match self {
+            Self::Direct => 0,
+            Self::Conjugate => 1,
+        }
+    }
 }
 
 impl fmt::Display for QlFace {

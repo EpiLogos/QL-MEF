@@ -1,0 +1,46 @@
+name: Q6 MEF Rotation Conformance
+
+on:
+  push:
+    branches:
+      - agent/q6-pairing-square-grammar
+  pull_request:
+    paths:
+      - "crates/ql-mef/src/coordinate.rs"
+      - "crates/ql-mef/src/lib.rs"
+      - "crates/ql-mef/src/sublens.rs"
+      - "crates/ql-mef/tests/rotation_promotion.rs"
+      - "fixtures/q6/mef-rotation-*"
+      - ".github/workflows/q6-mef-rotation-conformance.yml"
+
+jobs:
+  structural-rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Verify promotion manifest boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("fixtures/q6/mef-rotation-promotion-v1.json").read_text())
+          assert manifest["capability"] == "ql.mef.rotation"
+          assert manifest["version"] == "1.0.0"
+          assert manifest["status"] == "specified-formal-structure"
+          assert manifest["automaticInvocation"] is False
+          assert manifest["deterministicBoundary"]["localToAbsolute"] == "(anchor + local) mod 6"
+          assert manifest["deterministicBoundary"]["semanticRoleBinding"] == "not-promoted"
+          assert manifest["deterministicBoundary"]["runtimePolicy"] == "not-promoted"
+          assert manifest["promoted"]["lensAnchors"] == 12
+          assert manifest["promoted"]["localPositionsPerLens"] == 6
+          assert manifest["promoted"]["manifoldCoordinates"] == 72
+          assert manifest["provenance"]["factoryProgramme"]["issue"] == 121
+          assert manifest["provenance"]["factoryProgramme"]["crossRepoEvidence"] == "not-required-for-this-capability"
+          PY
+      - name: Run standalone MEF rotation acceptance
+        run: cargo test -p ql-mef --test rotation_promotion

@@ -1,0 +1,87 @@
+{
+  "schema": "ql-mef/promotion-status/v1",
+  "capability": "ql.mef.context-frame",
+  "version": "1.0.0",
+  "status": "specified-formal-structure",
+  "automaticInvocation": false,
+  "deterministicBoundary": {
+    "frameOrder": "CF1..CF7",
+    "canonicalSelection": "3 Name -> conjugate-cross -> 4 Power",
+    "lensRotation": "(anchor + local) mod 6",
+    "selectedPartition": "5 inner-four + 2 outer-two",
+    "unselectedPartition": "3 inner-four hooks + 2 outer-two anchors",
+    "alternateConjugateSelection": "not-promoted",
+    "modalReanchoring": "not-promoted",
+    "semanticRoleBinding": "not-promoted",
+    "runtimePolicy": "not-promoted"
+  },
+  "frames": [
+    {"id": "CF1", "expression": "(00/00)", "name": "Fourfold-Zero / undifferentiated-ground"},
+    {"id": "CF2", "expression": "(0/1)", "name": "Non-Dual Anchor / standing-identity"},
+    {"id": "CF3", "expression": "(0/1/2)", "name": "Dual-Non-Dual / triadic-circulation"},
+    {"id": "CF4", "expression": "(0/1/2/3)", "name": "Trinitarian / tetradic-prehensive-closure"},
+    {"id": "CF5", "expression": "(4.0/1-4.4/5)", "name": "Fractal-Doubling Executive"},
+    {"id": "CF6", "expression": "(4.5/0)", "name": ".5 Bridge"},
+    {"id": "CF7", "expression": "(5/0)", "name": "Total Synthesis / Mobius cyclic-closure-and-reopening"}
+  ],
+  "promoted": {
+    "canonicalProgression": [
+      "CF1:P0:Name:OuterTwo",
+      "CF2:P1:Name:InnerFour",
+      "CF3:P2:Name:InnerFour",
+      "CF4:P2:Power:InnerFour",
+      "CF5:P3:Power:InnerFour",
+      "CF6:P4:Power:InnerFour",
+      "CF7:P5:Power:OuterTwo"
+    ],
+    "complexificationHooks": [
+      "P3:Name:InnerFour",
+      "P4:Name:InnerFour",
+      "P1:Power:InnerFour"
+    ],
+    "unpickedOuterAnchors": [
+      "P5:Name:OuterTwo",
+      "P0:Power:OuterTwo"
+    ],
+    "completeFormAddresses": 12
+  },
+  "researchExtensions": [
+    "ql.state64.runtime-semantics",
+    "ql.epogdoon.retained-difference-metric",
+    "ql.topology.control-rules",
+    "ql.mef.context-operational-roles",
+    "ql.mef.context-frame.alternate-conjugate-selection",
+    "ql.mef.context-frame.modal-reanchoring"
+  ],
+  "provenance": {
+    "factoryProgramme": {
+      "repository": "EpiLogos/agent-system-design",
+      "issue": 121,
+      "crossRepoEvidence": "not-required-for-this-capability",
+      "reason": "the controlling CF grammar is defined in the QL/MEF formal corpus rather than a Factory runtime implementation"
+    },
+    "evidenceCorpus": [
+      {
+        "source": "ql-musical-derivation-v3.md",
+        "status": "formal-derivation-source",
+        "sections": ["II-3.8", "II-4.1", "II-4.2", "II-4.3", "Reference Table 4", "Reference Table 10"],
+        "claim": "the seven CF progression selects P0/P1/P2 on Name, crosses at P2 to Power, continues P3/P4/P5 on Power, and partitions the 12 form-addresses into 7 selected plus 3 inner hooks plus 2 outer anchors",
+        "sha256": "61508658f871f232f554127052d683ecded15c28694cc79a110bcf7841492699"
+      },
+      {
+        "source": "mef-12-lenses-sublens-reference.md",
+        "status": "derived-synthesis-reference",
+        "section": "2. What a lens is — tonic, rotation, sublens",
+        "claim": "the 7-fold is cut from the rotated field by seven context frames as 3 Names -> conjugate-cross -> 4 Powers; Day/Night twins share the rotated diatonic",
+        "sha256": "1e1ee72c6445eea2e7df057798bd1b0441f6e5eeac289dddb65d680d7ca6bb51"
+      },
+      {
+        "source": "epi_logos_coordinate_system.md",
+        "status": "coordinate-system-corroboration",
+        "section": "P-position inherent relations / L-family context",
+        "claim": "the six positions and conjugate faces remain the coordinate substrate on which the CF cut operates",
+        "sha256": "a674e3c0489b1e9bd27078a2ec6c2a0cb1158ea8e37628a9ed36a429c1ab454f"
+      }
+    ]
+  }
+}

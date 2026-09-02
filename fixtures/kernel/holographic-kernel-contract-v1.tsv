@@ -1,0 +1,76 @@
+# ql.holographic-kernel-contract/v1
+meta	contract-version	1.1.0
+meta	historical-reference-revision	daa660cbc1b8c5da83828698665a753852cb0287
+meta	historical-pointer-web-blob	3eeae6f9c8cc65c5a610df1a49143b3c65bdd320
+meta	rust-pairing-version	1.0.0
+meta	rust-mef-rotation-version	1.0.0
+meta	rust-context-frame-version	1.0.0
+family	C	0
+family	P	1
+family	L	2
+family	S	3
+family	T	4
+family	M	5
+family	NONE	7
+face	direct	0
+face	prime	1
+relation	position.identity	ql.kernel.position.identity/v1
+relation	family.same-position	ql.kernel.family.same-position/v1
+relation	cross.same-position	ql.kernel.cross.same-position/v1
+relation	pair.A	ql.kernel.pair.A/v1
+relation	pair.B	ql.kernel.pair.B/v1
+relation	pair.C	ql.kernel.pair.C/v1
+relation	cross.transform	ql.kernel.cross.transform/v1
+relation	cross.require	ql.kernel.cross.require/v1
+relation	cross.complete	ql.kernel.cross.complete/v1
+relation	conjugate-invariance.A	ql.kernel.conjugate-invariance.A/v1
+relation	conjugate-invariance.B	ql.kernel.conjugate-invariance.B/v1
+relation	conjugate-invariance.C	ql.kernel.conjugate-invariance.C/v1
+relation	mirror.complement	ql.kernel.mirror.complement/v1
+relation	position.successor	ql.kernel.position.successor/v1
+relation	return.mobius	ql.kernel.return.mobius/v1
+relation	lens.anchor	ql.kernel.lens.anchor/v1
+relation	context-frame	ql.kernel.context-frame/v1
+relation	vak.cpf	ql.kernel.vak.cpf/v1
+relation	vak.ct	ql.kernel.vak.ct/v1
+relation	vak.cp	ql.kernel.vak.cp/v1
+relation	vak.cfp	ql.kernel.vak.cfp/v1
+relation	vak.cs	ql.kernel.vak.cs/v1
+relation	nesting	ql.kernel.nesting/v1
+relation	branching	ql.kernel.branching/v1
+relation	source.provenance	ql.kernel.source.provenance/v1
+vak	cpf	0	ql.kernel.vak.cpf/v1	Category-Position-Frame	discrimination/inversion
+vak	ct	1	ql.kernel.vak.ct/v1	Context-Time / Content Types	QL-frame-selection
+vak	cp	2	ql.kernel.vak.cp/v1	Context-Position	void-arithmetic-position-anchor
+vak	cf	3	ql.kernel.context-frame/v1	Context-Frame	Context-Frame/Vimarsa-invocation
+vak	cfp	4	ql.kernel.vak.cfp/v1	Context-Frame-Position / Paths	R-factor-thread
+vak	cs	5	ql.kernel.vak.cs/v1	Context-Sequence	Logos-cycle-completion
+pointer-web	cpf	slot-unmaterialized
+pointer-web	ct	slot-unmaterialized
+pointer-web	cp	slot-unmaterialized
+pointer-web	cf	slot-materialized
+pointer-web	cfp	slot-unmaterialized
+pointer-web	cs	slot-materialized
+pair	A	0-1,2-3,4-5
+pair	B	1-2,3-4,5-0
+pair	C	0-5,1-4,2-3
+square-degree	D1	2	selected-direct-pair
+square-degree	D2	3	one-sided-conjugate-expansion
+square-degree	D3	4	complete-conjugate-square
+cross	cross.same-position	n->n'
+cross	cross.transform	n->(n+1)'
+cross	cross.require	n->(n-1)'
+cross	cross.complete	n->(5-n)'
+cross	mirror.complement	n->5-n
+mef	lens-count	12
+mef	local-positions-per-lens	6
+mef	address-count	72
+mef	absolute-position	(lens+local)%6
+mef	registry-revision	1
+cf	CF1	0	name	outer-two	(00/00)
+cf	CF2	1	name	inner-four	(0/1)
+cf	CF3	2	name	inner-four	(0/1/2)
+cf	CF4	2	power	inner-four	(0/1/2/3)
+cf	CF5	3	power	inner-four	(4.0/1-4.4/5)
+cf	CF6	4	power	inner-four	(4.5/0)
+cf	CF7	5	power	outer-two	(5/0)

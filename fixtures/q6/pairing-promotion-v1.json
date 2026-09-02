@@ -1,0 +1,46 @@
+{
+  "schema": "ql-mef/promotion-status/v1",
+  "capability": "ql.pairing",
+  "version": "1.0.0",
+  "status": "specified-formal-structure",
+  "automaticTraversal": false,
+  "deterministicBoundary": {
+    "grammarSelection": "deterministic",
+    "modulationConstruction": "deterministic",
+    "canonicalCrossPassLookup": "deterministic",
+    "invocationPolicy": "external-experimental-policy"
+  },
+  "promoted": {
+    "withinPassFamilies": ["A", "B", "C"],
+    "softwareModulation": ["D1", "D2", "D3"],
+    "canonicalCrossPass": [
+      "D1:same-position-conjugate",
+      "D2:transform",
+      "D2:require",
+      "D2:complete",
+      "D3:A",
+      "D3:B",
+      "D3:C"
+    ],
+    "squareApparatus": {
+      "entries": 9,
+      "orientedStructures": 8,
+      "unorderedAddressTetrads": 7
+    }
+  },
+  "researchExtensions": [
+    "ql.state64.runtime-semantics",
+    "ql.epogdoon.retained-difference-metric",
+    "ql.topology.control-rules",
+    "ql.mef.context-operational-roles"
+  ],
+  "provenance": {
+    "factoryRepository": "EpiLogos/agent-system-design",
+    "factoryIssue": 108,
+    "factoryPullRequest": 130,
+    "factoryHead": "a654c62f68b82236061986d9215b23257fe53b17",
+    "factoryPairingGrammarBlob": "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4",
+    "factoryClarification": "ql-agent-experiments/QL-PAIRING-SQUARES-CLARIFICATION-08-14-2026.md",
+    "formalBasis": "ql-musical-derivation-v3"
+  }
+}

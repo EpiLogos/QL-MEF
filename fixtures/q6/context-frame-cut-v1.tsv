@@ -1,0 +1,13 @@
+category	frame	local_position	unit_face	grain
+selected	CF1	0	Name	OuterTwo
+selected	CF2	1	Name	InnerFour
+selected	CF3	2	Name	InnerFour
+selected	CF4	2	Power	InnerFour
+selected	CF5	3	Power	InnerFour
+selected	CF6	4	Power	InnerFour
+selected	CF7	5	Power	OuterTwo
+hook	-	3	Name	InnerFour
+hook	-	4	Name	InnerFour
+hook	-	1	Power	InnerFour
+outer-anchor	-	5	Name	OuterTwo
+outer-anchor	-	0	Power	OuterTwo
