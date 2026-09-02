@@ -3,12 +3,14 @@ use std::fmt;
 
 use crate::vak::{
     SelfOtherForm, VakActionRelationKind, VakAddressHorizon, VakContextField, VakDivineAct,
-    VakError, VakRef, VakRegistry, VakRelationOp, VakStanding,
+    VakError, VakNeighbourhood, VakPraxisAspect, VakRef, VakRegistry, VakRelationOp, VakStanding,
 };
 
 pub const VAK_OI_PRIMITIVE_MATRIX_CONTRACT: &str = "vak-oi-primitive-relation-matrix-v1";
 pub const VAK_ACTION_PROFILE_CONTRACT: &str = "vak-action-profile-v1";
-pub const VAK_EXPRESSION_CONTRACT: &str = "vak-expression-v1";
+pub const VAK_EXPRESSION_READING_CONTRACT: &str = "vak-expression-reading-v1";
+pub const AIKIT_OPERATIVE_SYNTAX_VERSION: &str = "aikit.operative-resolve/v1";
+pub const AIKIT_OPERATIVE_OWNER_REVISION: &str = "4e35f499c50b987551ab124b4432757973e823ae";
 pub const VAK_PATH_CONTRACT: &str = "vak-path-v1";
 pub const VAK_RECOGNITION_CONTRACT: &str = "vak-recognition-v1";
 
@@ -297,7 +299,41 @@ pub enum VakExpressionSubject {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VakExpressionV1 {
+pub struct VakGeneralExpressionEvidence {
+    pub syntax_version: String,
+    pub owner_revision: String,
+    pub resolve_path_identity: String,
+    pub rendered: String,
+    pub full_vak_rendering: String,
+    pub evidence: Vec<String>,
+}
+
+impl VakGeneralExpressionEvidence {
+    pub fn validate(&self) -> Result<(), VakOiError> {
+        if self.syntax_version != AIKIT_OPERATIVE_SYNTAX_VERSION {
+            return Err(VakOiError::Contract(self.syntax_version.clone()));
+        }
+        if self.owner_revision != AIKIT_OPERATIVE_OWNER_REVISION {
+            return Err(VakOiError::Observation(
+                "general expression owner revision does not match the inspected AIKit syntax owner"
+                    .into(),
+            ));
+        }
+        if self.resolve_path_identity.trim().is_empty()
+            || self.rendered.trim().is_empty()
+            || self.full_vak_rendering.trim().is_empty()
+            || self.evidence.is_empty()
+        {
+            return Err(VakOiError::Missing("general ResolveExpression evidence"));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+/// A full-Vāk reading attached to one step of the AIKit-owned ResolveExpression/ResolvePath.
+/// This is deliberately not a parser or competing AST.
+pub struct VakExpressionReadingV1 {
     pub contract: &'static str,
     pub operator: VakRelationOp,
     pub horizon: VakAddressHorizon,
@@ -312,9 +348,9 @@ pub struct VakExpressionV1 {
     pub evidence: Vec<String>,
 }
 
-impl VakExpressionV1 {
+impl VakExpressionReadingV1 {
     pub fn validate(&self, registry: &VakRegistry) -> Result<(), VakOiError> {
-        if self.contract != VAK_EXPRESSION_CONTRACT {
+        if self.contract != VAK_EXPRESSION_READING_CONTRACT {
             return Err(VakOiError::Contract(self.contract.to_owned()));
         }
         if self.subjects.is_empty() {
@@ -360,10 +396,13 @@ pub struct VakActionProfileV1 {
     pub contract: &'static str,
     pub action_ref: String,
     pub native_owner: String,
+    pub native_handler_ref: String,
+    pub native_result_lineage: String,
     pub primary_vak_ref: VakRef,
     pub related_vak_refs: Vec<VakRef>,
     pub relation_kinds: Vec<VakActionRelationKind>,
     pub divine_acts: Vec<VakDivineAct>,
+    pub praxis_aspects: Vec<VakPraxisAspect>,
     pub affordances: Vec<VakActionAffordance>,
     pub expected_return_relations: Vec<VakOiRelationKind>,
     pub standing: VakStanding,
@@ -381,6 +420,10 @@ impl VakActionProfileV1 {
         }
         if self.native_owner.trim().is_empty() {
             return Err(VakOiError::Missing("native_owner"));
+        }
+        if self.native_handler_ref.trim().is_empty() || self.native_result_lineage.trim().is_empty()
+        {
+            return Err(VakOiError::Missing("native Action handler/result lineage"));
         }
         if self.binding_revision.trim().is_empty() {
             return Err(VakOiError::Missing("binding_revision"));
@@ -404,6 +447,14 @@ impl VakActionProfileV1 {
         for act in &self.divine_acts {
             registry.r_path(*act).map_err(VakOiError::Vak)?;
         }
+        for aspect in &self.praxis_aspects {
+            let reading = registry.praxis_reading(*aspect);
+            if reading.source_refs.is_empty() {
+                return Err(VakOiError::Observation(
+                    "Action praxis aspect has no source-backed Vāk reading".into(),
+                ));
+            }
+        }
         Ok(())
     }
 }
@@ -415,6 +466,9 @@ pub fn factory_request_evidence_profile(
         contract: VAK_ACTION_PROFILE_CONTRACT,
         action_ref: FACTORY_REQUEST_EVIDENCE_ACTION_REF.into(),
         native_owner: "factory".into(),
+        native_handler_ref: "factory::FactoryActionExecutor::execute".into(),
+        native_result_lineage:
+            "FactoryActionReceipt -> FactoryBuildView@next_revision -> HumanRequest".into(),
         primary_vak_ref: SelfOtherForm::QueryOfOther.source_ref(),
         related_vak_refs: vec![
             VakContextField::Pratibimba.source_ref(),
@@ -425,6 +479,11 @@ pub fn factory_request_evidence_profile(
             VakActionRelationKind::ReadsThrough,
         ],
         divine_acts: vec![VakDivineAct::Grace],
+        praxis_aspects: vec![
+            VakPraxisAspect::WillAgency,
+            VakPraxisAspect::KnowledgeVimarsa,
+            VakPraxisAspect::ActionSvatantrya,
+        ],
         affordances: vec![
             VakActionAffordance {
                 operator: VakRelationOp::Potential,
@@ -465,6 +524,11 @@ pub fn central_work_list_profile(registry: &VakRegistry) -> Result<VakActionProf
         contract: VAK_ACTION_PROFILE_CONTRACT,
         action_ref: CENTRAL_WORK_LIST_ACTION_REF.into(),
         native_owner: "central".into(),
+        native_handler_ref: "central::ActionRegistry::execute/work.list -> WorkDiscovery::list"
+            .into(),
+        native_result_lineage:
+            "ActionResult::Success(work.list) -> WorkItem list + selected connector diagnostics"
+                .into(),
         primary_vak_ref: VakContextField::World.source_ref(),
         related_vak_refs: vec![
             VakContextField::Bimba.source_ref(),
@@ -475,6 +539,10 @@ pub fn central_work_list_profile(registry: &VakRegistry) -> Result<VakActionProf
             VakActionRelationKind::Expresses,
         ],
         divine_acts: vec![VakDivineAct::Freedom],
+        praxis_aspects: vec![
+            VakPraxisAspect::KnowledgeVimarsa,
+            VakPraxisAspect::ActionSvatantrya,
+        ],
         affordances: vec![
             VakActionAffordance {
                 operator: VakRelationOp::Relate,
@@ -592,7 +660,7 @@ pub fn oi_reference_primitive_matrix(
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VakPathStepV1 {
     pub step_id: String,
-    pub expression: VakExpressionV1,
+    pub expression: VakExpressionReadingV1,
     pub native_subject_refs: Vec<String>,
     pub method_ref: Option<String>,
     pub action_ref: Option<String>,
@@ -623,7 +691,7 @@ pub struct VakExecutionObservationV1 {
     pub owner_revision: String,
     pub evidence_run_ref: String,
     pub method_ref: String,
-    pub resolve_expression: String,
+    pub general_expression: VakGeneralExpressionEvidence,
     pub world_ref: Option<String>,
     pub project_ref: Option<String>,
     pub focus_ref: Option<String>,
@@ -641,7 +709,7 @@ pub struct VakPathV1 {
     pub path_ref: String,
     pub observation_ref: String,
     pub method_ref: String,
-    pub resolve_expression: String,
+    pub general_expression: VakGeneralExpressionEvidence,
     pub world_ref: Option<String>,
     pub project_ref: Option<String>,
     pub focus_ref: Option<String>,
@@ -666,7 +734,6 @@ pub fn reconstruct_observed_vak_path(
         || observation.owner_revision.trim().is_empty()
         || observation.evidence_run_ref.trim().is_empty()
         || observation.method_ref.trim().is_empty()
-        || observation.resolve_expression.trim().is_empty()
     {
         return Err(VakOiError::Observation(
             "observation identity, owner revision, run, Method and Resolve expression are required"
@@ -679,6 +746,7 @@ pub fn reconstruct_observed_vak_path(
         ));
     }
     observation.action_profile.validate(registry)?;
+    observation.general_expression.validate()?;
     if observation.action_profile.binding_revision != observation.owner_revision {
         return Err(VakOiError::Observation(
             "Action profile revision must equal the observed native owner revision".into(),
@@ -712,7 +780,7 @@ pub fn reconstruct_observed_vak_path(
         path_ref: format!("vak-path:{}", observation.observation_ref),
         observation_ref: observation.observation_ref,
         method_ref: observation.method_ref,
-        resolve_expression: observation.resolve_expression,
+        general_expression: observation.general_expression,
         world_ref: observation.world_ref,
         project_ref: observation.project_ref,
         focus_ref: observation.focus_ref,
@@ -727,6 +795,20 @@ pub fn reconstruct_observed_vak_path(
             .collect(),
         standing: VakStanding::Observed,
     })
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VakPraxisInstantiationV1 {
+    pub aspect: VakPraxisAspect,
+    pub source_refs: Vec<VakRef>,
+    pub method_ref: String,
+    pub action_ref: String,
+    pub actor_ref: Option<String>,
+    pub agency_ref: Option<String>,
+    pub activity_refs: Vec<String>,
+    pub evidence_refs: Vec<String>,
+    /// Source meaning + observed praxis yields a derived situated reading.
+    pub standing: VakStanding,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -745,6 +827,7 @@ pub struct VakRecognitionV1 {
     pub recognised_vak_refs: Vec<VakRef>,
     pub returned_refs: Vec<String>,
     pub evidence_refs: Vec<String>,
+    pub praxis: Vec<VakPraxisInstantiationV1>,
     pub proposals: Vec<VakRecognitionProposal>,
     pub standing: VakStanding,
 }
@@ -796,6 +879,31 @@ pub fn recognise_vak_return(
         returned_refs.extend(step.result_refs.iter().cloned());
     }
 
+    let activity_refs = path
+        .steps
+        .iter()
+        .filter_map(|step| step.activity_ref.clone())
+        .collect::<Vec<_>>();
+    let praxis = path
+        .action_profile
+        .praxis_aspects
+        .iter()
+        .map(|aspect| {
+            let reading = registry.praxis_reading(*aspect);
+            VakPraxisInstantiationV1 {
+                aspect: *aspect,
+                source_refs: reading.source_refs,
+                method_ref: path.method_ref.clone(),
+                action_ref: path.action_profile.action_ref.clone(),
+                actor_ref: path.actor_ref.clone(),
+                agency_ref: path.agency_ref.clone(),
+                activity_refs: activity_refs.clone(),
+                evidence_refs: path.evidence_refs.clone(),
+                standing: VakStanding::Derived,
+            }
+        })
+        .collect();
+
     Ok(VakRecognitionV1 {
         contract: VAK_RECOGNITION_CONTRACT,
         recognition_ref: recognition_ref.into(),
@@ -804,10 +912,29 @@ pub fn recognise_vak_return(
         recognised_vak_refs: recognised_vak_refs.into_iter().collect(),
         returned_refs: returned_refs.into_iter().collect(),
         evidence_refs,
+        praxis,
         proposals: Vec::new(),
         // The path occurrence is observed; the semantic integration across it is a derived reading.
         standing: VakStanding::Derived,
     })
+}
+
+impl VakRecognitionV1 {
+    /// Return the exact source neighbourhoods through which this returned actuality can be read.
+    pub fn vak_neighbourhoods(
+        &self,
+        registry: &VakRegistry,
+        depth: usize,
+    ) -> Result<Vec<VakNeighbourhood>, VakOiError> {
+        self.recognised_vak_refs
+            .iter()
+            .map(|reference| {
+                registry
+                    .neighbourhood(reference, depth)
+                    .map_err(VakOiError::Vak)
+            })
+            .collect()
+    }
 }
 
 fn field_for_horizon(horizon: VakAddressHorizon) -> VakContextField {

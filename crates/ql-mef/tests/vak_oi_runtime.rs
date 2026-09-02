@@ -1,11 +1,13 @@
 use ql_mef::{
-    CENTRAL_ACTION_OWNER_REVISION, CENTRAL_WORK_LIST_ACTION_REF, FACTORY_ACTION_OWNER_REVISION,
+    AIKIT_OPERATIVE_OWNER_REVISION, AIKIT_OPERATIVE_SYNTAX_VERSION, CENTRAL_ACTION_OWNER_REVISION,
+    CENTRAL_WORK_LIST_ACTION_REF, FACTORY_ACTION_OWNER_REVISION,
     FACTORY_REQUEST_EVIDENCE_ACTION_REF, SelfOtherForm, VAK_ACTION_PROFILE_CONTRACT,
     VAK_OI_PRIMITIVE_MATRIX_CONTRACT, VAK_PATH_CONTRACT, VAK_RECOGNITION_CONTRACT,
-    VakAddressHorizon, VakContextField, VakExecutionObservationV1, VakExpressionSubject,
-    VakExpressionV1, VakOiPrimitiveKind, VakPathStepV1, VakRegistry, VakRelationOp, VakStanding,
-    central_work_list_profile, factory_request_evidence_profile, oi_reference_primitive_matrix,
-    recognise_vak_return, reconstruct_observed_vak_path,
+    VakAddressHorizon, VakContextField, VakExecutionObservationV1, VakExpressionReadingV1,
+    VakExpressionSubject, VakGeneralExpressionEvidence, VakOiPrimitiveKind, VakPathStepV1,
+    VakRegistry, VakRelationOp, VakStanding, central_work_list_profile,
+    factory_request_evidence_profile, oi_reference_primitive_matrix, recognise_vak_return,
+    reconstruct_observed_vak_path,
 };
 
 #[test]
@@ -55,6 +57,9 @@ fn canonical_action_profiles_are_pinned_to_two_real_native_owners() {
         SelfOtherForm::QueryOfOther.source_ref()
     );
     assert!(!factory.affordances.is_empty());
+    assert!(!factory.native_handler_ref.is_empty());
+    assert!(!factory.native_result_lineage.is_empty());
+    assert_eq!(factory.praxis_aspects.len(), 3);
 
     let central = central_work_list_profile(&registry).unwrap();
     assert_eq!(central.contract, VAK_ACTION_PROFILE_CONTRACT);
@@ -63,6 +68,9 @@ fn canonical_action_profiles_are_pinned_to_two_real_native_owners() {
     assert_eq!(central.binding_revision, CENTRAL_ACTION_OWNER_REVISION);
     assert_eq!(central.primary_vak_ref, VakContextField::World.source_ref());
     assert!(!central.affordances.is_empty());
+    assert!(!central.native_handler_ref.is_empty());
+    assert!(!central.native_result_lineage.is_empty());
+    assert_eq!(central.praxis_aspects.len(), 2);
 }
 
 #[test]
@@ -73,7 +81,14 @@ fn an_implementation_binding_cannot_masquerade_as_an_observed_vak_path() {
         owner_revision: FACTORY_ACTION_OWNER_REVISION.into(),
         evidence_run_ref: "fixture:no-owner-runtime".into(),
         method_ref: "method:ql83/conformance".into(),
-        resolve_expression: "@2 candidate / @5 request-evidence".into(),
+        general_expression: VakGeneralExpressionEvidence {
+            syntax_version: AIKIT_OPERATIVE_SYNTAX_VERSION.into(),
+            owner_revision: AIKIT_OPERATIVE_OWNER_REVISION.into(),
+            resolve_path_identity: "resolve-path:87fc6f42f239f59b".into(),
+            rendered: "@2 candidate / @5 request-evidence".into(),
+            full_vak_rendering: "@2 X# candidate / @5 R# request-evidence".into(),
+            evidence: vec!["fixture:not-observed".into()],
+        },
         world_ref: None,
         project_ref: None,
         focus_ref: None,
@@ -107,7 +122,14 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
             owner_revision: FACTORY_ACTION_OWNER_REVISION.into(),
             evidence_run_ref: run_ref.clone(),
             method_ref: "method:ql83/factory-request-evidence-conformance".into(),
-            resolve_expression: "@2 candidate / @5 request-evidence".into(),
+            general_expression: VakGeneralExpressionEvidence {
+                syntax_version: AIKIT_OPERATIVE_SYNTAX_VERSION.into(),
+                owner_revision: AIKIT_OPERATIVE_OWNER_REVISION.into(),
+                resolve_path_identity: "resolve-path:87fc6f42f239f59b".into(),
+                rendered: "@2 candidate / @5 request-evidence".into(),
+                full_vak_rendering: "@2 X# candidate / @5 R# request-evidence".into(),
+                evidence: vec![run_ref.clone()],
+            },
             world_ref: Some("factory:world/build".into()),
             project_ref: Some("project:01ARZ3NDEKTSV4RRFFQ69G5FCA".into()),
             focus_ref: Some("candidate:01ARZ3NDEKTSV4RRFFQ69G5FCC".into()),
@@ -117,8 +139,8 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
             steps: vec![
                 VakPathStepV1 {
                     step_id: "factory-invocation".into(),
-                    expression: VakExpressionV1 {
-                        contract: ql_mef::VAK_EXPRESSION_CONTRACT,
+                    expression: VakExpressionReadingV1 {
+                        contract: ql_mef::VAK_EXPRESSION_READING_CONTRACT,
                         operator: VakRelationOp::Potential,
                         horizon: VakAddressHorizon::H2,
                         subjects: vec![
@@ -151,8 +173,8 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
                 },
                 VakPathStepV1 {
                     step_id: "factory-activity-return".into(),
-                    expression: VakExpressionV1 {
-                        contract: ql_mef::VAK_EXPRESSION_CONTRACT,
+                    expression: VakExpressionReadingV1 {
+                        contract: ql_mef::VAK_EXPRESSION_READING_CONTRACT,
                         operator: VakRelationOp::Express,
                         horizon: VakAddressHorizon::H5,
                         subjects: vec![VakExpressionSubject::Native(
@@ -211,6 +233,20 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
             .any(|value| value == factory_return)
     );
     assert!(recognition.proposals.is_empty());
+    assert_eq!(recognition.praxis.len(), 3);
+    assert!(recognition.praxis.iter().all(|praxis| {
+        praxis.standing == VakStanding::Derived
+            && !praxis.source_refs.is_empty()
+            && !praxis.activity_refs.is_empty()
+            && praxis.method_ref == "method:ql83/factory-request-evidence-conformance"
+    }));
+    assert!(
+        recognition
+            .vak_neighbourhoods(&registry, 1)
+            .unwrap()
+            .iter()
+            .all(|field| !field.entries.is_empty())
+    );
 
     let central_profile = central_work_list_profile(&registry).unwrap();
     let central_path = reconstruct_observed_vak_path(
@@ -220,7 +256,14 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
             owner_revision: CENTRAL_ACTION_OWNER_REVISION.into(),
             evidence_run_ref: run_ref.clone(),
             method_ref: "method:ql83/central-work-list-conformance".into(),
-            resolve_expression: "@4 Central/Work x @3 work.list".into(),
+            general_expression: VakGeneralExpressionEvidence {
+                syntax_version: AIKIT_OPERATIVE_SYNTAX_VERSION.into(),
+                owner_revision: AIKIT_OPERATIVE_OWNER_REVISION.into(),
+                resolve_path_identity: "resolve-path:a8d70c5d3fef7c90".into(),
+                rendered: "@4 Central/Work x @3 work.list".into(),
+                full_vak_rendering: "@4 M# Central/Work x @3 N# work.list".into(),
+                evidence: vec![run_ref.clone()],
+            },
             world_ref: Some("central:world".into()),
             project_ref: None,
             focus_ref: Some("Central/Work".into()),
@@ -230,8 +273,8 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
             steps: vec![
                 VakPathStepV1 {
                     step_id: "central-invocation".into(),
-                    expression: VakExpressionV1 {
-                        contract: ql_mef::VAK_EXPRESSION_CONTRACT,
+                    expression: VakExpressionReadingV1 {
+                        contract: ql_mef::VAK_EXPRESSION_READING_CONTRACT,
                         operator: VakRelationOp::Relate,
                         horizon: VakAddressHorizon::H4,
                         subjects: vec![VakExpressionSubject::Native("Central/Work".into())],
@@ -257,8 +300,8 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
                 },
                 VakPathStepV1 {
                     step_id: "central-provider-return".into(),
-                    expression: VakExpressionV1 {
-                        contract: ql_mef::VAK_EXPRESSION_CONTRACT,
+                    expression: VakExpressionReadingV1 {
+                        contract: ql_mef::VAK_EXPRESSION_READING_CONTRACT,
                         operator: VakRelationOp::Express,
                         horizon: VakAddressHorizon::H3,
                         subjects: vec![VakExpressionSubject::Native(
@@ -302,6 +345,10 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
     )
     .unwrap();
     assert_eq!(central_recognition.standing, VakStanding::Derived);
+    assert_eq!(central_recognition.praxis.len(), 2);
+    assert!(central_recognition.praxis.iter().all(|praxis| {
+        praxis.standing == VakStanding::Derived && !praxis.activity_refs.is_empty()
+    }));
     assert!(
         central_recognition
             .changed_fields
