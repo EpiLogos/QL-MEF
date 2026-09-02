@@ -165,6 +165,73 @@ fn ordinary_native_ref_can_refract_into_a_real_vak_neighbourhood() {
     );
 }
 
+#[test]
+fn siva_times_sakti_is_a_source_provenanced_canonical_six_by_six_field() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let field = registry.siva_sakti_operative_field().unwrap();
+    assert_eq!(field.ql_shape_ref, ql_core::SIX_BY_SIX_SHAPE_REF);
+    assert_eq!(field.cells.len(), 36);
+    assert_eq!(field.standing, VakStanding::ImplementationMapping);
+
+    for operator in VakRelationOp::ALL {
+        for horizon in VakAddressHorizon::ALL {
+            let cell = field
+                .cells
+                .iter()
+                .find(|cell| cell.operator == operator && cell.horizon == horizon)
+                .unwrap();
+            assert_eq!(cell.ql_address.row.position.value(), operator.position());
+            assert_eq!(cell.ql_address.column.position.value(), horizon.position());
+            assert_eq!(
+                cell.operator_source_ref.as_str(),
+                operator.source_coordinate()
+            );
+            assert_eq!(
+                cell.horizon_source_ref.as_str(),
+                horizon.source_coordinate()
+            );
+            assert!(registry.locate(&cell.operator_source_ref).is_some());
+            assert!(registry.locate(&cell.horizon_source_ref).is_some());
+        }
+    }
+}
+
+#[test]
+fn slash_binds_the_two_vak_sixfolds_to_kernel_generation_without_inventing_content() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let field = registry.siva_sakti_relational_sixfold().unwrap();
+    assert_eq!(field.ql_shape_ref, ql_core::RELATIONAL_SIXFOLD_SHAPE_REF);
+    assert_eq!(
+        field.ql_operator_ref,
+        ql_core::RELATIONAL_SIXFOLD_OPERATOR_REF
+    );
+    assert_eq!(field.contextualise_source_ref.as_str(), "M0-5-(0/1)-4");
+    assert_eq!(field.return_anchor_symbol, "0/1");
+    assert_eq!(field.sites.len(), 6);
+    assert!(field.semantic_generation_requires_attributable_return);
+
+    for (position, site) in field.sites.iter().enumerate() {
+        assert_eq!(site.position, position as u8);
+        assert_eq!(site.operator.position(), position as u8);
+        assert_eq!(site.horizon.position(), position as u8);
+        assert_eq!(
+            site.operator_source_ref.as_str(),
+            site.operator.source_coordinate()
+        );
+        assert_eq!(
+            site.horizon_source_ref.as_str(),
+            site.horizon.source_coordinate()
+        );
+        assert_eq!(
+            site.ql_operator_ref,
+            format!(
+                "{}:position-{position}",
+                ql_core::RELATIONAL_SIXFOLD_OPERATOR_REF
+            )
+        );
+    }
+}
+
 fn expected_position(operator: VakRelationOp) -> usize {
     match operator {
         VakRelationOp::Potential => 0,

@@ -43,7 +43,8 @@ pub use vak::{
     VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon, VakEntry,
     VakError, VakHorizonBinding, VakNeighbourhood, VakOperatorBinding, VakPath, VakPraxisAspect,
     VakPraxisReading, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind,
-    VakRelationOp, VakSourceProvenance, VakStanding,
+    VakRelationOp, VakSivaSaktiCell, VakSivaSaktiField, VakSivaSaktiGenerationSite,
+    VakSivaSaktiRelationalSixfold, VakSourceProvenance, VakStanding,
 };
 
 impl MCoordinate {
