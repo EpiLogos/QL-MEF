@@ -16,7 +16,12 @@ fn broad_oi_matrix_covers_every_required_primitive_without_collapsing_native_own
     assert_eq!(matrix.standing, VakStanding::AuthoredArchitecture);
 
     for primitive in VakOiPrimitiveKind::ALL {
-        assert!(matrix.relations.iter().any(|relation| relation.primitive == primitive));
+        assert!(
+            matrix
+                .relations
+                .iter()
+                .any(|relation| relation.primitive == primitive)
+        );
     }
 
     let action_owners = matrix
@@ -45,7 +50,10 @@ fn canonical_action_profiles_are_pinned_to_two_real_native_owners() {
     assert_eq!(factory.action_ref, FACTORY_REQUEST_EVIDENCE_ACTION_REF);
     assert_eq!(factory.native_owner, "factory");
     assert_eq!(factory.binding_revision, FACTORY_ACTION_OWNER_REVISION);
-    assert_eq!(factory.primary_vak_ref, SelfOtherForm::QueryOfOther.source_ref());
+    assert_eq!(
+        factory.primary_vak_ref,
+        SelfOtherForm::QueryOfOther.source_ref()
+    );
     assert!(!factory.affordances.is_empty());
 
     let central = central_work_list_profile(&registry).unwrap();
@@ -181,7 +189,12 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
     .unwrap();
     assert_eq!(factory_path.contract, VAK_PATH_CONTRACT);
     assert_eq!(factory_path.standing, VakStanding::Observed);
-    assert!(factory_path.steps.iter().any(|step| step.return_ref.is_some()));
+    assert!(
+        factory_path
+            .steps
+            .iter()
+            .any(|step| step.return_ref.is_some())
+    );
     let recognition = recognise_vak_return(
         &registry,
         &factory_path,
@@ -191,7 +204,12 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
     .unwrap();
     assert_eq!(recognition.contract, VAK_RECOGNITION_CONTRACT);
     assert_eq!(recognition.standing, VakStanding::Derived);
-    assert!(recognition.returned_refs.iter().any(|value| value == factory_return));
+    assert!(
+        recognition
+            .returned_refs
+            .iter()
+            .any(|value| value == factory_return)
+    );
     assert!(recognition.proposals.is_empty());
 
     let central_profile = central_work_list_profile(&registry).unwrap();
@@ -284,6 +302,14 @@ fn native_owner_conformance_can_return_through_vak_path_and_m5_recognition() {
     )
     .unwrap();
     assert_eq!(central_recognition.standing, VakStanding::Derived);
-    assert!(central_recognition.changed_fields.contains(&VakContextField::World));
-    assert!(central_recognition.changed_fields.contains(&VakContextField::Language));
+    assert!(
+        central_recognition
+            .changed_fields
+            .contains(&VakContextField::World)
+    );
+    assert!(
+        central_recognition
+            .changed_fields
+            .contains(&VakContextField::Language)
+    );
 }

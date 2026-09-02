@@ -152,16 +152,37 @@ impl VakOiPrimitiveKind {
             Self::ResourceRef | Self::SourceRef | Self::Source | Self::Ground | Self::Canon => {
                 VakContextField::Bimba
             }
-            Self::Reading | Self::KnowledgeNode | Self::KnowledgeRoute | Self::Result
-            | Self::Claim | Self::Evidence => VakContextField::Pratibimba,
+            Self::Reading
+            | Self::KnowledgeNode
+            | Self::KnowledgeRoute
+            | Self::Result
+            | Self::Claim
+            | Self::Evidence => VakContextField::Pratibimba,
             Self::Surface | Self::Projection => VakContextField::Language,
-            Self::World | Self::Project | Self::SessionSpace | Self::SharedField | Self::Journey
-            | Self::Run | Self::Participant | Self::Agent | Self::Agency | Self::AgentSet
+            Self::World
+            | Self::Project
+            | Self::SessionSpace
+            | Self::SharedField
+            | Self::Journey
+            | Self::Run
+            | Self::Participant
+            | Self::Agent
+            | Self::Agency
+            | Self::AgentSet
             | Self::AgentSession => VakContextField::World,
             Self::ContextSource | Self::ContextResolution => VakContextField::Particular,
-            Self::Capability | Self::Skill | Self::UsageOverlay | Self::SkillSet | Self::Method
-            | Self::Action | Self::ActionRef | Self::Invocation | Self::Activity
-            | Self::ActuationStream | Self::Return | Self::Recognition => VakContextField::Techne,
+            Self::Capability
+            | Self::Skill
+            | Self::UsageOverlay
+            | Self::SkillSet
+            | Self::Method
+            | Self::Action
+            | Self::ActionRef
+            | Self::Invocation
+            | Self::Activity
+            | Self::ActuationStream
+            | Self::Return
+            | Self::Recognition => VakContextField::Techne,
         }
     }
 }
@@ -302,8 +323,12 @@ impl VakExpressionV1 {
         if self.evidence.is_empty() {
             return Err(VakOiError::Missing("expression evidence"));
         }
-        registry.bind_operator(self.operator).map_err(VakOiError::Vak)?;
-        registry.bind_horizon(self.horizon).map_err(VakOiError::Vak)?;
+        registry
+            .bind_operator(self.operator)
+            .map_err(VakOiError::Vak)?;
+        registry
+            .bind_horizon(self.horizon)
+            .map_err(VakOiError::Vak)?;
         for vak_ref in self
             .subjects
             .iter()
@@ -369,8 +394,12 @@ impl VakActionProfileV1 {
             }
         }
         for affordance in &self.affordances {
-            registry.bind_operator(affordance.operator).map_err(VakOiError::Vak)?;
-            registry.bind_horizon(affordance.horizon).map_err(VakOiError::Vak)?;
+            registry
+                .bind_operator(affordance.operator)
+                .map_err(VakOiError::Vak)?;
+            registry
+                .bind_horizon(affordance.horizon)
+                .map_err(VakOiError::Vak)?;
         }
         for act in &self.divine_acts {
             registry.r_path(*act).map_err(VakOiError::Vak)?;
@@ -431,9 +460,7 @@ pub fn factory_request_evidence_profile(
     Ok(profile)
 }
 
-pub fn central_work_list_profile(
-    registry: &VakRegistry,
-) -> Result<VakActionProfileV1, VakOiError> {
+pub fn central_work_list_profile(registry: &VakRegistry) -> Result<VakActionProfileV1, VakOiError> {
     let profile = VakActionProfileV1 {
         contract: VAK_ACTION_PROFILE_CONTRACT,
         action_ref: CENTRAL_WORK_LIST_ACTION_REF.into(),
@@ -459,8 +486,7 @@ pub fn central_work_list_profile(
             VakActionAffordance {
                 operator: VakRelationOp::Express,
                 horizon: VakAddressHorizon::H3,
-                role: "return the discovered Work items and selected-connector diagnostics"
-                    .into(),
+                role: "return the discovered Work items and selected-connector diagnostics".into(),
                 standing: VakStanding::Implementation,
             },
         ],
@@ -664,7 +690,9 @@ pub fn reconstruct_observed_vak_path(
     let mut has_return = false;
     for step in &observation.steps {
         step.validate(registry)?;
-        if step.standing != VakStanding::Observed || step.expression.standing != VakStanding::Observed {
+        if step.standing != VakStanding::Observed
+            || step.expression.standing != VakStanding::Observed
+        {
             return Err(VakOiError::Observation(
                 "every reconstructed path step and expression must be OBSERVED".into(),
             ));
@@ -736,21 +764,29 @@ pub fn recognise_vak_return(
         return Err(VakOiError::Missing("Recognition evidence"));
     }
 
-    let mut changed_fields = BTreeSet::new();
+    let mut changed_fields = Vec::new();
     let mut recognised_vak_refs = BTreeSet::new();
     let mut returned_refs = BTreeSet::new();
     for step in &path.steps {
         step.expression.validate(registry)?;
-        changed_fields.insert(field_for_horizon(step.expression.horizon));
+        let changed_field = field_for_horizon(step.expression.horizon);
+        if !changed_fields.contains(&changed_field) {
+            changed_fields.push(changed_field);
+        }
         for vak_ref in step
             .expression
             .relation_refs
             .iter()
             .chain(step.expression.complement_refs.iter())
-            .chain(step.expression.subjects.iter().filter_map(|subject| match subject {
-                VakExpressionSubject::Vak(vak_ref) => Some(vak_ref),
-                VakExpressionSubject::Native(_) => None,
-            }))
+            .chain(
+                step.expression
+                    .subjects
+                    .iter()
+                    .filter_map(|subject| match subject {
+                        VakExpressionSubject::Vak(vak_ref) => Some(vak_ref),
+                        VakExpressionSubject::Native(_) => None,
+                    }),
+            )
         {
             recognised_vak_refs.insert(vak_ref.clone());
         }
@@ -764,7 +800,7 @@ pub fn recognise_vak_return(
         contract: VAK_RECOGNITION_CONTRACT,
         recognition_ref: recognition_ref.into(),
         path_ref: path.path_ref.clone(),
-        changed_fields: changed_fields.into_iter().collect(),
+        changed_fields,
         recognised_vak_refs: recognised_vak_refs.into_iter().collect(),
         returned_refs: returned_refs.into_iter().collect(),
         evidence_refs,
@@ -788,36 +824,56 @@ fn field_for_horizon(horizon: VakAddressHorizon) -> VakContextField {
 fn primitive_owner(primitive: VakOiPrimitiveKind) -> &'static str {
     match primitive {
         VakOiPrimitiveKind::ResourceRef | VakOiPrimitiveKind::SourceRef => "O:I",
-        VakOiPrimitiveKind::Source | VakOiPrimitiveKind::Ground | VakOiPrimitiveKind::Canon
-        | VakOiPrimitiveKind::World | VakOiPrimitiveKind::Project => "Central",
-        VakOiPrimitiveKind::Reading | VakOiPrimitiveKind::KnowledgeNode
-        | VakOiPrimitiveKind::KnowledgeRoute | VakOiPrimitiveKind::SessionSpace
-        | VakOiPrimitiveKind::AgentSession | VakOiPrimitiveKind::Capability
-        | VakOiPrimitiveKind::Skill | VakOiPrimitiveKind::UsageOverlay
-        | VakOiPrimitiveKind::SkillSet | VakOiPrimitiveKind::Method
-        | VakOiPrimitiveKind::ContextSource | VakOiPrimitiveKind::ContextResolution
-        | VakOiPrimitiveKind::Surface | VakOiPrimitiveKind::Projection => "AIKit",
+        VakOiPrimitiveKind::Source
+        | VakOiPrimitiveKind::Ground
+        | VakOiPrimitiveKind::Canon
+        | VakOiPrimitiveKind::World
+        | VakOiPrimitiveKind::Project => "Central",
+        VakOiPrimitiveKind::Reading
+        | VakOiPrimitiveKind::KnowledgeNode
+        | VakOiPrimitiveKind::KnowledgeRoute
+        | VakOiPrimitiveKind::SessionSpace
+        | VakOiPrimitiveKind::AgentSession
+        | VakOiPrimitiveKind::Capability
+        | VakOiPrimitiveKind::Skill
+        | VakOiPrimitiveKind::UsageOverlay
+        | VakOiPrimitiveKind::SkillSet
+        | VakOiPrimitiveKind::Method
+        | VakOiPrimitiveKind::ContextSource
+        | VakOiPrimitiveKind::ContextResolution
+        | VakOiPrimitiveKind::Surface
+        | VakOiPrimitiveKind::Projection => "AIKit",
         VakOiPrimitiveKind::SharedField | VakOiPrimitiveKind::Participant => "O:I",
-        VakOiPrimitiveKind::Journey | VakOiPrimitiveKind::Run | VakOiPrimitiveKind::Result
-        | VakOiPrimitiveKind::Claim | VakOiPrimitiveKind::Evidence
+        VakOiPrimitiveKind::Journey
+        | VakOiPrimitiveKind::Run
+        | VakOiPrimitiveKind::Result
+        | VakOiPrimitiveKind::Claim
+        | VakOiPrimitiveKind::Evidence
         | VakOiPrimitiveKind::Recognition => "Factory",
-        VakOiPrimitiveKind::Agent | VakOiPrimitiveKind::Agency | VakOiPrimitiveKind::AgentSet
-        | VakOiPrimitiveKind::Invocation | VakOiPrimitiveKind::Activity
-        | VakOiPrimitiveKind::ActuationStream | VakOiPrimitiveKind::Return => "Actuation",
+        VakOiPrimitiveKind::Agent
+        | VakOiPrimitiveKind::Agency
+        | VakOiPrimitiveKind::AgentSet
+        | VakOiPrimitiveKind::Invocation
+        | VakOiPrimitiveKind::Activity
+        | VakOiPrimitiveKind::ActuationStream
+        | VakOiPrimitiveKind::Return => "Actuation",
         VakOiPrimitiveKind::Action | VakOiPrimitiveKind::ActionRef => "native product owner",
     }
 }
 
 fn primitive_altitude(primitive: VakOiPrimitiveKind) -> VakOiSemanticAltitude {
     match primitive {
-        VakOiPrimitiveKind::Invocation | VakOiPrimitiveKind::Activity
+        VakOiPrimitiveKind::Invocation
+        | VakOiPrimitiveKind::Activity
         | VakOiPrimitiveKind::ActuationStream => VakOiSemanticAltitude::Activity,
-        VakOiPrimitiveKind::ContextResolution | VakOiPrimitiveKind::Method
-        | VakOiPrimitiveKind::Action | VakOiPrimitiveKind::ActionRef
-        | VakOiPrimitiveKind::Surface | VakOiPrimitiveKind::Projection
-        | VakOiPrimitiveKind::Return | VakOiPrimitiveKind::Recognition => {
-            VakOiSemanticAltitude::SituatedUse
-        }
+        VakOiPrimitiveKind::ContextResolution
+        | VakOiPrimitiveKind::Method
+        | VakOiPrimitiveKind::Action
+        | VakOiPrimitiveKind::ActionRef
+        | VakOiPrimitiveKind::Surface
+        | VakOiPrimitiveKind::Projection
+        | VakOiPrimitiveKind::Return
+        | VakOiPrimitiveKind::Recognition => VakOiSemanticAltitude::SituatedUse,
         VakOiPrimitiveKind::Result | VakOiPrimitiveKind::Claim | VakOiPrimitiveKind::Evidence => {
             VakOiSemanticAltitude::CurrentState
         }
@@ -839,9 +895,15 @@ impl fmt::Display for VakOiError {
         match self {
             Self::Vak(error) => error.fmt(formatter),
             Self::Missing(field) => write!(formatter, "missing required Vāk/O:I field: {field}"),
-            Self::Contract(contract) => write!(formatter, "unexpected Vāk/O:I contract: {contract}"),
+            Self::Contract(contract) => {
+                write!(formatter, "unexpected Vāk/O:I contract: {contract}")
+            }
             Self::PrimitiveCoverage(missing) => {
-                write!(formatter, "primitive matrix is missing: {}", missing.join(", "))
+                write!(
+                    formatter,
+                    "primitive matrix is missing: {}",
+                    missing.join(", ")
+                )
             }
             Self::Observation(message) => formatter.write_str(message),
         }
