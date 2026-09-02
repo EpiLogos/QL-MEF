@@ -1,4 +1,7 @@
-use crate::{PairInstance, QlCoordinate, QlFace, QlPosition, RelationField, WHOLE_ANCHOR_SYMBOL};
+use crate::{
+    ConstellationGrain, PairInstance, QlCoordinate, QlFace, QlPosition, RelationFamily,
+    RelationField, WHOLE_ANCHOR_SYMBOL,
+};
 
 pub const QL_SHAPE_CONTRACT_VERSION: &str = "1.0.0";
 pub const SIX_BY_SIX_SHAPE_REF: &str = "ql:shape:1.0.0:6x6:direct-conjugate";
@@ -6,8 +9,43 @@ pub const RELATIONAL_SIXFOLD_SHAPE_REF: &str = "ql:shape:1.0.0:6-plus-6-prime";
 pub const RELATIONAL_SIXFOLD_OPERATOR_REF: &str =
     "ql:shape:1.0.0:generation:same-position-direct-conjugate";
 
+/// Canonical executable morphology of a QL whole.
+///
+/// `Constellation` carries the already-developed positive grains from the whole
+/// anchor through partial and complete direct/conjugate constellations. The
+/// matrix and relational-sixfold variants are higher-order fields disclosed from
+/// those same coordinates rather than a second structural system.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum QlShape {
+    Constellation(ConstellationGrain),
+    FourByFour {
+        family: RelationFamily,
+        pair_index: u8,
+    },
+    SixBySix,
+    RelationalSixfold,
+}
+
+impl QlShape {
+    pub fn shape_ref(self) -> String {
+        match self {
+            Self::Constellation(grain) => format!(
+                "ql:shape:{QL_SHAPE_CONTRACT_VERSION}:constellation:{}",
+                grain.as_str()
+            ),
+            Self::FourByFour { family, pair_index } => format!(
+                "ql:shape:{QL_SHAPE_CONTRACT_VERSION}:4x4:{}:{pair_index}",
+                family.as_str()
+            ),
+            Self::SixBySix => SIX_BY_SIX_SHAPE_REF.into(),
+            Self::RelationalSixfold => RELATIONAL_SIXFOLD_SHAPE_REF.into(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum QlShapeKind {
+    Constellation,
     FourByFour,
     SixBySix,
     RelationalSixfold,
@@ -16,6 +54,7 @@ pub enum QlShapeKind {
 impl QlShapeKind {
     pub const fn as_str(self) -> &'static str {
         match self {
+            Self::Constellation => "constellation",
             Self::FourByFour => "4x4",
             Self::SixBySix => "6x6",
             Self::RelationalSixfold => "6-plus-6-prime",
@@ -54,16 +93,19 @@ impl FourByFourField {
         QlShapeKind::FourByFour
     }
 
+    pub const fn shape(&self) -> QlShape {
+        QlShape::FourByFour {
+            family: self.source.pair.family,
+            pair_index: self.source.pair.pair_index,
+        }
+    }
+
     pub fn axis(&self) -> &[QlCoordinate] {
         &self.source.coordinates
     }
 
     pub fn shape_ref(&self) -> String {
-        format!(
-            "ql:shape:{QL_SHAPE_CONTRACT_VERSION}:4x4:{}:{}",
-            self.source.pair.family.as_str(),
-            self.source.pair.pair_index
-        )
+        self.shape().shape_ref()
     }
 
     pub fn derivation_ref(&self) -> String {
@@ -93,6 +135,10 @@ impl SixBySixField {
 
     pub const fn kind(&self) -> QlShapeKind {
         QlShapeKind::SixBySix
+    }
+
+    pub const fn shape(&self) -> QlShape {
+        QlShape::SixBySix
     }
 
     pub const fn shape_ref(&self) -> &'static str {
@@ -145,18 +191,18 @@ impl RelationalSixfold {
             .collect();
         Self {
             sites,
-            direct_basis_ref: format!(
-                "ql:shape:{QL_SHAPE_CONTRACT_VERSION}:sixfold:direct"
-            ),
-            conjugate_basis_ref: format!(
-                "ql:shape:{QL_SHAPE_CONTRACT_VERSION}:sixfold:conjugate"
-            ),
+            direct_basis_ref: format!("ql:shape:{QL_SHAPE_CONTRACT_VERSION}:sixfold:direct"),
+            conjugate_basis_ref: format!("ql:shape:{QL_SHAPE_CONTRACT_VERSION}:sixfold:conjugate"),
             return_anchor_symbol: WHOLE_ANCHOR_SYMBOL,
         }
     }
 
     pub const fn kind(&self) -> QlShapeKind {
         QlShapeKind::RelationalSixfold
+    }
+
+    pub const fn shape(&self) -> QlShape {
+        QlShape::RelationalSixfold
     }
 
     pub const fn shape_ref(&self) -> &'static str {
@@ -171,8 +217,7 @@ impl RelationalSixfold {
 fn canonical_axis(face: QlFace) -> Vec<QlCoordinate> {
     (0_u8..6)
         .map(|value| {
-            let position =
-                QlPosition::new(value).expect("shape-axis positions are canonical 0..5");
+            let position = QlPosition::new(value).expect("shape-axis positions are canonical 0..5");
             QlCoordinate::new(position, face)
         })
         .collect()
@@ -194,7 +239,21 @@ fn cartesian_addresses(rows: &[QlCoordinate], columns: &[QlCoordinate]) -> Vec<Q
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::RelationFamily;
+
+    #[test]
+    fn existing_constellation_grains_are_positive_canonical_shapes() {
+        let partial = QlShape::Constellation(ConstellationGrain::PartialConjugate9);
+        let direct = QlShape::Constellation(ConstellationGrain::SixFold);
+
+        assert_eq!(
+            partial.shape_ref(),
+            "ql:shape:1.0.0:constellation:partial-conjugate-9"
+        );
+        assert_eq!(
+            direct.shape_ref(),
+            "ql:shape:1.0.0:constellation:sixfold"
+        );
+    }
 
     #[test]
     fn d3_square_expands_to_sixteen_addresses_and_retains_route_identity() {
@@ -242,5 +301,16 @@ mod tests {
         }
         assert_eq!(shape.return_anchor_symbol, "0/1");
         assert_eq!(shape.shape_ref(), RELATIONAL_SIXFOLD_SHAPE_REF);
+    }
+
+    #[test]
+    fn portable_shape_fixture_carries_the_same_cardinality_and_return_laws() {
+        let fixture = include_str!("../../../fixtures/kernel/ql-shape-contract-v1.json");
+
+        assert!(fixture.contains("\"address_cardinality\": 16"));
+        assert!(fixture.contains("\"address_cardinality\": 36"));
+        assert!(fixture.contains("\"site_cardinality\": 6"));
+        assert!(fixture.contains("\"return_through\": \"0/1\""));
+        assert!(fixture.contains("\"shape_address_asserts_semantic_relation\": false"));
     }
 }
