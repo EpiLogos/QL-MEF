@@ -35,9 +35,9 @@ pub use pairing::{
 };
 pub use position::QlPosition;
 pub use shape::{
-    FourByFourField, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShapeAddress, QlShapeKind,
-    RELATIONAL_SIXFOLD_OPERATOR_REF, RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold,
-    SIX_BY_SIX_SHAPE_REF, SixBySixField,
+    FourByFourField, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShape, QlShapeAddress,
+    QlShapeKind, RELATIONAL_SIXFOLD_OPERATOR_REF, RELATIONAL_SIXFOLD_SHAPE_REF,
+    RelationalSixfold, SIX_BY_SIX_SHAPE_REF, SixBySixField,
 };
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
