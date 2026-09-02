@@ -1,0 +1,89 @@
+name: QL83 O:I Action path return conformance
+
+on:
+  push:
+    branches:
+      - feat/epi-vak-agent-native-runtime
+    paths:
+      - '.github/workflows/ql83-oi-finish.yml'
+      - 'scripts/ql83-oi-finish.py'
+
+permissions:
+  contents: write
+
+jobs:
+  cross-product-return:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout QL-MEF branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/epi-vak-agent-native-runtime
+          path: ql-mef
+          fetch-depth: 0
+
+      - name: Checkout exact Factory owner revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/agent-system-design
+          ref: 71287c179e7686cb37cb25267958f0c390a1ecb7
+          path: factory-owner
+
+      - name: Checkout exact Central owner revision
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Central
+          ref: 77625f40081a3e38503d732f44c607a94888d9d6
+          path: central-owner
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Apply bounded Recognition fix and verify QL-MEF
+        working-directory: ql-mef
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ql83-oi-finish.py
+          cargo fmt --all
+          cargo check --workspace --all-targets
+          cargo clippy --workspace --all-targets -- -D warnings
+          cargo test --workspace
+
+      - name: Execute exact Factory Action proving specimen
+        working-directory: factory-owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '71287c179e7686cb37cb25267958f0c390a1ecb7'
+          cargo test -p epilogos-factory --test build_file_provider local_provider_persists_canonical_mutation_and_reopens_at_new_revision -- --exact
+
+      - name: Execute exact Central Action proving specimen
+        working-directory: central-owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '77625f40081a3e38503d732f44c607a94888d9d6'
+          cargo test -p ctrl --test port_connector work_list_action_depends_on_port_and_reports_selected_connector -- --exact
+
+      - name: Admit same-run owner evidence into observed Vāk paths and Recognition
+        working-directory: ql-mef
+        shell: bash
+        env:
+          VAK_OWNER_CONFORMANCE_RUN_REF: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          cargo test -p ql-mef --test vak_oi_runtime native_owner_conformance_can_return_through_vak_path_and_m5_recognition -- --exact
+
+      - name: Commit verified runtime and retire migration scaffolding
+        working-directory: ql-mef
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/ql83-oi-finish.yml scripts/ql83-oi-finish.py
+          git add crates/ql-mef/src/vak_oi.rs crates/ql-mef/src/lib.rs crates/ql-mef/tests/vak_oi_runtime.rs
+          git commit -m '[QL83] Verify cross-product Action path and Recognition return'
+          git push origin HEAD:feat/epi-vak-agent-native-runtime
