@@ -40,11 +40,12 @@ pub use registry::{
 pub use sublens::SublensRef;
 pub use vak::{
     SelfOtherForm, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
-    VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon, VakEntry,
-    VakError, VakHorizonBinding, VakNeighbourhood, VakOperatorBinding, VakPath, VakPraxisAspect,
-    VakPraxisReading, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind,
-    VakRelationOp, VakSivaSaktiCell, VakSivaSaktiField, VakSivaSaktiGenerationSite,
-    VakSivaSaktiRelationalSixfold, VakSourceProvenance, VakStanding,
+    VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon,
+    VakContextField, VakDivineAct, VakEntry, VakError, VakFormalCoverage, VakHorizonBinding,
+    VakNeighbourhood, VakOperatorBinding, VakPath, VakPraxisAspect, VakPraxisReading, VakRPath,
+    VakRPathStep, VakRef, VakRefraction, VakRegistry, VakRelation, VakRelationKind, VakRelationOp,
+    VakSivaSaktiCell, VakSivaSaktiField, VakSivaSaktiGenerationSite, VakSivaSaktiRelationalSixfold,
+    VakSourceProvenance, VakSpeechAct, VakSpeechStance, VakStanding,
 };
 
 impl MCoordinate {

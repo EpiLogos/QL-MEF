@@ -2,8 +2,8 @@ use std::collections::BTreeSet;
 
 use ql_mef::{
     SelfOtherForm, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
-    VAK_SOURCE_REVISION, VakAddressHorizon, VakPraxisAspect, VakRef, VakRegistry, VakRelationOp,
-    VakStanding,
+    VAK_SOURCE_REVISION, VakAddressHorizon, VakContextField, VakDivineAct, VakPraxisAspect, VakRef,
+    VakRegistry, VakRelationKind, VakRelationOp, VakSpeechStance, VakStanding,
 };
 
 #[test]
@@ -43,9 +43,9 @@ fn siva_sixfold_is_present_at_exact_source_coordinates() {
         assert_eq!(operator.position() as usize, expected_position(operator));
         let entry = registry.locate_str(coordinate).unwrap();
         assert!(entry.raw_source_row.contains(source_glyph));
-        assert_eq!(entry.source.standing, VakStanding::SourceBacked);
+        assert_eq!(entry.source.standing, VakStanding::Source);
         let binding = registry.bind_operator(operator).unwrap();
-        assert_eq!(binding.standing, VakStanding::ImplementationMapping);
+        assert_eq!(binding.standing, VakStanding::Implementation);
         assert_eq!(
             binding.source_support,
             vec![VakRef::new(coordinate).unwrap()]
@@ -69,9 +69,9 @@ fn shakti_sixfold_is_present_at_exact_source_coordinates() {
         let entry = registry.locate_str(coordinate).unwrap();
         assert!(entry.raw_source_row.contains(source_relation));
         assert!(entry.raw_source_row.contains(horizon.source_symbol()));
-        assert_eq!(entry.source.standing, VakStanding::SourceBacked);
+        assert_eq!(entry.source.standing, VakStanding::Source);
         let binding = registry.bind_horizon(horizon).unwrap();
-        assert_eq!(binding.standing, VakStanding::ImplementationMapping);
+        assert_eq!(binding.standing, VakStanding::Implementation);
         assert_eq!(
             binding.source_support,
             vec![VakRef::new(coordinate).unwrap()]
@@ -136,7 +136,7 @@ fn will_knowledge_action_readings_are_source_backed() {
         VakPraxisAspect::ActionSvatantrya,
     ] {
         let reading = registry.praxis_reading(aspect);
-        assert_eq!(reading.standing, VakStanding::SourceBacked);
+        assert_eq!(reading.standing, VakStanding::Source);
         assert!(!reading.source_refs.is_empty());
     }
 }
@@ -149,13 +149,13 @@ fn ordinary_native_ref_can_refract_into_a_real_vak_neighbourhood() {
         .refract(
             "action:aikit/resolve",
             vak_ref.clone(),
-            VakStanding::ImplementationMapping,
+            VakStanding::Implementation,
             vec!["explicit test binding".into()],
         )
         .unwrap();
     assert_eq!(reading.native_ref, "action:aikit/resolve");
     assert_eq!(reading.vak_ref, vak_ref);
-    assert_eq!(reading.standing, VakStanding::ImplementationMapping);
+    assert_eq!(reading.standing, VakStanding::Implementation);
     assert!(
         !registry
             .neighbourhood(&reading.vak_ref, 1)
@@ -171,7 +171,7 @@ fn siva_times_sakti_is_a_source_provenanced_canonical_six_by_six_field() {
     let field = registry.siva_sakti_operative_field().unwrap();
     assert_eq!(field.ql_shape_ref, ql_core::SIX_BY_SIX_SHAPE_REF);
     assert_eq!(field.cells.len(), 36);
-    assert_eq!(field.standing, VakStanding::ImplementationMapping);
+    assert_eq!(field.standing, VakStanding::Implementation);
 
     for operator in VakRelationOp::ALL {
         for horizon in VakAddressHorizon::ALL {
@@ -241,4 +241,137 @@ fn expected_position(operator: VakRelationOp) -> usize {
         VakRelationOp::Contextualise => 4,
         VakRelationOp::Express => 5,
     }
+}
+
+#[test]
+fn exact_formal_property_coverage_matches_the_authoritative_source_receipt() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let coverage = registry.formal_coverage();
+    assert_eq!(coverage.names, 109);
+    assert_eq!(coverage.symbols, 107);
+    assert_eq!(coverage.primary_designations, 108);
+    assert_eq!(coverage.complete_formulations, 67);
+    assert_eq!(coverage.formulation_breakdowns, 49);
+    assert_eq!(coverage.metaphysical_names, 19);
+    assert_eq!(coverage.descriptions, 97);
+}
+
+#[test]
+fn coordinate_prefix_structure_is_derived_while_m0_4_context_chain_is_authored_architecture() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let structural = registry
+        .relations_from(&VakRef::new("M0-3-6").unwrap())
+        .unwrap();
+    assert!(structural.iter().any(|relation| {
+        relation.relation == VakRelationKind::Parent && relation.standing == VakStanding::Derived
+    }));
+
+    for field in VakContextField::ALL {
+        let entry = registry.context_field_entry(field).unwrap();
+        assert_eq!(entry.vak_ref.as_str(), field.source_coordinate());
+        assert!(entry.raw_source_row.contains(field.symbol()));
+    }
+    let bimba = VakContextField::Bimba.source_ref();
+    let relations = registry.context_relations_from(&bimba).unwrap();
+    assert!(relations.iter().any(|relation| {
+        relation.relation == VakRelationKind::Contextualises
+            && relation.into_ref == VakContextField::Pratibimba.source_ref()
+            && relation.standing == VakStanding::AuthoredArchitecture
+    }));
+}
+
+#[test]
+fn principle_nine_divine_action_paths_are_exact_source_relations() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let expected = [
+        (
+            VakDivineAct::Creation,
+            "0R = @ = (9-O#-X#-N#)",
+            vec!["9", "O#", "X#", "N#"],
+        ),
+        (
+            VakDivineAct::Sustenance,
+            "1R = @ = (O#-X#-N#-M#-#-(#))",
+            vec!["O#", "X#", "N#", "M#", "#", "(#)"],
+        ),
+        (
+            VakDivineAct::Dissolution,
+            "2R = @ = (X#-N#-M#-#-(#)-(@#))",
+            vec!["X#", "N#", "M#", "#", "(#)", "(@#)"],
+        ),
+        (
+            VakDivineAct::Veiling,
+            "3R = @ = ((@#)-(#)-#-M#-N#-X#)",
+            vec!["(@#)", "(#)", "#", "M#", "N#", "X#"],
+        ),
+        (
+            VakDivineAct::Grace,
+            "4R = @ = ((#)-#-M#-N#-X#-O#)",
+            vec!["(#)", "#", "M#", "N#", "X#", "O#"],
+        ),
+        (VakDivineAct::Absorption, "5R = @ = (##)", vec!["##"]),
+    ];
+    for (act, formula, tokens) in expected {
+        let path = registry.r_path(act).unwrap();
+        assert_eq!(path.standing, VakStanding::Source);
+        assert_eq!(path.principle_nine_formula.as_deref(), Some(formula));
+        assert_eq!(
+            path.steps
+                .iter()
+                .map(|step| step.token.as_str())
+                .collect::<Vec<_>>(),
+            tokens
+        );
+        assert!(path.principle_nine_ref.is_some());
+    }
+    let freedom = registry.r_path(VakDivineAct::Freedom).unwrap();
+    assert_eq!(freedom.steps[0].token, "R#");
+    assert!(freedom.principle_nine_ref.is_none());
+}
+
+#[test]
+fn m0_3_speech_forms_have_typed_source_grounded_stances() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let query = registry.parse_speech_act("-!").unwrap();
+    assert_eq!(query.stance, VakSpeechStance::QueryOfOther);
+    assert_eq!(query.standing, VakStanding::Source);
+    assert_eq!(query.source_ref.as_str(), "M0-3-6-6");
+
+    let reflexive = registry.parse_speech_act("?!").unwrap();
+    assert_eq!(reflexive.stance, VakSpeechStance::ReflexiveQuery);
+    let return_question = registry.parse_speech_act("?!/!?").unwrap();
+    assert_eq!(
+        return_question.stance,
+        VakSpeechStance::WorldQuestioningSelf
+    );
+}
+
+#[test]
+fn will_knowledge_and_action_readings_use_explicit_source_coordinates() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let will = registry.praxis_reading(VakPraxisAspect::WillAgency);
+    assert_eq!(
+        will.source_refs,
+        vec![
+            VakRef::new("M0-3-3").unwrap(),
+            VakRef::new("M0-3-6-2").unwrap(),
+        ]
+    );
+    let knowledge = registry.praxis_reading(VakPraxisAspect::KnowledgeVimarsa);
+    assert_eq!(
+        knowledge.source_refs,
+        vec![
+            VakRef::new("M0-3-(0/1)").unwrap(),
+            VakRef::new("M0-(4.0/1/2)").unwrap(),
+        ]
+    );
+    let action = registry.praxis_reading(VakPraxisAspect::ActionSvatantrya);
+    assert_eq!(
+        action.source_refs,
+        vec![
+            VakRef::new("M0-3-10").unwrap(),
+            VakRef::new("M0-3-10-(0/1)").unwrap(),
+            VakRef::new("M0-5-(5/0)-5").unwrap(),
+        ]
+    );
 }
