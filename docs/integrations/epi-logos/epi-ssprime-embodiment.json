@@ -1,0 +1,62 @@
+{
+  "schema_version": "epi-ssprime-embodiment/0.3-agent-world",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "topology": {
+    "S": ["S0 Central", "S1 Actuation", "S2 AIKit", "S3 Software Factory", "S4 Workcell", "S5 QL-MEF"],
+    "S_prime": {
+      "whole": "Ta-Onta — Epi Agent-world composition",
+      "internal": ["S'.0 Khora", "S'.1 Hen", "S'.2 Pleroma", "S'.3 Chronos", "S'.4 Anima", "S'.5 Aletheia"]
+    },
+    "law": "The prior technical-strata S0/S0-prime through S5/S5-prime model is capability lineage, not current topology. Current embodiment asks which O:I owners make a capability technically real and which Ta-Onta organs make it cohere inside the Epi Agent World."
+  },
+  "prior_matrix_lineage": {
+    "source": "research/deep-subsystem-capability-matrices:docs/integrations/epi-logos/epi-ssprime-embodiment.json",
+    "blob": "a626bc0fee8bdea10c4f2f112dfd8e46df3cec08",
+    "disposition": "PRESERVE-AS-CAPABILITY-LINEAGE; SUPERSEDED-AS-CURRENT-TOPOLOGY",
+    "reason": "It recovered valuable capabilities but organised embodiment by historical technical strata rather than current O:I product ownership plus Ta-Onta whole-agent purpose."
+  },
+  "capabilities": [
+    {"ref":"M0P-LANGUAGE","m":"M0","purpose":"Render source-provenanced Anuttara language and canonical absence states","ta_onta":["Khora","Hen","Pleroma","Aletheia"],"owners":["Central","AIKit","QL-MEF"]},
+    {"ref":"M0P-QL-STRUCTURE","m":"M0","purpose":"Expose family/mirror/lens/inversion pointer law and position character","ta_onta":["Hen","Pleroma","Anima"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M0P-RELATIONS","m":"M0","purpose":"Inspect provenance-typed Bimba relation field","ta_onta":["Hen","Pleroma","Aletheia"],"owners":["AIKit","QL-MEF"]},
+    {"ref":"M0P-TIME-COMMUNITY","m":"M0","purpose":"Overlay graph/community relations and active collective NOW","ta_onta":["Chronos","Hen","Pleroma"],"owners":["AIKit","O:I SharedField","QL-MEF"]},
+    {"ref":"M0P-PERSONAL-ROUTE","m":"M0","purpose":"Route a public coordinate into eligible protected Nara context","ta_onta":["Khora","Anima","Aletheia"],"owners":["Central","AIKit","Actuation","QL-MEF"]},
+    {"ref":"M0P-PEDAGOGY-ROUTE","m":"M0","purpose":"Route a canonical coordinate into Epii teaching/review context","ta_onta":["Hen","Anima","Aletheia"],"owners":["AIKit","Factory","QL-MEF","Central"]},
+
+    {"ref":"M1P-CANONICAL-SOURCE","m":"M1","purpose":"Expose immutable harmonic, matrix and Hopf source facts","ta_onta":["Khora","Hen","Pleroma"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M1P-INSTANCE","m":"M1","purpose":"Hold bounded session walk, coordinate and lens/mode state","ta_onta":["Khora","Chronos","Anima"],"owners":["AIKit","Actuation","QL-MEF"]},
+    {"ref":"M1P-HARMONIC-ENGINE","m":"M1","purpose":"Render Ananda matrix families and profile-driven harmonic state","ta_onta":["Pleroma","Chronos","Anima"],"owners":["QL-MEF","AIKit","Workcell"]},
+    {"ref":"M1P-SPANDA","m":"M1","purpose":"Enact profile/tick-driven phase, pulsation and inversion","ta_onta":["Chronos","Pleroma","Anima"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M1P-QL-FLOWERING","m":"M1","purpose":"Walk positions/relations and compose lens-as-scale traversal","ta_onta":["Hen","Pleroma","Anima"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M1P-TOPOLOGY","m":"M1","purpose":"Render played torus, Hopf and 4pi topology recognition","ta_onta":["Pleroma","Anima","Aletheia"],"owners":["QL-MEF","AIKit"]},
+
+    {"ref":"M2P-PROFILE-SOURCE","m":"M2","purpose":"Validate and serve 72-space addresses and correspondential descriptors","ta_onta":["Khora","Hen","Pleroma"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M2P-VIMARSHA-AUDIO","m":"M2","purpose":"Read Prakasa profile through Vimarsha/MEF and produce shared 8+4 audio bus","ta_onta":["Pleroma","Chronos","Anima"],"owners":["QL-MEF","AIKit","Workcell"]},
+    {"ref":"M2P-ELEMENTAL-MEDIUM","m":"M2","purpose":"Resolve tattva/element/chakra/media response with provenance","ta_onta":["Hen","Pleroma","Chronos"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M2P-DECANIC-FACE","m":"M2","purpose":"Resolve decan/zodiac/planet/body-zone light-shadow face","ta_onta":["Hen","Chronos","Aletheia"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M2P-SONIC-ARENA","m":"M2","purpose":"Make sacred-sonic/maqam/mantra/planetary systems playable","ta_onta":["Pleroma","Anima","Chronos"],"owners":["AIKit","QL-MEF","Workcell"]},
+    {"ref":"M2P-DET-GATE","m":"M2","purpose":"Project 72-space evidence into M3-ready 64-address evidence","ta_onta":["Pleroma","Anima","Aletheia"],"owners":["QL-MEF","AIKit","Factory"]},
+
+    {"ref":"M3P-CLOCK","m":"M3","purpose":"Render shared harmonic clock without a private renderer clock","ta_onta":["Chronos","Pleroma","Khora"],"owners":["QL-MEF","AIKit","O:I SharedField"]},
+    {"ref":"M3P-TRANSDUCTION","m":"M3","purpose":"Display M2 72-to-DET-to-64 reception provenance","ta_onta":["Hen","Pleroma","Aletheia"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M3P-SYMBOLIC-CODEC","m":"M3","purpose":"Render canonical codon/I-Ching/Tarot/line-change/amino-acid facts","ta_onta":["Hen","Pleroma","Anima"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M3P-ROTATION","m":"M3","purpose":"Project 84 lens/mode states into 472 codon/rotation landscape","ta_onta":["Pleroma","Chronos","Anima"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M3P-MEASUREMENT-INSPECTOR","m":"M3","purpose":"Expose disciplined symbolic/physics coupling-flow explanation/provenance","ta_onta":["Hen","Pleroma","Aletheia"],"owners":["QL-MEF","AIKit"]},
+    {"ref":"M3P-WORLD-CLOCK","m":"M3","purpose":"Provide one Earth-relative shared clock/cosmos state for human and Agent surfaces","ta_onta":["Chronos","Khora","Pleroma","Anima"],"owners":["O:I SharedField","AIKit","QL-MEF","Workcell"],"provider":{"name":"O:I SharedField / SpaceTimeDB","standing":"IMPLEMENTATION-FACT + OBSERVED-RESULT"},"cosmic_time":{"kerykeion":"first-class","fields":["degree720","tick12","decan","tattva","sun_degree","moon_degree","planet_degrees","epoch","kerykeion_version"]}},
+
+    {"ref":"M4P-IDENTITY","m":"M4","purpose":"Protected personal identity and personal quaternion/resonance state","ta_onta":["Khora","Hen","Anima","Aletheia"],"owners":["Central","AIKit","Actuation","QL-MEF"],"time_relation":"Situate natal/personal state relative to shared Earth/world clock without projecting protected state."},
+    {"ref":"M4P-DAY-EPISODE","m":"M4","purpose":"Canonical DAY container with NOW-stamped lived artifacts","ta_onta":["Khora","Hen","Chronos","Aletheia"],"owners":["Central","AIKit","QL-MEF"],"time_relation":"Personal DAY/NOW remains situated against collective M3 NOW while retaining local/private authority."},
+    {"ref":"M4P-ORACLE","m":"M4","purpose":"Bounded oracle/transcription interpretation over M3 facts and current cosmic state","ta_onta":["Chronos","Pleroma","Anima","Aletheia"],"owners":["AIKit","QL-MEF","Central"],"time_relation":"Kerykeion/Kairos and M3 symbolic facts qualify the reading; protected interpretation remains M4."},
+    {"ref":"M4P-ACTIVITY","m":"M4","purpose":"Trajectory/activity evidence and decayed perturbation","ta_onta":["Chronos","Anima","Aletheia"],"owners":["Actuation","Factory","AIKit","QL-MEF"]},
+    {"ref":"M4P-EPISODIC","m":"M4","purpose":"Protected temporal episodic retrieval through privacy classes","ta_onta":["Khora","Hen","Chronos","Aletheia"],"owners":["Central","AIKit","QL-MEF"]},
+    {"ref":"M4P-PROMOTION-SEAM","m":"M4","purpose":"Produce identity-augment proposals and governed sendoff to M5 review","ta_onta":["Anima","Aletheia"],"owners":["Actuation","Factory","Central","QL-MEF"]},
+
+    {"ref":"M5P-LIBRARY","m":"M5","purpose":"Bimba pedagogy, Gnosis/RAG and knowledge retrieval across distinct namespaces","ta_onta":["Hen","Pleroma","Aletheia"],"owners":["AIKit","QL-MEF","Central"]},
+    {"ref":"M5P-CANON","m":"M5","purpose":"Philosophy/canon authoring and review with safe mutation","ta_onta":["Hen","Anima","Aletheia"],"owners":["Central","AIKit","Factory","QL-MEF"]},
+    {"ref":"M5P-BACKEND-STUDIO","m":"M5","purpose":"Inspect and operate Epi backend through governed tasks/tests/evidence","ta_onta":["Pleroma","Anima","Aletheia"],"owners":["AIKit","Actuation","Factory","Workcell","QL-MEF"]},
+    {"ref":"M5P-REFLECTED-APP","m":"M5","purpose":"Reflected application/workspace surface for M-prime capabilities","ta_onta":["Khora","Pleroma","Chronos","Anima"],"owners":["AIKit","O:I SharedField","QL-MEF","Workcell"]},
+    {"ref":"M5P-CONTROL-ROOM","m":"M5","purpose":"Governed Agent execution, capability selection, evidence and review handoff","ta_onta":["Pleroma","Anima","Aletheia"],"owners":["Actuation","AIKit","Factory","QL-MEF"]},
+    {"ref":"M5P-ATELIER","m":"M5","purpose":"Logos/etymological archaeology, source-following, crystallisation and return","ta_onta":["Hen","Pleroma","Anima","Aletheia"],"owners":["AIKit","Factory","QL-MEF","Central"]}
+  ]
+}
