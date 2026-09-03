@@ -64,9 +64,12 @@ flowchart TB
     SEM["ql-semantic<br/>replaceable semantic refraction providers"]
     SVC["ql-service<br/>capabilities · locate · refract · relate · synthesise"]
     AD["ql-adapters<br/>client/product adapters over the same operation meaning"]
+    CLI["ql-cli<br/>native command surface projecting kernel · MEF · Context-Frame · Vāk · service"]
     PROV["Revision-bearing provenance<br/>provider · operation · inputs · readings · warnings"]
 
     CLIENT -->|"preserves native identity and revision"| AD
+    CLI -->|"projects accepted contracts as ql commands"| SVC
+    CLI -->|"projects registry directly"| MEF
     AD -->|"calls transport-independent operations"| SVC
     SVC -->|"uses deterministic form where warranted"| CORE
     SVC -->|"uses canonical lens contracts"| MEF
@@ -77,6 +80,8 @@ flowchart TB
     SVC -->|"returns results with"| PROV
     PROV -->|"keeps the reading attributable to the caller's subject"| CLIENT
 ```
+
+`ql-cli` is the native command surface accepted on `main` via PR #88. It projects the accepted kernel, MEF registry, Context-Frame grammar, Vāk source registry and service negotiation contracts as a single `ql` binary. It introduces no new formal semantics; it is a projection over existing owners.
 
 The architecture separates deterministic structure from semantic inference. `locate` may return ambiguity or insufficient information; semantic operations expose disclosure/confidence rather than laundering model judgement into deterministic fact. Current `main` does not include draft Q6 pairing, MEF rotation or context-frame promotion as accepted product truth.
 
