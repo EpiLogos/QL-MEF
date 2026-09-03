@@ -513,9 +513,12 @@ fn verify_command(json: bool) -> Result<String, CliError> {
         return Err(CliError("deterministic kernel verification failed".into()));
     }
     if all_lens_definitions().len() != 12 || ContextFrameId::ALL.len() != 7 {
-        return Err(CliError("MEF/Context-Frame registry verification failed".into()));
+        return Err(CliError(
+            "MEF/Context-Frame registry verification failed".into(),
+        ));
     }
-    let vak = VakRegistry::from_authoritative_source().map_err(|error| CliError(error.to_string()))?;
+    let vak =
+        VakRegistry::from_authoritative_source().map_err(|error| CliError(error.to_string()))?;
     if vak.len() != VAK_ENTRY_COUNT {
         return Err(CliError("Vāk source registry verification failed".into()));
     }
@@ -627,7 +630,10 @@ mod tests {
         assert_eq!(value["product"], "quaternal-logic");
         assert_eq!(value["service"]["providerState"], "absent");
         assert_eq!(value["mefRegistryVersion"], MEF_REGISTRY_VERSION);
-        assert_eq!(value["contextFrameGrammarVersion"], CONTEXT_FRAME_GRAMMAR_VERSION);
+        assert_eq!(
+            value["contextFrameGrammarVersion"],
+            CONTEXT_FRAME_GRAMMAR_VERSION
+        );
         assert_eq!(value["vakSourceRevision"], VAK_SOURCE_REVISION);
     }
 
@@ -654,12 +660,8 @@ mod tests {
         assert_eq!(mef["lenses"].as_array().unwrap().len(), 12);
         assert_eq!(mef["lenses"][0]["lensRef"], "mef:lens:L0@1");
 
-        let frames = execute_cli(&[
-            "context-frame".into(),
-            "list".into(),
-            "--json".into(),
-        ])
-        .unwrap();
+        let frames =
+            execute_cli(&["context-frame".into(), "list".into(), "--json".into()]).unwrap();
         let frames: serde_json::Value = serde_json::from_str(&frames).unwrap();
         assert_eq!(frames["grammarVersion"], CONTEXT_FRAME_GRAMMAR_VERSION);
         assert_eq!(frames["frames"].as_array().unwrap().len(), 7);
@@ -668,23 +670,14 @@ mod tests {
 
     #[test]
     fn vak_commands_consume_source_locked_registry() {
-        let capabilities = execute_cli(&[
-            "vak".into(),
-            "capabilities".into(),
-            "--json".into(),
-        ])
-        .unwrap();
+        let capabilities =
+            execute_cli(&["vak".into(), "capabilities".into(), "--json".into()]).unwrap();
         let capabilities: serde_json::Value = serde_json::from_str(&capabilities).unwrap();
         assert_eq!(capabilities["sourceRevision"], VAK_SOURCE_REVISION);
         assert_eq!(capabilities["entryCount"], VAK_ENTRY_COUNT);
 
-        let located = execute_cli(&[
-            "vak".into(),
-            "locate".into(),
-            "M0".into(),
-            "--json".into(),
-        ])
-        .unwrap();
+        let located =
+            execute_cli(&["vak".into(), "locate".into(), "M0".into(), "--json".into()]).unwrap();
         let located: serde_json::Value = serde_json::from_str(&located).unwrap();
         assert_eq!(located["vakRef"], "M0");
         assert_eq!(located["standing"], "SOURCE");
