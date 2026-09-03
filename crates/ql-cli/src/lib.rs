@@ -1,4 +1,4 @@
-use ql_core::{apply_operator, kernel_capabilities, QlAddress, QlOperator, KERNEL_VERSION};
+use ql_core::{KERNEL_VERSION, QlAddress, QlOperator, apply_operator, kernel_capabilities};
 use ql_semantic::{Operation, ProviderState};
 use ql_service::QlService;
 use serde::Serialize;
@@ -94,7 +94,9 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
         Some("kernel") => kernel_command(&args[1..], json),
         Some("service") => service_command(&args[1..], json),
         Some("verify") => verify_command(json),
-        Some(command) => Err(CliError(format!("unknown command `{command}`; run `ql help`"))),
+        Some(command) => Err(CliError(format!(
+            "unknown command `{command}`; run `ql help`"
+        ))),
     }
 }
 
@@ -158,10 +160,10 @@ fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
             let address = args
                 .get(2)
                 .ok_or_else(|| CliError("missing QL address".into()))?;
-            let operator = QlOperator::from_str(operator)
-                .map_err(|error| CliError(error.to_string()))?;
-            let address = QlAddress::from_str(address)
-                .map_err(|error| CliError(error.to_string()))?;
+            let operator =
+                QlOperator::from_str(operator).map_err(|error| CliError(error.to_string()))?;
+            let address =
+                QlAddress::from_str(address).map_err(|error| CliError(error.to_string()))?;
             let result = apply_operator(operator, address);
             let view = ApplyView {
                 contract: QL_CLI_CONTRACT,
@@ -174,7 +176,10 @@ fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
             if json {
                 serde_json::to_string_pretty(&view).map_err(CliError::from)
             } else {
-                Ok(format!("{} {} -> {}", view.operation, view.input, view.output))
+                Ok(format!(
+                    "{} {} -> {}",
+                    view.operation, view.input, view.output
+                ))
             }
         }
         Some(operation) => Err(CliError(format!("unknown kernel operation `{operation}`"))),
@@ -294,7 +299,9 @@ fn verify_command(json: bool) -> Result<String, CliError> {
     if !service.negotiate(Operation::Capabilities).supported
         || service.negotiate(Operation::Locate).supported
     {
-        return Err(CliError("service capability negotiation verification failed".into()));
+        return Err(CliError(
+            "service capability negotiation verification failed".into(),
+        ));
     }
     let result = VerificationView {
         contract: QL_CLI_CONTRACT,
