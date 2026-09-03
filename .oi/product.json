@@ -8,16 +8,16 @@
   "canonical_repository_name": "Quaternal-Logic",
   "source_checkout": "Quaternal-Logic",
   "artifact": {
-    "kind": "rust-component",
-    "entry": null,
-    "platforms": ["platform-neutral-source-component"]
+    "kind": "rust-cli",
+    "entry": "target/release/ql",
+    "platforms": ["cargo-supported"]
   },
   "build": {
     "command": ["cargo", "build", "--workspace", "--locked", "--release"]
   },
   "verify": {
     "source_command": ["cargo", "test", "--workspace", "--all-targets", "--locked"],
-    "installed_command": null
+    "installed_command": ["ql", "verify", "--json"]
   },
   "install": {"mode": "oi-managed-component"},
   "update": {"mode": "suite-manifest"},
