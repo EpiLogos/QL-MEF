@@ -1,6 +1,10 @@
 # Epi / Ta-Onta Agent-World Capability Matrix
 
-**Status:** active research matrix  
+**Standing:** design-commitment  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
+**Status:** ratified design field  
 **Date:** 2026-09-03  
 **Current QL-MEF lock:** `590ea5464e0b422beaddea2669039e3d8c7fcb5c`
 

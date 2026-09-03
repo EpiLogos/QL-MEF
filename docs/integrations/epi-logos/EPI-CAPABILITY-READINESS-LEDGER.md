@@ -1,5 +1,9 @@
 # Epi Capability Readiness Ledger
 
+**Standing:** observed-evidence  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
 **Status:** ratified design field / active execution ledger  
 **Ratification:** 2026-09-03  
 **Carrier:** QL-MEF PR #93  

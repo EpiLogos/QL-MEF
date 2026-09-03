@@ -1,5 +1,9 @@
 # Epi M / M′ Capability Field
 
+**Standing:** design-commitment  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
 **Status:** active R3 capability matrix  
 **Date:** 2026-09-03  
 **Companions:** `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md` · `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`

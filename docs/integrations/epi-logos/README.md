@@ -18,10 +18,12 @@ M3 Mahamaya
 M4 Nara
 M5 Epii
 
-S / S' = Epi technical/runtime strata and their conjugate/augmentation laws
+S  = generic O:I powers (Central, Actuation, AIKit, Factory, Workcell, QL-MEF)
+S′ = Ta-Onta Agent-world composition of those powers
+     S0′ Khora · S1′ Hen · S2′ Pleroma · S3′ Chronos · S4′ Anima · S5′ Aletheia
 ```
 
-Do not alias Anuttara→Epii to S0→S5.
+Do not alias Anuttara→Epii to S0→S5. Same-index S↔S′ is affinity, not exclusive ownership. Ta-Onta is the S′ whole, not a nested S4′ package.
 
 ## Current accepted Epi source input
 
@@ -49,7 +51,24 @@ Later capability-matrix research may supersede or deepen particular relation rea
 
 ## Maps developed here
 
-The living R2 field should resolve into four linked maps rather than one overloaded matrix:
+The **current living R3 field** is entered through `EPI-CAPABILITY-MATRIX-FIELD-INDEX.md`.
+
+Ratified carriers:
+
+- `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`
+- `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md`
+- `EPI-M-CAPABILITY-FIELD.md`
+- `EPI-CAPABILITY-MATRIX-FIELD-INDEX.md`
+- `EPI-CAPABILITY-READINESS-LEDGER.md`
+- `EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md`
+
+Machine files:
+
+- `epi-m-capability-field.json`
+- `epi-ta-onta-m-relational-field.csv`
+- `epi-capability-readiness.json`
+
+The R2 four linked maps remain historical/lineage work under #25. They are still-open derivation work, not the present field home:
 
 ```text
 Epi M/M' internal relations
@@ -148,12 +167,14 @@ This line also clarifies C′/VĀK in `EPI-HOLOGRAPHIC-KERNEL-ORIENTATION.md`: l
 
 ## Next work
 
-Execute #25 from current live target-platform state while consuming the newer Vāk runtime determination where relevant:
+1. continue execution in QL-MEF #94 against the ratified R3 field (`EPI-CAPABILITY-READINESS-LEDGER.md`), without reopening the 36 capability identities or the Ta-Onta = S′ lock.
 
-1. consume the accepted R1 machine inventory and any explicitly newer source-pinned capability matrix used by a relation;
-2. derive the Epi M/M' internal relation dataset;
-3. derive M/M'↔S/S' embodiment/authority relations;
-4. verify live O:I/native-product contracts and derive the cross-map;
-5. derive the explicit Bimba bridge map;
-6. materialise the source-pinned Vāk registry/action-binding line according to `EPI-VAK-AGENT-NATIVE-RUNTIME.md` rather than creating a parallel runtime ontology;
-7. only then derive bounded migration/reuse/supersession pressures.
+Still-open R2 derivation under #25, from current live target-platform state while consuming the newer Vāk runtime determination where relevant:
+
+2. consume the accepted R1 machine inventory and any explicitly newer source-pinned capability matrix used by a relation;
+3. derive the Epi M/M' internal relation dataset;
+4. derive M/M'↔S/S' embodiment/authority relations;
+5. verify live O:I/native-product contracts and derive the cross-map;
+6. derive the explicit Bimba bridge map;
+7. materialise the source-pinned Vāk registry/action-binding line according to `EPI-VAK-AGENT-NATIVE-RUNTIME.md` rather than creating a parallel runtime ontology;
+8. only then derive bounded migration/reuse/supersession pressures.
