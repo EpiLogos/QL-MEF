@@ -1,7 +1,8 @@
 # Epi Deep Subsystem Capability Matrix Protocol
 
-**Status:** active R3 purpose-first protocol  
+**Status:** ratified R3 purpose-first design protocol  
 **Date:** 2026-09-03  
+**Ratification:** QL-MEF PR #93 / execution #94  
 **QL-MEF lock:** `590ea5464e0b422beaddea2669039e3d8c7fcb5c`
 
 ## 0. Unit of work
@@ -21,7 +22,7 @@ FOR WHAT?
 
 Implementation can move while purpose and provenance remain legible.
 
-## 1. Current topology
+## 1. Ratified topology
 
 ```text
 M0 Anuttara     S0 Central             S0′ Khora
@@ -32,7 +33,9 @@ M4 Nara         S4 Workcell            S4′ Anima
 M5 Epii         S5 QL-MEF              S5′ Aletheia
 ```
 
-Ta-Onta is the **S′ whole**. `S0′…S5′` are its six coordinate identities; do not write them as `S′.0…S′.5`. Same-index S↔S′ is a structural affinity, not exclusive implementation ownership. Historical `Ta-Onta = nested S4′` and the older technical-strata S/S′ maps remain lineage/evidence only.
+Ta-Onta is the **S′ whole**. `S0′…S5′` are its six coordinate identities. Same-index S↔S′ is a structural affinity, not exclusive implementation ownership. Historical `Ta-Onta = nested S4′` and the older technical-strata S/S′ maps remain lineage/evidence only.
+
+The 36 recovered `M*P-*` capability identities are now the standing capability field. Their providers, S′ participation, evidence and readiness may be revised by returned implementation reality without reopening their identities.
 
 ## 2. Required row fields
 
@@ -52,9 +55,12 @@ source / observation / inference / proposal distinction
 Epii-on-X developmental relation, when material
 Return / Recognition owner
 historical lineage
+readiness
 ```
 
-Use standing explicitly: `AUTHORED-POSITION`, `CURRENT-DOMAIN-SPEC`, `DESIGN-COMMITMENT`, `IMPLEMENTATION-FACT`, `OBSERVED-RESULT`, `RESEARCH-PROPOSITION`, `DERIVED-CURRENT-ARCHITECTURE`, `HISTORICAL-IMPLEMENTATION-EVIDENCE`.
+Use standing explicitly: `AUTHORED-POSITION`, `CURRENT-DOMAIN-SPEC`, `DESIGN-COMMITMENT`, `IMPLEMENTATION-FACT`, `OBSERVED-RESULT`, `RESEARCH-PROPOSITION`, `HISTORICAL-IMPLEMENTATION-EVIDENCE`.
+
+Readiness is separate from standing: `ALREADY-REAL`, `READY-TO-COMPOSE`, `EPI-GAP`, `NATIVE-GAP`, `RESEARCH-ONLY`.
 
 ## 3. Native owner test
 
@@ -90,9 +96,11 @@ Run all six questions against all six M domains. Empty cells require an explicit
 
 ## 5. Chronos invariants
 
-Chronos must preserve distinct temporal registers: source revision/freshness; M1 harmonic tick; M2 Kerykeion cosmic qualification; M3 shared world-clock/collective NOW; M4 natal/transit/DAY/NOW/episodes; M5 developmental/review time.
+Chronos preserves distinct temporal registers: source revision/freshness; M1 harmonic tick; M2 Kerykeion cosmic qualification; M3 shared world-clock/collective NOW; M4 natal/transit/DAY/NOW/episodes; M5 developmental/review time.
 
-Kerykeion is first-class, not decorative metadata. Current source carries planetary positions, decan/tattva/aspect condition into Kairos/Q_transit. O:I SpaceTimeDB is already a live hosted SharedField substrate across site/browser, desktop and structured-Agent readings. The common Earth/world referent joining M3 collective NOW to M4 situated NOW is `DERIVED-CURRENT-ARCHITECTURE` unless/until a canonical named Epi object is recovered and ratified.
+Kerykeion is first-class, not decorative metadata. Current source carries planetary positions, decan/tattva/aspect condition into Kairos/Q_transit. O:I SpaceTimeDB is already a live hosted SharedField substrate across site/browser, desktop and structured-Agent readings.
+
+The **common Earth/world referent joining M3 collective NOW to M4 situated NOW is a ratified design commitment**. The exact named object/schema remains an implementation determination: do not invent a new semantic identity where the existing M3/M4 source and SharedField relation are sufficient.
 
 ## 6. Operative model body != subsystem development
 
@@ -109,7 +117,7 @@ M4 Epii-on-Nara        Anima-led narrow QLoRA voice + optional DPO
 M5 Epii-on-Epii        recursive synthetic-telic self-development / autoresearch
 ```
 
-All six files currently declare `active-operational-capacity-spec`. This is authored current domain/design standing. It does **not** prove those development pipelines are implemented. Each row must separately establish current implementation and observed evidence.
+All six files currently declare `active-operational-capacity-spec`. This is authored current domain/design standing. It does **not** prove those development pipelines are implemented. Each row separately establishes current implementation and observed evidence.
 
 ## 7. Return law
 
@@ -125,6 +133,22 @@ actual activity
 
 Generated interpretation is not authored source. Observation is not canon. Hosted state is not semantic ownership. A training output is not an accepted subsystem revision.
 
-## 8. Acceptance
+## 8. Execution law
 
-The matrix tranche is coherent when: all 36 M×S′ cells are represented; the 36 recovered M capability identities remain traceable; current O:I owners replace historical technical-strata ownership; Kerykeion and SpaceTimeDB collective NOW are represented with correct standing; Epii-on-X is source-backed; JSON/CSV carriers parse; and source/evidence/proposal/Recognition remain distinct.
+The ratified field now proceeds through `EPI-CAPABILITY-READINESS-LEDGER.md` and QL-MEF #94.
+
+```text
+standing capability
+→ readiness classification
+→ smallest whole proving composition
+→ native owner implementation where a real gap appears
+→ evidence
+→ readiness revision
+→ ALREADY-REAL only when the Epi whole is actually proved
+```
+
+Do not pre-create symmetrical native-owner work. `NATIVE-GAP` must be returned by actual execution evidence.
+
+## 9. Acceptance
+
+The matrix tranche is coherent when: all 36 M×S′ cells are represented; the 36 recovered M capability identities remain traceable; current O:I owners replace historical technical-strata ownership; Kerykeion and SpaceTimeDB collective NOW are represented with correct standing; Epii-on-X is source-backed; readiness is explicit; JSON/CSV carriers parse; and source/evidence/proposal/Recognition remain distinct.
