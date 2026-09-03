@@ -60,6 +60,7 @@ name = "ql-cli"
 version = "0.1.0"
 dependencies = [
  "ql-core",
+ "ql-mef",
  "ql-semantic",
  "ql-service",
  "serde",
