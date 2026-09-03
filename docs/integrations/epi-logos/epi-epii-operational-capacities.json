@@ -1,0 +1,17 @@
+{
+  "schema_version": "epi-epii-operational-capacities/0.1",
+  "status": "source-backed-research-matrix",
+  "date": "2026-09-03",
+  "source_repository": "EpiLogos/Epi-Logos-C-Experiments",
+  "source_directory": "Idea/Bimba/Seeds/M/M5'/epii-operational-capacities/",
+  "law": "These are M5-prime Epii developmental capacities upon M0-M5, not a generic model catalogue. Native O:I products may embody model, harness, compute, Agency, Run and evidence mechanics; the target-specific developmental reason comes from the Epii-on-X source.",
+  "standing_law": "active-operational-capacity-spec is current authored domain/design standing; implementation and observed-result standing must be evidenced independently.",
+  "capacities": [
+    {"target":"M0","name":"Anuttara","file":"m5-prime-epii-on-anuttara-language-development.md","blob":"a3cccc90204462ba3f7ef36f234005ffa2317269","status":"active-operational-capacity-spec","developmental_law":"language development by deliberate construction, articulation, formalisation, developer conversation, agentic mediation and etymological archaeology; explicitly not gradient training","generic_oi_embodiment":["Central","AIKit","Factory","QL-MEF"]},
+    {"target":"M1","name":"Paramasiva","file":"m5-prime-epii-on-paramasiva-ql-cpt-and-rag.md","blob":"df9a75b806ea68b525871c63c43c968c57570698","status":"active-operational-capacity-spec","developmental_law":"foundational-derivational CPT plus RAG; model is an articulating voice of the matheme while executable/canonical QL remains authority","generic_oi_embodiment":["AIKit","Factory","Workcell","QL-MEF"]},
+    {"target":"M2","name":"Parashakti","file":"m5-prime-epii-on-parashakti-graph-relational-ml.md","blob":"530c3a15dd27945545328a9d015f18ea038265f9","status":"active-operational-capacity-spec","developmental_law":"graph-relational learning over derived embedding/representation geometry; learned representations remain rebuildable and never canonical graph authority","generic_oi_embodiment":["AIKit","Factory","Workcell","QL-MEF"]},
+    {"target":"M3","name":"Mahamaya","file":"m5-prime-epii-on-mahamaya-process-reward-rl.md","blob":"7c868244f5776fb091b9b8625d484d33a4bd1b17","status":"active-operational-capacity-spec","developmental_law":"canonical symbolic/calculation substrate remains constructed; calculation pathways may be learned through process-reward RL, federated and symbolic-genetic work; the training pipeline remains governed construction","generic_oi_embodiment":["AIKit","Factory","Workcell","Actuation","QL-MEF"]},
+    {"target":"M4","name":"Nara","file":"m5-prime-epii-on-nara-qlora-dialogic-voice.md","blob":"c32a73264adaeaebe78c3e9d2e49cfc76694e4ad","status":"active-operational-capacity-spec","developmental_law":"Anima-led narrow QLoRA over personal/anima-Vak dialogic voice with optional DPO; slow, consent-gated voice tuning; identity, quaternionic state and canonical branch laws remain outside tuning","generic_oi_embodiment":["Central","AIKit","Factory","Workcell","Actuation","QL-MEF"]},
+    {"target":"M5","name":"Epii","file":"m5-prime-epii-on-epii-self-referential-capacity.md","blob":"5350bd9f30db611d93352d21891698a39e6c9c8a","status":"active-operational-capacity-spec","developmental_law":"recursive synthetic-telic self-development of pedagogy, review, canon and autoresearch; CPT/RAG may support voice/reach but promotion remains deliberate human-in-the-loop Return","generic_oi_embodiment":["Central","AIKit","Factory","Workcell","Actuation","QL-MEF"]}
+  ]
+}
