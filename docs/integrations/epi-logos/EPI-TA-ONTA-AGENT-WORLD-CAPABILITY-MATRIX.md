@@ -17,9 +17,11 @@ S4′ Anima
 S5′ Aletheia
 ```
 
-These are not `S′.0…S′.5` child addresses. They are the six S′ coordinates. Same-index O:I relations remain useful affinities—Central↔Khora, Actuation↔Hen, AIKit↔Pleroma, Factory↔Chronos, Workcell↔Anima, QL-MEF↔Aletheia—but a real capability composes several products and several S′ coordinates where required.
+These are the six S′ coordinates. Same-index O:I relations remain useful affinities—Central↔Khora, Actuation↔Hen, AIKit↔Pleroma, Factory↔Chronos, Workcell↔Anima, QL-MEF↔Aletheia—but a real capability composes several products and several S′ coordinates where required.
 
 The matrix asks: **what must this M-domain become inside this S′ coordinate of the Agent world so the Agent actually inhabits Epi rather than merely receiving Epi text?**
+
+The companion `EPI-M-CAPABILITY-FIELD.md` starts from the other direction: the 36 recovered M-domain capabilities and their M′ operation, S′ composition, native O:I evidence, Epii-on-X developmental relation and Return authority. These are two readings of one field, not rival taxonomies.
 
 ## Whole purpose of the six S′ coordinates
 
