@@ -1,0 +1,37 @@
+{
+  "schema_version": "epi-mmprime-relations/0.3-current",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "law": "M is canonical Bimba/domain meaning; M-prime is lived/compositional Pratibimba. Provider and implementation bodies are evidence for a relation, not semantic owners.",
+  "critical_current_relations": {
+    "collective_now": "M3 shared world-clock is the impersonal/common Earth-relative NOW; O:I SpaceTimeDB supplies a live hosted application/transport substrate.",
+    "kerykeion": "Kerykeion is first-class to M2-to-M3 cosmic qualification and M2/M3-to-M4 situated Kairos/Q_transit.",
+    "earth_common_referent": "The M3-to-M4 relation uses the shared world-clock as a common Earth/world referent. Standing: DERIVED-CURRENT-ARCHITECTURE pending a canonical named EpiAddress/object if one is ratified."
+  },
+  "relations": [
+    {"from":"M0","to":"M1","relation":"GROUND_TO_DETERMINATION","meaning":"Anuttara ground becomes explicit relational/harmonic determination without M1 replacing source ground.","owners":["QL-MEF"]},
+    {"from":"M0","to":"M2","relation":"GROUND_TO_REFRACTION","meaning":"Bimba/Vak address and source horizon condition Parashakti/MEF reading.","owners":["QL-MEF","AIKit"]},
+    {"from":"M0","to":"M3","relation":"GROUND_TO_WORLD","meaning":"Bimba address becomes situated in symbolic/measurement-world and current clock-cosmos.","owners":["QL-MEF","O:I SharedField"]},
+    {"from":"M0","to":"M4","relation":"GROUND_TO_PERSONAL","meaning":"Public/canonical Bimba coordinate may be related into protected Nara context under explicit privacy/authority.","owners":["Central","AIKit","QL-MEF"]},
+    {"from":"M0","to":"M5","relation":"GROUND_TO_PEDAGOGY","meaning":"Canonical source enters Epii pedagogy/review/recognition without mutation by retrieval.","owners":["AIKit","QL-MEF","Factory"]},
+
+    {"from":"M1","to":"M2","relation":"PRAKASA_VIMARSA","meaning":"Paramasiva source/harmonic state is read/refracted through Parashakti Vimarsha/MEF.","owners":["QL-MEF"]},
+    {"from":"M2","to":"M1","relation":"REFRACTED_RETURN","meaning":"MEF/sonic/correspondential reading returns a qualified view of M1 without changing M1 mathematical authority.","owners":["QL-MEF","AIKit"]},
+    {"from":"M1","to":"M3","relation":"HARMONIC_CLOCK","meaning":"Kernel tick/profile supplies the formal pulse M3 world-clock renders and shares.","owners":["QL-MEF","AIKit","O:I SharedField"]},
+    {"from":"M2","to":"M3","relation":"DET_TRANSDUCTION","meaning":"72-fold vibrational/correspondential evidence projects through the accepted DET relation into M3 64-address symbolic transcription.","owners":["QL-MEF"]},
+    {"from":"M2","to":"M3","relation":"KERYKEION_COSMIC_QUALIFICATION","meaning":"Current Kerykeion planetary/decan/tattva/aspect state qualifies the shared clock-cosmos as provenance-bearing cosmic/Kairos state.","owners":["QL-MEF","AIKit","Workcell"]},
+
+    {"from":"M3","to":"M4","relation":"UNIVERSAL_NOW_TO_SITUATED_NOW","meaning":"One impersonal Earth-relative M3 world-clock/collective NOW is the common referent against which M4 DAY/NOW, natal basis, Q_transit, activity and episodes are situated.","owners":["O:I SharedField","Central","AIKit","QL-MEF"],"standing":"CURRENT-DOMAIN-SPEC + DERIVED-CURRENT-ARCHITECTURE"},
+    {"from":"M2","to":"M4","relation":"KERYKEION_TRANSIT","meaning":"M2 planetary/chakral/Kerykeion state participates in M4 Q_transit/Kairos without mutating stable identity.","owners":["QL-MEF","AIKit","Central"]},
+    {"from":"M3","to":"M4","relation":"SYMBOLIC_PRIOR_TO_ORACLE","meaning":"M3 canonical codon/I-Ching/Tarot/transcription facts provide bounded symbolic priors for M4 lived/oracular interpretation.","owners":["QL-MEF","AIKit"]},
+    {"from":"M1","to":"M4","relation":"HARMONIC_PRIOR_TO_PERSONAL","meaning":"M1 harmonic/relational state can participate in Nara resonance/instrument readings without becoming personal identity.","owners":["QL-MEF","AIKit"]},
+
+    {"from":"M4","to":"M5","relation":"PROPOSAL_TO_RECOGNITION","meaning":"Nara activity/observation/identity-augment candidates pass to Epii/Factory review; proposal is not adoption.","owners":["Factory","QL-MEF","Central","Actuation"]},
+    {"from":"M5","to":"M4","relation":"RECOGNISED_RETURN","meaning":"Recognised Epii result may return to Nara as accepted knowledge/state proposal under M4/Central authority.","owners":["QL-MEF","Central","AIKit"]},
+    {"from":"M5","to":"M0","relation":"CANON_RETURN","meaning":"Reviewed Epii knowledge or theory may become a proposal to Bimba/canonical source; promotion is explicit and provenance-bearing.","owners":["QL-MEF","Central","Factory"]},
+    {"from":"M3","to":"M5","relation":"TRACE_TO_DEVELOPMENT","meaning":"M3 execution/transcription/pathway traces can become evidence for governed Epii developmental research, including speculative ML lines.","owners":["Factory","QL-MEF","AIKit"]},
+    {"from":"M2","to":"M5","relation":"FITNESS_TO_DEVELOPMENT","meaning":"M2 retrieval/correspondential/instrument/model fitness can become evidence for Epii developmental work.","owners":["Factory","QL-MEF","AIKit"]},
+    {"from":"M1","to":"M5","relation":"FORMAL_EVIDENCE_TO_REVIEW","meaning":"M1 derivation/instrument evidence can be reviewed by Epii without M5 becoming the source of the formal law.","owners":["Factory","QL-MEF"]}
+  ],
+  "default_standing": "CURRENT-DOMAIN-SPEC / DERIVED-CURRENT-ARCHITECTURE"
+}
