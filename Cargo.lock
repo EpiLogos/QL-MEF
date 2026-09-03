@@ -56,6 +56,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ql-cli"
+version = "0.1.0"
+dependencies = [
+ "ql-core",
+ "ql-mef",
+ "ql-semantic",
+ "ql-service",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "ql-core"
 version = "0.1.0"
 
