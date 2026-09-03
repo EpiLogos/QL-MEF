@@ -1,0 +1,65 @@
+{
+  "schema_version": "epi-capability-readiness/0.1",
+  "status": "ratified-design-active-execution",
+  "date": "2026-09-03",
+  "ratification": "QL-MEF#93",
+  "execution": "QL-MEF#94",
+  "counts": {
+    "READY-TO-COMPOSE": 21,
+    "EPI-GAP": 15,
+    "NATIVE-GAP": 0,
+    "ALREADY-REAL": 0,
+    "RESEARCH-ONLY": 0
+  },
+  "rows": [
+    {"ref":"M0P-LANGUAGE","readiness":"READY-TO-COMPOSE","proof":"P1"},
+    {"ref":"M0P-QL-STRUCTURE","readiness":"READY-TO-COMPOSE","proof":"P1"},
+    {"ref":"M0P-RELATIONS","readiness":"READY-TO-COMPOSE","proof":"P1"},
+    {"ref":"M0P-TIME-COMMUNITY","readiness":"READY-TO-COMPOSE","proof":"P1"},
+    {"ref":"M0P-PERSONAL-ROUTE","readiness":"READY-TO-COMPOSE","proof":"P1"},
+    {"ref":"M0P-PEDAGOGY-ROUTE","readiness":"READY-TO-COMPOSE","proof":"P1"},
+
+    {"ref":"M1P-CANONICAL-SOURCE","readiness":"READY-TO-COMPOSE"},
+    {"ref":"M1P-INSTANCE","readiness":"READY-TO-COMPOSE"},
+    {"ref":"M1P-HARMONIC-ENGINE","readiness":"EPI-GAP"},
+    {"ref":"M1P-SPANDA","readiness":"EPI-GAP"},
+    {"ref":"M1P-QL-FLOWERING","readiness":"READY-TO-COMPOSE"},
+    {"ref":"M1P-TOPOLOGY","readiness":"EPI-GAP"},
+
+    {"ref":"M2P-PROFILE-SOURCE","readiness":"EPI-GAP"},
+    {"ref":"M2P-VIMARSHA-AUDIO","readiness":"EPI-GAP"},
+    {"ref":"M2P-ELEMENTAL-MEDIUM","readiness":"EPI-GAP"},
+    {"ref":"M2P-DECANIC-FACE","readiness":"EPI-GAP"},
+    {"ref":"M2P-SONIC-ARENA","readiness":"EPI-GAP"},
+    {"ref":"M2P-DET-GATE","readiness":"EPI-GAP"},
+
+    {"ref":"M3P-CLOCK","readiness":"EPI-GAP"},
+    {"ref":"M3P-TRANSDUCTION","readiness":"EPI-GAP"},
+    {"ref":"M3P-SYMBOLIC-CODEC","readiness":"EPI-GAP"},
+    {"ref":"M3P-ROTATION","readiness":"EPI-GAP"},
+    {"ref":"M3P-MEASUREMENT-INSPECTOR","readiness":"EPI-GAP"},
+    {"ref":"M3P-WORLD-CLOCK","readiness":"READY-TO-COMPOSE","proof":"P2"},
+
+    {"ref":"M4P-IDENTITY","readiness":"READY-TO-COMPOSE","proof":"P2"},
+    {"ref":"M4P-DAY-EPISODE","readiness":"READY-TO-COMPOSE","proof":"P2"},
+    {"ref":"M4P-ORACLE","readiness":"EPI-GAP"},
+    {"ref":"M4P-ACTIVITY","readiness":"READY-TO-COMPOSE","proof":"P2"},
+    {"ref":"M4P-EPISODIC","readiness":"READY-TO-COMPOSE","proof":"P2"},
+    {"ref":"M4P-PROMOTION-SEAM","readiness":"READY-TO-COMPOSE"},
+
+    {"ref":"M5P-LIBRARY","readiness":"READY-TO-COMPOSE","proof":"P3"},
+    {"ref":"M5P-CANON","readiness":"READY-TO-COMPOSE","proof":"P3"},
+    {"ref":"M5P-BACKEND-STUDIO","readiness":"READY-TO-COMPOSE","proof":"P3"},
+    {"ref":"M5P-REFLECTED-APP","readiness":"READY-TO-COMPOSE"},
+    {"ref":"M5P-CONTROL-ROOM","readiness":"READY-TO-COMPOSE","proof":"P3"},
+    {"ref":"M5P-ATELIER","readiness":"READY-TO-COMPOSE","proof":"P3"}
+  ],
+  "developmental_axis": {
+    "M0":"ACTIVE-DESIGN",
+    "M1":"RESEARCH-ONLY",
+    "M2":"RESEARCH-ONLY",
+    "M3":"RESEARCH-ONLY",
+    "M4":"RESEARCH-ONLY-CONSENT-GATED",
+    "M5":"ACTIVE-DESIGN-WITH-TRAINING-ASPECTS-RESEARCH-ONLY"
+  }
+}
