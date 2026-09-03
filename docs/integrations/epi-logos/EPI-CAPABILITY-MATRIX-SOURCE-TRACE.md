@@ -1,5 +1,9 @@
 # Epi Capability Matrix Source Trace
 
+**Standing:** observed-evidence  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
 **Status:** active source/research ledger  
 **Date:** 2026-09-03
 

@@ -1,5 +1,9 @@
 # Epi Deep Subsystem Capability Matrix Protocol
 
+**Standing:** design-commitment  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
 **Status:** ratified R3 purpose-first design protocol  
 **Date:** 2026-09-03  
 **Ratification:** QL-MEF PR #93 / execution #94  

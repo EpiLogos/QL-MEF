@@ -1,5 +1,9 @@
 # Epi Capability Matrix Field Index
 
+**Standing:** architecture-contract  
+**Register:** episteme  
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+
 **Status:** active R3 field index  
 **Date:** 2026-09-03
 

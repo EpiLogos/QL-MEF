@@ -74,44 +74,44 @@ S5 Quaternal Logic
 
 The old Bimba S lattice remains developmental evidence but its former roots (CLI, vault, graph, gateway, ta-onta package, world return) are not retained as the present S roots.
 
-`S′` is the lawful/reflexive technological refraction **across** those products. A capability may therefore appear through several product centres without becoming owned by the relation or by one implementation technology.
+As of QL-MEF PR #93, `S′` is Ta-Onta as the Agent-world composition of those generic S powers, with coordinates S0′ Khora · S1′ Hen · S2′ Pleroma · S3′ Chronos · S4′ Anima · S5′ Aletheia. Same-index S↔S′ is affinity, not exclusive repository ownership. `S′` is not a second product field and not a nested S4 / ta-onta package. The living field is entered through `EPI-CAPABILITY-MATRIX-FIELD-INDEX.md`; this orientation file does not restate it.
 
-The first native C floor is materially owned by **S5 / Quaternal Logic**. That statement does not mean every consumer manifestation is S5, nor does it define a final S′ encoding. Cross-product refraction is recorded only where there is actual present evidence.
+A capability may therefore appear through several product centres without becoming owned by the S′ relation or by one implementation technology.
+
+The first native C floor is materially owned by **S5 / Quaternal Logic**. That statement does not mean every consumer manifestation is S5. Cross-product affinity is recorded only where there is actual present evidence.
 
 The same rule applies to the Vāk runtime: generalized Vāk registry/refraction machinery may live in S5/QL-MEF because that product owns QL formal law and semantic runtime, while the Anuttara language remains M0/Epi source authority and the canonical `M0 -> S0 Central` same-index relation remains unchanged.
 
 The human/agent `P/P′` product faces remain a separate axis. They are not renamed as S/S′.
 
-### 3.1 First S′ refraction model
+### 3.1 Locked S′ coordinates; cross-product table is affinity evidence
 
-The first usable S′ model is a **cross-cutting relation**, not another list of six roots and not an automatic `Sx.y = archetype-y` equation.
+The six names are the locked S′ coordinates (S0′ Khora · S1′ Hen · S2′ Pleroma · S3′ Chronos · S4′ Anima · S5′ Aletheia), not a modal vocabulary and not an automatic `Sx.y = archetype-y` equation.
 
-A refraction record has the logical shape:
+How a locked coordinate may appear through several products is affinity evidence, not the definition of `S′`:
 
 ```text
 native product centre Sx
     ×
-operative / architectural modality
+S′ coordinate
     ×
 actual manifestation or provider
     ×
 source / evidence / standing
 ```
 
-This permits one modality to appear through several native products while each product retains its own centre and ownership. It also permits a product to exhibit several modalities at once. The exact Bimba edge encoding remains source-owned and must be recovered from live relations rather than guessed from this engineering projection.
+This permits one S′ coordinate to appear through several native products while each product retains its own centre and ownership. It also permits a product to exhibit several S′ coordinates at once. The exact Bimba edge encoding remains source-owned and must be recovered from live relations rather than guessed from this engineering projection.
 
-The historical Ta-Onta sixfold gives the first named modal vocabulary worth carrying forward:
-
-| Archetype | Cross-product modal reading | Present examples; **not** a 1:1 coordinate assignment |
+| Coordinate | Cross-product affinity reading | Present examples; affinity, **not** the definition of S′ |
 |---|---|---|
-| **Khora** | ground / place / condition of material possibility | Central world/project ground; Actuation WorldBinding conditions; AIKit resolved context ground; Factory `StructuralGround`; Workcell material execution domain; QL formal/computational ground |
-| **Hen** | local unity / form held as one | authored Project/source whole; situated Agency identity; AIKit Resource/ProjectMap identity; Factory Run/Candidate whole; Workcell materialised world identity; QL law/kernel form |
-| **Pleroma** | potency / available capability fullness | project powers; Agency powers; AIKit Skills/Methods/Capabilities; Factory developmental powers; Workcell provider offers; QL executable operators |
-| **Chronos** | temporal articulation / history / sequence | Central NOW/DAY and project history; Actuation stream/return history; AIKit route/session history; Factory Run/evolution history; Workcell lifecycle; QL temporal/cyclic projections where formally grounded |
-| **Anima** | inhabited contextual organisation | lived/project world; situated Agency; AIKit actor Context; Factory Agent/Agency-in-Run; Workcell world as inhabited by an execution; QL context/readings when actually invoked |
-| **Aletheia** | disclosure / return / crystallised evidence | authored/source return; Actuation Return; AIKit verification/read-model disclosure; Factory Claims/evidence/Recognition return; Workcell observed-state evidence; QL parity/formal verification |
+| **S0′ Khora** | ground / place / condition of material possibility | Central world/project ground; Actuation WorldBinding conditions; AIKit resolved context ground; Factory `StructuralGround`; Workcell material execution domain; QL formal/computational ground |
+| **S1′ Hen** | local unity / form held as one | authored Project/source whole; situated Agency identity; AIKit Resource/ProjectMap identity; Factory Run/Candidate whole; Workcell materialised world identity; QL law/kernel form |
+| **S2′ Pleroma** | potency / available capability fullness | project powers; Agency powers; AIKit Skills/Methods/Capabilities; Factory developmental powers; Workcell provider offers; QL executable operators |
+| **S3′ Chronos** | temporal articulation / history / sequence | Central NOW/DAY and project history; Actuation stream/return history; AIKit route/session history; Factory Run/evolution history; Workcell lifecycle; QL temporal/cyclic projections where formally grounded |
+| **S4′ Anima** | inhabited contextual organisation | lived/project world; situated Agency; AIKit actor Context; Factory Agent/Agency-in-Run; Workcell world as inhabited by an execution; QL context/readings when actually invoked |
+| **S5′ Aletheia** | disclosure / return / crystallised evidence | authored/source return; Actuation Return; AIKit verification/read-model disclosure; Factory Claims/evidence/Recognition return; Workcell observed-state evidence; QL parity/formal verification |
 
-These rows are a **design-level refraction account** grounded in the old S4/Ta-Onta operational semantics and current native product responsibilities. They are not claims that the Bimba graph already contains all 36 new edges, nor that every listed example is equally developed.
+These rows are present affinity examples grounded in current native product responsibilities. They are not the definition of S′, not claims that the Bimba graph already contains all 36 new edges, nor that every listed example is equally developed.
 
 The immediate specimen is intentionally narrower:
 
@@ -122,9 +122,11 @@ S5 Quaternal Logic
   → parity + manifest evidence
 ```
 
-No Ta-Onta archetype is attached to that scalar operation simply to fill a slot. The cross-product table tells later work how named archetypes may lawfully refract; the specimen records only what the current source proves.
+No Ta-Onta coordinate is attached to that scalar operation simply to fill a slot. The cross-product table records affinity examples; the specimen records only what the current source proves.
 
 ## 4. Ta-Onta archetypes survive package dissolution
+
+The archetypes now have a locked S′ coordinate identity in the R3 field, which is a later determination than this C-floor account.
 
 Historical Bimba development gave the former S4/ta-onta package a sixfold operational articulation:
 
