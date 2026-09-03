@@ -2,7 +2,8 @@ use ql_core::{KERNEL_VERSION, QlAddress, QlOperator, apply_operator, kernel_capa
 use ql_mef::{
     CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId, LensFace, MEF_REGISTRY_REVISION,
     MEF_REGISTRY_VERSION, MefSquare, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH,
-    VAK_SOURCE_REPOSITORY, VAK_SOURCE_REVISION, VakRegistry, all_lens_definitions,
+    VAK_SOURCE_REPOSITORY, VAK_SOURCE_REVISION, VakEntry, VakRegistry, VakRelation,
+    VakRelationKind, all_lens_definitions,
 };
 use ql_semantic::{Operation, ProviderState};
 use ql_service::QlService;
@@ -13,6 +14,8 @@ use std::process::ExitCode;
 use std::str::FromStr;
 
 pub const QL_CLI_CONTRACT: &str = "ql.cli/v1";
+pub const VAK_CONTEXT_CONTRACT: &str = "ql.vak-context/v1";
+const MAX_VAK_CONTEXT_DEPTH: usize = 2;
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -131,6 +134,55 @@ struct VakEntryView {
     source_line: usize,
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct VakSourceView {
+    repository: &'static str,
+    revision: &'static str,
+    path: &'static str,
+    git_blob: &'static str,
+    coordinate: String,
+    source_line: usize,
+    standing: &'static str,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct VakContextEntryView {
+    vak_ref: String,
+    source: VakSourceView,
+    name: Option<String>,
+    symbol: Option<String>,
+    primary_designation: Option<String>,
+    complete_formulation: Option<String>,
+    formulation_breakdown: Option<String>,
+    metaphysical_names: Vec<String>,
+    description: Option<String>,
+    r_factors: Vec<String>,
+    raw_source_row: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct VakContextRelationView {
+    from_ref: String,
+    relation: &'static str,
+    into_ref: String,
+    standing: &'static str,
+    evidence: Vec<String>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct VakContextView {
+    contract: &'static str,
+    source_revision: &'static str,
+    centre: VakContextEntryView,
+    depth: usize,
+    entries: Vec<VakContextEntryView>,
+    relations: Vec<VakContextRelationView>,
+}
+
 pub fn cli_main() -> ExitCode {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     match execute_cli(&args) {
@@ -169,8 +221,8 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
-The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nProvider-backed service operations disclose their current negotiated availability.",
+Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
+The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
         env!("CARGO_PKG_VERSION")
     )
 }
@@ -193,6 +245,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "context-frame.list",
             "vak.capabilities",
             "vak.locate",
+            "vak.context",
             "service.capabilities",
             "service.negotiate",
             "verify",
@@ -366,8 +419,125 @@ fn vak_command(args: &[String], json: bool) -> Result<String, CliError> {
                 ))
             }
         }
+        Some("context") => vak_context_command(&args[1..], json),
         Some(operation) => Err(CliError(format!("unknown Vāk operation `{operation}`"))),
         None => Err(CliError("missing Vāk operation".into())),
+    }
+}
+
+fn vak_context_command(args: &[String], json: bool) -> Result<String, CliError> {
+    let reference = args
+        .first()
+        .ok_or_else(|| CliError("missing Vāk ref".into()))?;
+    let depth = match args.get(1) {
+        Some(value) => value
+            .parse::<usize>()
+            .map_err(|_| CliError(format!("invalid Vāk context depth `{value}`")))?,
+        None => 1,
+    };
+    if args.len() > 2 {
+        return Err(CliError(
+            "usage: ql vak context <vak-ref> [depth] [--json]".into(),
+        ));
+    }
+    if depth > MAX_VAK_CONTEXT_DEPTH {
+        return Err(CliError(format!(
+            "Vāk context depth {depth} exceeds bounded maximum {MAX_VAK_CONTEXT_DEPTH}"
+        )));
+    }
+
+    let registry =
+        VakRegistry::from_authoritative_source().map_err(|error| CliError(error.to_string()))?;
+    let centre = registry
+        .locate_str(reference)
+        .map_err(|error| CliError(error.to_string()))?;
+    let centre_ref = centre.vak_ref.clone();
+    let neighbourhood = registry
+        .neighbourhood(&centre_ref, depth)
+        .map_err(|error| CliError(error.to_string()))?;
+    let entries = neighbourhood
+        .entries
+        .iter()
+        .filter_map(|reference| registry.locate(reference))
+        .map(vak_context_entry_view)
+        .collect::<Vec<_>>();
+    let relations = neighbourhood
+        .relations
+        .iter()
+        .map(vak_context_relation_view)
+        .collect::<Vec<_>>();
+    let view = VakContextView {
+        contract: VAK_CONTEXT_CONTRACT,
+        source_revision: VAK_SOURCE_REVISION,
+        centre: vak_context_entry_view(centre),
+        depth,
+        entries,
+        relations,
+    };
+
+    if json {
+        serde_json::to_string_pretty(&view).map_err(CliError::from)
+    } else {
+        Ok(format!(
+            "{}\nsource: {}@{}\ndepth: {}\nentries: {}\nrelations: {}",
+            view.centre.vak_ref,
+            view.centre.source.repository,
+            view.centre.source.revision,
+            view.depth,
+            view.entries.len(),
+            view.relations.len()
+        ))
+    }
+}
+
+fn vak_context_entry_view(entry: &VakEntry) -> VakContextEntryView {
+    VakContextEntryView {
+        vak_ref: entry.vak_ref.to_string(),
+        source: VakSourceView {
+            repository: entry.source.repository,
+            revision: entry.source.revision,
+            path: entry.source.path,
+            git_blob: entry.source.git_blob,
+            coordinate: entry.source.coordinate.to_string(),
+            source_line: entry.source.source_line,
+            standing: entry.source.standing.as_schema_str(),
+        },
+        name: entry.name.clone(),
+        symbol: entry.symbol.clone(),
+        primary_designation: entry.primary_designation.clone(),
+        complete_formulation: entry.complete_formulation.clone(),
+        formulation_breakdown: entry.formulation_breakdown.clone(),
+        metaphysical_names: entry.metaphysical_names.clone(),
+        description: entry.description.clone(),
+        r_factors: entry.r_factors.clone(),
+        raw_source_row: entry.raw_source_row.clone(),
+    }
+}
+
+fn vak_context_relation_view(relation: &VakRelation) -> VakContextRelationView {
+    VakContextRelationView {
+        from_ref: relation.from_ref.to_string(),
+        relation: vak_relation_kind(relation.relation),
+        into_ref: relation.into_ref.to_string(),
+        standing: relation.standing.as_schema_str(),
+        evidence: relation.evidence.clone(),
+    }
+}
+
+fn vak_relation_kind(kind: VakRelationKind) -> &'static str {
+    match kind {
+        VakRelationKind::Parent => "parent",
+        VakRelationKind::Child => "child",
+        VakRelationKind::SourceMentions => "source-mentions",
+        VakRelationKind::Contextualises => "contextualises",
+        VakRelationKind::ContextualisedBy => "contextualised-by",
+        VakRelationKind::PrincipleNineAppearance => "principle-nine-appearance",
+        VakRelationKind::RPathStep => "r-path-step",
+        VakRelationKind::Expresses => "expresses",
+        VakRelationKind::InvokesThrough => "invokes-through",
+        VakRelationKind::TransformsThrough => "transforms-through",
+        VakRelationKind::ReadsThrough => "reads-through",
+        VakRelationKind::Other => "other",
     }
 }
 
@@ -635,6 +805,11 @@ mod tests {
             CONTEXT_FRAME_GRAMMAR_VERSION
         );
         assert_eq!(value["vakSourceRevision"], VAK_SOURCE_REVISION);
+        assert!(value["commands"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|value| value == "vak.context"));
     }
 
     #[test]
@@ -681,6 +856,41 @@ mod tests {
         let located: serde_json::Value = serde_json::from_str(&located).unwrap();
         assert_eq!(located["vakRef"], "M0");
         assert_eq!(located["standing"], "SOURCE");
+    }
+
+    #[test]
+    fn vak_context_projects_full_source_locked_bounded_neighbourhood() {
+        let output = execute_cli(&[
+            "vak".into(),
+            "context".into(),
+            "M0".into(),
+            "1".into(),
+            "--json".into(),
+        ])
+        .unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["contract"], VAK_CONTEXT_CONTRACT);
+        assert_eq!(value["sourceRevision"], VAK_SOURCE_REVISION);
+        assert_eq!(value["centre"]["vakRef"], "M0");
+        assert_eq!(value["centre"]["source"]["gitBlob"], VAK_SOURCE_GIT_BLOB);
+        assert_eq!(value["centre"]["source"]["standing"], "SOURCE");
+        assert!(value["centre"]["rawSourceRow"].as_str().unwrap().contains("M0"));
+        assert_eq!(value["depth"], 1);
+        assert!(!value["entries"].as_array().unwrap().is_empty());
+        assert!(!value["relations"].as_array().unwrap().is_empty());
+    }
+
+    #[test]
+    fn vak_context_depth_is_bounded() {
+        let error = execute_cli(&[
+            "vak".into(),
+            "context".into(),
+            "M0".into(),
+            "3".into(),
+            "--json".into(),
+        ])
+        .unwrap_err();
+        assert!(error.to_string().contains("bounded maximum"));
     }
 
     #[test]
