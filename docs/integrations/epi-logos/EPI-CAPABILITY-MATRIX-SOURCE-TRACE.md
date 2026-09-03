@@ -8,16 +8,41 @@
 | Source | Revision / blob | Standing | Use |
 |---|---|---|---|
 | QL-MEF | `590ea5464e0b422beaddea2669039e3d8c7fcb5c` | CURRENT-DEVELOPMENT | current QL/Vāk/kernel and matrix host |
-| O:I | `9e1a6366ebf7487d7bdc99901d7d72c99db4788d` | IMPLEMENTATION-FACT | SharedField/composition/application relation |
-| Central | `3d45044e3984e2f389e1e9237306ddeba4d3ca94` | IMPLEMENTATION-FACT | durable human/Project ground |
-| Actuation | `7895fa05d87cb1f1ba121ba4f91b64a52484d212` | IMPLEMENTATION-FACT | Agent/Agency/authority/Return |
-| AIKit | `0eff91a76fcba27e004b2611bbe38622009906e8` | IMPLEMENTATION-FACT | Context/Knowledge/Capability/Method/model/harness/composition |
-| Factory | `7e8fadea5156d75eb872f55f4fd4938d47fb0648` | IMPLEMENTATION-FACT | Journey/Run/Evidence development field |
-| Workcell | `bfb5287935ebb2e08677e219cb4de8c65a4b38a8` | IMPLEMENTATION-FACT | material provider/body field |
+| O:I | `18fd59838c63b0a2caff23e249eff24a8a0f6fc0` | IMPLEMENTATION-FACT | SharedField/composition/application relation plus adapter-driven World recognition |
+| Central | `0b636d1fa52f625451fb94a1dc86d589117b76bd` | IMPLEMENTATION-FACT | durable human/Project ground and native `ctrl` doorway |
+| Actuation | `b403cbf1be1c3d78316753db9bcde9f31eb2fb4e` | IMPLEMENTATION-FACT | Agent/Agency/authority/Return plus native lifecycle/CLI doorway |
+| AIKit | `00afe1b91f00f3881cac56459fa1cff8e7ba7183` | IMPLEMENTATION-FACT | Context/Knowledge/Capability/Method/model/harness/composition plus owner-bound Central NOW/Flow lifecycle reading |
+| Factory | `7e8fadea5156d75eb872f55f4fd4938d47fb0648` | IMPLEMENTATION-FACT | Journey/Run/Evidence development field and native Factory command surface |
+| Workcell | `25792dc3aa8e4c54088c0696cee00f8efefe03ad` | IMPLEMENTATION-FACT | material provider/body field and stable material/provider command identity |
 | Epi source | `daa660cbc1b8c5da83828698665a753852cb0287` | CANONICAL-SEMANTIC-SOURCE + historical implementation | M/M′, Ta-Onta lineage, Epii operational capacities |
 | prior matrix branch | `c1796dfc80d2da8a9bdd2b42e53f5492d7c87e8e` | HISTORICAL-RESEARCH-LINEAGE | recovered 36 capability identities and prior disposition work |
 
 Re-lock before implementation work; these are tranche locks, not permanent authority claims.
+
+## Live embodiment deltas since the first R3 lock
+
+### O:I World recognition is now real
+
+O:I #185 is merged on current main. The current executable relation is:
+
+```text
+oi install / oi adopt / oi recognition inspect
+→ shared O:I World-recognition engine
+→ built-in + registered oi.world-recognition/v1 contributions
+→ native technology observations / relations / owner bindings
+→ extension request where support is missing
+→ owner SDK + Skill + conformance + oi.package/v1 target
+```
+
+The recognition registry is explicitly separate from the six-product composition registry. Recognition records the technology actually encountered and routes missing integration to its native owner rather than stealing AIKit, Workcell, Central, Factory, Actuation or QL semantics.
+
+**Matrix consequence:** Khora/Anima can now rely on a live generic *recognise the world that is actually here* capability. Ta-Onta adds the Epi relation—Bimba/M/M′/Vāk/Context-Frame inhabitation—not another recogniser.
+
+### AIKit now reads current Central temporal ground through the owner surface
+
+AIKit #176 is merged on current main. AIKit consumes Central's registered JSON Actions through the existing CommandRunner seam on `SessionStart`, `UserPromptSubmit` and `PreCompact`. It does not parse Central files, create a temporal store, grant authority, activate capabilities or invoke an Agent/model. The reading explicitly marks itself as current orientation only.
+
+**Matrix consequence:** Khora and Chronos now have a current generic carrier for Project-local NOW/DAY/Flow orientation whose authority remains Central. This is implementation evidence for the current S0′/S3′ relation, not a reason to move temporal ownership into AIKit or Ta-Onta.
 
 ## Source determinations used
 
