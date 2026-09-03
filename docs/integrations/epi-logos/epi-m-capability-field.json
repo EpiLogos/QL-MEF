@@ -1,0 +1,96 @@
+{
+  "schema_version": "epi-m-capability-field/0.2",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "purpose": "Join the 36 recovered M-domain capabilities to lived M′ operation, clean S0′–S5′ Ta-Onta composition, current native O:I owners/evidence, Epii-on-X developmental law and governed Return.",
+  "laws": [
+    "The unit is a capability, not a repository or technology.",
+    "Ta-Onta is the S′ whole; its coordinate identities are S0′ Khora, S1′ Hen, S2′ Pleroma, S3′ Chronos, S4′ Anima, S5′ Aletheia.",
+    "Generic O:I products own mechanics; M/M′ sources own Epi semantic/domain meaning; Ta-Onta composes Epi Agent-world meaning.",
+    "A model/harness/adapter is an operative body capability. Epii-on-X owns the target-specific developmental proposition.",
+    "Implementation evidence for generic mechanics does not by itself prove the Epi composition or an Epii-on-X development pipeline.",
+    "Returned evidence/readings/training outputs are proposals until recognised by the authority owning target ground."
+  ],
+  "current_locks": {
+    "O:I": "18fd59838c63b0a2caff23e249eff24a8a0f6fc0",
+    "Central": "0b636d1fa52f625451fb94a1dc86d589117b76bd",
+    "Actuation": "b403cbf1be1c3d78316753db9bcde9f31eb2fb4e",
+    "AIKit": "00afe1b91f00f3881cac56459fa1cff8e7ba7183",
+    "Software Factory": "7e8fadea5156d75eb872f55f4fd4938d47fb0648",
+    "Workcell": "25792dc3aa8e4c54088c0696cee00f8efefe03ad",
+    "QL-MEF": "590ea5464e0b422beaddea2669039e3d8c7fcb5c",
+    "Epi source": "daa660cbc1b8c5da83828698665a753852cb0287"
+  },
+  "evidence_registry": {
+    "OI_WORLD_RECOGNITION_185": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "O:I",
+      "revision": "18fd59838c63b0a2caff23e249eff24a8a0f6fc0",
+      "source": "EpiLogos/O-I#185",
+      "relation": "Adapter-driven World recognition discovers existing technologies, relations and owner bindings and routes missing integration to native owners without semantic takeover."
+    },
+    "AIKIT_CENTRAL_TEMPORAL_176": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "AIKit",
+      "revision": "00afe1b91f00f3881cac56459fa1cff8e7ba7183",
+      "source": "EpiLogos/ai-kit#176",
+      "relation": "AIKit consumes Central-owned NOW/DAY/Flow through registered owner Actions on causal lifecycle events; orientation does not grant authority, activate capabilities or invoke a model."
+    },
+    "AIKIT_SEMANTIC_WIKI_158": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "AIKit",
+      "revision": "current main at 00afe1b91f00f3881cac56459fa1cff8e7ba7183",
+      "source": "EpiLogos/ai-kit#158 (closed completed)",
+      "relation": "SemanticWiki/Living Knowledge/Contemplate operates canonical QL-shaped knowledge with provenance, bounded deterministic preflight, generated WikiReadings and Return; no automatic model invocation or canon promotion."
+    },
+    "FACTORY_JOURNEY_176": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "Software Factory",
+      "revision": "current main at 7e8fadea5156d75eb872f55f4fd4938d47fb0648",
+      "source": "EpiLogos/agent-system-design#176 (closed completed)",
+      "relation": "Commission/Journey/Run carries developmental continuity and evidence while Actuation owns Agency/authority/Return, AIKit operative body/context and Workcell material placement."
+    },
+    "OI_SHAREDFIELD_SPACETIMEDB": {
+      "standing": "IMPLEMENTATION-FACT + OBSERVED-RESULT",
+      "owner": "O:I SharedField",
+      "revision": "current O:I main 18fd59838c63b0a2caff23e249eff24a8a0f6fc0; hosted Explore lineage",
+      "source": "O:I SharedField/SpaceTimeDB application line; source-trace/W11 lineage",
+      "relation": "Live hosted SharedField application substrate supplies common state/readings across human/desktop/Agent surfaces; hosted IDs/state do not own Epi semantic identity."
+    },
+    "QLMEF_CURRENT_KERNEL": {
+      "standing": "CURRENT-DEVELOPMENT",
+      "owner": "QL-MEF",
+      "revision": "590ea5464e0b422beaddea2669039e3d8c7fcb5c",
+      "source": "QL-MEF current main plus current subsystem matrix/kernel carriers",
+      "relation": "Current QL/MEF/Vāk/kernel owner supplies formal relations and domain instrument substrate; each capability-specific implementation/observed-result claim still requires exact native proof when promoted."
+    },
+    "WORKCELL_MATERIAL_BODY": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "Workcell",
+      "revision": "25792dc3aa8e4c54088c0696cee00f8efefe03ad",
+      "source": "Workcell current main",
+      "relation": "Workcell owns material provider/body/process/service conditions; material identity remains distinct from Agent, capability and Epi semantic identity."
+    },
+    "AIKIT_CONTEXT_COMPOSITION": {
+      "standing": "IMPLEMENTATION-FACT",
+      "owner": "AIKit",
+      "revision": "00afe1b91f00f3881cac56459fa1cff8e7ba7183",
+      "source": "AIKit current main; canonical Skill→Method→SkillSet→Context lineage",
+      "relation": "AIKit owns Context, Capability, Skill/Method, model/harness, SessionSpace and Surface composition used by Epi without becoming the Epi semantic owner."
+    }
+  },
+  "historical_lineage": {
+    "source": "prior R2 epi-ssprime-embodiment capability rows",
+    "blob": "a626bc0fee8bdea10c4f2f112dfd8e46df3cec08",
+    "standing": "HISTORICAL-RESEARCH-LINEAGE",
+    "law": "All 36 capability identities are retained; historical technical-strata topology and obsolete subcoordinate notation are superseded."
+  },
+  "domains": [
+    {"m":"M0","m_name":"Anuttara","m_prime":"M0′ Bimba / playable source-addressed language and graph instrument","epii_on_x_ref":"EPII_ON_M0_ANUTTARA","capability_count":6,"file":"epi-m-capability-field-m0.json"},
+    {"m":"M1","m_name":"Paramaśiva","m_prime":"M1′ relational / harmonic instrument","epii_on_x_ref":"EPII_ON_M1_PARAMASIVA","capability_count":6,"file":"epi-m-capability-field-m1.json"},
+    {"m":"M2","m_name":"Paraśakti","m_prime":"M2′ correspondential / cymatic instrument","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","capability_count":6,"file":"epi-m-capability-field-m2.json"},
+    {"m":"M3","m_name":"Mahāmāyā","m_prime":"M3′ world-clock / symbolic transcription instrument","epii_on_x_ref":"EPII_ON_M3_MAHAMAYA","capability_count":6,"file":"epi-m-capability-field-m3.json"},
+    {"m":"M4","m_name":"Nara","m_prime":"M4′ protected personal / lived instrument","epii_on_x_ref":"EPII_ON_M4_NARA","capability_count":6,"file":"epi-m-capability-field-m4.json"},
+    {"m":"M5","m_name":"Epii","m_prime":"M5′ Epii reflexive developmental / review instrument","epii_on_x_ref":"EPII_ON_M5_EPII","capability_count":6,"file":"epi-m-capability-field-m5.json"}
+  ]
+}
