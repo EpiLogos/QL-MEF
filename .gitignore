@@ -1,0 +1,9 @@
+# Rust build artifacts
+/target/
+
+# Local platform noise
+.DS_Store
+
+# Secrets — never commit these
+.env
+.env.*
