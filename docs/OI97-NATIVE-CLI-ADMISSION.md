@@ -1,5 +1,9 @@
 # O:I #172 native CLI admission
 
+**Standing:** observed-evidence  
+**Register:** episteme  
+**Provenance:** PR #88 merge commit `db2b159`; human-authored admission record  
+
 This note records the deterministic admission boundary for the first owner-native `ql` command surface.
 
 The implementation head `7389bad1fdb334fe3a10f758cae4d92acbad7c5b` passed QL-MEF Rust Verify, QW4 Independent-Wiki Conformance, and Pre-local verification. Its dedicated Native CLI and full Rust lanes stopped only at `cargo fmt --check`, before clippy/test execution.
