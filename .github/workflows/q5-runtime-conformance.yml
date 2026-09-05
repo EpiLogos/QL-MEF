@@ -3,7 +3,7 @@ name: Q5 Runtime Conformance
 on:
   push:
     branches:
-      - agent/q5-runtime-refraction
+      - main
   pull_request:
     paths:
       - "crates/ql-adapters/**"

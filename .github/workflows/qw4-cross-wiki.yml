@@ -3,7 +3,7 @@ name: QW4 Independent-Wiki Conformance
 on:
   push:
     branches:
-      - agent/qw4-second-wiki-proof
+      - main
   pull_request:
 
 jobs:

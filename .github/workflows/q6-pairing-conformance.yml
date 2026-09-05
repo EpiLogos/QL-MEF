@@ -3,7 +3,7 @@ name: Q6 Pairing Conformance
 on:
   push:
     branches:
-      - agent/q6-pairing-square-grammar
+      - main
   pull_request:
     paths:
       - "crates/ql-core/src/kernel.rs"

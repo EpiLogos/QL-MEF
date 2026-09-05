@@ -3,7 +3,7 @@ name: Epi C R1 R2
 on:
   push:
     branches:
-      - agent/epi-c-r1-r2-native-floor
+      - main
   pull_request:
     paths:
       - .github/workflows/epi-c-r1-r2.yml

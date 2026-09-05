@@ -3,7 +3,7 @@ name: Q6 Context Frame Conformance
 on:
   push:
     branches:
-      - agent/q6-pairing-square-grammar
+      - main
   pull_request:
     paths:
       - "crates/ql-mef/src/context_frame.rs"
