@@ -1,0 +1,90 @@
+{
+  "schema_version": "epi-ta-onta-agent-world-capabilities/0.3",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "purpose": "Make a generic O:I computational World operate as Epi-Logos for an Agent: Bimba first-class, M/M-prime addressable, Vak/Context Frames operative, cosmic and personal time situated, Epi Agents composable, and activity capable of governed knowledge/developmental Return.",
+  "topology": {
+    "M": ["M0 Anuttara", "M1 Paramasiva", "M2 Parashakti", "M3 Mahamaya", "M4 Nara", "M5 Epii"],
+    "S": ["S0 Central", "S1 Actuation", "S2 AIKit", "S3 Software Factory", "S4 Workcell", "S5 QL-MEF"],
+    "S_prime": {
+      "whole": "Ta-Onta — primary Epi-Logos Agent-world composition",
+      "internal": ["S'.0 Khora", "S'.1 Hen", "S'.2 Pleroma", "S'.3 Chronos", "S'.4 Anima", "S'.5 Aletheia"],
+      "standing": "DERIVED-CURRENT-ARCHITECTURE pending ratification through QL-MEF #25/#74",
+      "refines": "The #74/#25 six-independent-top-level-S-prime wording while preserving internal positional sequence and same-index affinities.",
+      "does_not_restore": "Historical Ta-Onta = nested S4-prime technical residency."
+    },
+    "M_prime": ["M0' Bimba instrument", "M1' relational/harmonic instrument", "M2' correspondential/cymatic instrument", "M3' world-clock/transcription instrument", "M4' protected personal/lived instrument", "M5' Epii reflexive instrument"]
+  },
+  "same_index_internal_affinities": [
+    ["Central", "Khora"], ["Actuation", "Hen"], ["AIKit", "Pleroma"], ["Factory", "Chronos"], ["Workcell", "Anima"], ["QL-MEF", "Aletheia"]
+  ],
+  "matrix_question": "What must this M-domain become inside the Agent's operative world, through this Ta-Onta organ, so the Agent is actually inhabiting Epi-Logos rather than merely having Epi information in its prompt?",
+  "cells": [
+    {"organ":"Khora","m":"M0","for_what":"Enter Bimba/Vak at a source-provenanced address with authored orientation, revision and continuation.","owners":["Central","AIKit","QL-MEF"],"m_prime":"M0'"},
+    {"organ":"Khora","m":"M1","for_what":"Bind session to canonical QL/kernel and current profile generation.","owners":["QL-MEF","AIKit"],"m_prime":"M1'"},
+    {"organ":"Khora","m":"M2","for_what":"Establish the Parashakti source horizon/current correspondential profile without confusing derived correspondence with source.","owners":["AIKit","QL-MEF"],"m_prime":"M2'"},
+    {"organ":"Khora","m":"M3","for_what":"Attach to authoritative shared clock/cosmos stream, world-clock generation and Project/deposition anchors rather than a private Agent clock.","owners":["AIKit","O:I SharedField","QL-MEF"],"m_prime":"M3'"},
+    {"organ":"Khora","m":"M4","for_what":"Bind only eligible human ground/protected Nara state under privacy, separating identity, state, observation and inference.","owners":["Central","AIKit","Actuation"],"m_prime":"M4'"},
+    {"organ":"Khora","m":"M5","for_what":"Recover prior Recognition/WikiReading/review frontier and unresolved Return.","owners":["AIKit","Factory","QL-MEF","Central"],"m_prime":"M5'"},
+
+    {"organ":"Hen","m":"M0","for_what":"Make Bimba/Vak entries, source standing, coordinate relations and provenance living Wiki/artifact forms.","owners":["AIKit","QL-MEF","Central"],"m_prime":"M0'"},
+    {"organ":"Hen","m":"M1","for_what":"Make QL/harmonic derivations, proofs and instrument states source-addressable forms.","owners":["QL-MEF","AIKit"],"m_prime":"M1'"},
+    {"organ":"Hen","m":"M2","for_what":"Type lenses, elements, planets, chakras, decans, sonic systems and correspondence claims with provenance.","owners":["AIKit","QL-MEF"],"m_prime":"M2'"},
+    {"organ":"Hen","m":"M3","for_what":"Give codon/transcription/oracle/clock packets and world-clock observations stable replayable forms.","owners":["AIKit","QL-MEF","O:I SharedField"],"m_prime":"M3'"},
+    {"organ":"Hen","m":"M4","for_what":"Give DAY/NOW, journal, dream, oracle, episode and PersonalState Epi-native forms with privacy/identity boundaries.","owners":["Central","AIKit","QL-MEF"],"m_prime":"M4'"},
+    {"organ":"Hen","m":"M5","for_what":"Represent review deposits, Contemplate/Wiki readings, canon proposals, pedagogy and recognised returns.","owners":["AIKit","Factory","Central","QL-MEF"],"m_prime":"M5'"},
+
+    {"organ":"Pleroma","m":"M0","for_what":"Expose Locate/Relate/Refract and full Vak/Bimba operations over canonical O:I Actions/refs.","owners":["AIKit","QL-MEF"],"m_prime":"M0'"},
+    {"organ":"Pleroma","m":"M1","for_what":"Constitute QL/harmonic kernel, music/torus instruments, model access and relevant Surfaces.","owners":["AIKit","QL-MEF","Workcell"],"m_prime":"M1'"},
+    {"organ":"Pleroma","m":"M2","for_what":"Constitute MEF, graph, sonic/cymatic and Kerykeion-query faculties as an Epi affordance field over AIKit capabilities.","owners":["AIKit","QL-MEF","Workcell"],"m_prime":"M2'"},
+    {"organ":"Pleroma","m":"M3","for_what":"Constitute world-clock, codon/transcription, oracle and SharedField operations/Surfaces.","owners":["AIKit","O:I SharedField","QL-MEF","Workcell"],"m_prime":"M3'"},
+    {"organ":"Pleroma","m":"M4","for_what":"Constitute journal, oracle and personal-context faculties under Nara privacy/authority and current model/body conditions.","owners":["AIKit","Actuation","Workcell","Central"],"m_prime":"M4'"},
+    {"organ":"Pleroma","m":"M5","for_what":"Constitute Contemplate, research, review, evidence, pedagogy and governed model-development faculties.","owners":["AIKit","Factory","QL-MEF","Actuation","Workcell"],"m_prime":"M5'"},
+
+    {"organ":"Chronos","m":"M0","for_what":"Carry source revision, ChangeHorizon and freshness.","owners":["Central","AIKit"],"m_prime":"M0'"},
+    {"organ":"Chronos","m":"M1","for_what":"Carry harmonic tick, 12-tick, 360/720 phase, cycle and profile generation.","owners":["QL-MEF","AIKit"],"m_prime":"M1'"},
+    {"organ":"Chronos","m":"M2","for_what":"Make Kerykeion first-class: planets, decan/tattva/aspect conditions and M2-5 correspondences become provenance-bearing Kairos context.","owners":["QL-MEF","AIKit","Workcell"],"m_prime":"M2'"},
+    {"organ":"Chronos","m":"M3","for_what":"Maintain the impersonal collective NOW: one Earth-relative world-clock/cosmos state hosted through SpaceTimeDB and consumed by desktop, site and Agent without rival clocks.","owners":["O:I SharedField","AIKit","QL-MEF","Workcell"],"m_prime":"M3'"},
+    {"organ":"Chronos","m":"M4","for_what":"Relate shared Earth/world NOW to personal DAY/NOW, natal basis, transit, episodes and activity, yielding Q_transit/Kairos without publishing protected state.","owners":["Central","AIKit","QL-MEF","O:I SharedField"],"m_prime":"M4'"},
+    {"organ":"Chronos","m":"M5","for_what":"Carry Mobius/day-night, knowledge freshness, developmental frontier, review cadence and autoresearch time.","owners":["Factory","AIKit","QL-MEF","Central"],"m_prime":"M5'"},
+
+    {"organ":"Anima","m":"M0","for_what":"Let actual Bimba/Vak address/neighbourhood participate in determination of Agency.","owners":["Actuation","AIKit","QL-MEF"],"m_prime":"M0'"},
+    {"organ":"Anima","m":"M1","for_what":"Compose QL operation/instrument mode, actor, authority and Return while Agent identity remains stable across body/model changes.","owners":["Actuation","QL-MEF","AIKit"],"m_prime":"M1'"},
+    {"organ":"Anima","m":"M2","for_what":"Coordinate capabilities, models, specialist Agencies and correspondential instruments under the active Context Frame.","owners":["Actuation","AIKit","QL-MEF","Workcell"],"m_prime":"M2'"},
+    {"organ":"Anima","m":"M3","for_what":"Compose Journey/Run, AgentSet, Vak path, thread topology, temporal phase, Actions and material placement into the developmental act.","owners":["Factory","Actuation","AIKit","Workcell","QL-MEF"],"m_prime":"M3'"},
+    {"organ":"Anima","m":"M4","for_what":"Instantiate the Nara/Psyche dialogical relation: personal context, voice, attention, consent and privacy as conditions of Agency.","owners":["Actuation","AIKit","Central","Workcell","QL-MEF"],"m_prime":"M4'"},
+    {"organ":"Anima","m":"M5","for_what":"Compose Epii/Sophia/guardian review and metagency so proposals reach the authority that can recognise/refuse/promote them.","owners":["Actuation","Factory","AIKit","QL-MEF","Central"],"m_prime":"M5'"},
+
+    {"organ":"Aletheia","m":"M0","for_what":"Return observations/questions/new relations as Bimba-addressable Knowledge with standing and provenance.","owners":["AIKit","QL-MEF","Central"],"m_prime":"M0'"},
+    {"organ":"Aletheia","m":"M1","for_what":"Return evidence about QL/harmonic propositions, derivations and instrument behaviour.","owners":["QL-MEF","AIKit","Factory"],"m_prime":"M1'"},
+    {"organ":"Aletheia","m":"M2","for_what":"Return correspondence, retrieval, model and instrument fitness without converting observed resonance into canon.","owners":["AIKit","QL-MEF","Factory"],"m_prime":"M2'"},
+    {"organ":"Aletheia","m":"M3","for_what":"Return execution traces/transcription/pathway patterns as governed improvement candidates; RL/federated/genetic lines remain research until evidenced.","owners":["Factory","AIKit","QL-MEF"],"m_prime":"M3'"},
+    {"organ":"Aletheia","m":"M4","for_what":"Metabolise episodes, thoughts, dreams, oracle/activity and InternalityObservations into protected learning/identity proposals gated by owner authority.","owners":["Central","AIKit","Factory","QL-MEF"],"m_prime":"M4'"},
+    {"organ":"Aletheia","m":"M5","for_what":"Close the Epii loop through Contemplate, Gnosis, pedagogy, review/autoresearch and Recognition back into future Bimba/Vak/Agency.","owners":["QL-MEF","AIKit","Factory","Central"],"m_prime":"M5'"}
+  ],
+  "chronos_invariants": {
+    "kerykeion": {"standing":"CURRENT-DOMAIN-SPEC","law":"Kerykeion is first-class to cosmic-time composition. Chronos quantitative time and Kairos qualitative time remain distinct; Kairos consumes current planetary/decan/tattva/aspect state and relates it to M2/M3/M4."},
+    "universal_now": {"standing":"IMPLEMENTATION-FACT + CURRENT-DOMAIN-SPEC","law":"M3 collective NOW is one shared Earth-relative world-clock state. O:I SpaceTimeDB SharedField already supplies a live hosted application substrate across browser, desktop and structured-Agent readings."},
+    "earth_common_referent": {"standing":"DERIVED-CURRENT-ARCHITECTURE","law":"The shared world-clock is the common Earth/world referent through which impersonal M3 state is situated relative to M4 natal/transit/DAY/NOW. SpaceTimeDB hosts state; it does not own the Epi semantic identity."},
+    "privacy": "Public/current M3 state may be shared. M4 personal/natal/episode/identity bodies remain protected unless explicitly disclosed."
+  },
+  "model_development_register": {
+    "standing": "RESEARCH-PROPOSITION / DESIGN-DIRECTION unless separately implemented and evidenced",
+    "domains": {
+      "M0": "language/schema/canonical relation development",
+      "M1": "CPT + RAG over QL theory/foundational derivation",
+      "M2": "graph-relational ML, KGE/R-GCN/GDS and lens adapters",
+      "M3": "process-reward RL, federated learning and symbolic/genetic pathway synthesis",
+      "M4": "narrow QLoRA over dialogic/anima-Vak voice with optional governed DPO",
+      "M5": "CPT/RAG for Epii voice plus recursive autoresearch"
+    }
+  },
+  "authority_law": [
+    "O:I products own generic mechanics and canonical native refs.",
+    "M/M-prime sources own Epi semantic/domain meaning.",
+    "Ta-Onta composes an Epi Agent World; it does not create duplicate generic registries.",
+    "Historical Ta-Onta technologies are capability lineage and implementation evidence.",
+    "Provider/hosted state cannot silently become Bimba, Nara or Central source authority.",
+    "Return may generate evidence/readings/proposals; durable promotion occurs only through the authority owning target ground."
+  ]
+}
