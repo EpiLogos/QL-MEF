@@ -14,6 +14,7 @@ mod operator;
 mod pairing;
 mod position;
 mod shape;
+mod relation_classification;
 mod structural;
 
 pub use address::QlAddress;
@@ -39,6 +40,7 @@ pub use shape::{
     QlShapeKind, RELATIONAL_SIXFOLD_OPERATOR_REF, RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold,
     SIX_BY_SIX_SHAPE_REF, SixBySixField,
 };
+pub use relation_classification::{RelationPairMatch, classify_relation_pair};
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
