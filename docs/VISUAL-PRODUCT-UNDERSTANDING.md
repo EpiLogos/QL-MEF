@@ -53,7 +53,40 @@ flowchart TB
 
 Material experiments do not automatically determine QL canon. They discriminate **how well a particular computational expression realises or tests a formal relation**. This is why the repository has an explicit research firewall and evidence-led promotion process.
 
-## 3. Architecture — accepted standalone executable surface
+## 3. Historical precedent — world-understanding made operable
+
+The history of computational astronomy provides a useful orienting precedent for the **kind of move** described above.
+
+The Alfonsine Tables and the wider medieval `zīj` tradition joined developed mathematical astronomy, numerical tables and procedural **canons** through which a practitioner could compute situated astronomical results such as the positions of the Sun, Moon and planets.
+
+At the relevant level of abstraction:
+
+```text
+world-account / mathematical astronomy
+        ↓
+computational representation
+        ↓
+tables + procedures of use
+        ↓
+situated inputs
+        ↓
+determinate result
+        ↓
+practical judgement / revision
+```
+
+This historical form makes one important product relation concrete: **an account of relations can become an instrument which operates and answers back through inspectable consequences**.
+
+The precedent is a Figure, not evidence for Quaternal Logic's formal claims. Historical astronomy does not validate QL operators, MEF semantics or Epi-Logos correspondences by analogy. The value is orientation toward a recognisable class of technical object.
+
+The fuller Epi-Logos use of this Figure belongs to the Epi integration programme, where it illuminates the Current Situated Matheme and especially the M2 Paraśakti → M3 Mahāmāyā → M4 Nara relation. Standalone Quaternal Logic only needs the more general precedent above.
+
+Historical references used by that integration work include:
+
+- Oxford Cabinet, *Tabule astronomice Alfonsi Regis (Venice, 1492)*: <https://www.cabinet.ox.ac.uk/node/9821>
+- José Chabás & Bernard R. Goldstein, *The Alfonsine Tables of Toledo*: <https://link.springer.com/book/10.1007/978-94-017-0213-3>
+
+## 4. Architecture — accepted standalone executable surface
 
 ```mermaid
 flowchart TB
@@ -80,7 +113,7 @@ flowchart TB
 
 The architecture separates deterministic structure from semantic inference. `locate` may return ambiguity or insufficient information; semantic operations expose disclosure/confidence rather than laundering model judgement into deterministic fact. Current `main` does not include draft Q6 pairing, MEF rotation or context-frame promotion as accepted product truth.
 
-## 4. Diagram audit
+## 5. Diagram audit
 
 | Existing visual | Class | Disposition |
 |---|---|---|
@@ -91,14 +124,16 @@ The architecture separates deterministic structure from semantic inference. `loc
 | Q4 client adapter maps and cross-repo fixtures | integration architecture/evidence | **Preserve.** They prove “alignment, not translation” at specific client seams. |
 | draft Q6 and Epi/O:I relation maps | research/current development | **Do not present as current architecture.** Keep draft status until accepted. |
 
-## 5. Verification
+## 6. Verification
 
 **Semantic:** a reader can explain Quaternal Logic as an experimental relation between formal proposition, computational expression, operation and returned discrimination without knowing QL notation first.
+
+**Historical orientation:** a reader can use the Alfonsine/zīj precedent to recognise the general move from a developed relational account into an operable computational instrument while stating clearly that the analogy does not validate QL or Epi formal propositions.
 
 **Implementation:** the architecture names accepted Q1–Q4 crates and operation families only. It keeps deterministic and semantic provider status distinct and preserves caller refs/revisions.
 
 **Cross-product:** Quaternal Logic is not a decorative reasoning framework because its accepted product surface contains executable forms, service operations, provider negotiation, provenance and conformance. It also does not own Factory Runs, AIKit ContextResolution, Actuation identity, Central Control or Workcell materialisation.
 
-## 6. Public-site projection
+## 7. Public-site projection
 
-Project the **formal proposition → computational expression → consequence → discrimination → return** relation for ordinary audiences. A deeper specialist section may reinterpret the bimba/pratibimba diagram and link into native topology, MEF and musical derivations. Do not lead the public experience with a generic “QL engine” component graph or unexplained symbols.
+Project the **formal proposition → computational expression → consequence → discrimination → return** relation for ordinary audiences. The historical precedent can be used where it helps make the kind of technical object intelligible. A deeper specialist section may reinterpret the bimba/pratibimba diagram and link into native topology, MEF and musical derivations. The richer M2→M3→M4 Alfonsine Figure belongs to Epi product understanding rather than standalone QL onboarding.
