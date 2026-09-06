@@ -1,0 +1,16 @@
+# ql.mef.physical-pole-form-state/v1 — composition bridge fixture (Stage 2)
+meta	contract-version	1.0.0
+meta	authority	docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md s8 s13.4 s14
+meta	law-one-event-ref	one eventRef / one profile generation drives M1, M2 and M3
+meta	law-double-cover	degree720 is first-class state; degree360 = degree720 mod 360
+meta	law-determinism	same sections compose to the same state for human and agent
+identity-sample	event:n4/sample	7	3	200
+carrier	earth	0	C	0
+carrier	fire	1	T	1
+carrier	water	2	A	2
+carrier	air	3	G	3
+active-ratio	9	8
+readiness	ready	ready	ready	ready	ready
+readiness	ready	provisional	ready	ready	provisional
+readiness	ready	ready	ready	unavailable	unavailable
+roles	m2-potential	m3-resolution	never-merged

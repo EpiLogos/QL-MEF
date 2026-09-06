@@ -12,6 +12,7 @@ mod m_map;
 mod matheme;
 mod music;
 mod music_completion;
+mod pole_state;
 mod provenance;
 mod reading;
 mod refraction;
@@ -70,6 +71,10 @@ pub use music::{
 pub use music_completion::{
     MUSICAL_COMPLETION_VERSION, MusicalCompletionFrame, MusicalTraversalCandidate,
     TraversalExpansionSide, classify_musical_traversal, musical_completion_frame,
+};
+pub use pole_state::{
+    M1CarrierFacts, PHYSICAL_POLE_FORM_STATE_REF, PHYSICAL_POLE_FORM_STATE_VERSION,
+    PhysicalPoleFormState, PoleIdentity, PoleProvenance, Readiness,
 };
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
