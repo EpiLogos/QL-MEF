@@ -1,0 +1,83 @@
+# ql.mef.ruling-grid/v1 — ruling-grid address transform fixture (T3)
+meta	contract-version	1.0.0
+meta	authority	docs/geometry/FOLD-AND-RULING-GRAMMAR.md s14 promotion candidate 1
+meta	families	P lens lines: 12 x 30deg; L position lines: 6 x 60deg
+meta	closure	torus as projective closure; absolute = (lens-index+local) mod 6 preserved
+meta	note	lens-index: day/night twins share an index; the ruling slot is twelve-fold
+ruling	0	0	0	0	0
+ruling	0	1	0	600	1
+ruling	0	2	0	1200	2
+ruling	0	3	0	1800	3
+ruling	0	4	0	2400	4
+ruling	0	5	0	3000	5
+ruling	1	0	300	0	0
+ruling	1	1	300	600	1
+ruling	1	2	300	1200	2
+ruling	1	3	300	1800	3
+ruling	1	4	300	2400	4
+ruling	1	5	300	3000	5
+ruling	2	0	600	0	1
+ruling	2	1	600	600	2
+ruling	2	2	600	1200	3
+ruling	2	3	600	1800	4
+ruling	2	4	600	2400	5
+ruling	2	5	600	3000	0
+ruling	3	0	900	0	1
+ruling	3	1	900	600	2
+ruling	3	2	900	1200	3
+ruling	3	3	900	1800	4
+ruling	3	4	900	2400	5
+ruling	3	5	900	3000	0
+ruling	4	0	1200	0	2
+ruling	4	1	1200	600	3
+ruling	4	2	1200	1200	4
+ruling	4	3	1200	1800	5
+ruling	4	4	1200	2400	0
+ruling	4	5	1200	3000	1
+ruling	5	0	1500	0	2
+ruling	5	1	1500	600	3
+ruling	5	2	1500	1200	4
+ruling	5	3	1500	1800	5
+ruling	5	4	1500	2400	0
+ruling	5	5	1500	3000	1
+ruling	6	0	1800	0	3
+ruling	6	1	1800	600	4
+ruling	6	2	1800	1200	5
+ruling	6	3	1800	1800	0
+ruling	6	4	1800	2400	1
+ruling	6	5	1800	3000	2
+ruling	7	0	2100	0	3
+ruling	7	1	2100	600	4
+ruling	7	2	2100	1200	5
+ruling	7	3	2100	1800	0
+ruling	7	4	2100	2400	1
+ruling	7	5	2100	3000	2
+ruling	8	0	2400	0	4
+ruling	8	1	2400	600	5
+ruling	8	2	2400	1200	0
+ruling	8	3	2400	1800	1
+ruling	8	4	2400	2400	2
+ruling	8	5	2400	3000	3
+ruling	9	0	2700	0	4
+ruling	9	1	2700	600	5
+ruling	9	2	2700	1200	0
+ruling	9	3	2700	1800	1
+ruling	9	4	2700	2400	2
+ruling	9	5	2700	3000	3
+ruling	10	0	3000	0	5
+ruling	10	1	3000	600	0
+ruling	10	2	3000	1200	1
+ruling	10	3	3000	1800	2
+ruling	10	4	3000	2400	3
+ruling	10	5	3000	3000	4
+ruling	11	0	3300	0	5
+ruling	11	1	3300	600	0
+ruling	11	2	3300	1200	1
+ruling	11	3	3300	1800	2
+ruling	11	4	3300	2400	3
+ruling	11	5	3300	3000	4
+closure	intersections	72
+closure	p-lines	12
+closure	l-lines	6
+closure	points-per-p-line	6
+closure	points-per-l-line	12

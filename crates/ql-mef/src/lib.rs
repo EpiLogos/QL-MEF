@@ -16,6 +16,7 @@ mod provenance;
 mod reading;
 mod refraction;
 mod registry;
+mod ruling;
 mod sublens;
 mod vak;
 mod vak_oi;
@@ -77,6 +78,10 @@ pub use refraction::RefractionContract;
 pub use registry::{
     LENS_DEFINITIONS, LensDefinition, SublensDefinition, all_lens_definitions,
     all_sublens_definitions, lens_definition,
+};
+pub use ruling::{
+    RULING_GRID_CONTRACT_REF, RULING_GRID_VERSION, RulingClosureReport, RulingGridAddress, RulingS,
+    RulingT, projective_closure,
 };
 pub use sublens::SublensRef;
 pub use vak::{

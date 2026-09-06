@@ -93,6 +93,25 @@ impl LensId {
         }
     }
 
+    /// The lens's position in [`Self::ALL`] (0..12): day/night twins share a
+    /// MEF index but occupy distinct slots.
+    pub const fn slot(self) -> u8 {
+        match self {
+            Self::L0 => 0,
+            Self::L0Prime => 1,
+            Self::L1 => 2,
+            Self::L1Prime => 3,
+            Self::L2 => 4,
+            Self::L2Prime => 5,
+            Self::L3 => 6,
+            Self::L3Prime => 7,
+            Self::L4 => 8,
+            Self::L4Prime => 9,
+            Self::L5 => 10,
+            Self::L5Prime => 11,
+        }
+    }
+
     pub const fn face(self) -> LensFace {
         match self {
             Self::L0 | Self::L1 | Self::L2 | Self::L3 | Self::L4 | Self::L5 => LensFace::Day,
