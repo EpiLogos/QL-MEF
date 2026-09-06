@@ -5,7 +5,13 @@ on:
     paths:
       - "Cargo.toml"
       - "Cargo.lock"
+      # ql-cli builds against these path dependencies; a change in any of
+      # them changes the CLI surface this gate certifies.
       - "crates/ql-cli/**"
+      - "crates/ql-core/**"
+      - "crates/ql-mef/**"
+      - "crates/ql-semantic/**"
+      - "crates/ql-service/**"
       - ".oi/product.json"
       - ".github/workflows/native-cli.yml"
   push:
@@ -15,6 +21,10 @@ on:
       - "Cargo.toml"
       - "Cargo.lock"
       - "crates/ql-cli/**"
+      - "crates/ql-core/**"
+      - "crates/ql-mef/**"
+      - "crates/ql-semantic/**"
+      - "crates/ql-service/**"
       - ".oi/product.json"
       - ".github/workflows/native-cli.yml"
 

@@ -1,9 +1,17 @@
 name: Epi Bimba Map conformance
 
 on:
+  # The parity branch agent/epi-pre-d-bimba-map-parity was merged; the
+  # conformance it escorted now runs on main pushes touching the same paths.
   push:
     branches:
-      - agent/epi-pre-d-bimba-map-parity
+      - main
+    paths:
+      - 'crates/ql-mef/**'
+      - 'scripts/compile-epi-bimba-map.py'
+      - 'scripts/compile-epi-bimba-map-live.py'
+      - 'data/epi-bimba-map/**'
+      - '.github/workflows/epi-bimba-map-conformance.yml'
   pull_request:
     paths:
       - 'crates/ql-mef/**'

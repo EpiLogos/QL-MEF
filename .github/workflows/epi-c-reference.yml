@@ -1,9 +1,12 @@
 name: Epi C reference
 
 on:
+  # The migration branch agent/epi-c-kernel-migration-floor was merged; the
+  # frozen-corpus checks it escorted now run on main and on PRs touching the
+  # vendor corpus and migration sources.
   push:
     branches:
-      - agent/epi-c-kernel-migration-floor
+      - main
     paths:
       - vendor/epi-kernel/reference/**
       - migration/epi-kernel/**

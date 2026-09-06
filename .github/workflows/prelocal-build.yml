@@ -44,7 +44,10 @@ jobs:
         run: |
           set -euo pipefail
           short_sha="${GITHUB_SHA::12}"
-          name="quaternal-logic-0.1.0-${short_sha}-component"
+          # Artifact identity derives from the product manifest, never a
+          # restated version string that rots between releases.
+          version="$(node -p "require('./.oi/product.json').version")"
+          name="quaternal-logic-${version}-${short_sha}-component"
           mkdir -p "dist/$name"
           cp -R crates .oi "dist/$name/"
           cp Cargo.toml Cargo.lock README.md "dist/$name/"
