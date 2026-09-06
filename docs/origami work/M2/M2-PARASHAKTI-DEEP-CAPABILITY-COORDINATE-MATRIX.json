@@ -1,0 +1,138 @@
+{
+  "schema": "epi.deep-subsystem-capability-matrix.v2",
+  "status": "research-matrix-current-human-review-incorporated",
+  "subsystem": {
+    "index": 2,
+    "m_identity": "Paraśakti",
+    "core_purpose": "Vimarśā / reflective-creative Power by which the Paramaśiva matheme becomes epistemically, ontologically, temporally, symbolically, musically, cosmically and bodily differentiated.",
+    "standing_reflection": {"coordinate":"S2","identity":"AIKit"},
+    "operative_reflection": {"coordinate":"S2'","identity":"Pleroma"},
+    "deep_instrument": {"coordinate":"M2'","identity":"epi.deep.m2"},
+    "m0_4_prefiguration": "X# imaginal/potentiating meta-logic in Anuttara"
+  },
+  "mark_ground": {
+    "mark": "Paraśakti is the differentiated Power/world-condition field through which M1 formal-harmonic possibility becomes epistemically, ontologically, temporally, symbolically, musically, cosmically and bodily determinate enough for M3 inscription and M4 situated lived composition.",
+    "larger_whole": "Epi Cosmic 1-2-3 and Personal 4-5-0 relation through one Current Situated Matheme",
+    "source_signals": [
+      "Idea/Bimba/Map/datasets/parashakti-deep/**",
+      "Idea/Bimba/Seeds/M/M2'/Legacy/specs/M/M2-parashakti-vibrational-architecture.md",
+      "M0-4 / X# source in Anuttara",
+      "M1 Spanda / Ananda / musical derivation sources",
+      "current integrated 1-2-3 Cosmic architecture",
+      "current reviewed Paraśakti deep capability matrix"
+    ],
+    "mark_reading_standing": "current human-reviewed research/design articulation over authored/source ground",
+    "aim": "recover Paraśakti as a whole capability/coordinate field and preserve its actual M2->M3 determination and M2->M4 world-conditioning relations before implementation decomposition",
+    "recognition": "a human or Agent can explain, inspect and eventually operate Paraśakti as a differentiated Power/world-condition instrument whose relations into Mahāmāyā and Nara remain source- and provenance-visible"
+  },
+  "orienting_figures": [
+    {
+      "id": "alfonsine-zij-computational-instrument",
+      "role": "ORIENTING-FIGURE",
+      "canonical_treatment": "EpiLogos/QL-MEF docs/integrations/epi-logos/EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md",
+      "figure": "Alfonsine Tables and wider zij practice as world-account rendered into tables + canons for situated calculation",
+      "illuminates": "the kind of technical move in which a structured account of world-relations becomes an operable computational instrument yielding a situated determination; especially useful for apprehending M2 world-condition -> M3 inscription -> M4 situated relation",
+      "boundary": "historical analogy does not validate Epi correspondences, astrology, QL/MEF metaphysics, 72->64 interpretations, bioquaternionic identity, or any specific implementation",
+      "secondary_matrix_lesson": "structured inspectable state plus procedures/canons, derivational provenance and revision history can inform instrument/matrix design without defining generic response-matrix ontology"
+    }
+  ],
+  "coordinate_tree": {
+    "M2-0": {"name":"Archetypal numerical / potentiation ground","roles":["pentadic phi self-proportion","36->72 spinorial differentiation","Third Spanda Paraśakti term"]},
+    "M2-1": {"name":"MEF / Vimarśā epistemic refraction","roles":["12 actual L/L' lenses","six sublenses per lens","active lens/mode reading","M2' audio genesis"]},
+    "M2-2": {"name":"36 Tattvas / ontological depth","roles":["nested objective internality","manifestation/reabsorption","element/chakra throughline","ground of eventual individual subjectivity"]},
+    "M2-3": {"name":"36 Decans / situated archetypal faces","roles":["cosmic-temporal situation","paired faces","element/sign/planet/body-zone relation","Nara transit context"]},
+    "M2-4": {
+      "name":"Symbolic-musical Power arena",
+      "children": {
+        "M2-4.0":"Asmāʾ al-Ḥusnā 99+1",
+        "M2-4.1":"Mātṛkā + Mālinī 50+50",
+        "M2-4.2":"Spiritual maqāmāt",
+        "M2-4.3":"Musical maqāmāt",
+        "M2-4.5":"Shem ha-Mephorash 8x9=72"
+      },
+      "note":"Preserve actual asymmetry; no invented M2-4.4."
+    },
+    "M2-5": {"name":"Planetary-chakral harmonic synthesis / 1-2-3 threshold","roles":["planetary śaktis","solar/chakral embodied reception","current world condition","9:8 M2->M3 bridge","72->64 DET evidence"]}
+  },
+  "mathematical_ground": {
+    "phi": ["x^2-x-1=0","phi^2=phi+1","phi^-1=phi-1"],
+    "spinorial": ["36=6^2","72=2*36","72/64=9/8"],
+    "third_spanda": "137=64+72+1",
+    "interpretation": "M2-0 carries the Paraśakti 72 term while the theorem remains cross-M1/M2/M3."
+  },
+  "mef": {
+    "lens_count": 12,
+    "sublenses_per_lens": 6,
+    "conditions": 72,
+    "lenses": ["L0 Quaternal","L1 Causal","L2 Logical","L3 Processual","L4 Phenomenological","L5 Para Vāk","L0' Archetypal-Numerical","L1' Phenomenal","L2' Alchemical-Elemental","L3' Chronological","L4' Scientific","L5' Divine Logos"],
+    "law": "L and L' are actual lens identities; different M2 72-factorisations carry their own native second-axis meanings."
+  },
+  "objective_internality": {
+    "tattva_divisions": {"suddha":5,"suddhasuddha":7,"asuddha":24},
+    "m2_2_role": "nested ontological manifestation/reabsorption and rigorous provenance of limited embodied subjectivity within one reality",
+    "m2_3_role": "cosmic-temporal archetypal situation of that manifestation",
+    "nara_relation": "M2-2 and M2-3 establish being-depth and situated world-condition later consumed by M4/Nara."
+  },
+  "symbolic_musical_field": {
+    "core_capability":"symbolic-musical transduction of M1 formal harmonic possibility into qualitative/linguistic/ritual/modal Power",
+    "systems":["Asma 99+1","Matrika/Malini 50+50","spiritual maqamat","musical maqamat","Shem 8x9=72"]
+  },
+  "m2_5": {
+    "planetary_role":"differentiated cosmic powers / shaktis",
+    "chakra_axis":["Earth/ground","Muladhara/Prithvi","Svadhisthana/Apas","Manipura/Agni","Anahata/Vayu","Vishuddha/Akasha","Ajna/beyond elements","Sahasrara/undifferentiated consciousness"],
+    "bridge":"72*(8/9)=64",
+    "relation":"cosmic ordering and embodied reception compose one situated Power field before M3 inscription and M4 lived composition"
+  },
+  "elemental_fibre_transduction": {
+    "status": "current-human-authored-cross-coordinate-synthesis",
+    "pentadic_ground": ["100=36+64=4*9+4*16=4*(3^2+4^2)=4*5^2", "100/5=20", "five-element spine includes Akasha/quintessence while the decanic 72 uses four material elemental carriers"],
+    "m2_material_fibre": {"factorization":"4*3*3*2=4*18=72","angle_per_state_degrees":20},
+    "m3_material_fibre": {"factorization":"4*16=64","angle_per_state_degrees":22.5},
+    "epogdoon": ["4*18 --8/9--> 4*16", "18 --8/9--> 16", "20deg --9/8--> 22.5deg", "9*20deg=8*22.5deg=180deg"],
+    "carrier_law": "Earth/Fire/Water/Air remain the material carriers across M2 vibrational differentiation and M3 determinate form; the internal resolution of each carrier changes",
+    "modal_templateure": {"source_space":"V72=V18(Earth) direct-sum V18(Fire) direct-sum V18(Water) direct-sum V18(Air)","transform":"T72->64=I4 tensor T18->16","target_space":"R64=R16(Earth) direct-sum R16(Fire) direct-sum R16(Water) direct-sum R16(Air)","meaning":"M2 resonant/cymatic state can carry distributed form-potential before or alongside discrete M3 crystallisation"},
+    "nama_rupa": "M2 name/sound/mode/quality/vibration -> elemental-modal carrier -> 9:8 -> M3 determinate symbolic/spatial rupa"
+  },
+  "m_prime_experience": {
+    "identity":"professional harmonic/correspondential/resonant instrument",
+    "inputs":["M1 topological/harmonic excitation","audio_octet[8]","nodal_quartet[4]","72-space conditions","world/provider state"],
+    "bell_resonator_design": {
+      "status":"current-human-ratified-design-commitment",
+      "capabilities":["geometry/material-dependent eigenmodes","strike/excitation position","causal nodal/antinodal organisation","concurrent partials","damping/decay","energy transfer","beating where appropriate","cymatic mode-shape from same resonator state"],
+      "composition":"M1 K2/SU2/traversal topology x M2 bell-modal material physics",
+      "diagnostic_projection":"Chladni plate",
+      "global_composition_surface":"M1 K2"
+    }
+  },
+  "capabilities": [
+    {"id":"M2-C01","name":"X# imaginal prefiguration","relations":["M0-4","M2"]},
+    {"id":"M2-C02","name":"pentadic/phi self-proportion","relations":["M2-0","M1 topology"]},
+    {"id":"M2-C03","name":"spinorial 36->72 differentiation","relations":["M2-0","M1 SU2","Third Spanda"]},
+    {"id":"M2-C04","name":"12x6 MEF","relations":["M2-1","L/L'","P4","Context Frames"]},
+    {"id":"M2-C05","name":"Vimarsa active reading","relations":["M2-1","M1 audio/topology","M2'"]},
+    {"id":"M2-C06","name":"tattvic nested internality","relations":["M2-2","Objective Internality","M4"]},
+    {"id":"M2-C07","name":"elemental throughline","relations":["M2-2","M2-3","M2-4","M2-5","M3","M4"]},
+    {"id":"M2-C08","name":"decanic situated face","relations":["M2-3","zodiac","planet","body-zone","clock","M4"]},
+    {"id":"M2-C09","name":"Asma power field","relations":["M2-4.0","name","quality"]},
+    {"id":"M2-C10","name":"Matrika/Malini mantra field","relations":["M2-4.1","Vak","element","tattva"]},
+    {"id":"M2-C11","name":"spiritual maqamat","relations":["M2-4.2","transformation"]},
+    {"id":"M2-C12","name":"musical maqamat","relations":["M2-4.3","M1 music","planet","tuning"]},
+    {"id":"M2-C13","name":"Shem 72-name field","relations":["M2-4.5","decan","planet","8x9"]},
+    {"id":"M2-C14","name":"symbolic-musical transduction","relations":["M2-4","M1","M5 Logos"]},
+    {"id":"M2-C15","name":"planetary shakti field","relations":["M2-5","M2-3","M4","live provider"]},
+    {"id":"M2-C16","name":"solar/chakral embodied reception","relations":["M2-5","element","M4"]},
+    {"id":"M2-C17","name":"9:8 epogdoon / DET handoff","relations":["M2-5","M3","72","64"]},
+    {"id":"M2-C18","name":"bell-modal resonant body","relations":["M2'","M1 K2","cymatics"]},
+    {"id":"M2-C19","name":"Cosmic 1-2-3 composition","relations":["M1","M2","M3","137"]},
+    {"id":"M2-C20","name":"Nara world-conditioning","relations":["M2-2","M2-3","M2-4","M2-5","M4"]},
+    {"id":"M2-C21","name":"Paraśakti standing product reflection","relations":["M2","S2 AIKit"]},
+    {"id":"M2-C22","name":"Pleroma operative distribution","relations":["M2","S2' Pleroma"]},
+    {"id":"M2-C23","name":"pentadic elemental aperture","relations":["M2-0","M2-3","100/5=20","five-element spine","4 material elements","4*18=72","Fibonacci/Pisano ground"]},
+    {"id":"M2-C24","name":"element-preserving 18->16 epogdoon transduction","relations":["M2-5","M3-0","4*18->4*16","20deg->22.5deg","9/8","DET","M3 nucleotide-element families"]},
+    {"id":"M2-C25","name":"vibrational templateure / modal form-potential","relations":["M2-0","M2'","bell eigenmodes","cymatics","V72","I4 tensor T18->16","M3","nama->rupa"]}
+  ],
+  "implementation_state": {
+    "present":["72-invariant C substrate","MEF descriptors","tattva/decan/Shem/maqam/Asma/mantra/planetary structures at varying depth","Vimarsa audio_octet+nodal_quartet","72->64 DET","M2' cymatic architecture","integrated 1-2-3 design"],
+    "current_development":["full six-axis live decoded meaning projection","truthful world-provider integration","bell-modal material/acoustic body","whole-instrument planetary/chakral + symbolic-musical + cymatic composition","provenance standing throughout live readings","distributed elemental-fibre/form-potential projection for the integrated physical-pole instrument"]
+  }
+}
