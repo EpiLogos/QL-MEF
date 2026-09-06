@@ -21,6 +21,12 @@ pub struct RotationalPose {
 }
 
 impl RotationalPose {
+    /// Trusted constructor for code paths that maintain the slot invariant
+    /// themselves (the fold state keeps `slot < state_count`).
+    pub const fn from_trusted(codon: Codon64, slot: u8) -> Self {
+        Self { codon, slot }
+    }
+
     pub fn new(codon: Codon64, slot: u8) -> Result<Self, QlError> {
         let state_count = codon.rotational_state_count();
         if slot < state_count {

@@ -36,12 +36,14 @@ pub use pairing::{
     canonical_cross_pass_d3,
 };
 pub use pole::{
-    AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, Codon64, CodonClass, CoinFace, CoinSum,
-    CoinTriple, Element, ElementalQuaternionBasis, FibonacciGround, FoldMotif, FourCharge,
-    MatrixAxis, MatrixFamily, Mobility, Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION,
-    POLE_COIN_CONTRACT_REF, POLE_ELEMENTAL_CARRIER_REF, PairIndex16, Polarity,
-    QuaternionComponents, ROTATIONAL_STATE_TOTAL, RotationalPose, SiteProperty, SiteState,
-    Transduction18to16, all_poses, carrier, det_shadow, monoid,
+    AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, CanonicalAddress, Codon64, CodonClass,
+    CoinFace, CoinSum, CoinTriple, Element, ElementalQuaternionBasis, FibonacciGround,
+    FoldGeometry, FoldMotif, FoldState, FourCharge, INVERSE_SEAM_CONTRACT_REF, MatrixAxis,
+    MatrixFamily, Mobility, Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION,
+    POLE_COIN_CONTRACT_REF, POLE_ELEMENTAL_CARRIER_REF, POLE_FOLD_STATE_REF, PairIndex16, Polarity,
+    QuaternionComponents, ROTATIONAL_STATE_TOTAL, RetrievalEvidence, RotationalPose,
+    SelectionContext, SelectionLaw, SiteProperty, SiteReading, SiteState, Transduction18to16,
+    all_poses, carrier, det_shadow, monoid,
 };
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};

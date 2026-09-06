@@ -23,6 +23,8 @@ pub mod aperture;
 pub mod basis;
 pub mod codon;
 pub mod coin;
+pub mod fold;
+pub mod inverse;
 pub mod nucleotide;
 pub mod pose;
 
@@ -36,6 +38,10 @@ pub use codon::{
     SiteProperty, SiteState,
 };
 pub use coin::{CoinFace, CoinSum, CoinTriple, Mobility, Polarity, monoid};
+pub use fold::{FoldGeometry, FoldState, SiteReading};
+pub use inverse::{
+    CanonicalAddress, INVERSE_SEAM_CONTRACT_REF, RetrievalEvidence, SelectionContext, SelectionLaw,
+};
 pub use nucleotide::Nucleotide;
 pub use pose::{ROTATIONAL_STATE_TOTAL, RotationalPose, all_poses};
 
@@ -47,3 +53,6 @@ pub const POLE_COIN_CONTRACT_REF: &str = "ql.pole.coin-value-ground/v1";
 
 /// Semantic identity of the ratified elemental-carrier contract (T2).
 pub const POLE_ELEMENTAL_CARRIER_REF: &str = "ql.pole.elemental-carrier/v1";
+
+/// Semantic identity of the M3 fold/rūpa state projection (T5).
+pub const POLE_FOLD_STATE_REF: &str = "ql.pole.fold-state/v1";
