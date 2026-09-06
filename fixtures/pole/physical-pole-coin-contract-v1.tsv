@@ -1,0 +1,103 @@
+# ql.pole.coin-value-ground/v1 — physical-pole coin contract fixture
+meta	contract-version	1.0.0
+meta	authority	docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md s5 s6 s8 s13 s14
+meta	coin-law	three coins per site, heads=3 tails=2; sum 6..9; polarity=parity (odd=yang); mobility=extremity (6,9 moving)
+meta	zero-one-exclusion	M3 values never admit 0 or 1; the coin base is {2,3}; kernel anchor # / 0/1 <-> 1/0
+meta	nucleotide-table	canonical NUCLEOTIDE_COIN_VALUE = [6,9,8,7]; see docs/pole/M3-COIN-VALUE-DISCREPANCY.md
+nucleotide	A	0	6	yin	moving
+nucleotide	T	1	9	yang	moving
+nucleotide	C	2	8	yin	resting
+nucleotide	G	3	7	yang	resting
+resolution	6	7	one-coin-flip
+resolution	9	8	one-coin-flip
+counts	adjacency	384
+counts	poses	472
+counts	integral-total	1440
+counts	pair16	16
+codon	0	AAA	0	0	18	perfect-palindromic	7
+codon	1	AAT	0	1	21	non-palindromic-non-dual	7
+codon	2	AAC	0	2	20	non-palindromic-non-dual	7
+codon	3	AAG	0	3	19	non-palindromic-non-dual	7
+codon	4	ATA	1	4	21	imperfect-palindromic	7
+codon	5	ATT	1	5	24	non-palindromic-non-dual	7
+codon	6	ATC	1	6	23	dual	8
+codon	7	ATG	1	7	22	dual	8
+codon	8	ACA	2	8	20	imperfect-palindromic	7
+codon	9	ACT	2	9	23	dual	8
+codon	10	ACC	2	10	22	non-palindromic-non-dual	7
+codon	11	ACG	2	11	21	dual	8
+codon	12	AGA	3	12	19	imperfect-palindromic	7
+codon	13	AGT	3	13	22	dual	8
+codon	14	AGC	3	14	21	dual	8
+codon	15	AGG	3	15	20	non-palindromic-non-dual	7
+codon	16	TAA	4	0	21	non-palindromic-non-dual	7
+codon	17	TAT	4	1	24	imperfect-palindromic	7
+codon	18	TAC	4	2	23	dual	8
+codon	19	TAG	4	3	22	dual	8
+codon	20	TTA	5	4	24	non-palindromic-non-dual	7
+codon	21	TTT	5	5	27	perfect-palindromic	7
+codon	22	TTC	5	6	26	non-palindromic-non-dual	7
+codon	23	TTG	5	7	25	non-palindromic-non-dual	7
+codon	24	TCA	6	8	23	dual	8
+codon	25	TCT	6	9	26	imperfect-palindromic	7
+codon	26	TCC	6	10	25	non-palindromic-non-dual	7
+codon	27	TCG	6	11	24	dual	8
+codon	28	TGA	7	12	22	dual	8
+codon	29	TGT	7	13	25	imperfect-palindromic	7
+codon	30	TGC	7	14	24	dual	8
+codon	31	TGG	7	15	23	non-palindromic-non-dual	7
+codon	32	CAA	8	0	20	non-palindromic-non-dual	7
+codon	33	CAT	8	1	23	dual	8
+codon	34	CAC	8	2	22	imperfect-palindromic	7
+codon	35	CAG	8	3	21	dual	8
+codon	36	CTA	9	4	23	dual	8
+codon	37	CTT	9	5	26	non-palindromic-non-dual	7
+codon	38	CTC	9	6	25	imperfect-palindromic	7
+codon	39	CTG	9	7	24	dual	8
+codon	40	CCA	10	8	22	non-palindromic-non-dual	7
+codon	41	CCT	10	9	25	non-palindromic-non-dual	7
+codon	42	CCC	10	10	24	perfect-palindromic	7
+codon	43	CCG	10	11	23	non-palindromic-non-dual	7
+codon	44	CGA	11	12	21	dual	8
+codon	45	CGT	11	13	24	dual	8
+codon	46	CGC	11	14	23	imperfect-palindromic	7
+codon	47	CGG	11	15	22	non-palindromic-non-dual	7
+codon	48	GAA	12	0	19	non-palindromic-non-dual	7
+codon	49	GAT	12	1	22	dual	8
+codon	50	GAC	12	2	21	dual	8
+codon	51	GAG	12	3	20	imperfect-palindromic	7
+codon	52	GTA	13	4	22	dual	8
+codon	53	GTT	13	5	25	non-palindromic-non-dual	7
+codon	54	GTC	13	6	24	dual	8
+codon	55	GTG	13	7	23	imperfect-palindromic	7
+codon	56	GCA	14	8	21	dual	8
+codon	57	GCT	14	9	24	dual	8
+codon	58	GCC	14	10	23	non-palindromic-non-dual	7
+codon	59	GCG	14	11	22	imperfect-palindromic	7
+codon	60	GGA	15	12	20	non-palindromic-non-dual	7
+codon	61	GGT	15	13	23	non-palindromic-non-dual	7
+codon	62	GGC	15	14	22	non-palindromic-non-dual	7
+codon	63	GGG	15	15	21	perfect-palindromic	7
+aperture	0	0	15
+aperture	1	225	14
+aperture	2	450	13
+aperture	3	675	12
+aperture	4	900	11
+aperture	5	1125	10
+aperture	6	1350	9
+aperture	7	1575	8
+aperture	8	1800	7
+aperture	9	2025	6
+aperture	10	2250	5
+aperture	11	2475	4
+aperture	12	2700	3
+aperture	13	2925	2
+aperture	14	3150	1
+aperture	15	3375	0
+clock	fibonacci-ground	60	60
+clock	sync-base-fibre	6
+clock	sync-base-aperture	4
+clock	sync-fibre-aperture	2
+matrix	complementary	i
+matrix	moving-resting	j
+matrix	same-quality	k

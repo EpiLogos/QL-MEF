@@ -8,6 +8,7 @@ pub enum QlError {
     InvalidPosition(u8),
     InvalidAddress(String),
     UnknownOperator(String),
+    InvalidPoleValue { field: &'static str, value: u32 },
 }
 
 impl QlError {
@@ -19,6 +20,7 @@ impl QlError {
             Self::InvalidPosition(_) => "INVALID_POSITION",
             Self::InvalidAddress(_) => "INVALID_ADDRESS",
             Self::UnknownOperator(_) => "UNKNOWN_OPERATOR",
+            Self::InvalidPoleValue { .. } => "INVALID_POLE_VALUE",
         }
     }
 }
@@ -39,6 +41,9 @@ impl fmt::Display for QlError {
             Self::InvalidAddress(address) => write!(f, "invalid canonical QL address: {address}"),
             Self::UnknownOperator(operator) => {
                 write!(f, "unsupported deterministic QL operator: {operator}")
+            }
+            Self::InvalidPoleValue { field, value } => {
+                write!(f, "invalid physical-pole value for {field}: {value}")
             }
         }
     }
