@@ -377,3 +377,89 @@ fn matheme_rows_compose_only_existing_kernel_contract_primitives() {
         }
     }
 }
+
+#[test]
+fn executable_module_computes_every_fixture_row_from_existing_elements() {
+    use ql_mef::{
+        CIRCUIT_COORDINATES, CIRCUIT_DEGREES, COPULA_SYMBOL, DOUBLE_BEAT_TURNS,
+        MATHEME_DERIVATION_CONTRACT_VERSION, MATHEME_DERIVATION_LAYER, MathemeTopLine,
+        RECOGNITION_DEGREES, RETAINED_ONE, TOP_LINE, binary_register, cardinality_sum,
+        decomposed_totality, derive_matheme, door_ascent, door_descent, epogdoon,
+        field_cardinality, octave_through_door, one_circuit, position_hexad, ring_octave,
+        self_register, standing_whole, totality_ratio, twelve_ring,
+    };
+
+    assert_eq!(
+        MATHEME_DERIVATION_CONTRACT_VERSION,
+        value(CONTRACT, "meta", "contract-version")
+    );
+    assert_eq!(
+        MATHEME_DERIVATION_LAYER,
+        value(CONTRACT, "meta", "layer").parse::<u8>().unwrap()
+    );
+    assert_eq!(TOP_LINE, value(CONTRACT, "eq1", "top-line"));
+
+    let derivation = derive_matheme();
+    assert_eq!(derivation.circuits.len(), 6);
+    for (index, circuit) in derivation.circuits.iter().enumerate() {
+        assert_eq!(*circuit, one_circuit(position(index as u8)));
+        assert_eq!(
+            circuit.kernel_relation_id(),
+            KernelRelationId::CrossSamePosition
+        );
+    }
+
+    let top = MathemeTopLine::canonical();
+    assert_eq!(top, derivation.top_line);
+    assert_eq!(top.hash, QlFamily::None);
+    assert_eq!(top.copula, QlFace::Direct);
+    assert_eq!(top.return_switch, QlFace::Conjugate);
+    assert_eq!(COPULA_SYMBOL, WHOLE_ANCHOR_SYMBOL);
+
+    assert_eq!(CIRCUIT_COORDINATES, 2);
+    assert_eq!(CIRCUIT_DEGREES, 360);
+    assert_eq!(DOUBLE_BEAT_TURNS, 2);
+    assert_eq!(RECOGNITION_DEGREES, CIRCUIT_DEGREES * DOUBLE_BEAT_TURNS);
+    assert_eq!(standing_whole(), ratio(1, 1));
+
+    assert_eq!(position_hexad(), factor_count_row_value());
+    assert_eq!(position_hexad(), 6);
+    assert_eq!(binary_register(), 64);
+    assert_eq!(self_register(), 36);
+    assert_eq!(decomposed_totality(), 100);
+    assert_eq!(totality_ratio(), ratio(16, 9));
+    assert_eq!(twelve_ring(), 12);
+    assert_eq!(LensId::ALL.len() as u32, twelve_ring());
+    assert_eq!(ring_octave(), ratio(2, 1));
+    assert_eq!(
+        field_cardinality(),
+        kernel_value("mef", "address-count").parse::<u32>().unwrap()
+    );
+
+    assert_eq!(RETAINED_ONE, 1);
+    assert_eq!(cardinality_sum(), 137);
+    assert_eq!(door_descent(), ratio(64, 1));
+    assert_eq!(door_ascent(), ratio(72, 1));
+    assert_eq!(epogdoon(), ratio(9, 8));
+    assert_eq!(epogdoon().reciprocal(), ratio(8, 9));
+    assert_eq!(octave_through_door(), ratio(2, 1));
+
+    assert_eq!(derivation.standing_whole, standing_whole());
+    assert_eq!(derivation.binary_register, binary_register());
+    assert_eq!(derivation.self_register, self_register());
+    assert_eq!(derivation.decomposed_totality, decomposed_totality());
+    assert_eq!(derivation.totality_ratio, totality_ratio());
+    assert_eq!(derivation.twelve_ring, twelve_ring());
+    assert_eq!(derivation.ring_octave, ring_octave());
+    assert_eq!(derivation.field_cardinality, field_cardinality());
+    assert_eq!(derivation.cardinality_sum, cardinality_sum());
+    assert_eq!(derivation.door_descent, door_descent());
+    assert_eq!(derivation.door_ascent, door_ascent());
+    assert_eq!(derivation.octave_through_door, octave_through_door());
+}
+
+fn factor_count_row_value() -> u32 {
+    row(CONTRACT, "eq2", "prime-factor-count")[3]
+        .parse()
+        .unwrap()
+}

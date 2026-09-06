@@ -1,9 +1,11 @@
 use ql_core::{KERNEL_VERSION, QlAddress, QlOperator, apply_operator, kernel_capabilities};
 use ql_mef::{
-    CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId, LensFace, MEF_REGISTRY_REVISION,
-    MEF_REGISTRY_VERSION, MefSquare, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH,
-    VAK_SOURCE_REPOSITORY, VAK_SOURCE_REVISION, VakEntry, VakRegistry, VakRelation,
-    VakRelationKind, all_lens_definitions,
+    CIRCUIT_COORDINATES, CIRCUIT_DEGREES, CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId,
+    DOUBLE_BEAT_TURNS, HarmonicRatio, LensFace, MATHEME_DERIVATION_CONTRACT_VERSION,
+    MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare, RECOGNITION_DEGREES, TOP_LINE,
+    VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
+    VAK_SOURCE_REVISION, VakEntry, VakRegistry, VakRelation, VakRelationKind, all_lens_definitions,
+    derive_matheme,
 };
 use ql_semantic::{Operation, ProviderState};
 use ql_service::QlService;
@@ -56,6 +58,7 @@ struct CliCapabilitiesView {
     mef_registry_revision: u16,
     context_frame_grammar_version: &'static str,
     vak_source_revision: &'static str,
+    matheme_derivation_contract_version: &'static str,
     commands: Vec<&'static str>,
 }
 
@@ -111,6 +114,35 @@ struct ContextFrameView {
 struct ContextFrameRegistryView {
     grammar_version: &'static str,
     frames: Vec<ContextFrameView>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MathemeDerivationView {
+    contract_version: &'static str,
+    layer: u8,
+    top_line: &'static str,
+    hash_family: String,
+    copula: String,
+    return_switch: String,
+    circuit_coordinates: usize,
+    circuit_degrees: u32,
+    double_beat_turns: u32,
+    recognition_degrees: u32,
+    standing_whole: String,
+    position_hexad: u32,
+    binary_register: u32,
+    self_register: u32,
+    decomposed_totality: u32,
+    totality_ratio: String,
+    twelve_ring: u32,
+    ring_octave: String,
+    field_cardinality: u32,
+    retained_one: u32,
+    cardinality_sum: u32,
+    door_descent: String,
+    door_ascent: String,
+    octave_through_door: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -207,6 +239,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
         Some("--version") | Some("version") => Ok(format!("ql {}", env!("CARGO_PKG_VERSION"))),
         Some("capabilities") => render_capabilities(json),
         Some("kernel") => kernel_command(&args[1..], json),
+        Some("matheme") => matheme_command(&args[1..], json),
         Some("mef") => mef_command(&args[1..], json),
         Some("context-frame") => context_frame_command(&args[1..], json),
         Some("vak") => vak_command(&args[1..], json),
@@ -221,8 +254,8 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
-The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
+Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
+The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
         env!("CARGO_PKG_VERSION")
     )
 }
@@ -238,8 +271,10 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
         mef_registry_revision: MEF_REGISTRY_REVISION,
         context_frame_grammar_version: CONTEXT_FRAME_GRAMMAR_VERSION,
         vak_source_revision: VAK_SOURCE_REVISION,
+        matheme_derivation_contract_version: MATHEME_DERIVATION_CONTRACT_VERSION,
         commands: vec![
             "kernel.capabilities",
+            "matheme.derive",
             "kernel.apply",
             "mef.lenses",
             "context-frame.list",
@@ -265,6 +300,79 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             view.service.provider_state
         ))
     }
+}
+
+fn matheme_command(args: &[String], json: bool) -> Result<String, CliError> {
+    match args.first().map(String::as_str) {
+        Some("derive") => {
+            let view = matheme_derivation_view();
+            if json {
+                serde_json::to_string_pretty(&view).map_err(CliError::from)
+            } else {
+                Ok(format!(
+                    "matheme {} layer {} over ql.holographic-kernel-contract/v1\n\
+top-line\t{}\t# {} / 0/1 {} / 1/0 {}\n\
+circuit\t{} coordinates x {} degrees\tdouble-beat {} turns\trecognition {}\n\
+totality\t2^6+6^2 = {}\tratio {}\n\
+ring\t6+6 = {} at {}\tfield 12x6 = {}\n\
+cardinality\t1+64+72 = {}\n\
+door\t72x8/9 = 64\t64x9/8 = 72\t16/9x9/8 = 2/1",
+                    view.contract_version,
+                    view.layer,
+                    view.top_line,
+                    view.hash_family,
+                    view.copula,
+                    view.return_switch,
+                    view.circuit_coordinates,
+                    view.circuit_degrees,
+                    view.double_beat_turns,
+                    view.recognition_degrees,
+                    view.decomposed_totality,
+                    view.totality_ratio,
+                    view.twelve_ring,
+                    view.ring_octave,
+                    view.field_cardinality,
+                    view.cardinality_sum,
+                ))
+            }
+        }
+        Some(operation) => Err(CliError(format!("unknown matheme operation `{operation}`"))),
+        None => Err(CliError("missing matheme operation".into())),
+    }
+}
+
+fn matheme_derivation_view() -> MathemeDerivationView {
+    let derivation = derive_matheme();
+    MathemeDerivationView {
+        contract_version: derivation.contract_version,
+        layer: derivation.layer,
+        top_line: TOP_LINE,
+        hash_family: derivation.top_line.hash.code().into(),
+        copula: derivation.top_line.copula.kernel_code().into(),
+        return_switch: derivation.top_line.return_switch.kernel_code().into(),
+        circuit_coordinates: CIRCUIT_COORDINATES,
+        circuit_degrees: CIRCUIT_DEGREES,
+        double_beat_turns: DOUBLE_BEAT_TURNS,
+        recognition_degrees: RECOGNITION_DEGREES,
+        standing_whole: ratio_string(derivation.standing_whole),
+        position_hexad: derivation.position_hexad,
+        binary_register: derivation.binary_register,
+        self_register: derivation.self_register,
+        decomposed_totality: derivation.decomposed_totality,
+        totality_ratio: ratio_string(derivation.totality_ratio),
+        twelve_ring: derivation.twelve_ring,
+        ring_octave: ratio_string(derivation.ring_octave),
+        field_cardinality: derivation.field_cardinality,
+        retained_one: derivation.retained_one,
+        cardinality_sum: derivation.cardinality_sum,
+        door_descent: ratio_string(derivation.door_descent),
+        door_ascent: ratio_string(derivation.door_ascent),
+        octave_through_door: ratio_string(derivation.octave_through_door),
+    }
+}
+
+fn ratio_string(ratio: HarmonicRatio) -> String {
+    format!("{}/{}", ratio.numerator(), ratio.denominator())
 }
 
 fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
@@ -811,6 +919,47 @@ mod tests {
                 .unwrap()
                 .iter()
                 .any(|value| value == "vak.context")
+        );
+    }
+
+    #[test]
+    fn matheme_derive_projects_the_zero_layer_over_the_kernel_contract() {
+        let output = execute_cli(&["matheme".into(), "derive".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(
+            value["contractVersion"],
+            MATHEME_DERIVATION_CONTRACT_VERSION
+        );
+        assert_eq!(value["layer"], 0);
+        assert_eq!(value["topLine"], "# / 0/1 <-> 1/0");
+        assert_eq!(value["hashFamily"], "NONE");
+        assert_eq!(value["copula"], "direct");
+        assert_eq!(value["returnSwitch"], "prime");
+        assert_eq!(value["recognitionDegrees"], 720);
+        assert_eq!(value["decomposedTotality"], 100);
+        assert_eq!(value["totalityRatio"], "16/9");
+        assert_eq!(value["fieldCardinality"], 72);
+        assert_eq!(value["cardinalitySum"], 137);
+        assert_eq!(value["doorDescent"], "64/1");
+        assert_eq!(value["doorAscent"], "72/1");
+        assert_eq!(value["octaveThroughDoor"], "2/1");
+
+        let human = execute_cli(&["matheme".into(), "derive".into()]).unwrap();
+        assert!(human.contains("# / 0/1 <-> 1/0"));
+        assert!(human.contains("1+64+72 = 137"));
+
+        let capabilities = execute_cli(&["capabilities".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&capabilities).unwrap();
+        assert_eq!(
+            value["mathemeDerivationContractVersion"],
+            MATHEME_DERIVATION_CONTRACT_VERSION
+        );
+        assert!(
+            value["commands"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|value| value == "matheme.derive")
         );
     }
 
