@@ -31,3 +31,19 @@ Connection of record: `docker exec -i epi-neo4j cypher-shell -a bolt://localhost
 **Post-write verification** (read-back, same date): M2-4 name/former/appellations/templateure confirmed; L2-5′ = Salt with former_name Mineral; five target relations present — 4 pre-existing with `c_4_last_verified`, 1 new with fold-in provenance; also observed pre-existing `REFLECTS_FOUNDATION` (M3-0→M2-5, the 5/0 non-dual link).
 
 **Erratum propagation status after this entry**: graph ✅, Rust registry/fixtures ✅ — remaining stragglers: `Control/user/identity/sources/natal-chart.md` (Mineral/lapis prose), `epi …/S4-1p-hen/CONTRACT.md` (sub-position list). Not touched here (human/contract ground — propose separately).
+
+---
+
+## 2026-09-06 — M1-branch fold-in, round 2 (exponent genesis; double cover; equation-as-frames; M1-4.5 reservation)
+
+- **Script**: [`2026-09-06-fold-in-m1-branch.cypher`](2026-09-06-fold-in-m1-branch.cypher)
+- **Operator**: zcode — ql-mef geometric foundation session, later pass (after consulting the M1 branch at depth: M1-0/M1-1/M1-3/M1-3-4/M1-4 from the wayfinder branch's Map files + the kernel contract)
+- **Authority**: owner direction in session (exponent genesis → existing matrix + map, no new docs; the 0/1 re-grounding; the [4.5] reservation)
+- **Infrastructure note**: executed after a Docker daemon recovery — the earlier session's `docker restart` was killed mid-cycle leaving the container stopped and the daemon API wedged; resolved by full Docker Desktop restart (quit + relaunch). Data intact (2,141 Bimba nodes verified post-recovery).
+
+| # | Statement (granular) | Target | Idempotency | Result |
+|---|---|---|---|---|
+| 1 | M1-4: new `c_2_exponent_genesis` — the 1→12 compositional line (2⁴/3² = six factors = the position hexad; ±(6+6) → the 12-ring at 12:6 = 2:1; 12×6 = 72; 2⁶ = 64; 3+4 = 7 and 3×4 = 12), with the standing note (coordinates = 1, derivation = 0, retroactive grounding) | node M1-4 | SET | ✅ applied; verified |
+| 2 | M1-3: new `c_2_double_cover_reading` — the equation's two operations as the two circuits (division = first traversal/alias; summation = second/recognition; T1/T2 = the two helices; pratyabhijñā = the return-switch; kernel seats n↔n′ and 720°) | node M1-3 | SET | ✅ applied; verified |
+| 3 | M1-3-4: new `c_2_equation_as_frames` — the complete formulation and the Context-Frame sub-stages as one sequence (0000↔0/0 CF1 … (5/0)↔1/1 CF7) | node M1-3-4 | SET | ✅ applied; verified |
+| 4 | M1-4.5 ("Harmonic Meta-Frames & Quintessential Integration"): new `c_2_reserved_genesis` — the [4.5] space reserved for the full harmonic/musical genesis (#31 edge: musical derivation v3, pre-M derivation, Jankó), empty by design, refinements streaming | node M1-4.5 | SET | ✅ applied; verified |
