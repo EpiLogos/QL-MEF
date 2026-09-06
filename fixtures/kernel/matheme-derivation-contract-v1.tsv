@@ -1,0 +1,32 @@
+# ql.matheme-derivation-contract/v1
+meta	contract-version	1.0.0
+meta	layer	0
+meta	kernel-contract	ql.holographic-kernel-contract/v1
+meta	kernel-contract-version	1.1.0
+meta	derivation-source	ql-musical-derivation-v3
+meta	derivation-source-blob	6414c56c6241c3da46e1ea6fdcd7a09b6b66c5aa
+eq1	top-line	# / 0/1 <-> 1/0
+eq1	hash-bedrock	#	family	NONE
+eq1	copula	0/1	face	direct
+eq1	return-switch	1/0	face	prime
+eq1	circuit	n<->n'	relation	ql.kernel.cross.same-position/v1	coordinates	2	degrees	360
+eq1	double-beat	n->n'->n	turns	2
+eq1	recognition	degrees	720	identity	n->n'->n==n
+eq1	sum	(0/1)+(1/0)	1/1
+eq2	totality	1/1	100
+eq2	decomposition	100	2^6+6^2
+eq2	binary-register	2^6	64
+eq2	self-register	6^2	36
+eq2	ratio-field	64/36	16/9
+eq2	prime-factorisation	16/9	2^4/3^2
+eq2	prime-factor-count	4+2	6
+eq2	position-hexad	6	registry	mef.local-positions-per-lens
+eq2	ring	6+6	12
+eq2	ring-faces	direct+prime
+eq2	ring-octave	12:6	2:1
+eq2	ring-product	12x6	72	registry	mef.address-count
+eq3	retained-one	1/1	cardinality	1
+eq3	cardinality-sum	1+64+72	137
+eq3	door-descent	8/9	72	64
+eq3	door-ascent	9/8	64	72
+eq3	octave-through-door	16/9x9/8	2/1

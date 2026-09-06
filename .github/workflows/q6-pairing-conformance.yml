@@ -13,6 +13,7 @@ on:
       - "crates/ql-mef/src/lens.rs"
       - "crates/ql-mef/src/music.rs"
       - "crates/ql-mef/tests/holographic_kernel_contract.rs"
+      - "crates/ql-mef/tests/matheme_derivation_contract.rs"
       - "crates/ql-mef/tests/musical_harmonic_system.rs"
       - "fixtures/kernel/**"
       - "fixtures/q6/**"
@@ -69,5 +70,7 @@ jobs:
         run: cargo test -p ql-core --test pairing_grammar --test pairing_promotion
       - name: Run shared holographic kernel contract acceptance
         run: cargo test -p ql-mef --test holographic_kernel_contract
+      - name: Run matheme derivation contract acceptance
+        run: cargo test -p ql-mef --test matheme_derivation_contract
       - name: Run Rust workspace acceptance
         run: cargo test --workspace
