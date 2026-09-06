@@ -7,7 +7,7 @@ use crate::{CANONICAL_RATIOS, HarmonicRatio, SECOND_SPANDA_VERTICAL};
 
 /// Version of `fixtures/kernel/matheme-derivation-contract-v1.tsv`, the
 /// machine-readable conformance boundary for this module.
-pub const MATHEME_DERIVATION_CONTRACT_VERSION: &str = "1.0.0";
+pub const MATHEME_DERIVATION_CONTRACT_VERSION: &str = "1.1.0";
 
 /// The matheme derivation is the definitional 0-layer; the kernel
 /// coordinates remain the governing 1.
@@ -175,6 +175,99 @@ pub mod eq3 {
     }
 }
 
+/// The address-shadow register of the two-way door — the deep bridge.
+///
+/// `floor(index72 x 8/9)` is the deep system's Discrete Epistemic
+/// Transform: the 72-space sampled at the epogdoon rate into the binary
+/// register. It is the shadow of eq3's exact door arithmetic — exact
+/// there (72 x 8/9 = 64 in ratios), exact here only at the ninefold
+/// points. The law is frozen from the deep specimen
+/// (EpiLogos/Epi-Logos-C-Experiments @ daa660c): `m3.h` carries the
+/// inline map and gap predicate, `mahamaya.rs` the Rust twin with its
+/// 63-cap, `m2.c` the projection-mask table whose fold-back bits are
+/// the same collision addresses. The two-descriptions law stays
+/// distinct: 8 codomain collisions (targets hit twice) and 9 source
+/// round-trip non-closures (the 8 fold sources plus the octave point
+/// 72, whose exact image 64 lies outside the register) are two readings
+/// of the one many-to-one map, not one gap count.
+pub mod det {
+    pub const DEEP_SOURCE_REPOSITORY: &str = "EpiLogos/Epi-Logos-C-Experiments";
+    pub const DEEP_SOURCE_REVISION: &str = "daa660cbc1b8c5da83828698665a753852cb0287";
+    pub const DEEP_M3_HEADER_BLOB: &str = "5cfc92a22dd06f41e35855808450a1e3f9659229";
+    pub const DEEP_MAHAMAYA_BLOB: &str = "8baf9da6d554ab5383cbb723fafc8bb9740300cf";
+    pub const DEEP_M3_TEST_BLOB: &str = "b759ea2fd3a4950b25d28fabf4271184b6a25274";
+    pub const DEEP_M2_MASK_TABLE_BLOB: &str = "911b8ce9cdb922d12422de91949d2a64c8ad7ace";
+
+    /// The Rust twin caps the compressed index at 63; the C inline is
+    /// uncapped, and over the 72-source domain the two agree.
+    pub const SHADOW_CAP: u8 = 63;
+
+    /// The octave point: its exact image `8 x 72/9 = 64` lies outside
+    /// the binary register, so the capped map sends it to 63 and the
+    /// round-trip cannot close.
+    pub const OCTAVE_POINT: u8 = 72;
+
+    /// The element-preserving fibre reading: four carriers, 18 sources
+    /// onto 16 contiguous targets each.
+    pub const FIBRE_COUNT: u8 = 4;
+    pub const FIBRE_SOURCE_CARDINALITY: u8 = 18;
+    pub const FIBRE_TARGET_CARDINALITY: u8 = 16;
+
+    /// The deep map, verbatim: `floor(index x 8/9)`, capped.
+    pub fn epogdoon_compression(source_index: u8) -> u8 {
+        (u16::from(source_index) * 8 / 9).min(u16::from(SHADOW_CAP)) as u8
+    }
+
+    /// The deep gap predicate: the source fails to round-trip through
+    /// `floor(compressed x 9/8)`. Closes exactly at the ninefold points.
+    pub fn is_evolutionary_gap(source_index: u8) -> bool {
+        let compressed = u16::from(epogdoon_compression(source_index));
+        compressed * 9 / 8 != u16::from(source_index)
+    }
+
+    /// The full 72-entry shadow register.
+    pub fn shadow() -> [u8; 72] {
+        std::array::from_fn(|index| epogdoon_compression(index as u8))
+    }
+
+    /// The 8 fold sources (second preimages, `i = 1 mod 9`), computed
+    /// through the map's own law.
+    pub fn fold_sources() -> [u8; 8] {
+        std::array::from_fn(|k| 9 * k as u8 + 1)
+    }
+
+    /// The 8 doubled targets (`j = 0 mod 8`), each the image of the
+    /// fold source and its ninefold partner — the same addresses the
+    /// deep mask table's fold-back bits occupy.
+    pub fn collision_addresses() -> [u8; 8] {
+        std::array::from_fn(|k| epogdoon_compression(9 * k as u8 + 1))
+    }
+
+    /// The 9 source-side non-closures: the 8 fold sources plus the
+    /// octave point.
+    pub fn source_roundtrip_nonclosures() -> [u8; 9] {
+        let folds = fold_sources();
+        std::array::from_fn(|k| if k < 8 { folds[k] } else { OCTAVE_POINT })
+    }
+
+    /// Where the shadow is exact: the ninefold sources, 8 in-domain.
+    pub fn exact_closures() -> [u8; 8] {
+        std::array::from_fn(|k| 9 * k as u8)
+    }
+
+    /// One fibre's source span `(18f, 18f+17)`.
+    pub fn fibre_source_span(fibre: u8) -> (u8, u8) {
+        let base = FIBRE_SOURCE_CARDINALITY * fibre;
+        (base, base + FIBRE_SOURCE_CARDINALITY - 1)
+    }
+
+    /// One fibre's contiguous target span `(16f, 16f+15)`.
+    pub fn fibre_target_span(fibre: u8) -> (u8, u8) {
+        let base = FIBRE_TARGET_CARDINALITY * fibre;
+        (base, base + FIBRE_TARGET_CARDINALITY - 1)
+    }
+}
+
 /// The complete 0-layer reading of one derivation, assembled from the
 /// equation modules above. `circuits` carries the six D1 passes so callers
 /// can inspect the traversal without re-deriving it.
@@ -200,6 +293,13 @@ pub struct MathemeDerivation {
     pub octave_through_door: HarmonicRatio,
 }
 
+pub use det::{
+    DEEP_M2_MASK_TABLE_BLOB, DEEP_M3_HEADER_BLOB, DEEP_M3_TEST_BLOB, DEEP_MAHAMAYA_BLOB,
+    DEEP_SOURCE_REPOSITORY, DEEP_SOURCE_REVISION, FIBRE_COUNT, FIBRE_SOURCE_CARDINALITY,
+    FIBRE_TARGET_CARDINALITY, OCTAVE_POINT, SHADOW_CAP, collision_addresses, epogdoon_compression,
+    exact_closures, fibre_source_span, fibre_target_span, fold_sources, is_evolutionary_gap,
+    shadow, source_roundtrip_nonclosures,
+};
 pub use eq1::{beat, double_beat, one_circuit, standing_whole};
 pub use eq2::{
     binary_register, decomposed_totality, field_cardinality, position_hexad, ring_octave,

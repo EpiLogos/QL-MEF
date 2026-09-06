@@ -1,11 +1,12 @@
 use ql_core::{KERNEL_VERSION, QlAddress, QlOperator, apply_operator, kernel_capabilities};
 use ql_mef::{
     CIRCUIT_COORDINATES, CIRCUIT_DEGREES, CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId,
-    DOUBLE_BEAT_TURNS, HarmonicRatio, LensFace, MATHEME_DERIVATION_CONTRACT_VERSION,
-    MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare, RECOGNITION_DEGREES, TOP_LINE,
-    VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
-    VAK_SOURCE_REVISION, VakEntry, VakRegistry, VakRelation, VakRelationKind, all_lens_definitions,
-    derive_matheme,
+    DEEP_SOURCE_REPOSITORY, DEEP_SOURCE_REVISION, DOUBLE_BEAT_TURNS, FIBRE_COUNT, HarmonicRatio,
+    LensFace, MATHEME_DERIVATION_CONTRACT_VERSION, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION,
+    MefSquare, OCTAVE_POINT, RECOGNITION_DEGREES, TOP_LINE, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB,
+    VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY, VAK_SOURCE_REVISION, VakEntry, VakRegistry,
+    VakRelation, VakRelationKind, all_lens_definitions, binary_register, collision_addresses,
+    derive_matheme, exact_closures, field_cardinality, fold_sources, is_evolutionary_gap, shadow,
 };
 use ql_semantic::{Operation, ProviderState};
 use ql_service::QlService;
@@ -147,6 +148,27 @@ struct MathemeDerivationView {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
+struct DetShadowView {
+    contract_version: &'static str,
+    deep_repository: &'static str,
+    deep_revision: &'static str,
+    map: Vec<u8>,
+    domain: u32,
+    codomain: u32,
+    collision_addresses: Vec<u8>,
+    fold_sources: Vec<u8>,
+    octave_nonclosure: u8,
+    source_roundtrip_nonclosures: Vec<u8>,
+    exact_closures: Vec<u8>,
+    gap_sources: Vec<u8>,
+    fibre_source_spans: Vec<[u8; 2]>,
+    fibre_target_spans: Vec<[u8; 2]>,
+    two_descriptions: &'static str,
+    shadow_of: &'static str,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 struct VakRegistryView {
     source_repository: &'static str,
     source_revision: &'static str,
@@ -254,7 +276,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
+Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
         env!("CARGO_PKG_VERSION")
     )
@@ -275,6 +297,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
         commands: vec![
             "kernel.capabilities",
             "matheme.derive",
+            "matheme.shadow",
             "kernel.apply",
             "mef.lenses",
             "context-frame.list",
@@ -336,6 +359,44 @@ door\t72x8/9 = 64\t64x9/8 = 72\t16/9x9/8 = 2/1",
                 ))
             }
         }
+        Some("shadow") => {
+            let view = det_shadow_view();
+            if json {
+                serde_json::to_string_pretty(&view).map_err(CliError::from)
+            } else {
+                let gap_sources = (0u8..72)
+                    .filter(|&source| is_evolutionary_gap(source))
+                    .collect::<Vec<_>>();
+                Ok(format!(
+                    "det shadow pinned to {}@{}\n\
+map\tfloor(index72*8/9) capped 63\n\
+domain {} -> codomain {}\n\
+collisions {} at {:?}\n\
+folds {} at {:?}\toctave {}\tnonclosures {}\n\
+exact closures {} at {:?}\tgap sources {}\n\
+fibres 4x18->4x16\t{:?}\t{:?}\n\
+two descriptions: {} (8 target collisions vs 9 source non-closures)\n\
+shadow of {} (exact 64/1; the shadow is exact only at 9k)",
+                    view.deep_repository,
+                    view.deep_revision,
+                    view.domain,
+                    view.codomain,
+                    view.collision_addresses.len(),
+                    view.collision_addresses,
+                    view.fold_sources.len(),
+                    view.fold_sources,
+                    view.octave_nonclosure,
+                    view.source_roundtrip_nonclosures.len(),
+                    view.exact_closures.len(),
+                    view.exact_closures,
+                    gap_sources.len(),
+                    view.fibre_source_spans,
+                    view.fibre_target_spans,
+                    view.two_descriptions,
+                    view.shadow_of,
+                ))
+            }
+        }
         Some(operation) => Err(CliError(format!("unknown matheme operation `{operation}`"))),
         None => Err(CliError("missing matheme operation".into())),
     }
@@ -368,6 +429,34 @@ fn matheme_derivation_view() -> MathemeDerivationView {
         door_descent: ratio_string(derivation.door_descent),
         door_ascent: ratio_string(derivation.door_ascent),
         octave_through_door: ratio_string(derivation.octave_through_door),
+    }
+}
+
+fn det_shadow_view() -> DetShadowView {
+    let register = shadow();
+    DetShadowView {
+        contract_version: MATHEME_DERIVATION_CONTRACT_VERSION,
+        deep_repository: DEEP_SOURCE_REPOSITORY,
+        deep_revision: DEEP_SOURCE_REVISION,
+        map: register.to_vec(),
+        domain: field_cardinality(),
+        codomain: binary_register(),
+        collision_addresses: collision_addresses().to_vec(),
+        fold_sources: fold_sources().to_vec(),
+        octave_nonclosure: OCTAVE_POINT,
+        source_roundtrip_nonclosures: ql_mef::source_roundtrip_nonclosures().to_vec(),
+        exact_closures: exact_closures().to_vec(),
+        gap_sources: (0u8..72).filter(|&i| is_evolutionary_gap(i)).collect(),
+        fibre_source_spans: (0..FIBRE_COUNT)
+            .map(ql_mef::fibre_source_span)
+            .map(|(lo, hi)| [lo, hi])
+            .collect(),
+        fibre_target_spans: (0..FIBRE_COUNT)
+            .map(ql_mef::fibre_target_span)
+            .map(|(lo, hi)| [lo, hi])
+            .collect(),
+        two_descriptions: "distinct",
+        shadow_of: "eq3.door-descent",
     }
 }
 
@@ -961,6 +1050,55 @@ mod tests {
                 .iter()
                 .any(|value| value == "matheme.derive")
         );
+    }
+
+    #[test]
+    fn matheme_shadow_projects_the_pinned_deep_det_register() {
+        let output = execute_cli(&["matheme".into(), "shadow".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["deepRepository"], "EpiLogos/Epi-Logos-C-Experiments");
+        assert_eq!(
+            value["deepRevision"],
+            "daa660cbc1b8c5da83828698665a753852cb0287"
+        );
+        let map = value["map"].as_array().unwrap();
+        assert_eq!(map.len(), 72);
+        assert_eq!(map[0], 0);
+        assert_eq!(map[1], 0);
+        assert_eq!(map[9], 8);
+        assert_eq!(map[71], 63);
+        let distinct: std::collections::HashSet<_> = map.iter().cloned().collect();
+        assert_eq!(distinct.len(), 64);
+        assert_eq!(value["domain"], 72);
+        assert_eq!(value["codomain"], 64);
+        assert_eq!(
+            value["collisionAddresses"],
+            serde_json::json!([0, 8, 16, 24, 32, 40, 48, 56])
+        );
+        assert_eq!(
+            value["foldSources"],
+            serde_json::json!([1, 10, 19, 28, 37, 46, 55, 64])
+        );
+        assert_eq!(value["octaveNonclosure"], 72);
+        assert_eq!(
+            value["sourceRoundtripNonclosures"]
+                .as_array()
+                .unwrap()
+                .len(),
+            9
+        );
+        assert_eq!(
+            value["exactClosures"],
+            serde_json::json!([0, 9, 18, 27, 36, 45, 54, 63])
+        );
+        assert_eq!(value["gapSources"].as_array().unwrap().len(), 64);
+        assert_eq!(value["twoDescriptions"], "distinct");
+        assert_eq!(value["shadowOf"], "eq3.door-descent");
+
+        let human = execute_cli(&["matheme".into(), "shadow".into()]).unwrap();
+        assert!(human.contains("floor(index72*8/9) capped 63"));
+        assert!(human.contains("nonclosures 9"));
+        assert!(human.contains("4x18->4x16"));
     }
 
     #[test]

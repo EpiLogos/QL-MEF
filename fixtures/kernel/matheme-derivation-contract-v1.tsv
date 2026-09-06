@@ -1,5 +1,5 @@
 # ql.matheme-derivation-contract/v1
-meta	contract-version	1.0.0
+meta	contract-version	1.1.0
 meta	layer	0
 meta	kernel-contract	ql.holographic-kernel-contract/v1
 meta	kernel-contract-version	1.1.0
@@ -30,3 +30,22 @@ eq3	cardinality-sum	1+64+72	137
 eq3	door-descent	8/9	72	64
 eq3	door-ascent	9/8	64	72
 eq3	octave-through-door	16/9x9/8	2/1
+det	deep-repository	EpiLogos/Epi-Logos-C-Experiments
+det	deep-revision	daa660cbc1b8c5da83828698665a753852cb0287
+det	deep-m3-header-blob	5cfc92a22dd06f41e35855808450a1e3f9659229
+det	deep-mahamaya-blob	8baf9da6d554ab5383cbb723fafc8bb9740300cf
+det	deep-m3-test-blob	b759ea2fd3a4950b25d28fabf4271184b6a25274
+det	deep-m2-mask-table-blob	911b8ce9cdb922d12422de91949d2a64c8ad7ace
+det	account-source	M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json	eef6a55d87d65e53fd62819d0c7a864b950c2bc7
+det	map	floor(index72*8/9)	cap	63
+det	domain	72	registry	mef.address-count
+det	codomain	64	bind	binary-register
+det	target-collisions	8	at	0mod8
+det	fold-sources	8	at	1mod9
+det	octave-nonclosure	72
+det	source-roundtrip-nonclosures	9
+det	mask-foldback	0mod8
+det	fibre-reading	4x18-4x16
+det	exact-closures	8	at	0mod9
+det	shadow-of	eq3.door-descent
+det	two-descriptions-law	distinct
