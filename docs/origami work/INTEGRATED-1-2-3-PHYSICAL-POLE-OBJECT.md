@@ -135,6 +135,12 @@ The physical-pole meaning is direct: **the same epogdoon which operates as inter
 
 The four material carriers remain co-referent while their internal organisation changes.
 
+### 1.4 The exponent genesis — the 1→12 compositional line (added 2026-09-06)
+
+The Second Spanda's ratio is genesis, not signature. 16/9 = 2⁴/3²: **four twos and two threes — six factors — are the position hexad #0–#5.** The map's own flowering stages compose with this reading: the 4.1 stage names the hexad (−(4+2)); the 4.2 stage's ±(6+6) doubles it into the twelvefold ring (12:6 = 2:1 — the ring is the octave of the position field); the kernel contract resolves the same ring natively ("twelve lenses … six local positions per lens, 72 addresses"); the 4.4 meta-frames carry the fields' full counts — 2⁶ = 64 and 12×6 = 72 (Paraśakti's double-covering of 36 = 6²). The tetractys closes the line from both ends: 3+4 = 7 (additive — the Timaeus leg-sum; the 25:7 kernel torus equators) and 3×4 = 12 (multiplicative — the ring).
+
+Standing of this derivation: taking the kernel coordinates as the **1** — the given ordering that already governs and maps — the matheme derivation is their **0**: a definitional layer expressing what the internal dynamics of `#` amount to, which retroactively explains the genesis of the ordering law (QL) that governs them. The full harmonic and musical genesis is reserved for the [4.5] space (M1-4.5, "Harmonic Meta-Frames & Quintessential Integration" — reserved in-map 2026-09-06, to be filled by the #31 development edge).
+
 ---
 
 ## 2. Elemental carrier law

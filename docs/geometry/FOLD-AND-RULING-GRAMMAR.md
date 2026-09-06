@@ -14,6 +14,8 @@ The stance is earned-pattern, not provisional: the number-forms below recur acro
 
 One law governs the whole: **what cannot close in the plane closes on the surface.** Every impossibility met below is a planar impossibility, and every resolution is a change of surface — not an appeal to more of the same construction.
 
+**Re-grounding (2026-09-06, later pass):** the core thing is **0/1** — M1-0's in-scribed copula (the cut that bonds) and M1-1's inverse traversal (1/0, the return-switch), which is the kernel contract's own top line, `# / 0/1 <-> 1/0`. The First Spanda is its double-covered self-relation (the division and the summation are the two circuits; 1/1 = 100% is the completed double traversal); the Second is the completion's decomposition into the position hexad (2⁴/3² — four twos and two threes); the Third — 137 = 1+64+72 — is a layer up, not the core. Everything in this note is second- and third-layer arithmetic of that one movement.
+
 ---
 
 ## §1 — The three seats
