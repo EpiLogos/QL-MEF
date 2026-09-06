@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use ql_core::{
     CanonicalCrossPass, HOLOGRAPHIC_KERNEL_CONTRACT_VERSION, KernelRelationId, QlAddress, QlFace,
     QlFamily, QlPosition, RelationalSixfold, SixBySixField, WHOLE_ANCHOR_SYMBOL,
@@ -40,7 +42,11 @@ fn ratio(numerator: u32, denominator: u32) -> HarmonicRatio {
 
 #[test]
 fn contract_meta_pins_the_zero_layer_to_the_kernel_contract_and_v3_source() {
-    assert_eq!(value(CONTRACT, "meta", "contract-version"), "1.0.0");
+    assert_eq!(
+        value(CONTRACT, "meta", "contract-version"),
+        ql_mef::MATHEME_DERIVATION_CONTRACT_VERSION
+    );
+    assert_eq!(ql_mef::MATHEME_DERIVATION_CONTRACT_VERSION, "1.1.0");
     assert_eq!(value(CONTRACT, "meta", "layer"), "0");
     assert_eq!(
         value(CONTRACT, "meta", "kernel-contract"),
@@ -462,4 +468,244 @@ fn factor_count_row_value() -> u32 {
     row(CONTRACT, "eq2", "prime-factor-count")[3]
         .parse()
         .unwrap()
+}
+
+#[test]
+fn det_deep_provenance_is_pinned_to_the_frozen_specimen() {
+    use ql_mef::{
+        DEEP_M2_MASK_TABLE_BLOB, DEEP_M3_HEADER_BLOB, DEEP_M3_TEST_BLOB, DEEP_MAHAMAYA_BLOB,
+        DEEP_SOURCE_REPOSITORY, DEEP_SOURCE_REVISION,
+    };
+
+    assert_eq!(
+        value(CONTRACT, "det", "deep-repository"),
+        DEEP_SOURCE_REPOSITORY
+    );
+    assert_eq!(
+        value(CONTRACT, "det", "deep-revision"),
+        DEEP_SOURCE_REVISION
+    );
+    assert_eq!(
+        DEEP_SOURCE_REVISION,
+        ql_core::HOLOGRAPHIC_KERNEL_REFERENCE_REVISION
+    );
+    assert_eq!(
+        value(CONTRACT, "det", "deep-m3-header-blob"),
+        DEEP_M3_HEADER_BLOB
+    );
+    assert_eq!(
+        value(CONTRACT, "det", "deep-mahamaya-blob"),
+        DEEP_MAHAMAYA_BLOB
+    );
+    assert_eq!(
+        value(CONTRACT, "det", "deep-m3-test-blob"),
+        DEEP_M3_TEST_BLOB
+    );
+    assert_eq!(
+        value(CONTRACT, "det", "deep-m2-mask-table-blob"),
+        DEEP_M2_MASK_TABLE_BLOB
+    );
+
+    let account = row(CONTRACT, "det", "account-source");
+    assert_eq!(
+        account[2],
+        "M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json"
+    );
+    let matrix = include_str!(
+        "../../../docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json"
+    );
+    assert!(matrix.contains("\"source_roundtrip_nonclosures\": 9"));
+    assert!(matrix.contains("\"target_collisions\": 8"));
+    assert!(matrix.contains("\"map\": \"floor(index72*8/9)\""));
+}
+
+#[test]
+fn det_shadow_is_the_deep_map_covering_sixty_four_with_eight_collisions() {
+    use ql_mef::{SHADOW_CAP, epogdoon_compression, shadow};
+
+    let map = row(CONTRACT, "det", "map");
+    assert_eq!(map[2], "floor(index72*8/9)");
+    assert_eq!(map[3], "cap");
+    assert_eq!(map[4].parse::<u8>().unwrap(), SHADOW_CAP);
+
+    let register = shadow();
+    for (index, target) in register.iter().enumerate() {
+        let index = index as u16;
+        assert_eq!(
+            *target,
+            (index * 8 / 9).min(u16::from(SHADOW_CAP)) as u8,
+            "shadow entry {index}"
+        );
+    }
+    assert_eq!(register.iter().copied().collect::<HashSet<u8>>().len(), 64);
+    assert_eq!(*register.iter().max().unwrap(), 63);
+    // The cap is inert across the 72-source domain and binds at the octave.
+    for index in 0u16..72 {
+        assert_eq!(
+            epogdoon_compression(index as u8),
+            (index * 8 / 9) as u8,
+            "cap inert in-domain at {index}"
+        );
+    }
+    assert_eq!(epogdoon_compression(72), SHADOW_CAP);
+}
+
+#[test]
+fn det_two_descriptions_stay_distinct_eight_and_nine() {
+    use ql_mef::{
+        OCTAVE_POINT, collision_addresses, epogdoon_compression, fold_sources, is_evolutionary_gap,
+        source_roundtrip_nonclosures,
+    };
+
+    let collisions = collision_addresses();
+    let folds = fold_sources();
+    assert_eq!(
+        collisions,
+        [0, 8, 16, 24, 32, 40, 48, 56],
+        "collisions sit at 0 mod 8"
+    );
+    assert_eq!(
+        folds,
+        [1, 10, 19, 28, 37, 46, 55, 64],
+        "fold sources sit at 1 mod 9"
+    );
+
+    // Each collision target is the image of exactly the ninefold pair.
+    for (k, target) in collisions.iter().enumerate() {
+        let preimages: Vec<u8> = (0..72u8)
+            .filter(|&source| epogdoon_compression(source) == *target)
+            .collect();
+        assert_eq!(preimages, vec![9 * k as u8, 9 * k as u8 + 1]);
+    }
+
+    // The two descriptions are distinct readings: targets vs sources.
+    assert!(!collisions.iter().any(|target| folds.contains(target)));
+
+    // The octave point cannot close: its exact image 64 lies outside the
+    // register, the cap sends it to 63, and the round-trip misses.
+    assert_eq!(value(CONTRACT, "det", "octave-nonclosure"), "72");
+    assert_eq!(OCTAVE_POINT, 72);
+    assert!(is_evolutionary_gap(OCTAVE_POINT));
+
+    let nonclosures = source_roundtrip_nonclosures();
+    assert_eq!(nonclosures.len(), 9);
+    assert_eq!(&nonclosures[..8], &folds[..]);
+    assert_eq!(nonclosures[8], OCTAVE_POINT);
+    assert_eq!(value(CONTRACT, "det", "source-roundtrip-nonclosures"), "9");
+    assert_eq!(value(CONTRACT, "det", "two-descriptions-law"), "distinct");
+}
+
+#[test]
+fn det_fibres_preserve_four_carriers_eighteen_to_sixteen() {
+    use ql_mef::{
+        FIBRE_COUNT, FIBRE_SOURCE_CARDINALITY, FIBRE_TARGET_CARDINALITY, fibre_source_span,
+        fibre_target_span, shadow,
+    };
+
+    assert_eq!(value(CONTRACT, "det", "fibre-reading"), "4x18-4x16");
+    assert_eq!(FIBRE_COUNT, 4);
+    assert_eq!(FIBRE_SOURCE_CARDINALITY, 18);
+    assert_eq!(FIBRE_TARGET_CARDINALITY, 16);
+    assert_eq!(
+        FIBRE_SOURCE_CARDINALITY * FIBRE_COUNT,
+        ql_mef::field_cardinality() as u8,
+        "four fibres carry the whole 72-space"
+    );
+    assert_eq!(
+        FIBRE_TARGET_CARDINALITY * FIBRE_COUNT,
+        ql_mef::binary_register() as u8,
+        "four fibres fill the whole binary register"
+    );
+
+    let register = shadow();
+    for fibre in 0..FIBRE_COUNT {
+        let (source_lo, source_hi) = fibre_source_span(fibre);
+        let (target_lo, target_hi) = fibre_target_span(fibre);
+        assert_eq!(source_hi - source_lo + 1, FIBRE_SOURCE_CARDINALITY);
+        assert_eq!(target_hi - target_lo + 1, FIBRE_TARGET_CARDINALITY);
+        let mut targets: Vec<u8> = (source_lo..=source_hi)
+            .map(|source| register[usize::from(source)])
+            .collect();
+        targets.sort_unstable();
+        targets.dedup();
+        assert_eq!(
+            targets,
+            (target_lo..=target_hi).collect::<Vec<_>>(),
+            "fibre {fibre} maps onto its contiguous 16 targets"
+        );
+    }
+}
+
+#[test]
+fn det_gap_predicate_closes_exactly_at_the_ninefold_points() {
+    use ql_mef::{epogdoon_compression, exact_closures, is_evolutionary_gap};
+
+    assert_eq!(value(CONTRACT, "det", "exact-closures"), "8");
+    assert_eq!(row(CONTRACT, "det", "exact-closures")[4], "0mod9");
+    let closures = exact_closures();
+    assert_eq!(closures, [0, 9, 18, 27, 36, 45, 54, 63]);
+
+    for source in 0u8..72 {
+        assert_eq!(
+            is_evolutionary_gap(source),
+            source % 9 != 0,
+            "gap predicate at {source}"
+        );
+        if source % 9 == 0 {
+            assert_eq!(
+                u16::from(epogdoon_compression(source)) * 9,
+                u16::from(source) * 8,
+                "exact closure at {source}"
+            );
+        }
+    }
+
+    // The shadow is the shadow of eq3's door: the door is exact as a
+    // ratio, the shadow only at the ninefold points; the difference is
+    // retained, never eliminated.
+    assert_eq!(value(CONTRACT, "det", "shadow-of"), "eq3.door-descent");
+    assert_eq!(ql_mef::door_descent(), ratio(64, 1));
+}
+
+#[test]
+fn det_domain_and_codomain_bind_to_the_registry_and_the_binary_register() {
+    let domain = row(CONTRACT, "det", "domain");
+    assert_eq!(domain[2], "72");
+    assert_eq!(domain[3], "registry");
+    assert_eq!(domain[4], "mef.address-count");
+    assert_eq!(
+        domain[2].parse::<u32>().unwrap(),
+        kernel_value("mef", "address-count").parse::<u32>().unwrap()
+    );
+    assert_eq!(ql_mef::field_cardinality(), 72);
+    assert_eq!(ql_mef::shadow().len(), 72);
+
+    let codomain = row(CONTRACT, "det", "codomain");
+    assert_eq!(codomain[2], "64");
+    assert_eq!(codomain[3], "bind");
+    assert_eq!(codomain[4], "binary-register");
+    assert_eq!(
+        codomain[2].parse::<u32>().unwrap(),
+        ql_mef::binary_register()
+    );
+    assert_eq!(
+        ql_mef::shadow()
+            .iter()
+            .copied()
+            .collect::<HashSet<u8>>()
+            .len(),
+        64
+    );
+}
+
+#[test]
+fn det_mask_foldback_bits_are_the_same_collision_addresses() {
+    // The deep mask table (m2.c, blob-pinned above) folds states 64-71
+    // onto bits 8k; the integer map doubles the same addresses from the
+    // ninefold pairs {9k, 9k+1}. Which sources fold differs — where
+    // they fold agrees.
+    assert_eq!(value(CONTRACT, "det", "mask-foldback"), "0mod8");
+    // foldback_bits[k] is the mask table's own law: state 64+k -> bit 8k.
+    let foldback_bits: [u8; 8] = std::array::from_fn(|k| 8 * k as u8);
+    assert_eq!(ql_mef::collision_addresses(), foldback_bits);
 }
