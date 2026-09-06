@@ -2,12 +2,6 @@ name: QL-MEF Rust
 
 on:
   pull_request:
-    paths:
-      - "crates/**"
-      - "fixtures/**"
-      - "Cargo.toml"
-      - "rust-toolchain.toml"
-      - ".github/workflows/ql-mef-rust.yml"
   push:
     branches:
       - main
