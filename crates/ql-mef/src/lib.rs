@@ -9,6 +9,7 @@ mod error;
 mod identity;
 mod lens;
 mod m_map;
+mod matheme;
 mod music;
 mod music_completion;
 mod provenance;
@@ -36,6 +37,14 @@ pub use m_map::{
     ImplementationBinding, MCoordinate, MFace, MMapIndex, MPathSeparator, MRelation,
     MRelationClass, MRelationEndpoint, ReflectionProof, RelationOrientation, SourcePayload,
     SourceRecordRef,
+};
+pub use matheme::{
+    CIRCUIT_COORDINATES, CIRCUIT_DEGREES, COPULA_SYMBOL, DOUBLE_BEAT_TURNS,
+    MATHEME_DERIVATION_CONTRACT_VERSION, MATHEME_DERIVATION_LAYER, MathemeDerivation,
+    MathemeTopLine, RECOGNITION_DEGREES, RETAINED_ONE, TOP_LINE, beat, binary_register,
+    cardinality_sum, decomposed_totality, derive_matheme, door_ascent, door_descent, double_beat,
+    epogdoon, field_cardinality, octave_through_door, one_circuit, position_hexad, ring_octave,
+    self_register, standing_whole, totality_ratio, twelve_ring,
 };
 pub use music::{
     ALL_PITCH_CLASSES, AUTHORED_INTERVAL_REFERENCES, AuthoredIntervalReference, CANONICAL_RATIOS,
