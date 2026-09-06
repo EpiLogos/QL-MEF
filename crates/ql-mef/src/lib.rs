@@ -18,6 +18,7 @@ mod refraction;
 mod registry;
 mod ruling;
 mod sublens;
+mod templateure;
 mod vak;
 mod vak_oi;
 
@@ -84,6 +85,10 @@ pub use ruling::{
     RulingT, projective_closure,
 };
 pub use sublens::SublensRef;
+pub use templateure::{
+    Amplitude, FibreField, FormPotential, TEMPLATEURE_FIELD_CONTRACT_REF,
+    TEMPLATEURE_FIELD_VERSION, TemplateureField,
+};
 pub use vak::{
     SelfOtherForm, VAK_ENTRY_COUNT, VAK_SOURCE_GIT_BLOB, VAK_SOURCE_PATH, VAK_SOURCE_REPOSITORY,
     VAK_SOURCE_REVISION, VakActionProfile, VakActionRelationKind, VakAddressHorizon,

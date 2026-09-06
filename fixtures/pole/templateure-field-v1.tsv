@@ -1,0 +1,34 @@
+# ql.mef.templateure-field/v1 — vibrational templateure fixture (T4)
+meta	contract-version	1.0.0
+meta	authority	docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md s3 s14; fold-grammar s12 vector formulation
+meta	field	V72 = V18(Earth) (+) V18(Fire) (+) V18(Water) (+) V18(Air); T72->64 = I4 (x) T18->16
+meta	operator	analytic-signal quadrature: (re,im) -> (-im,re); order 4; power conserved; commutes with transduction
+quadrature	3	-4	4	3	25
+quadrature	1	0	0	1	1
+quadrature	0	2	-2	0	4
+quadrature	-2	3	-3	-2	13
+quadrature	5	1	-1	5	26
+transduction	0	0	identity
+transduction	1	1	identity
+transduction	2	2	identity
+transduction	3	3	identity
+transduction	4	4	identity
+transduction	5	5	identity
+transduction	6	6	identity
+transduction	7	7	identity
+transduction	8	8	identity
+transduction	9	9	identity
+transduction	10	10	identity
+transduction	11	11	identity
+transduction	12	12	identity
+transduction	13	13	identity
+transduction	14	14	identity
+transduction	15	15	identity
+transduction	16	0	folded
+transduction	17	8	folded
+field-sample	earth	0	1	0
+field-sample	earth	16	0	2
+field-result	earth	0	1	2	5
+invariant	quadrature-power-conserved	1
+invariant	quadrature-order	4
+invariant	commutes-with-transduction	1
