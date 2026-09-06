@@ -37,9 +37,11 @@ pub use pairing::{
 };
 pub use pole::{
     AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, Codon64, CodonClass, CoinFace, CoinSum,
-    CoinTriple, FibonacciGround, FoldMotif, FourCharge, MatrixAxis, MatrixFamily, Mobility,
-    Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION, POLE_COIN_CONTRACT_REF, PairIndex16, Polarity,
-    ROTATIONAL_STATE_TOTAL, RotationalPose, SiteProperty, SiteState, all_poses, monoid,
+    CoinTriple, Element, ElementalQuaternionBasis, FibonacciGround, FoldMotif, FourCharge,
+    MatrixAxis, MatrixFamily, Mobility, Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION,
+    POLE_COIN_CONTRACT_REF, POLE_ELEMENTAL_CARRIER_REF, PairIndex16, Polarity,
+    QuaternionComponents, ROTATIONAL_STATE_TOTAL, RotationalPose, SiteProperty, SiteState,
+    Transduction18to16, all_poses, carrier, det_shadow, monoid,
 };
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};
