@@ -12,6 +12,7 @@ mod form;
 mod kernel;
 mod operator;
 mod pairing;
+mod pole;
 mod position;
 mod relation_classification;
 mod shape;
@@ -33,6 +34,12 @@ pub use pairing::{
     CanonicalCrossPass, D2CrossPassKind, PAIRING_GRAMMAR_VERSION, PairingError,
     build_d_modulation_frame, canonical_cross_pass_d1, canonical_cross_pass_d2,
     canonical_cross_pass_d3,
+};
+pub use pole::{
+    AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, Codon64, CodonClass, CoinFace, CoinSum,
+    CoinTriple, FibonacciGround, FoldMotif, FourCharge, MatrixAxis, MatrixFamily, Mobility,
+    Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION, POLE_COIN_CONTRACT_REF, PairIndex16, Polarity,
+    ROTATIONAL_STATE_TOTAL, RotationalPose, SiteProperty, SiteState, all_poses, monoid,
 };
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};
