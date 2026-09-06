@@ -805,11 +805,13 @@ mod tests {
             CONTEXT_FRAME_GRAMMAR_VERSION
         );
         assert_eq!(value["vakSourceRevision"], VAK_SOURCE_REVISION);
-        assert!(value["commands"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|value| value == "vak.context"));
+        assert!(
+            value["commands"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|value| value == "vak.context")
+        );
     }
 
     #[test]
@@ -874,7 +876,12 @@ mod tests {
         assert_eq!(value["centre"]["vakRef"], "M0");
         assert_eq!(value["centre"]["source"]["gitBlob"], VAK_SOURCE_GIT_BLOB);
         assert_eq!(value["centre"]["source"]["standing"], "SOURCE");
-        assert!(value["centre"]["rawSourceRow"].as_str().unwrap().contains("M0"));
+        assert!(
+            value["centre"]["rawSourceRow"]
+                .as_str()
+                .unwrap()
+                .contains("M0")
+        );
         assert_eq!(value["depth"], 1);
         assert!(!value["entries"].as_array().unwrap().is_empty());
         assert!(!value["relations"].as_array().unwrap().is_empty());
