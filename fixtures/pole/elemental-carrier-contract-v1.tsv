@@ -1,0 +1,42 @@
+# ql.pole.elemental-carrier/v1 — ratified basis and epogdoon continuity fixture
+meta	contract-version	1.0.0
+meta	authority	docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md s1 s2 s14
+meta	ratification	M4 ratification 5: A=Water, T=Fire, C=Earth, G=Air; [w,x,y,z]=[Earth,Fire,Water,Air]; alternates are drift
+basis	earth	Earth	C	0	w
+basis	fire	Fire	T	1	x
+basis	water	Water	A	2	y
+basis	air	Air	G	3	z
+carrier	fibre-states	18
+carrier	form-states	16
+carrier	fibres	4
+carrier	second-spanda	100	5	20
+transduction	0	0	identity
+transduction	1	1	identity
+transduction	2	2	identity
+transduction	3	3	identity
+transduction	4	4	identity
+transduction	5	5	identity
+transduction	6	6	identity
+transduction	7	7	identity
+transduction	8	8	identity
+transduction	9	9	identity
+transduction	10	10	identity
+transduction	11	11	identity
+transduction	12	12	identity
+transduction	13	13	identity
+transduction	14	14	identity
+transduction	15	15	identity
+transduction	16	0	folded
+transduction	17	8	folded
+det-shadow	64	0
+det-shadow	65	8
+det-shadow	66	16
+det-shadow	67	24
+det-shadow	68	32
+det-shadow	69	40
+det-shadow	70	48
+det-shadow	71	56
+epogdoon	count	18	16	9	8
+epogdoon	angle	200	225	9	8
+sync	fibre-form	180
+sync	full-turn	360

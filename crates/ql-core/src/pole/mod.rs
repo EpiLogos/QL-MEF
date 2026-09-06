@@ -20,12 +20,17 @@
 //! from either.
 
 pub mod aperture;
+pub mod basis;
 pub mod codon;
 pub mod coin;
 pub mod nucleotide;
 pub mod pose;
 
 pub use aperture::{AngularGrid, ApertureClock, ApertureIndex, FibonacciGround};
+pub use basis::{
+    Element, ElementalQuaternionBasis, QuaternionComponents, Transduction18to16, carrier,
+    det_shadow,
+};
 pub use codon::{
     AngleDeg10, Codon64, CodonClass, FoldMotif, FourCharge, MatrixAxis, MatrixFamily, PairIndex16,
     SiteProperty, SiteState,
@@ -39,3 +44,6 @@ pub const PHYSICAL_POLE_FORM_CONTRACT_VERSION: &str = "1.0.0";
 
 /// Semantic identity of the M3 coin-value ground.
 pub const POLE_COIN_CONTRACT_REF: &str = "ql.pole.coin-value-ground/v1";
+
+/// Semantic identity of the ratified elemental-carrier contract (T2).
+pub const POLE_ELEMENTAL_CARRIER_REF: &str = "ql.pole.elemental-carrier/v1";
