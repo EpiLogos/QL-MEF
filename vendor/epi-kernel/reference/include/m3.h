@@ -48,8 +48,8 @@
 static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
 
 _Static_assert(
-    6 + 9 + 7 + 8 == 30,
-    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+7+8)"
+    6 + 9 + 8 + 7 == 30,
+    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+8+7)"
 );
 _Static_assert(NUCLEOTIDE_ICHING_VALUE[0] + NUCLEOTIDE_ICHING_VALUE[1] == 15,
     "Complementary pair A+T must sum to 15");
@@ -590,7 +590,7 @@ extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
  * FR 2.3.15: 360 INTEGRAL INVARIANT
  *
  * Sum of all (+,+) codon evaluations = 360.
- * Per-suit: Cups=84, Wands=96, Pentacles=88, Swords=92.
+ * Per-suit: Cups=84, Wands=96, Pentacles=92, Swords=88.
  * =================================================================== */
 
 #define M3_INTEGRAL_INVARIANT    360U
