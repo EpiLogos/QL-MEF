@@ -1,0 +1,241 @@
+diff --git a/vendor/epi-kernel/reference/include/m3.h b/vendor/epi-kernel/reference/include/m3.h
+index 5cfc92a..42658c7 100644
+--- a/vendor/epi-kernel/reference/include/m3.h
++++ b/vendor/epi-kernel/reference/include/m3.h
+@@ -32,16 +32,24 @@
+ /* ===================================================================
+  * FR 2.3.12: NUCLEOTIDE_ICHING_VALUE — Canonical I-Ching Numeric LUT
+  *
+- * A=6(Yin,Moving), T=9(Yang,Moving), C=7(yin,Resting), G=8(yang,Resting)
++ * A=6(Yin,Moving), T=9(Yang,Moving), C=8(yin,Resting), G=7(yang,Resting)
+  * These values ARE the system's root arithmetic.
+  * All pair sums, codon sums, and integral invariants derive from them.
++ *
++ * Parity law (m4_cast_iching, the generator): odd sums are yang, even
++ * sums are yin; extreme sums (6=2+2+2, 9=3+3+3) move, mixed sums rest.
++ * Classical grades: old yin 6, young YANG 7, young YIN 8, old yang 9 —
++ * C (yin/resting, Pentacles) is the young yin 8; G (yang/resting,
++ * Swords) is the young yang 7. Ratified 2026-09-07 (owner): corrected
++ * from the parity-violating {6,9,7,8}; dataset tables regenerated with
++ * this table in the same commit.
+  * =================================================================== */
+ 
+-static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8};
++static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
+ 
+ _Static_assert(
+-    6 + 9 + 7 + 8 == 30,
+-    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+7+8)"
++    6 + 9 + 8 + 7 == 30,
++    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+8+7)"
+ );
+ _Static_assert(NUCLEOTIDE_ICHING_VALUE[0] + NUCLEOTIDE_ICHING_VALUE[1] == 15,
+     "Complementary pair A+T must sum to 15");
+@@ -69,8 +77,8 @@ static inline uint8_t get_codon_iching_sum(uint8_t codon6bit) {
+  *
+  * A=0b00(0) Yin/Moving   — Old Yin (6)   — CUPS (Water)
+  * T=0b01(1) Yang/Moving  — Old Yang (9)  — WANDS (Fire)
+- * C=0b10(2) Yin/Resting  — Young Yin (7) — PENTACLES (Earth)
+- * G=0b11(3) Yang/Resting — Young Yang (8)— SWORDS (Air)
++ * C=0b10(2) Yin/Resting  — Young Yin (8) — PENTACLES (Earth)
++ * G=0b11(3) Yang/Resting — Young Yang (7)— SWORDS (Air)
+  * =================================================================== */
+ 
+ #define M3_NUC_A  0x00
+@@ -582,14 +590,14 @@ extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
+  * FR 2.3.15: 360 INTEGRAL INVARIANT
+  *
+  * Sum of all (+,+) codon evaluations = 360.
+- * Per-suit: Cups=84, Wands=96, Pentacles=88, Swords=92.
++ * Per-suit: Cups=84, Wands=96, Pentacles=92, Swords=88.
+  * =================================================================== */
+ 
+ #define M3_INTEGRAL_INVARIANT    360U
+ #define M3_SUIT_A_INTEGRAL        84U   /* Cups:      Yin Moving  */
+ #define M3_SUIT_T_INTEGRAL        96U   /* Wands:     Yang Moving */
+-#define M3_SUIT_C_INTEGRAL        88U   /* Pentacles: yin Resting */
+-#define M3_SUIT_G_INTEGRAL        92U   /* Swords:    yang Resting */
++#define M3_SUIT_C_INTEGRAL        92U   /* Pentacles: yin Resting */
++#define M3_SUIT_G_INTEGRAL        88U   /* Swords:    yang Resting */
+ 
+ _Static_assert(
+     M3_SUIT_A_INTEGRAL + M3_SUIT_T_INTEGRAL +
+diff --git a/vendor/epi-kernel/reference/src/m3.c b/vendor/epi-kernel/reference/src/m3.c
+index d7f2c2e..1408a07 100644
+--- a/vendor/epi-kernel/reference/src/m3.c
++++ b/vendor/epi-kernel/reference/src/m3.c
+@@ -15,6 +15,13 @@
+  * FR 2.3.2: M3_PAIR_MATRIX[16] — The Unified Dinucleotide LUT
+  *
+  * Indexed by (nuc1 << 2) | nuc2.
++ * Regenerated 2026-09-07 under the parity-consistent value table
++ * {A=6, T=9, C=8, G=7}: sumValue = v(n1)+v(n2) for every pair;
++ * |differenceValue| = |v(n1)-v(n2)| for mixed pairs (0 for homogeneous);
++ * the difference SIGN of each entry is the recorded dataset provenance
++ * (M3 unresolved item 2: the exact class-stable semantics of
++ * differenceValue remains open) and is preserved verbatim from the
++ * previously recorded table.
+  * 3-Matrix system — each matrix has 8 pairs (4 homogeneous shared):
+  *   Matrix 1 (Watson-Crick): homos + AT,TA,CG,GC = 8 pairs
+  *   Matrix 2 (Cross-compl):  homos + AG,GA,TC,CT = 8 pairs
+@@ -26,8 +33,8 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
+     /* Homogeneous pairs — differenceValue=0, SHARED across all 3 matrices */
+     [0]  = { 12,  0 },  /* AA (Yin/Moving  + Yin/Moving)  — K'un  */
+     [5]  = { 18,  0 },  /* TT (Yang/Moving + Yang/Moving) — Ch'ien (MAX SUM) */
+-    [10] = { 14,  0 },  /* CC (Yin/Rest    + Yin/Rest)    — K'an  */
+-    [15] = { 16,  0 },  /* GG (Yang/Rest   + Yang/Rest)   — Li    */
++    [10] = { 16,  0 },  /* CC (Yin/Rest    + Yin/Rest)    — K'an  */
++    [15] = { 14,  0 },  /* GG (Yang/Rest   + Yang/Rest)   — Li    */
+ 
+     /* Matrix 1 pairs — Watson-Crick (polarity-complementary, same mobility) */
+     [1]  = { 15, -3 },  /* AT (Yin/Moving  + Yang/Moving) — Tui   */
+@@ -36,16 +43,16 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
+     [14] = { 15, -1 },  /* CG (Yin/Rest    + Yang/Rest)   — Sun   */
+ 
+     /* Matrix 2 pairs — Cross-complementary (dataset keeps class-stable polarity) */
+-    [3]  = { 14,  2 },  /* AG (Yin/Moving  + Yang/Rest)   */
+-    [12] = { 14,  2 },  /* GA (Yang/Rest   + Yin/Moving)  */
+-    [6]  = { 16, -2 },  /* TC (Yang/Moving + Yin/Rest)    */
+-    [9]  = { 16, -2 },  /* CT (Yin/Rest    + Yang/Moving) */
++    [3]  = { 13,  1 },  /* AG (Yin/Moving  + Yang/Rest)   */
++    [12] = { 13,  1 },  /* GA (Yang/Rest   + Yin/Moving)  */
++    [6]  = { 17, -1 },  /* TC (Yang/Moving + Yin/Rest)    */
++    [9]  = { 17, -1 },  /* CT (Yin/Rest    + Yang/Moving) */
+ 
+     /* Matrix 3 pairs — Cross-diagonal (polarity AND mobility both differ) */
+-    [2]  = { 13, -1 },  /* AC (Yin/Moving  + Yin/Rest)    */
+-    [8]  = { 13,  1 },  /* CA (Yin/Rest    + Yin/Moving)  */
+-    [7]  = { 17,  1 },  /* TG (Yang/Moving + Yang/Rest)   */
+-    [13] = { 17, -1 },  /* GT (Yang/Rest   + Yang/Moving) */
++    [2]  = { 14, -2 },  /* AC (Yin/Moving  + Yin/Rest)    */
++    [8]  = { 14,  2 },  /* CA (Yin/Rest    + Yin/Moving)  */
++    [7]  = { 16,  2 },  /* TG (Yang/Moving + Yang/Rest)   */
++    [13] = { 16, -2 },  /* GT (Yang/Rest   + Yang/Moving) */
+ };
+ 
+ const uint8_t M3_MATRIX_PAIR[M3_MATRIX_COUNT][4] = {
+@@ -297,18 +304,18 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
+      * Suit integral: 84 */
+     {
+         {0, M3_TAROT_PIP_ACE,       COD(A,A,A), NONE},      /* Ace:    AAA pp=18 */
+-        {0, 1,                      COD(A,A,G), NONE},      /* Two:    AAG pp=20 */
++        {0, 1,                      COD(A,A,G), NONE},      /* Two:    AAG pp=19 */
+         {0, 2,                      COD(A,A,T), NONE},      /* Three:  AAT pp=21 */
+-        {0, 3,                      COD(A,C,C), NONE},      /* Four:   ACC pp=20 */
+-        {0, 4,                      COD(A,T,G), NONE},      /* Five:   ATG pp=23 */
+-        {0, 5,                      COD(A,G,A), NONE},      /* Six:    AGA pp=20 */
+-        {0, 6,                      COD(A,G,T), NONE},      /* Seven:  AGT pp=23 */
+-        {0, 7,                      COD(A,G,G), NONE},      /* Eight:  AGG pp=22 */
++        {0, 3,                      COD(A,C,C), NONE},      /* Four:   ACC pp=22 */
++        {0, 4,                      COD(A,T,G), NONE},      /* Five:   ATG pp=22 */
++        {0, 5,                      COD(A,G,A), NONE},      /* Six:    AGA pp=19 */
++        {0, 6,                      COD(A,G,T), NONE},      /* Seven:  AGT pp=22 */
++        {0, 7,                      COD(A,G,G), NONE},      /* Eight:  AGG pp=20 */
+         {0, 8,                      COD(A,T,T), NONE},      /* Nine:   ATT pp=24 */
+         {0, 9,                      COD(A,T,A), NONE},      /* Ten:    ATA pp=21 */
+-        {0, M3_TAROT_PIP_PRINCESS,  COD(A,C,A), NONE},      /* Page:   ACA pp=19 */
++        {0, M3_TAROT_PIP_PRINCESS,  COD(A,C,A), NONE},      /* Page:   ACA pp=20 */
+         {0, M3_TAROT_PIP_PRINCE,    COD(A,C,G), COD(A,G,C)},/* Knight: ACG+AGC (dual) */
+-        {0, M3_TAROT_PIP_QUEEN,     COD(A,A,C), NONE},      /* Queen:  AAC pp=19 */
++        {0, M3_TAROT_PIP_QUEEN,     COD(A,A,C), NONE},      /* Queen:  AAC pp=20 */
+         {0, M3_TAROT_PIP_KING,      COD(A,C,T), COD(A,T,C)},/* King:   ACT+ATC (dual) */
+         {0, 0, 0, NONE}, {0, 0, 0, NONE}, /* padding to 16 — unused */
+     },
+@@ -317,56 +324,56 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
+     {
+         {1, M3_TAROT_PIP_ACE,       COD(T,T,T), NONE},      /* Ace:    TTT pp=27 */
+         {1, 1,                      COD(T,T,A), NONE},      /* Two:    TTA pp=24 */
+-        {1, 2,                      COD(T,T,C), NONE},      /* Three:  TTC pp=25 */
+-        {1, 3,                      COD(T,G,G), NONE},      /* Four:   TGG pp=25 */
+-        {1, 4,                      COD(T,A,C), NONE},      /* Five:   TAC pp=22 */
+-        {1, 5,                      COD(T,C,A), NONE},      /* Six:    TCA pp=22 */
+-        {1, 6,                      COD(T,C,C), NONE},      /* Seven:  TCC pp=23 */
++        {1, 2,                      COD(T,T,C), NONE},      /* Three:  TTC pp=26 */
++        {1, 3,                      COD(T,G,G), NONE},      /* Four:   TGG pp=23 */
++        {1, 4,                      COD(T,A,C), NONE},      /* Five:   TAC pp=23 */
++        {1, 5,                      COD(T,C,A), NONE},      /* Six:    TCA pp=23 */
++        {1, 6,                      COD(T,C,C), NONE},      /* Seven:  TCC pp=25 */
+         {1, 7,                      COD(T,A,A), NONE},      /* Eight:  TAA pp=21 */
+-        {1, 8,                      COD(T,C,T), NONE},      /* Nine:   TCT pp=25 */
++        {1, 8,                      COD(T,C,T), NONE},      /* Nine:   TCT pp=26 */
+         {1, 9,                      COD(T,A,T), NONE},      /* Ten:    TAT pp=24 */
+         {1, M3_TAROT_PIP_PRINCESS,  COD(T,A,G), COD(T,G,A)},/* Page:   TAG+TGA (dual) */
+-        {1, M3_TAROT_PIP_PRINCE,    COD(T,G,T), NONE},      /* Knight: TGT pp=26 */
++        {1, M3_TAROT_PIP_PRINCE,    COD(T,G,T), NONE},      /* Knight: TGT pp=25 */
+         {1, M3_TAROT_PIP_QUEEN,     COD(T,C,G), COD(T,G,C)},/* Queen:  TCG+TGC (dual) */
+-        {1, M3_TAROT_PIP_KING,      COD(T,T,G), NONE},      /* King:   TTG pp=26 */
++        {1, M3_TAROT_PIP_KING,      COD(T,T,G), NONE},      /* King:   TTG pp=25 */
+         {1, 0, 0, NONE}, {1, 0, 0, NONE}, /* padding */
+     },
+-    /* [2] Pentacles (C-family, yin Resting, I-Ching=7)
+-     * Suit integral: 88 */
++    /* [2] Pentacles (C-family, yin Resting, I-Ching=8)
++     * Suit integral: 92 */
+     {
+-        {2, M3_TAROT_PIP_ACE,       COD(C,C,C), NONE},      /* Ace:    CCC pp=21 */
+-        {2, 1,                      COD(C,C,G), NONE},      /* Two:    CCG pp=22 */
+-        {2, 2,                      COD(C,C,T), NONE},      /* Three:  CCT pp=23 */
+-        {2, 3,                      COD(C,A,A), NONE},      /* Four:   CAA pp=19 */
+-        {2, 4,                      COD(C,G,C), NONE},      /* Five:   CGC pp=22 */
+-        {2, 5,                      COD(C,G,G), NONE},      /* Six:    CGG pp=23 */
++        {2, M3_TAROT_PIP_ACE,       COD(C,C,C), NONE},      /* Ace:    CCC pp=24 */
++        {2, 1,                      COD(C,C,G), NONE},      /* Two:    CCG pp=23 */
++        {2, 2,                      COD(C,C,T), NONE},      /* Three:  CCT pp=25 */
++        {2, 3,                      COD(C,A,A), NONE},      /* Four:   CAA pp=20 */
++        {2, 4,                      COD(C,G,C), NONE},      /* Five:   CGC pp=23 */
++        {2, 5,                      COD(C,G,G), NONE},      /* Six:    CGG pp=22 */
+         {2, 6,                      COD(C,G,T), NONE},      /* Seven:  CGT pp=24 */
+         {2, 7,                      COD(C,T,G), NONE},      /* Eight:  CTG pp=24 */
+-        {2, 8,                      COD(C,T,T), NONE},      /* Nine:   CTT pp=25 */
+-        {2, 9,                      COD(C,T,C), NONE},      /* Ten:    CTC pp=23 */
+-        {2, M3_TAROT_PIP_PRINCESS,  COD(C,C,A), NONE},      /* Page:   CCA pp=20 */
++        {2, 8,                      COD(C,T,T), NONE},      /* Nine:   CTT pp=26 */
++        {2, 9,                      COD(C,T,C), NONE},      /* Ten:    CTC pp=25 */
++        {2, M3_TAROT_PIP_PRINCESS,  COD(C,C,A), NONE},      /* Page:   CCA pp=22 */
+         {2, M3_TAROT_PIP_PRINCE,    COD(C,A,G), COD(C,G,A)},/* Knight: CAG+CGA (dual) */
+-        {2, M3_TAROT_PIP_QUEEN,     COD(C,A,C), NONE},      /* Queen:  CAC pp=20 */
++        {2, M3_TAROT_PIP_QUEEN,     COD(C,A,C), NONE},      /* Queen:  CAC pp=22 */
+         {2, M3_TAROT_PIP_KING,      COD(C,A,T), COD(C,T,A)},/* King:   CAT+CTA (dual) */
+         {2, 0, 0, NONE}, {2, 0, 0, NONE}, /* padding */
+     },
+-    /* [3] Swords (G-family, yang Resting, I-Ching=8)
+-     * Suit integral: 92 */
++    /* [3] Swords (G-family, yang Resting, I-Ching=7)
++     * Suit integral: 88 */
+     {
+-        {3, M3_TAROT_PIP_ACE,       COD(G,G,G), NONE},      /* Ace:    GGG pp=24 */
+-        {3, 1,                      COD(G,G,A), NONE},      /* Two:    GGA pp=22 */
+-        {3, 2,                      COD(G,G,C), NONE},      /* Three:  GGC pp=23 */
+-        {3, 3,                      COD(G,T,T), NONE},      /* Four:   GTT pp=26 */
++        {3, M3_TAROT_PIP_ACE,       COD(G,G,G), NONE},      /* Ace:    GGG pp=21 */
++        {3, 1,                      COD(G,G,A), NONE},      /* Two:    GGA pp=20 */
++        {3, 2,                      COD(G,G,C), NONE},      /* Three:  GGC pp=22 */
++        {3, 3,                      COD(G,T,T), NONE},      /* Four:   GTT pp=25 */
+         {3, 4,                      COD(G,A,C), NONE},      /* Five:   GAC pp=21 */
+-        {3, 5,                      COD(G,A,G), NONE},      /* Six:    GAG pp=22 */
++        {3, 5,                      COD(G,A,G), NONE},      /* Six:    GAG pp=20 */
+         {3, 6,                      COD(G,C,A), NONE},      /* Seven:  GCA pp=21 */
+-        {3, 7,                      COD(G,C,C), NONE},      /* Eight:  GCC pp=22 */
+-        {3, 8,                      COD(G,A,A), NONE},      /* Nine:   GAA pp=20 */
+-        {3, 9,                      COD(G,C,G), NONE},      /* Ten:    GCG pp=23 */
++        {3, 7,                      COD(G,C,C), NONE},      /* Eight:  GCC pp=23 */
++        {3, 8,                      COD(G,A,A), NONE},      /* Nine:   GAA pp=19 */
++        {3, 9,                      COD(G,C,G), NONE},      /* Ten:    GCG pp=22 */
+         {3, M3_TAROT_PIP_PRINCESS,  COD(G,C,T), COD(G,T,C)},/* Page:   GCT+GTC (dual) */
+-        {3, M3_TAROT_PIP_PRINCE,    COD(G,G,T), NONE},      /* Knight: GGT pp=25 */
++        {3, M3_TAROT_PIP_PRINCE,    COD(G,G,T), NONE},      /* Knight: GGT pp=23 */
+         {3, M3_TAROT_PIP_QUEEN,     COD(G,A,T), COD(G,T,A)},/* Queen:  GAT+GTA (dual) */
+-        {3, M3_TAROT_PIP_KING,      COD(G,T,G), NONE},      /* King:   GTG pp=25 */
++        {3, M3_TAROT_PIP_KING,      COD(G,T,G), NONE},      /* King:   GTG pp=23 */
+         {3, 0, 0, NONE}, {3, 0, 0, NONE}, /* padding */
+     },
+ };
+@@ -439,7 +446,7 @@ static int m3_verify_integral_invariant(void) {
+     for (uint8_t codon = 0; codon < 64; codon++) {
+         /* Use m3_compute_charges (pp = X+Y+Z from I-Ching values) —
+          * NOT evaluate_codon() which uses pair S-value sums.
+-         * Raw per-suit sums: 336/384/352/368 = 1440.
++         * Raw per-suit sums: 336/384/368/352 = 1440.
+          * 1440 / 4 = 360 (the integral invariant). */
+         int8_t pp, nn, np, pn;
+         m3_compute_charges(codon, &pp, &nn, &np, &pn);
