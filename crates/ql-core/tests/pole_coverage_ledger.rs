@@ -168,6 +168,25 @@ fn ported_rows_resolve_to_existing_rust_homes() {
         ql_core::Trigram::LUT,
         ql_core::palindromic_anchors(),
         ql_core::det_overlay,
+        // Tarot bridge (pole::tarot) — M3-C19/C20.
+        ql_core::POLE_TAROT_BRIDGE_REF,
+        ql_core::ENTRIES_PER_SUIT,
+        ql_core::MINOR_ARCANA_COUNT,
+        ql_core::MAJOR_ARCANA_COUNT,
+        ql_core::TRANSCENDENT_TAROT_COUNT,
+        // Rotational machinery (pole::rotational) — M3-C13.
+        ql_core::POLE_ROTATIONAL_PROFILE_REF,
+        ql_core::ROTATIONAL_TABLE_ENTRIES,
+        ql_core::RECORDED_PAIR_DIFF_SIGNS,
+        ql_core::generate_rotational_states,
+        ql_core::wc_anticodon,
+        // Transcription layer (pole::transcription) — M3-C02/C17/C18.
+        ql_core::POLE_TRANSCRIPTION_REF,
+        ql_core::M2_TO_M3_CYMATIC_PROJECTION,
+        ql_core::M3_CODON_TO_AA,
+        ql_core::M3_RNA_FUNCTIONAL_MASK,
+        ql_core::M3_PAIR_DIFFERENCE_SIGN,
+        ql_core::transduce_vibration_to_symbol,
     );
     let _ = homes_present;
 
