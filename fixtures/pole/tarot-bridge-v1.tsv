@@ -1,0 +1,98 @@
+# ql.pole.tarot-bridge/v1 — machine-readable contract of the M3 Tarot exact-cover bridge
+meta	contract	ql.pole.tarot-bridge/v1
+meta	branch	M3-4 — Tarot / Phase / Expressional Field; hooks M3-C19 (minor exact cover), M3-C20 (major + 22+2 governance), M3-C21 (narrative transcription — typed surface only)
+meta	kernel	M3_TAROT_CODON_MAP[4][16] vendor/epi-kernel/reference/src/m3.c:302-380 (FR 2.3.19, m3.c:256); M3_MAJOR_ARCANA[22] m3.c:273-296; FR 2.3.16 constants m3.h:610-644; integrals m3.h:596-600
+meta	court-law	yin suits (Cups, Pentacles) dual at Prince(Knight)+King; yang suits (Wands, Swords) dual at Princess(Page)+Queen; every dual pair swaps middle/inner keeping outer = suit nucleotide
+meta	governance	22+2 law (matrix §10, M3-C20): The Fool = start/opening/0, The Universe = stop/completion/1 — two functional readings of the boundary Majors, not two extra physical cards; quaternion ids 78/79 (+z/-z, m3.h:806-835)
+meta	naming	pip 10 Princess(Page), 11 Prince(Knight): Thoth register = M3_TAROT_PIP_*, RWS register = TAROT_RANK_NAMES — one deck, two registers
+meta	coin	pp = canonical coin values A=6 T=9 C=8 G=7 (owner ratification 2026-09-07); suit integral = outer-family pp per quarter; total pp over all 64 codons = 1440 = 4 x 360 (proved in tests/pole_coin_contract.rs)
+suit	0	Cups	A	Water	yin	84
+suit	1	Wands	T	Fire	yang	96
+suit	2	Pentacles	C	Earth	yin	92
+suit	3	Swords	G	Air	yang	88
+card	0	0	0	Ace	Ace	AAA	-
+card	1	0	1	Two	Two	AAG	-
+card	2	0	2	Three	Three	AAT	-
+card	3	0	3	Four	Four	ACC	-
+card	4	0	4	Five	Five	ATG	-
+card	5	0	5	Six	Six	AGA	-
+card	6	0	6	Seven	Seven	AGT	-
+card	7	0	7	Eight	Eight	AGG	-
+card	8	0	8	Nine	Nine	ATT	-
+card	9	0	9	Ten	Ten	ATA	-
+card	10	0	10	Princess	Page	ACA	-
+card	11	0	11	Prince	Knight	ACG	AGC
+card	12	0	12	Queen	Queen	AAC	-
+card	13	0	13	King	King	ACT	ATC
+card	14	1	0	Ace	Ace	TTT	-
+card	15	1	1	Two	Two	TTA	-
+card	16	1	2	Three	Three	TTC	-
+card	17	1	3	Four	Four	TGG	-
+card	18	1	4	Five	Five	TAC	-
+card	19	1	5	Six	Six	TCA	-
+card	20	1	6	Seven	Seven	TCC	-
+card	21	1	7	Eight	Eight	TAA	-
+card	22	1	8	Nine	Nine	TCT	-
+card	23	1	9	Ten	Ten	TAT	-
+card	24	1	10	Princess	Page	TAG	TGA
+card	25	1	11	Prince	Knight	TGT	-
+card	26	1	12	Queen	Queen	TCG	TGC
+card	27	1	13	King	King	TTG	-
+card	28	2	0	Ace	Ace	CCC	-
+card	29	2	1	Two	Two	CCG	-
+card	30	2	2	Three	Three	CCT	-
+card	31	2	3	Four	Four	CAA	-
+card	32	2	4	Five	Five	CGC	-
+card	33	2	5	Six	Six	CGG	-
+card	34	2	6	Seven	Seven	CGT	-
+card	35	2	7	Eight	Eight	CTG	-
+card	36	2	8	Nine	Nine	CTT	-
+card	37	2	9	Ten	Ten	CTC	-
+card	38	2	10	Princess	Page	CCA	-
+card	39	2	11	Prince	Knight	CAG	CGA
+card	40	2	12	Queen	Queen	CAC	-
+card	41	2	13	King	King	CAT	CTA
+card	42	3	0	Ace	Ace	GGG	-
+card	43	3	1	Two	Two	GGA	-
+card	44	3	2	Three	Three	GGC	-
+card	45	3	3	Four	Four	GTT	-
+card	46	3	4	Five	Five	GAC	-
+card	47	3	5	Six	Six	GAG	-
+card	48	3	6	Seven	Seven	GCA	-
+card	49	3	7	Eight	Eight	GCC	-
+card	50	3	8	Nine	Nine	GAA	-
+card	51	3	9	Ten	Ten	GCG	-
+card	52	3	10	Princess	Page	GCT	GTC
+card	53	3	11	Prince	Knight	GGT	-
+card	54	3	12	Queen	Queen	GAT	GTA
+card	55	3	13	King	King	GTG	-
+major	0	The Fool	1	0
+major	1	The Magician	2	1
+major	2	The High Priestess	3	2
+major	3	The Empress	4	3
+major	4	The Emperor	5	4
+major	5	The Hierophant	6	5
+major	6	The Lovers	7	6
+major	7	The Chariot	8	7
+major	8	Adjustment	9	8
+major	9	The Hermit	10	9
+major	10	Wheel of Fortune	11	10
+major	11	Lust	12	11
+major	12	The Hanged Man	13	12
+major	13	Death	14	13
+major	14	Art	15	14
+major	15	The Devil	16	15
+major	16	The Tower	17	16
+major	17	The Star	18	17
+major	18	The Moon	19	18
+major	19	The Sun	20	19
+major	20	Aeon	21	20
+major	21	The Universe	22	21
+governance	Fool	0	0	78	start/opening
+governance	Universe	21	1	79	stop/completion
+counts	minor	56
+counts	major	22
+counts	transcendent	2
+counts	quaternion-total	80
+counts	covered-codons	64
+counts	integral-total	1440
