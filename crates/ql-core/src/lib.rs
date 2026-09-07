@@ -51,15 +51,15 @@ pub use pole::{
     rotational_total_sum_value, transduce_vibration_to_symbol, wc_anticodon,
 };
 pub use pole::{
-    AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, ApplyOutcome, CanonicalAddress, Codon64,
-    CodonClass, CoinFace, CoinSum, CoinTriple, Element, ElementalQuaternionBasis, FibonacciGround,
-    FoldGeometry, FoldMotif, FoldState, FourCharge, INVERSE_SEAM_CONTRACT_REF, M3_RES_MATRIX,
-    MatrixAxis, MatrixFamily, Mobility, Nucleotide, PHYSICAL_POLE_FORM_CONTRACT_VERSION,
-    POLE_COIN_CONTRACT_REF, POLE_ELEMENTAL_CARRIER_REF, POLE_FOLD_STATE_REF, PairIndex16, Polarity,
-    QuaternionComponents, RES_ADMITTED_COUNT, RES_GAP_ADDRESSES, RESONANCE_GAP,
-    ROTATIONAL_STATE_TOTAL, RetrievalEvidence, RotationalPose, SelectionContext, SelectionLaw,
-    SiteProperty, SiteReading, SiteState, Transduction18to16, all_poses, carrier, det_shadow,
-    is_resonance_gap, monoid, resonance_entry,
+    AngleDeg10, AngularGrid, AnuttaraVoidRing, ApertureClock, ApertureIndex, ApplyOutcome,
+    CanonicalAddress, Codon64, CodonClass, CoinFace, CoinSum, CoinTriple, Element,
+    ElementalQuaternionBasis, FibonacciGround, FoldGeometry, FoldMotif, FoldState, FourCharge,
+    INVERSE_SEAM_CONTRACT_REF, M3_RES_MATRIX, MatrixAxis, MatrixFamily, Mobility, Nucleotide,
+    PHYSICAL_POLE_FORM_CONTRACT_VERSION, POLE_COIN_CONTRACT_REF, POLE_ELEMENTAL_CARRIER_REF,
+    POLE_FOLD_STATE_REF, PairIndex16, Polarity, QuaternionComponents, RES_ADMITTED_COUNT,
+    RES_GAP_ADDRESSES, RESONANCE_GAP, ROTATIONAL_STATE_TOTAL, RetrievalEvidence, RotationalPose,
+    SelectionContext, SelectionLaw, SiteProperty, SiteReading, SiteState, Transduction18to16,
+    all_poses, carrier, det_shadow, is_resonance_gap, monoid, resonance_entry,
 };
 pub use pole::{
     DetOverlay, ICHING_GRAMMAR_REF, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF,
