@@ -51,19 +51,55 @@ git -C "$EPI_REPO" archive "$SOURCE_REV" \
 
 frozen="$tmp/$SOURCE_ROOT"
 
+# Registered ratified corrections: content-pinned patch sets applied on top
+# of the frozen reference (schema ql-mef.epi-c-kernel-source-lock/v1,
+# ratified_corrections). The guarantee becomes: vendored == frozen o patches,
+# so the freeze still admits no silent drift.
+CORRECTIONS_ROOT="$REPO_ROOT/vendor/epi-kernel/corrections"
+CORRECTION_PATCHES=$(python3 - "$REPO_ROOT/migration/epi-kernel/source-lock.json" <<-'PYEOF'
+import json, sys
+lock = json.load(open(sys.argv[1]))
+for correction in lock.get("ratified_corrections", []):
+    print(correction["patch"])
+PYEOF
+)
+
+apply_corrections() {
+    # Applies every registered patch with paths resolving from the repo root.
+    while IFS= read -r patch_path; do
+        [[ -z "$patch_path" ]] && continue
+        git -C "$REPO_ROOT" apply "$REPO_ROOT/$patch_path"
+    done <<< "$CORRECTION_PATCHES"
+}
+
 if [[ "$MODE" == "check" ]]; then
-  diff -ru -- "$frozen/include" "$REFERENCE_ROOT/include"
-  diff -ru -- "$frozen/src" "$REFERENCE_ROOT/src"
-  echo "Epi C reference matches $SOURCE_REV"
-  echo "historical test tree locked (not bulk-vendored): $TEST_TREE"
-  exit 0
+    if [[ -n "$CORRECTION_PATCHES" ]]; then
+        # Rebuild the vendored tree from frozen + patches in a scratch
+        # checkout and require byte-identity with what is actually vendored.
+        apply_root="$REPO_ROOT/target/corrections-check/vendor/epi-kernel/reference"
+        rm -rf "$REPO_ROOT/target/corrections-check"
+        mkdir -p "$apply_root"
+        cp -R "$frozen/include" "$frozen/src" "$apply_root/"
+        apply_corrections
+        diff -ru -- "$apply_root/include" "$REFERENCE_ROOT/include"
+        diff -ru -- "$apply_root/src" "$REFERENCE_ROOT/src"
+        rm -rf "$REPO_ROOT/target/corrections-check"
+    else
+        diff -ru -- "$frozen/include" "$REFERENCE_ROOT/include"
+        diff -ru -- "$frozen/src" "$REFERENCE_ROOT/src"
+    fi
+    echo "Epi C reference matches $SOURCE_REV o ratified corrections"
+    echo "historical test tree locked (not bulk-vendored): $TEST_TREE"
+    exit 0
 fi
 
 mkdir -p "$REFERENCE_ROOT"
 rm -rf "$REFERENCE_ROOT/include" "$REFERENCE_ROOT/src"
 cp -R "$frozen/include" "$REFERENCE_ROOT/include"
 cp -R "$frozen/src" "$REFERENCE_ROOT/src"
-
+if [[ -n "$CORRECTION_PATCHES" ]]; then
+    apply_corrections
+fi
 echo "synchronized Epi C reference from $SOURCE_REV"
 echo "include tree: $INCLUDE_TREE"
 echo "src tree:     $SRC_TREE"
