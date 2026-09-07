@@ -3,7 +3,7 @@ meta	contract-version	1.0.0
 meta	authority	docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md s5 s6 s8 s13 s14
 meta	coin-law	three coins per site, heads=3 tails=2; sum 6..9; polarity=parity (odd=yang); mobility=extremity (6,9 moving)
 meta	zero-one-exclusion	M3 values never admit 0 or 1; the coin base is {2,3}; kernel anchor # / 0/1 <-> 1/0
-meta	nucleotide-table	canonical NUCLEOTIDE_COIN_VALUE = [6,9,8,7]; see docs/pole/M3-COIN-VALUE-DISCREPANCY.md
+meta	nucleotide-table	canonical NUCLEOTIDE_COIN_VALUE = [6,9,8,7]; corrected once and for all (owner ratification 2026-09-07); C kernel array pinned byte-for-byte by test
 nucleotide	A	0	6	yin	moving
 nucleotide	T	1	9	yang	moving
 nucleotide	C	2	8	yin	resting
@@ -101,3 +101,10 @@ clock	sync-fibre-aperture	2
 matrix	complementary	i
 matrix	moving-resting	j
 matrix	same-quality	k
+meta	tarot-law	suits carry gendering (suit polarity = nucleotide polarity) and dominant/subdominant grade (moving/old = dominant, resting/young = subdominant); per-suit integral = 4 x value + 60 (total 360)
+tarot	cups	A	water	yin	moving-dominant	6	84
+tarot	wands	T	fire	yang	moving-dominant	9	96
+tarot	pentacles	C	earth	yin	resting-subdominant	8	92
+tarot	swords	G	air	yang	resting-subdominant	7	88
+tarot-court	yin-suits	knight+king	dual-codon
+tarot-court	yang-suits	princess+queen	dual-codon

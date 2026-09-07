@@ -408,8 +408,8 @@ Current executable law:
 |---|---:|---|---|---:|---|---|
 | A | `00` | Yin | Moving | 6 | Cups | Water |
 | T | `01` | Yang | Moving | 9 | Wands | Fire |
-| C | `10` | Yin | Resting | 7 | Pentacles | Earth |
-| G | `11` | Yang | Resting | 8 | Swords | Air |
+| C | `10` | Yin | Resting | 8 | Pentacles | Earth |
+| G | `11` | Yang | Resting | 7 | Swords | Air |
 
 This gives one compact four-state alphabet from two binary distinctions. A codon is three such two-bit symbols:
 
@@ -558,8 +558,8 @@ Per suit / outer-nucleotide family:
 ```text
 A / Cups       336 / 4 = 84
 T / Wands      384 / 4 = 96
-C / Pentacles  352 / 4 = 88
-G / Swords     368 / 4 = 92
+C / Pentacles  368 / 4 = 92
+G / Swords     352 / 4 = 88
                          ───
                          360
 ```
@@ -1097,7 +1097,7 @@ Cross-coordinate dependencies remain many-to-many. M3′ uses M1/M2 kernel, M4 p
 
 - M3 as Mahāmāyā / dynamic computational matrix / universal transcription.
 - 64 as primary M3 address-space.
-- A/T/C/G two-bit values and I-Ching values `6/9/7/8`.
+- A/T/C/G two-bit values and I-Ching values `6/9/8/7`.
 - 64 hexagrams / codons and 384 line changes.
 - 16 pair field as currently dataset-backed.
 - three M3 matrix families and i/j/k axis assignment.
