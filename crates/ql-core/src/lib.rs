@@ -36,6 +36,21 @@ pub use pairing::{
     canonical_cross_pass_d3,
 };
 pub use pole::{
+    AA_STOP_INDEX, AMINO_ACID_VOCABULARY, DNA_RNA_UNIQUE_FORMS, ENTRIES_PER_SUIT,
+    M2_TO_M3_CYMATIC_PROJECTION, M2_VIBRATION_CYCLE, M3_CODON_TO_AA, M3_MATRIX_PAIR,
+    M3_PAIR_DIFFERENCE_SIGN, M3_RNA_DARK_MASK, M3_RNA_FUNCTIONAL_MASK, MAJOR_ARCANA_COUNT,
+    MINOR_ARCANA_COUNT, MajorArcanaCard, MinorArcanaCard, PARASHAKTI_SHADOW_OFFSET,
+    POLARIZED_ENTRIES, POLE_ROTATIONAL_PROFILE_REF, POLE_TAROT_BRIDGE_REF, POLE_TRANSCRIPTION_REF,
+    RECORDED_PAIR_DIFF_SIGNS, RNA_T_CONTAINING_CODONS, RNA_T_FREE_CODONS, ROTATIONAL_TABLE_ENTRIES,
+    RotationalCandidate, RotationalPolarity, RotationalProfile, RotationalStateType,
+    TAROT_QUATERNION_COUNT, TRANSCENDENT_TAROT_COUNT, TarotBridge, TarotPip, TarotSuit,
+    TranscendentOperator, amino_acid_name, apply_epogdoon_compression, codon_parashakti_frequency,
+    compose_rotational_state, generate_rotational_states, is_evolutionary_gap, is_stop_codon,
+    m3_codon_amino_index, m3_codon_is_rna_capable, matrix_pair_nucleotides, matrix_partner,
+    pair_difference, pair_sum, parashakti_frequency, rotational_profile,
+    rotational_total_sum_value, transduce_vibration_to_symbol, wc_anticodon,
+};
+pub use pole::{
     AngleDeg10, AngularGrid, ApertureClock, ApertureIndex, ApplyOutcome, CanonicalAddress, Codon64,
     CodonClass, CoinFace, CoinSum, CoinTriple, Element, ElementalQuaternionBasis, FibonacciGround,
     FoldGeometry, FoldMotif, FoldState, FourCharge, INVERSE_SEAM_CONTRACT_REF, M3_RES_MATRIX,

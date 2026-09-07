@@ -23,12 +23,12 @@ M3_RNA_DARK_MASK	data	FR 2.3.20	M3-C17	M3-3	ported	pole::transcription	as above
 M3_COMP_MATRIX	data	FR 2.3.9	M3-C09	M3-2	ported-as-law	pole::fold + iching complement	XOR 0x3F law; hexagram register cross-tested
 M3_MOVE_MATRIX	data	FR 2.3.9	M3-C09	M3-2	ported-as-law	pole::fold	trigram exchange law
 M3_RES_MATRIX	data	FR 2.3.9	M3-C16	M3-3	ported	pole::fold M3_RES_MATRIX	structural: 8 Kan/Li gap crossings; 56 admitted are identity (#112)
-M3_CODON_TO_AA	data	FR 2.3.9	M3-C18	M3-3	ported	pole::transcription	kernel's simplified record ported as data; biological audit stays open (unresolved item 6)
+M3_CODON_TO_AA	data	FR 2.3.9	M3-C18	M3-3	ported	pole::transcription	kernel's simplified record ported as data (STOP = vocabulary slot 10, not the 0xFF the header claims); biological audit stays open (unresolved item 6)
 M3_MAJOR_ARCANA	data	FR 2.3.16	M3-C20	M3-4	ported	pole::tarot	22 cards -> chromosome pair + amino index; +2 governance typed
 M3_TAROT_CODON_MAP	data	FR 2.3.16	M3-C19	M3-4	ported	pole::tarot	56-card exact cover, parsed from vendor
-M3_ROTATIONAL_PROFILE	data	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational	7/8 states, anchors, 16 court reflections
+M3_ROTATIONAL_PROFILE	data	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational	7/8 states, anchors, 16 court reflections; two-family generation yields 8 (codon,valence) candidates for every codon — the 472 surface is dataset provenance, classifier-consistent (agent-verified, refuting the derivation hypothesis); vendor sorts ascending
 M3_CODON_CLASS	derived	FR 2.3.17b	M3-C12	M3-3	shadowed	Codon64::classify + rotational profile	classification computed, not stored
-M2_TO_M3_CYMATIC_PROJECTION	data	FR 2.3.0	M3-C02	M3-0	ported	pole::transcription	72 one-hot masks, epogdoon fold-back bits
+M2_TO_M3_CYMATIC_PROJECTION	data	FR 2.2.7/M3 2.3.0	M3-C02	M3-0	ported	pole::transcription	72 one-hot masks, epogdoon fold-back bits; mask gap set (0,8,...,56) vs FR 2.3.6 arithmetic gap set (0,9,...,63) are two recorded taxes, never conflate
 M2_CAUSAL_RESONANCE_MASKS	data	M2 FR	M2	C M2 register	deferred	vendor m2.c	M2-register resonance data, not M3 codon system; its own ticket
 CLOCK_DEGREE_LUT	data	clock FR	M3-C24/C26	M3-5	open	none	dataset-backed columns live in the external deep specimen and were never filled in the vendored file; computable column laws ported (iching/aperture arithmetic); generator script lives in the deep specimen
 m3_generate_rotational_states	fn	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational two-family generation	negative/positive families, sum+diff / diff+sum values, 45-degree slots
@@ -37,7 +37,7 @@ m3_det_with_quaternion	fn	FR 2.3.11	M3-C14	M3-3	ported	pole::quaternion det_over
 m3_quat_from_codon	fn	FR 2.3.3	M3-C14	M3-3	ported	pole::quaternion	seed = (sum, v_outer - v_inner, 0, sum mod 6); provably non-invertible (M3-C31 evidence)
 m3_quat_codon_state	fn	FR 2.3.3	M3-C15	M3-3	ported	pole::quaternion	45-degree x-axis rotations
 m3_quat_active_state	fn	FR 2.3.3	M3-C14	M3-3	ported	pole::quaternion	argument quantization onto 8 states
-m3_tarot_rotation	fn	FR 2.3.16	M3-C15/C21	M3-4	ported	pole::tarot	minor = normalize/slerp of court codons; major = 2pi x idx/22; transcendent = +/-z
+m3_tarot_rotation	fn	FR 2.3.19/2.3.16	M3-C15/C21	M3-4	ported	pole::tarot	minor = normalize/slerp of court codons; major = 2pi x idx/22; transcendent = +/-z (vendor LUT labels itself FR 2.3.19)
 m3_tarot_translate	fn	FR 2.3.16	M3-C21/C31	M3-4	ported	pole::tarot	sandwich + quantize to 64; the strongest M3-C31 seed, kept as forward law
 m3_init/m3_teardown/m3_cli_dispatch	engine	-	-	-	shadowed	ql-cli product surface	arena/HC plumbing is C-engine register; CLI is the product entry
 m3_verify	engine	-	-	-	shadowed	conformance suites	its laws live distributed in the Rust conformance tests (C side still runs green)

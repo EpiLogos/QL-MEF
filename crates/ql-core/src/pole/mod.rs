@@ -29,6 +29,9 @@ pub mod inverse;
 pub mod nucleotide;
 pub mod pose;
 pub mod quaternion;
+pub mod rotational;
+pub mod tarot;
+pub mod transcription;
 
 pub use aperture::{AngularGrid, ApertureClock, ApertureIndex, FibonacciGround};
 pub use basis::{
@@ -58,6 +61,26 @@ pub use quaternion::{
     DetOverlay, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF, Quat, RING_QUATERNION_LUT,
     det_overlay, element_quaternion, matrix_axis_quaternion, quat_active_state, quat_codon_state,
     quat_from_codon, quat_from_ring_pos,
+};
+pub use rotational::{
+    POLARIZED_ENTRIES, POLE_ROTATIONAL_PROFILE_REF, RECORDED_PAIR_DIFF_SIGNS,
+    ROTATIONAL_TABLE_ENTRIES, RotationalCandidate, RotationalPolarity, RotationalProfile,
+    RotationalStateType, compose_rotational_state, generate_rotational_states, rotational_profile,
+    wc_anticodon,
+};
+pub use tarot::{
+    ENTRIES_PER_SUIT, MAJOR_ARCANA_COUNT, MINOR_ARCANA_COUNT, MajorArcanaCard, MinorArcanaCard,
+    POLE_TAROT_BRIDGE_REF, TAROT_QUATERNION_COUNT, TRANSCENDENT_TAROT_COUNT, TarotBridge, TarotPip,
+    TarotSuit, TranscendentOperator,
+};
+pub use transcription::{
+    AA_STOP_INDEX, AMINO_ACID_VOCABULARY, DNA_RNA_UNIQUE_FORMS, M2_TO_M3_CYMATIC_PROJECTION,
+    M2_VIBRATION_CYCLE, M3_CODON_TO_AA, M3_MATRIX_PAIR, M3_PAIR_DIFFERENCE_SIGN, M3_RNA_DARK_MASK,
+    M3_RNA_FUNCTIONAL_MASK, PARASHAKTI_SHADOW_OFFSET, POLE_TRANSCRIPTION_REF,
+    RNA_T_CONTAINING_CODONS, RNA_T_FREE_CODONS, amino_acid_name, apply_epogdoon_compression,
+    codon_parashakti_frequency, is_evolutionary_gap, is_stop_codon, m3_codon_amino_index,
+    m3_codon_is_rna_capable, matrix_pair_nucleotides, matrix_partner, pair_difference, pair_sum,
+    parashakti_frequency, rotational_total_sum_value, transduce_vibration_to_symbol,
 };
 
 /// Version of the physical-pole form contract this ground serves.
