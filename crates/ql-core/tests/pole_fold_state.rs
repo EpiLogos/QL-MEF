@@ -3,8 +3,8 @@
 //! reciprocal-aperture fold, and the open inverse seam.
 
 use ql_core::{
-    ApertureIndex, Codon64, MatrixFamily, Mobility, POLE_FOLD_STATE_REF, Polarity,
-    RetrievalEvidence, SelectionContext, SiteReading,
+    ApertureIndex, ApplyOutcome, Codon64, MatrixFamily, Mobility, POLE_FOLD_STATE_REF, Polarity,
+    QuaternionComponents, RetrievalEvidence, SelectionContext, SiteReading,
 };
 
 const FIXTURE: &str = include_str!("../../../fixtures/pole/fold-state-v1.tsv");
@@ -88,21 +88,37 @@ impl FoldStateForTest {
         self.0
             .apply_matrix(family)
             .expect("matrix law applies")
+            .applied()
+            .expect("determinate transform")
             .codon()
             .address()
     }
 }
 
 #[test]
-fn fixture_resonance_stays_typed_but_unresolved() {
+fn fixture_resonance_rows_are_the_ported_dataset_table() {
     let rows = rows("matrix-resonance");
     assert_eq!(rows.len(), 1);
-    assert_eq!(rows[0][1], "typed-unresolved");
+    // The k axis is no longer typed-unresolved: the RES matrix is ported
+    // verbatim from the C kernel — identity partners on the 56 admitted
+    // entries, the 8 evolutionary gaps typed as Provisional.
+    assert_eq!(rows[0][1], "identity-on-56-admitted");
     assert_eq!(rows[0][2], "dataset-structural");
     assert_eq!(rows[0][3], "8-gaps");
-    // Executable half: the k-axis action is not fabricable headlessly.
-    let state = FoldStateForTest::new(0);
-    assert!(state.0.apply_matrix(MatrixFamily::SameQuality).is_err());
+    // Executable half: admitted codons apply through the k axis; gap codons
+    // yield the typed provisional outcome, never an error.
+    let applied = FoldStateForTest::new(0)
+        .0
+        .apply_matrix(MatrixFamily::SameQuality)
+        .expect("k axis executes");
+    assert!(matches!(applied, ApplyOutcome::Applied(_)));
+    assert!(matches!(
+        FoldStateForTest::new(0x05)
+            .0
+            .apply_matrix(MatrixFamily::SameQuality)
+            .expect("k axis executes"),
+        ApplyOutcome::Provisional
+    ));
 }
 
 #[test]
@@ -140,10 +156,31 @@ fn inverse_seam_stays_open_with_the_roles_typed() {
     // no consumer can collapse retrieval into a canonical verdict.
     let evidence = RetrievalEvidence::from_scores(vec![(Codon64::new(21), 90)]);
     assert_eq!(evidence.best().map(|(c, _)| c.address()), Some(21));
+    // The context quaternions are composed in the ratified elemental basis
+    // (w=Earth, x=Fire, y=Water, z=Air) — the kernel-side audit found no
+    // deterministic, grounded selection law, and the typed split is the
+    // strengthened ground any future law reads.
     let context = SelectionContext {
-        q_identity: [1, 0, 0, 0],
-        q_composed: [0, 1, 0, 0],
+        q_identity: QuaternionComponents {
+            w: 1,
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        q_composed: QuaternionComponents {
+            w: 0,
+            x: 1,
+            y: 0,
+            z: 0,
+        },
     };
+    // The elemental reads route through the basis, not raw slots.
+    use ql_core::Element;
+    assert_eq!(
+        context.by_element(true, Element::Fire),
+        1,
+        "composed quaternion's Fire component"
+    );
     // The context types keep Q_identity and Q_composed separately typed
     // (acceptance criterion 11); evidence never substitutes for them.
     let _ = (context.q_identity, context.q_composed);

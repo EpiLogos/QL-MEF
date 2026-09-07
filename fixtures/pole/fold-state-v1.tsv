@@ -135,7 +135,7 @@ matrix-complement	62	1
 matrix-move	62	55
 matrix-complement	63	0
 matrix-move	63	63
-matrix-resonance	typed-unresolved	dataset-structural	8-gaps
+matrix-resonance	identity-on-56-admitted	dataset-structural	8-gaps
 reciprocal	0	15
 reciprocal	1	14
 reciprocal	2	13

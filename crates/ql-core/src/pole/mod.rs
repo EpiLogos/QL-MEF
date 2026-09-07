@@ -38,7 +38,10 @@ pub use codon::{
     SiteProperty, SiteState,
 };
 pub use coin::{CoinFace, CoinSum, CoinTriple, Mobility, Polarity, monoid};
-pub use fold::{FoldGeometry, FoldState, SiteReading};
+pub use fold::{
+    ApplyOutcome, FoldGeometry, FoldState, M3_RES_MATRIX, RES_ADMITTED_COUNT, RES_GAP_ADDRESSES,
+    RESONANCE_GAP, SiteReading, is_resonance_gap, resonance_entry,
+};
 pub use inverse::{
     CanonicalAddress, INVERSE_SEAM_CONTRACT_REF, RetrievalEvidence, SelectionContext, SelectionLaw,
 };

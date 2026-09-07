@@ -26,7 +26,10 @@
 //! ```text
 //! Complementary  (i): codon ⊕ 0x3F — every bit of every site conjugates
 //! Moving/Resting (j): trigram exchange — lower and upper trigrams swap
-//! Same-Quality   (k): resonance lookup — dataset-structural, 8 gaps
+//! Same-Quality   (k): resonance lookup — the ported RES matrix (verbatim
+//!                     from the C reference kernel): the recorded partner
+//!                     on the 56 admitted entries, and one of 8 evolutionary
+//!                     gaps (typed [`ApplyOutcome::Provisional`]) elsewhere
 //! ```
 
 use super::aperture::ApertureIndex;
@@ -44,6 +47,88 @@ pub const VALLEY_ANGLE_DEG10: i32 = 225;
 pub const MOUNTAIN_ANGLE_DEG10: i32 = -225;
 pub const MOVING_VELOCITY_DEG10: i32 = 225;
 pub const RESTING_VELOCITY_DEG10: i32 = 0;
+
+/// The kernel's resonance gap sentinel (`M3_RESONANCE_GAP`,
+/// `vendor/epi-kernel/reference/include/m3.h` FR 2.3.3/2.3.8): the system
+/// has reached an evolutionary gap — `STATUS_PROVISIONAL`.
+pub const RESONANCE_GAP: u8 = 0xFF;
+
+/// The M3 RES matrix — the Same-Quality (k-axis) resonance table — ported
+/// VERBATIM from the C reference kernel
+/// (`vendor/epi-kernel/reference/src/m3.c`, `M3_RES_MATRIX`):
+/// dataset-structural, 56 admitted entries + 8 evolutionary gaps (`0xFF`).
+///
+/// Indexed by the raw six-bit codon address; entry `a` records the
+/// resonance partner of address `a`, with [`RESONANCE_GAP`] where the
+/// resonance does not resolve.
+///
+/// Verified gap structure (value-independent). The gaps are trigram-row
+/// positions of the address bits alone — the kernel comments place each gap
+/// at an `upper<<3 | lower` crossing (the hexagram id read from the same
+/// six bits, cf. [`super::codon::Codon64::hexagram_id`]):
+///
+/// ```text
+/// 0x05  Kun(000)/Li(101)    0x2A  Li(101)/Kan(010)
+/// 0x15  Kan(010)/Li(101)    0x35  Xun(110)/Li(101)
+/// 0x1A  Dui(011)/Kan(010)   0x3A  Qian(111)/Kan(010)
+/// 0x22  Gen(100)/Kan(010)   0x3D  Qian(111)/Li(101)
+/// ```
+///
+/// Every gap has a Kan (Water, 010) or Li (Fire, 101) lower trigram; the
+/// Zhen (001) row is entirely admitted. The only kernel consumer of the
+/// table (`m3_resonance_lookup`, m3.h FR 2.3.8/2.3.9) is a plain array
+/// index over the address — it never reads the nucleotide I-Ching value
+/// table (`NUCLEOTIDE_ICHING_VALUE`, m3.h FR 2.3.12), which participates
+/// only in the `m3_quat_from_codon`/charge paths. The gap set is therefore
+/// a property of the six-bit address structure and cannot move under the
+/// canonical nucleotide value-table correction
+/// ([`super::nucleotide::Nucleotide::NUCLEOTIDE_COIN_VALUE`]); conformance
+/// tests in `tests/pole_res_matrix.rs` pin the exact addresses and their
+/// trigram decomposition.
+pub const M3_RES_MATRIX: [u8; 64] = [
+    // Row 0 (upper=Kun=000):    gap at 0x05 (Kun/Li)
+    0x00, 0x01, 0x02, 0x03, 0x04, 0xFF, 0x06, 0x07,
+    // Row 1 (upper=Zhen=001):   all valid
+    0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    // Row 2 (upper=Kan=010):    gap at 0x15 (Kan/Li)
+    0x10, 0x11, 0x12, 0x13, 0x14, 0xFF, 0x16, 0x17,
+    // Row 3 (upper=Dui=011):    gap at 0x1A (Dui/Kan)
+    0x18, 0x19, 0xFF, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+    // Row 4 (upper=Gen=100):    gap at 0x22 (Gen/Kan)
+    0x20, 0x21, 0xFF, 0x23, 0x24, 0x25, 0x26, 0x27,
+    // Row 5 (upper=Li=101):     gap at 0x2A (Li/Kan)
+    0x28, 0x29, 0xFF, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+    // Row 6 (upper=Xun=110):    gap at 0x35 (Xun/Li)
+    0x30, 0x31, 0x32, 0x33, 0x34, 0xFF, 0x36, 0x37,
+    // Row 7 (upper=Qian=111):   gaps at 0x3A (Qian/Kan) and 0x3D (Qian/Li)
+    0x38, 0x39, 0xFF, 0x3B, 0x3C, 0xFF, 0x3E, 0x3F,
+];
+
+/// The eight evolutionary gap addresses of [`M3_RES_MATRIX`], ascending —
+/// exactly its [`RESONANCE_GAP`] entries (test-pinned).
+pub const RES_GAP_ADDRESSES: [u8; 8] = [0x05, 0x15, 0x1A, 0x22, 0x2A, 0x35, 0x3A, 0x3D];
+
+/// Admitted (resonance-resolvable) codons: 64 − 8 gaps = 56, the kernel's
+/// "56 entries + 8 gaps" admissibility split (`M3-C16`).
+pub const RES_ADMITTED_COUNT: usize = 56;
+
+/// The recorded resonance entry of a codon address — the typed form of the
+/// kernel's `m3_resonance_lookup` (m3.h FR 2.3.9): `Some(partner)` on the
+/// 56 admitted entries, `None` at the 8 evolutionary gaps (where the kernel
+/// sets `STATUS_PROVISIONAL`).
+pub const fn resonance_entry(address: u8) -> Option<u8> {
+    let entry = M3_RES_MATRIX[(address & 0x3F) as usize];
+    if entry == RESONANCE_GAP {
+        None
+    } else {
+        Some(entry)
+    }
+}
+
+/// Whether a codon address sits on an evolutionary resonance gap.
+pub const fn is_resonance_gap(address: u8) -> bool {
+    resonance_entry(address).is_none()
+}
 
 /// Live crease telemetry at one site.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -130,6 +215,36 @@ pub struct FoldState {
     rotational_index: u8,
     aperture16: ApertureIndex,
     fibonacci_phase60: u16,
+}
+
+/// The outcome of applying one M3 matrix family through its bound
+/// quaternion axis.
+///
+/// The i (Complementary) and j (Moving/Resting) transforms are total and
+/// always [`ApplyOutcome::Applied`]. The k (Same-Quality) transform reads
+/// the dataset-structural RES matrix, whose 8 evolutionary gaps yield
+/// [`ApplyOutcome::Provisional`] — the kernel's `STATUS_PROVISIONAL`
+/// (m3.h FR 2.3.8) carried as a typed outcome rather than an error: the
+/// operation is lawful and executable, the gap means the transform itself
+/// does not resolve and the fold stays at its current state.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ApplyOutcome {
+    /// The transform resolved to a determinate next fold state.
+    Applied(FoldState),
+    /// The k-axis resonance entry is an evolutionary gap
+    /// ([`RESONANCE_GAP`]): typed but unresolved; the resident fold state
+    /// is unchanged.
+    Provisional,
+}
+
+impl ApplyOutcome {
+    /// The applied state, when the transform resolved.
+    pub const fn applied(self) -> Option<FoldState> {
+        match self {
+            Self::Applied(state) => Some(state),
+            Self::Provisional => None,
+        }
+    }
 }
 
 impl FoldState {
@@ -232,7 +347,17 @@ impl FoldState {
 
     /// Apply one of the three M3 matrix operations through its bound
     /// quaternion axis. The address changes; the fold state re-projects.
-    pub fn apply_matrix(&self, family: MatrixFamily) -> Result<Self, QlError> {
+    ///
+    /// The Same-Quality (k) family reads the ported RES matrix
+    /// ([`M3_RES_MATRIX`]): a valid entry applies like the i/j families —
+    /// the rotational index carries over clamped to the new codon's state
+    /// count, aperture and Fibonacci phase are preserved, and the active
+    /// axis is set to the family's own (k). An entry that is one of the 8
+    /// evolutionary gaps returns [`ApplyOutcome::Provisional`] instead of an
+    /// error (kernel `STATUS_PROVISIONAL`); the design keeps all three
+    /// families on one return path so the provisional status is
+    /// distinguishable in the type, not buried in an error channel.
+    pub fn apply_matrix(&self, family: MatrixFamily) -> Result<ApplyOutcome, QlError> {
         let codon = match family {
             MatrixFamily::Complementary => Codon64::new(self.codon.address() ^ 0x3F),
             super::codon::MatrixFamily::MovingResting => {
@@ -240,13 +365,10 @@ impl FoldState {
                 Codon64::new(((a & 0x07) << 3) | ((a >> 3) & 0x07))
             }
             super::codon::MatrixFamily::SameQuality => {
-                // The resonance action is the dataset-structural RES matrix
-                // (8 evolutionary gaps); without the dataset the operation
-                // is typed but unresolved — STATUS_PROVISIONAL.
-                return Err(QlError::InvalidPoleValue {
-                    field: "resonance-unresolved",
-                    value: self.codon.address() as u32,
-                });
+                match resonance_entry(self.codon.address()) {
+                    Some(target) => Codon64::new(target),
+                    None => return Ok(ApplyOutcome::Provisional),
+                }
             }
         };
         let mut next = Self::from_codon(codon, self.aperture16, self.fibonacci_phase60);
@@ -254,7 +376,7 @@ impl FoldState {
             .rotational_index
             .min(codon.rotational_state_count() - 1);
         next.active_matrix_axis = family.axis();
-        Ok(next)
+        Ok(ApplyOutcome::Applied(next))
     }
 }
 
@@ -318,13 +440,19 @@ mod tests {
         for address in 0u8..64 {
             let codon = Codon64::new(address);
             let state = FoldState::from_codon(codon, ApertureIndex::new(3).unwrap(), 7);
-            let complemented = state.apply_matrix(MatrixFamily::Complementary).unwrap();
+            let complemented = state
+                .apply_matrix(MatrixFamily::Complementary)
+                .unwrap()
+                .applied()
+                .expect("the i axis is total");
             assert_eq!(complemented.codon().address(), address ^ 0x3F);
             assert_eq!(complemented.active_matrix_axis(), MatrixAxis::I);
             // Involution.
             let back = complemented
                 .apply_matrix(MatrixFamily::Complementary)
-                .unwrap();
+                .unwrap()
+                .applied()
+                .expect("the i axis is total");
             assert_eq!(back.codon(), codon);
         }
     }
@@ -333,19 +461,74 @@ mod tests {
     fn moving_resting_axis_exchanges_trigrams() {
         let codon = Codon64::new(0b001010); // lower 010, upper 001
         let state = FoldState::from_codon(codon, ApertureIndex::new(0).unwrap(), 0);
-        let moved = state.apply_matrix(MatrixFamily::MovingResting).unwrap();
+        let moved = state
+            .apply_matrix(MatrixFamily::MovingResting)
+            .unwrap()
+            .applied()
+            .expect("the j axis is total");
         assert_eq!(moved.codon().address(), 0b010001);
         assert_eq!(moved.active_matrix_axis(), MatrixAxis::J);
         // Involution.
-        let back = moved.apply_matrix(MatrixFamily::MovingResting).unwrap();
+        let back = moved
+            .apply_matrix(MatrixFamily::MovingResting)
+            .unwrap()
+            .applied()
+            .expect("the j axis is total");
         assert_eq!(back.codon(), codon);
     }
 
     #[test]
-    fn resonance_axis_stays_typed_but_unresolved_without_the_dataset() {
-        let state = FoldState::from_codon(Codon64::new(0), ApertureIndex::new(0).unwrap(), 0);
-        let result = state.apply_matrix(MatrixFamily::SameQuality);
-        assert!(result.is_err(), "the RES action needs the dataset table");
+    fn resonance_axis_applies_admitted_entries_and_marks_gaps_provisional() {
+        let aperture = ApertureIndex::new(3).unwrap();
+        for address in 0u8..64 {
+            let state = FoldState::from_codon(Codon64::new(address), aperture, 7);
+            let outcome = state.apply_matrix(MatrixFamily::SameQuality).unwrap();
+            if is_resonance_gap(address) {
+                // The kernel's STATUS_PROVISIONAL as a typed outcome, never
+                // an error: the fold stays at its current state.
+                assert_eq!(outcome, ApplyOutcome::Provisional, "gap {address:#04x}");
+                assert!(outcome.applied().is_none());
+            } else {
+                let next = outcome.applied().expect("admitted resonance entry applies");
+                assert_eq!(next.codon().address(), address, "partner of {address:#04x}");
+                assert_eq!(next.active_matrix_axis(), MatrixAxis::K);
+                // Registers preserved; the pose carries over the identity
+                // partner within the same state count.
+                assert_eq!(next.aperture16(), aperture);
+                assert_eq!(next.fibonacci_phase60(), 7);
+                assert_eq!(next.rotational_index(), 0);
+                assert_eq!(next.rotational_pose().codon(), next.codon());
+            }
+        }
+    }
+
+    #[test]
+    fn same_quality_carries_the_pose_and_preserves_the_registers() {
+        // AAA (admitted, 7 rotational states): pose index 6 carries exactly.
+        let mut state = FoldState::from_codon(Codon64::new(0), ApertureIndex::new(2).unwrap(), 11);
+        state.set_rotational_index(6).unwrap();
+        let next = state
+            .apply_matrix(MatrixFamily::SameQuality)
+            .unwrap()
+            .applied()
+            .expect("AAA is admitted");
+        assert_eq!(next.rotational_index(), 6, "pose carries over");
+        assert_eq!(next.aperture16().index(), 2, "aperture preserved");
+        assert_eq!(next.fibonacci_phase60(), 11, "phase preserved");
+        assert_eq!(next.active_matrix_axis(), MatrixAxis::K);
+        // The clamp to the new codon's state count is the shared tail of all
+        // three arms; under the identity RES data the k axis never changes
+        // the codon, so the clamp itself is exercised by the i/j arms.
+    }
+
+    #[test]
+    fn the_eight_res_gaps_are_exactly_the_recorded_addresses() {
+        let gaps: Vec<u8> = (0u8..64).filter(|a| is_resonance_gap(*a)).collect();
+        assert_eq!(gaps, RES_GAP_ADDRESSES);
+        assert_eq!(gaps.len(), 64 - RES_ADMITTED_COUNT);
+        for gap in gaps {
+            assert_eq!(M3_RES_MATRIX[gap as usize], RESONANCE_GAP);
+        }
     }
 
     #[test]
