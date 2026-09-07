@@ -1016,7 +1016,7 @@ It does **not** yet expose the M3 16-lens + Fibonacci-ground aperture state as a
 | `M3-C08` | 16 dinucleotide S/D field | M3-2 | two nucleotides | dataset-native sum/difference | Inspect pair-level relational charge | Implemented; D semantics partly open |
 | `M3-C09` | Three matrix / quaternion-axis field | M3-2/M3-3 | pair family / address | i/j/k matrix operation | Read three orthogonal transformation axes | Implemented axes/operators; deeper Clifford mapping research |
 | `M3-C10` | Four-charge codon accounting | M3-2/M3-3 | codon X/Y/Z values | pp/mm/mp/pm | Obtain a calculable bioquaternionic charge signature | Implemented + tested |
-| `M3-C11` | 360 integral closure | M3-2/M3-5 | all 64 pp values | 1440/4 = 360; suit 84/96/88/92 | Relate genetic/Tarot charge accounting to clock total | Implemented invariant |
+| `M3-C11` | 360 integral closure | M3-2/M3-5 | all 64 pp values | 1440/4 = 360; suit 84/96/92/88 | Relate genetic/Tarot charge accounting to clock total | Implemented invariant |
 | `M3-C12` | Codon class / non-duality | M3-3 | nucleotide pattern | 40 non-dual / 24 dual | Explains different rotational cardinalities | Implemented + tested |
 | `M3-C13` | 472-state rotational surface | M3-3 | codon + overlapping pair relations | 40×7 + 24×8 | Exposes oriented expression of a form | Implemented generation/profile |
 | `M3-C14` | Environment-conditioned rotation | M3-3 | active codon + composed ring/element/matrix quaternion | active 0..7 state | Deterministically augments a reading with current orientation | Implemented in C DET overlay |
