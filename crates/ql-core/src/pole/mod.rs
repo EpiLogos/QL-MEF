@@ -24,9 +24,11 @@ pub mod basis;
 pub mod codon;
 pub mod coin;
 pub mod fold;
+pub mod iching;
 pub mod inverse;
 pub mod nucleotide;
 pub mod pose;
+pub mod quaternion;
 
 pub use aperture::{AngularGrid, ApertureClock, ApertureIndex, FibonacciGround};
 pub use basis::{
@@ -42,11 +44,21 @@ pub use fold::{
     ApplyOutcome, FoldGeometry, FoldState, M3_RES_MATRIX, RES_ADMITTED_COUNT, RES_GAP_ADDRESSES,
     RESONANCE_GAP, SiteReading, is_resonance_gap, resonance_entry,
 };
+pub use iching::{
+    ICHING_GRAMMAR_REF, Trigram, complement, compose_hexagram, flow_clockwise,
+    integral_symmetry_field, lower_trigram_id, nuclear_hexagram, nuclear_lower, nuclear_upper,
+    palindromic_anchors, polar_opposite_simple, polar_opposite_su2, quadrant, upper_trigram_id,
+};
 pub use inverse::{
     CanonicalAddress, INVERSE_SEAM_CONTRACT_REF, RetrievalEvidence, SelectionContext, SelectionLaw,
 };
 pub use nucleotide::Nucleotide;
 pub use pose::{ROTATIONAL_STATE_TOTAL, RotationalPose, all_poses};
+pub use quaternion::{
+    DetOverlay, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF, Quat, RING_QUATERNION_LUT,
+    det_overlay, element_quaternion, matrix_axis_quaternion, quat_active_state, quat_codon_state,
+    quat_from_codon, quat_from_ring_pos,
+};
 
 /// Version of the physical-pole form contract this ground serves.
 pub const PHYSICAL_POLE_FORM_CONTRACT_VERSION: &str = "1.0.0";
@@ -59,3 +71,6 @@ pub const POLE_ELEMENTAL_CARRIER_REF: &str = "ql.pole.elemental-carrier/v1";
 
 /// Semantic identity of the M3 fold/rūpa state projection (T5).
 pub const POLE_FOLD_STATE_REF: &str = "ql.pole.fold-state/v1";
+
+/// Semantic identity of the I-Ching grammar port (T-I).
+pub const POLE_ICHING_GRAMMAR_CONTRACT_REF: &str = ICHING_GRAMMAR_REF;
