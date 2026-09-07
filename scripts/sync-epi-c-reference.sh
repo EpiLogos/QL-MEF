@@ -64,26 +64,30 @@ for correction in lock.get("ratified_corrections", []):
 PYEOF
 )
 
+# $1 = repo-root-relative directory whose layout mirrors the repo root
+# (must contain the frozen reference pre-images under vendor/...).
 apply_corrections() {
-    # Applies every registered patch with paths resolving from the repo root.
+    local apply_dir=$1
     while IFS= read -r patch_path; do
         [[ -z "$patch_path" ]] && continue
-        git -C "$REPO_ROOT" apply "$REPO_ROOT/$patch_path"
+        git -C "$REPO_ROOT" apply --directory="$apply_dir" "$patch_path"
     done <<< "$CORRECTION_PATCHES"
 }
 
 if [[ "$MODE" == "check" ]]; then
     if [[ -n "$CORRECTION_PATCHES" ]]; then
         # Rebuild the vendored tree from frozen + patches in a scratch
-        # checkout and require byte-identity with what is actually vendored.
-        apply_root="$REPO_ROOT/target/corrections-check/vendor/epi-kernel/reference"
-        rm -rf "$REPO_ROOT/target/corrections-check"
+        # directory (repo-relative; git apply resolves --directory against
+        # the repo root) and require byte-identity with what is vendored.
+        APPLY_DIR="target/corrections-check"
+        apply_root="$REPO_ROOT/$APPLY_DIR/vendor/epi-kernel/reference"
+        rm -rf "$REPO_ROOT/$APPLY_DIR"
         mkdir -p "$apply_root"
         cp -R "$frozen/include" "$frozen/src" "$apply_root/"
-        apply_corrections
+        apply_corrections "$APPLY_DIR"
         diff -ru -- "$apply_root/include" "$REFERENCE_ROOT/include"
         diff -ru -- "$apply_root/src" "$REFERENCE_ROOT/src"
-        rm -rf "$REPO_ROOT/target/corrections-check"
+        rm -rf "$REPO_ROOT/$APPLY_DIR"
     else
         diff -ru -- "$frozen/include" "$REFERENCE_ROOT/include"
         diff -ru -- "$frozen/src" "$REFERENCE_ROOT/src"
@@ -98,7 +102,7 @@ rm -rf "$REFERENCE_ROOT/include" "$REFERENCE_ROOT/src"
 cp -R "$frozen/include" "$REFERENCE_ROOT/include"
 cp -R "$frozen/src" "$REFERENCE_ROOT/src"
 if [[ -n "$CORRECTION_PATCHES" ]]; then
-    apply_corrections
+    apply_corrections "."
 fi
 echo "synchronized Epi C reference from $SOURCE_REV"
 echo "include tree: $INCLUDE_TREE"
