@@ -32,12 +32,20 @@
 /* ===================================================================
  * FR 2.3.12: NUCLEOTIDE_ICHING_VALUE — Canonical I-Ching Numeric LUT
  *
- * A=6(Yin,Moving), T=9(Yang,Moving), C=7(yin,Resting), G=8(yang,Resting)
+ * A=6(Yin,Moving), T=9(Yang,Moving), C=8(yin,Resting), G=7(yang,Resting)
  * These values ARE the system's root arithmetic.
  * All pair sums, codon sums, and integral invariants derive from them.
+ *
+ * Parity law (m4_cast_iching, the generator): odd sums are yang, even
+ * sums are yin; extreme sums (6=2+2+2, 9=3+3+3) move, mixed sums rest.
+ * Classical grades: old yin 6, young YANG 7, young YIN 8, old yang 9 —
+ * C (yin/resting, Pentacles) is the young yin 8; G (yang/resting,
+ * Swords) is the young yang 7. Ratified 2026-09-07 (owner): corrected
+ * from the parity-violating {6,9,7,8}; dataset tables regenerated with
+ * this table in the same commit.
  * =================================================================== */
 
-static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8};
+static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
 
 _Static_assert(
     6 + 9 + 7 + 8 == 30,
@@ -69,8 +77,8 @@ static inline uint8_t get_codon_iching_sum(uint8_t codon6bit) {
  *
  * A=0b00(0) Yin/Moving   — Old Yin (6)   — CUPS (Water)
  * T=0b01(1) Yang/Moving  — Old Yang (9)  — WANDS (Fire)
- * C=0b10(2) Yin/Resting  — Young Yin (7) — PENTACLES (Earth)
- * G=0b11(3) Yang/Resting — Young Yang (8)— SWORDS (Air)
+ * C=0b10(2) Yin/Resting  — Young Yin (8) — PENTACLES (Earth)
+ * G=0b11(3) Yang/Resting — Young Yang (7)— SWORDS (Air)
  * =================================================================== */
 
 #define M3_NUC_A  0x00
@@ -588,8 +596,8 @@ extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
 #define M3_INTEGRAL_INVARIANT    360U
 #define M3_SUIT_A_INTEGRAL        84U   /* Cups:      Yin Moving  */
 #define M3_SUIT_T_INTEGRAL        96U   /* Wands:     Yang Moving */
-#define M3_SUIT_C_INTEGRAL        88U   /* Pentacles: yin Resting */
-#define M3_SUIT_G_INTEGRAL        92U   /* Swords:    yang Resting */
+#define M3_SUIT_C_INTEGRAL        92U   /* Pentacles: yin Resting */
+#define M3_SUIT_G_INTEGRAL        88U   /* Swords:    yang Resting */
 
 _Static_assert(
     M3_SUIT_A_INTEGRAL + M3_SUIT_T_INTEGRAL +

@@ -2,9 +2,9 @@
 //!
 //! One site carries the same two-bit distinction as a nucleotide:
 //! polarity × mobility. The canonical coin-value table below is the ONE named
-//! mapping for the whole physical pole; see
-//! `docs/pole/M3-COIN-VALUE-DISCREPANCY.md` for the ripple analysis of the
-//! legacy C-kernel array and the owner ratification ask.
+//! mapping for the whole physical pole, shared with the C reference kernel
+//! (FR 2.3.12, corrected 2026-09-07 by owner ratification): the conformance
+//! test pins the C array byte-for-byte so the two languages cannot drift.
 
 use super::coin::{CoinSum, Mobility, Polarity};
 use crate::QlError;
@@ -34,17 +34,13 @@ impl Nucleotide {
 
     /// THE canonical nucleotide → coin-value table of the physical pole.
     ///
-    /// Parity-consistent default: odd sums are yang, even sums are yin; the
-    /// extreme sums move, the mixed sums rest. Complementary pairs keep
-    /// A+T = C+G = 15 and the total 30.
+    /// Parity law: odd sums are yang, even sums are yin; the extreme sums
+    /// move, the mixed sums rest. Classical grades: old yin 6 (A, dominant
+    /// yin), young yang 7 (G, subdominant yang), young yin 8 (C, subdominant
+    /// yin), old yang 9 (T, dominant yang). Complementary pairs keep
+    /// A+T = C+G = 15 and the total 30. The same table stands in the C
+    /// reference kernel (FR 2.3.12) — pinned by test.
     pub const NUCLEOTIDE_COIN_VALUE: [u8; 4] = [6, 9, 8, 7];
-
-    /// The legacy C-kernel array (`vendor/epi-kernel/reference/include/m3.h`,
-    /// FR 2.3.12) that the C datasets were generated under. It violates the
-    /// parity law at the C/G positions (C=7 is odd = yang-parity but labelled
-    /// yin; G=8 is even = yin-parity but labelled yang). Kept here as named
-    /// evidence only: never mix the two mappings.
-    pub const LEGACY_C_KERNEL_NUCLEOTIDE_ICHING_VALUE: [u8; 4] = [6, 9, 7, 8];
 
     pub fn from_bits(bits: u8) -> Result<Self, QlError> {
         match bits & 0x03 {
@@ -176,21 +172,23 @@ mod tests {
     }
 
     #[test]
-    fn legacy_array_is_proven_parity_violating() {
-        // The discrepancy is executable evidence, not an opinion: the legacy
-        // C array assigns C (yin/resting) the odd value 7 and G (yang/resting)
-        // the even value 8 — both violate the parity law its own generator
-        // (m4_cast_iching) enforces.
-        let legacy = Nucleotide::LEGACY_C_KERNEL_NUCLEOTIDE_ICHING_VALUE;
-        let c_parity = legacy[Nucleotide::C as usize] % 2;
-        let g_parity = legacy[Nucleotide::G as usize] % 2;
-        assert_eq!(
-            c_parity, 1,
-            "legacy C value is odd = yang-parity, but C is ratified yin"
-        );
-        assert_eq!(
-            g_parity, 0,
-            "legacy G value is even = yin-parity, but G is ratified yang"
-        );
+    fn c_kernel_array_is_pinned_to_the_canonical_table() {
+        // The C reference kernel (FR 2.3.12, corrected 2026-09-07 by owner
+        // ratification) must carry the exact same table as the Rust contract:
+        // one law, two languages, zero drift.
+        let header = include_str!("../../../../vendor/epi-kernel/reference/include/m3.h");
+        let anchor = "NUCLEOTIDE_ICHING_VALUE[4] = {";
+        let start = header.find(anchor).expect("C array anchor") + anchor.len();
+        let end = header[start..].find('}').expect("array close");
+        let parsed: Vec<u8> = header[start..start + end]
+            .split(',')
+            .map(|piece| {
+                piece
+                    .trim()
+                    .parse()
+                    .expect("C array entries are byte literals")
+            })
+            .collect();
+        assert_eq!(parsed, Nucleotide::NUCLEOTIDE_COIN_VALUE.to_vec());
     }
 }

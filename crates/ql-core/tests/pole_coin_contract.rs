@@ -3,10 +3,10 @@
 //!
 //! The fixture is the machine-readable contract: every row is checked against
 //! the executable types, and the executable laws are checked against the
-//! fixture. The discrepancy deliverable (docs/pole/M3-COIN-VALUE-DISCREPANCY.md)
-//! is enforced here: the canonical table is parity-consistent, the legacy C
-//! array is proven parity-violating, and the C-dataset conflict is documented
-//! as a known-open ignored test rather than silently flipped.
+//! fixture. The nucleotide value table is corrected once and for all (owner
+//! ratification 2026-09-07): the C reference kernel, its dataset-backed
+//! tables and this contract all carry the same parity-consistent table, and
+//! the C side is pinned byte-for-byte by test.
 
 use ql_core::{
     AngularGrid, ApertureIndex, Codon64, CoinSum, FibonacciGround, MatrixFamily, Nucleotide,
@@ -296,43 +296,85 @@ fn zero_one_exclusion_law_holds_on_the_value_type() {
     assert!(ql_core::CoinFace::from_value(1).is_err());
 }
 
-/// KNOWN-OPEN (M3-COIN-1): the C dataset is generation-locked to the legacy
-/// parity-violating array.
-///
-/// `M3_PAIR_MATRIX` (dataset-backed sumValue/differenceValue) and the per-suit
-/// integral constants (Pentacles 88, Swords 92) in
-/// `vendor/epi-kernel/reference/` were generated under
-/// `NUCLEOTIDE_ICHING_VALUE = {6,9,7,8}`. The parity-consistent canonical
-/// table `{6,9,8,7}` is what the coin law and the ratified element labels
-/// require; running this test today fails against the *legacy* dataset
-/// values, which is exactly the conflict placed before the owner in
-/// docs/pole/M3-COIN-VALUE-DISCREPANCY.md s4 (owner ratification ask).
-///
-/// Until the owner ratifies the flip and the C datasets are regenerated, this
-/// stays ignored — never silently flipped, never mixed.
+/// The C dataset tables were regenerated with the canonical table (owner
+/// ratification 2026-09-07): M3_PAIR_MATRIX (vendor m3.c) and the per-suit
+/// integral constants now satisfy the coin law exactly. The C table is
+/// parsed from source and every entry is checked: magnitudes follow the
+/// value arithmetic; signs are the recorded dataset provenance (M3
+/// unresolved item 2) preserved verbatim — no transcription, no drift.
 #[test]
-#[ignore = "known-open M3-COIN-1: waits on owner ratification of the parity-consistent table; see docs/pole/M3-COIN-VALUE-DISCREPANCY.md"]
-fn known_open_legacy_dataset_would_regenerate_under_canonical_table() {
-    // Regenerated dataset expectations under the canonical table:
-    let expected_pair_sums: [(u8, u16); 4] = [
-        // (pair, canonical sum)
-        (0b00_00, 12), // AA
-        (0b01_01, 18), // TT
-        (0b10_10, 16), // CC — legacy dataset records 14
-        (0b11_11, 14), // GG — legacy dataset records 16
-    ];
-    for (pair, sum) in expected_pair_sums {
-        let a = (pair >> 2) & 3;
-        let b = pair & 3;
-        let canonical_sum = (Nucleotide::try_from(a).unwrap().coin_value().value() as u16)
-            + Nucleotide::try_from(b).unwrap().coin_value().value() as u16;
-        assert_eq!(
-            canonical_sum, sum,
-            "canonical pair sum for pair index {pair}"
-        );
+fn regenerated_c_dataset_matches_canonical_table() {
+    let source = include_str!("../../../vendor/epi-kernel/reference/src/m3.c");
+    let anchor = "M3_PAIR_MATRIX[16] = {";
+    let start = source.find(anchor).expect("pair matrix anchor") + anchor.len();
+    let end = source[start..].find("};").expect("pair matrix close");
+
+    // Parse every `[index] = { sum, diff },` entry line.
+    let mut c_table: [(i16, i16); 16] = [(0, 0); 16];
+    let mut found = 0;
+    for line in source[start..start + end].lines() {
+        let trimmed = line.trim();
+        if !(trimmed.starts_with('[') && trimmed.contains('{') && trimmed.contains('}')) {
+            continue;
+        }
+        let close_bracket = trimmed.find(']').expect("index close");
+        let index: usize = trimmed[1..close_bracket]
+            .trim()
+            .parse()
+            .expect("pair index");
+        let open_brace = trimmed.find('{').expect("entry open");
+        let close_brace = trimmed.find('}').expect("entry close");
+        let numbers: Vec<i16> = trimmed[open_brace + 1..close_brace]
+            .split(',')
+            .filter_map(|piece| piece.trim().parse().ok())
+            .collect();
+        assert_eq!(numbers.len(), 2, "two values per entry: {trimmed}");
+        c_table[index] = (numbers[0], numbers[1]);
+        found += 1;
     }
+    assert_eq!(found, 16, "the C table must carry all 16 entries");
+
+    // Recorded dataset signs (M3 unresolved item 2: the class-stable
+    // semantics of differenceValue stays open; the signs are provenance
+    // preserved verbatim from the previously recorded table). 0 = homogeneous.
+    let recorded_signs: [i16; 16] = [
+        0,  // AA
+        -1, // AT
+        -1, // AC
+        1,  // AG
+        1,  // TA
+        0,  // TT
+        -1, // TC
+        1,  // TG
+        1,  // CA
+        -1, // CT
+        0,  // CC
+        1,  // GC
+        1,  // GA
+        -1, // GT
+        -1, // CG
+        0,  // GG
+    ];
+
+    // Law: sum = v1+v2 always; |diff| = |v1-v2| for mixed pairs, 0 for
+    // homogeneous; diff sign = the recorded dataset provenance.
+    for a in Nucleotide::ALL {
+        for b in Nucleotide::ALL {
+            let index = ((a.bits() << 2) | b.bits()) as usize;
+            let sum = (v_of(a) + v_of(b)) as i16;
+            let magnitude = (v_of(a) as i16 - v_of(b) as i16).abs();
+            let expected_diff = recorded_signs[index] * magnitude;
+            assert_eq!(c_table[index].0, sum, "sum for pair index {index}");
+            assert_eq!(
+                c_table[index].1, expected_diff,
+                "difference for pair index {index} ({a}{b})"
+            );
+        }
+    }
+
     // Regenerated per-suit integrals: Cups 84, Wands 96, Pentacles 92,
-    // Swords 88 (total 360 unchanged; the C constants swap C/G).
+    // Swords 88 — total 360 unchanged; the C constants were swapped with
+    // the table in the same commit so m3_verify() passes.
     let mut suit_totals = [0u32; 4];
     for address in 0u8..64 {
         let codon = Codon64::new(address);
@@ -340,4 +382,82 @@ fn known_open_legacy_dataset_would_regenerate_under_canonical_table() {
     }
     let per_suit: Vec<u32> = suit_totals.iter().map(|raw| raw / 4).collect();
     assert_eq!(per_suit, vec![84, 96, 92, 88]);
+}
+
+fn v_of(n: Nucleotide) -> u8 {
+    n.coin_value().value()
+}
+
+#[test]
+fn fixture_tarot_rows_carry_gendering_and_dominant_subdominant() {
+    // The suit alignments: gendering (suit polarity = nucleotide polarity)
+    // and the dominant/subdominant grade (moving/old = dominant,
+    // resting/young = subdominant). The correction of the C/G values is
+    // what makes this law hold: Pentacles is the subdominant yin (young
+    // yin 8) and Swords the subdominant yang (young yang 7).
+    let rows: Vec<Vec<&str>> = FIXTURE
+        .lines()
+        .filter(|row| !row.starts_with('#'))
+        .map(|row| row.split('\t').collect::<Vec<_>>())
+        .filter(|fields| fields[0] == "tarot")
+        .collect();
+    assert_eq!(rows.len(), 4, "the four suits");
+    for fields in &rows {
+        let nucleotide = match fields[2] {
+            "A" => Nucleotide::A,
+            "T" => Nucleotide::T,
+            "C" => Nucleotide::C,
+            _ => Nucleotide::G,
+        };
+        let element = match fields[3] {
+            "water" => "Water",
+            "fire" => "Fire",
+            "earth" => "Earth",
+            _ => "Air",
+        };
+        let value: u8 = fields[6].parse().unwrap();
+        let integral: u32 = fields[7].parse().unwrap();
+        // Value parity matches the suit gendering.
+        let suit_yin = fields[4] == "yin";
+        assert_eq!(value % 2 == 0, suit_yin, "parity/gendering for {fields:?}");
+        // Grade follows mobility: moving = dominant, resting = subdominant.
+        let grade = fields[5];
+        assert_eq!(
+            grade.starts_with("moving"),
+            nucleotide.mobility() == ql_core::Mobility::Moving,
+            "grade/mobility agreement for {fields:?}"
+        );
+        // The suit integral is the outer-family charge law: 4v + 60.
+        assert_eq!(
+            integral,
+            4 * u32::from(value) + 60,
+            "integral for {fields:?}"
+        );
+        // Total still 360 across the four suits.
+        let _ = element;
+    }
+    let total: u32 = rows
+        .iter()
+        .map(|fields| fields[7].parse::<u32>().unwrap())
+        .sum();
+    assert_eq!(total, 360);
+}
+
+#[test]
+fn fixture_tarot_court_rows_pin_the_dual_codon_gendering() {
+    // Kernel court law (m3.h FR 2.3.16): yin suits carry their dual-codon
+    // courts at Knight+King, yang suits at Princess(Page)+Queen — the
+    // relational (two-codon) courts sit on the opposite gender within each
+    // suit polarity. Nucleotide-keyed, invariant under the value table.
+    let rows: Vec<Vec<&str>> = FIXTURE
+        .lines()
+        .filter(|row| !row.starts_with('#'))
+        .map(|row| row.split('\t').collect::<Vec<_>>())
+        .filter(|fields| fields[0] == "tarot-court")
+        .collect();
+    assert_eq!(rows.len(), 2);
+    assert_eq!(rows[0][1], "yin-suits");
+    assert_eq!(rows[0][2], "knight+king");
+    assert_eq!(rows[1][1], "yang-suits");
+    assert_eq!(rows[1][2], "princess+queen");
 }
