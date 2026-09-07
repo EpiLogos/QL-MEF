@@ -46,6 +46,14 @@ pub use pole::{
     SiteProperty, SiteReading, SiteState, Transduction18to16, all_poses, carrier, det_shadow,
     is_resonance_gap, monoid, resonance_entry,
 };
+pub use pole::{
+    DetOverlay, ICHING_GRAMMAR_REF, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF,
+    POLE_ICHING_GRAMMAR_CONTRACT_REF, Quat, RING_QUATERNION_LUT, Trigram, complement,
+    compose_hexagram, det_overlay, element_quaternion, flow_clockwise, integral_symmetry_field,
+    lower_trigram_id, matrix_axis_quaternion, nuclear_hexagram, nuclear_lower, nuclear_upper,
+    palindromic_anchors, polar_opposite_simple, polar_opposite_su2, quadrant, quat_active_state,
+    quat_codon_state, quat_from_codon, quat_from_ring_pos, upper_trigram_id,
+};
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};
 pub use shape::{
