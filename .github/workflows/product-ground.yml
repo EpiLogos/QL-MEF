@@ -1,0 +1,68 @@
+name: Product documentation maintenance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_INCREMENTAL: "0"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  carrier-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify every registered capability-matrix carrier
+        run: python3 scripts/check-capability-matrix-registry.py
+
+  capability-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
+      - name: Build the actual product CLI
+        run: cargo build --package ql-cli --bin ql
+      - name: Check source, profile, seed and native CLI maintenance
+        id: check
+        continue-on-error: true
+        shell: bash
+        env:
+          PRODUCT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          base_args=()
+          if [[ -n "$PRODUCT_BASE" && "$PRODUCT_BASE" != 0000000000000000000000000000000000000000 ]]; then
+            base_args=(--base "$PRODUCT_BASE")
+          fi
+          python3 .github/product-ground.pyz --root . --account ql.html --namespace ql --product-index 5 --reference-scope repository "${base_args[@]}" | tee product-ground-result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: product-ground-result
+          path: product-ground-result.json
+      - name: Annotate drift (advisory — does not block merge)
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::notice title=Capability-matrix drift::The account page and suite profile have drifted apart. This does not block merge. See the product-ground-result artifact for precise reconciliation work."

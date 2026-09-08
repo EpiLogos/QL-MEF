@@ -7,6 +7,130 @@
   "repository_name_status": "historical-name-pending-canonical-rename",
   "canonical_repository_name": "Quaternal-Logic",
   "source_checkout": "Quaternal-Logic",
+  "capability_matrices": {
+    "schema": "oi.product-capability-sources/v1",
+    "primary_id": "ql-product-profile",
+    "matrices": [
+      {
+        "id": "ql-product-profile",
+        "role": "suite-profile",
+        "protocol": "ql-capability-matrix/1",
+        "suite_catalogue": true,
+        "carriers": {
+          "manifest": "ProjectCentral/user/capability-matrix.json",
+          "records": "ProjectCentral/user/capability-matrix.csv",
+          "rendering": "ProjectCentral/user/capability-matrix.md",
+          "account": "ProjectCentral/user/ql.html"
+        }
+      },
+      {
+        "id": "epi-capability-readiness",
+        "role": "native-readiness",
+        "protocol": "epi-capability-readiness/0.1",
+        "suite_catalogue": false,
+        "carriers": {
+          "data": "docs/integrations/epi-logos/epi-capability-readiness.json",
+          "rendering": "docs/integrations/epi-logos/EPI-CAPABILITY-READINESS-LEDGER.md"
+        }
+      },
+      {
+        "id": "epi-ta-onta-agent-world",
+        "role": "native-agent-world",
+        "protocol": "epi-ta-onta-agent-world-capabilities/0.3",
+        "suite_catalogue": false,
+        "carriers": {
+          "data": "docs/integrations/epi-logos/epi-ta-onta-agent-world-capabilities.json",
+          "rendering": "docs/integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md"
+        }
+      },
+      {
+        "id": "epi-m-capability-field",
+        "role": "native-deep-subsystem",
+        "protocol": "epi-m-capability-field/0.2",
+        "suite_catalogue": false,
+        "carriers": {
+          "data": "docs/integrations/epi-logos/epi-m-capability-field.json",
+          "rendering": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md"
+        },
+        "partitions": [
+          "docs/integrations/epi-logos/epi-m-capability-field-m0.json",
+          "docs/integrations/epi-logos/epi-m-capability-field-m1.json",
+          "docs/integrations/epi-logos/epi-m-capability-field-m2.json",
+          "docs/integrations/epi-logos/epi-m-capability-field-m3.json",
+          "docs/integrations/epi-logos/epi-m-capability-field-m4.json",
+          "docs/integrations/epi-logos/epi-m-capability-field-m5.json"
+        ],
+        "partition_protocol": "epi-m-capability-domain/0.2"
+      },
+      {
+        "id": "epi-deep-coordinate-matrices",
+        "role": "native-deep-coordinate",
+        "protocol": "epi.deep-subsystem-capability-matrix.v2",
+        "suite_catalogue": false,
+        "members": [
+          {
+            "id": "m1-paramasiva",
+            "data": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+            "rendering": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.md"
+          },
+          {
+            "id": "m2-parashakti",
+            "data": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+            "rendering": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.md"
+          },
+          {
+            "id": "m3-mahamaya",
+            "data": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+            "rendering": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md"
+          },
+          {
+            "id": "m4-nara",
+            "data": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+            "rendering": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md"
+          }
+        ]
+      },
+      {
+        "id": "epi-relational-fields",
+        "role": "native-relational-field",
+        "protocol": "ql-capability-matrix/1",
+        "suite_catalogue": false,
+        "members": [
+          {
+            "id": "m-m-prime",
+            "manifest": "docs/integrations/epi-logos/epi-relational-field.matrix.json",
+            "records": "docs/integrations/epi-logos/epi-relational-field.csv",
+            "required_columns": ["id", "record_type", "view_id", "row_id", "column_id", "capability_refs", "need", "operation", "outcome", "implementation_status", "standing", "source_refs", "code_refs", "test_refs", "account_ref", "relation", "coverage", "extensions"]
+          },
+          {
+            "id": "s-s-prime",
+            "manifest": "docs/integrations/epi-logos/epi-ssprime-relational-field.matrix.json",
+            "records": "docs/integrations/epi-logos/epi-ssprime-relational-field.csv",
+            "required_columns": ["id", "record_type", "view_id", "row_id", "column_id", "capability_refs", "need", "operation", "outcome", "implementation_status", "standing", "source_refs", "code_refs", "test_refs", "account_ref", "relation", "coverage", "extensions"]
+          },
+          {
+            "id": "ta-onta-m",
+            "manifest": "docs/integrations/epi-logos/epi-ta-onta-m-relational-field.matrix.json",
+            "records": "docs/integrations/epi-logos/epi-ta-onta-m-relational-field.csv",
+            "required_columns": ["id", "record_type", "view_id", "row_id", "column_id", "capability_refs", "need", "operation", "outcome", "implementation_status", "standing", "source_refs", "code_refs", "test_refs", "account_ref", "relation", "coverage", "extensions"]
+          }
+        ]
+      }
+    ],
+    "discovery": {
+      "roots": ["ProjectCentral/user", "docs"],
+      "filename_signatures": [
+        ["capability", "matrix"],
+        ["relational", "matrix"],
+        ["relational-field"]
+      ],
+      "excluded": {
+        "docs/integrations/epi-logos/EPI-CAPABILITY-MATRIX-FIELD-INDEX.md": "Index of the registered fields, not a matrix carrier.",
+        "docs/integrations/epi-logos/EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md": "Provenance and source-lock trace supporting registered matrices.",
+        "docs/integrations/epi-logos/EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md": "Protocol governing deep matrices, not a matrix instance."
+      }
+    }
+  },
   "artifact": {
     "kind": "rust-cli",
     "entry": "target/release/ql",

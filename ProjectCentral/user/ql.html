@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<title>Quaternal Logic / MEF · product account</title>
+<meta name="description" content="QL: a formal kernel, native CLI and attributable perspectives over existing subjects.">
+<style>
+:root{
+  --left-w:286px;
+  --right-w:326px;
+  --top-h:56px;
+  --paper:#f5f8fb;
+  --sheet:#ffffff;
+  --sheet-2:#eef4f8;
+  --ink:#132235;
+  --muted:#5e6d7f;
+  --faint:#8c98a7;
+  --line:#d8e1e9;
+  --line-strong:#bdcad6;
+  --blue:#1f5f9d;
+  --blue-deep:#184c7c;
+  --blue-soft:#e7f0fa;
+  --teal:#197f82;
+  --teal-soft:#e6f4f3;
+  --orange:#a45c2e;
+  --orange-soft:#f5ece6;
+  --danger:#9b4e50;
+  --success:#477a5e;
+  --focus:#2a78c5;
+  --shadow:0 12px 34px rgba(22,43,68,.08);
+  --radius:14px;
+  --reading:78ch;
+  --wide:1120px;
+  --full:1400px;
+  --ui:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:Georgia,"Times New Roman",Times,serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+html[data-theme="dark"]{
+  --paper:#071320;
+  --sheet:#0c1b2c;
+  --sheet-2:#10243a;
+  --ink:#e7edf5;
+  --muted:#a7b4c4;
+  --faint:#7c8ba0;
+  --line:#21364d;
+  --line-strong:#35536f;
+  --blue:#77abe5;
+  --blue-deep:#9bc5ef;
+  --blue-soft:#102e4d;
+  --teal:#5ab5b3;
+  --teal-soft:#103536;
+  --orange:#c57a45;
+  --orange-soft:#3b281d;
+  --danger:#ce8587;
+  --success:#80ad92;
+  --focus:#8ec3ff;
+  --shadow:0 18px 42px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto;background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:16.5px;line-height:1.7;text-rendering:optimizeLegibility}
+button,input,textarea,select{font:inherit}
+a{color:var(--blue);text-decoration-thickness:.08em;text-underline-offset:.16em}
+a:hover{color:var(--teal)}
+button{color:inherit}
+::selection{background:var(--blue-soft)}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--focus) 65%,transparent);outline-offset:2px}
+.app{min-height:100vh;display:grid;grid-template-columns:var(--left-w) minmax(0,1fr) var(--right-w);grid-template-rows:var(--top-h) 1fr;grid-template-areas:"top top top" "left main right";transition:grid-template-columns .18s ease}
+body.left-closed .app{grid-template-columns:0 minmax(0,1fr) var(--right-w)}
+body.right-closed .app{grid-template-columns:var(--left-w) minmax(0,1fr) 0}
+body.left-closed.right-closed .app{grid-template-columns:0 minmax(0,1fr) 0}
+.topbar{grid-area:top;position:sticky;top:0;z-index:80;height:var(--top-h);display:flex;align-items:center;gap:9px;padding:0 12px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--sheet) 94%,transparent);backdrop-filter:blur(14px)}
+.brand{min-width:0;margin-right:auto;display:flex;align-items:baseline;gap:10px;font-family:var(--ui)}
+.brand strong{font-size:12px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.brand span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11.5px}
+.icon-btn{width:34px;height:34px;display:grid;place-items:center;padding:0;border:1px solid var(--line);border-radius:9px;background:var(--sheet);cursor:pointer;font:700 13px/1 var(--ui)}
+.icon-btn:hover{background:var(--blue-soft);border-color:var(--line-strong)}
+.route-chip{max-width:230px;height:32px;display:flex;align-items:center;gap:7px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--sheet);color:var(--muted);font:600 10.5px/1 var(--ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.route-chip code{color:var(--teal);font:800 10px/1 var(--mono)}
+.left-rail,.right-rail{position:sticky;top:var(--top-h);height:calc(100vh - var(--top-h));overflow:auto;background:var(--sheet);z-index:50;transition:transform .18s ease,opacity .18s ease}
+.left-rail{grid-area:left;border-right:1px solid var(--line);padding:18px 13px 34px}
+.right-rail{grid-area:right;border-left:1px solid var(--line);padding:18px 16px 34px}
+body.left-closed .left-rail{transform:translateX(-100%);opacity:0;pointer-events:none}
+body.right-closed .right-rail{transform:translateX(100%);opacity:0;pointer-events:none}
+.main{grid-area:main;min-width:0;background:var(--paper);container-type:inline-size;container-name:account-main}
+.rail-label{margin:4px 7px 10px;color:var(--faint);font:750 9.5px/1.2 var(--ui);letter-spacing:.12em;text-transform:uppercase}
+.surface-nav{display:grid;gap:5px}.nav-group{border-radius:10px}.nav-head{display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:stretch}.nav-select,.nav-toggle{border:0;background:transparent;cursor:pointer}.nav-select{display:grid;grid-template-columns:36px minmax(0,1fr);gap:7px;text-align:left;padding:9px 7px;border-radius:9px 0 0 9px}.nav-toggle{border-radius:0 9px 9px 0;font:800 11px/1 var(--ui);color:var(--muted)}.nav-head:hover .nav-select,.nav-head:hover .nav-toggle{background:var(--blue-soft)}.nav-group.active>.nav-head .nav-select,.nav-group.active>.nav-head .nav-toggle{background:var(--blue-soft)}.nav-group.active>.nav-head .nav-select{box-shadow:inset 3px 0 0 var(--blue)}.nav-q{font:800 10.5px/1.5 var(--mono);color:var(--blue)}.nav-name{font:700 11.5px/1.3 var(--ui);color:var(--ink)}.nav-gloss{display:block;margin-top:2px;color:var(--muted);font:400 10px/1.35 var(--ui)}.nav-toggle span{display:inline-block;transition:transform .15s ease}.nav-group.expanded .nav-toggle span{transform:rotate(90deg)}.subnav{display:none;margin:2px 0 5px 35px;padding:2px 0 5px 7px;border-left:1px solid var(--line)}.nav-group.expanded .subnav{display:grid;gap:1px}.subnav a{display:grid;grid-template-columns:32px minmax(0,1fr);gap:5px;padding:6px 8px;border-radius:7px;color:var(--muted);text-decoration:none;font:10.5px/1.35 var(--ui)}.subnav a:hover{background:var(--sheet-2);color:var(--ink)}.subnav a.active{background:var(--teal-soft);color:var(--ink)}.subnav code{font:800 9.5px/1.35 var(--mono);color:var(--teal)}
+.context-head{padding-bottom:15px;margin-bottom:14px;border-bottom:1px solid var(--line)}.context-kicker{margin-bottom:7px;color:var(--faint);font:750 9.5px/1 var(--ui);letter-spacing:.11em;text-transform:uppercase}.context-head h3{margin:0 0 5px;font:600 17px/1.25 var(--serif)}.context-head p{margin:0;color:var(--muted);font:11.5px/1.5 var(--ui)}.note-field{margin-top:15px}body[data-notes="false"] .note-field{display:none}.note-field label{display:block;margin-bottom:7px;color:var(--muted);font:700 10.5px/1.35 var(--ui)}.note-field textarea{width:100%;min-height:128px;resize:vertical;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);outline:none;font:12.5px/1.55 var(--ui)}.note-field textarea:focus{border-color:var(--blue)}.save-state{margin-top:5px;color:var(--faint);font:9.5px/1.3 var(--ui)}.context-slot{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.context-slot:empty{display:none}.context-slot h4{margin:0 0 8px;font:750 10px/1.3 var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.right-details{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}.right-details summary{cursor:pointer;color:var(--muted);font:700 10.5px/1.4 var(--ui)}.meta-list{display:grid;gap:7px;margin:10px 0 0}.meta-row{display:grid;grid-template-columns:72px 1fr;gap:8px;font:10px/1.45 var(--ui)}.meta-row dt{color:var(--faint)}.meta-row dd{margin:0;color:var(--muted);overflow-wrap:anywhere}.source-list{display:grid;gap:8px;margin-top:10px}.source-list a{display:block;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);text-decoration:none;color:var(--ink);font:10.5px/1.4 var(--ui)}.source-list a:hover{border-color:var(--blue)}.source-empty{margin-top:9px;color:var(--faint);font:10px/1.4 var(--ui)}
+.surface{display:none;min-height:calc(100vh - var(--top-h));padding:clamp(34px,4vw,68px) clamp(22px,5vw,84px) 112px}.surface.active{display:block}.surface-inner{width:min(100%,var(--surface-max,var(--full)));margin:0 auto}.hero{margin-bottom:clamp(70px,8vw,118px);padding-bottom:clamp(34px,5vw,58px);border-bottom:1px solid var(--line)}.hero-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;font-family:var(--ui)}.ql-badge{display:inline-flex;align-items:center;height:27px;padding:0 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font:800 10.5px/1 var(--mono)}.hero-label{color:var(--muted);font:750 10px/1 var(--ui);letter-spacing:.09em;text-transform:uppercase}h1{max-width:18ch;margin:0;font-family:var(--serif);font-size:clamp(40px,5vw,66px);font-weight:500;line-height:1.02;letter-spacing:-.03em}.hero-deck{max-width:var(--reading);margin:20px 0 0;color:var(--muted);font-size:clamp(18px,1.8vw,22px);line-height:1.5}.hero-meta{display:flex;gap:10px 16px;flex-wrap:wrap;margin-top:22px;color:var(--faint);font:10.5px/1.4 var(--ui)}.ql-node{scroll-margin-top:calc(var(--top-h) + 26px);margin:0 0 clamp(76px,9vw,126px)}.node-head{margin-bottom:clamp(28px,3.4vw,40px)}.node-eyebrow{margin-bottom:10px;color:var(--teal);font:750 9.5px/1.2 var(--ui);letter-spacing:.1em;text-transform:uppercase}.ql-node h2{max-width:25ch;margin:0;font-family:var(--serif);font-size:clamp(26px,3vw,40px);font-weight:500;line-height:1.12;letter-spacing:-.018em}.node-deck{max-width:var(--reading);margin:13px 0 0;color:var(--muted);font-size:17.5px;line-height:1.58}.prose{max-width:var(--reading);font-size:16.5px;line-height:1.72}.prose p{margin:0 0 1em}.prose p:last-child{margin-bottom:0}.prose h3{margin:2.2em 0 .7em;font:600 22px/1.25 var(--serif)}.prose h4{margin:1.8em 0 .55em;font:750 12px/1.35 var(--ui);letter-spacing:.03em}.prose ul,.prose ol{margin:.9em 0 1.2em;padding-left:1.35em}.prose li{margin:.32em 0}.prose blockquote{margin:28px 0;padding:0 0 0 18px;border-left:3px solid var(--teal);color:var(--muted);font-size:18px;line-height:1.6}.prose code{font:90%/1 var(--mono);background:var(--sheet-2);padding:.12em .28em;border-radius:4px}.reading{width:min(100%,var(--reading))}.wide{width:min(100%,var(--wide))}.full{width:min(100%,var(--full))}.centered{margin-left:auto;margin-right:auto}
+.definition,.claim,.note,.warning,.evidence{max-width:var(--reading);margin:28px 0;padding:18px 20px;border-radius:0 12px 12px 0;background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--blue)}.definition{background:var(--blue-soft)}.claim{border-left-color:var(--teal);background:var(--teal-soft)}.note{border-left-color:var(--line-strong)}.warning{border-left-color:var(--orange);background:var(--orange-soft)}.evidence{border-left-color:var(--success)}.block-label{margin-bottom:7px;color:var(--muted);font:800 9.5px/1.3 var(--ui);letter-spacing:.08em;text-transform:uppercase}.definition p,.claim p,.note p,.warning p,.evidence p{margin:0;font-size:15.5px;line-height:1.6}.figure{margin:34px 0;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--sheet);box-shadow:var(--shadow)}.figure-head{display:flex;justify-content:space-between;gap:14px;align-items:start;padding:14px 16px;border-bottom:1px solid var(--line);font-family:var(--ui)}.figure-head strong{font-size:11.5px;line-height:1.35}.figure-head span{color:var(--muted);font-size:10px;line-height:1.4;text-align:right}.figure-body{padding:clamp(14px,2vw,24px);overflow:auto}.figure figcaption{padding:12px 16px 14px;border-top:1px solid var(--line);color:var(--muted);font:10.8px/1.55 var(--ui)}.svg-wrap svg{display:block;width:100%;height:auto}.svg-wrap.scroll-x svg{min-width:720px}.table-wrap{margin:28px 0;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--sheet)}table{width:100%;border-collapse:collapse;font:12.5px/1.5 var(--ui)}th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--sheet-2);color:var(--muted);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}tr:last-child td{border-bottom:0}.code-block,.equation{margin:28px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);overflow:auto}.code-block pre{margin:0;padding:18px 20px;font:12.5px/1.6 var(--mono)}.equation{padding:20px 22px;font:500 clamp(20px,2.6vw,30px)/1.4 var(--serif)}.source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:28px 0}.source-card{display:block;padding:14px 15px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;color:var(--ink)}.source-card:hover{border-color:var(--blue);box-shadow:var(--shadow)}.source-card strong{display:block;font:700 11.5px/1.4 var(--ui)}.source-card span{display:block;margin-top:4px;color:var(--muted);font:10.5px/1.5 var(--ui)}.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,54px);align-items:start}.three-col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.mockup-frame{margin:32px 0;border:1px solid var(--line-strong);border-radius:16px;background:var(--sheet);overflow:hidden;box-shadow:var(--shadow)}.mockup-toolbar{height:38px;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid var(--line);background:var(--sheet-2)}.mockup-dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong)}.mockup-body{min-height:260px;padding:20px}.controls{display:grid;gap:18px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--sheet)}.control-row{display:grid;grid-template-columns:minmax(150px,.5fr) minmax(0,1fr) auto;gap:14px;align-items:center;font-family:var(--ui)}.control-row label{font-size:11.5px;font-weight:700}.control-row output{min-width:64px;text-align:right;color:var(--teal);font:800 11px/1 var(--mono)}input[type="range"]{width:100%;accent-color:var(--teal)}.toggle-row{display:flex;gap:7px;flex-wrap:wrap}.toggle-row button{padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:var(--paper);cursor:pointer;font:700 10.5px/1.2 var(--ui)}.toggle-row button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:#fff}.timeline{position:relative;display:grid;gap:18px;margin:28px 0;padding-left:26px}.timeline:before{content:"";position:absolute;left:7px;top:5px;bottom:5px;width:1px;background:var(--line-strong)}.timeline-item{position:relative}.timeline-item:before{content:"";position:absolute;left:-23px;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--paper)}.timeline-item time{display:block;margin-bottom:3px;color:var(--faint);font:700 9.5px/1.3 var(--ui)}.timeline-item h4{margin:0 0 4px;font:650 16px/1.3 var(--serif)}.timeline-item p{margin:0;color:var(--muted);font:11.5px/1.5 var(--ui)}
+@media (max-width:1319px){.app{grid-template-columns:var(--left-w) minmax(0,1fr);grid-template-areas:"top top" "left main"}body.left-closed .app,body.left-closed.right-closed .app{grid-template-columns:0 minmax(0,1fr)}body.right-closed .app{grid-template-columns:var(--left-w) minmax(0,1fr)}.right-rail{position:fixed;top:var(--top-h);right:0;width:var(--right-w);height:calc(100vh - var(--top-h));border-left:1px solid var(--line);box-shadow:-18px 0 40px rgba(16,35,56,.14)}body.right-closed .right-rail{transform:translateX(100%);opacity:0;pointer-events:none}}
+@media (max-width:979px){.app{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "main"}body.left-closed .app,body.right-closed .app,body.left-closed.right-closed .app{grid-template-columns:minmax(0,1fr)}.left-rail{position:fixed;top:var(--top-h);left:0;width:min(var(--left-w),88vw);height:calc(100vh - var(--top-h));box-shadow:18px 0 40px rgba(16,35,56,.14)}.right-rail{width:min(var(--right-w),90vw)}.route-chip{display:none}.surface{padding-left:clamp(18px,5vw,42px);padding-right:clamp(18px,5vw,42px)}}
+@container account-main (max-width:880px){.two-col,.three-col,.source-grid{grid-template-columns:1fr}.control-row{grid-template-columns:1fr}.control-row output{text-align:left}}
+@container account-main (max-width:620px){.hero{margin-bottom:66px}.ql-node{margin-bottom:78px}.node-head{margin-bottom:26px}.figure-head{display:block}.figure-head span{display:block;margin-top:4px;text-align:left}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media print{:root{--paper:#fff;--sheet:#fff;--ink:#000;--muted:#444;--line:#bbb;--line-strong:#888}.topbar,.left-rail,.right-rail{display:none!important}.app{display:block}.main{display:block}.surface{display:block!important;padding:24mm 18mm;min-height:auto;break-before:page}.surface:first-child{break-before:auto}.hero{margin-bottom:18mm}.ql-node{break-inside:avoid-page}.figure,.table-wrap,.code-block,.equation{box-shadow:none;break-inside:avoid}a{color:#000;text-decoration:none}a[href^="http"]:after{content:" (" attr(href) ")";font-size:8pt;overflow-wrap:anywhere}}
+
+.right-closed .right-rail,.left-closed .left-rail{display:none}
+.svg-wrap{overflow-x:auto}.svg-wrap svg{min-width:640px}
+.unit-sources{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;padding-top:14px;border-top:1px solid var(--line);font-size:12px}.unit-sources a{color:var(--muted)}
+.prose a[data-resource]{text-decoration:underline;text-underline-offset:3px}.source-unresolved{color:#a02d22}.surface-inner{max-width:1120px}.prose li{margin-bottom:.65em}
+@media print{.surface{display:block!important} .left-rail,.right-rail,.topbar{display:none!important} .main{margin:0!important}}
+.prose pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}.capability-links{font-size:.9em;color:var(--muted)}
+[data-surface="whole"] .hero{margin-bottom:40px;padding-bottom:30px}[data-surface="whole"] .ql-node{margin-bottom:42px}[data-surface="whole"] .node-head{margin-bottom:16px}[data-surface="whole"] .ql-node h2{max-width:36ch;font-size:clamp(25px,2.3vw,31px)}
+</style>
+</head>
+<body class="right-closed" data-notes="true">
+<script type="application/json" id="account-provenance">{
+  "uid": "ql-product-ground",
+  "kind": "html-account",
+  "title": "Quaternal Logic / MEF — inspectable relationships",
+  "project": "project:ql",
+  "status": "draft-for-review",
+  "provenance": "generated-suggestion",
+  "standing": "agent-inference",
+  "seed_standing": "agent-inference",
+  "seed_origin": "Agent-recovered candidate from native sources; no human adoption recorded",
+  "question_profile": "human-selected L0 documentation application; native registry unchanged",
+  "created": "2026-09-06",
+  "updated": "2026-09-06",
+  "generator": "QL dedicated product documentation agent",
+  "source_revision": "781981374eaa1f02952249dcdbca1af671d1ece4",
+  "source_basis": [
+    {
+      "ref": "source:readme",
+      "path": "README.md",
+      "sha256": "f2dc1a54506bc5affc0fb0ffa79ee1854574145f36325858b15bdb81938ab078",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:foundations",
+      "path": "skills/ql-foundations/SKILL.md",
+      "sha256": "ebbd7008862e4f929e16b3bb9a391b6f474c2b1e9df70ee530e09de9d890af6b",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:operation",
+      "path": "skills/ql-operation/SKILL.md",
+      "sha256": "adbc50e1846a25a45013e6fae0f3070f4cfc157c2f323538d0857b8b872eebd5",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:kernel",
+      "path": "docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md",
+      "sha256": "d6abf877222454da46512df4ba056275f7487f3357af5edcd5f39c6af13b675f",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:shape",
+      "path": "fixtures/kernel/ql-shape-contract-v1.json",
+      "sha256": "3c85b80d76412a161466dc79c863852b12b8c7343b4fc2b76760f3157d0bb041",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:wiki",
+      "path": "docs/wiki-structural-contract-v2.md",
+      "sha256": "dff544943b25266a31cc045e68be1ba0b1a1609b227bcb94012c815bcd662ef8",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:context",
+      "path": "../Central/docs/PROJECT-CONTEXT-PROTOCOL.md",
+      "sha256": "f732128a9e5f03ba26d9bb66eeebfe2c50198463ecf6c37c4fd23ce813020976",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:shared",
+      "path": "../O-I/docs/HUMAN-AGENT-COVENANT.md",
+      "sha256": "79dccdffee7cb340fddaf049a9d898cea3b99bfb577cbeec8b988cfc79c01ef5",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:wiki-write",
+      "path": "../ai-kit/registry/capsules/skill/aikit/wiki-inhabitation/payload/SKILL.md",
+      "sha256": "a2f6e1b653530335cd31791b7950bbbae75e296dfb58ce54eee5929ea1996de4",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "source:wiki-read",
+      "path": "../ai-kit/registry/capsules/skill/aikit/knowledge-navigation/payload/SKILL.md",
+      "sha256": "0fca6972ede735a20b7318b46bb2c5cca391d5c17119479245e3320cb97a10f6",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:78",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/78.json",
+      "sha256": "5f275b1e5cbd589f186fc6641a97722572885bf55ed0952b26a35d2a894f89c4",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:78.comments",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/78.comments.json",
+      "sha256": "9ff0e511d5ffcdea2a15850e7083beced14dc1a52c18a1d020cb6b7e5115d3c6",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:85",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/85.json",
+      "sha256": "3fe6cada91ccb2e39047bc2bb2537c93836d7079b6ee189bab2b1146a68bf132",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:85.comments",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/85.comments.json",
+      "sha256": "9cb4702a3c3076ff5759fe11da56c83f80c9bd94d539581296750f1c5c826b88",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:87",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/87.json",
+      "sha256": "cff5fc245d33521144657666723439d5df3bda35e81a60896d40648670e67ea6",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:87.comments",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/87.comments.json",
+      "sha256": "b738f8053769080a488a8593f63a23f11d9005916449ef98b670cddbfbe98461",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:79",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/79.json",
+      "sha256": "570a97e54412e9cc464bbbe2bc85c6d72f719ec669e64644c9a4175eb52fa86b",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:79.comments",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/79.comments.json",
+      "sha256": "15e5c6b6aa5c13899ab66fba3dc551ccfd41d58cb300e13552d82db952687d26",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:66",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/66.json",
+      "sha256": "bb88634dda04b4ac2d73892c308f8c3c261ddf3ee078950c95ce38f6df6d9f39",
+      "role": "source inspected; original standing retained"
+    },
+    {
+      "ref": "ticket:66.comments",
+      "path": "../github-recovery-mirror/mirror/QL-MEF/issues/66.comments.json",
+      "sha256": "cdfec0edd9133ff511035a22e8a24b6d621a56d93e131a6576ac8da2734b2db6",
+      "role": "source inspected; original standing retained"
+    }
+  ],
+  "source_basis_path_base": "repository-root",
+  "reconciled_source_revisions": [
+    {
+      "path": "../Central/docs/PROJECT-CONTEXT-PROTOCOL.md",
+      "previous_sha256": "6846212de82152cb82d13fb31b89ccc56882e56b5f71f3b6737a863fc8e3cc09",
+      "sha256": "f732128a9e5f03ba26d9bb66eeebfe2c50198463ecf6c37c4fd23ce813020976",
+      "reason": "Reconciled single matrix form, declared views and Central filesystem / AIKit operation ownership; source authority unchanged."
+    },
+    {
+      "path": "../ai-kit/registry/capsules/skill/aikit/wiki-inhabitation/payload/SKILL.md",
+      "previous_sha256": "cdf516f3ccd0221b4559ebb64de8b498fb578489a1746cb38029645d2607a68b",
+      "sha256": "a2f6e1b653530335cd31791b7950bbbae75e296dfb58ce54eee5929ea1996de4",
+      "reason": "Reconciled single matrix form, declared views and Central filesystem / AIKit operation ownership; source authority unchanged."
+    },
+    {
+      "path": "../ai-kit/registry/capsules/skill/aikit/knowledge-navigation/payload/SKILL.md",
+      "previous_sha256": "b0d69ae06afe5f96b2e46ae2e1a00e99f7a4727265fad50196f13cefeca5a83e",
+      "sha256": "0fca6972ede735a20b7318b46bb2c5cca391d5c17119479245e3320cb97a10f6",
+      "reason": "Reconciled single matrix form, declared views and Central filesystem / AIKit operation ownership; source authority unchanged."
+    }
+  ],
+  "matrix_basis": {
+    "protocol": "ql-capability-matrix/1",
+    "csv_sha256": "0a0fd90223d831f9b3bcd7b994c43e129c7caf6feb3cc3446b13d3a9bb67d125",
+    "manifest_sha256": "589d30ef4ec74bc4a6d330759a521c6d4ef3545460a6dff2f448b179dedadafa",
+    "record_sha256": {
+      "cap.ql.cli-discovery": "e2dc267e0b5fec210c83c85c206a1c7e4a526bdf1a27603073827e0b2a213623",
+      "cap.ql.kernel-operators": "34ef356e5969375e34efa52976b76d28b426fd1251fbd7ea92bb34affbdf7e6d",
+      "cap.ql.pairing": "547a3e1a484341fdf591f6973e277ba1127db283d0dc5ffc5767f8c7b9134495",
+      "cap.ql.shape": "0012d794ef816be4686700cdf5b9c9529b590be5c588dede983585061c141f56",
+      "cap.ql.lens-registry": "e86a0cf662884f3e8e4213e190c613fe8cac5444a4182e46d1040376c1fffcb1",
+      "cap.ql.context-frames": "55a373b294bfdbec453f8cb1548be9dd3206c94a401fb54d3a88c31aaa709309",
+      "cap.ql.external-frame": "96af8dc0dae04c1ff8866807af488d14ef1e0e19ae5ecf6862d15a439e6c36b9",
+      "cap.ql.vak-source": "3253f4938b0e763a1b1aa2a916ae8a9c97d943474490e0139597c99d17768c5c",
+      "cap.ql.vak-context": "43f8df9e4cb886707e058bb078c90c584608fd7ad93f8c9de19d056c308d1cd7",
+      "cap.ql.service-negotiation": "ce36b09fbf69ab53dfd15bee0c67dfc0dd8600b1714d12b58dcaeb7b126915d7",
+      "cap.ql.service-readings": "b0ec04af6d7c9798ec8772a03bf34b27d1735648f1522bdb46288cd436ffe9a0",
+      "cap.ql.client-modes": "275f30927cf614371e2d37e3e01f381bcb35c7f9b4b72f78a9d408b1bf6b8f7d",
+      "cap.ql.wiki-structure": "ef44b33b4e7869d593b614a0dfddcd2edf5d74f552118ad1125b91d38025f6a0",
+      "cap.ql.wiki-refraction": "9606965c45d5a20d47518def2a78b5d4bbddfbc1ee0c033b8d02afefe2f863bb",
+      "cap.ql.wiki-portals": "5e6a8bf2a9b85ca414d758e02ffe10679bb6370d248d63b4bf1fb327bcd04554",
+      "cap.ql.living-wiki": "992f6b0a6fc94fbb6008e928ddaa01967f84d0a936110b0ec42e8a53befc86ea",
+      "cap.ql.cli-verification": "fd507be169f9670e0241e3bcd4dfeb2055a617d7933dde6a940f5f47ac2004b2",
+      "cap.ql.kernel-parity": "a5e9622c4504b598dbc119e27daac208b933fad2bd0986d2f916ff32c391f115",
+      "H0->H5": "87979bbf7d2601c7a081a35834feef7f3b17bde0163e0994058d806c04294aa8",
+      "H0->A5": "4416811e05940c4919bb8fa7ce1d2501070d3090466fa58b5138d684327a4845",
+      "H1->H5": "5221715411f66ad175d2b0109cc0577e184c6450025ccb48e5047f264b2edcf5",
+      "H1->A5": "c01c4b05fcb2fa2f21053f86b4db4fc5ea65a0e737913d879665d3b33ab4a603",
+      "H2->H5": "be020ea9d58d5e617be743296c2536e78a6d8ad1ea8f448fbb0d1bd755084cae",
+      "H2->A5": "ed4d691ec175c957ddc20c3dea7074030a8539fb93bf87aaf1acd434d5c3e3cf",
+      "H3->H5": "9f2255b97eed20fd4a9e296476b85879472e9b4ded595023816866aad43ae7fb",
+      "H3->A5": "cc049d9b0cbba922d388f08862cd4ba0772152693164ea775987ce06db28dcaf",
+      "H4->H5": "3538d0a79894144f76d685dc88211ddcc3e1cc3c822483a93956c9cc968e3f47",
+      "H4->A5": "05dd5771546cd17f662e03cf1d5bce4351eb71b57caca4374d6b94b22c8ce789",
+      "H5->H0": "a65289715c6dac2149eb585fa596f918464ea4d50efaa8ba8168abf628a849f9",
+      "H5->H1": "8368d106b5d1a6fa231bd12c66bbf88138883e331536aa140f27806d17cbaec2",
+      "H5->H2": "29d36c8d37648ac76508b3f5b94e5d4ad82321c2055dc18722855e267f4f603e",
+      "H5->H3": "720c66cb7bc22303a6c07c6787a508e0ca453847035f2adb4cb08184f7398919",
+      "H5->H4": "17f69b3a42fa8103df4026f73a6dddf1ee43cc17cb6eacea12bc1c293b8c1eaa",
+      "H5->H5": "a9c0669158c543260979ad3006275f8a9f895ca639c67cb9df10631d0787dcef",
+      "H5->A0": "59c2f2964a7b190baa7d968f5f1635de7f5bf55800d9849bdeb2cae777ec94ba",
+      "H5->A1": "f3f1e00e170780420dc76126b19d2c99e978cd112d3e3a2c8bebcba31c0352f1",
+      "H5->A2": "186cc5a0828c0c9d443c97fcc0dde30c0154e7e299ab8b17e66d73daa4eb552d",
+      "H5->A3": "e0b0465340a6563aa6f791b8ba393a55df71b69bf5741723084e29b4172488bd",
+      "H5->A4": "4f062d2d2b763b6d8508b6fafcd0c99a9601cccc435e5342ca8ddcc168831601",
+      "H5->A5": "d0076d0fed9d5d1e06cb97826dad813b732ad634c32ef345bed3094ad20acd3e",
+      "A0->H5": "aed74c0f8a6486da5012bc3fac2c1c2bbdca21e4b33581bc0a2497d26c27b176",
+      "A0->A5": "adbdb9a601a5308bb24672a295d5a931fb43099c3713001a45082d6c545bec45",
+      "A1->H5": "6de09080bce8a8c879817c83c15dab96115a6754f6732de9f37b9c2eecf01098",
+      "A1->A5": "6adbe43174327335e93636cb4ea2da2b8b1c6ed721ffbfff102f7cdb33651583",
+      "A2->H5": "dbe257b521d3900c87d1bace76c110e66937fb19afb3f68f035f8968dfde5f85",
+      "A2->A5": "36a444c0a98e77c5be80d48e1834e10bd4fa58cebff2f04501513509f1136227",
+      "A3->H5": "27b0b989bc00240a686b51cd2cce84a090325f54f8efd1b056514993ba850826",
+      "A3->A5": "a45189df52dd35cdc004d1421775bf202aba2da6b1b7879ff17e5e3f2de53f65",
+      "A4->H5": "daf2e001d85fa7b35873b6ce70cca6bb7faeafb4c469eb3fc558f2dc2af3a75f",
+      "A4->A5": "a089e865d0b249f4cfac9ebdf9c4495c025f32cddeb2c26068849a7fe4cd2158",
+      "A5->H0": "7e79b8757a4d2ee8976cc102759a8c0a6a689c4d5b50673846a466f1889b9c9f",
+      "A5->H1": "324637a000ec04b861fe407bd404d965c6a4d23d8bbd3d5716a3051c3e86d365",
+      "A5->H2": "6144ba136871e8c2848d1380b8dd1518cb4ced24c3b632ddc8c312651fa2c3ab",
+      "A5->H3": "5afc8a9710cbb00f68d4f00f9d149dab370c58733aa04d6142f75adef70807a8",
+      "A5->H4": "8bc7da501bdb962ddcf9fef0d5701499a17eebfebafee11c68a50e3327309119",
+      "A5->H5": "3ac06da999c0ec217976eb8fb23eb54d0ea55884b2c5021332130d69b88d9017",
+      "A5->A0": "953b3052eaf2fd6355e2a9183520602e3093a0fd9a9e1bc5a8695404f2cfab13",
+      "A5->A1": "55817dce71ce6d43b3809c446bf000f7aaab3e40cd9b39b7faabed544b267b56",
+      "A5->A2": "ed95025fa7f175441799cf3ce21a12befeed482bc884350794a632564356d53d",
+      "A5->A3": "e91d8b010dfd7043be280a76bb74fec6a583ef0e0f275a6f002d63dba7ae324b",
+      "A5->A4": "226e70aba8752ad2599002ee39d87434467314a4721c6b49328c33a92c8d5f26",
+      "A5->A5": "2f8b7cb6f065048ed9d77d7ed2ac93f423db4548886260d22a953f21b86dc485",
+      "rel.ql.q0.S": "63e97beabdf523e77e60093f8035cd8795e43f879b7db3bdd1931024482b9fe2",
+      "rel.ql.q1.S": "2fd625dabb6d1d766e6123de333eec30162acc8c42a42f003c35fa782e88b7cd",
+      "rel.ql.q2.S": "f19b5751149fa315f499098fb2952ca770ec27e5594cf891456d8451ca13e3fc",
+      "rel.ql.q3.S": "db2b04cbb6dcab9202553ffdb51e53fce0b68bd593a74dcdb9dcffae858420c3",
+      "rel.ql.q4.S": "07841541a766e455a3fe14abca7a415dbf45f13bcaf90cf1d3c1bf70fdde1bff",
+      "rel.ql.q5.S": "0a7a3e8a38e61a2f62eb535ec5fd991e4c95d990a9d84a1f0e5e4b224dff77e9",
+      "rel.ql.q3.S0": "2821557d641881eea5cac1acdd5c708a6abd6d5d7103b8fdc87dbc873885ea64",
+      "rel.ql.q2.S2": "5756e79c427b31d1caa9c2f7b5657a01adfb000ac1ad3067470ca19467f47b19",
+      "rel.ql.q3.S3": "eb5ae4505052c576ab0337ecfef4f061838388a09910d2a2aed889cd8c190b76"
+    },
+    "change_ref": "QL-MEF:agent/ql-multi-matrix-profile",
+    "reviewed_at": "2026-09-08T10:44:17.878137+00:00",
+    "reviewed_sections": [
+      "q1",
+      "q2",
+      "q4",
+      "q5"
+    ]
+  }
+}</script>
+<script type="application/json" id="ground-resources">{
+  "source:readme": {
+    "title": "QL product definition and research provenance",
+    "href": "../../README.md"
+  },
+  "source:foundations": {
+    "title": "QL foundations and L0 meanings",
+    "href": "../../skills/ql-foundations/SKILL.md"
+  },
+  "source:operation": {
+    "title": "Native QL operation procedure",
+    "href": "../../skills/ql-operation/SKILL.md"
+  },
+  "source:kernel": {
+    "title": "Holographic kernel formal reference",
+    "href": "../../docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md"
+  },
+  "source:shape": {
+    "title": "Versioned QL shape contract",
+    "href": "../../fixtures/kernel/ql-shape-contract-v1.json"
+  },
+  "source:wiki": {
+    "title": "Wiki structural contract",
+    "href": "../../docs/wiki-structural-contract-v2.md"
+  },
+  "source:context": {
+    "title": "Source and documentation protocol",
+    "href": "../../../Central/docs/PROJECT-CONTEXT-PROTOCOL.md"
+  },
+  "source:shared": {
+    "title": "Shared O:I primitive relations",
+    "href": "../../../O-I/docs/HUMAN-AGENT-COVENANT.md"
+  },
+  "source:wiki-write": {
+    "title": "AIKit wiki write procedure",
+    "href": "../../../ai-kit/registry/capsules/skill/aikit/wiki-inhabitation/payload/SKILL.md"
+  },
+  "source:wiki-read": {
+    "title": "AIKit knowledge navigation",
+    "href": "../../../ai-kit/registry/capsules/skill/aikit/knowledge-navigation/payload/SKILL.md"
+  },
+  "ticket:78": {
+    "title": "QL-MEF #78 retained intent",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/78.json"
+  },
+  "ticket:78.comments": {
+    "title": "QL-MEF #78 subsequent discussion",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/78.comments.json"
+  },
+  "ticket:85": {
+    "title": "QL-MEF #85 retained intent",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/85.json"
+  },
+  "ticket:85.comments": {
+    "title": "QL-MEF #85 subsequent discussion",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/85.comments.json"
+  },
+  "ticket:87": {
+    "title": "QL-MEF #87 retained intent",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/87.json"
+  },
+  "ticket:87.comments": {
+    "title": "QL-MEF #87 subsequent discussion",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/87.comments.json"
+  },
+  "ticket:79": {
+    "title": "QL-MEF #79 retained intent",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/79.json"
+  },
+  "ticket:79.comments": {
+    "title": "QL-MEF #79 subsequent discussion",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/79.comments.json"
+  },
+  "ticket:66": {
+    "title": "QL-MEF #66 retained intent",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/66.json"
+  },
+  "ticket:66.comments": {
+    "title": "QL-MEF #66 subsequent discussion",
+    "href": "../../../github-recovery-mirror/mirror/QL-MEF/issues/66.comments.json"
+  },
+  "cap.ql.cli-discovery": {
+    "title": "Inspect the available product",
+    "href": "capability-matrix.md#cap-ql-cli-discovery"
+  },
+  "cap.ql.kernel-operators": {
+    "title": "Compute address relations",
+    "href": "capability-matrix.md#cap-ql-kernel-operators"
+  },
+  "cap.ql.pairing": {
+    "title": "Preserve how a relation was formed",
+    "href": "capability-matrix.md#cap-ql-pairing"
+  },
+  "cap.ql.shape": {
+    "title": "Disclose whole and partial structures",
+    "href": "capability-matrix.md#cap-ql-shape"
+  },
+  "cap.ql.lens-registry": {
+    "title": "Choose a refractive perspective",
+    "href": "capability-matrix.md#cap-ql-lens-registry"
+  },
+  "cap.ql.context-frames": {
+    "title": "Inspect canonical contextual forms",
+    "href": "capability-matrix.md#cap-ql-context-frames"
+  },
+  "cap.ql.external-frame": {
+    "title": "Read an external sixfold mapping",
+    "href": "capability-matrix.md#cap-ql-external-frame"
+  },
+  "cap.ql.vak-source": {
+    "title": "Retrieve a source formulation",
+    "href": "capability-matrix.md#cap-ql-vak-source"
+  },
+  "cap.ql.vak-context": {
+    "title": "Read a bounded source neighbourhood",
+    "href": "capability-matrix.md#cap-ql-vak-context"
+  },
+  "cap.ql.service-negotiation": {
+    "title": "Determine operation availability",
+    "href": "capability-matrix.md#cap-ql-service-negotiation"
+  },
+  "cap.ql.service-readings": {
+    "title": "Request an attributable reading",
+    "href": "capability-matrix.md#cap-ql-service-readings"
+  },
+  "cap.ql.client-modes": {
+    "title": "Keep QL an explicit client choice",
+    "href": "capability-matrix.md#cap-ql-client-modes"
+  },
+  "cap.ql.wiki-structure": {
+    "title": "Retain source structure at its actual depth",
+    "href": "capability-matrix.md#cap-ql-wiki-structure"
+  },
+  "cap.ql.wiki-refraction": {
+    "title": "Derive a reading of a knowledge field",
+    "href": "capability-matrix.md#cap-ql-wiki-refraction"
+  },
+  "cap.ql.wiki-portals": {
+    "title": "Follow related knowledge across wikis",
+    "href": "capability-matrix.md#cap-ql-wiki-portals"
+  },
+  "cap.ql.living-wiki": {
+    "title": "Examine relevant context after a changed whole",
+    "href": "capability-matrix.md#cap-ql-living-wiki"
+  },
+  "cap.ql.cli-verification": {
+    "title": "Check the exposed native surface",
+    "href": "capability-matrix.md#cap-ql-cli-verification"
+  },
+  "cap.ql.kernel-parity": {
+    "title": "Preserve the determined kernel during nativeisation",
+    "href": "capability-matrix.md#cap-ql-kernel-parity"
+  },
+  "ql:matrix:md": {
+    "title": "QL capability matrix",
+    "href": "capability-matrix.md"
+  },
+  "ql:matrix:csv": {
+    "title": "Machine-readable capabilities and relations",
+    "href": "capability-matrix.csv"
+  },
+  "ql:doc:overview": {
+    "title": "QL whole account",
+    "href": "#whole"
+  },
+  "ql:seed:q0": {
+    "title": "Why? Make relationships inspectable",
+    "href": "#whole/why"
+  },
+  "ql:seed:q1": {
+    "title": "What? A formal kernel, lens system and native CLI",
+    "href": "#whole/what"
+  },
+  "ql:seed:q2": {
+    "title": "How? Apply a defined operation to an identified subject",
+    "href": "#whole/how"
+  },
+  "ql:seed:q3": {
+    "title": "Who / Whereby? A shared language for readers, builders and researchers",
+    "href": "#whole/whereby"
+  },
+  "ql:seed:q4": {
+    "title": "Where / When? A deliberate formal perspective within ongoing work",
+    "href": "#whole/context"
+  },
+  "ql:seed:q5": {
+    "title": "Why-For? Better understanding with consequences that can be tested",
+    "href": "#whole/purpose"
+  },
+  "ql:doc:need": {
+    "title": "A relation should be something we can examine",
+    "href": "#q0/need"
+  },
+  "ql:doc:provenance": {
+    "title": "Develop the existing research into usable operations",
+    "href": "#q0/provenance"
+  },
+  "ql:doc:success": {
+    "title": "Judge usefulness at the point of use",
+    "href": "#q0/success"
+  },
+  "ql:doc:product": {
+    "title": "The executable product",
+    "href": "#q1/product"
+  },
+  "ql:doc:kernel": {
+    "title": "One field of structural operations",
+    "href": "#q1/kernel"
+  },
+  "ql:doc:readings": {
+    "title": "Lenses, contextual forms and source language",
+    "href": "#q1/readings"
+  },
+  "ql:doc:services": {
+    "title": "A service a client can deliberately request",
+    "href": "#q1/services"
+  },
+  "ql:doc:first-operation": {
+    "title": "Inspect and apply a formal operation",
+    "href": "#q2/first-operation"
+  },
+  "ql:doc:organise": {
+    "title": "Open a compact account into its relevant detail",
+    "href": "#q2/organise"
+  },
+  "ql:doc:refract": {
+    "title": "Ask another perspective of the same subject",
+    "href": "#q2/refract"
+  },
+  "ql:doc:wiki-encounter": {
+    "title": "Examine a bounded knowledge field",
+    "href": "#q2/wiki-encounter"
+  },
+  "ql:doc:people": {
+    "title": "Readers, builders and investigators",
+    "href": "#q3/people"
+  },
+  "ql:doc:identity": {
+    "title": "Preserve the subject while changing the view",
+    "href": "#q3/identity"
+  },
+  "ql:doc:structure": {
+    "title": "Whole anchors and honest partial disclosure",
+    "href": "#q3/structure"
+  },
+  "ql:doc:deployment": {
+    "title": "Use the depth the task needs",
+    "href": "#q4/deployment"
+  },
+  "ql:doc:sources": {
+    "title": "Structured accounts and ordinary files",
+    "href": "#q4/sources"
+  },
+  "ql:doc:frontier": {
+    "title": "The current development frontier",
+    "href": "#q4/frontier"
+  },
+  "ql:doc:consequence": {
+    "title": "Make the formal contribution useful to the whole",
+    "href": "#q5/consequence"
+  },
+  "ql:doc:verification": {
+    "title": "What this pass establishes",
+    "href": "#q5/verification"
+  },
+  "ql:doc:revision": {
+    "title": "Carry a changed understanding back into the account",
+    "href": "#q5/revision"
+  }
+}</script>
+<div class="app">
+  <header class="topbar">
+    <button class="icon-btn" id="leftToggle" aria-label="Toggle contents" aria-controls="leftRail" aria-expanded="true">☰</button>
+    <div class="brand"><strong>QL / MEF</strong><span>Product ground · review draft</span></div>
+    <div class="route-chip" id="routeChip"><code>#0</code><span>Ground</span></div>
+    <button class="icon-btn" id="themeToggle" aria-label="Switch theme">◐</button>
+    <button class="icon-btn" id="rightToggle" aria-label="Toggle context" aria-controls="rightRail" aria-expanded="false">✎</button>
+  </header>
+  <nav class="left-rail" id="leftRail" aria-label="Account contents"><div class="rail-label">Account</div><div class="surface-nav" id="surfaceNav"></div></nav>
+  <main class="main" id="mainContent"><article class="surface active" data-surface="whole" data-whole-anchor="0/1" data-title="QL · the whole account" data-gloss="Six questions"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">0/1</span><span class="hero-label">The whole account</span></div><h1>Quaternal Logic / MEF</h1><p class="hero-deck">A formal kernel and perspectives for making relationships inspectable.</p><div class="hero-meta">Agent-recovered candidate seed · 6 September 2026</div></header><p class="prose">This seed is generated synthesis from the linked native sources, awaiting human review. The six question labels are the selected L0 application for this account. <a href="capability-matrix.md">Capabilities</a> · <a href="capability-matrix.csv">CSV</a></p><section class="ql-node" id="whole-why" data-node=".0" data-route="why" data-nav="Why? Make relationships inspectable" data-context="vision · agent-inference · review draft" data-vessel="vision" data-standing="agent-inference" data-tags="ql whole why" data-resource="ql:seed:q0"><header class="node-head"><div class="node-eyebrow">#0 · <span data-seed-question="ql:seed:q0">Why?</span></div><h2>Why? Make relationships inspectable</h2></header><div class="prose"><div data-seed-content="ql:seed:q0"><p>People and Agents use patterns to understand a subject, but the pattern can remain implicit or become a label detached from the work. Quaternal Logic gives relational understanding an explicit form that can be inspected, compared and tested. Its research begins in the Epi-Logos inquiry into mind, relation and interiority; its software makes sufficiently specified parts of that inquiry operational.</p></div><p><a href="#q0">Open the #0 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="whole-what" data-node=".1" data-route="what" data-nav="What? A formal kernel, lens system and native CLI" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql whole what" data-resource="ql:seed:q1"><header class="node-head"><div class="node-eyebrow">#1 · <span data-seed-question="ql:seed:q1">What?</span></div><h2>What? A formal kernel, lens system and native CLI</h2></header><div class="prose"><div data-seed-content="ql:seed:q1"><p>Quaternal Logic / MEF is a Rust software product with a native ql CLI, a shared formal kernel, twelve MEF lenses and versioned service and client contracts. It computes defined structural relations, exposes canonical registries, retrieves source-bearing Vāk context and supports attributable readings of existing subjects. The broader research programme develops further operations through explicit contracts and evidence.</p></div><p><a href="#q1">Open the #1 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="whole-how" data-node=".2" data-route="how" data-nav="How? Apply a defined operation to an identified subject" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql whole how" data-resource="ql:seed:q2"><header class="node-head"><div class="node-eyebrow">#2 · <span data-seed-question="ql:seed:q2">How?</span></div><h2>How? Apply a defined operation to an identified subject</h2></header><div class="prose"><div data-seed-content="ql:seed:q2"><p>A user or client selects a subject, preserves its identity and revision, then chooses a formal operation or a refractive perspective. QL validates the structure and returns the result with its operation, version and source basis. Deterministic kernel operations act directly; richer readings use an explicitly available provider. A client can compare the reading with its original material and retain the difference that proves useful.</p></div><p><a href="#q2">Open the #2 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="whole-whereby" data-node=".3" data-route="whereby" data-nav="Who / Whereby? A shared language for readers, builders and researchers" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql whole whereby" data-resource="ql:seed:q3"><header class="node-head"><div class="node-eyebrow">#3 · <span data-seed-question="ql:seed:q3">Who / Whereby?</span></div><h2>Who / Whereby? A shared language for readers, builders and researchers</h2></header><div class="prose"><div data-seed-content="ql:seed:q3"><p>QL serves people organising knowledge, developers exposing relational views and researchers testing formal propositions. Stable addresses, a whole anchor, complementary relations and multiple lenses let them inspect different aspects of the same subject. The subject remains owned by its originating product, while QL owns the formal reading and its provenance.</p></div><p><a href="#q3">Open the #3 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="whole-context" data-node=".4" data-route="context" data-nav="Where / When? A deliberate formal perspective within ongoing work" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql whole context" data-resource="ql:seed:q4"><header class="node-head"><div class="node-eyebrow">#4 · <span data-seed-question="ql:seed:q4">Where / When?</span></div><h2>Where / When? A deliberate formal perspective within ongoing work</h2></header><div class="prose"><div data-seed-content="ql:seed:q4"><p>QL can be used at a terminal, through Rust libraries or as an optional provider within a larger O:I workflow. It is useful when a person needs to disclose a structure, compare relationships, or test whether a proposed distinction changes an outcome. Ordinary work and ordinary sources remain usable before any QL reading is requested; the chosen scope and available evidence determine the depth of a reading.</p></div><p><a href="#q4">Open the #4 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="whole-purpose" data-node=".5" data-route="purpose" data-nav="Why-For? Better understanding with consequences that can be tested" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql whole purpose" data-resource="ql:seed:q5"><header class="node-head"><div class="node-eyebrow">#5 · <span data-seed-question="ql:seed:q5">Why-For?</span></div><h2>Why-For? Better understanding with consequences that can be tested</h2></header><div class="prose"><div data-seed-content="ql:seed:q5"><p>QL is for developing a more explicit and relationally aware encounter with knowledge and agentic work. It gives O:I and Epi-Logos a common formal resource while leaving each product responsible for its own actions and meaning. Its success lies in useful understanding and demonstrable operations: a reading that clarifies a decision, a structure that preserves relationships, or an experiment that teaches us which distinctions carry real consequences.</p></div><p><a href="#q5">Open the #5 expanded answer</a></p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q0" data-title="Make relationships inspectable" data-gloss="Why?" data-seed-ref="ql:seed:q0" data-seed-sha256="3869e8d7edfd0673735a78ad9ff3a02303c7cf74fcf63c2d9b392dc5afd30316"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#0</span><span class="hero-label">Why?</span></div><h1>Make relationships inspectable</h1><p class="hero-deck">People and Agents use patterns to understand a subject, but the pattern can remain implicit or become a label detached from the work. Quaternal Logic gives relational understanding an explicit form that can be inspected, compared and tested. Its research begins in the Epi-Logos inquiry into mind, relation and interiority; its software makes sufficiently specified parts of that inquiry operational.</p><div class="hero-meta"><a href="#whole/why">0/1 · Return to the Why? seed</a></div></header><section class="ql-node" id="q0-need" data-node=".0" data-route="need" data-nav="A relation should be something we can examine" data-context="vision · agent-inference · review draft" data-vessel="vision" data-standing="agent-inference" data-tags="ql q0 need" data-resource="ql:doc:need"><header class="node-head"><div class="node-eyebrow">vision</div><h2>A relation should be something we can examine</h2></header><div class="prose"><p>A researcher sees a recurring pattern across several kinds of work. A developer wants to use that pattern in software. An Agent needs to explain what the pattern discloses about a particular subject. Each needs a way to preserve the original material, state the proposed relation and inspect what follows from it. QL exists to make that passage explicit.</p><p>The desired experience begins with a recognisable subject: this project, this question, this set of sources. The person can open a whole account, follow its parts and compare another perspective without losing the original subject. Where a relation is formally determined, the software can calculate it. Where interpretation is required, the interpretation carries its author and basis.</p><p>This gives the research a practical direction. A useful relation should help someone notice a missing condition, compare alternatives, organise a body of knowledge or formulate an experiment. The account should make that benefit understandable before asking the reader to learn the formal vocabulary.</p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a></footer></section>
+<section class="ql-node" id="q0-provenance" data-node=".1" data-route="provenance" data-nav="Develop the existing research into usable operations" data-context="founding-position · agent-inference · review draft" data-vessel="founding-position" data-standing="agent-inference" data-tags="ql q0 provenance" data-resource="ql:doc:provenance"><header class="node-head"><div class="node-eyebrow">founding position</div><h2>Develop the existing research into usable operations</h2></header><div class="prose"><p>The source inquiry draws on depth psychology, Eastern metaphysics, phenomenology and recursive relational thought. Those traditions supply questions about awareness, mediation and return. The current product receives that provenance and develops technical articulations that can be examined on their own terms.</p><p>The kernel wayfinder corrected an important implementation drift: the native product must preserve the existing holographic kernel as a whole relation. Its work is more substantial than collecting convenient scalar helpers. C and Rust expressions are joined through shared formal identities, retained source references and parity checks.</p><p>The human experience sought here is continuity between the original inquiry and the working instrument. A reader should be able to trace a formal operation to its determined source, and trace a proposed interpretation to the person or provider making it. Further development can then change the software correspondence with a clear account of what changed.</p><p class="capability-links">Capabilities: [[cap.ql.kernel-parity|Preserve the determined kernel during nativeisation]].</p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/78.json">QL-MEF #78 retained intent</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/78.comments.json">QL-MEF #78 subsequent discussion</a><a data-source href="../../docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md">Holographic kernel formal reference</a></footer></section>
+<section class="ql-node" id="q0-success" data-node=".2" data-route="success" data-nav="Judge usefulness at the point of use" data-context="constitution-design-commitment · agent-inference · review draft" data-vessel="constitution-design-commitment" data-standing="agent-inference" data-tags="ql q0 success" data-resource="ql:doc:success"><header class="node-head"><div class="node-eyebrow">constitution design commitment</div><h2>Judge usefulness at the point of use</h2></header><div class="prose"><p>A person using the six questions should gain a clearer account of the subject. A developer using an address operator should receive a reproducible result. A researcher comparing two methods should retain enough evidence to learn from a difference or its absence. These are distinct forms of success with distinct observations.</p><p>The product should make its first useful operation easy to reach, explain the scope of the result and keep the underlying subject accessible. Richer formal detail becomes available as the task requires it. A partial account can already be useful, and a simple source can remain simple while participating in larger relations.</p><p class="capability-links">Capabilities: [[cap.ql.shape|Disclose whole and partial structures]] · [[cap.ql.kernel-operators|Compute address relations]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a><a data-source href="../../fixtures/kernel/ql-shape-contract-v1.json">Versioned QL shape contract</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q1" data-title="A formal kernel, lens system and native CLI" data-gloss="What?" data-seed-ref="ql:seed:q1" data-seed-sha256="ed702daab4d4f5a6a5d743844c8cda1a9e687b5302c16b4e48b3731aee8af483"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#1</span><span class="hero-label">What?</span></div><h1>A formal kernel, lens system and native CLI</h1><p class="hero-deck">Quaternal Logic / MEF is a Rust software product with a native ql CLI, a shared formal kernel, twelve MEF lenses and versioned service and client contracts. It computes defined structural relations, exposes canonical registries, retrieves source-bearing Vāk context and supports attributable readings of existing subjects. The broader research programme develops further operations through explicit contracts and evidence.</p><div class="hero-meta"><a href="#whole/what">0/1 · Return to the What? seed</a></div></header><section class="ql-node" id="q1-product" data-node=".0" data-route="product" data-nav="The executable product" data-context="readme · agent-inference · review draft" data-vessel="readme" data-standing="agent-inference" data-tags="ql q1 product" data-resource="ql:doc:product"><header class="node-head"><div class="node-eyebrow">readme</div><h2>The executable product</h2></header><div class="prose"><p><strong>QL is a formal computation and reading product, available through the ql command and Rust libraries.</strong> Its native command surface exposes kernel capabilities and address operations, the twelve-lens registry, Context Frame names, Vāk source lookup and bounded context, service negotiation and a verification command.</p><p>The libraries provide the deeper typed contracts: positions and faces, addresses and pair families, whole and partial shapes, MEF coordinates and readings, external Context Frame mappings, provider dispatch and client adapters. These contracts let another program request a precise operation while preserving its own objects.</p><p>A human can begin with <code>ql capabilities --json</code> to inspect the exposed surface. <code>ql mef lenses</code> lists perspectives; <code>ql context-frame list</code> lists the current named contextual forms. The command is a doorway into the existing native owners, with version information available alongside the result.</p><p class="capability-links">Capabilities: [[cap.ql.cli-discovery|Inspect the available product]] · [[cap.ql.lens-registry|Choose a refractive perspective]] · [[cap.ql.context-frames|Inspect canonical contextual forms]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/87.json">QL-MEF #87 retained intent</a></footer></section>
+<section class="ql-node" id="q1-kernel" data-node=".1" data-route="kernel" data-nav="One field of structural operations" data-context="architecture-contract · agent-inference · review draft" data-vessel="architecture-contract" data-standing="agent-inference" data-tags="ql q1 kernel" data-resource="ql:doc:kernel"><header class="node-head"><div class="node-eyebrow">architecture contract</div><h2>One field of structural operations</h2></header><div class="prose"><p>The kernel gives a position and a face separate identities. Same-position conjugacy relates a direct position to its prime counterpart; complement relates a position to five minus that position on the same face. Those operations can share a vertex while remaining different relations. Their identities and provenance let a client tell them apart.</p><p>Three pair families, A, B and C, select defined pairs. Within a selected pair, D1 records the direct pair, D2 a one-sided conjugate expansion and D3 the completed conjugate square. The resulting shape retains the chosen family and pair index, including where two constructions reach the same unordered vertices.</p><p>The shape contract includes partial constellations, 4×4 and 6×6 fields, and the relational sixfold 6+6′. An address locates a place at which a relation can be examined. The application supplies the meaning of the content at that address, making the field useful across different subjects.</p><p class="capability-links">Capabilities: [[cap.ql.kernel-operators|Compute address relations]] · [[cap.ql.pairing|Preserve how a relation was formed]] · [[cap.ql.shape|Disclose whole and partial structures]].</p></div><footer class="unit-sources"><a data-source href="../../docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md">Holographic kernel formal reference</a><a data-source href="../../fixtures/kernel/ql-shape-contract-v1.json">Versioned QL shape contract</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/85.json">QL-MEF #85 retained intent</a></footer></section>
+<section class="ql-node" id="q1-readings" data-node=".2" data-route="readings" data-nav="Lenses, contextual forms and source language" data-context="surface-discovery · agent-inference · review draft" data-vessel="surface-discovery" data-standing="agent-inference" data-tags="ql q1 readings" data-resource="ql:doc:readings"><header class="node-head"><div class="node-eyebrow">surface discovery</div><h2>Lenses, contextual forms and source language</h2></header><div class="prose"><p>MEF supplies twelve lenses, six Day and six Night, each with an internal sixfold articulation. A lens is a perspective over an identified subject. Several lenses can reveal different relations of that subject while preserving a common identity for comparison.</p><p>Context Frames describe canonical cuts of a sixfold relation. The structural operator records what is selected and unselected. An external-target reading additionally carries the mapping by which the caller placed its own material in the field, and can disclose an exact, partial, ambiguous or absent match.</p><p>The Vāk registry exposes source-defined entries and their references. The CLI can locate an entry or return its neighbourhood at bounded depth. A researcher receives the source revision and coordinates needed to return to the formulation, rather than an anonymous paraphrase.</p><p class="capability-links">Capabilities: [[cap.ql.lens-registry|Choose a refractive perspective]] · [[cap.ql.context-frames|Inspect canonical contextual forms]] · [[cap.ql.external-frame|Read an external sixfold mapping]] · [[cap.ql.vak-source|Retrieve a source formulation]] · [[cap.ql.vak-context|Read a bounded source neighbourhood]].</p></div><footer class="unit-sources"><a data-source href="../../docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md">Holographic kernel formal reference</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/66.json">QL-MEF #66 retained intent</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/87.json">QL-MEF #87 retained intent</a></footer></section>
+<section class="ql-node" id="q1-services" data-node=".3" data-route="services" data-nav="A service a client can deliberately request" data-context="architecture-contract · agent-inference · review draft" data-vessel="architecture-contract" data-standing="agent-inference" data-tags="ql q1 services" data-resource="ql:doc:services"><header class="node-head"><div class="node-eyebrow">architecture contract</div><h2>A service a client can deliberately request</h2></header><div class="prose"><p>The service family includes capabilities, locate, refract, relate and synthesise. The caller first inspects the provider state and operation support. This lets a client know whether it can obtain a deterministic structural result, a provider-backed reading, or an explicit unavailable result.</p><p>Client adapters preserve the native subject and support disabled, optional and required modes. A disabled client retains its own material. An optional client can continue when a provider is unavailable. Required mode exposes the failure at the operation that needs QL. This gives the user a deliberate choice about how formal reading enters a workflow.</p><p class="capability-links">Capabilities: [[cap.ql.service-negotiation|Determine operation availability]] · [[cap.ql.service-readings|Request an attributable reading]] · [[cap.ql.client-modes|Keep QL an explicit client choice]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q2" data-title="Apply a defined operation to an identified subject" data-gloss="How?" data-seed-ref="ql:seed:q2" data-seed-sha256="b64f4d4d716b918dbf2863312ad9e7c3115cce9773a7788d547894567a6e0c83"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#2</span><span class="hero-label">How?</span></div><h1>Apply a defined operation to an identified subject</h1><p class="hero-deck">A user or client selects a subject, preserves its identity and revision, then chooses a formal operation or a refractive perspective. QL validates the structure and returns the result with its operation, version and source basis. Deterministic kernel operations act directly; richer readings use an explicitly available provider. A client can compare the reading with its original material and retain the difference that proves useful.</p><div class="hero-meta"><a href="#whole/how">0/1 · Return to the How? seed</a></div></header><section class="ql-node" id="q2-first-operation" data-node=".0" data-route="first-operation" data-nav="Inspect and apply a formal operation" data-context="implementation-guide · agent-inference · review draft" data-vessel="implementation-guide" data-standing="agent-inference" data-tags="ql q2 first-operation" data-resource="ql:doc:first-operation"><header class="node-head"><div class="node-eyebrow">implementation guide</div><h2>Inspect and apply a formal operation</h2></header><div class="prose"><p>A terminal user first reads the capability response and chooses an advertised kernel operator. The user supplies a valid address; the command returns the operation, input, output and kernel/schema versions. An invalid address produces an error that can be corrected before repeating the request.</p><p>The useful result is a reproducible structural fact. A developer can keep that response with the source material or use the corresponding library contract within another program. Repeating the same deterministic operation with the same version and input permits direct comparison.</p><p>The CLI currently exposes conjugate-address, complement-address and classify-four-plus-two. The broader pairing and shape facilities are native library contracts; the account keeps those surfaces distinct so a user can find an actual entry point for the intended operation.</p><p class="capability-links">Capabilities: [[cap.ql.cli-discovery|Inspect the available product]] · [[cap.ql.kernel-operators|Compute address relations]] · [[cap.ql.cli-verification|Check the exposed native surface]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/87.json">QL-MEF #87 retained intent</a></footer></section>
+<section class="ql-node" id="q2-organise" data-node=".1" data-route="organise" data-nav="Open a compact account into its relevant detail" data-context="protocol-method · agent-inference · review draft" data-vessel="protocol-method" data-standing="agent-inference" data-tags="ql q2 organise" data-resource="ql:doc:organise"><header class="node-head"><div class="node-eyebrow">protocol method</div><h2>Open a compact account into its relevant detail</h2></header><div class="prose"><p>A person begins with six short answers describing a subject. The whole overview stays readable on its own. Each answer then opens into material that explains the corresponding need, definition, operation, structure, context or consequence. A reader can move from the whole to a precise unit and return without losing the question being answered.</p><p>This account uses the human-selected Why, What, How, Who / Whereby, Where / When and Why-For labels. The native L0 registry remains available by reference. The application wording is recorded here because the purpose is to make product intentions clear to their human reader.</p><p>An Agent revising an answer reviews its corresponding expansion and follows the linked capabilities. The recorded seed hash establishes the text against which that expansion was reviewed. The human judges the faithfulness of the elaboration. Existing small notes can contribute as sources through their own identities and links, with no requirement to invent a complete six-part account for each.</p><p class="capability-links">Capabilities: [[cap.ql.shape|Disclose whole and partial structures]] · [[cap.ql.wiki-structure|Retain source structure at its actual depth]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a><a data-source href="../../../Central/docs/PROJECT-CONTEXT-PROTOCOL.md">Source and documentation protocol</a></footer></section>
+<section class="ql-node" id="q2-refract" data-node=".2" data-route="refract" data-nav="Ask another perspective of the same subject" data-context="implementation-guide · agent-inference · review draft" data-vessel="implementation-guide" data-standing="agent-inference" data-tags="ql q2 refract" data-resource="ql:doc:refract"><header class="node-head"><div class="node-eyebrow">implementation guide</div><h2>Ask another perspective of the same subject</h2></header><div class="prose"><p>A client identifies a subject and revision, selects a lens and supplies the relevant mapping and context. It checks service capabilities before making the request. A supported operation returns a reading together with provider identity, version, input references and the result class.</p><p>The user can compare the reading with the source and with another reading of that same subject. This comparison is possible because lens, subject and provider remain distinguishable. If the context is partial or the provider is degraded, that condition travels with the result and informs the next decision.</p><p>A useful interface should display the focal subject, selected perspective, resulting relations and source links together. The person should be able to change the perspective or return to the source as a direct action. The client decides whether the new reading becomes retained knowledge or leads to another operation.</p><p class="capability-links">Capabilities: [[cap.ql.service-readings|Request an attributable reading]] · [[cap.ql.client-modes|Keep QL an explicit client choice]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a></footer></section>
+<section class="ql-node" id="q2-wiki-encounter" data-node=".3" data-route="wiki-encounter" data-nav="Examine a bounded knowledge field" data-context="protocol-method · agent-inference · review draft" data-vessel="protocol-method" data-standing="agent-inference" data-tags="ql q2 wiki-encounter" data-resource="ql:doc:wiki-encounter"><header class="node-head"><div class="node-eyebrow">protocol method</div><h2>Examine a bounded knowledge field</h2></header><div class="prose"><p>An AIKit client can supply a bounded WikiFrame: the target wiki, revision, selected nodes and explicit mapping information. QL can derive a formal reading over that field and return the selected relations with their operator and source basis. The result belongs beside the existing knowledge as an attributable reading.</p><p>The living-wiki method offers an initial 5→0→1 orientation: the current whole, its relevant ground and a focal determination. The relevant field can then expand to include positions 2, 3 and 4, or the full contextual relation, within the requested bounds. The sequence is an entry method; the kernel retains Return through the whole anchor.</p><p>The intended experience is a useful new connection that remains inspectable. A person can follow the reading into its sources, understand which mapping supported it and choose what to retain. The ordinary wiki stays usable when this optional formal perspective is absent.</p><p class="capability-links">Capabilities: [[cap.ql.wiki-refraction|Derive a reading of a knowledge field]] · [[cap.ql.living-wiki|Examine relevant context after a changed whole]] · [[cap.ql.wiki-portals|Follow related knowledge across wikis]].</p></div><footer class="unit-sources"><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/79.json">QL-MEF #79 retained intent</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/79.comments.json">QL-MEF #79 subsequent discussion</a><a data-source href="../../docs/wiki-structural-contract-v2.md">Wiki structural contract</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q3" data-title="A shared language for readers, builders and researchers" data-gloss="Who / Whereby?" data-seed-ref="ql:seed:q3" data-seed-sha256="124c1f33c42b0140a1d750f54501605e96b42cd630f16f17a532028c2a381e4b"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#3</span><span class="hero-label">Who / Whereby?</span></div><h1>A shared language for readers, builders and researchers</h1><p class="hero-deck">QL serves people organising knowledge, developers exposing relational views and researchers testing formal propositions. Stable addresses, a whole anchor, complementary relations and multiple lenses let them inspect different aspects of the same subject. The subject remains owned by its originating product, while QL owns the formal reading and its provenance.</p><div class="hero-meta"><a href="#whole/whereby">0/1 · Return to the Who / Whereby? seed</a></div></header><section class="ql-node" id="q3-people" data-node=".0" data-route="people" data-nav="Readers, builders and investigators" data-context="vision · agent-inference · review draft" data-vessel="vision" data-standing="agent-inference" data-tags="ql q3 people" data-resource="ql:doc:people"><header class="node-head"><div class="node-eyebrow">vision</div><h2>Readers, builders and investigators</h2></header><div class="prose"><p>A reader needs a coherent encounter with a subject and an easy way to reach the relevant detail. A builder needs typed operations, versioned outputs and reliable failure conditions. An investigator needs a way to preserve a proposition, set up a comparison and retain the result without losing its experimental conditions.</p><p>QL meets these needs through different surfaces over the same formal field. The documentation explains intended meaning and use. The command exposes bounded native operations. The libraries and service let other products compose them. Research fixtures and evidence establish the scope of demonstrated behaviour.</p><p>The author of a reading remains identifiable. A semantic interpretation generated by an Agent belongs to that Agent or client act. A formal operator can establish a structural result within its contract. Keeping those relations visible lets readers assess the contribution of each participant.</p><p class="capability-links">Capabilities: [[cap.ql.service-readings|Request an attributable reading]] · [[cap.ql.vak-source|Retrieve a source formulation]].</p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a></footer></section>
+<section class="ql-node" id="q3-identity" data-node=".1" data-route="identity" data-nav="Preserve the subject while changing the view" data-context="architecture-contract · agent-inference · review draft" data-vessel="architecture-contract" data-standing="agent-inference" data-tags="ql q3 identity" data-resource="ql:doc:identity"><header class="node-head"><div class="node-eyebrow">architecture contract</div><h2>Preserve the subject while changing the view</h2></header><div class="prose"><p>A Factory Run, AIKit Resource or Wiki subject carries its native identity into a QL request. The request adds an operation, lens or mapping; the response identifies the subject it read. This gives different readings a shared point of reference and lets the source owner continue to govern its material.</p><p>The same discipline applies inside the kernel. Pair-family provenance is retained even when two fields have equal vertices. Versioned relation identifiers distinguish same-position conjugacy, mirror/complement and cross-completion. Reading provenance identifies the mapping, provider and source revisions on which the result depends.</p><p>The shared O:I primitive vocabulary remains in [[source:shared|the Covenant]]. QL supplies formal structure and derived readings within that wider World. Central holds durable source; AIKit interprets and navigates knowledge; other native products enact their own responsibilities. A relation between products should identify the actual operation crossing the seam.</p><p class="capability-links">Capabilities: [[cap.ql.pairing|Preserve how a relation was formed]] · [[cap.ql.external-frame|Read an external sixfold mapping]] · [[cap.ql.client-modes|Keep QL an explicit client choice]].</p></div><footer class="unit-sources"><a data-source href="../../docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md">Holographic kernel formal reference</a><a data-source href="../../../O-I/docs/HUMAN-AGENT-COVENANT.md">Shared O:I primitive relations</a></footer></section>
+<section class="ql-node" id="q3-structure" data-node=".2" data-route="structure" data-nav="Whole anchors and honest partial disclosure" data-context="architecture-contract · agent-inference · review draft" data-vessel="architecture-contract" data-standing="agent-inference" data-tags="ql q3 structure" data-resource="ql:doc:structure"><header class="node-head"><div class="node-eyebrow">architecture contract</div><h2>Whole anchors and honest partial disclosure</h2></header><div class="prose"><p>The whole anchor 0/1 identifies a whole that can open into its relevant structure. A partial shape is already a valid disclosed whole. Its current contents and relations remain available, and the absence of other positions can be expressed without filling them with invented material.</p><p>An ordinary atomic node can remain one thing. Explicit QL structure adds an opening where it is useful. Addressing locates structure; semantic content and relationships come from the attributed source or reading. This lets an ad hoc note, a structured account and a capability record coexist without assigning them artificial uniform meaning.</p><p>Return preserves its relation through the whole anchor. A downstream application may choose a practical navigation sequence or workflow, but that choice carries its own application identity. This separation allows useful interfaces to develop while the shared structural contract stays precise.</p><p class="capability-links">Capabilities: [[cap.ql.shape|Disclose whole and partial structures]] · [[cap.ql.wiki-structure|Retain source structure at its actual depth]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-foundations/SKILL.md">QL foundations and L0 meanings</a><a data-source href="../../fixtures/kernel/ql-shape-contract-v1.json">Versioned QL shape contract</a><a data-source href="../../docs/wiki-structural-contract-v2.md">Wiki structural contract</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q4" data-title="A deliberate formal perspective within ongoing work" data-gloss="Where / When?" data-seed-ref="ql:seed:q4" data-seed-sha256="3164ed3d0ccf6d573724b7859bb8dc70ab6b89c92e20590bc7360511f885053b"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#4</span><span class="hero-label">Where / When?</span></div><h1>A deliberate formal perspective within ongoing work</h1><p class="hero-deck">QL can be used at a terminal, through Rust libraries or as an optional provider within a larger O:I workflow. It is useful when a person needs to disclose a structure, compare relationships, or test whether a proposed distinction changes an outcome. Ordinary work and ordinary sources remain usable before any QL reading is requested; the chosen scope and available evidence determine the depth of a reading.</p><div class="hero-meta"><a href="#whole/context">0/1 · Return to the Where / When? seed</a></div></header><section class="ql-node" id="q4-deployment" data-node=".0" data-route="deployment" data-nav="Use the depth the task needs" data-context="surface-discovery · agent-inference · review draft" data-vessel="surface-discovery" data-standing="agent-inference" data-tags="ql q4 deployment" data-resource="ql:doc:deployment"><header class="node-head"><div class="node-eyebrow">surface discovery</div><h2>Use the depth the task needs</h2></header><div class="prose"><p>The terminal surface is useful for inspecting the local product and performing bounded operations. A Rust client can use the typed libraries directly. A larger application can negotiate provider capabilities and select the operating mode appropriate to the task. These are different ways of reaching the same native formal owners.</p><p>The relevant context includes the product revision, operator version, subject revision, provider health and requested scope. Those details determine whether results can be compared meaningfully. A source-locked Vāk lookup has a different evidence basis from a semantic provider reading, even when both contribute to one investigation.</p><p>For a knowledge task, a small field may be enough to answer the question. More depth should follow a concrete need to examine additional relations. The current Vāk CLI bounds context depth to zero through two; living-wiki methods preserve bounded scope in their requests and results.</p><p class="capability-links">Capabilities: [[cap.ql.vak-context|Read a bounded source neighbourhood]] · [[cap.ql.service-negotiation|Determine operation availability]] · [[cap.ql.living-wiki|Examine relevant context after a changed whole]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/87.json">QL-MEF #87 retained intent</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/79.json">QL-MEF #79 retained intent</a></footer></section>
+<section class="ql-node" id="q4-sources" data-node=".1" data-route="sources" data-nav="Structured accounts and ordinary files" data-context="protocol-method · agent-inference · review draft" data-vessel="protocol-method" data-standing="agent-inference" data-tags="ql q4 sources" data-resource="ql:doc:sources"><header class="node-head"><div class="node-eyebrow">protocol method</div><h2>Structured accounts and ordinary files</h2></header><div class="prose"><p>This HTML is a candidate editable account with stable units and seed relations. Its matrix supplies capability addresses and evidence traces. An ordinary research note can carry its own source identity and links without adopting this layout. Both forms should remain retrievable at the level of their actual material.</p><p>The current AIKit authored Markdown relation reader handles ordinary Markdown and optional properties. It retains explicit relations and unresolved targets. Its current adapter does not automatically extract the HTML resource map or individual CSV capability rows into semantic subjects. The next format adapter must preserve those explicit units rather than flattening them or manufacturing positions for ordinary notes.</p><p>Wiki writing is a separate act through [[source:wiki-write|AIKit’s native write procedure]]. Reading follows [[source:wiki-read|knowledge navigation]]. QL supplies optional structural and refractive methods. Source identity, standing, revision and privacy remain part of the input contract whichever file format carries the material.</p><p class="capability-links">Capabilities: [[cap.ql.wiki-structure|Retain source structure at its actual depth]] · [[cap.ql.wiki-refraction|Derive a reading of a knowledge field]].</p></div><footer class="unit-sources"><a data-source href="../../../Central/docs/PROJECT-CONTEXT-PROTOCOL.md">Source and documentation protocol</a><a data-source href="../../../ai-kit/registry/capsules/skill/aikit/wiki-inhabitation/payload/SKILL.md">AIKit wiki write procedure</a><a data-source href="../../../ai-kit/registry/capsules/skill/aikit/knowledge-navigation/payload/SKILL.md">AIKit knowledge navigation</a></footer></section>
+<section class="ql-node" id="q4-frontier" data-node=".2" data-route="frontier" data-nav="The current development frontier" data-context="temporal-working-state · agent-inference · review draft" data-vessel="temporal-working-state" data-standing="agent-inference" data-tags="ql q4 frontier" data-resource="ql:doc:frontier"><header class="node-head"><div class="node-eyebrow">temporal working state</div><h2>The current development frontier</h2></header><div class="prose"><p>This account was recovered from the local checkout at 781981374eaa1f02952249dcdbca1af671d1ece4 on 6 September 2026. The linked issue bodies and discussions are retained local snapshots. Current code provides a firmer basis for executable scope than an older branch-status sentence or a closed ticket by itself.</p><p>The native CLI and kernel/MEF tests were executed for this documentation pass. Provider-backed service and wiki facilities were inspected through their source and test contracts. Their matrix status remains source-inspected here. No model-benefit experiment or physical client deployment was established by this pass.</p><p>The remaining product question is how deeper formal distinctions improve an actual encounter or operation. The research programme retains musical, harmonic and Epi integration development. Each further promotion needs its own explicit operation, source relation and relevant observed consequence. The full suite can then distinguish useful explanatory form from demonstrated runtime effect.</p><p class="capability-links">Capabilities: [[cap.ql.service-readings|Request an attributable reading]] · [[cap.ql.living-wiki|Examine relevant context after a changed whole]].</p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/78.comments.json">QL-MEF #78 subsequent discussion</a><a data-source href="../../../github-recovery-mirror/mirror/QL-MEF/issues/85.comments.json">QL-MEF #85 subsequent discussion</a></footer></section>
+</div></article>
+<article class="surface" data-surface="q5" data-title="Better understanding with consequences that can be tested" data-gloss="Why-For?" data-seed-ref="ql:seed:q5" data-seed-sha256="0b2bff63c1b59bed272e2b4a2c7863e946064f70525302b179d8c9e2b17ae630"><div class="surface-inner"><header class="hero"><div class="hero-line"><span class="ql-badge">#5</span><span class="hero-label">Why-For?</span></div><h1>Better understanding with consequences that can be tested</h1><p class="hero-deck">QL is for developing a more explicit and relationally aware encounter with knowledge and agentic work. It gives O:I and Epi-Logos a common formal resource while leaving each product responsible for its own actions and meaning. Its success lies in useful understanding and demonstrable operations: a reading that clarifies a decision, a structure that preserves relationships, or an experiment that teaches us which distinctions carry real consequences.</p><div class="hero-meta"><a href="#whole/purpose">0/1 · Return to the Why-For? seed</a></div></header><section class="ql-node" id="q5-consequence" data-node=".0" data-route="consequence" data-nav="Make the formal contribution useful to the whole" data-context="vision · agent-inference · review draft" data-vessel="vision" data-standing="agent-inference" data-tags="ql q5 consequence" data-resource="ql:doc:consequence"><header class="node-head"><div class="node-eyebrow">vision</div><h2>Make the formal contribution useful to the whole</h2></header><div class="prose"><p>QL contributes a common way to locate, disclose and compare relationships. A product can use that contribution where it clarifies a subject or supports a defined operation. The user receives an account whose parts remain connected and a result whose meaning can be assessed against its source.</p><p>In an O:I World, the most useful outcome may be a clearer formulation of intent, a connection among previously separate evidence or an experiment that changes the next development decision. QL returns the reading to the native actor who can recognise and act on that consequence.</p><p>For Epi-Logos, the same discipline sustains the larger investigation. A determined source relation becomes an executable contract where it can. A new result can refine the proposed correspondence. The whole inquiry becomes more answerable as its individual technical claims acquire precise consequences.</p><p class="capability-links">Capabilities: [[cap.ql.service-readings|Request an attributable reading]] · [[cap.ql.living-wiki|Examine relevant context after a changed whole]].</p></div><footer class="unit-sources"><a data-source href="../../README.md">QL product definition and research provenance</a><a data-source href="../../../O-I/docs/HUMAN-AGENT-COVENANT.md">Shared O:I primitive relations</a></footer></section>
+<section class="ql-node" id="q5-verification" data-node=".1" data-route="verification" data-nav="What this pass establishes" data-context="evidence · agent-inference · review draft" data-vessel="evidence" data-standing="agent-inference" data-tags="ql q5 verification" data-resource="ql:doc:verification"><header class="node-head"><div class="node-eyebrow">evidence</div><h2>What this pass establishes</h2></header><div class="prose"><p>The selected native command was <code>cargo test -p ql-cli -p ql-core -p ql-mef --all-targets</code>. It passed on 6 September 2026. The suites exercise actual native address operations, structural contracts, pair families, MEF and contextual forms, Vāk source contracts and CLI behaviour.</p><p>The selection establishes bounded software behaviour at the inspected checkout. Service-provider and cross-wiki tests are linked for further inspection but were outside this executed selection. A passing structural test does not establish an improvement in model capability or a conclusion about the philosophical source.</p><p>The document validator checks source links, the six seed relationships, typed unit identities, capability references and MD/CSV parity. Browser checks assess the reading interface. The human review remains the place to recognise or amend this source-recovered seed and its intended meaning.</p><p class="capability-links">Capabilities: [[cap.ql.cli-verification|Check the exposed native surface]] · [[cap.ql.kernel-operators|Compute address relations]].</p></div><footer class="unit-sources"><a data-source href="../../skills/ql-operation/SKILL.md">Native QL operation procedure</a><a data-source href="../../fixtures/kernel/ql-shape-contract-v1.json">Versioned QL shape contract</a></footer></section>
+<section class="ql-node" id="q5-revision" data-node=".2" data-route="revision" data-nav="Carry a changed understanding back into the account" data-context="skill-agent-operating-instruction · agent-inference · review draft" data-vessel="skill-agent-operating-instruction" data-standing="agent-inference" data-tags="ql q5 revision" data-resource="ql:doc:revision"><header class="node-head"><div class="node-eyebrow">skill agent operating instruction</div><h2>Carry a changed understanding back into the account</h2></header><div class="prose"><p>Begin a revision with the smallest relevant source set: the current human seed, governing formal source, native operation and later ticket corrections. Establish which part of the account is under pressure. Revise that unit and its connected capability rather than multiplying parallel explanations.</p><p>When the seed changes, reconcile the matching expanded layer and any affected contracts or journeys. Record the revised source basis only after reading the meaning together. A capability change can expose an implementation gap while the human purpose remains valid.</p><p>The companion matrix holds eighteen functional capability families. Its default view relates the six seed answers to the O:I whole and peer products; additional declared views carry source-defined relational questions using the same contract. The functional records supply concrete powers and traces. Reading both alongside the account keeps intention, functional scope and wider relationships connected without making one substitute for another.</p><p>The <a href="capability-matrix.md#seed--field-contribution">seed × field grid</a> opens the <a href="capability-matrix.json">declared matrix views</a>. Edit its <a href="capability-matrix.csv">CSV records</a> under the <a href="../../../Central/docs/CAPABILITY-MATRIX-PROTOCOL.md">shared capability protocol</a>, then reconcile affected passages in this account. Central owns retirement’s filesystem structure; AIKit owns its operations and the wiki population procedure.</p></div><footer class="unit-sources"><a data-source href="../../../Central/docs/PROJECT-CONTEXT-PROTOCOL.md">Source and documentation protocol</a></footer></section>
+</div></article>
+</main>
+  <aside class="right-rail" id="rightRail" aria-label="Section context"><div class="context-head"><div class="context-kicker" id="contextCoord">#0 · .0</div><h3 id="contextTitle">Source context</h3><p id="contextSummary">Select a section to inspect its source and standing.</p></div><div class="note-field" id="noteField"><label for="sectionNote">Section notes</label><textarea id="sectionNote" placeholder="Write a note for this section…"></textarea><div class="save-state" id="saveState">Saved locally when available.</div></div><div class="context-slot" id="contextSlot"></div><details class="right-details" open><summary>Sources in this section</summary><div class="source-list" id="sectionSources"></div><div class="source-empty" id="sourceEmpty">No section sources listed.</div></details><details class="right-details"><summary>Provenance</summary><dl class="meta-list" id="metaList"></dl></details></aside>
+</div>
+
+<script>
+(() => {
+  const resources=JSON.parse(document.getElementById('ground-resources').textContent);
+  const walker=document.createTreeWalker(document.getElementById('mainContent'),NodeFilter.SHOW_TEXT,{acceptNode(node){return node.parentElement.closest('script,style,code,pre,a')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;}});
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  for(const node of nodes){const raw=node.textContent;const pattern=/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;let match,last=0,changed=false;const fragment=document.createDocumentFragment();
+    while((match=pattern.exec(raw))){changed=true;fragment.append(document.createTextNode(raw.slice(last,match.index)));const ref=match[1].trim(),entry=resources[ref];const el=document.createElement(entry?'a':'span');el.textContent=match[2]||entry?.title||ref;if(entry){el.href=entry.href;el.dataset.resource=ref;}else{el.className='source-unresolved';el.title='Unresolved authored source: '+ref;}fragment.append(el);last=pattern.lastIndex;}
+    if(changed){fragment.append(document.createTextNode(raw.slice(last)));node.replaceWith(fragment);}
+  }
+})();
+</script>
+<script>
+(() => {
+  'use strict';
+  const body = document.body;
+  const root = document.documentElement;
+  const surfaces = [...document.querySelectorAll('.surface')];
+  const surfaceNav = document.getElementById('surfaceNav');
+  const leftToggle = document.getElementById('leftToggle');
+  const rightToggle = document.getElementById('rightToggle');
+  const themeToggle = document.getElementById('themeToggle');
+  const routeChip = document.getElementById('routeChip');
+  const contextCoord = document.getElementById('contextCoord');
+  const contextTitle = document.getElementById('contextTitle');
+  const contextSummary = document.getElementById('contextSummary');
+  const contextSlot = document.getElementById('contextSlot');
+  const sectionSources = document.getElementById('sectionSources');
+  const sourceEmpty = document.getElementById('sourceEmpty');
+  const sectionNote = document.getElementById('sectionNote');
+  const saveState = document.getElementById('saveState');
+  const metaList = document.getElementById('metaList');
+  const provenance = readProvenance();
+  let activeSurface = surfaces[0];
+  let activeNode = activeSurface.querySelector('.ql-node');
+  let scrollFrame = 0;
+  function safeGet(key){try{return localStorage.getItem(key)}catch(_){return null}}
+  function safeSet(key,value){try{localStorage.setItem(key,value);return true}catch(_){return false}}
+  function readProvenance(){try{return JSON.parse(document.getElementById('account-provenance').textContent)}catch(_){return {}}}
+  function buildMetadata(){const fields=[['UID',provenance.uid],['Project',provenance.project],['Session',provenance.session],['Status',provenance.status],['Created',provenance.created],['Updated',provenance.updated],['Generator',provenance.generator]];metaList.innerHTML='';for(const [label,value] of fields){if(!value)continue;const row=document.createElement('div');row.className='meta-row';row.innerHTML=`<dt>${escapeHTML(label)}</dt><dd>${escapeHTML(String(value))}</dd>`;metaList.appendChild(row)}}
+  function escapeHTML(value){return value.replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
+  function buildNav(){surfaceNav.innerHTML='';surfaces.forEach(surface=>{const q=surface.dataset.surface;const qNumber=q==='whole'?'0/1':q.replace(/^q/,'');const title=surface.dataset.title||q;const gloss=surface.dataset.gloss||'';const group=document.createElement('div');group.className='nav-group';group.dataset.surface=q;const head=document.createElement('div');head.className='nav-head';const select=document.createElement('button');select.type='button';select.className='nav-select';select.innerHTML=`<span class="nav-q">${q==='whole'?'':'#'}${qNumber}</span><span class="nav-name">${escapeHTML(title)}<span class="nav-gloss">${escapeHTML(gloss)}</span></span>`;select.addEventListener('click',()=>navigate(q,null,true));const toggle=document.createElement('button');toggle.type='button';toggle.className='nav-toggle';toggle.setAttribute('aria-label',`Toggle sections for ${title}`);toggle.setAttribute('aria-expanded','false');toggle.innerHTML='<span>›</span>';toggle.addEventListener('click',()=>{const open=group.classList.toggle('expanded');toggle.setAttribute('aria-expanded',String(open))});head.append(select,toggle);group.appendChild(head);const subnav=document.createElement('div');subnav.className='subnav';[...surface.querySelectorAll('.ql-node')].forEach(node=>{const a=document.createElement('a');const route=node.dataset.route||node.id;a.href=`#${q}/${encodeURIComponent(route)}`;a.dataset.nodeId=node.id;a.innerHTML=`<code>${escapeHTML(node.dataset.node||'')}</code><span>${escapeHTML(node.dataset.nav||node.querySelector('h2')?.textContent||route)}</span>`;a.addEventListener('click',event=>{event.preventDefault();navigate(q,route,true)});subnav.appendChild(a)});group.appendChild(subnav);surfaceNav.appendChild(group)})}
+  function parseHash(){let raw=location.hash.slice(1).trim();try{raw=decodeURIComponent(raw)}catch{}if(!raw)return{surface:surfaces[0]?.dataset.surface||'q0',route:null};const[surface,route]=raw.split('/');return{surface:surfaces.some(s=>s.dataset.surface===surface)?surface:(surfaces[0]?.dataset.surface||'q0'),route:route||null}}
+  function findNode(surface,route){const nodes=[...surface.querySelectorAll('.ql-node')];if(!route)return nodes[0]||null;return nodes.find(node=>node.dataset.route===route||node.id===route)||nodes[0]||null}
+  function navigate(surfaceId,route,push){const surface=surfaces.find(item=>item.dataset.surface===surfaceId)||surfaces[0];const node=findNode(surface,route);activateSurface(surface);activeNode=node;updateActiveUI();if(push){const hash=`#${surface.dataset.surface}${route?'/'+encodeURIComponent(route):''}`;history.pushState(null,'',hash)}requestAnimationFrame(()=>{if(route&&node)node.scrollIntoView({behavior:prefersReducedMotion()?'auto':'smooth',block:'start'});else window.scrollTo({top:0,behavior:'auto'})})}
+  function activateSurface(surface){if(activeSurface!==surface){activeSurface.classList.remove('active');surface.classList.add('active');activeSurface=surface;window.scrollTo({top:0,behavior:'auto'})}document.querySelectorAll('.nav-group').forEach(group=>{const isActive=group.dataset.surface===surface.dataset.surface;group.classList.toggle('active',isActive);if(isActive){group.classList.add('expanded');const toggle=group.querySelector('.nav-toggle');if(toggle)toggle.setAttribute('aria-expanded','true')}})}
+  function updateActiveUI(){if(!activeNode)return;document.querySelectorAll('.subnav a').forEach(a=>a.classList.toggle('active',a.dataset.nodeId===activeNode.id));const qNumber=activeSurface.dataset.surface==='whole'?'0/1':activeSurface.dataset.surface.replace(/^q/,'');routeChip.innerHTML=`<code>${qNumber==='0/1'?'':'#'}${qNumber} · ${escapeHTML(activeNode.dataset.node||'')}</code><span>${escapeHTML(activeNode.dataset.nav||'')}</span>`;updateContext(qNumber,activeNode)}
+  function updateContext(qNumber,node){contextCoord.textContent=`${qNumber==='0/1'?'':'#'}${qNumber} · ${node.dataset.node||''}`;contextTitle.textContent=node.dataset.nav||node.querySelector('h2')?.textContent||'Section';contextSummary.textContent=node.dataset.context||'Section-relative context.';const panel=node.querySelector('template[data-context-panel]');contextSlot.innerHTML='';if(panel)contextSlot.appendChild(panel.content.cloneNode(true));const sources=[...node.querySelectorAll('a[data-source]')];sectionSources.innerHTML='';sourceEmpty.hidden=sources.length>0;sources.forEach(source=>{const clone=document.createElement('a');clone.href=source.href;clone.target='_blank';clone.rel='noopener noreferrer';clone.textContent=source.textContent.trim()||source.href;sectionSources.appendChild(clone)});const noteKey=noteStorageKey(activeSurface.dataset.surface,node.dataset.route||node.id);sectionNote.value=safeGet(noteKey)||'';sectionNote.dataset.storageKey=noteKey}
+  function noteStorageKey(surface,route){return`ql-html-account:${provenance.uid||'anonymous'}:${surface}:${route}:note`}
+  function updateFromScroll(){scrollFrame=0;if(!activeSurface)return;const nodes=[...activeSurface.querySelectorAll('.ql-node')];if(!nodes.length)return;let current=nodes[0];const offset=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--top-h'))+34;const atBottom=window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4;if(atBottom){current=nodes[nodes.length-1]}else{for(const node of nodes){if(node.getBoundingClientRect().top<=offset)current=node;else break}}if(current!==activeNode){activeNode=current;updateActiveUI();const route=current.dataset.route||current.id;const nextHash=`#${activeSurface.dataset.surface}/${encodeURIComponent(route)}`;history.replaceState(null,'',nextHash)}}
+  function scheduleScrollUpdate(){if(scrollFrame)return;scrollFrame=requestAnimationFrame(updateFromScroll)}
+  function routeFromLocation(){const{surface,route}=parseHash();const targetSurface=surfaces.find(s=>s.dataset.surface===surface)||surfaces[0];const node=findNode(targetSurface,route);activateSurface(targetSurface);activeNode=node;updateActiveUI();requestAnimationFrame(()=>{if(route&&node)node.scrollIntoView({behavior:'auto',block:'start'});else window.scrollTo({top:0,behavior:'auto'})})}
+  function prefersReducedMotion(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches}
+  function setTheme(theme){root.dataset.theme=theme;safeSet('ql-html-account:theme',theme)}
+  function applyResponsiveRailDefaults(){const width=window.innerWidth;if(width<980){body.classList.add('left-closed','right-closed')}else if(width<1320){if(!body.dataset.userLeft)body.classList.remove('left-closed');if(!body.dataset.userRight)body.classList.add('right-closed')}syncRailAria()}
+  function syncRailAria(){leftToggle.setAttribute('aria-expanded',String(!body.classList.contains('left-closed')));rightToggle.setAttribute('aria-expanded',String(!body.classList.contains('right-closed')))}
+  leftToggle.addEventListener('click',()=>{body.dataset.userLeft='1';body.classList.toggle('left-closed');syncRailAria()});rightToggle.addEventListener('click',()=>{body.dataset.userRight='1';body.classList.toggle('right-closed');syncRailAria()});themeToggle.addEventListener('click',()=>{setTheme(root.dataset.theme==='dark'?'light':'dark')});sectionNote.addEventListener('input',()=>{const ok=safeSet(sectionNote.dataset.storageKey||'',sectionNote.value);saveState.textContent=ok?'Saved locally.':'Local persistence is unavailable. The note remains in this page until it closes.'});window.addEventListener('scroll',scheduleScrollUpdate,{passive:true});window.addEventListener('popstate',routeFromLocation);window.addEventListener('hashchange',routeFromLocation);window.addEventListener('resize',applyResponsiveRailDefaults,{passive:true});buildMetadata();buildNav();setTheme(safeGet('ql-html-account:theme')||'light');applyResponsiveRailDefaults();routeFromLocation();
+})();
+</script>
+</body>
+</html>

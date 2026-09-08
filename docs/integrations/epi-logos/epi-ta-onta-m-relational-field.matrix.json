@@ -1,0 +1,73 @@
+{
+  "protocol": "ql-capability-matrix/1",
+  "matrix_id": "epi:agent-world-capabilities",
+  "anchor_ref": "epi:ta-onta:0/1",
+  "default_view": "inhabitation",
+  "views": [
+    {
+      "id": "inhabitation",
+      "title": "M domains through Ta-Onta organs",
+      "row_axis": {
+        "id": "domains",
+        "label": "M domain",
+        "members": [
+          {
+            "id": "M0",
+            "label": "Anuttara"
+          },
+          {
+            "id": "M1",
+            "label": "Paramaśiva"
+          },
+          {
+            "id": "M2",
+            "label": "Paraśakti"
+          },
+          {
+            "id": "M3",
+            "label": "Mahāmāyā"
+          },
+          {
+            "id": "M4",
+            "label": "Nara"
+          },
+          {
+            "id": "M5",
+            "label": "Epii"
+          }
+        ]
+      },
+      "column_axis": {
+        "id": "organs",
+        "label": "Ta-Onta organ",
+        "members": [
+          {
+            "id": "S0′",
+            "label": "Khora"
+          },
+          {
+            "id": "S1′",
+            "label": "Hen"
+          },
+          {
+            "id": "S2′",
+            "label": "Pleroma"
+          },
+          {
+            "id": "S3′",
+            "label": "Chronos"
+          },
+          {
+            "id": "S4′",
+            "label": "Anima"
+          },
+          {
+            "id": "S5′",
+            "label": "Aletheia"
+          }
+        ]
+      },
+      "semantics": "What must this M domain become in an Agent’s operative world through this Ta-Onta organ? A relation carries its authored purpose and references every capability whose domain shard explicitly names that organ. Capability identity is independent of cell identity; native owners remain separately attributed. An absent cell is unassessed; an empty capability_refs array asserts no capability membership."
+    }
+  ]
+}
