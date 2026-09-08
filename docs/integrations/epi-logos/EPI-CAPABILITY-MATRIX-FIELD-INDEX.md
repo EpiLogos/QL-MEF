@@ -1,11 +1,17 @@
 # Epi Capability Matrix Field Index
 
-**Standing:** architecture-contract  
-**Register:** episteme  
-**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+**Standing:** architecture-contract
+**Register:** episteme
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification
 
-**Status:** active R3 field index  
+**Status:** active R3 field index
 **Date:** 2026-09-03
+
+## Shared matrix form
+
+These carriers conform to [[../../../../Central/docs/CAPABILITY-MATRIX-PROTOCOL.md|ql-capability-matrix/1]]. Each CSV has a `.matrix.json` companion declaring its anchor, axes and relation question. `epi-relational-field.csv` and `epi-ssprime-relational-field.csv` contain named domain and technical relation views; `epi-ta-onta-m-relational-field.csv` contains the 36 M×S′ relation cells and 36 stable capability records. The technical view qualifies its coordinates with `technical:`; it does not redefine native S products or Ta-Onta organs. Source fields survive in `extensions`, under the same protocol.
+
+The R3 topology below governs current S/S′ meaning. Canonical CSV edits and their domain/evidence source updates form one reviewed change. A cell can reference several capabilities and a capability can participate in several cells.
 
 ## Read the field in this order
 

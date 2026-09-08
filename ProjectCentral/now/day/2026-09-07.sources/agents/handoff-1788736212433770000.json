@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788736212433770000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788736212,
+  "subject": "N2 M1-4.5 musical genesis landed (round 3); N3 descent proposal awaits owner review",
+  "result": "Round 3 applied and verified on M1-4.5 only: eight c_2_musical_* properties + c_3_musical_canon_refs + c_3_updated_at; two on-node corrections to canon (q_1 B/C family swap fixed; q_0 reciprocal pair fixed) with former readings preserved under coalesce. Script cypher/2026-09-06-m1-4.5-musical-genesis.cypher; granular 11-row entry in cypher/CYPHER-LOG.md. Canon-vs-map deltas found but NOT executed (proposals): M1-3 T1/T2 vs docs T0/T1 (three T-conventions coexist in-graph per the N3 scoper); v3 vendored blob still says Mineral where graph/registry hold Salt; M1-4.5 c_1_complete_formulation grounds 64 via 16-fold where canon grounds 2^6. N3 scoping report (six-element toroidal descent over M1-3-0..5, drafted cypher, EXECUTED NOTHING) delivered in session output for owner review before any round 4. Docker daemon wedged after verification; recovered per round-2 precedent (stale com.docker.backend SIGKILLed, clean relaunch, container restarted); post-recovery re-verify: 2141 nodes, all round-3 writes intact. Remaining open: owner decision on N3 execution (round 4) and the three delta proposals.",
+  "status": "active"
+}

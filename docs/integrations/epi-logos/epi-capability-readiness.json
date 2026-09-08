@@ -61,5 +61,6 @@
     "M3":"RESEARCH-ONLY",
     "M4":"RESEARCH-ONLY-CONSENT-GATED",
     "M5":"ACTIVE-DESIGN-WITH-TRAINING-ASPECTS-RESEARCH-ONLY"
-  }
+  },
+  "matrix_projection": {"protocol": "ql-capability-matrix/1", "csv": "epi-ta-onta-m-relational-field.csv", "manifest": "epi-ta-onta-m-relational-field.matrix.json", "role": "source-determinations", "reconciliation": "Update the affected source determinations and canonical matrix records together."}
 }

@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788735359191402000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788735359,
+  "subject": "Matheme 0-layer landed as executable product code (PR 103 merged)",
+  "result": "DONE: crates/ql-mef/src/matheme.rs — the matheme derivation as executable API (eq1/eq2/eq3 modules + derive_matheme()), mirroring music.rs; ql matheme derive CLI projection with capabilities surface; conformance test extended to 12. PR 103 rebase-merged as 1182c67 (second commit: FOLD s14 erratum closing the 9:8 DET drift), all CI green. Everything computes from existing contract elements — one_circuit IS canonical_cross_pass_d1, self_register IS the 6x6 field cardinality, field_cardinality = 12x6 computed, epogdoon = canonical 9/8 with descent as reciprocal; nothing minted. OPEN: nothing blocking. Standing notes: root disk was ~97 percent full at session start (recovered externally mid-session; Docker VM images suspected) — worth an owner look; the deep-repo DET floor arithmetic remains the natural next bridge if the 0-layer ever needs the address-shadow register (not requested, not built).",
+  "status": "active"
+}

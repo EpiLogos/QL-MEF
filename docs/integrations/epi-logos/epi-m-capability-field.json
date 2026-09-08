@@ -92,5 +92,6 @@
     {"m":"M3","m_name":"Mahāmāyā","m_prime":"M3′ world-clock / symbolic transcription instrument","epii_on_x_ref":"EPII_ON_M3_MAHAMAYA","capability_count":6,"file":"epi-m-capability-field-m3.json"},
     {"m":"M4","m_name":"Nara","m_prime":"M4′ protected personal / lived instrument","epii_on_x_ref":"EPII_ON_M4_NARA","capability_count":6,"file":"epi-m-capability-field-m4.json"},
     {"m":"M5","m_name":"Epii","m_prime":"M5′ Epii reflexive developmental / review instrument","epii_on_x_ref":"EPII_ON_M5_EPII","capability_count":6,"file":"epi-m-capability-field-m5.json"}
-  ]
+  ],
+  "matrix_projection": {"protocol": "ql-capability-matrix/1", "csv": "epi-ta-onta-m-relational-field.csv", "manifest": "epi-ta-onta-m-relational-field.matrix.json", "role": "source-determinations", "reconciliation": "Update the affected source determinations and canonical matrix records together."}
 }

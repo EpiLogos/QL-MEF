@@ -1,13 +1,19 @@
 # Epi Deep Subsystem Capability Matrix Protocol
 
-**Standing:** design-commitment  
-**Register:** episteme  
-**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+**Standing:** design-commitment
+**Register:** episteme
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification
 
-**Status:** ratified R3 purpose-first design protocol  
-**Date:** 2026-09-03  
-**Ratification:** QL-MEF PR #93 / execution #94  
+**Status:** ratified R3 purpose-first design protocol
+**Date:** 2026-09-03
+**Ratification:** QL-MEF PR #93 / execution #94
 **QL-MEF lock:** `590ea5464e0b422beaddea2669039e3d8c7fcb5c`
+
+## Shared matrix form
+
+These carriers conform to [[../../../../Central/docs/CAPABILITY-MATRIX-PROTOCOL.md|ql-capability-matrix/1]]. Each CSV has a `.matrix.json` companion declaring its anchor, axes and relation question. `epi-relational-field.csv` and `epi-ssprime-relational-field.csv` contain named domain and technical relation views; `epi-ta-onta-m-relational-field.csv` contains the 36 M×S′ relation cells and 36 stable capability records. The technical view qualifies its coordinates with `technical:`; it does not redefine native S products or Ta-Onta organs. Source fields survive in `extensions`, under the same protocol.
+
+The R3 topology below governs current S/S′ meaning. Canonical CSV edits and their domain/evidence source updates form one reviewed change. A cell can reference several capabilities and a capability can participate in several cells.
 
 ## 0. Unit of work
 

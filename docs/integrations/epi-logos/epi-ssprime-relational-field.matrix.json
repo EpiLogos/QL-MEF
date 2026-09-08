@@ -1,0 +1,121 @@
+{
+  "protocol": "ql-capability-matrix/1",
+  "matrix_id": "epi:technical-relations",
+  "anchor_ref": "epi:technical-field:0/1",
+  "default_view": "relations",
+  "views": [
+    {
+      "id": "relations",
+      "title": "Technical strata relations",
+      "row_axis": {
+        "id": "source",
+        "label": "Source",
+        "members": [
+          {
+            "id": "technical:S0",
+            "label": "CommandRuntimeGround · S0"
+          },
+          {
+            "id": "technical:S1",
+            "label": "VaultResidency · S1"
+          },
+          {
+            "id": "technical:S2",
+            "label": "GraphBody · S2"
+          },
+          {
+            "id": "technical:S3",
+            "label": "GatewayControl · S3"
+          },
+          {
+            "id": "technical:S4",
+            "label": "AgentRuntime · S4"
+          },
+          {
+            "id": "technical:S5",
+            "label": "WorldBoundary · S5"
+          },
+          {
+            "id": "technical:S0′",
+            "label": "ReflectiveCLILaw · S0′"
+          },
+          {
+            "id": "technical:S1′",
+            "label": "HenCompilerLaw · S1′"
+          },
+          {
+            "id": "technical:S2′",
+            "label": "CoordinateGraphLaw · S2′"
+          },
+          {
+            "id": "technical:S3′",
+            "label": "TemporalStateLaw · S3′"
+          },
+          {
+            "id": "technical:S4′",
+            "label": "TaOntaInhabitation · S4′"
+          },
+          {
+            "id": "technical:S5′",
+            "label": "EpiiReturnLaw · S5′"
+          }
+        ]
+      },
+      "column_axis": {
+        "id": "destination",
+        "label": "Destination",
+        "members": [
+          {
+            "id": "technical:S0",
+            "label": "CommandRuntimeGround · S0"
+          },
+          {
+            "id": "technical:S1",
+            "label": "VaultResidency · S1"
+          },
+          {
+            "id": "technical:S2",
+            "label": "GraphBody · S2"
+          },
+          {
+            "id": "technical:S3",
+            "label": "GatewayControl · S3"
+          },
+          {
+            "id": "technical:S4",
+            "label": "AgentRuntime · S4"
+          },
+          {
+            "id": "technical:S5",
+            "label": "WorldBoundary · S5"
+          },
+          {
+            "id": "technical:S0′",
+            "label": "ReflectiveCLILaw · S0′"
+          },
+          {
+            "id": "technical:S1′",
+            "label": "HenCompilerLaw · S1′"
+          },
+          {
+            "id": "technical:S2′",
+            "label": "CoordinateGraphLaw · S2′"
+          },
+          {
+            "id": "technical:S3′",
+            "label": "TemporalStateLaw · S3′"
+          },
+          {
+            "id": "technical:S4′",
+            "label": "TaOntaInhabitation · S4′"
+          },
+          {
+            "id": "technical:S5′",
+            "label": "EpiiReturnLaw · S5′"
+          }
+        ]
+      },
+      "semantics": "Relations between explicitly named implementation strata and their prime laws. The technical: namespace qualifies the source S/S′ coordinates; these members do not name the native O:I S0–S5 products or the current Ta-Onta organs. Their relation assertions retain their source basis for implementation comparison. An absent cell is unassessed; an empty capability_refs array asserts no capability membership."
+    }
+  ]
+}
