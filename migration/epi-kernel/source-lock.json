@@ -9,7 +9,9 @@
       "include": "f2b27d99197ee0f1cb9ed95ef52a5dd61a226e54",
       "src": "a60dcda1427a6ab3cfcd44565a29f988938d0881",
       "test": "9a6ef6505bb4e7622dba0922a07dced9bc49cd79"
-    }
+    },
+    "standing": "historical-last-prototype",
+    "note": "Epi-Logos-C-Experiments is the historical last prototype of this work, not a living upstream. QL-MEF owns the vendored reference in corrected form (ratified_corrections); the prototype is mined for knowledge and parity evidence, not synchronized as authority and not fed corrections."
   },
   "target": {
     "repository": "EpiLogos/QL-MEF",
