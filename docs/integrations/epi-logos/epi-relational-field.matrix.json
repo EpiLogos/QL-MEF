@@ -1,0 +1,121 @@
+{
+  "protocol": "ql-capability-matrix/1",
+  "matrix_id": "epi:domain-relations",
+  "anchor_ref": "epi:domain-field:0/1",
+  "default_view": "relations",
+  "views": [
+    {
+      "id": "relations",
+      "title": "Domain and lived-instrument relations",
+      "row_axis": {
+        "id": "source",
+        "label": "Source",
+        "members": [
+          {
+            "id": "M0",
+            "label": "Anuttara · M0"
+          },
+          {
+            "id": "M1",
+            "label": "Paramasiva · M1"
+          },
+          {
+            "id": "M2",
+            "label": "Parashakti · M2"
+          },
+          {
+            "id": "M3",
+            "label": "Mahamaya · M3"
+          },
+          {
+            "id": "M4",
+            "label": "Nara · M4"
+          },
+          {
+            "id": "M5",
+            "label": "Epii · M5"
+          },
+          {
+            "id": "M0′",
+            "label": "Anuttara · M0′"
+          },
+          {
+            "id": "M1′",
+            "label": "Paramasiva · M1′"
+          },
+          {
+            "id": "M2′",
+            "label": "Parashakti · M2′"
+          },
+          {
+            "id": "M3′",
+            "label": "Mahamaya · M3′"
+          },
+          {
+            "id": "M4′",
+            "label": "Nara · M4′"
+          },
+          {
+            "id": "M5′",
+            "label": "Epii · M5′"
+          }
+        ]
+      },
+      "column_axis": {
+        "id": "destination",
+        "label": "Destination",
+        "members": [
+          {
+            "id": "M0",
+            "label": "Anuttara · M0"
+          },
+          {
+            "id": "M1",
+            "label": "Paramasiva · M1"
+          },
+          {
+            "id": "M2",
+            "label": "Parashakti · M2"
+          },
+          {
+            "id": "M3",
+            "label": "Mahamaya · M3"
+          },
+          {
+            "id": "M4",
+            "label": "Nara · M4"
+          },
+          {
+            "id": "M5",
+            "label": "Epii · M5"
+          },
+          {
+            "id": "M0′",
+            "label": "Anuttara · M0′"
+          },
+          {
+            "id": "M1′",
+            "label": "Paramasiva · M1′"
+          },
+          {
+            "id": "M2′",
+            "label": "Parashakti · M2′"
+          },
+          {
+            "id": "M3′",
+            "label": "Mahamaya · M3′"
+          },
+          {
+            "id": "M4′",
+            "label": "Nara · M4′"
+          },
+          {
+            "id": "M5′",
+            "label": "Epii · M5′"
+          }
+        ]
+      },
+      "semantics": "Directed relations across the M-domain and M′ lived-instrument faces. Prime and direct members have distinct identities even where their source product labels coincide. An absent cell is unassessed; an empty capability_refs array asserts no capability membership."
+    }
+  ]
+}
