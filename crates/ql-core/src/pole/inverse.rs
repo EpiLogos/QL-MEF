@@ -53,6 +53,30 @@
 //! rule that resolves the preimage ambiguity from the elemental (M2-carrier)
 //! and operator (M3-matrix) relations. `M3-C31` therefore stays open as the
 //! explicitly missing kernel operation.
+//!
+//! ## Disposition after the live-graph recovery (N4, 2026-09-07)
+//!
+//! The live Bimba map corroborates and *corrects the question itself*. The
+//! quaternion IS the elemental reading: `M3-4`'s compile-asserted elemental
+//! quaternary (`Cups=84, Wands=96, Pentacles=88, Swords=92`, summing to
+//! 360) is exactly the four nucleotide pp-integrals — the quaternion
+//! aligns with the four nucleotides, and suits/wheel arcs are its
+//! projection. Codons map complex forms as **strings** (`p_3_sequence`,
+//! `c_3_non_dual_pair` overlapping-dinucleotide decompositions); the
+//! values and charges modulate the Tarot association, which carries its
+//! codon links and hexagram links through the three matrices
+//! (`M3-3-2-0..2`, the Clifford-identity nodes; `M3-4.0` as the
+//! codon↔tarot hub). **No entity→primary-codon law exists anywhere in the
+//! graph.** The capability hook's own wording ("entity quaternion →
+//! primary address64 / canonical primary codon selection") is the
+//! degraded form; the graph's forward law is: identity (BLAKE3
+//! quintessence hash) + anchors (natal / kairos / oracle) →
+//! `exact_degree_720` → address (`degree360 × 64/360`), with degree
+//! inference from a bare quaternion explicitly deprecated in the
+//! prototype canon. The types here remain valid for the corrected
+//! reading: retrieval gathers candidate evidence about a form's
+//! elemental/matrix composition; any canonical verdict routes through
+//! anchor/identity law — never through a quaternion preimage.
 
 use super::basis::{Element, ElementalQuaternionBasis, QuaternionComponents};
 use super::codon::Codon64;
