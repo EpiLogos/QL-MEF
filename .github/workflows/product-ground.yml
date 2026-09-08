@@ -9,14 +9,28 @@ on:
 permissions:
   contents: read
 
+env:
+  CARGO_INCREMENTAL: "0"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  product-ground:
+  carrier-integrity:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify every registered capability-matrix carrier
+        run: python3 scripts/check-capability-matrix-registry.py
+
+  capability-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,9 +40,11 @@ jobs:
           python-version: '3.12'
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
       - name: Build the actual product CLI
         run: cargo build --package ql-cli --bin ql
-      - name: Check source, matrix, seed and native CLI maintenance
+      - name: Check source, profile, seed and native CLI maintenance
         id: check
         continue-on-error: true
         shell: bash
@@ -49,4 +65,4 @@ jobs:
       - name: Annotate drift (advisory — does not block merge)
         if: steps.check.outcome == 'failure'
         run: |
-          echo "::notice title=Capability-matrix drift::The account page and the capability matrix have drifted apart. This no longer blocks merge — reconcile at your convenience with tools/reconcile_product_ground.py (plan, review, apply). See product-ground-result artifact for detail."
+          echo "::notice title=Capability-matrix drift::The account page and suite profile have drifted apart. This does not block merge. See the product-ground-result artifact for precise reconciliation work."

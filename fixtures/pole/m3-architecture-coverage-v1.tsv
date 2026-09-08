@@ -13,7 +13,7 @@ meta	contract-version	1.0.0
 meta	contract-ref	ql.pole.m3-architecture-coverage/v1
 meta	source-vendor	vendor/epi-kernel/reference/src/m3.c + include/m3.h (+ m2.c for the two M2-registered tables)
 meta	value-table	{A6,T9,C8,G7} corrected 2026-09-07 (owner ratification); see PR #105/#111
-M3_PAIR_MATRIX	data	FR 2.3.2	M3-C08	M3-2	ported-as-law	ql-core pole coin contract + codon	sum=v1+v2; diff magnitudes arithmetic, signs recorded provenance (unresolved item 2); C source parsed by test
+M3_PAIR_MATRIX	data	FR 2.3.2	M3-C08	M3-2	ported-as-law	ql-core pole coin contract + codon	sum=v1+v2; diff magnitudes arithmetic, signs recorded provenance (unresolved item 2); C source parsed by test; live graph confirms pair composition and codon charges are ONE algebraic law (pp=S+Z, pn=S-Z, np=D+Z, nn=D-Z) so the kernel Finding-F2 'approximation' comment is a stale prototype artifact; NOTE: the live graph still carries legacy C=7/G=8 pair records - a graph-side correction is owner-gated authored intervention
 M3_MATRIX_PAIR	data	FR 2.3.2	M3-C09	M3-2	ported	pole::transcription	family->pair-nucleotide binding, parsed from vendor
 M3_TRIGRAM_LUT	data	FR 2.3.1	M3-C07	M3-1	ported	pole::iching Trigram LUT	earlier/later heaven, element spine, family role, degree anchor
 M3_HEXAGRAM_LUT	data	FR 2.3.1	M3-C05/C07	M3-1	ported-as-law	pole::iching complement/nuclear/compose	C LUT was itself macro-generated; the generating law is ported
@@ -22,15 +22,15 @@ M3_RNA_FUNCTIONAL_MASK	data	FR 2.3.20	M3-C17	M3-3	ported	pole::transcription	par
 M3_RNA_DARK_MASK	data	FR 2.3.20	M3-C17	M3-3	ported	pole::transcription	as above
 M3_COMP_MATRIX	data	FR 2.3.9	M3-C09	M3-2	ported-as-law	pole::fold + iching complement	XOR 0x3F law; hexagram register cross-tested
 M3_MOVE_MATRIX	data	FR 2.3.9	M3-C09	M3-2	ported-as-law	pole::fold	trigram exchange law
-M3_RES_MATRIX	data	FR 2.3.9	M3-C16	M3-3	ported	pole::fold M3_RES_MATRIX	structural: 8 Kan/Li gap crossings; 56 admitted are identity (#112)
-M3_CODON_TO_AA	data	FR 2.3.9	M3-C18	M3-3	ported	pole::transcription	kernel's simplified record ported as data (STOP = vocabulary slot 10, not the 0xFF the header claims); biological audit stays open (unresolved item 6)
+M3_RES_MATRIX	data	FR 2.3.9	M3-C16	M3-3	ported	pole::fold M3_RES_MATRIX	structural: 8 Kan/Li gap crossings; 56 admitted are identity (#112); live graph Matrix 3 carries the same 56/64 incompleteness - shared law, not a defect
+M3_CODON_TO_AA	data	FR 2.3.9	M3-C18	M3-3	ported	pole::transcription	kernel's simplified record ported as data (STOP = vocabulary slot 10, not the 0xFF the header claims); 'biological audit' framing replaced by system recovery: the amino layer is graph-native - 24 nodes (20 aa + Sec + Pyl + Start + Stop) each governing a 15-degree wheel arc (= the backbone governors), 24 hours, chakras, 1:1 Major Arcana karyotype (Fool=Glycine, Universe=Pyrrolysine, Start/Stop the two transcendent outside the arcana); the kernel table is the flattened record
 M3_MAJOR_ARCANA	data	FR 2.3.16	M3-C20	M3-4	ported	pole::tarot	22 cards -> chromosome pair + amino index; +2 governance typed
 M3_TAROT_CODON_MAP	data	FR 2.3.16	M3-C19	M3-4	ported	pole::tarot	56-card exact cover, parsed from vendor
 M3_ROTATIONAL_PROFILE	data	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational	7/8 states, anchors, 16 court reflections; two-family generation yields 8 (codon,valence) candidates for every codon — the 472 surface is dataset provenance, classifier-consistent (agent-verified, refuting the derivation hypothesis); vendor sorts ascending
 M3_CODON_CLASS	derived	FR 2.3.17b	M3-C12	M3-3	shadowed	Codon64::classify + rotational profile	classification computed, not stored
 M2_TO_M3_CYMATIC_PROJECTION	data	FR 2.2.7/M3 2.3.0	M3-C02	M3-0	ported	pole::transcription	72 one-hot masks, epogdoon fold-back bits; mask gap set (0,8,...,56) vs FR 2.3.6 arithmetic gap set (0,9,...,63) are two recorded taxes, never conflate
-M2_CAUSAL_RESONANCE_MASKS	data	M2 FR	M2	C M2 register	deferred	vendor m2.c	M2-register resonance data, not M3 codon system; its own ticket
-CLOCK_DEGREE_LUT	data	clock FR	M3-C24/C26	M3-5	open	none	dataset-backed columns live in the external deep specimen and were never filled in the vendored file; computable column laws ported (iching/aperture arithmetic); generator script lives in the deep specimen
+M2_CAUSAL_RESONANCE_MASKS	data	M2 FR 2.2.5	M2	M2 C M2 register	deferred	vendor m2.c	true coordinates recovered: the M2 same-seat resonance web - six QL-level themes x 15 participants (M2-q, M2-1-q, the six conditions M2-1-0-q..M2-1-5-q, six L-family nodes), 660 directed edges live (parashakti-deep); the 36 conditions are the 6x6 lens x position base of the 72 MEF (#2-1-{l}-{p}); the kernel masks are the trivial same-position seed awaiting the graph truth; own ticket under M2 coordinates
+CLOCK_DEGREE_LUT	data	clock FR	M3-C24/C26	M3-5	open	none	GRAPH-NATIVE: the 360 degrees are node structure (M3-5: 390 nodes - Axis Mundi, Alpha-Omega, 359 degree nodes with m_3_5_* law columns, 4 cardinal anchors x 6 = the 24 backbone governors each ruling a 15deg arc); the C LUT is a flattened projection; live columns attach via relations; follow-up = live Cypher wiring, not data porting
 m3_generate_rotational_states	fn	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational two-family generation	negative/positive families, sum+diff / diff+sum values, 45-degree slots
 m3_get_rotational_profile	fn	FR 2.3.14	M3-C13	M3-3	ported	pole::rotational	profile accessor
 m3_det_with_quaternion	fn	FR 2.3.11	M3-C14	M3-3	ported	pole::quaternion det_overlay	ring x element x axis composition; active states by 45-degree argument quantization
