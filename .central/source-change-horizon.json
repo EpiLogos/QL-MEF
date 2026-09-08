@@ -1,0 +1,171 @@
+{
+  "schema": "central.source-change-horizon/v1",
+  "world_ref": "project:project:quaternal-logic",
+  "cursor": 2,
+  "sources": {
+    "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-content.md": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-content.md",
+        "path": "ProjectCentral/agents/governance/repo-content.md",
+        "roles": [
+          "agent-governance-source"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-agent-governance",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:547:8e32b268cd6ccd6a",
+        "byte_len": 547
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-structure.md": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-structure.md",
+        "path": "ProjectCentral/agents/governance/repo-structure.md",
+        "roles": [
+          "agent-governance-source"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-agent-governance",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:606:003b52ee32f98548",
+        "byte_len": 606
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/agents/wiki/wiki.json": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/agents/wiki/wiki.json",
+        "path": "ProjectCentral/agents/wiki/wiki.json",
+        "roles": [
+          "agent-wiki-source"
+        ],
+        "provenance": "agent-maintained",
+        "standing": "unspecified",
+        "treatment": "projectcentral-agent-wiki",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:358:8063f704919ceb56",
+        "byte_len": 358
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.csv": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.csv",
+        "path": "ProjectCentral/user/capability-matrix.csv",
+        "roles": [
+          "project-human-source-aperture"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-user",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:56258:75f9509d838602e4",
+        "byte_len": 56258
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.json": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.json",
+        "path": "ProjectCentral/user/capability-matrix.json",
+        "roles": [
+          "project-human-source-aperture"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-user",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:5373:f47f9cb55f36d20a",
+        "byte_len": 5373
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.md": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/user/capability-matrix.md",
+        "path": "ProjectCentral/user/capability-matrix.md",
+        "roles": [
+          "project-human-source-aperture"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-user",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:78815:c0325c34a0308b5e",
+        "byte_len": 78815
+      }
+    },
+    "central:source:project:project:quaternal-logic:ProjectCentral/user/ql.html": {
+      "binding": {
+        "ref": "central:source:project:project:quaternal-logic:ProjectCentral/user/ql.html",
+        "path": "ProjectCentral/user/ql.html",
+        "roles": [
+          "project-human-source-aperture"
+        ],
+        "provenance": "unresolved",
+        "standing": "unspecified",
+        "treatment": "projectcentral-user",
+        "agent_retrieval_allowed": true
+      },
+      "revision": {
+        "revision": "central.content-fnv1a64/v1:106318:57aebe6971cd2e3a",
+        "byte_len": 106318
+      }
+    }
+  },
+  "changes": [
+    {
+      "schema": "central.source-change/v1",
+      "change_ref": "central:change:project:project:quaternal-logic:1",
+      "cursor": 1,
+      "world_ref": "project:project:quaternal-logic",
+      "source_ref": "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-content.md",
+      "source_path": "ProjectCentral/agents/governance/repo-content.md",
+      "source_roles": [
+        "agent-governance-source"
+      ],
+      "provenance": "unresolved",
+      "standing": "unspecified",
+      "treatment": "projectcentral-agent-governance",
+      "agent_retrieval_allowed": true,
+      "before_revision": null,
+      "after_revision": "central.content-fnv1a64/v1:547:8e32b268cd6ccd6a",
+      "kind": "added",
+      "observed_at_unix_seconds": 1788838418,
+      "provider": "central.filesystem-reconcile/v1"
+    },
+    {
+      "schema": "central.source-change/v1",
+      "change_ref": "central:change:project:project:quaternal-logic:2",
+      "cursor": 2,
+      "world_ref": "project:project:quaternal-logic",
+      "source_ref": "central:source:project:project:quaternal-logic:ProjectCentral/agents/governance/repo-structure.md",
+      "source_path": "ProjectCentral/agents/governance/repo-structure.md",
+      "source_roles": [
+        "agent-governance-source"
+      ],
+      "provenance": "unresolved",
+      "standing": "unspecified",
+      "treatment": "projectcentral-agent-governance",
+      "agent_retrieval_allowed": true,
+      "before_revision": null,
+      "after_revision": "central.content-fnv1a64/v1:606:003b52ee32f98548",
+      "kind": "added",
+      "observed_at_unix_seconds": 1788838418,
+      "provider": "central.filesystem-reconcile/v1"
+    }
+  ],
+  "consumer_cursors": {},
+  "provider": "central.filesystem-reconcile/v1",
+  "reconciled_at_unix_seconds": 1788840193
+}

@@ -73,12 +73,16 @@ pub use music_completion::{
     TraversalExpansionSide, classify_musical_traversal, musical_completion_frame,
 };
 pub use pole_state::{
-    M1CarrierFacts, PHYSICAL_POLE_FORM_STATE_REF, PHYSICAL_POLE_FORM_STATE_VERSION,
-    PhysicalPoleFormState, PoleIdentity, PoleProvenance, Readiness,
+    APERTURE_CLOCK_CANON_VERSION, M1CarrierFacts, PHYSICAL_POLE_FORM_STATE_REF,
+    PHYSICAL_POLE_FORM_STATE_VERSION, PhysicalPoleFormState, PoleIdentity, PoleProvenance,
+    Readiness,
 };
+// The 18-lens aperture canon (16 static divisor lenses + Fibonacci/Pisano
+// ground + Anuttara void ring), owned by ql-core::pole::aperture.
 pub use provenance::{
     CONTRACT_SCHEMA_VERSION, InputRefRevision, QlProvenance, QlProviderRef, ResultClass,
 };
+pub use ql_core::{AnuttaraVoidRing, ApertureClock, ApertureIndex, FibonacciGround};
 pub use reading::{QlReading, QlRelationReading, QlSynthesis};
 pub use refraction::RefractionContract;
 pub use registry::{

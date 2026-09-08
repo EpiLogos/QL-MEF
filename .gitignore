@@ -7,3 +7,6 @@
 # Secrets — never commit these
 .env
 .env.*
+
+# Local recovery receipts for reviewed documentation changes.
+/.central/documentation-transactions/

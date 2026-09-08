@@ -26,6 +26,9 @@
 use crate::{MefError, TemplateureField};
 use ql_core::{Element, ElementalQuaternionBasis, FoldState, QlPosition, QuaternionComponents};
 
+/// Version of the 18-lens canon (owner ruling 2026-09-07).
+pub const APERTURE_CLOCK_CANON_VERSION: &str = "18-lens/1.0.0";
+
 /// Version of the composed state contract.
 pub const PHYSICAL_POLE_FORM_STATE_VERSION: &str = "1.0.0";
 /// Semantic identity of the composition bridge.

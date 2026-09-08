@@ -62,7 +62,11 @@ Ratified carriers:
 - `EPI-CAPABILITY-READINESS-LEDGER.md`
 - `EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md`
 
-Machine files:
+Machine files (all matrix CSVs use `ql-capability-matrix/1`; domain/evidence JSON files remain their attributable source basis):
+
+- `epi-relational-field.csv` + `epi-relational-field.matrix.json`
+- `epi-ssprime-relational-field.csv` + `epi-ssprime-relational-field.matrix.json`
+- `epi-ta-onta-m-relational-field.matrix.json`
 
 - `epi-m-capability-field.json`
 - `epi-ta-onta-m-relational-field.csv`

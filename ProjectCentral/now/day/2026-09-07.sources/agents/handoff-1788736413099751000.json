@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788736413099751000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788736413,
+  "subject": "Deep bridge landed: DET address-shadow register in matheme::det (PR 104 merged)",
+  "result": "DONE: the deep-system DET floor(index72*8/9) is now carried in this repository as matheme::det — the address-shadow register of the eq3 door, frozen from the deep specimen Epi-Logos-C-Experiments @ daa660c (same revision the holographic contract pins) with four blob-pinned sources: m3.h inline map+gap predicate (5cfc92a2), mahamaya.rs Rust twin with 63-cap (8baf9da6), test_m3.c compiled acceptance (b759ea2f), m2.c projection-mask table (911b8ce9); the 8/9 account cites this repos M3 matrix JSON (eef6a55d). Landed: epogdoon_compression + is_evolutionary_gap verbatim; collision_addresses 8 at 0mod8 (image of ninefold pairs 9k,9k+1); fold_sources 8 at 1mod9; source_roundtrip_nonclosures 9 = 8 folds + the octave point 72 (exact image 64 outside the register; cap sends it to 63) — the two-descriptions law kept distinct, the M3 matrix open item on 8/8/9 left open; mask fold-back bits == collision addresses (two deep maps, one fold structure); fibre reading 4x18 to 4x16 contiguous (M3-C36 verified from the map); bridge: domain = field_cardinality = registry 72, codomain = binary_register 64, shadow of eq3 door_descent (door exact 64/1, shadow exact only at 9k). Contract 1.1.0, 19 fixture det rows, ql matheme shadow CLI, 19 conformance tests. PR https://github.com/EpiLogos/QL-MEF/pull/104 rebase-merged as c786b305, all CI green. Central clone: local main ref fast-forwarded to c786b30 without touching the other agents checkout (they are on branch agent/n4-pole-contract with 17 modified files — left fully alone). OPEN: nothing from this thread. Standing: root disk again ran to ENOSPC during the build (freed by removing /tmp artifacts each time; ~500MB headroom now; the volume needs an owner-level cleanup — Docker suspected).",
+  "status": "active"
+}

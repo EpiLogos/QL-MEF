@@ -33,7 +33,7 @@ pub mod rotational;
 pub mod tarot;
 pub mod transcription;
 
-pub use aperture::{AngularGrid, ApertureClock, ApertureIndex, FibonacciGround};
+pub use aperture::{AngularGrid, AnuttaraVoidRing, ApertureClock, ApertureIndex, FibonacciGround};
 pub use basis::{
     Element, ElementalQuaternionBasis, QuaternionComponents, Transduction18to16, carrier,
     det_shadow,

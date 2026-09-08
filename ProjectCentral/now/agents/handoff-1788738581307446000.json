@@ -1,0 +1,14 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788738581307446000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-n4",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788738581,
+  "subject": "TASK N4 stages 0-2 of the physical pole landed as PR series #105-#110 (all merged, CI green)",
+  "result": "Six rebase-merged PRs on EpiLogos/QL-MEF: #105 Stage-0 M3 coin-value ground in ql-core pole module (coin law from m4_cast_iching, 0/1-exclusion as a type, codon64<->fold motif round-trips, 384 adjacency, four-charge 4X invariant, 472 poses, 16+1 aperture clock with 6/4/2 sync, fixture physical-pole-coin-contract-v1.tsv); #106 T2 sealed ElementalQuaternionBasis (A=Water/T=Fire/C=Earth/G=Air, [w,x,y,z]=[Earth,Fire,Water,Air], carrier 4x18->4x16, epogdoon 8/9 in count AND angle registers, T18->16 + flat DET kept as two descriptions); #107 T3 ruling-grid over MEF 72 (P 12x30deg x L 6x60deg, projective closure, LensId::slot added); #108 T4 templateure V72 with integer complex amplitudes, T72->64=I4(x)T18->16, quadrature operator commuting with transduction (criterion 9 state-level); #109 T5 FoldState (s8 m3_rupa: cast law sign(rho)/[rho-dot!=0], pair16 hinge 22.5deg*p n2 shared, matrix ops = kernel laws i XOR 0x3F / j trigram exchange / k typed-unresolved, reciprocal aperture fold) + inverse seam typed open (RetrievalEvidence vs CanonicalAddress, no public constructor, SelectionLaw unimplemented); #110 Stage-2 PhysicalPoleFormState composition bridge (one eventRef by construction, carrier continuity across composed object, readiness aggregation, determinism). Fixtures under fixtures/pole/*.tsv; all conformance-gated.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-08"
+  ]
+}

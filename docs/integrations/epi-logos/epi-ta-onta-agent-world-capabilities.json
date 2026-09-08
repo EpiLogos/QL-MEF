@@ -9,7 +9,7 @@
     "S_prime": {
       "whole": "Ta-Onta — primary Epi-Logos Agent-world composition",
       "internal": ["S'.0 Khora", "S'.1 Hen", "S'.2 Pleroma", "S'.3 Chronos", "S'.4 Anima", "S'.5 Aletheia"],
-      "standing": "DERIVED-CURRENT-ARCHITECTURE pending ratification through QL-MEF #25/#74",
+      "standing": "DESIGN-COMMITMENT; ratified R3 QL-MEF#93",
       "refines": "The #74/#25 six-independent-top-level-S-prime wording while preserving internal positional sequence and same-index affinities.",
       "does_not_restore": "Historical Ta-Onta = nested S4-prime technical residency."
     },
@@ -86,5 +86,6 @@
     "Historical Ta-Onta technologies are capability lineage and implementation evidence.",
     "Provider/hosted state cannot silently become Bimba, Nara or Central source authority.",
     "Return may generate evidence/readings/proposals; durable promotion occurs only through the authority owning target ground."
-  ]
+  ],
+  "matrix_projection": {"protocol": "ql-capability-matrix/1", "csv": "epi-ta-onta-m-relational-field.csv", "manifest": "epi-ta-onta-m-relational-field.matrix.json", "role": "source-determinations", "reconciliation": "Update the affected source determinations and canonical matrix records together."}
 }

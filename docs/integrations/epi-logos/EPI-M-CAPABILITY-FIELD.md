@@ -1,11 +1,11 @@
 # Epi M / M′ Capability Field
 
-**Standing:** design-commitment  
-**Register:** episteme  
-**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification  
+**Standing:** design-commitment
+**Register:** episteme
+**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification
 
-**Status:** active R3 capability matrix  
-**Date:** 2026-09-03  
+**Status:** active R3 capability matrix
+**Date:** 2026-09-03
 **Companions:** `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md` · `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`
 
 ## What this layer is
@@ -55,8 +55,8 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M0P-PERSONAL-ROUTE` | Route a public coordinate into eligible protected Nara context | S0′ Khora · S4′ Anima · S5′ Aletheia |
 | `M0P-PEDAGOGY-ROUTE` | Route a canonical coordinate into Epii teaching/review context | S1′ Hen · S4′ Anima · S5′ Aletheia |
 
-**Lived register:** M0′ Bimba / playable source-addressed language and graph instrument  
-**Development:** Epii-on-Anuttara — Deliberate language construction/articulation; construction-not-training.  
+**Lived register:** M0′ Bimba / playable source-addressed language and graph instrument
+**Development:** Epii-on-Anuttara — Deliberate language construction/articulation; construction-not-training.
 **Recognition:** human-authored/canonical Bimba source authority through governed proposal and Recognition
 
 ## M1 — Paramaśiva
@@ -70,8 +70,8 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M1P-QL-FLOWERING` | Walk positions/relations and compose lens-as-scale traversal | S1′ Hen · S2′ Pleroma · S4′ Anima |
 | `M1P-TOPOLOGY` | Render played torus, Hopf and 4pi topology recognition | S2′ Pleroma · S4′ Anima · S5′ Aletheia |
 
-**Lived register:** M1′ relational / harmonic instrument  
-**Development:** Epii-on-Paramaśiva — Foundational-derivational CPT + RAG; model is articulating voice, executable matheme remains authority.  
+**Lived register:** M1′ relational / harmonic instrument
+**Development:** Epii-on-Paramaśiva — Foundational-derivational CPT + RAG; model is articulating voice, executable matheme remains authority.
 **Recognition:** QL-MEF formal source authority with human authorial ratification for canonical change
 
 ## M2 — Paraśakti
@@ -85,8 +85,8 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M2P-SONIC-ARENA` | Make sacred-sonic/maqam/mantra/planetary systems playable | S2′ Pleroma · S4′ Anima · S3′ Chronos |
 | `M2P-DET-GATE` | Project 72-space evidence into M3-ready 64-address evidence | S2′ Pleroma · S4′ Anima · S5′ Aletheia |
 
-**Lived register:** M2′ correspondential / cymatic instrument  
-**Development:** Epii-on-Paraśakti — Graph-relational ML over derived representation geometry; embeddings remain rebuildable and non-canonical.  
+**Lived register:** M2′ correspondential / cymatic instrument
+**Development:** Epii-on-Paraśakti — Graph-relational ML over derived representation geometry; embeddings remain rebuildable and non-canonical.
 **Recognition:** QL-MEF/Epi correspondential source authority; learned geometry and fitness evidence remain derived until recognised
 
 ## M3 — Mahāmāyā
@@ -100,8 +100,8 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M3P-MEASUREMENT-INSPECTOR` | Expose disciplined symbolic/physics coupling-flow explanation/provenance | S1′ Hen · S2′ Pleroma · S5′ Aletheia |
 | `M3P-WORLD-CLOCK` | Provide one Earth-relative shared clock/cosmos state for human and Agent surfaces | S3′ Chronos · S0′ Khora · S2′ Pleroma · S4′ Anima |
 
-**Lived register:** M3′ world-clock / symbolic transcription instrument  
-**Development:** Epii-on-Mahāmāyā — Canonical symbolic/calculation substrate remains constructed; calculation pathways may learn through process-reward RL, federated and symbolic/genetic work.  
+**Lived register:** M3′ world-clock / symbolic transcription instrument
+**Development:** Epii-on-Mahāmāyā — Canonical symbolic/calculation substrate remains constructed; calculation pathways may learn through process-reward RL, federated and symbolic/genetic work.
 **Recognition:** QL-MEF/Epi symbolic source authority; learned pathways/programs remain candidates until governed Recognition
 
 ## M4 — Nara
@@ -115,8 +115,8 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M4P-EPISODIC` | Protected temporal episodic retrieval through privacy classes | S0′ Khora · S1′ Hen · S3′ Chronos · S5′ Aletheia |
 | `M4P-PROMOTION-SEAM` | Produce identity-augment proposals and governed sendoff to M5 review | S4′ Anima · S5′ Aletheia |
 
-**Lived register:** M4′ protected personal / lived instrument  
-**Development:** Epii-on-Nara — Anima-led narrow QLoRA voice tuning with optional DPO; slow and consent-gated; identity/substrate remain outside tuning.  
+**Lived register:** M4′ protected personal / lived instrument
+**Development:** Epii-on-Nara — Anima-led narrow QLoRA voice tuning with optional DPO; slow and consent-gated; identity/substrate remain outside tuning.
 **Recognition:** human/Central/Nara protected source authority under explicit consent and privacy
 
 ## M5 — Epii
@@ -130,11 +130,13 @@ A live generic mechanic does not prove the Epi composition. An authored Epii-on-
 | `M5P-CONTROL-ROOM` | Governed Agent execution, capability selection, evidence and review handoff | S2′ Pleroma · S4′ Anima · S5′ Aletheia |
 | `M5P-ATELIER` | Logos/etymological archaeology, source-following, crystallisation and return | S1′ Hen · S2′ Pleroma · S4′ Anima · S5′ Aletheia |
 
-**Lived register:** M5′ Epii reflexive developmental / review instrument  
-**Development:** Epii-on-Epii — Recursive synthetic-telic development of pedagogy, review, canon and autoresearch; CPT/RAG may support voice/reach but never auto-promote.  
+**Lived register:** M5′ Epii reflexive developmental / review instrument
+**Development:** Epii-on-Epii — Recursive synthetic-telic development of pedagogy, review, canon and autoresearch; CPT/RAG may support voice/reach but never auto-promote.
 **Recognition:** human Recognition plus the canonical owner of the target ground; Factory evidence/review does not itself confer authority
 
 ## Machine carrier
+
+The canonical matrix records are in [[epi-ta-onta-m-relational-field.csv]] with axes and view semantics in [[epi-ta-onta-m-relational-field.matrix.json]]. They follow [[../../../../Central/docs/CAPABILITY-MATRIX-PROTOCOL.md|ql-capability-matrix/1]]. This prose and the domain JSON files supply the source determinations; their values are preserved in the CSV extensions and must be reconciled together when changed. All 36 stable capability IDs remain unchanged, and explicit organ memberships determine their cell placements.
 
 `epi-m-capability-field.json` is the root index/evidence registry. The six domain shards `epi-m-capability-field-m0.json` through `epi-m-capability-field-m5.json` each carry exactly six rows with:
 

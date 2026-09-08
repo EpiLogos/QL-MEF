@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788738592773854000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-n4",
+  "kind": "learning",
+  "recorded_at_unix_seconds": 1788738592,
+  "subject": "M3 coin-value discrepancy (M3-COIN-1): legacy C array {6,9,7,8} proven parity-violating; owner ratification ask carried",
+  "result": "m3.h FR 2.3.12 declares NUCLEOTIDE_ICHING_VALUE={6,9,7,8} with C=7(yin),G=8(yang), violating the parity law its own generator m4_cast_iching enforces (odd=yang, even=yin) and classical coin arithmetic (young yang=7, young yin=8). Ripple analysis in docs/pole/M3-COIN-VALUE-DISCREPANCY.md: the flip to the parity-consistent {A6,T9,C8,G7} preserves complementary sums (15/30), the 1440/360 integral total, RES-matrix gaps, and all bit machinery, but is generation-locked OUT of the dataset: 8/16 entries of M3_PAIR_MATRIX change (CC 14<->16, GG, AG, TC, AC, TG + difference magnitudes), per-suit integrals swap C<->G (88/92), rotational values and Parashakti frequency indices derived from pair sums shift, and m3_verify() fails unless constants regenerate with the array. Resolution landed: ONE named canonical table NUCLEOTIDE_COIN_VALUE=[6,9,8,7] as the Rust default, conformance-tested; legacy array kept as named evidence with a passing test PROVING it parity-violating; a known-open #[ignore] test documents what regenerates under ratification. NEVER mix both mappings silently. OPEN: owner ratification ask pending in PR #105 description.",
+  "status": "active"
+}

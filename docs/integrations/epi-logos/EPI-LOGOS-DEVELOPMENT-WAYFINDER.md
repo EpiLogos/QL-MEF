@@ -1,15 +1,17 @@
 # Epi-Logos Development Wayfinder
 
-**Parent:** QL-MEF #30  
-**Architecture / relation research:** #25 / draft PR #27  
-**Grounding account:** `EPI-LOGOS-SOURCE-OF-TRUTH.md`  
-**Deep subsystem recovery:** `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`  
-**Orienting historical Figure:** `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md`  
-**Product build order:** `EPI-PRATIBIMBA-BUILD-ORDER.md`  
-**Machine guard:** `pratibimba-build-order.json`  
-**M/M′ field:** `epi-relational-field.csv`  
-**S/S′ field:** `epi-ssprime-relational-field.csv`  
-**M→S capability bridge:** `epi-ssprime-embodiment.json`  
+**Parent:** QL-MEF #30
+**Architecture / relation research:** #25 / draft PR #27
+**Grounding account:** `EPI-LOGOS-SOURCE-OF-TRUTH.md`
+**Deep subsystem recovery:** `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`
+**Orienting historical Figure:** `EPI-LOGOS-ALFONSINE-ORIENTING-FIGURE.md`
+**Product build order:** `EPI-PRATIBIMBA-BUILD-ORDER.md`
+**Machine guard:** `pratibimba-build-order.json`
+**M/M′ field:** `epi-relational-field.csv`
+**Technical relation view:** `epi-ssprime-relational-field.csv`
+**Current Ta-Onta capability field:** `epi-ta-onta-m-relational-field.csv`
+**Matrix form:** `ql-capability-matrix/1`; each CSV has a `.matrix.json` axis/view manifest. Current S/S′ topology follows the R3 `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md`; technical view labels are qualified implementation concerns.
+**M→S capability bridge:** `epi-ssprime-embodiment.json`
 **O:I field:** O:I #29 / `data/ql-relational-field.csv`
 
 ## 0. Read this correctly
