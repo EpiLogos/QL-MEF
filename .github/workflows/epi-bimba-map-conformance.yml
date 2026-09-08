@@ -23,29 +23,52 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ql-mef-core:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
       - name: Prove granular coordinate/reflection core
         run: cargo test -p ql-mef
 
   bimba-map-conformance:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out QL-MEF PRE-D
         uses: actions/checkout@v4
 
+      - name: Restore exact Bimba source revision clone
+        id: epi-source-cache
+        uses: actions/cache@v4
+        with:
+          path: epi-source
+          key: ql-epi-source-clone-daa660cbc1b8c5da83828698665a753852cb0287
+
       - name: Check out exact Bimba source revision
+        if: steps.epi-source-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments
           ref: daa660cbc1b8c5da83828698665a753852cb0287
           path: epi-source
 
+      - name: Restore current Nara implementation floor clone
+        id: epi-implementation-cache
+        uses: actions/cache@v4
+        with:
+          path: epi-implementation
+          key: ql-epi-implementation-clone-52e7433bee54561a767833895b59f553cca62149
+
       - name: Check out current Nara implementation floor
+        if: steps.epi-implementation-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments

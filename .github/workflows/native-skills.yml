@@ -17,13 +17,22 @@ on:
       - "crates/ql-adapters/**"
       - ".github/workflows/native-skills.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   conformance:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/verify-native-skills.sh
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
       - run: cargo test -p ql-adapters --test noql_matrix
       - run: cargo test -p ql-adapters --test interop_contract
-      - run: cargo test --workspace --all-targets
+      # No blanket workspace suite here: this workflow is path-filtered to
+      # skills/** and no crate reads skills/ at test time (verified by grep
+      # over crates/), so skills changes cannot alter Rust test outcomes.
+      # The full workspace suite is owned by ql-mef-rust.yml.

@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   second-wiki:
     runs-on: ubuntu-latest
@@ -13,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
       - name: Build current QL-MEF Wiki refraction executable
         run: cargo build -p ql-wiki --bin ql-wiki-refraction
       - name: Prove independent Research Canvas contract and executable boundary

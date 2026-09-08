@@ -13,6 +13,10 @@ on:
       - "fixtures/q6/mef-rotation-*"
       - ".github/workflows/q6-mef-rotation-conformance.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   structural-rotation:
     runs-on: ubuntu-latest
@@ -22,6 +26,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
       - name: Verify promotion manifest boundary
         run: |
           python - <<'PY'

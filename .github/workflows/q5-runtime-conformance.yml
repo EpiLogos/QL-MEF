@@ -10,6 +10,10 @@ on:
       - "fixtures/q5/**"
       - ".github/workflows/q5-runtime-conformance.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   frozen-runtime-seam:
     runs-on: ubuntu-latest
@@ -22,10 +26,18 @@ jobs:
         with:
           node-version: "22"
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
+      - name: Restore pinned Factory clone
+        uses: actions/cache@v4
+        with:
+          path: /tmp/factory
+          key: ql-factory-clone-7690069846eb6fc89f6aa78dcf7aab886ac7c737
       - name: Fetch exact frozen Factory runtime foundation
         run: |
-          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
-          git -C /tmp/factory checkout --detach 7690069846eb6fc89f6aa78dcf7aab886ac7c737
+          if [ ! -d /tmp/factory/.git ]; then
+            git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+            git -C /tmp/factory checkout --detach 7690069846eb6fc89f6aa78dcf7aab886ac7c737
+          fi
           test "$(git -C /tmp/factory rev-parse HEAD)" = "7690069846eb6fc89f6aa78dcf7aab886ac7c737"
       - name: Run frozen Factory foundation acceptance
         working-directory: /tmp/factory/ql-agent-experiments/foundation

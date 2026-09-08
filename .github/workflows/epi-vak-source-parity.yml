@@ -21,14 +21,27 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   exact-source-parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out QL-MEF head
         uses: actions/checkout@v4
 
+      - name: Restore authoritative Epi source clone
+        id: epi-source-cache
+        uses: actions/cache@v4
+        with:
+          path: epi-source
+          key: ql-epi-source-clone-daa660cbc1b8c5da83828698665a753852cb0287
+
       - name: Check out authoritative Epi source revision
+        if: steps.epi-source-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments

@@ -15,14 +15,27 @@ on:
       - c/**
       - vendor/epi-kernel/reference/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   characterize-and-parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out QL-MEF
         uses: actions/checkout@v4
 
+      - name: Restore pinned Epi historical tests clone
+        id: epi-source-cache
+        uses: actions/cache@v4
+        with:
+          path: .source/epi
+          key: ql-epi-source-clone-daa660cbc1b8c5da83828698665a753852cb0287
+
       - name: Check out locked Epi historical tests
+        if: steps.epi-source-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments
@@ -76,6 +89,7 @@ jobs:
             target/epi-c-parity
           if-no-files-found: error
 
-      - name: Preserve current QL-MEF package tests
-        if: always()
-        run: cargo test --workspace --locked
+      # No trailing blanket workspace suite here: this conformance exercises
+      # the frozen C corpus and the native C primitive floor (cc-compiled),
+      # no crate consumes them, and the full workspace suite is owned by
+      # ql-mef-rust.yml.

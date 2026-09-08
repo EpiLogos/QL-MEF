@@ -20,18 +20,30 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
+    # The full workspace suite (cargo test --workspace --all-targets, modulo
+    # --locked) is owned canonically by ql-mef-rust.yml, which runs it on
+    # every PR and on main pushes. This job keeps the `verify` check name and
+    # the artifact gate (needs: verify) without re-compiling the workspace.
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --workspace --all-targets --locked
+      # The full workspace suite is owned canonically by ql-mef-rust.yml; this
+      # job keeps the lockfile-freshness guard and the artifact gate below.
+      - run: cargo metadata --locked --format-version 1 > /dev/null
 
   artifact:
     if: github.event_name == 'push'
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       id-token: write

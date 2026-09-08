@@ -13,14 +13,20 @@ on:
       - "rust-toolchain.toml"
       - ".github/workflows/ql-mef-rust.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ql-mef-rust:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2.9.2
       - name: Format
         run: cargo fmt --all -- --check
       - name: Check
