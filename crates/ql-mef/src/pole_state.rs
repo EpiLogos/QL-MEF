@@ -26,14 +26,6 @@
 use crate::{MefError, TemplateureField};
 use ql_core::{Element, ElementalQuaternionBasis, FoldState, QlPosition, QuaternionComponents};
 
-/// The 18-lens aperture canon, re-exported at the M1/M2/M3 composition seam
-/// so the physical-pole state and the musical derivation see one clock law:
-/// sixteen static divisor lenses (the sixteen non-trivial even divisions of
-/// 360°, eight complementary pairs, reciprocity p ↔ 15−p), +1 Fibonacci/Pisano
-/// Level-0 ground (60 × 6°), +1 Anuttara void ring (16 arcs × 22.5°,
-/// antipodal pairing p ↔ p+8). Owned by `ql_core::pole::aperture`.
-pub use ql_core::{AnuttaraVoidRing, ApertureClock, ApertureIndex, FibonacciGround};
-
 /// Version of the 18-lens canon (owner ruling 2026-09-07).
 pub const APERTURE_CLOCK_CANON_VERSION: &str = "18-lens/1.0.0";
 
