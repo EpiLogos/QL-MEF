@@ -134,7 +134,10 @@ impl QlWholeAxis {
     }
 
     pub fn return_operator_refs(&self) -> Vec<String> {
-        self.returns.iter().map(AnchorReturn::operator_ref).collect()
+        self.returns
+            .iter()
+            .map(AnchorReturn::operator_ref)
+            .collect()
     }
 }
 
