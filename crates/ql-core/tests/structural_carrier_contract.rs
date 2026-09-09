@@ -1,6 +1,6 @@
 use ql_core::{
     AnchorReturn, CallerProvenance, CarrierError, GroundKind, QlFace, QlPosition,
-    RelationFieldComposition, RELATION_FIELD_COMPOSITION_OPERATOR_REF, SIX_BY_SIX_SHAPE_REF,
+    RELATION_FIELD_COMPOSITION_OPERATOR_REF, RelationFieldComposition, SIX_BY_SIX_SHAPE_REF,
     STRUCTURAL_CARRIER_CONTRACT_VERSION, ShapeBinding, ShapeRelationBinding,
     StructuralConstellation, StructuralParticipation, WHOLE_ANCHOR_SYMBOL,
 };
@@ -40,12 +40,7 @@ fn whole(
 fn relation_fields_derive_cardinality_from_disclosed_wholes() {
     let two = whole("external:whole:two", "external:two", &[0, 1], &[]);
     let three = whole("external:whole:three", "external:three", &[1, 2, 3], &[]);
-    let four = whole(
-        "external:whole:four",
-        "external:four",
-        &[1, 2, 3, 4],
-        &[],
-    );
+    let four = whole("external:whole:four", "external:four", &[1, 2, 3, 4], &[]);
     let six = whole(
         "external:whole:six",
         "external:six",
@@ -99,23 +94,16 @@ fn relation_fields_derive_cardinality_from_disclosed_wholes() {
 
 #[test]
 fn generic_six_by_six_cannot_impersonate_canonical_direct_conjugate_field() {
-    let six_a = whole(
-        "external:whole:a",
-        "external:a",
-        &[0, 1, 2, 3, 4, 5],
-        &[],
-    );
-    let six_b = whole(
-        "external:whole:b",
-        "external:b",
-        &[0, 1, 2, 3, 4, 5],
-        &[],
-    );
+    let six_a = whole("external:whole:a", "external:a", &[0, 1, 2, 3, 4, 5], &[]);
+    let six_b = whole("external:whole:b", "external:b", &[0, 1, 2, 3, 4, 5], &[]);
     let generic = RelationFieldComposition::compose(&six_a, &six_b).unwrap();
 
     assert_eq!(generic.cardinality(), (6, 6, 36));
     assert_ne!(generic.shape_ref(), SIX_BY_SIX_SHAPE_REF);
-    assert_eq!(generic.operator_ref(), RELATION_FIELD_COMPOSITION_OPERATOR_REF);
+    assert_eq!(
+        generic.operator_ref(),
+        RELATION_FIELD_COMPOSITION_OPERATOR_REF
+    );
 }
 
 #[test]
@@ -158,12 +146,7 @@ fn addresses_are_deterministic_under_external_member_rename_and_reordering() {
 #[test]
 fn semantic_relations_are_sparse_plural_asymmetric_and_caller_attributable() {
     let row = whole("external:whole:row", "external:row", &[0, 1], &[]);
-    let column = whole(
-        "external:whole:column",
-        "external:column",
-        &[0, 1],
-        &[],
-    );
+    let column = whole("external:whole:column", "external:column", &[0, 1], &[]);
     let field = RelationFieldComposition::compose(&row, &column).unwrap();
     let address = field.addresses[1];
     let first = ShapeRelationBinding::new(
@@ -205,26 +188,21 @@ fn semantic_relations_are_sparse_plural_asymmetric_and_caller_attributable() {
     binding.validate_relation_field(&field).unwrap();
     assert_eq!(field.addresses.len(), 4);
     assert_eq!(binding.relation_bindings.len(), 2);
-    assert_eq!(binding.relation_bindings[0].address, binding.relation_bindings[1].address);
+    assert_eq!(
+        binding.relation_bindings[0].address,
+        binding.relation_bindings[1].address
+    );
     assert_ne!(address.row, address.column);
 }
 
 #[test]
 fn a_semantic_binding_requires_evidence_and_must_land_inside_the_field() {
     let row = whole("external:whole:row", "external:row", &[0, 1], &[]);
-    let column = whole(
-        "external:whole:column",
-        "external:column",
-        &[0, 1],
-        &[],
-    );
+    let column = whole("external:whole:column", "external:column", &[0, 1], &[]);
     let field = RelationFieldComposition::compose(&row, &column).unwrap();
 
-    let no_evidence = ShapeRelationBinding::new(
-        field.addresses[0],
-        "external:relation:unsupported",
-        vec![],
-    );
+    let no_evidence =
+        ShapeRelationBinding::new(field.addresses[0], "external:relation:unsupported", vec![]);
     assert_eq!(no_evidence.unwrap_err(), CarrierError::MissingEvidence);
 
     let outside = ql_core::QlShapeAddress {
@@ -294,8 +272,14 @@ fn relation_derivation_keeps_source_wholes_grains_returns_and_zero_one_basis() {
         ["external:whole:row", "external:whole:column"]
     );
     assert_eq!(derivation.source_shape_refs[0], field.row_axis.shape_ref());
-    assert_eq!(derivation.source_shape_refs[1], field.column_axis.shape_ref());
-    assert_eq!(derivation.operator_ref, RELATION_FIELD_COMPOSITION_OPERATOR_REF);
+    assert_eq!(
+        derivation.source_shape_refs[1],
+        field.column_axis.shape_ref()
+    );
+    assert_eq!(
+        derivation.operator_ref,
+        RELATION_FIELD_COMPOSITION_OPERATOR_REF
+    );
     assert_eq!(derivation.generated_shape_ref, field.shape_ref());
     assert_eq!(derivation.return_basis, WHOLE_ANCHOR_SYMBOL);
     assert_eq!(derivation.source_return_refs.len(), 1);
