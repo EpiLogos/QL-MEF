@@ -5,6 +5,7 @@
 mod address;
 mod address_parse;
 mod apply;
+mod carrier;
 mod deterministic;
 mod error;
 mod face;
@@ -20,6 +21,11 @@ mod structural;
 
 pub use address::QlAddress;
 pub use apply::apply_operator;
+pub use carrier::{
+    CallerProvenance, CarrierError, QlWholeAxis, RELATION_FIELD_COMPOSITION_OPERATOR_REF,
+    RelationFieldComposition, RelationFieldDerivation, STRUCTURAL_CARRIER_CONTRACT_VERSION,
+    ShapeBinding, ShapeDefinition, ShapeRelationBinding,
+};
 pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
 pub use face::QlFace;
