@@ -21,10 +21,20 @@ pub const RELATION_FIELD_COMPOSITION_OPERATOR_REF: &str =
 /// external objects to the canonical `QlShape` grammar.
 pub type ShapeDefinition = QlShape;
 
+/// Consumer-facing name for an existing structural participation.
+///
+/// The alias makes the binding role explicit without copying the QL coordinate
+/// or participation model into another carrier type.
+pub type ShapeMemberBinding = StructuralParticipation;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CarrierError {
     EmptyRef(&'static str),
     EmptyAxis(&'static str),
+    UndisclosedAxisShape {
+        axis: &'static str,
+        grain: ConstellationGrain,
+    },
     MissingEvidence,
     BindingShapeMismatch {
         binding_shape_ref: String,
@@ -40,6 +50,10 @@ impl fmt::Display for CarrierError {
             Self::EmptyAxis(axis) => write!(
                 f,
                 "{axis} whole has no positional members and cannot form a relation axis"
+            ),
+            Self::UndisclosedAxisShape { axis, grain } => write!(
+                f,
+                "{axis} whole grain {grain:?} is not a disclosed positive carrier shape"
             ),
             Self::MissingEvidence => {
                 f.write_str("an attributable semantic relation requires at least one evidence ref")
@@ -79,6 +93,10 @@ fn validate_refs(values: &[String], field: &'static str) -> Result<(), CarrierEr
     Ok(())
 }
 
+fn is_disclosed_carrier_grain(grain: ConstellationGrain) -> bool {
+    !matches!(grain, ConstellationGrain::Other { .. })
+}
+
 /// One already-disclosed QL whole made usable as an axis without losing the
 /// caller/source identities that disclosed it.
 ///
@@ -89,7 +107,7 @@ pub struct QlWholeAxis {
     pub whole_ref: String,
     pub shape: ShapeDefinition,
     pub grain: ConstellationGrain,
-    pub members: Vec<StructuralParticipation>,
+    pub members: Vec<ShapeMemberBinding>,
     pub returns: Vec<AnchorReturn>,
 }
 
@@ -145,7 +163,7 @@ impl QlWholeAxis {
 ///
 /// The generated field keeps both source wholes, their actual QL forms, grains,
 /// operator and Return basis. It does not flatten them into anonymous matrix
-/// dimensions.
+/// dimensions or Return operator labels.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RelationFieldDerivation {
     pub source_whole_refs: [String; 2],
@@ -155,13 +173,16 @@ pub struct RelationFieldDerivation {
     pub generated_shape_ref: String,
     pub return_basis: &'static str,
     pub source_return_refs: Vec<String>,
+    pub source_returns: Vec<AnchorReturn>,
 }
 
 /// Generic composition of two legitimate disclosed QL whole axes.
 ///
 /// Cardinality follows from the actual axes. There is intentionally no
 /// constructor from `(rows, columns)`: dimensions are observations of a field,
-/// never authority for declaring a QL shape.
+/// never authority for declaring a QL shape. A structurally valid but presently
+/// undisclosed `Other` grain is therefore not silently promoted into a carrier
+/// axis merely because its member count resembles a familiar matrix dimension.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RelationFieldComposition {
     pub row_axis: QlWholeAxis,
@@ -181,6 +202,18 @@ impl RelationFieldComposition {
         }
         if column_axis.members.is_empty() {
             return Err(CarrierError::EmptyAxis("column"));
+        }
+        if !is_disclosed_carrier_grain(row_axis.grain) {
+            return Err(CarrierError::UndisclosedAxisShape {
+                axis: "row",
+                grain: row_axis.grain,
+            });
+        }
+        if !is_disclosed_carrier_grain(column_axis.grain) {
+            return Err(CarrierError::UndisclosedAxisShape {
+                axis: "column",
+                grain: column_axis.grain,
+            });
         }
 
         let rows = row_axis.coordinates();
@@ -229,6 +262,8 @@ impl RelationFieldComposition {
     pub fn derivation(&self) -> RelationFieldDerivation {
         let mut source_return_refs = self.row_axis.return_operator_refs();
         source_return_refs.extend(self.column_axis.return_operator_refs());
+        let mut source_returns = self.row_axis.returns.clone();
+        source_returns.extend(self.column_axis.returns.clone());
         RelationFieldDerivation {
             source_whole_refs: [
                 self.row_axis.whole_ref.clone(),
@@ -240,6 +275,7 @@ impl RelationFieldComposition {
             generated_shape_ref: self.shape_ref(),
             return_basis: WHOLE_ANCHOR_SYMBOL,
             source_return_refs,
+            source_returns,
         }
     }
 }
@@ -315,7 +351,7 @@ pub struct ShapeBinding {
     pub shape_ref: String,
     pub whole_ref: String,
     pub basis_refs: Vec<String>,
-    pub members: Vec<StructuralParticipation>,
+    pub members: Vec<ShapeMemberBinding>,
     pub relation_bindings: Vec<ShapeRelationBinding>,
     pub derivation_ref: Option<String>,
     pub operator_ref: Option<String>,
@@ -330,7 +366,7 @@ impl ShapeBinding {
         shape_ref: impl Into<String>,
         whole_ref: impl Into<String>,
         basis_refs: Vec<String>,
-        members: Vec<StructuralParticipation>,
+        members: Vec<ShapeMemberBinding>,
         relation_bindings: Vec<ShapeRelationBinding>,
         derivation_ref: Option<String>,
         operator_ref: Option<String>,
@@ -361,6 +397,14 @@ impl ShapeBinding {
             require_ref(reference, "operator_ref")?;
         }
         Ok(value)
+    }
+
+    pub fn member_bindings(&self) -> &[ShapeMemberBinding] {
+        &self.members
+    }
+
+    pub const fn caller_provenance(&self) -> &CallerProvenance {
+        &self.provenance
     }
 
     /// Validate relation bindings against a disclosed field without requiring
