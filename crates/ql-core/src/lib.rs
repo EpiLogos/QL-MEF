@@ -24,7 +24,7 @@ pub use apply::apply_operator;
 pub use carrier::{
     CallerProvenance, CarrierError, QlWholeAxis, RELATION_FIELD_COMPOSITION_OPERATOR_REF,
     RelationFieldComposition, RelationFieldDerivation, STRUCTURAL_CARRIER_CONTRACT_VERSION,
-    ShapeBinding, ShapeDefinition, ShapeRelationBinding,
+    ShapeBinding, ShapeDefinition, ShapeMemberBinding, ShapeRelationBinding,
 };
 pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
