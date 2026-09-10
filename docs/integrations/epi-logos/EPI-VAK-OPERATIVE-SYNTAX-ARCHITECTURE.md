@@ -830,3 +830,9 @@ FULL QL-MEF
 ```
 
 That is the implementation relation to carry into #83, PR #84 and AIKit #142.
+
+## QL-owned contextual implementation — #138
+
+The [QL Kernel reconciliation](../../QL-VAK-KERNEL-RECONCILIATION.md) now gives the executable C′/Context-Frame producer contract. `FullVakBinding` interprets the existing AIKit native expression node and ResolvePath under an explicitly accepted syntax revision; it does not copy the general AST/parser. The same source-bearing determination is framed, harmonically/geometrically/MEF-readable, composable as a whole within a whole, and capable of explicit generative Return.
+
+`VakComposition::record_native_observation` correlates the existing native observed-path contract with that determination and retains it through Return. Admission of supplied execution evidence is not execution by QL. Synthetic validator tests are not native Agent acceptance. The immutable #83 receipt remains historical evidence for the implementation actually tested there. The current seven CFs are unchanged; the historical `(4/5/0)` occurrence is superseded/noncanonical, with no missing eighth frame.
