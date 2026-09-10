@@ -11,12 +11,8 @@ pub const QL_KERNEL_NAME: &str = "QL Kernel";
 
 /// L5 is the concrescence of this existing articulation square, not a kernel wrapper.
 /// Order follows the canonical L0 / L0' / L5' / L5 articulation.
-pub const ARTICULATION_SQUARE: [LensId; 4] = [
-    LensId::L0,
-    LensId::L0Prime,
-    LensId::L5Prime,
-    LensId::L5,
-];
+pub const ARTICULATION_SQUARE: [LensId; 4] =
+    [LensId::L0, LensId::L0Prime, LensId::L5Prime, LensId::L5];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum L5Office {

@@ -1,6 +1,6 @@
 use ql_core::{KernelRelationId, QlFamily, VakFamily};
 use ql_mef::l5_projection::{
-    ARTICULATION_SQUARE, L5Office, L5_PROJECTION_VERSION, QL_KERNEL_NAME,
+    ARTICULATION_SQUARE, L5_PROJECTION_VERSION, L5Office, QL_KERNEL_NAME,
     lookup_context_frame_expression,
 };
 use ql_mef::{
@@ -30,7 +30,10 @@ fn faithful_offices_project_existing_refs_without_replacing_source_labels() {
     }
     assert_eq!(lens_definition(LensId::L5).name(), "Para Vāk");
     assert_eq!(L5Office::Harmonics.source_label(), "Paśyantī");
-    assert_ne!(L5Office::Harmonics.name(), L5Office::Harmonics.source_label());
+    assert_ne!(
+        L5Office::Harmonics.name(),
+        L5Office::Harmonics.source_label()
+    );
 }
 
 #[test]
