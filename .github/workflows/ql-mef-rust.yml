@@ -31,10 +31,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if test -f tools/vak138-integrate.py; then
-            python tools/vak138-integrate.py
-            rm tools/vak138-integrate.py
-          fi
+          for script in tools/vak138-integrate.py tools/vak138-finish.py; do
+            if test -f "$script"; then
+              python "$script"
+              rm "$script"
+            fi
+          done
           cargo fmt --all
           if ! git diff --quiet; then
             git config user.name 'github-actions[bot]'
