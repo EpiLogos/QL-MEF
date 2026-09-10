@@ -19,15 +19,17 @@ These remain canonical. The carrier composes them; it does not reinterpret them.
 
 ## Additive carrier seam
 
-`ShapeBinding` is caller-owned attribution around QL form. It carries `subject_ref`, `shape_ref`, `whole_ref`, basis/member bindings, optional derivation/operator refs, Return refs, relation bindings, and opaque caller/source/standing provenance. Binding a subject does not grant QL authority over that subject and does not promote the caller's claim into QL-owned semantics.
+`ShapeBinding` is caller-owned attribution around QL form. It carries `subject_ref`, `shape_ref`, `whole_ref`, basis/member bindings, optional derivation/operator refs, Return refs, relation bindings, and opaque caller/source/standing provenance. `ShapeMemberBinding` is only an alias for the existing `StructuralParticipation`; it does not duplicate the coordinate model. Binding a subject does not grant QL authority over that subject and does not promote the caller's claim into QL-owned semantics.
 
 `RelationFieldComposition` composes two actual `StructuralConstellation` wholes into a row-major address field. There is deliberately no constructor from numeric dimensions. A 3×4 or 6×12 cardinality is therefore a consequence of the two disclosed axes, never the reason they count as QL wholes.
+
+The v1 composition seam accepts the currently named positive/developed constellation grains and refuses `ConstellationGrain::Other`. `Other` remains a legitimate structural observation in the wider kernel, but all such forms currently share the same `...:constellation:other` shape ref. Promoting them into portable carrier axes would therefore fabricate identity and permit structurally different undeclared forms to collide. A later kernel revision may admit new grains once their QL identity is explicitly disclosed.
 
 The generic field has its own carrier ref. In particular, a generic 6×6 cannot claim `ql:shape:1.0.0:6x6:direct-conjugate`; that ref remains reserved for the canonical direct/conjugate field.
 
 Addresses are generated deterministically from canonicalised coordinates, not from external labels. They carry no generated semantic cell. External semantic determinations arrive only as `ShapeRelationBinding` values with caller-supplied relation and evidence refs. Missing addresses, one-way/asymmetric determinations and multiple determinations at one address remain valid.
 
-`RelationFieldDerivation` retains both source whole refs, source QL shape refs, grains, the composition operator, generated field ref, source Return operators and the `0/1` Return basis instead of flattening the operation to anonymous dimensions.
+`RelationFieldDerivation` retains both source whole refs, source QL shape refs, grains, the composition operator, generated field ref, source Return operator refs, the complete source `AnchorReturn` routes and the `0/1` Return basis. The operation therefore does not flatten distinct Return paths into a shared label or anonymous dimensions.
 
 ## Portable consumer contract
 
