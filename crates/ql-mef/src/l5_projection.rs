@@ -95,8 +95,8 @@ impl L5Office {
 
 /// Exact lookup in the existing seven-frame canon, not another expression parser.
 ///
-/// Historical Ta-Onta also admitted `(4/5/0)`. It has no canonical frame identity
-/// here and is intentionally unresolved, not silently aliased to CF5 or CF6.
+/// The historical Ta-Onta `(4/5/0)` occurrence is superseded/noncanonical.
+/// It is outside this set, not an eighth frame, alias or unresolved feature.
 /// Success identifies a frame; it does not confer execution or runtime authority.
 pub fn lookup_context_frame_expression(expression: &str) -> Option<ContextFrameId> {
     ContextFrameId::ALL
