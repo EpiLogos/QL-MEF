@@ -29,6 +29,7 @@
     "construction": "disclosed-whole-axis x disclosed-whole-axis",
     "operator_ref": "ql:carrier:1.0.0:relation-field:cartesian-addresses",
     "dimensions_are_shape_authority": false,
+    "undisclosed_other_grains_are_carrier_axes": false,
     "address_generation_asserts_semantic_relation": false,
     "semantic_cells_generated": false,
     "missing_cells_valid": true,
@@ -59,18 +60,17 @@
     }
   },
   "shape_binding": {
-    "required_refs": [
+    "identity_refs": [
       "subject_ref",
       "shape_ref",
       "whole_ref",
       "basis_refs",
       "member_bindings",
       "relation_bindings",
-      "derivation_ref",
-      "operator_ref",
       "return_refs",
       "caller_provenance"
     ],
+    "optional_derivation_refs": ["derivation_ref", "operator_ref"],
     "caller_provenance": ["caller_ref", "source_ref", "standing_ref"],
     "semantic_relation_requires_evidence_ref": true,
     "binding_upgrades_caller_authority": false
@@ -81,6 +81,7 @@
     "retains_grains": true,
     "retains_operator_ref": true,
     "retains_source_return_refs": true,
+    "retains_source_return_routes": true,
     "return_basis": "0/1"
   },
   "external_specimen": {
