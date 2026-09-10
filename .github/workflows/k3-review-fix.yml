@@ -1,0 +1,44 @@
+name: K3 reviewed parser correction
+on:
+  push:
+    branches: [agent/k3-m-ledger-matrix-lock]
+    paths: [.github/workflows/k3-review-fix.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/k3-m-ledger-matrix-lock
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/m-ledger.py')
+          s = p.read_text()
+          old = "(?:[-./][0-9]+)*(?![\\w′'])"
+          new = "(?:[-./][0-9]+)*(?![\\w′']|[-./][0-9])"
+          assert s.count(old) == 1
+          p.write_text(s.replace(old, new))
+          p = Path('scripts/tests/test_m_ledger.py')
+          s = p.read_text()
+          pos = s.index('\n\nif __name__')
+          s = s[:pos] + '''
+              def test_primed_or_suffixed_expressions_cannot_collapse_to_unprimed_prefixes(self):
+                  for expression in ("M1-4′", "M1-4'", "M1-4x", "#0-4.0/1/2′"):
+                      self.assertEqual(list(ledger.COORDINATE.finditer(expression)), [], expression)
+                  self.assertEqual([m.group() for m in ledger.COORDINATE.finditer("M1/M2")], ["M1", "M2"])
+          ''' + s[pos:]
+          p.write_text(s)
+          PY
+          python3 -m pip install jsonschema==4.25.1
+          python3 scripts/m-ledger.py check
+          python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v
+          git add scripts/m-ledger.py scripts/tests/test_m_ledger.py
+          git config user.name 'Epii'
+          git config user.email 'agent@epilogos.dev'
+          git commit -m 'fix(kernel): preserve primed source expressions without prefix backtracking'
+          git push origin HEAD:agent/k3-m-ledger-matrix-lock
+          git rev-parse HEAD
+          git rev-parse HEAD^{tree}
