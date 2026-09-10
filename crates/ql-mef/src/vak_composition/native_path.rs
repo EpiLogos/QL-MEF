@@ -110,6 +110,31 @@ impl VakComposition {
                 || step.return_ref.as_deref() == Some(&contribution.result_ref),
             "native returned result is not the declared Agent contribution",
         )?;
+        require(
+            step.action_ref.as_deref() == Some(path.action_profile.action_ref.as_str())
+                && step.method_ref.as_deref() == Some(path.method_ref.as_str()),
+            "native step Action/Method differs from its execution path",
+        )?;
+        require(
+            path.action_profile.affordances.iter().any(|a| {
+                a.operator == step.expression.operator && a.horizon == step.expression.horizon
+            }),
+            "native Action profile does not bind this operation",
+        )?;
+        require(
+            step.expression.world_ref == language.reading.world_ref
+                && step.expression.project_ref == language.reading.project_ref
+                && step.expression.focus_ref == language.reading.focus_ref,
+            "native step changes contextual scope",
+        )?;
+        for subject in &language.reading.subjects {
+            if let VakExpressionSubject::Native(r) = subject {
+                require(
+                    step.native_subject_refs.contains(r),
+                    "native step omits a producing subject",
+                )?;
+            }
+        }
         let value = NativePathCorrelation {
             reference: input.reference,
             determination: input.determination.clone(),

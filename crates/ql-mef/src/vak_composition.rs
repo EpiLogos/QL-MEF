@@ -239,6 +239,7 @@ pub struct Whole {
     pub producing_refs: Vec<String>,
     pub transitions: Vec<Transition>,
     pub member_focus: Option<MemberFocus>,
+    pub selected_member: Option<StructuralParticipation>,
     depth: usize,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -464,6 +465,7 @@ impl VakComposition {
                 producing_refs: Vec::new(),
                 transitions: Vec::new(),
                 member_focus: None,
+                selected_member: None,
                 depth: 0,
             },
         );
@@ -557,6 +559,7 @@ impl VakComposition {
                 },
                 transitions: Vec::new(),
                 member_focus: None,
+                selected_member: None,
                 depth,
             },
         );
@@ -686,8 +689,8 @@ impl VakComposition {
         }
         let frame_pitch = whole.frame.pitch();
         let pitch = match &whole.member_focus {
-            Some(focus) => {
-                let local = focus_local(focus, whole.frame.lens);
+            Some(_) => {
+                let local = selected_local(whole);
                 crate::pitch_at_lens(whole.frame.basis, whole.frame.lens, local)
             }
             None => frame_pitch,
@@ -696,12 +699,8 @@ impl VakComposition {
             .iter()
             .map(|c| directed_pitch_delta(frame_pitch, c.harmonic_pitch))
             .collect();
-        let absolute = if let Some(focus) = &whole.member_focus {
-            MefRotation::new(
-                whole.frame.lens,
-                focus_local(focus, whole.frame.lens).position,
-            )
-            .absolute_position()
+        let absolute = if whole.member_focus.is_some() {
+            MefRotation::new(whole.frame.lens, selected_local(whole).position).absolute_position()
         } else {
             whole
                 .frame
@@ -825,10 +824,27 @@ impl VakComposition {
         Ok(())
     }
     fn contains_use(&self, parent: &str, child: &str) -> Result<bool> {
+        let child_whole = self.whole(child)?;
+        let mut aliases = BTreeSet::new();
+        let mut pending = vec![child.to_owned()];
+        while let Some(r) = pending.pop() {
+            if !aliases.insert(r.clone()) {
+                continue;
+            }
+            for source in &self.whole(&r)?.producing_refs {
+                if let Some(w) = self.wholes.get(source) {
+                    if w.binding.whole_ref == child_whole.binding.whole_ref
+                        && w.binding.subject_ref == child_whole.binding.subject_ref
+                    {
+                        pending.push(source.clone());
+                    }
+                }
+            }
+        }
         let mut pending = vec![parent.to_owned()];
         let mut seen = BTreeSet::new();
         while let Some(r) = pending.pop() {
-            if r == child {
+            if aliases.contains(&r) {
                 return Ok(true);
             }
             if !seen.insert(r.clone()) {
@@ -852,12 +868,12 @@ impl VakComposition {
                 "own ground must be producing use",
             )?,
             GroundKind::Parent => require(
-                source.use_ref != target.use_ref
+                source.binding.whole_ref != target.binding.whole_ref
                     && self.contains_use(&target.use_ref, &source.use_ref)?,
                 "target is not an explicit parent",
             )?,
             GroundKind::Child => require(
-                source.use_ref != target.use_ref
+                source.binding.whole_ref != target.binding.whole_ref
                     && self.contains_use(&source.use_ref, &target.use_ref)?,
                 "target is not an explicit child",
             )?,
@@ -1084,7 +1100,28 @@ impl CPrimeContext {
         let from = self.focus_use.clone();
         let mut frame = graph.whole(&from)?.frame;
         frame.face = face;
+        let selected = if let Some(member) = &graph.whole(&from)?.selected_member {
+            let target = QlCoordinate::new(member.coordinate.position, face);
+            match &graph.whole(&from)?.body {
+                WholeBody::Local(form) => Some(
+                    form.members
+                        .iter()
+                        .find(|m| m.coordinate == target)
+                        .cloned()
+                        .ok_or_else(|| err("CPF counterpart is not disclosed"))?,
+                ),
+                _ => return Err(err("positioned CPF requires a local whole")),
+            }
+        } else {
+            None
+        };
         graph.reframe(&from, into, frame, basis.clone())?;
+        if let Some(w) = graph.wholes.get_mut(into) {
+            w.selected_member = selected;
+            if let Some(focus) = &mut w.member_focus {
+                focus.coordinate.face = face;
+            }
+        }
         if let Some(w) = graph.wholes.get_mut(into) {
             if let Some(t) = w.transitions.last_mut() {
                 t.operation = VakFamily::Cpf.relation_id().as_str().into();
@@ -1343,6 +1380,9 @@ fn focus_local(f: &MemberFocus, lens: LensId) -> QlCoordinate {
     QlCoordinate::new(position, f.coordinate.face)
 }
 fn selected_coordinate(w: &Whole) -> QlCoordinate {
+    if let Some(member) = &w.selected_member {
+        return member.coordinate;
+    }
     match &w.member_focus {
         None => w.frame.coordinate(),
         Some(f) => {
@@ -1369,6 +1409,7 @@ impl VakComposition {
             "contextual transition bound exceeded",
         )?;
         w.member_focus = Some(focus.clone());
+        w.selected_member = None;
         let coordinate = selected_coordinate(&w);
         match &w.body {
             WholeBody::Local(form) => require(
@@ -1380,6 +1421,13 @@ impl VakComposition {
                     "CP must address an actual local participant before choosing its member",
                 ));
             }
+        }
+        if let WholeBody::Local(form) = &w.body {
+            w.selected_member = form
+                .members
+                .iter()
+                .find(|m| m.coordinate == coordinate)
+                .cloned();
         }
         w.use_ref = into.into();
         w.producing_refs.push(from.into());
@@ -1411,4 +1459,16 @@ impl CPrimeContext {
         self.receipt(VakFamily::Cp, vec![from], vec![into.into()], basis);
         Ok(())
     }
+}
+
+fn selected_local(w: &Whole) -> QlCoordinate {
+    let c = selected_coordinate(w);
+    let position = match w.frame.positions {
+        PositionBasis::Local => c.position,
+        PositionBasis::Absolute => {
+            QlPosition::new((c.position.value() + 6 - w.frame.lens.index()) % 6)
+                .expect("modulo-six coordinate")
+        }
+    };
+    QlCoordinate::new(position, c.face)
 }
