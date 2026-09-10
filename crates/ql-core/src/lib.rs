@@ -17,6 +17,8 @@ mod position;
 mod relation_classification;
 mod shape;
 mod structural;
+#[path = "carrier.rs"]
+mod structural_carrier;
 
 pub use address::QlAddress;
 pub use apply::apply_operator;
@@ -81,4 +83,9 @@ pub use structural::{
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
     STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralError, StructuralParticipation,
     WHOLE_ANCHOR_SYMBOL, all_d3_fields,
+};
+pub use structural_carrier::{
+    CallerProvenance, CarrierError, QlWholeAxis, RELATION_FIELD_COMPOSITION_OPERATOR_REF,
+    RelationFieldComposition, RelationFieldDerivation, STRUCTURAL_CARRIER_CONTRACT_VERSION,
+    ShapeBinding, ShapeDefinition, ShapeMemberBinding, ShapeRelationBinding,
 };

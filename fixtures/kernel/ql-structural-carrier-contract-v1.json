@@ -1,0 +1,128 @@
+{
+  "contract_id": "ql.structural-carrier",
+  "version": "1.0.0",
+  "depends_on": {
+    "shape_contract": "ql.shape/1.0.0",
+    "structural_contract": "ql.structural/2.0.0"
+  },
+  "shape_definition": {
+    "owner": "ql-kernel",
+    "representation": "QlShape",
+    "binding_is_definition": false
+  },
+  "positive_wholes": [
+    "anchor-only",
+    "twofold",
+    "threefold-123",
+    "threefold-450",
+    "fourfold-1234",
+    "four-plus-one-ground",
+    "four-plus-one-synthesis",
+    "sixfold",
+    "partial-conjugate-8",
+    "partial-conjugate-9",
+    "partial-conjugate-10",
+    "partial-conjugate-11",
+    "twelvefold"
+  ],
+  "relation_field": {
+    "construction": "disclosed-whole-axis x disclosed-whole-axis",
+    "operator_ref": "ql:carrier:1.0.0:relation-field:cartesian-addresses",
+    "dimensions_are_shape_authority": false,
+    "undisclosed_other_grains_are_carrier_axes": false,
+    "address_generation_asserts_semantic_relation": false,
+    "semantic_cells_generated": false,
+    "missing_cells_valid": true,
+    "asymmetric_cells_valid": true,
+    "plural_bindings_per_address_valid": true,
+    "observed_examples": [
+      {"rows": 2, "columns": 2, "addresses": 4},
+      {"rows": 3, "columns": 4, "addresses": 12},
+      {"rows": 4, "columns": 4, "addresses": 16},
+      {"rows": 6, "columns": 6, "addresses": 36},
+      {"rows": 6, "columns": 12, "addresses": 72},
+      {"rows": 12, "columns": 12, "addresses": 144}
+    ]
+  },
+  "canonical_specialisations": {
+    "d3_four_by_four": {
+      "shape_ref_template": "ql:shape:1.0.0:4x4:{family}:{pair_index}",
+      "retains_pair_family_provenance": true
+    },
+    "direct_conjugate_six_by_six": {
+      "shape_ref": "ql:shape:1.0.0:6x6:direct-conjugate",
+      "generic_six_by_six_may_claim_this_ref": false
+    },
+    "relational_sixfold": {
+      "shape_ref": "ql:shape:1.0.0:6-plus-6-prime",
+      "operator_ref": "ql:shape:1.0.0:generation:same-position-direct-conjugate",
+      "return_through": "0/1"
+    }
+  },
+  "shape_binding": {
+    "identity_refs": [
+      "subject_ref",
+      "shape_ref",
+      "whole_ref",
+      "basis_refs",
+      "member_bindings",
+      "relation_bindings",
+      "return_refs",
+      "caller_provenance"
+    ],
+    "optional_derivation_refs": ["derivation_ref", "operator_ref"],
+    "caller_provenance": ["caller_ref", "source_ref", "standing_ref"],
+    "semantic_relation_requires_evidence_ref": true,
+    "binding_upgrades_caller_authority": false
+  },
+  "derivation": {
+    "retains_source_wholes": true,
+    "retains_source_shape_refs": true,
+    "retains_grains": true,
+    "retains_operator_ref": true,
+    "retains_source_return_refs": true,
+    "retains_source_return_routes": true,
+    "return_basis": "0/1"
+  },
+  "external_specimen": {
+    "row_whole": {
+      "whole_ref": "external:whole:plan",
+      "shape_ref": "ql:shape:1.0.0:constellation:threefold-123",
+      "member_refs": ["external:plan:a", "external:plan:b", "external:plan:c"]
+    },
+    "column_whole": {
+      "whole_ref": "external:whole:evidence",
+      "shape_ref": "ql:shape:1.0.0:constellation:fourfold-1234",
+      "member_refs": [
+        "external:evidence:a",
+        "external:evidence:b",
+        "external:evidence:c",
+        "external:evidence:d"
+      ]
+    },
+    "field": {
+      "row_cardinality": 3,
+      "column_cardinality": 4,
+      "address_cardinality": 12,
+      "semantic_binding_count": 2,
+      "unfilled_address_count": 10
+    },
+    "binding": {
+      "subject_ref": "external:subject:work-item-7",
+      "whole_ref": "external:whole:plan-evidence-reading",
+      "caller_ref": "external:caller:agent-3",
+      "source_ref": "external:source:run-42",
+      "standing_ref": "external:standing:observed",
+      "relation_refs": ["external:relation:r1", "external:relation:r2"],
+      "evidence_refs": ["external:evidence:receipt-1", "external:evidence:receipt-2"]
+    },
+    "external_label_rename_changes_structure": false
+  },
+  "laws": {
+    "ql_owns_form_not_external_semantics": true,
+    "addresses_are_questions_not_answers": true,
+    "arbitrary_rectangles_are_not_ql_by_dimension": true,
+    "caller_owned_labels_do_not_define_structure": true,
+    "portable_consumers_need_no_live_ql_service": true
+  }
+}
