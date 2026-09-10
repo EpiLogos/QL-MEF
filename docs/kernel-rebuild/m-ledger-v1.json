@@ -1,0 +1,37 @@
+{
+  "schema": "ql.kernel-rebuild-m-ledger-handoff/v1",
+  "issue": 127,
+  "foundation_commit": "e3e0bc12a632b8f4cb1960387b4920c794393d52",
+  "registry": "fixtures/kernel/m-tree-v1.json",
+  "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "ledger": "fixtures/kernel/m-ledger-v1.json",
+  "json_schema": "fixtures/kernel/m-ledger-v1.schema.json",
+  "rationale": "docs/KERNEL-M-LEDGER-MATRIX-LOCK.md",
+  "rust_consumer": "crates/ql-mef/src/m_ledger.rs",
+  "cli": "crates/ql-cli/src/m_ledger.rs",
+  "import_and_checkout_verifier": "scripts/m-ledger.py",
+  "counts": {
+    "locked_matrix_carriers": 10,
+    "deep_source_capabilities": 149,
+    "normalized_source_capabilities": 36,
+    "index_rows": 7,
+    "total_seed_rows": 192,
+    "index_implementation_bindings": 14
+  },
+  "parity_axes": ["source", "coordinate", "relation", "operational", "experiential"],
+  "readiness_strata": ["source", "c", "rust", "cpp", "neo4j", "application", "instrument"],
+  "acceptance_commands": [
+    "python3 scripts/m-ledger.py check",
+    "python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v",
+    "cargo test -p ql-mef --test m_ledger --locked",
+    "cargo test -p ql-cli --test m_ledger_cli --locked",
+    "cargo test --workspace --all-targets --locked",
+    "python3 scripts/m-ledger.py observe --peer c --input target/m-tree/native.jsonl",
+    "python3 scripts/m-ledger.py observe --peer rust --input target/m-tree/c-rust-parity.jsonl"
+  ],
+  "handoff": {
+    "next_issue": 128,
+    "scope": "Automated M1/M2/M3 source/implementation census, scoped evidence and dispositions, returned discrepancies and generated vertical work graph using the accepted M registry and this ledger.",
+    "not_claimed": ["full M computational port", "complete implementation census", "live Neo4j observation", "C++ embodiment", "whole-M operational or experiential readiness"]
+  }
+}
