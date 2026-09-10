@@ -140,9 +140,9 @@ fn addresses_are_deterministic_under_external_member_rename_and_reordering() {
     let row_a = StructuralConstellation::new(
         "external:whole:row",
         vec![
-            member("external:old", 2, QlFace::Direct),
-            member("external:old", 0, QlFace::Direct),
+            member("external:old", 3, QlFace::Direct),
             member("external:old", 1, QlFace::Direct),
+            member("external:old", 2, QlFace::Direct),
         ],
         vec![],
     )
@@ -150,9 +150,9 @@ fn addresses_are_deterministic_under_external_member_rename_and_reordering() {
     let row_b = StructuralConstellation::new(
         "external:whole:row",
         vec![
-            member("external:renamed", 1, QlFace::Direct),
             member("external:renamed", 2, QlFace::Direct),
-            member("external:renamed", 0, QlFace::Direct),
+            member("external:renamed", 3, QlFace::Direct),
+            member("external:renamed", 1, QlFace::Direct),
         ],
         vec![],
     )
