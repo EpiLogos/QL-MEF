@@ -85,3 +85,42 @@ fn explicit_cp_member_choice_survives_changed_frame_and_mef_view() {
     assert_ne!(before["focusInterval"], after["focusInterval"]);
     assert_eq!(after["geometry"]["viewingAbsolutePosition"], 4);
 }
+
+#[test]
+fn native_cli_lineage_retains_return_snapshots_and_replays_identically() {
+    let mut request: Value = serde_json::from_slice(&std::fs::read(specimen()).unwrap()).unwrap();
+    request["steps"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"op":"lineage","reference":"offered"}));
+    let file = std::env::temp_dir().join(format!("ql-lineage-{}.json", std::process::id()));
+    std::fs::write(&file, serde_json::to_vec(&request).unwrap()).unwrap();
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_ql"))
+        .args(["vak", "compose"])
+        .arg(&file)
+        .arg("--json")
+        .output()
+        .unwrap();
+    let _ = std::fs::remove_file(file);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let value: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        value,
+        ql_cli::vak_composition::execute_request(&request).unwrap()
+    );
+    let lineage = &value["results"].as_array().unwrap().last().unwrap()["result"];
+    assert!(
+        lineage["determinations"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|d| d["reference"] == "d")
+    );
+    assert_eq!(lineage["returns"][0]["reference"], "r");
+    assert_eq!(lineage["returns"][0]["producing"]["standing"], "DERIVED");
+    assert_eq!(lineage["returns"][0]["route"]["anchorRef"], "anchor:outer");
+}

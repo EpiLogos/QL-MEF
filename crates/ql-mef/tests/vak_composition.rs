@@ -545,3 +545,219 @@ fn arbitrary_full_profile_refs_and_expected_ground_are_preserved() {
     );
     assert!(graph.returned("wrong").is_err());
 }
+
+#[test]
+fn generated_only_sources_and_readings_survive_return_reentry() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let mut graph = VakComposition::default();
+    local(&mut graph, &registry, "seed", ContextFrameId::Cf2, false);
+    let mut l = language("seed", VakRelationOp::Express, VakContextField::Bimba);
+    l.reading.relation_refs.push(VakRef::new("M0").unwrap());
+    let mut req = request("generated", "seed");
+    req.language = Some(l.clone());
+    req.contribution = Some(AgentContribution {
+        actor_ref: "test:Agent".into(),
+        result_ref: "test:new-reading".into(),
+        input_refs: vec!["seed".into()],
+        evidence: vec!["test:supplied-interpretation".into()],
+    });
+    graph.determine(&registry, req).unwrap();
+    graph
+        .return_result(returning(
+            "first-return",
+            "generated",
+            "seed",
+            GroundKind::Own,
+        ))
+        .unwrap();
+    let mut b = basis("first-return");
+    b.provenance.standing_ref = "DERIVED".into();
+    graph
+        .offer_as_whole("first-return", "offered", "anchor:offered", b)
+        .unwrap();
+    graph
+        .determine(&registry, request("second", "offered"))
+        .unwrap();
+    let second = graph.determination("second").unwrap();
+    assert!(second.sources.iter().any(|s| s.coordinate.as_str() == "M0"));
+    assert!(
+        second
+            .sources
+            .iter()
+            .any(|s| s.coordinate == VakContextField::Bimba.source_ref())
+    );
+    let lineage = graph.lineage("second").unwrap();
+    assert!(
+        lineage
+            .determinations
+            .iter()
+            .any(|d| d.reference == "generated" && d.language.as_ref() == Some(&l))
+    );
+    assert_eq!(
+        lineage.returns[0]
+            .producing
+            .contribution
+            .as_ref()
+            .unwrap()
+            .result_ref,
+        "test:new-reading"
+    );
+    assert_eq!(lineage.returns[0].route.through_anchor_ref, "anchor:seed");
+    // The generating interpretation remains operative in CT admission, rather
+    // than vanishing at the offered-whole boundary.
+    let mut c =
+        CPrimeContext::enter(&graph, "offered", frame(ContextFrameId::Cf2).coordinate()).unwrap();
+    c.ct(vec![VakContextField::Techne], basis("test:only-techne"))
+        .unwrap();
+    assert!(
+        c.determine(&mut graph, &registry, request("ct-refused", "offered"))
+            .is_err()
+    );
+    assert!(graph.determination("ct-refused").is_err());
+    assert!(graph.lineage("not-a-production-ref").is_err());
+}
+
+#[test]
+fn returned_field_can_be_interpreted_and_used_by_a_source_path_again() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let mut graph = VakComposition::default();
+    local(&mut graph, &registry, "a", ContextFrameId::Cf2, false);
+    local(&mut graph, &registry, "b", ContextFrameId::Cf3, false);
+    compose(
+        &mut graph,
+        &registry,
+        "field",
+        "a",
+        "b",
+        ContextFrameId::Cf5,
+    );
+    graph.determine(&registry, request("d", "field")).unwrap();
+    graph
+        .return_result(returning("r", "d", "field", GroundKind::Own))
+        .unwrap();
+    let mut b = basis("r");
+    b.provenance.standing_ref = "DERIVED".into();
+    graph
+        .offer_as_whole("r", "offered", "anchor:offered", b)
+        .unwrap();
+    let before = graph.whole("offered").unwrap().clone();
+    graph
+        .interpret(
+            &registry,
+            "offered",
+            "read-again",
+            language("d", VakRelationOp::Affirm, VakContextField::Techne),
+            basis("test:read-again"),
+        )
+        .unwrap();
+    assert_eq!(graph.whole("read-again").unwrap().body, before.body);
+    assert_eq!(graph.whole("read-again").unwrap().binding, before.binding);
+    assert_eq!(graph.whole("offered").unwrap(), &before);
+    let path = registry.r_path(VakDivineAct::Freedom).unwrap();
+    let bindings: Vec<_> = path
+        .steps
+        .iter()
+        .map(|s| ThreadBinding {
+            source_step: s.vak_ref.clone(),
+            path: vec![],
+        })
+        .collect();
+    let mut c = CPrimeContext::enter(
+        &graph,
+        "read-again",
+        frame(ContextFrameId::Cf5).coordinate(),
+    )
+    .unwrap();
+    c.cfp(
+        &graph,
+        &registry,
+        &bindings,
+        VakDivineAct::Freedom,
+        basis("test:reentered-cfp"),
+    )
+    .unwrap();
+    c.determine(&mut graph, &registry, request("next", "read-again"))
+        .unwrap();
+    assert_eq!(
+        graph
+            .determination("next")
+            .unwrap()
+            .context
+            .as_ref()
+            .unwrap()
+            .readings[0]
+            .binding
+            .subject_ref,
+        "d"
+    );
+    let mut forged = language("d", VakRelationOp::Affirm, VakContextField::Techne);
+    forged.reading.standing = VakStanding::Source;
+    assert!(
+        graph
+            .interpret(
+                &registry,
+                "offered",
+                "forged",
+                forged,
+                basis("test:forged-source")
+            )
+            .is_err()
+    );
+    assert!(graph.whole("forged").is_err());
+}
+
+#[test]
+fn active_whole_return_ground_cannot_be_bypassed_by_omitting_result_language() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let mut graph = VakComposition::default();
+    local(&mut graph, &registry, "a", ContextFrameId::Cf2, false);
+    let mut l = language("a", VakRelationOp::Affirm, VakContextField::Techne);
+    l.expected_ground = Some("ground:elsewhere".into());
+    graph
+        .interpret(&registry, "a", "situated", l, basis("test:explicit-ground"))
+        .unwrap();
+    graph
+        .determine(&registry, request("d", "situated"))
+        .unwrap();
+    assert!(
+        graph
+            .return_result(returning("wrong", "d", "situated", GroundKind::Own))
+            .is_err()
+    );
+    assert!(graph.returned("wrong").is_err());
+}
+
+#[test]
+fn recursive_shape_text_is_bounded_before_allocation() {
+    let registry = VakRegistry::from_authoritative_source().unwrap();
+    let mut graph = VakComposition::default();
+    local(&mut graph, &registry, "a", ContextFrameId::Cf2, false);
+    let mut last = "a".to_owned();
+    let mut refused = false;
+    for index in 0..64 {
+        let next = format!("doubling:{index}");
+        let result = graph.compose(
+            &registry,
+            ComposeInput {
+                use_ref: next.clone(),
+                whole_ref: format!("anchor:{next}"),
+                row: last.clone(),
+                column: last.clone(),
+                frame: frame(ContextFrameId::Cf2),
+                ground_ref: "ground:a".into(),
+                ground_face: QlFace::Direct,
+                basis: basis("test:bounded-shape"),
+                language: None,
+            },
+        );
+        if let Err(e) = result {
+            assert!(e.0.contains("shape reference byte bound"), "{e}");
+            assert!(graph.whole(&next).is_err());
+            refused = true;
+            break;
+        }
+        assert!(graph.whole(&next).unwrap().binding.shape_ref.len() <= MAX_SHAPE_REF_BYTES);
+        last = next;
+    }
+    assert!(refused);
+}

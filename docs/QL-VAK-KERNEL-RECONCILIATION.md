@@ -202,6 +202,10 @@ Geometry here is the exact address/form plus harmonic circle-phase disclosure of
 
 `return_result` and CS produce `Returned` through the source whole-anchor to an explicit own, parent, child, other or conjugate ground at #0. Parent/child relations are checked against actual recursive participation; a reframed/positioned use preserves its original participating whole relation, but a newly offered whole is not silently treated as its source. Other/conjugate relations require attribution, and conjugate grounds retain the opposite face. The complete producing determination, source/target bindings, target basis and existing Return routes survive.
 
+`lineage` traverses the existing whole-use, determination and Return relations, including interpretations introduced during generation. The archived producing determination on a Return remains separately inspectable from later observations attached to the live determination. These source-bearing readings participate in subsequent CT/CPF admission and source collection; they are not discarded at re-entry. Receiving-ground provenance remains explicit on Return rather than being silently imported as producing input.
+
+`interpret` attaches a supplied DERIVED/PROPOSED full-profile reading to a new immutable use of the same actual whole. A returned relation field can thereby enter CFP again without being flattened or promoted to authored Source. Active whole and result readings both constrain their declared Return ground.
+
 `offer_as_whole` makes the returned determination independently addressable with the same actual form, including recursively composed fields. It requires `DERIVED` provenance from that Return. Its declared existing ground remains explicit; generated content is not promoted to human-authored source or recognised canon. The native owner decides adoption.
 
 ## 9. Full language, native paths and public calls
@@ -210,7 +214,7 @@ The 109-node Anuttara source field remains unchanged. `FullVakBinding` carries t
 
 A native AST declaration is not an execution receipt. `record_native_observation` accepts the existing `VakExecutionObservationV1`, validates it through the existing observed-path machinery under the explicitly accepted syntax revision, and correlates the producing actor/result, native step, Action/Method, World/Project/Focus and source-bearing expression. Its correlation is `DERIVED`; supplied native execution evidence remains `OBSERVED`. The original #83 validation entrypoints retain their immutable acceptance revision. No general parser, Agent launch loop or native execution authority is duplicated.
 
-Public Rust entrypoints are `VakComposition::{bind_whole,compose,reframe,position,position_member,read,determine,return_result,offer_as_whole,record_native_observation}` and `CPrimeContext::{enter,cpf,ct,cp,cp_at,cf,cfp,determine,cs}`. The small `whole`, `determination` and `returned` lookups expose immutable results.
+Public Rust entrypoints are `VakComposition::{bind_whole,compose,reframe,position,position_member,read,interpret,lineage,determine,return_result,offer_as_whole,record_native_observation}` and `CPrimeContext::{enter,cpf,ct,cp,cp_at,cf,cfp,determine,cs}`. The small `whole`, `determination` and `returned` lookups expose immutable results.
 
 The native CLI and JSON library adapter expose:
 
@@ -218,11 +222,11 @@ The native CLI and JSON library adapter expose:
 ql vak compose fixtures/kernel/vak-composition-v1.json --json
 ```
 
-The envelope is `{"contract":"ql.vak-composition/v1","steps":[…]}`. Operations are `whole`, `compose`, `reframe`, `read`, `position`, `determine`, `return`, `offer`, `enter`, `cpf`, `ct`, `cp`, `cf`, `cfp`, and `inspect-context`. `determine`/`return` can explicitly name a C′ context. Each operation consumes native refs plus explicit frames/basis, not a QL-local expression string. JSON is a transport over these operations, not a replacement AIKit AST.
+The envelope is `{"contract":"ql.vak-composition/v1","steps":[…]}`. Operations are `whole`, `compose`, `reframe`, `read`, `position`, `determine`, `return`, `offer`, `enter`, `cpf`, `ct`, `cp`, `cf`, `cfp`, `interpret`, `lineage`, and `inspect-context`. `determine`/`return` can explicitly name a C′ context. Each operation consumes native refs plus explicit frames/basis, not a QL-local expression string. JSON is a transport over these operations, not a replacement AIKit AST.
 
 `ql_cli::vak_composition::execute_request` evaluates the same envelope in memory. Detailed typed native-observation correlation is available in the QL library rather than a second JSON copy of every native Action record. The specimen and `crates/ql-cli/tests/vak_composition.rs` show concrete public inputs and inspectable outputs. Replaying the same request preserves returned formal/source identity. Independent native deployments own durable storage and authority.
 
-Input bounds are 64 recursive levels, 4,096 graph objects/expanded reading nodes, 64 contextual transitions, and a 16 MiB CLI request. Invalid refs, undeclared members, unsupported grains, inadmissible contextual combinations, forged parent relations and cyclic/future references fail without a successful result receipt.
+Input bounds are 64 recursive levels, 4,096 graph objects/expanded reading nodes, 64 contextual transitions, an 8 MiB generated shape-ref bound checked before allocation, and a 16 MiB CLI request. Invalid refs, undeclared members, unsupported grains, inadmissible contextual combinations, forged parent relations and cyclic/future references fail without a successful result receipt.
 
 ## 10. Relation to the coordinate-complete rebuild and native owners
 
@@ -237,3 +241,5 @@ AIKit owns AST/parser/operative resolution; Factory owns Commission/Journey/Run/
 The existing QL Rust lane runs format, workspace/all-target check, Clippy with denied warnings and all workspace tests. The new native QL tests exercise local/recursive forms, all six reflective operations, source R-path correlation, frame-dependent consequences, CP versus CF, MEF rotation, retained Return/source identity, callable CLI replay and lawful refusal. Existing structural, seven-CF and 109-source tests continue unchanged.
 
 The CLI test actually launches the `ql` binary against the specimen; it does not merely validate JSON. Native-observation admission tests use explicitly synthetic records and prove validator behavior, not external Factory/Agent execution. The PR/merge checks supply actual run evidence. No local structural or software result proves metaphysical claims, downstream installation, model intelligence, material embodiment or human recognition.
+
+Review regression commands: `cargo test -p ql-mef --test vak_composition` and `cargo test -p ql-cli --test vak_composition`. They cover generation-only source retention, source-path re-entry, explicit-ground refusal, pre-allocation recursive-ref bounds, and actual-binary lineage replay in addition to the initial feature cases.

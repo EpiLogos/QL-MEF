@@ -362,6 +362,21 @@ pub fn execute_request(request: &Value) -> R<Value> {
                         .read(text(s, "useRef")?, text(s, "lens")?.parse().map_err(error)?)
                         .map_err(error)?,
                 )),
+                "lineage" => {
+                    let lineage = graph.lineage(text(s, "reference")?).map_err(error)?;
+                    Ok(json!({
+                        "wholes": lineage.wholes.into_iter().map(whole_view).collect::<Vec<_>>(),
+                        "determinations": lineage.determinations.into_iter().map(determination_view).collect::<Vec<_>>(),
+                        "returns": lineage.returns.into_iter().map(return_view).collect::<Vec<_>>()
+                    }))
+                }
+                "interpret" => {
+                    let into = text(s, "into")?;
+                    let language = parse_language(&s["language"])?
+                        .ok_or_else(|| error("interpret requires a full-profile reading"))?;
+                    graph.interpret(&registry, text(s, "from")?, into, language, parse_basis(&s["basis"])?).map_err(error)?;
+                    Ok(whole_view(graph.whole(into).map_err(error)?))
+                }
                 "position" => Ok(whole_view(
                     graph
                         .position(text(s, "useRef")?, &axes(s, "path")?)

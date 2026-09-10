@@ -19,7 +19,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 mod native_path;
+mod production;
 pub use native_path::{NativePathCorrelation, NativePathInput};
+pub use production::{MAX_SHAPE_REF_BYTES, ProductionLineage};
 
 pub const CONTRACT: &str = "ql.vak-composition/v1";
 pub const MAX_DEPTH: usize = 64;
@@ -498,18 +500,12 @@ impl VakComposition {
             }
             _ => None,
         };
-        let shape_ref = carrier
-            .as_ref()
-            .map(RelationFieldComposition::shape_ref)
-            .unwrap_or_else(|| {
-                format!(
-                    "ql:carrier:1.1.0:relation-field:{}:{}:{}:{}",
-                    row.binding.shape_ref.len(),
-                    row.binding.shape_ref,
-                    col.binding.shape_ref.len(),
-                    col.binding.shape_ref
-                )
-            });
+        let shape_ref = match &carrier {
+            Some(carrier) => carrier.shape_ref(),
+            None => {
+                production::recursive_shape_ref(&row.binding.shape_ref, &col.binding.shape_ref)?
+            }
+        };
         if let Some(l) = &input.language {
             l.validate(registry)?;
             require(
@@ -789,26 +785,22 @@ impl VakComposition {
         Ok(())
     }
     fn language_bindings(&self, r: &str) -> Result<Vec<&FullVakBinding>> {
-        let mut pending = vec![r.to_owned()];
-        let mut seen = BTreeSet::new();
+        let lineage = self.lineage(r)?;
         let mut result = Vec::new();
-        while let Some(r) = pending.pop() {
-            if !seen.insert(r.clone()) {
-                continue;
-            }
-            let w = self.whole(&r)?;
+        for w in lineage.wholes {
             if let Some(l) = &w.language {
                 result.push(l);
             }
-            if let WholeBody::Relation { row, column, .. } = &w.body {
-                pending.extend([row.clone(), column.clone()]);
+        }
+        for d in lineage.determinations {
+            if let Some(l) = &d.language {
+                result.push(l);
             }
-            pending.extend(
-                w.producing_refs
-                    .iter()
-                    .filter(|r| self.wholes.contains_key(*r))
-                    .cloned(),
-            );
+        }
+        for returned in lineage.returns {
+            if let Some(l) = &returned.producing.language {
+                result.push(l);
+            }
         }
         Ok(result)
     }
@@ -820,6 +812,13 @@ impl VakComposition {
     ) -> Result<()> {
         for l in self.language_bindings(r)? {
             extend_unique(into, &l.sources(registry)?);
+        }
+        let lineage = self.lineage(r)?;
+        for d in lineage.determinations {
+            extend_unique(into, &d.sources);
+        }
+        for returned in lineage.returns {
+            extend_unique(into, &returned.producing.sources);
         }
         Ok(())
     }
@@ -893,7 +892,7 @@ impl VakComposition {
                 }
             }
         }
-        if let Some(l) = &d.language {
+        for l in source.language.iter().chain(d.language.iter()) {
             if let Some(expected) = &l.expected_ground {
                 require(
                     expected == &target.ground_ref,
@@ -953,6 +952,12 @@ impl VakComposition {
         w.binding.provenance = basis.provenance.clone();
         w.binding.derivation_ref = Some(returned.determination.clone());
         w.binding.return_refs.push(return_ref.into());
+        extend_unique(&mut w.basis, &returned.producing.reading.basis);
+        extend_unique(
+            &mut w.basis,
+            std::slice::from_ref(&returned.producing.basis),
+        );
+        extend_unique(&mut w.basis, std::slice::from_ref(&returned.basis));
         w.basis.push(basis);
         w.producing_refs.extend([
             returned.source_use.clone(),
