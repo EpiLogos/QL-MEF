@@ -492,3 +492,102 @@ fn joined_coordinate_view_retains_source_parentage_relations_and_profiles() {
             .any(|r| r["row"]["id"] == "ql.m-index:M1")
     );
 }
+
+/// A valid readiness assessment and C/Rust comparison do not imply that the
+/// requested stratum participates in that comparison. These are synthetic
+/// evidence declarations for validation tests, not new execution receipts.
+fn coverage_parity_fixture(stratum: &str) -> (MLedger, String) {
+    let mut l = ledger();
+    let at = index(&l);
+    let row_id = l.rows[at].id.clone();
+    let mut assessment = l.assessments["k2-index"].clone();
+    let mut evidence = l.evidence[0].clone();
+    evidence.id = "coverage-parity-fixture".into();
+    evidence.kind = "observation".into();
+    evidence.result = "passed".into();
+    evidence.subjects = vec![row_id.clone()];
+    evidence.strata = vec![stratum.into(), "c".into(), "rust".into()];
+    evidence.axes = AXES.iter().map(|axis| (*axis).into()).collect();
+    *assessment.readiness.get_mut(stratum).unwrap() = Claim {
+        status: "verified".into(),
+        warrant: "tested".into(),
+        evidence: vec![evidence.id.clone()],
+    };
+    let comparisons = assessment.parity.get_mut("coordinate").unwrap();
+    comparisons.push(ParityClaim {
+        from_peer: "c".into(),
+        to_peer: "rust".into(),
+        status: "equivalent".into(),
+        warrant: "tested".into(),
+        evidence: vec![evidence.id.clone()],
+    });
+    // Neo4j readiness also requires a computational binding. This synthetic
+    // fixture makes that prerequisite valid so the test isolates peer selection.
+    if stratum == "neo4j" {
+        let mut binding = l
+            .implementations
+            .iter()
+            .find(|i| i.stratum == "c" && l.rows[at].bindings.contains(&i.id))
+            .unwrap()
+            .clone();
+        binding.id = "coverage-neo4j-fixture".into();
+        binding.stratum = "neo4j".into();
+        binding.kind = "computational".into();
+        l.rows[at].bindings.push(binding.id.clone());
+        l.implementations.push(binding);
+    }
+    l.rows[at].assessment = "coverage-parity-fixture".into();
+    l.assessments
+        .insert("coverage-parity-fixture".into(), assessment);
+    l.evidence.push(evidence);
+    assert!(codes(&l).is_empty(), "{:?}", codes(&l));
+    (l, row_id)
+}
+
+#[test]
+fn source_coverage_cannot_borrow_c_rust_parity() {
+    let (l, row_id) = coverage_parity_fixture("source");
+    let report = l
+        .coverage(
+            native_m_registry(),
+            "M1",
+            "source",
+            "coordinate",
+            "verified",
+        )
+        .unwrap();
+    assert!(report.blocking_rows.iter().any(|f| f.subject == row_id));
+}
+
+#[test]
+fn source_coverage_accepts_scoped_bimba_parity_in_either_direction() {
+    for (from, to) in [("bimba", "c"), ("c", "bimba")] {
+        let (mut l, row_id) = coverage_parity_fixture("source");
+        let assessment = l.assessments.get_mut("coverage-parity-fixture").unwrap();
+        let p = &mut assessment.parity.get_mut("coordinate").unwrap()[0];
+        p.from_peer = from.into();
+        p.to_peer = to.into();
+        assert!(codes(&l).is_empty(), "{:?}", codes(&l));
+        let report = l
+            .coverage(
+                native_m_registry(),
+                "M1",
+                "source",
+                "coordinate",
+                "verified",
+            )
+            .unwrap();
+        assert!(!report.blocking_rows.iter().any(|f| f.subject == row_id));
+    }
+}
+
+#[test]
+fn later_strata_do_not_gain_parity_from_an_unrelated_native_comparison() {
+    for stratum in ["neo4j", "application", "instrument"] {
+        let (l, row_id) = coverage_parity_fixture(stratum);
+        let report = l
+            .coverage(native_m_registry(), "M1", stratum, "coordinate", "verified")
+            .unwrap();
+        assert!(report.blocking_rows.iter().any(|f| f.subject == row_id));
+    }
+}
