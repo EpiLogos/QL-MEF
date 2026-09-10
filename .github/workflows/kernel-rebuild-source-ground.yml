@@ -1,0 +1,102 @@
+name: Kernel rebuild K0 source ground
+
+on:
+  pull_request:
+    paths:
+      - 'docs/kernel-rebuild/**'
+      - 'docs/KERNEL-REBUILD-SOURCE-CANON-LEDGER.md'
+      - 'scripts/verify-kernel-rebuild-ground.py'
+      - 'scripts/tests/test_kernel_rebuild_ground.py'
+      - '.github/workflows/kernel-rebuild-source-ground.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/kernel-rebuild/**'
+      - 'docs/KERNEL-REBUILD-SOURCE-CANON-LEDGER.md'
+      - 'scripts/verify-kernel-rebuild-ground.py'
+      - 'scripts/tests/test_kernel_rebuild_ground.py'
+      - '.github/workflows/kernel-rebuild-source-ground.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-source-ground:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read exact serialized Bimba and original C/Rust bodies
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: .source/epi
+          persist-credentials: false
+      - name: Read existing Nara conformance witness
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: 52e7433bee54561a767833895b59f553cca62149
+          path: .source/epi-implementation
+          persist-credentials: false
+      - name: Read closed unmerged C recovery input without reviving its branch
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/QL-MEF
+          ref: e5f612653c71c8a9ae74199ef2e8b326e3e9deba
+          path: .source/ql-c-recovery
+          persist-credentials: false
+      - name: Reject mutable pins and invented evidence
+        run: python3 -m unittest discover -s scripts/tests -p test_kernel_rebuild_ground.py -v
+      - name: Verify K0 inputs, source corrections, all matrix carriers and K1 recovery objects
+        run: |
+          python3 scripts/verify-kernel-rebuild-ground.py \
+            --source-repo .source/epi \
+            --implementation-repo .source/epi-implementation \
+            --recovery-repo .source/ql-c-recovery \
+            --out target/kernel-rebuild-k0
+      - name: Reuse native matrix registry validation
+        run: python3 scripts/check-capability-matrix-registry.py
+      - name: Reproduce existing serialized Bimba compilation
+        run: |
+          python3 scripts/compile-epi-bimba-map-live.py \
+            --source-repo .source/epi \
+            --implementation-repo .source/epi-implementation \
+            --source-lock data/epi-bimba-map/source-lock.json \
+            --out target/kernel-rebuild-k0/bimba
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('target/kernel-rebuild-k0/bimba')
+          summary = json.loads((root / 'summary.json').read_text())
+          nara = json.loads((root / 'nara-conformance.json').read_text())
+          assert summary['revision'] == 'daa660cbc1b8c5da83828698665a753852cb0287'
+          assert summary['json_failure_count'] == 0
+          assert summary['coordinate_parse_failure_count'] == 0
+          assert summary['source_coordinate_count'] > 44
+          assert summary['source_relation_count'] > 0
+          assert all(summary['root_coordinate_counts'][str(i)] > 0 for i in range(6))
+          assert nara['implementation_coordinate_ref_count'] == 44
+          assert nara['exact_source_implementation_match_count'] == 44
+          assert nara['source_coordinates_absent_from_executable_floor_count'] > 0
+          assert not nara['alias_or_notation_mismatches']
+          assert not nara['parentage_mismatches']
+          print(json.dumps({'serialized_source_summary': summary, 'nara_witness': nara}, indent=2))
+          print('Serialized source verification only. Live Neo4j: NOT OBSERVED. K1/K4 implementation: NOT CLAIMED.')
+          PY
+      - name: Preserve current native C primitive parity and semantic manifest
+        run: |
+          bash scripts/test-epi-c-parity.sh
+          python3 scripts/validate-epi-holographic-manifest.py
+      - name: Upload exact input inventories and serialized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-rebuild-k0-source-ground
+          path: |
+            target/kernel-rebuild-k0
+            target/epi-c-parity
+          if-no-files-found: error
