@@ -22,6 +22,7 @@ mod ruling;
 mod sublens;
 mod templateure;
 mod vak;
+pub mod vak_composition;
 mod vak_oi;
 
 pub use context_frame::{
