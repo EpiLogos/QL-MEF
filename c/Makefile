@@ -12,10 +12,12 @@ API_VERSION = 0.1.0
 CONTRACT_VERSION = 1.1.0
 PACKAGE_BASENAME = ql-mef-c-$(API_VERSION)-$(SOURCE_REVISION).tar.gz
 LIB = $(BUILD_DIR)/libql-mef-c.a
-SRC = src/primitive.c src/holographic.c src/kernel.c
+SRC = src/primitive.c src/holographic.c src/kernel.c src/m_tree.c
 OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
-HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h
+HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h
 REVISION_STAMP = $(BUILD_DIR)/source-revision.txt
+M_TREE_MANIFEST = ../fixtures/kernel/m-tree-v1.json
+
 CONTRACT_FIXTURE = ../fixtures/kernel/holographic-kernel-contract-v1.tsv
 
 .PHONY: all clean install package FORCE
@@ -37,6 +39,8 @@ $(REVISION_STAMP): FORCE | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: src/%.c $(HEADERS) $(REVISION_STAMP) | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Iinclude -DQL_C_SOURCE_REVISION='"$(SOURCE_REVISION)"' -c $< -o $@
 
+$(BUILD_DIR)/m_tree.o: src/m_tree_data.inc
+
 $(LIB): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 
@@ -45,6 +49,7 @@ install: $(LIB)
 	mkdir -p $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/lib $(DESTDIR)$(PREFIX)/share/ql-mef-c
 	cp $(HEADERS) $(DESTDIR)$(PREFIX)/include/ql/
 	cp $(LIB) $(DESTDIR)$(PREFIX)/lib/libql-mef-c.a
+	cp $(M_TREE_MANIFEST) $(DESTDIR)$(PREFIX)/share/ql-mef-c/m-tree-v1.json
 	cp $(CONTRACT_FIXTURE) $(DESTDIR)$(PREFIX)/share/ql-mef-c/holographic-kernel-contract-v1.tsv
 	printf '%s\n' '$(API_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/api-version.txt
 	printf '%s\n' '$(CONTRACT_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/kernel-contract-version.txt

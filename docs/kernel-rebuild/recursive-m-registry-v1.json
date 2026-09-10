@@ -1,0 +1,69 @@
+{
+  "schema": "ql.kernel-rebuild-m-registry-handoff/v1",
+  "issue": 126,
+  "foundation_commit": "c3f49a7e099b2af908bac11ec2ea4ce7f3e351e9",
+  "manifest": "fixtures/kernel/m-tree-v1.json",
+  "json_schema": "fixtures/kernel/m-tree-v1.schema.json",
+  "source_snapshot": "c/registry/m-tree-source-v1.json",
+  "native_header": "c/include/ql/m_tree.h",
+  "native_source": "c/src/m_tree.c",
+  "native_tables": "c/src/m_tree_data.inc",
+  "generator": "scripts/generate-m-tree.py",
+  "rust_consumer": "crates/ql-mef/src/m_tree.rs",
+  "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "source_repository": "EpiLogos/Epi-Logos-C-Experiments",
+  "source_revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+  "source_dataset_tree": "cd4f4f77c13f27e2563c5a6753d2f8bf2b605f15",
+  "source_snapshot_sha256": "43ba60f5b27a1de2d325c5c983fb94eec1ef2a1a3d3a864611312aa8657683d2",
+  "counts": {
+    "nodes_including_master": 1876,
+    "source_coordinates": 1875,
+    "root_subtrees": [
+      108,
+      43,
+      597,
+      996,
+      100,
+      31
+    ],
+    "relations": 21083,
+    "cross_m_relations": 2676,
+    "partial_or_meta_relations": 450,
+    "source_records": 24831,
+    "source_files": 57,
+    "index_bindings": 7,
+    "alternate_notation_groups": 8,
+    "meta_source_records": 14
+  },
+  "entry_points": [
+    "ql_m_master",
+    "ql_m_root",
+    "ql_m_resolve",
+    "ql_m_node_by_id",
+    "ql_m_parent",
+    "ql_m_child_at",
+    "ql_m_relation_by_id",
+    "ql_m_binding_valid",
+    "ql_m_registry_revision",
+    "ql_mef::m_tree::native_m_registry",
+    "ql_mef::m_tree::MRegistry::to_m_map_index"
+  ],
+  "acceptance_commands": [
+    "python3 scripts/generate-m-tree.py --check",
+    "bash scripts/test-native-m-tree.sh",
+    "cargo test --workspace --all-targets --locked",
+    "cmp target/m-tree/native.jsonl target/m-tree/c-rust-parity.jsonl",
+    "python3 scripts/generate-m-tree.py --import-compilation target/epi-bimba-map --check"
+  ],
+  "handoff": {
+    "next_issue": 127,
+    "scope": "capability ledger, multi-axis parity/readiness and discrepancy lifecycle; K4 census uses these coordinate/relation/module identities",
+    "not_claimed": [
+      "full M computational port",
+      "complete capability census/binding",
+      "live Neo4j reconciliation",
+      "C++ embodiment",
+      "operational/experiential readiness"
+    ]
+  }
+}

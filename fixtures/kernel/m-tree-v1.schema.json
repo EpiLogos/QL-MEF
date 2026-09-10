@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ql:m-tree:v1",
+  "title": "Native recursive M registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "registry_revision",
+    "id_scheme",
+    "source_repository",
+    "source_revision",
+    "source_dataset_tree",
+    "source_snapshot_sha256",
+    "source_lock_sha256",
+    "compiler_sha256",
+    "master_id",
+    "roots",
+    "files",
+    "records",
+    "nodes",
+    "relations",
+    "bindings",
+    "alternate_notation_groups",
+    "meta_source_records",
+    "parent_discrepancies"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ql.m-tree/v1"
+    },
+    "registry_revision": {
+      "$ref": "#/$defs/sha256"
+    },
+    "id_scheme": {
+      "const": "first-64-bits-sha256-domain-NUL-exact-source-spelling"
+    },
+    "source_repository": {
+      "type": "string"
+    },
+    "source_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_dataset_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_snapshot_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_lock_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "compiler_sha256": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "master_id": {
+      "$ref": "#/$defs/id"
+    },
+    "roots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceFile"
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceRecord"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "alternate_notation_groups": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "meta_source_records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "parent_discrepancies": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$",
+      "not": {
+        "const": "0000000000000000"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_ref",
+        "parent_id",
+        "root_id",
+        "root_position",
+        "local_segment",
+        "separator",
+        "depth",
+        "lexical_depth",
+        "lexical_parent_source_ref",
+        "parent_basis",
+        "source_parent_refs",
+        "structural_status",
+        "aggregate",
+        "names",
+        "aliases",
+        "records",
+        "children",
+        "subtree_count"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "root_id": {
+          "$ref": "#/$defs/id"
+        },
+        "root_position": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "local_segment": {
+          "type": "string"
+        },
+        "separator": {
+          "enum": [
+            "",
+            "-",
+            ".",
+            "/"
+          ]
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lexical_depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lexical_parent_source_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parent_basis": {
+          "enum": [
+            "master",
+            "aggregate-root",
+            "source-parent",
+            "existing-source-prefix"
+          ]
+        },
+        "source_parent_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "structural_status": {
+          "enum": [
+            "master-index",
+            "source-declared"
+          ]
+        },
+        "aggregate": {
+          "type": "boolean"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "subtree_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sourceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "git_blob",
+        "sha256",
+        "record_class",
+        "bytes"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "git_blob": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "record_class": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sourceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "record_index",
+        "payload_sha256",
+        "property_keys"
+      ],
+      "properties": {
+        "file": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "record_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payload_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "property_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "relation_ref",
+        "class",
+        "source_kind",
+        "from_ref",
+        "to_ref",
+        "from_id",
+        "to_id",
+        "orientation",
+        "cross_m",
+        "record"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "relation_ref": {
+          "type": "string"
+        },
+        "class": {
+          "const": "bimba-source"
+        },
+        "source_kind": {
+          "type": "string"
+        },
+        "from_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "to_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "to_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "orientation": {
+          "enum": [
+            "directed",
+            "undirected",
+            "unspecified"
+          ]
+        },
+        "cross_m": {
+          "type": "boolean"
+        },
+        "record": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "module",
+        "disposition",
+        "coordinate_id",
+        "relation_id",
+        "readiness",
+        "evidence"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string"
+        },
+        "module": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "COORDINATE-BOUND",
+            "CROSS-COORDINATE",
+            "INFRASTRUCTURAL"
+          ]
+        },
+        "coordinate_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "relation_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "readiness": {
+          "enum": [
+            "unbound",
+            "structural-index-only"
+          ]
+        },
+        "evidence": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

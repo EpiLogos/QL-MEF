@@ -191,12 +191,8 @@ impl ParsedSourceCoordinate {
         if self.path.is_empty() {
             return Some("#".to_owned());
         }
-        let mut result = format!("#{}", self.root);
-        for (index, segment) in self.path[..self.path.len() - 1].iter().enumerate() {
-            result.push(self.separators[index].as_char());
-            result.push_str(&segment.to_string());
-        }
-        Some(result)
+        let split = self.source_ref.rfind(['.', '-', '/'])?;
+        Some(self.source_ref[..split].to_owned())
     }
 }
 
