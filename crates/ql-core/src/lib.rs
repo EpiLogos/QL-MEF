@@ -5,7 +5,8 @@
 mod address;
 mod address_parse;
 mod apply;
-mod carrier;
+#[path = "carrier.rs"]
+mod structural_carrier;
 mod deterministic;
 mod error;
 mod face;
@@ -21,11 +22,6 @@ mod structural;
 
 pub use address::QlAddress;
 pub use apply::apply_operator;
-pub use carrier::{
-    CallerProvenance, CarrierError, QlWholeAxis, RELATION_FIELD_COMPOSITION_OPERATOR_REF,
-    RelationFieldComposition, RelationFieldDerivation, STRUCTURAL_CARRIER_CONTRACT_VERSION,
-    ShapeBinding, ShapeDefinition, ShapeMemberBinding, ShapeRelationBinding,
-};
 pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
 pub use face::QlFace;
@@ -87,4 +83,9 @@ pub use structural::{
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
     STRUCTURAL_CONTRACT_VERSION, StructuralConstellation, StructuralError, StructuralParticipation,
     WHOLE_ANCHOR_SYMBOL, all_d3_fields,
+};
+pub use structural_carrier::{
+    CallerProvenance, CarrierError, QlWholeAxis, RELATION_FIELD_COMPOSITION_OPERATOR_REF,
+    RelationFieldComposition, RelationFieldDerivation, STRUCTURAL_CARRIER_CONTRACT_VERSION,
+    ShapeBinding, ShapeDefinition, ShapeMemberBinding, ShapeRelationBinding,
 };
