@@ -121,7 +121,7 @@ The frozen kernel's six-family reflective instruction representation is:
 5 CS   Context-Sequence
 ```
 
-It is one representation within the full source-grounded Anuttara/Vāk language, not the whole 109-node language or the AIKit general expression AST. Reflective family indices are not L5 office indices, RelationOp indices or address horizons. The reconciliation records their explicit relationships and the unresolved historical CT/CS/CFP aliases.
+It is one representation within the full source-grounded Anuttara/Vāk language, not the whole 109-node language or the AIKit general expression AST. Reflective family indices are not L5 office indices, RelationOp indices or address horizons. The reconciliation records their current operative relations: CPF discrimination, CT source-field selection, CP actual position/path, CF framing, CFP source R-path composition and CS explicit Return. Historical CT/CS/CFP spellings are not mandatory unresolved aliases.
 
 The instruction has five source-defined fields:
 
@@ -184,7 +184,7 @@ CF7  (5/0)
 
 They resolve over the same 12-lens MEF field: six local positions per lens, 72 addresses, with absolute position `(lens + local) mod 6`.
 
-The historical Ta-Onta mirror's additional `(4/5/0)` literal has no canonical CF identity in this seven-frame contract. It remains a source-qualified compatibility question under #138, not a silent eighth frame or an alias for CF5/CF6. Current harmonic cuts already use the seven canonical identities; complete scoped runtime propagation is a separate conformance gate.
+The historical Ta-Onta `(4/5/0)` occurrence is superseded/noncanonical and outside this seven-frame set. No eighth frame, alias or compatibility blocker exists. `ql_mef::vak_composition` implements explicit scoped harmonic → geometric → MEF → generative propagation over these unchanged identities; see the canonical reconciliation for public operations and verification boundaries.
 
 ## Conformance authority
 

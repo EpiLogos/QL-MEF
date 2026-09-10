@@ -20,11 +20,19 @@ QL Kernel
   L5-5  Techne
 ```
 
-L5 is the concrescence of the existing **L0 / L0′ / L5′ / L5 articulation square**, not a speech subsystem around another kernel. These offices project onto existing MEF refs without renaming source Anuttara, Para Vāk or their sublens labels. Context-Frame identity propagates from harmonic determination into Geometry, Meta Epistemic Framework and generative use; complete scoped runtime propagation remains an explicitly tracked implementation frontier.
+L5 is the concrescence of the existing **L0 / L0′ / L5′ / L5 articulation square**, not a speech subsystem around another kernel. These offices project onto existing MEF refs without renaming source Anuttara, Para Vāk or their sublens labels. Context-Frame identity propagates from harmonic determination into Geometry, Meta Epistemic Framework and generative use; scoped runtime propagation is executable through `ql_mef::vak_composition`, including recursive fields, explicit CP/CF operations, generative determinations and checked Return.
 
-The reconciliation distinguishes the full 109-node Anuttara language, AIKit's already-owned general Search/Resolve grammar, C′ reflective context, Ta-Onta S′ world composition and native Factory orchestration. [The accepted #83 receipt](docs/integrations/epi-logos/EPI-VAK-ACCEPTANCE-RECEIPT.md) governs the returned Vāk implementation; older Vāk runtime/Wayfinder paragraphs calling that work pending are historical status, not the current gate. The follow-on work is QL-MEF #138, AIKit #267, Factory #217 and late installed-suite O:I #216, not a new grammar in each consumer.
+The reconciliation distinguishes the full 109-node Anuttara language, AIKit's already-owned general Search/Resolve grammar, C′ reflective context, Ta-Onta S′ world composition and native Factory orchestration. [The accepted #83 receipt](docs/integrations/epi-logos/EPI-VAK-ACCEPTANCE-RECEIPT.md) governs the returned Vāk implementation; older Vāk runtime/Wayfinder paragraphs calling that work pending are historical status, not the current gate. QL-MEF #138 supplies the executable producer contract. AIKit #267, Factory #217 and O:I #216 are separate downstream applications, not this feature's execution sequence or completion gates.
 
-Development Field #122 has separately landed its [portable structural carrier](docs/QL-STRUCTURAL-CARRIER-CONTRACT-V1.md) in PR #137, main commit `10fb4bade8ad6a6df67f80cb6ef913592ac654be`. `ShapeBinding`, `RelationFieldComposition` and `RelationFieldDerivation` supply attributable form, non-fabricating addresses and complete Return provenance. The deeper C′ work must reuse that accepted seam rather than anticipating or replacing it with another ontology.
+Development Field #122 has separately landed its [portable structural carrier](docs/QL-STRUCTURAL-CARRIER-CONTRACT-V1.md) in PR #137, main commit `10fb4bade8ad6a6df67f80cb6ef913592ac654be`. `ShapeBinding`, `RelationFieldComposition` and `RelationFieldDerivation` supply attributable form, non-fabricating addresses and complete Return provenance. The implemented C′ operations reuse that accepted seam; composed fields remain addressable wholes when nested and after Return, without a replacement shape ontology.
+
+Run a native local → recursive → reframed → generated → Return → new-whole path with:
+
+```sh
+ql vak compose fixtures/kernel/vak-composition-v1.json --json
+```
+
+The returned JSON exposes actual participant refs, active frames, member/address selection, harmonic intervals, geometric phases, MEF positions, producing basis and explicit Return grounds. Agent-provided interpretation remains attributable and generated results remain `DERIVED`.
 
 ## Research provenance
 
@@ -184,7 +192,7 @@ Vāk, MEF, Context Frames, SemanticWiki clients and richer harmonic development 
 
 The current Rust product exposes `ql-core`, `ql-mef`, provider/service and CLI contracts, with adapters and fixtures as warranted by the accepted development programme. Native C is also an active structural implementation stratum: #135 and its #124–#134 ladder govern the coordinate-complete C/Rust/C++/Bimba rebuild. The frozen vendored C specimen is historical/parity evidence; that does not make the native C centre permanently historical.
 
-Current `main` and accepted evidence determine present implementation truth. Accepted #83/#142 Vāk/Search work is inherited; the deeper C′ scope and full-suite integration gates are named in the reconciliation above. Unmerged, stacked or draft work remains branch-qualified evidence, not accepted capability merely because its own CI is green.
+Current `main` and accepted evidence determine present implementation truth. Accepted #83/#142 Vāk/Search work is inherited; C′ composition is callable through the QL library/CLI, while native C restoration, deeper M coverage, C++ embodiment and downstream suite integration retain their distinct ownership in the reconciliation above. Unmerged, stacked or draft work remains branch-qualified evidence, not accepted capability merely because its own CI is green.
 
 In particular:
 

@@ -1,9 +1,7 @@
 # QL Kernel — Vāk, C′ and Context-Frame reconciliation
 
 **Track:** [#123](https://github.com/EpiLogos/QL-MEF/issues/123)  
-**Standing:** canonical first-round architectural reconciliation; bounded executable projection and identity conformance accompany it. This is **not** a receipt for full C′ orchestration or human acceptance.  
-**Projection:** `ql.kernel.l5-projection/v1`  
-**Audit date:** 2026-09-10
+**Standing:** canonical architectural reconciliation and executable QL-owned C′ composition contract. Native QL verification is separate from downstream installation, native Agent execution and human acceptance.  
 
 ## 1. Start here: one whole, six offices
 
@@ -48,7 +46,7 @@ QL source authorities are exact refs and laws, not whatever implementation is ea
 
 The concurrent [#135 kernel rebuild](https://github.com/EpiLogos/QL-MEF/issues/135), with [PR #136](https://github.com/EpiLogos/QL-MEF/pull/136) open at audit, establishes the C/Rust/C++/Bimba coordinate-complete development programme. Native C is an active structural centre, not merely an obsolete oracle. The **frozen vendored implementation** is historical/parity evidence; these are different claims. This reconciliation neither implements nor supersedes #124–#134. Future deep-coordinate discrepancies join their M ledger rather than becoming local alternate source truths.
 
-Keep seven epistemic standings separate: `SOURCE`, `AUTHORED-ARCHITECTURE`, `IMPLEMENTATION`, `OBSERVED`, `DERIVED`, `PROPOSED`, with historical implementation explicitly identified as such. A normative architecture relation is not evidence that all of its runtime behaviour already exists. New reconciliation requirements below are identified as requirements, not retroactively attributed to the old C or TypeScript source.
+Keep epistemic standings separate: `SOURCE`, `AUTHORED-ARCHITECTURE`, `IMPLEMENTATION`, `OBSERVED`, `DERIVED`, `PROPOSED`, with historical implementation explicitly identified as such. A normative architecture relation is not evidence that all of its runtime behaviour already exists. New reconciliation requirements below are identified as requirements, not retroactively attributed to the old C or TypeScript source.
 
 ### Accepted Vāk work is not reopened
 
@@ -82,7 +80,7 @@ AIKit owns `aikit.operative-resolve/v1`. Ordinary text search, situated resoluti
 
 The twelve M0-3-6 forms remain individually source-addressed: `!`, `?`, `!-`, `-?`, `!?`, `?-`, `-!`, `?!`, `-!/!-`, `-?/?-`, `!?/?!`, `?!/!?`. They distinguish self/other and assertion/query/reflexive relations. They must not be flattened into two punctuation tokens or presented as proof that a model truly knows its own epistemic state. The seven `VakContextField` entries are also **not** the seven ContextFrameIds: the particular `#` field has no assigned horizon, while the other source bindings carry their explicit mappings.
 
-Parentheses in AIKit's `Frame { expression }` preserve nested syntax. They do not themselves select a Context Frame, establish a bounded World or authorize child execution. That missing semantic correlation is the precise bridge for #138/#267; a second grammar would hide rather than solve it.
+Parentheses in AIKit's `Frame { expression }` preserve nested syntax. QL `FullVakBinding` supplies the explicit semantic correlation through the caller's native node ref, ResolvePath identity, accepted syntax revision, source-grounded reading, self↔other form, contextual field and interpreter. This is interpretation of the existing AST, not another AST/parser. A readable scope does not authorize an Action.
 
 ## 4. Root: positioned and conjugate possibilities
 
@@ -99,7 +97,7 @@ The seed is:
 
 The later relation field discloses positioned/conjugate possibilities: same-position conjugacy `n ↔ n′`, same-face complement `n ↔ 5−n`, cross-face completion `n ↔ (5−n)′`, successor/predecessor relations and paired fields. Do not implement priming by positional complement. Do not identify a source Bimba/Pratibimba role with mutable/immutable storage or a runtime provider choice merely because a prime glyph is present.
 
-The source-recovered C′ entry is especially important. The vendored `include/ontology.h` describes the P4 lemniscate entry to C′ through the reflective families **CPF/CT/CP/CF/CFP/CS**; `families.c` shows reflective slots alongside the six base family pointers. That establishes a reflective contextual addressing role, not a seventh base family and not sufficient evidence for the equation “C′ is only `QlFamily::C` plus conjugate face.” The exact bridge to current native C/M identities must be source-led under #138 and #125–#127. Historical fixed pointer layout is evidence, not a requirement to reproduce that layout in every runtime.
+The source-recovered C′ entry is especially important. The vendored `include/ontology.h` describes the P4 lemniscate entry through CPF/CT/CP/CF/CFP/CS; `families.c` supplies historical reflective-slot evidence. `CPrimeContext` now operationalises that reflective relation over an explicit whole-ground and existing QL coordinate. C′ is not a seventh base family, nor merely C's conjugate face. The operations in §7 reuse existing kernel family/relation IDs; they do not restore or replace the native C centre owned by #125–#127. Historical pointer layout remains implementation evidence, not a runtime storage prescription.
 
 ### Sixfolds which must not be conflated
 
@@ -141,7 +139,7 @@ harmonic/contextual determination: active CF + source/binding provenance
     → attributable Return, retaining or explicitly changing that frame
 ```
 
-Identity must survive; consequences can differ by office. Frame change requires a traceable transition, not a silently substituted default. **Current harmonic identity conformance is implemented. Full scoped runtime propagation is not established by that test and remains #138.** An office-role enum describes this architecture; it is not a readiness flag, scheduler or claim that execution occurred.
+Identity must survive; consequences can differ by office. Frame change requires a traceable transition, not a silently substituted default. **The scoped operation is implemented in `vak_composition`: the same `FramedReading` carries the actual selected member/address, active frame, harmonic determination, derived geometry and MEF view into `Determination` and `Returned`.** An office-role enum describes this architecture; it is not a readiness flag, scheduler or claim that execution occurred.
 
 ## 6. Geometry and Meta Epistemic Framework
 
@@ -157,142 +155,85 @@ C = {(0,5),(1,4),(2,3)}
 
 D1 is same-position conjugate opposition; D2 is one-sided expansion of a selected pair; D3 is both-sided expansion. Family/pair provenance survives coincident vertex sets. Legacy musical D2-transform/require/complete and D3-primed-helix labels are not aliases for structural-v2 D2/D3. Nor is a geometric `450` constellation an automatic alias for the historical `(4/5/0)` CF literal.
 
-The whole-anchor is not a seventh positional member. Partial form is positively representable without fabricated siblings. #122 owns the Development Field carrier and portable relation-field binding; this document does not preempt its concrete types.
+The whole-anchor is not a seventh positional member. Partial form is positively representable without fabricated siblings. #122/#137 supplied the accepted Development Field carrier; the contextual operations reuse `ShapeBinding`, `RelationFieldComposition`, `RelationFieldDerivation` and `AnchorReturn`.
 
 **Meta Epistemic Framework** reads the same field through twelve lenses and seventy-two sublenses. `SublensRef = LensRef + local QlPosition`; rotation supplies the absolute position. Preserve Day/Night leading direct/conjugate face, Name/Power distinction, conjugate twin, same-face complement and Möbius partner. These are distinct operations, not synonyms for reflection.
 
 `MefSquare::{Articulation,Encounter,Becoming}` groups the existing lens squares. Its legacy A/B/C labels are not the kernel's pair-family A/B/C enum. Preserve source naming with explicit qualification rather than reindexing either field for superficial agreement. In particular the L0/L0′/L5′/L5 square is **MEF Articulation**, while its complement geometry involves the canonical kernel relation family that actually supplies those endpoints; a shared letter is not the proof.
 
-## 7. C′ through Ta-Onta: recovered function, not imported shell
+## 7. Operative C′: one reflective relation, six distinct operations
 
-Four existing representations must be related, not merged indiscriminately:
+The current implementation is `ql_mef::vak_composition`, with public contract `ql.vak-composition/v1`. This operational module belongs to the one QL Kernel; it is not a Vāk kernel wrapped around another kernel. Its structs compose the accepted structural carrier with existing Context Frames, music, MEF rotation and the full Vāk registry.
 
-| Representation | Source / current role | What it does not establish |
+C is the existing category-family head of a positioned whole. C′ is that whole's **explicit reflective/contextual use**, carrying its ground, current focus, discriminations, source-field selection, frame and compositional thread. A direct/conjugate face is one determination within that relation, not the definition of C′. No cast relates the reflective-family slots to L5 offices, base family heads, M roots, S′ offices, Śiva operators or Śakti horizons.
+
+| Family / accepted relation ID | Executable operation | Actual consequence |
 |---|---|---|
-| Six reflective fields in C | CPF/CT/CP/CF/CFP/CS contextual articulation | Complete operational wiring; historical `families.c` wires only some reflective slots |
-| `VakInstruction` | Compact family/index/target/face instruction | Full recursive scope, World, provenance or orchestration payload |
-| Historical TypeScript `VakAddress` | Six-field task/context description used by Ta-Onta | Canonical current wire contract or full semantic validity from literal-set membership |
-| AIKit expression + QL reading + native path | General operative syntax, source interpretation and attributable native work | A complete C′ scope contract merely because parentheses or a CF code are present |
+| CPF / `ql.kernel.vak.cpf/v1` | `CPrimeContext::cpf` | Explicitly selects the direct/conjugate leading use and eligible Vāk operations. Excluded operations cannot determine through this context. Inversion preserves the position; it is not positional complement. |
+| CT / `ql.kernel.vak.ct/v1` | `CPrimeContext::ct` | Selects eligible source-qualified `VakContextField` content. Both producing and inherited/thread readings must be admitted. These seven source fields are not the seven CF identities. |
+| CP / `ql.kernel.vak.cp/v1` | `cp`, `cp_at`, `position`, `position_member` | Traverses the actual recursive participant relation, then can address a disclosed member with explicit local/absolute basis. An explicit member remains itself when CF/lens changes. |
+| CF / `ql.kernel.context-frame/v1` | `cf`, `reframe` | Produces an immutable new framed use. The active canonical cut governs selection and harmonic settlement; the transition and source basis remain available. |
+| CFP / `ql.kernel.vak.cfp/v1` | `CPrimeContext::cfp` | Binds every ordered step of an actual source `VakRPath` to an explicitly interpreted whole/path, computes its framed readings and retains them in the producing determination. This is not a scheduler. |
+| CS / `ql.kernel.vak.cs/v1` | `CPrimeContext::cs` | Completes the declared contextual thread through a determination and an explicit checked ground/whole-anchor Return. It does not guess a destination from position five. |
 
-At source revision `daa660…`, read-only `Body/S/S4/ta-onta/shared/vak_address.ts` (blob `82701b20007d26fb2a722c1ccb541d5c351ad3e9`) declares itself a **local mirror** of another historical `ql_types` module. Its unverified external short commit/local path is not promoted into present source authority. Its payload contains:
+The operative CT meaning is **Context-Type/content-field selection**. Historical Context-Time expansions remain source descriptions, not mandatory aliases in this contract. The operative CS is **Context-Sequence/completion**; a historical Context-System spelling does not define another current object. CFP is source-qualified compositional threading; the obsolete `Z` literal is not an unimplemented mandatory thread. Old payload layouts have been resolved against current meaning rather than reproduced.
 
-```text
-cpf: two historical polarities
-ct: nonempty CT0/1/2/3/4a/4b/5 list
-cp: CP4.0 … CP4.5
-cf: a literal Context-Frame expression
-cfp: CFP0 … CFP5 or Z
-cs: { code: CS0 … CS5, direction: Day | Night′ }
+The current seven CFs are settled, exactly as listed in §5. The old Ta-Onta `(4/5/0)` occurrence is **superseded/noncanonical historical material**, outside the canonical set. It is neither an eighth frame, an alias, a missing operation nor a blocker. Exact lookup continues to return no canonical identity for that occurrence.
+
+### Ta-Onta remains the ratified S′ whole
+
+The [current Ta-Onta capability matrix](integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md) governs: S0′ Khora is ground/continuity; S1′ Hen semantic/artifact form; S2′ Pleroma operative affordances; S3′ Chronos temporal becoming; S4′ Anima situated Agency; S5′ Aletheia disclosure/metabolism/Return. C′ supplies reflective composition **to** this inhabiting world; C′ and S′ are not aliases.
+
+Canonical Agents, M/M′ domains/instruments and native product owners retain their own identities. A Context Frame does not select an Agent by a universal index. The historical `shared/vak_address.ts` (blob `82701b20007d26fb2a722c1ccb541d5c351ad3e9`) and Anima contract (blob `893021ab7b36623de63b7fb4f8f4e0e11fb34d88`) remain read-only source/implementation evidence. Their old plugin, task-record and dispatch arrangements are not a current reconstruction assignment. The present requirement is attributable participating whole, frame, source and Return preservation.
+
+## 8. Local → recursive composition → generation → Return
+
+`VakComposition::bind_whole` accepts an actual `StructuralConstellation`, its existing `ShapeBinding`, a native subject/whole-ground, active frame, source revision/evidence and optional `FullVakBinding`. Public mutable input carriers are revalidated at admission. Missing members are not invented.
+
+`compose` takes two already-addressed whole uses. When both are local constellations it constructs the accepted `RelationFieldComposition` and retains the complete `RelationFieldDerivation`. A composed field may itself be either source of another composition, and may remain a recursively composed field after Return. No conversion to a fabricated constellation and no numeric-dimension constructor are required.
+
+The recursive carrier retains row/column **use refs**, actual source bodies, bindings, source Return routes and derivations. Its addresses are recursive pairs of actual member/whole addresses. `((a,b),c)` and `(a,(b,c))` retain distinct grouped identities. The additive recursive address ref uses length-framed child shape refs under `ql:carrier:1.1.0:relation-field:…`; unchanged immediate constellation×constellation fields keep the accepted v1 ref. This extends operational carrier addressing, not the canonical shape-grain ontology or the base C positional laws. Positive local carrier admission remains unchanged: empty and `Other` axes are refused even inside recursion.
+
+`read` computes the active harmonic cut. For a parent field, each child pitch is determined relative to the **parent's current frame pitch**. Changing that frame therefore changes intervals and derived circle phases without changing the participating child or its frame. An explicit CP member focus remains the same disclosed member; its interval from the new frame is recomputed. MEF viewing rotation preserves that same absolute determination while exposing its local position through another existing lens. Name/Power, direct/conjugate and local/absolute positions remain separately inspectable.
+
+Geometry here is the exact address/form plus harmonic circle-phase disclosure of this determination. The operation does not claim that C++ toroidal/material/acoustic embodiment has been completed. Existing shapes and canonical relations remain the formal authority; continuous embodiments are consumers under the separate kernel rebuild.
+
+`determine` computes a new addressed `Determination` with its framed reading, all source refs, source revisions, contextual thread and producing basis. An optional `AgentContribution` must carry actor, result, input and evidence refs and an attributable full-profile expression. QL does not infer semantic text or an Agent's understanding from a coordinate.
+
+`return_result` and CS produce `Returned` through the source whole-anchor to an explicit own, parent, child, other or conjugate ground at #0. Parent/child relations are checked against actual recursive participation; a reframed/positioned use preserves its original participating whole relation, but a newly offered whole is not silently treated as its source. Other/conjugate relations require attribution, and conjugate grounds retain the opposite face. The complete producing determination, source/target bindings, target basis and existing Return routes survive.
+
+`offer_as_whole` makes the returned determination independently addressable with the same actual form, including recursively composed fields. It requires `DERIVED` provenance from that Return. Its declared existing ground remains explicit; generated content is not promoted to human-authored source or recognised canon. The native owner decides adoption.
+
+## 9. Full language, native paths and public calls
+
+The 109-node Anuttara source field remains unchanged. `FullVakBinding` carries the same AIKit syntax version, explicitly accepted owner revision, ResolvePath identity and native expression-node ref, together with `VakExpressionReadingV1`, a source `SelfOtherForm`, `VakContextField`, interpreter and optional expected ground. M0-3 self↔other, M0-4 contextual relation and M0-5 operative support remain separate source relations of the same determination. All source refs resolve through the existing `VakRegistry`; the full profile is not reduced to the generic six operators/horizons.
+
+A native AST declaration is not an execution receipt. `record_native_observation` accepts the existing `VakExecutionObservationV1`, validates it through the existing observed-path machinery under the explicitly accepted syntax revision, and correlates the producing actor/result, native step, Action/Method, World/Project/Focus and source-bearing expression. Its correlation is `DERIVED`; supplied native execution evidence remains `OBSERVED`. The original #83 validation entrypoints retain their immutable acceptance revision. No general parser, Agent launch loop or native execution authority is duplicated.
+
+Public Rust entrypoints are `VakComposition::{bind_whole,compose,reframe,position,position_member,read,determine,return_result,offer_as_whole,record_native_observation}` and `CPrimeContext::{enter,cpf,ct,cp,cp_at,cf,cfp,determine,cs}`. The small `whole`, `determination` and `returned` lookups expose immutable results.
+
+The native CLI and JSON library adapter expose:
+
+```sh
+ql vak compose fixtures/kernel/vak-composition-v1.json --json
 ```
 
-The same source admits **eight** CF literals: the seven current expressions plus `(4/5/0)`. The current seven-frame canon must not be expanded or silently remapped from that mirror. `lookup_context_frame_expression` is an exact lookup over `ContextFrameId::ALL`; `(4/5/0)` deliberately returns no canonical identity. It is not an expression parser and does not discard the historical input: an importing adapter must preserve input/provenance and report it as unresolved.
+The envelope is `{"contract":"ql.vak-composition/v1","steps":[…]}`. Operations are `whole`, `compose`, `reframe`, `read`, `position`, `determine`, `return`, `offer`, `enter`, `cpf`, `ct`, `cp`, `cf`, `cfp`, and `inspect-context`. `determine`/`return` can explicitly name a C′ context. Each operation consumes native refs plus explicit frames/basis, not a QL-local expression string. JSON is a transport over these operations, not a replacement AIKit AST.
 
-CT is expanded as Context-Time in some source and Content Types in other descriptions. CS is Context-System in Anima's task contract and Context-Sequence in the current reflective-family description. CFP `Z` appears in the historical literal set without a corresponding executable thread form in the inspected six-form contract. These are **source-qualified compatibility questions**, not permission to replace them with convenient modern meanings. #138 owns explicit resolution and fixtures.
+`ql_cli::vak_composition::execute_request` evaluates the same envelope in memory. Detailed typed native-observation correlation is available in the QL library rather than a second JSON copy of every native Action record. The specimen and `crates/ql-cli/tests/vak_composition.rs` show concrete public inputs and inspectable outputs. Replaying the same request preserves returned formal/source identity. Independent native deployments own durable storage and authority.
 
-### Ta-Onta is the S′ whole of an inhabiting Agent
+Input bounds are 64 recursive levels, 4,096 graph objects/expanded reading nodes, 64 contextual transitions, and a 16 MiB CLI request. Invalid refs, undeclared members, unsupported grains, inadmissible contextual combinations, forged parent relations and cyclic/future references fail without a successful result receipt.
 
-The current accepted [Ta-Onta capability matrix](integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md) governs over historical filesystem naming. Khora, Hen, Pleroma, Chronos, Anima and Aletheia are S0′–S5′ offices of a composed Agent world, not six independent plugins or identity aliases for six O:I products:
+## 10. Relation to the coordinate-complete rebuild and native owners
 
-| S′ office | Contribution to the whole | Current ownership boundary |
-|---|---|---|
-| Khora | Entry, ground and continuity | Source/session/material owners retain their identities |
-| Hen | Semantic/artifact form | QL form and source-owned authored content are distinct |
-| Pleroma | Available operative affordances/instruments | AIKit capability resolution; actual provider/material facts remain native |
-| Chronos | Temporal/coordinating relations | Native NOW/DAY and scheduling owners, not a new global clock store |
-| Anima | Situated Agency composition under frame and task | QL readings + AIKit resolution + Actuation; Factory where developmental work is chosen |
-| Aletheia | Disclosure, knowledge metabolism and Return | No automatic conversion of generation into accepted source |
+At this implementation inspection #136 remains open at `88cdcbafd9924b09b7f130dae8f31ef756f0f45d`; `docs/KERNEL-REBUILD-WAYFINDER.md` is still branch-qualified, not main. #125 owns native C restoration; #126 the shared recursive M registry; #127 the M ledger/parity protocol; #134 deep M0/M4/M5 closure. Their current issues are open.
 
-C′ is the reflective contextual articulation used in this composition; S′ is the composition of the inhabiting world. **C′ and S′ are not aliases.** M/M′ domain/instrument relations remain another explicit axis. M′ instruments can be co-active in one event rather than six successive exclusive apps.
+This feature does not introduce another M tree or promote a new base structural position/family/grain. It consumes the accepted source registry, QL relation IDs, structural carrier and frame laws and adds Rust operational use/composition state. Required future changes to those canonical structural laws must return to C parity through the existing rebuild. Native C execution of these new higher-order operations and continuous C++ embodiment are not claimed by this Rust/CLI implementation.
 
-The historical Anima contract (`Body/S/S4/ta-onta/S4-4p-anima/CONTRACT.md`, blob `893021ab7b36623de63b7fb4f8f4e0e11fb34d88`) connects Vāk task evaluation → CF constitutional routing → CFP execution form → CS phase. Its six thread forms are direct single, parallel, sequential, fusion, long-running/resumable and meta-nested. Its former PI tools are implementation mechanisms, not the contemporary protocol.
+AIKit owns AST/parser/operative resolution; Factory owns Commission/Journey/Run/WorkflowUnit/ExecutionDisposition and developmental scheduling; Wiki consumes QL; Central owns authored source; Actuation owns native agency; Workcell owns material execution. AIKit #267, Factory #217 and O:I #216 are downstream application/rollout concerns, not serial completion gates or work undertaken here. No new issues or Wayfinder are required.
 
-Historical Nous/Logos/Eros/Mythos/Psyche/Sophia routing shows differentiated constitutional use. It does not create universal CF-to-Agent identity: the same contract associates more than one frame with Psyche and distinguishes Anima's own dispatch frame. Preserve current canonical Agent names and their explicit profiles. Day/Night′ is a contextual runtime phase in that contract, not a replacement Agent identity or an automatic mapping to every use of prime/conjugate in QL. Source intentions for later fusion/meta-nesting are not evidence that those paths were all executed.
+## 11. Verification and epistemic boundary
 
-### The four-seam spine and its attribution lesson
+The existing QL Rust lane runs format, workspace/all-target check, Clippy with denied warnings and all workspace tests. The new native QL tests exercise local/recursive forms, all six reflective operations, source R-path correlation, frame-dependent consequences, CP versus CF, MEF rotation, retained Return/source identity, callable CLI replay and lawful refusal. Existing structural, seven-CF and 109-source tests continue unchanged.
 
-Historical `spine/types.ts` and `spine/compositor.ts` contribute **disclosure/injection → extraction/ledger → recompilation → query**. Recover that cycle as attributable contributions to the world, not the old vault paths, PI process ownership or hard-coded budget.
-
-A concrete inspected defect explains why provenance is an acceptance condition: `compositor.ts` (blob `e35165371f0c6d839f574c4b0be6ccd1f811bca8`) filters fulfilled `Promise.allSettled` results before indexing the original contributors. If the first query rejects, the second successful result can receive the first contributor's coordinate. This is a code-level inference from the implementation, not a reported production incident. Future consumers must correlate each outcome to its original scope/owner before filtering, sorting or aggregation. #138/#217 carry this regression case.
-
-## 8. Whole-within-whole and Factory: exact implementation frontier
-
-The reconciliation requirement is one composable, attributable relation:
-
-```text
-source-owned whole and exact source/Git basis
-    → AIKit expression / resolution path
-    → QL source-grounded C′ / active CF scope binding
-    → harmonic determination / geometric disclosure / MEF reading
-    → native Techne application
-        Factory: Commission / Journey / Run / WorkflowUnit / ExecutionDisposition
-        or Direct/non-Factory agency through its native owner
-    → child Activity / Evidence / Return
-    → same parent/child/other/conjugate ground through explicit whole-anchor
-    → governed Recognition or still-unaccepted proposal
-```
-
-This is a relation among existing owners, not a serial runtime that every ordinary act must traverse. A child whole remains a whole in its own right, with an explicit parent relation. “Context” may not become ambient permission; a readable parent does not authorize all child actions. Equal expression text under different Worlds/scopes/revisions must not collapse into one identity.
-
-Before executing the full path, the accepted contract must retain equivalents of: stable whole and parent/child refs; exact canonical frame and grammar revision; local/absolute position and face/grain where relevant; source/binding/derivation evidence; expression/path identity; native target/owner; bounded disclosure/authority; invocation/attempt/activity/evidence/return correlation. Existing fields should be reused rather than copied into a new universal record. Missing or ambiguous fields remain positively missing/ambiguous, not guessed into apparent completeness.
-
-Frame propagation preserves identity and provenance, not necessarily an immutable frame selection forever: deliberate selection changes must be explicit transitions. Return is the structural path through the whole-anchor to an explicit own/parent/child/other/conjugate ground, not shorthand `5 → 0`. A returned candidate can become a new authored ground only through the appropriate recognition/owner action.
-
-### What Factory already provides
-
-`factory/src/orchestration.rs` is explicitly a coordinator over `CompiledWorkflow` and Run mutation authority, not a second runner. `DelegationContract` already carries parent Journey/Run, WorkflowUnit, concern, subject, basis revision, permitted effects, verification obligations, return address, stop conditions and retry grant. Attempts, failures, cancellation, late artifacts and barriers already have explicit records. `ExecutionDisposition` remains the actual launch decision.
-
-`factory/src/journey_praxis.rs` preserves the exact AIKit Method-classified Skill ResourceRef/revision, ContextResolution, body conditions, Activity/Evidence/Return and proof/Routine correlations. Its compatibility `method_ref` field is **not a separate MethodRef**. Admission validates that the Run/Activity/Return belongs to the Journey.
-
-Therefore the required extension is source-grounded CF/scope/path correlation **over those existing contracts**, plus tests of the six historical thread-form applications. Do not rebuild Factory in Vāk, import Anima's old spawning primitives as another runtime, duplicate Workcell material lifecycle, move Git/worktree semantics out of AIKit/native Git, or make Direct agency depend on Factory.
-
-## 9. File and contract dispositions
-
-These classifications state present use, not permission to delete history. A file may contain canonical relations and an explicitly stale status paragraph; classify that paragraph rather than erasing the source.
-
-| Class | Concrete carrier | Required disposition |
-|---|---|---|
-| CANONICAL | This reconciliation; `src/l5_projection.rs`; `fixtures/kernel/l5-projection-v1.tsv` | Current six-office/square reading over existing refs; no runtime completeness claim |
-| CANONICAL | `crates/ql-core/src/kernel.rs`; holographic-kernel fixture/formal reference | Base families, relation identities and reflective family identities; whole QL is larger than this crate |
-| CANONICAL | `fixtures/q2/lenses.tsv`; `lens.rs`, `sublens.rs`, `coordinate.rs`, `registry/**` | Preserve 12/72 source labels and rotation; qualify legacy square letters |
-| CANONICAL | `context_frame.rs`, `context_frame_target.rs`, `music.rs` | Same seven-frame identity, attributed readings and real harmonic use |
-| CANONICAL | `data/epi-bimba-map/anuttara-language-map.md`, provenance/generated source data, `vak.rs` | Lossless 109-node source field with exact provenance |
-| CANONICAL | `vak_oi.rs`; Vāk acceptance receipt | Accepted semantic/path/Action/Recognition contracts and immutable proving evidence |
-| CANONICAL | `docs/wiki-structural-contract-v2.md` | Generic content-free relation/constellation/Return floor |
-| CONSUMER | AIKit `resource/operative.rs` | Sole general expression owner; full QL interpretation is optional/provider-owned |
-| CONSUMER | Factory `orchestration.rs`, `journey_praxis.rs` | Native developmental application and consequential return correlation |
-| CONSUMER | Wiki/refraction clients and future C++ geometry | Reuse exact formal refs; do not acquire a new kernel/parser |
-| CANONICAL | `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md` | Accepted S′ composition design; not blanket evidence of implemented cells |
-| HISTORICAL | `vendor/epi-kernel/reference/**`; `EPI-C-KERNEL-REFERENCE-MAP.md`; R1/R2 migration inventories | Frozen source/parity and historical scope; not a claim native C is permanently historical |
-| COMPATIBILITY | Historical Ta-Onta `shared/vak_address.ts`, source CT/CS aliases, current Factory `method_ref` spelling | Preserve source version/input; translate only with explicit proven equivalence |
-| HISTORICAL | Ta-Onta PI extension, `S4-*` filesystem shell and old spine | Recover semantics and regressions; do not port obsolete ownership/path assumptions |
-| DRIFT | Ta-Onta eight-literal CF mirror vs current seven canonical CFs | `(4/5/0)` unresolved, not CF8 or a silent CF5/CF6 alias |
-| DRIFT | Old Vāk runtime “implementation pending” / Wayfinder “active #83” status | Read through the accepted #83 receipt and this scope; retain historical body |
-| DRIFT | Diagrams making CF first appear only after MEF, or `ql-core` equal the whole QL Kernel | This projection supersedes that reading; source numeric/structural laws remain unchanged |
-| OPEN | Recursive C′ scope/CF propagation, CT/CS/CFP compatibility, whole-within-whole runtime proof | #138; do not represent architecture tests as completion |
-| OPEN | Coordinate-complete active C/Rust/C++/Bimba reconciliation | #124–#135; source/operational/experiential parity remain separate |
-| OPEN | Installed owner convergence and full Wiki/intelligence/Factory specimen | O:I #216 and native consumer tickets below |
-
-## 10. Exact downstream execution graph
-
-The first-round map and bounded projection land together. Broad implementation starts from the accepted map and live contracts, not from an invented payload sketched before reconciliation.
-
-| Owner / ticket | Exact next work | Required result |
-|---|---|---|
-| [QL-MEF #138](https://github.com/EpiLogos/QL-MEF/issues/138) | Reuse CF/target/Vāk/path/provenance and #122 bindings for scoped C′ composition; resolve historical compatibility; coordinate C/M parity with #125–#127 | Versioned scope/binding contract; harmonic→geometry→MEF→Techne identity and parent/child/Return positive/negative fixtures |
-| [AIKit #267](https://github.com/EpiLogos/ai-kit/issues/267) | Carry accepted provider-neutral scope/binding refs through existing AST/Resolve/Path/ContextResolution; add only genuinely missing seams | Generic Search works without QL; explicit full-profile scope preserves identity across CLI/application/Agent paths; no second grammar |
-| [Factory #217](https://github.com/EpiLogos/agent-system-design/issues/217) | Apply the same scope to current native delegation, workflows, dispositions and returned praxis | Six thread-form dispositions and a real parent/two-child specimen, including failure/out-of-order return, exact basis and native evidence |
-| [O:I #216](https://github.com/EpiLogos/O-I/issues/216) | Consume the accepted owners and #212 active installed suite after convergence | Real Wiki/source→scoped native development→Return round-trip with exact suite/owner revisions and separate human H judgement |
-
-[QL-MEF #122](https://github.com/EpiLogos/QL-MEF/issues/122) stays the Development Field S6 structural carrier. AIKit #261 and Factory #215 stay their S3/S4 substrate/application tracks. Neither must guess full C′ behaviour to complete its bounded work. O:I #212 owns coherent install/update/dispatch receipts; #216 uses them late rather than introducing another suite selector. No bulk document/matrix migration is authorized by this reconciliation.
-
-### Non-negotiable conformance cases
-
-Beyond existing 109-source and four-owner acceptance, test exact frame/ref/version/source preservation; explicit frame transition; two identical-looking expressions in different scopes; parent/child/sibling and conjugate Return; partial/ambiguous/unavailable binding; malformed/forged refs and cycles; bounded recursion/disclosure; authority refusal; failed-first/successful-second child attribution; reordered completion, retries, cancellation and late results. Structural validity must never fabricate semantic truth, runtime readiness or human recognition.
-
-## 11. Verification boundary for this landing
-
-The new Rust `l5_projection` module is an additive public read model. It exposes the six offices over existing `SublensRef`s, keeps source labels separate, records the existing articulation square and provides exact canonical CF-expression lookup. The fixture pins the owner-determined names and refs. Tests cross-check the existing registry/rotation and both harmonic bases across all twelve lenses, including unchanged seven-frame identities and rejection of the historical extra literal.
-
-Run `cargo fmt --all -- --check`, `cargo check --workspace --all-targets`, `cargo clippy --workspace --all-targets -- -D warnings`, and `cargo test --workspace --all-targets` through the existing `ql-mef-rust` lane. Retain existing Vāk source/path conformance and Wiki/formal tests. The PR/merge receipt records actual execution and revisions; this document does not predeclare a green result.
-
-These tests prove the bounded projection and reused identity laws. They do **not** prove a model's intelligence, a live C′ orchestrator, physical material behaviour, full native C coverage or human H acceptance. #123 remains the living Wayfinder for those named downstream gates after its first-round reconciliation lands.
+The CLI test actually launches the `ql` binary against the specimen; it does not merely validate JSON. Native-observation admission tests use explicitly synthetic records and prove validator behavior, not external Factory/Agent execution. The PR/merge checks supply actual run evidence. No local structural or software result proves metaphysical claims, downstream installation, model intelligence, material embodiment or human recognition.
