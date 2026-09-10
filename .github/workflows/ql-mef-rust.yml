@@ -21,6 +21,30 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      # Temporary implementation-environment transfer; removed before #138 merges.
+      # Only tracked public source, public dependency cache and compiler tools:
+      # no .git, credentials, runner environment or application data.
+      - name: Stage offline QL verification environment
+        if: github.ref == 'refs/heads/agent/ql-vak-cf-138'
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/ql-138-verification"
+          mkdir -p "$root/source" "$root/toolchain" "$root/cargo"
+          git archive HEAD | tar -x -C "$root/source"
+          cargo fetch --locked
+          sysroot="$(rustc --print sysroot)"
+          cp -a "$sysroot/bin" "$sysroot/lib" "$root/toolchain/"
+          cp -a "$HOME/.cargo/registry" "$root/cargo/"
+          rustc --version > "$root/rust-version.txt"
+          git rev-parse HEAD > "$root/source-commit.txt"
+          tar -czf "$RUNNER_TEMP/ql-138-verification.tar.gz" -C "$RUNNER_TEMP" ql-138-verification
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/agent/ql-vak-cf-138'
+        with:
+          name: ql-138-offline-verification
+          path: ${{ runner.temp }}/ql-138-verification.tar.gz
+          retention-days: 1
       - name: Format
         run: cargo fmt --all -- --check
       - name: Check
