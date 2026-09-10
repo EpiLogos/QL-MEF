@@ -76,6 +76,8 @@ name = "ql-mef"
 version = "0.1.0"
 dependencies = [
  "ql-core",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
