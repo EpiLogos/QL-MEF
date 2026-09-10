@@ -454,7 +454,9 @@ pub fn execute_request(request: &Value) -> R<Value> {
                                     "local" => PositionBasis::Local,
                                     "absolute" => PositionBasis::Absolute,
                                     _ => {
-                                        return Err(error("CP positions must be local or absolute"));
+                                        return Err(error(
+                                            "CP positions must be local or absolute",
+                                        ));
                                     }
                                 };
                                 c.cp_at(
