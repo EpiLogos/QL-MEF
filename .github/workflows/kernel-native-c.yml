@@ -1,0 +1,78 @@
+name: Native C kernel
+
+on:
+  pull_request:
+    paths:
+      - "c/**"
+      - "crates/**"
+      - "fixtures/**"
+      - "migration/epi-kernel/**"
+      - "vendor/epi-kernel/**"
+      - "scripts/**"
+      - "docs/kernel-rebuild/**"
+      - "docs/KERNEL-NATIVE-C-FOUNDATION.md"
+      - ".github/workflows/kernel-native-c.yml"
+  push:
+    branches: [main]
+    paths:
+      - "c/**"
+      - "crates/**"
+      - "fixtures/**"
+      - "migration/epi-kernel/**"
+      - "vendor/epi-kernel/**"
+      - "scripts/**"
+      - "docs/kernel-rebuild/**"
+      - "docs/KERNEL-NATIVE-C-FOUNDATION.md"
+      - ".github/workflows/kernel-native-c.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ql-native-c:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Record exact native source
+        run: |
+          mkdir -p target/kernel-native-c
+          git rev-parse HEAD > target/kernel-native-c/source-revision.txt
+          git ls-tree -r HEAD c crates fixtures/kernel vendor/epi-kernel migration/epi-kernel > target/kernel-native-c/source-objects.txt
+          git archive --format=tar.gz --output=target/kernel-native-c/source.tar.gz HEAD
+          git diff --name-status f97745b4715311e97e44eda5c22488de5eb2455c HEAD -- vendor/epi-kernel migration/epi-kernel/source-lock.json crates/ql-core/src crates/ql-mef/src crates/ql-cli/src fixtures/kernel/vak-composition-v1.json > target/kernel-native-c/changes-from-k0-preserved-inputs.txt
+          rustc --version > target/kernel-native-c/rust-toolchain.txt
+          cargo --version >> target/kernel-native-c/rust-toolchain.txt
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Primitive parity
+        run: bash scripts/test-epi-c-parity.sh
+      - name: Native kernel parity, install and package
+        run: bash scripts/test-epi-c-r4.sh
+      - name: Native boundaries, sanitizers and reproducible package
+        run: bash scripts/test-native-c-foundation.sh
+      - name: Current Rust producer and executable C parity
+        run: |
+          set -euo pipefail
+          cargo test --workspace --all-targets --locked 2>&1 | tee target/kernel-native-c/rust-tests.txt
+          cmp target/kernel-native-c/clang-parity.tsv target/kernel-native-c/c-rust-parity.tsv
+          git diff --exit-code
+      - name: Upload exact-source native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-native-c-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            target/kernel-native-c/
+            target/epi-c-r4/*.txt
+            c/dist/
+          if-no-files-found: error
+          retention-days: 14

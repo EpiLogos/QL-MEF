@@ -1,0 +1,14 @@
+# ql.native-c-foundation-cases/v1
+# Exhaustive stream shape; semantic identities remain in holographic-kernel-contract-v1.tsv.
+contract	1
+family	7
+face	2
+relation	25
+hash	1
+hash-edge	25
+address	84
+edge	2604
+mef	72
+cf	84
+vak	6
+instruction	432
