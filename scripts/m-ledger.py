@@ -22,7 +22,7 @@ STRATA = ("source", "c", "rust", "cpp", "neo4j", "application", "instrument")
 BINDING_STRATA = ("c", "rust", "cpp", "neo4j")
 # A slash between digits is part of one source spelling. /M or <-> delimits
 # authored cross-coordinate expressions. Ranges and primes are NOT expanded.
-COORDINATE = re.compile(r"(?<![\w#])(?:M|#)[0-5](?:[-./][0-9]+)*(?![\w′'])")
+COORDINATE = re.compile(r"(?<![\w#])(?:M|#)[0-5](?:[-./][0-9]+)*(?![\w′']|[-./][0-9])")
 
 
 def canonical(value):

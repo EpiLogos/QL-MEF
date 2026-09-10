@@ -149,6 +149,11 @@ class MLedgerTests(unittest.TestCase):
         refs = [m.group() for m in ledger.COORDINATE.finditer("M0-4.0/1/2 / M0-4.0/1-2 -> M4.5-0 / M4.5.0")]
         self.assertEqual(refs, ["M0-4.0/1/2", "M0-4.0/1-2", "M4.5-0", "M4.5.0"])
 
+    def test_primed_or_suffixed_expressions_cannot_collapse_to_unprimed_prefixes(self):
+        for expression in ("M1-4′", "M1-4'", "M1-4x", "#0-4.0/1/2′"):
+            self.assertEqual(list(ledger.COORDINATE.finditer(expression)), [], expression)
+        self.assertEqual([m.group() for m in ledger.COORDINATE.finditer("M1/M2")], ["M1", "M2"])
+
 
 if __name__ == "__main__":
     unittest.main()
