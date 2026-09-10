@@ -1,6 +1,6 @@
 # Q1 — Minimal deterministic QL kernel (Rust)
 
-Factory coordination: `EpiLogos/agent-system-design#116`.
+Factory coordination: `EpiLogos/Factory#116`.
 
 Q1 is implemented in the `ql-core` Rust crate. It contains no semantic inference and no QL Loop Runtime dependency.
 

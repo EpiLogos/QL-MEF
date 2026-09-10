@@ -170,7 +170,7 @@ It does **not** own:
 
 This repository is the implementation repository for the standalone QL/MEF product.
 
-The product architecture was developed in `EpiLogos/agent-system-design`, especially the standalone QL/MEF design package under its canonical documentation. Factory-side design history remains important provenance, while executable product code, product-local fixtures, releases and product implementation evidence belong here.
+The product architecture was developed in `EpiLogos/Factory` (renamed from `agent-system-design`), especially the standalone QL/MEF design package under its canonical documentation. Factory-side design history remains important provenance, while executable product code, product-local fixtures, releases and product implementation evidence belong here.
 
 The move to this repository does not merge QL/MEF with the QL Loop Runtime. Runtime recurrence is a separate experimental concern now developed under Actuation and consumes this product only through explicit versioned seams.
 
@@ -215,7 +215,7 @@ The order is epistemic as well as technical: establish what can be stated determ
 
 ## Read with
 
-- the canonical standalone QL/MEF design package in [`EpiLogos/agent-system-design`](https://github.com/EpiLogos/agent-system-design/tree/main/docs/canon/ql-mef-module);
+- the canonical standalone QL/MEF design package in [`EpiLogos/Factory`](https://github.com/EpiLogos/Factory/tree/main/docs/canon/ql-mef-module);
 - the wider Epi-Logos source work in [`EpiLogos/Epi-Logos-C-Experiments`](https://github.com/EpiLogos/Epi-Logos-C-Experiments);
 - the active issue/PR programme in this repository for current development state.
 
