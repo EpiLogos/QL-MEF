@@ -235,6 +235,7 @@ pub struct Whole {
     pub body: WholeBody,
     pub producing_refs: Vec<String>,
     pub transitions: Vec<Transition>,
+    pub member_focus: Option<MemberFocus>,
     depth: usize,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -288,6 +289,9 @@ pub struct FramedReading {
     pub carrier_derivations: Vec<RelationFieldDerivation>,
     pub basis: Vec<Basis>,
     pub source_returns: Vec<AnchorReturn>,
+    pub transitions: Vec<Transition>,
+    pub frame_pitch: u8,
+    pub focus_interval: u8,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GeometryReading {
@@ -453,6 +457,7 @@ impl VakComposition {
                 body: WholeBody::Local(form),
                 producing_refs: Vec::new(),
                 transitions: Vec::new(),
+                member_focus: None,
                 depth: 0,
             },
         );
@@ -545,6 +550,7 @@ impl VakComposition {
                     carrier,
                 },
                 transitions: Vec::new(),
+                member_focus: None,
                 depth,
             },
         );
@@ -561,6 +567,10 @@ impl VakComposition {
         self.vacant(into)?;
         basis.validate()?;
         let mut whole = self.whole(from)?.clone();
+        require(
+            whole.transitions.len() < MAX_DEPTH,
+            "contextual transition bound exceeded",
+        )?;
         whole.transitions.push(Transition {
             from_ref: from.into(),
             operation: KernelRelationId::ContextFrame.as_str().into(),
@@ -614,7 +624,7 @@ impl VakComposition {
                 let a = if form.members.is_empty() {
                     SelectedAddress::Anchor(form.anchor_ref.clone())
                 } else {
-                    let coordinate = whole.frame.coordinate();
+                    let coordinate = selected_coordinate(whole);
                     let member = form.members.iter().find(|m| m.coordinate == coordinate)
                         .ok_or_else(|| err(format!("{use_ref}: active frame selects an undisclosed member {coordinate:?}")))?;
                     SelectedAddress::Member {
@@ -668,18 +678,33 @@ impl VakComposition {
         for child in &children {
             extend_unique(&mut source_returns, &child.source_returns);
         }
-        let pitch = whole.frame.pitch();
+        let frame_pitch = whole.frame.pitch();
+        let pitch = match &whole.member_focus {
+            Some(focus) => {
+                let local = focus_local(focus, whole.frame.lens);
+                crate::pitch_at_lens(whole.frame.basis, whole.frame.lens, local)
+            }
+            None => frame_pitch,
+        };
         let child_intervals: Vec<u8> = children
             .iter()
-            .map(|c| directed_pitch_delta(pitch, c.harmonic_pitch))
+            .map(|c| directed_pitch_delta(frame_pitch, c.harmonic_pitch))
             .collect();
-        let absolute = whole
-            .frame
-            .id
-            .canonical_selection()
-            .at_lens(whole.frame.lens)
-            .coordinate()
-            .absolute_position();
+        let absolute = if let Some(focus) = &whole.member_focus {
+            MefRotation::new(
+                whole.frame.lens,
+                focus_local(focus, whole.frame.lens).position,
+            )
+            .absolute_position()
+        } else {
+            whole
+                .frame
+                .id
+                .canonical_selection()
+                .at_lens(whole.frame.lens)
+                .coordinate()
+                .absolute_position()
+        };
         let local =
             QlPosition::new((absolute.value() + 6 - viewing_lens.index()) % 6).map_err(err)?;
         Ok(FramedReading {
@@ -691,7 +716,7 @@ impl VakComposition {
             geometry: GeometryReading {
                 shape_ref: whole.binding.shape_ref.clone(),
                 absolute_position: absolute,
-                frame_phase_degrees: u16::from(pitch) * 30,
+                frame_phase_degrees: u16::from(frame_pitch) * 30,
                 child_phase_degrees: child_intervals.iter().map(|p| u16::from(*p) * 30).collect(),
                 viewing_lens: LensRef::canonical(viewing_lens),
                 viewing_rotation: MefRotation::new(viewing_lens, local),
@@ -701,6 +726,9 @@ impl VakComposition {
             carrier_derivations,
             basis: whole.basis.clone(),
             source_returns,
+            transitions: whole.transitions.clone(),
+            frame_pitch,
+            focus_interval: directed_pitch_delta(frame_pitch, pitch),
         })
     }
 
@@ -1198,9 +1226,12 @@ impl CPrimeContext {
                 let source = registry
                     .locate(r)
                     .ok_or_else(|| err("missing R-path source"))?;
-                extend_unique(&mut sources, &[source.source.clone()]);
+                extend_unique(&mut sources, std::slice::from_ref(&source.source));
             }
         }
+        let ground = graph.whole(&self.ground_use)?;
+        let ground_binding = ground.binding.clone();
+        let ground_basis = ground.basis.clone();
         let reference = request.reference.clone();
         graph.determine(registry, request)?;
         let d = graph
@@ -1209,6 +1240,9 @@ impl CPrimeContext {
             .expect("just inserted determination");
         extend_unique(&mut d.sources, &sources);
         d.context = Some(ReflectiveDerivation {
+            ground_use: self.ground_use.clone(),
+            ground_binding,
+            ground_basis,
             category_ground: self.category_ground,
             focus_path: self.focus_path.clone(),
             allowed_operators: self.allowed_operators.clone(),
@@ -1247,6 +1281,9 @@ pub struct ThreadBinding {
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReflectiveDerivation {
+    pub ground_use: String,
+    pub ground_binding: ShapeBinding,
+    pub ground_basis: Vec<Basis>,
     pub category_ground: QlCoordinate,
     pub focus_path: Vec<Axis>,
     pub allowed_operators: Vec<VakRelationOp>,
@@ -1268,4 +1305,93 @@ pub fn source_neighbourhood(
         "source neighbourhood depth bound exceeded",
     )?;
     registry.neighbourhood(reference, depth).map_err(err)
+}
+
+/// An explicitly positioned use of an actual member. This is a coordinate in
+/// the existing carrier, not a replacement shape or a newly inferred member.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MemberFocus {
+    pub coordinate: QlCoordinate,
+    pub positions: PositionBasis,
+    pub basis: Basis,
+}
+fn focus_local(f: &MemberFocus, lens: LensId) -> QlCoordinate {
+    let position = match f.positions {
+        PositionBasis::Local => f.coordinate.position,
+        PositionBasis::Absolute => {
+            QlPosition::new((f.coordinate.position.value() + 6 - lens.index()) % 6)
+                .expect("modulo-six coordinate")
+        }
+    };
+    QlCoordinate::new(position, f.coordinate.face)
+}
+fn selected_coordinate(w: &Whole) -> QlCoordinate {
+    match &w.member_focus {
+        None => w.frame.coordinate(),
+        Some(f) => {
+            let local = focus_local(f, w.frame.lens);
+            QlCoordinate::new(
+                match w.frame.positions {
+                    PositionBasis::Local => local.position,
+                    PositionBasis::Absolute => {
+                        MefRotation::new(w.frame.lens, local.position).absolute_position()
+                    }
+                },
+                local.face,
+            )
+        }
+    }
+}
+impl VakComposition {
+    pub fn position_member(&mut self, from: &str, into: &str, focus: MemberFocus) -> Result<()> {
+        self.vacant(into)?;
+        focus.basis.validate()?;
+        let mut w = self.whole(from)?.clone();
+        require(
+            w.transitions.len() < MAX_DEPTH,
+            "contextual transition bound exceeded",
+        )?;
+        w.member_focus = Some(focus.clone());
+        let coordinate = selected_coordinate(&w);
+        match &w.body {
+            WholeBody::Local(form) => require(
+                form.members.iter().any(|m| m.coordinate == coordinate),
+                "CP selects a member not disclosed by this whole",
+            )?,
+            WholeBody::Relation { .. } => {
+                return Err(err(
+                    "CP must address an actual local participant before choosing its member",
+                ));
+            }
+        }
+        w.use_ref = into.into();
+        w.producing_refs.push(from.into());
+        w.transitions.push(Transition {
+            from_ref: from.into(),
+            operation: VakFamily::Cp.relation_id().as_str().into(),
+            from: w.frame,
+            into: w.frame,
+            basis: focus.basis.clone(),
+        });
+        w.basis.push(focus.basis);
+        self.wholes.insert(into.into(), w);
+        Ok(())
+    }
+}
+impl CPrimeContext {
+    /// Resolve a local participant first with CP path, then determine its exact
+    /// coordinate. CF remains active; it is never replaced by the CP choice.
+    pub fn cp_at(
+        &mut self,
+        graph: &mut VakComposition,
+        into: &str,
+        focus: MemberFocus,
+    ) -> Result<()> {
+        let from = self.focus_use.clone();
+        let basis = focus.basis.clone();
+        graph.position_member(&from, into, focus)?;
+        self.focus_use = into.into();
+        self.receipt(VakFamily::Cp, vec![from], vec![into.into()], basis);
+        Ok(())
+    }
 }

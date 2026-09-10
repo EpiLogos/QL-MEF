@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use serde_json::{Value, json};
+use std::path::PathBuf;
 
 fn specimen() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/kernel/vak-composition-v1.json")
@@ -7,26 +7,52 @@ fn specimen() -> PathBuf {
 #[test]
 fn actual_cli_executes_nested_framing_generation_return_and_reentry() {
     let output = std::process::Command::new(env!("CARGO_BIN_EXE_ql"))
-        .args(["vak", "compose"]).arg(specimen()).arg("--json").output().unwrap();
-    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        .args(["vak", "compose"])
+        .arg(specimen())
+        .arg("--json")
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
     let v: Value = serde_json::from_slice(&output.stdout).unwrap();
     assert_eq!(v["contract"], "ql.vak-composition/v1");
     let results = v["results"].as_array().unwrap();
     let original = &results[5]["result"];
     let changed = &results[7]["result"];
     assert_ne!(original["childIntervals"], changed["childIntervals"]);
-    assert_ne!(original["geometry"]["childPhaseDegrees"], changed["geometry"]["childPhaseDegrees"]);
-    assert_eq!(original["children"][0]["frame"], changed["children"][0]["frame"]);
+    assert_ne!(
+        original["geometry"]["childPhaseDegrees"],
+        changed["geometry"]["childPhaseDegrees"]
+    );
+    assert_eq!(
+        original["children"][0]["frame"],
+        changed["children"][0]["frame"]
+    );
     assert_eq!(changed["transitions"].as_array().unwrap().len(), 1);
     let returned = &results[9]["result"];
     assert_eq!(returned["route"]["anchorRef"], "anchor:outer");
     assert_eq!(returned["route"]["groundRef"], "ground:outer");
     assert_eq!(returned["producing"]["standing"], "DERIVED");
-    assert_eq!(returned["producing"]["reading"]["sourceReturns"].as_array().unwrap().len(), 3);
+    assert_eq!(
+        returned["producing"]["reading"]["sourceReturns"]
+            .as_array()
+            .unwrap()
+            .len(),
+        3
+    );
     let reopened = &results[12]["result"];
     assert_eq!(reopened["children"][0]["binding"]["subjectRef"], "d");
-    assert_eq!(reopened["children"][0]["binding"]["provenance"]["standing"], "DERIVED");
-    assert_eq!(reopened["children"][0]["children"][0]["children"][0]["binding"]["subjectRef"], "subject:a");
+    assert_eq!(
+        reopened["children"][0]["binding"]["provenance"]["standing"],
+        "DERIVED"
+    );
+    assert_eq!(
+        reopened["children"][0]["children"][0]["children"][0]["binding"]["subjectRef"],
+        "subject:a"
+    );
 }
 #[test]
 fn cli_rejects_invalid_frames_before_returning_a_success_receipt() {

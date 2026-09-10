@@ -16,6 +16,8 @@ use std::fmt::{self, Display};
 use std::process::ExitCode;
 use std::str::FromStr;
 
+pub mod vak_composition;
+
 pub const QL_CLI_CONTRACT: &str = "ql.cli/v1";
 pub const VAK_CONTEXT_CONTRACT: &str = "ql.vak-context/v1";
 const MAX_VAK_CONTEXT_DEPTH: usize = 2;
@@ -276,7 +278,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
+Usage:\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql verify [--json]\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
         env!("CARGO_PKG_VERSION")
     )
@@ -304,6 +306,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.capabilities",
             "vak.locate",
             "vak.context",
+            "vak.compose",
             "service.capabilities",
             "service.negotiate",
             "verify",
@@ -617,6 +620,7 @@ fn vak_command(args: &[String], json: bool) -> Result<String, CliError> {
             }
         }
         Some("context") => vak_context_command(&args[1..], json),
+        Some("compose") => vak_composition::command(&args[1..], json),
         Some(operation) => Err(CliError(format!("unknown Vāk operation `{operation}`"))),
         None => Err(CliError("missing Vāk operation".into())),
     }
