@@ -40,12 +40,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
       - name: Record exact native source
         run: |
           mkdir -p target/kernel-native-c
           git rev-parse HEAD > target/kernel-native-c/source-revision.txt
           git ls-tree -r HEAD c fixtures/kernel vendor/epi-kernel migration/epi-kernel > target/kernel-native-c/source-objects.txt
           git archive --format=tar.gz --output=target/kernel-native-c/source.tar.gz HEAD
+          rustfmt --edition 2024 --emit stdout crates/ql-mef/tests/native_c_foundation.rs > target/kernel-native-c/native-c-foundation.formatted.rs
       - name: Primitive parity
         run: bash scripts/test-epi-c-parity.sh
       - name: Native kernel parity, install and package
