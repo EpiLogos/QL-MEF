@@ -1,8 +1,8 @@
 use ql_core::{
-    AnchorReturn, CallerProvenance, CarrierError, GroundKind, QlFace, QlPosition,
-    RELATION_FIELD_COMPOSITION_OPERATOR_REF, RelationFieldComposition, SIX_BY_SIX_SHAPE_REF,
-    STRUCTURAL_CARRIER_CONTRACT_VERSION, ShapeBinding, ShapeRelationBinding,
-    StructuralConstellation, StructuralParticipation, WHOLE_ANCHOR_SYMBOL,
+    AnchorReturn, CallerProvenance, CarrierError, ConstellationGrain, GroundKind, QlFace,
+    QlPosition, RELATION_FIELD_COMPOSITION_OPERATOR_REF, RelationFieldComposition,
+    SIX_BY_SIX_SHAPE_REF, STRUCTURAL_CARRIER_CONTRACT_VERSION, ShapeBinding,
+    ShapeRelationBinding, StructuralConstellation, StructuralParticipation, WHOLE_ANCHOR_SYMBOL,
 };
 
 fn p(value: u8) -> QlPosition {
@@ -90,6 +90,35 @@ fn relation_fields_derive_cardinality_from_disclosed_wholes() {
             .cardinality(),
         (12, 12, 144)
     );
+}
+
+#[test]
+fn undisclosed_other_grain_is_not_promoted_by_dimension() {
+    let arbitrary_three = whole(
+        "external:whole:arbitrary-three",
+        "external:arbitrary-three",
+        &[0, 2, 5],
+        &[],
+    );
+    let four = whole("external:whole:four", "external:four", &[1, 2, 3, 4], &[]);
+
+    assert_eq!(
+        arbitrary_three.grain(),
+        ConstellationGrain::Other {
+            direct: 3,
+            conjugate: 0
+        }
+    );
+    assert!(matches!(
+        RelationFieldComposition::compose(&arbitrary_three, &four),
+        Err(CarrierError::UndisclosedAxisShape {
+            axis: "row",
+            grain: ConstellationGrain::Other {
+                direct: 3,
+                conjugate: 0
+            }
+        })
+    ));
 }
 
 #[test]
@@ -192,6 +221,11 @@ fn semantic_relations_are_sparse_plural_asymmetric_and_caller_attributable() {
         binding.relation_bindings[0].address,
         binding.relation_bindings[1].address
     );
+    assert_eq!(binding.member_bindings().len(), 0);
+    assert_eq!(
+        binding.caller_provenance().standing_ref,
+        "external:standing:observed"
+    );
     assert_ne!(address.row, address.column);
 }
 
@@ -241,7 +275,7 @@ fn a_semantic_binding_requires_evidence_and_must_land_inside_the_field() {
 }
 
 #[test]
-fn relation_derivation_keeps_source_wholes_grains_returns_and_zero_one_basis() {
+fn relation_derivation_keeps_source_wholes_grains_and_full_return_routes() {
     let route = AnchorReturn::new(
         "external:row:5:direct",
         "external:whole:row",
@@ -283,6 +317,15 @@ fn relation_derivation_keeps_source_wholes_grains_returns_and_zero_one_basis() {
     assert_eq!(derivation.generated_shape_ref, field.shape_ref());
     assert_eq!(derivation.return_basis, WHOLE_ANCHOR_SYMBOL);
     assert_eq!(derivation.source_return_refs.len(), 1);
+    assert_eq!(derivation.source_returns.len(), 1);
+    assert_eq!(
+        derivation.source_returns[0].through_anchor_ref,
+        "external:whole:row"
+    );
+    assert_eq!(
+        derivation.source_returns[0].target_ground_ref,
+        "external:ground:row"
+    );
 }
 
 #[test]
@@ -303,9 +346,11 @@ fn portable_fixture_freezes_only_structural_law() {
     assert!(fixture.contains("\"contract_id\": \"ql.structural-carrier\""));
     assert!(fixture.contains("\"version\": \"1.0.0\""));
     assert!(fixture.contains("\"dimensions_are_shape_authority\": false"));
+    assert!(fixture.contains("\"undisclosed_other_grains_are_carrier_axes\": false"));
     assert!(fixture.contains("\"semantic_cells_generated\": false"));
     assert!(fixture.contains("\"missing_cells_valid\": true"));
     assert!(fixture.contains("\"plural_bindings_per_address_valid\": true"));
+    assert!(fixture.contains("\"retains_source_return_routes\": true"));
     assert!(fixture.contains("\"return_basis\": \"0/1\""));
     assert!(fixture.contains("\"external_label_rename_changes_structure\": false"));
     assert_eq!(STRUCTURAL_CARRIER_CONTRACT_VERSION, "1.0.0");
