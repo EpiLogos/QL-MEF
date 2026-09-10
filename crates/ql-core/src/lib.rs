@@ -5,8 +5,6 @@
 mod address;
 mod address_parse;
 mod apply;
-#[path = "carrier.rs"]
-mod structural_carrier;
 mod deterministic;
 mod error;
 mod face;
@@ -19,6 +17,8 @@ mod position;
 mod relation_classification;
 mod shape;
 mod structural;
+#[path = "carrier.rs"]
+mod structural_carrier;
 
 pub use address::QlAddress;
 pub use apply::apply_operator;
