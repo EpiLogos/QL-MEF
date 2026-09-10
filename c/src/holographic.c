@@ -20,7 +20,7 @@ static const QL_Holographic_Coordinate QL_HASH_BIMBA = {
 };
 
 static int ql_family_index(QL_Coordinate_Family family) {
-    return family <= QL_FAMILY_M ? (int)family : -1;
+    return (unsigned)family < QL_COORDINATE_FAMILY_COUNT ? (int)family : -1;
 }
 
 static bool ql_address_family_valid(QL_Coordinate_Family family) {
@@ -100,6 +100,15 @@ QL_Coordinate_Label ql_coordinate_label(
     uint8_t position,
     QL_Coordinate_Face face
 ) {
+    /* Check enum-width inputs before storing the compact identity. Otherwise
+     * e.g. family=256 or face=256 silently aliases the valid zero value. */
+    if (!ql_address_family_valid(family) || (unsigned)face >= QL_FACE_COUNT) {
+        return (QL_Coordinate_Label){
+            .family = QL_INVALID_U8,
+            .position = QL_INVALID_U8,
+            .face = (uint8_t)QL_COORD_FACE_DIRECT
+        };
+    }
     QL_Coordinate_Label label = {
         .family = (uint8_t)family,
         .position = position,
@@ -134,7 +143,7 @@ QL_Coordinate_Face ql_coordinate_face(const QL_Holographic_Coordinate* coordinat
 }
 
 int ql_coordinate_set_face(QL_Holographic_Coordinate* coordinate, QL_Coordinate_Face face) {
-    if (!coordinate || face > QL_COORD_FACE_PRIME) return -1;
+    if (!coordinate || (unsigned)face >= QL_FACE_COUNT) return -1;
     coordinate->inversion_state = (uint8_t)face;
 
     /* Only P/P' has a topology change asserted by the current coordinate account.

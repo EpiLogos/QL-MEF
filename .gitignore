@@ -10,3 +10,7 @@
 
 # Local recovery receipts for reviewed documentation changes.
 /.central/documentation-transactions/
+
+# Native C build and package artifacts
+/c/build/
+/c/dist/

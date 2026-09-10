@@ -5,7 +5,7 @@ REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 REFERENCE_ROOT="$REPO_ROOT/vendor/epi-kernel/reference"
 OUT_DIR="$REPO_ROOT/target/epi-c-r4"
 CC_BIN=${CC:-cc}
-SOURCE_REVISION=$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || printf unversioned)
+SOURCE_REVISION=${SOURCE_REVISION:-$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || printf unversioned)}
 
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
@@ -25,7 +25,8 @@ mkdir -p "$OUT_DIR"
 
 "$OUT_DIR/r4-parity" | tee "$OUT_DIR/r4-parity.txt"
 
-make -C "$REPO_ROOT/c" clean all SOURCE_REVISION="$SOURCE_REVISION"
+make -C "$REPO_ROOT/c" clean
+make -C "$REPO_ROOT/c" all SOURCE_REVISION="$SOURCE_REVISION"
 make -C "$REPO_ROOT/c" install SOURCE_REVISION="$SOURCE_REVISION" DESTDIR="$OUT_DIR/install-root" PREFIX=/ql-mef-c
 make -C "$REPO_ROOT/c" package SOURCE_REVISION="$SOURCE_REVISION"
 

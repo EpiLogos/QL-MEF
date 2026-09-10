@@ -1,0 +1,116 @@
+{
+  "schema": "ql.native-c-foundation/v1",
+  "issue": 125,
+  "pull_request": 144,
+  "next_issue": 126,
+  "accepted_k0_base": "f97745b4715311e97e44eda5c22488de5eb2455c",
+  "recovery_commit": "e5f612653c71c8a9ae74199ef2e8b326e3e9deba",
+  "historical_reference_revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+  "api_version": "0.1.0",
+  "contract": {
+    "id": "ql.holographic-kernel-contract/v1",
+    "version": "1.1.0",
+    "fixture": "fixtures/kernel/holographic-kernel-contract-v1.tsv",
+    "git_blob": "5112349d363a5c01e63418c91880af67c5e60ed1"
+  },
+  "recovery_inventory": [
+    {
+      "path": "c/Makefile",
+      "observed_recovery_blob": "85995f91a97803f7cbeb090398cc91d2bb12e203",
+      "k0_prose_advertised_blob": "a3b2862b7f77db77744e8967debb8a03945c471b",
+      "k1_blob": "3468e9b25e6266b78c7d561a6d72ba508061ba51",
+      "standing": "recovered-with-bounded-repair"
+    },
+    {
+      "path": "c/include/ql/holographic.h",
+      "observed_recovery_blob": "ce53c5002c439e248cba4809d91ed6cf4f3efba4",
+      "k0_prose_advertised_blob": "5e3faedf6a9e4bb4eb2918a04aacc782f903df83",
+      "k1_blob": "ce53c5002c439e248cba4809d91ed6cf4f3efba4",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "c/include/ql/kernel.h",
+      "observed_recovery_blob": "43be46b2b5ff66c36cb633c7fd6f317350a0e654",
+      "k0_prose_advertised_blob": "23bbe3f87d8304f86fce4bdb511552fa22635881",
+      "k1_blob": "43be46b2b5ff66c36cb633c7fd6f317350a0e654",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "c/src/holographic.c",
+      "observed_recovery_blob": "e46e53f2ad3d0dd42931fbb0416089076383581b",
+      "k0_prose_advertised_blob": "03f54d7f43f26b75e8f63caf03b72e5724a65d00",
+      "k1_blob": "b87d72c1d72c42cc6f8793c16ed9179cafad33d5",
+      "standing": "recovered-with-bounded-repair"
+    },
+    {
+      "path": "c/src/kernel.c",
+      "observed_recovery_blob": "3278737950f01f53b54d0898f3d075706a3ad18f",
+      "k0_prose_advertised_blob": "02cce4b5fba1ac6708e5da8854b88643e0aedf579",
+      "k1_blob": "3278737950f01f53b54d0898f3d075706a3ad18f",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "migration/epi-kernel/r4-holographic-kernel-parity.c",
+      "observed_recovery_blob": "33ce4426ceae9d669d49ba147b7b735267162da3",
+      "k0_prose_advertised_blob": "44da9748fe3a519bb318d0ffbfa12e76fce4fc50",
+      "k1_blob": "33ce4426ceae9d669d49ba147b7b735267162da3",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "migration/epi-kernel/r4-vak-parity.c",
+      "observed_recovery_blob": "fc08bc9e40b5e49674a65c23ce9e28f520e11d3c",
+      "k0_prose_advertised_blob": "5c9915117a58d292a65d5b93fcec9d17e325d2d9",
+      "k1_blob": "fc08bc9e40b5e49674a65c23ce9e28f520e11d3c",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "migration/epi-kernel/r4-package-smoke.c",
+      "observed_recovery_blob": "579ae85fb1eb997aac8c7e4e2a05c607e4cea365",
+      "k0_prose_advertised_blob": "0cf9ea113f194f8ef9f3feb5f889f6b1c7ed7d8c",
+      "k1_blob": "579ae85fb1eb997aac8c7e4e2a05c607e4cea365",
+      "standing": "recovered-unchanged"
+    },
+    {
+      "path": "scripts/test-epi-c-r4.sh",
+      "observed_recovery_blob": "844d61dd4dd4519db34ea5fc4ba8666ea42fa13c",
+      "k0_prose_advertised_blob": "9105ccb2fac1bf3cdaa6d48e5dce90e55e3343cd",
+      "k1_blob": "fe0778df738d041f1e4b77e1325c8f23632df2d5",
+      "standing": "recovered-with-bounded-repair"
+    }
+  ],
+  "preserved_from_k0": [
+    "vendor/epi-kernel",
+    "migration/epi-kernel/source-lock.json",
+    "c/include/ql/primitive.h",
+    "c/src/primitive.c",
+    "crates/ql-core/src",
+    "crates/ql-mef/src",
+    "crates/ql-cli/src",
+    "fixtures/kernel/vak-composition-v1.json"
+  ],
+  "public_headers": [
+    "c/include/ql/primitive.h",
+    "c/include/ql/holographic.h",
+    "c/include/ql/kernel.h"
+  ],
+  "native_sources": [
+    "c/src/primitive.c",
+    "c/src/holographic.c",
+    "c/src/kernel.c"
+  ],
+  "library": "c/build/libql-mef-c.a",
+  "parity_cases": "fixtures/kernel/native-c-foundation-counts-v1.tsv",
+  "parity_outcome_count": 3343,
+  "context_frame_count": 7,
+  "deferred_to_126": [
+    "recursive native M identity and registry",
+    "ql.m-tree/v1",
+    "same native registry consumed by Rust"
+  ],
+  "not_claimed": [
+    "full M0-M5 coordinate porting",
+    "C++ embodiment",
+    "live Neo4j acceptance",
+    "replacement VAK composition producer"
+  ]
+}

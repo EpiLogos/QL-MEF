@@ -15,16 +15,26 @@ LIB = $(BUILD_DIR)/libql-mef-c.a
 SRC = src/primitive.c src/holographic.c src/kernel.c
 OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
 HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h
+REVISION_STAMP = $(BUILD_DIR)/source-revision.txt
 CONTRACT_FIXTURE = ../fixtures/kernel/holographic-kernel-contract-v1.tsv
 
-.PHONY: all clean install package
+.PHONY: all clean install package FORCE
 
 all: $(LIB)
 
 $(BUILD_DIR):
 	mkdir -p $@
 
-$(BUILD_DIR)/%.o: src/%.c $(HEADERS) | $(BUILD_DIR)
+# A new checkout/revision must rebuild the macro embedded in the library even
+# when source mtimes are unchanged. Keep the stamp mtime on a no-op invocation.
+FORCE:
+
+$(REVISION_STAMP): FORCE | $(BUILD_DIR)
+	@printf '%s\n' '$(SOURCE_REVISION)' > $@.tmp
+	@cmp -s $@.tmp $@ || cp $@.tmp $@
+	@rm -f $@.tmp
+
+$(BUILD_DIR)/%.o: src/%.c $(HEADERS) $(REVISION_STAMP) | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Iinclude -DQL_C_SOURCE_REVISION='"$(SOURCE_REVISION)"' -c $< -o $@
 
 $(LIB): $(OBJ)
@@ -38,7 +48,7 @@ install: $(LIB)
 	cp $(CONTRACT_FIXTURE) $(DESTDIR)$(PREFIX)/share/ql-mef-c/holographic-kernel-contract-v1.tsv
 	printf '%s\n' '$(API_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/api-version.txt
 	printf '%s\n' '$(CONTRACT_VERSION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/kernel-contract-version.txt
-	printf '%s\n' '$(SOURCE_REVISION)' > $(DESTDIR)$(PREFIX)/share/ql-mef-c/source-revision.txt
+	cp $(REVISION_STAMP) $(DESTDIR)$(PREFIX)/share/ql-mef-c/source-revision.txt
 
 package: $(LIB)
 	rm -rf $(BUILD_DIR)/package-root
