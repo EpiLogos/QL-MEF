@@ -1,0 +1,450 @@
+{
+  "contract": "ql.vak-composition/v1",
+  "steps": [
+    {
+      "op": "whole",
+      "useRef": "a",
+      "subjectRef": "subject:a",
+      "wholeRef": "anchor:a",
+      "category": "M",
+      "groundRef": "ground:a",
+      "groundFace": "direct",
+      "frame": {
+        "id": "CF2",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "source:a",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      },
+      "members": [
+        {
+          "subjectRef": "a:0:direct",
+          "position": 0,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:1:direct",
+          "position": 1,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:2:direct",
+          "position": 2,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:3:direct",
+          "position": 3,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:4:direct",
+          "position": 4,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:5:direct",
+          "position": 5,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "a:0:conjugate",
+          "position": 0,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "a:1:conjugate",
+          "position": 1,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "a:2:conjugate",
+          "position": 2,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "a:3:conjugate",
+          "position": 3,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "a:4:conjugate",
+          "position": 4,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "a:5:conjugate",
+          "position": 5,
+          "face": "conjugate"
+        }
+      ],
+      "sourceReturns": [
+        {
+          "fromRef": "source-result:a",
+          "anchorRef": "anchor:a",
+          "groundRef": "ground:a",
+          "face": "direct",
+          "kind": "own"
+        }
+      ]
+    },
+    {
+      "op": "whole",
+      "useRef": "b",
+      "subjectRef": "subject:b",
+      "wholeRef": "anchor:b",
+      "category": "M",
+      "groundRef": "ground:b",
+      "groundFace": "direct",
+      "frame": {
+        "id": "CF3",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "source:b",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      },
+      "members": [
+        {
+          "subjectRef": "b:0:direct",
+          "position": 0,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:1:direct",
+          "position": 1,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:2:direct",
+          "position": 2,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:3:direct",
+          "position": 3,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:4:direct",
+          "position": 4,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:5:direct",
+          "position": 5,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "b:0:conjugate",
+          "position": 0,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "b:1:conjugate",
+          "position": 1,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "b:2:conjugate",
+          "position": 2,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "b:3:conjugate",
+          "position": 3,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "b:4:conjugate",
+          "position": 4,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "b:5:conjugate",
+          "position": 5,
+          "face": "conjugate"
+        }
+      ],
+      "sourceReturns": [
+        {
+          "fromRef": "source-result:b",
+          "anchorRef": "anchor:b",
+          "groundRef": "ground:b",
+          "face": "direct",
+          "kind": "own"
+        }
+      ]
+    },
+    {
+      "op": "whole",
+      "useRef": "c",
+      "subjectRef": "subject:c",
+      "wholeRef": "anchor:c",
+      "category": "M",
+      "groundRef": "ground:c",
+      "groundFace": "direct",
+      "frame": {
+        "id": "CF4",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "source:c",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      },
+      "members": [
+        {
+          "subjectRef": "c:0:direct",
+          "position": 0,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:1:direct",
+          "position": 1,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:2:direct",
+          "position": 2,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:3:direct",
+          "position": 3,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:4:direct",
+          "position": 4,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:5:direct",
+          "position": 5,
+          "face": "direct"
+        },
+        {
+          "subjectRef": "c:0:conjugate",
+          "position": 0,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "c:1:conjugate",
+          "position": 1,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "c:2:conjugate",
+          "position": 2,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "c:3:conjugate",
+          "position": 3,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "c:4:conjugate",
+          "position": 4,
+          "face": "conjugate"
+        },
+        {
+          "subjectRef": "c:5:conjugate",
+          "position": 5,
+          "face": "conjugate"
+        }
+      ],
+      "sourceReturns": [
+        {
+          "fromRef": "source-result:c",
+          "anchorRef": "anchor:c",
+          "groundRef": "ground:c",
+          "face": "direct",
+          "kind": "own"
+        }
+      ]
+    },
+    {
+      "op": "compose",
+      "useRef": "ab",
+      "wholeRef": "anchor:ab",
+      "row": "a",
+      "column": "b",
+      "frame": {
+        "id": "CF1",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "groundRef": "ground:ab",
+      "groundFace": "direct",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:composition",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "compose",
+      "useRef": "outer",
+      "wholeRef": "anchor:outer",
+      "row": "ab",
+      "column": "c",
+      "frame": {
+        "id": "CF5",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "groundRef": "ground:outer",
+      "groundFace": "direct",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:composition",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "read",
+      "useRef": "outer",
+      "lens": "L5"
+    },
+    {
+      "op": "reframe",
+      "from": "outer",
+      "into": "outer-cf2",
+      "frame": {
+        "id": "CF2",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:frame-change",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "read",
+      "useRef": "outer-cf2",
+      "lens": "L1'"
+    },
+    {
+      "op": "determine",
+      "id": "d",
+      "useRef": "outer-cf2",
+      "lens": "L5",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:determination",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "return",
+      "id": "r",
+      "determination": "d",
+      "target": "outer-cf2",
+      "kind": "own",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:Return",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "offer",
+      "return": "r",
+      "into": "offered",
+      "wholeRef": "anchor:offered",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "r",
+        "revision": "synthetic-v1",
+        "standing": "DERIVED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "compose",
+      "useRef": "next",
+      "wholeRef": "anchor:next",
+      "row": "offered",
+      "column": "a",
+      "frame": {
+        "id": "CF7",
+        "lens": "L0",
+        "basis": "chromatic",
+        "face": "direct",
+        "positions": "local"
+      },
+      "groundRef": "ground:next",
+      "groundFace": "direct",
+      "basis": {
+        "caller": "specimen:ql",
+        "source": "specimen:composition",
+        "revision": "synthetic-v1",
+        "standing": "PROPOSED",
+        "evidence": [
+          "specimen:caller-input"
+        ]
+      }
+    },
+    {
+      "op": "read",
+      "useRef": "next",
+      "lens": "L0"
+    }
+  ]
+}

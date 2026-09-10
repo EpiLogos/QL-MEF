@@ -565,7 +565,7 @@ fn derivation_view(d: &RelationFieldDerivation) -> Value {
     "sourceReturnRefs":d.source_return_refs,"sourceReturns":d.source_returns.iter().map(route_view).collect::<Vec<_>>()})
 }
 fn whole_view(w: &Whole) -> Value {
-    json!({"useRef":w.use_ref,"binding":binding_view(&w.binding),"category":w.category.code(),"groundRef":w.ground_ref,"groundFace":w.ground_face.as_str(),
+    json!({"useRef":w.use_ref,"language":w.language.as_ref().map(language_view),"binding":binding_view(&w.binding),"category":w.category.code(),"groundRef":w.ground_ref,"groundFace":w.ground_face.as_str(),
     "frame":frame_view(w.frame),"basis":w.basis.iter().map(basis_view).collect::<Vec<_>>(),"producingRefs":w.producing_refs,
     "body":match &w.body{WholeBody::Local(f)=>json!({"kind":"constellation","anchorRef":f.anchor_ref,"grain":f.grain().as_str(),"members":f.members.iter().map(member_view).collect::<Vec<_>>(),"returns":f.returns.iter().map(route_view).collect::<Vec<_>>()}),
         WholeBody::Relation{row,column,carrier}=>json!({"kind":"relation-field","rowUse":row,"columnUse":column,"carrierDerivation":carrier.as_ref().map(|c|derivation_view(&c.derivation()))})},
@@ -588,7 +588,7 @@ fn address_view(a: &SelectedAddress) -> Value {
 }
 fn read_view(r: &FramedReading) -> Value {
     json!({"useRef":r.use_ref,"binding":binding_view(&r.binding),"frame":frame_view(r.frame),"address":address_view(&r.address),
-    "harmonicPitch":r.harmonic_pitch,"framePitch":r.frame_pitch,"focusInterval":r.focus_interval,"childIntervals":r.child_intervals,"geometry":{"shapeRef":r.geometry.shape_ref,"absolutePosition":r.geometry.absolute_position.value(),
+    "language":r.language.as_ref().map(language_view),"memberFocus":r.member_focus.as_ref().map(|f|json!({"coordinate":coord_view(f.coordinate),"positions":match f.positions{PositionBasis::Local=>"local",PositionBasis::Absolute=>"absolute"},"basis":basis_view(&f.basis)})),"harmonicPitch":r.harmonic_pitch,"framePitch":r.frame_pitch,"focusInterval":r.focus_interval,"childIntervals":r.child_intervals,"geometry":{"shapeRef":r.geometry.shape_ref,"absolutePosition":r.geometry.absolute_position.value(),
         "framePhaseDegrees":r.geometry.frame_phase_degrees,"childPhaseDegrees":r.geometry.child_phase_degrees,"viewingLens":r.geometry.viewing_lens.to_string(),
         "viewingLocalPosition":r.geometry.viewing_rotation.local_position().value(),"viewingAbsolutePosition":r.geometry.viewing_rotation.absolute_position().value()},
     "children":r.children.iter().map(read_view).collect::<Vec<_>>(),"carrierDerivations":r.carrier_derivations.iter().map(derivation_view).collect::<Vec<_>>(),
@@ -623,7 +623,7 @@ fn context_view(c: &CPrimeContext) -> Value {
 }
 fn determination_view(d: &Determination) -> Value {
     json!({"reference":d.reference,"wholeUse":d.whole_use,"reading":read_view(&d.reading),"sources":d.sources.iter().map(source_view).collect::<Vec<_>>(),
-    "basis":basis_view(&d.basis),"standing":d.standing.as_schema_str(),
+    "basis":basis_view(&d.basis),"standing":d.standing.as_schema_str(),"nativePaths":d.native_paths.iter().map(|p|json!({"reference":p.reference,"determination":p.determination,"pathRef":p.path.path_ref,"nativeNodeRef":p.native_node_ref,"nativeStepRef":p.native_step_ref,"actorRef":p.path.actor_ref,"evidence":p.path.evidence_refs,"basis":basis_view(&p.basis),"standing":p.standing.as_schema_str()})).collect::<Vec<_>>(),
     "expression":d.language.as_ref().map(|l|json!({"nativeNodeRef":l.native_node_ref,"resolvePathIdentity":l.general.resolve_path_identity,"syntaxVersion":l.general.syntax_version,
         "ownerRevision":l.general.owner_revision,"rendered":l.general.rendered,"fullVakRendering":l.general.full_vak_rendering,"selfOther":l.self_other.glyph(),"field":l.field.symbol(),
         "interpreter":l.interpreter,"expectedGround":l.expected_ground,"evidence":l.reading.evidence})),
@@ -637,4 +637,16 @@ fn return_view(r: &Returned) -> Value {
     json!({"reference":r.reference,"determination":r.determination,"sourceUse":r.source_use,"targetUse":r.target_use,"route":route_view(&r.route),
     "sourceBinding":binding_view(&r.source_binding),"targetBinding":binding_view(&r.target_binding),"producing":determination_view(&r.producing),
     "targetBasis":r.target_basis.iter().map(basis_view).collect::<Vec<_>>(),"relationEvidence":r.relation_evidence,"basis":basis_view(&r.basis),"standing":r.standing.as_schema_str()})
+}
+
+fn language_view(l: &FullVakBinding) -> Value {
+    json!({"acceptedSyntaxRevision":l.accepted_syntax_revision,"nativeNodeRef":l.native_node_ref,
+        "selfOther":l.self_other.glyph(),"field":l.field.symbol(),"interpreter":l.interpreter,"expectedGround":l.expected_ground,
+        "general":{"syntaxVersion":l.general.syntax_version,"ownerRevision":l.general.owner_revision,"resolvePathIdentity":l.general.resolve_path_identity,
+            "rendered":l.general.rendered,"fullVakRendering":l.general.full_vak_rendering,"evidence":l.general.evidence},
+        "reading":{"contract":l.reading.contract,"operator":l.reading.operator.glyph(),"horizon":l.reading.horizon.address(),
+            "subjects":l.reading.subjects.iter().map(|s|match s{VakExpressionSubject::Native(r)=>json!({"native":r}),VakExpressionSubject::Vak(r)=>json!({"vak":r.to_string()})}).collect::<Vec<_>>(),
+            "relationRefs":l.reading.relation_refs.iter().map(ToString::to_string).collect::<Vec<_>>(),"complementRefs":l.reading.complement_refs.iter().map(ToString::to_string).collect::<Vec<_>>(),
+            "worldRef":l.reading.world_ref,"projectRef":l.reading.project_ref,"focusRef":l.reading.focus_ref,"expectedReturn":l.reading.expected_return,
+            "standing":l.reading.standing.as_schema_str(),"evidence":l.reading.evidence}})
 }

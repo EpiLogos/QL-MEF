@@ -120,7 +120,7 @@ pub use vak_oi::{
     VakOiSemanticAltitude, VakPathStepV1, VakPathV1, VakPraxisInstantiationV1,
     VakRecognitionProposal, VakRecognitionV1, central_work_list_profile,
     factory_request_evidence_profile, oi_reference_primitive_matrix, recognise_vak_return,
-    reconstruct_observed_vak_path,
+    reconstruct_observed_vak_path, reconstruct_observed_vak_path_for_revision,
 };
 
 impl MCoordinate {

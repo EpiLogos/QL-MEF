@@ -310,10 +310,18 @@ pub struct VakGeneralExpressionEvidence {
 
 impl VakGeneralExpressionEvidence {
     pub fn validate(&self) -> Result<(), VakOiError> {
+        self.validate_for_revision(AIKIT_OPERATIVE_OWNER_REVISION)
+    }
+    /// An explicit consumer-selected syntax revision, not a silent replacement
+    /// of the frozen #83 acceptance revision or a claim of native execution.
+    pub fn validate_for_revision(&self, accepted_revision: &str) -> Result<(), VakOiError> {
+        if accepted_revision.trim().is_empty() {
+            return Err(VakOiError::Missing("accepted AIKit syntax revision"));
+        }
         if self.syntax_version != AIKIT_OPERATIVE_SYNTAX_VERSION {
             return Err(VakOiError::Contract(self.syntax_version.clone()));
         }
-        if self.owner_revision != AIKIT_OPERATIVE_OWNER_REVISION {
+        if self.owner_revision != accepted_revision {
             return Err(VakOiError::Observation(
                 "general expression owner revision does not match the inspected AIKit syntax owner"
                     .into(),
@@ -725,6 +733,19 @@ pub fn reconstruct_observed_vak_path(
     registry: &VakRegistry,
     observation: VakExecutionObservationV1,
 ) -> Result<VakPathV1, VakOiError> {
+    reconstruct_observed_vak_path_for_revision(
+        registry,
+        observation,
+        AIKIT_OPERATIVE_OWNER_REVISION,
+    )
+}
+
+/// Same observed-path validation under an explicitly accepted syntax revision.
+pub fn reconstruct_observed_vak_path_for_revision(
+    registry: &VakRegistry,
+    observation: VakExecutionObservationV1,
+    accepted_syntax_revision: &str,
+) -> Result<VakPathV1, VakOiError> {
     if observation.standing != VakStanding::Observed {
         return Err(VakOiError::Observation(
             "path reconstruction requires OBSERVED execution evidence".into(),
@@ -746,7 +767,9 @@ pub fn reconstruct_observed_vak_path(
         ));
     }
     observation.action_profile.validate(registry)?;
-    observation.general_expression.validate()?;
+    observation
+        .general_expression
+        .validate_for_revision(accepted_syntax_revision)?;
     if observation.action_profile.binding_revision != observation.owner_revision {
         return Err(VakOiError::Observation(
             "Action profile revision must equal the observed native owner revision".into(),

@@ -18,6 +18,9 @@ use ql_core::{
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+mod native_path;
+pub use native_path::{NativePathCorrelation, NativePathInput};
+
 pub const CONTRACT: &str = "ql.vak-composition/v1";
 pub const MAX_DEPTH: usize = 64;
 pub const MAX_OBJECTS: usize = 4096;
@@ -290,6 +293,8 @@ pub struct FramedReading {
     pub basis: Vec<Basis>,
     pub source_returns: Vec<AnchorReturn>,
     pub transitions: Vec<Transition>,
+    pub language: Option<FullVakBinding>,
+    pub member_focus: Option<MemberFocus>,
     pub frame_pitch: u8,
     pub focus_interval: u8,
 }
@@ -324,6 +329,7 @@ pub struct Determination {
     pub language: Option<FullVakBinding>,
     pub sources: Vec<VakSourceProvenance>,
     pub contribution: Option<AgentContribution>,
+    pub native_paths: Vec<NativePathCorrelation>,
     pub context: Option<ReflectiveDerivation>,
     pub basis: Basis,
     pub standing: VakStanding,
@@ -727,6 +733,8 @@ impl VakComposition {
             basis: whole.basis.clone(),
             source_returns,
             transitions: whole.transitions.clone(),
+            language: whole.language.clone(),
+            member_focus: whole.member_focus.clone(),
             frame_pitch,
             focus_interval: directed_pitch_delta(frame_pitch, pitch),
         })
@@ -774,6 +782,7 @@ impl VakComposition {
                 sources,
                 contribution: request.contribution,
                 context: None,
+                native_paths: Vec::new(),
                 basis: request.basis,
                 standing: VakStanding::Derived,
             },
@@ -1268,8 +1277,16 @@ impl CPrimeContext {
         let outputs = vec![input.reference.clone()];
         let inputs = vec![input.determination.clone(), input.target_use.clone()];
         let basis = input.basis.clone();
+        let return_ref = input.reference.clone();
         graph.return_result(input)?;
         self.receipt(VakFamily::Cs, inputs, outputs, basis);
+        if let Some(returned) = graph.returns.get_mut(&return_ref) {
+            if let Some(context) = &mut returned.producing.context {
+                context
+                    .operations
+                    .push(self.operations.last().expect("CS receipt").clone());
+            }
+        }
         Ok(())
     }
 }
