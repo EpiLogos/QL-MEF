@@ -1,0 +1,913 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epilogos.dev/schemas/ql.m-ledger-v1.schema.json",
+  "title": "QL M ledger v1 (K3)",
+  "description": "Matrix rationale and exact K2 coordinate/relation provenance remain referenced, not replaced. An empty parity axis or omitted disposition is unassessed. Semantic, lifecycle and scoped-warrant constraints are enforced by ql_mef::m_ledger; checkout hashes and source completeness by scripts/m-ledger.py.",
+  "allOf": [
+    {
+      "$ref": "#/$defs/ledger"
+    }
+  ],
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ]
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "revision"
+      ]
+    },
+    "matrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "$ref": "#/$defs/artifact"
+        },
+        "rationale": {
+          "$ref": "#/$defs/artifact"
+        }
+      },
+      "required": [
+        "id",
+        "data",
+        "rationale"
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "unassessed",
+            "unimplemented",
+            "structural-index-only",
+            "partial",
+            "implemented",
+            "verified"
+          ]
+        },
+        "warrant": {
+          "enum": [
+            "unassessed",
+            "source-declared",
+            "inferred",
+            "implemented",
+            "tested",
+            "observed"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "warrant",
+        "evidence"
+      ]
+    },
+    "parity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from_peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "to_peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "status": {
+          "enum": [
+            "unassessed",
+            "different",
+            "partial",
+            "equivalent"
+          ]
+        },
+        "warrant": {
+          "enum": [
+            "unassessed",
+            "source-declared",
+            "inferred",
+            "implemented",
+            "tested",
+            "observed"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "from_peer",
+        "to_peer",
+        "status",
+        "warrant",
+        "evidence"
+      ]
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/claim"
+        },
+        "c": {
+          "$ref": "#/$defs/claim"
+        },
+        "rust": {
+          "$ref": "#/$defs/claim"
+        },
+        "cpp": {
+          "$ref": "#/$defs/claim"
+        },
+        "neo4j": {
+          "$ref": "#/$defs/claim"
+        },
+        "application": {
+          "$ref": "#/$defs/claim"
+        },
+        "instrument": {
+          "$ref": "#/$defs/claim"
+        }
+      },
+      "required": [
+        "source",
+        "c",
+        "rust",
+        "cpp",
+        "neo4j",
+        "application",
+        "instrument"
+      ]
+    },
+    "parityAxes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parity"
+          }
+        },
+        "coordinate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parity"
+          }
+        },
+        "relation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parity"
+          }
+        },
+        "operational": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parity"
+          }
+        },
+        "experiential": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parity"
+          }
+        }
+      },
+      "required": [
+        "source",
+        "coordinate",
+        "relation",
+        "operational",
+        "experiential"
+      ]
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "readiness": {
+          "$ref": "#/$defs/readiness"
+        },
+        "parity": {
+          "$ref": "#/$defs/parityAxes"
+        }
+      },
+      "required": [
+        "readiness",
+        "parity"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pointer": {
+          "type": "string",
+          "pattern": "^/capabilities/[0-9]+$"
+        }
+      },
+      "required": [
+        "matrix",
+        "pointer"
+      ]
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relation_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "standing": {
+          "enum": [
+            "semantic",
+            "research",
+            "structural-canon"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "relation_ref",
+        "standing",
+        "evidence"
+      ]
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assessment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "dispositions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "c": {
+              "enum": [
+                "unassessed",
+                "planned",
+                "unimplemented",
+                "bound"
+              ]
+            },
+            "rust": {
+              "enum": [
+                "unassessed",
+                "planned",
+                "unimplemented",
+                "bound"
+              ]
+            },
+            "cpp": {
+              "enum": [
+                "unassessed",
+                "planned",
+                "unimplemented",
+                "bound"
+              ]
+            },
+            "neo4j": {
+              "enum": [
+                "unassessed",
+                "planned",
+                "unimplemented",
+                "bound"
+              ]
+            }
+          }
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relation"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "scope",
+        "coordinates",
+        "source",
+        "assessment",
+        "bindings",
+        "dispositions",
+        "invariants",
+        "relations",
+        "dependencies"
+      ]
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "coordinate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "coordinate",
+        "parent",
+        "children",
+        "relations"
+      ]
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stratum": {
+          "enum": [
+            "c",
+            "rust",
+            "cpp",
+            "neo4j"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "structural-index",
+            "computational"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "coordinate-bound",
+            "cross-coordinate",
+            "infrastructural"
+          ]
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "structure": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/structure"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "stratum",
+        "kind",
+        "path",
+        "symbol",
+        "disposition",
+        "coordinates",
+        "relations",
+        "rationale",
+        "structure"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "source",
+            "implementation",
+            "test-receipt",
+            "observation",
+            "review"
+          ]
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifact"
+        },
+        "registry_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "strata": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "source",
+              "c",
+              "rust",
+              "cpp",
+              "neo4j",
+              "application",
+              "instrument"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "axes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "source",
+              "coordinate",
+              "relation",
+              "operational",
+              "experiential"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "result": {
+          "enum": [
+            "present",
+            "passed",
+            "failed",
+            "accepted",
+            "rejected"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "artifact",
+        "registry_revision",
+        "subjects",
+        "strata",
+        "axes",
+        "result"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "peer",
+        "reference",
+        "reason"
+      ]
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target_peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "change": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "target_peer",
+        "change",
+        "evidence"
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "$ref": "#/$defs/authority"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "authority",
+        "evidence"
+      ]
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "open",
+            "proposed",
+            "accepted",
+            "applied",
+            "rejected"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "state",
+        "reference"
+      ]
+    },
+    "discrepancy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "axis": {
+          "enum": [
+            "source",
+            "coordinate",
+            "relation",
+            "operational",
+            "experiential"
+          ]
+        },
+        "from_peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "to_peer": {
+          "enum": [
+            "bimba",
+            "c",
+            "rust",
+            "cpp"
+          ]
+        },
+        "state": {
+          "enum": [
+            "open",
+            "proposed",
+            "accepted",
+            "applied",
+            "rejected"
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_authority": {
+          "$ref": "#/$defs/authority"
+        },
+        "proposal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/resolution"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/decision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "promotion": {
+          "anyOf": [
+            {
+              "enum": [
+                "structural-canon"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "history": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/transition"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "subjects",
+        "axis",
+        "from_peer",
+        "to_peer",
+        "state",
+        "detail",
+        "current_authority",
+        "proposal",
+        "decision",
+        "promotion",
+        "history"
+      ]
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ql.m-ledger/v1"
+        },
+        "ledger_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registry": {
+          "$ref": "#/$defs/registry"
+        },
+        "matrices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/matrix"
+          }
+        },
+        "assessments": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/assessment"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/row"
+          }
+        },
+        "implementations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/implementation"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "discrepancies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discrepancy"
+          }
+        }
+      },
+      "required": [
+        "schema",
+        "ledger_revision",
+        "registry",
+        "matrices",
+        "assessments",
+        "rows",
+        "implementations",
+        "evidence",
+        "discrepancies"
+      ]
+    }
+  }
+}

@@ -1,0 +1,3947 @@
+{
+  "schema": "ql.m-ledger/v1",
+  "ledger_revision": "cffda5ec8eab3ece8db4625d0c7d4b1e3ec95eefb26bba045f855823d83d2cde",
+  "registry": {
+    "path": "fixtures/kernel/m-tree-v1.json",
+    "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480",
+    "revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4"
+  },
+  "matrices": [
+    {
+      "id": "deep-M1",
+      "data": {
+        "path": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+        "sha256": "917f3139eac19b2bf5fe6ec1243d26ae3dcf32ec09a703543b7ce0a086550594"
+      },
+      "rationale": {
+        "path": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+        "sha256": "c5ae4a925112ad651d1323242c4b5ecd0ec05da6dd225b0812cdf4fdd36581d8"
+      }
+    },
+    {
+      "id": "deep-M2",
+      "data": {
+        "path": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+        "sha256": "9fe93e554ecbd1748bb0e1a13f93c048dbc6c564e0f1778c0bde19cd18d40dbd"
+      },
+      "rationale": {
+        "path": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+        "sha256": "debc9de83563e6aa9bceeebce55b653677b2e7b9f393d62c5ce788bae52bb5f4"
+      }
+    },
+    {
+      "id": "deep-M3",
+      "data": {
+        "path": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+        "sha256": "1e242a7d9a19da22adbad67453c97fbdac59bf94c991ec51f5964026363846b1"
+      },
+      "rationale": {
+        "path": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+        "sha256": "423ae543d78c319fd326689e948a76769fd0ed8c8072bac697f67b3ca49258aa"
+      }
+    },
+    {
+      "id": "deep-M4",
+      "data": {
+        "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+        "sha256": "df46160e0e1137f4b2686b731139b10bfc225f25432fc8a20cdc6a78aaf632fe"
+      },
+      "rationale": {
+        "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+        "sha256": "6738fa80ec422f60546a18ead99107d4e95fce8238db29f8efcaffad618afaf8"
+      }
+    },
+    {
+      "id": "field-M0",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m0.json",
+        "sha256": "d3420d38c5186717446419391d28b8e19e91127595627e3e0befaaa3602facd1"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    },
+    {
+      "id": "field-M1",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m1.json",
+        "sha256": "918c13b1839544c8a28f13043065907fdd5631118848b703e201e607827dd9e0"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    },
+    {
+      "id": "field-M2",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m2.json",
+        "sha256": "0beb7de467c0c8ac10667e61348c77d20f061ead2b487d4614be40a9de660c93"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    },
+    {
+      "id": "field-M3",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m3.json",
+        "sha256": "531cc37c3227b59454c3100fecfced9b66261654c581ed759cf91149530214a2"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    },
+    {
+      "id": "field-M4",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m4.json",
+        "sha256": "c48e6537406455bf3d1cb12fe12df2184b0a7db6dc02c24b22a26ba9ec09ddee"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    },
+    {
+      "id": "field-M5",
+      "data": {
+        "path": "docs/integrations/epi-logos/epi-m-capability-field-m5.json",
+        "sha256": "c09afe730b68e2b18330e2249c993a82f5f865e99384df105c920bdb44567030"
+      },
+      "rationale": {
+        "path": "docs/integrations/epi-logos/EPI-M-CAPABILITY-FIELD.md",
+        "sha256": "964ffd4b836af87a22572119e3f0ee655797ef8d9501c6d88e2e04be7886a38f"
+      }
+    }
+  ],
+  "assessments": {
+    "unassessed": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "rust": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [],
+        "relation": [],
+        "operational": [],
+        "experiential": []
+      }
+    },
+    "k2-index": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "structural-index-only",
+          "warrant": "source-declared",
+          "evidence": [
+            "k2-index-declaration"
+          ]
+        },
+        "rust": {
+          "status": "structural-index-only",
+          "warrant": "source-declared",
+          "evidence": [
+            "k2-index-declaration"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [],
+        "relation": [],
+        "operational": [],
+        "experiential": []
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "deep-M1:M1-C01",
+      "role": "formal self-identity",
+      "scope": "M1",
+      "coordinates": [
+        "M1-0",
+        "M1-1"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C02",
+      "role": "self-inversion and source-traceable reflection",
+      "scope": "M1",
+      "coordinates": [
+        "M1-1",
+        "M2"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C03",
+      "role": "self-difference",
+      "scope": "M1",
+      "coordinates": [
+        "M1-0/1"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C04",
+      "role": "Ananda harmonic field",
+      "scope": "M1",
+      "coordinates": [
+        "M1-2",
+        "M1-3",
+        "M1-5"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C05",
+      "role": "bi-phasal Spanda generation",
+      "scope": "M1",
+      "coordinates": [
+        "M1-3",
+        "M1-4"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C06",
+      "role": "First/Second/Third Spanda multi-read",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C07",
+      "role": "QL positional and recursive grammar",
+      "scope": "M1",
+      "coordinates": [
+        "M1-4"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/6"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C08",
+      "role": "complement and conjugacy",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/7"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C09",
+      "role": "state and relation fields",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/8"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C10",
+      "role": "determinate oscillation",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/9"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C11",
+      "role": "Context Frame relational activation",
+      "scope": "M1",
+      "coordinates": [
+        "M1-4"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/10"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C12",
+      "role": "MEF refraction",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/11"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C13",
+      "role": "QL musical derivation",
+      "scope": "M1",
+      "coordinates": [
+        "M1-2",
+        "M1-3",
+        "M1-4",
+        "M1-5",
+        "M2"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/12"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C14",
+      "role": "topological recognition",
+      "scope": "M1",
+      "coordinates": [
+        "M1-5"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/13"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C15",
+      "role": "TDA / invariant shape of activity",
+      "scope": "M1",
+      "coordinates": [
+        "M1-5"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/14"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C16",
+      "role": "playable matheme",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/15"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C17",
+      "role": "determinate Agency refraction",
+      "scope": "M1",
+      "coordinates": [
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/16"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C18",
+      "role": "operative relational persistence",
+      "scope": "M1",
+      "coordinates": [
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/17"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C19",
+      "role": "formal return and theory revision",
+      "scope": "M1",
+      "coordinates": [
+        "M1",
+        "M0",
+        "M5"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/18"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M1:M1-C20",
+      "role": "physical-pole geometric carrier / transduction grammar",
+      "scope": "M1",
+      "coordinates": [
+        "M1-2/3/4/5",
+        "M2",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M1",
+        "pointer": "/capabilities/19"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C01",
+      "role": "X# imaginal prefiguration",
+      "scope": "M2",
+      "coordinates": [
+        "M0-4",
+        "M2"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C02",
+      "role": "pentadic/phi self-proportion",
+      "scope": "M2",
+      "coordinates": [
+        "M2-0",
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C03",
+      "role": "spinorial 36->72 differentiation",
+      "scope": "M2",
+      "coordinates": [
+        "M2-0",
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C04",
+      "role": "12x6 MEF",
+      "scope": "M2",
+      "coordinates": [
+        "M2-1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C05",
+      "role": "Vimarsa active reading",
+      "scope": "M2",
+      "coordinates": [
+        "M2-1",
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C06",
+      "role": "tattvic nested internality",
+      "scope": "M2",
+      "coordinates": [
+        "M2-2",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C07",
+      "role": "elemental throughline",
+      "scope": "M2",
+      "coordinates": [
+        "M2-2",
+        "M2-3",
+        "M2-4",
+        "M2-5",
+        "M3",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/6"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C08",
+      "role": "decanic situated face",
+      "scope": "M2",
+      "coordinates": [
+        "M2-3",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/7"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C09",
+      "role": "Asma power field",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4.0"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/8"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C10",
+      "role": "Matrika/Malini mantra field",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4.1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/9"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C11",
+      "role": "spiritual maqamat",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4.2"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/10"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C12",
+      "role": "musical maqamat",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4.3",
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/11"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C13",
+      "role": "Shem 72-name field",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4.5"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/12"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C14",
+      "role": "symbolic-musical transduction",
+      "scope": "M2",
+      "coordinates": [
+        "M2-4",
+        "M1",
+        "M5"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/13"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C15",
+      "role": "planetary shakti field",
+      "scope": "M2",
+      "coordinates": [
+        "M2-5",
+        "M2-3",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/14"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C16",
+      "role": "solar/chakral embodied reception",
+      "scope": "M2",
+      "coordinates": [
+        "M2-5",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/15"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C17",
+      "role": "9:8 epogdoon / DET handoff",
+      "scope": "M2",
+      "coordinates": [
+        "M2-5",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/16"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C18",
+      "role": "bell-modal resonant body",
+      "scope": "M2",
+      "coordinates": [
+        "M1"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/17"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C19",
+      "role": "Cosmic 1-2-3 composition",
+      "scope": "M2",
+      "coordinates": [
+        "M1",
+        "M2",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/18"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C20",
+      "role": "Nara world-conditioning",
+      "scope": "M2",
+      "coordinates": [
+        "M2-2",
+        "M2-3",
+        "M2-4",
+        "M2-5",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/19"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C21",
+      "role": "Paraśakti standing product reflection",
+      "scope": "M2",
+      "coordinates": [
+        "M2"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/20"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C22",
+      "role": "Pleroma operative distribution",
+      "scope": "M2",
+      "coordinates": [
+        "M2"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/21"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C23",
+      "role": "pentadic elemental aperture",
+      "scope": "M2",
+      "coordinates": [
+        "M2-0",
+        "M2-3"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/22"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C24",
+      "role": "element-preserving 18->16 epogdoon transduction",
+      "scope": "M2",
+      "coordinates": [
+        "M2-5",
+        "M3-0",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/23"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M2:M2-C25",
+      "role": "vibrational templateure / modal form-potential",
+      "scope": "M2",
+      "coordinates": [
+        "M2-0",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M2",
+        "pointer": "/capabilities/24"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C01",
+      "role": "quaternionic/cymatic reception",
+      "scope": "M3",
+      "coordinates": [
+        "M3-0"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C02",
+      "role": "72->64 DET / epogdoon transduction",
+      "scope": "M3",
+      "coordinates": [
+        "M3-0"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C03",
+      "role": "elemental/L2' -> nucleotide transcription",
+      "scope": "M3",
+      "coordinates": [
+        "M3-0",
+        "M3-2"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C04",
+      "role": "four-state nucleotide codec",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C05",
+      "role": "64-address codon/hexagram identity",
+      "scope": "M3",
+      "coordinates": [
+        "M3-1",
+        "M3-2"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C06",
+      "role": "I-Ching 384 transformation graph",
+      "scope": "M3",
+      "coordinates": [
+        "M3-1"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C07",
+      "role": "trigram/complement/nuclear operations",
+      "scope": "M3",
+      "coordinates": [
+        "M3-1"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/6"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C08",
+      "role": "16 dinucleotide S/D field",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/7"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C09",
+      "role": "three matrix/quaternion-axis field",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2",
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/8"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C10",
+      "role": "four-charge codon quaternion",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2",
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/9"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C11",
+      "role": "360 integral closure",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2",
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/10"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C12",
+      "role": "codon class/non-duality",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/11"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C13",
+      "role": "472-state rotational surface",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/12"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C14",
+      "role": "environment-conditioned rotation",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/13"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C15",
+      "role": "Tarot orientation refinement",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3",
+        "M3-4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/14"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C16",
+      "role": "resonance/admissibility field",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/15"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C17",
+      "role": "DNA->RNA transcription",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3",
+        "M3-4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/16"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C18",
+      "role": "amino/protein/backbone projection",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3",
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/17"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C19",
+      "role": "Minor Arcana exact cover",
+      "scope": "M3",
+      "coordinates": [
+        "M3-4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/18"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C20",
+      "role": "Major Arcana/governance layer",
+      "scope": "M3",
+      "coordinates": [
+        "M3-4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/19"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C21",
+      "role": "narrative whole transcription",
+      "scope": "M3",
+      "coordinates": [
+        "M3-4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/20"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C22",
+      "role": "Nara Tarot session trajectory",
+      "scope": "M3",
+      "coordinates": [
+        "M3-4",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/21"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C23",
+      "role": "Nara I-Ching transformation trace",
+      "scope": "M3",
+      "coordinates": [
+        "M3-1",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/22"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C24",
+      "role": "360-degree world-clock",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/23"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C25",
+      "role": "720-degree SU2 double-cover",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/24"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C26",
+      "role": "24-fold backbone",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/25"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C27",
+      "role": "16 static lens apertures",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/26"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C28",
+      "role": "Fibonacci/Pisano pre-lensic ground",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5",
+        "M2-0"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/27"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C29",
+      "role": "K2 x T2_Mahamaya world-clock",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/28"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C30",
+      "role": "recursive M4->M3 situated inscription",
+      "scope": "M3",
+      "coordinates": [
+        "M3",
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/29"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C31",
+      "role": "entity quaternion -> primary address",
+      "scope": "M3",
+      "coordinates": [
+        "M3-0",
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/30"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C32",
+      "role": "symbolic-protein/ORF sequence",
+      "scope": "M3",
+      "coordinates": [
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/31"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C33",
+      "role": "Clifford/Pauli pattern-weave",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2",
+        "M3-3",
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/32"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C34",
+      "role": "137/alpha psychoid bridge",
+      "scope": "M3",
+      "coordinates": [
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/33"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C35",
+      "role": "constitutional M/S/S'/M' refraction",
+      "scope": "M3",
+      "coordinates": [
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/34"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C36",
+      "role": "element-preserving 4x18 -> 4x16 epogdoon transduction",
+      "scope": "M3",
+      "coordinates": [
+        "M3-0"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/35"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C37",
+      "role": "six-bit fold/rupa grammar",
+      "scope": "M3",
+      "coordinates": [
+        "M3-1",
+        "M3-2"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/36"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C38",
+      "role": "matrix-axis spatial form transformation",
+      "scope": "M3",
+      "coordinates": [
+        "M3-2",
+        "M3-3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/37"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C39",
+      "role": "16+1 fold-aperture world-clock",
+      "scope": "M3",
+      "coordinates": [
+        "M3-5"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/38"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M3:M3-C40",
+      "role": "nama-to-rupa modal inscription",
+      "scope": "M3",
+      "coordinates": [
+        "M2-4",
+        "M2-5",
+        "M3"
+      ],
+      "source": {
+        "matrix": "deep-M3",
+        "pointer": "/capabilities/39"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C01",
+      "role": "Personal Dialogical Interface / local cosmic instantiation",
+      "scope": "M4",
+      "coordinates": [
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C02",
+      "role": "Objective internality / subjective-immediacy relation",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C03",
+      "role": "Cosmic 1/2/3 personal nesting",
+      "scope": "M4",
+      "coordinates": [
+        "M4",
+        "M4.4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C04",
+      "role": "Identity Matrix integration",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C05",
+      "role": "Birthdate Encoding",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C06",
+      "role": "Astrological Chart",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C07",
+      "role": "Jungian Assessment",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/6"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C08",
+      "role": "Gene Keys Profile",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/7"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C09",
+      "role": "Human Design Profile",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/8"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C10",
+      "role": "Archetypal Quintessence",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/9"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C11",
+      "role": "Canonical elemental throughline",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0",
+        "M4.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/10"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C12",
+      "role": "Elemental Ground",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/11"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C13",
+      "role": "Energy-Body Architecture",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/12"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C14",
+      "role": "Materia & Reagents",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/13"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C15",
+      "role": "Operations & Techne",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/14"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C16",
+      "role": "Temporal Astrological Intelligence",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/15"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C17",
+      "role": "Safety & Feedback",
+      "scope": "M4",
+      "coordinates": [
+        "M4.1.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/16"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C18",
+      "role": "Common Symbol Substrate",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/17"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C19",
+      "role": "Tarot Engines",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/18"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C20",
+      "role": "I-Ching Integration",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/19"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C21",
+      "role": "Casting & Randomness (Sacred Portal)",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/20"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C22",
+      "role": "Interpretation Layer",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/21"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C23",
+      "role": "Divinatory Hygiene & Pedagogy",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/22"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C24",
+      "role": "Oracle invocation of full cosmic 1/2/3",
+      "scope": "M4",
+      "coordinates": [
+        "M4.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/23"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C25",
+      "role": "Cycle Engine",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/24"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C26",
+      "role": "Operational Grammar (Alchemy)",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/25"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C27",
+      "role": "Dialogical & Inquiry Containers",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/26"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C28",
+      "role": "Control/Chaos & Safety",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/27"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C29",
+      "role": "Protocol Library (Storey Packets)",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/28"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C30",
+      "role": "24-stroke doubled transformation traversal",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/29"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C31",
+      "role": "Telemetry & Phase History",
+      "scope": "M4",
+      "coordinates": [
+        "M4.3.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/30"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C32",
+      "role": "Context & Lenses conduit",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/31"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C33",
+      "role": "Gebser lens",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/32"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C34",
+      "role": "Ontological lens",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/33"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C35",
+      "role": "Epistemological lens",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/34"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C36",
+      "role": "Jungian Depth field",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/35"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C37",
+      "role": "Archetypal Foundation",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/36"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C38",
+      "role": "Psychological Typology",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/37"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C39",
+      "role": "L1′ ↔ Psychological Typology refraction",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/38"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C40",
+      "role": "Psychodynamics & Synchronicity",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/39"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C41",
+      "role": "Alchemical Transformation (Jungian)",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/40"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C42",
+      "role": "Self-Expression / Telos",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/41"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C43",
+      "role": "Transcendent Integration / Gnosis",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.3-5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/42"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C44",
+      "role": "Phenomenological field",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/43"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C45",
+      "role": "Pre-Categorical",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/44"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C46",
+      "role": "Primordial Differentiation",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/45"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C47",
+      "role": "Temporal Sedimentation",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/46"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C48",
+      "role": "Standard/prime = day/night = prospective/retrospective conjugacy",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/47"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C49",
+      "role": "Symbolic Body",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/48"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C50",
+      "role": "Personal Pratibimba",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/49"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C51",
+      "role": "Pratyabhijna",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/50"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C52",
+      "role": "Vāma-Śakti recognitive mediation",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/51"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C53",
+      "role": "Trika/Kashmir Śaivism lens",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/52"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C54",
+      "role": "Curriculum Map",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.0"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/53"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C55",
+      "role": "Core Epi-Logos Voice",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.1"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/54"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C56",
+      "role": "Method Transparency Lab",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.2"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/55"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C57",
+      "role": "Integration Lab",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.3"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/56"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C58",
+      "role": "Pedagogy Lab",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/57"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C59",
+      "role": "Logos Cycle Engine",
+      "scope": "M4",
+      "coordinates": [
+        "M4.5.5"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/58"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C60",
+      "role": "Self-transcendental self-knowing UX",
+      "scope": "M4",
+      "coordinates": [
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/59"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C61",
+      "role": "Constitutional M/S/S′/M′ refraction",
+      "scope": "M4",
+      "coordinates": [
+        "M4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/60"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C62",
+      "role": "elemental quaternion carrier continuity",
+      "scope": "M4",
+      "coordinates": [
+        "M2",
+        "M3",
+        "M4.0",
+        "M4.1",
+        "M4.4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/61"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C63",
+      "role": "situated archetypal-form participation / living Pratibimba",
+      "scope": "M4",
+      "coordinates": [
+        "M4.4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/62"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "deep-M4:M4-C64",
+      "role": "identity-hash / archetypal-address / quaternion role separation",
+      "scope": "M4",
+      "coordinates": [
+        "M4.0",
+        "M4.4.4.4"
+      ],
+      "source": {
+        "matrix": "deep-M4",
+        "pointer": "/capabilities/63"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-LANGUAGE",
+      "role": "Render source-provenanced Anuttara language and canonical absence states",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-QL-STRUCTURE",
+      "role": "Expose family/mirror/lens/inversion pointer law and position character",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-RELATIONS",
+      "role": "Inspect provenance-typed Bimba relation field",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-TIME-COMMUNITY",
+      "role": "Overlay graph/community relations and active collective NOW",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-PERSONAL-ROUTE",
+      "role": "Route a public coordinate into eligible protected Nara context",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M0:M0P-PEDAGOGY-ROUTE",
+      "role": "Route a canonical coordinate into Epii teaching/review context",
+      "scope": "M0",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M0",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-CANONICAL-SOURCE",
+      "role": "Expose immutable harmonic, matrix and Hopf source facts",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-INSTANCE",
+      "role": "Hold bounded session walk, coordinate and lens/mode state",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-HARMONIC-ENGINE",
+      "role": "Render Ananda matrix families and profile-driven harmonic state",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-SPANDA",
+      "role": "Enact profile/tick-driven phase, pulsation and inversion",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-QL-FLOWERING",
+      "role": "Walk positions/relations and compose lens-as-scale traversal",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M1:M1P-TOPOLOGY",
+      "role": "Render played torus, Hopf and 4pi topology recognition",
+      "scope": "M1",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M1",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-PROFILE-SOURCE",
+      "role": "Validate and serve 72-space addresses and correspondential descriptors",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-VIMARSHA-AUDIO",
+      "role": "Read Prakāśa profile through Vimarśa/MEF and produce shared 8+4 audio bus",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-ELEMENTAL-MEDIUM",
+      "role": "Resolve tattva/element/chakra/media response with provenance",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-DECANIC-FACE",
+      "role": "Resolve decan/zodiac/planet/body-zone light-shadow face",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-SONIC-ARENA",
+      "role": "Make sacred-sonic/maqam/mantra/planetary systems playable",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M2:M2P-DET-GATE",
+      "role": "Project 72-space evidence into M3-ready 64-address evidence",
+      "scope": "M2",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M2",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-CLOCK",
+      "role": "Render shared harmonic clock without a private renderer clock",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-TRANSDUCTION",
+      "role": "Display M2 72-to-DET-to-64 reception provenance",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-SYMBOLIC-CODEC",
+      "role": "Render canonical codon/I-Ching/Tarot/line-change/amino-acid facts",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-ROTATION",
+      "role": "Project 84 lens/mode states into 472 codon/rotation landscape",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-MEASUREMENT-INSPECTOR",
+      "role": "Expose disciplined symbolic/physics coupling-flow explanation/provenance",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M3:M3P-WORLD-CLOCK",
+      "role": "Provide one Earth-relative shared clock/cosmos state for human and Agent surfaces",
+      "scope": "M3",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M3",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-IDENTITY",
+      "role": "Protected personal identity and personal quaternion/resonance state",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-DAY-EPISODE",
+      "role": "Canonical DAY container with NOW-stamped lived artifacts",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-ORACLE",
+      "role": "Bounded oracle/transcription interpretation over M3 facts and current cosmic state",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-ACTIVITY",
+      "role": "Trajectory/activity evidence and decayed perturbation",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-EPISODIC",
+      "role": "Protected temporal episodic retrieval through privacy classes",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M4:M4P-PROMOTION-SEAM",
+      "role": "Produce identity-augment proposals and governed sendoff to M5 review",
+      "scope": "M4",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M4",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-LIBRARY",
+      "role": "Bimba pedagogy, Gnosis/RAG and knowledge retrieval across distinct namespaces",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/0"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-CANON",
+      "role": "Philosophy/canon authoring and review with safe mutation",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/1"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-BACKEND-STUDIO",
+      "role": "Inspect and operate Epi backend through governed tasks/tests/evidence",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/2"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-REFLECTED-APP",
+      "role": "Reflected application/workspace surface for M-prime capabilities",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/3"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-CONTROL-ROOM",
+      "role": "Governed Agent execution, capability selection, evidence and review handoff",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/4"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "field-M5:M5P-ATELIER",
+      "role": "Logos/etymological archaeology, source-following, crystallisation and return",
+      "scope": "M5",
+      "coordinates": [],
+      "source": {
+        "matrix": "field-M5",
+        "pointer": "/capabilities/5"
+      },
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M",
+      "role": "recursive M structural index",
+      "scope": "M",
+      "coordinates": [
+        "M"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M",
+        "rust:ql.m-index:M"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M0",
+      "role": "recursive M structural index",
+      "scope": "#0",
+      "coordinates": [
+        "#0"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M0",
+        "rust:ql.m-index:M0"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M1",
+      "role": "recursive M structural index",
+      "scope": "#1",
+      "coordinates": [
+        "#1"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M1",
+        "rust:ql.m-index:M1"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M2",
+      "role": "recursive M structural index",
+      "scope": "#2",
+      "coordinates": [
+        "#2"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M2",
+        "rust:ql.m-index:M2"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M3",
+      "role": "recursive M structural index",
+      "scope": "#3",
+      "coordinates": [
+        "#3"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M3",
+        "rust:ql.m-index:M3"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M4",
+      "role": "recursive M structural index",
+      "scope": "#4",
+      "coordinates": [
+        "#4"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M4",
+        "rust:ql.m-index:M4"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    },
+    {
+      "id": "ql.m-index:M5",
+      "role": "recursive M structural index",
+      "scope": "#5",
+      "coordinates": [
+        "#5"
+      ],
+      "source": null,
+      "assessment": "k2-index",
+      "bindings": [
+        "c:ql.m-index:M5",
+        "rust:ql.m-index:M5"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "index-is-not-computational-readiness"
+      ],
+      "relations": [],
+      "dependencies": []
+    }
+  ],
+  "implementations": [
+    {
+      "id": "c:ql.m-index:M",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "M"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "M"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M0",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#0"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M0",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#0"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M1",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M1",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M2",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M2",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M3",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#3"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M3",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#3"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M4",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M4",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "c:ql.m-index:M5",
+      "stratum": "c",
+      "kind": "structural-index",
+      "path": "c/src/m_tree.c",
+      "symbol": "ql_m_resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#5"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    },
+    {
+      "id": "rust:ql.m-index:M5",
+      "stratum": "rust",
+      "kind": "structural-index",
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "symbol": "resolve",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#5"
+      ],
+      "relations": [],
+      "rationale": "K2 aggregate index only; no computational-body claim.",
+      "structure": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "k2-index-declaration",
+      "kind": "source",
+      "artifact": {
+        "path": "fixtures/kernel/m-tree-v1.json",
+        "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480"
+      },
+      "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+      "subjects": [
+        "ql.m-index:M",
+        "ql.m-index:M0",
+        "ql.m-index:M1",
+        "ql.m-index:M2",
+        "ql.m-index:M3",
+        "ql.m-index:M4",
+        "ql.m-index:M5"
+      ],
+      "strata": [
+        "c",
+        "rust"
+      ],
+      "axes": [
+        "coordinate",
+        "relation"
+      ],
+      "result": "present"
+    }
+  ],
+  "discrepancies": [
+    {
+      "id": "k2-parent-0",
+      "subjects": [
+        "#2-4"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "open",
+      "detail": "{\"coordinate\": \"#2-4\", \"source_parent_refs\": [\"#2\", \"#2-4.5\"], \"standing\": \"non-tree-parent-assertion-retained-as-source-relation\", \"tree_parent\": \"#2\"}",
+      "current_authority": {
+        "peer": "c",
+        "reference": "docs/KERNEL-RECURSIVE-M-REGISTRY.md",
+        "reason": "K2 containment rule governs the executable tree; all Bimba parent assertions remain retained, not erased or promoted."
+      },
+      "proposal": null,
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "docs/KERNEL-RECURSIVE-M-REGISTRY.md"
+        }
+      ]
+    }
+  ]
+}

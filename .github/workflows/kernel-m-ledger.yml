@@ -1,0 +1,67 @@
+name: M ledger / matrix lock
+
+on:
+  pull_request:
+    paths: ["c/**", "crates/**", "fixtures/kernel/**", "scripts/**", "docs/origami work/**", "docs/integrations/epi-logos/**", "docs/kernel-rebuild/**", "docs/KERNEL-M-LEDGER-MATRIX-LOCK.md", ".github/workflows/kernel-m-ledger.yml"]
+  push:
+    branches: [main]
+    paths: ["c/**", "crates/**", "fixtures/kernel/**", "scripts/**", "docs/origami work/**", "docs/integrations/epi-logos/**", "docs/kernel-rebuild/**", "docs/KERNEL-M-LEDGER-MATRIX-LOCK.md", ".github/workflows/kernel-m-ledger.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - run: python3 -m pip install jsonschema==4.25.1
+      - name: Source, rationale, schema and evidence locks
+        run: |
+          set -euo pipefail
+          mkdir -p target/m-ledger
+          git rev-parse HEAD > target/m-ledger/source-revision.txt
+          python3 scripts/m-ledger.py check | tee target/m-ledger/locks.txt
+          python3 scripts/check-capability-matrix-registry.py
+          python3 scripts/m-ledger.py refresh
+          git diff --exit-code
+      - name: Source and actual native-observer mutation regressions
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v 2>&1 | tee target/m-ledger/python-tests.txt
+      - name: Native ledger, lifecycle and CLI regressions
+        run: |
+          set -euo pipefail
+          cargo test -p ql-mef --test m_ledger --locked 2>&1 | tee target/m-ledger/rust-tests.txt
+          cargo test -p ql-cli --test m_ledger_cli --locked 2>&1 | tee target/m-ledger/cli-tests.txt
+      - name: Actual C and Rust coordinate/relation observation
+        run: |
+          set -euo pipefail
+          cc -std=c11 -O1 -Wall -Wextra -Werror -pedantic -Ic/include migration/epi-kernel/k2-m-tree-probe.c c/src/m_tree.c -o target/m-ledger/native-probe
+          target/m-ledger/native-probe > target/m-ledger/native.jsonl 2> target/m-ledger/native-checks.txt
+          cargo test -p ql-mef --test native_m_tree --locked 2>&1 | tee target/m-ledger/registry-parity-tests.txt
+          python3 scripts/m-ledger.py observe --peer c --input target/m-ledger/native.jsonl > target/m-ledger/c-observation.json
+          python3 scripts/m-ledger.py observe --peer rust --input target/m-tree/c-rust-parity.jsonl > target/m-ledger/rust-observation.json
+          cmp target/m-ledger/native.jsonl target/m-tree/c-rust-parity.jsonl
+      - name: Query the real requested verticals and exact compound coordinate
+        run: |
+          set -euo pipefail
+          cargo run -q -p ql-cli --locked -- kernel validate-ledger --json > target/m-ledger/validation.json
+          for scope in M1 M2 M3; do
+            cargo run -q -p ql-cli --locked -- kernel coverage "$scope" --json > "target/m-ledger/$scope-coverage.json"
+          done
+          cargo run -q -p ql-cli --locked -- kernel ledger '#0-4.0/1/2' --json > target/m-ledger/compound-coordinate.json
+          git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m-ledger-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/m-ledger/
+          retention-days: 14
+          if-no-files-found: error
