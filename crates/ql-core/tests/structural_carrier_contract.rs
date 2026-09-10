@@ -1,8 +1,8 @@
 use ql_core::{
     AnchorReturn, CallerProvenance, CarrierError, ConstellationGrain, GroundKind, QlFace,
     QlPosition, RELATION_FIELD_COMPOSITION_OPERATOR_REF, RelationFieldComposition,
-    SIX_BY_SIX_SHAPE_REF, STRUCTURAL_CARRIER_CONTRACT_VERSION, ShapeBinding,
-    ShapeRelationBinding, StructuralConstellation, StructuralParticipation, WHOLE_ANCHOR_SYMBOL,
+    SIX_BY_SIX_SHAPE_REF, STRUCTURAL_CARRIER_CONTRACT_VERSION, ShapeBinding, ShapeRelationBinding,
+    StructuralConstellation, StructuralParticipation, WHOLE_ANCHOR_SYMBOL,
 };
 
 fn p(value: u8) -> QlPosition {
