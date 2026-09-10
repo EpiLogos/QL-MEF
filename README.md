@@ -6,6 +6,26 @@ This repository is the implementation home for the standalone executable QL/MEF 
 
 That executable boundary matters, but it is not the whole meaning of the project.
 
+## QL Kernel: the current architectural entry
+
+**QL Kernel** names the whole canonical object, not merely `ql-core`. Begin with [QL Kernel — Vāk, C′ and Context-Frame reconciliation](docs/QL-VAK-KERNEL-RECONCILIATION.md), the current #123 architecture carrier:
+
+```text
+QL Kernel
+  L5-0  Syntax
+  L5-1  Root = psychoids + coordinate-family heads
+  L5-2  Harmonics — Context Frames already active here
+  L5-3  Geometry
+  L5-4  Meta Epistemic Framework
+  L5-5  Techne
+```
+
+L5 is the concrescence of the existing **L0 / L0′ / L5′ / L5 articulation square**, not a speech subsystem around another kernel. These offices project onto existing MEF refs without renaming source Anuttara, Para Vāk or their sublens labels. Context-Frame identity propagates from harmonic determination into Geometry, Meta Epistemic Framework and generative use; complete scoped runtime propagation remains an explicitly tracked implementation frontier.
+
+The reconciliation distinguishes the full 109-node Anuttara language, AIKit's already-owned general Search/Resolve grammar, C′ reflective context, Ta-Onta S′ world composition and native Factory orchestration. [The accepted #83 receipt](docs/integrations/epi-logos/EPI-VAK-ACCEPTANCE-RECEIPT.md) governs the returned Vāk implementation; older Vāk runtime/Wayfinder paragraphs calling that work pending are historical status, not the current gate. The follow-on work is QL-MEF #138, AIKit #267, Factory #217 and late installed-suite O:I #216, not a new grammar in each consumer.
+
+Development Field #122 has separately landed its [portable structural carrier](docs/QL-STRUCTURAL-CARRIER-CONTRACT-V1.md) in PR #137, main commit `10fb4bade8ad6a6df67f80cb6ef913592ac654be`. `ShapeBinding`, `RelationFieldComposition` and `RelationFieldDerivation` supply attributable form, non-fabricating addresses and complete Return provenance. The deeper C′ work must reuse that accepted seam rather than anticipating or replacing it with another ontology.
+
 ## Research provenance
 
 Quaternal Logic arises from a longer Epi-Logos inquiry into mind and reality whose sources include **depth psychology, Eastern metaphysics, recursive/archetypal relational work, phenomenology, process thought and related traditions**.
@@ -156,17 +176,15 @@ The move to this repository does not merge QL/MEF with the QL Loop Runtime. Runt
 
 ## Foundational executable kernel
 
-The current executable centre is the native holographic QL kernel shared across the Rust and source-proven C bodies. Its compact human reference is [`docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md`](docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md), paired with `fixtures/kernel/holographic-kernel-contract-v1.tsv`. The same kernel now exposes the versioned `ql.shape@1.0.0` contract in `fixtures/kernel/ql-shape-contract-v1.json`: positive partial/developed wholes, A/B/C pair provenance, D1→D3 conjugate completion, D3 `4×4`, direct/conjugate `6×6`, `6 / 6′ → 6+6′` relational-generation sites and Return through the `0/1` anchor.
+The current executable formal field is shared across the Rust and source-proven C bodies. Its compact human reference is [`docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md`](docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md), paired with `fixtures/kernel/holographic-kernel-contract-v1.tsv`. The same kernel now exposes the versioned `ql.shape@1.0.0` contract in `fixtures/kernel/ql-shape-contract-v1.json`: positive partial/developed wholes, A/B/C pair provenance, D1→D3 conjugate completion, D3 `4×4`, direct/conjugate `6×6`, `6 / 6′ → 6+6′` relational-generation sites and Return through the `0/1` anchor.
 
 Vāk, MEF, Context Frames, SemanticWiki clients and richer harmonic development all operate or refract this same kernel field; they do not establish parallel shape vocabularies.
 
 ## Current development state
 
-The repository is a Rust product. The intended implementation modules include `ql-core`, `ql-mef`, `ql-semantic`, `ql-service`, adapters and fixtures as warranted by the accepted development programme.
+The current Rust product exposes `ql-core`, `ql-mef`, provider/service and CLI contracts, with adapters and fixtures as warranted by the accepted development programme. Native C is also an active structural implementation stratum: #135 and its #124–#134 ladder govern the coordinate-complete C/Rust/C++/Bimba rebuild. The frozen vendored C specimen is historical/parity evidence; that does not make the native C centre permanently historical.
 
-Current `main` and accepted evidence determine present implementation truth.
-
-Several substantial QW/Q5/Q6 and Epi/O:I relation-map PRs are currently stacked or draft. They contain important executable and research evidence, but their draft status and branch ancestry are part of their provenance. They must not be described as accepted `main` capability merely because their own CI is green.
+Current `main` and accepted evidence determine present implementation truth. Accepted #83/#142 Vāk/Search work is inherited; the deeper C′ scope and full-suite integration gates are named in the reconciliation above. Unmerged, stacked or draft work remains branch-qualified evidence, not accepted capability merely because its own CI is green.
 
 In particular:
 
@@ -190,6 +208,8 @@ client adapters
         ↓
 evidence-led runtime and deeper-operator integration
 ```
+
+This is a promotion/dependency sequence, not a second ontology or a claim that Context Frames first arise at MEF. The faithful L5 projection above governs the whole relation.
 
 The order is epistemic as well as technical: establish what can be stated deterministically, then expose provider seams for interpretations that require more than the structural kernel, then let real clients and experiments pressure the distinction.
 

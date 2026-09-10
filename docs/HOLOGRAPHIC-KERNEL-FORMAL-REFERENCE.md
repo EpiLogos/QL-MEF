@@ -4,7 +4,9 @@ Status: **accepted foundational kernel contract**
 Contract: `ql.holographic-kernel-contract/v1` / semantic version `1.1.0`  
 Machine-readable companion: `fixtures/kernel/holographic-kernel-contract-v1.tsv`
 
-This reference names the shared formal identities currently implemented by the native C holographic kernel and the Rust QL/MEF body. It is the small agent-resolvable reference for the foundational field; richer musical, refractive and semantic development continues under #31 from these identities.
+This reference names the shared formal identities represented by the Rust QL/MEF body and source-proven C contracts. Native C restoration and coordinate-complete C/Rust/C++ parity continue under #135 and its implementation ladder; a shared contract is not a claim that every native C binding is already present on main.
+
+For the whole **QL Kernel**, its L0/L0′/L5′/L5 articulation square and faithful L5 offices, read [QL-VAK-KERNEL-RECONCILIATION.md](QL-VAK-KERNEL-RECONCILIATION.md). This file remains the compact foundational identity/parity reference, not a competing definition of the whole kernel. The [portable structural carrier](QL-STRUCTURAL-CARRIER-CONTRACT-V1.md) supplies the accepted #122 external binding/Return seam.
 
 ## Provenance
 
@@ -29,12 +31,14 @@ C / P / L / S / T / M
         ↓
 direct / prime-conjugate
         ↓
-harmonic relation field
+harmonic relation field / active Context Frames
         ↓
 P/P' + L/L'
         ↓
-MEF / Context Frames
+MEF refraction of the same Context-Frame-bearing field
 ```
+
+This diagram is a foundational dependency view. Context Frames are already active in harmonic determination and propagate into Geometry, Meta Epistemic Framework and Techne; they are not a MEF-only addition. The faithful L5 projection is the canonical whole-level articulation.
 
 `NONE` identifies Hash/raw psychoid bedrock before a C/P/L/S/T/M family manifestation. Position and face remain explicit dimensions of the same field.
 
@@ -60,15 +64,17 @@ Family × pair index gives the nine canonical square entries. Current executable
 
 Coincident vertex sets do not collapse family, pair-index or orientation provenance.
 
-### D1 / D2 / D3
+### D1 / D2 / D3 — qualify the derivation
 
-Within one selected A/B/C pair, D1/D2/D3 are the square-completion coordinates:
+The retained foundational square-completion derivation labels one selected A/B/C pair as follows:
 
 ```text
 D1  selected direct pair                    2 coordinates
 D2  one-sided conjugate expansion           3 coordinates
 D3  complete conjugate square               4 coordinates
 ```
+
+That retained derivational `D1` label is **not an alias** for the current generic structural-v2 D1 operator. [The Wiki structural v2 contract](wiki-structural-contract-v2.md) governs portable structural clients: D1 is position-local same-position conjugate opposition, D2 is one-sided expansion of a selected pair, and D3 is both-sided expansion. Source derivation labels remain provenance; an unqualified `D1` must not silently switch meanings between these contracts. This clarification does not rewrite the frozen derivation fixture.
 
 The retained cross derivation also uses D1/D2/D3 as derivational coordinates. Public executable identity is therefore carried by the semantic kernel relation ID, while the exact D-coordinate remains provenance.
 
@@ -104,7 +110,7 @@ Pair C, mirror/complement and cross-complete retain distinct operator identities
 
 ## VĀK reflective language
 
-VĀK is the universal six-family reflective instruction language of the frozen kernel:
+The frozen kernel's six-family reflective instruction representation is:
 
 ```text
 0 CPF  Category-Position-Frame
@@ -114,6 +120,8 @@ VĀK is the universal six-family reflective instruction language of the frozen k
 4 CFP  Context-Frame-Position / Paths
 5 CS   Context-Sequence
 ```
+
+It is one representation within the full source-grounded Anuttara/Vāk language, not the whole 109-node language or the AIKit general expression AST. Reflective family indices are not L5 office indices, RelationOp indices or address horizons. The reconciliation records their explicit relationships and the unresolved historical CT/CS/CFP aliases.
 
 The instruction has five source-defined fields:
 
@@ -176,6 +184,8 @@ CF7  (5/0)
 
 They resolve over the same 12-lens MEF field: six local positions per lens, 72 addresses, with absolute position `(lens + local) mod 6`.
 
+The historical Ta-Onta mirror's additional `(4/5/0)` literal has no canonical CF identity in this seven-frame contract. It remains a source-qualified compatibility question under #138, not a silent eighth frame or an alias for CF5/CF6. Current harmonic cuts already use the seven canonical identities; complete scoped runtime propagation is a separate conformance gate.
+
 ## Conformance authority
 
 The machine-readable contract and executable tests jointly determine implementation conformance:
@@ -186,6 +196,6 @@ The machine-readable contract and executable tests jointly determine implementat
 - `migration/epi-kernel/r4-holographic-kernel-parity.c`
 - `migration/epi-kernel/r4-vak-parity.c`
 
-The contract preserves source provenance, shared family/face/relation identities, VĀK semantics versus pointer-web materialisation, A/B/C and D-degree definitions, MEF cardinality and the seven Context Frames.
+The contract preserves source provenance, shared family/face/relation identities, VĀK semantics versus pointer-web materialisation, A/B/C and source-qualified D-degree definitions, MEF cardinality and the seven Context Frames. Native implementation availability and parity coverage must be read from current main and the #135 ledger, not inferred from a retained path in this reference.
 
-Richer musical ratios, modes, voice-leading, refractive consequences and later research extensions belong to the continuing #31 development edge and must derive from this field without minting a second positional, conjugation, square, VĀK, MEF or Context-Frame substrate.
+Richer musical ratios, modes, voice-leading, refractive consequences and later research extensions must derive from this field without minting a second positional, conjugation, square, VĀK, MEF or Context-Frame substrate. #31 retains its development history; #123 supplies the current Vāk/C′ reconciliation and exact downstream implementation graph.
