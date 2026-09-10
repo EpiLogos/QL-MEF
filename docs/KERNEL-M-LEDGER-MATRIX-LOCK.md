@@ -160,6 +160,15 @@ existence cannot satisfy either computational requirement. A successful query
 means the report was produced, not that its vertical is ready. The JSON arrays of
 blockers/missing coordinates and findings are the machine-consumable answer.
 
+Coverage must match the requested stratum to a participant in its parity claim.
+`source` corresponds to the Bimba peer and consumes source-scoped evidence; it
+cannot borrow a C/Rust-only comparison. Live Neo4j, application and instrument
+readiness remain separately expressible, but the v1 four-peer parity protocol
+does not give them an implicit peer alias. Their parity-dependent coverage stays
+blocked rather than clearing a row from an unrelated native comparison. This
+restriction does not erase their readiness evidence or establish a source/live
+graph equivalence.
+
 The observation verifier consumes K2 descriptor JSONL produced by the actual C
 probe and Rust parity acceptance. All nodes, relations, files, records and bindings
 are compared. Missing/duplicate/extra nodes or descriptors, changed parentage or

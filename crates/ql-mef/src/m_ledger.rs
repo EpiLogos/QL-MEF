@@ -345,7 +345,13 @@ impl MLedger {
                 claims.iter().any(|p| {
                     p.status == "equivalent"
                         && (p.from_peer == peer || p.to_peer == peer)
-                        && self.evidence_for(&p.evidence, &row.id, Some(peer), Some(axis), true)
+                        && self.evidence_for(
+                            &p.evidence,
+                            &row.id,
+                            Some(peer_stratum(peer)),
+                            Some(axis),
+                            true,
+                        )
                 })
             })
     }
@@ -1063,20 +1069,15 @@ impl MLedger {
                 .unwrap_or("unassessed");
             let ready =
                 status == "verified" || (required == "implemented" && status == "implemented");
-            let parity = self
-                .assessments
-                .get(&row.assessment)
-                .and_then(|a| a.parity.get(axis));
-            if !ready
-                || parity.is_none_or(|claims| {
-                    !claims.iter().any(|p| {
-                        p.status == "equivalent"
-                            && (p.from_peer == stratum
-                                || p.to_peer == stratum
-                                || !PEERS.contains(&stratum))
-                    })
-                })
-            {
+            // Bimba is the peer name for serialized source, not an alias for
+            // live Neo4j. Strata without an explicit comparison peer stay
+            // blocked; unrelated C/Rust parity cannot establish their parity.
+            let peer = if stratum == "source" {
+                "bimba"
+            } else {
+                stratum
+            };
+            if !ready || !self.parity_for(row, axis, peer) {
                 blocking_rows.push(finding("gap", "vertical-blocker", &row.id, format!("{stratum} readiness={status}; required {required} and evidenced {axis} parity")));
             }
         }
