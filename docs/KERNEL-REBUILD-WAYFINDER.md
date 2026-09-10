@@ -34,6 +34,14 @@ Neo4j + other projections
 
 These are not separate ontologies. They are different computational holdings of the same kernel field.
 
+### 0.1 Accepted producer floor — 2026-09-10
+
+Reconciled against main `374cf8db5569401980a0f88ae38da1e2d11129b1`: **#138 is complete through merged PR #142. `ql.vak-composition/v1` is the QL-owned producer contract.** Consume the existing `ql_mef::vak_composition::VakComposition`, `ql_cli::vak_composition::execute_request`, `ql vak compose <request.json> --json`, and `fixtures/kernel/vak-composition-v1.json` surfaces. Preserve their whole/identity/frame/provenance/Return behavior while rebuilding the structural strata.
+
+#123 remains architectural provenance, not an instruction to restart Vāk reconciliation. This Wayfinder does not import or re-author the parallel Vāk articulation theory. Downstream owner adoption is separate from producer completion and is not a prerequisite for K0.
+
+This accepted Rust operational floor does **not** claim native-C execution of the higher-order composition operations, a complete recursive M registry, continuous C++ embodiment, or whole-M closure. K0 pins the actual floor and discrepancies; #125–#134 retain their separate contracts. The seven canonical Context Frames are settled; historical `(4/5/0)` is superseded/noncanonical, not an eighth-frame/alias/blocker question.
+
 ## 1. The kernel object
 
 The foundational QL field remains:
