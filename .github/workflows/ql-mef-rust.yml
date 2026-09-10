@@ -39,7 +39,7 @@ jobs:
           if ! git diff --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add crates tools/vak138-integrate.py
+            git add -A -- crates tools docs README.md fixtures
             git commit -m 'feat(vak): integrate and format recursive composition operations'
             git push origin HEAD:agent/ql-vak-cf-138
           fi
