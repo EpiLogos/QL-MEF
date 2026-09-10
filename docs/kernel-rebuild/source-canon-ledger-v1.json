@@ -1,0 +1,108 @@
+{
+  "schema": "ql.kernel-rebuild-source-canon-ledger/v1",
+  "issue": 124,
+  "observed_on": "2026-09-10",
+  "scope": "K0 source-ground acceptance only; not K1 restoration, K3 capability parity machinery, K4 census, live graph parity or experiential acceptance",
+  "authority_rule": "Resolve a disagreement by the exact subject, source warrant and explicit owner ratification. Commit order, package residency, convenient implementation and test success do not establish semantic authority. Preserve both records when no such determination exists.",
+  "repositories": {
+    "ql": {"repository": "EpiLogos/QL-MEF", "revision": "d658b3478e42d96b947a5781f5468edf1886e511", "standing": "VERIFIED_MAIN_AFTER_PR_136"},
+    "recovery": {"repository": "EpiLogos/QL-MEF", "revision": "e5f612653c71c8a9ae74199ef2e8b326e3e9deba", "standing": "PR_76_CLOSED_UNMERGED_RECOVERY_INPUT"},
+    "epi": {"repository": "EpiLogos/Epi-Logos-C-Experiments", "revision": "daa660cbc1b8c5da83828698665a753852cb0287", "standing": "OBSERVED_MAIN_AND_LOCKED_SOURCE_CORPUS_READ_ONLY"},
+    "nara": {"repository": "EpiLogos/Epi-Logos-C-Experiments", "revision": "52e7433bee54561a767833895b59f553cca62149", "standing": "EXISTING_BIMBA_CONFORMANCE_IMPLEMENTATION_WITNESS_NOT_SOURCE_AUTHORITY"}
+  },
+  "classes": ["governing_architecture", "canonical_structural_source", "canonical_deep_coordinate_source", "current_c_implementation", "current_rust_implementation", "imported_c_implementation_body", "imported_rust_implementation_body", "returned_correction", "research_proposition", "implementation_evidence", "stale_representation", "mixed_source_field"],
+  "inputs": [
+    {"id":"wayfinder","repository":"ql","path":"docs/KERNEL-REBUILD-WAYFINDER.md","kind":"blob","oid":"30cbc060bbecee72111707a4e07d8a74c1f6ac7f","classes":["governing_architecture"],"standing":"ACCEPTED_K0_K10_PROGRAMME"},
+    {"id":"formal-reference","repository":"ql","path":"docs/HOLOGRAPHIC-KERNEL-FORMAL-REFERENCE.md","kind":"blob","oid":"497b2367340b9005c4aa094f4dfab5c41e83fd29","classes":["canonical_structural_source","stale_representation"],"standing":"STRUCTURAL_CONTRACT_AUTHORITY_WITH_BRANCH_QUALIFIED_C_AVAILABILITY"},
+    {"id":"kernel-fixtures","repository":"ql","path":"fixtures/kernel","kind":"tree","classes":["canonical_structural_source","implementation_evidence"],"standing":"PRESERVE_VERSIONED_CONTRACT_IDENTITIES"},
+    {"id":"structural-v2","repository":"ql","path":"docs/wiki-structural-contract-v2.md","kind":"blob","oid":"035f9a4686be5091a56b66aaca4302251392138f","classes":["canonical_structural_source"],"standing":"DISTINCT_FROM_SOURCE_D_DEVELOPMENT_NOT_AN_ALIAS"},
+    {"id":"structural-carrier","repository":"ql","path":"docs/QL-STRUCTURAL-CARRIER-CONTRACT-V1.md","kind":"blob","oid":"2ead7ea9e1fafb67fb546a3e3187ac498d9e3330","classes":["canonical_structural_source"],"standing":"ACCEPTED_GENERIC_CARRIER_NOT_SEMANTIC_AUTHORITY"},
+    {"id":"native-c","repository":"ql","path":"c","kind":"tree","oid":"87f404db6493e3d419b36088882829cc54954eb6","classes":["current_c_implementation"],"standing":"PRIMITIVE_ONLY_NATIVE_FLOOR"},
+    {"id":"current-rust","repository":"ql","path":"crates","kind":"tree","oid":"2b1664b2a7cfdb86b655733af17f35719da1158c","classes":["current_rust_implementation"],"standing":"KERNEL_REBUILD_BODY"},
+    {"id":"m-map","repository":"ql","path":"crates/ql-mef/src/m_map.rs","kind":"blob","oid":"bea337c6a20416b6511bf0d01395e78ad2d98aa5","classes":["current_rust_implementation"],"standing":"SOURCE_PRESERVING_RUST_INDEX_NOT_NATIVE_C_REGISTRY"},
+    {"id":"imported-c","repository":"ql","path":"vendor/epi-kernel/reference","kind":"tree","oid":"f64e1fb2150ca02fc1aca9486b8a38a1e4fa63f8","classes":["imported_c_implementation_body"],"standing":"KERNEL_REBUILD_BODY"},
+    {"id":"c-corrections","repository":"ql","path":"vendor/epi-kernel/corrections","kind":"tree","oid":"f7b1bb38dcd8c91e9885fc40e0eb78b3f6ddbede","classes":["returned_correction"],"standing":"EXPLICIT_RATIFICATION_NOT_PARITY_CONVENIENCE"},
+    {"id":"c-source-lock","repository":"ql","path":"migration/epi-kernel/source-lock.json","kind":"blob","oid":"8973e734916558af02e555bd1240b2874db9e543","classes":["implementation_evidence","returned_correction","stale_representation"],"standing":"RETAIN_EXACT_INVENTORY_AND_M3_COIN_1_OVERRIDE_EVIDENCE_ONLY_DISPOSITION"},
+    {"id":"original-c","repository":"epi","path":"Body/S/S0/epi-lib","kind":"tree","oid":"f2995865292f90c8fab9370ba90ff8530c75f2dc","classes":["imported_c_implementation_body","implementation_evidence"],"standing":"KERNEL_REBUILD_BODY_ORIGINAL_PROVENANCE_NOT_UNCORRECTED_ORACLE"},
+    {"id":"imported-rust","repository":"epi","path":"Body/S/S0/portal-core","kind":"tree","oid":"727bcd861affb424e4b2251983b4c6d893ffa3fe","classes":["imported_rust_implementation_body"],"standing":"KERNEL_REBUILD_BODY"},
+    {"id":"c-recovery","repository":"recovery","path":"c","kind":"tree","classes":["current_c_implementation","implementation_evidence"],"standing":"UNMERGED_RECOVERY_CANDIDATE_NOT_CURRENT_MAIN"},
+    {"id":"c-recovery-tests","repository":"recovery","path":"migration/epi-kernel","kind":"tree","classes":["implementation_evidence"],"standing":"R4_RECOVERY_TESTS_RECONCILE_BEFORE_REUSE"},
+    {"id":"c-recovery-fixture","repository":"recovery","path":"fixtures/kernel/holographic-kernel-contract-v1.tsv","kind":"blob","oid":"5112349d363a5c01e63418c91880af67c5e60ed1","classes":["implementation_evidence"],"standing":"COMPARE_WITH_CURRENT_CONTRACT_NOT_BLIND_REPLACEMENT"},
+    {"id":"bimba-corpus","repository":"epi","path":"Idea/Bimba/Map","kind":"tree","classes":["canonical_deep_coordinate_source"],"standing":"EXACT_SERIALIZED_SOURCE_NOT_A_LIVE_DATABASE_SNAPSHOT"},
+    {"id":"bimba-datasets","repository":"epi","path":"Idea/Bimba/Map/datasets","kind":"tree","oid":"cd4f4f77c13f27e2563c5a6753d2f8bf2b605f15","classes":["canonical_deep_coordinate_source"],"standing":"ALL_FILES_RECURSIVE_INCLUDING_DEEP_LOW_DETAIL_RESIDUE_AND_MIGRATION_PROVENANCE"},
+    {"id":"bimba-lock","repository":"ql","path":"data/epi-bimba-map/source-lock.json","kind":"blob","oid":"865f61cc38a8c84c4e01cfc3b216b505d2d43fd7","classes":["canonical_deep_coordinate_source","stale_representation"],"standing":"EXACT_GIT_SOURCE_LOCK_LIVE_MEANS_SOURCE_REPOSITORY_NOT_OBSERVED_NEO4J"},
+    {"id":"local-bimba-projections","repository":"ql","path":"data/epi-bimba-map","kind":"tree","classes":["implementation_evidence"],"standing":"SELECTED_PROJECT_PROJECTIONS_NOT_FULL_GRAPH_AUTHORITY"},
+    {"id":"live-access-basis","repository":"epi","path":"Idea/Bimba/Map/datasets/fetch_bimba.py","kind":"blob","oid":"42ff8929319713de26775c99a17543f54d8d49db","classes":["implementation_evidence","stale_representation"],"standing":"READ_QUERY_LINEAGE_PARTIAL_EXPORT_DO_NOT_RUN_IN_SOURCE_CHECKOUT"},
+    {"id":"nara-implementation-witness","repository":"nara","path":"Body/S/S0/portal-core","kind":"tree","classes":["implementation_evidence","imported_rust_implementation_body"],"standing":"BOUNDED_EXISTING_EXECUTABLE_WITNESS_NOT_WHOLE_M_COVERAGE"},
+    {"id":"matrix-registry","repository":"ql","path":".oi/product.json","kind":"blob","oid":"b19dea7d6ea1fcac94c5f8751d78f0205e6fb52f","classes":["governing_architecture"],"standing":"ALL_DECLARED_MATRIX_FAMILIES_KEEP_NATIVE_SCHEMAS"},
+    {"id":"matrix-source-field","repository":"ql","path":"docs/integrations/epi-logos","kind":"tree","oid":"5909386b49762cdba1ce8e6918196cda5d3f81fa","classes":["mixed_source_field"],"standing":"PER_DOCUMENT_AND_PER_ROW_WARRANT_RETAINED_NOT_BLANKET_CANON"},
+    {"id":"deep-coordinate-field","repository":"ql","path":"docs/origami work","kind":"tree","oid":"aa2e38add2fad94adaafae7efec222584030da4d","classes":["mixed_source_field"],"standing":"M1_M4_DEEP_MATRICES_PLUS_DISTINCT_RESEARCH_AND_EMBODIMENT_PROPOSITIONS"},
+    {"id":"matrix-source-trace","repository":"ql","path":"docs/integrations/epi-logos/EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md","kind":"blob","oid":"fb710871d214ed83116bea34af3645fab487fda3","classes":["implementation_evidence","stale_representation"],"standing":"TRANCHE_LOCKS_NOT_CURRENT_MAIN_OR_PERMANENT_READINESS"},
+    {"id":"epii-development-propositions","repository":"ql","path":"docs/integrations/epi-logos/epi-epii-operational-capacities.json","kind":"blob","classes":["research_proposition"],"standing":"SOURCE_BACKED_DOMAIN_SPEC_NOT_PROOF_OF_IMPLEMENTED_LEARNING"},
+    {"id":"vak-reconciliation-provenance","repository":"ql","path":"docs/QL-VAK-KERNEL-RECONCILIATION.md","kind":"blob","oid":"3e515c404efdd61c56111025b9d9598c93bb6b84","classes":["implementation_evidence","stale_representation"],"standing":"PRESERVE_ARCHITECTURAL_PROVENANCE_DO_NOT_RESTART_TRACK"},
+    {"id":"existing-proving-tools","repository":"ql","path":"scripts","kind":"tree","oid":"66634651559d4de816cc1c15071b043df08a657f","classes":["implementation_evidence"],"standing":"REUSE_EXISTING_COMPILER_MATRIX_VALIDATION_AND_C_PARITY"}
+  ],
+  "kernel": {
+    "holographic_contract": "ql.holographic-kernel-contract/v1",
+    "holographic_contract_version": "1.1.0",
+    "producer_contract": "ql.vak-composition/v1",
+    "producer_merge_revision": "374cf8db5569401980a0f88ae38da1e2d11129b1",
+    "producer_issue": 138,
+    "producer_pr": 142,
+    "producer_paths": ["crates/ql-mef/src/vak_composition.rs", "crates/ql-mef/src/vak_composition", "crates/ql-cli/src/vak_composition.rs", "fixtures/kernel/vak-composition-v1.json", "crates/ql-mef/tests/vak_composition.rs", "crates/ql-cli/tests/vak_composition.rs"],
+    "public_surfaces": ["ql_mef::vak_composition::VakComposition", "ql_cli::vak_composition::execute_request", "ql vak compose <request.json> --json"],
+    "canonical_context_frames": ["(00/00)", "(0/1)", "(0/1/2)", "(0/1/2/3)", "(4.0/1-4.4/5)", "(4.5/0)", "(5/0)"],
+    "historical_noncanonical_context_frame": "(4/5/0)",
+    "not_claimed": ["native C execution of recursive Vāk composition", "complete native C recursive M registry", "C++ embodiment", "whole M capability coverage", "downstream Agent execution", "live Neo4j parity"]
+  },
+  "matrix_inventory": {
+    "registry_input": "matrix-registry",
+    "selector": "capability_matrices.matrices: every carriers value, partitions path and member carrier path",
+    "expected_family_ids": ["ql-product-profile", "epi-capability-readiness", "epi-ta-onta-agent-world", "epi-m-capability-field", "epi-deep-coordinate-matrices", "epi-relational-fields"],
+    "expected_carrier_count": 30,
+    "meaning": "Six registered families; normalized M0-M5 capability records and deep M1-M4 v2 coordinate matrices are distinct. Inventory is not a claim of coordinate or operational completeness."
+  },
+  "live_graph": {
+    "authority_role": "Live Neo4j Bimba is the deep-coordinate semantic/relational home; structural promotion still requires scoped ratification and C/Rust reconciliation.",
+    "observation_status": "not_observed",
+    "database_revision": null,
+    "receipt": null,
+    "access_status": "source_endpoint_and_queries_identified_no_authenticated_database_connection_in_this_session",
+    "historical_endpoint": "http://localhost:7475/db/neo4j/tx/commit",
+    "access_basis_input": "live-access-basis",
+    "credential_rule": "Use operator-supplied endpoint/database and credentials; do not use or copy historical defaults. No private Control or database mutation.",
+    "read_statements": [
+      "CALL dbms.components() YIELD name, versions, edition RETURN name, versions, edition",
+      "MATCH (n) WHERE n.bimbaCoordinate IS NOT NULL RETURN id(n) AS exportLocalId, labels(n) AS labels, properties(n) AS properties ORDER BY exportLocalId",
+      "MATCH (n)-[r]->(m) WHERE n.bimbaCoordinate IS NOT NULL OR m.bimbaCoordinate IS NOT NULL RETURN id(r) AS exportLocalRelationId, id(n) AS sourceExportLocalId, n.bimbaCoordinate AS sourceCoordinate, labels(n) AS sourceLabels, properties(n) AS sourceProperties, type(r) AS relationType, properties(r) AS relationProperties, id(m) AS targetExportLocalId, m.bimbaCoordinate AS targetCoordinate, labels(m) AS targetLabels, properties(m) AS targetProperties ORDER BY exportLocalRelationId"
+    ],
+    "capture_requirements": ["retain raw response and server errors", "record actual database identity/version and UTC capture window", "hash raw response and query payload", "record backup/transaction provenance and concurrent-write policy; a transaction request alone is not proof of snapshot isolation", "export-local numeric IDs are not canonical kernel IDs", "retain missing-coordinate endpoints and all properties; do not infer aliases or canonical promotion", "compare with serialized source record-by-record at K4; retain discrepancies instead of latest-wins replacement"],
+    "pending_owner": "#128 K4 live graph observation and source reconciliation; this ledger pins the access basis, not an invented database revision"
+  },
+  "discrepancies": [
+    {"id":"D01","subject":"Native C availability","sources":["native-c","formal-reference","c-recovery","c-recovery-tests"],"finding":"Main has only c/src/primitive.c and no c/Makefile; R4 holographic/kernel/parity/package surfaces exist at closed unmerged #76. Earlier passing R4 tests are branch evidence, not main availability.","disposition":"OPEN_IMPLEMENTATION_GAP","owner":"#125 K1","rule":"Recover selectively against current contracts; do not merge the old branch wholesale."},
+    {"id":"D02","subject":"Imported body disposition","sources":["wayfinder","c-source-lock","imported-c","imported-rust","current-rust"],"finding":"Historical/prototype and secondary-witness-only descriptions understate the explicitly clarified C/Rust rebuild role.","disposition":"OWNER_CLARIFICATION_APPLIED_TO_DISPOSITION","owner":"#135","rule":"Both C and Rust are kernel-rebuild implementation bodies. Retain frozen provenance and no-second-kernel rule; do not discard bodies or treat every old layout as canon."},
+    {"id":"D03","subject":"M3 nucleotide coin correction","sources":["original-c","imported-c","c-corrections","c-source-lock"],"finding":"Prototype {6,9,7,8} differs from explicitly ratified M3-COIN-1 {6,9,8,7}; associated pair matrix and suit totals were corrected.","disposition":"RATIFIED_CORRECTION","owner":"#111 / M3-COIN-1","rule":"Preserve original hashes, patch and corrected SHA-256 evidence. Ratification, not chronology or parity convenience, warrants the corrected QL body."},
+    {"id":"D04","subject":"Live source wording","sources":["bimba-lock","bimba-corpus","live-access-basis"],"finding":"The lock/compiler's live-source wording identifies a Git corpus; no live Neo4j database revision was observed in K0.","disposition":"EVIDENCE_BOUNDARY_EXPLICIT","owner":"#128 K4","rule":"Serialized verification can pass while live graph observation remains visibly pending."},
+    {"id":"D05","subject":"Historical fetch coverage","sources":["live-access-basis","bimba-datasets"],"finding":"fetch_bimba.py selects limited node fields and drops relationship properties; it writes beside the source files and uses historical local credential defaults.","disposition":"PARTIAL_EXPORT_TOOL_NOT_FULL_GRAPH_WARRANT","owner":"#128 K4","rule":"Retain as query lineage; use separate authenticated read-only capture with full raw properties, no source overwrite or migration execution."},
+    {"id":"D06","subject":"Matrix implementation locks","sources":["matrix-source-trace","matrix-source-field","matrix-registry"],"finding":"Current-lock prose records a prior tranche, including QL 590ea5464e0b422beaddea2669039e3d8c7fcb5c. Embedded owner revisions are historical evidence, not newly verified live owner implementations.","disposition":"STALE_STATUS_CARRIER_RETAINED","owner":"#128 K4","rule":"Pin present carrier bytes; preserve accepted source meanings and recheck implementation/readiness separately. Do not silently rewrite all external owner pins."},
+    {"id":"D07","subject":"Matrix granularity and completeness","sources":["matrix-registry","deep-coordinate-field","m-map"],"finding":"The normalized 36-capability field is not the deep recursive coordinate inventory; the registered deep v2 matrices cover M1-M4, not six complete M trees.","disposition":"COVERAGE_BOUNDARY_NOT_SOURCE_DELETION","owner":"#126 K2 / #127 K3 / #128 K4","rule":"Preserve all families and source depth. No fabricated siblings, readiness from existence, or reduced 36-row substitute."},
+    {"id":"D08","subject":"Settled Vāk status and CF history","sources":["wayfinder","vak-reconciliation-provenance","kernel-fixtures"],"finding":"Pre-#142 next-action and branch-only #136 passages remain historical prose; old (4/5/0) is superseded/noncanonical in the CF register.","disposition":"STATUS_SUPERSEDED_NOT_THEORY_REOPENED","owner":"#123 provenance / completed #138","rule":"Consume ql.vak-composition/v1 and seven settled CFs. Do not create an eighth frame, import parallel articulation theory or restart reconciliation. Personal 4/5/0 application identity is a different subject, not banned by this CF determination."},
+    {"id":"D09","subject":"Source spellings and overlapping exports","sources":["m-map","bimba-corpus","bimba-lock"],"finding":"Low-detail, deep, alternate-spelling, meta-source and partial-endpoint records remain independently traceable in the existing compiler/index.","disposition":"UNRESOLVED_RECORD_RELATIONS_RETAINED","owner":"#128 K4","rule":"Do not choose by file date, collapse punctuation, regularize the tree or erase migration residue; preserve exact record provenance and explicit source relations."},
+    {"id":"D10","subject":"Research versus operation","sources":["epii-development-propositions","deep-coordinate-field","matrix-source-trace"],"finding":"Source-backed learning, continuous embodiment and physical/correspondential proposals do not establish implemented pipelines or experiential acceptance.","disposition":"WARRANT_AND_READINESS_SEPARATE","owner":"#128 K4 / #129-#134 later scopes","rule":"Retain authored depth with its warrant; require separate implementation, parity and experiential evidence."},
+    {"id":"D11","subject":"Older programme and Ta-Onta status","sources":["wayfinder","matrix-source-field"],"finding":"#78 calls #76 active; #69 retains S4.0-prime..S4.5-prime Ta-Onta nesting, while #73 and the ratified current matrix preserve S0-prime..S5-prime.","disposition":"SCOPED_SUPERSESSION_WITH_PROVENANCE","owner":"#135 / ratified Ta-Onta matrix","rule":"Retain #51/#78/#69/#73 source, event/deep-return and parity laws. Use current explicitly ratified S-prime mapping; neither dates nor old package residency decide ownership."}
+  ],
+  "historical_issue_context": [51,78,69,73,123],
+  "unmerged_parallel_work_excluded_from_floor": [140,141],
+  "handoff": {
+    "K1": {
+      "issue":125,
+      "inputs":["wayfinder","formal-reference","kernel-fixtures","structural-v2","structural-carrier","native-c","current-rust","imported-c","original-c","imported-rust","c-source-lock","c-corrections","c-recovery","c-recovery-tests","c-recovery-fixture"],
+      "recovery_candidates":["c/Makefile","c/include/ql/holographic.h","c/include/ql/kernel.h","c/src/holographic.c","c/src/kernel.c","migration/epi-kernel/r4-holographic-kernel-parity.c","migration/epi-kernel/r4-vak-parity.c","migration/epi-kernel/r4-package-smoke.c","scripts/test-epi-c-r4.sh"],
+      "constraints":["Reinspect actual main then compare exact pinned #76 input; do not reset main or blindly restore #76 docs/fixtures/workflow.","Preserve bedrock, six families, position, face, distinct conjugacy/complement/cross relations and current D/operator identities.","Preserve merged Vāk producer paths and whole/identity/frame/provenance/Return behavior; native C higher-order composition is not claimed by K0.","Apply only explicit ratified corrections; no editing reference merely to make native parity pass.","Run restored native build/install/parity and current Rust fixtures; leave recursive M registry to K2 and broad M port/census to later tickets."]
+    },
+    "K2":{"issue":126,"inputs":["m-map","bimba-corpus","bimba-lock","formal-reference"],"boundary":"Source-faithful recursive native M identities; do not infer completeness from the current Rust index."},
+    "K3":{"issue":127,"inputs":["matrix-registry","matrix-source-field","deep-coordinate-field","c-source-lock"],"boundary":"Future capability ledger/parity machinery; K0 inventory is not that implementation."},
+    "K4":{"issue":128,"inputs":["bimba-corpus","bimba-lock","live-access-basis","local-bimba-projections","nara-implementation-witness","matrix-registry","imported-c","imported-rust","current-rust"],"boundary":"Row-level coverage and authenticated live/serialized reconciliation remain to execute; use the existing recursive compiler, not a new graph or ontology."}
+  }
+}
