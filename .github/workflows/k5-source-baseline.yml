@@ -1,4 +1,4 @@
-name: K5 source baseline (branch-local)
+name: K5 accepted deep return (branch-local)
 on:
   push:
     branches: [agent/129-m1-coordinate-rebuild]
@@ -6,50 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
-  baseline:
+  source:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
-      - uses: actions/checkout@v4
-        with:
           repository: EpiLogos/Epi-Logos-C-Experiments
-          ref: daa660cbc1b8c5da83828698665a753852cb0287
-          path: .source/epi
+          ref: bb47ab9730f0ddadd4891666fb6f3e0a6d457330
           persist-credentials: false
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-      - name: Preserve exact tracked source and baseline observations
+      - name: Preserve exact tracked deep return
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/k5-baseline"
-          git rev-parse HEAD > "$RUNNER_TEMP/k5-baseline/revision.txt"
-          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/k5-baseline/source.tar.gz"
-          git -C .source/epi ls-tree -r --name-only HEAD > "$RUNNER_TEMP/k5-baseline/epi-paths.txt"
-          python3 - <<'PY'
-          import os, subprocess
-          from pathlib import Path
-          root = Path('.source/epi')
-          paths = subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', 'HEAD'], text=True).splitlines()
-          selected = [p for p in paths if p.startswith(('Idea/Bimba/Map/', 'Body/S/S0/portal-core/', 'Idea/Bimba/Seeds/')) or any(s in p for s in ('ANANDA-EXECUTABLE-SUBSTRATE', 'M1-ARCHITECTURE', 'M1-2-ANANDA', 'Spanda_Genesis', 'Paramasiva'))]
-          out = Path(os.environ['RUNNER_TEMP']) / 'k5-baseline'
-          (out / 'epi-selected-paths.txt').write_text('\n'.join(selected) + '\n')
-          with (out / 'epi-m1-inputs.tar.gz').open('wb') as f:
-              subprocess.run(['git', '-C', str(root), 'archive', '--format=tar.gz', 'HEAD', '--', *selected], stdout=f, check=True)
-          PY
-          cargo test -p ql-mef --locked 2>&1 | tee "$RUNNER_TEMP/k5-baseline/rust-tests.txt"
-          make -C c 2>&1 | tee "$RUNNER_TEMP/k5-baseline/c-build.txt"
-          rustc --version --verbose > "$RUNNER_TEMP/k5-baseline/compiler.txt"
-          TOOLCHAIN=$(dirname "$(dirname "$(rustup which rustc)")")
-          tar -C "$TOOLCHAIN" -czf "$RUNNER_TEMP/k5-baseline/rust-toolchain.tar.gz" bin lib
-          tar -C "${CARGO_HOME:-$HOME/.cargo}" -czf "$RUNNER_TEMP/k5-baseline/cargo-registry.tar.gz" registry
+          mkdir -p "$RUNNER_TEMP/k5-deep-return"
+          git rev-parse HEAD > "$RUNNER_TEMP/k5-deep-return/revision.txt"
+          git ls-tree -r --name-only HEAD > "$RUNNER_TEMP/k5-deep-return/paths.txt"
+          git archive --format=tar.gz HEAD Body/S/S0/epi-lib Body/S/S0/portal-core Idea/Bimba/Map Idea/Bimba/Seeds > "$RUNNER_TEMP/k5-deep-return/source.tar.gz"
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: k5-source-baseline-${{ github.sha }}
-          path: ${{ runner.temp }}/k5-baseline/
+          name: k5-accepted-deep-return-bb47ab9
+          path: ${{ runner.temp }}/k5-deep-return/
           retention-days: 3
           if-no-files-found: error
