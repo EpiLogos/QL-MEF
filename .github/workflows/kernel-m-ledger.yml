@@ -31,6 +31,12 @@ jobs:
           python3 scripts/check-capability-matrix-registry.py
           python3 scripts/m-ledger.py refresh
           git diff --exit-code
+      - name: K4 census reproducibility from the committed capture
+        run: |
+          set -euo pipefail
+          python3 scripts/m_census.py census | tee target/m-ledger/census.txt
+          python3 -m unittest discover -s scripts/tests -p test_m_census.py -v 2>&1 | tee target/m-ledger/census-tests.txt
+          git diff --exit-code
       - name: Source and actual native-observer mutation regressions
         run: |
           set -euo pipefail

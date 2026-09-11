@@ -1,0 +1,1138 @@
+{
+  "schema": "ql.m-census/v1",
+  "root": "M1",
+  "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "ledger_revision": "91dece201f8e1887835c9e18dbbdff85c80bcd4274a794f7120e1be7c7490f80",
+  "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
+  "coordinate_count": 43,
+  "counts": {
+    "c": {
+      "implemented": 22,
+      "unimplemented": 21
+    },
+    "rust": {
+      "implemented": 16,
+      "unimplemented": 23,
+      "partial": 4
+    }
+  },
+  "coordinates": [
+    {
+      "coordinate": "#1",
+      "live_spelling": "M1",
+      "names": [
+        "Paramasiva",
+        "Paramasiva",
+        "Subsystem #1 - The Foundational Architect of Quaternal Logic - ParamOsiva Zero Logic - Universal Grammar Generator"
+      ],
+      "labels": [],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_hash_bimba",
+          "c/src/holographic.c:ql_default_topology",
+          "c/src/holographic.c:ql_holographic_field_get",
+          "c/src/holographic.c:ql_holographic_field_get_const",
+          "c/src/holographic.c:ql_holographic_field_init",
+          "vendor/epi-kernel/reference/src/engine.c:engine_double_covering",
+          "vendor/epi-kernel/reference/src/engine.c:engine_lemniscate_dive",
+          "vendor/epi-kernel/reference/src/engine.c:engine_spanda_walk",
+          "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_BIMBA",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_QUINTESSENCE",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_SUM",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+          "vendor/epi-kernel/reference/src/m1.c:M1_BRANCH_QL_CATEGORY",
+          "vendor/epi-kernel/reference/src/m1.c:M1_M0_CROSSLINK",
+          "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+          "vendor/epi-kernel/reference/src/m1.c:_ananda_digital_root",
+          "vendor/epi-kernel/reference/src/m1.c:_ananda_init",
+          "vendor/epi-kernel/reference/src/m1.c:m1_ananda_dr_get",
+          "vendor/epi-kernel/reference/src/m1.c:m1_ananda_get",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_seed",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_trika",
+          "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES",
+          "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY",
+          "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/pole/coin.rs:Polarity",
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/lens.rs:LensId",
+          "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/pole_state.rs:M1CarrierFacts",
+          "crates/ql-mef/src/pole_state.rs:Readiness",
+          "crates/ql-mef/src/reading.rs:QlSynthesis",
+          "crates/ql-mef/src/vak_composition.rs:reference",
+          "crates/ql-mef/src/vak_composition.rs:references",
+          "crates/ql-wiki/src/portal.rs:MetaManifestation",
+          "crates/ql-wiki/src/recognition.rs:RecognitionState"
+        ]
+      },
+      "row": "census:#1"
+    },
+    {
+      "coordinate": "#1-0",
+      "live_spelling": "M1-0",
+      "names": [
+        "Bimba - Original Aspect",
+        "Bimba - Original Aspect",
+        "The (0/1) Element as Bimba - The Original Unmanifest Potential"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_hash_bimba",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-0"
+    },
+    {
+      "coordinate": "#1-1",
+      "live_spelling": "M1-1",
+      "names": [
+        "Pratibimba - Reflection Aspect",
+        "Pratibimba - Reflection Aspect",
+        "The (0/1) Element as Pratibimba - The Reflective Self-Awareness"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+          "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-1"
+    },
+    {
+      "coordinate": "#1-2",
+      "live_spelling": "M1-2",
+      "names": [
+        "Ananda",
+        "Ananda",
+        "Ananda Harmonic System: Six-Matrix Vortex Mathematical Generator with Digital Root Reflections"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_hash_bimba",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_BIMBA",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_QUINTESSENCE",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_SUM",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+          "vendor/epi-kernel/reference/src/m1.c:_ananda_digital_root",
+          "vendor/epi-kernel/reference/src/m1.c:_ananda_init",
+          "vendor/epi-kernel/reference/src/m1.c:m1_ananda_dr_get",
+          "vendor/epi-kernel/reference/src/m1.c:m1_ananda_get",
+          "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES",
+          "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
+        ]
+      },
+      "rust": {
+        "state": "partial",
+        "covered_by_descendants": [
+          "#1-2-0",
+          "#1-2-2",
+          "#1-2-3"
+        ],
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/pole/coin.rs:Polarity",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-2"
+    },
+    {
+      "coordinate": "#1-3",
+      "live_spelling": "M1-3",
+      "names": [
+        "Spanda",
+        "Spanda",
+        "Spanda Subsystem - Dynamic Intelligence Engine of Paramasiva"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_holographic_field_get",
+          "c/src/holographic.c:ql_holographic_field_get_const",
+          "c/src/holographic.c:ql_holographic_field_init",
+          "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+          "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_seed",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_trika"
+        ]
+      },
+      "rust": {
+        "state": "partial",
+        "covered_by_descendants": [
+          "#1-2-0",
+          "#1-2-2",
+          "#1-3-4.0/1"
+        ],
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-3"
+    },
+    {
+      "coordinate": "#1-4",
+      "live_spelling": "M1-4",
+      "names": [
+        "Quaternal Logic Flowering",
+        "Quaternal Logic Flowering",
+        "The Complete Architecture of Logical Manifestation"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+          "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+          "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY"
+        ]
+      },
+      "rust": {
+        "state": "partial",
+        "covered_by_descendants": [
+          "#1-2-2",
+          "#1-3-4.0/1",
+          "#1-4.5"
+        ],
+        "constructs": [
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-mef/src/lens.rs:LensId",
+          "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/reading.rs:QlSynthesis",
+          "crates/ql-wiki/src/portal.rs:MetaManifestation"
+        ]
+      },
+      "row": "census:#1-4"
+    },
+    {
+      "coordinate": "#1-5",
+      "live_spelling": "M1-5",
+      "names": [
+        "Quaternionic Integration",
+        "Toroidal Recognition",
+        "Quaternionic Integration",
+        "The Complete Realization: Consciousness Recognizing Its Own Toroidal Structure"
+      ],
+      "labels": [
+        "ParamasivaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_topology",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+          "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/reading.rs:QlSynthesis",
+          "crates/ql-mef/src/vak_composition.rs:reference",
+          "crates/ql-mef/src/vak_composition.rs:references",
+          "crates/ql-wiki/src/recognition.rs:RecognitionState"
+        ]
+      },
+      "row": "census:#1-5"
+    },
+    {
+      "coordinate": "#1-2-0",
+      "live_spelling": "M1-2-0",
+      "names": [
+        "Matrix 0: The Original (Bimba)",
+        "Matrix 0: The Original (Bimba)",
+        "Foundational Unshifted Vortex Matrix - Pure Bimba Archetypal Ground"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_hash_bimba",
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_BIMBA"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/structural.rs:GroundKind"
+        ]
+      },
+      "row": "census:#1-2-0"
+    },
+    {
+      "coordinate": "#1-2-1",
+      "live_spelling": "M1-2-1",
+      "names": [
+        "Matrix 1: The Offset (Pratibimba)",
+        "Matrix 1: The Offset (Pratibimba)",
+        "First Reflection Vortex Matrix - Pratibimba Archetypal Differentiation"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
+          "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-1"
+    },
+    {
+      "coordinate": "#1-2-2",
+      "live_spelling": "M1-2-2",
+      "names": [
+        "Matrix 2: The Sum (Constructive Synthesis)",
+        "Matrix 2: The Sum (Constructive Synthesis)",
+        "Constructive Synthesis Vortex Matrix - Creative Evolutionary Manifestation"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_SUM"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-2-2"
+    },
+    {
+      "coordinate": "#1-2-3",
+      "live_spelling": "M1-2-3",
+      "names": [
+        "Matrix 3: First Difference (Pure Polarity)",
+        "Matrix 3: First Difference (Pure Polarity)",
+        "First Polarity Difference Matrix - Void-Full Tension Archetype"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-core/src/pole/coin.rs:Polarity"
+        ]
+      },
+      "row": "census:#1-2-3"
+    },
+    {
+      "coordinate": "#1-2-4",
+      "live_spelling": "M1-2-4",
+      "names": [
+        "Matrix 4: Second Difference (Complementary Polarity)",
+        "Matrix 4: Second Difference (Complementary Polarity)",
+        "Second Polarity Difference Matrix - Full-Void Tension Archetype"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-core/src/pole/coin.rs:Polarity"
+        ]
+      },
+      "row": "census:#1-2-4"
+    },
+    {
+      "coordinate": "#1-2-5",
+      "live_spelling": "M1-2-5",
+      "names": [
+        "Matrix 5: Non-Dual Quintessence (Paradox Holder)",
+        "Matrix 5: Non-Dual Quintessence (Paradox Holder)",
+        "Non-Dual Quintessence Matrix - (0/1) ± (1/0) Paradox Synthesis"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "AnandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:ANANDA_QUINTESSENCE"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-2-5"
+    },
+    {
+      "coordinate": "#1-3-0",
+      "live_spelling": "M1-3-0",
+      "names": [
+        "Spanda Seed",
+        "Spanda Seed",
+        "Stage #0 - The (0/1) Element as Pure Oscillatory Potential"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_seed"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-0"
+    },
+    {
+      "coordinate": "#1-3-1",
+      "live_spelling": "M1-3-1",
+      "names": [
+        "Primal Differentiation - Original Pole",
+        "Primal Differentiation - Original Pole",
+        "Stage #1 - The (0/1) Operational Pole in Creative Puncture"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-1"
+    },
+    {
+      "coordinate": "#1-3-2",
+      "live_spelling": "M1-3-2",
+      "names": [
+        "Primal Differentiation - Reflection Pole",
+        "Primal Differentiation - Reflection Pole",
+        "Stage #2 - The (1/0) Operational Pole in Creative Puncture"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-2"
+    },
+    {
+      "coordinate": "#1-3-3",
+      "live_spelling": "M1-3-3",
+      "names": [
+        "Trika Synthesis",
+        "Trika Synthesis",
+        "Stage #3 - The ((0/1)/(1/0)) = (0/1/2) Mediating Structure"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_trika"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-3-3"
+    },
+    {
+      "coordinate": "#1-3-4",
+      "live_spelling": "M1-3-4",
+      "names": [
+        "Contextual Flowering",
+        "Contextual Flowering",
+        "Stage #4 - The Contextual Flowering of Quaternal Logic"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
+        ]
+      },
+      "rust": {
+        "state": "partial",
+        "covered_by_descendants": [
+          "#1-2-0",
+          "#1-2-2",
+          "#1-3-4.0/1"
+        ],
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-3-4"
+    },
+    {
+      "coordinate": "#1-3-5",
+      "live_spelling": "M1-3-5",
+      "names": [
+        "Quintessential Meta-Reflection",
+        "Quintessential Meta-Reflection",
+        "Stage #5 - The Holographic Revelation through Multiple Counting Lenses"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_holographic_field_get",
+          "c/src/holographic.c:ql_holographic_field_get_const",
+          "c/src/holographic.c:ql_holographic_field_init",
+          "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-5"
+    },
+    {
+      "coordinate": "#1-4.0",
+      "live_spelling": "M1-4.0",
+      "names": [
+        "Foundational Encoding",
+        "Foundational Encoding",
+        "The Primary 4²/3² Architectural Genesis"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-4.0"
+    },
+    {
+      "coordinate": "#1-4.1",
+      "live_spelling": "M1-4.1",
+      "names": [
+        "Explicate-Implicate Framework",
+        "Explicate-Implicate Framework",
+        "The Foundational 4-Fold Explicate and 6-Fold Processual Frames"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-core/src/pole/fold.rs:FoldState"
+        ]
+      },
+      "row": "census:#1-4.1"
+    },
+    {
+      "coordinate": "#1-4.2",
+      "live_spelling": "M1-4.2",
+      "names": [
+        "Principle of Inversion",
+        "Principle of Inversion",
+        "The Generation of Complementary Shadow Dynamics"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-4.2"
+    },
+    {
+      "coordinate": "#1-4.3",
+      "live_spelling": "M1-4.3",
+      "names": [
+        "Bi-Directional Synthesis",
+        "Bi-Directional Synthesis",
+        "The Unified 12-Fold Recursive Loop"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-4.3"
+    },
+    {
+      "coordinate": "#1-4.4",
+      "live_spelling": "M1-4.4",
+      "names": [
+        "Contextual Flowering",
+        "Contextual Flowering",
+        "The Emergence of Nested Complexity and Infinite Scalability"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-4.4"
+    },
+    {
+      "coordinate": "#1-4.5",
+      "live_spelling": "M1-4.5",
+      "names": [
+        "Harmonic Meta-Frames & Quintessential Integration",
+        "Harmonic Meta-Frames & Quintessential Integration",
+        "The Cosmic Architectural Blueprints and Map-Compass-Lens Synthesis"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "QLComponent"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY"
+        ]
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/lens.rs:LensId",
+          "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/reading.rs:QlSynthesis",
+          "crates/ql-wiki/src/portal.rs:MetaManifestation"
+        ]
+      },
+      "row": "census:#1-4.5"
+    },
+    {
+      "coordinate": "#1-5-0",
+      "live_spelling": "M1-5-0",
+      "names": [
+        "Quaternionic Foundation",
+        "Toroidal-Quaternionic Ground",
+        "Quaternionic Foundation",
+        "The Implicit Foundation: Pre-reflective Self-Reference and Quaternionic Genesis"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/vak_composition.rs:reference",
+          "crates/ql-mef/src/vak_composition.rs:references"
+        ]
+      },
+      "row": "census:#1-5-0"
+    },
+    {
+      "coordinate": "#1-5-1",
+      "live_spelling": "M1-5-1",
+      "names": [
+        "The Torus in Quaternionic Space",
+        "Volumetric Potential",
+        "Volumetric Potential",
+        "Material Construction: Explicit Toroidal Geometry in Three Dimensions"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-5-1"
+    },
+    {
+      "coordinate": "#1-5-2",
+      "live_spelling": "M1-5-2",
+      "names": [
+        "Double-Covering Principle",
+        "The 4π = 720° Toroidal Cycle",
+        "Double-Covering Principle",
+        "Dynamic Completion: Total Angular Measure and Double-Covering Necessity"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-5-2"
+    },
+    {
+      "coordinate": "#1-5-3",
+      "live_spelling": "M1-5-3",
+      "names": [
+        "Inversion and Shadow Dynamics",
+        "Shadow as Phase-Shift on the Torus",
+        "Inversion and Shadow Dynamics",
+        "Formal Integration: Understanding Opposition as π Phase Difference"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-5-3"
+    },
+    {
+      "coordinate": "#1-5-4",
+      "live_spelling": "M1-5-4",
+      "names": [
+        "Bridge to Parashakti",
+        "The Torus Generating Parashakti",
+        "Bridge to Parashakti",
+        "Contextual Bridge: From Static Topology to Vibrational Multiplicity and Cosmic Manifestation"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "c/src/holographic.c:ql_default_topology"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-5-4"
+    },
+    {
+      "coordinate": "#1-5-5",
+      "live_spelling": "M1-5-5",
+      "names": [
+        "Complete Self-Realization",
+        "Recognition of Toroidal Necessity",
+        "Complete Self-Realization",
+        "Purposive Synthesis: Why Genus-1 is Topologically Necessary and Sufficient for Self-Reference"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "ParamasivaConcept"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/reading.rs:QlSynthesis",
+          "crates/ql-mef/src/vak_composition.rs:reference",
+          "crates/ql-mef/src/vak_composition.rs:references"
+        ]
+      },
+      "row": "census:#1-5-5"
+    },
+    {
+      "coordinate": "#1-2-0-0",
+      "live_spelling": "M1-2-0-0",
+      "names": [
+        "Matrix 0 Digital Root Reflection",
+        "Matrix 0 Digital Root Reflection",
+        "Original Vortex Archetypal Distillation - Bimba Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-0-0"
+    },
+    {
+      "coordinate": "#1-2-1-0",
+      "live_spelling": "M1-2-1-0",
+      "names": [
+        "Matrix 1 Digital Root Reflection",
+        "Matrix 1 Digital Root Reflection",
+        "Offset Vortex Archetypal Distillation - Pratibimba Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-1-0"
+    },
+    {
+      "coordinate": "#1-2-2-0",
+      "live_spelling": "M1-2-2-0",
+      "names": [
+        "Matrix 2 Digital Root Reflection",
+        "Matrix 2 Digital Root Reflection",
+        "Constructive Sum Archetypal Distillation - Synthesis Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-2-0"
+    },
+    {
+      "coordinate": "#1-2-3-0",
+      "live_spelling": "M1-2-3-0",
+      "names": [
+        "Matrix 3 Digital Root Reflection",
+        "Matrix 3 Digital Root Reflection",
+        "First Polarity Archetypal Distillation - Void Tension Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-3-0"
+    },
+    {
+      "coordinate": "#1-2-4-0",
+      "live_spelling": "M1-2-4-0",
+      "names": [
+        "Matrix 4 Digital Root Reflection",
+        "Matrix 4 Digital Root Reflection",
+        "Second Polarity Archetypal Distillation - Full Tension Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-4-0"
+    },
+    {
+      "coordinate": "#1-2-5-0",
+      "live_spelling": "M1-2-5-0",
+      "names": [
+        "Matrix 5 Digital Root Reflection",
+        "Matrix 5 Digital Root Reflection",
+        "Non-Dual Quintessence Archetypal Distillation - Paradox Unity Harmonic Soul"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "MatrixNode",
+        "AnandaDigitalReflection"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-2-5-0"
+    },
+    {
+      "coordinate": "#1-3-4.0000",
+      "live_spelling": "M1-3-4.0000",
+      "names": [
+        "4-Fold Static Framework (Void Frame)",
+        "4-Fold Static Framework (Void Frame)",
+        "Sub-stage #4.0 - The Four Ground States of Binary-Non-Dual System"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-cli/src/vak_composition.rs:ground",
+          "crates/ql-core/src/pole/fold.rs:FoldState",
+          "crates/ql-core/src/structural.rs:GroundKind"
+        ]
+      },
+      "row": "census:#1-3-4.0000"
+    },
+    {
+      "coordinate": "#1-3-4.0/1",
+      "live_spelling": "M1-3-4.(0/1)",
+      "names": [
+        "6-Fold Dynamic Process",
+        "6-Fold Dynamic Process",
+        "Sub-stage #4.0/1 - The Dynamic Activation of Static Framework"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-core/src/pole/fold.rs:FoldState"
+        ]
+      },
+      "row": "census:#1-3-4.0/1"
+    },
+    {
+      "coordinate": "#1-3-4.5/0",
+      "live_spelling": "M1-3-4.(5/0)",
+      "names": [
+        "Transcendent Integration (Recursive Frame)",
+        "Transcendent Integration (Recursive Frame)",
+        "Sub-stage #4.5 - The Bridge to Quintessential Meta-Reflection"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "c": {
+        "state": "implemented",
+        "constructs": [
+          "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
+        ]
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-4.5/0"
+    },
+    {
+      "coordinate": "#1-3-4.0/1/2",
+      "live_spelling": "M1-3-4.(0/1/2)",
+      "names": [
+        "8-Fold Processual Frame",
+        "8-Fold Processual Frame",
+        "Sub-stage #4.0/1/2 - The Expanded Process with Nested States"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-4.0/1/2"
+    },
+    {
+      "coordinate": "#1-3-4.0/1/2/3",
+      "live_spelling": "M1-3-4.(0/1/2/3)",
+      "names": [
+        "Dual-Track Parallel Equation",
+        "Dual-Track Parallel Equation",
+        "Sub-stage #4.0/1/2/3 - The Quantum-like Superposition Architecture"
+      ],
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "unimplemented"
+      },
+      "row": "census:#1-3-4.0/1/2/3"
+    },
+    {
+      "coordinate": "#1-3-4.4.0-4.4/5",
+      "live_spelling": null,
+      "names": [
+        "Contextual Flowering Synthesis (Nested Frame)"
+      ],
+      "labels": [],
+      "c": {
+        "state": "unimplemented"
+      },
+      "rust": {
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/reading.rs:QlSynthesis"
+        ]
+      },
+      "row": "census:#1-3-4.4.0-4.4/5"
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "schema": "ql.m-census-report/v1",
+  "report": "live-serialized-delta",
+  "joined_unique": 1857,
+  "ambiguous_alternate_groups": {
+    "M0-4.(0/1)-2": [
+      "#0-4.0/1-2",
+      "#0-4.0/1/2"
+    ],
+    "M0-4.(0/1/2)": [
+      "#0-4.0/1-2",
+      "#0-4.0/1/2"
+    ],
+    "M0-4.(0/1/2)-3": [
+      "#0-4.0/1/2-3",
+      "#0-4.0/1/2/3"
+    ],
+    "M0-4.(0/1/2/3)": [
+      "#0-4.0/1/2-3",
+      "#0-4.0/1/2/3"
+    ],
+    "M4.5-0": [
+      "#4.5-0",
+      "#4.5.0"
+    ],
+    "M4.5-1": [
+      "#4.5-1",
+      "#4.5.1"
+    ],
+    "M4.5-2": [
+      "#4.5-2",
+      "#4.5.2"
+    ],
+    "M4.5-3": [
+      "#4.5-3",
+      "#4.5.3"
+    ],
+    "M4.5-4": [
+      "#4.5-4",
+      "#4.5.4"
+    ],
+    "M4.5-5": [
+      "#4.5-5",
+      "#4.5.5"
+    ],
+    "M4.5.0": [
+      "#4.5-0",
+      "#4.5.0"
+    ],
+    "M4.5.1": [
+      "#4.5-1",
+      "#4.5.1"
+    ],
+    "M4.5.2": [
+      "#4.5-2",
+      "#4.5.2"
+    ],
+    "M4.5.3": [
+      "#4.5-3",
+      "#4.5.3"
+    ],
+    "M4.5.4": [
+      "#4.5-4",
+      "#4.5.4"
+    ],
+    "M4.5.5": [
+      "#4.5-5",
+      "#4.5.5"
+    ]
+  },
+  "live_only": [
+    {
+      "live_coordinate": "M0'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaBase"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-0",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-1",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-2",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-3",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-4",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M0-4.(4.0/1-4.4/5)-5",
+      "labels": [
+        "AnuttaraComponent",
+        "AnuttaraLanguageElement",
+        "MahamayaCycle"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M1'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M1-3-4.(4.0/1-4.4/5)",
+      "labels": [
+        "ParamasivaComponent",
+        "SpandaNestedStage"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M2'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M2-3-1-51000",
+      "labels": [
+        "Psychoid",
+        "VaultArtifact"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M3'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M4'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M5'",
+      "labels": [],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M5-2'",
+      "labels": [
+        "Pratibimba",
+        "RenderedAffordance"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M5-3'",
+      "labels": [
+        "Pratibimba",
+        "RenderedAffordance"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    },
+    {
+      "live_coordinate": "M5-4'",
+      "labels": [
+        "Pratibimba",
+        "RenderedAffordance"
+      ],
+      "note": "present in the live graph, absent from the K2 registry at its accepted source lock; pending reviewed registry promotion, not merged by the census"
+    }
+  ],
+  "serialized_only": [
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5",
+      "names": [
+        "M# - Mahamaya Base"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-0",
+      "names": [
+        "M0 - Subjective Ground"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-1",
+      "names": [
+        "M1 - Definition of the Other"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-2",
+      "names": [
+        "M2 - Process of Relationship"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-3",
+      "names": [
+        "M3 - Mediation of the World"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-4",
+      "names": [
+        "M4 - Context of the Collective"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#0-4.4.0-4.4/5-5",
+      "names": [
+        "M5 - Integration of Self and Whole"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    },
+    {
+      "registry_coordinate": "#1-3-4.4.0-4.4/5",
+      "names": [
+        "Contextual Flowering Synthesis (Nested Frame)"
+      ],
+      "note": "present in the K2 serialized snapshot, not found in the live capture"
+    }
+  ],
+  "composite_divergence_groups": [
+    {
+      "discrepancy_id": "k4-live-spelling-composite-m0-0-4-4-0",
+      "common_numeric_prefix": [
+        0,
+        4,
+        4,
+        0
+      ],
+      "registry_coordinates": [
+        "#0-4.4.0-4.4/5",
+        "#0-4.4.0-4.4/5-0",
+        "#0-4.4.0-4.4/5-1",
+        "#0-4.4.0-4.4/5-2",
+        "#0-4.4.0-4.4/5-3",
+        "#0-4.4.0-4.4/5-4",
+        "#0-4.4.0-4.4/5-5"
+      ],
+      "live_spellings": [
+        "M0-4.(4.0/1-4.4/5)"
+      ]
+    },
+    {
+      "discrepancy_id": "k4-live-spelling-composite-m1-1-3-4-4-0",
+      "common_numeric_prefix": [
+        1,
+        3,
+        4,
+        4,
+        0
+      ],
+      "registry_coordinates": [
+        "#1-3-4.4.0-4.4/5"
+      ],
+      "live_spellings": [
+        "M1-3-4.(4.0/1-4.4/5)"
+      ]
+    }
+  ],
+  "resolution_policy": "recorded, not merged; registry promotion requires the reviewed K2 regeneration path with a new source lock"
+}
