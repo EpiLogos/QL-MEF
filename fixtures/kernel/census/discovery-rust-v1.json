@@ -1,9 +1,9 @@
 {
   "schema": "ql.m-census-discovery/v1",
   "stratum": "rust",
-  "construct_count": 1003,
-  "bound_count": 195,
-  "orphan_count": 808,
+  "construct_count": 1027,
+  "bound_count": 215,
+  "orphan_count": 812,
   "bound": [
     {
       "symbol": "QlAttachment",
@@ -47,7 +47,7 @@
       "symbol": "vak_relation_kind",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 743,
+      "line": 740,
       "stratum": "rust",
       "coordinates": [
         "#2-1-5",
@@ -83,7 +83,7 @@
       "symbol": "verify_command",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 889,
+      "line": 886,
       "stratum": "rust",
       "coordinates": [
         "#2-5-0/1-6"
@@ -108,7 +108,7 @@
       "symbol": "parse_operation",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 945,
+      "line": 942,
       "stratum": "rust",
       "coordinates": [
         "#3-4"
@@ -131,7 +131,7 @@
       "symbol": "provider_state",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 956,
+      "line": 953,
       "stratum": "rust",
       "coordinates": [
         "#2-3-2-0-1-0"
@@ -499,6 +499,106 @@
         "#3",
         "#3-4",
         "#3-4-4"
+      ]
+    },
+    {
+      "symbol": "M3_CLOCK_VERSION",
+      "path": "crates/ql-core/src/m3_clock.rs",
+      "kind": "const",
+      "line": 6,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_CLOCK_SOURCE",
+      "path": "crates/ql-core/src/m3_clock.rs",
+      "kind": "const",
+      "line": 7,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "CLOCK_FIELD_COUNT",
+      "path": "crates/ql-core/src/m3_clock.rs",
+      "kind": "const",
+      "line": 9,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ClockField",
+      "path": "crates/ql-core/src/m3_clock.rs",
+      "kind": "enum",
+      "line": 14,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Clock",
+      "path": "crates/ql-core/src/m3_clock.rs",
+      "kind": "struct",
+      "line": 45,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
       ]
     },
     {
@@ -4380,6 +4480,405 @@
       "extended_coordinates": [
         "#2",
         "#3"
+      ]
+    },
+    {
+      "symbol": "M3_ENGINE_VERSION",
+      "path": "crates/ql-mef/src/m3_engine.rs",
+      "kind": "const",
+      "line": 11,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": [
+            "engine"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3NodeKind",
+      "path": "crates/ql-mef/src/m3_engine.rs",
+      "kind": "enum",
+      "line": 15,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3ClockFrame",
+      "path": "crates/ql-mef/src/m3_engine.rs",
+      "kind": "struct",
+      "line": 50,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Engine",
+      "path": "crates/ql-mef/src/m3_engine.rs",
+      "kind": "struct",
+      "line": 58,
+      "stratum": "rust",
+      "coordinates": [
+        "#1-3",
+        "#2-5-0/1-3",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "engine"
+          ]
+        },
+        {
+          "coordinate": "#2-5-0/1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "engine"
+          ]
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": [
+            "engine"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#2",
+        "#2-5",
+        "#2-5-0/1",
+        "#2-5-0/1-3",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "DOMAIN_SCHEMA",
+      "path": "crates/ql-mef/src/m3_source.rs",
+      "kind": "const",
+      "line": 11,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "DOMAIN_JSON",
+      "path": "crates/ql-mef/src/m3_source.rs",
+      "kind": "const",
+      "line": 12,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "SourceNode",
+      "path": "crates/ql-mef/src/m3_source.rs",
+      "kind": "struct",
+      "line": 16,
+      "stratum": "rust",
+      "coordinates": [
+        "#2-4.0-0/1",
+        "#2-4.1-0-0-14"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.0-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        },
+        {
+          "coordinate": "#2-4.1-0-0-14",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.0",
+        "#2-4.0-0/1",
+        "#2-4.1",
+        "#2-4.1-0",
+        "#2-4.1-0-0",
+        "#2-4.1-0-0-14"
+      ]
+    },
+    {
+      "symbol": "SourceRelation",
+      "path": "crates/ql-mef/src/m3_source.rs",
+      "kind": "struct",
+      "line": 28,
+      "stratum": "rust",
+      "coordinates": [
+        "#2-4.0-0/1",
+        "#2-4.1-0-0-14"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.0-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        },
+        {
+          "coordinate": "#2-4.1-0-0-14",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.0",
+        "#2-4.0-0/1",
+        "#2-4.1",
+        "#2-4.1-0",
+        "#2-4.1-0-0",
+        "#2-4.1-0-0-14"
+      ]
+    },
+    {
+      "symbol": "M3Source",
+      "path": "crates/ql-mef/src/m3_source.rs",
+      "kind": "struct",
+      "line": 79,
+      "stratum": "rust",
+      "coordinates": [
+        "#2-4.0-0/1",
+        "#2-4.1-0-0-14",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.0-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        },
+        {
+          "coordinate": "#2-4.1-0-0-14",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "source"
+          ]
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.0",
+        "#2-4.0-0/1",
+        "#2-4.1",
+        "#2-4.1-0",
+        "#2-4.1-0-0",
+        "#2-4.1-0-0-14",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Request",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "struct",
+      "line": 28,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Operation",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "enum",
+      "line": 48,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Command",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "struct",
+      "line": 78,
+      "stratum": "rust",
+      "coordinates": [
+        "#2-5-0/1-6",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-0/1-6",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "command"
+          ]
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-0/1",
+        "#2-5-0/1-6",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3Receipt",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "struct",
+      "line": 90,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3State",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "struct",
+      "line": 103,
+      "stratum": "rust",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "code",
+      "path": "crates/ql-mef/src/m3_state.rs",
+      "kind": "fn",
+      "line": 126,
+      "stratum": "rust",
+      "coordinates": [
+        "#3-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "code"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-2"
       ]
     },
     {

@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M1",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "a8e9f186e2477d8a3c2ed61b3d0f83ae5d7ca88cb89959eec4b89543aa893b83",
+  "ledger_revision": "9d4b00d291574c7c73af26bbf86c315ee5bb47c16263ad0b5ff3a47a5ffbb53a",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 43,
   "counts": {
@@ -99,6 +99,7 @@
           "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS",
           "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
           "crates/ql-mef/src/pole_state.rs:M1CarrierFacts",
           "crates/ql-mef/src/pole_state.rs:Readiness",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
@@ -247,6 +248,7 @@
           "crates/ql-mef/src/m1.rs:spanda",
           "crates/ql-mef/src/m1_engine.rs:Reflection",
           "crates/ql-mef/src/m1_engine.rs:reflection",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
       },

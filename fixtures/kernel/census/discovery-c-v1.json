@@ -1,9 +1,9 @@
 {
   "schema": "ql.m-census-discovery/v1",
   "stratum": "c",
-  "construct_count": 378,
-  "bound_count": 90,
-  "orphan_count": 288,
+  "construct_count": 407,
+  "bound_count": 97,
+  "orphan_count": 310,
   "bound": [
     {
       "symbol": "engine_lemniscate_dive",
@@ -2537,6 +2537,365 @@
         "#2",
         "#2-1",
         "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m3_trigram",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 47,
+      "stratum": "c",
+      "coordinates": [
+        "#3-1-0",
+        "#3-1-1",
+        "#3-1-2",
+        "#3-1-3",
+        "#3-1-4",
+        "#3-1-5",
+        "#3-1-6",
+        "#3-1-7"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-1-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-6",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        },
+        {
+          "coordinate": "#3-1-7",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "trigram"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-1",
+        "#3-1-0",
+        "#3-1-1",
+        "#3-1-2",
+        "#3-1-3",
+        "#3-1-4",
+        "#3-1-5",
+        "#3-1-6",
+        "#3-1-7"
+      ]
+    },
+    {
+      "symbol": "ql_m3_hexagram",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 51,
+      "stratum": "c",
+      "coordinates": [
+        "#3-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "hexagram"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-1"
+      ]
+    },
+    {
+      "symbol": "ql_m3_matrix_partner",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 59,
+      "stratum": "c",
+      "coordinates": [
+        "#3-3-2-0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-3-2-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "partner"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-3",
+        "#3-3-2",
+        "#3-3-2-0"
+      ]
+    },
+    {
+      "symbol": "ql_m3_minor",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 105,
+      "stratum": "c",
+      "coordinates": [
+        "#2-4.3-5-0",
+        "#3-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.3-5-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "minor"
+          ]
+        },
+        {
+          "coordinate": "#3-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "minor"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.3",
+        "#2-4.3-5",
+        "#2-4.3-5-0",
+        "#3",
+        "#3-4"
+      ]
+    },
+    {
+      "symbol": "ql_m3_active_state",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 122,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-0-2",
+        "#2-1-3-2",
+        "#2-4.0-0/1-0-0",
+        "#2-4.0-0/1-0-21",
+        "#2-4.0-0/1-0-5",
+        "#2-4.0-0/1-0-8",
+        "#2-4.2-5",
+        "#3-3-2-1",
+        "#3-3-5-1-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-0-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-1-3-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-0-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-0-21",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-0-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-0-8",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#2-4.2-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#3-3-2-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        },
+        {
+          "coordinate": "#3-3-5-1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "active"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-0",
+        "#2-1-0-2",
+        "#2-1-3",
+        "#2-1-3-2",
+        "#2-4",
+        "#2-4.0",
+        "#2-4.0-0/1",
+        "#2-4.0-0/1-0",
+        "#2-4.0-0/1-0-0",
+        "#2-4.0-0/1-0-21",
+        "#2-4.0-0/1-0-5",
+        "#2-4.0-0/1-0-8",
+        "#2-4.2",
+        "#2-4.2-5",
+        "#3",
+        "#3-3",
+        "#3-3-2",
+        "#3-3-2-1",
+        "#3-3-5",
+        "#3-3-5-1",
+        "#3-3-5-1-1"
+      ]
+    },
+    {
+      "symbol": "ql_m3_epogdoon",
+      "path": "c/src/m3.c",
+      "kind": "function",
+      "line": 142,
+      "stratum": "c",
+      "coordinates": [
+        "#2-5-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "epogdoon"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-2"
+      ]
+    },
+    {
+      "symbol": "ql_m3_form",
+      "path": "c/src/m3_domain.c",
+      "kind": "function",
+      "line": 29,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-3",
+        "#2-2-2-4-3",
+        "#2-4",
+        "#3-4-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "form"
+          ]
+        },
+        {
+          "coordinate": "#2-2-2-4-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "form"
+          ]
+        },
+        {
+          "coordinate": "#2-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "form"
+          ]
+        },
+        {
+          "coordinate": "#3-4-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "form"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-3",
+        "#2-2",
+        "#2-2-2",
+        "#2-2-2-4",
+        "#2-2-2-4-3",
+        "#2-4",
+        "#3",
+        "#3-4",
+        "#3-4-4"
       ]
     },
     {
