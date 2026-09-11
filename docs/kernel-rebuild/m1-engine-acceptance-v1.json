@@ -343,7 +343,7 @@
     "mode_basis_lens_cases": 168,
     "m1_engine_tests": 8,
     "m1_state_tests": 8,
-    "census_tests": 19
+    "census_tests": 20
   },
   "input_locks": [
     {
@@ -424,11 +424,11 @@
     },
     {
       "path": "scripts/m_census.py",
-      "sha256": "85bc98659d62c27105bc2cd1b75615312d7eb31fcd53ef6f6a87d319ca88cd1b"
+      "sha256": "92e86784e5f3b3a3af068bb50542d4d2b85442f0e92f57afa44c97b81fc2af3b"
     },
     {
       "path": "scripts/tests/test_m_census.py",
-      "sha256": "b062401db3a805c87f139644f6b0059c074724be25da273aa4ec7ebc7d149ba7"
+      "sha256": "46e1d6c572003162e636ee2a1c799596c8b605cc9901670d93819b942b4e7799"
     },
     {
       "path": "crates/ql-mef/tests/m1_acceptance.rs",

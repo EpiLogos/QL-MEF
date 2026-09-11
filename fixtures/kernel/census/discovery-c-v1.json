@@ -1,9 +1,9 @@
 {
   "schema": "ql.m-census-discovery/v1",
   "stratum": "c",
-  "construct_count": 352,
-  "bound_count": 86,
-  "orphan_count": 266,
+  "construct_count": 378,
+  "bound_count": 90,
+  "orphan_count": 288,
   "bound": [
     {
       "symbol": "engine_lemniscate_dive",
@@ -2387,6 +2387,155 @@
       ],
       "extended_coordinates": [
         "#2",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m2_modal_quadrature",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 137,
+      "stratum": "c",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#2",
+        "#2-1",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m2_modal_transduce",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 143,
+      "stratum": "c",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#2",
+        "#2-1",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m2_modal_power",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 149,
+      "stratum": "c",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#2-4",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "modal"
+          ]
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#2",
+        "#2-1",
+        "#2-4",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m2_vimarsha",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 158,
+      "stratum": "c",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#2",
+        "#2-1",
         "#3"
       ]
     },

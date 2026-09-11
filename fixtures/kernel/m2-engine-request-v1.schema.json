@@ -1,0 +1,564 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ql.m2-engine-request/v1",
+  "description": "Generated from Rust M2 wire types. Native validation also enforces semantic invariants; schema acceptance alone is not engine readiness.",
+  "$ref": "#/$defs/M2Request",
+  "$defs": {
+    "CarrierWeight": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "carrier": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 71
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "carrier",
+        "weight"
+      ]
+    },
+    "ContinuousMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode_ref": {
+          "type": "string"
+        },
+        "source_coordinate": {
+          "type": "string"
+        },
+        "material_fibre": {
+          "$ref": "#/$defs/MaterialFibre"
+        },
+        "carrier_weights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CarrierWeight"
+          },
+          "minItems": 1,
+          "maxItems": 18
+        },
+        "frequency_hz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "amplitude": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "excitation": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "damping_per_second": {
+          "type": "number",
+          "minimum": 0
+        },
+        "nodal_state_ref": {
+          "type": "string"
+        },
+        "antinodal_state_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode_ref",
+        "source_coordinate",
+        "material_fibre",
+        "carrier_weights",
+        "frequency_hz",
+        "amplitude",
+        "excitation",
+        "damping_per_second",
+        "nodal_state_ref",
+        "antinodal_state_ref"
+      ]
+    },
+    "CorrespondenceRole": {
+      "enum": [
+        "tonic",
+        "dominant"
+      ]
+    },
+    "EventIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_ref": {
+          "type": "string"
+        },
+        "profile_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_ref",
+        "profile_generation"
+      ]
+    },
+    "InputStamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/EventIdentity"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "contract_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "source_ref",
+        "contract_ref"
+      ]
+    },
+    "M1Excitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "topology_ref": {
+          "type": "string"
+        },
+        "audio_octet": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 8,
+          "maxItems": 8
+        },
+        "nodal_quartet": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "stamp",
+        "topology_ref",
+        "audio_octet",
+        "nodal_quartet"
+      ]
+    },
+    "M2ConditionInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maqam_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 71
+        },
+        "role": {
+          "$ref": "#/$defs/CorrespondenceRole"
+        },
+        "active_mef_condition": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 71
+        },
+        "tuning": {
+          "$ref": "#/$defs/TuningPolicy"
+        },
+        "tonic_hz": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1000000
+        },
+        "palette": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RenderPalette"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "maqam_index",
+        "role",
+        "active_mef_condition",
+        "tuning",
+        "tonic_hz"
+      ]
+    },
+    "M2Request": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/M2ConditionInput"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "ql.m2-engine-request/v1"
+        },
+        "registry_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "at_unix_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "tick12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "degree720": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 719
+        },
+        "modal_coefficients": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 72,
+          "maxItems": 72
+        },
+        "mef_conditions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 71
+          },
+          "maxItems": 72
+        },
+        "context_frames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 7
+        },
+        "selections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Selection"
+          },
+          "maxItems": 764
+        },
+        "m1_excitation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/M1Excitation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vimarsha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VimarshaInput"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "world_observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorldObservation"
+          },
+          "maxItems": 10
+        },
+        "resonator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResonatorState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "registry_revision",
+        "stamp",
+        "at_unix_ms",
+        "tick12",
+        "degree720",
+        "modal_coefficients",
+        "mef_conditions",
+        "context_frames",
+        "selections",
+        "world_observations"
+      ]
+    },
+    "MaterialFibre": {
+      "enum": [
+        "earth",
+        "fire",
+        "water",
+        "air"
+      ]
+    },
+    "NamedPaletteEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "linear_rgba": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "name",
+        "linear_rgba"
+      ]
+    },
+    "PhysicalParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "source_ref"
+      ]
+    },
+    "RenderPalette": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "policy_ref": {
+          "type": "string"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NamedPaletteEntry"
+          },
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "stamp",
+        "policy_ref",
+        "entries"
+      ]
+    },
+    "ResonatorState": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "provider_ref": {
+          "type": "string"
+        },
+        "geometry_ref": {
+          "type": "string"
+        },
+        "material_ref": {
+          "type": "string"
+        },
+        "material_model_ref": {
+          "type": "string"
+        },
+        "material_parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PhysicalParameter"
+          }
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContinuousMode"
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "stamp",
+        "provider_ref",
+        "geometry_ref",
+        "material_ref",
+        "material_model_ref",
+        "material_parameters",
+        "modes"
+      ]
+    },
+    "Selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "table",
+        "index"
+      ]
+    },
+    "TuningPolicy": {
+      "enum": [
+        "retained24_tet",
+        "bimba_spelled24_tet"
+      ]
+    },
+    "VimarshaInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "lens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "musical_mode": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "harmonic_ratio": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "pose_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 471
+        },
+        "pose_source_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "stamp",
+        "lens",
+        "musical_mode",
+        "harmonic_ratio",
+        "pose_ordinal",
+        "pose_source_ref"
+      ]
+    },
+    "WorldObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planet_id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "longitude_degrees": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360
+        },
+        "provider_ref": {
+          "type": "string"
+        },
+        "source_revision": {
+          "type": "string"
+        },
+        "observed_at_unix_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "planet_id",
+        "longitude_degrees",
+        "provider_ref",
+        "source_revision",
+        "observed_at_unix_ms"
+      ]
+    }
+  }
+}

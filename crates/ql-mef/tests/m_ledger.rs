@@ -27,7 +27,11 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
     let l = ledger();
     assert!(codes(&l).is_empty());
     assert_eq!(l.matrices.len(), 10);
-    assert!(l.rows.len() >= 1828);
+    // K3 imported 185 source capabilities + 7 aggregate index rows. K4 added
+    // one census row per M1/M2/M3 registry coordinate (43 + 597 + 996) through
+    // the automated coverage census; the source imports themselves are
+    // unchanged and every capability keeps its distinct identity.
+    assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
     assert_eq!(
         l.rows
             .iter()
@@ -35,14 +39,35 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
             .count(),
         1636
     );
-    assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
+    assert_eq!(
+        l.rows
+            .iter()
+            .filter(|r| r.id.starts_with("ql.m-index:"))
+            .count(),
+        7
+    );
     assert_eq!(
         l.implementations
             .iter()
-            .filter(|i| i.id.contains("ql.m-index:"))
+            .filter(|i| i.id.starts_with("c:ql.m-index:") || i.id.starts_with("rust:ql.m-index:"))
             .count(),
         14
     );
+    assert_eq!(
+        l.implementations
+            .iter()
+            .filter(|i| i.id.starts_with("neo4j:live:"))
+            .count(),
+        1635
+    );
+    let registry = native_m_registry();
+    let bound: std::collections::BTreeSet<_> = l
+        .implementations
+        .iter()
+        .filter(|i| i.stratum == "c" && i.kind == "computational")
+        .flat_map(|i| &i.coordinates)
+        .map(|r| registry.resolve(r).unwrap().id)
+        .collect();
     for (scope, count) in [
         ("M0", 108),
         ("M1", 43),
@@ -52,30 +77,42 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
         ("M5", 31),
         ("M", 1876),
     ] {
-        let c = l
-            .coverage(native_m_registry(), scope, "c", "coordinate", "verified")
+        let coverage = l
+            .coverage(registry, scope, "c", "coordinate", "verified")
             .unwrap();
-        assert_eq!(c.structural_coordinates, count);
-        let bound: std::collections::BTreeSet<_> = l
-            .implementations
+        assert_eq!(coverage.structural_coordinates, count);
+        let centre = registry.resolve(scope).unwrap().id;
+        let expected: std::collections::BTreeSet<_> = registry
+            .manifest()
+            .nodes
             .iter()
-            .filter(|i| i.stratum == "c" && i.kind == "computational")
-            .flat_map(|i| i.coordinates.iter())
-            .map(|s| native_m_registry().resolve(s).unwrap().source_ref.clone())
-            .collect();
-        let root = native_m_registry().resolve(scope).unwrap();
-        let bound_in_scope = bound
-            .iter()
-            .filter(|s| {
-                let n = native_m_registry().resolve(s).unwrap();
-                scope == "M" || n.root_id == root.id
+            .filter(|node| {
+                let mut current = Some(*node);
+                while let Some(n) = current {
+                    if n.id == centre {
+                        return true;
+                    }
+                    current = registry.parent(n.id);
+                }
+                false
             })
-            .count();
+            .filter(|n| !bound.contains(&n.id))
+            .map(|n| n.source_ref.clone())
+            .collect();
         assert_eq!(
-            c.coordinates_without_computational_binding.len(),
-            count - bound_in_scope
+            coverage
+                .coordinates_without_computational_binding
+                .iter()
+                .cloned()
+                .collect::<std::collections::BTreeSet<_>>(),
+            expected
         );
-        assert!(c.blocking_rows.len() <= c.rows.len());
+        assert!(
+            coverage
+                .blocking_rows
+                .iter()
+                .any(|r| r.subject == format!("ql.m-index:{scope}"))
+        );
     }
 }
 
@@ -181,7 +218,7 @@ fn coordinate_test_cannot_establish_operational_or_experiential_readiness() {
     l.evidence[0].kind = "test-receipt".into();
     l.evidence[0].result = "passed".into();
     for i in &mut l.implementations {
-        if i.stratum == "rust" {
+        if i.id.starts_with("rust:ql.m-index:") {
             i.kind = "computational".into();
         }
     }
@@ -205,7 +242,7 @@ fn coordinate_test_cannot_establish_operational_or_experiential_readiness() {
 fn source_declaration_cannot_prove_implementation() {
     let mut l = ledger();
     for i in &mut l.implementations {
-        if i.stratum == "rust" {
+        if i.id.starts_with("rust:ql.m-index:") {
             i.kind = "computational".into();
         }
     }
@@ -491,11 +528,23 @@ fn vertical_dependencies_are_included_and_cycles_rejected() {
 
 #[test]
 fn source_coverage_gaps_and_known_backward_parent_discrepancy_remain_visible() {
-    let l = ledger();
+    let mut l = ledger();
+    // K6 gives every source row a disposition. Deliberately remove one to
+    // exercise missing-disposition detection without requiring permanent gaps.
+    let row = l
+        .rows
+        .iter_mut()
+        .find(|r| r.scope == "M2" && r.source.is_some())
+        .unwrap();
+    let missing = row.id.clone();
+    row.dispositions.remove("rust");
     let c = l
         .coverage(native_m_registry(), "M2", "rust", "operational", "verified")
         .unwrap();
-    assert!(!c.source_without_implementation_disposition.is_empty());
+    assert!(
+        c.source_without_implementation_disposition
+            .contains(&missing)
+    );
     assert!(!c.coordinates_without_capability_rows.is_empty());
     assert!(
         c.findings
@@ -621,4 +670,58 @@ fn later_strata_do_not_gain_parity_from_an_unrelated_native_comparison() {
             .unwrap();
         assert!(report.blocking_rows.iter().any(|f| f.subject == row_id));
     }
+}
+
+#[test]
+fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabilities() {
+    let l = ledger();
+    let tables: Vec<_> = l
+        .rows
+        .iter()
+        .filter(|r| r.id.starts_with("k6-m2:table-"))
+        .collect();
+    assert_eq!(tables.len(), 16);
+    for r in tables {
+        for peer in ["c", "rust"] {
+            assert_eq!(
+                l.assessments[&r.assessment].readiness[peer].status,
+                "structural-index-only"
+            );
+        }
+    }
+    let source: Vec<_> = l
+        .rows
+        .iter()
+        .filter(|r| r.scope == "M2" && r.source.is_some())
+        .collect();
+    assert_eq!(source.len(), 31);
+    for r in source {
+        for peer in ["c", "rust", "cpp", "neo4j"] {
+            assert!(
+                !["verified", "implemented"]
+                    .contains(&l.assessments[&r.assessment].readiness[peer].status.as_str())
+            );
+        }
+    }
+    let shem = l.rows.iter().find(|r| r.id == "deep-M2:M2-C13").unwrap();
+    assert!(
+        l.assessments[&shem.assessment]
+            .parity
+            .values()
+            .all(Vec::is_empty)
+    );
+    for id in ["k6-m2:templateure", "k6-m2:carrier", "k6-m2:vimarsha"] {
+        let r = l.rows.iter().find(|r| r.id == id).unwrap();
+        for peer in ["c", "rust"] {
+            assert_eq!(
+                l.assessments[&r.assessment].readiness[peer].status,
+                "verified"
+            );
+        }
+    }
+    assert!(
+        l.discrepancies
+            .iter()
+            .any(|d| d.id == "k6-m2:difference-asma" && d.state == "open")
+    );
 }

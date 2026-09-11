@@ -2,19 +2,19 @@
   "schema": "ql.m-census/v1",
   "root": "M2",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "0797ab2ab4510ef1baa6fdc4b54367414b0e4d25abc3d5ce99ab9912864b5f74",
+  "ledger_revision": "6f51a6046266a88e41e17f8874ad143bd727c0b47b792dae8bf4577a8bca3d00",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 597,
   "counts": {
     "c": {
-      "implemented": 33,
+      "implemented": 34,
       "unimplemented": 550,
-      "partial": 14
+      "partial": 13
     },
     "rust": {
-      "implemented": 69,
+      "implemented": 71,
       "partial": 19,
-      "unimplemented": 509
+      "unimplemented": 507
     }
   },
   "coordinates": [
@@ -36,6 +36,10 @@
           "c/src/m1_state.c:ql_m1_grammar",
           "c/src/m1_state.c:ql_m1_source_traits",
           "c/src/m1_state.c:seat",
+          "c/src/m2.c:ql_m2_modal_power",
+          "c/src/m2.c:ql_m2_modal_quadrature",
+          "c/src/m2.c:ql_m2_modal_transduce",
+          "c/src/m2.c:ql_m2_vimarsha",
           "c/src/m_tree.c:ql_m_child_at",
           "c/src/m_tree.c:ql_m_relation_resolve",
           "c/src/m_tree.c:ql_m_resolve",
@@ -121,6 +125,22 @@
           "crates/ql-mef/src/m1_engine.rs:carrier",
           "crates/ql-mef/src/m1_engine.rs:finite_field",
           "crates/ql-mef/src/m1_engine.rs:grammar",
+          "crates/ql-mef/src/m2.rs:ModalField",
+          "crates/ql-mef/src/m2.rs:asma_is_internal",
+          "crates/ql-mef/src/m2.rs:context_condition",
+          "crates/ql-mef/src/m2_condition.rs:M2Condition",
+          "crates/ql-mef/src/m2_condition.rs:M2ConditionInput",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_condition.rs:resolve",
+          "crates/ql-mef/src/m2_engine.rs:M2Frame",
+          "crates/ql-mef/src/m2_engine.rs:M2Request",
+          "crates/ql-mef/src/m2_engine.rs:ModalState",
+          "crates/ql-mef/src/m2_engine.rs:ResonatorState",
+          "crates/ql-mef/src/m2_engine.rs:finite",
+          "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m2_vimarsha.rs:read_from_pose",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Decision",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
@@ -201,6 +221,10 @@
         "state": "implemented",
         "constructs": [
           "c/src/m1.c:ql_m1_formal",
+          "c/src/m2.c:ql_m2_modal_power",
+          "c/src/m2.c:ql_m2_modal_quadrature",
+          "c/src/m2.c:ql_m2_modal_transduce",
+          "c/src/m2.c:ql_m2_vimarsha",
           "vendor/epi-kernel/reference/src/m0.c:SIVA_TABLE",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
@@ -227,6 +251,9 @@
           "crates/ql-mef/src/lens.rs:LensRef",
           "crates/ql-mef/src/m1.rs:Formal",
           "crates/ql-mef/src/m1.rs:formal",
+          "crates/ql-mef/src/m2.rs:context_condition",
+          "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/templateure.rs:FormPotential",
@@ -288,6 +315,7 @@
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
           "crates/ql-mef/src/m1_engine.rs:finite_field",
+          "crates/ql-mef/src/m2_engine.rs:finite",
           "crates/ql-mef/src/vak.rs:SelfOtherForm",
           "crates/ql-mef/src/vak.rs:VakActionRelationKind",
           "crates/ql-mef/src/vak.rs:VakEntry",
@@ -352,15 +380,10 @@
         "ParashaktiComponent"
       ],
       "c": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#1",
-          "#2-1-0-3",
-          "#2-4.0-0/1-1-0",
-          "#2-4.2-1-2"
-        ],
+        "state": "implemented",
         "constructs": [
           "c/src/m1_state.c:ql_m1_grammar",
+          "c/src/m2.c:ql_m2_modal_power",
           "c/src/m_tree.c:ql_m_child_at",
           "c/src/m_tree.c:ql_m_relation_resolve",
           "c/src/m_tree.c:ql_m_resolve",
@@ -379,6 +402,13 @@
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:Grammar",
           "crates/ql-mef/src/m1_engine.rs:grammar",
+          "crates/ql-mef/src/m2.rs:ModalField",
+          "crates/ql-mef/src/m2.rs:asma_is_internal",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_condition.rs:resolve",
+          "crates/ql-mef/src/m2_engine.rs:ModalState",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Decision",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
@@ -436,7 +466,8 @@
           "#2-5-0/1",
           "#2-5-0/1-6",
           "#2-5-2",
-          "#2-5-5"
+          "#2-5-5",
+          "#2-5-6"
         ],
         "constructs": [
           "crates/ql-cli/src/lib.rs:verify_command",
@@ -449,6 +480,7 @@
           "crates/ql-mef/src/m1_engine.rs:Carrier",
           "crates/ql-mef/src/m1_engine.rs:M1Engine",
           "crates/ql-mef/src/m1_engine.rs:carrier",
+          "crates/ql-mef/src/m2_engine.rs:ResonatorState",
           "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
           "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
           "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -619,7 +651,8 @@
         "constructs": [
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
           "crates/ql-mef/src/lens.rs:LensId",
-          "crates/ql-mef/src/lens.rs:LensRef"
+          "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/m2.rs:context_condition"
         ]
       },
       "row": "census:#2-1-4"
@@ -717,7 +750,8 @@
         "constructs": [
           "crates/ql-adapters/src/attachment.rs:QlAttachment",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
-          "crates/ql-mef/src/m1_engine.rs:finite_field"
+          "crates/ql-mef/src/m1_engine.rs:finite_field",
+          "crates/ql-mef/src/m2_engine.rs:finite"
         ]
       },
       "row": "census:#2-2-1"
@@ -904,18 +938,14 @@
         ]
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#1-2-2",
-          "#1-2-3",
-          "#1-5",
-          "#2-1-0-2",
-          "#2-3-1-0-1",
-          "#2-4.0-0/1"
-        ],
+        "state": "implemented",
         "constructs": [
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
+          "crates/ql-mef/src/m2.rs:asma_is_internal",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -951,6 +981,9 @@
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:Grammar",
           "crates/ql-mef/src/m1_engine.rs:grammar",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -986,6 +1019,7 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-core/src/operator.rs:FourPlusTwoClass",
+          "crates/ql-mef/src/m2_condition.rs:resolve",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
         ]
       },
@@ -1186,6 +1220,7 @@
       "rust": {
         "state": "implemented",
         "constructs": [
+          "crates/ql-mef/src/m2_engine.rs:ResonatorState",
           "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
           "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
           "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -1915,7 +1950,8 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/src/context_frame.rs:ContextFrameId"
+          "crates/ql-mef/src/context_frame.rs:ContextFrameId",
+          "crates/ql-mef/src/m2.rs:context_condition"
         ]
       },
       "row": "census:#2-1-4-4"
@@ -2184,7 +2220,8 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
-          "crates/ql-mef/src/m1_engine.rs:finite_field"
+          "crates/ql-mef/src/m1_engine.rs:finite_field",
+          "crates/ql-mef/src/m2_engine.rs:finite"
         ]
       },
       "row": "census:#2-2-1-2"
@@ -2757,12 +2794,16 @@
       "rust": {
         "state": "partial",
         "covered_by_descendants": [
+          "#1",
           "#2-2-0-5",
           "#2-4.0-0/1"
         ],
         "constructs": [
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -2837,7 +2878,13 @@
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-4.2-1-2"
+        ],
+        "constructs": [
+          "crates/ql-mef/src/m2_condition.rs:resolve"
+        ]
       },
       "row": "census:#2-4.2-1"
     },
@@ -4647,6 +4694,9 @@
         "constructs": [
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -4675,12 +4725,16 @@
       "rust": {
         "state": "partial",
         "covered_by_descendants": [
+          "#1",
           "#2-2-0-5",
           "#2-4.0-0/1"
         ],
         "constructs": [
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -4829,7 +4883,10 @@
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m2_condition.rs:resolve"
+        ]
       },
       "row": "census:#2-4.2-1-2"
     },
@@ -9747,6 +9804,9 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
+          "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+          "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]

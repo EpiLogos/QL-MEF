@@ -96,20 +96,6 @@
       ]
     },
     {
-      "coordinate": "#1-2-1",
-      "names": [
-        "Matrix 1: The Offset (Pratibimba)",
-        "Matrix 1: The Offset (Pratibimba)",
-        "First Reflection Vortex Matrix - Pratibimba Archetypal Differentiation"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
-        "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
-      ]
-    },
-    {
       "coordinate": "#1-3-0",
       "names": [
         "Spanda Seed",
@@ -192,19 +178,6 @@
       "rust_state": "partial",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
-      ]
-    },
-    {
-      "coordinate": "#2-4.0",
-      "names": [
-        "Asma ul-Husna",
-        "Asma ul-Husna",
-        "The 99 Most Beautiful Names of Allah - Divine Mathematical Architecture"
-      ],
-      "c_state": "partial",
-      "rust_state": "partial",
-      "c_bodies": [
-        "c/src/m_tree.c:ql_m_child_at"
       ]
     },
     {
@@ -306,7 +279,7 @@
         "Tawba (التوبة) - The Station of Repentance and Return"
       ],
       "c_state": "partial",
-      "rust_state": "unimplemented",
+      "rust_state": "partial",
       "c_bodies": [
         "c/src/m_tree.c:ql_m_relation_resolve",
         "c/src/m_tree.c:ql_m_resolve"
@@ -388,20 +361,6 @@
       "rust_state": "unimplemented",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
-      ]
-    },
-    {
-      "coordinate": "#2-4.2-1-2",
-      "names": [
-        "Tawba Khawas al-Khawas",
-        "Tawba Khawas al-Khawas",
-        "Very Select Repentance - The Level of Resolve"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "c/src/m_tree.c:ql_m_relation_resolve",
-        "c/src/m_tree.c:ql_m_resolve"
       ]
     },
     {
@@ -649,6 +608,7 @@
         "The Expansive Elaboration & Wisdom Matrix"
       ],
       "rust_bodies": [
+        "crates/ql-mef/src/m2_engine.rs:ResonatorState",
         "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
         "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
         "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -808,7 +768,8 @@
         "Context as Dasein - Historicality and the Ontological Turn"
       ],
       "rust_bodies": [
-        "crates/ql-mef/src/context_frame.rs:ContextFrameId"
+        "crates/ql-mef/src/context_frame.rs:ContextFrameId",
+        "crates/ql-mef/src/m2.rs:context_condition"
       ]
     },
     {
@@ -833,7 +794,8 @@
       ],
       "rust_bodies": [
         "crates/ql-mef/src/m1_engine.rs:FiniteField",
-        "crates/ql-mef/src/m1_engine.rs:finite_field"
+        "crates/ql-mef/src/m1_engine.rs:finite_field",
+        "crates/ql-mef/src/m2_engine.rs:finite"
       ]
     },
     {
@@ -1240,6 +1202,9 @@
       ],
       "rust_bodies": [
         "crates/ql-mef/src/m1.rs:SOURCE_REF",
+        "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
+        "crates/ql-mef/src/m2_condition.rs:SourceRelation",
+        "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
         "crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "crates/ql-mef/src/vak.rs:parse_source_entry"
       ]

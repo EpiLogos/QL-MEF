@@ -1814,6 +1814,355 @@
       ]
     },
     {
+      "symbol": "ql_m2_asma_route",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 97,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "asma",
+        "route"
+      ]
+    },
+    {
+      "symbol": "ql_m2_aspect",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 107,
+      "context": "",
+      "stratum": "c",
+      "reason": "ambiguous across 74 coordinates",
+      "candidates": [
+        "#1-0",
+        "#1-1",
+        "#2-3-1-0-0-0",
+        "#2-3-1-0-0-1",
+        "#2-3-1-0-1-0",
+        "#2-3-1-0-1-1",
+        "#2-3-1-0-2-0",
+        "#2-3-1-0-2-1",
+        "#2-3-1-1-0-0",
+        "#2-3-1-1-0-1",
+        "#2-3-1-1-1-0",
+        "#2-3-1-1-1-1",
+        "#2-3-1-1-2-0",
+        "#2-3-1-1-2-1",
+        "#2-3-1-2-0-0",
+        "#2-3-1-2-0-1",
+        "#2-3-1-2-1-0",
+        "#2-3-1-2-1-1",
+        "#2-3-1-2-2-0",
+        "#2-3-1-2-2-1",
+        "#2-3-2-0-0-0",
+        "#2-3-2-0-0-1",
+        "#2-3-2-0-1-0",
+        "#2-3-2-0-1-1",
+        "#2-3-2-0-2-0",
+        "#2-3-2-0-2-1",
+        "#2-3-2-1-0-0",
+        "#2-3-2-1-0-1",
+        "#2-3-2-1-1-0",
+        "#2-3-2-1-1-1",
+        "#2-3-2-1-2-0",
+        "#2-3-2-1-2-1",
+        "#2-3-2-2-0-0",
+        "#2-3-2-2-0-1",
+        "#2-3-2-2-1-0",
+        "#2-3-2-2-1-1",
+        "#2-3-2-2-2-0",
+        "#2-3-2-2-2-1",
+        "#2-3-3-0-0-0",
+        "#2-3-3-0-0-1",
+        "#2-3-3-0-1-0",
+        "#2-3-3-0-1-1",
+        "#2-3-3-0-2-0",
+        "#2-3-3-0-2-1",
+        "#2-3-3-1-0-0",
+        "#2-3-3-1-0-1",
+        "#2-3-3-1-1-0",
+        "#2-3-3-1-1-1",
+        "#2-3-3-1-2-0",
+        "#2-3-3-1-2-1",
+        "#2-3-3-2-0-0",
+        "#2-3-3-2-0-1",
+        "#2-3-3-2-1-0",
+        "#2-3-3-2-1-1",
+        "#2-3-3-2-2-0",
+        "#2-3-3-2-2-1",
+        "#2-3-4-0-0-0",
+        "#2-3-4-0-0-1",
+        "#2-3-4-0-1-0",
+        "#2-3-4-0-1-1",
+        "#2-3-4-0-2-0",
+        "#2-3-4-0-2-1",
+        "#2-3-4-1-0-0",
+        "#2-3-4-1-0-1",
+        "#2-3-4-1-1-0",
+        "#2-3-4-1-1-1",
+        "#2-3-4-1-2-0",
+        "#2-3-4-1-2-1",
+        "#2-3-4-2-0-0",
+        "#2-3-4-2-0-1",
+        "#2-3-4-2-1-0",
+        "#2-3-4-2-1-1",
+        "#2-3-4-2-2-0",
+        "#2-3-4-2-2-1"
+      ]
+    },
+    {
+      "symbol": "ql_m2_correspondence",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 189,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "ql_m2_correspondence_at",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 186,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "ql_m2_correspondence_count",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 183,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence",
+        "count"
+      ]
+    },
+    {
+      "symbol": "ql_m2_correspondence_pitch",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 197,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence",
+        "pitch"
+      ]
+    },
+    {
+      "symbol": "ql_m2_decan_to_fibre",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 71,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "decan",
+        "fibre"
+      ]
+    },
+    {
+      "symbol": "ql_m2_exact_record_count",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 23,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "count",
+        "exact",
+        "record"
+      ]
+    },
+    {
+      "symbol": "ql_m2_fibre_target",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 76,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "fibre",
+        "target"
+      ]
+    },
+    {
+      "symbol": "ql_m2_flatten",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 32,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "flatten"
+      ]
+    },
+    {
+      "symbol": "ql_m2_legacy_det",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 88,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "det",
+        "legacy"
+      ]
+    },
+    {
+      "symbol": "ql_m2_maqam_pitch",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 121,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "maqam",
+        "pitch"
+      ]
+    },
+    {
+      "symbol": "ql_m2_planet_preempted",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 102,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "planet",
+        "preempted"
+      ]
+    },
+    {
+      "symbol": "ql_m2_record",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 19,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "record"
+      ]
+    },
+    {
+      "symbol": "ql_m2_scalar_compress",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 80,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "compress",
+        "scalar"
+      ]
+    },
+    {
+      "symbol": "ql_m2_scalar_expand",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 84,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "expand",
+        "scalar"
+      ]
+    },
+    {
+      "symbol": "ql_m2_signature",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 56,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "signature"
+      ]
+    },
+    {
+      "symbol": "ql_m2_table",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 16,
+      "context": "",
+      "stratum": "c",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "ql_m2_tattva_step",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 66,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "step",
+        "tattva"
+      ]
+    },
+    {
+      "symbol": "ql_m2_unflatten",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 44,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "unflatten"
+      ]
+    },
+    {
+      "symbol": "ql_m2_unpack_signature",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 60,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "signature",
+        "unpack"
+      ]
+    },
+    {
+      "symbol": "valid_amplitudes",
+      "path": "c/src/m2.c",
+      "kind": "function",
+      "line": 131,
+      "context": "",
+      "stratum": "c",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "amplitude",
+        "valid"
+      ]
+    },
+    {
       "symbol": "ql_m_binding_valid",
       "path": "c/src/m_tree.c",
       "kind": "function",
@@ -9171,6 +9520,27 @@
       "reason": "no distinctive tokens or coordinate spelling"
     },
     {
+      "symbol": "main",
+      "path": "crates/ql-mef/examples/m2_engine.rs",
+      "kind": "fn",
+      "line": 19,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "run",
+      "path": "crates/ql-mef/examples/m2_engine.rs",
+      "kind": "fn",
+      "line": 3,
+      "context": "//! Checkout-independent JSON adapter once compiled; no Python/runtime source dependency.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "run"
+      ]
+    },
+    {
       "symbol": "CONTEXT_FRAME_GRAMMAR_VERSION",
       "path": "crates/ql-mef/src/context_frame.rs",
       "kind": "const",
@@ -10877,6 +11247,1104 @@
       "tokens": [
         "source",
         "trait"
+      ]
+    },
+    {
+      "symbol": "Aspect",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 499,
+      "context": "",
+      "stratum": "rust",
+      "reason": "ambiguous across 74 coordinates",
+      "candidates": [
+        "#1-0",
+        "#1-1",
+        "#2-3-1-0-0-0",
+        "#2-3-1-0-0-1",
+        "#2-3-1-0-1-0",
+        "#2-3-1-0-1-1",
+        "#2-3-1-0-2-0",
+        "#2-3-1-0-2-1",
+        "#2-3-1-1-0-0",
+        "#2-3-1-1-0-1",
+        "#2-3-1-1-1-0",
+        "#2-3-1-1-1-1",
+        "#2-3-1-1-2-0",
+        "#2-3-1-1-2-1",
+        "#2-3-1-2-0-0",
+        "#2-3-1-2-0-1",
+        "#2-3-1-2-1-0",
+        "#2-3-1-2-1-1",
+        "#2-3-1-2-2-0",
+        "#2-3-1-2-2-1",
+        "#2-3-2-0-0-0",
+        "#2-3-2-0-0-1",
+        "#2-3-2-0-1-0",
+        "#2-3-2-0-1-1",
+        "#2-3-2-0-2-0",
+        "#2-3-2-0-2-1",
+        "#2-3-2-1-0-0",
+        "#2-3-2-1-0-1",
+        "#2-3-2-1-1-0",
+        "#2-3-2-1-1-1",
+        "#2-3-2-1-2-0",
+        "#2-3-2-1-2-1",
+        "#2-3-2-2-0-0",
+        "#2-3-2-2-0-1",
+        "#2-3-2-2-1-0",
+        "#2-3-2-2-1-1",
+        "#2-3-2-2-2-0",
+        "#2-3-2-2-2-1",
+        "#2-3-3-0-0-0",
+        "#2-3-3-0-0-1",
+        "#2-3-3-0-1-0",
+        "#2-3-3-0-1-1",
+        "#2-3-3-0-2-0",
+        "#2-3-3-0-2-1",
+        "#2-3-3-1-0-0",
+        "#2-3-3-1-0-1",
+        "#2-3-3-1-1-0",
+        "#2-3-3-1-1-1",
+        "#2-3-3-1-2-0",
+        "#2-3-3-1-2-1",
+        "#2-3-3-2-0-0",
+        "#2-3-3-2-0-1",
+        "#2-3-3-2-1-0",
+        "#2-3-3-2-1-1",
+        "#2-3-3-2-2-0",
+        "#2-3-3-2-2-1",
+        "#2-3-4-0-0-0",
+        "#2-3-4-0-0-1",
+        "#2-3-4-0-1-0",
+        "#2-3-4-0-1-1",
+        "#2-3-4-0-2-0",
+        "#2-3-4-0-2-1",
+        "#2-3-4-1-0-0",
+        "#2-3-4-1-0-1",
+        "#2-3-4-1-1-0",
+        "#2-3-4-1-1-1",
+        "#2-3-4-1-2-0",
+        "#2-3-4-1-2-1",
+        "#2-3-4-2-0-0",
+        "#2-3-4-2-0-1",
+        "#2-3-4-2-1-0",
+        "#2-3-4-2-1-1",
+        "#2-3-4-2-2-0",
+        "#2-3-4-2-2-1"
+      ]
+    },
+    {
+      "symbol": "CATALOGUE_SCHEMA",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 17,
+      "context": "//! a semantic equivalence. The historical scalar/OR transforms and current //! elemental modal transform remain separately named operations.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "catalogue",
+        "schema"
+      ]
+    },
+    {
+      "symbol": "Catalogue",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 88,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "catalogue"
+      ]
+    },
+    {
+      "symbol": "CoordinateHolding",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 292,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "coordinate",
+        "holding"
+      ]
+    },
+    {
+      "symbol": "DescriptorReading",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 237,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "descriptor",
+        "reading"
+      ]
+    },
+    {
+      "symbol": "ENGINE_CONTRACT",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 16,
+      "context": "//! A shared 72-byte carrier supports four distinct readings; its index is not //! a semantic equivalence. The historical scalar/OR transforms and current //! elemental modal transform remain separately named operations.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "contract",
+        "engine"
+      ]
+    },
+    {
+      "symbol": "MAX_COMPONENT",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 19,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "max"
+      ]
+    },
+    {
+      "symbol": "RETAINED_C_JSON",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 20,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "json",
+        "retained"
+      ]
+    },
+    {
+      "symbol": "RETAINED_STANDING",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 18,
+      "context": "//! elemental modal transform remain separately named operations.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "retained",
+        "standing"
+      ]
+    },
+    {
+      "symbol": "Reading72",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 334,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "reading72"
+      ]
+    },
+    {
+      "symbol": "Register72",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "enum",
+      "line": 327,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "register72"
+      ]
+    },
+    {
+      "symbol": "RetainedTable",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 52,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "retained"
+      ]
+    },
+    {
+      "symbol": "SourceLock",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "struct",
+      "line": 46,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "lock",
+        "source"
+      ]
+    },
+    {
+      "symbol": "TABLE_COUNTS",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 39,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "count"
+      ]
+    },
+    {
+      "symbol": "TABLE_NAMES",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 21,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "TABLE_WIDTHS",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 42,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "width"
+      ]
+    },
+    {
+      "symbol": "TattvaPhase",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "enum",
+      "line": 412,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "phase",
+        "tattva"
+      ]
+    },
+    {
+      "symbol": "asma_is_projective",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 470,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "asma",
+        "projective"
+      ]
+    },
+    {
+      "symbol": "aspect",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 504,
+      "context": "",
+      "stratum": "rust",
+      "reason": "ambiguous across 74 coordinates",
+      "candidates": [
+        "#1-0",
+        "#1-1",
+        "#2-3-1-0-0-0",
+        "#2-3-1-0-0-1",
+        "#2-3-1-0-1-0",
+        "#2-3-1-0-1-1",
+        "#2-3-1-0-2-0",
+        "#2-3-1-0-2-1",
+        "#2-3-1-1-0-0",
+        "#2-3-1-1-0-1",
+        "#2-3-1-1-1-0",
+        "#2-3-1-1-1-1",
+        "#2-3-1-1-2-0",
+        "#2-3-1-1-2-1",
+        "#2-3-1-2-0-0",
+        "#2-3-1-2-0-1",
+        "#2-3-1-2-1-0",
+        "#2-3-1-2-1-1",
+        "#2-3-1-2-2-0",
+        "#2-3-1-2-2-1",
+        "#2-3-2-0-0-0",
+        "#2-3-2-0-0-1",
+        "#2-3-2-0-1-0",
+        "#2-3-2-0-1-1",
+        "#2-3-2-0-2-0",
+        "#2-3-2-0-2-1",
+        "#2-3-2-1-0-0",
+        "#2-3-2-1-0-1",
+        "#2-3-2-1-1-0",
+        "#2-3-2-1-1-1",
+        "#2-3-2-1-2-0",
+        "#2-3-2-1-2-1",
+        "#2-3-2-2-0-0",
+        "#2-3-2-2-0-1",
+        "#2-3-2-2-1-0",
+        "#2-3-2-2-1-1",
+        "#2-3-2-2-2-0",
+        "#2-3-2-2-2-1",
+        "#2-3-3-0-0-0",
+        "#2-3-3-0-0-1",
+        "#2-3-3-0-1-0",
+        "#2-3-3-0-1-1",
+        "#2-3-3-0-2-0",
+        "#2-3-3-0-2-1",
+        "#2-3-3-1-0-0",
+        "#2-3-3-1-0-1",
+        "#2-3-3-1-1-0",
+        "#2-3-3-1-1-1",
+        "#2-3-3-1-2-0",
+        "#2-3-3-1-2-1",
+        "#2-3-3-2-0-0",
+        "#2-3-3-2-0-1",
+        "#2-3-3-2-1-0",
+        "#2-3-3-2-1-1",
+        "#2-3-3-2-2-0",
+        "#2-3-3-2-2-1",
+        "#2-3-4-0-0-0",
+        "#2-3-4-0-0-1",
+        "#2-3-4-0-1-0",
+        "#2-3-4-0-1-1",
+        "#2-3-4-0-2-0",
+        "#2-3-4-0-2-1",
+        "#2-3-4-1-0-0",
+        "#2-3-4-1-0-1",
+        "#2-3-4-1-1-0",
+        "#2-3-4-1-1-1",
+        "#2-3-4-1-2-0",
+        "#2-3-4-1-2-1",
+        "#2-3-4-2-0-0",
+        "#2-3-4-2-0-1",
+        "#2-3-4-2-1-0",
+        "#2-3-4-2-1-1",
+        "#2-3-4-2-2-0",
+        "#2-3-4-2-2-1"
+      ]
+    },
+    {
+      "symbol": "binding_basis",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 280,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "basi",
+        "binding"
+      ]
+    },
+    {
+      "symbol": "catalogue",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 229,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "catalogue"
+      ]
+    },
+    {
+      "symbol": "causal_resonances",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 314,
+      "context": "/// Actual source relation edges; the legacy same-position mask is NOT this field.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "causal",
+        "resonance"
+      ]
+    },
+    {
+      "symbol": "decan_to_fibre",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 437,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "decan",
+        "fibre"
+      ]
+    },
+    {
+      "symbol": "elemental_signature",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 425,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "elemental",
+        "signature"
+      ]
+    },
+    {
+      "symbol": "fibre_target",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 443,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "fibre",
+        "target"
+      ]
+    },
+    {
+      "symbol": "fn",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 490,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "fn",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "const",
+      "line": 669,
+      "context": "/// Ordered primitive ground factors, matching the native C ground descriptor. /// This polynomial/factorisation is not a metaphysical or physical proof.",
+      "stratum": "rust",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "legacy_det",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 464,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "det",
+        "legacy"
+      ]
+    },
+    {
+      "symbol": "linked_readings",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 571,
+      "context": "/// Typed cross-table links retain their register; a same integer is never used /// as an implicit element/planet/decan identity conversion.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "linked",
+        "reading"
+      ]
+    },
+    {
+      "symbol": "m2_coordinates",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 298,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "coordinate"
+      ]
+    },
+    {
+      "symbol": "m2_relations",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 303,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no distinctive tokens or coordinate spelling"
+    },
+    {
+      "symbol": "maqam_pitches",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 553,
+      "context": "/// Equal-quarter-tone playback of the retained declared pattern. Not a claim /// that this is the only tuning, nor a normalization to some other maqam.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "maqam",
+        "pitche"
+      ]
+    },
+    {
+      "symbol": "planet_is_preempted",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 484,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "planet",
+        "preempted"
+      ]
+    },
+    {
+      "symbol": "scalar_compress",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 452,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "compress",
+        "scalar"
+      ]
+    },
+    {
+      "symbol": "scalar_expand",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 458,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "expand",
+        "scalar"
+      ]
+    },
+    {
+      "symbol": "situated_decan",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 537,
+      "context": "/// A supplied longitude, not an ephemeris or a claim to live sky observation.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "decan",
+        "situated"
+      ]
+    },
+    {
+      "symbol": "tattva_step",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 416,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "step",
+        "tattva"
+      ]
+    },
+    {
+      "symbol": "unpack_signature",
+      "path": "crates/ql-mef/src/m2.rs",
+      "kind": "fn",
+      "line": 431,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "signature",
+        "unpack"
+      ]
+    },
+    {
+      "symbol": "CONDITION_CONTRACT",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "const",
+      "line": 18,
+      "context": "//! All output belongs to the engine's event/generation; no shader owns lookup.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "condition",
+        "contract"
+      ]
+    },
+    {
+      "symbol": "CORRESPONDENCE_CONTRACT",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "const",
+      "line": 19,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "contract",
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "ConditionColour",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 330,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "colour",
+        "condition"
+      ]
+    },
+    {
+      "symbol": "ConditionMusic",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 322,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "condition",
+        "music"
+      ]
+    },
+    {
+      "symbol": "CorrespondenceField",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 88,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "CorrespondenceRole",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "enum",
+      "line": 24,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "CorrespondenceRule",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 61,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence",
+        "rule"
+      ]
+    },
+    {
+      "symbol": "NamedPaletteEntry",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 254,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "named",
+        "palette"
+      ]
+    },
+    {
+      "symbol": "RenderPalette",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 261,
+      "context": "/// Explicit renderer policy, linear-light RGBA; never inferred from Hz.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "palette",
+        "render"
+      ]
+    },
+    {
+      "symbol": "SourceClaim",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "struct",
+      "line": 37,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "claim",
+        "source"
+      ]
+    },
+    {
+      "symbol": "TuningPolicy",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "enum",
+      "line": 30,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "policy",
+        "tuning"
+      ]
+    },
+    {
+      "symbol": "condition_pitches",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "fn",
+      "line": 359,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "condition",
+        "pitche"
+      ]
+    },
+    {
+      "symbol": "correspondence_field",
+      "path": "crates/ql-mef/src/m2_condition.rs",
+      "kind": "fn",
+      "line": 245,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "correspondence"
+      ]
+    },
+    {
+      "symbol": "CarrierWeight",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 107,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "carrier",
+        "weight"
+      ]
+    },
+    {
+      "symbol": "ContextReading",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 171,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "context",
+        "reading"
+      ]
+    },
+    {
+      "symbol": "ContinuousMode",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 120,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "continuou",
+        "mode"
+      ]
+    },
+    {
+      "symbol": "DomainHolding",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 192,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "domain",
+        "holding"
+      ]
+    },
+    {
+      "symbol": "EventIdentity",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 19,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "event",
+        "identity"
+      ]
+    },
+    {
+      "symbol": "InputStamp",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 25,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "stamp"
+      ]
+    },
+    {
+      "symbol": "MAX_EXACT_JSON_INTEGER",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "const",
+      "line": 15,
+      "context": "//! to carriers and supplies geometry/material, nodal/antinodal and damping facts. //! Supplied observations are never relabelled as authenticated/live/verified.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "exact",
+        "integer",
+        "json",
+        "max"
+      ]
+    },
+    {
+      "symbol": "MaterialFibre",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "enum",
+      "line": 89,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "fibre",
+        "material"
+      ]
+    },
+    {
+      "symbol": "MefReading",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 164,
+      "context": "/// EFWA order, 18 coefficients per fibre, exact integer kernel units.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "mef",
+        "reading"
+      ]
+    },
+    {
+      "symbol": "NumericGround",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 212,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "ground",
+        "numeric"
+      ]
+    },
+    {
+      "symbol": "PhysicalParameter",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 113,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "parameter",
+        "physical"
+      ]
+    },
+    {
+      "symbol": "PlanetaryAspect",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 186,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "aspect",
+        "planetary"
+      ]
+    },
+    {
+      "symbol": "REQUEST_SCHEMA",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "const",
+      "line": 16,
+      "context": "//! to carriers and supplies geometry/material, nodal/antinodal and damping facts. //! Supplied observations are never relabelled as authenticated/live/verified.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "request",
+        "schema"
+      ]
+    },
+    {
+      "symbol": "Selection",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 32,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "selection"
+      ]
+    },
+    {
+      "symbol": "VimarshaFrame",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 56,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "vimarsha"
+      ]
+    },
+    {
+      "symbol": "VimarshaInput",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 46,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "vimarsha"
+      ]
+    },
+    {
+      "symbol": "WorldObservation",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 80,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "observation",
+        "world"
+      ]
+    },
+    {
+      "symbol": "WorldReading",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "struct",
+      "line": 177,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "reading",
+        "world"
+      ]
+    },
+    {
+      "symbol": "nonempty",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "fn",
+      "line": 250,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "nonempty"
+      ]
+    },
+    {
+      "symbol": "stamp",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "fn",
+      "line": 257,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "stamp"
+      ]
+    },
+    {
+      "symbol": "validate_resonator",
+      "path": "crates/ql-mef/src/m2_engine.rs",
+      "kind": "fn",
+      "line": 276,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "resonator",
+        "validate"
+      ]
+    },
+    {
+      "symbol": "INTERVALS",
+      "path": "crates/ql-mef/src/m2_vimarsha.rs",
+      "kind": "const",
+      "line": 47,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "interval"
+      ]
+    },
+    {
+      "symbol": "VimarshaReading",
+      "path": "crates/ql-mef/src/m2_vimarsha.rs",
+      "kind": "struct",
+      "line": 39,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "reading",
+        "vimarsha"
+      ]
+    },
+    {
+      "symbol": "VimarshaSeed",
+      "path": "crates/ql-mef/src/m2_vimarsha.rs",
+      "kind": "struct",
+      "line": 13,
+      "context": "//! NOT the seven Context Frames or the six internal MEF positions.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "seed",
+        "vimarsha"
+      ]
+    },
+    {
+      "symbol": "pitch",
+      "path": "crates/ql-mef/src/m2_vimarsha.rs",
+      "kind": "fn",
+      "line": 49,
+      "context": "",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "pitch"
       ]
     },
     {

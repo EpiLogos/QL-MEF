@@ -735,6 +735,16 @@ def reviewed_row(row: dict | None) -> bool:
                 and not row["assessment"].startswith("k4:"))
 
 
+def bindings_for_stratum(bindings, implementations, stratum):
+    """A vertical's binding identity is opaque; its inventory owns its stratum.
+
+    K5/K6/K7 use namespaced IDs. Requiring a c:/rust: prefix would let a
+    presence-only census downgrade valid reviewed bindings to unimplemented.
+    Unknown IDs stay for the ledger validator rather than acquiring a stratum.
+    """
+    return {b for b in bindings if implementations.get(b, {}).get("stratum") == stratum}
+
+
 def build_census(args) -> int:
     registry = load_registry()
     live_content, live_receipt = load_live_content()
@@ -902,7 +912,7 @@ def build_census(args) -> int:
             continue
         resolved_row_coords = {resolve(c) for c in row["coordinates"]}
         for stratum, state_map in (("c", c_class), ("rust", rust_class)):
-            bound_ids = {b for b in row["bindings"] if b.startswith(f"{stratum}:")}
+            bound_ids = bindings_for_stratum(row["bindings"], impl_by_id, stratum)
             all_unimplemented = True
             for ref in coords:
                 entry = state_map.get(resolve(ref) or ref,
@@ -915,7 +925,7 @@ def build_census(args) -> int:
                     all_unimplemented = False
             if bound_ids:
                 row["bindings"] = sorted(
-                    {b for b in row["bindings"] if not b.startswith(f"{stratum}:")} | bound_ids)
+                    set(row["bindings"]) | bound_ids)
                 row["dispositions"][stratum] = "bound"
             elif all_unimplemented:
                 row["dispositions"][stratum] = "unimplemented"

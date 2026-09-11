@@ -1,0 +1,1528 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ql.m2-engine/v1",
+  "description": "Generated from Rust M2 wire types. Native validation also enforces semantic invariants; schema acceptance alone is not engine readiness.",
+  "$ref": "#/$defs/M2Frame",
+  "$defs": {
+    "Aspect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "angle": {
+          "type": "number"
+        },
+        "orb": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "angle",
+        "orb"
+      ]
+    },
+    "CarrierWeight": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "carrier": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 71
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "carrier",
+        "weight"
+      ]
+    },
+    "ConditionColour": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "linear_rgba": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "palette": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RenderPalette"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "standing": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "standing"
+      ]
+    },
+    "ConditionMusic": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tuning": {
+          "$ref": "#/$defs/TuningPolicy"
+        },
+        "tonic_hz": {
+          "type": "number"
+        },
+        "pitches_hz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "standing": {
+          "type": "string"
+        },
+        "retained_c_planet_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "tuning",
+        "tonic_hz",
+        "pitches_hz",
+        "standing",
+        "retained_c_planet_index"
+      ]
+    },
+    "ContextReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "expression": {
+          "type": "string"
+        },
+        "condition_indices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          }
+        }
+      },
+      "required": [
+        "code",
+        "expression",
+        "condition_indices"
+      ]
+    },
+    "ContinuousMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode_ref": {
+          "type": "string"
+        },
+        "source_coordinate": {
+          "type": "string"
+        },
+        "material_fibre": {
+          "$ref": "#/$defs/MaterialFibre"
+        },
+        "carrier_weights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CarrierWeight"
+          },
+          "minItems": 1,
+          "maxItems": 18
+        },
+        "frequency_hz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "amplitude": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "excitation": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "damping_per_second": {
+          "type": "number",
+          "minimum": 0
+        },
+        "nodal_state_ref": {
+          "type": "string"
+        },
+        "antinodal_state_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode_ref",
+        "source_coordinate",
+        "material_fibre",
+        "carrier_weights",
+        "frequency_hz",
+        "amplitude",
+        "excitation",
+        "damping_per_second",
+        "nodal_state_ref",
+        "antinodal_state_ref"
+      ]
+    },
+    "CorrespondenceRole": {
+      "enum": [
+        "tonic",
+        "dominant"
+      ]
+    },
+    "CorrespondenceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maqam_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "role": {
+          "$ref": "#/$defs/CorrespondenceRole"
+        },
+        "maqam_coordinate": {
+          "type": "string"
+        },
+        "maqam_node_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "maqam_name": {
+          "type": "string"
+        },
+        "planet_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "planet_coordinate": {
+          "type": "string"
+        },
+        "planet_node_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "chakra_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "chakra_coordinate": {
+          "type": "string"
+        },
+        "chakra_node_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "tattva_coordinate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tattva_node_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{16}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "element_literal": {
+          "type": "string"
+        },
+        "material_fibre": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaterialFibre"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "yantra_literal": {
+          "type": "string"
+        },
+        "colour_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planetary_mode_literal": {
+          "type": "string"
+        },
+        "interval_literal": {
+          "type": "string"
+        },
+        "spelled_steps24": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "musical_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceRelation"
+          }
+        },
+        "planetary_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceRelation"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceClaim"
+          }
+        }
+      },
+      "required": [
+        "maqam_index",
+        "role",
+        "maqam_coordinate",
+        "maqam_node_id",
+        "maqam_name",
+        "planet_index",
+        "planet_coordinate",
+        "planet_node_id",
+        "chakra_index",
+        "chakra_coordinate",
+        "chakra_node_id",
+        "element_literal",
+        "yantra_literal",
+        "planetary_mode_literal",
+        "interval_literal",
+        "musical_relations",
+        "planetary_relations",
+        "claims"
+      ]
+    },
+    "DescriptorReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "table": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "source_symbol": {
+          "type": "string"
+        },
+        "structural_scope": {
+          "type": "string"
+        },
+        "standing": {
+          "const": "retained-source-reading-not-whole-subsystem-parity"
+        },
+        "exact_coordinate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coordinate_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{16}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coordinate_binding_basis": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "maxLength": 20
+          }
+        },
+        "source_relation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "table",
+        "index",
+        "source_symbol",
+        "structural_scope",
+        "standing",
+        "source_names",
+        "coordinate_binding_basis",
+        "fields",
+        "source_relation_refs"
+      ]
+    },
+    "DomainHolding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "retained_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "exact_coordinate_bindings": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "selected_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "standing": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "scope",
+        "retained_records",
+        "exact_coordinate_bindings",
+        "selected_records",
+        "standing"
+      ]
+    },
+    "EventIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_ref": {
+          "type": "string"
+        },
+        "profile_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "event_ref",
+        "profile_generation"
+      ]
+    },
+    "InputStamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/EventIdentity"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "contract_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "source_ref",
+        "contract_ref"
+      ]
+    },
+    "M1Excitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "topology_ref": {
+          "type": "string"
+        },
+        "audio_octet": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 8,
+          "maxItems": 8
+        },
+        "nodal_quartet": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "stamp",
+        "topology_ref",
+        "audio_octet",
+        "nodal_quartet"
+      ]
+    },
+    "M2Condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ql.m2-condition/v1"
+        },
+        "identity": {
+          "$ref": "#/$defs/EventIdentity"
+        },
+        "registry_revision": {
+          "type": "string"
+        },
+        "source_revision": {
+          "type": "string"
+        },
+        "correspondence_ref": {
+          "type": "string"
+        },
+        "active_mef_condition": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "sublens_ref": {
+          "type": "string"
+        },
+        "musical": {
+          "$ref": "#/$defs/ConditionMusic"
+        },
+        "drive": {
+          "$ref": "#/$defs/VimarshaReading"
+        },
+        "source_path": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CorrespondenceRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "colour": {
+          "$ref": "#/$defs/ConditionColour"
+        },
+        "physical_material": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResonatorState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "world": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorldReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provider_standing": {
+          "type": "string"
+        },
+        "m3_form_potential_ref": {
+          "type": "string"
+        },
+        "m3_scalar_from_mef": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "m3_legacy_mask_from_mef_decimal": {
+          "type": "string"
+        },
+        "m3_transform_policies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "schema",
+        "identity",
+        "registry_revision",
+        "source_revision",
+        "correspondence_ref",
+        "active_mef_condition",
+        "sublens_ref",
+        "musical",
+        "drive",
+        "colour",
+        "provider_standing",
+        "m3_form_potential_ref",
+        "m3_scalar_from_mef",
+        "m3_legacy_mask_from_mef_decimal",
+        "m3_transform_policies",
+        "gaps"
+      ]
+    },
+    "M2Frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/M2Condition"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema": {
+          "const": "ql.m2-engine/v1"
+        },
+        "registry_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "ledger_revision": {
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/$defs/EventIdentity"
+        },
+        "input_stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "at_unix_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "tick12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "degree720": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 719
+        },
+        "source_locks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceLock"
+          }
+        },
+        "structural_coordinate_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "structural_relation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "numerical_ground": {
+          "$ref": "#/$defs/NumericGround"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DomainHolding"
+          }
+        },
+        "mef": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MefReading"
+          }
+        },
+        "context_frames": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContextReading"
+          }
+        },
+        "selected_descriptors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DescriptorReading"
+          }
+        },
+        "linked_descriptors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DescriptorReading"
+          }
+        },
+        "modal": {
+          "$ref": "#/$defs/ModalState"
+        },
+        "m1_excitation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/M1Excitation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vimarsha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VimarshaFrame"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "world": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorldReading"
+          }
+        },
+        "aspects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanetaryAspect"
+          }
+        },
+        "resonator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResonatorState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "continuous_standing": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "registry_revision",
+        "ledger_revision",
+        "identity",
+        "input_stamp",
+        "at_unix_ms",
+        "tick12",
+        "degree720",
+        "source_locks",
+        "structural_coordinate_count",
+        "structural_relation_count",
+        "numerical_ground",
+        "domains",
+        "mef",
+        "context_frames",
+        "selected_descriptors",
+        "linked_descriptors",
+        "modal",
+        "world",
+        "aspects",
+        "continuous_standing"
+      ]
+    },
+    "MaterialFibre": {
+      "enum": [
+        "earth",
+        "fire",
+        "water",
+        "air"
+      ]
+    },
+    "MefReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "carrier_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "sublens_ref": {
+          "type": "string"
+        },
+        "lens_name": {
+          "type": "string"
+        },
+        "source_scope": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "carrier_index",
+        "sublens_ref",
+        "lens_name",
+        "source_scope"
+      ]
+    },
+    "ModalState": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_ref": {
+          "type": "string"
+        },
+        "carrier_order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MaterialFibre"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "coefficient_unit": {
+          "type": "string"
+        },
+        "coefficients": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 72,
+          "maxItems": 72
+        },
+        "quadrature": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 72,
+          "maxItems": 72
+        },
+        "form_potential": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": -2000000,
+              "maximum": 2000000
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 64,
+          "maxItems": 64
+        },
+        "power_decimal": {
+          "type": "string"
+        },
+        "transformation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract_ref",
+        "carrier_order",
+        "coefficient_unit",
+        "coefficients",
+        "quadrature",
+        "form_potential",
+        "power_decimal",
+        "transformation"
+      ]
+    },
+    "NamedPaletteEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "linear_rgba": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "name",
+        "linear_rgba"
+      ]
+    },
+    "NodalConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ql_position": {
+          "enum": [
+            0,
+            5
+          ]
+        },
+        "helix": {
+          "$ref": "#/$defs/VimarshaHelix"
+        },
+        "m": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      },
+      "required": [
+        "ql_position",
+        "helix",
+        "m",
+        "n"
+      ]
+    },
+    "NumericGround": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phi_polynomial": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": -128,
+            "maximum": 127
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "phi": {
+          "type": "number"
+        },
+        "base36": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "field72": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "form64": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "retained_whole": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "third_spanda": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "elemental_aperture": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4294967295
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "phi_polynomial",
+        "phi",
+        "base36",
+        "field72",
+        "form64",
+        "retained_whole",
+        "third_spanda",
+        "elemental_aperture"
+      ]
+    },
+    "PhysicalParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "source_ref"
+      ]
+    },
+    "PlanetaryAspect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from_planet": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "to_planet": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "value": {
+          "$ref": "#/$defs/Aspect"
+        }
+      },
+      "required": [
+        "from_planet",
+        "to_planet",
+        "value"
+      ]
+    },
+    "RenderPalette": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "policy_ref": {
+          "type": "string"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NamedPaletteEntry"
+          },
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "stamp",
+        "policy_ref",
+        "entries"
+      ]
+    },
+    "ResonatorState": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "provider_ref": {
+          "type": "string"
+        },
+        "geometry_ref": {
+          "type": "string"
+        },
+        "material_ref": {
+          "type": "string"
+        },
+        "material_model_ref": {
+          "type": "string"
+        },
+        "material_parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PhysicalParameter"
+          }
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContinuousMode"
+          },
+          "minItems": 1,
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "stamp",
+        "provider_ref",
+        "geometry_ref",
+        "material_ref",
+        "material_model_ref",
+        "material_parameters",
+        "modes"
+      ]
+    },
+    "SourceClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "coordinate": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "property": {
+          "type": "string"
+        },
+        "literal": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinate",
+        "node_id",
+        "property",
+        "literal",
+        "path",
+        "pointer",
+        "sha256"
+      ]
+    },
+    "SourceLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ]
+    },
+    "SourceRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "relation_ref": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "from_coordinate": {
+          "type": "string"
+        },
+        "to_coordinate": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "record_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "payload_sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "relation_ref",
+        "kind",
+        "from_coordinate",
+        "to_coordinate",
+        "path",
+        "sha256",
+        "record_index",
+        "payload_sha256"
+      ]
+    },
+    "TuningPolicy": {
+      "enum": [
+        "retained24_tet",
+        "bimba_spelled24_tet"
+      ]
+    },
+    "VimarshaFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "$ref": "#/$defs/VimarshaInput"
+        },
+        "reading": {
+          "$ref": "#/$defs/VimarshaReading"
+        }
+      },
+      "required": [
+        "input",
+        "reading"
+      ]
+    },
+    "VimarshaHelix": {
+      "enum": [
+        "bimba",
+        "pratibimba"
+      ]
+    },
+    "VimarshaInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stamp": {
+          "$ref": "#/$defs/InputStamp"
+        },
+        "lens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "musical_mode": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "harmonic_ratio": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "pose_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 471
+        },
+        "pose_source_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "stamp",
+        "lens",
+        "musical_mode",
+        "harmonic_ratio",
+        "pose_ordinal",
+        "pose_source_ref"
+      ]
+    },
+    "VimarshaReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_ref": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "source_coordinate": {
+          "type": "string"
+        },
+        "seed": {
+          "$ref": "#/$defs/VimarshaSeed"
+        },
+        "audio_octet_hz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 8,
+          "maxItems": 8
+        },
+        "nodal_quartet": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodalConstraint"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "policy_ref",
+        "source_ref",
+        "source_coordinate",
+        "seed",
+        "audio_octet_hz",
+        "nodal_quartet"
+      ]
+    },
+    "VimarshaSeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tick12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "lens": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "musical_mode": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "harmonic_ratio": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "codon": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "rotation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        }
+      },
+      "required": [
+        "tick12",
+        "lens",
+        "musical_mode",
+        "harmonic_ratio",
+        "codon",
+        "rotation"
+      ]
+    },
+    "WorldObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planet_id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "longitude_degrees": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360
+        },
+        "provider_ref": {
+          "type": "string"
+        },
+        "source_revision": {
+          "type": "string"
+        },
+        "observed_at_unix_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "planet_id",
+        "longitude_degrees",
+        "provider_ref",
+        "source_revision",
+        "observed_at_unix_ms"
+      ]
+    },
+    "WorldReading": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "observation": {
+          "$ref": "#/$defs/WorldObservation"
+        },
+        "standing": {
+          "type": "string"
+        },
+        "age_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "planetary_power": {
+          "$ref": "#/$defs/DescriptorReading"
+        },
+        "light_decan": {
+          "$ref": "#/$defs/DescriptorReading"
+        },
+        "shadow_decan": {
+          "$ref": "#/$defs/DescriptorReading"
+        }
+      },
+      "required": [
+        "observation",
+        "standing",
+        "age_ms",
+        "planetary_power",
+        "light_decan",
+        "shadow_decan"
+      ]
+    }
+  }
+}

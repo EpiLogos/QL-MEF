@@ -198,10 +198,10 @@ class ReviewedVerticalTests(unittest.TestCase):
     def test_census_replay_preserves_reviewed_row_and_matrix_assessments(self):
         original = json.loads((ROOT / census.LEDGER).read_text())
         captured = {}
-        reviewed_ids = ["census:#1-2-0", "deep-M1:M1-C04"]
+        reviewed_ids = ["census:#1-2-0", "deep-M1:M1-C04", "census:#2-1", "deep-M2:M2-C02"]
         for row in original["rows"]:
             if row["id"] in reviewed_ids:
-                row["assessment"] = "k5-test:executed"
+                row["assessment"] = "k6-test:executed" if "#2" in row["id"] or "deep-M2:" in row["id"] else "k5-test:executed"
                 row["bindings"] = ["native-reviewed-binding"]
                 row["dependencies"] = ["k5-test:operation"]
                 row["invariants"] = ["reviewed-source-register-decision"]
@@ -220,6 +220,21 @@ class ReviewedVerticalTests(unittest.TestCase):
         self.assertFalse(census.reviewed_row({"assessment":"unassessed"}))
         self.assertFalse(census.reviewed_row({"assessment":"k4:c=implemented"}))
         self.assertTrue(census.reviewed_row({"assessment":"k5:partial"}))
+
+class VerticalBindingTests(unittest.TestCase):
+    def test_namespaced_binding_stratum_comes_from_inventory_not_id_prefix(self):
+        implementations = {
+            "k6-m2:mantra:c": {"stratum": "c"},
+            "k7-m3:clock:rust": {"stratum": "rust"},
+            "c:misleading-prefix": {"stratum": "rust"},
+        }
+        bindings = [*implementations, "c:unknown"]
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "c"),
+                         {"k6-m2:mantra:c"})
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "rust"),
+                         {"k7-m3:clock:rust", "c:misleading-prefix"})
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "cpp"), set())
+
 
 if __name__ == "__main__":
     unittest.main()
