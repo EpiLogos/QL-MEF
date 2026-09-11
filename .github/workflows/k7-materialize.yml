@@ -1,5 +1,5 @@
-# Temporary, exact-payload source transfer for PR151. The resulting commit
-# contains ordinary readable source and generated fixtures, not these parts.
+# Temporary exact-source transfer for PR151. The connector completes workflow
+# cleanup after the runner publishes code without changing its workflow tree.
 name: K7 exact tested source materialization
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import hashlib,lzma,pathlib,subprocess,json
+          import hashlib,lzma,pathlib
           payload=b''.join(pathlib.Path(f'.github/k7-source-part-{i}.bin').read_bytes() for i in range(4))
           assert hashlib.sha256(payload).hexdigest()=='6b3c44a2dba38602b17dc1a210c1189ce9a7faa9c505eb98dee1c50b18cd3b62'
           patch=lzma.decompress(payload)
@@ -82,7 +82,7 @@ jobs:
           cargo test --workspace --all-targets --locked
           cargo fmt --all -- --check
           cargo clippy --workspace --all-targets --locked -- -D warnings
-      - name: Commit only reviewed source and reproducible generated outputs
+      - name: Preserve exact tested tree then publish code without workflow mutation
         shell: bash
         run: |
           set -euo pipefail
@@ -98,20 +98,29 @@ jobs:
           assert not any(p.startswith(('.github/k7-source','.github/workflows/k7-materialize','vendor/','fixtures/kernel/m-tree')) for p in changed)
           subprocess.run(['git','diff','--exit-code'],check=True)
           PY
+          mkdir -p target/k7-publication
           tree=$(git write-tree)
+          printf '%s\n' "$tree" > target/k7-publication/tested-tree.txt
+          git ls-tree -r "$tree" > target/k7-publication/tested-objects.txt
+          git archive "$tree" > target/k7-publication/source.tar
+          git diff --stat "$BASE_SHA" "$tree" > target/k7-publication/changes.txt
+          # The runner's contents-write token cannot change workflows. Preserve
+          # this branch's .github exactly for the code-only push; the native
+          # connector replaces that subtree with the tested one afterward.
+          git rm -r --quiet -- .github
+          git checkout "$EVENT_SHA" -- .github
+          transport_tree=$(git write-tree)
+          test "$(git rev-parse "$transport_tree:.github")" = "$(git rev-parse "$EVENT_SHA:.github")"
           export GIT_AUTHOR_NAME='Epii' GIT_COMMITTER_NAME='Epii'
           export GIT_AUTHOR_EMAIL='186434782+EpiLogos@users.noreply.github.com'
           export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-          candidate=$(printf '%s\n' 'feat(m3): complete coordinate-bound engine and same-event parent reception' '' 'K7 #131 on accepted K4/#153, parent consumer requirements #154, and merged K6. Full locked source, native C/Rust parity, atomic Cosmic/Personal/M3-prime state, installed C++ handoff and canonical ledger reconciliation. Exact authored patch SHA256 fa1aea209f1316867d75da707040ac5da43c316ddfa1d4b721fa9b919882ba8f. Scoped M2 and M3 acceptance plus workspace tests and lint executed before publication. Source discrepancies retain their ledger lifecycle; no continuous-runtime or experiential claim.' | git commit-tree "$tree" -p "$EVENT_SHA" -p "$BASE_SHA")
+          candidate=$(printf '%s\n' 'feat(m3): publish tested coordinate engine and parent reception' '' "Tested full tree: $tree. K7 #131 consumes accepted K4/#153, parent contract #154 and K6. Full M2/M3 acceptance, canonical ledger reconciliation, workspace tests, fmt and Clippy passed. Source discrepancies retain their lifecycle. Workflow subtree awaits native-connector publication; do not merge this intermediate transport tree." | git commit-tree "$transport_tree" -p "$EVENT_SHA" -p "$BASE_SHA")
+          printf '%s\n' "$candidate" > target/k7-publication/candidate.txt
+          printf '%s\n' "$transport_tree" > target/k7-publication/transport-tree.txt
           current=$(git ls-remote origin refs/heads/agent/k7-m3-engine-131 | cut -f1)
           test "$current" = "$EVENT_SHA"
           git push origin "$candidate:refs/heads/agent/k7-m3-engine-131"
-          mkdir -p target/k7-publication
-          printf '%s\n' "$candidate" > target/k7-publication/candidate.txt
-          printf '%s\n' "$tree" > target/k7-publication/tree.txt
-          git archive "$candidate" > target/k7-publication/source.tar
-          git diff --stat "$BASE_SHA" "$candidate" > target/k7-publication/changes.txt
-      - name: Preserve diagnostics and exact source even when a check fails
+      - name: Preserve diagnostics even when a check fails
         if: always()
         shell: bash
         run: |
