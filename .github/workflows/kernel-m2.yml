@@ -38,7 +38,7 @@ jobs:
           ref: daa660cbc1b8c5da83828698665a753852cb0287
           path: target/m2-bimba-source
           sparse-checkout: |
-            Idea/Bimba/Map/datasets/parashakti-deep
+            Idea/Bimba/Map/datasets
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -55,7 +55,7 @@ jobs:
         run: |
           python3 scripts/m-ledger.py check
           python3 scripts/m2-ledger.py check
-          python3 -m unittest discover -s scripts/tests -p 'test_m_ledger.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+          python3 -m unittest discover -s scripts/tests -p 'test_m*.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
       - name: Full Rust workspace
         run: cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
       - name: Formatting and Clippy

@@ -38,9 +38,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p target/m2-receipt
+          # The workflow edit is already committed through the native connector.
+          # GITHUB_TOKEN publishes source/data only, never workflow changes.
           for patch in scripts/m2-integration-*.patch; do
-            git apply --check "$patch"
-            git apply "$patch"
+            git apply --exclude=.github/workflows/kernel-m2.yml --check "$patch"
+            git apply --exclude=.github/workflows/kernel-m2.yml "$patch"
           done
           cp target/m2-bimba-source/Body/S/S0/portal-core/src/parashakti/vimarsha_reading.rs fixtures/kernel/m2-reference-vimarsha.rs
           test "$(git hash-object fixtures/kernel/m2-reference-vimarsha.rs)" = 7b0bc34cee3388a8d22a615ad2c9facc28016e30
@@ -130,15 +132,18 @@ jobs:
           changed=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
           changed.update(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())
           if changed-allowed: raise SystemExit('Unexpected writes: '+repr(sorted(changed-allowed)))
+          if any(p.startswith('.github/workflows/') for p in changed):
+              raise SystemExit('Workflow edits must be published through the native connector, not this job')
           subprocess.run(['git','add','--',*sorted(changed)],check=True)
           PY
           test "$(git ls-remote origin refs/heads/agent/k6-m2-coordinate-rebuild | cut -f1)" = "$SOURCE_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'feat(m2): publish tested K4-integrated engine and source-linked music colour material producer'
+          git rev-parse HEAD > target/m2-receipt/candidate-revision.txt
+          git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
           git push origin HEAD:refs/heads/agent/k6-m2-coordinate-rebuild
           git rev-parse HEAD > target/m2-receipt/published-revision.txt
-          git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
       - name: Retain executed publication evidence
         if: always()
         uses: actions/upload-artifact@v4
