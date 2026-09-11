@@ -1,225 +1,194 @@
 # Paraśakti apertures and the Mahāmāyā clock centre
 
-Status: **authorised M2 ownership/branch decision and recorded M3 architectural refinement, 2026-09-11; not a graph-migration or implementation receipt**.
-Programme: [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md), #135.
-Consumer contract: [Cosmic / Personal integration](PARENT-SURFACES-INTEGRATION.md).
+Status: **adopted post-K7 architecture, 2026-09-11; graph/registry application and new operational acceptance still require execution**.
+Programme: [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md), #135. Full product/UX: [Living instrument architecture](LIVING-INSTRUMENT-ARCHITECTURE.md). Consumer acceptance: [Parent-surfaces integration](PARENT-SURFACES-INTEGRATION.md).
 
-## 1. Authorial decision and the reason for it
+This updates #160 in place. The owner's subsequent approval of the whole adopts its explicit void-at-0/Fibonacci-at-1 naming and two-leaf pair elaboration for implementation. Their provenance as the assistant's original design elaboration remains visible; they are no longer an unspecified future naming gate. K8.0/#132 is the single shared integration owner for promotion, with K10/#134 contributing M0 and Personal relations.
 
-The owner places the **complete eighteen-aperture architecture at M2-0**. Paraśakti supplies the apertures to Mahāmāyā's clock and owns the symbolic worlds that are lensed through them. The two additional apertures occupy M2-0-0 and M2-0-1; M2-0-2 holds the sixteen static lenses through eight reciprocal-pair branches, M2-0-2-0 through M2-0-2-7. This is the local 0/1/2 articulation corresponding to Paraśakti's existing Context Frame, not a new Context Frame.
+## 1. Authorial decision and its reason
 
-The owner's accompanying M3 refinement is a **spatio-temporal field**: M1 supplies rotational/topological capacity; M2 supplies the spectrality through which oscillatory power becomes structured vibration; M3 formally differentiates these within an explicit field of actuality. M3-0 is the ground of that field and becomes operative through the existing clock centre inside M3-5. The author's image is an exploded clock assembly, but closer to **a flower with an eye in the middle**.
+**M2-0 owns the complete eighteen-aperture architecture.** Paraśakti provides the apertures to Mahāmāyā's clock and owns the symbolic worlds lensed through them. M2-0-0 and M2-0-1 hold the two additional apertures; M2-0-2 holds the sixteenfold through eight reciprocal-pair branches. This is the local 0/1/2 articulation appropriate to Paraśakti's existing Context Frame, not another CF.
 
-The M2 allocation and eight-pair branch shape are settled by this instruction. The detailed labels of the two additional branches, pair-leaf suffixes, centre-binding vocabulary and continuous field mechanics below are the present design proposal that makes it inspectable. They are not represented as separately ratified live graph identities or an already-shipped API.
+M3-0 is the **spatio-temporal field of reception and differentiation**. M1 supplies rotational/topological capacity; M2 supplies the spectrality by which oscillatory power becomes structured vibration; M3 makes determinate actuality within their common field. The field is realised centrally in the existing M3-5 clock, not represented by a duplicate aperture catalogue. The author's image is an exploded clock assembly closer to a flower with an eye in the middle.
 
-This supersedes the preceding suggestion to place the full aperture catalogue under M3-0. M3 receives and uses it; M2 owns it. Anuttara provenance of the void ring remains explicit within that ownership.
+The live product now relates this composition through the Earth centre to Nara's active chakral receiving field. The clock can open its constituents while the same subject/event continues. Enacted Vāk, including a 0→1 morph expressing `/`, is a legitimate way of disclosing its relations, alongside literal notation and source explanation.
 
 ## 2. M2-0: one eighteen-aperture architecture
 
-### 2.1 Coordinate structure
-
-The proposed naming order for the author's two additional branches is **void ring at 0, Fibonacci/Pisano ground at 1**: inherited opening/orientation and generative numerical unfolding, respectively. This naming order is a design interpretation of the author's 0/1 allocation; it does not reclassify the Fibonacci ground as a static lens or change any existing numerical API.
+### 2.1 Adopted coordinate structure
 
 ```text
-M2-0  Archetypal Numerical Ground / complete aperture architecture
+M2-0  Archetypal Numerical Ground / full aperture architecture
 ├── M2-0-0  Anuttara-derived void-ring aperture
-│            16 orientation positions × 22.5°
+│             16 orientation positions × 22.5°
 ├── M2-0-1  Fibonacci/Pisano ground aperture
-│            60 phases × 6°
+│             60 phases × 6°
 └── M2-0-2  Sixteenfold static aperture field
-    ├── M2-0-2-0  reciprocal pair 0: 1° / 360°
-    │   ├── M2-0-2-0-0  1° × 360   [native ApertureIndex 0]
-    │   └── M2-0-2-0-1  360° × 1   [native ApertureIndex 15]
-    ├── M2-0-2-1  reciprocal pair 1: 2° / 180°
-    │   ├── M2-0-2-1-0  2° × 180   [native ApertureIndex 1]
-    │   └── M2-0-2-1-1  180° × 2   [native ApertureIndex 14]
-    ├── M2-0-2-2  reciprocal pair 2: 4° / 90°
-    │   ├── M2-0-2-2-0  4° × 90    [native ApertureIndex 2]
-    │   └── M2-0-2-2-1  90° × 4    [native ApertureIndex 13]
-    ├── M2-0-2-3  reciprocal pair 3: 8° / 45°
-    │   ├── M2-0-2-3-0  8° × 45    [native ApertureIndex 3]
-    │   └── M2-0-2-3-1  45° × 8    [native ApertureIndex 12]
-    ├── M2-0-2-4  reciprocal pair 4: 9° / 40°
-    │   ├── M2-0-2-4-0  9° × 40    [native ApertureIndex 4]
-    │   └── M2-0-2-4-1  40° × 9    [native ApertureIndex 11]
-    ├── M2-0-2-5  reciprocal pair 5: 10° / 36°
-    │   ├── M2-0-2-5-0  10° × 36   [native ApertureIndex 5]
-    │   └── M2-0-2-5-1  36° × 10   [native ApertureIndex 10]
-    ├── M2-0-2-6  reciprocal pair 6: 12° / 30°
-    │   ├── M2-0-2-6-0  12° × 30   [native ApertureIndex 6]
-    │   └── M2-0-2-6-1  30° × 12   [native ApertureIndex 9]
-    └── M2-0-2-7  reciprocal pair 7: 15° / 24°
-        ├── M2-0-2-7-0  15° × 24   [native ApertureIndex 7]
-        └── M2-0-2-7-1  24° × 15   [native ApertureIndex 8]
+      └── M2-0-2-0 … M2-0-2-7
+             eight reciprocal-pair containers, each with -0 and -1 leaves
 ```
 
-This gives **eighteen aperture identities**, not twenty-six: the eight pair containers organise sixteen lenses and are not additional apertures. The sixteen orientation positions of the void ring and sixty phases of the Fibonacci ground likewise do not increase the aperture count.
+The complete leaf/native mapping is:
 
-The `-0`/`-1` leaf encoding above is a proposed explicit containment encoding. For pair `p` in 0..7 it retains native indices `p` and `15-p`. The subtree is a map of identities and relations, not a mandatory temporal, musical or narrative traversal order.
+| Pair container | First leaf / division × segments / native index | Second leaf / division × segments / native index |
+|---|---|---|
+| M2-0-2-0 | M2-0-2-0-0 / 1° × 360 / 0 | M2-0-2-0-1 / 360° × 1 / 15 |
+| M2-0-2-1 | M2-0-2-1-0 / 2° × 180 / 1 | M2-0-2-1-1 / 180° × 2 / 14 |
+| M2-0-2-2 | M2-0-2-2-0 / 4° × 90 / 2 | M2-0-2-2-1 / 90° × 4 / 13 |
+| M2-0-2-3 | M2-0-2-3-0 / 8° × 45 / 3 | M2-0-2-3-1 / 45° × 8 / 12 |
+| M2-0-2-4 | M2-0-2-4-0 / 9° × 40 / 4 | M2-0-2-4-1 / 40° × 9 / 11 |
+| M2-0-2-5 | M2-0-2-5-0 / 10° × 36 / 5 | M2-0-2-5-1 / 36° × 10 / 10 |
+| M2-0-2-6 | M2-0-2-6-0 / 12° × 30 / 6 | M2-0-2-6-1 / 30° × 12 / 9 |
+| M2-0-2-7 | M2-0-2-7-0 / 15° × 24 / 7 | M2-0-2-7-1 / 24° × 15 / 8 |
 
-### 2.2 Relations carried by the architecture
+This adds 27 descendant coordinates beneath the existing M2-0 (three first branches, eight pair containers and sixteen leaves) while naming **18 aperture identities** (two additional apertures plus sixteen static lenses). Containers and the sixty/sixteen phase positions are not extra apertures. The Fibonacci ground remains pre-lensic relative to the static partitions, while being one constituent of the eighteenfold architecture.
 
-Each static lens retains its division angle, number of segments, reciprocal identity, pair-container identity and its relation to the void-ring orientation and Fibonacci ground. For a division `d`, segment count is `360/d`; the reciprocal lens's division is `360/d` degrees. M3 references these M2 identities when applying a partition to a form or clock field.
+For pair p in 0…7 the leaves preserve native indices p and 15−p. Containment/display order is not a mandatory musical, temporal or narrative walk. Do not reorder existing native arrays because a paired-petal layout uses another explicit arrangement.
 
-The void ring retains its Anuttara/M0 derivation while its aperture role resides in M2-0. The Fibonacci ground retains its numerical seed and period. The existing M2 symbolic-world branches retain their own identities and typed associations with applicable apertures; there is no invented one-lens/one-world bijection and no wholesale reparenting of M2's worlds into this new branch.
+### 2.2 Relations, ownership and native continuity
 
-Three different relations remain distinguishable:
+Every static lens retains division angle, segment count, reciprocal identity, pair membership, and its relations to the void-ring orientation and Fibonacci ground. For division d, segment count is 360/d; its complementary lens has division 360/d degrees. M3 references these exact M2 identities when partitioning the same form/clock field.
 
-- **static-lens reciprocity:** native index `p ↔ 15-p`, the complementary divisor;
-- **void-ring antipodality:** orientation position `p ↔ (p+8) mod 16`;
-- **M2/MEF lens relations:** the twelve L0/L0′ through L5/L5′ identities and their own twin/complement/Mobius operations.
+The void ring retains its M0/Anuttara derivation while its aperture role belongs to M2-0. The Fibonacci ground retains the numerical seed and period. M2 symbolic-world branches keep their native identities and typed aperture associations; there is no invented one-lens/one-world bijection or wholesale reparenting into the aperture branch.
 
-The first two need separately typed graph relations even where an instrument presents both as a fold. The twelve MEF lenses, eighteen clock apertures and eighteen positions of a 20° elemental grid are related registers, not interchangeable identity catalogues. Use the existing identity bridges described in [Lens identity and encodings](LENS-IDENTITY-AND-ENCODINGS.md).
+Distinguish:
+
+- static-lens reciprocity p↔15−p;
+- void-ring antipodality p↔(p+8) mod 16;
+- twelve MEF lens identities with their own twin/complement/Mobius laws;
+- eighteen positions of the 20° elemental grid.
+
+Use separate typed relations and [existing encoding bridges](LENS-IDENTITY-AND-ENCODINGS.md). Similar counts or a visual fold do not make those catalogues interchangeable.
 
 ### 2.3 Essential three-grid relations
 
-The numerical and physical connection is part of the aperture architecture, not renderer styling:
-
-| Grid | Quantum | Positions in a turn | Ownership/reception |
+| Grid | Quantum | Positions | Role |
 |---|---:|---:|---|
-| Fibonacci/Pisano | 6° | 60 | M2-0 ground, received throughout the clock |
-| Elemental-vibrational fibre | 20° | 18 | Existing M2 elemental/spectral register, linked to M2-0 |
-| Anuttara-derived form/void ring | 22.5° | 16 | M2-0 aperture architecture, received as M3 form/lensing orientation |
+| Fibonacci/Pisano | 6° | 60 | M2-0-1 ground, received throughout the clock |
+| Elemental-vibrational fibre | 20° | 18 | Existing M2 spectral/material register, explicitly linked to the aperture architecture |
+| Anuttara-derived void/form ring | 22.5° | 16 | M2-0-0 aperture orientation, received by M3 form/lensing |
 
-For a shared phase origin, exact common closures are:
+With a common phase origin:
 
 ```text
-6° with 20°:     60°  = 10 × 6°  = 3 × 20°       → 6 per 360°
-6° with 22.5°:   90°  = 15 × 6°  = 4 × 22.5°     → 4 per 360°
-20° with 22.5°: 180°  =  9 × 20° = 8 × 22.5°     → 2 per 360°
-
+6° with 20°:     60°  = 10 × 6° = 3 × 20°        → 6 per turn
+6° with 22.5°:   90°  = 15 × 6° = 4 × 22.5°      → 4 per turn
+20° with 22.5°: 180°  = 9 × 20° = 8 × 22.5°      → 2 per turn
 all three:     180°  = 30 × 6° = 9 × 20° = 8 × 22.5°
 22.5° / 20° = 9/8
 ```
 
-These are exact relationships in the existing angle convention. For example, half-degree units give quanta 12, 40 and 45; no floating-point coincidence test is needed to establish the closures. The common-origin qualification matters: a live relative-phase offset is a state variable, not an error to erase by snapping all grids to zero. Record both the structural closure law and the current relative phase. The 6/4/2 closures and 9/8 relation must be source/coordinate-backed inputs to continuous embodiment.
+Exact half-degree quanta 12, 40 and 45 prove these closures without floating coincidence tests. Keep current relative phase offsets as state; the common-origin structural law does not justify snapping every phase to zero. The source/coordinate-linked 6/4/2 closures and 9/8 relation must reach continuous computation and sensory disclosure, not be recreated as renderer decoration.
 
 ## 3. M3-0: constitution of the spatio-temporal field
 
-M3-0 develops its existing quaternionic-reception and Paraśakti-integration function into the explicit field in which inscriptions acquire position, orientation, phase and relations to one another.
-
-The proposed three-domain relation is:
+M3-0 develops its existing quaternionic-reception and Paraśakti-integration role into the explicit field in which inscriptions have position, orientation, phase and mutual relation:
 
 ```text
-M1: rotational/topological carrier and lawful motion
-                 ↓
-M2: spectral/vibrational differentiation, symbolic worlds and apertures
-                 ↓
-M3-0: common spatio-temporal field of reception and differentiation
-                 ↓ realised in
-M3-5: the inhabited inscription/lensing world-clock
+M1 rotational/topological carrier and lawful motion
+                    ↓
+M2 spectral/vibrational differentiation, worlds and apertures
+                    ↓
+M3-0 common field of reception and differentiation
+                    ↓ realised within
+M3-5 inhabited inscription/lensing world-clock
 ```
 
-This is a composition of currently active domain contributions, not three serial construction stages after which an earlier domain disappears. In a running clock, M1 topology, M2 spectrality and M3 formal differentiation remain co-present and jointly attributable.
+These contributions remain co-present in the running event; they are not construction stages discarded after completion. The field binding retains the inherited carrier/topology/phase basis, M2 world/aperture refs, origin/orientation relation and current event/subject/generation. Fit concrete schema and numerical mechanics to the accepted producers.
 
-M3-0 should provide the common frame through which M1's carrier and M2's aperture/world field become mutually situated. Its explicit binding needs the inherited carrier/topology and phase basis, M2 aperture and symbolic-world references, the field's origin/orientation relation, and the current event/subject/generation. The concrete schema and numerical mechanics must be developed against the accepted producer contracts rather than invented here as a shipped type.
-
-The selected inscription is an actual configuration in that field. Changing the configuration and changing the aperture are different operations; an authored coupled operation may change both. An aperture's operation is implicit in an ordinary reading even when its ring or controls are not drawn. Opening an explanatory view makes the active relation inspectable without creating the relation for the first time.
+A selected inscription is a configuration in this field. Changing it and changing the aperture are different operations; a declared coupled trajectory can change both. The aperture may be implicit in ordinary viewing, then become explicit for inspection. Opening an explanation reveals a relation already operating; it does not create a new domain state merely by displaying it.
 
 ## 4. The existing centre is M3-0 realised within M3-5
 
-The retained coordinate source identifies **M3-5-5/0**, also spelled `#3-5-5/0`, as the **Axis Mundi / Central Unity Origin**. It already gives the centre two roles: convergence of the differentiated field and origin of its emanation. The Fibonacci seed explicitly associates the centre with M3 reception ground `#3-0` and a return to M2-0.
-
-The proposed refinement is therefore an explicit relation, not a second centre:
+Retained source identifies **M3-5-5/0**, also `#3-5-5/0`, as Axis Mundi / Central Unity Origin. It is convergence and origin of emanation. The Fibonacci integration explicitly associates the centre with M3 reception ground and return to M2-0.
 
 ```text
-M2-0 aperture architecture ── supplies ──┐
-M1 carrier/topology ────────────────────┼── M3-0 field constitution
-M2 spectral/world condition ───────────┘                │
-                                                       │ realised at
-                                                       ▼
-                                          M3-5-5/0 existing centre
-                                                       │
-                                               situates and mediates
-                                                       ▼
-                                          M3-5 whole world-clock
-                                                       │
-                                               attributable Return
-                                                       └── to its grounds
+M1 carrier/topology ─────────────┐
+M2 spectral/world condition ────┼── M3-0 field constitution
+M2-0 aperture architecture ─────┘              │
+                                               ▼
+                                  M3-5-5/0 existing pin
+                                               │
+                                  M3-5 whole world-clock
+                                               │
+                                    attributable Return
 ```
 
-M3-0 is the field's constitutional ground; M3-5-5/0 is its central realisation within the integrated clock. Preserve their distinct identities and relate them. Do not alias them, move the existing centre, strip the meaningful `/` from its coordinate, or reparent existing degree/backbone nodes to make a new drawing look regular.
+M3-0 is the field's constitutional ground; M3-5-5/0 is its central realisation in the integrated clock. Preserve both identities and explicitly relate them. Do not move or alias the centre, strip its slash or reparent degree/backbone nodes to regularise a drawing.
 
-The centre is the **pin** in the operational sense: it binds the common origin, relative orientation/phase and active aperture/world references through which the differentiated clock is read. It is the receiving and returning point of the composition, not simply a viewport coordinate at `(0,0,0)`. A view may move or unfold that point on screen without changing the domain field.
+The pin binds common origin, relative orientation/phase and active aperture/world references. It is more than the viewport's `(0,0,0)`. In the live planetary–Nara instrument, Earth/observer/EarthBody and this field centre have explicit source-backed relations, not one shared raw ID. The seven chakras root through EarthBody; the anchor is not an eighth peer chakra.
 
-Historical source prose also uses `#3-5-360` as a return/centre label. Preserve that as a source assertion for ledger reconciliation; it is not sufficient evidence to introduce a new alias or replace `M3-5-5/0`. A 360° return marker, a 720° identity-return cycle and the centre's stable coordinate identity remain separately represented.
+Historical `#3-5-360` centre/return prose remains a source assertion for ledger reconciliation, not sufficient authority for a new alias. Stable centre identity, the 360° return marker and the 720° cycle remain distinct.
 
-No M3-0 child numbers are assigned by this document. Its finer coordinate body should follow the actual field mechanics and retained source relations, rather than acquiring an arbitrary set of siblings before those mechanics are articulated.
+No arbitrary M3-0 child numbers are allocated here. Add finer coordinates from the actual field mechanics and retained source relations through the existing promotion owner.
 
 ## 5. Twofold clock: inscription and lensing around the same centre
 
-The source history gives two related formulations: spatial/decan and evaluative/hexagram approaches to the same codon field; and the later explicit **inscription circle × lens circle** formulation. The current M3 matrix calls the latter the geometric successor to the earlier two-orthogonal-wheels conception.
+The earlier spatial/decan and evaluative/hexagram routes reach the same codon field. The later source names its geometric successor:
 
 ```text
 T²_Mahāmāyā = S¹_inscription × S¹_lensing
-
-K² × T²_Mahāmāyā
-    harmonic/audio-genesis composition × symbolic world-clock composition
+K² × T²_Mahāmāyā = harmonic/audio-genesis × symbolic world-clock composition
 ```
 
-In the present refinement, M2 supplies the aperture architecture; M3-0 supplies their common field of reception; the existing centre pins their realisation in M3-5. The two axes are independently addressable coordinates of a reading. The permitted operations and trajectories specify when and how they are coupled.
+M2 provides aperture/world structure; M3-0 provides the common field; the existing centre pins its realisation in M3-5. The two axes are independently addressable, with explicit permitted coupling and trajectories. The older two-720° proposal retains its stated data/geometry verification needs; do not silently equate every historical construction.
 
-The continuous lensing phase must not be inferred solely from the index of a selected static lens. A finite catalogue of sixteen partitions and a cyclic orientation/traversal coordinate are different data. The current native `ApertureIndex` enumeration and `orientation()` remain an inherited discrete convention; a continuous lift, winding rule or alternate display arrangement requires an explicit relation to those stable identities, not a silent reordering.
+Static aperture identity, cyclic lensing phase, inscription phase and double-cover layer remain separately represented. The inherited `ApertureIndex` and `orientation()` convention does not by itself supply a continuous lift. Preserve exact native meaning and define any lift/winding/display arrangement explicitly. The seeds' Hopf formulation is design/research provenance; its balance and Personal reception must be tied to actual owner-produced inputs and verified where claimed.
 
-Likewise, the existing 720° double cover is not by itself proof of the two-axis construction. The linked inscription/lensing phase and the double-cover layer must both be carried. The proposed Hopf formulation in the seeds supplies a concrete research/design basis for this relation; its balance parameter and Personal reception must be tied to their actual owner-produced inputs. M3's form quaternion does not become Nara's identity quaternion.
+K8.0 extends the same-event producer with exact M2 aperture and centre refs, the M3-0 field binding, independent phases and selected coupling/trajectory rule. Original M1/M2/Personal generations and source bases remain available. M3's form quaternion is not relabelled Nara identity. The bioquaternion is a reading of the full personal composition at its locus, with original evidence and local states preserved.
 
-A useful next producer contract extends the existing same-event M3 state with exact references to M2's aperture architecture and the existing centre, an explicit M3-0 field binding, independently identifiable inscription and lensing phase, and the selected coupling/trajectory rule. The original M1/M2/Personal input generations and source bases remain available. This is an extension target, not a declaration that these additional fields are already implemented.
+## 6. Exploded flower/eye and enacted language
 
-## 6. Exploded flower/eye instrument
+The gathered instrument can open along its real relations. The eye is the field centre/current inscription-lensing conjunction; the paired petals disclose eight reciprocal pairs; the void ring, Fibonacci ground, elemental/spectral field and M1 carrier are available as contributing structures. These are functional correspondences, not a requirement that every lens look like a literal petal.
 
-The author's image gives a precise compositional interaction: the assembled instrument can open along its real relations to reveal what is contributing to the current reading.
+A person or Epii can select a constituent, follow its coordinate/source, operate it with authority and reassemble around the same event. The existing particle system receives the form's actual dynamic targets/geometry/images and preserves material/sample identity through that movement. Moving an exploded view is presentation; applying an actual phase/aperture/world change is a domain Action with its own receipt.
 
-The **eye** is the shared field centre and the current act of inscription/lensing. The **paired petals** expose the eight reciprocal aperture pairs, with both individual lenses inspectable. The void ring and Fibonacci ground are separately discoverable supporting structures. The elemental/spectral field and M1 carrier remain visible as the conditions from which the formal clock is composed. These are functional correspondences for the instrument design, not mandatory geometry or a claim that each lens must be rendered as a literal petal.
+Vāk can disclose those relations in literal glyphs, images and enacted transitions. The owner's 0→1 morph is an expression of `/`, not inherently a parsing failure. Preserve intentional literal, enacted and mixed modes and their source identity; do not mandate that the slash always remain a static visible character. An illustrative morph and a tested native operation each keep their actual warrant.
 
-An exploded view should allow a person or Epii to select a constituent, follow its M coordinate and source relations, operate that same constituent where authorised, and reassemble the view around the unchanged subject. Pulling apart the view is a presentation action; changing an aperture, inscription, phase relation or spectral condition is an attributable domain Action. Their receipts are different.
-
-The lens catalogue's reciprocal pair structure does not compel a new native lens ordering. A paired-petal layout can expose that structure through an explicit identity-to-view placement relation while retaining the accepted native encoding and void-ring antipodality. The two cyclic axes may be shown orthogonally around the eye without declaring that screen geometry is the entire underlying topology.
-
-K8 supplies the continuous compositional state and retained point-cloud integration. K9's Cosmic/M2′/M3′ instruments expose assembled/exploded inspection and operation. K10's Bimba map and the same Epii agent resolve the underlying objects and Actions. Reuse the already-built desktop centres, glyphs and field implementation.
+The focused M2′/M3′ regions are states of the same live M1–M4 instrument. Both 3:3 and 4:2 arrange the same six M′ capabilities. Full-screen centre, left Bimba, right Epii and existing files/writing/pop-outs preserve the selection and running instance. K9 owns that experience, K8 continuous binding, and K10 Personal/map/agent operations. Reuse the already-built topology, toroidal, centre and image/glyph machinery.
 
 ## 7. Current implementation and deliberate promotion
 
-At the inspected QL-MEF main `144d3f1a2a3a03bdd8c3612d4666f11b119ad94e`, the current `crates/ql-core/src/pole/aperture.rs` already distinguishes sixteen static apertures, `FibonacciGround`, `AnuttaraVoidRing`, and `ApertureClock::TOTAL_LENSES = 18`. The M3 producer in `crates/ql-mef/src/m3_state.rs` publishes the eighteenfold count alongside form/aperture/clock state. That accepted implementation is retained.
+The accepted implementation already distinguishes sixteen static apertures, `FibonacciGround`, `AnuttaraVoidRing` and `ApertureClock::TOTAL_LENSES = 18`. The M3 producer publishes the count beside its discrete form/aperture/clock state. K7 #151 is accepted at `276f23e46c625a83c5dee7c1fc64f32761333ac6`; that existing law and scope are retained.
 
-The new M2-0 descendants, centre-field relation and complete coupled continuous clock are **not** established merely by that count or the previous K7 acceptance. A documentation update does not install Neo4j nodes, publish new registry IDs, re-seat native ownership or prove the new operational contract.
+The new M2 descendants, field-centre binding and full coupled continuous operation require their own implementation. This document is the scoped current successor for ownership/count and field interpretation, including the older M3-C27/M3-C39 16+1/M3-only wording. “16 static lenses” remains correct for the subset. Preserve unrelated matrix depth and source disagreements.
 
-This document is the current planning successor for aperture ownership/count and centre-field interpretation in the retained M2-0 and M3 clock material, particularly M3-C27 and M3-C39. The older `16+1 fold-aperture` heading and M3-only catalogue ownership are superseded for new work. `16 static lenses` remains correct for that subset. Retain the old matrix and C-Experiments seed text as identified source history, rather than treating their count as current authority or rewriting accepted evidence silently.
+**Execute K8.0/#132**, with K10/#134 input and K9/#133 consumers:
 
-The existing K3 matrix lock hashes both JSON and Markdown, so their authoritative carrier updates belong with the controlled ledger refresh. The following work is an explicit follow-on M2/M3 package under #135 and the existing vertical ownership, consumed by #132/#133/#134; it adds no new stage or K4 gate:
-
-1. **M2 owner:** develop the author-approved M2-0 branch structure, record the proposed label/leaf choices as reviewed decisions, retain symbolic-world relations and all three-grid derivations, and bind the existing native aperture law to the new coordinates. Preserve M0 derivation of the void ring and twelvefold MEF identities.
-2. **M3 owner:** resolve the actual centre node through the accepted registry/source identifiers, record its M3-0 field-realisation relation and M2 aperture reception, and extend the same-event producer with the required field/coupled-phase state. Retain all clock, matrix, inscription and transcription depth.
-3. **Shared registry/ledger:** use the accepted generator and discrepancy lifecycle for the approved coordinate additions and matrix amendments. Preserve old IDs, accepted K4 capture and historical acceptance receipts; add new evidence at a new revision. Reconcile live-versus-serialized holdings explicitly. C-Experiments remains read-only source provenance in this lane.
-4. **K8/K9/K10 consumers:** implement and exercise the continuous two-axis composition, assembled/exploded instrument, Bimba inspection and authorised Epii operation through their existing contracts. Accepted K5–K7 finite proofs remain valid in their stated scope; this extension has its own proof obligations.
+1. Update the relevant matrix JSON/Markdown rationale and reviewed source decisions; author the adopted M2 subtree, its M0/world links and essential grid relations. Preserve native lens encodings and exact source identity.
+2. Resolve existing centre IDs and add the M3-0 realisation/reception/coupled-phase operations through the existing engine owners; keep full clock, form, matrix and transcription depth.
+3. Use the accepted registry/generator/ledger tools under one integration owner. Preserve old IDs, K4 captures, assessments, discrepancy lifecycles and historical proofs at their original revisions. Add new evidence; do not retarget old acceptance silently.
+4. Supply a reviewed idempotent graph migration/projection, demonstrate application and rollback when the live graph is available, and distinguish pending live application from tested serialized/native structure. C-Experiments remains read-only provenance.
+5. Publish a runnable extended producer and installed consumer early. Continue continuous/renderer/Personal/UX implementation in the existing lanes, without another stage or full-census gate.
 
 ### Required acceptance of that follow-on work
 
 | Concern | Required evidence |
 |---|---|
-| Aperture architecture | Resolve all eighteen aperture identities through the proposed 0/1/2 tree; each of eight pair containers has its two expected lens identities; no container is counted as a lens |
-| Numerical continuity | Existing native indices round-trip through the new coordinate refs unchanged; static reciprocity and void antipodality remain distinct; twelvefold MEF bridges retain identity |
-| Three-grid structure | Prove exact 60°/90°/180° pairwise closures, the shared 180° closure and 9/8 ratio; preserve explicit nonzero phase offsets in state |
-| Centre and field | Resolve the existing `M3-5-5/0` identity and its field-ground relation to M3-0; references survive generation changes and return; no centre/degree/360°-marker alias is guessed |
-| Twofold operation | Hold inscription while changing lensing; hold lensing while changing inscription; execute a specified coupled trajectory; retain event/subject, both phases, double-cover layer and input provenance |
-| Instrument | Assemble, explode, inspect, perform an authorised domain Action and reassemble around the same subject; view motion alone leaves domain state unchanged |
-| Source return | Person and Epii reach the same Bimba objects and original Day/NOW/source bases; graph/registry promotion has its own reviewed and executed receipt |
+| Apertures | 18 identities, eight pair containers/two leaves each, unique complete native mapping, no containers counted as lenses |
+| Numerical relations | Native round trips; separate reciprocity/antipodality/MEF laws; exact closures/9:8 and nonzero phase state |
+| Centre | Existing M3-5-5/0 and explicit M3-0 relation survive updates/replay; no guessed centre or degree aliases |
+| Twofold clock | Independent inscription/lensing changes and specified coupled trajectories; both phases, double cover, original sources and subject preserved |
+| Material instrument | Real target/geometry/image motion through retained particles; stable samples and gathered/exploded/reassembled continuity |
+| Language | Literal, enacted 0→1 `/`, and mixed expressions retain source relation and intentional transition semantics |
+| Source/Return | Human and Epii reach the same map objects, original Day/NOW and source; graph application and native promotion each have actual receipts |
 
-No result is claimed for these new acceptance cases by this planning document.
+Full joined planetary/Nara/desktop/pedagogy cases are in [consumer acceptance §7](PARENT-SURFACES-INTEGRATION.md#7-joined-feature-acceptance). No result for them is claimed by planning.
 
 ## 8. Source trail
 
-Current code/contract: [aperture.rs](../../crates/ql-core/src/pole/aperture.rs), [M3 state](../../crates/ql-mef/src/m3_state.rs), [M3 engine contract](../KERNEL-M3-ENGINE-CONTRACT.md), and [M2 parent handoff](M2-PARENT-HANDOFF.md).
+Current code: [aperture.rs](../../crates/ql-core/src/pole/aperture.rs), [M3 state](../../crates/ql-mef/src/m3_state.rs), [M3 contract](../KERNEL-M3-ENGINE-CONTRACT.md), [M2 parent handoff](M2-PARENT-HANDOFF.md), and the existing Vāk composition/interpreter.
 
-Retained QL-MEF design: [M2 capability matrix](../origami%20work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.md) and [M3 capability matrix](../origami%20work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md). The scoped supersessions in §7 apply; unrelated coordinate depth remains intact.
+Retained deep design: [M2 matrix](../origami%20work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.md), [M3 matrix](../origami%20work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md), [Fourth Spanda](../geometry/FOURTH-SPANDA-EQUATION.md) and [physical-pole object](../origami%20work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md). The current ownership/UX supersessions are scoped; source depth and warrant remain intact.
 
-C-Experiments source revision for this reading: `daa660cbc1b8c5da83828698665a753852cb0287`, under `Idea/Bimba/`:
+C-Experiments source cut `daa660cbc1b8c5da83828698665a753852cb0287`, under `Idea/Bimba/`:
 
-- `Map/datasets/mahamaya-deep/fibonacci-60-pisano-integration.md`, especially §§4–5: M2-0 → M3-5 → central node, explicit M3-0 reception association and return.
-- `Map/datasets/mahamaya-deep/nodes-full-detail.json`: exact centre `#3-5-5/0`, convergence/origin functions and retained alternate centre prose.
-- `Seeds/M/M-M-prime-coordinate-mapping-inaugural.md`, M3-5 and §4: existing central coordinate and unified clock composition.
-- `Seeds/M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS/02-16-lenses-backbone-temporal.md`: sixteen static partitions and Fibonacci pre-lensic distinction; the older total is superseded.
-- `Seeds/M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS/HOPF-INTEGRATION-READ.md`, §XI: spatial/decan and evaluative/hexagram approaches to the same codon field.
-- `Seeds/M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS/TEMP-mahamaya-clock-aural-field-integration.md`, §1: inscription × lens torus, M2 Vimarśā relation and proposed Hopf phase formulation.
-- `Seeds/M/M4'/m4-prime-nara-handoff.md`, §2.4: the earlier orthogonal 720° phase-space proposal, including its stated verification needs.
+- `Map/datasets/mahamaya-deep/fibonacci-60-pisano-integration.md` §§4–5: M2-0 → M3-5 → centre, M3-0 reception and return;
+- `Map/datasets/mahamaya-deep/nodes-full-detail.json`: exact centre and convergence/origin functions;
+- `Seeds/M/M-M-prime-coordinate-mapping-inaugural.md`: existing centre and unified clock;
+- `Seeds/M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS/02-16-lenses-backbone-temporal.md`: static partitions and pre-lensic ground, older total superseded;
+- the same directory's `HOPF-INTEGRATION-READ.md` §XI and `TEMP-mahamaya-clock-aural-field-integration.md` §1: dual codon routes, inscription × lens torus, Vimarśā and Hopf proposal;
+- `Seeds/M/M4'/m4-prime-nara-handoff.md` §2.4: earlier orthogonal 720° phase spaces with explicit verification needs;
+- M4/M5 activity, psychoid-field and pedagogical source, as joined in the [living architecture](LIVING-INSTRUMENT-ARCHITECTURE.md).
 
-The owner's September 11 instruction at the head of this refinement is the authority for M2's full aperture ownership and proposed M3 spatio-temporal-field direction. The seeds explain its provenance; current code establishes only the implemented subset.
+The owner's September 11 direction and subsequent approvals govern the current allocation and lived instrument. Sources explain their provenance; code and actual returned execution establish what is presently implemented.
