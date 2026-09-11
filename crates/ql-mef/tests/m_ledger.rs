@@ -27,23 +27,41 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
     let l = ledger();
     assert!(codes(&l).is_empty());
     assert_eq!(l.matrices.len(), 10);
-    assert_eq!(l.rows.len(), 192);
+    // K3 imported 185 source capabilities + 7 aggregate index rows. K4 added
+    // one census row per M1/M2/M3 registry coordinate (43 + 597 + 996) through
+    // the automated coverage census; the source imports themselves are
+    // unchanged and every capability keeps its distinct identity.
+    assert_eq!(l.rows.len(), 1828);
     assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
-    assert_eq!(l.implementations.len(), 14);
-    for (scope, count) in [
-        ("M0", 108),
-        ("M1", 43),
-        ("M2", 597),
-        ("M3", 996),
-        ("M4", 100),
-        ("M5", 31),
-        ("M", 1876),
+    assert_eq!(
+        l.rows
+            .iter()
+            .filter(|r| r.id.starts_with("census:"))
+            .count(),
+        1636
+    );
+    // K4 census inventory: 90 discovered C bodies (including the explicitly
+    // infrastructural arena machinery), 148 Rust bodies, and one live-graph
+    // structural-index record per joined live coordinate (1635).
+    assert_eq!(l.implementations.len(), 1873);
+    // C-stratum coordinates still lacking a discovered computational body,
+    // from the committed census receipts (fixtures/kernel/census/): M1 22,
+    // M2 43 and M3 18 coordinates carry discovered C structure, including
+    // aggregate coverage; M0/M4/M5 await the K10 extension.
+    for (scope, count, lacking) in [
+        ("M0", 108, 108),
+        ("M1", 43, 21),
+        ("M2", 597, 554),
+        ("M3", 996, 978),
+        ("M4", 100, 100),
+        ("M5", 31, 31),
+        ("M", 1876, 1793),
     ] {
         let c = l
             .coverage(native_m_registry(), scope, "c", "coordinate", "verified")
             .unwrap();
         assert_eq!(c.structural_coordinates, count);
-        assert_eq!(c.coordinates_without_computational_binding.len(), count);
+        assert_eq!(c.coordinates_without_computational_binding.len(), lacking);
         assert_eq!(c.blocking_rows.len(), c.rows.len());
     }
 }

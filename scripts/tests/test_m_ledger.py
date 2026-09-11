@@ -23,6 +23,7 @@ class MLedgerTests(unittest.TestCase):
         cls.world = Path(cls.temp.name)
         paths = {m[k]["path"] for m in cls.base["matrices"] for k in ("data", "rationale")}
         paths.update(i["path"] for i in cls.base["implementations"])
+        paths.update(e["artifact"]["path"] for e in cls.base["evidence"])
         paths.update([str(ledger.REGISTRY), "fixtures/kernel/m-ledger-v1.schema.json"])
         for p in paths:
             target = cls.world / p; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / p, target)
@@ -44,11 +45,18 @@ class MLedgerTests(unittest.TestCase):
         return document
 
     def test_seed_determinism_and_source_inventory(self):
-        generated = ledger.refresh(ROOT)
-        self.assertEqual(generated, self.base)
+        # The deterministic K3 seed is unchanged; the K4 census (see
+        # fixtures/kernel/census/) extends it with one row per M1/M2/M3
+        # coordinate, and refresh preserves those census additions exactly.
+        seed = ledger.refresh(ROOT)
+        self.assertEqual(len(seed["rows"]), 192)
+        self.assertEqual(len(seed["matrices"]), 10)
+        by_id = {r["id"]: r for r in self.base["rows"]}
+        for row in seed["rows"]:
+            self.assertIn(row["id"], by_id)
+            for field in ("role", "scope", "coordinates", "source"):
+                self.assertEqual(row[field], by_id[row["id"]][field])
         self.assertEqual(ledger.refresh(ROOT, copy.deepcopy(self.base)), self.base)
-        self.assertEqual(len(generated["rows"]), 192)
-        self.assertEqual(len(generated["matrices"]), 10)
         ledger.verify(ROOT, self.base)
 
     def test_refresh_preserves_assessments_bindings_discrepancies_and_new_rows(self):
@@ -93,11 +101,11 @@ class MLedgerTests(unittest.TestCase):
             document = json.loads(original); document["capabilities"].append({"id": "K4-AUTO-TEST", "name": "new source capability", "coordinate": "M1-0"})
             path.write_text(json.dumps(document))
             expanded = ledger.refresh(self.world, copy.deepcopy(self.base))
-            self.assertEqual(len(expanded["rows"]), 193)
+            self.assertEqual(len(expanded["rows"]), len(self.base["rows"]) + 1)
             ledger.verify(self.world, expanded)
             document["capabilities"].pop(); path.write_bytes(original)
             shrunk = ledger.refresh(self.world, expanded)
-            self.assertEqual(len(shrunk["rows"]), 193, "removed source must not be silently forgotten")
+            self.assertEqual(len(shrunk["rows"]), len(self.base["rows"]) + 1, "removed source must not be silently forgotten")
             with self.assertRaisesRegex(ValueError, "orphan/stale source capability"):
                 ledger.verify(self.world, shrunk)
         finally:
