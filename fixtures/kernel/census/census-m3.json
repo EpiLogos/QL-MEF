@@ -2,14 +2,14 @@
   "schema": "ql.m-census/v1",
   "root": "M3",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "92ec1e3aeb0a269345e2ec2e5389e1b4264ebbe81125ecbc7050b7a9d574409a",
+  "ledger_revision": "9d4b00d291574c7c73af26bbf86c315ee5bb47c16263ad0b5ff3a47a5ffbb53a",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 996,
   "counts": {
     "c": {
-      "implemented": 11,
-      "unimplemented": 976,
-      "partial": 9
+      "implemented": 23,
+      "unimplemented": 963,
+      "partial": 10
     },
     "rust": {
       "implemented": 34,
@@ -38,6 +38,12 @@
           "c/src/m2.c:ql_m2_modal_quadrature",
           "c/src/m2.c:ql_m2_modal_transduce",
           "c/src/m2.c:ql_m2_vimarsha",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3.c:ql_m3_hexagram",
+          "c/src/m3.c:ql_m3_matrix_partner",
+          "c/src/m3.c:ql_m3_minor",
+          "c/src/m3.c:ql_m3_trigram",
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/families.c:families_wire_reflective",
           "vendor/epi-kernel/reference/src/m0.c:VIRTUE_LUT",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
@@ -69,6 +75,11 @@
           "crates/ql-cli/src/vak_composition.rs:return_view",
           "crates/ql-core/src/form.rs:QlForm",
           "crates/ql-core/src/form.rs:QlFormRef",
+          "crates/ql-core/src/m3_clock.rs:CLOCK_FIELD_COUNT",
+          "crates/ql-core/src/m3_clock.rs:ClockField",
+          "crates/ql-core/src/m3_clock.rs:M3Clock",
+          "crates/ql-core/src/m3_clock.rs:M3_CLOCK_SOURCE",
+          "crates/ql-core/src/m3_clock.rs:M3_CLOCK_VERSION",
           "crates/ql-core/src/operator.rs:OperatorValue",
           "crates/ql-core/src/operator.rs:QlOperator",
           "crates/ql-core/src/pole/aperture.rs:STATIC_DIVISION_DEG10",
@@ -148,6 +159,19 @@
           "crates/ql-mef/src/m2_vimarsha.rs:VimarshaHelix",
           "crates/ql-mef/src/m2_vimarsha.rs:read_from_pose",
           "crates/ql-mef/src/m2_vimarsha.rs:read_seed",
+          "crates/ql-mef/src/m3_engine.rs:M3ClockFrame",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
+          "crates/ql-mef/src/m3_engine.rs:M3NodeKind",
+          "crates/ql-mef/src/m3_engine.rs:M3_ENGINE_VERSION",
+          "crates/ql-mef/src/m3_source.rs:DOMAIN_JSON",
+          "crates/ql-mef/src/m3_source.rs:DOMAIN_SCHEMA",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_state.rs:M3Command",
+          "crates/ql-mef/src/m3_state.rs:M3Operation",
+          "crates/ql-mef/src/m3_state.rs:M3Receipt",
+          "crates/ql-mef/src/m3_state.rs:M3Request",
+          "crates/ql-mef/src/m3_state.rs:M3State",
+          "crates/ql-mef/src/m3_state.rs:code",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Transition",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -197,6 +221,8 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m3.c:ql_m3_hexagram",
+          "c/src/m3.c:ql_m3_trigram",
           "vendor/epi-kernel/reference/src/m3.c:m3_print_hexagram"
         ]
       },
@@ -235,7 +261,8 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-cli/src/vak_composition.rs:parse_language"
+          "crates/ql-cli/src/vak_composition.rs:parse_language",
+          "crates/ql-mef/src/m3_state.rs:code"
         ]
       },
       "row": "census:#3-2"
@@ -256,10 +283,14 @@
         "covered_by_descendants": [
           "#1-0",
           "#1-1",
-          "#1-2-3"
+          "#1-2-3",
+          "#2-1-0-2",
+          "#3-3-2-0"
         ],
         "constructs": [
           "c/src/m1_state.c:ql_m1_reflection",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3.c:ql_m3_matrix_partner",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
           "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
         ]
@@ -316,16 +347,12 @@
         "MahamayaComponent"
       ],
       "c": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#1-1",
-          "#3-2-2-1-4",
-          "#3-4-1-2",
-          "#3-4.0"
-        ],
+        "state": "implemented",
         "constructs": [
           "c/src/holographic.c:ql_relation_tag",
           "c/src/m1_state.c:ql_m1_reflection",
+          "c/src/m3.c:ql_m3_minor",
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/m0.c:VIRTUE_LUT",
           "vendor/epi-kernel/reference/src/m3.c:m3_print_tarot"
         ]
@@ -392,7 +419,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -412,7 +442,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "partial",
@@ -439,7 +472,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -459,7 +495,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -479,7 +518,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -499,7 +541,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -519,7 +564,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -539,7 +587,10 @@
         "Trigram"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_trigram"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -686,10 +737,14 @@
       "c": {
         "state": "partial",
         "covered_by_descendants": [
-          "#1-1"
+          "#1-1",
+          "#2-1-0-2",
+          "#3-3-2-0"
         ],
         "constructs": [
-          "c/src/m1_state.c:ql_m1_reflection"
+          "c/src/m1_state.c:ql_m1_reflection",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3.c:ql_m3_matrix_partner"
         ]
       },
       "rust": {
@@ -783,7 +838,13 @@
         "MahamayaElement"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-1-0-2"
+        ],
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "partial",
@@ -890,7 +951,10 @@
         "Pentacles"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3_domain.c:ql_m3_form"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -2685,7 +2749,8 @@
       "c": {
         "state": "implemented",
         "constructs": [
-          "c/src/m1_state.c:ql_m1_reflection"
+          "c/src/m1_state.c:ql_m1_reflection",
+          "c/src/m3.c:ql_m3_matrix_partner"
         ]
       },
       "rust": {
@@ -2710,7 +2775,10 @@
         "MatrixOperator"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -3421,7 +3489,13 @@
         "ChromosomeContainer"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-1-0-2"
+        ],
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -10258,7 +10332,10 @@
         "ChromosomeElement"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",

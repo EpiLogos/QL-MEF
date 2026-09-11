@@ -43,6 +43,7 @@
       "c_state": "implemented",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m3_domain.c:ql_m3_form",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
@@ -62,6 +63,7 @@
       "c_bodies": [
         "c/src/m1_state.c:ql_m1_carrier",
         "c/src/m1_state.c:seat",
+        "c/src/m3.c:ql_m3_epogdoon",
         "vendor/epi-kernel/reference/src/m2.c:m2_print_planets",
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
         "vendor/epi-kernel/reference/src/m5.c:M5_LOGOS_STAGE_NAMES"
@@ -77,6 +79,8 @@
       "c_state": "implemented",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m3.c:ql_m3_hexagram",
+        "c/src/m3.c:ql_m3_trigram",
         "vendor/epi-kernel/reference/src/m3.c:m3_print_hexagram"
       ]
     },
@@ -91,6 +95,8 @@
       "rust_state": "partial",
       "c_bodies": [
         "c/src/m1_state.c:ql_m1_reflection",
+        "c/src/m3.c:ql_m3_active_state",
+        "c/src/m3.c:ql_m3_matrix_partner",
         "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
         "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
       ]
@@ -147,6 +153,7 @@
       "c_state": "partial",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m3.c:ql_m3_active_state",
         "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY",
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
       ]
@@ -161,6 +168,7 @@
       "c_state": "partial",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m3_domain.c:ql_m3_form",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
         "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
@@ -178,6 +186,131 @@
       "rust_state": "partial",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+      ]
+    },
+    {
+      "coordinate": "#2-4.3",
+      "names": [
+        "72 Musical Maqamat",
+        "72 Musical Maqamat",
+        "The Complete Islamic Musical Modal System - 72 Heptatonic Scales"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_minor"
+      ]
+    },
+    {
+      "coordinate": "#3-1-0",
+      "names": [
+        "Qian",
+        "Qian",
+        "The Creative / Heaven",
+        "乾"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-1",
+      "names": [
+        "Kun",
+        "Kun",
+        "The Receptive / Earth",
+        "坤"
+      ],
+      "c_state": "implemented",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-2",
+      "names": [
+        "Zhen",
+        "Zhen",
+        "The Arousing / Thunder",
+        "震"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-3",
+      "names": [
+        "Xun",
+        "Xun",
+        "The Gentle / Wind / Wood",
+        "巽"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-4",
+      "names": [
+        "Kan",
+        "Kan",
+        "The Abysmal / Water",
+        "坎"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-5",
+      "names": [
+        "Li",
+        "Li",
+        "The Clinging / Fire",
+        "離"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-6",
+      "names": [
+        "Gen",
+        "Gen",
+        "Keeping Still / Mountain",
+        "艮"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
+      ]
+    },
+    {
+      "coordinate": "#3-1-7",
+      "names": [
+        "Dui",
+        "Dui",
+        "The Joyous / Lake / Marsh",
+        "兌"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_trigram"
       ]
     },
     {
@@ -205,6 +338,19 @@
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
         "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5",
+      "names": [
+        "Human Karyotype",
+        "Human Karyotype",
+        "The Complete Human Chromosomal Architecture - 23 Pairs + Mitochondrial"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_active_state"
       ]
     },
     {
@@ -246,6 +392,19 @@
       ]
     },
     {
+      "coordinate": "#2-2-2-4",
+      "names": [
+        "Tanmatras",
+        "Tanmatras",
+        "Tanmatras - The Five Subtle Elements"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m3_domain.c:ql_m3_form"
+      ]
+    },
+    {
       "coordinate": "#2-3-1-0",
       "names": [
         "Aries Decans",
@@ -283,6 +442,19 @@
       "c_bodies": [
         "c/src/m_tree.c:ql_m_relation_resolve",
         "c/src/m_tree.c:ql_m_resolve"
+      ]
+    },
+    {
+      "coordinate": "#2-4.3-5",
+      "names": [
+        "Nahawand Family",
+        "Nahawand Family",
+        "Nahawand Family - The Mirror of Human Emotional Complexity"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_minor"
       ]
     },
     {
@@ -361,6 +533,19 @@
       "rust_state": "unimplemented",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.3-5-0",
+      "names": [
+        "Nahawand",
+        "Nahawand",
+        "Maqam Nahawand - The Natural Minor of the Heart"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m3.c:ql_m3_minor"
       ]
     },
     {
@@ -618,18 +803,6 @@
       ]
     },
     {
-      "coordinate": "#3-4-4",
-      "names": [
-        "Pentacles",
-        "Pentacles",
-        "Suit of Earth - Material Form and Practical Manifestation"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/form.rs:QlForm",
-        "crates/ql-core/src/form.rs:QlFormRef"
-      ]
-    },
-    {
       "coordinate": "#3-5-1",
       "names": [
         "North Cardinal Anchor",
@@ -731,16 +904,6 @@
       ]
     },
     {
-      "coordinate": "#2-1-3-2",
-      "names": [
-        "Sprouting (active emergence)",
-        "Sprouting (active emergence)"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
       "coordinate": "#2-1-3-3",
       "names": [
         "Blooming (structural unfolding)",
@@ -811,17 +974,6 @@
       ]
     },
     {
-      "coordinate": "#2-4.2-5",
-      "names": [
-        "Sabr",
-        "Sabr",
-        "Sabr (الصبر) - The Station of Patience and Active Endurance"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
       "coordinate": "#2-4.3-4",
       "names": [
         "Hijaz Family",
@@ -854,17 +1006,6 @@
       "rust_bodies": [
         "crates/ql-cli/src/vak_composition.rs:frame_view",
         "crates/ql-cli/src/vak_composition.rs:return_view"
-      ]
-    },
-    {
-      "coordinate": "#3-3-2-1",
-      "names": [
-        "Matrix 2",
-        "Matrix 2",
-        "Active-Passive States and Genetic Breathing Operator"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ]
     },
     {
@@ -941,18 +1082,6 @@
       ]
     },
     {
-      "coordinate": "#3-3-5-1",
-      "names": [
-        "Sex Chromosome Polarity",
-        "Sex Chromosome Polarity",
-        "The 23rd Pair - XX/XY Sexual Differentiation System"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/pole/coin.rs:Polarity",
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
       "coordinate": "#3-4-5/0",
       "names": [
         "Major Arcana",
@@ -984,20 +1113,6 @@
       ],
       "rust_bodies": [
         "crates/ql-core/src/pole/fold.rs:FoldState"
-      ]
-    },
-    {
-      "coordinate": "#2-2-2-4-3",
-      "names": [
-        "Rupa Tanmatra",
-        "Rupa Tanmatra",
-        "रूप तन्मात्र",
-        "Rupa Tanmatra - Subtle Element of Form"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/form.rs:QlForm",
-        "crates/ql-core/src/form.rs:QlFormRef",
-        "crates/ql-mef/src/vak.rs:SelfOtherForm"
       ]
     },
     {
@@ -1044,7 +1159,8 @@
         "The City of Jewels: Engine of Will & Transformative Fire"
       ],
       "rust_bodies": [
-        "crates/ql-mef/src/m1_engine.rs:M1Engine"
+        "crates/ql-mef/src/m1_engine.rs:M1Engine",
+        "crates/ql-mef/src/m3_engine.rs:M3Engine"
       ]
     },
     {
@@ -1057,7 +1173,8 @@
       "rust_bodies": [
         "crates/ql-cli/src/lib.rs:verify_command",
         "crates/ql-cli/src/m_ledger.rs:command",
-        "crates/ql-cli/src/vak_composition.rs:command"
+        "crates/ql-cli/src/vak_composition.rs:command",
+        "crates/ql-mef/src/m3_state.rs:M3Command"
       ]
     },
     {
@@ -1093,17 +1210,6 @@
         "crates/ql-mef/src/m_ledger.rs:Authority",
         "crates/ql-mef/src/m_ledger.rs:authority",
         "crates/ql-mef/src/vak.rs:structural_relation"
-      ]
-    },
-    {
-      "coordinate": "#3-3-5-1-1",
-      "names": [
-        "Y Chromosome",
-        "Y Chromosome",
-        "The Masculine Differentiator - Active Yang Principle"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ]
     },
     {
@@ -1180,20 +1286,6 @@
       ]
     },
     {
-      "coordinate": "#2-4.0-0/1-0",
-      "names": [
-        "Jalal",
-        "Jalal",
-        "Divine Majesty and Power Attributes - Transcendent Authority Grouping"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/pole/coin.rs:Polarity",
-        "crates/ql-mef/src/m_ledger.rs:Authority",
-        "crates/ql-mef/src/m_ledger.rs:authority",
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
       "coordinate": "#2-4.1-0-0-14",
       "names": [
         "ANUSVĀRA",
@@ -1205,6 +1297,9 @@
         "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
         "crates/ql-mef/src/m2_condition.rs:SourceRelation",
         "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+        "crates/ql-mef/src/m3_source.rs:M3Source",
+        "crates/ql-mef/src/m3_source.rs:SourceNode",
+        "crates/ql-mef/src/m3_source.rs:SourceRelation",
         "crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "crates/ql-mef/src/vak.rs:parse_source_entry"
       ]
@@ -1232,26 +1327,6 @@
       ]
     },
     {
-      "coordinate": "#2-4.0-0/1-0-0",
-      "names": [
-        "Al-Malik",
-        "Al-Malik"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
-      "coordinate": "#2-4.0-0/1-0-21",
-      "names": [
-        "Al-Khaliq",
-        "Al-Khaliq"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
       "coordinate": "#2-4.0-0/1-0-32",
       "names": [
         "Al-Awwal",
@@ -1259,26 +1334,6 @@
       ],
       "rust_bodies": [
         "crates/ql-core/src/pole/coin.rs:Polarity"
-      ]
-    },
-    {
-      "coordinate": "#2-4.0-0/1-0-5",
-      "names": [
-        "Al-Aziz",
-        "Al-Aziz"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
-      ]
-    },
-    {
-      "coordinate": "#2-4.0-0/1-0-8",
-      "names": [
-        "Al-Qahhar",
-        "Al-Qahhar"
-      ],
-      "rust_bodies": [
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ]
     },
     {

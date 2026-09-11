@@ -227,7 +227,15 @@ class M3SourceParityTests(unittest.TestCase):
     def test_all_findings_fit_existing_ledger_without_readiness_promotion(self):
         original = ledger.read(ROOT / ledger.LEDGER)
         updated = copy.deepcopy(original)
-        updated["discrepancies"].extend(self.audit["discrepancies"])
+        # K7 has now admitted these findings. Re-running the source audit must
+        # retain a reviewed lifecycle, not append duplicate IDs or overwrite it.
+        existing = {d["id"]: d for d in updated["discrepancies"]}
+        for finding in self.audit["discrepancies"]:
+            if finding["id"] in existing:
+                for key in ("axis", "from_peer", "to_peer", "subjects", "detail"):
+                    self.assertEqual(existing[finding["id"]][key], finding[key])
+            else:
+                updated["discrepancies"].append(copy.deepcopy(finding))
         updated["ledger_revision"] = ledger.digest(ledger.canonical({k: v for k, v in updated.items() if k != "ledger_revision"}))
         ledger.verify(ROOT, updated)
         row_ids = {r["id"] for r in updated["rows"]}

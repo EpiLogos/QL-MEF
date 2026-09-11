@@ -725,3 +725,56 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
             .any(|d| d.id == "k6-m2:difference-asma" && d.state == "open")
     );
 }
+
+#[test]
+fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumers() {
+    let l = ledger();
+    assert_eq!(
+        l.rows
+            .iter()
+            .filter(|r| r.id.starts_with("census:#3"))
+            .count(),
+        996
+    );
+    assert!(l.rows.iter().any(|r| r.id == "k6-m2:condition-producer"));
+    assert!(l.rows.iter().any(|r| r.id == "k7-m3:parent-producer"));
+    assert_eq!(
+        l.discrepancies
+            .iter()
+            .filter(|d| d.id.starts_with("k7-source-"))
+            .count(),
+        563
+    );
+    let index = l
+        .rows
+        .iter()
+        .find(|r| r.id == "k7-m3:source-matrices")
+        .unwrap();
+    assert_eq!(
+        l.assessments[&index.assessment].readiness["c"].status,
+        "structural-index-only"
+    );
+    let form = l.rows.iter().find(|r| r.id == "k7-m3:form").unwrap();
+    assert_eq!(
+        l.assessments[&form.assessment].readiness["c"].status,
+        "verified"
+    );
+    assert_eq!(
+        l.assessments[&form.assessment].readiness["rust"].status,
+        "verified"
+    );
+    assert_eq!(
+        l.assessments[&form.assessment].readiness["cpp"].status,
+        "unassessed"
+    );
+    let field = l
+        .rows
+        .iter()
+        .find(|r| r.id == "field-M3:M3P-CLOCK")
+        .unwrap();
+    assert!(field.coordinates.is_empty());
+    assert_ne!(
+        l.assessments[&field.assessment].readiness["rust"].status,
+        "verified"
+    );
+}
