@@ -26,7 +26,7 @@ https://github.com/EpiLogos/ai-kit
 https://github.com/EpiLogos/Actuation  
 https://github.com/EpiLogos/Workcell  
 https://github.com/EpiLogos/Central  
-https://github.com/EpiLogos/agent-system-design
+https://github.com/EpiLogos/Factory
 
 ## START FROM CURRENT AUTHORITY
 
