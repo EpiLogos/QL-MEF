@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "6f51a6046266a88e41e17f8874ad143bd727c0b47b792dae8bf4577a8bca3d00",
+  "ledger_revision": "92ec1e3aeb0a269345e2ec2e5389e1b4264ebbe81125ecbc7050b7a9d574409a",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480",
@@ -92835,7 +92835,7 @@
       "kind": "source",
       "artifact": {
         "path": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
-        "sha256": "8370c1eac919e80efc351fbe32eb2554bb779f0d57e51febe661ceb5b8084601"
+        "sha256": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848"
       },
       "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
       "subjects": [

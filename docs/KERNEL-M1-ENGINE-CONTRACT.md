@@ -113,7 +113,7 @@ The traversal wire envelope is `ql.m1.traversal/v1`. `traverse_json` rejects
 unknown fields/schema, invalid indices/faces/lenses and malformed counters.
 `cycle` is an unsigned decimal **string** to preserve 64-bit identity in clients.
 Source/target have `position6:0..5` and `phase:0|1`; `lens12` uses the existing
-L0..L5,L0′..L5′ order. Basis is `chromatic|fifths`; participation is
+interleaved L0,L0′,L1,L1′,…,L5,L5′ (`LensId::ALL`) order. Basis is `chromatic|fifths`; participation is
 `none|source-only|target-only|both`. Every pointer field is required; roles may
 be empty. Example:
 
@@ -308,3 +308,38 @@ observation or audio-device time. C++ interpolates that generation while domain
 changes return through the revision-checked Rust owner. Personal/Cosmic and
 deep M1′ consumers keep the same event and subject rather than starting another
 clock or generating a renderer-local ontology.
+
+
+### M1 → M2 reception: lens encoding, source subject and time
+
+`crates/ql-mef/tests/m1_m2_parent_join.rs` executes the accepted M1 engine and
+M2 joint-condition producer together for Cosmic, Personal and deep M1 callers.
+It uses both musical bases and all twelve native lens identities. The actual
+Ananda traversal supplies its source-provenanced ratio, and the same M1 owner
+supplies event/generation, effective tick/degree and active lens/local position.
+M2 continues to own Vimarśā and the correspondence source paths. The test does
+not manufacture colour from pitch, simulate a physical resonator, or treat
+fixture amplitudes as observed excitation. Stale incoming M1 stamps fail.
+
+Native M1 `lens12` is the **interleaved `LensId::ALL` slot**. M2's retained C
+MEF table uses **grouped** direct/conjugate rows. Compose through the existing
+`Reading72::from_sublens` / `mef_sublens` bridge; do not copy a numeric M1 slot
+into the C table index. The earlier grouped-order wording in this document was
+incorrect. Native code and lens identities are unchanged; the joined regression
+checks every forward/inverse mapping as well as actual M2 execution.
+
+`config.subject_coordinate` remains M1's source/instance coordinate, not a
+Nara identity or a human Day. The Personal host keeps its receiving subject,
+identity revision and authorized Day/NOW/Flow source handles separately and
+relates them to the same event/generation. Passing those refs does not authorize
+protected-source disclosure or turn the kernel into their source owner. K10
+supplies Nara's actual constitution; K8 applies it to the existing field.
+
+M1 cycles/revisions are full-width unsigned 64-bit decimal strings. The current
+M2 JSON `EventIdentity.profile_generation` is a numeric value restricted to
+`2^53-1`. A consumer must reject unsupported generations, not truncate or reset
+them. The joined fixture keeps a cycle above that threshold exact in M1 and
+separately tests rejection of an unsafe M2 generation even when both input
+stamps agree. Logical kernel time remains distinct from UTC/provider time and
+from an owner's Day/NOW identity. These are headless producer tests, not a new
+Agent, map, parent surface or installed experiential acceptance claim.
