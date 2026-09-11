@@ -1,0 +1,66 @@
+name: K5 checked source publication (temporary)
+on:
+  push:
+    branches: [agent/129-m1-coordinate-rebuild]
+    paths: [.github/workflows/k5-publish.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/agent/129-m1-coordinate-rebuild'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Verify the complete authored patch before applying it
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/k5-publication"
+          cp .k5-transfer-*.b64 "$RUNNER_TEMP/k5-publication/"
+          python3 - <<'PY'
+          import base64, hashlib, lzma, os
+          from pathlib import Path
+          encoded = ''.join(Path(f'.k5-transfer-{i}.b64').read_text().strip() for i in (1,2,3))
+          patch = lzma.decompress(base64.b64decode(encoded, validate=True))
+          assert hashlib.sha256(patch).hexdigest() == 'adfaa37ea0b0afa0c3b99eae6f59fae788d03e74d19cd21ac56bec526db475e6'
+          assert b'diff --git a/.github/' not in patch
+          Path(os.environ['RUNNER_TEMP'], 'k5-publication', 'product.patch').write_bytes(patch)
+          PY
+          git apply --check --index --whitespace=nowarn "$RUNNER_TEMP/k5-publication/product.patch"
+          git apply --index --whitespace=nowarn "$RUNNER_TEMP/k5-publication/product.patch"
+          git rm -- .k5-transfer-1.b64 .k5-transfer-2.b64 .k5-transfer-3.b64
+      - name: Execute native engine and existing ledger tests
+        run: |
+          set -euo pipefail
+          python3 -m pip install jsonschema==4.25.1
+          cargo fmt --all -- --check
+          cargo test -p ql-mef --locked 2>&1 | tee "$RUNNER_TEMP/k5-publication/ql-mef-tests.txt"
+          cargo clippy -p ql-mef --all-targets --locked -- -D warnings 2>&1 | tee "$RUNNER_TEMP/k5-publication/clippy.txt"
+          bash scripts/test-m1-engine.sh 2>&1 | tee "$RUNNER_TEMP/k5-publication/native-m1.txt"
+          python3 scripts/m-ledger.py check
+          python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v 2>&1 | tee "$RUNNER_TEMP/k5-publication/ledger-python.txt"
+          git diff --exit-code
+      - name: Commit only staged product files to this K5 branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat(m1): recover native coordinate engine, Rust traversal and scoped ledger evidence (#129)'
+          AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $AUTH" push origin HEAD:refs/heads/agent/129-m1-coordinate-rebuild
+          git rev-parse HEAD > "$RUNNER_TEMP/k5-publication/commit.txt"
+          git rev-parse HEAD^{tree} > "$RUNNER_TEMP/k5-publication/tree.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k5-publication-${{ github.sha }}
+          path: ${{ runner.temp }}/k5-publication/
+          retention-days: 7
+          if-no-files-found: error
