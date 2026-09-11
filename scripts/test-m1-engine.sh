@@ -5,16 +5,21 @@ cd "$(dirname "$0")/.."
 mkdir -p target/m1-engine
 cc=${CC:-clang}
 flags=(-std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -ffunction-sections -fdata-sections)
+# section GC is --gc-sections on ELF linkers, -dead_strip on macOS ld64
+case "$(uname -s)" in
+  Darwin) gc=(-Wl,-dead_strip); asan="detect_leaks=0:halt_on_error=1" ;;  # LeakSanitizer is unsupported on macOS
+  *)      gc=(-Wl,--gc-sections); asan="detect_leaks=1:halt_on_error=1" ;;
+esac
 includes=(-Ic/include -Ivendor/epi-kernel/reference/include -Imigration/epi-kernel/m1-return)
 sources=(migration/epi-kernel/m1-engine-probe.c migration/epi-kernel/m1-return/m1_ananda_projection.c vendor/epi-kernel/reference/src/m1.c vendor/epi-kernel/reference/src/psychoid_numbers.c c/src/m_tree.c c/src/m1.c)
-"$cc" "${flags[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer "${includes[@]}" "${sources[@]}" -Wl,--gc-sections -lm -o target/m1-engine/sanitized
-ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 target/m1-engine/sanitized > target/m1-engine/sanitized.jsonl
+"$cc" "${flags[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer "${includes[@]}" "${sources[@]}" "${gc[@]}" -lm -o target/m1-engine/sanitized
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 target/m1-engine/sanitized > target/m1-engine/sanitized.jsonl
 python3 scripts/check-m1-source.py --observations target/m1-engine/sanitized.jsonl
 python3 scripts/generate-m1-source.py
 python3 scripts/check-m1-acceptance.py
 mkdir -p target/m1-state
-"$cc" "${flags[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer -Ic/include -Ivendor/epi-kernel/reference/include vendor/epi-kernel/reference/src/m1.c vendor/epi-kernel/reference/src/psychoid_numbers.c migration/epi-kernel/m1-state-probe.c c/src/m_tree.c c/src/m1.c c/src/m1_state.c c/src/kernel.c c/src/primitive.c -Wl,--gc-sections -lm -o target/m1-state/sanitized
-ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 target/m1-state/sanitized > target/m1-state/sanitized.jsonl
+"$cc" "${flags[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer -Ic/include -Ivendor/epi-kernel/reference/include vendor/epi-kernel/reference/src/m1.c vendor/epi-kernel/reference/src/psychoid_numbers.c migration/epi-kernel/m1-state-probe.c c/src/m_tree.c c/src/m1.c c/src/m1_state.c c/src/kernel.c c/src/primitive.c "${gc[@]}" -lm -o target/m1-state/sanitized
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 target/m1-state/sanitized > target/m1-state/sanitized.jsonl
 python3 scripts/check-m1-literals.py --observations target/m1-state/sanitized.jsonl
 make -C c install DESTDIR="$PWD/target/m1-engine/installed" PREFIX=/ql-mef-c
 cat > target/m1-engine/consumer.cpp <<'CPP'
