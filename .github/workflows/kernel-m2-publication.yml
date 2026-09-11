@@ -12,65 +12,121 @@ jobs:
   publish-generated-source:
     if: github.repository == 'EpiLogos/QL-MEF' && github.ref == 'refs/heads/agent/k6-m2-coordinate-rebuild'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-      - name: Pinned read-only source for exact oracle and deep census
+      - name: Pinned read-only source for exact oracle and complete M2 relations
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments
           ref: daa660cbc1b8c5da83828698665a753852cb0287
           path: target/m2-bimba-source
           sparse-checkout: |
-            Idea/Bimba/Map/datasets/parashakti-deep
+            Idea/Bimba/Map/datasets
             Body/S/S0/portal-core/src/parashakti
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
       - run: python3 -m pip install 'jsonschema==4.25.1'
-      - name: Apply reviewed narrow integration patch and generate source-held data
+      - name: Apply reviewed source integration and verify tested input identities
         run: |
-          git apply --check scripts/m2-publication.patch
-          git apply scripts/m2-publication.patch
+          set -euo pipefail
+          mkdir -p target/m2-receipt
+          for patch in scripts/m2-integration-*.patch; do
+            git apply --check "$patch"
+            git apply "$patch"
+          done
           cp target/m2-bimba-source/Body/S/S0/portal-core/src/parashakti/vimarsha_reading.rs fixtures/kernel/m2-reference-vimarsha.rs
           test "$(git hash-object fixtures/kernel/m2-reference-vimarsha.rs)" = 7b0bc34cee3388a8d22a615ad2c9facc28016e30
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          v=json.loads(Path('fixtures/kernel/m2-engine-request-v1.json').read_text())
+          v['tick12']=0
+          v['mef_conditions']=[0]
+          v['vimarsha']={'stamp':v['stamp'],'lens':0,'musical_mode':0,'harmonic_ratio':[3,2],'pose_ordinal':0,'pose_source_ref':'fixture:shared-M3-pose'}
+          v['condition']={'maqam_index':3,'role':'tonic','active_mef_condition':0,'tuning':'bimba_spelled24_tet','tonic_hz':220.0,'palette':None}
+          Path('fixtures/kernel/m2-condition-request-v1.json').write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n')
+          PY
+          cargo fmt --all
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          expected=json.loads(Path('scripts/m2-reviewed-inputs.json').read_text())
+          mismatches=[]
+          for path,sha in expected.items():
+              actual=subprocess.check_output(['git','hash-object',path],text=True).strip()
+              if actual!=sha: mismatches.append({'path':path,'expected':sha,'actual':actual})
+          Path('target/m2-receipt/reviewed-inputs.json').write_text(json.dumps({'inputs':expected,'mismatches':mismatches},indent=2)+'\n')
+          if mismatches: raise SystemExit('Source does not match locally executed input: '+repr(mismatches))
+          PY
           python3 scripts/m2-catalogue.py refresh
           python3 scripts/m2-field-report.py refresh --source-root target/m2-bimba-source
-          cargo fmt --all
+          python3 scripts/m2-correspondences.py refresh --source-root target/m2-bimba-source
           python3 scripts/m2-contract.py refresh
-      - name: Execute acceptance before materializing proof or ledger
+      - name: Execute source, C/Rust, joint-condition and installed-consumer acceptance
         run: bash scripts/test-m2-engine.sh
-      - name: Add namespaced inventory to the existing ledger
+      - name: Reconcile the existing ledger and census by identity
         run: |
+          set -euo pipefail
           python3 scripts/m2-ledger.py refresh
+          python3 scripts/m_census.py census
           python3 scripts/m-ledger.py check
           python3 scripts/m2-ledger.py check
-          python3 -m unittest discover -s scripts/tests -p 'test_m_ledger.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+          python3 -m unittest discover -s scripts/tests -p 'test_m*.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
       - name: Execute full workspace after ledger integration
         run: |
+          set -euo pipefail
           cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
           cargo fmt --all --check
           cargo clippy --workspace --all-targets --locked -- -D warnings
-      - name: Publish only the allowed generated/integration files, without force
+      - name: Prove shared refresh is a byte-stable fixed point
+        run: |
+          set -euo pipefail
+          find fixtures/kernel/census -type f -print0 | sort -z | xargs -0 sha256sum > target/m2-receipt/before-refresh.sha256
+          sha256sum fixtures/kernel/m-ledger-v1.json >> target/m2-receipt/before-refresh.sha256
+          python3 scripts/m-ledger.py refresh
+          python3 scripts/m_census.py census
+          python3 scripts/m2-ledger.py check
+          sha256sum --check target/m2-receipt/before-refresh.sha256
+      - name: Publish only tested integration and generated files without force
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: |
-          rm scripts/m2-publication.patch
+          set -euo pipefail
           python3 - <<'PY'
-          import subprocess
-          allowed={
-            'c/src/m2_data.inc','crates/ql-mef/src/lib.rs',
-            'crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2_vimarsha.rs',
-            'crates/ql-mef/tests/m2_engine.rs','crates/ql-mef/tests/m2_vimarsha.rs','crates/ql-mef/examples/m2_engine.rs',
-            'crates/ql-mef/tests/m_ledger.rs','scripts/tests/test_m_ledger.py',
+          import json, subprocess
+          from pathlib import Path
+          expected=json.loads(Path('scripts/m2-reviewed-inputs.json').read_text())
+          allowed=set(expected)
+          allowed.update({
+            'c/src/m2_data.inc','c/src/m2_correspondence_data.inc',
+            'crates/ql-mef/src/m2_vimarsha.rs','crates/ql-mef/tests/m2_engine.rs',
+            'crates/ql-mef/tests/m2_vimarsha.rs','crates/ql-mef/examples/m2_engine.rs',
             'fixtures/kernel/m2-reference-vimarsha.rs','fixtures/kernel/m2-retained-c-v1.json',
-            'fixtures/kernel/m2-field-census-summary-v1.json','fixtures/kernel/m2-engine-request-v1.schema.json',
-            'fixtures/kernel/m2-engine-frame-v1.schema.json','fixtures/kernel/m2-finite-proof-v1.json',
-            'fixtures/kernel/m-ledger-v1.json','scripts/m2-publication.patch'
-          }
+            'fixtures/kernel/m2-field-census-summary-v1.json','fixtures/kernel/m2-correspondences-v1.json',
+            'fixtures/kernel/m2-engine-request-v1.schema.json','fixtures/kernel/m2-engine-frame-v1.schema.json',
+            'fixtures/kernel/m2-finite-proof-v1.json','fixtures/kernel/m-ledger-v1.json',
+            'fixtures/kernel/census/census-m1.json','fixtures/kernel/census/census-m2.json',
+            'fixtures/kernel/census/census-m3.json','fixtures/kernel/census/discovery-c-v1.json',
+            'fixtures/kernel/census/discovery-rust-v1.json','fixtures/kernel/census/work-graph.json',
+            'fixtures/kernel/census/reports/missing-c-structural-bindings.json',
+            'fixtures/kernel/census/reports/missing-partial-rust-ports.json',
+            'fixtures/kernel/census/reports/orphan-implementations.json',
+            'scripts/m2-publication.patch','scripts/m2-reviewed-inputs.json',
+            'scripts/m2-integration-core.patch','scripts/m2-integration-ledger.patch',
+            'scripts/m2-integration-checks.patch','scripts/m2-integration-docs.patch'
+          })
+          for path in ['scripts/m2-publication.patch','scripts/m2-reviewed-inputs.json',
+                       'scripts/m2-integration-core.patch','scripts/m2-integration-ledger.patch',
+                       'scripts/m2-integration-checks.patch','scripts/m2-integration-docs.patch']:
+              Path(path).unlink()
           changed=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
           changed.update(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())
           if changed-allowed: raise SystemExit('Unexpected writes: '+repr(sorted(changed-allowed)))
@@ -79,7 +135,7 @@ jobs:
           test "$(git ls-remote origin refs/heads/agent/k6-m2-coordinate-rebuild | cut -f1)" = "$SOURCE_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'feat(m2): materialize tested coordinate catalogue, engine shapes and scoped ledger'
+          git commit -m 'feat(m2): publish tested K4-integrated engine and source-linked music colour material producer'
           git push origin HEAD:refs/heads/agent/k6-m2-coordinate-rebuild
           git rev-parse HEAD > target/m2-receipt/published-revision.txt
           git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
@@ -90,3 +146,4 @@ jobs:
           name: m2-publication-${{ github.sha }}
           path: target/m2-receipt/
           retention-days: 7
+          if-no-files-found: error

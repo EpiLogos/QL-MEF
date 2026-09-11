@@ -1,0 +1,144 @@
+diff --git a/scripts/m2-ledger.py b/scripts/m2-ledger.py
+index 76bb775ccbe5924ff9a98b53bb9012325f970869..244d6f932f2ff738057bbdb1899a304f1c03ad24 100644
+--- a/scripts/m2-ledger.py
++++ b/scripts/m2-ledger.py
+@@ -23,7 +23,9 @@ def row_id(name):return PREFIX+name
+ 
+ def materialize(previous):
+     # Start from the canonical importer, retaining K5/K7 inventories verbatim.
+-    result=m.refresh(ROOT,previous)
++    result=m.refresh(ROOT,copy.deepcopy(previous))
++    original_order={key:{v["id"]:i for i,v in enumerate(result[key])} for key in ("rows","implementations","evidence","discrepancies")}
++    prior_discrepancies={d["id"]:copy.deepcopy(d) for d in result["discrepancies"] if d["id"].startswith(PREFIX)}
+     for key in ('rows','implementations','evidence','discrepancies'):
+         result[key]=[v for v in result[key] if not v['id'].startswith(PREFIX)]
+     result['assessments']={k:v for k,v in result['assessments'].items() if not k.startswith(PREFIX)}
+@@ -66,6 +68,17 @@ def materialize(previous):
+     add('mef-bridge','C-grouped/Rust-interleaved lens bridge; preserves seven canonical Context Frames',['#2-1'],[],['mef_sublens','from_sublens','context_condition'])
+     add('world-face','Resolve paired decan readings from supplied longitude, not an ephemeris',['#2-3','#2-5'],[],['situated_decan','linked_readings','causal_resonances'])
+     add('engine','Same-event versioned full-field engine frame and validated provider modal/material handoff',['#2'],[],['execute','validate'],path='crates/ql-mef/src/m2_engine.rs')
++    field=load('fixtures/kernel/m2-correspondences-v1.json')
++    correspondences=list(dict.fromkeys(c for rule in field['rules'] for c in
++        [rule['maqam_coordinate'],rule['planet_coordinate'],rule['chakra_coordinate'],rule['tattva_coordinate']] if c))
++    add('correspondence-source','Compiled source-attributed maqam/planet/chakra/element/colour paths, not retained-ruler equivalence',
++        correspondences,['ql_m2_correspondence','ql_m2_correspondence_at'],['correspondence_field','rule'],
++        'structural-index',path='crates/ql-mef/src/m2_condition.rs')
++    add('correspondence-pitch','Separate retained and explicitly spelled 24-TET operations with unsupported-source rejection',
++        list(dict.fromkeys(rule['maqam_coordinate'] for rule in field['rules'])),
++        ['ql_m2_correspondence_pitch'],['condition_pitches'],path='crates/ql-mef/src/m2_condition.rs')
++    add('condition-producer','Joint event/MEF/drive/source-path/colour/material/world and distinct M3 transformation outputs',
++        ['#2','#2-1','#2-2','#2-3','#2-4','#2-5'],[],['resolve'],path='crates/ql-mef/src/m2_condition.rs')
+     result['rows']+=new;result['implementations']+=impls
+     subjects=[r['id'] for r in new+sources]
+     # Every evidence claim remains scoped to what the executable proof measures.
+@@ -93,26 +106,29 @@ def materialize(previous):
+     reg=load('fixtures/kernel/m-tree-v1.json');lookup={}
+     for n in reg['nodes']:
+         lookup[n['source_ref']]=n['id']
++        if n['source_ref'].startswith('#'):lookup['M'+n['source_ref'][1:]]=n['id']
+         for alias in n['aliases']:lookup[alias]=n['id']
+     for row in sources:
+         if row['assessment'] != 'unassessed' and not row['assessment'].startswith(PREFIX):
+-            raise ValueError('M2 source row has a later external assessment; reconcile explicitly: '+row['id'])
++            continue  # A later reviewed assessment belongs to its owner; never overwrite it.
+         if any(row['dispositions'].get(peer) not in (None, 'planned') for peer in ('cpp','neo4j')):
+             raise ValueError('M2 source row has later embodiment bindings; preserve and reconcile: '+row['id'])
+         ids={lookup.get(c) for c in row['coordinates']}-{None}
+         relevant=[r for r in new if ids.intersection(lookup.get(c) for c in r['coordinates'])]
+         # Empty imported coordinate sets stay empty; consume the engine through
+         # dependencies rather than inventing bindings. M2-C18 belongs to M1/M2'.
+-        row['dependencies']=list(dict.fromkeys([d for d in row['dependencies'] if not d.startswith(PREFIX)]+[r['id'] for r in relevant]+[row_id('engine')]))
+-        row['bindings']=[b for b in row['bindings'] if not b.startswith(PREFIX)]+[b for r in relevant for b in r['bindings']]
++        row['dependencies']=sorted(set([d for d in row['dependencies'] if not d.startswith(PREFIX)]+[r['id'] for r in relevant]+[row_id('engine')]))
++        row['bindings']=sorted(set([b for b in row['bindings'] if not b.startswith(PREFIX)]+[b for r in relevant for b in r['bindings']]))
+         row['invariants']=list(dict.fromkeys(row['invariants']+['K6: broad capability is not closed by retained lookup or finite subset','K6: see M2 discrepancy register and provider boundaries']))
+         computed={peer:any(i['id'] in row['bindings'] and i['stratum']==peer and i['kind']=='computational' for i in impls) for peer in ['c','rust']}
+         indexed={peer:any(i['id'] in row['bindings'] and i['stratum']==peer for i in impls) for peer in ['c','rust']}
+         row['assessment']=row_id('partial' if all(computed.values()) else 'rust-partial' if computed['rust'] else 'source-index' if all(indexed.values()) else 'source-only')
+-        row['dispositions'].update({peer:'bound' if indexed[peer] else 'planned' for peer in ['c','rust']})
++        for peer in ['c','rust']:
++            has_binding=any(i['id'] in row['bindings'] and i['stratum']==peer for i in result['implementations'])
++            row['dispositions'][peer]='bound' if has_binding else row['dispositions'].get(peer,'planned')
+         row['dispositions'].update({'cpp':'planned','neo4j':'planned'})
+     differences=[
+-      ('k4','source','bimba','rust','K4 whole-programme acceptance was not observed: #128 still carries K3-to-K4 handoff. K6 supplies a bounded M2 census, not retrospective K4 acceptance.'),
++      ('colour-source','source','bimba','rust','The locked Bimba cut yields 127 unique tonic/dominant-to-chakra paths and 17 missing paths. Only explicit yellow-square, silver-crescent and red-triangle yantra colours are admitted; other centres do not acquire a guessed palette. Retained C rulers, source tonic and source dominant readings remain separate.'),
+       ('tattva','coordinate','bimba','c','Two retained principles (Vidya and Ear) lack exact K2 bindings; retain records 7 and 16 unbound rather than aliasing neighbours.'),
+       ('planet','coordinate','bimba','c','Uranus (mod-10 id 7) is absent from the accepted serialized M2 coordinates; Earth is separate ground, not a replacement.'),
+       ('asma','source','bimba','c','122 matched-name Abjad/digital-root field disagreements and 14 stored-vs-arithmetic digital-root discrepancies remain explicit; 34 names lack unique normalized bindings. Hidden name 99 keeps its sentinel.'),
+@@ -129,6 +145,13 @@ def materialize(previous):
+         result['discrepancies'].append({'id':row_id('difference-'+name),'subjects':['M2'],'axis':axis,'from_peer':fr,'to_peer':to,'state':'open','detail':detail,
+             'current_authority':{'peer':'bimba','reference':DOC,'reason':'Preserve exact source identity and separate computational readings; no silent canon promotion.'},
+             'proposal':None,'decision':None,'promotion':None,'history':[{'state':'open','reference':DOC}]})
++    for i,d in enumerate(result['discrepancies']):
++        prior=prior_discrepancies.get(d['id'])
++        if prior and (prior['state']!='open' or prior.get('proposal') or prior.get('decision')):
++            result['discrepancies'][i]=prior  # Preserve the discrepancy lifecycle on refresh.
++    for key,order in original_order.items():
++        result[key].sort(key=lambda v:order.get(v['id'],len(order)))
++    result['assessments']=dict(sorted(result['assessments'].items()))
+     result=m.refresh(ROOT,result)
+     return result
+ 
+@@ -137,10 +160,10 @@ def proof_refresh():
+     if receipt['result']!='passed':raise ValueError('run the complete M2 acceptance first')
+     for path,sha in receipt['inputs'].items():
+         if lock(path)['sha256']!=sha:raise ValueError('acceptance is stale: '+path)
+-    parity=load('target/m2-receipt/rust-parity.json');vim=load('target/m2-receipt/vimarsha-parity.json')
+-    if parity['result']!='pass' or vim['result']!='passed':raise ValueError('missing executed peer proof')
++    parity=load('target/m2-receipt/rust-parity.json');vim=load('target/m2-receipt/vimarsha-parity.json');condition=load('target/m2-receipt/condition-parity.json')
++    if parity['result']!='pass' or vim['result']!='passed' or condition['result']!='passed':raise ValueError('missing executed peer proof')
+     write(PROOF,{'schema':'ql.m2-finite-proof/v1','result':'passed','standing':'exact input hashes executed; final CI acceptance.json binds execution to the accepted Git revision',
+-        'inputs':receipt['inputs'],'finite_observation':parity,'vimarsha_observation':vim,'checks':receipt['checks'],
++        'inputs':receipt['inputs'],'finite_observation':parity,'vimarsha_observation':vim,'condition_observation':condition,'checks':receipt['checks'],
+         'not_claimed':receipt['not_claimed']+['whole-source capability completion from descriptor lookup']})
+ 
+ def main():
+@@ -151,7 +174,7 @@ def main():
+     for path,sha in proof['inputs'].items():
+         if lock(path)['sha256']!=sha:raise ValueError('stale finite proof input: '+path)
+     # Fresh executable observations must accompany CI/local acceptance.
+-    for key,path in [('finite_observation','rust-parity.json'),('vimarsha_observation','vimarsha-parity.json')]:
++    for key,path in [('finite_observation','rust-parity.json'),('vimarsha_observation','vimarsha-parity.json'),('condition_observation','condition-parity.json')]:
+         if proof[key]!=load('target/m2-receipt/'+path):raise ValueError('fresh observations do not match checked-in scoped proof')
+     ledger=load(m.LEDGER);m.verify(ROOT,ledger)
+     if materialize(ledger)!=ledger:raise ValueError('K6 inventory or evidence locks are stale; refresh without replacing other verticals')
+diff --git a/scripts/m_census.py b/scripts/m_census.py
+index d90c307815cc7b542331923d17bdb03833f95500..5b529b3471d502e07894512615dae3625f1a88c5 100644
+--- a/scripts/m_census.py
++++ b/scripts/m_census.py
+@@ -725,6 +725,16 @@ def impl_id(stratum: str, construct: dict) -> str:
+     return f"{stratum}:{construct['path']}:{construct['symbol']}"
+ 
+ 
++def bindings_for_stratum(bindings, implementations, stratum):
++    """A vertical's binding identity is opaque; its inventory owns its stratum.
++
++    K5/K6/K7 use namespaced IDs. Requiring a c:/rust: prefix would let a
++    presence-only census downgrade valid reviewed bindings to unimplemented.
++    Unknown IDs stay for the ledger validator rather than acquiring a stratum.
++    """
++    return {b for b in bindings if implementations.get(b, {}).get("stratum") == stratum}
++
++
+ def build_census(args) -> int:
+     registry = load_registry()
+     live_content, live_receipt = load_live_content()
+@@ -890,7 +900,7 @@ def build_census(args) -> int:
+             continue
+         resolved_row_coords = {resolve(c) for c in row["coordinates"]}
+         for stratum, state_map in (("c", c_class), ("rust", rust_class)):
+-            bound_ids = {b for b in row["bindings"] if b.startswith(f"{stratum}:")}
++            bound_ids = bindings_for_stratum(row["bindings"], impl_by_id, stratum)
+             all_unimplemented = True
+             for ref in coords:
+                 entry = state_map.get(resolve(ref) or ref,
+@@ -903,7 +913,7 @@ def build_census(args) -> int:
+                     all_unimplemented = False
+             if bound_ids:
+                 row["bindings"] = sorted(
+-                    {b for b in row["bindings"] if not b.startswith(f"{stratum}:")} | bound_ids)
++                    set(row["bindings"]) | bound_ids)
+                 row["dispositions"][stratum] = "bound"
+             elif all_unimplemented:
+                 row["dispositions"][stratum] = "unimplemented"

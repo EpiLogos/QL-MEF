@@ -1,0 +1,388 @@
+diff --git a/.github/workflows/kernel-m2.yml b/.github/workflows/kernel-m2.yml
+index 6ae519d1ad006c69e2798e72f2a2e0f89538992b..b24742c059a3f9eefa0128517b2db710dc0d4c27 100644
+--- a/.github/workflows/kernel-m2.yml
++++ b/.github/workflows/kernel-m2.yml
+@@ -38,7 +38,7 @@ jobs:
+           ref: daa660cbc1b8c5da83828698665a753852cb0287
+           path: target/m2-bimba-source
+           sparse-checkout: |
+-            Idea/Bimba/Map/datasets/parashakti-deep
++            Idea/Bimba/Map/datasets
+           persist-credentials: false
+       - uses: dtolnay/rust-toolchain@stable
+         with:
+@@ -55,7 +55,7 @@ jobs:
+         run: |
+           python3 scripts/m-ledger.py check
+           python3 scripts/m2-ledger.py check
+-          python3 -m unittest discover -s scripts/tests -p 'test_m_ledger.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
++          python3 -m unittest discover -s scripts/tests -p 'test_m*.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+       - name: Full Rust workspace
+         run: cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
+       - name: Formatting and Clippy
+diff --git a/crates/ql-mef/tests/m_ledger.rs b/crates/ql-mef/tests/m_ledger.rs
+index 21dc9ac26c32464bb828dd8c6587c2f41553f0aa..47a8ae5ad736fd3ad6fee9ab19a9424f67d733d2 100644
+--- a/crates/ql-mef/tests/m_ledger.rs
++++ b/crates/ql-mef/tests/m_ledger.rs
+@@ -31,7 +31,6 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
+     // one census row per M1/M2/M3 registry coordinate (43 + 597 + 996) through
+     // the automated coverage census; the source imports themselves are
+     // unchanged and every capability keeps its distinct identity.
+-    assert_eq!(l.rows.len(), 1828);
+     assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
+     assert_eq!(
+         l.rows
+@@ -40,29 +39,80 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
+             .count(),
+         1636
+     );
+-    // K4 census inventory: 90 discovered C bodies (including the explicitly
+-    // infrastructural arena machinery), 148 Rust bodies, and one live-graph
+-    // structural-index record per joined live coordinate (1635).
+-    assert_eq!(l.implementations.len(), 1873);
+-    // C-stratum coordinates still lacking a discovered computational body,
+-    // from the committed census receipts (fixtures/kernel/census/): M1 22,
+-    // M2 43 and M3 18 coordinates carry discovered C structure, including
+-    // aggregate coverage; M0/M4/M5 await the K10 extension.
+-    for (scope, count, lacking) in [
+-        ("M0", 108, 108),
+-        ("M1", 43, 21),
+-        ("M2", 597, 554),
+-        ("M3", 996, 978),
+-        ("M4", 100, 100),
+-        ("M5", 31, 31),
+-        ("M", 1876, 1793),
++    assert_eq!(
++        l.rows
++            .iter()
++            .filter(|r| r.id.starts_with("ql.m-index:"))
++            .count(),
++        7
++    );
++    assert_eq!(
++        l.implementations
++            .iter()
++            .filter(|i| i.id.starts_with("c:ql.m-index:") || i.id.starts_with("rust:ql.m-index:"))
++            .count(),
++        14
++    );
++    assert_eq!(
++        l.implementations
++            .iter()
++            .filter(|i| i.id.starts_with("neo4j:live:"))
++            .count(),
++        1635
++    );
++    let registry = native_m_registry();
++    let bound: std::collections::BTreeSet<_> = l
++        .implementations
++        .iter()
++        .filter(|i| i.stratum == "c" && i.kind == "computational")
++        .flat_map(|i| &i.coordinates)
++        .map(|r| registry.resolve(r).unwrap().id)
++        .collect();
++    for (scope, count) in [
++        ("M0", 108),
++        ("M1", 43),
++        ("M2", 597),
++        ("M3", 996),
++        ("M4", 100),
++        ("M5", 31),
++        ("M", 1876),
+     ] {
+-        let c = l
+-            .coverage(native_m_registry(), scope, "c", "coordinate", "verified")
++        let coverage = l
++            .coverage(registry, scope, "c", "coordinate", "verified")
+             .unwrap();
+-        assert_eq!(c.structural_coordinates, count);
+-        assert_eq!(c.coordinates_without_computational_binding.len(), lacking);
+-        assert_eq!(c.blocking_rows.len(), c.rows.len());
++        assert_eq!(coverage.structural_coordinates, count);
++        let centre = registry.resolve(scope).unwrap().id;
++        let expected: std::collections::BTreeSet<_> = registry
++            .manifest()
++            .nodes
++            .iter()
++            .filter(|node| {
++                let mut current = Some(*node);
++                while let Some(n) = current {
++                    if n.id == centre {
++                        return true;
++                    }
++                    current = registry.parent(n.id);
++                }
++                false
++            })
++            .filter(|n| !bound.contains(&n.id))
++            .map(|n| n.source_ref.clone())
++            .collect();
++        assert_eq!(
++            coverage
++                .coordinates_without_computational_binding
++                .iter()
++                .cloned()
++                .collect::<std::collections::BTreeSet<_>>(),
++            expected
++        );
++        assert!(
++            coverage
++                .blocking_rows
++                .iter()
++                .any(|r| r.subject == format!("ql.m-index:{scope}"))
++        );
+     }
+ }
+ 
+@@ -168,7 +218,7 @@ fn coordinate_test_cannot_establish_operational_or_experiential_readiness() {
+     l.evidence[0].kind = "test-receipt".into();
+     l.evidence[0].result = "passed".into();
+     for i in &mut l.implementations {
+-        if i.stratum == "rust" {
++        if i.id.starts_with("rust:ql.m-index:") {
+             i.kind = "computational".into();
+         }
+     }
+@@ -192,7 +242,7 @@ fn coordinate_test_cannot_establish_operational_or_experiential_readiness() {
+ fn source_declaration_cannot_prove_implementation() {
+     let mut l = ledger();
+     for i in &mut l.implementations {
+-        if i.stratum == "rust" {
++        if i.id.starts_with("rust:ql.m-index:") {
+             i.kind = "computational".into();
+         }
+     }
+@@ -478,11 +528,23 @@ fn vertical_dependencies_are_included_and_cycles_rejected() {
+ 
+ #[test]
+ fn source_coverage_gaps_and_known_backward_parent_discrepancy_remain_visible() {
+-    let l = ledger();
++    let mut l = ledger();
++    // K6 gives every source row a disposition. Deliberately remove one to
++    // exercise missing-disposition detection without requiring permanent gaps.
++    let row = l
++        .rows
++        .iter_mut()
++        .find(|r| r.scope == "M2" && r.source.is_some())
++        .unwrap();
++    let missing = row.id.clone();
++    row.dispositions.remove("rust");
+     let c = l
+         .coverage(native_m_registry(), "M2", "rust", "operational", "verified")
+         .unwrap();
+-    assert!(!c.source_without_implementation_disposition.is_empty());
++    assert!(
++        c.source_without_implementation_disposition
++            .contains(&missing)
++    );
+     assert!(!c.coordinates_without_capability_rows.is_empty());
+     assert!(
+         c.findings
+@@ -609,3 +671,57 @@ fn later_strata_do_not_gain_parity_from_an_unrelated_native_comparison() {
+         assert!(report.blocking_rows.iter().any(|f| f.subject == row_id));
+     }
+ }
++
++#[test]
++fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabilities() {
++    let l = ledger();
++    let tables: Vec<_> = l
++        .rows
++        .iter()
++        .filter(|r| r.id.starts_with("k6-m2:table-"))
++        .collect();
++    assert_eq!(tables.len(), 16);
++    for r in tables {
++        for peer in ["c", "rust"] {
++            assert_eq!(
++                l.assessments[&r.assessment].readiness[peer].status,
++                "structural-index-only"
++            );
++        }
++    }
++    let source: Vec<_> = l
++        .rows
++        .iter()
++        .filter(|r| r.scope == "M2" && r.source.is_some())
++        .collect();
++    assert_eq!(source.len(), 31);
++    for r in source {
++        for peer in ["c", "rust", "cpp", "neo4j"] {
++            assert!(
++                !["verified", "implemented"]
++                    .contains(&l.assessments[&r.assessment].readiness[peer].status.as_str())
++            );
++        }
++    }
++    let shem = l.rows.iter().find(|r| r.id == "deep-M2:M2-C13").unwrap();
++    assert!(
++        l.assessments[&shem.assessment]
++            .parity
++            .values()
++            .all(Vec::is_empty)
++    );
++    for id in ["k6-m2:templateure", "k6-m2:carrier", "k6-m2:vimarsha"] {
++        let r = l.rows.iter().find(|r| r.id == id).unwrap();
++        for peer in ["c", "rust"] {
++            assert_eq!(
++                l.assessments[&r.assessment].readiness[peer].status,
++                "verified"
++            );
++        }
++    }
++    assert!(
++        l.discrepancies
++            .iter()
++            .any(|d| d.id == "k6-m2:difference-asma" && d.state == "open")
++    );
++}
+diff --git a/scripts/m2-contract.py b/scripts/m2-contract.py
+index 6b4cec938046d480ea62e3466ba5d00a0fa36126..5c32face6b6170441c574d3bfb4c845dbd0608f2 100644
+--- a/scripts/m2-contract.py
++++ b/scripts/m2-contract.py
+@@ -9,7 +9,7 @@ from __future__ import annotations
+ import argparse,json,re
+ from pathlib import Path
+ ROOT=Path(__file__).resolve().parents[1]
+-SOURCES=['crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_vimarsha.rs']
++SOURCES=['crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_vimarsha.rs','crates/ql-mef/src/m2_condition.rs']
+ MAX=9007199254740991
+ 
+ def schemas():
+@@ -20,7 +20,7 @@ def schemas():
+             fields=re.findall(r'^\s*pub (\w+): ([^\n]+),$',body,re.M)
+             structs[name]=fields
+     def shape(typ):
+-        typ=typ.strip().replace('m2::','').replace('crate::m2_vimarsha::','')
++        typ=typ.strip().replace('m2::','').replace('crate::m2_vimarsha::','').replace('crate::m2_condition::','')
+         if typ.startswith('Option<'):return {'anyOf':[shape(typ[7:-1]),{'type':'null'}]}
+         if typ.startswith('Vec<'):return {'type':'array','items':shape(typ[4:-1])}
+         if typ.startswith('BTreeMap<String, '):return {'type':'object','additionalProperties':shape(typ[17:-1])}
+@@ -34,9 +34,9 @@ def schemas():
+             bits=int(typ[1:]) if typ!='usize' else 64
+             return {'type':'integer','minimum':0 if typ.startswith('u') else -(2**(bits-1)),
+                 'maximum':min(MAX,2**(bits if typ.startswith('u') else bits-1)-1)}
+-        if typ in structs or typ in ['MaterialFibre','VimarshaHelix']:return {'$ref':'#/$defs/'+typ}
++        if typ in structs or typ in ['MaterialFibre','VimarshaHelix','CorrespondenceRole','TuningPolicy']:return {'$ref':'#/$defs/'+typ}
+         raise ValueError('unhandled actual Rust wire type: '+typ)
+-    defs={'MaterialFibre':{'enum':['earth','fire','water','air']},'VimarshaHelix':{'enum':['bimba','pratibimba']}}
++    defs={'MaterialFibre':{'enum':['earth','fire','water','air']},'VimarshaHelix':{'enum':['bimba','pratibimba']},'CorrespondenceRole':{'enum':['tonic','dominant']},'TuningPolicy':{'enum':['retained24_tet','bimba_spelled24_tet']}}
+     for name,fields in structs.items():
+         if not fields:continue
+         defs[name]={'type':'object','additionalProperties':False,'properties':{k:shape(t) for k,t in fields},
+@@ -66,6 +66,12 @@ def schemas():
+     props('ContinuousMode')['carrier_weights'].update(minItems=1,maxItems=18)
+     props('CarrierWeight')['carrier']['maximum']=71
+     props('ResonatorState')['modes'].update(minItems=1,maxItems=4096)
++    props('M2Condition')['schema']={'const':'ql.m2-condition/v1'}
++    props('M2ConditionInput')['maqam_index']['maximum']=71
++    props('M2ConditionInput')['active_mef_condition']['maximum']=71
++    props('M2ConditionInput')['tonic_hz'].update(exclusiveMinimum=0,maximum=1000000)
++    props('RenderPalette')['entries']['maxItems']=32
++    props('NamedPaletteEntry')['linear_rgba']['items'].update(minimum=0,maximum=1)
+     def document(root,ident):
+         needed=set()
+         def walk(value):
+@@ -92,8 +98,9 @@ def main():
+         jsonschema.Draft202012Validator.check_schema(d)
+         if args.command=='refresh':path.write_text(text)
+         elif path.read_text()!=text:raise ValueError('stale generated M2 shape: '+name)
+-    request=json.loads((ROOT/'fixtures/kernel/m2-engine-request-v1.json').read_text())
+-    jsonschema.validate(request,documents['m2-engine-request-v1.schema.json'])
++    for fixture in ['m2-engine-request-v1.json','m2-condition-request-v1.json']:
++        request=json.loads((ROOT/'fixtures/kernel'/fixture).read_text())
++        jsonschema.validate(request,documents['m2-engine-request-v1.schema.json'])
+     if args.frame:jsonschema.validate(json.loads(args.frame.read_text()),documents['m2-engine-frame-v1.schema.json'])
+     print('Actual Rust M2 wire shapes and supplied fixtures verified')
+ if __name__=='__main__':main()
+diff --git a/scripts/m2-field-report.py b/scripts/m2-field-report.py
+index d639ca09ec3b31e63b8bcc2800c618280ef4691f..f69c972de4d486e1fc1076b40c1879a736314750 100644
+--- a/scripts/m2-field-report.py
++++ b/scripts/m2-field-report.py
+@@ -75,7 +75,7 @@ def report(source):
+     header = (ROOT/'vendor/epi-kernel/reference/include/m2.h').read_text()
+     native_functions = re.findall(r'static inline\s+\w+\s+(\w+)\s*\(',header)
+     source_functions = re.findall(r'^(?:M2_Root\*|void|bool|int)\s+(m2_\w+)\s*\(',body,re.M)
+-    return {'schema':'ql.m2-field-census/v1','standing':'scoped-K6-census; K4-whole-programme-acceptance-not-observed',
++    return {'schema':'ql.m2-field-census/v1','standing':'scoped-K6-source-observation-on-accepted-K4-census',
+         'registry_revision':registry['registry_revision'],'source_repository':registry['source_repository'],
+         'source_revision':registry['source_revision'],'source_locks':locks,
+         'source_parse_policy':'K2 retained UTF-8 BOM/control-character JSON; strict=False; unchanged source bytes',
+diff --git a/scripts/test-m2-engine.sh b/scripts/test-m2-engine.sh
+index 0e06f9aa0cd466f6b3288d1dd01dd9988367eb9c..e822d878a7329b169009303213abe933617d2613 100755
+--- a/scripts/test-m2-engine.sh
++++ b/scripts/test-m2-engine.sh
+@@ -7,6 +7,7 @@ mkdir -p "$receipt"
+ test "$(git hash-object fixtures/kernel/m2-reference-vimarsha.rs)" = 7b0bc34cee3388a8d22a615ad2c9facc28016e30
+ git rev-parse HEAD > "$receipt/source-revision.txt"
+ python3 scripts/m2-catalogue.py check --receipt "$receipt"
++python3 scripts/m2-correspondences.py check --source-root "${M2_BIMBA_SOURCE:-target/m2-bimba-source}"
+ if [[ -n "${M2_BIMBA_SOURCE:-}" ]]; then
+   python3 scripts/m2-field-report.py check --source-root "$M2_BIMBA_SOURCE"
+ elif [[ -d target/m2-bimba-source/Idea/Bimba/Map/datasets/parashakti-deep ]]; then
+@@ -31,14 +32,20 @@ PY
+   scripts/m2-native-probe.c c/src/m2.c c/src/m_tree.c -lm -o "$receipt/sanitized-probe"
+ ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 "$receipt/sanitized-probe" > "$receipt/sanitized.tsv"
+ cmp "$receipt/native.tsv" "$receipt/sanitized.tsv"
+-cargo test -p ql-mef --test m2_engine --test m2_vimarsha --locked -- --nocapture 2>&1 | tee "$receipt/m2-tests.log"
++cargo test -p ql-mef --test m2_engine --test m2_vimarsha --test m2_condition --locked -- --nocapture 2>&1 | tee "$receipt/m2-tests.log"
+ cargo run -q -p ql-mef --example m2_engine --locked -- --fixture > "$receipt/engine-frame.json"
+ python3 scripts/m2-contract.py check --frame "$receipt/engine-frame.json"
++python3 scripts/m2-contract.py check --frame "$receipt/condition-frame.json"
++"${CC:-cc}" -std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -Ic/include \
++  -fsanitize=address,undefined -fno-omit-frame-pointer \
++  scripts/m2-condition-probe.c c/src/m2.c c/src/m_tree.c -lm -o "$receipt/condition-sanitized"
++ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 "$receipt/condition-sanitized" > "$receipt/condition-sanitized.tsv"
++cmp "$receipt/condition-native.tsv" "$receipt/condition-sanitized.tsv"
+ # Consumers need only installed headers/staticlib; C++ must not need C sources.
+ prefix=$(mktemp -d)
+ trap 'rm -rf "$prefix"' EXIT
+ make -C c install PREFIX="$prefix"
+-printf '#include <ql/m2.h>\n#include <cassert>\nint main(){assert(ql_m2_table(QL_M2_MEF_TABLE)->row_count==72);return 0;}\n' > "$receipt/consumer.cpp"
++printf '#include <ql/m2.h>\n#include <cassert>\nint main(){assert(ql_m2_table(QL_M2_MEF_TABLE)->row_count==72);assert(ql_m2_correspondence_count()==127);return 0;}\n' > "$receipt/consumer.cpp"
+ "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -I"$prefix/include" "$receipt/consumer.cpp" \
+   -L"$prefix/lib" -lql-mef-c -lm -o "$receipt/installed-cpp-consumer"
+ "$receipt/installed-cpp-consumer"
+@@ -46,16 +53,16 @@ python3 - <<'PY'
+ import hashlib,json,subprocess
+ from pathlib import Path
+ p=Path('target/m2-receipt')
+-paths=['c/include/ql/m2.h','c/src/m2.c','c/src/m2_data.inc','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_engine.rs',
++paths=['fixtures/kernel/m2-condition-request-v1.json','fixtures/kernel/m2-engine-request-v1.json','c/Makefile','scripts/m2-correspondences.py','crates/ql-mef/src/m2_condition.rs','crates/ql-mef/tests/m2_condition.rs','scripts/m2-condition-probe.c','c/src/m2_correspondence_data.inc','fixtures/kernel/m2-correspondences-v1.json','scripts/m2-field-report.py','scripts/m2-catalogue.py','c/include/ql/m2.h','c/src/m2.c','c/src/m2_data.inc','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_engine.rs',
+  'crates/ql-mef/tests/m2_engine.rs','fixtures/kernel/m2-retained-c-v1.json','fixtures/kernel/m2-field-census-summary-v1.json',
+  'crates/ql-mef/src/m2_vimarsha.rs','crates/ql-mef/tests/m2_vimarsha.rs','fixtures/kernel/m2-reference-vimarsha.rs','scripts/m2-vimarsha-probe.c',
+  'scripts/m2-contract.py','fixtures/kernel/m2-engine-request-v1.schema.json','fixtures/kernel/m2-engine-frame-v1.schema.json',
+  'scripts/m2-native-probe.c','scripts/m2-source-probe.c','scripts/test-m2-engine.sh']
+ receipt={'schema':'ql.m2-acceptance/v1','result':'passed','revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+  'inputs':{path:hashlib.sha256(Path(path).read_bytes()).hexdigest() for path in paths},
+- 'checks':['independent-retained-C-source','597-coordinate/8876-relation C-Rust observation','finite-operations','ASan+UBSan',
++ 'checks':['127-source-correspondence-paths/6912-C-Rust-pitch-cases','joint-condition-generation/tuning/palette/provider-negative-cases','independent-retained-C-source','597-coordinate/8876-relation C-Rust observation','finite-operations','ASan+UBSan',
+  'source-Vimarsha-32256-cases','closed-wire-shapes','strict-installed-C++17-consumer','same-event/bounded/provider contract','K2-pinned-deep-source-census'],
+- 'not_claimed':['K4 whole-programme acceptance','semantic equality of contradictory source declarations','live Neo4j or ephemeris','physical resonator solver','experiential validation']}
++ 'not_claimed':['whole-M operational completion','semantic equality of contradictory source declarations','live Neo4j or ephemeris','physical resonator solver','experiential validation']}
+ (p/'acceptance.json').write_text(json.dumps(receipt,indent=2)+'\n')
+ print('M2 source/C/Rust/installed-consumer scoped acceptance passed')
+ PY
+diff --git a/scripts/tests/test_m_census.py b/scripts/tests/test_m_census.py
+index d265b95fe8ce640ef8b9af84eb3cd3ec69472630..ef0381179a42e5c614bf7a97288912e3d4781dd9 100644
+--- a/scripts/tests/test_m_census.py
++++ b/scripts/tests/test_m_census.py
+@@ -191,3 +191,18 @@ class InfrastructuralTests(unittest.TestCase):
+ 
+ if __name__ == "__main__":
+     unittest.main()
++
++
++class VerticalBindingTests(unittest.TestCase):
++    def test_namespaced_binding_stratum_comes_from_inventory_not_id_prefix(self):
++        implementations = {
++            "k6-m2:mantra:c": {"stratum": "c"},
++            "k7-m3:clock:rust": {"stratum": "rust"},
++            "c:misleading-prefix": {"stratum": "rust"},
++        }
++        bindings = [*implementations, "c:unknown"]
++        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "c"),
++                         {"k6-m2:mantra:c"})
++        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "rust"),
++                         {"k7-m3:clock:rust", "c:misleading-prefix"})
++        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "cpp"), set())
