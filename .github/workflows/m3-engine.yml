@@ -1,33 +1,18 @@
 name: M3 native engine parity
 on:
   pull_request:
-    paths:
-      - 'c/**'
-      - 'crates/**'
-      - 'fixtures/kernel/**'
-      - 'vendor/epi-kernel/**'
-      - 'migration/epi-kernel/k7-*'
-      - 'scripts/generate-m3.py'
-      - 'scripts/test-m3-engine.sh'
-      - 'scripts/tests/test_m3_engine.py'
-      - '.github/workflows/m3-engine.yml'
+    paths: ['c/**', 'crates/**', 'fixtures/kernel/**', 'vendor/epi-kernel/**', 'migration/epi-kernel/k7-*', 'scripts/**', 'docs/KERNEL-M3-ENGINE-CONTRACT.md', '.github/workflows/m3-engine.yml']
   push:
-    branches: [main, agent/k7-m3-engine-131]
-    paths:
-      - 'c/**'
-      - 'crates/**'
-      - 'fixtures/kernel/**'
-      - 'vendor/epi-kernel/**'
-      - 'migration/epi-kernel/k7-*'
-      - 'scripts/*m3*'
-      - 'scripts/tests/test_m3_engine.py'
-      - '.github/workflows/m3-engine.yml'
+    branches: [main]
+    paths: ['c/**', 'crates/**', 'fixtures/kernel/**', 'vendor/epi-kernel/**', 'migration/epi-kernel/k7-*', 'scripts/**', 'docs/KERNEL-M3-ENGINE-CONTRACT.md', '.github/workflows/m3-engine.yml']
 permissions:
   contents: read
 jobs:
   m3-engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    env:
+      M3_SOURCE_ROOT: ${{ github.workspace }}/target/m3-bimba-source
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,55 +20,39 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: 7dda4d8c9c708d0e551fb19fada4097168c8af30
-          path: target/k4-source
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: target/m3-bimba-source
           persist-credentials: false
-      - name: Exact accepted K4 and native producer sources
-        run: |
-          mkdir -p target/m3-sources
-          git archive HEAD > target/m3-sources/engine.tar
-          git rev-parse HEAD > target/m3-sources/engine-revision.txt
-          git rev-parse HEAD^{tree} > target/m3-sources/engine-tree.txt
-          git -C target/k4-source archive HEAD > target/m3-sources/k4.tar
-          git -C target/k4-source rev-parse HEAD > target/m3-sources/k4-revision.txt
-          git -C target/k4-source rev-parse HEAD^{tree} > target/m3-sources/k4-tree.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: m3-joined-source-${{ github.event.pull_request.head.sha || github.sha }}
-          path: target/m3-sources/
-          retention-days: 7
-          if-no-files-found: error
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Source and exact coordinate laws
-        run: python3 -m unittest discover -s scripts/tests -p test_m3_engine.py -v
-      - name: Executed retained C, native C, sanitizers and installed C++ ABI
-        run: bash scripts/test-m3-engine.sh
-      - name: Full finite C and Rust parity
-        run: cargo test -p ql-mef --test m3_engine --locked -- --nocapture
-      - name: Workspace regression and lint
+      - run: python3 -m pip install jsonschema==4.25.1
+      - name: Full source, native C/Rust and parent-consumer acceptance
+        run: bash scripts/test-m3-acceptance.sh
+      - name: Canonical K7 ledger and exact proof inputs
+        run: python3 scripts/m3-ledger.py check
+      - name: Workspace regressions and lint
         run: |
           cargo test --workspace --all-targets --locked
+          cargo fmt --all -- --check
           cargo clippy --workspace --all-targets --locked -- -D warnings
-      - name: Format
-        run: cargo fmt --all -- --check
-      - name: Capture exact evidence and formatting diagnostics
+      - name: Exact source and tree receipt
         if: always()
         run: |
-          mkdir -p target/m3-native/formatted
-          git rev-parse HEAD > target/m3-native/commit.txt
-          git ls-tree -r HEAD c crates scripts/generate-m3.py vendor/epi-kernel fixtures/kernel > target/m3-native/source-objects.txt
-          for file in crates/ql-core/src/m3_clock.rs crates/ql-mef/src/m3_engine.rs crates/ql-mef/tests/m3_engine.rs; do
-            mkdir -p "target/m3-native/formatted/$(dirname "$file")"
-            cp "$file" "target/m3-native/formatted/$file"
-            rustfmt --edition 2024 "target/m3-native/formatted/$file"
-          done
+          mkdir -p target/m3-acceptance
+          git rev-parse HEAD > target/m3-acceptance/source-revision.txt
+          git rev-parse HEAD^{tree} > target/m3-acceptance/source-tree.txt
+          git archive HEAD > target/m3-acceptance/source.tar
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m3-engine-${{ github.event.pull_request.head.sha || github.sha }}
+          name: m3-acceptance-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
-            target/m3-native/
-            target/m3-rust/
+            target/m3-acceptance/
+            target/m3-domain/*.jsonl
+            target/m3-rust/*.jsonl
+            target/m3-parent-consumer/handoff.json
+            target/m3-parent-consumer/consumer.cpp
           retention-days: 14
+          if-no-files-found: error
