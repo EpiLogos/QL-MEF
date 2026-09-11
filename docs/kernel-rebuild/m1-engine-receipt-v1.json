@@ -1,0 +1,76 @@
+{
+  "schema": "ql.m1.candidate-test-receipt/v1",
+  "status": "bounded-local-execution-not-K4-or-whole-M1-acceptance",
+  "base_revision": "e753efc91f62b5b2af09e0a852c5063e366eccbe",
+  "source_return_revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
+  "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "subjects": [
+    "k5-m1:ananda",
+    "k5-m1:spanda",
+    "k5-m1:formal",
+    "k5-m1:topology",
+    "k5-m1:torus",
+    "k5-m1:clock",
+    "k5-m1:traversal",
+    "k5-m1:ratios"
+  ],
+  "input_locks": [
+    {
+      "path": "c/include/ql/m1.h",
+      "sha256": "d587d402b592f066e5d10a4e169f58dcdbfe54cdd263a4c581fd03155f0d4e6b"
+    },
+    {
+      "path": "c/src/m1.c",
+      "sha256": "46d44b7ee37a5a78999b11e63b2a07dc8c11b375f3fe5d861bc129cb749875ab"
+    },
+    {
+      "path": "crates/ql-mef/src/m1.rs",
+      "sha256": "e4a575090a7b46eb82e0507fd059a6bdbf74dcaf2ff24fae94014c209471cebc"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_engine.rs",
+      "sha256": "2a6644895a9f6cf1447cdb0e1e9ddef7b2e5a7ea4b26ab8a0a5bd77ab0edd714"
+    },
+    {
+      "path": "migration/epi-kernel/m1-engine-probe.c",
+      "sha256": "8155422678e070ec42cc6ccc80e5f717772d35b122e807e8be4581564413e08f"
+    },
+    {
+      "path": "migration/epi-kernel/m1-return/source-lock.json",
+      "sha256": "9d3e25cdb9acbf54f1369e4181f4c9c6698f1c2c13503a1f90ddc1a1234b651a"
+    },
+    {
+      "path": "scripts/check-m1-source.py",
+      "sha256": "c13605795ba15b3230518f31bfb5baf0b09867235239acc2d8f77fa43c2cfcdb"
+    },
+    {
+      "path": "scripts/test-m1-engine.sh",
+      "sha256": "a2680033e13f2fda2bf2f2a50cfda47f84a9858561bd718d89af13abf653be4e"
+    }
+  ],
+  "executed": {
+    "native_strict_c11": "passed",
+    "m1_rust_tests": 8,
+    "source_return_and_native_rust_cell_comparisons": 20736,
+    "additional_spanda_formal_topology_descriptors": 29,
+    "walker_basis_lens_participation_cases": 6912,
+    "literal_readings": 1728,
+    "literal_equal": 1352,
+    "literal_different": 376,
+    "asan_ubsan_native_probe": "passed",
+    "installed_cpp17_consumer": "passed-linkage-only",
+    "ql_mef_clippy_all_targets": "passed",
+    "ql_mef_package_tests": "passed",
+    "prime_completion_coordinates_and_pitch_assertions": "passed-in-all-6912-walker-cases"
+  },
+  "not_claimed": [
+    "accepted K4 census",
+    "whole M1 source/coordinate/relation/operational parity",
+    "source literal equality",
+    "authenticated live Neo4j observation",
+    "C++ engine or instrument execution",
+    "experiential acceptance",
+    "full workspace local acceptance (offline equivalent dependency unavailable)",
+    "hosted PR CI before its actual execution"
+  ]
+}

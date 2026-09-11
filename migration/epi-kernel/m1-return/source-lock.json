@@ -1,0 +1,25 @@
+{
+  "schema": "ql.m1.return-source-lock/v1",
+  "repository": "EpiLogos/Epi-Logos-C-Experiments",
+  "revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
+  "files": [
+    {
+      "local_path": "migration/epi-kernel/m1-return/m1_ananda_projection.c",
+      "source_path": "Body/S/S0/epi-lib/src/m1_ananda_projection.c",
+      "git_blob": "1b3231c5ec2d821e0818b353276d95967927112f",
+      "sha256": "6fb0db3f7d573e291466996d93c767d3d1b0385ec1a559d4c31595ac6e033186"
+    },
+    {
+      "local_path": "migration/epi-kernel/m1-return/m1_ananda_projection.h",
+      "source_path": "Body/S/S0/epi-lib/include/m1_ananda_projection.h",
+      "git_blob": "04f4e4c1c7c774ed303cdcebe072c7a9412003a1",
+      "sha256": "1e968cdbdd204e9290f21178f48b1121381d362ec107ab359a8a22ed3962ac71"
+    },
+    {
+      "local_path": "migration/epi-kernel/m1-return/vortex-modulae.csv",
+      "source_path": "Idea/Bimba/Map/datasets/(0_1) Vortex Modulae - (0_1) x 12Fold and 8_9fold (mod12 and mod10) Archetypal Number Identities - Sheet1.csv",
+      "git_blob": "75672026871483739e9e3ef3d42b96a39040c6e5",
+      "sha256": "3e3d068452aa67de145f9e94d5c35446933080a5e82d5aa3e21978de20ec8c90"
+    }
+  ]
+}

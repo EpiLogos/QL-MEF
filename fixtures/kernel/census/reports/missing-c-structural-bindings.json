@@ -86,32 +86,12 @@
       "rust_state": "implemented"
     },
     {
-      "coordinate": "#1-5-1",
-      "names": [
-        "The Torus in Quaternionic Space",
-        "Volumetric Potential",
-        "Volumetric Potential",
-        "Material Construction: Explicit Toroidal Geometry in Three Dimensions"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
       "coordinate": "#1-5-2",
       "names": [
         "Double-Covering Principle",
         "The 4π = 720° Toroidal Cycle",
         "Double-Covering Principle",
         "Dynamic Completion: Total Angular Measure and Double-Covering Necessity"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#1-5-3",
-      "names": [
-        "Inversion and Shadow Dynamics",
-        "Shadow as Phase-Shift on the Torus",
-        "Inversion and Shadow Dynamics",
-        "Formal Integration: Understanding Opposition as π Phase Difference"
       ],
       "rust_state": "unimplemented"
     },
@@ -132,7 +112,7 @@
         "Shuddha Tattvas",
         "Pure Tattvas - The Five Transcendent Principles of Divine Consciousness"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-2-1",
@@ -171,15 +151,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.1",
-      "names": [
-        "100 Shaivite Mantras",
-        "100 Shaivite Mantras",
-        "Dual-System Vibrational Grammar of Consciousness"
-      ],
-      "rust_state": "partial"
-    },
-    {
       "coordinate": "#2-4.3",
       "names": [
         "72 Musical Maqamat",
@@ -194,15 +165,6 @@
         "72 Names of God System",
         "72 Names of God System",
         "Shem HaMephorash - The 72-Fold Explicit Name as Vibrational Matrix of Divine Actualization"
-      ],
-      "rust_state": "implemented"
-    },
-    {
-      "coordinate": "#2-5-2",
-      "names": [
-        "Venus",
-        "Venus",
-        "The Aesthetic Integration Matrix & Coherence Operator"
       ],
       "rust_state": "implemented"
     },
@@ -393,15 +355,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#3-3-2",
-      "names": [
-        "Matrix Operators",
-        "Matrix Operators",
-        "The Three Transcriptional Matrices"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#3-3-3",
       "names": [
         "RNA Transcription Family",
@@ -565,15 +518,6 @@
         "Efficient cause (how)",
         "Efficient cause (how)",
         "Efficient Cause - Energy as Affective Valuation"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-1-1-3",
-      "names": [
-        "Formal cause (who/mediating structure)",
-        "Formal cause (who/mediating structure)",
-        "Formal Cause - Pattern as Logical Architecture"
       ],
       "rust_state": "unimplemented"
     },
@@ -817,7 +761,7 @@
         "शुद्ध विद्या तत्त्व",
         "Shuddha Vidya Tattva - Pure Knowledge and Balanced Awareness"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-2-1-2",
@@ -2045,15 +1989,6 @@
       "names": [
         "NonPalindromic",
         "NonPalindromic"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-3-2-0",
-      "names": [
-        "Matrix 1",
-        "Matrix 1",
-        "Partner Dynamics and Self-Reflection Operator"
       ],
       "rust_state": "unimplemented"
     },
@@ -4915,15 +4850,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-5-0/1-1",
-      "names": [
-        "Mūlādhāra",
-        "Mūlādhāra",
-        "The Root Foundation: Seat of Latent Power & Structural Foundation"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#2-5-0/1-2",
       "names": [
         "Svādhiṣṭhāna",
@@ -4939,7 +4865,7 @@
         "Maṇipūra",
         "The City of Jewels: Engine of Will & Transformative Fire"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-5-0/1-4",
@@ -7402,7 +7328,7 @@
         "TAA Codon Reflection - Swift Action",
         "TAA Codon Reflection - Swift Action"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-4.0-2-8",
@@ -11382,7 +11308,7 @@
         "Ū-KĀRA",
         "The Wave Sound - Divine Creative Action"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.1-0-0-6",

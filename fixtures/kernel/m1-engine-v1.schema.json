@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QL M1 engine request v1",
+  "description": "Stateless request transport; storage and authorization remain with the caller. Rust M1Engine is the in-memory operational owner.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "ql.m1.engine/v1"
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "row12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "col12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "flowering_substage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "lens12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        },
+        "context_frame": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+        },
+        "basis": {
+          "enum": [
+            "chromatic",
+            "fifths"
+          ]
+        },
+        "event_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "subject_coordinate": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact existing K2 M1 coordinate or sanctioned M1/#1 alias; runtime resolves it."
+        },
+        "selected_coordinate": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact existing K2 M1 coordinate or sanctioned M1/#1 alias; runtime resolves it."
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9]{1,20}$",
+          "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+        },
+        "cycle": {
+          "type": "string",
+          "pattern": "^[0-9]{1,20}$",
+          "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+        },
+        "tick12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11
+        }
+      },
+      "required": [
+        "family",
+        "row12",
+        "col12",
+        "flowering_substage",
+        "lens12",
+        "context_frame",
+        "basis",
+        "event_ref",
+        "subject_coordinate",
+        "selected_coordinate",
+        "revision",
+        "cycle",
+        "tick12"
+      ]
+    },
+    "action": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "advance"
+            },
+            "expected_revision": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+            },
+            "ticks": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+            }
+          },
+          "required": [
+            "kind",
+            "expected_revision",
+            "ticks"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "select"
+            },
+            "expected_revision": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+            },
+            "coordinate": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Exact existing K2 M1 coordinate or sanctioned M1/#1 alias; runtime resolves it."
+            }
+          },
+          "required": [
+            "kind",
+            "expected_revision",
+            "coordinate"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "harmonics"
+            },
+            "expected_revision": {
+              "type": "string",
+              "pattern": "^[0-9]{1,20}$",
+              "description": "Unsigned decimal u64. Runtime also rejects numeric overflow; output is canonical decimal."
+            },
+            "selection": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "family": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "row12": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 11
+                },
+                "col12": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 11
+                },
+                "flowering_substage": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "lens12": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 11
+                },
+                "context_frame": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                },
+                "basis": {
+                  "enum": [
+                    "chromatic",
+                    "fifths"
+                  ]
+                }
+              },
+              "required": [
+                "family",
+                "row12",
+                "col12",
+                "flowering_substage",
+                "lens12",
+                "context_frame",
+                "basis"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "expected_revision",
+            "selection"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "config"
+  ]
+}

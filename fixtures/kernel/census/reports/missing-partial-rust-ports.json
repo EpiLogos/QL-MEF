@@ -18,70 +18,6 @@
       ]
     },
     {
-      "coordinate": "#1-1",
-      "names": [
-        "Pratibimba - Reflection Aspect",
-        "Pratibimba - Reflection Aspect",
-        "The (0/1) Element as Pratibimba - The Reflective Self-Awareness"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
-        "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
-      ]
-    },
-    {
-      "coordinate": "#1-2",
-      "names": [
-        "Ananda",
-        "Ananda",
-        "Ananda Harmonic System: Six-Matrix Vortex Mathematical Generator with Digital Root Reflections"
-      ],
-      "c_state": "implemented",
-      "rust_state": "partial",
-      "c_bodies": [
-        "c/src/holographic.c:ql_default_hash_bimba",
-        "vendor/epi-kernel/reference/src/m1.c:ANANDA_BIMBA",
-        "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
-        "vendor/epi-kernel/reference/src/m1.c:ANANDA_QUINTESSENCE",
-        "vendor/epi-kernel/reference/src/m1.c:ANANDA_SUM",
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
-        "vendor/epi-kernel/reference/src/m1.c:_ananda_digital_root",
-        "vendor/epi-kernel/reference/src/m1.c:_ananda_init",
-        "vendor/epi-kernel/reference/src/m1.c:m1_ananda_dr_get",
-        "vendor/epi-kernel/reference/src/m1.c:m1_ananda_get",
-        "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES",
-        "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
-      ]
-    },
-    {
-      "coordinate": "#1-3",
-      "names": [
-        "Spanda",
-        "Spanda",
-        "Spanda Subsystem - Dynamic Intelligence Engine of Paramasiva"
-      ],
-      "c_state": "implemented",
-      "rust_state": "partial",
-      "c_bodies": [
-        "c/src/holographic.c:ql_holographic_field_get",
-        "c/src/holographic.c:ql_holographic_field_get_const",
-        "c/src/holographic.c:ql_holographic_field_init",
-        "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
-        "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_seed",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_trika"
-      ]
-    },
-    {
       "coordinate": "#1-4",
       "names": [
         "Quaternal Logic Flowering",
@@ -124,6 +60,8 @@
       "c_state": "partial",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m1_state.c:ql_m1_carrier",
+        "c/src/m1_state.c:seat",
         "vendor/epi-kernel/reference/src/m2.c:m2_print_planets",
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
         "vendor/epi-kernel/reference/src/m5.c:M5_LOGOS_STAGE_NAMES"
@@ -152,6 +90,7 @@
       "c_state": "partial",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m1_state.c:ql_m1_reflection",
         "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
         "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
       ]
@@ -184,20 +123,6 @@
       ]
     },
     {
-      "coordinate": "#1-3-2",
-      "names": [
-        "Primal Differentiation - Reflection Pole",
-        "Primal Differentiation - Reflection Pole",
-        "Stage #2 - The (1/0) Operational Pole in Creative Puncture"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b"
-      ]
-    },
-    {
       "coordinate": "#1-3-4",
       "names": [
         "Contextual Flowering",
@@ -207,39 +132,9 @@
       "c_state": "implemented",
       "rust_state": "partial",
       "c_bodies": [
+        "c/src/m1_state.c:ql_m1_reflection",
         "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
         "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
-      ]
-    },
-    {
-      "coordinate": "#1-3-5",
-      "names": [
-        "Quintessential Meta-Reflection",
-        "Quintessential Meta-Reflection",
-        "Stage #5 - The Holographic Revelation through Multiple Counting Lenses"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "c/src/holographic.c:ql_holographic_field_get",
-        "c/src/holographic.c:ql_holographic_field_get_const",
-        "c/src/holographic.c:ql_holographic_field_init",
-        "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
-      ]
-    },
-    {
-      "coordinate": "#1-5-4",
-      "names": [
-        "Bridge to Parashakti",
-        "The Torus Generating Parashakti",
-        "Bridge to Parashakti",
-        "Contextual Bridge: From Static Topology to Vibrational Multiplicity and Cosmic Manifestation"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "c/src/holographic.c:ql_default_topology"
       ]
     },
     {
@@ -351,22 +246,6 @@
       ]
     },
     {
-      "coordinate": "#2-2-2-3",
-      "names": [
-        "Karmendriyas",
-        "Karmendriyas",
-        "Karmendriyas - The Five Organs of Action"
-      ],
-      "c_state": "partial",
-      "rust_state": "partial",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
-        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
-        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
-        "vendor/epi-kernel/reference/src/m0.c:m0_vak_ct"
-      ]
-    },
-    {
       "coordinate": "#2-3-1-0",
       "names": [
         "Aries Decans",
@@ -433,19 +312,6 @@
       ]
     },
     {
-      "coordinate": "#3-3-4-19",
-      "names": [
-        "Histidine",
-        "Histidine",
-        "The pH Sensor - Imidazole Ring Consciousness"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA"
-      ]
-    },
-    {
       "coordinate": "#3-3-4-21",
       "names": [
         "Pyrrolysine",
@@ -456,19 +322,6 @@
       "rust_state": "unimplemented",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
-      ]
-    },
-    {
-      "coordinate": "#3-3-4-6",
-      "names": [
-        "Phenylalanine",
-        "Phenylalanine",
-        "The Aromatic Gateway - Benzene Ring Consciousness"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA"
       ]
     },
     {
@@ -495,32 +348,6 @@
       "rust_state": "partial",
       "c_bodies": [
         "c/src/holographic.c:ql_relation_tag"
-      ]
-    },
-    {
-      "coordinate": "#1-3-4.5/0",
-      "names": [
-        "Transcendent Integration (Recursive Frame)",
-        "Transcendent Integration (Recursive Frame)",
-        "Sub-stage #4.5 - The Bridge to Quintessential Meta-Reflection"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
-      ]
-    },
-    {
-      "coordinate": "#2-3-1-0-2",
-      "names": [
-        "Aries Decan 3",
-        "Aries Decan 3",
-        "The Ring - Venusian Pioneer"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
       ]
     },
     {
@@ -744,18 +571,6 @@
       ]
     },
     {
-      "coordinate": "#2-5-2",
-      "names": [
-        "Venus",
-        "Venus",
-        "The Aesthetic Integration Matrix & Coherence Operator"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/operator.rs:OperatorValue",
-        "crates/ql-core/src/operator.rs:QlOperator"
-      ]
-    },
-    {
       "coordinate": "#2-5-4",
       "names": [
         "Moon",
@@ -800,19 +615,6 @@
         "crates/ql-mef/src/registry/becoming.rs:L3_PRIME",
         "crates/ql-mef/src/registry/encounter.rs:L1_PRIME",
         "crates/ql-mef/src/registry/encounter.rs:L4_PRIME"
-      ]
-    },
-    {
-      "coordinate": "#3-3-2",
-      "names": [
-        "Matrix Operators",
-        "Matrix Operators",
-        "The Three Transcriptional Matrices"
-      ],
-      "rust_bodies": [
-        "crates/ql-core/src/operator.rs:OperatorValue",
-        "crates/ql-core/src/operator.rs:QlOperator",
-        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ]
     },
     {
@@ -971,6 +773,18 @@
       ]
     },
     {
+      "coordinate": "#2-2-0-5",
+      "names": [
+        "Shuddha Vidya Tattva",
+        "Shuddha Vidya Tattva",
+        "शुद्ध विद्या तत्त्व",
+        "Shuddha Vidya Tattva - Pure Knowledge and Balanced Awareness"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
+      ]
+    },
+    {
       "coordinate": "#2-2-1-2",
       "names": [
         "Kala Tattva (Limitation)",
@@ -979,6 +793,8 @@
         "Kala Tattva - The Limitation of Infinite Power into Finite Agency"
       ],
       "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:FiniteField",
+        "crates/ql-mef/src/m1_engine.rs:finite_field",
         "crates/ql-mef/src/m2_engine.rs:finite"
       ]
     },
@@ -1221,14 +1037,14 @@
       ]
     },
     {
-      "coordinate": "#2-5-0/1-1",
+      "coordinate": "#2-5-0/1-3",
       "names": [
-        "Mūlādhāra",
-        "Mūlādhāra",
-        "The Root Foundation: Seat of Latent Power & Structural Foundation"
+        "Maṇipūra",
+        "Maṇipūra",
+        "The City of Jewels: Engine of Will & Transformative Fire"
       ],
       "rust_bodies": [
-        "crates/ql-mef/src/vak.rs:structural_relation"
+        "crates/ql-mef/src/m1_engine.rs:M1Engine"
       ]
     },
     {
@@ -1314,6 +1130,17 @@
       ]
     },
     {
+      "coordinate": "#3-4.0-2-7",
+      "names": [
+        "TAA Codon Reflection - Swift Action",
+        "TAA Codon Reflection - Swift Action",
+        "TAA Codon Reflection - Swift Action"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
+      ]
+    },
+    {
       "coordinate": "#3-4.0-4-5",
       "names": [
         "GAG Codon Reflection - Transition and Healing",
@@ -1374,11 +1201,23 @@
         "Nasal Completion Sound - Return to Unmanifest Source"
       ],
       "rust_bodies": [
+        "crates/ql-mef/src/m1.rs:SOURCE_REF",
         "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
         "crates/ql-mef/src/m2_condition.rs:SourceRelation",
         "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
         "crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "crates/ql-mef/src/vak.rs:parse_source_entry"
+      ]
+    },
+    {
+      "coordinate": "#2-4.1-0-0-5",
+      "names": [
+        "Ū-KĀRA",
+        "Ū-KĀRA",
+        "The Wave Sound - Divine Creative Action"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
       ]
     },
     {
