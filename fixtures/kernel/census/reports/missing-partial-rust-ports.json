@@ -1241,6 +1241,7 @@
       "rust_bodies": [
         "crates/ql-cli/src/lib.rs:verify_command",
         "crates/ql-cli/src/m_ledger.rs:command",
+        "crates/ql-cli/src/system.rs:system_command",
         "crates/ql-cli/src/vak_composition.rs:command"
       ]
     },

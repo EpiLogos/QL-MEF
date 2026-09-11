@@ -2,7 +2,7 @@
   "schema": "ql.m-census-work-graph/v1",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
   "ledger": "fixtures/kernel/m-ledger-v1.json",
-  "ledger_revision": "8072c255432a9b7ab5dca93041a082558c3abe6340b66d07c96309ea2ed65399",
+  "ledger_revision": "fefcaf250196a7a830cb2bfc8751a92d200cbf275efcb25188eb21e69b7c1221",
   "note": "bounded per-coordinate work. Dependencies are encoded in the M ledger rows: census rows depend on their parent coordinate, capability rows on their coordinates; coverage queries expand the requested vertical only.",
   "verticals": {
     "M1": {
