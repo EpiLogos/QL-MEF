@@ -2,18 +2,18 @@
   "schema": "ql.m-census/v1",
   "root": "M1",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "fefcaf250196a7a830cb2bfc8751a92d200cbf275efcb25188eb21e69b7c1221",
+  "ledger_revision": "92ec1e3aeb0a269345e2ec2e5389e1b4264ebbe81125ecbc7050b7a9d574409a",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 43,
   "counts": {
     "c": {
-      "implemented": 22,
-      "unimplemented": 21
+      "implemented": 24,
+      "unimplemented": 19
     },
     "rust": {
-      "implemented": 17,
-      "unimplemented": 22,
-      "partial": 4
+      "implemented": 26,
+      "unimplemented": 15,
+      "partial": 2
     }
   },
   "coordinates": [
@@ -34,6 +34,13 @@
           "c/src/holographic.c:ql_holographic_field_get",
           "c/src/holographic.c:ql_holographic_field_get_const",
           "c/src/holographic.c:ql_holographic_field_init",
+          "c/src/m1.c:ql_m1_formal",
+          "c/src/m1.c:ql_m1_node",
+          "c/src/m1.c:ql_m1_spanda",
+          "c/src/m1.c:ql_m1_topology",
+          "c/src/m1.c:ql_m1_torus",
+          "c/src/m1_state.c:ql_m1_grammar",
+          "c/src/m1_state.c:ql_m1_reflection",
           "c/src/m2.c:ql_m2_modal_power",
           "c/src/m2.c:ql_m2_modal_quadrature",
           "c/src/m2.c:ql_m2_modal_transduce",
@@ -68,17 +75,26 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-cli/src/system.rs:ABOUT",
-          "crates/ql-cli/src/system.rs:CONTRACT_REVISION",
-          "crates/ql-cli/src/system.rs:OWNER_REF",
-          "crates/ql-cli/src/system.rs:PRODUCT_ID",
-          "crates/ql-cli/src/system.rs:SCHEMA",
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-core/src/pole/fold.rs:FoldState",
           "crates/ql-core/src/structural.rs:GroundKind",
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/m1.rs:Formal",
+          "crates/ql-mef/src/m1.rs:Spanda",
+          "crates/ql-mef/src/m1.rs:Topology",
+          "crates/ql-mef/src/m1.rs:Torus",
+          "crates/ql-mef/src/m1.rs:formal",
+          "crates/ql-mef/src/m1.rs:spanda",
+          "crates/ql-mef/src/m1.rs:topology",
+          "crates/ql-mef/src/m1.rs:torus",
+          "crates/ql-mef/src/m1_engine.rs:Grammar",
+          "crates/ql-mef/src/m1_engine.rs:M1Engine",
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:engine_json",
+          "crates/ql-mef/src/m1_engine.rs:grammar",
+          "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/m2_engine.rs:M1Excitation",
           "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS",
           "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
@@ -132,13 +148,18 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
           "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection"
+        ]
       },
       "row": "census:#1-1"
     },
@@ -157,6 +178,7 @@
         "state": "implemented",
         "constructs": [
           "c/src/holographic.c:ql_default_hash_bimba",
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m1.c:ANANDA_BIMBA",
           "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
           "vendor/epi-kernel/reference/src/m1.c:ANANDA_QUINTESSENCE",
@@ -172,17 +194,13 @@
         ]
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#1-2-0",
-          "#1-2-1",
-          "#1-2-2",
-          "#1-2-3"
-        ],
+        "state": "implemented",
         "constructs": [
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
@@ -206,6 +224,8 @@
           "c/src/holographic.c:ql_holographic_field_get",
           "c/src/holographic.c:ql_holographic_field_get_const",
           "c/src/holographic.c:ql_holographic_field_init",
+          "c/src/m1.c:ql_m1_spanda",
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
@@ -218,16 +238,15 @@
         ]
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#1-2-0",
-          "#1-2-2",
-          "#1-3-4.0/1"
-        ],
+        "state": "implemented",
         "constructs": [
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/pole/fold.rs:FoldState",
           "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/m1.rs:Spanda",
+          "crates/ql-mef/src/m1.rs:spanda",
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
       },
@@ -286,6 +305,9 @@
         "state": "implemented",
         "constructs": [
           "c/src/holographic.c:ql_default_topology",
+          "c/src/m1.c:ql_m1_formal",
+          "c/src/m1.c:ql_m1_topology",
+          "c/src/m1.c:ql_m1_torus",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
           "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
         ]
@@ -295,6 +317,12 @@
         "constructs": [
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/m1.rs:Formal",
+          "crates/ql-mef/src/m1.rs:Topology",
+          "crates/ql-mef/src/m1.rs:Torus",
+          "crates/ql-mef/src/m1.rs:formal",
+          "crates/ql-mef/src/m1.rs:topology",
+          "crates/ql-mef/src/m1.rs:torus",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak_composition.rs:reference",
           "crates/ql-mef/src/vak_composition.rs:references",
@@ -524,12 +552,17 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
           "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b"
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection"
+        ]
       },
       "row": "census:#1-3-2"
     },
@@ -574,6 +607,7 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
           "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
         ]
@@ -581,6 +615,7 @@
       "rust": {
         "state": "partial",
         "covered_by_descendants": [
+          "#1-1",
           "#1-2-0",
           "#1-2-2",
           "#1-3-4.0/1"
@@ -589,6 +624,8 @@
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/pole/fold.rs:FoldState",
           "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
       },
@@ -612,12 +649,17 @@
           "c/src/holographic.c:ql_holographic_field_get",
           "c/src/holographic.c:ql_holographic_field_get_const",
           "c/src/holographic.c:ql_holographic_field_init",
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m0.c:m0_verify_holographic_registry",
           "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection"
+        ]
       },
       "row": "census:#1-3-5"
     },
@@ -798,10 +840,17 @@
         "ParamasivaConcept"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m1.c:ql_m1_torus"
+        ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1.rs:Torus",
+          "crates/ql-mef/src/m1.rs:torus"
+        ]
       },
       "row": "census:#1-5-1"
     },
@@ -840,10 +889,20 @@
         "ParamasivaConcept"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m1.c:ql_m1_formal",
+          "c/src/m1.c:ql_m1_torus"
+        ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1.rs:Formal",
+          "crates/ql-mef/src/m1.rs:Torus",
+          "crates/ql-mef/src/m1.rs:formal",
+          "crates/ql-mef/src/m1.rs:torus"
+        ]
       },
       "row": "census:#1-5-3"
     },
@@ -863,11 +922,19 @@
       "c": {
         "state": "implemented",
         "constructs": [
-          "c/src/holographic.c:ql_default_topology"
+          "c/src/holographic.c:ql_default_topology",
+          "c/src/m1.c:ql_m1_topology",
+          "c/src/m1.c:ql_m1_torus"
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1.rs:Topology",
+          "crates/ql-mef/src/m1.rs:Torus",
+          "crates/ql-mef/src/m1.rs:topology",
+          "crates/ql-mef/src/m1.rs:torus"
+        ]
       },
       "row": "census:#1-5-4"
     },
@@ -1086,11 +1153,16 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m1_state.c:ql_m1_reflection",
           "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m1_engine.rs:Reflection",
+          "crates/ql-mef/src/m1_engine.rs:reflection"
+        ]
       },
       "row": "census:#1-3-4.5/0"
     },

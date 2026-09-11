@@ -1,6 +1,10 @@
 """K4 census regressions: coordinate identity, anchor joins, classification."""
 import importlib.util
 import unittest
+import copy
+import json
+import contextlib
+import io
 from unittest import mock
 
 from pathlib import Path
@@ -189,9 +193,33 @@ class InfrastructuralTests(unittest.TestCase):
         self.assertIn("vendor/epi-kernel/reference/src/arena.c", census.INFRASTRUCTURAL_C_FILES)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
+class ReviewedVerticalTests(unittest.TestCase):
+    def test_census_replay_preserves_reviewed_row_and_matrix_assessments(self):
+        original = json.loads((ROOT / census.LEDGER).read_text())
+        captured = {}
+        reviewed_ids = ["census:#1-2-0", "deep-M1:M1-C04", "census:#2-1", "deep-M2:M2-C02"]
+        for row in original["rows"]:
+            if row["id"] in reviewed_ids:
+                row["assessment"] = "k6-test:executed" if "#2" in row["id"] or "deep-M2:" in row["id"] else "k5-test:executed"
+                row["bindings"] = ["native-reviewed-binding"]
+                row["dependencies"] = ["k5-test:operation"]
+                row["invariants"] = ["reviewed-source-register-decision"]
+        before = {row["id"]: copy.deepcopy(row) for row in original["rows"] if row["id"] in reviewed_ids}
+        real_read = census.read_json
+        def read(path):
+            return copy.deepcopy(original) if Path(path) == ROOT/census.LEDGER else real_read(path)
+        def write(path, value):
+            captured[str(path)] = copy.deepcopy(value)
+        with mock.patch.object(census, "read_json", side_effect=read), mock.patch.object(census, "write_json", side_effect=write), contextlib.redirect_stdout(io.StringIO()):
+            census.build_census(None)
+        after = {row["id"]: row for row in captured[str(ROOT/census.LEDGER)]["rows"]}
+        for key in reviewed_ids:
+            self.assertEqual(before[key], after[key])
+        self.assertIn(str(ROOT/census.CENSUS_DIR/"census-m1.json"), captured)
+        self.assertFalse(census.reviewed_row({"assessment":"unassessed"}))
+        self.assertFalse(census.reviewed_row({"assessment":"k4:c=implemented"}))
+        self.assertTrue(census.reviewed_row({"assessment":"k5:partial"}))
 
 class VerticalBindingTests(unittest.TestCase):
     def test_namespaced_binding_stratum_comes_from_inventory_not_id_prefix(self):
@@ -206,3 +234,7 @@ class VerticalBindingTests(unittest.TestCase):
         self.assertEqual(census.bindings_for_stratum(bindings, implementations, "rust"),
                          {"k7-m3:clock:rust", "c:misleading-prefix"})
         self.assertEqual(census.bindings_for_stratum(bindings, implementations, "cpp"), set())
+
+
+if __name__ == "__main__":
+    unittest.main()

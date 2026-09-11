@@ -1,0 +1,8648 @@
+{
+  "schema": "ql.m1.source-literals/v1",
+  "source_sha256": "3e3d068452aa67de145f9e94d5c35446933080a5e82d5aa3e21978de20ec8c90",
+  "source_git_blob": "75672026871483739e9e3ef3d42b96a39040c6e5",
+  "source_revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
+  "cells": [
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "2",
+      "digit_root_literal": "2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "3",
+      "digit_root_literal": "3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "4",
+      "digit_root_literal": "4",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "2",
+      "digit_root_literal": "2",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "4",
+      "digit_root_literal": "4",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "14",
+      "digit_root_literal": "5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "16",
+      "digit_root_literal": "7",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "18",
+      "digit_root_literal": "9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "20",
+      "digit_root_literal": "2",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "22",
+      "digit_root_literal": "4",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "3",
+      "digit_root_literal": "3",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "18",
+      "digit_root_literal": "9",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "24",
+      "digit_root_literal": "6",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "27",
+      "digit_root_literal": "9",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "30",
+      "digit_root_literal": "3",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "4",
+      "digit_root_literal": "4",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "16",
+      "digit_root_literal": "7",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "20",
+      "digit_root_literal": "2",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "24",
+      "digit_root_literal": "6",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "28",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "32",
+      "digit_root_literal": "5",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "36",
+      "digit_root_literal": "9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "40",
+      "digit_root_literal": "4",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "44",
+      "digit_root_literal": "8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "20",
+      "digit_root_literal": "2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "30",
+      "digit_root_literal": "3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "35",
+      "digit_root_literal": "8",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "40",
+      "digit_root_literal": "4",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "50",
+      "digit_root_literal": "5",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "18",
+      "digit_root_literal": "9",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "24",
+      "digit_root_literal": "6",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "30",
+      "digit_root_literal": "3",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "36",
+      "digit_root_literal": "9",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "42",
+      "digit_root_literal": "6",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "48",
+      "digit_root_literal": "3",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "54",
+      "digit_root_literal": "9",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "60",
+      "digit_root_literal": "6",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "66",
+      "digit_root_literal": "3",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "14",
+      "digit_root_literal": "5",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "28",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "35",
+      "digit_root_literal": "8",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "42",
+      "digit_root_literal": "6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "56",
+      "digit_root_literal": "2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "63",
+      "digit_root_literal": "9",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "70",
+      "digit_root_literal": "7",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "77",
+      "digit_root_literal": "5",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "16",
+      "digit_root_literal": "7",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "24",
+      "digit_root_literal": "6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "32",
+      "digit_root_literal": "5",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "40",
+      "digit_root_literal": "4",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "48",
+      "digit_root_literal": "3",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "56",
+      "digit_root_literal": "2",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "64",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "72",
+      "digit_root_literal": "9",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "80",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "88",
+      "digit_root_literal": "7",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "18",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "27",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "36",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "54",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "63",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "72",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "90",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "99",
+      "digit_root_literal": "9",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "20",
+      "digit_root_literal": "2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "30",
+      "digit_root_literal": "3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "40",
+      "digit_root_literal": "4",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "50",
+      "digit_root_literal": "5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "60",
+      "digit_root_literal": "6",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "70",
+      "digit_root_literal": "7",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "80",
+      "digit_root_literal": "8",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "90",
+      "digit_root_literal": "9",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "100",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "110",
+      "digit_root_literal": "2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 35
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "0",
+      "digit_root_literal": "0",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 23
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 24
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "22",
+      "digit_root_literal": "4",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 25
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 26
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "44",
+      "digit_root_literal": "8",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 27
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 28
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "66",
+      "digit_root_literal": "3",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 29
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "77",
+      "digit_root_literal": "5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 30
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "88",
+      "digit_root_literal": "7",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 31
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "99",
+      "digit_root_literal": "9",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 32
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "110",
+      "digit_root_literal": "2",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 34
+    },
+    {
+      "family": 0,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "121",
+      "digit_root_literal": "4",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 35
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "2",
+      "digit_root_literal": "2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "3",
+      "digit_root_literal": "3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "4",
+      "digit_root_literal": "4",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "3",
+      "digit_root_literal": "3",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "23",
+      "digit_root_literal": "5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "4",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "16",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "22",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "28",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "34",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "29",
+      "digit_root_literal": "2",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "6",
+      "digit_root_literal": "6",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "16",
+      "digit_root_literal": "7",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "26",
+      "digit_root_literal": "8",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "36",
+      "digit_root_literal": "9",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "46",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "51",
+      "digit_root_literal": "6",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "56",
+      "digit_root_literal": "2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "43",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "67",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "8",
+      "digit_root_literal": "8",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "22",
+      "digit_root_literal": "4",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "29",
+      "digit_root_literal": "2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "36",
+      "digit_root_literal": "9",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "43",
+      "digit_root_literal": "7",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "50",
+      "digit_root_literal": "5",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "57",
+      "digit_root_literal": "3",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "64",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "71",
+      "digit_root_literal": "8",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "78",
+      "digit_root_literal": "6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "57",
+      "digit_root_literal": "3",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "65",
+      "digit_root_literal": "2",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "89",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "10",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "28",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "46",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "64",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "82",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "100",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "51",
+      "digit_root_literal": "6",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "71",
+      "digit_root_literal": "8",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "101",
+      "digit_root_literal": "2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "111",
+      "digit_root_literal": "3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 16
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 4
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "12",
+      "digit_root_literal": "3",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 5
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "23",
+      "digit_root_literal": "5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 6
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "34",
+      "digit_root_literal": "7",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 7
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 8
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "56",
+      "digit_root_literal": "2",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 9
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "67",
+      "digit_root_literal": "4",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 10
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "78",
+      "digit_root_literal": "6",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 11
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "89",
+      "digit_root_literal": "8",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 12
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "100",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 13
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "111",
+      "digit_root_literal": "3",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 15
+    },
+    {
+      "family": 1,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "122",
+      "digit_root_literal": "5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 16
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "3",
+      "digit_root_literal": "3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "23",
+      "digit_root_literal": "5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "5",
+      "digit_root_literal": "5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "29",
+      "digit_root_literal": "2",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "7",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "43",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "67",
+      "digit_root_literal": "4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "9",
+      "digit_root_literal": "9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "57",
+      "digit_root_literal": "3",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "65",
+      "digit_root_literal": "2",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "89",
+      "digit_root_literal": "8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "11",
+      "digit_root_literal": "2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "31",
+      "digit_root_literal": "4",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "51",
+      "digit_root_literal": "6",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "71",
+      "digit_root_literal": "8",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "101",
+      "digit_root_literal": "2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "111",
+      "digit_root_literal": "3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "13",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "25",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "85",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "97",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "109",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "121",
+      "digit_root_literal": "4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "133",
+      "digit_root_literal": "7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "15",
+      "digit_root_literal": "6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "29",
+      "digit_root_literal": "2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "43",
+      "digit_root_literal": "7",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "57",
+      "digit_root_literal": "3",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "71",
+      "digit_root_literal": "8",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "85",
+      "digit_root_literal": "4",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "99",
+      "digit_root_literal": "9",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "113",
+      "digit_root_literal": "5",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "127",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "141",
+      "digit_root_literal": "6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "155",
+      "digit_root_literal": "2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "17",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "33",
+      "digit_root_literal": "6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "49",
+      "digit_root_literal": "4",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "65",
+      "digit_root_literal": "2",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "97",
+      "digit_root_literal": "7",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "113",
+      "digit_root_literal": "5",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "129",
+      "digit_root_literal": "3",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "145",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "161",
+      "digit_root_literal": "8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "177",
+      "digit_root_literal": "6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "109",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "127",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "145",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "163",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "181",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "199",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "21",
+      "digit_root_literal": "3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "41",
+      "digit_root_literal": "5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "61",
+      "digit_root_literal": "7",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "81",
+      "digit_root_literal": "9",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "101",
+      "digit_root_literal": "2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "121",
+      "digit_root_literal": "4",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "141",
+      "digit_root_literal": "6",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "161",
+      "digit_root_literal": "8",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "181",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "201",
+      "digit_root_literal": "3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "221",
+      "digit_root_literal": "5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 55
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 43
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "23",
+      "digit_root_literal": "5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 44
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "45",
+      "digit_root_literal": "9",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 45
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "67",
+      "digit_root_literal": "4",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 46
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "89",
+      "digit_root_literal": "8",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 47
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "111",
+      "digit_root_literal": "3",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 48
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "133",
+      "digit_root_literal": "7",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 49
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "155",
+      "digit_root_literal": "2",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 50
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "177",
+      "digit_root_literal": "6",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 51
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "199",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 52
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "221",
+      "digit_root_literal": "5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 54
+    },
+    {
+      "family": 2,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "243",
+      "digit_root_literal": "9",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 55
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 77
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 65
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 66
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 67
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 68
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 69
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 70
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 71
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 72
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 73
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 74
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 76
+    },
+    {
+      "family": 3,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "-1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 77
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 100
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 88
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 89
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 90
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 91
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 92
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 93
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 94
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 95
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 96
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 97
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 99
+    },
+    {
+      "family": 4,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "1",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 100
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 1,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 2,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 3,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 4,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 5,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 6,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 7,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 8,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 9,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 10,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 0,
+      "col12": 11,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 5,
+      "csv_dr_row": 39,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 1,
+      "raw_literal": "-1/1/3",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 2,
+      "raw_literal": "-1/1/5",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 3,
+      "raw_literal": "-1/1/7",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 4,
+      "raw_literal": "-1/1/9",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 5,
+      "raw_literal": "-1/1/11",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 6,
+      "raw_literal": "-1/1/13",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 7,
+      "raw_literal": "-1/1/15",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 8,
+      "raw_literal": "-1/1/17",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 9,
+      "raw_literal": "-1/1/19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 10,
+      "raw_literal": "-1/1/21",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 1,
+      "col12": 11,
+      "raw_literal": "-1/1/23",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 6,
+      "csv_dr_row": 40,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 1,
+      "raw_literal": "-1/1/5",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 2,
+      "raw_literal": "-1/1/9",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 3,
+      "raw_literal": "-1/1/13",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 4,
+      "raw_literal": "-1/1/17",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 5,
+      "raw_literal": "-1/1/21",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 6,
+      "raw_literal": "-1/1/25",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 7,
+      "raw_literal": "-1/1/29",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 8,
+      "raw_literal": "-1/1/33",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 9,
+      "raw_literal": "-1/1/37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 10,
+      "raw_literal": "-1/1/41",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 2,
+      "col12": 11,
+      "raw_literal": "-1/1/45",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 7,
+      "csv_dr_row": 41,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 1,
+      "raw_literal": "-1/1/7",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 2,
+      "raw_literal": "-1/1/13",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 3,
+      "raw_literal": "-1/1/19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 4,
+      "raw_literal": "-1/1/25",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 5,
+      "raw_literal": "-1/1/31",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 6,
+      "raw_literal": "-1/1/37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 7,
+      "raw_literal": "-1/1/43",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 8,
+      "raw_literal": "-1/1/49",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 9,
+      "raw_literal": "-1/1/55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 10,
+      "raw_literal": "-1/1/61",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 3,
+      "col12": 11,
+      "raw_literal": "-1/1/67",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 8,
+      "csv_dr_row": 42,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 1,
+      "raw_literal": "-1/1/9",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 2,
+      "raw_literal": "-1/1/17",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 3,
+      "raw_literal": "-1/1/25",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 4,
+      "raw_literal": "-1/1/33",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 5,
+      "raw_literal": "-1/1/41",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 6,
+      "raw_literal": "-1/1/49",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 7,
+      "raw_literal": "-1/1/57",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 8,
+      "raw_literal": "-1/1/65",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 9,
+      "raw_literal": "-1/1/73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 10,
+      "raw_literal": "-1/1/81",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 4,
+      "col12": 11,
+      "raw_literal": "-1/1/89",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 9,
+      "csv_dr_row": 43,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 1,
+      "raw_literal": "-1/1/11",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 2,
+      "raw_literal": "-1/1/21",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 3,
+      "raw_literal": "-1/1/31",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 4,
+      "raw_literal": "-1/1/41",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 5,
+      "raw_literal": "-1/1/51",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 6,
+      "raw_literal": "-1/1/61",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 7,
+      "raw_literal": "-1/1/71",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 8,
+      "raw_literal": "-1/1/81",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 9,
+      "raw_literal": "-1/1/91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 10,
+      "raw_literal": "-1/1/101",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 5,
+      "col12": 11,
+      "raw_literal": "-1/1/111",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 10,
+      "csv_dr_row": 44,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 1,
+      "raw_literal": "-1/1/13",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 2,
+      "raw_literal": "-1/1/25",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 3,
+      "raw_literal": "-1/1/37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 4,
+      "raw_literal": "-1/1/49",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 5,
+      "raw_literal": "-1/1/61",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 6,
+      "raw_literal": "-1/1/73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 7,
+      "raw_literal": "-1/1/85",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 8,
+      "raw_literal": "-1/1/97",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 9,
+      "raw_literal": "-1/1/109",
+      "digit_root_literal": "1",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 10,
+      "raw_literal": "-1/1/121",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 6,
+      "col12": 11,
+      "raw_literal": "-1/1/133",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 11,
+      "csv_dr_row": 45,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 1,
+      "raw_literal": "-1/1/15",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 2,
+      "raw_literal": "-1/1/29",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 3,
+      "raw_literal": "-1/1/43",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 4,
+      "raw_literal": "-1/1/57",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 5,
+      "raw_literal": "-1/1/71",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 6,
+      "raw_literal": "-1/1/85",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 7,
+      "raw_literal": "-1/1/99",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 8,
+      "raw_literal": "-1/1/113",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 9,
+      "raw_literal": "-1/1/127",
+      "digit_root_literal": "1",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 10,
+      "raw_literal": "-1/1/141",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 7,
+      "col12": 11,
+      "raw_literal": "-1/1/155",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 12,
+      "csv_dr_row": 46,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 1,
+      "raw_literal": "-1/1/17",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 2,
+      "raw_literal": "-1/1/33",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 3,
+      "raw_literal": "-1/1/49",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 4,
+      "raw_literal": "-1/1/65",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 5,
+      "raw_literal": "-1/1/81",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 6,
+      "raw_literal": "-1/1/97",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 7,
+      "raw_literal": "-1/1/113",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 8,
+      "raw_literal": "-1/1/129",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 9,
+      "raw_literal": "-1/1/145",
+      "digit_root_literal": "1",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 10,
+      "raw_literal": "-1/1/161",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 8,
+      "col12": 11,
+      "raw_literal": "-1/1/177",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 13,
+      "csv_dr_row": 47,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 1,
+      "raw_literal": "-1/1/19",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 2,
+      "raw_literal": "-1/1/37",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 3,
+      "raw_literal": "-1/1/55",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 4,
+      "raw_literal": "-1/1/73",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 5,
+      "raw_literal": "-1/1/91",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 6,
+      "raw_literal": "-1/1/109",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 7,
+      "raw_literal": "-1/1/127",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 8,
+      "raw_literal": "-1/1/145",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 9,
+      "raw_literal": "-1/1/163",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 10,
+      "raw_literal": "-1/1/181",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 9,
+      "col12": 11,
+      "raw_literal": "-1/1/199",
+      "digit_root_literal": "1",
+      "csv_raw_row": 14,
+      "csv_dr_row": 48,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 1,
+      "raw_literal": "-1/1/21",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 2,
+      "raw_literal": "-1/1/41",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 3,
+      "raw_literal": "-1/1/61",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 4,
+      "raw_literal": "-1/1/81",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 5,
+      "raw_literal": "-1/1/101",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 6,
+      "raw_literal": "-1/1/121",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 7,
+      "raw_literal": "-1/1/141",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 8,
+      "raw_literal": "-1/1/161",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 9,
+      "raw_literal": "-1/1/181",
+      "digit_root_literal": "1",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 10,
+      "raw_literal": "-1/1/201",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 10,
+      "col12": 11,
+      "raw_literal": "-1/1/221",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 16,
+      "csv_dr_row": 50,
+      "csv_column": 121
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 0,
+      "raw_literal": "-1/0/1",
+      "digit_root_literal": "0/1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 109
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 1,
+      "raw_literal": "-1/1/23",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 110
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 2,
+      "raw_literal": "-1/1/45",
+      "digit_root_literal": "1/9",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 111
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 3,
+      "raw_literal": "-1/1/67",
+      "digit_root_literal": "1/4",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 112
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 4,
+      "raw_literal": "-1/1/89",
+      "digit_root_literal": "1/8",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 113
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 5,
+      "raw_literal": "-1/1/111",
+      "digit_root_literal": "1/3",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 114
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 6,
+      "raw_literal": "-1/1/133",
+      "digit_root_literal": "1/7",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 115
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 7,
+      "raw_literal": "-1/1/155",
+      "digit_root_literal": "1/2",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 116
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 8,
+      "raw_literal": "-1/1/177",
+      "digit_root_literal": "1/6",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 117
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 9,
+      "raw_literal": "-1/1/199",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 118
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 10,
+      "raw_literal": "-1/1/221",
+      "digit_root_literal": "1/5",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 120
+    },
+    {
+      "family": 5,
+      "row12": 11,
+      "col12": 11,
+      "raw_literal": "-1/1/243",
+      "digit_root_literal": "1",
+      "csv_raw_row": 17,
+      "csv_dr_row": 51,
+      "csv_column": 121
+    }
+  ]
+}

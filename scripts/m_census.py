@@ -725,6 +725,16 @@ def impl_id(stratum: str, construct: dict) -> str:
     return f"{stratum}:{construct['path']}:{construct['symbol']}"
 
 
+def reviewed_row(row: dict | None) -> bool:
+    """A vertical assessment is not a fresh K4 discovery classification.
+
+    Re-scanning still returns its independent presence workbook. It must not
+    overwrite reviewed bindings, dispositions, relations or parity evidence.
+    """
+    return bool(row and row["assessment"] != "unassessed"
+                and not row["assessment"].startswith("k4:"))
+
+
 def bindings_for_stratum(bindings, implementations, stratum):
     """A vertical's binding identity is opaque; its inventory owns its stratum.
 
@@ -873,7 +883,7 @@ def build_census(args) -> int:
             rows.append(row)
             row_by_id[row_id] = row
             added_rows += 1
-        else:
+        elif not reviewed_row(row_by_id[row_id]):
             row_by_id[row_id] = row
             for index, existing in enumerate(rows):
                 if existing["id"] == row_id:
@@ -884,6 +894,8 @@ def build_census(args) -> int:
     for ref in order:
         row = row_by_id[f"census:{ref}"]
         parent = field.parent_of(ref)
+        if reviewed_row(row):
+            continue
         row["dependencies"] = (
             [f"census:{parent}"] if parent and in_census_scope(parent) and f"census:{parent}" in row_by_id
             else [])
@@ -893,7 +905,7 @@ def build_census(args) -> int:
     # matched through resolved registry identity, never raw strings.
     resolve = canonical_resolver(live_join)
     for row in rows:
-        if row["source"] is None or row["id"].startswith("ql.m-index"):
+        if row["source"] is None or row["id"].startswith("ql.m-index") or reviewed_row(row):
             continue
         coords = [c for c in row["coordinates"] if in_census_scope(c)]
         if not coords:
