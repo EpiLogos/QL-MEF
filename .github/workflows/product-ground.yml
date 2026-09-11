@@ -27,6 +27,8 @@ jobs:
           python-version: '3.12'
       - name: Verify every registered capability-matrix carrier
         run: python3 scripts/check-capability-matrix-registry.py
+      - name: Verify current living-instrument plan and negative cases
+        run: python3 scripts/check-living-instrument-plan.py --self-test
 
   capability-drift:
     runs-on: ubuntu-latest
