@@ -1,0 +1,92 @@
+name: M2 deterministic branch publication
+on:
+  push:
+    branches: [agent/k6-m2-coordinate-rebuild]
+    paths: ['.github/workflows/kernel-m2-publication.yml']
+permissions:
+  contents: write
+concurrency:
+  group: m2-publication
+  cancel-in-progress: false
+jobs:
+  publish-generated-source:
+    if: github.repository == 'EpiLogos/QL-MEF' && github.ref == 'refs/heads/agent/k6-m2-coordinate-rebuild'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Pinned read-only source for exact oracle and deep census
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: target/m2-bimba-source
+          sparse-checkout: |
+            Idea/Bimba/Map/datasets/parashakti-deep
+            Body/S/S0/portal-core/src/parashakti
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: python3 -m pip install 'jsonschema==4.25.1'
+      - name: Apply reviewed narrow integration patch and generate source-held data
+        run: |
+          git apply --check scripts/m2-publication.patch
+          git apply scripts/m2-publication.patch
+          cp target/m2-bimba-source/Body/S/S0/portal-core/src/parashakti/vimarsha_reading.rs fixtures/kernel/m2-reference-vimarsha.rs
+          test "$(git hash-object fixtures/kernel/m2-reference-vimarsha.rs)" = 7b0bc34cee3388a8d22a615ad2c9facc28016e30
+          python3 scripts/m2-catalogue.py refresh
+          python3 scripts/m2-field-report.py refresh --source-root target/m2-bimba-source
+          cargo fmt --all
+          python3 scripts/m2-contract.py refresh
+      - name: Execute acceptance before materializing proof or ledger
+        run: bash scripts/test-m2-engine.sh
+      - name: Add namespaced inventory to the existing ledger
+        run: |
+          python3 scripts/m2-ledger.py refresh
+          python3 scripts/m-ledger.py check
+          python3 scripts/m2-ledger.py check
+          python3 -m unittest discover -s scripts/tests -p 'test_m_ledger.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+      - name: Execute full workspace after ledger integration
+        run: |
+          cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Publish only the allowed generated/integration files, without force
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          rm scripts/m2-publication.patch
+          python3 - <<'PY'
+          import subprocess
+          allowed={
+            'c/src/m2_data.inc','crates/ql-mef/src/lib.rs',
+            'crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2_vimarsha.rs',
+            'crates/ql-mef/tests/m2_engine.rs','crates/ql-mef/tests/m2_vimarsha.rs','crates/ql-mef/examples/m2_engine.rs',
+            'crates/ql-mef/tests/m_ledger.rs','scripts/tests/test_m_ledger.py',
+            'fixtures/kernel/m2-reference-vimarsha.rs','fixtures/kernel/m2-retained-c-v1.json',
+            'fixtures/kernel/m2-field-census-summary-v1.json','fixtures/kernel/m2-engine-request-v1.schema.json',
+            'fixtures/kernel/m2-engine-frame-v1.schema.json','fixtures/kernel/m2-finite-proof-v1.json',
+            'fixtures/kernel/m-ledger-v1.json','scripts/m2-publication.patch'
+          }
+          changed=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          changed.update(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines())
+          if changed-allowed: raise SystemExit('Unexpected writes: '+repr(sorted(changed-allowed)))
+          subprocess.run(['git','add','--',*sorted(changed)],check=True)
+          PY
+          test "$(git ls-remote origin refs/heads/agent/k6-m2-coordinate-rebuild | cut -f1)" = "$SOURCE_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(m2): materialize tested coordinate catalogue, engine shapes and scoped ledger'
+          git push origin HEAD:refs/heads/agent/k6-m2-coordinate-rebuild
+          git rev-parse HEAD > target/m2-receipt/published-revision.txt
+          git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
+      - name: Retain executed publication evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m2-publication-${{ github.sha }}
+          path: target/m2-receipt/
+          retention-days: 7

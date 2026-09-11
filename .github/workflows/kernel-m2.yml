@@ -1,15 +1,21 @@
 name: M2 coordinate engine
 on:
   push:
-    branches: [agent/k6-m2-coordinate-rebuild]
+    branches: [main, agent/k6-m2-coordinate-rebuild]
+    paths:
+      - '.github/workflows/kernel-m2.yml'
+      - 'crates/**'
+      - 'c/**'
+      - 'fixtures/kernel/**'
+      - 'scripts/**'
+      - 'docs/kernel-rebuild/**'
   pull_request:
     paths:
       - '.github/workflows/kernel-m2.yml'
-      - 'crates/ql-mef/**'
+      - 'crates/**'
       - 'c/**'
       - 'fixtures/kernel/**'
-      - 'scripts/*m2*'
-      - 'scripts/tests/*m2*'
+      - 'scripts/**'
       - 'docs/kernel-rebuild/**'
 permissions:
   contents: read
@@ -19,6 +25,7 @@ concurrency:
 jobs:
   parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,29 +40,31 @@ jobs:
           sparse-checkout: |
             Idea/Bimba/Map/datasets/parashakti-deep
           persist-credentials: false
-      - name: Capture exact source
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: python3 -m pip install 'jsonschema==4.25.1'
+      - name: Exact-head source receipt
         run: |
           mkdir -p target/m2-receipt
           git rev-parse HEAD > target/m2-receipt/source-revision.txt
           git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
-          tar -C target/m2-bimba-source -czf target/m2-receipt/bimba-source.tar.gz Idea/Bimba/Map/datasets/parashakti-deep
-      - name: Publish source receipt
-        uses: actions/upload-artifact@v4
-        with:
-          name: m2-source-${{ github.event.pull_request.head.sha || github.sha }}
-          path: target/m2-receipt/
-          retention-days: 7
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Rust baseline and M2 tests
-        run: cargo test --workspace --all-targets --locked
-      - name: M2 source and native parity
+      - name: Mandatory source, native C/Rust and installed consumer acceptance
+        run: bash scripts/test-m2-engine.sh
+      - name: Shared-ledger and scoped proof validation
         run: |
-          if test -f scripts/test-m2-engine.sh; then
-            bash scripts/test-m2-engine.sh
-          else
-            python3 scripts/m-ledger.py check
-          fi
-      - name: Publish parity receipt
+          python3 scripts/m-ledger.py check
+          python3 scripts/m2-ledger.py check
+          python3 -m unittest discover -s scripts/tests -p 'test_m_ledger.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+      - name: Full Rust workspace
+        run: cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
+      - name: Formatting and Clippy
+        run: |
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Verify generators did not mutate accepted source
+        run: git diff --exit-code
+      - name: Publish exact-head parity receipt
         if: always()
         uses: actions/upload-artifact@v4
         with:
