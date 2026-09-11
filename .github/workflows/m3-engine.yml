@@ -33,6 +33,26 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 5b24b95d17234ab5d23d84e658c0cc06434b41a3
+          path: target/k4-source
+          persist-credentials: false
+      - name: Exact accepted K4 and native producer sources
+        run: |
+          mkdir -p target/m3-sources
+          git archive HEAD > target/m3-sources/engine.tar
+          git rev-parse HEAD > target/m3-sources/engine-revision.txt
+          git rev-parse HEAD^{tree} > target/m3-sources/engine-tree.txt
+          git -C target/k4-source archive HEAD > target/m3-sources/k4.tar
+          git -C target/k4-source rev-parse HEAD > target/m3-sources/k4-revision.txt
+          git -C target/k4-source rev-parse HEAD^{tree} > target/m3-sources/k4-tree.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m3-joined-source-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/m3-sources/
+          retention-days: 7
+          if-no-files-found: error
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
