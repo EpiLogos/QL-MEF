@@ -1,0 +1,59 @@
+name: M2 K4 source-body capture
+on:
+  push:
+    branches: [agent/k6-m2-coordinate-rebuild]
+    paths: [.github/workflows/kernel-m2-source-ground.yml]
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: target/m2-bimba-source
+          sparse-checkout: |
+            Idea/Bimba/Map/datasets
+            Body/S/S0/portal-core/src/parashakti
+          persist-credentials: false
+      - name: Capture only actual M2 registry source records and the frozen reader
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p target/m2-source-ground
+          python3 - <<'PY'
+          import hashlib, json, tarfile
+          from pathlib import Path
+          registry=json.loads(Path('fixtures/kernel/m-tree-v1.json').read_text())
+          nodes=[n for n in registry['nodes'] if n['root_position']==2]
+          ids={n['id'] for n in nodes}
+          records={i for n in nodes for i in n['records']}
+          records.update(r['record'] for r in registry['relations'] if r['from_id'] in ids or r['to_id'] in ids)
+          files={registry['records'][i]['file'] for i in records}
+          source=Path('target/m2-bimba-source')
+          paths=[]
+          for i in sorted(files):
+              record=registry['files'][i]
+              path=source/record['path']
+              if hashlib.sha256(path.read_bytes()).hexdigest()!=record['sha256']:
+                  raise ValueError('stale pinned source: '+record['path'])
+              paths.append(record['path'])
+          paths.extend(['Idea/Bimba/Map/datasets/parashakti-deep/parashakti-planets.json','Body/S/S0/portal-core/src/parashakti/vimarsha_reading.rs'])
+          with tarfile.open('target/m2-source-ground/bimba-source.tar.gz','w:gz') as archive:
+              for path in sorted(set(paths)): archive.add(source/path,arcname=path)
+          Path('target/m2-source-ground/selection.json').write_text(json.dumps({'schema':'ql.m2-source-selection/v1','registry_revision':registry['registry_revision'],'source_revision':registry['source_revision'],'coordinates':len(nodes),'registry_record_count':len(records),'paths':sorted(set(paths))},indent=2)+'\n')
+          PY
+          git rev-parse HEAD > target/m2-source-ground/source-revision.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m2-k4-source-body-${{ github.sha }}
+          path: target/m2-source-ground/
+          retention-days: 7
+          if-no-files-found: error
