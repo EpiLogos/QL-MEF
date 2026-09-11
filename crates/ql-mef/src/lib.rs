@@ -10,6 +10,7 @@ mod identity;
 pub mod l5_projection;
 mod lens;
 pub mod m1;
+pub mod m1_engine;
 pub mod m_ledger;
 mod m_map;
 pub mod m_tree;

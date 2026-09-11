@@ -45,11 +45,18 @@ class MLedgerTests(unittest.TestCase):
         return document
 
     def test_seed_determinism_and_source_inventory(self):
-        generated = ledger.refresh(ROOT)
-        self.assertEqual([r for r in generated["rows"] if r["source"]], [r for r in self.base["rows"] if r["source"]])
+        # The deterministic K3 seed is unchanged; the K4 census (see
+        # fixtures/kernel/census/) extends it with one row per M1/M2/M3
+        # coordinate, and refresh preserves those census additions exactly.
+        seed = ledger.refresh(ROOT)
+        self.assertEqual(len(seed["rows"]), 192)
+        self.assertEqual(len(seed["matrices"]), 10)
+        by_id = {r["id"]: r for r in self.base["rows"]}
+        for row in seed["rows"]:
+            self.assertIn(row["id"], by_id)
+            for field in ("role", "scope", "coordinates", "source"):
+                self.assertEqual(row[field], by_id[row["id"]][field])
         self.assertEqual(ledger.refresh(ROOT, copy.deepcopy(self.base)), self.base)
-        self.assertEqual(len(generated["rows"]), 192)
-        self.assertEqual(len(generated["matrices"]), 10)
         ledger.verify(ROOT, self.base)
 
     def test_refresh_preserves_assessments_bindings_discrepancies_and_new_rows(self):

@@ -1,0 +1,1399 @@
+{
+  "schema": "ql.m-census-report/v1",
+  "report": "missing-partial-rust-ports",
+  "unported": [
+    {
+      "coordinate": "#1-0",
+      "names": [
+        "Bimba - Original Aspect",
+        "Bimba - Original Aspect",
+        "The (0/1) Element as Bimba - The Original Unmanifest Potential"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/holographic.c:ql_default_hash_bimba",
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+      ]
+    },
+    {
+      "coordinate": "#1-4",
+      "names": [
+        "Quaternal Logic Flowering",
+        "Quaternal Logic Flowering",
+        "The Complete Architecture of Logical Manifestation"
+      ],
+      "c_state": "implemented",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI",
+        "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+        "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY"
+      ]
+    },
+    {
+      "coordinate": "#2-2",
+      "names": [
+        "36 Tattvas System",
+        "36 Tattvas System",
+        "The 36x2 Tattvas: Ascending and Descending Principles of Reality in Kashmir Shaivism"
+      ],
+      "c_state": "implemented",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_ct",
+        "vendor/epi-kernel/reference/src/m2.c:m2_print_tattvas"
+      ]
+    },
+    {
+      "coordinate": "#2-5",
+      "names": [
+        "Planetary Harmonic Integration",
+        "Planetary Harmonic Integration",
+        "The Sevenfold Celestial Bridge: The Quantum-Hermetic Translation Matrix"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m1_state.c:ql_m1_carrier",
+        "c/src/m1_state.c:seat",
+        "vendor/epi-kernel/reference/src/m2.c:m2_print_planets",
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
+        "vendor/epi-kernel/reference/src/m5.c:M5_LOGOS_STAGE_NAMES"
+      ]
+    },
+    {
+      "coordinate": "#3-1",
+      "names": [
+        "I-Ching System",
+        "I-Ching System",
+        "The Book of Changes - 64 Hexagram Oracle System"
+      ],
+      "c_state": "implemented",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m3.c:m3_print_hexagram"
+      ]
+    },
+    {
+      "coordinate": "#3-3",
+      "names": [
+        "Mahamaya Universal Transcription Engine",
+        "Mahamaya Universal Transcription Engine",
+        "The Complete DNA→RNA→Protein→Chromosome Sacred Pathway"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m1_state.c:ql_m1_reflection",
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+        "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+      ]
+    },
+    {
+      "coordinate": "#1-2-1",
+      "names": [
+        "Matrix 1: The Offset (Pratibimba)",
+        "Matrix 1: The Offset (Pratibimba)",
+        "First Reflection Vortex Matrix - Pratibimba Archetypal Differentiation"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:ANANDA_PRATIBIMBA",
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_pratibimba"
+      ]
+    },
+    {
+      "coordinate": "#1-3-0",
+      "names": [
+        "Spanda Seed",
+        "Spanda Seed",
+        "Stage #0 - The (0/1) Element as Pure Oscillatory Potential"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_seed"
+      ]
+    },
+    {
+      "coordinate": "#1-3-1",
+      "names": [
+        "Primal Differentiation - Original Pole",
+        "Primal Differentiation - Original Pole",
+        "Stage #1 - The (0/1) Operational Pole in Creative Puncture"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_a",
+        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_pole_b"
+      ]
+    },
+    {
+      "coordinate": "#1-3-4",
+      "names": [
+        "Contextual Flowering",
+        "Contextual Flowering",
+        "Stage #4 - The Contextual Flowering of Quaternal Logic"
+      ],
+      "c_state": "implemented",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m1_state.c:ql_m1_reflection",
+        "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
+        "vendor/epi-kernel/reference/src/m1.c:spanda_pass_meta"
+      ]
+    },
+    {
+      "coordinate": "#2-1-0",
+      "names": [
+        "Archetypal-Numerical Foundation",
+        "Archetypal-Numerical Foundation",
+        "Archetypal-Numerical Foundation"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY",
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
+      ]
+    },
+    {
+      "coordinate": "#2-2-2",
+      "names": [
+        "Ashuddha Tattvas",
+        "Ashuddha Tattvas",
+        "Impure Tattvas - The Twenty-Four Material and Psychophysical Principles"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
+        "vendor/epi-kernel/reference/src/m0.c:m0_vak_ct"
+      ]
+    },
+    {
+      "coordinate": "#2-3-1",
+      "names": [
+        "Fire Element Decans",
+        "Fire Element Decans",
+        "Igneous Archetypal Expressions - Aries, Leo, Sagittarius"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0",
+      "names": [
+        "Asma ul-Husna",
+        "Asma ul-Husna",
+        "The 99 Most Beautiful Names of Allah - Divine Mathematical Architecture"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#3-2-2",
+      "names": [
+        "Thymine",
+        "Thymine",
+        "Thymine - The Primary Yin Nucleotide"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/holographic.c:ql_relation_tag"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4",
+      "names": [
+        "Amino Acid Architecture",
+        "Amino Acid Architecture",
+        "The 24-Fold Protein Building Block Mandala"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_MAHAMAYA",
+        "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+      ]
+    },
+    {
+      "coordinate": "#3-4-1",
+      "names": [
+        "Wands",
+        "Wands",
+        "Suit of Fire - Spiritual Will and Creative Force"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m0.c:VIRTUE_LUT"
+      ]
+    },
+    {
+      "coordinate": "#2-1-2-2",
+      "names": [
+        "Negation (is not)",
+        "Negation (is not)",
+        "Negation (Is Not) - Identity Through Difference"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
+      ]
+    },
+    {
+      "coordinate": "#2-1-3-4",
+      "names": [
+        "Flowering (contextual expression)",
+        "Flowering (contextual expression)"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING"
+      ]
+    },
+    {
+      "coordinate": "#2-3-1-0",
+      "names": [
+        "Aries Decans",
+        "Aries Decans",
+        "The Ram - Cardinal Fire Expressions"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m1.c:DR_RING_PARASHAKTI"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-0",
+      "names": [
+        "La Maqam",
+        "La Maqam",
+        "La Maqam (لا مقام) - The Station of No-Station"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-1",
+      "names": [
+        "Tawba",
+        "Tawba",
+        "Tawba (التوبة) - The Station of Repentance and Return"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_relation_resolve",
+        "c/src/m_tree.c:ql_m_resolve"
+      ]
+    },
+    {
+      "coordinate": "#3-2-2-1",
+      "names": [
+        "TA_Pair",
+        "TA_Pair",
+        "TA Dinucleotide - Yin-Yang Return"
+      ],
+      "c_state": "partial",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/holographic.c:ql_relation_tag"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-0",
+      "names": [
+        "Glycine",
+        "Glycine",
+        "The Primordial Foundation - Simplest Amino Acid Archetype"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-21",
+      "names": [
+        "Pyrrolysine",
+        "Pyrrolysine",
+        "The 22nd Archetype - Methanogenic Consciousness"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m2.c:M2_ARCHETYPES"
+      ]
+    },
+    {
+      "coordinate": "#3-4-1-2",
+      "names": [
+        "Three of Wands",
+        "Three of Wands",
+        "Lord of Virtue - Sun in Aries"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m0.c:VIRTUE_LUT"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-2",
+      "names": [
+        "T/U(XX) Family",
+        "T/U(XX) Family",
+        "Thymine/Uracil Dual-Nature Codon Reflection Family"
+      ],
+      "c_state": "partial",
+      "rust_state": "partial",
+      "c_bodies": [
+        "c/src/holographic.c:ql_relation_tag"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-0-0",
+      "names": [
+        "La Maqam Malamatiyya",
+        "La Maqam Malamatiyya",
+        "People of Blame - Transcending Spiritual Identity"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-1-2",
+      "names": [
+        "Tawba Khawas al-Khawas",
+        "Tawba Khawas al-Khawas",
+        "Very Select Repentance - The Level of Resolve"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_relation_resolve",
+        "c/src/m_tree.c:ql_m_resolve"
+      ]
+    },
+    {
+      "coordinate": "#2-5-0/1-0",
+      "names": [
+        "Planet Earth",
+        "Planet Earth",
+        "The Grounding Potential: Terrestrial Foundation & Electromagnetic Anchor"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "vendor/epi-kernel/reference/src/m2.c:m2_print_planets"
+      ]
+    },
+    {
+      "coordinate": "#3-2-2-1-4",
+      "names": [
+        "Codon_TAG",
+        "Codon_TAG",
+        "Codon TAG - The Amber Terminator"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/holographic.c:ql_relation_tag"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-2-12",
+      "names": [
+        "TAG Codon Reflection - Page of Wands (Yin-receptivity)",
+        "TAG Codon Reflection - Page of Wands (Yin-receptivity)",
+        "TAG Codon Reflection - Page of Wands (Yin-receptivity)"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/holographic.c:ql_relation_tag"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-0",
+      "names": [
+        "Al-Hayy",
+        "Al-Hayy"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-2",
+      "names": [
+        "Al-Aleem",
+        "Al-Aleem"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-4",
+      "names": [
+        "Al-Mureed",
+        "Al-Mureed"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-5",
+      "names": [
+        "As-Samee",
+        "As-Samee"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-6",
+      "names": [
+        "Al-Baseer",
+        "Al-Baseer"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-7",
+      "names": [
+        "Al-Mutakallim",
+        "Al-Mutakallim"
+      ],
+      "c_state": "implemented",
+      "rust_state": "unimplemented",
+      "c_bodies": [
+        "c/src/m_tree.c:ql_m_child_at"
+      ]
+    }
+  ],
+  "rust_only": [
+    {
+      "coordinate": "#2-0",
+      "names": [
+        "Archetypal Numerical Ground",
+        "Archetypal Numerical Ground",
+        "Paramasiva - Mathematical-Mystical Seed Matrix of Parashakti"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/vak_composition.rs:ground",
+        "crates/ql-core/src/structural.rs:GroundKind"
+      ]
+    },
+    {
+      "coordinate": "#3-5",
+      "names": [
+        "The 360° Mythic Synthesis Wheel",
+        "The 360° Mythic Synthesis Wheel",
+        "Mahamaya #3-5: The Anima Mundi Rotunda - Universal Convergence Point of All Relational Threads"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/iching.rs:MATCH_BINARY_TO_ID",
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn",
+        "crates/ql-mef/src/reading.rs:QlSynthesis",
+        "crates/ql-mef/src/vak_composition.rs:Axis"
+      ]
+    },
+    {
+      "coordinate": "#1-4.1",
+      "names": [
+        "Explicate-Implicate Framework",
+        "Explicate-Implicate Framework",
+        "The Foundational 4-Fold Explicate and 6-Fold Processual Frames"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/fold.rs:FoldState"
+      ]
+    },
+    {
+      "coordinate": "#1-4.3",
+      "names": [
+        "Bi-Directional Synthesis",
+        "Bi-Directional Synthesis",
+        "The Unified 12-Fold Recursive Loop"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/fold.rs:FoldState",
+        "crates/ql-mef/src/reading.rs:QlSynthesis"
+      ]
+    },
+    {
+      "coordinate": "#1-5-0",
+      "names": [
+        "Quaternionic Foundation",
+        "Toroidal-Quaternionic Ground",
+        "Quaternionic Foundation",
+        "The Implicit Foundation: Pre-reflective Self-Reference and Quaternionic Genesis"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/vak_composition.rs:ground",
+        "crates/ql-core/src/structural.rs:GroundKind",
+        "crates/ql-mef/src/vak_composition.rs:reference",
+        "crates/ql-mef/src/vak_composition.rs:references"
+      ]
+    },
+    {
+      "coordinate": "#1-5-5",
+      "names": [
+        "Complete Self-Realization",
+        "Recognition of Toroidal Necessity",
+        "Complete Self-Realization",
+        "Purposive Synthesis: Why Genus-1 is Topologically Necessary and Sufficient for Self-Reference"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/reading.rs:QlSynthesis",
+        "crates/ql-mef/src/vak_composition.rs:reference",
+        "crates/ql-mef/src/vak_composition.rs:references"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5",
+      "names": [
+        "72 Names of God System",
+        "72 Names of God System",
+        "Shem HaMephorash - The 72-Fold Explicit Name as Vibrational Matrix of Divine Actualization"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/fold.rs:FoldState",
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:Decision",
+        "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-service/src/service.rs:QlService"
+      ]
+    },
+    {
+      "coordinate": "#2-5-4",
+      "names": [
+        "Moon",
+        "Moon",
+        "The Temporal Cycling & Quantum Phase Coordinator"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/operator.rs:OperatorValue",
+        "crates/ql-core/src/operator.rs:QlOperator"
+      ]
+    },
+    {
+      "coordinate": "#2-5-5",
+      "names": [
+        "Saturn",
+        "Saturn",
+        "The Contemplative Foundation & Topological Constraint Matrix"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn",
+        "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
+        "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
+        "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
+        "crates/ql-mef/src/registry/becoming.rs:L3_PRIME",
+        "crates/ql-mef/src/registry/encounter.rs:L1_PRIME",
+        "crates/ql-mef/src/registry/encounter.rs:L4_PRIME"
+      ]
+    },
+    {
+      "coordinate": "#2-5-6",
+      "names": [
+        "Jupiter",
+        "Jupiter",
+        "The Expansive Elaboration & Wisdom Matrix"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
+        "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
+        "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
+        "crates/ql-mef/src/registry/becoming.rs:L3_PRIME",
+        "crates/ql-mef/src/registry/encounter.rs:L1_PRIME",
+        "crates/ql-mef/src/registry/encounter.rs:L4_PRIME"
+      ]
+    },
+    {
+      "coordinate": "#3-4-4",
+      "names": [
+        "Pentacles",
+        "Pentacles",
+        "Suit of Earth - Material Form and Practical Manifestation"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/form.rs:QlForm",
+        "crates/ql-core/src/form.rs:QlFormRef"
+      ]
+    },
+    {
+      "coordinate": "#3-5-1",
+      "names": [
+        "North Cardinal Anchor",
+        "North Cardinal Anchor"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn"
+      ]
+    },
+    {
+      "coordinate": "#3-5-2",
+      "names": [
+        "South Cardinal Anchor",
+        "South Cardinal Anchor"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn"
+      ]
+    },
+    {
+      "coordinate": "#3-5-3",
+      "names": [
+        "East Cardinal Anchor",
+        "East Cardinal Anchor"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn"
+      ]
+    },
+    {
+      "coordinate": "#3-5-4",
+      "names": [
+        "West Cardinal Anchor",
+        "West Cardinal Anchor"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn"
+      ]
+    },
+    {
+      "coordinate": "#1-3-4.0000",
+      "names": [
+        "4-Fold Static Framework (Void Frame)",
+        "4-Fold Static Framework (Void Frame)",
+        "Sub-stage #4.0 - The Four Ground States of Binary-Non-Dual System"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/vak_composition.rs:ground",
+        "crates/ql-core/src/pole/fold.rs:FoldState",
+        "crates/ql-core/src/structural.rs:GroundKind"
+      ]
+    },
+    {
+      "coordinate": "#2-1-1-0",
+      "names": [
+        "Primordial cause",
+        "Primordial cause",
+        "Primordial Causal Plenitude - Being (Sat) as Uncaused Ground"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/vak_composition.rs:ground",
+        "crates/ql-core/src/structural.rs:GroundKind"
+      ]
+    },
+    {
+      "coordinate": "#2-1-2-1",
+      "names": [
+        "Affirmation (is)",
+        "Affirmation (is)",
+        "Affirmation (Is) - Cataphatic Positive Assertion"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:StructureAssertion"
+      ]
+    },
+    {
+      "coordinate": "#2-1-2-4",
+      "names": [
+        "Transcendence (neither is nor is not)",
+        "Transcendence (neither is nor is not)",
+        "Transcendence (Neither) - Contextual Limit of Logic"
+      ],
+      "rust_bodies": [
+        "crates/ql-semantic/src/capability.rs:InputLimits"
+      ]
+    },
+    {
+      "coordinate": "#2-1-3-0",
+      "names": [
+        "Soil (foundation/potential)",
+        "Soil (foundation/potential)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/templateure.rs:FormPotential"
+      ]
+    },
+    {
+      "coordinate": "#2-1-3-2",
+      "names": [
+        "Sprouting (active emergence)",
+        "Sprouting (active emergence)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-1-3-3",
+      "names": [
+        "Blooming (structural unfolding)",
+        "Blooming (structural unfolding)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak.rs:structural_relation"
+      ]
+    },
+    {
+      "coordinate": "#2-1-3-5",
+      "names": [
+        "Maturity (synthesis/renewal)",
+        "Maturity (synthesis/renewal)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/reading.rs:QlSynthesis"
+      ]
+    },
+    {
+      "coordinate": "#2-1-4-4",
+      "names": [
+        "Contextual domain (when/where)",
+        "Contextual domain (when/where)",
+        "Context as Dasein - Historicality and the Ontological Turn"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/context_frame.rs:ContextFrameId"
+      ]
+    },
+    {
+      "coordinate": "#2-2-0-5",
+      "names": [
+        "Shuddha Vidya Tattva",
+        "Shuddha Vidya Tattva",
+        "शुद्ध विद्या तत्त्व",
+        "Shuddha Vidya Tattva - Pure Knowledge and Balanced Awareness"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
+      ]
+    },
+    {
+      "coordinate": "#2-2-1-2",
+      "names": [
+        "Kala Tattva (Limitation)",
+        "Kala Tattva (Limitation)",
+        "कला तत्त्व",
+        "Kala Tattva - The Limitation of Infinite Power into Finite Agency"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:FiniteField",
+        "crates/ql-mef/src/m1_engine.rs:finite_field"
+      ]
+    },
+    {
+      "coordinate": "#2-2-1-4",
+      "names": [
+        "Raga Tattva",
+        "Raga Tattva",
+        "राग तत्त्व",
+        "Raga Tattva - The Limitation of Fullness into Desire and Attachment"
+      ],
+      "rust_bodies": [
+        "crates/ql-adapters/src/attachment.rs:QlAttachment"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-5",
+      "names": [
+        "Sabr",
+        "Sabr",
+        "Sabr (الصبر) - The Station of Patience and Active Endurance"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.3-4",
+      "names": [
+        "Hijaz Family",
+        "Hijaz Family",
+        "Hijaz Family - The Desert Path of Mystical Yearning"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:path"
+      ]
+    },
+    {
+      "coordinate": "#2-4.3-9",
+      "names": [
+        "Nawa Athar Family",
+        "Nawa Athar Family",
+        "Nawa Athar Family - The Exotic Path of Transformation"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:path"
+      ]
+    },
+    {
+      "coordinate": "#3-1-1-3",
+      "names": [
+        "Guan",
+        "Guan",
+        "Contemplation / View",
+        "觀"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/vak_composition.rs:frame_view",
+        "crates/ql-cli/src/vak_composition.rs:return_view"
+      ]
+    },
+    {
+      "coordinate": "#3-3-2-1",
+      "names": [
+        "Matrix 2",
+        "Matrix 2",
+        "Active-Passive States and Genetic Breathing Operator"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-1",
+      "names": [
+        "Alanine",
+        "Alanine",
+        "The Structural Anchor - Alpha Helix Stabilizer"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
+        "crates/ql-core/src/structural.rs:AnchorReturn",
+        "crates/ql-mef/src/vak.rs:structural_relation"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-15",
+      "names": [
+        "Aspartic Acid",
+        "Aspartic Acid",
+        "The Negative Charge - Carboxylate Electrostatic Force"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/codon.rs:FourCharge"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-17",
+      "names": [
+        "Lysine",
+        "Lysine",
+        "The Positive Charge - Amino Group Attracting Force"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/codon.rs:FourCharge"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-18",
+      "names": [
+        "Arginine",
+        "Arginine",
+        "The Guanidinium Power - Multi-Positive Charge Distributor"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/codon.rs:FourCharge"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-22",
+      "names": [
+        "Start Operator",
+        "Start Operator",
+        "The Sacred Beginning - Methionine in Transcendent Context"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/operator.rs:OperatorValue",
+        "crates/ql-core/src/operator.rs:QlOperator",
+        "crates/ql-core/src/pole/tarot.rs:TranscendentOperator",
+        "crates/ql-mef/src/context_frame.rs:ContextFrameId"
+      ]
+    },
+    {
+      "coordinate": "#3-3-4-23",
+      "names": [
+        "Stop Operator",
+        "Stop Operator",
+        "The Sacred Completion - Release Factor Consciousness"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/operator.rs:OperatorValue",
+        "crates/ql-core/src/operator.rs:QlOperator",
+        "crates/ql-core/src/pole/transcription.rs:AA_STOP_INDEX"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5-1",
+      "names": [
+        "Sex Chromosome Polarity",
+        "Sex Chromosome Polarity",
+        "The 23rd Pair - XX/XY Sexual Differentiation System"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity",
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#3-4-5/0",
+      "names": [
+        "Major Arcana",
+        "Major Arcana",
+        "The Archetypal Synthesis of Quintessential Forces - Sacred Transcription Pathways"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-mef/src/reading.rs:QlSynthesis"
+      ]
+    },
+    {
+      "coordinate": "#3-5-5/0",
+      "names": [
+        "Axis Mundi - Central Unity Origin",
+        "Axis Mundi - Central Unity Origin"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:Axis"
+      ]
+    },
+    {
+      "coordinate": "#1-3-4.0/1",
+      "names": [
+        "6-Fold Dynamic Process",
+        "6-Fold Dynamic Process",
+        "Sub-stage #4.0/1 - The Dynamic Activation of Static Framework"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/fold.rs:FoldState"
+      ]
+    },
+    {
+      "coordinate": "#2-2-2-4-3",
+      "names": [
+        "Rupa Tanmatra",
+        "Rupa Tanmatra",
+        "रूप तन्मात्र",
+        "Rupa Tanmatra - Subtle Element of Form"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/form.rs:QlForm",
+        "crates/ql-core/src/form.rs:QlFormRef",
+        "crates/ql-mef/src/vak.rs:SelfOtherForm"
+      ]
+    },
+    {
+      "coordinate": "#2-3-1-0-1",
+      "names": [
+        "Aries Decan 2",
+        "Aries Decan 2",
+        "The Crown - Solar Authority"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority"
+      ]
+    },
+    {
+      "coordinate": "#2-3-2-2-1",
+      "names": [
+        "Capricorn Decan 2",
+        "Capricorn Decan 2",
+        "The Builder - Martial Determination"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:Determination"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5-5-9",
+      "names": [
+        "Nithael",
+        "Nithael",
+        "Angel of Divine Kingship Through Service and Legitimate Authority"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-service/src/service.rs:QlService"
+      ]
+    },
+    {
+      "coordinate": "#2-5-0/1-3",
+      "names": [
+        "Maṇipūra",
+        "Maṇipūra",
+        "The City of Jewels: Engine of Will & Transformative Fire"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:M1Engine"
+      ]
+    },
+    {
+      "coordinate": "#2-5-0/1-6",
+      "names": [
+        "Ājñā",
+        "Ājñā",
+        "The Command Center: Eye of Intuition & Direct Perception"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/lib.rs:verify_command",
+        "crates/ql-cli/src/m_ledger.rs:command",
+        "crates/ql-cli/src/vak_composition.rs:command"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5-0-14",
+      "names": [
+        "Chromosome Pair 15",
+        "Chromosome Pair 15",
+        "The Temperance Chromosome Pair - Biological Moderation and Synthesis"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/reading.rs:QlSynthesis"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5-0-15",
+      "names": [
+        "Chromosome Pair 16",
+        "Chromosome Pair 16",
+        "The Devil Chromosome Pair - Biological Binding and Material Attachment"
+      ],
+      "rust_bodies": [
+        "crates/ql-adapters/src/attachment.rs:QlAttachment"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5-0-4",
+      "names": [
+        "Chromosome Pair 5",
+        "Chromosome Pair 5",
+        "The Emperor Chromosome Pair - Structural Genetic Authority"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-mef/src/vak.rs:structural_relation"
+      ]
+    },
+    {
+      "coordinate": "#3-3-5-1-1",
+      "names": [
+        "Y Chromosome",
+        "Y Chromosome",
+        "The Masculine Differentiator - Active Yang Principle"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#3-4-5/0-4",
+      "names": [
+        "The Emperor",
+        "The Emperor",
+        "The Emperor - Aries and Masculine Authority"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-2-5",
+      "names": [
+        "TCA Codon Reflection - Victory and Recognition",
+        "TCA Codon Reflection - Victory and Recognition",
+        "TCA Codon Reflection - Victory and Recognition"
+      ],
+      "rust_bodies": [
+        "crates/ql-wiki/src/recognition.rs:RecognitionState"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-2-7",
+      "names": [
+        "TAA Codon Reflection - Swift Action",
+        "TAA Codon Reflection - Swift Action",
+        "TAA Codon Reflection - Swift Action"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-4-5",
+      "names": [
+        "GAG Codon Reflection - Transition and Healing",
+        "GAG Codon Reflection - Transition and Healing",
+        "GAG Codon Reflection - Transition and Healing"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Transition",
+        "crates/ql-mef/src/m_ledger.rs:transition",
+        "crates/ql-mef/src/vak_composition.rs:Transition"
+      ]
+    },
+    {
+      "coordinate": "#3-4.0-4-7",
+      "names": [
+        "GCC Codon Reflection - Restriction and Limits",
+        "GCC Codon Reflection - Restriction and Limits",
+        "GCC Codon Reflection - Restriction and Limits"
+      ],
+      "rust_bodies": [
+        "crates/ql-semantic/src/capability.rs:InputLimits"
+      ]
+    },
+    {
+      "coordinate": "#2-3-2-0-1-0",
+      "names": [
+        "Taurus Decan 2 Light",
+        "Taurus Decan 2 Light",
+        "The Nurturing Provider"
+      ],
+      "rust_bodies": [
+        "crates/ql-cli/src/lib.rs:provider_state",
+        "crates/ql-mef/src/provenance.rs:QlProviderRef",
+        "crates/ql-semantic/src/capability.rs:ProviderClass",
+        "crates/ql-semantic/src/capability.rs:ProviderState",
+        "crates/ql-service/src/guard.rs:provider_for"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0",
+      "names": [
+        "Jalal",
+        "Jalal",
+        "Divine Majesty and Power Attributes - Transcendent Authority Grouping"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity",
+        "crates/ql-mef/src/m_ledger.rs:Authority",
+        "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.1-0-0-14",
+      "names": [
+        "ANUSVĀRA",
+        "ANUSVĀRA",
+        "Nasal Completion Sound - Return to Unmanifest Source"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1.rs:SOURCE_REF",
+        "crates/ql-mef/src/m_ledger.rs:MatrixSource",
+        "crates/ql-mef/src/vak.rs:parse_source_entry"
+      ]
+    },
+    {
+      "coordinate": "#2-4.1-0-0-5",
+      "names": [
+        "Ū-KĀRA",
+        "Ū-KĀRA",
+        "The Wave Sound - Divine Creative Action"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m1_engine.rs:Action"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5-6-0/1",
+      "names": [
+        "Mebahiah",
+        "Mebahiah",
+        "Angel of Eternal Clarity and Divine Decision-Making"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/m_ledger.rs:Decision"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0-0",
+      "names": [
+        "Al-Malik",
+        "Al-Malik"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0-21",
+      "names": [
+        "Al-Khaliq",
+        "Al-Khaliq"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0-32",
+      "names": [
+        "Al-Awwal",
+        "Al-Awwal"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0-5",
+      "names": [
+        "Al-Aziz",
+        "Al-Aziz"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-0-8",
+      "names": [
+        "Al-Qahhar",
+        "Al-Qahhar"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-11",
+      "names": [
+        "Al-Haqq",
+        "Al-Haqq"
+      ],
+      "rust_bodies": [
+        "crates/ql-wiki/src/recognition.rs:RecognitionState"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-17",
+      "names": [
+        "Ash-Shahid",
+        "Ash-Shahid"
+      ],
+      "rust_bodies": [
+        "crates/ql-wiki/src/recognition.rs:RecognitionState"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-21",
+      "names": [
+        "Al-Aakhir",
+        "Al-Aakhir"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-22",
+      "names": [
+        "Az-Zahir",
+        "Az-Zahir"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-23",
+      "names": [
+        "Al-Batin",
+        "Al-Batin"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-30",
+      "names": [
+        "Ad-Dharr",
+        "Ad-Dharr"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#2-4.0-0/1-1-31",
+      "names": [
+        "An-Naafi",
+        "An-Naafi"
+      ],
+      "rust_bodies": [
+        "crates/ql-core/src/pole/coin.rs:Polarity"
+      ]
+    },
+    {
+      "coordinate": "#1-3-4.4.0-4.4/5",
+      "names": [
+        "Contextual Flowering Synthesis (Nested Frame)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/reading.rs:QlSynthesis"
+      ]
+    }
+  ]
+}

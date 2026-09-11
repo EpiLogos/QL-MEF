@@ -14,3 +14,5 @@
 # Native C build and package artifacts
 /c/build/
 /c/dist/
+# Python bytecode
+__pycache__/

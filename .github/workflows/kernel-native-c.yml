@@ -81,6 +81,7 @@ jobs:
             target/kernel-native-c/
             target/m-tree/
             target/m1-engine/
+            target/m1-state/
             target/epi-c-r4/*.txt
             c/dist/
           if-no-files-found: error

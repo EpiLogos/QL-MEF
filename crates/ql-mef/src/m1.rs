@@ -2,8 +2,8 @@
 //!
 //! Reconciles the full retained C body with the later accepted Ananda return at
 //! `bb47ab9730f0ddadd4891666fb6f3e0a6d457330`. Existing matheme, QL relation and
-//! music operators remain the authority. This candidate API does not pronounce
-//! the missing K4 census, all M1 capabilities, C++ or experiential parity ready.
+//! music operators remain the authority. K4 coordinate presence is consumed;
+//! the bounded K5 engine keeps C++ and experiential standing separate.
 use crate::m_tree::{MTreeId, MTreeNode, native_m_registry};
 use crate::{
     HarmonicRatio, LensId, MusicalBasis, MusicalTraversalCandidate, TraversalExpansionSide,
@@ -12,7 +12,7 @@ use crate::{
 use ql_core::{ConjugationDegree, QlCoordinate, Quat, RING_QUATERNION_LUT};
 use serde::Serialize;
 
-pub const ENGINE_VERSION: &str = "0.1.0";
+pub const ENGINE_VERSION: &str = "1.0.0";
 pub const RETURN_REVISION: &str = "bb47ab9730f0ddadd4891666fb6f3e0a6d457330";
 pub const SOURCE_REF: &str = "Idea/Bimba/Map/datasets/(0_1) Vortex Modulae - (0_1) x 12Fold and 8_9fold (mod12 and mod10) Archetypal Number Identities - Sheet1.csv";
 pub const VALID_FOLDS: [u32; 14] = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 16, 18, 24];
@@ -576,6 +576,6 @@ pub fn traverse_json(input: &str) -> Result<String, String> {
         "basis":match basis {MusicalBasis::Chromatic=>"chromatic", MusicalBasis::Fifths=>"fifths"},
         "lens":lens.code(),"interval_semitones":result.interval_semitones,"candidates":candidates,
         "completion_base_phase":result.source.face.kernel_value(),
-        "acceptance":"candidate-pending-K4-and-K5", "experiential_parity":"unassessed"
+        "acceptance":"kernel-contract-v1; instrument-and-experience-separate", "experiential_parity":"unassessed"
     })).map_err(|e|e.to_string())
 }

@@ -1,0 +1,462 @@
+{
+  "schema": "ql.m1.kernel-acceptance/v1",
+  "k4_revision": "5b24b95d17234ab5d23d84e658c0cc06434b41a3",
+  "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "source_return_revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
+  "status": "executed-native-contract; downstream provider/instrument/experiential dispositions remain separate",
+  "evidence_scope": {
+    "source": "Verbatim Ananda raw/DR source plus immutable K2 source record descriptors; not equivalence of literal and numeric registers",
+    "coordinate": "All 43 K4 M1 coordinates / original parent, children and source IDs",
+    "relation": "1072 incident K2 serialized relation descriptors; no fresh live graph or inferred semantic equivalence",
+    "operational": "Actual C vs independent Rust finite operations; Rust state/action and existing music/traversal composition; floating tolerance 3e-7 (f32), 2e-14 (f64) on tested ranges",
+    "experiential": "unassessed"
+  },
+  "subjects": [
+    "k5-m1:ananda",
+    "k5-m1:spanda",
+    "k5-m1:formal",
+    "k5-m1:topology",
+    "k5-m1:torus",
+    "k5-m1:clock",
+    "k5-m1:traversal",
+    "k5-m1:ratios",
+    "k5-m1:source-literals",
+    "k5-m1:reflection",
+    "k5-m1:grammar",
+    "k5-m1:rotor",
+    "k5-m1:carrier",
+    "k5-m1:advance",
+    "k5-m1:relations",
+    "k5-m1:finite-field",
+    "k5-m1:source-traits",
+    "k5-m1:state",
+    "census:#1",
+    "census:#1-0",
+    "census:#1-1",
+    "census:#1-2",
+    "census:#1-2-0",
+    "census:#1-2-0-0",
+    "census:#1-2-1",
+    "census:#1-2-1-0",
+    "census:#1-2-2",
+    "census:#1-2-2-0",
+    "census:#1-2-3",
+    "census:#1-2-3-0",
+    "census:#1-2-4",
+    "census:#1-2-4-0",
+    "census:#1-2-5",
+    "census:#1-2-5-0",
+    "census:#1-3",
+    "census:#1-3-0",
+    "census:#1-3-1",
+    "census:#1-3-2",
+    "census:#1-3-3",
+    "census:#1-3-4",
+    "census:#1-3-4.0/1",
+    "census:#1-3-4.0/1/2",
+    "census:#1-3-4.0/1/2/3",
+    "census:#1-3-4.0000",
+    "census:#1-3-4.4.0-4.4/5",
+    "census:#1-3-4.5/0",
+    "census:#1-3-5",
+    "census:#1-4",
+    "census:#1-4.0",
+    "census:#1-4.1",
+    "census:#1-4.2",
+    "census:#1-4.3",
+    "census:#1-4.4",
+    "census:#1-4.5",
+    "census:#1-5",
+    "census:#1-5-0",
+    "census:#1-5-1",
+    "census:#1-5-2",
+    "census:#1-5-3",
+    "census:#1-5-4",
+    "census:#1-5-5",
+    "deep-M1:M1-C01",
+    "deep-M1:M1-C02",
+    "deep-M1:M1-C03",
+    "deep-M1:M1-C04",
+    "deep-M1:M1-C05",
+    "deep-M1:M1-C06",
+    "deep-M1:M1-C07",
+    "deep-M1:M1-C08",
+    "deep-M1:M1-C09",
+    "deep-M1:M1-C10",
+    "deep-M1:M1-C11",
+    "deep-M1:M1-C12",
+    "deep-M1:M1-C13",
+    "deep-M1:M1-C14",
+    "deep-M1:M1-C15",
+    "deep-M1:M1-C16",
+    "deep-M1:M1-C17",
+    "deep-M1:M1-C18",
+    "deep-M1:M1-C19",
+    "deep-M1:M1-C20",
+    "field-M1:M1P-CANONICAL-SOURCE",
+    "field-M1:M1P-INSTANCE",
+    "field-M1:M1P-HARMONIC-ENGINE",
+    "field-M1:M1P-SPANDA",
+    "field-M1:M1P-QL-FLOWERING",
+    "field-M1:M1P-TOPOLOGY",
+    "k5-m1:source-inventory",
+    "k5-m1:acceptance",
+    "k4-live-spelling-composite-m1-(1, 3, 4, 4, 0)",
+    "k4-live-spelling-composite-m1-1-3-4-4-0",
+    "k5-m1:sum-dr",
+    "#1-2-2-0",
+    "k5-m1:difference-a-dr",
+    "#1-2-3-0",
+    "k5-m1:quintessence-raw",
+    "#1-2-5",
+    "k5-m1:quintessence-dr",
+    "#1-2-5-0"
+  ],
+  "capability_dispositions": [
+    {
+      "row": "deep-M1:M1-C01",
+      "native_operations": [
+        "reflection"
+      ],
+      "disposition": "Formal source/instance identity preserved; self-identity metaphysics remains authored meaning."
+    },
+    {
+      "row": "deep-M1:M1-C02",
+      "native_operations": [
+        "reflection",
+        "clock"
+      ],
+      "disposition": "Same-position phase inversion preserves source identity. M2 differentiation remains K6."
+    },
+    {
+      "row": "deep-M1:M1-C03",
+      "native_operations": [
+        "reflection",
+        "ananda"
+      ],
+      "disposition": "M1-0/1 is the authored composite expression, not a missing native node. The source reflection edge and signed Ananda differences expose the operative relation."
+    },
+    {
+      "row": "deep-M1:M1-C04",
+      "native_operations": [
+        "ananda",
+        "source-literals",
+        "traversal",
+        "ratios"
+      ],
+      "disposition": "Full numeric and literal Ananda field; arbitrary scalar-cell to musical relation inference is not fabricated."
+    },
+    {
+      "row": "deep-M1:M1-C05",
+      "native_operations": [
+        "clock",
+        "advance",
+        "spanda"
+      ],
+      "disposition": "Generated bi-phase and independent fibre are operative; mutable platform/harness lifecycle remains external."
+    },
+    {
+      "row": "deep-M1:M1-C06",
+      "native_operations": [
+        "grammar",
+        "ratios"
+      ],
+      "disposition": "Existing matheme/ratio derivation consumed; 3:3 and 3:1 retain their authored process/recognition interpretations."
+    },
+    {
+      "row": "deep-M1:M1-C07",
+      "native_operations": [
+        "grammar",
+        "state",
+        "traversal"
+      ],
+      "disposition": "Canonical kernel and seven CFs compose; no alternate P/CF grammar."
+    },
+    {
+      "row": "deep-M1:M1-C08",
+      "native_operations": [
+        "reflection",
+        "traversal",
+        "finite-field"
+      ],
+      "disposition": "Position complement, same-position conjugacy and independent direct/prime state words remain distinct."
+    },
+    {
+      "row": "deep-M1:M1-C09",
+      "native_operations": [
+        "finite-field"
+      ],
+      "disposition": "36 relation ordinals, 64 states, 128 face-indexed states and all 4096 supplied word pairs are executable; ordinals are not M coordinates or M3 codons."
+    },
+    {
+      "row": "deep-M1:M1-C10",
+      "native_operations": [
+        "clock",
+        "spanda"
+      ],
+      "disposition": "Deterministic oscillatory structure is available. General activity-based excess/deficiency or eight-determination inference is not present in the recovered body; retained research/operational gap, not guessed classifier."
+    },
+    {
+      "row": "deep-M1:M1-C11",
+      "native_operations": [
+        "state",
+        "grammar"
+      ],
+      "disposition": "All seven configured CFs select existing modes. Agency activation authority belongs to Actuation/AIKit, not this numeric engine."
+    },
+    {
+      "row": "deep-M1:M1-C12",
+      "native_operations": [
+        "state",
+        "traversal"
+      ],
+      "disposition": "Existing 12-lens/7-mode and 72 formal reservoir used. Semantic MEF readings use existing ql-mef refraction, not duplicated here."
+    },
+    {
+      "row": "deep-M1:M1-C13",
+      "native_operations": [
+        "traversal",
+        "ratios",
+        "state"
+      ],
+      "disposition": "Accepted pre-M musical authority retained; M2 material realization K6/K8, instrument K9."
+    },
+    {
+      "row": "deep-M1:M1-C14",
+      "native_operations": [
+        "carrier",
+        "rotor",
+        "torus",
+        "clock"
+      ],
+      "disposition": "Toroidal/quaternionic and phase conventions are operative. General topological necessity/psychophysical claims retain source warrant."
+    },
+    {
+      "row": "deep-M1:M1-C15",
+      "native_operations": [],
+      "disposition": "TDA on representation/activity trajectories is not in the recovered native computational body. Explicit unimplemented provider/research depth for the existing #133 deep-instrument programme; no TDA claim from torus samples."
+    },
+    {
+      "row": "deep-M1:M1-C16",
+      "native_operations": [
+        "state",
+        "traversal",
+        "carrier"
+      ],
+      "disposition": "Kernel operations and stable event refs ready for #132/#133; playable audio/controller/Janko renderer is downstream, not a second kernel."
+    },
+    {
+      "row": "deep-M1:M1-C17",
+      "native_operations": [],
+      "disposition": "Native Actuation owns Agency constitution and authority; M1 formal refraction can be consumed there. No duplicate Agency runtime in K5."
+    },
+    {
+      "row": "deep-M1:M1-C18",
+      "native_operations": [],
+      "disposition": "Operative relational persistence remains native Hen/Central/AIKit contribution, not M1 storage implementation."
+    },
+    {
+      "row": "deep-M1:M1-C19",
+      "native_operations": [],
+      "disposition": "Source/canon revision remains an explicit Epi/QL recognition operation; M1 returns evidence but does not rewrite source or Bimba. Native #133/#134 consumers own the broader return."
+    },
+    {
+      "row": "deep-M1:M1-C20",
+      "native_operations": [
+        "carrier",
+        "rotor",
+        "ratios",
+        "state"
+      ],
+      "disposition": "Existing M1 carrier/math and event identity are exposed; continuous material/audio/render composition in #132/#133 consumes K6/K7 engines."
+    },
+    {
+      "row": "field-M1:M1P-CANONICAL-SOURCE",
+      "native_operations": [
+        "source-literals",
+        "source-traits",
+        "grammar"
+      ],
+      "disposition": "Native immutable source access; no live graph mutation."
+    },
+    {
+      "row": "field-M1:M1P-INSTANCE",
+      "native_operations": [
+        "state"
+      ],
+      "disposition": "Bounded event/clock/selection/harmonic owner is implemented; host persistence belongs to consumer."
+    },
+    {
+      "row": "field-M1:M1P-HARMONIC-ENGINE",
+      "native_operations": [
+        "ananda",
+        "source-literals",
+        "state"
+      ],
+      "disposition": "Computational field ready; continuous rendering/audio is #132/#133."
+    },
+    {
+      "row": "field-M1:M1P-SPANDA",
+      "native_operations": [
+        "clock",
+        "advance",
+        "spanda",
+        "state"
+      ],
+      "disposition": "Source faithful clock/pass computation and mutable instance; continuous pulsation is K8."
+    },
+    {
+      "row": "field-M1:M1P-QL-FLOWERING",
+      "native_operations": [
+        "traversal",
+        "grammar",
+        "state"
+      ],
+      "disposition": "All basis/lens/CF states and actual traversal candidate completion retained."
+    },
+    {
+      "row": "field-M1:M1P-TOPOLOGY",
+      "native_operations": [
+        "carrier",
+        "rotor",
+        "torus",
+        "state"
+      ],
+      "disposition": "Numeric geometry/source facts ready; played topology and experiential verification are #132/#133."
+    }
+  ],
+  "executed": {
+    "retained_native_ananda_cells": 20736,
+    "literal_tokens": 1728,
+    "literal_matches": 1728,
+    "numeric_literal_differences_retained": 376,
+    "coordinates": 43,
+    "incident_relation_observations": 1072,
+    "reflection_states": 86,
+    "rotors": 2401,
+    "carriers": 48,
+    "torus_positions": 625,
+    "clock_advances_including_overflow": 384,
+    "independent_state_pairs": 4096,
+    "source_trait_tables": 1,
+    "traversal_cases": 6912,
+    "mode_basis_lens_cases": 168,
+    "m1_engine_tests": 8,
+    "m1_state_tests": 8,
+    "census_tests": 19
+  },
+  "input_locks": [
+    {
+      "path": "c/include/ql/m1.h",
+      "sha256": "087d84a96bc92bb0b620b4e5a1b69df3fba941c694fa59adfee973d7e032b046"
+    },
+    {
+      "path": "c/src/m1.c",
+      "sha256": "46d44b7ee37a5a78999b11e63b2a07dc8c11b375f3fe5d861bc129cb749875ab"
+    },
+    {
+      "path": "c/src/m1_state.c",
+      "sha256": "a7d949e543e52b4e2a7191eb662a0b1af3a793138946c661f8e7a4076955754e"
+    },
+    {
+      "path": "c/src/m1_source_data.inc",
+      "sha256": "530f2d3c24d62b4fcf2f8a6cc1fbabea15d083f728de68957b5640a28cb9f925"
+    },
+    {
+      "path": "crates/ql-mef/src/m1.rs",
+      "sha256": "0ad921c1dc99506beb0830873b06b2abcb16b2c1e67955b0a693a64c500e9fd7"
+    },
+    {
+      "path": "crates/ql-mef/src/m1_engine.rs",
+      "sha256": "6720e4f61d3c7a069fbfe6e305e54fed2b177d56e5ec365f8483da0bba0ee886"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_engine.rs",
+      "sha256": "2a6644895a9f6cf1447cdb0e1e9ddef7b2e5a7ea4b26ab8a0a5bd77ab0edd714"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_state.rs",
+      "sha256": "571b1bbfe0b594982b9c9d516e544cd57cf473d926de3383314d18fd40cbb54d"
+    },
+    {
+      "path": "migration/epi-kernel/m1-state-probe.c",
+      "sha256": "e11b03bdbcc7503adfd8b5464c3f00412edb4a6bdc61c5cc644749bf4b5ff2bc"
+    },
+    {
+      "path": "migration/epi-kernel/m1-engine-probe.c",
+      "sha256": "8155422678e070ec42cc6ccc80e5f717772d35b122e807e8be4581564413e08f"
+    },
+    {
+      "path": "migration/epi-kernel/m1-return/source-lock.json",
+      "sha256": "9d3e25cdb9acbf54f1369e4181f4c9c6698f1c2c13503a1f90ddc1a1234b651a"
+    },
+    {
+      "path": "scripts/check-m1-source.py",
+      "sha256": "c13605795ba15b3230518f31bfb5baf0b09867235239acc2d8f77fa43c2cfcdb"
+    },
+    {
+      "path": "scripts/check-m1-literals.py",
+      "sha256": "bfa9a11b752e37fd84b278d7444cef55ef3f2ba050e409f99f4374e65520a91d"
+    },
+    {
+      "path": "scripts/generate-m1-source.py",
+      "sha256": "dd07022a46599ba0d7625fc2c75b41582b5fd51b8521f02fde5623880812ccbd"
+    },
+    {
+      "path": "scripts/test-m1-engine.sh",
+      "sha256": "07e25a326e0bdbb1b66615a473f975c17609fe02291e869518bb5b1ebee61065"
+    },
+    {
+      "path": "fixtures/kernel/m1-source-literals-v1.json",
+      "sha256": "aac66e27e5e7f38c6ab61f8c422ecbcf06cf4f5ef98397c2c78b4ad186a14076"
+    },
+    {
+      "path": "fixtures/kernel/m1-engine-v1.schema.json",
+      "sha256": "cf0a1bc192870d5522d851aed0262b864eb7c5d07e5a90668275a73447d25d6a"
+    },
+    {
+      "path": "fixtures/kernel/m1-engine-v1.request.json",
+      "sha256": "0e040db95d3f18546dc63deac869d020da84f96fc85a1b0f34c5dbbaf88cdb20"
+    },
+    {
+      "path": "scripts/check-m1-acceptance.py",
+      "sha256": "64cf9cb4616f118ad2eb6e820d0c19b38f1b4349e04ba7343aa35e7a95dda0a1"
+    },
+    {
+      "path": "scripts/m_census.py",
+      "sha256": "85bc98659d62c27105bc2cd1b75615312d7eb31fcd53ef6f6a87d319ca88cd1b"
+    },
+    {
+      "path": "scripts/tests/test_m_census.py",
+      "sha256": "b062401db3a805c87f139644f6b0059c074724be25da273aa4ec7ebc7d149ba7"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_acceptance.rs",
+      "sha256": "aafbc4eaabc483717b21d39f72bea7cff215ba11bb0534753e471a426fe53dfd"
+    },
+    {
+      "path": "crates/ql-cli/src/lib.rs",
+      "sha256": "d0ace3ae8f4ae2f579d7f1c4775d32a32dd83ccfac100df4cd4e63b32b027bb8"
+    },
+    {
+      "path": "crates/ql-cli/tests/m1_engine_cli.rs",
+      "sha256": "6d4e81217dda0744389087706236b025ae2094fc8cbaf34ac7c908e81838d889"
+    }
+  ],
+  "observations": [
+    {
+      "local_path": "target/m1-engine/c-rust.jsonl",
+      "sha256": "e7ee82fd94268bc0e6ef397621afb507fcc1f44b5dcc925e5049b0a34e6f1d2e"
+    },
+    {
+      "local_path": "target/m1-state/c-rust.jsonl",
+      "sha256": "4f4b2c9eda1aaa2dd46df149dbdde483cd210d92c0053c26eb336302c0961678"
+    }
+  ],
+  "scope_boundaries": [
+    "M1 engine state is process-local; persistent storage, session lifecycle and authorization remain with native consumers",
+    "C++ installed linkage does not constitute K8 continuous material/audio/rendering or K9 deep instrument completion",
+    "Source prose is retained at its own warrant; no universal consciousness/topological necessity proof is claimed",
+    "No new M/CF/music/Agent identity or registry introduced"
+  ]
+}

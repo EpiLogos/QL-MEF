@@ -27,12 +27,19 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
     let l = ledger();
     assert!(codes(&l).is_empty());
     assert_eq!(l.matrices.len(), 10);
-    assert!(l.rows.len() >= 192);
+    assert!(l.rows.len() >= 1828);
+    assert_eq!(
+        l.rows
+            .iter()
+            .filter(|r| r.id.starts_with("census:"))
+            .count(),
+        1636
+    );
     assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
     assert_eq!(
         l.implementations
             .iter()
-            .filter(|i| i.kind == "structural-index")
+            .filter(|i| i.id.contains("ql.m-index:"))
             .count(),
         14
     );
@@ -68,7 +75,7 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
             c.coordinates_without_computational_binding.len(),
             count - bound_in_scope
         );
-        assert_eq!(c.blocking_rows.len(), c.rows.len());
+        assert!(c.blocking_rows.len() <= c.rows.len());
     }
 }
 

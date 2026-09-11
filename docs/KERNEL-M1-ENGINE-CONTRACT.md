@@ -1,10 +1,10 @@
-# M1 / Paramaśiva engine candidate — K5 (#129)
+# M1 / Paramaśiva engine contract — K5 (#129)
 
-Status: **candidate 0.1.0; not whole-M1 acceptance**. This work was opened on
-`e753efc91f62b5b2af09e0a852c5063e366eccbe`. At inspection on 2026-09-11,
-#128 contained the accepted K3 handoff, not an accepted K4 M1 census. Therefore
-this return must not close #129 or be described as executing an accepted K4
-vertical. It supplies a tested, bounded native implementation for that review.
+Status: **stable kernel contract 1.0.0**. Consumes accepted K4/#153 at
+`5b24b95d17234ab5d23d84e658c0cc06434b41a3`. All 43 M1 coordinate
+rows are reconciled to native operations; all 26 inherited source capabilities
+have explicit implementation/consumer/research dispositions in the same M ledger.
+K8 continuous embodiment and K9 played instruments consume this kernel contract.
 
 ## Authority and recovered depth
 
@@ -14,8 +14,8 @@ registry, unchanged at revision
 K3's `fixtures/kernel/m-ledger-v1.json` remains the only readiness/discrepancy
 ledger. Original imported matrix rows, Markdown rationales, source spellings,
 parent discrepancies and seven-stratum/five-axis assessments are retained.
-New bounded rows disclose what this candidate actually computes; they do not
-upgrade inherited M1 capability rows or the aggregate index to complete.
+Reviewed census rows now disclose native computation; inherited source capabilities
+retain wider provider/research standing. The aggregate index remains an index.
 
 The original M1 C body remains untouched under `vendor/epi-kernel/reference`.
 The later accepted upstream return was recovered in full from
@@ -109,7 +109,7 @@ a derivation tree, including both operands. Checked widened products reduce
 before conversion back to the existing positive `HarmonicRatio` register.
 They recover the existing eight canonical ratios, not a new tuning grammar.
 
-The candidate wire envelope is `ql.m1.traversal/v1`. `traverse_json` rejects
+The traversal wire envelope is `ql.m1.traversal/v1`. `traverse_json` rejects
 unknown fields/schema, invalid indices/faces/lenses and malformed counters.
 `cycle` is an unsigned decimal **string** to preserve 64-bit identity in clients.
 Source/target have `position6:0..5` and `phase:0|1`; `lens12` uses the existing
@@ -125,49 +125,186 @@ Output carries registry/source-return/music versions, exact M1 IDs, all cell
 contributors, source-ratio evidence, original pointer evidence, observed
 traversal orientation, interval, every candidate's family/pair/D degree/side,
 operator reference, completed coordinates and pitches. Pointer evidence is
-labelled `caller-supplied`, not authenticated Neo4j evidence. Acceptance is
-explicitly candidate and experiential parity remains unassessed. No Rust ABI,
+labelled `caller-supplied`, not authenticated Neo4j evidence. Experiential parity remains unassessed. No Rust ABI,
 C++ runtime, audio driver, renderer or transport is implied by this JSON method.
 The installed C++ consumer proves linkage/data consumption only, not M1′
-instrument behaviour. K8 can consume this candidate but must not advertise a
-stable accepted whole-M1 engine until K4/K5 decisions are returned.
+instrument behaviour. K8 consumes this stable discrete/finite boundary; its continuous implementation
+and the played M1′ experience remain separate acceptance objects.
 
-## Literal source pressure retained through the ledger
+## Source-register reconciliation
 
-`docs/kernel-rebuild/m1-source-comparison-v1.json` compares all 1,728 raw/DR
-literal readings of the complete 6×12×12 CSV with **actual native C output**.
-There are 1,352 exact textual matches and 376 differences: Sum DR has two
-`0/1` literals where the accepted typed result is 1; Difference A DR has 144
-source 1 / runtime 9 readings; Quintessence has 120 raw and 110 DR textual
-differences. The report records every source row/column, literal and projected
-value. Some may express different symbolic/register meanings rather than
-incorrect arithmetic. This work does not infer that interpretation, normalise
-`0/1`, erase a component, rewrite the CSV, or claim full Bimba/source parity.
-The four corresponding existing-ledger discrepancies remain open for K4/K5
-resolution. The runtime authority is the accepted typed return; the CSV remains
-an independently addressable source witness. Passing runtime parity cannot
-close those source/coordinate interpretation questions.
+The original 1,728-reading comparison remains unchanged: 1,352 textual matches
+and 376 differences. K5 resolves **loss/conflation at the implementation boundary**,
+not by pretending those unlike readings are equal. Both are now operational:
 
-## Executable evidence and remaining acceptance
+`ql_m1_source_cell` / `m1_engine::source_cell` exposes **all 1,728 literal raw/DR
+expressions**, their exact CSV row and column, source blob and SHA-256. The
+generator reads the complete locked source, and independent tests compare actual
+compiled C output directly to the CSV (not to the generated Rust fixture).
+`ql_m1_cell` / `m1::cell` continues the accepted, independently tested numeric
+projection. A caller can inspect the expression and compute with the named
+numeric register without losing either representation.
 
-`cargo test -p ql-mef --test m1_engine --locked` executes 20,736 cells across all
-families, rows, columns, ticks and both fibres against the retained C return,
-then compares the actual C descriptors with independent Rust execution. It
-also exercises 6,912 actual-walk/basis/lens/conjugate combinations, raw/DR/
-decimal separation, exact ratio provenance/overflow, D2 reversal, JSON rejection
-and full-width counters. `scripts/check-m1-source.py` validates witness hashes
-and detects any changed literal/runtime pressure rather than hiding it.
+The four ledger decisions are therefore applied as follows:
 
-`bash scripts/test-m1-engine.sh` runs ASan/UBSan, actual source/typed observations,
-and an installed-library C++17 consumer. It is added to the existing native C
-job, not a new CI matrix. Existing whole-registry and retained kernel tests remain
-in place. C/Rust source/coordinate/operational evidence here is scoped to these
-operations; it is not blanket relation, live Neo4j, application, instrument or
-experiential parity. The original inherited source rows remain unassessed.
+| Source reading | Numeric projection | Resolution |
+|---|---|---|
+| Sum DR has two `0/1` literals | scalar 1 | Return both; no automatic normalization of the expression |
+| Difference A DR is 1 in the CSV | complement residue 9 for signed -1 | Keep literal and complement policy separately named; never call `%10` digit root |
+| Quintessence raw expressions | full five contributors plus `{-1,bimba,sum}` rule | Return the expression and contributors, never replace the sixth family by a scalar/XOR |
+| Quintessence DR expressions | numeric contributor residues | Return both the source expression and computed tuple |
 
-Still required for #129: accepted K4 M1 inventory/work graph; full per-coordinate
-M1 census and dispositions (including existing HC/arena/CLI and other wrappers),
-review of the four literal-source pressures and two clock conventions through
-that authority, the remaining coordinate/relation/operational obligations,
-and accepted stable M1′ handoff. No K6/K7 source, core schema, canonical agent
-name, registry node or relation is changed here.
+This is an interface/representation decision warranted by the original CSV and
+the accepted bb47ab9 typed return. It does not decide that every symbolic
+expression has a unique scalar meaning. Original bytes, previous comparison,
+and each discrepancy's proposal/decision/application history remain available.
+
+The K4 live composite spelling is also retained. K5 rejects promoting guessed
+aliases: `#1-3-4.4.0-4.4/5` remains the executable K2 coordinate, while the
+observed live `M1-3-4.(4.0/1-4.4/5)` remains source observation, not an accepted
+native alias. No parentheses/slashes are silently normalized. The old duplicate
+K4 discrepancy is retained with the same no-promotion disposition. This does
+not change or judge the live graph's spelling.
+
+## Complete coordinate operations and state
+
+The added native C `m1_state.c` and Rust `m1_engine` module complete the K4
+coordinate assignments without a second registry. The original 43 coordinates,
+source parents/children/records and 1,072 incident relation observations come
+from K2; relation parity compares the complete retained relation descriptors,
+including external endpoints, orientation, source record and cross-M flags.
+The normalized K4 live capture establishes observed coordinate presence, not a
+new execution or a fresh full live-relation observation in this session.
+
+| Coordinate body | Executable state / reading |
+|---|---|
+| `#1`, `#1-0`, `#1-1` | Bounded source/instance identity, event, revision, selection and reflection; immutable registry source remains separate from mutable state |
+| `#1-2`, six family nodes and their six `-0` DR nodes | Full Ananda numeric/source projections and explicit register selection |
+| `#1-3`, six stages and all six compound Flowering nodes | Clock, checked advance, source mutator results, fold sieve and selected substage |
+| `#1-4`, six dotted stages | Ratio/cardinality derivation, 4+6 frame, inversion, 12-ring, nesting; formal/trig source slots; finite 36/64/128/4096 state/relation field |
+| `#1-5`, six topological children | Two-circle quaternion rotor, torus embedding, independent cover/spinor, opposition, quadrature/72 carrier and genus-one structural invariants |
+
+`ql_m1_source_traits` preserves the source branch category table, doubling and
+tripling rings and unary/binary/relational masks, verified directly against the
+frozen C tables. These M1-generative source tracks do not replace M2/M3 engines.
+The source header/source construct inventory includes the constants, header-only
+helpers and historical lifecycle/CLI/cache wrappers omitted by name-only discovery.
+Each retained construct names its coordinate and native successor family.
+Historical allocation/tagged-pointer/CLI residency does not need a duplicate host:
+the process-local Rust engine supplies the bounded mutable state, and static C
+projection removes lazy-cache mutation. Source is not deleted.
+
+`ql_m1_finite_field` and `m1_engine::finite_field` use independently supplied
+direct and prime six-bit words. They expose the 36 relation index, 64 word states,
+128 face-indexed states and 4,096 ordered pairs. Pair indices are storage
+ordinals, not new M nodes or M3 codon identities. Bitwise complement is separate
+from choosing the prime word. C reuses the accepted primitive operations; Rust
+uses the existing sixfold relation order and face involution.
+
+`ql_m1_rotor(a,b)` uses `exp(i*a) exp(j*b)` and the existing quaternion multiply;
+angles are finite radians. `ql_m1_carrier` emits the generated clock spinor,
+quadrature and its opposite, with exact source coordinate handles and 72-carrier
+cardinality. Floats describe a numerical realization, never replacement symbolic
+identities. The historical nonuniform quaternion LUT and return-stage sequence
+remain explicitly available, distinct from the generated 24-tick orbit.
+
+### Operational owner and Actions
+
+`ql_mef::m1_engine::M1Engine` holds private, validated state. Construction requires
+an event ref, source subject, selected exact coordinate, cycle/tick, revision and
+harmonic configuration. `select`, `advance` and `configure_harmonics` check the
+expected revision and validate the entire change before committing. Invalid,
+stale and overflowing changes leave the state untouched; no-op changes keep the
+revision. Event and subject identity survive every action. `pole_identity()`
+returns the existing cross-domain event identity with the actual degree720.
+
+Every selected branch returns **its own computation**, not the currently active
+cell relabelled with a selected coordinate. For example selecting `#1-2-3` while
+family 0 is active returns Difference A for the chosen cell without changing the
+active family. The selected reading and active configuration are separate.
+All 43 selected readings are tested. Every basis/lens/CF selection consumes the
+existing musical derivation and returns the actual tonic, mode, seven pitches
+and Name/Power pattern. All 168 combinations (two bases × 12 lenses × seven
+CFs) are checked against the existing operator.
+
+Storage, authorization, session lifecycle, physical scheduling and realtime
+interpolation remain with native consumers. This owner is not a second generic
+Actuation/AIKit runtime and does not mutate Bimba or authored source.
+
+### JSON and CLI boundary
+
+The strict request contract is `ql.m1.engine/v1`; its schema and complete example
+are `fixtures/kernel/m1-engine-v1.schema.json` and
+`fixtures/kernel/m1-engine-v1.request.json`. Invoke:
+
+```sh
+ql kernel m1 fixtures/kernel/m1-engine-v1.request.json --json
+```
+
+`config` is required. The optional `action` is `advance`, `select` or `harmonics`,
+each with `expected_revision`; `null` is a read. Cycle/revision/tick-delta counters
+are unsigned decimal strings of at most 20 digits, additionally checked for u64
+overflow. Invalid coordinate spellings, out-of-range values, unknown fields and
+stale revisions fail. Event refs are non-blank and bounded to 4096 UTF-8 bytes.
+The returned configuration can re-enter the request transport without precision
+loss. A transported configuration is caller-supplied data, not authenticated
+remote mutation authority; persistent consumers keep the actual engine instance.
+
+The separate `ql.m1.traversal/v1` boundary remains available with source/target
+pointer evidence, A/B/C participation and D completion. Public C and Rust APIs
+also expose numeric geometry and finite-state operations for in-process clients.
+
+## Remaining source-capability and downstream standing
+
+The shared ledger accounts all 20 deep and six normalized M1 capabilities.
+A broad authored capability may remain **partial** while its scoped numeric
+operations are verified. In particular, a kernel test does not complete a
+played instrument or a general activity/psychophysical interpretation.
+
+The explicit residuals are: general activity-based excess/deficiency and
+eight-determination inference (C10); representation-trajectory TDA (C15);
+continuous audio/material/rendering and the played/Jankó instrument (C16 and
+render-facing field rows); and Agency, persistence, source Recognition and
+whole-product Return in their existing native owners (C17–C19). Arbitrary scalar
+Ananda-cell-to-musical-relation inference is not substituted for the implemented
+actual-walk bridge. These are preserved capabilities, with native-operation
+dependencies and existing owner/programme dispositions, not undiscovered holes
+or extra completion claims hidden behind a single green flag.
+
+K8/#132 consumes the source-backed carrier and stable C/Rust boundary. K9/#133
+composes the full deep instrument and M1/M2/M3 shared event. This K5 acceptance
+completes the coordinate-backed **kernel contract**, not those downstream
+embodiment or experiential acceptances. No M2/M3 runtime, registry/schema,
+canonical Agent name or source-coordinate hierarchy is changed.
+
+## Reproduction and evidence
+
+`cargo test -p ql-mef --test m1_engine --test m1_state --locked` executes the
+retained-source comparisons, actual C/Rust observations and state/music tests.
+`bash scripts/test-m1-engine.sh` executes native ASan/UBSan and an installed
+C++17 consumer. `scripts/generate-m1-source.py` checks exact generated literals;
+`scripts/check-m1-literals.py` compares actual C source readings to the CSV.
+The old numeric/literal comparison is retained by `scripts/check-m1-source.py`.
+
+The ledger evidence receipt is `docs/kernel-rebuild/m1-engine-acceptance-v1.json`.
+Its exact input locks and observation scope are checked by the M1 acceptance
+regressions; CI independently executes the actual operations. The earlier
+candidate receipt remains historical rather than being silently relabelled.
+The K4 census now preserves reviewed vertical rows during refresh while still
+regenerating its independent discovery reports. A replay regression protects
+both reviewed coordinate rows and source-matrix assessments. No shared schema
+change or competing ledger is needed.
+
+## Parent/deep runtime handoff
+
+This is the M1 producer consumed by the existing
+`kernel-rebuild/PARENT-SURFACES-INTEGRATION.md` plan, not an additional surface
+or renderer. `config.revision` is the canonical state generation; `clock.cycle`
+and `clock.tick12` are its exact logical effective time. One immutable snapshot
+carries the event, source subject, selected coordinate, harmonic configuration,
+source-return and registry revisions together. K8 relates this logical time to
+its integration/audio/render clock explicitly; K5 does not invent a UTC
+observation or audio-device time. C++ interpolates that generation while domain
+changes return through the revision-checked Rust owner. Personal/Cosmic and
+deep M1′ consumers keep the same event and subject rather than starting another
+clock or generating a renderer-local ontology.

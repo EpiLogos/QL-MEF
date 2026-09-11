@@ -47,7 +47,7 @@
       "standing": "IMPLEMENTATION-FACT",
       "owner": "Software Factory",
       "revision": "current main at 7e8fadea5156d75eb872f55f4fd4938d47fb0648",
-      "source": "EpiLogos/agent-system-design#176 (closed completed)",
+      "source": "EpiLogos/Factory#176 (closed completed)",
       "relation": "Commission/Journey/Run carries developmental continuity and evidence while Actuation owns Agency/authority/Return, AIKit operative body/context and Workcell material placement."
     },
     "OI_SHAREDFIELD_SPACETIMEDB": {

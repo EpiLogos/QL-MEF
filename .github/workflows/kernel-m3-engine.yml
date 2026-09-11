@@ -1,0 +1,64 @@
+name: M3 source / semantic parity
+
+on:
+  pull_request:
+    paths: ["c/**", "crates/**", "vendor/epi-kernel/**", "fixtures/kernel/**", "scripts/**", "docs/kernel-rebuild/**", ".github/workflows/kernel-m3-engine.yml"]
+  push:
+    branches: [main]
+    paths: ["c/**", "crates/**", "vendor/epi-kernel/**", "fixtures/kernel/**", "scripts/**", "docs/kernel-rebuild/**", ".github/workflows/kernel-m3-engine.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m3-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      M3_SOURCE_ROOT: ${{ github.workspace }}/reference
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          persist-credentials: false
+          sparse-checkout: |
+            Idea/Bimba/Map/datasets/mahamaya-deep
+          path: reference
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install jsonschema==4.25.1
+      - name: Exact source and test-revision receipts
+        run: |
+          set -euo pipefail
+          mkdir -p target/m3-source
+          git rev-parse HEAD > target/m3-source/engine-source-revision.txt
+          git rev-parse HEAD^{tree} > target/m3-source/engine-source-tree.txt
+          git -C reference rev-parse HEAD > target/m3-source/bimba-source-revision.txt
+          test "$(cat target/m3-source/bimba-source-revision.txt)" = daa660cbc1b8c5da83828698665a753852cb0287
+          git archive --format=tar HEAD > target/m3-source/source.tar
+      - name: Lossless K2 source join and explicit semantic discrepancies
+        run: |
+          set -euo pipefail
+          python3 scripts/m3-source-parity.py --source-root "$M3_SOURCE_ROOT" | tee target/m3-source/summary.json
+      - name: Source, semantic mutation and canonical-ledger compatibility tests
+        run: |
+          set -euo pipefail
+          test -f "$M3_SOURCE_ROOT/Idea/Bimba/Map/datasets/mahamaya-deep/nodes-full-detail.json"
+          python3 -m unittest discover -s scripts/tests -p test_m3_source_parity.py -v 2>&1 | tee target/m3-source/tests.txt
+          python3 -m unittest discover -s scripts/tests -p test_m3_observation_parity.py -v 2>&1 | tee target/m3-source/observation-tests.txt
+          python3 scripts/m-ledger.py check | tee target/m3-source/ledger-locks.txt
+          git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m3-source-parity-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/m3-source/
+          retention-days: 14
+          if-no-files-found: error

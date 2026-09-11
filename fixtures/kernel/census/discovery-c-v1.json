@@ -1,0 +1,2518 @@
+{
+  "schema": "ql.m-census-discovery/v1",
+  "stratum": "c",
+  "construct_count": 352,
+  "bound_count": 86,
+  "orphan_count": 266,
+  "bound": [
+    {
+      "symbol": "engine_lemniscate_dive",
+      "path": "vendor/epi-kernel/reference/src/engine.c",
+      "kind": "function",
+      "line": 57,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "engine_double_covering",
+      "path": "vendor/epi-kernel/reference/src/engine.c",
+      "kind": "function",
+      "line": 70,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "engine_spanda_walk",
+      "path": "vendor/epi-kernel/reference/src/engine.c",
+      "kind": "function",
+      "line": 100,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "families_wire_reflective",
+      "path": "vendor/epi-kernel/reference/src/families.c",
+      "kind": "function",
+      "line": 114,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "m0_verify_holographic_registry",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "function",
+      "line": 671,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "holographic"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-5"
+      ]
+    },
+    {
+      "symbol": "m0_vak_ct",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "function",
+      "line": 698,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-5",
+        "#2-2-2-3-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        },
+        {
+          "coordinate": "#2-2-2-3-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-5",
+        "#2-2",
+        "#2-2-2",
+        "#2-2-2-3",
+        "#2-2-2-3-0/1"
+      ]
+    },
+    {
+      "symbol": "m0_vak_cp",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "function",
+      "line": 705,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-5",
+        "#2-2-2-3-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        },
+        {
+          "coordinate": "#2-2-2-3-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-5",
+        "#2-2",
+        "#2-2-2",
+        "#2-2-2-3",
+        "#2-2-2-3-0/1"
+      ]
+    },
+    {
+      "symbol": "m0_vak_cf",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "function",
+      "line": 711,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-5",
+        "#2-2-2-3-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        },
+        {
+          "coordinate": "#2-2-2-3-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-5",
+        "#2-2",
+        "#2-2-2",
+        "#2-2-2-3",
+        "#2-2-2-3-0/1"
+      ]
+    },
+    {
+      "symbol": "m0_vak_cs",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "function",
+      "line": 730,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-5",
+        "#2-2-2-3-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        },
+        {
+          "coordinate": "#2-2-2-3-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "vak"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-5",
+        "#2-2",
+        "#2-2-2",
+        "#2-2-2-3",
+        "#2-2-2-3-0/1"
+      ]
+    },
+    {
+      "symbol": "VIRTUE_LUT",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "const-table",
+      "line": 49,
+      "stratum": "c",
+      "coordinates": [
+        "#3-4-1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-4-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "virtue"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-4",
+        "#3-4-1",
+        "#3-4-1-2"
+      ]
+    },
+    {
+      "symbol": "SIVA_TABLE",
+      "path": "vendor/epi-kernel/reference/src/m0.c",
+      "kind": "const-table",
+      "line": 422,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-5-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-5-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "siva"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-5",
+        "#2-1-5-5"
+      ]
+    },
+    {
+      "symbol": "spanda_pass_seed",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 213,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "seed",
+            "spanda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-0"
+      ]
+    },
+    {
+      "symbol": "spanda_pass_pole_a",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 217,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-1",
+        "#1-3-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pole",
+            "spanda"
+          ]
+        },
+        {
+          "coordinate": "#1-3-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pole",
+            "spanda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-1",
+        "#1-3-2"
+      ]
+    },
+    {
+      "symbol": "spanda_pass_pole_b",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 221,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-1",
+        "#1-3-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pole",
+            "spanda"
+          ]
+        },
+        {
+          "coordinate": "#1-3-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pole",
+            "spanda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-1",
+        "#1-3-2"
+      ]
+    },
+    {
+      "symbol": "spanda_pass_trika",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 225,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "spanda",
+            "trika"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-3"
+      ]
+    },
+    {
+      "symbol": "spanda_pass_meta",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 233,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-4.5/0",
+        "#1-3-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-4.5/0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "meta",
+            "spanda"
+          ]
+        },
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "meta",
+            "spanda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-4",
+        "#1-3-4.5/0",
+        "#1-3-5"
+      ]
+    },
+    {
+      "symbol": "_ananda_digital_root",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 301,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda",
+            "digital"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2"
+      ]
+    },
+    {
+      "symbol": "_ananda_init",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 307,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2"
+      ]
+    },
+    {
+      "symbol": "m1_ananda_get",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 326,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2"
+      ]
+    },
+    {
+      "symbol": "m1_ananda_dr_get",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "function",
+      "line": 332,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2"
+      ]
+    },
+    {
+      "symbol": "ANANDA_BIMBA",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 22,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2-0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda",
+            "bimba"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2",
+        "#1-2-0"
+      ]
+    },
+    {
+      "symbol": "ANANDA_PRATIBIMBA",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 43,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda",
+            "pratibimba"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2",
+        "#1-2-1"
+      ]
+    },
+    {
+      "symbol": "ANANDA_SUM",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 64,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda",
+            "sum"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2",
+        "#1-2-2"
+      ]
+    },
+    {
+      "symbol": "ANANDA_QUINTESSENCE",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 85,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "ananda",
+            "quintessence"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2",
+        "#1-2-5"
+      ]
+    },
+    {
+      "symbol": "DR_RING_MAHAMAYA",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 122,
+      "stratum": "c",
+      "coordinates": [
+        "#1-0",
+        "#1-1",
+        "#1-2",
+        "#1-3",
+        "#1-4",
+        "#1-5",
+        "#3-3-4-19",
+        "#3-3-4-6"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-0",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-4",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-5",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3-3-4-19",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "mahamaya",
+            "ring"
+          ]
+        },
+        {
+          "coordinate": "#3-3-4-6",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "mahamaya",
+            "ring"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-0",
+        "#1-1",
+        "#1-2",
+        "#1-3",
+        "#1-4",
+        "#1-5",
+        "#3",
+        "#3-3",
+        "#3-3-4",
+        "#3-3-4-19",
+        "#3-3-4-6"
+      ]
+    },
+    {
+      "symbol": "DR_RING_PARASHAKTI",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 123,
+      "stratum": "c",
+      "coordinates": [
+        "#1-0",
+        "#1-1",
+        "#1-2",
+        "#1-3",
+        "#1-4",
+        "#1-5",
+        "#2-3-1-0-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-0",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-4",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#1-5",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#2-3-1-0-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "parashakti",
+            "ring"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-0",
+        "#1-1",
+        "#1-2",
+        "#1-3",
+        "#1-4",
+        "#1-5",
+        "#2",
+        "#2-3",
+        "#2-3-1",
+        "#2-3-1-0",
+        "#2-3-1-0-2"
+      ]
+    },
+    {
+      "symbol": "M1_BRANCH_QL_CATEGORY",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 130,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "M1_M0_CROSSLINK",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 145,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "QL_FLOWERING",
+      "path": "vendor/epi-kernel/reference/src/m1.c",
+      "kind": "const-table",
+      "line": 198,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-4",
+        "#1-4",
+        "#2-1-3-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "flowering"
+          ]
+        },
+        {
+          "coordinate": "#1-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "flowering"
+          ]
+        },
+        {
+          "coordinate": "#2-1-3-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "flowering"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-4",
+        "#1-4",
+        "#2",
+        "#2-1",
+        "#2-1-3",
+        "#2-1-3-4"
+      ]
+    },
+    {
+      "symbol": "m2_print_mef",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "function",
+      "line": 1021,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "mef"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1"
+      ]
+    },
+    {
+      "symbol": "m2_print_planets",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "function",
+      "line": 1033,
+      "stratum": "c",
+      "coordinates": [
+        "#2-5-0/1-0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-0/1-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "planet"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-0/1",
+        "#2-5-0/1-0"
+      ]
+    },
+    {
+      "symbol": "m2_print_tattvas",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "function",
+      "line": 1053,
+      "stratum": "c",
+      "coordinates": [
+        "#2-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "tattva"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-2"
+      ]
+    },
+    {
+      "symbol": "M2_ARCHETYPES",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 21,
+      "stratum": "c",
+      "coordinates": [
+        "#1-2-3",
+        "#1-2-4",
+        "#2",
+        "#3-3-4-0",
+        "#3-3-4-21"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-2-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "archetype"
+          ]
+        },
+        {
+          "coordinate": "#1-2-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "archetype"
+          ]
+        },
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3-3-4-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "archetype"
+          ]
+        },
+        {
+          "coordinate": "#3-3-4-21",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "archetype"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-2",
+        "#1-2-3",
+        "#1-2-4",
+        "#2",
+        "#3",
+        "#3-3",
+        "#3-3-4",
+        "#3-3-4-0",
+        "#3-3-4-21"
+      ]
+    },
+    {
+      "symbol": "M2_MEF_LENS_NAMES",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 45,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_MEF_DESC",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 67,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_TATTVA_DESC",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 113,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_DECAN_DESC",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 164,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_QUINTESSENCE_DECAN",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 243,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_PLANET_LUT",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 264,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_CHAKRA_LUT",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 302,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_SHEM_DESC",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 321,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_MAQAM_RATIOS",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 409,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_MAQAM_DESC",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 430,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_ASMA_LUT",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 547,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_MANTRA_LUT",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 662,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_ELEMENTS",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 804,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "M2_TO_M3_CYMATIC_PROJECTION",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 821,
+      "stratum": "c",
+      "coordinates": [
+        "#2",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M2_CAUSAL_RESONANCE_MASKS",
+      "path": "vendor/epi-kernel/reference/src/m2.c",
+      "kind": "const-table",
+      "line": 884,
+      "stratum": "c",
+      "coordinates": [
+        "#2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2"
+      ]
+    },
+    {
+      "symbol": "m3_verify_integral_invariant",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "function",
+      "line": 442,
+      "stratum": "c",
+      "coordinates": [
+        "#2",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "m3_print_hexagram",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "function",
+      "line": 959,
+      "stratum": "c",
+      "coordinates": [
+        "#3-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "hexagram"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-1"
+      ]
+    },
+    {
+      "symbol": "m3_print_tarot",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "function",
+      "line": 993,
+      "stratum": "c",
+      "coordinates": [
+        "#3-4.0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-4.0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "tarot"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-4",
+        "#3-4.0"
+      ]
+    },
+    {
+      "symbol": "M3_PAIR_MATRIX",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 32,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_TRIGRAM_LUT",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 71,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_HEXAGRAM_LUT",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 98,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_NONDUAL_CODONS",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 119,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_RNA_FUNCTIONAL_MASK",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 133,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_RNA_DARK_MASK",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 134,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_COMP_MATRIX",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 151,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_MOVE_MATRIX",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 165,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_RES_MATRIX",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 183,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_CODON_TO_AA",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 228,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "M3_ROTATIONAL_PROFILE",
+      "path": "vendor/epi-kernel/reference/src/m3.c",
+      "kind": "const-table",
+      "line": 405,
+      "stratum": "c",
+      "coordinates": [
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#3"
+      ]
+    },
+    {
+      "symbol": "m4_print_identity",
+      "path": "vendor/epi-kernel/reference/src/m4.c",
+      "kind": "function",
+      "line": 526,
+      "stratum": "c",
+      "coordinates": [
+        "#2-1-0-3",
+        "#2-1-2-2",
+        "#2-4.2-0-0",
+        "#2-5-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-1-0-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "identity"
+          ]
+        },
+        {
+          "coordinate": "#2-1-2-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "identity"
+          ]
+        },
+        {
+          "coordinate": "#2-4.2-0-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "identity"
+          ]
+        },
+        {
+          "coordinate": "#2-5-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "identity"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-1",
+        "#2-1-0",
+        "#2-1-0-3",
+        "#2-1-2",
+        "#2-1-2-2",
+        "#2-4",
+        "#2-4.2",
+        "#2-4.2-0",
+        "#2-4.2-0-0",
+        "#2-5",
+        "#2-5-0/1"
+      ]
+    },
+    {
+      "symbol": "m4_print_pratibimba",
+      "path": "vendor/epi-kernel/reference/src/m4.c",
+      "kind": "function",
+      "line": 566,
+      "stratum": "c",
+      "coordinates": [
+        "#1-1",
+        "#1-2-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pratibimba"
+          ]
+        },
+        {
+          "coordinate": "#1-2-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "pratibimba"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-1",
+        "#1-2",
+        "#1-2-1"
+      ]
+    },
+    {
+      "symbol": "M4_LENS_REGISTRY",
+      "path": "vendor/epi-kernel/reference/src/m4.c",
+      "kind": "const-table",
+      "line": 53,
+      "stratum": "c",
+      "coordinates": [
+        "#1-4.5",
+        "#2-1-0-0",
+        "#2-1-0-1",
+        "#2-1-0-2",
+        "#2-1-0-3",
+        "#2-1-0-4",
+        "#2-1-0-5",
+        "#2-1-1",
+        "#2-1-2",
+        "#2-1-3",
+        "#2-1-4",
+        "#2-1-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-4.5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-0-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        },
+        {
+          "coordinate": "#2-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "lens"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-4",
+        "#1-4.5",
+        "#2",
+        "#2-1",
+        "#2-1-0",
+        "#2-1-0-0",
+        "#2-1-0-1",
+        "#2-1-0-2",
+        "#2-1-0-3",
+        "#2-1-0-4",
+        "#2-1-0-5",
+        "#2-1-1",
+        "#2-1-2",
+        "#2-1-3",
+        "#2-1-4",
+        "#2-1-5"
+      ]
+    },
+    {
+      "symbol": "M5_LOGOS_STAGE_NAMES",
+      "path": "vendor/epi-kernel/reference/src/m5.c",
+      "kind": "const-table",
+      "line": 18,
+      "stratum": "c",
+      "coordinates": [
+        "#2-5-0/1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-0/1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "logo"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-0/1"
+      ]
+    },
+    {
+      "symbol": "ql_default_topology",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 30,
+      "stratum": "c",
+      "coordinates": [
+        "#1-5-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-5-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "topology"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-5",
+        "#1-5-4"
+      ]
+    },
+    {
+      "symbol": "ql_default_hash_bimba",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 40,
+      "stratum": "c",
+      "coordinates": [
+        "#1-0",
+        "#1-2-0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "bimba"
+          ]
+        },
+        {
+          "coordinate": "#1-2-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "bimba"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-0",
+        "#1-2",
+        "#1-2-0"
+      ]
+    },
+    {
+      "symbol": "ql_relation_tag",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 254,
+      "stratum": "c",
+      "coordinates": [
+        "#3-2-2-1-4",
+        "#3-4.0-2-12"
+      ],
+      "trail": [
+        {
+          "coordinate": "#3-2-2-1-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "tag"
+          ]
+        },
+        {
+          "coordinate": "#3-4.0-2-12",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "tag"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#3",
+        "#3-2",
+        "#3-2-2",
+        "#3-2-2-1",
+        "#3-2-2-1-4",
+        "#3-4",
+        "#3-4.0",
+        "#3-4.0-2",
+        "#3-4.0-2-12"
+      ]
+    },
+    {
+      "symbol": "ql_holographic_field_get",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 291,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "holographic"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-5"
+      ]
+    },
+    {
+      "symbol": "ql_holographic_field_get_const",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 301,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "holographic"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-5"
+      ]
+    },
+    {
+      "symbol": "ql_holographic_field_init",
+      "path": "c/src/holographic.c",
+      "kind": "function",
+      "line": 327,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3-5"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "holographic"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3",
+        "#1-3-5"
+      ]
+    },
+    {
+      "symbol": "ql_m1_node",
+      "path": "c/src/m1.c",
+      "kind": "function",
+      "line": 11,
+      "stratum": "c",
+      "coordinates": [
+        "#1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#1"
+      ]
+    },
+    {
+      "symbol": "ql_m1_spanda",
+      "path": "c/src/m1.c",
+      "kind": "function",
+      "line": 78,
+      "stratum": "c",
+      "coordinates": [
+        "#1-3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "spanda"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-3"
+      ]
+    },
+    {
+      "symbol": "ql_m1_formal",
+      "path": "c/src/m1.c",
+      "kind": "function",
+      "line": 105,
+      "stratum": "c",
+      "coordinates": [
+        "#1-5-3",
+        "#2-1-1-3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-5-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "formal"
+          ]
+        },
+        {
+          "coordinate": "#2-1-1-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "formal"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-5",
+        "#1-5-3",
+        "#2",
+        "#2-1",
+        "#2-1-1",
+        "#2-1-1-3"
+      ]
+    },
+    {
+      "symbol": "ql_m1_topology",
+      "path": "c/src/m1.c",
+      "kind": "function",
+      "line": 123,
+      "stratum": "c",
+      "coordinates": [
+        "#1-5-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-5-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "topology"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-5",
+        "#1-5-4"
+      ]
+    },
+    {
+      "symbol": "ql_m1_torus",
+      "path": "c/src/m1.c",
+      "kind": "function",
+      "line": 141,
+      "stratum": "c",
+      "coordinates": [
+        "#1-5-1",
+        "#1-5-3",
+        "#1-5-4"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-5-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "toru"
+          ]
+        },
+        {
+          "coordinate": "#1-5-3",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "toru"
+          ]
+        },
+        {
+          "coordinate": "#1-5-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "toru"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-5",
+        "#1-5-1",
+        "#1-5-3",
+        "#1-5-4"
+      ]
+    },
+    {
+      "symbol": "seat",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 7,
+      "stratum": "c",
+      "coordinates": [
+        "#2-5-0/1-1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-0/1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "seat"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-0/1",
+        "#2-5-0/1-1"
+      ]
+    },
+    {
+      "symbol": "ql_m1_reflection",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 16,
+      "stratum": "c",
+      "coordinates": [
+        "#1-1",
+        "#1-2",
+        "#1-3-2",
+        "#1-3-4.5/0",
+        "#1-3-5",
+        "#3-3-2-0",
+        "#3-4.0"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1-1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#1-3-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#1-3-4.5/0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#1-3-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#3-3-2-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        },
+        {
+          "coordinate": "#3-4.0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "reflection"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#1-1",
+        "#1-2",
+        "#1-3",
+        "#1-3-2",
+        "#1-3-4",
+        "#1-3-4.5/0",
+        "#1-3-5",
+        "#3",
+        "#3-3",
+        "#3-3-2",
+        "#3-3-2-0",
+        "#3-4",
+        "#3-4.0"
+      ]
+    },
+    {
+      "symbol": "ql_m1_grammar",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 26,
+      "stratum": "c",
+      "coordinates": [
+        "#1",
+        "#2-4.1"
+      ],
+      "trail": [
+        {
+          "coordinate": "#1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "grammar"
+          ]
+        },
+        {
+          "coordinate": "#2-4.1",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "grammar"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#1",
+        "#2",
+        "#2-4",
+        "#2-4.1"
+      ]
+    },
+    {
+      "symbol": "ql_m1_carrier",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 56,
+      "stratum": "c",
+      "coordinates": [
+        "#2-5-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-5-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "carrier"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-5",
+        "#2-5-2"
+      ]
+    },
+    {
+      "symbol": "ql_m1_finite_field",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 101,
+      "stratum": "c",
+      "coordinates": [
+        "#2",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m1_source_traits",
+      "path": "c/src/m1_state.c",
+      "kind": "function",
+      "line": 115,
+      "stratum": "c",
+      "coordinates": [
+        "#2",
+        "#3"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        },
+        {
+          "coordinate": "#3",
+          "how": "coordinate-spelling",
+          "matched_tokens": []
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#3"
+      ]
+    },
+    {
+      "symbol": "ql_m_resolve",
+      "path": "c/src/m_tree.c",
+      "kind": "function",
+      "line": 28,
+      "stratum": "c",
+      "coordinates": [
+        "#2-4.2-1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.2-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "resolve"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.2",
+        "#2-4.2-1",
+        "#2-4.2-1-2"
+      ]
+    },
+    {
+      "symbol": "ql_m_child_at",
+      "path": "c/src/m_tree.c",
+      "kind": "function",
+      "line": 52,
+      "stratum": "c",
+      "coordinates": [
+        "#2-4.0-0/1-1-0",
+        "#2-4.0-0/1-1-2",
+        "#2-4.0-0/1-1-4",
+        "#2-4.0-0/1-1-5",
+        "#2-4.0-0/1-1-6",
+        "#2-4.0-0/1-1-7"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.0-0/1-1-0",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-1-4",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-1-5",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-1-6",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        },
+        {
+          "coordinate": "#2-4.0-0/1-1-7",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "child"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.0",
+        "#2-4.0-0/1",
+        "#2-4.0-0/1-1",
+        "#2-4.0-0/1-1-0",
+        "#2-4.0-0/1-1-2",
+        "#2-4.0-0/1-1-4",
+        "#2-4.0-0/1-1-5",
+        "#2-4.0-0/1-1-6",
+        "#2-4.0-0/1-1-7"
+      ]
+    },
+    {
+      "symbol": "ql_m_relation_resolve",
+      "path": "c/src/m_tree.c",
+      "kind": "function",
+      "line": 85,
+      "stratum": "c",
+      "coordinates": [
+        "#2-4.2-1-2"
+      ],
+      "trail": [
+        {
+          "coordinate": "#2-4.2-1-2",
+          "how": "bimba-name-anchor",
+          "matched_tokens": [
+            "resolve"
+          ]
+        }
+      ],
+      "extended_coordinates": [
+        "#2",
+        "#2-4",
+        "#2-4.2",
+        "#2-4.2-1",
+        "#2-4.2-1-2"
+      ]
+    }
+  ]
+}
