@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse,json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-SOURCES=['crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_vimarsha.rs']
+SOURCES=['crates/ql-mef/src/m2_engine.rs','crates/ql-mef/src/m2.rs','crates/ql-mef/src/m2_vimarsha.rs','crates/ql-mef/src/m2_condition.rs']
 MAX=9007199254740991
 
 def schemas():
@@ -20,7 +20,7 @@ def schemas():
             fields=re.findall(r'^\s*pub (\w+): ([^\n]+),$',body,re.M)
             structs[name]=fields
     def shape(typ):
-        typ=typ.strip().replace('m2::','').replace('crate::m2_vimarsha::','')
+        typ=typ.strip().replace('m2::','').replace('crate::m2_vimarsha::','').replace('crate::m2_condition::','')
         if typ.startswith('Option<'):return {'anyOf':[shape(typ[7:-1]),{'type':'null'}]}
         if typ.startswith('Vec<'):return {'type':'array','items':shape(typ[4:-1])}
         if typ.startswith('BTreeMap<String, '):return {'type':'object','additionalProperties':shape(typ[17:-1])}
@@ -34,9 +34,9 @@ def schemas():
             bits=int(typ[1:]) if typ!='usize' else 64
             return {'type':'integer','minimum':0 if typ.startswith('u') else -(2**(bits-1)),
                 'maximum':min(MAX,2**(bits if typ.startswith('u') else bits-1)-1)}
-        if typ in structs or typ in ['MaterialFibre','VimarshaHelix']:return {'$ref':'#/$defs/'+typ}
+        if typ in structs or typ in ['MaterialFibre','VimarshaHelix','CorrespondenceRole','TuningPolicy']:return {'$ref':'#/$defs/'+typ}
         raise ValueError('unhandled actual Rust wire type: '+typ)
-    defs={'MaterialFibre':{'enum':['earth','fire','water','air']},'VimarshaHelix':{'enum':['bimba','pratibimba']}}
+    defs={'MaterialFibre':{'enum':['earth','fire','water','air']},'VimarshaHelix':{'enum':['bimba','pratibimba']},'CorrespondenceRole':{'enum':['tonic','dominant']},'TuningPolicy':{'enum':['retained24_tet','bimba_spelled24_tet']}}
     for name,fields in structs.items():
         if not fields:continue
         defs[name]={'type':'object','additionalProperties':False,'properties':{k:shape(t) for k,t in fields},
@@ -66,6 +66,12 @@ def schemas():
     props('ContinuousMode')['carrier_weights'].update(minItems=1,maxItems=18)
     props('CarrierWeight')['carrier']['maximum']=71
     props('ResonatorState')['modes'].update(minItems=1,maxItems=4096)
+    props('M2Condition')['schema']={'const':'ql.m2-condition/v1'}
+    props('M2ConditionInput')['maqam_index']['maximum']=71
+    props('M2ConditionInput')['active_mef_condition']['maximum']=71
+    props('M2ConditionInput')['tonic_hz'].update(exclusiveMinimum=0,maximum=1000000)
+    props('RenderPalette')['entries']['maxItems']=32
+    props('NamedPaletteEntry')['linear_rgba']['items'].update(minimum=0,maximum=1)
     def document(root,ident):
         needed=set()
         def walk(value):
@@ -92,8 +98,9 @@ def main():
         jsonschema.Draft202012Validator.check_schema(d)
         if args.command=='refresh':path.write_text(text)
         elif path.read_text()!=text:raise ValueError('stale generated M2 shape: '+name)
-    request=json.loads((ROOT/'fixtures/kernel/m2-engine-request-v1.json').read_text())
-    jsonschema.validate(request,documents['m2-engine-request-v1.schema.json'])
+    for fixture in ['m2-engine-request-v1.json','m2-condition-request-v1.json']:
+        request=json.loads((ROOT/'fixtures/kernel'/fixture).read_text())
+        jsonschema.validate(request,documents['m2-engine-request-v1.schema.json'])
     if args.frame:jsonschema.validate(json.loads(args.frame.read_text()),documents['m2-engine-frame-v1.schema.json'])
     print('Actual Rust M2 wire shapes and supplied fixtures verified')
 if __name__=='__main__':main()

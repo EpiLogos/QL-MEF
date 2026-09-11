@@ -75,7 +75,7 @@ def report(source):
     header = (ROOT/'vendor/epi-kernel/reference/include/m2.h').read_text()
     native_functions = re.findall(r'static inline\s+\w+\s+(\w+)\s*\(',header)
     source_functions = re.findall(r'^(?:M2_Root\*|void|bool|int)\s+(m2_\w+)\s*\(',body,re.M)
-    return {'schema':'ql.m2-field-census/v1','standing':'scoped-K6-census; K4-whole-programme-acceptance-not-observed',
+    return {'schema':'ql.m2-field-census/v1','standing':'scoped-K6-source-observation-on-accepted-K4-census',
         'registry_revision':registry['registry_revision'],'source_repository':registry['source_repository'],
         'source_revision':registry['source_revision'],'source_locks':locks,
         'source_parse_policy':'K2 retained UTF-8 BOM/control-character JSON; strict=False; unchanged source bytes',

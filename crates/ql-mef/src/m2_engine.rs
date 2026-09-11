@@ -143,6 +143,7 @@ pub struct ResonatorState {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct M2Request {
+    pub condition: Option<crate::m2_condition::M2ConditionInput>,
     pub schema: String,
     pub registry_revision: String,
     pub stamp: InputStamp,
@@ -220,6 +221,7 @@ pub struct NumericGround {
 }
 #[derive(Debug, Clone, Serialize)]
 pub struct M2Frame {
+    pub condition: Option<crate::m2_condition::M2Condition>,
     pub schema: String,
     pub registry_revision: String,
     pub ledger_revision: String,
@@ -413,6 +415,9 @@ impl M2Request {
                 return Err("world observation is after the requested event".into());
             }
         }
+        if let Some(condition) = &self.condition {
+            condition.validate(self)?;
+        }
         if let Some(state) = &self.resonator {
             validate_resonator(state, &self.stamp.identity)?;
         }
@@ -521,7 +526,8 @@ impl M2Request {
             "unavailable-no-physical-solver-implied"
         }
         .into();
-        Ok(M2Frame {
+        let mut frame = M2Frame {
+            condition: None,
             schema: m2::ENGINE_CONTRACT.into(),
             registry_revision: catalogue.registry_revision().into(),
             ledger_revision: crate::m_ledger::native_m_ledger()?.ledger_revision,
@@ -574,6 +580,12 @@ impl M2Request {
             aspects,
             resonator: self.resonator.clone(),
             continuous_standing,
-        })
+        };
+        frame.condition = self
+            .condition
+            .as_ref()
+            .map(|input| crate::m2_condition::resolve(input, &frame))
+            .transpose()?;
+        Ok(frame)
     }
 }

@@ -16,13 +16,14 @@ M1, M3, M4, S2/AIKit, S2′/Pleroma and M2′ relations.
 
 The only coordinate tree is `fixtures/kernel/m-tree-v1.json`. The only readiness
 ledger is `fixtures/kernel/m-ledger-v1.json`, using the unchanged K3 schema.
-K6 adds namespaced `k6-m2:*` rows/bindings/evidence/discrepancies and scopes the
+K6 adds namespaced `k6-m2:*` rows/bindings/evidence/discrepancies and relates the
 existing 31 M2 source capabilities; it does not rewrite their source coordinates.
 
-The opening live state had #128 still at the K3→K4 handoff, not an accepted K4
-whole-programme census. This implementation supplies an executable, bounded M2
-census over that accepted K2/K3 floor. It does **not** retrospectively declare K4
-accepted or discard a later K4/parallel-vertical assessment.
+K4 is accepted through #153 at `5b24b95`; #154 at `9bf69a4` adds the
+parent-surface producer requirement. This lane consumes all 597 K4 M2 rows,
+source locks and live/serialized deltas. Its detailed M2 source observation
+complements the shared census; neither replaces the other. The census is
+presence evidence. Narrow executed operations have their own K6 records.
 
 `scripts/m2-field-report.py` verifies the original pinned Bimba bytes at
 `EpiLogos/Epi-Logos-C-Experiments@daa660cbc1b8c5da83828698665a753852cb0287`:
@@ -180,3 +181,96 @@ closed wire shapes and a C++17 consumer using **installed** headers/static libra
 `m2-finite-proof-v1.json` locks the executed working-tree inputs; CI supplies the
 exact Git SHA in `target/m2-receipt/acceptance.json`. Neither an index-only seed nor
 an earlier workflow run stands in for executed implementation evidence.
+
+
+## Joint musical–colour–material condition
+
+`M2Request.condition` selects a maqam, tonic/dominant relation, active MEF
+condition, named tuning policy and tonic in Hz. It requires the existing stamped
+Vimarśā drive; the lens and local position must agree with that MEF selection.
+The optional `M2Frame.condition` is `ql.m2-condition/v1`. Older requests remain
+valid with no joint condition.
+
+Run the committed full-chain request through the same producer:
+
+```sh
+cargo run -p ql-mef --example m2_engine --locked -- \
+  fixtures/kernel/m2-condition-request-v1.json
+```
+
+The source compiler `scripts/m2-correspondences.py` follows exact K2 relation IDs:
+`TONIC_PLANETARY_RESONANCE` or `DOMINANT_PLANETARY_RESONANCE` from the musical
+maqam to a planetary coordinate, then `PLANETARY_RESONANCE` to its chakral
+reception. The compiled C table and Rust field share node IDs, relation IDs,
+source revision and elemental/material holding. Rust also retains every repeated
+source assertion, source-file digest, record/payload digest and four exact
+property pointers. The underlying Bimba files and shared coordinate registry
+remain unchanged.
+
+This source cut supplies 127 unique role paths; 17 selections have no unique
+source-held path. The colour admission uses the literal yantra declarations:
+root's **yellow square**, sacral's **silver crescent moon**, navel's **red
+triangle**. Other centres have no admitted explicit colour name in this cut.
+This is not a conventional chakra-rainbow palette. A named source colour is not
+RGB: a separately stamped `RenderPalette` supplies an explicit linear-RGBA
+conversion policy. Missing names, missing palette entries and unsupported paths
+remain unavailable rather than acquiring a guessed colour.
+
+There are two independent tuning policies:
+
+- `retained24_tet` plays the retained C quarter-tone patterns and separately
+  reports their retained ruler index.
+- `bimba_spelled24_tet` interprets explicit eight-note source spelling under a
+  named 24-TET policy. Flat, sharp, natural and half-sharp spelling are supported;
+  ambiguous downward-arrow and non-note declarations remain unsupported. This
+  admits 115 of the 127 paths. It does not claim authentic performance tuning or
+  equality with the retained patterns, and never silently falls back to them.
+
+The condition carries the active lens/sublens, eight musical pitches, existing
+8+4 Vimarśā drive, actual planetary/chakral/tattva path, material fibre, source
+colour and explicit palette policy. Supplied planetary observations retain their
+provider, source revision and age; both decanic faces come from the existing
+world reading. A supplied continuous material keeps its geometry, constitutive
+model, unit-bearing parameters, mode weights, phase/amplitude/excitation,
+damping and nodal/antinodal references. Neither missing world input nor missing
+physical input is presented as an observation or working solver.
+
+Its material is a supplied embodiment of the same coordinate-backed event,
+not a physical property derived from the word yellow. The full-chain test uses
+an explicitly controlled Earth mode at the very tattva coordinate on the selected
+source path, with the same event/generation as the palette, harmonic drive and
+world reading. Conjugate MEF selection and supported tuning changes update their
+respective musical outputs while retaining the source path. Cross-generation
+palette/material inputs fail before production.
+
+The three M3 transformations remain separately identified. Scalar and retained
+mask outputs explicitly use the selected MEF carrier index; the distributed
+form-potential reference points to the complete engine modal amplitudes. None
+substitutes for the shared M3 clock/pose or a future continuous runtime.
+
+### Executed producer checks and regeneration
+
+The mandatory M2 suite independently executes 127 C/Rust path descriptors and
+6,912 tuning/role/degree/tonic cases, then compares sanitizer output and exercises
+the installed C++ header/static library. Rust full-chain fixtures cover source
+path, joint generation, supplied material, planetary/decan reception, palette,
+conjugate and tuning changes, and explicit unavailable behaviour. This is
+producer acceptance, not acoustic/visual or experiential acceptance.
+
+```sh
+python3 scripts/m2-correspondences.py refresh --source-root target/m2-bimba-source
+python3 scripts/m2-contract.py refresh
+bash scripts/test-m2-engine.sh
+python3 scripts/m2-ledger.py refresh
+python3 scripts/m_census.py census
+python3 scripts/m2-ledger.py check
+python3 scripts/m-ledger.py check
+```
+
+Refresh joins `M2…` to `#2…` using the registry's sanctioned root alias. The shared
+census determines a binding's stratum from its implementation inventory, never
+its ID prefix; thus K5/K6/K7 namespaced bindings are not downgraded by discovery.
+Refresh preserves K4 rows, foreign reviewed assessments and recorded discrepancy
+proposals/decisions. Regeneration and the shared Rust/Python mutation tests must
+pass together. The accepted K4 capture remains the original observation, while
+regenerated implementation workbooks describe the changed tree.

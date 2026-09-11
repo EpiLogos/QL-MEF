@@ -18,7 +18,7 @@ extern "C" {
 #define QL_M2_MAX_COLUMNS 11u
 
 typedef enum {
-    QL_M2_OK=0, QL_M2_INVALID=1, QL_M2_BOUNDARY=2, QL_M2_NONFINITE=3
+    QL_M2_OK=0, QL_M2_INVALID=1, QL_M2_BOUNDARY=2, QL_M2_NONFINITE=3, QL_M2_UNAVAILABLE=4
 } QL_M2_Result;
 typedef enum {
     QL_M2_MEF=0, QL_M2_TATTVA=1, QL_M2_DECAN=2, QL_M2_SHEM=3
@@ -80,6 +80,26 @@ QL_M2_Result ql_m2_maqam_pitch(unsigned mode, unsigned degree, double root_hz, d
 QL_M2_Result ql_m2_modal_quadrature(const QL_M2_Amplitude in[72], QL_M2_Amplitude out[72]);
 QL_M2_Result ql_m2_modal_transduce(const QL_M2_Amplitude in[72], QL_M2_Amplitude out[64]);
 QL_M2_Result ql_m2_modal_power(const QL_M2_Amplitude *in, size_t count, uint64_t *out);
+/* Source-attributed musical/planetary/chakral correspondence projection.
+ * role: 0 tonic, 1 dominant; fibre: EFWA 0..3 or 255 (beyond/space).
+ * Missing colour is NULL, not a rainbow default. Repeated source assertion IDs
+ * and literal/property provenance remain in ql.m2-correspondences/v1.
+ */
+typedef struct {
+    QL_M_NodeId maqam_id, planet_id, chakra_id, tattva_id;
+    QL_M_RelationId musical_relation_id, planetary_relation_id;
+    uint8_t maqam_index, role, planet_index, chakra_index, fibre, spelled_supported;
+    uint8_t spelled_steps24[8];
+    const char *colour_name, *element_literal, *planetary_mode_literal, *interval_literal;
+} QL_M2_Correspondence;
+size_t ql_m2_correspondence_count(void);
+const QL_M2_Correspondence *ql_m2_correspondence_at(size_t index);
+const QL_M2_Correspondence *ql_m2_correspondence(uint8_t maqam_index, uint8_t role);
+/* tuning: 0 retained-C 24-TET; 1 explicit Bimba note-spelling 24-TET policy.
+ * These are separately named readings, never an equivalence assertion.
+ */
+QL_M2_Result ql_m2_correspondence_pitch(uint8_t maqam_index, uint8_t role,
+    uint8_t tuning, uint8_t degree, double tonic_hz, double *out);
 #ifdef __cplusplus
 }
 #endif

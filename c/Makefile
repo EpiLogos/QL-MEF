@@ -40,7 +40,7 @@ $(BUILD_DIR)/%.o: src/%.c $(HEADERS) $(REVISION_STAMP) | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Iinclude -DQL_C_SOURCE_REVISION='"$(SOURCE_REVISION)"' -c $< -o $@
 
 $(BUILD_DIR)/m_tree.o: src/m_tree_data.inc
-$(BUILD_DIR)/m2.o: src/m2_data.inc
+$(BUILD_DIR)/m2.o: src/m2_data.inc src/m2_correspondence_data.inc
 
 $(LIB): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^

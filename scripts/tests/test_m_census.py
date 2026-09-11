@@ -191,3 +191,18 @@ class InfrastructuralTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VerticalBindingTests(unittest.TestCase):
+    def test_namespaced_binding_stratum_comes_from_inventory_not_id_prefix(self):
+        implementations = {
+            "k6-m2:mantra:c": {"stratum": "c"},
+            "k7-m3:clock:rust": {"stratum": "rust"},
+            "c:misleading-prefix": {"stratum": "rust"},
+        }
+        bindings = [*implementations, "c:unknown"]
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "c"),
+                         {"k6-m2:mantra:c"})
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "rust"),
+                         {"k7-m3:clock:rust", "c:misleading-prefix"})
+        self.assertEqual(census.bindings_for_stratum(bindings, implementations, "cpp"), set())

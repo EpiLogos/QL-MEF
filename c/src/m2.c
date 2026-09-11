@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include "m2_data.inc"
+#include "m2_correspondence_data.inc"
 _Static_assert(12*6==72 && 36*2==72 && 4*3*3*2==72 && 8*9==72, "native 72 readings");
 _Static_assert(5+7+24==36 && 4*18==72 && 4*16==64, "native strata and fibres");
 _Static_assert(99+1==100 && 50+50==100 && 8*3==24, "native symbolic cardinalities");
@@ -177,4 +178,34 @@ QL_M2_Result ql_m2_vimarsha(const QL_M2_VimarshaSeed *in, QL_M2_VimarshaReading 
         value.nodal_quartet[i].helix=(uint8_t)(i/2u); value.nodal_quartet[i].m=(uint8_t)(1u+mseed[i]%12u);
         value.nodal_quartet[i].n=(uint8_t)(1u+ns[i]%12u); }
     *out=value; return QL_M2_OK;
+}
+
+size_t ql_m2_correspondence_count(void) {
+    return sizeof(m2_correspondences)/sizeof(m2_correspondences[0]);
+}
+const QL_M2_Correspondence *ql_m2_correspondence_at(size_t index) {
+    return index<ql_m2_correspondence_count() ? &m2_correspondences[index] : NULL;
+}
+const QL_M2_Correspondence *ql_m2_correspondence(uint8_t index,uint8_t role) {
+    size_t i;
+    if (index>=72 || role>=2) return NULL;
+    for (i=0;i<ql_m2_correspondence_count();++i)
+        if (m2_correspondences[i].maqam_index==index && m2_correspondences[i].role==role)
+            return &m2_correspondences[i];
+    return NULL;
+}
+QL_M2_Result ql_m2_correspondence_pitch(uint8_t index,uint8_t role,
+    uint8_t tuning,uint8_t degree,double tonic,double *out) {
+    const QL_M2_Correspondence *r;
+    double value;
+    if (!out || index>=72 || role>=2 || tuning>=2 || degree>=8 || tonic<=0.0)
+        return QL_M2_INVALID;
+    if (!isfinite(tonic)) return QL_M2_NONFINITE;
+    if (tuning==0) return ql_m2_maqam_pitch(index,degree,tonic,out);
+    r=ql_m2_correspondence(index,role);
+    if (!r || !r->spelled_supported) return QL_M2_UNAVAILABLE;
+    value=tonic*pow(2.0,(double)r->spelled_steps24[degree]/24.0);
+    if (!isfinite(value)) return QL_M2_NONFINITE;
+    *out=value;
+    return QL_M2_OK;
 }

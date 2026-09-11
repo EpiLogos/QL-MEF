@@ -576,7 +576,20 @@ pub fn linked_readings(table: &str, index: usize) -> Result<Vec<DescriptorReadin
             ("decan", r[4] as usize),
             ("planet", r[5] as usize),
         ],
-        "decan" if index < 72 => vec![("element", r[0] as usize), ("planet", r[4] as usize)],
+        "decan" => {
+            // Decan F/E/A/W/quintessence is not the five-element ID order.
+            let element = catalogue()
+                .table("element")?
+                .rows()
+                .iter()
+                .position(|throughline| throughline[1] == r[0])
+                .ok_or("decan element has no retained throughline")?;
+            let mut links = vec![("element", element)];
+            if index < 72 {
+                links.push(("planet", r[4] as usize));
+            }
+            links
+        }
         "element" => vec![("tattva", r[0] as usize), ("chakra", r[3] as usize)],
         "maqam" => vec![("ratio", r[0] as usize), ("planet", r[9] as usize)],
         "mantra" => vec![("element", r[2] as usize)],
