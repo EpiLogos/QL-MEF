@@ -2,14 +2,14 @@
   "schema": "ql.m-census/v1",
   "root": "M2",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "92ec1e3aeb0a269345e2ec2e5389e1b4264ebbe81125ecbc7050b7a9d574409a",
+  "ledger_revision": "9d4b00d291574c7c73af26bbf86c315ee5bb47c16263ad0b5ff3a47a5ffbb53a",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 597,
   "counts": {
     "c": {
-      "implemented": 34,
-      "unimplemented": 550,
-      "partial": 13
+      "implemented": 42,
+      "unimplemented": 538,
+      "partial": 17
     },
     "rust": {
       "implemented": 71,
@@ -40,6 +40,10 @@
           "c/src/m2.c:ql_m2_modal_quadrature",
           "c/src/m2.c:ql_m2_modal_transduce",
           "c/src/m2.c:ql_m2_vimarsha",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3.c:ql_m3_epogdoon",
+          "c/src/m3.c:ql_m3_minor",
+          "c/src/m3_domain.c:ql_m3_form",
           "c/src/m_tree.c:ql_m_child_at",
           "c/src/m_tree.c:ql_m_relation_resolve",
           "c/src/m_tree.c:ql_m_resolve",
@@ -141,6 +145,11 @@
           "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m2_vimarsha.rs:read_from_pose",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
+          "crates/ql-mef/src/m3_state.rs:M3Command",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Decision",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
@@ -225,6 +234,8 @@
           "c/src/m2.c:ql_m2_modal_quadrature",
           "c/src/m2.c:ql_m2_modal_transduce",
           "c/src/m2.c:ql_m2_vimarsha",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/m0.c:SIVA_TABLE",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
@@ -290,6 +301,7 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
@@ -384,6 +396,9 @@
         "constructs": [
           "c/src/m1_state.c:ql_m1_grammar",
           "c/src/m2.c:ql_m2_modal_power",
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3.c:ql_m3_minor",
+          "c/src/m3_domain.c:ql_m3_form",
           "c/src/m_tree.c:ql_m_child_at",
           "c/src/m_tree.c:ql_m_relation_resolve",
           "c/src/m_tree.c:ql_m_resolve",
@@ -409,6 +424,9 @@
           "crates/ql-mef/src/m2_condition.rs:resolve",
           "crates/ql-mef/src/m2_engine.rs:ModalState",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Decision",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
@@ -453,6 +471,7 @@
         "constructs": [
           "c/src/m1_state.c:ql_m1_carrier",
           "c/src/m1_state.c:seat",
+          "c/src/m3.c:ql_m3_epogdoon",
           "vendor/epi-kernel/reference/src/m2.c:m2_print_planets",
           "vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
           "vendor/epi-kernel/reference/src/m5.c:M5_LOGOS_STAGE_NAMES"
@@ -462,6 +481,7 @@
         "state": "partial",
         "covered_by_descendants": [
           "#1",
+          "#1-3",
           "#2-1-3-3",
           "#2-5-0/1",
           "#2-5-0/1-6",
@@ -481,6 +501,8 @@
           "crates/ql-mef/src/m1_engine.rs:M1Engine",
           "crates/ql-mef/src/m1_engine.rs:carrier",
           "crates/ql-mef/src/m2_engine.rs:ResonatorState",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
+          "crates/ql-mef/src/m3_state.rs:M3Command",
           "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
           "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
           "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -508,9 +530,11 @@
         "state": "partial",
         "covered_by_descendants": [
           "#1-4.5",
+          "#2-1-0-2",
           "#2-1-0-3"
         ],
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
           "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY",
           "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
         ]
@@ -608,6 +632,8 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/m1.c:QL_FLOWERING",
           "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY"
         ]
@@ -772,9 +798,11 @@
       "c": {
         "state": "partial",
         "covered_by_descendants": [
+          "#2-1-3",
           "#2-1-5"
         ],
         "constructs": [
+          "c/src/m3_domain.c:ql_m3_form",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cf",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cp",
           "vendor/epi-kernel/reference/src/m0.c:m0_vak_cs",
@@ -931,9 +959,11 @@
       "c": {
         "state": "partial",
         "covered_by_descendants": [
+          "#2-1-0-2",
           "#2-4.0-0/1-1-0"
         ],
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
           "c/src/m_tree.c:ql_m_child_at"
         ]
       },
@@ -946,6 +976,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -984,6 +1017,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -1006,10 +1042,12 @@
       "c": {
         "state": "partial",
         "covered_by_descendants": [
+          "#2-1-0-2",
           "#2-1-0-3",
           "#2-4.2-1-2"
         ],
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
           "c/src/m_tree.c:ql_m_relation_resolve",
           "c/src/m_tree.c:ql_m_resolve",
           "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
@@ -1039,7 +1077,13 @@
         "MaqamSystem"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-4.3-5-0"
+        ],
+        "constructs": [
+          "c/src/m3.c:ql_m3_minor"
+        ]
       },
       "rust": {
         "state": "partial",
@@ -1098,7 +1142,8 @@
       "c": {
         "state": "implemented",
         "constructs": [
-          "c/src/m1_state.c:ql_m1_carrier"
+          "c/src/m1_state.c:ql_m1_carrier",
+          "c/src/m3.c:ql_m3_epogdoon"
         ]
       },
       "rust": {
@@ -1368,6 +1413,7 @@
       "c": {
         "state": "implemented",
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
           "vendor/epi-kernel/reference/src/m4.c:M4_LENS_REGISTRY"
         ]
       },
@@ -1776,7 +1822,10 @@
         "MEFSubLens"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -2449,7 +2498,13 @@
         "SubtleElements"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-1-3"
+        ],
+        "constructs": [
+          "c/src/m3_domain.c:ql_m3_form"
+        ]
       },
       "rust": {
         "state": "partial",
@@ -2804,6 +2859,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -2961,7 +3019,10 @@
         "SufiStation"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -3127,7 +3188,13 @@
         "MaqamFamily"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-4.3-5-0"
+        ],
+        "constructs": [
+          "c/src/m3.c:ql_m3_minor"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -3429,6 +3496,8 @@
           "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
           "crates/ql-core/src/structural.rs:AnchorReturn",
           "crates/ql-mef/src/m1_engine.rs:M1Engine",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine",
+          "crates/ql-mef/src/m3_state.rs:M3Command",
           "crates/ql-mef/src/vak.rs:structural_relation"
         ]
       },
@@ -3771,7 +3840,10 @@
         "SubtleElement"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3_domain.c:ql_m3_form"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -4683,9 +4755,11 @@
       "c": {
         "state": "partial",
         "covered_by_descendants": [
+          "#2-1-0-2",
           "#2-4.0-0/1-1-0"
         ],
         "constructs": [
+          "c/src/m3.c:ql_m3_active_state",
           "c/src/m_tree.c:ql_m_child_at"
         ]
       },
@@ -4697,6 +4771,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -4735,6 +4812,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -5943,7 +6023,10 @@
         "Maqam"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_minor"
+        ]
       },
       "rust": {
         "state": "unimplemented"
@@ -7942,7 +8025,8 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/src/m1_engine.rs:M1Engine"
+          "crates/ql-mef/src/m1_engine.rs:M1Engine",
+          "crates/ql-mef/src/m3_engine.rs:M3Engine"
         ]
       },
       "row": "census:#2-5-0/1-3"
@@ -8007,7 +8091,8 @@
         "constructs": [
           "crates/ql-cli/src/lib.rs:verify_command",
           "crates/ql-cli/src/m_ledger.rs:command",
-          "crates/ql-cli/src/vak_composition.rs:command"
+          "crates/ql-cli/src/vak_composition.rs:command",
+          "crates/ql-mef/src/m3_state.rs:M3Command"
         ]
       },
       "row": "census:#2-5-0/1-6"
@@ -9585,7 +9670,13 @@
         "IslamicMysticism"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "partial",
+        "covered_by_descendants": [
+          "#2-1-0-2"
+        ],
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -9807,6 +9898,9 @@
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
+          "crates/ql-mef/src/m3_source.rs:M3Source",
+          "crates/ql-mef/src/m3_source.rs:SourceNode",
+          "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
@@ -10461,7 +10555,10 @@
         "GenerativePrinciple"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -10865,7 +10962,10 @@
         "CreativeEnergy"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -11268,7 +11368,10 @@
         "GenerativePrinciple"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",
@@ -11354,7 +11457,10 @@
         "HealingCombination"
       ],
       "c": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "c/src/m3.c:ql_m3_active_state"
+        ]
       },
       "rust": {
         "state": "implemented",

@@ -151,15 +151,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.3",
-      "names": [
-        "72 Musical Maqamat",
-        "72 Musical Maqamat",
-        "The Complete Islamic Musical Modal System - 72 Heptatonic Scales"
-      ],
-      "rust_state": "partial"
-    },
-    {
       "coordinate": "#2-4.5",
       "names": [
         "72 Names of God System",
@@ -230,86 +221,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#3-1-0",
-      "names": [
-        "Qian",
-        "Qian",
-        "The Creative / Heaven",
-        "乾"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-1",
-      "names": [
-        "Kun",
-        "Kun",
-        "The Receptive / Earth",
-        "坤"
-      ],
-      "rust_state": "partial"
-    },
-    {
-      "coordinate": "#3-1-2",
-      "names": [
-        "Zhen",
-        "Zhen",
-        "The Arousing / Thunder",
-        "震"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-3",
-      "names": [
-        "Xun",
-        "Xun",
-        "The Gentle / Wind / Wood",
-        "巽"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-4",
-      "names": [
-        "Kan",
-        "Kan",
-        "The Abysmal / Water",
-        "坎"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-5",
-      "names": [
-        "Li",
-        "Li",
-        "The Clinging / Fire",
-        "離"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-6",
-      "names": [
-        "Gen",
-        "Gen",
-        "Keeping Still / Mountain",
-        "艮"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-1-7",
-      "names": [
-        "Dui",
-        "Dui",
-        "The Joyous / Lake / Marsh",
-        "兌"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
       "coordinate": "#3-2-1",
       "names": [
         "Adenine",
@@ -364,15 +275,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#3-3-5",
-      "names": [
-        "Human Karyotype",
-        "Human Karyotype",
-        "The Complete Human Chromosomal Architecture - 23 Pairs + Mitochondrial"
-      ],
-      "rust_state": "partial"
-    },
-    {
       "coordinate": "#3-4-2",
       "names": [
         "Cups",
@@ -389,15 +291,6 @@
         "Suit of Air - Mental Clarity and Discriminating Intelligence"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-4-4",
-      "names": [
-        "Pentacles",
-        "Pentacles",
-        "Suit of Earth - Material Form and Practical Manifestation"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-5-1",
@@ -599,14 +492,6 @@
         "Seeding (initiation)"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-1-3-2",
-      "names": [
-        "Sprouting (active emergence)",
-        "Sprouting (active emergence)"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-1-3-3",
@@ -842,15 +727,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-2-2-4",
-      "names": [
-        "Tanmatras",
-        "Tanmatras",
-        "Tanmatras - The Five Subtle Elements"
-      ],
-      "rust_state": "partial"
-    },
-    {
       "coordinate": "#2-2-2-5",
       "names": [
         "Mahabhutas",
@@ -1013,15 +889,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.2-5",
-      "names": [
-        "Sabr",
-        "Sabr",
-        "Sabr (الصبر) - The Station of Patience and Active Endurance"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#2-4.2-6",
       "names": [
         "Tawakkul",
@@ -1083,15 +950,6 @@
         "Hijaz Family - The Desert Path of Mystical Yearning"
       ],
       "rust_state": "implemented"
-    },
-    {
-      "coordinate": "#2-4.3-5",
-      "names": [
-        "Nahawand Family",
-        "Nahawand Family",
-        "Nahawand Family - The Mirror of Human Emotional Complexity"
-      ],
-      "rust_state": "unimplemented"
     },
     {
       "coordinate": "#2-4.3-6",
@@ -1993,15 +1851,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#3-3-2-1",
-      "names": [
-        "Matrix 2",
-        "Matrix 2",
-        "Active-Passive States and Genetic Breathing Operator"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#3-3-2-2",
       "names": [
         "Matrix 3",
@@ -2252,15 +2101,6 @@
         "The 22-Fold Homologous Chromosome Pairs - Major Arcana Foundation"
       ],
       "rust_state": "partial"
-    },
-    {
-      "coordinate": "#3-3-5-1",
-      "names": [
-        "Sex Chromosome Polarity",
-        "Sex Chromosome Polarity",
-        "The 23rd Pair - XX/XY Sexual Differentiation System"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-3-5-2",
@@ -3077,16 +2917,6 @@
         "Sparsha Tanmatra - Subtle Element of Touch"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-2-2-4-3",
-      "names": [
-        "Rupa Tanmatra",
-        "Rupa Tanmatra",
-        "रूप तन्मात्र",
-        "Rupa Tanmatra - Subtle Element of Form"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-2-2-4-4",
@@ -3982,15 +3812,6 @@
         "Uzzal",
         "Uzzal",
         "Maqam Uzzal - The Egyptian Mystery"
-      ],
-      "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-4.3-5-0",
-      "names": [
-        "Nahawand",
-        "Nahawand",
-        "Maqam Nahawand - The Natural Minor of the Heart"
       ],
       "rust_state": "unimplemented"
     },
@@ -6861,15 +6682,6 @@
         "The Feminine Bridge - Receptive Polarity Gateway"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#3-3-5-1-1",
-      "names": [
-        "Y Chromosome",
-        "Y Chromosome",
-        "The Masculine Differentiator - Active Yang Principle"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-4-5/0-0",
@@ -11185,15 +10997,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.0-0/1-0",
-      "names": [
-        "Jalal",
-        "Jalal",
-        "Divine Majesty and Power Attributes - Transcendent Authority Grouping"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#2-4.0-0/1-2",
       "names": [
         "Jamal",
@@ -11618,14 +11421,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.0-0/1-0-0",
-      "names": [
-        "Al-Malik",
-        "Al-Malik"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#2-4.0-0/1-0-1",
       "names": [
         "Al-Maalik",
@@ -11728,14 +11523,6 @@
         "Al-Mudhill"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-4.0-0/1-0-21",
-      "names": [
-        "Al-Khaliq",
-        "Al-Khaliq"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.0-0/1-0-22",
@@ -11842,14 +11629,6 @@
       "rust_state": "unimplemented"
     },
     {
-      "coordinate": "#2-4.0-0/1-0-5",
-      "names": [
-        "Al-Aziz",
-        "Al-Aziz"
-      ],
-      "rust_state": "implemented"
-    },
-    {
       "coordinate": "#2-4.0-0/1-0-6",
       "names": [
         "Al-Jabbar",
@@ -11864,14 +11643,6 @@
         "Al-Mutakabbir"
       ],
       "rust_state": "unimplemented"
-    },
-    {
-      "coordinate": "#2-4.0-0/1-0-8",
-      "names": [
-        "Al-Qahhar",
-        "Al-Qahhar"
-      ],
-      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.0-0/1-0-9",
