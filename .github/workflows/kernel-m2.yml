@@ -55,6 +55,9 @@ jobs:
       - name: Mandatory source, native C/Rust and installed consumer acceptance
         run: bash scripts/test-m2-engine.sh
       - name: Shared-ledger and scoped proof validation
+        # Broad discovery includes M3: use the same pinned source, never skip its proof.
+        env:
+          M3_SOURCE_ROOT: ${{ github.workspace }}/target/m2-bimba-source
         run: |
           python3 scripts/m-ledger.py check
           python3 scripts/m2-ledger.py check
