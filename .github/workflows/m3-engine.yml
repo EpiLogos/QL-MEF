@@ -12,7 +12,7 @@ on:
       - 'scripts/tests/test_m3_engine.py'
       - '.github/workflows/m3-engine.yml'
   push:
-    branches: [main]
+    branches: [main, agent/k7-m3-engine-131]
     paths:
       - 'c/**'
       - 'crates/**'
