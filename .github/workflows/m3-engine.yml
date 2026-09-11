@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: 5b24b95d17234ab5d23d84e658c0cc06434b41a3
+          ref: 7dda4d8c9c708d0e551fb19fada4097168c8af30
           path: target/k4-source
           persist-credentials: false
       - name: Exact accepted K4 and native producer sources
