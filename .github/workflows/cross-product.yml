@@ -1,14 +1,21 @@
-name: Q5 Runtime Conformance
+name: Cross-product (weekly)
+
+# Checks that clone Factory at a pinned revision run here weekly and on
+# demand, not per push: Factory gates its own main, and the local halves of
+# these proofs run in ql-mef-rust.yml. A red job is a rotted pin or a moved
+# seam, repaired in its own change.
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    paths:
-      - "crates/ql-adapters/**"
-      - "fixtures/q5/**"
-      - ".github/workflows/q5-runtime-conformance.yml"
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   frozen-runtime-seam:
@@ -57,5 +64,24 @@ jobs:
           assert fixture["integrationLaw"]["providerFailureChangesRuntimeStatus"] is False
           assert fixture["integrationLaw"]["classicRequiresQlProvider"] is False
           PY
-      - name: Run Q5 standalone runtime-refraction acceptance
-        run: cargo test -p ql-adapters --test runtime_refraction
+
+  corrected-formal-grammar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Fetch exact Factory Deep QL evidence source
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+          git -C /tmp/factory checkout --detach a654c62f68b82236061986d9215b23257fe53b17
+          test "$(git -C /tmp/factory rev-parse HEAD)" = "a654c62f68b82236061986d9215b23257fe53b17"
+          test "$(git -C /tmp/factory hash-object ql-agent-experiments/deep-ql/formal/pairing-grammar.js)" = "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4"
+      - name: Run Factory corrected pairing evidence
+        working-directory: /tmp/factory/ql-agent-experiments/deep-ql
+        run: node --test test/pairing.test.js
