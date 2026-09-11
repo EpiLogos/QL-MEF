@@ -1,0 +1,132 @@
+# Temporary, exact-payload source transfer for PR151. The resulting commit
+# contains ordinary readable source and generated fixtures, not these parts.
+name: K7 exact tested source materialization
+on:
+  push:
+    branches: [agent/k7-m3-engine-131]
+    paths: ['.github/workflows/k7-materialize.yml', '.github/k7-source-part-*.bin']
+permissions:
+  contents: write
+jobs:
+  materialize:
+    if: github.repository == 'EpiLogos/QL-MEF' && github.ref == 'refs/heads/agent/k7-m3-engine-131'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BASE_SHA: 7dda4d8c9c708d0e551fb19fada4097168c8af30
+      EVENT_SHA: ${{ github.sha }}
+      M3_SOURCE_ROOT: ${{ github.workspace }}/target/k7-bimba
+      M2_BIMBA_SOURCE: ${{ github.workspace }}/target/k7-bimba
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Validate exact locally tested patch and apply over accepted main
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,lzma,pathlib,subprocess,json
+          payload=b''.join(pathlib.Path(f'.github/k7-source-part-{i}.bin').read_bytes() for i in range(4))
+          assert hashlib.sha256(payload).hexdigest()=='6b3c44a2dba38602b17dc1a210c1189ce9a7faa9c505eb98dee1c50b18cd3b62'
+          patch=lzma.decompress(payload)
+          assert len(patch)==185180
+          assert hashlib.sha256(patch).hexdigest()=='fa1aea209f1316867d75da707040ac5da43c316ddfa1d4b721fa9b919882ba8f'
+          pathlib.Path('/tmp/k7-implementation.patch').write_bytes(patch)
+          PY
+          git checkout --detach "$BASE_SHA"
+          test "$(git rev-parse HEAD^{tree})" = c4451539779420e5500040b943a54551b0d4c098
+          git apply --index /tmp/k7-implementation.patch
+          git diff --cached --name-only -z > /tmp/k7-authored-paths
+          python3 - <<'PY'
+          from pathlib import Path
+          paths=Path('/tmp/k7-authored-paths').read_bytes().split(b'\0')[:-1]
+          assert len(paths)==31
+          assert all(p.startswith((b'c/',b'crates/',b'scripts/',b'migration/epi-kernel/k7-',b'fixtures/kernel/m3-',b'docs/KERNEL-M3-',b'.github/workflows/m3-engine.yml')) for p in paths)
+          assert not any(p.startswith((b'vendor/',b'fixtures/kernel/m-tree')) for p in paths)
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: target/k7-bimba
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: python3 -m pip install jsonschema==4.25.1
+      - name: Generate the lossless source catalogue
+        run: python3 scripts/m3-domain.py --source-root "$M3_SOURCE_ROOT" --refresh
+      - name: Re-prove accepted M2 against the joined native build
+        run: |
+          set -euo pipefail
+          bash scripts/test-m2-engine.sh
+          python3 scripts/m2-ledger.py refresh
+      - name: Execute full M3 native and parent-consumer acceptance
+        run: bash scripts/test-m3-acceptance.sh
+      - name: Reconcile additive K7 inventory through the canonical ledger
+        run: |
+          set -euo pipefail
+          python3 scripts/m_census.py census
+          python3 scripts/m3-ledger.py refresh
+          python3 scripts/m_census.py census
+          python3 scripts/m3-ledger.py refresh
+          python3 scripts/m_census.py census
+          python3 scripts/m3-ledger.py check
+          python3 scripts/m2-ledger.py check
+          python3 scripts/m-ledger.py check
+      - name: Workspace verification and lint
+        run: |
+          set -euo pipefail
+          cargo test --workspace --all-targets --locked
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Commit only reviewed source and reproducible generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          authored=[p.decode() for p in Path('/tmp/k7-authored-paths').read_bytes().split(b'\0') if p]
+          generated=['fixtures/kernel/m3-domain-v1.json','fixtures/kernel/m3-coverage-v1.json','fixtures/kernel/m3-finite-proof-v1.json','fixtures/kernel/m-ledger-v1.json','fixtures/kernel/m2-finite-proof-v1.json']
+          generated += [str(p) for p in Path('fixtures/kernel/census').rglob('*') if p.is_file()]
+          subprocess.run(['git','add','--',*authored,*generated],check=True)
+          changed=subprocess.check_output(['git','diff','--cached','--name-only','-z']).decode().split('\0')[:-1]
+          assert set(changed)<=set(authored+generated), changed
+          assert not any(p.startswith(('.github/k7-source','.github/workflows/k7-materialize','vendor/','fixtures/kernel/m-tree')) for p in changed)
+          subprocess.run(['git','diff','--exit-code'],check=True)
+          PY
+          tree=$(git write-tree)
+          export GIT_AUTHOR_NAME='Epii' GIT_COMMITTER_NAME='Epii'
+          export GIT_AUTHOR_EMAIL='186434782+EpiLogos@users.noreply.github.com'
+          export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+          candidate=$(printf '%s\n' 'feat(m3): complete coordinate-bound engine and same-event parent reception' '' 'K7 #131 on accepted K4/#153, parent consumer requirements #154, and merged K6. Full locked source, native C/Rust parity, atomic Cosmic/Personal/M3-prime state, installed C++ handoff and canonical ledger reconciliation. Exact authored patch SHA256 fa1aea209f1316867d75da707040ac5da43c316ddfa1d4b721fa9b919882ba8f. Scoped M2 and M3 acceptance plus workspace tests and lint executed before publication. Source discrepancies retain their ledger lifecycle; no continuous-runtime or experiential claim.' | git commit-tree "$tree" -p "$EVENT_SHA" -p "$BASE_SHA")
+          current=$(git ls-remote origin refs/heads/agent/k7-m3-engine-131 | cut -f1)
+          test "$current" = "$EVENT_SHA"
+          git push origin "$candidate:refs/heads/agent/k7-m3-engine-131"
+          mkdir -p target/k7-publication
+          printf '%s\n' "$candidate" > target/k7-publication/candidate.txt
+          printf '%s\n' "$tree" > target/k7-publication/tree.txt
+          git archive "$candidate" > target/k7-publication/source.tar
+          git diff --stat "$BASE_SHA" "$candidate" > target/k7-publication/changes.txt
+      - name: Preserve diagnostics and exact source even when a check fails
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p target/k7-publication
+          git status --short > target/k7-publication/status.txt
+          git diff --stat > target/k7-publication/unstaged.txt
+          git diff --cached --stat > target/k7-publication/staged.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k7-publication-${{ github.sha }}
+          path: |
+            target/k7-publication/
+            target/m3-acceptance/
+            target/m2-receipt/acceptance.json
+            target/m3-parent-consumer/handoff.json
+          retention-days: 14
+          if-no-files-found: error
