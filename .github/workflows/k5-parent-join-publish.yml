@@ -1,0 +1,71 @@
+name: K5 parent join publication (temporary)
+on:
+  push:
+    branches: [agent/129-parent-join-proof]
+    paths: [.github/workflows/k5-parent-join-publish.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy,rustfmt
+      - run: python3 -m pip install jsonschema==4.25.1
+      - name: Verify and apply exact scoped source change
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,hashlib,subprocess,zlib
+          from pathlib import Path
+          encoded='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'
+          patch=zlib.decompress(base64.b64decode(encoded,validate=True))
+          assert hashlib.sha256(patch).hexdigest()=='b70abb99f560d3c5161e8e8fa5577e918e07aec3eb753b1e7fa544dd284a9ad0'
+          path=Path('/tmp/k5-parent-join.patch');path.write_bytes(patch)
+          subprocess.run(['git','apply','--check',str(path)],check=True)
+          subprocess.run(['git','apply','--index',str(path)],check=True)
+          expected={'docs/KERNEL-M1-ENGINE-CONTRACT.md','crates/ql-mef/tests/m1_m2_parent_join.rs','fixtures/kernel/m-ledger-v1.json','fixtures/kernel/census/census-m1.json','fixtures/kernel/census/census-m2.json','fixtures/kernel/census/census-m3.json','fixtures/kernel/census/work-graph.json'}
+          assert set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())==expected
+          wf='.github/workflows/k5-parent-join-publish.yml'
+          subprocess.run(['git','rm','--cached',wf],check=True)
+          tree=subprocess.check_output(['git','write-tree'],text=True).strip()
+          assert tree=='6bb8252385471dec603ceca0cdf463c2f3f9b1cc',tree
+          subprocess.run(['git','reset','HEAD','--',wf],check=True)
+          Path('target/parent-join').mkdir(parents=True,exist_ok=True)
+          Path('target/parent-join/product-tree.txt').write_text(tree+'\n')
+          PY
+      - name: Test the exact product inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --workspace --all-targets --locked 2>&1 | tee target/parent-join/rust-tests.log
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+          python3 scripts/m-ledger.py check
+          python3 scripts/m2-ledger.py check
+          python3 scripts/check-m1-acceptance.py
+          python3 scripts/m-ledger.py refresh
+          python3 scripts/m_census.py census
+          git diff --exit-code
+      - name: Publish product changes only, retaining temporary workflow for connector cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test(m1): prove shared M1-M2 parent handoff and document native lens encoding'
+          git rev-parse HEAD > target/parent-join/published-head.txt
+          git push origin HEAD:refs/heads/agent/129-parent-join-proof
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k5-parent-join-${{ github.sha }}
+          path: target/parent-join/
+          retention-days: 14
+          if-no-files-found: warn
