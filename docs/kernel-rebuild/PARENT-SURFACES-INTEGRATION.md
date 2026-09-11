@@ -4,6 +4,8 @@ Status: **authorised development plan, 2026-09-11; not an implementation receipt
 Programme owner: [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md), #135.
 Execution owners remain #128–#134. This is their integration contract, not another programme or coordinate registry.
 
+Current aperture/clock refinement: [Paraśakti apertures and the Mahāmāyā clock centre](APERTURES-AND-CLOCK-CENTRE.md). M2-0 owns the complete eighteen-aperture architecture through the author's 0/1/2 and eight-pair branch structure. M3-0 is being articulated as its spatio-temporal reception field, realised at the existing M3-5-5/0 centre within M3-5. This is the scoped planning successor to older 16+1/M3-only aperture accounts; new coordinate promotion and coupled-clock implementation retain their own evidence obligations.
+
 ## 1. The product being built
 
 The desktop has two parent surfaces of one feature reality:
@@ -60,7 +62,7 @@ Domain changes, numerical integration/audio time and presentation frames have di
 
 This is a named consumer requirement of the full M2 vertical, not a replacement for its complete coordinate coverage.
 
-Resolve the current relation across M1 harmonic substrate, M2-1 MEF/Vimarśā, M2-2 tattvic/elemental medium, M2-3 decanic condition, M2-4 symbolic-musical Power and M2-5 planetary–chakral synthesis. Preserve the exact Bimba relations linking planetary/chakral colours to the musical systems. The evidence must identify the source nodes and relation path, not merely a colour attached to a label.
+Resolve the current relation across M1 harmonic substrate, M2-0 aperture architecture, M2-1 MEF/Vimarśā, M2-2 tattvic/elemental medium, M2-3 decanic condition, M2-4 symbolic-musical Power and M2-5 planetary–chakral synthesis. Preserve the exact Bimba relations linking planetary/chakral colours to the musical systems. The evidence must identify the source nodes and relation path, not merely a colour attached to a label.
 
 The M2 output must provide jointly attributable:
 
@@ -77,6 +79,16 @@ The spec's material/modulation structs are useful recovered requirements; curren
 Both parent surfaces and M2′ consume this producer. In the Cosmic instance it conditions the resonant/form body. In the Personal instance it is received through Nara's constitution and current state. The same source relation can therefore be inspected in the Bimba map, heard in the instrument and seen in the field.
 
 Acceptance owned by K6: source-path and C/Rust relation/operation fixtures for selected full-chain examples, direct/conjugate and supported tuning cases, and serialisable state for K8. Continuous acoustic/visual equivalence is demonstrated by K8/K9/K10, not claimed merely from K6 descriptor parity. Unsupported correspondences remain identifiable and do not acquire made-up colours.
+
+### 4.1 Aperture architecture and centre-field continuation
+
+The owner assigns both additional apertures to M2-0-0/M2-0-1 and the sixteen static lenses to M2-0-2, organised through M2-0-2-0 through M2-0-2-7, each holding its reciprocal lens pair. M2 owns the aperture architecture and symbolic worlds; M3 receives their exact identities. The detailed naming proposal, native-index continuity and distinction from the twelve MEF lenses are recorded in [Apertures and clock centre](APERTURES-AND-CLOCK-CENTRE.md).
+
+The 6° Fibonacci, 20° elemental-fibre and 22.5° form/void-ring grids are essential linked structural registers. Preserve their exact 60°/90°/180° pairwise closures, shared 180° closure and 9/8 relation alongside current phase offsets. They must reach the continuous producer with source/coordinate provenance rather than being recreated in a renderer.
+
+M3-0 is the proposed common spatio-temporal field receiving M1 rotational/topological capacity and M2 spectral/aperture differentiation. Its realisation within M3-5 uses the existing centre M3-5-5/0, with a distinct field-ground relation rather than a new centre or coordinate alias. The inscription and lensing axes are independently identifiable and have explicit coupling/trajectory rules; a 720° clock plus a sixteen-entry selector alone does not prove that full twofold construction.
+
+These requirements extend the accepted M2/M3 producers through the existing #135 programme; they do not retroactively broaden their acceptance receipts. K8 consumes the centre-field/coupled-phase contract, K9 exposes the assembled/exploded Cosmic and deep M2′/M3′ instrument, and K10 supplies inspection and authorised operation through the same Bimba map and Epii agent. The owner's flower/eye image means an inspectable composition whose parts can open out and return around one subject, not another particle-engine build.
 
 ## 5. Stage assignments and handoffs
 
@@ -148,6 +160,7 @@ These are acceptance scenarios assigned to the stages above, not new prerequisit
 4. **Bimba-map use.** Navigate from a selected field centre or M3 form into its real coordinate/relations/sources and back. Inspect an Epii-proposed change and its accepted/rejected result through the owner path.
 5. **Epii operates the instrument.** From one selected passage and event, Epii obtains authorised context, invokes an actual domain Action, observes the changed state and returns findings. The person and agent see the same result and provenance; this is an exercised tool/action path, not a prewritten chat demonstration. Include unavailable capability, refused authority and stale-revision paths.
 6. **Continuous runtime.** Exercise headless and installed host paths for bounded state transfer, coherent generations, audio/render lifecycle, independent personal instances and unchanged event identity after deep-open. Retain the existing point-cloud behaviour while adding domain coupling.
+7. **Aperture/centre composition.** Resolve all eighteen M2-owned apertures and eight reciprocal pairs; trace the 6°/20°/22.5° relations into M3-0 and the existing M3-5-5/0 centre. Exercise independent inscription/lensing changes and a specified coupled trajectory, preserving both phases, double-cover state and source bases. Assemble/explode/inspect/reassemble the same instrument without resetting its subject or treating view movement as a domain mutation. The detailed follow-on proof obligations are in [Apertures and clock centre](APERTURES-AND-CLOCK-CENTRE.md#7-current-implementation-and-deliberate-promotion).
 
 Keep source, coordinate, relation, operational and experiential receipts separate. Planning or a passing shared protocol is not a completed instrument. Coverage closure records every known capability's disposition; operational feature closure additionally requires the promised operation to work.
 
@@ -155,6 +168,7 @@ Keep source, coordinate, relation, operational and experiential receipts separat
 
 - O:I [`docs/positions/FOUNDING-POSITIONS.md`](https://github.com/EpiLogos/O-I/blob/main/docs/positions/FOUNDING-POSITIONS.md): authored ground, agency and Return.
 - [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md), #135: sole K0–K10 programme owner.
+- [Apertures and clock centre](APERTURES-AND-CLOCK-CENTRE.md): current M2-0 ownership/branch decision, essential three-grid links, M3-0 field-centre refinement and explicit twofold-clock follow-on work; scoped successor to older 16+1/M3-only aperture accounts.
 - [K4 census](K4-M123-CENSUS.md): actual entry evidence and workbooks.
 - [Integrated physical-pole object](../origami%20work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md) and current M1–M4 capability matrices: full domain requirements and canonical elemental continuity.
 - QL-MEF #69/#73: same-event parent/deep, human/Agent access and existing O:I host relations. The present authorial identification of M0′/M5′ is explicit above; older ambient-language summaries are not functional substitutes.
