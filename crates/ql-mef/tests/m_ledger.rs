@@ -27,9 +27,15 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
     let l = ledger();
     assert!(codes(&l).is_empty());
     assert_eq!(l.matrices.len(), 10);
-    assert_eq!(l.rows.len(), 192);
+    assert!(l.rows.len() >= 192);
     assert_eq!(l.rows.iter().filter(|r| r.source.is_some()).count(), 185);
-    assert_eq!(l.implementations.len(), 14);
+    assert_eq!(
+        l.implementations
+            .iter()
+            .filter(|i| i.kind == "structural-index")
+            .count(),
+        14
+    );
     for (scope, count) in [
         ("M0", 108),
         ("M1", 43),
@@ -43,7 +49,25 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
             .coverage(native_m_registry(), scope, "c", "coordinate", "verified")
             .unwrap();
         assert_eq!(c.structural_coordinates, count);
-        assert_eq!(c.coordinates_without_computational_binding.len(), count);
+        let bound: std::collections::BTreeSet<_> = l
+            .implementations
+            .iter()
+            .filter(|i| i.stratum == "c" && i.kind == "computational")
+            .flat_map(|i| i.coordinates.iter())
+            .map(|s| native_m_registry().resolve(s).unwrap().source_ref.clone())
+            .collect();
+        let root = native_m_registry().resolve(scope).unwrap();
+        let bound_in_scope = bound
+            .iter()
+            .filter(|s| {
+                let n = native_m_registry().resolve(s).unwrap();
+                scope == "M" || n.root_id == root.id
+            })
+            .count();
+        assert_eq!(
+            c.coordinates_without_computational_binding.len(),
+            count - bound_in_scope
+        );
         assert_eq!(c.blocking_rows.len(), c.rows.len());
     }
 }

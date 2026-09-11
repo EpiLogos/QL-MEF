@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "cffda5ec8eab3ece8db4625d0c7d4b1e3ec95eefb26bba045f855823d83d2cde",
+  "ledger_revision": "69a200840c40ae19bd1c3c563a6e418a1b6ba75766023e18550c489737ea7363",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480",
@@ -184,6 +184,534 @@
           "warrant": "source-declared",
           "evidence": [
             "k2-index-declaration"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [],
+        "relation": [],
+        "operational": [],
+        "experiential": []
+      }
+    },
+    "k5-m1:ananda": {
+      "readiness": {
+        "source": {
+          "status": "partial",
+          "warrant": "observed",
+          "evidence": [
+            "k5-m1:literal-observation"
+          ]
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [
+          {
+            "from_peer": "bimba",
+            "to_peer": "c",
+            "status": "different",
+            "warrant": "observed",
+            "evidence": [
+              "k5-m1:literal-observation"
+            ]
+          }
+        ],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:spanda": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:formal": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:topology": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:torus": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:clock": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "relation": [],
+        "operational": [
+          {
+            "from_peer": "c",
+            "to_peer": "rust",
+            "status": "partial",
+            "warrant": "tested",
+            "evidence": [
+              "k5-m1:local-execution"
+            ]
+          }
+        ],
+        "experiential": []
+      }
+    },
+    "k5-m1:traversal": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
+          ]
+        },
+        "cpp": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "neo4j": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "application": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "instrument": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        }
+      },
+      "parity": {
+        "source": [],
+        "coordinate": [],
+        "relation": [],
+        "operational": [],
+        "experiential": []
+      }
+    },
+    "k5-m1:ratios": {
+      "readiness": {
+        "source": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "c": {
+          "status": "unassessed",
+          "warrant": "unassessed",
+          "evidence": []
+        },
+        "rust": {
+          "status": "partial",
+          "warrant": "tested",
+          "evidence": [
+            "k5-m1:local-execution"
           ]
         },
         "cpp": {
@@ -3688,6 +4216,258 @@
       ],
       "relations": [],
       "dependencies": []
+    },
+    {
+      "id": "k5-m1:ananda",
+      "role": "Typed six-family raw/DR/decimal Ananda and full Quintessence contributors",
+      "scope": "M1",
+      "coordinates": [
+        "#1-2-0",
+        "#1-2-0-0",
+        "#1-2-1",
+        "#1-2-1-0",
+        "#1-2-2",
+        "#1-2-2-0",
+        "#1-2-3",
+        "#1-2-3-0",
+        "#1-2-4",
+        "#1-2-4-0",
+        "#1-2-5",
+        "#1-2-5-0"
+      ],
+      "source": null,
+      "assessment": "k5-m1:ananda",
+      "bindings": [
+        "k5-m1:ananda:c",
+        "k5-m1:ananda:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:spanda",
+      "role": "Source compiler-pass outputs and exact Flowering substage field",
+      "scope": "M1",
+      "coordinates": [
+        "#1-3-0",
+        "#1-3-1",
+        "#1-3-2",
+        "#1-3-3",
+        "#1-3-4",
+        "#1-3-5",
+        "#1-3-4.0000",
+        "#1-3-4.0/1",
+        "#1-3-4.0/1/2",
+        "#1-3-4.0/1/2/3",
+        "#1-3-4.4.0-4.4/5",
+        "#1-3-4.5/0"
+      ],
+      "source": null,
+      "assessment": "k5-m1:spanda",
+      "bindings": [
+        "k5-m1:spanda:c",
+        "k5-m1:spanda:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:formal",
+      "role": "Six QL flowering stages and retained trigonometric operand/signature table",
+      "scope": "M1",
+      "coordinates": [
+        "#1-4.0",
+        "#1-4.1",
+        "#1-4.2",
+        "#1-4.3",
+        "#1-4.4",
+        "#1-4.5"
+      ],
+      "source": null,
+      "assessment": "k5-m1:formal",
+      "bindings": [
+        "k5-m1:formal:c",
+        "k5-m1:formal:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:topology",
+      "role": "Retained element-count and historical ring quaternion tables",
+      "scope": "M1",
+      "coordinates": [
+        "#1-5"
+      ],
+      "source": null,
+      "assessment": "k5-m1:topology",
+      "bindings": [
+        "k5-m1:topology:c",
+        "k5-m1:topology:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:torus",
+      "role": "Checked finite 16/9 torus embedding; numerical domain not exhaustively tested",
+      "scope": "M1",
+      "coordinates": [
+        "#1-5-1"
+      ],
+      "source": null,
+      "assessment": "k5-m1:torus",
+      "bindings": [
+        "k5-m1:torus:c",
+        "k5-m1:torus:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:clock",
+      "role": "Independent direct/prime and Hopf-fibre clock; legacy return convention remains distinct",
+      "scope": "M1",
+      "coordinates": [
+        "#1-3",
+        "#1-5-2"
+      ],
+      "source": null,
+      "assessment": "k5-m1:clock",
+      "bindings": [
+        "k5-m1:clock:c",
+        "k5-m1:clock:rust"
+      ],
+      "dispositions": {
+        "c": "bound",
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:traversal",
+      "role": "Actual walker/pointer evidence through existing QL A/B/C and D completion",
+      "scope": "M1",
+      "coordinates": [
+        "#1-2",
+        "#1-4"
+      ],
+      "source": null,
+      "assessment": "k5-m1:traversal",
+      "bindings": [
+        "k5-m1:traversal:rust"
+      ],
+      "dispositions": {
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:ratios",
+      "role": "Evidenced source rows, reciprocal and two-operand composition into accepted music ratios",
+      "scope": "M1",
+      "coordinates": [
+        "#1-2-0",
+        "#1-2-1",
+        "#1-4"
+      ],
+      "source": null,
+      "assessment": "k5-m1:ratios",
+      "bindings": [
+        "k5-m1:ratios:rust"
+      ],
+      "dispositions": {
+        "rust": "bound"
+      },
+      "invariants": [
+        "existing-K2-identities-only",
+        "partial-candidate-is-not-inherited-capability-closure"
+      ],
+      "relations": [],
+      "dependencies": [
+        "k5-m1:acceptance"
+      ]
+    },
+    {
+      "id": "k5-m1:acceptance",
+      "role": "Accepted K4 M1 census and full per-coordinate K5 acceptance are outstanding (#128/#129).",
+      "scope": "M1",
+      "coordinates": [
+        "#1"
+      ],
+      "source": null,
+      "assessment": "unassessed",
+      "bindings": [],
+      "dispositions": {},
+      "invariants": [
+        "no-closure-before-accepted-census-and-scoped-evidence"
+      ],
+      "relations": [],
+      "dependencies": []
     }
   ],
   "implementations": [
@@ -3886,6 +4666,261 @@
       "relations": [],
       "rationale": "K2 aggregate index only; no computational-body claim.",
       "structure": []
+    },
+    {
+      "id": "k5-m1:ananda:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_cell",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-2-0",
+        "#1-2-0-0",
+        "#1-2-1",
+        "#1-2-1-0",
+        "#1-2-2",
+        "#1-2-2-0",
+        "#1-2-3",
+        "#1-2-3-0",
+        "#1-2-4",
+        "#1-2-4-0",
+        "#1-2-5",
+        "#1-2-5-0"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:ananda:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn cell",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-2-0",
+        "#1-2-0-0",
+        "#1-2-1",
+        "#1-2-1-0",
+        "#1-2-2",
+        "#1-2-2-0",
+        "#1-2-3",
+        "#1-2-3-0",
+        "#1-2-4",
+        "#1-2-4-0",
+        "#1-2-5",
+        "#1-2-5-0"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:spanda:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_spanda",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3-0",
+        "#1-3-1",
+        "#1-3-2",
+        "#1-3-3",
+        "#1-3-4",
+        "#1-3-5",
+        "#1-3-4.0000",
+        "#1-3-4.0/1",
+        "#1-3-4.0/1/2",
+        "#1-3-4.0/1/2/3",
+        "#1-3-4.4.0-4.4/5",
+        "#1-3-4.5/0"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:spanda:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn spanda",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3-0",
+        "#1-3-1",
+        "#1-3-2",
+        "#1-3-3",
+        "#1-3-4",
+        "#1-3-5",
+        "#1-3-4.0000",
+        "#1-3-4.0/1",
+        "#1-3-4.0/1/2",
+        "#1-3-4.0/1/2/3",
+        "#1-3-4.4.0-4.4/5",
+        "#1-3-4.5/0"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:formal:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_formal",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-4.0",
+        "#1-4.1",
+        "#1-4.2",
+        "#1-4.3",
+        "#1-4.4",
+        "#1-4.5"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:formal:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn formal",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-4.0",
+        "#1-4.1",
+        "#1-4.2",
+        "#1-4.3",
+        "#1-4.4",
+        "#1-4.5"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:topology:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_topology",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1-5"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:topology:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn topology",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1-5"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:torus:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_torus",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1-5-1"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:torus:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn torus",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#1-5-1"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:clock:c",
+      "stratum": "c",
+      "kind": "computational",
+      "path": "c/src/m1.c",
+      "symbol": "ql_m1_clock",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-5-2"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:clock:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub struct Clock",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-5-2"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:traversal:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn traverse",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-2",
+        "#1-4"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
+    },
+    {
+      "id": "k5-m1:ratios:rust",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-mef/src/m1.rs",
+      "symbol": "pub fn ratio_basis",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-2-0",
+        "#1-2-1",
+        "#1-4"
+      ],
+      "relations": [],
+      "rationale": "Bounded candidate operation only. Consume existing K2 identity; full K4 coordinate census and relation disposition remain outstanding.",
+      "structure": []
     }
   ],
   "evidence": [
@@ -3915,6 +4950,54 @@
         "relation"
       ],
       "result": "present"
+    },
+    {
+      "id": "k5-m1:local-execution",
+      "kind": "test-receipt",
+      "artifact": {
+        "path": "docs/kernel-rebuild/m1-engine-receipt-v1.json",
+        "sha256": "9b20cc3500b67115e0f190c211706f679dede517453bf2a15434451af025890d"
+      },
+      "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+      "subjects": [
+        "k5-m1:ananda",
+        "k5-m1:spanda",
+        "k5-m1:formal",
+        "k5-m1:topology",
+        "k5-m1:torus",
+        "k5-m1:clock",
+        "k5-m1:traversal",
+        "k5-m1:ratios"
+      ],
+      "strata": [
+        "c",
+        "rust"
+      ],
+      "axes": [
+        "coordinate",
+        "operational"
+      ],
+      "result": "passed"
+    },
+    {
+      "id": "k5-m1:literal-observation",
+      "kind": "observation",
+      "artifact": {
+        "path": "docs/kernel-rebuild/m1-source-comparison-v1.json",
+        "sha256": "618038a9949a3c0f0a18c9fda2923138abce0a32803b6bd4445ea3a48a9467e1"
+      },
+      "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+      "subjects": [
+        "k5-m1:ananda"
+      ],
+      "strata": [
+        "source",
+        "c"
+      ],
+      "axes": [
+        "source"
+      ],
+      "result": "present"
     }
   ],
   "discrepancies": [
@@ -3940,6 +5023,110 @@
         {
           "state": "open",
           "reference": "docs/KERNEL-RECURSIVE-M-REGISTRY.md"
+        }
+      ]
+    },
+    {
+      "id": "k5-m1:sum-dr",
+      "subjects": [
+        "#1-2-2-0",
+        "k5-m1:ananda"
+      ],
+      "axis": "source",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "open",
+      "detail": "Two source DR cells retain 0/1 while the accepted typed computation returns 1. No symbolic interpretation or normalization is inferred. Every source location and value is in docs/kernel-rebuild/m1-source-comparison-v1.json.",
+      "current_authority": {
+        "peer": "c",
+        "reference": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
+        "reason": "Accepted upstream bb47ab9 typed return governs this candidate runtime; literal CSV remains independent evidence. K4/K5 must resolve authority by register, not blanket equality."
+      },
+      "proposal": null,
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "docs/kernel-rebuild/m1-source-comparison-v1.json"
+        }
+      ]
+    },
+    {
+      "id": "k5-m1:difference-a-dr",
+      "subjects": [
+        "#1-2-3-0",
+        "k5-m1:ananda"
+      ],
+      "axis": "source",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "open",
+      "detail": "144 literal Difference A DR cells are 1; accepted typed return uses complement residue 9 for raw -1. Magnitude and complement readings are not declared synonymous. Every source location and value is in docs/kernel-rebuild/m1-source-comparison-v1.json.",
+      "current_authority": {
+        "peer": "c",
+        "reference": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
+        "reason": "Accepted upstream bb47ab9 typed return governs this candidate runtime; literal CSV remains independent evidence. K4/K5 must resolve authority by register, not blanket equality."
+      },
+      "proposal": null,
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "docs/kernel-rebuild/m1-source-comparison-v1.json"
+        }
+      ]
+    },
+    {
+      "id": "k5-m1:quintessence-raw",
+      "subjects": [
+        "#1-2-5",
+        "k5-m1:ananda"
+      ],
+      "axis": "source",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "open",
+      "detail": "120 raw literal Quintessence readings differ from the typed {-1,bimba,sum} tuple. Both contributors and exact CSV text remain retained. Every source location and value is in docs/kernel-rebuild/m1-source-comparison-v1.json.",
+      "current_authority": {
+        "peer": "c",
+        "reference": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
+        "reason": "Accepted upstream bb47ab9 typed return governs this candidate runtime; literal CSV remains independent evidence. K4/K5 must resolve authority by register, not blanket equality."
+      },
+      "proposal": null,
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "docs/kernel-rebuild/m1-source-comparison-v1.json"
+        }
+      ]
+    },
+    {
+      "id": "k5-m1:quintessence-dr",
+      "subjects": [
+        "#1-2-5-0",
+        "k5-m1:ananda"
+      ],
+      "axis": "source",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "open",
+      "detail": "110 literal Quintessence DR readings differ textually from the typed bimba/sum projection. Simplified/symbolic readings are not silently reinterpreted. Every source location and value is in docs/kernel-rebuild/m1-source-comparison-v1.json.",
+      "current_authority": {
+        "peer": "c",
+        "reference": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
+        "reason": "Accepted upstream bb47ab9 typed return governs this candidate runtime; literal CSV remains independent evidence. K4/K5 must resolve authority by register, not blanket equality."
+      },
+      "proposal": null,
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "docs/kernel-rebuild/m1-source-comparison-v1.json"
         }
       ]
     }

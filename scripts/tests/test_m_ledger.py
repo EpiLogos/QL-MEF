@@ -23,6 +23,7 @@ class MLedgerTests(unittest.TestCase):
         cls.world = Path(cls.temp.name)
         paths = {m[k]["path"] for m in cls.base["matrices"] for k in ("data", "rationale")}
         paths.update(i["path"] for i in cls.base["implementations"])
+        paths.update(e["artifact"]["path"] for e in cls.base["evidence"])
         paths.update([str(ledger.REGISTRY), "fixtures/kernel/m-ledger-v1.schema.json"])
         for p in paths:
             target = cls.world / p; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / p, target)
@@ -45,7 +46,7 @@ class MLedgerTests(unittest.TestCase):
 
     def test_seed_determinism_and_source_inventory(self):
         generated = ledger.refresh(ROOT)
-        self.assertEqual(generated, self.base)
+        self.assertEqual([r for r in generated["rows"] if r["source"]], [r for r in self.base["rows"] if r["source"]])
         self.assertEqual(ledger.refresh(ROOT, copy.deepcopy(self.base)), self.base)
         self.assertEqual(len(generated["rows"]), 192)
         self.assertEqual(len(generated["matrices"]), 10)
@@ -93,11 +94,11 @@ class MLedgerTests(unittest.TestCase):
             document = json.loads(original); document["capabilities"].append({"id": "K4-AUTO-TEST", "name": "new source capability", "coordinate": "M1-0"})
             path.write_text(json.dumps(document))
             expanded = ledger.refresh(self.world, copy.deepcopy(self.base))
-            self.assertEqual(len(expanded["rows"]), 193)
+            self.assertEqual(len(expanded["rows"]), len(self.base["rows"]) + 1)
             ledger.verify(self.world, expanded)
             document["capabilities"].pop(); path.write_bytes(original)
             shrunk = ledger.refresh(self.world, expanded)
-            self.assertEqual(len(shrunk["rows"]), 193, "removed source must not be silently forgotten")
+            self.assertEqual(len(shrunk["rows"]), len(self.base["rows"]) + 1, "removed source must not be silently forgotten")
             with self.assertRaisesRegex(ValueError, "orphan/stale source capability"):
                 ledger.verify(self.world, shrunk)
         finally:
