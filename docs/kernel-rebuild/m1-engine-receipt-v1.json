@@ -25,11 +25,11 @@
     },
     {
       "path": "crates/ql-mef/src/m1.rs",
-      "sha256": "980b817e2f6c19e5e4bd422e55a37fb6487a127c2e7bae0f16259cd3356ea382"
+      "sha256": "e4a575090a7b46eb82e0507fd059a6bdbf74dcaf2ff24fae94014c209471cebc"
     },
     {
       "path": "crates/ql-mef/tests/m1_engine.rs",
-      "sha256": "6cb8941f77462bce593b40e6eb997e7bf79a229651fddae6b9757e64c9409333"
+      "sha256": "2a6644895a9f6cf1447cdb0e1e9ddef7b2e5a7ea4b26ab8a0a5bd77ab0edd714"
     },
     {
       "path": "migration/epi-kernel/m1-engine-probe.c",
@@ -60,7 +60,8 @@
     "asan_ubsan_native_probe": "passed",
     "installed_cpp17_consumer": "passed-linkage-only",
     "ql_mef_clippy_all_targets": "passed",
-    "ql_mef_package_tests": "passed"
+    "ql_mef_package_tests": "passed",
+    "prime_completion_coordinates_and_pitch_assertions": "passed-in-all-6912-walker-cases"
   },
   "not_claimed": [
     "accepted K4 census",

@@ -95,7 +95,13 @@ cell, explicit conjugate participation, basis and lens. It never substitutes
 a clock-derived cell for the walker-selected cell. All pointer roles and
 zero-to-many A/B/C candidates survive, including overlapping pairs, reversed
 walks and the canonical side of D2 expansion. Cross-face walks are not invented
-as primary A/B/C relations. Existing QL operators own musical completion.
+as primary A/B/C relations. Existing QL operators own musical completion. The positional classifier's
+canonical direct-base frame is projected to the actual walked face using the
+existing kernel face involution: prime D1 retains both prime endpoints, and
+prime D2 adds the requested endpoint on the direct face. Pitches are recomputed
+with the same basis/lens. `completion_base_phase` discloses this projection;
+`operator_ref` remains the canonical operator's provenance, not a claim that
+the returned oriented coordinates are its unprojected direct-base frame.
 
 Source-row exact ratios are only the explicitly evidenced rows: P0=1/1,
 P3=4/3, B6=2/3, P7=16/9, B8=8/9, B9=1/1. Reciprocals and composition retain

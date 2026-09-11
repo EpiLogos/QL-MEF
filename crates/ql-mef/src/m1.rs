@@ -390,7 +390,9 @@ pub struct Traversal {
     pub source: QlCoordinate,
     pub target: QlCoordinate,
     pub interval_semitones: u8,
-    /// Preserve all valid families, reverse orientation and canonical D2 side.
+    /// Preserve all valid families, walked face, reverse orientation and canonical D2 side.
+    /// Frames are conjugated projections of the referenced canonical operator when
+    /// the walk begins on the prime face; the operator reference remains provenance.
     pub candidates: Vec<MusicalTraversalCandidate>,
 }
 pub fn traverse(request: TraversalRequest) -> Result<Traversal, String> {
@@ -422,7 +424,7 @@ pub fn traverse(request: TraversalRequest) -> Result<Traversal, String> {
             (ConjugationDegree::D2, Some(TraversalExpansionSide::Target))
         }
     };
-    let candidates = if request.source.face != request.target.face
+    let mut candidates = if request.source.face != request.target.face
         || request.source.position == request.target.position
     {
         Vec::new()
@@ -437,6 +439,23 @@ pub fn traverse(request: TraversalRequest) -> Result<Traversal, String> {
         )
         .map_err(|e| e.to_string())?
     };
+    // The shared classifier deliberately constructs canonical direct-base frames.
+    // Lift that existing frame onto the actual walk's base face. This is the
+    // kernel face involution, not another relation/completion grammar.
+    if request.source.face == ql_core::QlFace::Conjugate {
+        for candidate in &mut candidates {
+            for coordinate in &mut candidate.frame.coordinates {
+                coordinate.face = coordinate.face.conjugate();
+            }
+            candidate.frame.pitches = candidate
+                .frame
+                .coordinates
+                .iter()
+                .copied()
+                .map(|coordinate| pitch_at_lens(request.basis, request.lens, coordinate))
+                .collect();
+        }
+    }
     let interval_semitones = directed_pitch_delta(
         pitch_at_lens(request.basis, request.lens, request.source),
         pitch_at_lens(request.basis, request.lens, request.target),
@@ -556,6 +575,7 @@ pub fn traverse_json(input: &str) -> Result<String, String> {
         "pointer_evidence_status":"caller-supplied", "cell":result.cell,"ratio_evidence":result.ratio,
         "basis":match basis {MusicalBasis::Chromatic=>"chromatic", MusicalBasis::Fifths=>"fifths"},
         "lens":lens.code(),"interval_semitones":result.interval_semitones,"candidates":candidates,
+        "completion_base_phase":result.source.face.kernel_value(),
         "acceptance":"candidate-pending-K4-and-K5", "experiential_parity":"unassessed"
     })).map_err(|e|e.to_string())
 }

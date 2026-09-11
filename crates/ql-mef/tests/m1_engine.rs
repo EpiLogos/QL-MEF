@@ -260,6 +260,46 @@ fn every_actual_walk_retains_all_families_direction_and_completion() {
                                 };
                                 assert_eq!(candidate.frame.coordinates.len(), size);
                                 assert_eq!(candidate.frame.pitches.len(), size);
+                                assert!(candidate.frame.coordinates.contains(&q(from, face)));
+                                assert!(candidate.frame.coordinates.contains(&q(to, face)));
+                                assert_eq!(
+                                    candidate
+                                        .frame
+                                        .coordinates
+                                        .iter()
+                                        .filter(|c| c.face == face)
+                                        .count(),
+                                    2
+                                );
+                                if matches!(
+                                    participation,
+                                    ConjugateParticipation::SourceOnly
+                                        | ConjugateParticipation::TargetOnly
+                                ) {
+                                    let expanded =
+                                        if participation == ConjugateParticipation::SourceOnly {
+                                            from
+                                        } else {
+                                            to
+                                        };
+                                    assert!(
+                                        candidate
+                                            .frame
+                                            .coordinates
+                                            .contains(&q(expanded, face.conjugate()))
+                                    );
+                                }
+                                for (coordinate, pitch) in candidate
+                                    .frame
+                                    .coordinates
+                                    .iter()
+                                    .zip(&candidate.frame.pitches)
+                                {
+                                    assert_eq!(
+                                        *pitch,
+                                        ql_mef::pitch_at_lens(basis, lens, *coordinate)
+                                    );
+                                }
                             }
                         }
                     }
@@ -333,6 +373,21 @@ fn json_boundary_keeps_full_precision_and_rejects_malformed_requests() {
         let mut invalid = request.clone();
         invalid[key] = value;
         assert!(traverse_json(&invalid.to_string()).is_err(), "{invalid}");
+    }
+    let mut prime = request.clone();
+    prime["source"]["phase"] = serde_json::json!(1);
+    prime["target"]["phase"] = serde_json::json!(1);
+    prime["participation"] = serde_json::json!("none");
+    let prime: Value = serde_json::from_str(&traverse_json(&prime.to_string()).unwrap()).unwrap();
+    assert_eq!(prime["completion_base_phase"], 1);
+    for candidate in prime["candidates"].as_array().unwrap() {
+        assert!(
+            candidate["coordinates"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|c| c["phase"] == 1)
+        );
     }
     let mut invalid = request;
     invalid["source"]["position6"] = serde_json::json!(6);
