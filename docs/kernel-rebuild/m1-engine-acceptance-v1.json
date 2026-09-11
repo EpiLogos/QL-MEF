@@ -424,7 +424,7 @@
     },
     {
       "path": "scripts/m_census.py",
-      "sha256": "92e86784e5f3b3a3af068bb50542d4d2b85442f0e92f57afa44c97b81fc2af3b"
+      "sha256": "9198a246ee609f57613c68d53f8865e6cc398be33cc421fb327e76e38703dbe1"
     },
     {
       "path": "scripts/tests/test_m_census.py",

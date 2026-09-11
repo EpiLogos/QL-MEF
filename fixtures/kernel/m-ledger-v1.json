@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "9d4b00d291574c7c73af26bbf86c315ee5bb47c16263ad0b5ff3a47a5ffbb53a",
+  "ledger_revision": "b8444c34cd2c1b0a38a5d154590988af60c8e2249795eb4c7ff3205a51d51596",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480",
@@ -107701,6 +107701,162 @@
       "structure": [],
       "disposition": "cross-coordinate",
       "rationale": "Atomic same-event/subject/generation Cosmic-Personal-M3-prime state and replay; owner identity remains separate; this scoped operation/reading does not certify the whole coordinate."
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:ABOUT",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "ABOUT",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:CONTRACT_REVISION",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "CONTRACT_REVISION",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:OWNER_REF",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "OWNER_REF",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:PRODUCT_ID",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "PRODUCT_ID",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:SCHEMA",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "SCHEMA",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:axes",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "axes",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:build_descriptor",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "build_descriptor",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:now_ms",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "now_ms",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:readiness",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "readiness",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:setting",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "setting",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:sha256_hex",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "sha256_hex",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:system_command",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "system_command",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
+    },
+    {
+      "id": "rust:crates/ql-cli/src/system.rs:zero_unix_ms",
+      "stratum": "rust",
+      "kind": "computational",
+      "path": "crates/ql-cli/src/system.rs",
+      "symbol": "zero_unix_ms",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "relations": [],
+      "rationale": "K4 census: Wave 5 per-owner System settings disclosure; no coordinate identity.",
+      "structure": []
     }
   ],
   "evidence": [
@@ -109524,7 +109680,7 @@
       "kind": "implementation",
       "artifact": {
         "path": "fixtures/kernel/census/discovery-rust-v1.json",
-        "sha256": "ec2cf54fc3dc8d02c812ed24b660fc77deeec862c8c4adc1b31a8feb74ebec07"
+        "sha256": "7bdf28fdabea1b2b282673d2c668286f2e1a46e7bd9034d5bc91abefc9907ffd"
       },
       "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
       "subjects": [
@@ -109702,7 +109858,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
-        "sha256": "4167b357b4a62d8bf29c9e26f13ed4479e80e2b2b74a5b7d60e999f0fe49a8e6"
+        "sha256": "d368b75cf41ae28f43c04d3f39709e9497f0ce0c396a1764ca7be99e43cc9048"
       },
       "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
       "subjects": [

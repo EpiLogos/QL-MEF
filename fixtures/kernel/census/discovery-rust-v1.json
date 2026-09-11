@@ -1,9 +1,9 @@
 {
   "schema": "ql.m-census-discovery/v1",
   "stratum": "rust",
-  "construct_count": 1027,
+  "construct_count": 1040,
   "bound_count": 215,
-  "orphan_count": 812,
+  "orphan_count": 825,
   "bound": [
     {
       "symbol": "QlAttachment",
@@ -47,7 +47,7 @@
       "symbol": "vak_relation_kind",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 740,
+      "line": 743,
       "stratum": "rust",
       "coordinates": [
         "#2-1-5",
@@ -83,7 +83,7 @@
       "symbol": "verify_command",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 886,
+      "line": 889,
       "stratum": "rust",
       "coordinates": [
         "#2-5-0/1-6"
@@ -108,7 +108,7 @@
       "symbol": "parse_operation",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 942,
+      "line": 945,
       "stratum": "rust",
       "coordinates": [
         "#3-4"
@@ -131,7 +131,7 @@
       "symbol": "provider_state",
       "path": "crates/ql-cli/src/lib.rs",
       "kind": "fn",
-      "line": 953,
+      "line": 956,
       "stratum": "rust",
       "coordinates": [
         "#2-3-2-0-1-0"
