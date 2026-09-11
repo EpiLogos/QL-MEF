@@ -1,0 +1,19 @@
+{
+  "schema": "ql.m1.engine/v1",
+  "config": {
+    "event_ref": "example:cosmic-event",
+    "subject_coordinate": "#1",
+    "selected_coordinate": "#1-2-5",
+    "revision": "0",
+    "cycle": "1",
+    "tick12": 7,
+    "family": 5,
+    "row12": 3,
+    "col12": 4,
+    "flowering_substage": 3,
+    "lens12": 11,
+    "context_frame": 7,
+    "basis": "fifths"
+  },
+  "action": null
+}

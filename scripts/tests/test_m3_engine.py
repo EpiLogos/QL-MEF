@@ -21,6 +21,15 @@ class M3SourceTests(unittest.TestCase):
         self.assertEqual(groups[7][14], '#3-4-1-0')
         self.assertEqual(groups[5][0], '#3-1-1-1')
         self.assertEqual(groups[5][63], '#3-1-0-0')
+        self.assertEqual(groups[5][1], '#3-1-2-1')
+        self.assertEqual(groups[5][8], '#3-1-1-2')
+
+    def test_hexagram_bindings_reject_independent_relation_mutation(self):
+        registry = json.loads((ROOT / M.REGISTRY).read_text())
+        registry['relations'].append({'source_kind':'HAS_UPPER_Trigram',
+            'from_ref':'#3-1-2-1', 'to_ref':'#3-1-0'})
+        with self.assertRaisesRegex(ValueError,'ambiguous'):
+            M.source_groups(registry)
 
     def test_relation_disagreement_fails_instead_of_repairing_source(self):
         registry = json.loads((ROOT / M.REGISTRY).read_text())

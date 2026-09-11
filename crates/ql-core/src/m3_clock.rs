@@ -136,7 +136,9 @@ pub fn parse_recorded_clock(source: &str) -> Result<[RecordedClockProjection; 36
         }
     }
     let text = String::from_utf8(clean).map_err(|e| e.to_string())?;
-    let (_, table) = text.split_once("CLOCK_DEGREE_LUT[360]").ok_or("clock declaration absent")?;
+    let (_, table) = text
+        .split_once("CLOCK_DEGREE_LUT[360]")
+        .ok_or("clock declaration absent")?;
     let (body, _) = table.split_once("};").ok_or("clock terminator absent")?;
     let (_, body) = body.split_once('{').ok_or("clock initializer absent")?;
     let mut rows = Vec::new();
@@ -147,17 +149,22 @@ pub fn parse_recorded_clock(source: &str) -> Result<[RecordedClockProjection; 36
             .map(|token| {
                 let token = token.trim().trim_end_matches(['U', 'u', 'F', 'f']);
                 let number = token.parse::<f64>().map_err(|e| e.to_string())?;
-                if !number.is_finite() || number.fract() != 0.0 || !(0.0..=65535.0).contains(&number) {
+                if !number.is_finite()
+                    || number.fract() != 0.0
+                    || !(0.0..=65535.0).contains(&number)
+                {
                     return Err("non-integral or out-of-range clock field".into());
                 }
                 Ok(number as u16)
             })
             .collect::<Result<Vec<_>, String>>()?;
-        let fields: [u16; CLOCK_FIELD_COUNT] = values.try_into().map_err(|_| "clock width changed")?;
+        let fields: [u16; CLOCK_FIELD_COUNT] =
+            values.try_into().map_err(|_| "clock width changed")?;
         if fields[0] as usize != rows.len() {
             return Err("clock order, duplicate or missing degree".into());
         }
         rows.push(RecordedClockProjection { fields });
     }
-    rows.try_into().map_err(|_| "clock row count changed".into())
+    rows.try_into()
+        .map_err(|_| "clock row count changed".into())
 }

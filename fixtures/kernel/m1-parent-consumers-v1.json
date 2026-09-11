@@ -1,0 +1,22 @@
+{
+  "schema": "ql.m1.parent-consumer-fixture/v1",
+  "standing": "headless producer consumer fixture; not installed surface acceptance",
+  "consumer_refs": ["epi.cosmic.123", "epi.personal.450"],
+  "config": {
+    "event_ref": "fixture:shared-cosmic-personal-event",
+    "subject_coordinate": "#1",
+    "selected_coordinate": "#1-2-5",
+    "revision": "7",
+    "cycle": "9007199254740993",
+    "tick12": 7,
+    "family": 5,
+    "row12": 3,
+    "col12": 4,
+    "flowering_substage": 3,
+    "lens12": 11,
+    "context_frame": 7,
+    "basis": "fifths"
+  },
+  "advance_ticks": 5,
+  "deep_coordinate": "#1-5-2"
+}

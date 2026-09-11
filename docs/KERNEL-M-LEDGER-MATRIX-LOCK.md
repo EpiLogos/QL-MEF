@@ -201,3 +201,9 @@ source-ground and Rust workflows remain active. CI receipts identify actual
 commits; this document is not a substitute for those receipts. No full M body,
 full implementation census, C++ embodiment or authenticated live graph observation
 is claimed by K3.
+
+K4 handoff update (#128): the automated M1/M2/M3 census has since been executed
+onto this same ledger — discovered implementations, scoped readiness, evidence
+and discrepancies. See `docs/kernel-rebuild/K4-M123-CENSUS.md` and
+`fixtures/kernel/census/`; the import, refresh and verification laws above are
+unchanged and continue to govern it.

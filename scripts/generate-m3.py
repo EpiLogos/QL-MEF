@@ -63,8 +63,29 @@ def source_groups(registry: dict) -> tuple[list[list[str]], list[str]]:
     codon = [require(f'#3-2-{a+1}-{b+1}-{c+1}', f'Codon_{letters[a]}{letters[b]}{letters[c]}') for a in range(4) for b in range(4) for c in range(4)]
     # The source trigram ids are NOT their three-bit line patterns.
     trigram = [require(f'#3-1-{i}', name) for i, name in enumerate(['Qian','Kun','Zhen','Xun','Kan','Li','Gen','Dui'])]
-    binary_to_source = [1,2,4,7,6,5,3,0]
-    hexagram = [require(f'#3-1-{binary_to_source[h >> 3]}-{binary_to_source[h & 7]}') for h in range(64)]
+    # Derive addresses from explicit trigram relations, never from coordinate
+    # suffix order (which is lower/upper) or stale binaryCode payloads.
+    trigram_bits = dict(zip(trigram, [7, 0, 1, 6, 2, 5, 4, 3]))
+    hexagram = [None] * 64
+    halves = {}
+    for rel in registry['relations']:
+        if rel['source_kind'] in ('HAS_UPPER_Trigram', 'HAS_LOWER_Trigram'):
+            halves.setdefault(rel['from_ref'], {}).setdefault(rel['source_kind'], set()).add(rel['to_ref'])
+    for ref, parts in halves.items():
+        if not ref.startswith('#3-1-'):
+            continue
+        try:
+            upper, lower = parts['HAS_UPPER_Trigram'], parts['HAS_LOWER_Trigram']
+            if len(upper) != 1 or len(lower) != 1:
+                raise ValueError('ambiguous trigram composition: ' + ref)
+            address = (trigram_bits[next(iter(upper))] << 3) | trigram_bits[next(iter(lower))]
+        except KeyError as error:
+            raise ValueError('incomplete trigram composition: ' + ref) from error
+        if hexagram[address] is not None:
+            raise ValueError('duplicate relation-derived hexagram address')
+        hexagram[address] = require(ref)
+    if any(ref is None for ref in hexagram):
+        raise ValueError('missing relation-derived hexagram address')
     matrix = [require(f'#3-3-2-{i}', f'Matrix {i+1}') for i in range(3)]
     suit_paths = [2,1,4,3]  # names, not a cast between two differently ordered sixfolds
     suits = ['Cups','Wands','Pentacles','Swords']

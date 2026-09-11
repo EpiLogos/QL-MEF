@@ -1,0 +1,138 @@
+{
+  "request": {
+    "schema": "ql.m3-state-request/v1",
+    "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+    "stamp": {
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "source_ref": "fixture:M3-source",
+      "contract_ref": "ql.m3-state-request/v1"
+    },
+    "subject_ref": "fixture:nara-subject",
+    "occurrence_unix_ms": 1789090397000,
+    "receipt_unix_ms": 1789090400000,
+    "clock_steps": 359,
+    "address": 7,
+    "pose": 6,
+    "aperture": 2,
+    "matrix_axis": 0,
+    "rna": false,
+    "bases": [
+      {
+        "role": "identity-hash",
+        "reference": "fixture:nara/identity-hash",
+        "revision": "rev-1"
+      },
+      {
+        "role": "identity-quaternion",
+        "reference": "fixture:nara/identity-quaternion",
+        "revision": "rev-1"
+      },
+      {
+        "role": "live-composition",
+        "reference": "fixture:nara/live-composition",
+        "revision": "rev-1"
+      },
+      {
+        "role": "bioquaternion-reading",
+        "reference": "fixture:nara/bioquaternion-reading",
+        "revision": "rev-1"
+      },
+      {
+        "role": "human-Day",
+        "reference": "fixture:nara/human-Day",
+        "revision": "rev-1"
+      },
+      {
+        "role": "agent-NOW",
+        "reference": "fixture:nara/agent-NOW",
+        "revision": "rev-1"
+      },
+      {
+        "role": "Flow",
+        "reference": "fixture:nara/Flow",
+        "revision": "rev-1"
+      },
+      {
+        "role": "M1-carrier",
+        "reference": "fixture:nara/M1-carrier",
+        "revision": "rev-1"
+      }
+    ],
+    "m2_basis": {
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "source_ref": "fixture:M2-sound-colour-material",
+      "contract_ref": "ql.m2-engine-request/v1"
+    }
+  },
+  "commands": [
+    {
+      "schema": "ql.m3-command/v1",
+      "event_ref": "fixture:current-event",
+      "subject_ref": "fixture:nara-subject",
+      "expected_generation": 7,
+      "actor_ref": "fixture:authorised-owner-caller",
+      "cause_ref": "fixture:Flow/contribution-1",
+      "occurrence_unix_ms": 1789090397000,
+      "receipt_unix_ms": 1789090400000,
+      "operations": [
+        {
+          "operation": "apply-matrix",
+          "family": 0
+        },
+        {
+          "operation": "advance-clock",
+          "steps": 1
+        },
+        {
+          "operation": "transcribe",
+          "rna": true
+        }
+      ]
+    },
+    {
+      "schema": "ql.m3-command/v1",
+      "event_ref": "fixture:current-event",
+      "subject_ref": "fixture:nara-subject",
+      "expected_generation": 8,
+      "actor_ref": "fixture:authorised-owner-caller",
+      "cause_ref": "fixture:Flow/contribution-1",
+      "occurrence_unix_ms": 1789090397001,
+      "receipt_unix_ms": 1789090400001,
+      "operations": [
+        {
+          "operation": "reciprocal-aperture"
+        },
+        {
+          "operation": "change-line",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "schema": "ql.m3-command/v1",
+      "event_ref": "fixture:current-event",
+      "subject_ref": "fixture:nara-subject",
+      "expected_generation": 9,
+      "actor_ref": "fixture:authorised-owner-caller",
+      "cause_ref": "fixture:Flow/contribution-1",
+      "occurrence_unix_ms": 1789090397002,
+      "receipt_unix_ms": 1789090400002,
+      "operations": [
+        {
+          "operation": "advance-clock",
+          "steps": 360
+        },
+        {
+          "operation": "set-pose",
+          "pose": 0
+        }
+      ]
+    }
+  ]
+}
