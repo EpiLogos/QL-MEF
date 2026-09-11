@@ -1,0 +1,54 @@
+name: M2 coordinate engine
+on:
+  push:
+    branches: [agent/k6-m2-coordinate-rebuild]
+  pull_request:
+    paths:
+      - '.github/workflows/kernel-m2.yml'
+      - 'crates/ql-mef/**'
+      - 'ql-c/**'
+      - 'fixtures/kernel/**'
+      - 'scripts/*m2*'
+      - 'scripts/tests/*m2*'
+      - 'docs/kernel-rebuild/**'
+permissions:
+  contents: read
+concurrency:
+  group: m2-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Capture exact source
+        run: |
+          mkdir -p target/m2-receipt
+          git rev-parse HEAD > target/m2-receipt/source-revision.txt
+          git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
+      - name: Publish source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: m2-source-${{ github.sha }}
+          path: target/m2-receipt/
+          retention-days: 7
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Rust baseline and M2 tests
+        run: cargo test --workspace --all-targets --locked
+      - name: M2 source and native parity
+        run: |
+          if test -f scripts/test-m2-engine.sh; then
+            bash scripts/test-m2-engine.sh
+          else
+            python3 scripts/m-ledger.py check
+          fi
+      - name: Publish parity receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m2-parity-${{ github.sha }}
+          path: target/m2-receipt/
+          retention-days: 14
