@@ -1,94 +1,62 @@
 # QL-MEF Kernel Rebuild Wayfinder
 
-Status: **current development Wayfinder**  
-Scope: **one QL-MEF kernel, rebuilt from the existing C/Rust/Bimba bodies and extended through C++ embodiment**  
-Primary repository: `EpiLogos/QL-MEF`  
-Related source field: `EpiLogos/Epi-Logos-C-Experiments/Idea/Bimba/Map/**` and the live Neo4j Bimba Map  
-Existing programme relations: #51, #78, #69, #73 and current successors  
+Status: **current development Wayfinder — post-K7 living-instrument continuation, 2026-09-11**.  
+Programme owner: **EpiLogos/QL-MEF#135**.  
+Scope: one coordinate-complete C/Rust/C++ kernel, rich Bimba projection and the live planetary–Nara instrument in the existing O:I desktop.  
+Source field: `EpiLogos/Epi-Logos-C-Experiments/Idea/Bimba/Map/**`, its Seeds/implementation bodies, and the live Neo4j Bimba Map. C-Experiments remains read-only provenance.  
+Standing programme relations: #51, #78, #69, #73 and current successors.
 
-## 0. Purpose
+## 0. Current starting point
 
-This Wayfinder fixes the development centre for the next QL-MEF programme.
+**K0–K7 are complete at their accepted scopes. Start the continuation below; do not rerun the M1/M2/M3 waves or reopen K4.** Source coverage, finite producer acceptance, continuous embodiment and experienced instrument acceptance remain distinct.
 
-The work is **not** a fresh theoretical reconstruction and not a language rewrite. We are rebuilding one already-developed holographic kernel into a clear long-lived architecture while preserving the depth of the existing Bimba, C and Rust bodies.
+| Accepted floor | Receipt / contract | What subsequent work consumes |
+|---|---|---|
+| K0–K3 / #124–#127 | Source ground, native C centre, recursive `ql.m-tree/v1`, `ql.m-ledger/v1` | One existing coordinate field, registry, ledger/schema and native structural owner. |
+| K4 / #128 | #153, `5b24b95d17234ab5d23d84e658c0cc06434b41a3`; [K4 census](kernel-rebuild/K4-M123-CENSUS.md) | Accepted M1/M2/M3 coordinate workbooks, captured-live/serialized source, discovered C/Rust body and work graph. Discovery is not blanket parity. |
+| K5 / #129 | #150, `bb32250109417e46ee37b9d253e7ae115234ec24`; [M1 contract](KERNEL-M1-ENGINE-CONTRACT.md) | Native M1 engine, full retained Ananda/Spanda/Flowering/topology and same-event parent/deep producer. |
+| K6 / #130 | #148, `c421080371838c87f25ecee3fd53561f75a035f0`; [M2 contract](kernel-rebuild/m2-engine-v1.md) | Native Paraśakti engine, source-preserving known field and joint music/colour/material producer. |
+| K7 / #131 | #151, `276f23e46c625a83c5dee7c1fc64f32761333ac6`; [M3 contract](KERNEL-M3-ENGINE-CONTRACT.md) | Full known M3 source body, demonstrated finite operations, clock/transcription parity, state/Actions and installed-consumer handoff. |
+| Vāk / #138 | #142, `374cf8db5569401980a0f88ae38da1e2d11129b1`; [reconciliation](QL-VAK-KERNEL-RECONCILIATION.md) | Existing `ql.vak-composition/v1`, `ql_mef::vak_composition::VakComposition`, `ql vak compose` and fixture. No second Vāk parser or reopening of #138. |
 
-The governing development unit is the **coordinate and its relations**.
+Read the merge receipts and current contracts for their exact proof scope. The three engines are landed; live ephemeris, the new aperture/centre coordinate promotion, coupled clock phases, full Nara operation and the installed continuous/agent experience are still delivery obligations. This new work is not retrospectively claimed by K5–K7 acceptance.
 
-No single pass over M1, M2, M3 or another M root can be expected to hold the full subsystem in view. The deep capability matrices and the Bimba Map exist precisely to make that unnecessary. The programme therefore proceeds by coordinate coverage, source/implementation reconciliation and parity rather than by asking an Agent to recover an entire subsystem from whichever files happen to be visible in one session.
+This planning cut began from main `59f674d05c020e58c8d51cac7d518e73bc25ae64` (#160), with no open QL-MEF implementation PR returned at that inspection. Recheck actual main and active work before implementing. #154 established the parent-surface integration; #160 established M2 aperture ownership and the M3 centre-field refinement. The subsequent owner discussion completes the product image recorded below.
 
-The kernel build has four computational strata:
+### 0.1 What we are building now
 
-```text
-C
-    lowest executable Bimba / structural kernel lock
+The integrating object is **one continuous, Earth-situated field-event**: a real dated planetary condition participates in M1–M3 computation, is received through a particular Nara's identity, active chakral centres and activity, and becomes sound, colour, form, image, glyph and meaningful encounter. The person can inspect, operate, write about and revisit that same event. Epii and the Bimba map work on its real sources and identities.
 
-Rust
-    typed operational and computational kernel
+The full authorised account is [Living instrument architecture](kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md). Read it before designing the producer join or UX. It preserves the reason for the shape: self-knowledge, archetypal wisdom, attunement and the research of their computable relations, with the live sensory experience primary and information a panel away.
 
-C++
-    continuous geometric / material / acoustic / spatial computation
-
-Neo4j + other projections
-    rich active semantic Bimba and transformable relation field
-```
-
-These are not separate ontologies. They are different computational holdings of the same kernel field.
-
-### 0.1 Accepted producer floor — 2026-09-10
-
-Reconciled against main `374cf8db5569401980a0f88ae38da1e2d11129b1`: **#138 is complete through merged PR #142. `ql.vak-composition/v1` is the QL-owned producer contract.** Consume the existing `ql_mef::vak_composition::VakComposition`, `ql_cli::vak_composition::execute_request`, `ql vak compose <request.json> --json`, and `fixtures/kernel/vak-composition-v1.json` surfaces. Preserve their whole/identity/frame/provenance/Return behavior while rebuilding the structural strata.
-
-#123 remains architectural provenance, not an instruction to restart Vāk reconciliation. This Wayfinder does not import or re-author the parallel Vāk articulation theory. Downstream owner adoption is separate from producer completion and is not a prerequisite for K0.
-
-This accepted Rust operational floor does **not** claim native-C execution of the higher-order composition operations, a complete recursive M registry, continuous C++ embodiment, or whole-M closure. K0 pins the actual floor and discrepancies; #125–#134 retain their separate contracts. The seven canonical Context Frames are settled; historical `(4/5/0)` as a Context-Frame label is superseded/noncanonical, not an eighth-frame/alias/blocker question. This does not change `4/5/0` as the name of the Personal parent composition.
-
-### 0.2 Current K4 handoff and parent-surface integration — 2026-09-11
-
-The owner is coordinating from K4. GitHub now records #128 complete through merged PR #153, `5b24b95d17234ab5d23d84e658c0cc06434b41a3`. Consume [K4-M123-CENSUS.md](kernel-rebuild/K4-M123-CENSUS.md), the shared M ledger, per-root workbooks and `fixtures/kernel/census/work-graph.json`. K4 discovery does not establish downstream computational or experiential acceptance; existing candidate branches retain their own status.
-
-The authorised feature is **two parent surfaces plus six deep M′ instruments**:
+There are **six full M′ capabilities in one composable instrument**, not six mandatory standalone apps:
 
 ```text
-epi.cosmic.123    M1 / M2 / M3, one current harmonic/material/form event
-epi.personal.450  M4 / M5 / M0, that event in a lived DAY/NOW World
-
-M0′  the Bimba map
-M1′  the full Paramaśiva instrument
-M2′  the full Paraśakti instrument
-M3′  the full Mahāmāyā instrument
-M4′  the full Nara instrument
-M5′  the Epii agent
+M0′  Anuttara / the actual Bimba map and source ground
+M1′  Paramaśiva / full formal-harmonic-topological instrument
+M2′  Paraśakti / full spectral-musical-symbolic/aperture instrument
+M3′  Mahāmāyā / full form-transcription-clock instrument
+M4′  Nara / full lived personal and self-knowledge instrument
+M5′  Epii / the same canonical agent, pedagogy and operative Return
 ```
 
-M0′ means the actual map with coordinate/source/relation exploration and governed changes; M5′ means the actual Epii agent with dialogue, investigation, instrument Actions, pedagogy and Return. Their normal desktop availability and full deep working surfaces use the same map and Agent, not abstract substitutes or duplicated runtimes.
+The **3:3** composes Cosmic `epi.cosmic.123` and Personal `epi.personal.450`. The **4:2** foregrounds M1′–M4′ as the explicit lived composition with M0′/M5′ in their grounding and agentic capacities. Both are views/compositions of the same six instruments. Depth means focusing a spatial or relational region while keeping the same event, not creating another clock or session. M4/M4′ is the hinge between explicit composition and Personal Return.
 
-The owner reports the point-cloud engine and seven planetary/chakral glyph-field centres already built and integrated into the desktop. Reuse them. The remaining work is domain-state coupling through the C/Rust/C++ stack and the native desktop/agent/source contracts, not another point-cloud design or shell build.
+Each determinant can become a foregrounded state of the whole: M1's topology, M2's musical/spectral/colour and symbolic worlds, M3's clock/inscription, M4's personal field, M0's geometric/Vāk ground, and M5's teaching/research/action. Focus and presentation changes are distinct from deliberate domain operations.
 
-[Parent-surfaces integration](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md) is the detailed consumer/acceptance contract **inside this K4–K10 ladder**. It assigns the M2 musical–colour–material producer to K6, continuous runtime and retained-renderer binding to K8, Cosmic/deep M1′–M3′ to K9, and Nara/Personal/Bimba-map/Epii work to K10. It adds no stage, no coordinate system and no new K4 completion gate. Do not hand-edit generated census evidence into a roadmap.
+Vāk expressions can be written, imaged, sounded, embodied or enacted. **The 0→1 morph can express the “/” itself**; retain the owner's working renderer examples. Literal `0/1`, the enacted relation and their combination are valid choices. Do not turn this correction into a forced static-glyph or separator-parser rewrite. Preserve expression intent, source identity, transition and warrant.
 
-## 1. The kernel object
+### 0.2 Entry route and bounded first proof
 
-The foundational QL field remains:
+Delivery remains inside **K8/#132, K9/#133 and K10/#134**, with the work packages in §§5–8. There is no K11, new kernel registry, separate aura programme or prerequisite shell rebuild.
 
-```text
-# / 0/1 <-> 1/0
-        ↓
-#0 #1 #2 #3 #4 #5
-        ↓
-C / P / L / S / T / M
-        ↓
-direct / prime-conjugate
-        ↓
-canonical relation/operator field
-        ↓
-recursive coordinate structures and their computations
-```
+Start **K8.0** (coordinate/centre/coupled-event producer extension) and **K10.0–K10.1** (full M0/M4/M5 recovery and early Nara producer) in parallel. **K9.0** inspects the actual installed renderer/desktop and designs focused expression/selection against those contracts immediately; it does not wait for every Nara or continuous feature to close. Publish bounded contracts and runnable requests early, then continue implementation in those same lanes.
 
-The closed #76 line supplied useful family/position/face work recovered by K1 onto the current native C centre. K2 extends that foundation into the recursive M structure rather than leaving the M body implicit behind root positions. See the accepted [native C foundation](KERNEL-NATIVE-C-FOUNDATION.md) and [recursive registry](KERNEL-RECURSIVE-M-REGISTRY.md).
+The first integrating proof is a **live planetary encounter**: real current or historically calculated sky → exact planet/Earth/chakra/source path → M1–M3 composed state → a particular active Nara field → authorised journal/oracle/Epii operation → coherent sensory result and source-linked replay. A controlled deterministic fixture precedes the actual live run; neither is relabelled the other. A narrow first proof must exercise the real production path, not become a substitute for full domain delivery.
 
-### 1.1 M is a first-class Bimba tree
+## 1. The kernel and its computational holdings
 
-The M family is a kernel-resident semantic world structure:
+The foundational field remains `# / 0/1 ↔ 1/0`, its six positions, the C/P/L/S/T/M families, direct/prime structure, canonical operators and asymmetric recursive coordinate worlds.
 
 ```text
 M
@@ -100,727 +68,249 @@ M
 └── M5  Epii
 ```
 
-Each root is both:
+An M root is both an aggregate/index and the parent of its actual source-faithful tree. Preserve compound `-`, `.`, `/` and meaningful prime expressions; do not manufacture missing siblings to regularise a drawing. Coordinate existence, source authority, implementation binding, readiness and observed acceptance are different facts.
 
-- the aggregate/index for that M world; and
-- the parent of its actual asymmetric recursive coordinate tree.
+### 1.1 Native C — structural Bimba lock
 
-Examples:
+C is the lowest executable structural kernel: positions/families, direct/prime relations, stable recursive coordinate IDs, finite tables, structural invariants and deterministic operations. The restored `primitive.c`, `holographic.c`, `kernel.c`, generated `ql/m_tree.h` and accepted M1/M2/M3 native engines remain the centre of the existing static library.
 
-```text
-M1
-└── M1-2
-    └── M1-2-5
+Every substantial semantic construct receives a disposition: coordinate-bound, cross-coordinate over named refs, or explicitly infrastructural with a reason. No meaningful algorithm or table remains an unseated helper merely because its source has not been read. Promoted structural changes require C reconciliation/parity; rich semantic graph research need not be falsely promoted to bare-metal law.
 
-M2
-└── M2-4
-    ├── M2-4.0
-    ├── M2-4.1
-    ├── M2-4.2
-    ├── M2-4.3
-    └── M2-4.5
-```
+Use [Native C foundation](KERNEL-NATIVE-C-FOUNDATION.md), [recursive M registry](KERNEL-RECURSIVE-M-REGISTRY.md) and the domain contracts. Preserve their APIs and exact IDs or perform an explicit versioned extension.
 
-The registry must preserve real source structure. It must not manufacture missing siblings to regularise a tree.
+### 1.2 Rust — operational and computational ownership
 
-### 1.2 Structural existence is not implementation readiness
+Rust owns validated domain types, operations, state machines, providers, current-event composition, Actions, provenance, readiness and service interfaces. It consumes the existing registry rather than maintaining an independent M tree.
 
-A coordinate exists because it belongs to the canonical Bimba/source field. A current implementation may be complete, partial or absent.
+Reuse the substantial native matheme/music/MEF, Templateure, physical-pole, M3 form and accepted engine implementation. Coordinate and source parity may be exact finite-domain equality or declared numerical tolerance as appropriate. Rust-only operational state remains legitimate where its structural inputs resolve to canonical refs and its outputs retain provenance.
 
-The kernel must preserve this distinction mechanically:
+The seven canonical Context Frames are settled. CF4 is `(0/1/2/3)`; Personal `4/5/0` is a product composition, not an eighth CF. Twelve MEF lens identities, eighteen apertures, elemental fibre positions and their display/native encodings are different registers. Use [lens identity and encodings](kernel-rebuild/LENS-IDENTITY-AND-ENCODINGS.md); preserve interleaved M1/native and retained grouped M2 identities rather than reordering numbers by visual preference.
 
-```text
-coordinate existence
-    !=
-implementation binding
-    !=
-readiness
-    !=
-observed experiential acceptance
-```
+### 1.3 C++ and retained GPU — continuous embodiment
 
-This distinction is already present in the Rust `MMapIndex` direction and becomes a programme-wide law.
+C++ extends the kernel through continuous topology, material, modal/wave/acoustic, geometric, fold and spatial computation. Exact symbolic state and source identity remain with their C/Rust owners. Continuous values do not silently become new canon.
 
-## 2. Bimba authority and the bidirectional reconciliation field
+Use one shared runtime with domain-complete M1/M2/M3 engines, their composed event and subject-bound Personal field instances. The existing particle/GPU implementation retains its material buffers and supported particle-scale mechanics. Choose one numerical owner per operation; do not integrate the same movement twice or rewrite the entire renderer merely to satisfy a language diagram.
 
-The **live Neo4j Bimba Map is the canonical home of deep coordinate specifics and the large relational field** used from K4 onward.
+K8 chooses and implements the actual binding, lifetime, buffer transport, audio output and host receiver against measured requirements. A versioned C ABI or supervised process is a candidate, not an already imposed library/backend choice. A detached view subscribes to an instance; it does not create another simulation owner.
 
-The `Epi-Logos-C-Experiments/Idea/Bimba/Map/**` corpus also contains a full or near-full serialized M relational body, deep datasets and export/fetch tooling. It is therefore a foundational web-accessible source for the initial pre-vertical phases, especially while this programme is being driven primarily through ChatGPT web sessions.
+### 1.4 Bimba and native products
 
-QL-MEF already carries selected Bimba exports under `data/epi-bimba-map/**`; those are useful local/project fixtures, not a reason to ignore the richer live/serialized source field.
+Live Neo4j is the rich canonical home of deep coordinate specifics and relations. The serialized `Idea/Bimba/Map/**` body, Seeds and implementation corpus remain foundational, source-attributed inputs. Existing QL exports are useful holdings, not the entire source world.
 
-### 2.1 Reconciliation is not one-way
+Bimba can contain semantic depth, traditional correspondences, hypotheses, embeddings and event/trajectory projections beyond structural C. Canonical refs resolve through a known registry revision. Provisional structure and structural promotion remain explicit.
 
-The programme must not encode a simplistic:
+M0′ exposes this actual map, not a graphical backdrop. M5′ is the real Epii agent. O:I owns the desktop/workbench and shared-world hosting; Actuation owns agency/authority/Return; AIKit owns model/capability/context/session access; Central owns authored sources, Day/NOW/Flow and is the root meta-project; Workcell supplies material execution. Consume native owner Actions/SDKs rather than reproducing these products inside QL-MEF.
 
-```text
-Bimba → C → Rust
-```
+## 2. Source reconciliation, ledger and matrix law
 
-pipeline.
+The governing development unit remains **a coordinate and its relations**, not a subsystem summary. The full matrices and corpus must be traversable without requiring an agent to hold every source in one prompt.
 
-The correct relation is bidirectional and evidence-bearing:
+The reconciliation field is bidirectional: Bimba ↔ C ↔ Rust ↔ C++, with observations and proposed corrections joined through the existing M ledger. Current code states what works; it does not erase authored meaning. A source claim does not prove an implemented or physical result.
 
-```text
-                 M LEDGER
-                    │
-      ┌─────────────┼─────────────┐
-      │             │             │
-    Bimba           C            Rust
-      │             │             │
-      └─────────────┼─────────────┘
-                    │
-                   C++
-```
+Use `fixtures/kernel/m-tree-v1.json`, `fixtures/kernel/m-ledger-v1.json`, the K4 workbooks and `fixtures/kernel/census/work-graph.json`. The ledger retains exact coordinate/source refs, role, bindings, dispositions, independent readiness/warrant, dependencies, evidence and discrepancy lifecycle. Source, coordinate, relation, operational and experiential parity remain distinct.
 
-Examples of legitimate return:
+The [matrix-lock protocol](KERNEL-M-LEDGER-MATRIX-LOCK.md) remains load-bearing:
 
-- Bimba reveals a coordinate/relation missing from C;
-- C exposes a structural assumption that a serialized or live Bimba projection needs correcting;
-- Rust tests expose a wrong or incomplete C table, relation or source interpretation;
-- current ratification changes a structural relation and therefore requires Bimba + C + Rust parity work;
-- C++ embodiment exposes a contradiction or missing formal relation which returns to the ledger rather than being patched locally;
-- a rich Neo4j relation may remain semantic/research material until it is deliberately promoted into structural kernel canon.
+- preserve source capability identities, rationale and qualification across both matrix families;
+- every implementation binding resolves to actual coordinates or a reasoned infrastructure disposition;
+- unknown endpoints, stale assertions, missing capabilities and unseated constructs remain visible;
+- a structural change is promoted only with the corresponding C binding/parity and reviewed decision;
+- refresh preserves reviewed assessments, evidence, dependencies and discrepancy decisions; it is not automatic approval;
+- evidence bound to an old registry/source revision is retained with that scope, not silently retargeted;
+- graph observation, imported source coverage, a finite operation and an experienced instrument each require their own evidence.
 
-The ledger exists to make these movements accountable.
+Typical owner checks remain `python3 scripts/m-ledger.py check`, native `ql kernel validate-ledger --json`, `ql kernel ledger <coordinate> --json`, scoped `ql kernel coverage`, domain acceptance and actual C/Rust descriptor comparisons. A successful coverage query is a report, not proof that every row is ready.
 
-## 3. C — structural Bimba lock
+### 2.1 Controlled promotion of the new aperture/centre architecture
 
-C is the lowest executable layer of the rebuilt kernel.
+#160 and the [current aperture contract](kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md), as adopted by the [living architecture §5](kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md#5-apertures-centre-and-the-coupled-clock), assign the 18 apertures to M2-0. M3 receives those exact identities. M3-0 is the spatio-temporal field realised at the existing `M3-5-5/0` pin in M3-5. Preserve all existing clock identities.
 
-It owns the stable structural statement of:
+**K8.0 is the single integration owner for the shared structural promotion.** It updates the relevant M2/M3 matrix rationale/data and source-canon decisions, adds the approved descendants/typed relations, regenerates registry/C/Rust/ledger through the existing tools, preserves prior IDs and proof standing, and supplies a reviewed graph migration/projection with its own application/rollback evidence. K10 contributes M0/Personal relations by that same path. Parallel lanes must not regenerate competing cores.
 
-```text
-kernel positions
-coordinate families
-direct / prime structure
-recursive M-coordinate existence
-canonical structural relations
-finite-domain canonical tables
-structural invariants
-coordinate/module bindings
-bare-metal deterministic operations where appropriate
-```
+The exact eight reciprocal pair containers and sixteen leaves are recorded in the aperture contract. The adopted naming is void ring at M2-0-0 and Fibonacci ground at M2-0-1. Container/phase counts are not aperture counts. The 6°/20°/22.5° links, 60°/90°/180° closures, relative phases and 9/8 relation are part of the structural handoff. Native reciprocity and void antipodality remain distinct.
 
-### 3.1 Current returned reality
+Old locked 16+1, M3-owned catalogue and separate-page wording is source history for this scoped reconciliation, not current implementation authority. Preserve unaffected source depth. Planning merge does not itself install these graph nodes or certify their C/Rust operations. No further global architecture-ratification gate is required to execute this adopted design.
 
-K1 restored `primitive.c`, `holographic.c` and `kernel.c` into native `libql-mef-c.a`; K2 added the generated recursive M descriptors and allocation-free resolver through `ql/m_tree.h`. The full M0–M5 computational source remains available under the imported/vendored C corpus. These are the current structural centre and porting bodies, not a claim that each M domain is already complete.
+## 3. Retained accepted stages K0–K7
 
-K4's accepted census now records actual C/Rust discoveries, unseated constructs and live/serialized discrepancies. K5–K7/K10 consume those records and establish each domain's operational parity. The earlier pre-K1 observation that main had only `primitive.c` is historical, not the current starting point.
+The following purposes remain standing acceptance history and ongoing engineering laws, not a request to repeat them:
 
-### 3.2 Recursive M registry
-
-K2 implements the compact recursive registry with stable IDs; its exact public contract is [KERNEL-RECURSIVE-M-REGISTRY.md](KERNEL-RECURSIVE-M-REGISTRY.md). The original required shape remains useful as a design reading:
-
-```text
-MNode
-    stable node id
-    parent id
-    root M0..M5
-    local segment
-    source separator form (- / . / / where meaningful)
-    flags/status
-
-MRelation
-    stable relation id
-    from/to coordinate
-    relation kind
-    orientation/status
-
-MCapabilityBinding
-    exact coordinate
-    capability/module identity
-    structural status
-```
-
-The hot-path C address does not need to carry an arbitrary dynamic path. Recursive coordinates are compiled into stable IDs with a generated machine-readable manifest; do not redesign this accepted registry for the parent surfaces.
-
-### 3.3 Every semantic C construct receives a disposition
-
-Every substantial C construct must be one of:
-
-```text
-COORDINATE-BOUND
-    belongs to an exact kernel/M coordinate
-
-CROSS-COORDINATE
-    implements an explicit relation over named coordinates
-
-INFRASTRUCTURAL
-    memory/numeric/runtime machinery without semantic coordinate identity
-```
-
-No semantically meaningful table or algorithm remains permanently as an unseated helper merely because its coordinate has not yet been inspected.
-
-### 3.4 Structural-change parity law
-
-Once a relation is kernel-structural, structural change requires C reconciliation/parity.
-
-This does not mean every semantic graph edit changes C. It means promotion into the structural Bimba cannot bypass the lowest executable kernel layer.
-
-## 4. Rust — operational/computational kernel
-
-Rust operationalises the same coordinate field.
-
-It owns the safe typed layer for:
-
-```text
-coordinate/ref resolution
-validated domain types
-operators and derivations
-state machines
-current-state composition
-providers
-provenance/readiness
-service APIs
-Actions and application-facing computation
-```
-
-Rust should consume/generated-resolve the canonical registry rather than maintaining an independently authored M tree.
-
-Existing Rust work is retained and re-seated rather than replaced. Current code already includes strong QL/MEF/Context-Frame, matheme/music, M2 templateure, physical-pole composition and substantial M3 codon/I-Ching/Tarot/rotation/fold/quaternion computation.
-
-The question for K4 onward is not whether these files are useful. It is **which exact coordinate capabilities they implement, what C/Bimba laws they correspond to, what remains unported, and what requires correction**.
-
-C/Rust parity can be exact table/address equality, exhaustive finite-domain operator parity, or tolerance-bearing numerical parity as appropriate. Rust-only operational state remains valid when its structural inputs resolve to canonical coordinates and its outputs preserve provenance.
-
-## 5. C++ — continuous computational embodiment
-
-C++ extends the same kernel into continuous computation:
-
-```text
-geometry
-material dynamics
-waves
-sound
-physical/modal simulation
-folding
-spatial orientation
-GPU representation
-realtime interaction
-```
-
-C++ does not define symbolic identities locally. Every embodied capability remains keyed to stable kernel/M refs and revisions.
-
-The C++ programme uses one shared runtime with domain-complete M engines and subject-bound personal instances:
-
-```text
-PoleRuntime
-├── M1Engine
-├── M2Engine
-├── M3Engine
-├── M123Composition
-└── PersonalFieldInstance(subjectRef)
-      consumes K10 Nara state and the same M1/M2/M3 current relation
-```
-
-`PersonalFieldInstance` is the planned runtime role, not a claim that the class exists. It has its own subject-bound material/continuous state while reusing the domain engines. M0′ map operations and M5′ Epii operations are not recast as simulation engines.
-
-M1′, M2′ and M3′ can therefore be built against their own full domain engines. The singular M1/2/3 composition binds those same engines around one current event and shared carrier rather than reconstructing reduced copies. Personal reception applies Nara's constitution and activity to that field and drives the existing point-cloud surface.
-
-The Fourth-Spanda/integrated-physical-pole work already gives important typed embodiment registers — boundary, pulse, carrying topology, wave/quadrature, M2 figure/templateure, M3 crease/form and clock — but this Wayfinder does not attempt to re-author their theory. It treats those current documents and their warrant grades as inputs to the corresponding coordinate rows.
-
-## 6. Neo4j / Bimba projection layer
-
-Neo4j is the rich active semantic field of the same Bimba.
-
-It can safely carry much more than belongs in bare-metal C:
-
-```text
-deep coordinate detail
-names and meanings
-source text
-tradition-specific correspondences
-large relation networks
-research propositions
-semantic embeddings
-entity/event projections
-trajectory/session relations
-current semantic developments
-```
-
-Canonical graph nodes/relations should resolve to stable kernel coordinate/ref identity and a known registry revision where appropriate.
-
-Research/provisional graph structure may exist without being promoted into structural C canon. Promotion is explicit and then flows through the M ledger.
-
-M0′ exposes this actual Bimba map for exploration, selection, source/relation inspection and governed changes. Epii and the person use the same map objects; a graphical backdrop alone does not deliver M0′.
-
-## 7. The M ledger — central development object
-
-The M ledger is the joining surface between source/canon and all implementation strata.
-
-K3 implements the machine-readable ledger alongside the human-readable matrix explanations; K4 populates its first coordinate census. Consume those existing contracts rather than creating a surface-local coverage registry.
-
-For every meaningful capability the ledger records at least:
-
-| Field | Meaning |
+| Stage | Accepted work and retained obligations |
 |---|---|
-| coordinate | exact M/kernel coordinate |
-| parent/children | recursive structural context |
-| canonical role | what this capability is/does |
-| source/Bimba refs | authored/deep graph provenance |
-| structural invariants | relations that must not drift silently |
-| cross-relations | dependencies/transforms/outputs |
-| C binding | native C symbol/module/table/operator |
-| Rust binding | native typed computation/service |
-| C++ binding | continuous embodiment, if relevant |
-| Neo4j binding | canonical graph nodes/relations |
-| fixture/evidence refs | reproducible evidence |
-| warrant | source-recorded / derived / argued / offered / etc. |
-| readiness by stratum | absent / mapped / partial / operative / accepted |
-| parity state | source/coordinate/relation/operational/experiential |
-| discrepancy state | unresolved mismatch and current authority |
+| K0 / #124 | Establish exact source/canon/implementation boundary; imported C/Rust bodies remain valuable, not disposable artefacts. |
+| K1 / #125 | Restore the native C centre, structural invariants and production library. |
+| K2 / #126 | Recursive source-faithful M registry, stable IDs, public native lookup, full-M index and co-reference. |
+| K3 / #127 | One capability ledger, matrix locks, scoped readiness/warrant and multi-axis bidirectional parity. |
+| K4 / #128 | Automated M1/M2/M3 census, live capture/serialized discrepancies and retained implementation discoveries; M0/M4/M5 expansion is K10. |
+| K5 / #129 | M1 source/reflection, full Ananda, Spanda, compound Flowering and toroidal recognition; stable native operation and shared parent/Personal handoff. |
+| K6 / #130 | M2 numerical ground, 72-carrier/MEF, tattvas, decans, full symbolic-musical Power and planetary/chakral synthesis; source-linked joint producer. |
+| K7 / #131 | M3 full nucleotide/pair/biquaternion relations, three matrices, 64/384/472, I-Ching/Tarot/DNA/RNA/transcription, fold/pose and complete 360/24/720 clock; state and installed consumer. |
 
-One scalar `COMPLETE` is insufficient. The table names conceptual dimensions; use the accepted `ql.m-ledger/v1` schema's actual fields and states.
+K7's accepted field retains 996 coordinates and 4,891 qualified relations; source preservation is not an assertion that every historical research proposition is an operational law. K5/K6 likewise retain explicit broad-capability/provider/research gaps. Their exact contracts and receipts, not these summaries, delimit acceptance.
 
-A coordinate may legitimately be:
+New facts from embodiment return through the ledger. A real contradiction can warrant a scoped engine fix. Do not restart a vertical because a downstream surface has not yet consumed it.
 
-```text
-source-known       YES
-C-locked           YES
-Rust-operational   PARTIAL
-C++-embodied       NO
-graph-projected    YES
-relation-parity    PARTIAL
-experiential       NO
-```
+## 4. Product and runtime commitments governing the continuation
 
-The ledger must preserve that reality rather than allowing missing implementation to disappear from scope.
+The complete [living architecture](kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md) is the authored design authority for the joined experience. The [consumer/acceptance contract](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md) assigns concrete delivery. Preserve these central relations:
 
-## 8. Matrix-lock protocol
+1. **Live sky, Earth and Nara.** Compute dated/provider-attributed planetary conditions and their modelled source-backed reception in a particular Nara. Distinguish Earth/observer/EarthBody/material Earth and the existing field centre. The body is seven active chakral centres rooted through Earth, not decorative bars.
+2. **Full personal constitution.** `Q_identity · Q_transit · Q_activity → Q_composed`, its bioquaternionic reading and complete source/branch state remain related. Independently determined centre dynamics and the original identity-layer contributions survive global composition.
+3. **One dynamic material instrument.** The existing glyph/image/geometry particle system receives actual form and movement, including owner-built topology/toroidal work. Stable constituent/sample correspondence supports coherent motion, deformation, explosion and return.
+4. **Native expressive language.** Vāk literal, enacted and mixed expressions disclose real Bimba regions and relations. The 0→1 morph can enact `/`. Scripts, traditional glyphs, images, sound and transformations preserve their source and operation identities.
+5. **Focused depth and full-screen mode.** Foreground M1–M4 in the existing O:I canvas; left Bimba neighbourhood, right canonical Epii; existing editor/files/explainers and detached panels. Same six depths under 3:3 and 4:2. No state/session duplication.
+6. **Geometric genesis.** M0-4, CF4 `(0/1/2/3)`, O#/X#/N#, circle/intersection/flower and Fourth-Spanda/origami construction remain source-bearing disclosure/operation at stated warrant, not a decorative tile or an invented physical proof.
+7. **Lived Return and pedagogy.** Journal/dream/oracle/activity, bounded admitted inference, composition, sensory expression, response and reviewed integration form a recursive process. Full M4.0–M4.5 and M5's teaching/research/development capacities remain present.
+8. **Multiple Naras and shared-space horizon.** Preserve per-subject instances and consented presence from the first implementation. Full public hosting remains a later O:I consumer; protected identity, journals, field derivatives and raw bioquaternion are not implicitly shared.
 
-The existing deep capability matrices become the first major ledger inputs.
+Live ephemeris, exact domain events, simulation/audio time and presentation frames have distinct rates and explicit relations. A visual flourish does not advance the sky. Missing/stale inputs are identifiable. Actual/historical replay and new reinterpretation remain different acts.
 
-The Markdown form continues to carry rationale, provenance and human-readable meaning. A machine-readable companion carries exact identities, bindings, statuses and evidence suitable for CI and Agent use.
+## 5. K8 / #132 — shared event, producer convergence and continuous embodiment
 
-The matrix system should eventually be able to answer automatically:
+K8 now begins at the accepted three-engine floor. Its opening C/Rust work is the bounded integration extension those engines need, not a competing vertical rebuild.
 
-```text
-Does every canonical matrix coordinate exist in the kernel registry?
-Does every C semantic binding resolve to a known coordinate?
-Does every claimed Rust implementation resolve to the same coordinate?
-Which source capabilities have no implementation disposition?
-Which implementation modules are orphaned/unseated?
-Which graph coordinates or relations disagree with C/Rust?
-Did a structural relation change without C parity?
-Is an OPERATIVE claim backed by evidence?
-Which rows block a requested vertical slice?
-```
+### K8.0 — aperture, centre and coupled-event producer
 
-The output should support CLI/Agent queries such as:
+Read the full M2/M3 matrices and #160/current aperture contract. Execute §2.1's coordinated promotion and publish the coupled field contract: M2 aperture/world refs, M1 carrier/topology/phase, M3-0 field frame and existing centre, independent inscription/lensing phases, declared coupling/trajectory/double cover and original input bases. Preserve native encodings and the actual 6°/20°/22.5° relations. Complete missing operations through the existing engine owners and prove finite/negative/round-trip cases.
 
-```text
-ql kernel coverage M1
-ql kernel coverage M2
-ql kernel coverage M3
-ql kernel coverage M2-4.5
-```
+Publish a runnable producer request/result and an installed C++ consumer before the final visual polish, so #133/#134 can consume real interfaces. Version extensions honestly; an optional compatibility field is not licence to fabricate absent state. No arbitrary M3-0 child numbers are allocated before the actual source/field mechanics justify them.
 
-## 9. Pre-vertical development phase
+### K8.1 — real dated planetary condition
 
-Before broad M1/M2/M3 vertical implementation begins, the programme establishes enough structure that later work is mostly reconciliation rather than rediscovery.
+Implement/adapt the named Kerykeion path using verified current library/ephemeris and explicit identity/frame/time/chart policies. Reuse M2 observation and correspondence owners. Supply both shared sky and the observer/natal inputs needed by K10; do not embed Personal birth data in the public world frame.
 
-### K0 — current ground and authority reconciliation
+Prove current and historical calculation, known-time fixtures, body-ID mapping, retrograde/boundaries where supported, freshness/loss, and preservation of provider/model/source revision. Bind planetary/decan/aspect condition into the actual M2 musical/chakral/material computation, including source-qualified outer-planet and EarthBody rules. A chart JSON importer alone is not live influence computation.
 
-Purpose:
+### K8.2 — continuous runtime and retained renderer join
 
-- freeze the current development boundary;
-- identify current main, current matrices, live Bimba/Neo4j access and the serialized `Idea/Bimba/Map/**` corpus;
-- distinguish current canon from stale matrix/export/material without deleting useful source depth;
-- record that imported C and Rust are migration bodies to be rebuilt into one kernel, not disposable historical artefacts.
+Implement one reusable runtime with M1, M2, M3 domain engines, their composition and a `PersonalFieldInstance(subjectRef)` role. That role is an implementation responsibility, not a declaration that a particular class exists. K10 supplies the real Personal producer; independent Cosmic computation can proceed without whole-K10 completion.
 
-Deliverable: source/canon/implementation input ledger and exact revisions.
+Decide and test Rust/C++ binding, versioning, memory/buffer lifetime, numerical cadence, audio device/output, real-time state transport and the actual WebView/GPU receiver. Keep image sources and direct geometric targets as complementary inputs. Carry stable constituent/sample identity, motion and material state into the existing particle field without per-update reseeding. Retain resident buffers; send bounded coefficients/transforms or measured binary/texture data. Graph, provider and agent work stays off real-time callbacks.
 
-### K1 — restore the native C kernel centre
+Reuse the actual installed Point-Cloud implementation, including current owner-reported glyph/image, seven-centre and toroidal/topological work. Record installed revisions and hooks; stale published snapshots must not cause a replacement renderer or new shell. Reconcile demo presets with source-backed M2 mode/colour/material input and test formula degeneracies, sampling correspondence and live modal updates. State exact/reduced fidelity rather than certifying untested physics.
 
-Purpose:
+### K8.3 — joined runtime proof
 
-- recover/reconcile useful #76 native C `holographic`/`kernel` work onto current main;
-- preserve the accepted family/position/face foundation;
-- establish current native C build/test parity before recursive M promotion.
+Test coherent generations across form, sound, colour and Personal receiving state; centre/phase changes; stale/malformed commands; time-step/damping behavior; provider loss; resource ceilings; mute/resume; context loss/re-entry; two independent subject instances; no duplicate owners when companion windows open. The real-data planetary → Nara → field path is a distinct acceptance run from controlled fixtures.
 
-Deliverable: current native C foundational kernel on an active branch/PR.
+K8 publishes shared-substrate, Cosmic, Personal-binding and provider results separately. The minimum first encounter is a production-path proof; complete domain capability accounting remains mandatory.
 
-### K2 — recursive M registry and master M index
+## 6. K9 / #133 — focused deep instruments and native full-screen experience
 
-Purpose:
+### K9.0 — current host/renderer reconciliation and shared selection
 
-- make `M` a first-class whole/index;
-- make M0–M5 first-class aggregate roots;
-- support arbitrary source-faithful recursive M paths;
-- provide stable C-level node/relation/capability identities;
-- generate the shared registry manifest consumed by Rust/testing/tooling.
+Begin alongside K8.0/K10.0. Inspect actual O:I Workbench/Surface/knowledge/editor/Agent/detach code and the installed field. Record exact revisions and existing hooks. Extend them rather than reproducing a shell, graph engine, editor, transcript or router.
 
-Deliverable: `ql.m-tree/v1` or named successor plus C/Rust resolver conformance.
+Define an identified field constituent/expression over the existing refs and Actions: event, subject, exact coordinate/source, content/geometry, available representations, current generation and operation provenance. Provide bidirectional selection with the Bimba neighbourhood, pinned/follow state and back/forward recovery. This is a consumer contract over the existing registry, not a parallel symbolic graph.
 
-### K3 — capability ledger + parity protocol
+### K9.1 — enacted Vāk and focused determinant states
 
-Purpose:
+Implement literal/enacted/combined expression using the existing Vāk interpreter/composition owners. Include the owner's 0→1 `/` example; source bytes and relation remain available while motion enacts them. Verify Unicode/combining/RTL/font/source accessibility and intentional transition semantics. Do not apply a generic separator “fix” as a substitute for expression design.
 
-- define machine-readable matrix/ledger schema;
-- preserve Markdown rationale alongside machine records;
-- define source/coordinate/relation/operational/experiential parity separately;
-- define discrepancy/promotion workflow;
-- add initial CI and CLI/Agent coverage queries.
+Foreground each M determinant while the whole stays operative: M1 topology; M2 spectrum/music/colour and full symbolic worlds; M3 glyph/image/form/clock transformations; M4 personal reception and self-knowledge; M0 geometric/Vāk/Bimba ground; M5 Epii's operative pedagogy. Domain laws come from their full producers, not a renderer subset. Preserve twofold clock, apertures, images, fold geometry and the assembled/exploded flower/eye relation.
 
-Deliverable: reusable matrix-lock and parity machinery.
+Recover M0-4/CF4 and Fourth-Spanda/origami geometric genesis at actual source coordinates and stated warrant. Make boundary/pulse/carrier/wave/figure/crease/clock relations inspectable or playable where implemented. Do not let a tiling animation silently certify a physical or metaphysical theorem.
 
-### K4 — automated pre-vertical M1/M2/M3 census
+### K9.2 — full-screen mode and companion panels
 
-Purpose:
+Deliver the privileged foreground instrument mode inside O:I with existing native surface lifecycle. Centre: live event. Left: actual Bimba coordinate neighbourhood and authorised source/evidence relations. Right: the same Epii AgentSession. Files, Flow, explainers and communications can open in existing splits/tabs/pop-out windows with retained subject and return context.
 
-Use the live Neo4j Bimba Map, `Epi-Logos-C-Experiments/Idea/Bimba/Map/**`, vendored/imported C, current Rust, existing deep matrices and current QL-MEF docs to build the initial row-level coverage ledger.
+Implement both 3:3 and 4:2 compositions of the same six instruments. A deep focus is a region/mode of working, not necessarily a separate page. Preserve standalone access to full domain work where useful. Full-screen is a resource/display policy, not an authority escalation. Measure foreground/hidden/detached behavior; reduced motion, quiet/reading mode and independent audio mute preserve state.
 
-For every M1/M2/M3 coordinate/capability:
+### K9.3 — experienced operation and pedagogical return
 
-```text
-locate Bimba identity
-locate parent/children and relations
-locate C representation
-locate Rust representation
-classify missing/partial/misplaced implementations
-identify stale or conflicting material
-record current authority rather than silently choosing
-identify required C++ embodiment where applicable
-```
+Exercise real human and Epii Actions: inspect a source-backed relation, hear/see its expression, enter depth, apply a supported operation, observe a changed generation, explain it using actual sources, write/respond and return. Include refusal, unavailable capabilities, stale revisions, frozen reference versus live view and renderer restart. No DOM parsing or scripted agent demonstration substitutes for native action co-reference.
 
-This phase should be heavily automatable. The Bimba relational body is large enough that agents should query and join it rather than reconstructing subsystem topology from prose.
+Cosmic/focused M1–M3 can be delivered before all of K10. Final Personal and all-six-depth acceptance joins the actually returned K8/K10 producers. A green layout protocol is not six completed instruments.
 
-Deliverable: canonical initial M1/M2/M3 coverage ledgers and generated implementation work graph.
+## 7. K10 / #134 — full Nara, Bimba, Epii and whole-M continuation
 
-**Accepted handoff:** PR #153 / [K4-M123-CENSUS.md](kernel-rebuild/K4-M123-CENSUS.md). Use its workbooks, reports and shared ledger. The [parent-surfaces contract](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#2-entry-at-k4-without-restarting-it) assigns downstream consumers; it is not permission to relabel discovery as parity, restart K4, or require all Personal/desktop/C++ work before proceeding. M0/M4/M5 census expansion belongs to K10.
+### K10.0 — recover and seat M0/M4/M5
 
-## 10. Vertical implementation phase
+Apply the existing K4 method to the actual full source/implementation fields. Preserve the recursive M4 matrix, M0/Vāk/geometric ground, and M5's complete gnostic, research/development, pedagogical and Logos capabilities. Seat C structural/finite laws and Rust operations. Publish scoped discoveries and reviewed source differences through the shared ledger, coordinated with K8.0's registry writer. Do not confuse source counts or code presence with full readiness.
 
-After K0–K4, development proceeds by coherent coordinate verticals.
+### K10.1 — early Personal producer and active centres
 
-The default vertical loop is:
+Publish stable subject/identity revision, full M4.0 evidence and derivations, identity/transit/activity/composed/bioquaternion relations, independently derived local chakral/embodied condition, inter-centre coupling, temporal/source and M1–M3 bases. Use the canonical EFWA basis and keep the complete evidence field beside compressed readings.
+
+Implement all six M4 branches: layered identity (birthdate, natal, Jungian, Gene Keys, Human Design, quintessence), body/energy architecture and feedback, full M1–M3 oracle invocation, transformation intelligence, contextual/psychological/phenomenological history, and integration/pedagogy. Optional identity evidence can remain absent; fabricated layers or a natal-only endpoint cannot stand for the whole branch. Durable augmentation is separate from ordinary activity.
+
+K8 consumes this producer. Its design and implementation do not wait for the continuous instance. Demonstrate at least two controlled Naras receiving the same dated world condition differently through their actual inputs.
+
+### K10.2 — lived activity, source ownership and replay
+
+Consume current Central operations for human Day, agent NOW, Flow/Dialogue, source/revision/history and reviewed receiving/Return at root meta-project and child Project scope. Preserve human-authored bytes, bounded authority, long-lived NOWs, late/received events and original identity revisions. Temporal graph storage is derived retrieval, not another source owner.
+
+Journal/dream/session interpretation is span-anchored, confidence/model-versioned and allowed to abstain. Admitted bounded contributions carry weight/decay and receipts; they affect live composition, not identity by stealth. Oracle retains consent, entropy, deck/context/Vāk grammar and original output. M4.3 integrates the process and M4.5 records recognition and review. Original replay and new interpretation of an old event are explicit different operations.
+
+### K10.3 — the real Bimba map and Epii agent
+
+Deliver search/open/traverse/inspect/derive/governed-change Bimba operations with the same objects exposed by K9's left companion. Integrate private episode links without promoting them to canonical facts. Preserve selection and event when returning.
+
+Bind the canonical Epii agent to the actual source and domain Actions through Actuation/AIKit/Central/Workcell. It can investigate, explain, demonstrate, operate, teach, conduct research/development and return findings/proposals. Parent and deep conversation retain native session continuity. M4.5 is Nara's inner integration; M5 is the wider agent/systemic articulation. Do not replace Epii with an aura commentator, second loop or hard-coded chat.
+
+### K10.4 — Personal experience, multiple Naras and whole-M accounting
+
+With K8/K9 deliver Personal `epi.personal.450`, full M4′ and all delivered M0′–M5′ compositions. Test real permitted writing/activity → composition → field → response/Return and pedagogical source/action paths. Preserve independent subjects and consented shared-presence boundaries. Public multi-user hosting is an explicit future O:I consumer, not a blocker on the first local instrument; instance/authority design is not deferred.
+
+Report whole-M capability dispositions, missing implementation/research, graph promotion, operational and experiential receipts separately. Healing/attunement remains the authored vocation and research field; the person's experience and disagreement remain evidence. No health/spiritual score or automatic medical prescription follows from a field pattern.
+
+## 8. Current dependency graph and working discipline
 
 ```text
-select coordinate / coherent branch
-        ↓
-resolve complete Bimba/source field
-        ↓
-lock/reconcile C structure + relations
-        ↓
-seat/port/align Rust computation
-        ↓
-prove parity
-        ↓
-where relevant, embody in C++
-        ↓
-reconcile Neo4j projection
-        ↓
-exercise through deep/current-event surfaces
-        ↓
-return evidence/discrepancy to M ledger
+ACCEPTED: K0–K4 + K5 M1 + K6 M2 + K7 M3 + existing Vāk
+                           │
+          ┌────────────────┼──────────────────┐
+          ▼                ▼                  ▼
+ K8.0 shared producer   K10.0 recovery      K9.0 actual host/field
+ aperture/centre/phase  K10.1 Nara state    selection/expression contract
+          │                │                  │
+ K8.1 real sky ─────────────┤                  │
+          │                │                  │
+          └────── K8.2 continuous instance ────┤
+                         │                    ▼
+ K10.2 source/activity ──┼────────────── K9.1/K9.2 focused/full-screen UX
+ K10.3 Bimba/Epii ───────┤                    │
+                         └──── K8.3/K9.3/K10.4 joined lived encounter
+                                      │
+                           full domain / whole-M continuation
 ```
 
-This is not a rigid one-direction build order. Returned evidence may move backward through the loop.
+Dependencies are concrete contract requirements, not full-stage launch gates. Stub fixtures can support development but are named as fixtures; they cannot close a real-data or actual-agent acceptance. Record unavailable producer parts without blocking unrelated useful work.
 
-### K5 — M1 vertical rebuild
+Use bounded parallel lanes and one shared-core integration owner. Read main and active PRs before branching. Each lane has an explicit base and owned files; communicate shared schema/registry changes before regeneration. Preserve existing work, merge/rebase deliberately, run the affected tests and publish/merge usable contracts promptly so other lanes do not depend on unmerged planning. No force overwrites, duplicate census, indefinitely parked source rules or claimed acceptance based on unseen CI results.
 
-Initial top branch map:
+K8.0's registry promotion is serialised; domain, provider, renderer, Personal and UX work proceed concurrently around it. No fresh session must recover this product from branch archaeology: this file is the entry, the architecture supplies meaning, the consumer contract supplies criteria, and the ledger supplies actual state/evidence.
 
-```text
-M1-0  Bimba / Original
-M1-1  Pratibimba / Reflection
-M1-2  Ananda
-M1-3  Spanda
-M1-4  QL flowering
-M1-5  Toroidal recognition
-```
+## 9. Whole-programme acceptance
 
-The C source already contains substantial Ananda/Spanda/topological machinery; Rust already contains substantial matheme/music/QL computation. K5 seats and completes these against exact Bimba coordinates rather than redesigning Paramaśiva from scratch.
+The original kernel laws remain mandatory: stable full-M coordinates, source-faithful recursion, exact/cross-coordinate C bindings, structural promotion with C parity, Rust co-reference, C++ consumption without invented identities, rich/provisional Neo4j standing, complete capability accounting, separate parity/warrant/readiness and explicit returned correction.
 
-C++ target: continuous formal/harmonic/topological embodiment sufficient for the M1 engine and M1′ instrument.
+The joined feature additionally requires:
 
-**Parent consumers:** preserve harmonic traversal, topology, phase and event-bound operation refs for both Cosmic composition and Personal reception. K6 reads the same harmonic substrate; K8/K10 must not recreate local clock or pitch laws for the aura. This consumer requirement does not narrow whole-M1 coverage.
+- real dated sky and exact planetary/Earth/centre/chakral source paths, with freshness and historical replay;
+- the eighteen M2-owned aperture identities and independent coupled-clock phases, native encoding continuity and three-grid laws;
+- complete source-preserving Nara identity/activity/body/context and independent centre states, not a single animation score;
+- actual moving form/image/glyph projection into the retained field with stable samples, coherent sound/colour/material and explicit numerical ownership;
+- native Vāk literal/enacted/mixed expression, including the dynamic `/`, and source-addressed M0/CF4 geometry;
+- one set of six capabilities under both 3:3 and 4:2, focused depth without event/session reset;
+- full-screen resource lifecycle, usable left Bimba selection/pinning, canonical right Epii, real writing and detached companions;
+- an authorised journal/oracle/agent operation and source-grounded pedagogical return that actually changes and explains the running instrument;
+- two independently constituted Naras, protected derivatives and scoped future shared presence;
+- original-state replay, later reinterpretation, Day/NOW continuity, failure/refusal and bounded research/feedback;
+- full known capability dispositions plus separately evidenced operational and experiential completion.
 
-### K6 — M2 vertical rebuild
+Concrete test families and ownership are in [Parent-surfaces integration §7](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#7-joined-feature-acceptance). Passing planning/static-link checks or an installed headless consumer is not completion of this live experience.
 
-Initial top branch map:
+## 10. Readiness and source-history boundaries
 
-```text
-M2-0  numerical/potentiation ground
-M2-1  MEF / Vimarśā
-M2-2  36 Tattvas
-M2-3  36 Decans
-M2-4  symbolic-musical Power
-M2-5  planetary/chakral synthesis + M3 threshold
-```
+**Accepted now:** K0–K7 and the existing Vāk producer at their documented scopes; retained matrices, captured Bimba and native structural/operational bodies.
 
-Preserve actual asymmetric deeper branches.
+**Authorised now:** the full architecture, M2 aperture allocation and centre-field relation, planetary–Nara lived loop, enacted glyph language, focused instrument/full-screen/companion UX, pedagogy and the K8/K9/K10 dispatch. Execute; no general re-ratification phase is needed.
 
-The C source already contains the 72 carrier through MEF/Tattva/Decan/Shem and other M2 structures; Rust already has strong MEF and exact TemplateureField work. K6 establishes coordinate-complete Paraśakti coverage and fills actual C/Rust gaps.
+**To prove:** new coordinate/graph application and rollback; extended native coupled/Personal operations; actual ephemeris join; continuous field/acoustic fidelity and transport; installed renderer/desktop/agent/source operation; experiential and research results. No accepted producer receipt is broadened by planning prose.
 
-C++ target: physical/modal resonator, wave, acoustic and cymatic embodiment keyed to exact M2 state rather than a parallel audiovisual model.
+The original pre-K7 Wayfinder remains in Git history at #160's baseline. #51/#78/#69/#73 and the older Pratibimba build-order material remain provenance and consumer laws. Where they imply old standalone apps, generic host substitutes, 16+1 total, M3 ownership of the aperture catalogue, duplicated source/session machinery or an unfinished K4, this current Wayfinder and its scoped architecture/consumer companions govern the continuation. Unaffected domain depth, canonical identities and historical source evidence are retained.
 
-**Required shared producer:** the [M2 musical–colour–material contract](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#4-m2-musicalcolourmaterial-producer-k6--130) resolves MEF/music, elemental medium and the Bimba planetary/chakral colour relations together, with exact node/relation/source paths. Sound, colour, material response and M3 handoff remain jointly attributable outputs. Seat structural facts in C, implement the resolver in Rust and expose the result to K8/K9/K10. Do not collapse M2 into a palette, a scalar resonance or TemplateureField; preserve the full matrix and distinct musical traditions/tunings.
-
-### K7 — M3 vertical rebuild
-
-K7 must treat the 64 as one address register inside the much richer Mahāmāyā machine.
-
-Known current structural field includes:
-
-```text
-4-state nucleotide/element alphabet
-16 dinucleotide relations
-three matrix families
-64 codon/hexagram addresses
-384 line-change/change relations
-472 lawful orientations
-DNA/RNA/transcription relations
-Tarot exact-cover/expression relations
-360 dynamic degree carriers
-24 structural backbone carriers
-720° double-cover relation
-```
-
-The C body already contains a deep transcription/clock implementation. Rust already carries substantial codon/I-Ching/Tarot/rotation/fold/quaternion computation. K7 establishes exact coordinate coverage and restores missing clock/transcription parity without reducing M3 to the presently easiest subset to inspect.
-
-C++ target: full clock/form/transcription embodiment, including the spatial/physical consequences of matrix, fold, orientation and clock state.
-
-**Personal handoff:** the same form, pose, transformation and clock state is consumed by Nara alongside identity and live composition. Preserve the ratified elemental basis, exact source relations and current aperture canon. An identity hash, M3 address and quaternion are distinct inputs/relations, not interchangeable ways to identify a particle shape.
-
-## 11. C++ and deep-instrument programme
-
-### K8 — shared C++ computational substrate
-
-Build the common continuous runtime once:
-
-```text
-realtime state handoff
-geometry/material-coordinate infrastructure
-modal/physics substrate
-audio engine
-GPU/render substrate
-interaction/picking
-instrument diagnostics
-kernel ref/provenance transport
-```
-
-Then implement M1Engine, M2Engine and M3Engine as coordinate-backed domain engines on that substrate.
-
-**Parent-field integration is part of K8:**
-
-- define the reusable subject-bound Personal-field capability with K10 and instantiate it from K10's returned Nara state;
-- bind the already-built desktop point-cloud engine through its actual hooks, retaining its seven-centre glyph/field behaviour and GPU state;
-- carry jointly resolved M2 harmonic/colour/material inputs, M1 dynamics, M3 form/clock and Nara composition in coherent generations;
-- decide and implement the versioned Rust/C++ binding, memory/transport ownership and actual desktop/GPU receiver; a C ABI is a candidate to evaluate here, not a preselected backend;
-- separate domain-event timing, numerical/audio progression and presentation frames; keep I/O and inference off realtime callbacks;
-- exercise headless consumption, mute/resume, stale state, runtime lifecycle, personal-instance isolation and actual renderer coupling.
-
-See [the stack and boundary contract](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#3-one-stack-with-explicit-implementation-responsibilities). The shared runtime owns continuous computation; the Bimba map and Epii agent use native graph/agency operations, not invented M0/M5 physics engines.
-
-Do not require all six M roots to be fully embodied before useful C++ work begins. C++ work begins when a requested coordinate vertical has its structural/operational contracts locked enough to consume safely. K8's Cosmic path does not wait for K10; K10's producer work does not wait for K8. Their Personal runtime binding joins those outputs later.
-
-### K9 — deep M′ instruments and M1/2/3 composition
-
-Use the same domain engines for:
-
-```text
-M1′
-M2′
-M3′
-```
-
-and compose them into the singular M1/2/3 physical/cosmic object around the same current event.
-
-Deliver `epi.cosmic.123` as the Cosmic parent and M1′–M3′ as distinct full-depth instruments. Establish the shared parent/deep open/operate/return path consumed by K10's Personal and remaining depths. Opening another surface must not restart or fork the domain state. K9 can deliver independently of whole-K10 completion; joined acceptance runs when the participating contracts exist.
-
-Prompt-D/Prompt-E event identity, deep-open/return, readiness/provenance and human/Agent co-reference laws remain valuable conformance requirements. Their older implementation-history framings do not override this kernel architecture.
-
-A deep instrument resolves through at least:
-
-```text
-eventRef
-+ exact MCoordinateRef
-+ kernel/ledger revision
-```
-
-and returns to the exact parent relation without coordinate or event drift.
-
-## 12. Wider M closure
-
-### K10 — M0/M4/M5, Personal composition and whole-M closure
-
-M1/M2/M3 are the immediate physical/deep proving ground, not a special architecture.
-
-The same registry, ledger, C/Rust parity and projection machinery extends across M0, M4 and M5. K10 closes the whole-M coverage field and implements the Personal producers consumed by the same current-event, continuous-runtime and native desktop contracts.
-
-The work within #134 is concrete:
-
-1. Apply the K4 census method to M0/M4/M5; seat C structures and complete Rust operations against their full source fields.
-2. Publish Nara's full identity/transit/activity/composed-state and bioquaternionic relations, M4.3 transformation intelligence, M4.4 context/history and M4.5 integration, retaining exact event/source/coordinate identities.
-3. Consume Central's existing human Day, agent NOW, Flow/Dialogue, source-history and reviewed-contribution operations at root and Project scope. Preserve long-lived NOW work and original/received event times across Day changes.
-4. With K8, instantiate the subject-bound continuous field and connect the already-built point-cloud body. Deliver `epi.personal.450` and the full M4′ instrument over that state.
-5. Deliver **M0′, the Bimba map**: search/open/traverse coordinates, relations and sources; inspect selected field/event provenance; perform established governed map-change operations; return to the selected parent subject.
-6. Deliver **M5′, the Epii agent**: use the canonical Agent and native session/authority/tool infrastructure to investigate sources, operate the instruments, teach, conduct research/development and return findings/proposals. Parent dialogue and deep M5′ use the same Epii, not a second chat runtime or an aura-only explainer.
-7. Exercise Cosmic↔Personal and all delivered deep instruments with the same event, human/Agent Actions, protected disclosure and attributable Return; publish whole-M coverage and separate operational/experiential receipts.
-
-The [K10 contract](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#6-personal-field-and-remaining-instruments-k10--134) specifies these handoffs and their acceptance scenarios. Source/implementation recovery remains in QL-MEF; C-Experiments is read-only provenance. O:I retains the desktop, Actuation the agentic runtime relation, AIKit capability/session access, Central source/temporal ownership and Workcell material execution. Extend their existing seams rather than recreating them in this repository.
-
-K10's census and producer work may overlap K5–K9 from the accepted common floor. Only the concrete Personal continuous/desktop join depends on the corresponding K8/K9 outputs. No new K11 or separate aura programme is introduced.
-
-## 13. Parallel workstreams after K3
-
-After the foundational contract exists, work can proceed concurrently:
-
-```text
-A  kernel form / canonical relations
-B  native C Bimba port + structural parity
-C  Rust operational completion + provider/service work
-D  C++ embodiment + deep engines
-E  Neo4j/current-event/application projection
-```
-
-The M ledger is the joining surface.
-
-No stream is allowed to repair another stream's missing semantic law by silently inventing a local substitute.
-
-## 14. Known / partial / unresolved boundary
-
-### Firm enough to build against
-
-- one QL kernel;
-- coordinate-based migration;
-- M as first-class whole with M0–M5 recursive roots;
-- C as structural Bimba lock;
-- Rust as operational/computational layer;
-- C++ as continuous computational embodiment;
-- Neo4j as canonical deep-coordinate semantic/relational home;
-- matrix/ledger locking and multi-axis parity;
-- M1/M2/M3 capability matrices as current starting maps;
-- the integrated M1→M2→M3 physical-pole direction;
-- structural changes requiring C reconciliation once promoted to kernel canon;
-- two parent surfaces plus six deep instruments, including M0′ Bimba map and M5′ Epii agent;
-- reuse of the owner-reported integrated seven-centre point-cloud implementation.
-
-### Known current implementation facts
-
-- accepted K1 native C foundation and K2 recursive registry are the current structural centre;
-- imported/vendored C contains rich M0–M5 computation;
-- current Rust contains strong but differently-organised portions of M1/M2/M3 and generalized QL/MEF;
-- Bimba Map data exists both as live Neo4j structure and substantial serialized/web-accessible datasets;
-- K4 has executed the M1/M2/M3 discovery census against a captured live graph, the serialized registry and current implementation bodies; its exact receipt is linked in §0.2;
-- parent-surface planning does not certify candidate branch parity or the installed desktop's exact revision.
-
-### K4 discoveries and vertical proof obligations
-
-- preserve the accepted whole-M registry and K4 M1/M2/M3 workbooks;
-- establish exact C coordinate assignment of every imported semantic table/algorithm, including unseated discoveries;
-- establish exact Rust assignment of every current module;
-- prove complete C↔Rust parity per requested branch;
-- resolve which imported C laws remain correct as-is and which require current canonical correction;
-- retain every cross-coordinate relation currently implicit in implementation;
-- assess exact completeness of Rust M1 Ananda/Spanda, M2 Tattva/Decan/Power/synthesis and M3 full clock/transcription ports;
-- expand the census through M0/M4/M5 in K10, without retroactively claiming that K4 proved those domains.
-
-### Still implementation-design work
-
-- domain-specific C ABI/versioning additions beyond the accepted foundation and registry;
-- exact Rust↔C calling/generated-fixture arrangement for new domain operations;
-- C++ libraries, render/audio/physics backend choices;
-- in-process versus IPC boundaries for continuous runtime components;
-- the concrete transport into the already-integrated point-cloud implementation;
-- detailed interaction design of each full M′ instrument within the fixed parent/deep product shape.
-
-Do not resolve these prematurely where the ledger/vertical evidence can decide them more cleanly.
-
-## 15. Whole-programme acceptance laws
-
-The programme is healthy when all of the following are mechanically defensible:
-
-1. every canonical semantic capability has an exact coordinate or explicit cross-coordinate disposition;
-2. every canonical coordinate has a stable identity shared across implementations;
-3. M is a first-class master tree with M0–M5 aggregate roots and source-faithful recursion;
-4. every substantial semantic C construct is coordinate-bound or explicitly cross-coordinate;
-5. C is the lowest executable structural Bimba lock;
-6. promoted structural change cannot bypass C reconciliation/parity;
-7. Rust operationalises the same field rather than authoring a parallel M ontology;
-8. C++ consumes exact kernel refs and does not mint symbolic identity locally;
-9. Neo4j canonical deep coordinates resolve to kernel coordinate identity and known revisions;
-10. provisional/research graph relations remain possible without being misreported as bare-metal canon;
-11. the capability matrices retain known source capabilities even where implementation is missing;
-12. missing implementation remains visible in the ledger;
-13. source, coordinate, relation, operational and experiential parity remain separate evidence classes;
-14. warrant and readiness remain separate;
-15. deep M′ instruments preserve event + coordinate identity through open/operate/return;
-16. M1/M2/M3 composition consumes the full coordinate-backed engines rather than a reduced integration vocabulary;
-17. human and Agent access resolves to the same refs/actions/state where implemented;
-18. current-event state remains distinct from kernel possibility and presentation state;
-19. returned implementation or graph reality may revise architecture only through an explicit recorded reconciliation;
-20. no future Agent needs to reconstruct the kernel's M topology from scattered code or tickets before doing ordinary coordinate work;
-21. Cosmic and Personal operate as two parent faces with six distinct depths; M0′ provides real Bimba-map functionality and M5′ the real Epii agent;
-22. M2 sound/colour/material outputs retain their source-backed planetary/chakral/MEF relations through the continuous runtime and existing field renderer;
-23. an authorised lived contribution can be operated on by Epii, change the actual instrument, return evidence to its Day/NOW/source context and be replayed without losing identity or provenance.
-
-Concrete joined scenarios and stage ownership are in [Parent-surfaces integration §7](kernel-rebuild/PARENT-SURFACES-INTEGRATION.md#7-joined-feature-acceptance). Planning state is not implementation evidence.
-
-## 16. Ticket graph
-
-This Wayfinder owns the current programme ladder:
-
-```text
-K0  current ground / source authority reconciliation
- ↓
-K1  restore native C kernel centre
- ↓
-K2  recursive M registry + master M index
- ↓
-K3  capability ledger / matrix lock / parity protocol
- ↓
-K4  automated M1/M2/M3 pre-vertical census
- ├──────────────┬──────────────┐
- ↓              ↓              ↓
-K5 M1          K6 M2          K7 M3
- └──────────────┴──────────────┘
-                ↓
-K8  shared C++ substrate + domain engines + retained-renderer binding
-                ↓
-K9  Cosmic parent + M1′/M2′/M3′ + shared deep-open/return
-
-K4 method / common floor
-                ↓
-K10 M0/M4/M5 census + C/Rust producers
-                ↓ consumed by K8 Personal-field instance
-K10 Personal parent + M4′ + M0′ Bimba map + M5′ Epii agent
-                ↕ joins K9 through the same current event
-        two parents / six depths / whole-M acceptance
-```
-
-After K3, later work may overlap whenever ledger dependencies permit. The arrows express dependency/closure logic, not a demand for strictly serial implementation. K10 is no longer visually parked after all K9 work: its producers can proceed from the shared floor, while its runtime/desktop joins wait only for the outputs they consume. No stage is advanced or reopened by this map update.
-
-## 17. Relation to existing programme material
-
-Retain useful technical work, data, parity evidence and conformance laws from #51, #78, #69, #73 and related PRs/docs.
-
-Where those materials describe the imported C/Rust bodies primarily as historical specimens, prototype evidence or a one-way migration into Rust, this Wayfinder records the clarified current development intention:
-
-**both C and Rust were brought forward as implementation bodies of the kernel rebuild; C is to become the structural Bimba lock, Rust the operational kernel, and the existing bodies are to be moved, aligned, corrected and completed rather than treated as disposable source archaeology.**
-
-No prior issue history needs to be rewritten to pretend this clarification was always explicit. New implementation work should simply follow this Wayfinder.
-
-The September 11 parent-surface integration is the current authored functional identification of M0′ as the Bimba map and M5′ as the Epii agent. Preserve their full source-designed depth; historical ambient-ground/articulation descriptions and Theia-era package residency do not substitute for those products or relocate current ownership.
-
-## 18. Development posture
-
-The practical method is deliberately conservative about loss and aggressive about automation:
-
-```text
-query the coordinate field
-      ↓
-join existing Bimba + C + Rust evidence
-      ↓
-record discrepancy instead of guessing
-      ↓
-resolve the smallest coherent coordinate vertical
-      ↓
-prove parity
-      ↓
-return the result to the ledger
-```
-
-The depth already exists. The task is to make it structurally impossible for that depth to disappear merely because a later Agent saw only one projection of it.
+C-Experiments is read-only. Private Control is not touched by repository acceptance. Current implementation and returned human experience can revise the design through an explicit source/ledger/owner act. The next work is the actual lived planetary instrument over the landed engines—not another reconstruction of the three waves.
