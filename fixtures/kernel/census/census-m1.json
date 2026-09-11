@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M1",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "91dece201f8e1887835c9e18dbbdff85c80bcd4274a794f7120e1be7c7490f80",
+  "ledger_revision": "8072c255432a9b7ab5dca93041a082558c3abe6340b66d07c96309ea2ed65399",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 43,
   "counts": {
@@ -11,8 +11,8 @@
       "unimplemented": 21
     },
     "rust": {
-      "implemented": 16,
-      "unimplemented": 23,
+      "implemented": 17,
+      "unimplemented": 22,
       "partial": 4
     }
   },
@@ -34,6 +34,10 @@
           "c/src/holographic.c:ql_holographic_field_get",
           "c/src/holographic.c:ql_holographic_field_get_const",
           "c/src/holographic.c:ql_holographic_field_init",
+          "c/src/m2.c:ql_m2_modal_power",
+          "c/src/m2.c:ql_m2_modal_quadrature",
+          "c/src/m2.c:ql_m2_modal_transduce",
+          "c/src/m2.c:ql_m2_vimarsha",
           "vendor/epi-kernel/reference/src/engine.c:engine_double_covering",
           "vendor/epi-kernel/reference/src/engine.c:engine_lemniscate_dive",
           "vendor/epi-kernel/reference/src/engine.c:engine_spanda_walk",
@@ -70,6 +74,10 @@
           "crates/ql-core/src/structural.rs:GroundKind",
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
+          "crates/ql-mef/src/m2_engine.rs:M1Excitation",
+          "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS",
+          "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
+          "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/pole_state.rs:M1CarrierFacts",
           "crates/ql-mef/src/pole_state.rs:Readiness",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
@@ -162,6 +170,7 @@
         "state": "partial",
         "covered_by_descendants": [
           "#1-2-0",
+          "#1-2-1",
           "#1-2-2",
           "#1-2-3"
         ],
@@ -169,6 +178,7 @@
           "crates/ql-cli/src/vak_composition.rs:ground",
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-core/src/structural.rs:GroundKind",
+          "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
       },
@@ -336,7 +346,10 @@
         ]
       },
       "rust": {
-        "state": "unimplemented"
+        "state": "implemented",
+        "constructs": [
+          "crates/ql-mef/src/m2_vimarsha.rs:OFFSETS"
+        ]
       },
       "row": "census:#1-2-1"
     },

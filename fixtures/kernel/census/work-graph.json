@@ -2,7 +2,7 @@
   "schema": "ql.m-census-work-graph/v1",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
   "ledger": "fixtures/kernel/m-ledger-v1.json",
-  "ledger_revision": "91dece201f8e1887835c9e18dbbdff85c80bcd4274a794f7120e1be7c7490f80",
+  "ledger_revision": "8072c255432a9b7ab5dca93041a082558c3abe6340b66d07c96309ea2ed65399",
   "note": "bounded per-coordinate work. Dependencies are encoded in the M ledger rows: census rows depend on their parent coordinate, capability rows on their coordinates; coverage queries expand the requested vertical only.",
   "verticals": {
     "M1": {
@@ -15,19 +15,18 @@
           "unimplemented": 21
         },
         "rust": {
-          "implemented": 16,
-          "unimplemented": 23,
+          "implemented": 17,
+          "unimplemented": 22,
           "partial": 4
         }
       },
-      "open_coordinates": 34,
+      "open_coordinates": 33,
       "next_coordinates": [
         "#1-0",
         "#1-1",
         "#1-2",
         "#1-3",
         "#1-4",
-        "#1-2-1",
         "#1-3-0",
         "#1-3-1",
         "#1-3-2",
@@ -45,7 +44,8 @@
         "#1-5-4",
         "#1-5-5",
         "#1-2-0-0",
-        "#1-2-1-0"
+        "#1-2-1-0",
+        "#1-2-2-0"
       ],
       "missing_c_report": "fixtures/kernel/census/reports/missing-c-structural-bindings.json",
       "missing_rust_report": "fixtures/kernel/census/reports/missing-partial-rust-ports.json"
@@ -56,22 +56,21 @@
       "coordinate_count": 597,
       "counts": {
         "c": {
-          "implemented": 29,
+          "implemented": 30,
           "unimplemented": 554,
-          "partial": 14
+          "partial": 13
         },
         "rust": {
-          "implemented": 61,
+          "implemented": 64,
           "partial": 20,
-          "unimplemented": 516
+          "unimplemented": 513
         }
       },
-      "open_coordinates": 581,
+      "open_coordinates": 579,
       "next_coordinates": [
         "#2-0",
         "#2-2",
         "#2-3",
-        "#2-4",
         "#2-5",
         "#2-1-0",
         "#2-2-0",
@@ -91,7 +90,8 @@
         "#2-5-4",
         "#2-5-5",
         "#2-5-6",
-        "#2-5-7"
+        "#2-5-7",
+        "#2-5-8"
       ],
       "missing_c_report": "fixtures/kernel/census/reports/missing-c-structural-bindings.json",
       "missing_rust_report": "fixtures/kernel/census/reports/missing-partial-rust-ports.json"
