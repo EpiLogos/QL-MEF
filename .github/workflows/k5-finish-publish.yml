@@ -1,0 +1,38 @@
+name: K5 exact-source publication (temporary)
+on:
+  push:
+    branches: [agent/129-m1-coordinate-rebuild]
+    paths: [.github/workflows/k5-finish-publish.yml]
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Inspect transferred bytes without executing them
+        run: |
+          mkdir -p "$RUNNER_TEMP/k5-transfer"
+          cp .k5-transfer/part-*.b64 "$RUNNER_TEMP/k5-transfer/"
+          python3 - <<'PY'
+          import base64,hashlib,zlib
+          from pathlib import Path
+          chunks=[Path(f'.k5-transfer/part-{i}.b64').read_text().strip() for i in range(8)]
+          for i,c in enumerate(chunks): print(i,len(c),hashlib.sha256(c.encode()).hexdigest())
+          b=base64.b64decode(''.join(chunks),validate=True)
+          raw=zlib.decompress(b)
+          actual=hashlib.sha256(raw).hexdigest()
+          print('Payload SHA256:',actual)
+          assert actual=='e79d7db3a68922b05ce7de012f441a8742afa25cfde37c3c1ff32b3491847c66'
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k5-transfer-check-${{ github.sha }}
+          path: ${{ runner.temp }}/k5-transfer/
+          retention-days: 3
+          if-no-files-found: error
