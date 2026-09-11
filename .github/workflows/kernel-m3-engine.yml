@@ -12,6 +12,31 @@ permissions:
   contents: read
 
 jobs:
+  locked-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          persist-credentials: false
+          sparse-checkout: |
+            Idea/Bimba/Map/datasets/mahamaya-deep
+            Idea/Bimba/Seeds/M/M3'
+            Idea/Bimba/Seeds/M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS
+          path: reference
+      - name: Preserve read-only K2 source authority
+        run: |
+          mkdir -p snapshot
+          git -C reference rev-parse HEAD > snapshot/revision.txt
+          tar -C reference -cf snapshot/bimba-source.tar Idea
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m3-bimba-source-daa660c
+          path: snapshot/
+          retention-days: 7
+          if-no-files-found: error
   m3-engine:
     runs-on: ubuntu-latest
     timeout-minutes: 15
