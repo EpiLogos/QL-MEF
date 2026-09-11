@@ -1,0 +1,76 @@
+name: M2 coordinate engine
+on:
+  push:
+    branches: [main, agent/k6-m2-coordinate-rebuild]
+    paths:
+      - '.github/workflows/kernel-m2.yml'
+      - 'crates/**'
+      - 'c/**'
+      - 'fixtures/kernel/**'
+      - 'scripts/**'
+      - 'docs/kernel-rebuild/**'
+  pull_request:
+    paths:
+      - '.github/workflows/kernel-m2.yml'
+      - 'crates/**'
+      - 'c/**'
+      - 'fixtures/kernel/**'
+      - 'scripts/**'
+      - 'docs/kernel-rebuild/**'
+permissions:
+  contents: read
+concurrency:
+  group: m2-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Retain K2-pinned Bimba source (read only)
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Epi-Logos-C-Experiments
+          ref: daa660cbc1b8c5da83828698665a753852cb0287
+          path: target/m2-bimba-source
+          sparse-checkout: |
+            Idea/Bimba/Map/datasets
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: python3 -m pip install 'jsonschema==4.25.1'
+      - name: Exact-head source receipt
+        run: |
+          mkdir -p target/m2-receipt
+          git rev-parse HEAD > target/m2-receipt/source-revision.txt
+          git archive --format=tar HEAD | gzip > target/m2-receipt/source.tar.gz
+      - name: Mandatory source, native C/Rust and installed consumer acceptance
+        run: bash scripts/test-m2-engine.sh
+      - name: Shared-ledger and scoped proof validation
+        run: |
+          python3 scripts/m-ledger.py check
+          python3 scripts/m2-ledger.py check
+          python3 -m unittest discover -s scripts/tests -p 'test_m*.py' -v 2>&1 | tee target/m2-receipt/python-ledger.log
+      - name: Full Rust workspace
+        run: cargo test --workspace --all-targets --locked 2>&1 | tee target/m2-receipt/workspace-tests.log
+      - name: Formatting and Clippy
+        run: |
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Verify generators did not mutate accepted source
+        run: git diff --exit-code
+      - name: Publish exact-head parity receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m2-parity-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/m2-receipt/
+          retention-days: 14
