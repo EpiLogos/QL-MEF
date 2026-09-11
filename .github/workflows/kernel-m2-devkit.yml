@@ -1,0 +1,30 @@
+name: M2 local parity build kit
+on:
+  push:
+    branches: [agent/k6-m2-coordinate-rebuild]
+    paths: ['.github/workflows/kernel-m2-devkit.yml']
+permissions:
+  contents: read
+jobs:
+  build-kit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fetch --locked
+      - name: Retain offline compiler and fetched dependency cache
+        run: |
+          mkdir -p target/m2-build-kit
+          rustc --version > target/m2-build-kit/toolchain.txt
+          sysroot=$(rustc --print sysroot)
+          tar -C "$sysroot" -cf - bin lib | gzip -1 > target/m2-build-kit/toolchain.tar.gz
+          tar -C "${CARGO_HOME:-$HOME/.cargo}" -cf - registry | gzip -1 > target/m2-build-kit/registry.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m2-local-build-kit
+          path: target/m2-build-kit/
+          retention-days: 1
