@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M2",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "6f51a6046266a88e41e17f8874ad143bd727c0b47b792dae8bf4577a8bca3d00",
+  "ledger_revision": "92ec1e3aeb0a269345e2ec2e5389e1b4264ebbe81125ecbc7050b7a9d574409a",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 597,
   "counts": {
