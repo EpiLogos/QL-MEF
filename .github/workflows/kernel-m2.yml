@@ -1,7 +1,7 @@
 name: M2 coordinate engine
 on:
   push:
-    branches: [main, agent/k6-m2-coordinate-rebuild]
+    branches: [main]
     paths:
       - '.github/workflows/kernel-m2.yml'
       - 'crates/**'
