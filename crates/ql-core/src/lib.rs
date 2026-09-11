@@ -10,6 +10,7 @@ mod error;
 mod face;
 mod form;
 mod kernel;
+pub mod m3_clock;
 mod operator;
 mod pairing;
 mod pole;

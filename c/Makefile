@@ -12,9 +12,9 @@ API_VERSION = 0.1.0
 CONTRACT_VERSION = 1.1.0
 PACKAGE_BASENAME = ql-mef-c-$(API_VERSION)-$(SOURCE_REVISION).tar.gz
 LIB = $(BUILD_DIR)/libql-mef-c.a
-SRC = src/primitive.c src/holographic.c src/kernel.c src/m_tree.c
+SRC = src/primitive.c src/holographic.c src/kernel.c src/m_tree.c src/m3.c
 OBJ = $(SRC:src/%.c=$(BUILD_DIR)/%.o)
-HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h
+HEADERS = include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h include/ql/m3.h
 REVISION_STAMP = $(BUILD_DIR)/source-revision.txt
 M_TREE_MANIFEST = ../fixtures/kernel/m-tree-v1.json
 
@@ -40,6 +40,12 @@ $(BUILD_DIR)/%.o: src/%.c $(HEADERS) $(REVISION_STAMP) | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Iinclude -DQL_C_SOURCE_REVISION='"$(SOURCE_REVISION)"' -c $< -o $@
 
 $(BUILD_DIR)/m_tree.o: src/m_tree_data.inc
+
+$(BUILD_DIR)/m3_data.inc: ../scripts/generate-m3.py ../fixtures/kernel/m-tree-v1.json ../vendor/epi-kernel/reference/src/m3.c ../vendor/epi-kernel/reference/src/m3_clock_lut.c ../vendor/epi-kernel/reference/include/m3.h | $(BUILD_DIR)
+	python3 ../scripts/generate-m3.py --out $@
+
+$(BUILD_DIR)/m3.o: $(BUILD_DIR)/m3_data.inc
+$(BUILD_DIR)/m3.o: CPPFLAGS += -I$(BUILD_DIR)
 
 $(LIB): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
