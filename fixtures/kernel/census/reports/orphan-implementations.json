@@ -6743,16 +6743,58 @@
       "reason": "no distinctive tokens or coordinate spelling"
     },
     {
+      "symbol": "ABOUT",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "const",
+      "line": 20,
+      "context": "//! optional for the System surface; nothing here anticipates or encodes the //! QL-MEF #123 Vāk / C-prime / Context-Frame conclusions. //! //! Read-only: this command performs no mutation and writes nothing.",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
+      "symbol": "CONTRACT_REVISION",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "const",
+      "line": 17,
+      "context": "//! native QL Kernel availability, readings, Actions and readiness. QL remains //! optional for the System surface; nothing here anticipates or encodes the //! QL-MEF #123 Vāk / C-prime / Context-Frame conclusions. //! //! Read-only: this command performs no mutation and writes nothing.",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
+      "symbol": "OWNER_REF",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "const",
+      "line": 18,
+      "context": "//! optional for the System surface; nothing here anticipates or encodes the //! QL-MEF #123 Vāk / C-prime / Context-Frame conclusions. //! //! Read-only: this command performs no mutation and writes nothing.",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
+      "symbol": "PRODUCT_ID",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "const",
+      "line": 16,
+      "context": "//! native QL Kernel availability, readings, Actions and readiness. QL remains //! optional for the System surface; nothing here anticipates or encodes the //! QL-MEF #123 Vāk / C-prime / Context-Frame conclusions. //! //! Read-only: this command performs no mutation and writes nothing.",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
+      "symbol": "SCHEMA",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "const",
+      "line": 15,
+      "context": "//! `wave-5/system.1`) for `quaternal-logic`. Bounded to the currently accepted //! native QL Kernel availability, readings, Actions and readiness. QL remains //! optional for the System surface; nothing here anticipates or encodes the //! QL-MEF #123 Vāk / C-prime / Context-Frame conclusions. //! //! Read-only: this command performs no mutation and writes nothing.",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
       "symbol": "axes",
       "path": "crates/ql-cli/src/system.rs",
       "kind": "fn",
       "line": 227,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "axes"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "build_descriptor",
@@ -6761,11 +6803,7 @@
       "line": 58,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "build",
-        "descriptor"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "now_ms",
@@ -6774,10 +6812,7 @@
       "line": 242,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "now"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "readiness",
@@ -6786,10 +6821,7 @@
       "line": 191,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "readiness"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "setting",
@@ -6798,10 +6830,7 @@
       "line": 203,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "setting"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "sha256_hex",
@@ -6810,11 +6839,16 @@
       "line": 275,
       "context": "",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "hex",
-        "sha256"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
+    },
+    {
+      "symbol": "system_command",
+      "path": "crates/ql-cli/src/system.rs",
+      "kind": "fn",
+      "line": 25,
+      "context": "",
+      "stratum": "rust",
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "zero_unix_ms",
@@ -6823,10 +6857,7 @@
       "line": 251,
       "context": "/// Zero every `*_unix_ms` field in the descriptor, recursively, so the canonical /// reading body is independent of when the reading was taken (§4.5).",
       "stratum": "rust",
-      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
-      "tokens": [
-        "unix"
-      ]
+      "reason": "infrastructural: Wave 5 per-owner System settings disclosure"
     },
     {
       "symbol": "address_view",

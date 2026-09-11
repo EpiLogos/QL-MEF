@@ -497,6 +497,11 @@ def spelling_key(ref: str) -> str:
 INFRASTRUCTURAL_C_FILES = {
     "vendor/epi-kernel/reference/src/arena.c": "arena memory machinery",
 }
+# Rust disclosure machinery: product-identity strings for the Wave 5 System
+# surface; they describe the product, they carry no coordinate identity.
+INFRASTRUCTURAL_RUST_FILES = {
+    "crates/ql-cli/src/system.rs": "Wave 5 per-owner System settings disclosure",
+}
 C_KEYWORD_SYMBOLS = frozenset({
     "if", "while", "for", "switch", "return", "sizeof", "Static_assert",
     "_Static_assert", "assert", "defined", "include", "ifndef", "ifdef", "endif",
@@ -597,6 +602,10 @@ def bind_constructs(constructs: list[dict], field: BimbaField, stratum: str) -> 
     scope_refs = sorted(field.self_tokens)
     bound, orphans = [], []
     for construct in constructs:
+        if stratum == "rust" and construct["path"] in INFRASTRUCTURAL_RUST_FILES:
+            orphans.append({**construct, "stratum": stratum,
+                            "reason": f"infrastructural: {INFRASTRUCTURAL_RUST_FILES[construct['path']]}"})
+            continue
         if stratum == "c" and construct["path"] in INFRASTRUCTURAL_C_FILES:
             orphans.append({**construct, "stratum": stratum,
                             "reason": f"infrastructural: {INFRASTRUCTURAL_C_FILES[construct['path']]}"})
@@ -769,6 +778,19 @@ def build_census(args) -> int:
             implementations.append(record)
             impl_by_id[record["id"]] = record
         return record["id"]
+
+    # Infrastructural Rust disclosure machinery: explicit disposition.
+    for path, why in INFRASTRUCTURAL_RUST_FILES.items():
+        for symbol in sorted({c["symbol"] for c in discovered["rust"] if c["path"] == path}):
+            add_impl({
+                "id": f"rust:{path}:{symbol}",
+                "stratum": "rust", "kind": "computational",
+                "path": path, "symbol": symbol,
+                "disposition": "infrastructural",
+                "coordinates": [], "relations": [],
+                "rationale": f"K4 census: {why}; no coordinate identity.",
+                "structure": [],
+            })
 
     # Infrastructural C machinery: explicit disposition, no coordinate claims.
     for path, why in INFRASTRUCTURAL_C_FILES.items():

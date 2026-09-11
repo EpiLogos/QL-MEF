@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M2",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "3a4924a49df239c8ce5493d7538ea3ea376a2510a54b96c01084df54e952eecc",
+  "ledger_revision": "a8e9f186e2477d8a3c2ed61b3d0f83ae5d7ca88cb89959eec4b89543aa893b83",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 597,
   "counts": {
@@ -83,7 +83,6 @@
           "crates/ql-cli/src/lib.rs:vak_relation_kind",
           "crates/ql-cli/src/lib.rs:verify_command",
           "crates/ql-cli/src/m_ledger.rs:command",
-          "crates/ql-cli/src/system.rs:system_command",
           "crates/ql-cli/src/vak_composition.rs:command",
           "crates/ql-cli/src/vak_composition.rs:face",
           "crates/ql-cli/src/vak_composition.rs:ground",
@@ -473,7 +472,6 @@
         "constructs": [
           "crates/ql-cli/src/lib.rs:verify_command",
           "crates/ql-cli/src/m_ledger.rs:command",
-          "crates/ql-cli/src/system.rs:system_command",
           "crates/ql-cli/src/vak_composition.rs:command",
           "crates/ql-core/src/operator.rs:OperatorValue",
           "crates/ql-core/src/operator.rs:QlOperator",
@@ -3425,7 +3423,6 @@
         "constructs": [
           "crates/ql-cli/src/lib.rs:verify_command",
           "crates/ql-cli/src/m_ledger.rs:command",
-          "crates/ql-cli/src/system.rs:system_command",
           "crates/ql-cli/src/vak_composition.rs:command",
           "crates/ql-core/src/operator.rs:OperatorValue",
           "crates/ql-core/src/operator.rs:QlOperator",
@@ -8010,7 +8007,6 @@
         "constructs": [
           "crates/ql-cli/src/lib.rs:verify_command",
           "crates/ql-cli/src/m_ledger.rs:command",
-          "crates/ql-cli/src/system.rs:system_command",
           "crates/ql-cli/src/vak_composition.rs:command"
         ]
       },

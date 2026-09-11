@@ -2,8 +2,8 @@
   "schema": "ql.m-census-discovery/v1",
   "stratum": "rust",
   "construct_count": 1003,
-  "bound_count": 201,
-  "orphan_count": 802,
+  "bound_count": 195,
+  "orphan_count": 808,
   "bound": [
     {
       "symbol": "QlAttachment",
@@ -159,131 +159,6 @@
       "path": "crates/ql-cli/src/m_ledger.rs",
       "kind": "fn",
       "line": 7,
-      "stratum": "rust",
-      "coordinates": [
-        "#2-5-0/1-6"
-      ],
-      "trail": [
-        {
-          "coordinate": "#2-5-0/1-6",
-          "how": "bimba-name-anchor",
-          "matched_tokens": [
-            "command"
-          ]
-        }
-      ],
-      "extended_coordinates": [
-        "#2",
-        "#2-5",
-        "#2-5-0/1",
-        "#2-5-0/1-6"
-      ]
-    },
-    {
-      "symbol": "SCHEMA",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "const",
-      "line": 15,
-      "stratum": "rust",
-      "coordinates": [
-        "#1"
-      ],
-      "trail": [
-        {
-          "coordinate": "#1",
-          "how": "coordinate-spelling",
-          "matched_tokens": []
-        }
-      ],
-      "extended_coordinates": [
-        "#1"
-      ]
-    },
-    {
-      "symbol": "PRODUCT_ID",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "const",
-      "line": 16,
-      "stratum": "rust",
-      "coordinates": [
-        "#1"
-      ],
-      "trail": [
-        {
-          "coordinate": "#1",
-          "how": "coordinate-spelling",
-          "matched_tokens": []
-        }
-      ],
-      "extended_coordinates": [
-        "#1"
-      ]
-    },
-    {
-      "symbol": "CONTRACT_REVISION",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "const",
-      "line": 17,
-      "stratum": "rust",
-      "coordinates": [
-        "#1"
-      ],
-      "trail": [
-        {
-          "coordinate": "#1",
-          "how": "coordinate-spelling",
-          "matched_tokens": []
-        }
-      ],
-      "extended_coordinates": [
-        "#1"
-      ]
-    },
-    {
-      "symbol": "OWNER_REF",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "const",
-      "line": 18,
-      "stratum": "rust",
-      "coordinates": [
-        "#1"
-      ],
-      "trail": [
-        {
-          "coordinate": "#1",
-          "how": "coordinate-spelling",
-          "matched_tokens": []
-        }
-      ],
-      "extended_coordinates": [
-        "#1"
-      ]
-    },
-    {
-      "symbol": "ABOUT",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "const",
-      "line": 20,
-      "stratum": "rust",
-      "coordinates": [
-        "#1"
-      ],
-      "trail": [
-        {
-          "coordinate": "#1",
-          "how": "coordinate-spelling",
-          "matched_tokens": []
-        }
-      ],
-      "extended_coordinates": [
-        "#1"
-      ]
-    },
-    {
-      "symbol": "system_command",
-      "path": "crates/ql-cli/src/system.rs",
-      "kind": "fn",
-      "line": 25,
       "stratum": "rust",
       "coordinates": [
         "#2-5-0/1-6"
