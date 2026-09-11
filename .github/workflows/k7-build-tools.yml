@@ -1,0 +1,37 @@
+name: K7 reproducible compiler inputs
+on:
+  pull_request:
+    paths: ['.github/workflows/k7-build-tools.yml']
+permissions:
+  contents: read
+jobs:
+  inputs:
+    if: github.event.pull_request.number == 151 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Preserve compiler and dependency bytes, without credentials
+        run: |
+          set -euo pipefail
+          cargo fetch --locked
+          mkdir -p target/k7-tools
+          rustc --version --verbose > target/k7-tools/rustc.txt
+          cargo --version > target/k7-tools/cargo.txt
+          sysroot=$(rustc --print sysroot)
+          tar -czf target/k7-tools/toolchain.tar.gz -C "$sysroot" bin lib
+          tar -czf target/k7-tools/registry.tar.gz -C "$HOME/.cargo" registry
+          sha256sum target/k7-tools/*.tar.gz > target/k7-tools/SHA256SUMS
+          git rev-parse HEAD > target/k7-tools/producer.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: k7-compiler-inputs-${{ github.event.pull_request.head.sha }}
+          path: target/k7-tools/
+          retention-days: 1
+          if-no-files-found: error
