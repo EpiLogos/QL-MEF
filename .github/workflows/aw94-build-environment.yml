@@ -1,0 +1,73 @@
+# Temporary audit helper. Remove from the accepted change after the build
+# environment is captured; this is not a product runtime or dependency owner.
+name: AW94 exact build environment
+on:
+  pull_request:
+    paths: ['.github/workflows/aw94-build-environment.yml']
+permissions:
+  contents: read
+jobs:
+  capture:
+    if: github.head_ref == 'agent/aw94-full-field'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/QL-MEF
+          ref: efa599661aab171033769d33a3c2b6233c86eca5
+          path: QL-MEF
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/ai-kit
+          ref: 586b85eaf77c7232c93deb5abc75b558f15a02ed
+          path: ai-kit
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Factory
+          ref: f12b36c511260472796608fd5e4b7363727a73be
+          path: Factory
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Central
+          ref: 5fe7976f467096066692cda3c1018b73a88562df
+          path: Central
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Actuation
+          ref: 4af495f6509bb0dd779112a225d71a9df8145b6e
+          path: Actuation
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Workcell
+          ref: e4e40a91fe7ed1776e634cad768f1049c39fd34e
+          path: Workcell
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Capture compiler and locked registry inputs without credentials
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          rustc --version > evidence/toolchain.txt
+          cargo --version >> evidence/toolchain.txt
+          for owner in QL-MEF ai-kit Factory Central Actuation Workcell; do
+            mkdir -p "evidence/$owner"
+            git -C "$owner" rev-parse HEAD > "evidence/$owner/source-sha.txt"
+            git -C "$owner" cat-file -p HEAD > "evidence/$owner/commit-object.txt"
+            cargo fetch --manifest-path "$owner/Cargo.toml" --locked
+          done
+          tar --exclude='./share/doc' -C "$(rustc --print sysroot)" -czf evidence/rust-toolchain.tar.gz .
+          tar -C "$HOME/.cargo" -czf evidence/cargo-registry.tar.gz registry
+          sha256sum evidence/*.tar.gz > evidence/archive-digests.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aw94-exact-build-environment-${{ github.run_id }}
+          path: evidence/
+          retention-days: 3
