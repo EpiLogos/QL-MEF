@@ -1,86 +1,76 @@
 # Epi Capability Matrix Field Index
 
-**Standing:** architecture-contract
-**Register:** episteme
-**Provenance:** QL-MEF PR #93 merge `b6c7443`; human-authored R3 ratification
+**Standing:** architecture-contract and owner-ratified pre-K8 specification.  
+**Register:** episteme.  
+**Provenance:** PR #93 R3 field, #161 living instrument, and #163 owner-approved full agent-world lock, 2026-09-12.  
+**Current entry:** [Kernel Rebuild Wayfinder](../../KERNEL-REBUILD-WAYFINDER.md). **Execution:** #94 AW0–AW3 alongside #132/#133/#134.
 
-**Status:** active R3 field index
-**Date:** 2026-09-03
+## Full-field lock before implementation
+
+Read [Pre-K8 agent-world lock](../../kernel-rebuild/PRE-K8-AGENT-WORLD-LOCK.md), [Ta-Onta full defined field](TA-ONTA-FULL-FIELD-LOCK.md) and [Vāk/Oikonomia/knowledge Return](../../kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md) first. They record the owner's approved original musical C′ semantics, complete T/T′ consumption lifecycle, agent-led recognised naming, property sixfold and the M0/M5 relation to Nara. The full known field determines scope before implementation slices. The earlier #94 first-proving-composition strategy does not delimit completion.
+
+The following independent inventories all remain required:
+
+- six current S′ organs and all root contributions;
+- 36 historical first-level S′ source positions, with explicit current functional placement;
+- existing 36 M×S′ relation cells;
+- existing 36 M-domain capabilities and all deeper M matrices;
+- full 109 Vāk source entries and the distinct 36 Śiva–Śakti operation/horizon cells;
+- complete C′/CFP/CS/CF musical forms, twelve T/T′ readings, six property offices and six Epii-on-X laws.
+
+The two new lock documents are authorial specification/inventory, not another executable registry. AW0 reconciles actual implementation bindings, native gaps and evidence through the existing matrix protocol and registered carriers. A new machine carrier, if required to preserve an independent native matrix, must be registered through the existing registry rather than hidden in an untracked parallel store. Planning coverage and runtime readiness remain separate.
 
 ## Shared matrix form
 
 These carriers conform to [[../../../../Central/docs/CAPABILITY-MATRIX-PROTOCOL.md|ql-capability-matrix/1]]. Each CSV has a `.matrix.json` companion declaring its anchor, axes and relation question. `epi-relational-field.csv` and `epi-ssprime-relational-field.csv` contain named domain and technical relation views; `epi-ta-onta-m-relational-field.csv` contains the 36 M×S′ relation cells and 36 stable capability records. The technical view qualifies its coordinates with `technical:`; it does not redefine native S products or Ta-Onta organs. Source fields survive in `extensions`, under the same protocol.
 
-The R3 topology below governs current S/S′ meaning. Canonical CSV edits and their domain/evidence source updates form one reviewed change. A cell can reference several capabilities and a capability can participate in several cells.
+The R3 topology remains the current S/S′ field. The pre-K8 lock gives its deeper functions their approved contemporary interpretation. Canonical CSV edits and their source/evidence updates form one reviewed change. A cell can reference several capabilities and a capability can participate in several cells. Historical readiness counts remain tied to their source dates until AW0 reassesses them against exact current evidence.
 
 ## Read the field in this order
 
-1. `ProjectCentral/user/capability-matrix.{json,csv,md}` — the suite-facing product profile consumed by O:I. It indexes concrete QL product powers; it does not replace the native Epi matrices below.
-2. `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md` — method, provenance and standing discipline.
-3. `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md` — the 6 × 6 M × S′ inhabitation field.
-4. `EPI-M-CAPABILITY-FIELD.md` — the 36 recovered real capabilities, now read through M′ operation, S′ composition, native O:I embodiment, Epii-on-X development and Return.
-5. `epi-m-capability-field.json` + `epi-m-capability-field-m0.json` … `epi-m-capability-field-m5.json` — normalized machine carrier/evidence registry.
-6. `docs/origami work/M1` … `M4/*-DEEP-CAPABILITY-COORDINATE-MATRIX.{json,md}` — the four current subsystem-specific deep coordinate matrices. These retain their own richer v2 schema and are not partitions of the normalized 36-capability field.
-7. `epi-relational-field`, `epi-ssprime-relational-field` and `epi-ta-onta-m-relational-field` — the M↔M′, S↔S′ and Ta-Onta↔M relational carriers. Each CSV is paired with its own `.matrix.json` `ql-capability-matrix/1` declaration.
-8. `epi-epii-operational-capacities.json` — exact six source-backed M5′ Epii-on-X developmental relations.
-9. `EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md` — current locks, exact source blobs, live implementation deltas and historical lineage.
+1. The pre-K8 and full-field/language locks linked above: current authority, complete scope and dispatch.
+2. `ProjectCentral/user/capability-matrix.{json,csv,md}` — suite-facing product profile consumed by O:I; it does not replace native Epi matrices.
+3. `EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md` — source/provenance/standing discipline.
+4. `EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md` — 6 × 6 M × S′ inhabitation, retaining stable cells.
+5. `EPI-M-CAPABILITY-FIELD.md` — 36 recovered real capabilities through M′, S′, native O:I, Epii-on-X and Return.
+6. `epi-m-capability-field.json` + `epi-m-capability-field-m0.json` … `epi-m-capability-field-m5.json` — normalized machine/evidence carriers.
+7. `docs/origami work/M1` … `M4/*-DEEP-CAPABILITY-COORDINATE-MATRIX.{json,md}` — deeper coordinate matrices with their own richer v2 schema.
+8. `epi-relational-field`, `epi-ssprime-relational-field`, `epi-ta-onta-m-relational-field` — separate native relation views with `.matrix.json` declarations.
+9. `epi-epii-operational-capacities.json` — six target-specific developmental laws.
+10. `EPI-CAPABILITY-MATRIX-SOURCE-TRACE.md` — exact historical locks/blobs and implementation deltas, read with current source/owner corrections.
 
-The machine-readable inventory of these matrix families is
-`.oi/product.json#capability_matrices`. Exactly one entry has
-`suite_catalogue: true`; O:I may collate that interoperable profile while
-retaining the identities and carrier paths of every native matrix. A repository
-therefore owns one or more matrices, rather than being forced into one flattened
-matrix. CI verifies the inventory and every declared carrier with
-`scripts/check-capability-matrix-registry.py`.
+The machine-readable matrix-family inventory is `.oi/product.json#capability_matrices`. Exactly one entry has `suite_catalogue: true`; O:I collates that profile while retaining native matrix identity. `scripts/check-capability-matrix-registry.py` checks the inventory and all declared carriers.
 
-Completeness is filename-audited under `ProjectCentral/user` and `docs`: a file
-whose name contains `capability-matrix` or `relational-field` must be owned by a
-registered family or appear in the registry's explicit exclusion map with a
-reason. The field index, source trace and protocol are excluded because they
-govern or describe matrix instances; they are not themselves matrix carriers.
+Completeness is filename-audited under `ProjectCentral/user` and `docs`: names containing `capability-matrix` or `relational-field` must belong to a registered family or explicit exclusion. This index, source trace and protocol govern the instances and retain their existing exclusion. The pre-K8 lock check additionally verifies full authorial S′/language/lifecycle coverage and its Wayfinder links; it does not replace the native matrix checker or certify runtime acceptance.
 
 ## One composed field
 
 ```text
-M
-canonical/domain determination
-        ↓
-M′
-lived / playable / reflected instrument
-        ↓
-S′ = Ta-Onta
-S0′ Khora · S1′ Hen · S2′ Pleroma
-S3′ Chronos · S4′ Anima · S5′ Aletheia
-        ↓
-S = native O:I mechanics
-Central · Actuation · AIKit · Factory · Workcell · QL-MEF
-        ↓
-actual activity / evidence / reading / trace
-        ↓
-M5′ Epii-on-X
-subsystem-specific developmental interpretation
-        ↓
-Return / Recognition
-back to the authority owning target ground
+one kernel taproot # → #0…#5 → family/direct-prime/recursive bodies
+    M: articulated domain world
+    M′: co-active lived/operable instruments
+    S: Central · Actuation · AIKit · Factory · Workcell · QL-MEF
+    S′: Khora · Hen · Pleroma · Chronos · Anima · Aletheia
+              ↕
+Nara's lived event ↔ Bimba/source/Wiki ↔ Epii's investigation/action
+              ↕
+C′ musical/Oikonomia composition · T/T′ in NOW · full Vāk
+              ↓
+actual activity / evidence / performance / human response
+              ↓
+consumption into knowledge / learning / recognised named praxis
+              ↓
+M5′ Epii-on-X and native Return/Recognition → renewed ground
 ```
 
-These are not competing decompositions. The S′ matrix describes **how an Epi Agent-world is constituted**. The 36-capability field describes **what real capacities are being constituted and operated**. The Epii-on-X family describes **how each M domain may deliberately develop from returned evidence**.
+S5 QL-MEF self-inclusion is a versioned reference to the native product that implements/describes the same formal world. Same-index S↔S′ relations are affinities; real capabilities can use several owners. Central remains the root meta-project and owns Day/NOW. Hen consumes actual Wiki/constellation/source mechanics. M0′ is Bimba; M5′ is the canonical Epii. Ta-Onta is the complete agent-world specification, not six UI pages or another native product stack.
 
-## Standing boundary
+## Standing and closure
 
-A live native mechanic can be an `IMPLEMENTATION-FACT` while the specifically Epi composition using it remains `DERIVED-CURRENT-ARCHITECTURE`. An Epii-on-X file can be a `CURRENT-DOMAIN-SPEC / RESEARCH-PROPOSITION` while its proposed training/construction pipeline remains unimplemented. Returned model outputs, embeddings, pathways, WikiReadings and developmental evidence remain proposals or derived state until the authority owning target ground recognises them.
+A native mechanic can be implemented while its Epi composition remains unproved. A full source inventory establishes coverage, not operation. Original musical/Oikonomia source and the owner's ratified corrections define the intended behavior; downstream code is evidence to reconcile, not a substitute for that intent.
 
-## Current notation
+Retain ALREADY-REAL / READY-TO-COMPOSE / EPI-GAP / NATIVE-GAP / RESEARCH-ONLY with exact evidence. The complete full-field inventory, all root functions, C′ subforms, language cells, thought/property lifecycle and M capabilities receive explicit disposition before #94 closes. Selected P1–P3 demonstrations are retained as cross-field proofs, not as a scope-reduction rule.
 
-The S′ coordinates are exactly:
+The current S′ coordinates are exactly S0′ Khora, S1′ Hen, S2′ Pleroma, S3′ Chronos, S4′ Anima and S5′ Aletheia. Historical nested S4 carriers and technical-strata labels remain qualified provenance, not current organ topology. M4.5 personal integration and M5's wider agent/systemic Return remain distinguishable and co-active.
 
-```text
-S0′ Khora
-S1′ Hen
-S2′ Pleroma
-S3′ Chronos
-S4′ Anima
-S5′ Aletheia
-```
-
-Ta-Onta is the S′ whole. Same-index S↔S′ relations remain structural affinities, not exclusive repository ownership.
+Repository/native conformance and later owner-machine O:I/desktop/particle-field harmonisation have separate receipts. The approved planning lock precedes K8; the full M0/M5/S′ implementation runs alongside it.
