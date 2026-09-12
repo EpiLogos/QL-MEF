@@ -1,0 +1,32 @@
+{
+  "purpose": "Publication and review standing of the UX reconciliation, not a runtime capability or evidence registry",
+  "publication": "authorised_by_owner",
+  "H_ratification": "pending",
+  "reviewer": "Satya",
+  "date": "2026-09-12",
+  "scope": "The newly authored UX source selection, interpretation, crosswalk, practice guidance, trace index, proposed Epi host states and walks. Existing accepted architecture, original owner corrections, source standings and producer evidence remain unchanged.",
+  "publication_is_H_ratification": false,
+  "tests_are_H_ratification": false,
+  "human_experience_validated": false,
+  "files": [
+    "docs/kernel-rebuild/UX-INTENT-SOURCE-MINUTE.md",
+    "docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md",
+    "docs/kernel-rebuild/AGENT-PRACTICE-AND-BOOTSTRAP.md",
+    "docs/kernel-rebuild/ux-spine-trace.json",
+    "AGENTS.md",
+    "skills/ql-experience-prepare/SKILL.md",
+    "skills/ql-experience-walk/SKILL.md",
+    "skills/ql-evidence-report/SKILL.md"
+  ],
+  "existing_skill_amendments": [
+    "skills/ql-operation/SKILL.md",
+    "skills/refraction-adapter-authoring/SKILL.md",
+    "skills/bimba-cypher/SKILL.md",
+    "skills/ql-foundations/SKILL.md"
+  ],
+  "host_extensions": [
+    "EpiLogos/O-I:docs/cradle/03-UX-STATES.md#L",
+    "EpiLogos/O-I:docs/cradle/04-VERIFICATION.md#8"
+  ],
+  "instruction": "Publish so tracks can inspect and use the material provisionally against the already-approved source. Do not claim owner ratification, introduce a new runtime authority or replace existing obligations on the strength of this merge. Record the owner's later decision explicitly."
+}

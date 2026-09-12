@@ -1,16 +1,18 @@
 # UX intent: owner source minute
 
-Standing: authorial source excerpts and their approved implications, recovered from the current planning conversation on 2026-09-12. This is a bounded source record for the [UX reconciliation](UX-SPINE-RECONCILIATION.md), not another vision or a replacement Wayfinder.
+**Publication authorised; H ratification pending (Satya), 2026-09-12.** The owner requested that this work be merged so other tracks can read it. This minute's selection, framing and implication mapping have not yet been H-ratified by the owner. The original owner utterances and previously ratified architecture retain their existing authority. Publication and passing checks do not ratify this new synthesis or validate the lived experience.
+
+Standing: agent-recovered authorial source excerpts and implication mapping, awaiting H ratification. This is a bounded source record for the [UX reconciliation](UX-SPINE-RECONCILIATION.md), not another vision or a replacement Wayfinder. See [publication standing](ux-publication-standing.json).
 
 ## Source authority and limits
 
-The source field is the owner's actual turns in the K7 → living instrument → Ta-Onta → pre-K8 conversation, the supplied **TA-ONTA × O:I DESKTOP — FRESH-TRACK LIVE RECOVERY + CONTEMPLATION** text, current issue discussions, and the linked domain/Cradle planning. The supplied earlier text's §§3–4,7,10 established co-active instruments, native ownership and the human/agent Return loop. Its request to contemplate before coding was subsequently fulfilled and ratified in this conversation. No earlier conversation outside this supplied field is claimed to have been read.
+The source field is the owner's actual turns in the K7 → living instrument → Ta-Onta → pre-K8 conversation, the supplied **TA-ONTA × O:I DESKTOP — FRESH-TRACK LIVE RECOVERY + CONTEMPLATION** text, current issue discussions, and the linked domain/Cradle planning. The supplied earlier text's §§3–4,7,10 established co-active instruments, native ownership and the human/agent Return loop. Its request to contemplate before coding was subsequently fulfilled and the pre-K8 architecture ratified in this conversation; that prior ratification does not automatically ratify this later UX synthesis. No earlier conversation outside this supplied field is claimed to have been read.
 
-The governing host source is O:I `docs/positions/FOUNDING-POSITIONS.md`, followed by `docs/cradle/README.md`, `01-DESIGN.md`, `03-UX-STATES.md` and `04-VERIFICATION.md`. The existing everyday spine is **04 §2**; its A–K states are **03**, extended in place by the scoped Epi L family. Issues #135, #132, #133, #134 and #94 retain the domain execution; O:I #190 retains the host. PR descriptions, discussions, diffs and merge narratives are not UX-intent sources. Publication/CI metadata may establish publication or test state only.
+The governing host source is O:I `docs/positions/FOUNDING-POSITIONS.md`, followed by `docs/cradle/README.md`, `01-DESIGN.md`, `03-UX-STATES.md` and `04-VERIFICATION.md`. The existing everyday spine is **04 §2**; its A–K states are **03**. The scoped Epi L family and **04 §8** are published for H review within that spine, preserving the current continuous-work amendments. Issues #135, #132, #133, #134 and #94 retain the domain execution; O:I #190 retains the host. PR descriptions, discussions, diffs and merge narratives are not UX-intent sources. Publication/CI metadata may establish publication or test state only.
 
-Quotes below preserve the owner's words, including their informal spelling. The implication column records what was subsequently approved, with the detailed source still in the linked domain lock. These excerpts do not replace the full capability field.
+Quotes below preserve the owner's words, including their informal spelling. The implication column relates those passages to the previously approved architecture; this new selection and mapping awaits H review. These excerpts do not replace the full capability field.
 
-| ID | Owner passage | Experience and approved implication |
+| ID | Owner passage | Experience and approved architectural implication |
 |---|---|---|
 | U01 | “the correct and current count is 18 total” | The person can work with the whole eighteenfold composition, with sixteen reciprocal static lenses and two distinct grounding constituents. An older count cannot define the instrument. |
 | U02 | “the apertures are what parashakti provides to M3's clock” | M2 owns the aperture/world relations; M3 receives their actual identities. M2-0-0 / M2-0-1 / M2-0-2 and all eight pair branches matter to navigation and operation. |
@@ -50,4 +52,4 @@ The owner should not have to re-explain these distinctions to every agent, recon
 - [Pre-K8 lock](PRE-K8-AGENT-WORLD-LOCK.md): complete inventory and B01–B12.
 - [Parent acceptance](PARENT-SURFACES-INTEGRATION.md): A01–A18.
 
-These are approved intentions and specifications. Whether code, a loaded Skill, a running provider or a human encounter now fulfils them is a separate, dated reading.
+The linked approved intentions retain their prior standing. This minute's framing awaits H ratification. Whether code, a loaded Skill, a running provider or a human encounter fulfils an intention is a separate, dated reading.

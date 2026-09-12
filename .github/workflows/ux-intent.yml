@@ -14,8 +14,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check full source coverage and invalid mutations
         run: |
+          set -o pipefail
           mkdir -p ux-evidence
           git rev-parse HEAD > ux-evidence/revision.txt
+          python3 scripts/check-ux-publication.py | tee ux-evidence/publication-standing.json
           python3 scripts/check-ux-spine.py --self-test | tee ux-evidence/source-check.json
           bash scripts/verify-native-skills.sh
           python3 scripts/check-ux-spine.py --prepare UX01 > ux-evidence/preparation.json

@@ -1,6 +1,8 @@
 # Agent practice and the QL bootstrap bridge
 
-Standing: operational practice specification, 2026-09-12. Read with [the UX spine crosswalk](UX-SPINE-RECONCILIATION.md) and the existing full [pre-K8 lock](PRE-K8-AGENT-WORLD-LOCK.md). This document specifies how the source becomes agent behaviour; it does not declare unavailable operations installed.
+**Publication authorised; H ratification pending (Satya), 2026-09-12.** This practice synthesis and its bootstrap procedures are published for review and provisional use against the approved source. They have not yet been H-ratified. Merge, discovery, projection and tests do not ratify the guidance or validate the lived experience. Existing owner contracts and the pre-K8 architecture retain their standing. See [publication standing](ux-publication-standing.json).
+
+Standing: agent-authored operational practice specification awaiting H ratification. Read with [the UX spine crosswalk](UX-SPINE-RECONCILIATION.md) and the existing full [pre-K8 lock](PRE-K8-AGENT-WORLD-LOCK.md). This document specifies how the source becomes agent behaviour; it does not declare unavailable operations installed.
 
 ## 1. The agent's actual interface
 
