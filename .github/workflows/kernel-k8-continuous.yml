@@ -19,11 +19,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Retain native formatting of new Rust files for independent editing
+      - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
-          mkdir -p target/k8-format
-          rustfmt --edition 2021 --emit stdout crates/ql-mef/src/continuous.rs > target/k8-format/continuous.rs
-          rustfmt --edition 2021 --emit stdout crates/ql-mef/examples/k8_field.rs > target/k8-format/k8_field.rs
+          for path in crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/tests/k8_coupled.rs; do
+            mkdir -p "target/k8-format/$(dirname "$path")"
+            cp "$path" "target/k8-format/$path"
+            rustfmt --edition 2024 --config skip_children=true "target/k8-format/$path"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: k8-formatted-${{ github.event.pull_request.head.sha || github.sha }}
@@ -59,6 +61,11 @@ jobs:
         run: |
           cargo run --locked -p ql-mef --example k8_field -- target/k8-cpp/bin/ql-field-worker \
             target/k8-continuous/basis.json target/k8-continuous/initial.json > target/k8-continuous/rust-session.jsonl
+      - name: Complete native M1 M2 M3 event and persistent material adoption
+        run: |
+          cargo test --locked -p ql-mef --test k8_coupled
+          cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \
+            target/k8-continuous/basis.json target/k8-continuous/initial.json target/k8-coupled
       - name: Fetch the exact retained renderer read-only
         uses: actions/checkout@v4
         with:
@@ -76,7 +83,7 @@ jobs:
           npm --prefix target/k8-web install --package-lock=false --ignore-scripts --save-exact three@0.186.0 esbuild@0.25.0
           ln -s target/k8-web/node_modules node_modules
           node_modules/.bin/esbuild adapters/retained-field/acceptance.ts --bundle --format=esm --outfile=target/k8-gpu/acceptance.js
-          cp target/k8-continuous/frames.jsonl target/k8-gpu/
+          cp target/k8-coupled/frames.jsonl target/k8-gpu/
           python -m pip install playwright==1.57.0
           python -m playwright install --with-deps chromium
           git -C target/point-cloud-source rev-parse HEAD > target/k8-gpu/renderer-source-sha.txt
@@ -100,5 +107,6 @@ jobs:
           path: |
             target/k8-continuous/
             target/k8-gpu/
+            target/k8-coupled/
           retention-days: 14
           if-no-files-found: error

@@ -128,6 +128,33 @@
         ".github/workflows/kernel-k8-continuous.yml"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/coupled.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1",
+        "#2",
+        "#3"
+      ],
+      "rationale": "Composes the complete accepted M1/M2/M3 owners into one retained event; actual M1 harmonic evidence and M3 pose feed native M2 and the existing C++ continuation. No replacement numerical engine, identity inference or geometry solver.",
+      "tests": [
+        "crates/ql-mef/tests/k8_coupled.rs",
+        "crates/ql-mef/examples/k8_coupled.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/k8_coupled.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Installed full-event consumer executes actual M1/M3 operations, real sky/M2, one existing C++ field, atomic adoption and exact replay. Controlled input is not Nara or physical eigenvalue acceptance.",
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
+      "kind": "computational"
     }
   ]
 }

@@ -2,6 +2,8 @@
 //! Native host chooses/authorises the executable and subject. Neither a source
 //! reference nor a geometry payload grants authority. No child/JSON/domain work
 //! runs on an audio callback; this serial API transfers bounded control batches.
+pub mod coupled;
+
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
