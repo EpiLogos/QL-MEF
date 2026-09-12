@@ -85,6 +85,11 @@ is its receipt time, and the enclosing event explicitly retains this distinction
 full M2 frame and scope. The producer—not Python—calculates native planetary
 Power, element-first paired decans, 45 aspects, source relations and distributed
 64-amplitude form potential. The native frame's qualified standing is preserved.
+The JSON boundary enables `serde_json/float_roundtrip` so binary64 inputs survive
+parsing and emission bit-for-bit; the default approximate parser can change a
+longitude by one representable value. `k8_sky_numeric` tests exact bits against
+the native standard parser, including the real historical provider inputs.
+This changes serialization precision, not any M1–M3 numerical law.
 A failure emits no partial event. The executable is a host-selected installation,
 not a shell command supplied by an untrusted source.
 
