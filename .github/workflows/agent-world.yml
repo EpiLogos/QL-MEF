@@ -1,0 +1,136 @@
+name: Agent-world native acceptance
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/agent-world.yml'
+      - 'crates/**'
+      - 'scripts/**'
+      - 'fixtures/**'
+      - 'docs/integrations/epi-logos/**'
+      - 'docs/kernel-rebuild/**'
+      - '.oi/product.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  retained-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Retain accepted source, matrix and language contracts
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          git rev-parse HEAD > evidence/ql-source-sha.txt
+          git rev-parse HEAD^{tree} > evidence/ql-source-tree.txt
+          rustc --version > evidence/toolchain.txt
+          cargo test --workspace --locked 2>&1 | tee evidence/rust-tests.txt
+          python3 scripts/check-capability-matrix-registry.py 2>&1 | tee evidence/matrix-registry.txt
+          python3 scripts/check-pre-k8-lock.py 2>&1 | tee evidence/pre-k8-lock.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aw94-retained-floor-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          retention-days: 14
+
+  source-audit:
+    # Audit receipts are not claims of implemented AW behavior. Moving native
+    # main refs below are captured with their actual commit/tree/blob manifest;
+    # accepted cross-owner tests will pin the resulting implementation versions.
+    if: startsWith(github.head_ref, 'agent/aw94-') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repo: ai-kit
+            ref: 586b85eaf77c7232c93deb5abc75b558f15a02ed
+          - repo: Factory
+            ref: f12b36c511260472796608fd5e4b7363727a73be
+          - repo: Central
+            ref: main
+          - repo: Actuation
+            ref: main
+          - repo: Workcell
+            ref: main
+          - repo: O-I
+            ref: main
+          - repo: Epi-Logos-C-Experiments
+            ref: daa660cbc1b8c5da83828698665a753852cb0287
+            source_paths: |
+              Idea/Bimba/Seeds
+              Idea/Bimba/Map
+              Body/S
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/${{ matrix.repo }}
+          ref: ${{ matrix.ref }}
+          path: source
+          persist-credentials: false
+      - name: Archive read-only exact source and native Git evidence
+        env:
+          SOURCE_REPOSITORY: EpiLogos/${{ matrix.repo }}
+          REQUESTED_REF: ${{ matrix.ref }}
+          SOURCE_PATHS: ${{ matrix.source_paths }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+
+          out = Path('evidence').resolve()
+          out.mkdir()
+          def git(*args):
+              return subprocess.check_output(['git', '-C', 'source', *args])
+          sha = git('rev-parse', 'HEAD').decode().strip()
+          tree = git('rev-parse', 'HEAD^{tree}').decode().strip()
+          requested = os.environ['REQUESTED_REF']
+          if len(requested) == 40 and sha != requested:
+              raise SystemExit('checkout does not match the exact requested revision')
+          paths = [p for p in os.environ.get('SOURCE_PATHS', '').splitlines() if p]
+          missing = []
+          for path in paths:
+              if subprocess.run(['git', '-C', 'source', 'cat-file', '-e', f'HEAD:{path}']).returncode:
+                  missing.append(path)
+          if missing:
+              raise SystemExit(f'required original source paths unavailable: {missing}')
+          archive = out / 'source.tar.gz'
+          subprocess.run(['git', '-C', 'source', 'archive', '--format=tar.gz',
+                          f'--output={archive}', 'HEAD', *paths], check=True)
+          (out / 'commit-object.txt').write_bytes(git('cat-file', '-p', 'HEAD'))
+          (out / 'tracked-blobs.txt').write_bytes(git('ls-tree', '-r', 'HEAD'))
+          receipt = {
+              'repository': os.environ['SOURCE_REPOSITORY'],
+              'requested_ref': requested,
+              'commit': sha,
+              'tree': tree,
+              'archive_paths': paths or ['<complete tracked tree>'],
+              'sha256': hashlib.sha256(archive.read_bytes()).hexdigest(),
+              'standing': 'SOURCE-INSPECTION-ONLY',
+              'runtime_completion_claim': False,
+          }
+          (out / 'source-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          print(json.dumps(receipt, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aw94-source-${{ matrix.repo }}-${{ github.run_id }}
+          path: evidence/
+          retention-days: 7
