@@ -1,0 +1,80 @@
+{
+  "schema": "ql.k8-implementation-dispositions/v1",
+  "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
+  "modules": [
+    {
+      "path": "c/src/m_tree_live.c",
+      "header": "c/include/ql/m_tree_live.h",
+      "stratum": "c",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "M"
+      ],
+      "rationale": "Current structural projection over the same accepted index implementation, not whole-M computational readiness.",
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "scripts/tests/test_k8_structure.py"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "c/src/coupled_clock.c",
+      "header": "c/include/ql/coupled_clock.h",
+      "stratum": "c",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3-0",
+        "#3-5-5/0",
+        "#2-0-0",
+        "#2-0-1",
+        "#2-2"
+      ],
+      "rationale": "Exact lifted clock and phase/grid laws; validation/arithmetic helpers belong to this bounded owner.",
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "cpp/tests/k8_installed.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "c/src/m2_aperture.c",
+      "header": "c/include/ql/m2_aperture.h",
+      "stratum": "c",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2-0"
+      ],
+      "rationale": "Eighteen immutable native aperture descriptors; source-generated descendant IDs, not another lens catalogue.",
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "scripts/tests/test_k8_structure.py"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-mef/src/m_tree.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "M"
+      ],
+      "rationale": "Current source lineage and registry lookups extend accepted index machinery; historical readiness remains at its original revision.",
+      "tests": [
+        "crates/ql-mef/tests/native_m_tree.rs",
+        "crates/ql-mef/tests/k8_structure.rs"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-mef/build.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Compile reviewed source amendments into Cargo build outputs; does not create an independent coordinate owner.",
+      "tests": [
+        "crates/ql-mef/tests/k8_structure.rs"
+      ],
+      "kind": "computational"
+    }
+  ]
+}
