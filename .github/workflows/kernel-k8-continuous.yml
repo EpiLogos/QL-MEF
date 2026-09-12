@@ -1,0 +1,74 @@
+name: K8 continuous native field
+on:
+  pull_request:
+    paths: ['cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
+  push:
+    branches: [main]
+    paths: ['cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
+permissions:
+  contents: read
+jobs:
+  native-field:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Retain exact native formatting tool for controlled offline development
+        run: |
+          mkdir -p target/k8-tools
+          cp "$(rustup which rustfmt)" target/k8-tools/rustfmt
+          rustfmt --version > target/k8-tools/version.txt
+          sha256sum target/k8-tools/rustfmt > target/k8-tools/sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: k8-native-tools-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8-tools/
+          retention-days: 3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libjson-c-dev
+          python -m pip install -r providers/sky/requirements.txt
+      - name: Build and install real native C/C++ consumer
+        run: |
+          mkdir -p target/k8-continuous
+          set -o pipefail
+          make -C cpp test install PREFIX="$PWD/target/k8-cpp" 2>&1 | tee target/k8-continuous/build.log
+          c++ -std=c++17 -O2 -Wall -Wextra -Werror -pedantic -Itarget/k8-cpp/include \
+            cpp/tests/continuous_field.cpp target/k8-cpp/lib/libql-mef-c.a -lm -o target/k8-continuous/installed-test
+          target/k8-continuous/installed-test > target/k8-continuous/installed.json
+      - name: C++ sanitizer and analytic boundary acceptance
+        run: |
+          c++ -std=c++17 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
+            -Wall -Wextra -Werror -pedantic -Icpp/include -Ic/include \
+            cpp/tests/continuous_field.cpp c/build/libql-mef-c.a -lm -o target/k8-continuous/sanitized-test
+          target/k8-continuous/sanitized-test > target/k8-continuous/sanitized.json
+      - name: Accepted Rust producer, actual sky, persistent native modes and clock
+        run: |
+          cargo build --locked -p ql-mef --example m2_engine
+          set -o pipefail
+          python scripts/test-k8-continuous.py target/k8-cpp/bin/ql-field-worker 2>&1 | tee target/k8-continuous/native-join.log
+      - name: Exact source and toolchain receipt
+        if: always()
+        run: |
+          mkdir -p target/k8-continuous
+          git rev-parse HEAD > target/k8-continuous/source-sha.txt
+          git rev-parse 'HEAD^{tree}' > target/k8-continuous/source-tree.txt
+          { uname -a; c++ --version; rustc --version; python --version; pkg-config --modversion json-c; } > target/k8-continuous/toolchain.txt
+          python -m pip freeze > target/k8-continuous/python-lock.txt
+          sha256sum cpp/include/ql/continuous_field.hpp cpp/src/field_worker.cpp cpp/tests/continuous_field.cpp > target/k8-continuous/cpp-source-sha256.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k8-continuous-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8-continuous/
+          retention-days: 14
+          if-no-files-found: error
