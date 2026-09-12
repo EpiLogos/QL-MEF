@@ -17,7 +17,20 @@ jobs:
           git rev-parse HEAD > ux-source/revision.txt
           git rev-parse HEAD^{tree} > ux-source/tree.txt
           git archive --format=tar HEAD > ux-source/source.tar
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/ai-kit
+          ref: 586b85eaf77c7232c93deb5abc75b558f15a02ed
+          path: native-aikit
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Retain and build native skill resolver
+        run: |
+          git -C native-aikit rev-parse HEAD > ux-source/aikit-revision.txt
+          git -C native-aikit archive --format=tar HEAD > ux-source/aikit-source.tar
+          cargo build --manifest-path native-aikit/Cargo.toml --locked -p aikit-cli --bin aikit
+          cp native-aikit/target/debug/aikit ux-source/aikit
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ql-ux-source-basis
           path: ux-source/
