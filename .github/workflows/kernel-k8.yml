@@ -1,0 +1,77 @@
+name: Kernel K8 live-field acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'c/**'
+      - 'cpp/**'
+      - 'migration/epi-kernel/k8/**'
+      - 'crates/**'
+      - 'fixtures/kernel/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'docs/kernel-rebuild/**'
+      - '.github/workflows/kernel-k8.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'c/**'
+      - 'cpp/**'
+      - 'migration/epi-kernel/k8/**'
+      - 'crates/**'
+      - 'fixtures/kernel/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'docs/kernel-rebuild/**'
+      - '.github/workflows/kernel-k8.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  k8-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Capture exact tested source and toolchain receipt
+        run: |
+          mkdir -p target/k8
+          git archive --format=tar HEAD | gzip -n > target/k8/ql-mef-source.tar.gz
+          git cat-file commit HEAD > target/k8/commit-object.txt
+          git rev-parse HEAD > target/k8/source-sha.txt
+          git rev-parse 'HEAD^{tree}' > target/k8/source-tree.txt
+          { uname -a; rustc --version; cargo --version; c++ --version; cmake --version; } > target/k8/toolchain.txt
+      - name: Retain exact source for independent native consumer reproduction
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8-exact-source-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Current structure, exact clock, sanitizers and installed C++ consumer
+        run: |
+          set -o pipefail
+          bash scripts/test-k8-native.sh 2>&1 | tee target/k8/native.log
+      - name: Complete current inventory without restamping historical K4 evidence
+        run: python3 scripts/k8-census.py --check
+      - name: Preserve accepted Rust engines
+        run: |
+          set -o pipefail
+          cargo test --workspace --locked 2>&1 | tee target/k8/rust-tests.log
+      - name: Retain native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8-native-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            target/k8/
+            target/k8-native/*log
+            target/k8-native/*json
+            target/k8-registry/c-rust-parity.jsonl
+            target/m-ledger/current/
+          retention-days: 14
+          if-no-files-found: error

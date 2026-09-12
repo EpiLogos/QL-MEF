@@ -1,0 +1,186 @@
+{
+  "schema": "ql.m-structural-promotion/v1",
+  "id": "K8-APERTURES-CENTRE-2026-09-11",
+  "base_registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "authority": {
+    "repository": "EpiLogos/QL-MEF",
+    "revision": "efa599661aab171033769d33a3c2b6233c86eca5",
+    "path": "docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md",
+    "standing": "owner-ratified-structural-promotion",
+    "issue": 132,
+    "sha256": "4ae05ccd80d46a0f045388f7db21de337bd2fe1e8cc89aa42beeee7cdc8f8889",
+    "git_blob": "25d07a69482fa0cd1655a0ab207085f751572608"
+  },
+  "root": "#2-0",
+  "void": "#2-0-0",
+  "fibonacci": "#2-0-1",
+  "static_field": "#2-0-2",
+  "pairs": [
+    {
+      "ref": "#2-0-2-0",
+      "native_indices": [
+        0,
+        15
+      ],
+      "division_degrees": [
+        1,
+        360
+      ]
+    },
+    {
+      "ref": "#2-0-2-1",
+      "native_indices": [
+        1,
+        14
+      ],
+      "division_degrees": [
+        2,
+        180
+      ]
+    },
+    {
+      "ref": "#2-0-2-2",
+      "native_indices": [
+        2,
+        13
+      ],
+      "division_degrees": [
+        4,
+        90
+      ]
+    },
+    {
+      "ref": "#2-0-2-3",
+      "native_indices": [
+        3,
+        12
+      ],
+      "division_degrees": [
+        8,
+        45
+      ]
+    },
+    {
+      "ref": "#2-0-2-4",
+      "native_indices": [
+        4,
+        11
+      ],
+      "division_degrees": [
+        9,
+        40
+      ]
+    },
+    {
+      "ref": "#2-0-2-5",
+      "native_indices": [
+        5,
+        10
+      ],
+      "division_degrees": [
+        10,
+        36
+      ]
+    },
+    {
+      "ref": "#2-0-2-6",
+      "native_indices": [
+        6,
+        9
+      ],
+      "division_degrees": [
+        12,
+        30
+      ]
+    },
+    {
+      "ref": "#2-0-2-7",
+      "native_indices": [
+        7,
+        8
+      ],
+      "division_degrees": [
+        15,
+        24
+      ]
+    }
+  ],
+  "grids": [
+    {
+      "role": "fibonacci",
+      "ref": "#2-0-1",
+      "half_degree_quantum": 12,
+      "positions": 60
+    },
+    {
+      "role": "elemental",
+      "ref": "#2-2",
+      "half_degree_quantum": 40,
+      "positions": 18
+    },
+    {
+      "role": "void",
+      "ref": "#2-0-0",
+      "half_degree_quantum": 45,
+      "positions": 16
+    }
+  ],
+  "closures_half_degrees": [
+    120,
+    180,
+    360
+  ],
+  "all_grid_closure_half_degrees": 360,
+  "void_elemental_ratio": [
+    9,
+    8
+  ],
+  "field": "#3-0",
+  "centre": "#3-5-5/0",
+  "clock": "#3-5",
+  "field_relations": [
+    {
+      "from": "#3-0",
+      "to": "#3-5-5/0",
+      "kind": "REALISED_AT"
+    },
+    {
+      "from": "#3-5",
+      "to": "#2-0",
+      "kind": "RECEIVES_APERTURE_ARCHITECTURE"
+    },
+    {
+      "from": "#3-0",
+      "to": "#1",
+      "kind": "RECEIVES_ROTATIONAL_TOPOLOGICAL_CAPACITY"
+    },
+    {
+      "from": "#3-0",
+      "to": "#2",
+      "kind": "RECEIVES_SPECTRAL_WORLD_CONDITION"
+    },
+    {
+      "from": "#2-0-0",
+      "to": "#0",
+      "kind": "DERIVED_FROM_ANUTTARA"
+    },
+    {
+      "from": "#2-4",
+      "to": "#2-0",
+      "kind": "SYMBOLIC_WORLD_APERTURE_ASSOCIATION"
+    },
+    {
+      "from": "#2-5",
+      "to": "#3-0",
+      "kind": "PLANETARY_CONDITION_RECEIVED_IN_FIELD"
+    }
+  ],
+  "preservation": {
+    "existing_ids": "unchanged",
+    "existing_parentage": "unchanged",
+    "degree_and_backbone_nodes": "unchanged",
+    "m1_m2_m3_accepted_views": "retained-at-original-revision",
+    "historical_evidence": "not-retargeted",
+    "live_graph_application": "pending-live-application"
+  }
+}

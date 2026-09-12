@@ -1,0 +1,16 @@
+{
+  "schema": "ql.k8-build-lineage/v1",
+  "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
+  "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
+  "proofs": {
+    "m2": "b1b9c3fb4bf77dd764385fb08478379031751f301bbd974b65a38d5bca316cd9",
+    "m3": "8b010747869851ed1f51ccb3de981e745f2df12ba4a02490cbc83176312b7bce"
+  },
+  "integration_input": {
+    "path": "c/Makefile",
+    "before_sha256": "09704817adf82766cfc89c1c5084968f385dcf733f64702c00e806f4ae97e40d",
+    "after_sha256": "34191a7b6f6e4e98d1fa48c18ff2fe9e09b2ccf92148ae4dd04c347d9ff2df59",
+    "retained_before": "fixtures/kernel/history/pre-k8-Makefile",
+    "reason": "Add current structural projection and coupled-clock translation units/install exports; numerical engine source inputs remain unchanged."
+  }
+}

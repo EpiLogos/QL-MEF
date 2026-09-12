@@ -1,0 +1,57 @@
+name: K8 real sky and native M2
+on:
+  pull_request:
+    paths: ['providers/sky/**', 'scripts/test-k8-sky.py', 'crates/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-sky.yml']
+  push:
+    branches: [main]
+    paths: ['providers/sky/**', 'scripts/test-k8-sky.py', 'crates/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-sky.yml']
+permissions:
+  contents: read
+jobs:
+  sky-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r providers/sky/requirements.txt
+      - name: Actual provider, freshness, scope, replay and failure tests
+        run: |
+          mkdir -p target/k8-sky
+          set -o pipefail
+          python -m unittest discover -s providers/sky -p 'test*.py' -v 2>&1 | tee target/k8-sky/provider-tests.log
+      - name: Build actual accepted native M2 producer
+        run: |
+          cargo test --locked -p ql-mef --test k8_sky_numeric
+          cargo build --locked -p ql-mef --example m2_engine
+      - name: Real current and historical sky through complete M2
+        run: |
+          set -o pipefail
+          python scripts/test-k8-sky.py 2>&1 | tee target/k8-sky/native-join.log
+      - name: Exact source and runtime receipt
+        if: always()
+        run: |
+          mkdir -p target/k8-sky
+          git rev-parse HEAD > target/k8-sky/source-sha.txt
+          git rev-parse 'HEAD^{tree}' > target/k8-sky/source-tree.txt
+          { uname -a; python --version; rustc --version; cargo --version; } > target/k8-sky/toolchain.txt
+          python -m pip freeze > target/k8-sky/python-lock.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k8-sky-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8-sky/
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: k8-m2-native-consumer-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/debug/examples/m2_engine
+          retention-days: 7
+          if-no-files-found: error

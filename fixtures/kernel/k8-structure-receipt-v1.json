@@ -1,0 +1,56 @@
+{
+  "added_nodes": 27,
+  "added_relations": 78,
+  "authority": {
+    "git_blob": "25d07a69482fa0cd1655a0ab207085f751572608",
+    "issue": 132,
+    "path": "docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md",
+    "repository": "EpiLogos/QL-MEF",
+    "revision": "efa599661aab171033769d33a3c2b6233c86eca5",
+    "sha256": "4ae05ccd80d46a0f045388f7db21de337bd2fe1e8cc89aa42beeee7cdc8f8889",
+    "standing": "owner-ratified-structural-promotion"
+  },
+  "base_registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+  "centre": {
+    "id": "f0c7dcb383d337ff",
+    "ref": "#3-5-5/0"
+  },
+  "closures_half_degrees": [
+    120,
+    180,
+    360
+  ],
+  "field": {
+    "id": "eec91287030188ec",
+    "ref": "#3-0"
+  },
+  "graph_standing": "pending-live-application",
+  "grids": [
+    {
+      "half_degree_quantum": 12,
+      "positions": 60,
+      "ref": "#2-0-1",
+      "role": "fibonacci"
+    },
+    {
+      "half_degree_quantum": 40,
+      "positions": 18,
+      "ref": "#2-2",
+      "role": "elemental"
+    },
+    {
+      "half_degree_quantum": 45,
+      "positions": 16,
+      "ref": "#2-0-0",
+      "role": "void"
+    }
+  ],
+  "node_count": 1903,
+  "preserved_nodes": 1876,
+  "preserved_relations": 21083,
+  "promotion_id": "K8-APERTURES-CENTRE-2026-09-11",
+  "promotion_sha256": "962b2ee0d8930ed9f78f6435a3f2b2e9f29558975a06a20fc23c4617eeea6bc8",
+  "registry_revision": "0fd161f6c820705991b90f300288035e618f5939aef80a74c18fa630b322bba5",
+  "relation_count": 21161,
+  "schema": "ql.k8-structural-receipt/v1"
+}
