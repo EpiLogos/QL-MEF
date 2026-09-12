@@ -8,18 +8,35 @@ use ql_mef::{LensId, SublensRef};
 use serde_json::{Value, json};
 
 fn input() -> CoupledInput {
-    let fixture: Value = serde_json::from_str(include_str!("../../../fixtures/kernel/m1-engine-v1.request.json")).unwrap();
+    let fixture: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m1-engine-v1.request.json"
+    ))
+    .unwrap();
     let mut m1: EngineConfig = serde_json::from_value(fixture["config"].clone()).unwrap();
-    let m2: M2Request = serde_json::from_str(include_str!("../../../fixtures/kernel/m2-condition-request-v1.json")).unwrap();
-    let m3_fixture: Value = serde_json::from_str(include_str!("../../../fixtures/kernel/m3-parent-consumer-v1.json")).unwrap();
+    let m2: M2Request = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m2-condition-request-v1.json"
+    ))
+    .unwrap();
+    let m3_fixture: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+    ))
+    .unwrap();
     let mut m3: M3Request = serde_json::from_value(m3_fixture["request"].clone()).unwrap();
     m1.event_ref.clone_from(&m2.stamp.identity.event_ref);
-    m3.stamp.identity.event_ref.clone_from(&m2.stamp.identity.event_ref);
+    m3.stamp
+        .identity
+        .event_ref
+        .clone_from(&m2.stamp.identity.event_ref);
     m3.m2_basis.as_mut().unwrap().identity = m3.stamp.identity.clone();
     CoupledInput {
-        schema: REQUEST.into(), m1, m2, m3, m3_commands: vec![],
+        schema: REQUEST.into(),
+        m1,
+        m2,
+        m3,
+        m3_commands: vec![],
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
-        frequency_bindings: vec![], source_receipts: vec![json!({"standing":"controlled fixture, not a live provider"})],
+        frequency_bindings: vec![],
+        source_receipts: vec![json!({"standing":"controlled fixture, not a live provider"})],
     }
 }
 
@@ -30,7 +47,10 @@ fn full_owners_survive_the_actual_join_across_all_lenses_and_context_modes() {
             let mut request = input();
             request.m1.lens12 = slot as u8;
             request.m1.context_frame = cf;
-            let m1 = M1Engine::new(request.m1.clone()).unwrap().snapshot().unwrap();
+            let m1 = M1Engine::new(request.m1.clone())
+                .unwrap()
+                .snapshot()
+                .unwrap();
             let m3 = M3State::new(request.m3.clone()).unwrap().snapshot();
             let original = serde_json::to_value(&request).unwrap();
             let result = request.compose().unwrap();
@@ -40,12 +60,30 @@ fn full_owners_survive_the_actual_join_across_all_lenses_and_context_modes() {
             let sublens = SublensRef::canonical(lens, (request.m1.tick12 % 6) as u8).unwrap();
             assert_eq!(result.derivation["mef_sublens"], sublens.to_string());
             assert_eq!(result.m2["condition"]["sublens_ref"], sublens.to_string());
-            assert_eq!(result.m2_input.vimarsha.as_ref().unwrap().musical_mode, cf - 1);
-            assert_eq!(result.m2_input.vimarsha.as_ref().unwrap().pose_ordinal as u64, result.m3["form"]["pose_ordinal"].as_u64().unwrap());
-            assert_eq!(result.m2["modal"]["coefficients"], serde_json::to_value(&request.m2.modal_coefficients).unwrap());
-            assert_eq!(result.m2_input.world_observations.len(), request.m2.world_observations.len());
-            assert_eq!(result.m2["domains"].as_array().unwrap().len(), request.m2.execute().unwrap().domains.len());
-            assert_eq!(serde_json::to_value(request.compose().unwrap()).unwrap(), serde_json::to_value(result).unwrap());
+            assert_eq!(
+                result.m2_input.vimarsha.as_ref().unwrap().musical_mode,
+                cf - 1
+            );
+            assert_eq!(
+                result.m2_input.vimarsha.as_ref().unwrap().pose_ordinal as u64,
+                result.m3["form"]["pose_ordinal"].as_u64().unwrap()
+            );
+            assert_eq!(
+                result.m2["modal"]["coefficients"],
+                serde_json::to_value(&request.m2.modal_coefficients).unwrap()
+            );
+            assert_eq!(
+                result.m2_input.world_observations.len(),
+                request.m2.world_observations.len()
+            );
+            assert_eq!(
+                result.m2["domains"].as_array().unwrap().len(),
+                request.m2.execute().unwrap().domains.len()
+            );
+            assert_eq!(
+                serde_json::to_value(request.compose().unwrap()).unwrap(),
+                serde_json::to_value(result).unwrap()
+            );
         }
     }
 }
@@ -57,10 +95,18 @@ fn every_lawful_pose_and_all_native_harmonic_bases_remain_operative() {
         let mut request = input();
         request.m3.address = pose.codon().address();
         request.m3.pose = pose.slot();
-        request.harmonic_source = HarmonicSource::CanonicalBasis { index: (count % 8) as u8 };
+        request.harmonic_source = HarmonicSource::CanonicalBasis {
+            index: (count % 8) as u8,
+        };
         let result = request.compose().unwrap();
-        assert_eq!(result.m2["vimarsha"]["reading"]["seed"]["codon"], pose.codon().address());
-        assert_eq!(result.m2["vimarsha"]["reading"]["seed"]["rotation"], pose.slot());
+        assert_eq!(
+            result.m2["vimarsha"]["reading"]["seed"]["codon"],
+            pose.codon().address()
+        );
+        assert_eq!(
+            result.m2["vimarsha"]["reading"]["seed"]["rotation"],
+            pose.slot()
+        );
         assert_eq!(result.m3["form"]["lawful_field"], 472);
         assert!(result.m3["transcription"]["source"].is_object());
         assert!(result.m3["source_matrix_cells"].is_array());
@@ -79,13 +125,27 @@ fn actual_m1_ratio_and_m3_pose_change_the_returned_native_frequency() {
     assert_eq!(before.derivation["harmonic_ratio"]["ratio"], json!([4, 3]));
     request.m1.row12 = 7;
     let ratio_changed = request.compose().unwrap();
-    assert_ne!(before.m2["vimarsha"]["reading"]["audio_octet_hz"], ratio_changed.m2["vimarsha"]["reading"]["audio_octet_hz"]);
+    assert_ne!(
+        before.m2["vimarsha"]["reading"]["audio_octet_hz"],
+        ratio_changed.m2["vimarsha"]["reading"]["audio_octet_hz"]
+    );
     request.m3.pose = 0;
     let pose_changed = request.compose().unwrap();
-    assert_ne!(ratio_changed.m2["vimarsha"]["reading"]["audio_octet_hz"], pose_changed.m2["vimarsha"]["reading"]["audio_octet_hz"]);
-    assert_ne!(ratio_changed.m2["vimarsha"]["reading"]["nodal_quartet"], pose_changed.m2["vimarsha"]["reading"]["nodal_quartet"]);
+    assert_ne!(
+        ratio_changed.m2["vimarsha"]["reading"]["audio_octet_hz"],
+        pose_changed.m2["vimarsha"]["reading"]["audio_octet_hz"]
+    );
+    assert_ne!(
+        ratio_changed.m2["vimarsha"]["reading"]["nodal_quartet"],
+        pose_changed.m2["vimarsha"]["reading"]["nodal_quartet"]
+    );
     request.m1.row12 = 2;
-    assert!(request.compose().unwrap_err().contains("no admitted harmonic ratio"));
+    assert!(
+        request
+            .compose()
+            .unwrap_err()
+            .contains("no admitted harmonic ratio")
+    );
 }
 
 #[test]
@@ -100,7 +160,10 @@ fn no_cross_event_unknown_mode_invalid_pose_or_silent_binding_fallback() {
     request.harmonic_source = HarmonicSource::CanonicalBasis { index: 8 };
     assert!(request.compose().is_err());
     request = input();
-    request.frequency_bindings.push(FrequencyBinding { mode_ref: "unknown".into(), octet_index: 0 });
+    request.frequency_bindings.push(FrequencyBinding {
+        mode_ref: "unknown".into(),
+        octet_index: 0,
+    });
     assert!(request.compose().is_err());
     let mut raw = serde_json::to_value(input()).unwrap();
     raw["hidden_policy"] = json!(true);

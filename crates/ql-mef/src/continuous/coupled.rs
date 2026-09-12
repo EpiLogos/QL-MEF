@@ -76,7 +76,9 @@ impl CoupledInput {
         // Original stamps, observations, selections and physical inputs survive.
         self.m2.validate()?;
         let event = &self.m2.stamp.identity;
-        if self.m1.event_ref != event.event_ref || self.m3.stamp.identity.event_ref != event.event_ref {
+        if self.m1.event_ref != event.event_ref
+            || self.m3.stamp.identity.event_ref != event.event_ref
+        {
             return Err("M1/M2/M3 must refer to the same event".into());
         }
         let m1 = M1Engine::new(self.m1.clone())?;
@@ -89,8 +91,13 @@ impl CoupledInput {
             receipts.push(serde_json::to_value(receipt).map_err(|e| e.to_string())?);
         }
         let ratio = match self.harmonic_source {
-            HarmonicSource::SelectedSourceRow => crate::m1::source_ratio(self.m1.family, self.m1.row12)?
-                .ok_or("selected M1 row has no admitted harmonic ratio; choose an explicit native basis")?,
+            HarmonicSource::SelectedSourceRow => crate::m1::source_ratio(
+                self.m1.family,
+                self.m1.row12,
+            )?
+            .ok_or(
+                "selected M1 row has no admitted harmonic ratio; choose an explicit native basis",
+            )?,
             HarmonicSource::CanonicalBasis { index } => crate::m1::ratio_basis()?
                 .get(usize::from(index))
                 .cloned()
@@ -105,7 +112,9 @@ impl CoupledInput {
         let sublens = SublensRef::canonical(lens, clock.tick12() % 6).map_err(|e| e.to_string())?;
         let reading = Reading72::from_sublens(sublens);
         let cf = ContextFrameId::ALL[usize::from(self.m1.context_frame - 1)];
-        let mode = ModeKind::ALL.into_iter().find(|m| m.context_frame() == cf)
+        let mode = ModeKind::ALL
+            .into_iter()
+            .find(|m| m.context_frame() == cf)
             .ok_or("missing native Context Frame to musical-mode relation")?;
         let m1_frame = m1.snapshot()?;
         let m3_frame = m3.snapshot();
@@ -133,21 +142,33 @@ impl CoupledInput {
             harmonic_ratio: ratio16,
             pose_ordinal: u16::try_from(m3.fold().rotational_pose().ordinal())
                 .map_err(|_| "native pose ordinal outside M2 input")?,
-            pose_source_ref: m3_frame["form"]["codon"]["ref"].as_str()
-                .ok_or("native M3 lacks its source codon")?.into(),
+            pose_source_ref: m3_frame["form"]["codon"]["ref"]
+                .as_str()
+                .ok_or("native M3 lacks its source codon")?
+                .into(),
         });
         let initial = request.execute()?;
-        let audio = initial.vimarsha.as_ref().ok_or("missing joined Vimarsha reading")?
-            .reading.audio_octet_hz;
+        let audio = initial
+            .vimarsha
+            .as_ref()
+            .ok_or("missing joined Vimarsha reading")?
+            .reading
+            .audio_octet_hz;
         let mut seen = BTreeSet::new();
         for binding in &self.frequency_bindings {
-            let frequency = *audio.get(usize::from(binding.octet_index))
+            let frequency = *audio
+                .get(usize::from(binding.octet_index))
                 .ok_or("octet index outside the native eight")?;
             if !seen.insert(&binding.mode_ref) {
                 return Err("duplicate material-mode frequency binding".into());
             }
-            let mode = request.resonator.as_mut().ok_or("frequency binding has no supplied resonator")?
-                .modes.iter_mut().find(|m| m.mode_ref == binding.mode_ref)
+            let mode = request
+                .resonator
+                .as_mut()
+                .ok_or("frequency binding has no supplied resonator")?
+                .modes
+                .iter_mut()
+                .find(|m| m.mode_ref == binding.mode_ref)
                 .ok_or("frequency binding does not name an existing material mode")?;
             mode.frequency_hz = f64::from(frequency);
         }
@@ -181,25 +202,46 @@ pub struct CoupledFieldSession {
     original_field: FieldInput,
 }
 impl CoupledFieldSession {
-    pub fn open(executable: &Path, input: CoupledInput, field: FieldInput, timeout: Duration) -> Result<Self, String> {
+    pub fn open(
+        executable: &Path,
+        input: CoupledInput,
+        field: FieldInput,
+        timeout: Duration,
+    ) -> Result<Self, String> {
         let basis = input.compose()?;
         if basis.m3["subject_ref"] != field.subject_ref {
             return Err("field and M3 must retain the same subject".into());
         }
         let original_field = field.clone();
         let field = FieldSession::open(executable, basis.m2_input.clone(), field, timeout)?;
-        Ok(Self { field, original: basis.clone(), current: basis, original_field })
+        Ok(Self {
+            field,
+            original: basis.clone(),
+            current: basis,
+            original_field,
+        })
     }
-    pub fn original_basis(&self) -> &CoupledBasis { &self.original }
-    pub fn original_field(&self) -> &FieldInput { &self.original_field }
-    pub fn current_basis(&self) -> &CoupledBasis { &self.current }
-    pub fn available(&self) -> bool { self.field.available() }
+    pub fn original_basis(&self) -> &CoupledBasis {
+        &self.original
+    }
+    pub fn original_field(&self) -> &FieldInput {
+        &self.original_field
+    }
+    pub fn current_basis(&self) -> &CoupledBasis {
+        &self.current
+    }
+    pub fn available(&self) -> bool {
+        self.field.available()
+    }
     pub fn snapshot(&self) -> Value {
         json!({"schema":CONTRACT, "available":self.available(),
             "basis":self.current, "field":self.field.last_receipt(),
             "standing":"native modal continuation from complete retained M1/M2/M3 bases; original discrete clocks are not relabelled as continuous samples"})
     }
-    pub fn read(&mut self) -> Result<Value, String> { self.field.read()?; Ok(self.snapshot()) }
+    pub fn read(&mut self) -> Result<Value, String> {
+        self.field.read()?;
+        Ok(self.snapshot())
+    }
     pub fn advance(&mut self, frames: u32, muted: bool) -> Result<Value, String> {
         self.field.advance(frames, muted)?;
         Ok(self.snapshot())
