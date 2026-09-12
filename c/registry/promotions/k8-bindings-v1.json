@@ -75,6 +75,59 @@
         "crates/ql-mef/tests/k8_structure.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2",
+        "#3-0"
+      ],
+      "rationale": "Validated full M2 request producer and persistent control bridge to native C/C++ continuation; not another numerical engine or host authority.",
+      "tests": [
+        "crates/ql-mef/examples/k8_field.rs",
+        "scripts/test-k8-continuous.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/continuous_field.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2",
+        "#3-0",
+        "#3-5-5/0"
+      ],
+      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
+      "tests": [
+        "cpp/tests/continuous_field.cpp",
+        "scripts/test-k8-continuous.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/src/field_worker.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Bounded installed JSON management transport to the same typed C++ owner; no real-time provider or private authority inference.",
+      "tests": [
+        "scripts/test-k8-continuous.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/k8_field.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Installed headless consumer tests the full validated producer and one persistent C++ session; not a new domain model.",
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
+      "kind": "computational"
     }
   ]
 }

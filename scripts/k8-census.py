@@ -118,13 +118,21 @@ def project():
             public.append({'stratum': 'c', 'path': path, 'symbol': symbol,
                            'disposition': owner['disposition'], 'kind': owner['kind'], 'coordinates': owner['coordinates'],
                            'tests': owner['tests'], 'standing': 'linked-public-export-not-runtime-parity'})
+    # C++ is a new stratum here, not an invented historical K4 assessment.
+    # Capture complete declared modules and hashes; their installed/sanitizer
+    # execution is separate CI evidence, not inferred from these source records.
+    cpp_modules = []
+    for path, owner in modules.items():
+        if owner['stratum'] == 'cpp':
+            sources[path] = sha((ROOT / path).read_bytes())
+            cpp_modules.append(dict(owner, sha256=sources[path], standing='declared-current-module-not-runtime-parity'))
     result = {'schema': 'ql.m-current-inventory/v1',
               'registry_revision': registry['registry_revision'],
               'inherited_ledger_revision': ledger['ledger_revision'],
               'inherited_ledger_sha256': sha((ROOT / 'fixtures/kernel/m-ledger-v1.json').read_bytes()),
               'inherited_assessments_sha256': sha(canonical(ledger['assessments'])),
               'dispositions_sha256': sha(canonical(spec)),
-              'sources': sources, 'constructs': records, 'native_exports': public,
+              'sources': sources, 'constructs': records, 'native_exports': public, 'cpp_modules': cpp_modules,
               'standing': 'current source and linked inventory; no inherited proof retargeted; runtime parity is separate'}
     return result
 
@@ -139,6 +147,7 @@ def summary(inventory):
             'inherited_unresolved': sum(c['standing'] == 'inherited-unresolved' for c in inventory['constructs']),
             'reviewed_K8_constructs': sum(c['standing'] == 'reviewed-K8-binding' for c in inventory['constructs']),
             'linked_K8_public_exports': len(inventory['native_exports']),
+            'reviewed_K8_cpp_modules': len(inventory['cpp_modules']),
             'standing': inventory['standing']}
 
 

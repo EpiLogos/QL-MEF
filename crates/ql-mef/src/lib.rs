@@ -2,6 +2,7 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+pub mod continuous;
 mod context_frame;
 mod context_frame_target;
 mod coordinate;

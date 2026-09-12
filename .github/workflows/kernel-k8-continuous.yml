@@ -1,10 +1,10 @@
 name: K8 continuous native field
 on:
   pull_request:
-    paths: ['cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
+    paths: ['adapters/retained-field/**', 'cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
   push:
     branches: [main]
-    paths: ['cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
+    paths: ['adapters/retained-field/**', 'cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', '.github/workflows/kernel-k8-continuous.yml']
 permissions:
   contents: read
 jobs:
@@ -19,16 +19,15 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Retain exact native formatting tool for controlled offline development
+      - name: Retain native formatting of new Rust files for independent editing
         run: |
-          mkdir -p target/k8-tools
-          cp "$(rustup which rustfmt)" target/k8-tools/rustfmt
-          rustfmt --version > target/k8-tools/version.txt
-          sha256sum target/k8-tools/rustfmt > target/k8-tools/sha256.txt
+          mkdir -p target/k8-format
+          rustfmt --edition 2021 --emit stdout crates/ql-mef/src/continuous.rs > target/k8-format/continuous.rs
+          rustfmt --edition 2021 --emit stdout crates/ql-mef/examples/k8_field.rs > target/k8-format/k8_field.rs
       - uses: actions/upload-artifact@v4
         with:
-          name: k8-native-tools-${{ github.event.pull_request.head.sha || github.sha }}
-          path: target/k8-tools/
+          name: k8-formatted-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8-format/
           retention-days: 3
       - uses: actions/setup-python@v5
         with:
@@ -56,6 +55,35 @@ jobs:
           cargo build --locked -p ql-mef --example m2_engine
           set -o pipefail
           python scripts/test-k8-continuous.py target/k8-cpp/bin/ql-field-worker 2>&1 | tee target/k8-continuous/native-join.log
+      - name: Rust validated producer and persistent native control session
+        run: |
+          cargo run --locked -p ql-mef --example k8_field -- target/k8-cpp/bin/ql-field-worker \
+            target/k8-continuous/basis.json target/k8-continuous/initial.json > target/k8-continuous/rust-session.jsonl
+      - name: Fetch the exact retained renderer read-only
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Point-Cloud-Demo
+          ref: 040627d0ea40032fe7c7b8c98be9a246be9db7f6
+          path: target/point-cloud-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Bundle receiver with the actual retained GPU implementation
+        run: |
+          mkdir -p target/k8-web target/k8-gpu
+          echo '{"private":true,"type":"module"}' > target/k8-web/package.json
+          npm --prefix target/k8-web install --package-lock=false --ignore-scripts --save-exact three@0.186.0 esbuild@0.25.0
+          ln -s target/k8-web/node_modules node_modules
+          node_modules/.bin/esbuild adapters/retained-field/acceptance.ts --bundle --format=esm --outfile=target/k8-gpu/acceptance.js
+          cp target/k8-continuous/frames.jsonl target/k8-gpu/
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          git -C target/point-cloud-source rev-parse HEAD > target/k8-gpu/renderer-source-sha.txt
+          sha256sum adapters/retained-field/retained-field.mjs target/point-cloud-source/src/engine/GPGPUSimulator.ts > target/k8-gpu/source-sha256.txt
+          npm --prefix target/k8-web ls --all --json > target/k8-gpu/npm-lock.json
+      - name: Real WebGL integration, no reseed, density and context recovery
+        run: python adapters/retained-field/test-browser.py
       - name: Exact source and toolchain receipt
         if: always()
         run: |
@@ -69,6 +97,8 @@ jobs:
         if: always()
         with:
           name: k8-continuous-${{ github.event.pull_request.head.sha || github.sha }}
-          path: target/k8-continuous/
+          path: |
+            target/k8-continuous/
+            target/k8-gpu/
           retention-days: 14
           if-no-files-found: error
