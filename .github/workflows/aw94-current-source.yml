@@ -13,13 +13,10 @@ jobs:
         include:
           - repo: QL-MEF
             name: ql-main
-            ref: f524b814b36e2523c63d486c1fa4f0f05147dd89
-          - repo: QL-MEF
-            name: ql-aw
-            ref: 058b0868cb3dbe8ebc792ff369d9665c627b49b3
-          - repo: ai-kit
-            name: aikit-main
-            ref: 75ac68f4b3912908f55c1ef0f9031d35fc694d59
+            ref: 8db6a4084983a883f72ad2ee11d960ae282bbddb
+          - repo: Factory
+            name: factory-main
+            ref: c3c0677accdbeefb8e6cf1272cf45a9efa949873
     steps:
       - uses: actions/checkout@v4
         with:
