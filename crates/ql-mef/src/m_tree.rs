@@ -219,10 +219,7 @@ impl MRegistry {
             match (&file.repository, &file.revision) {
                 (None, None) => (),
                 (Some(repository), Some(revision))
-                    if !repository.is_empty() && hex(revision, 40) =>
-                {
-                    ()
-                }
+                    if !repository.is_empty() && hex(revision, 40) => {}
                 _ => return Err("incomplete source-file origin".into()),
             }
         }
