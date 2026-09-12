@@ -23,6 +23,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 PROMOTION = Path('c/registry/promotions/k8-apertures-v1.json')
 RECEIPT = Path('fixtures/kernel/k8-structure-receipt-v1.json')
+AUTHORITY_CAPTURE = Path('c/registry/promotions/sources/25d07a69482fa0cd1655a0ab207085f751572608.md')
 
 
 def compiler():
@@ -93,7 +94,8 @@ def validate(p, base, root):
             and all(c in '0123456789abcdef' for c in authority['revision']), 'invalid source authority')
     path = (root / authority['path']).resolve()
     require(path.is_relative_to(root.resolve()) and path.is_file(), 'unsafe/missing authority path')
-    data = path.read_bytes()
+    require(authority['path'] == 'docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md', 'wrong authority path')
+    data = (root / AUTHORITY_CAPTURE).read_bytes()
     require(blob(data) == authority['git_blob'] and hashlib.sha256(data).hexdigest() == authority['sha256'],
             'ratified authority source changed; review a successor, do not restamp old evidence')
     text = data.decode('utf-8')

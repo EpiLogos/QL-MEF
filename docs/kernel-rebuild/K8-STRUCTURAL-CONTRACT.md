@@ -99,3 +99,32 @@ or the installed clock consumer. K8 remains the shared integration writer;
 #94 owns its full source/property/Vāk work, #134 Personal inputs, and #133 the
 same-event interface. Owner-machine desktop harmonisation is later, not a reason
 to defer these repository implementations.
+
+## Rust and current-source evidence
+
+`ql_mef::m_tree::native_current_m_registry()` consumes the very same generated
+v2 manifest; `native_m_registry()` remains the accepted v1 engine source view.
+The current parser retains source lineage and per-file repository/revision.
+`k8_structure` executes the actual native C descriptor probe and compares every
+node, record, relation, file and binding with Rust, including promotion origins.
+The ratified source is retained under `c/registry/promotions/sources/` by its Git
+blob identity, so later documentation edits cannot rewrite historical authority.
+
+`scripts/k8-census.py --check` scans the complete current C/Rust source field,
+joins accepted bindings, retains old unresolved constructs, rejects new unowned
+constructs and verifies the new public C APIs against the built static library.
+Reviewed K8 module dispositions are in `c/registry/promotions/k8-bindings-v1.json`.
+The full inventory is emitted under `target/m-ledger/current/` with a checked-in
+digest receipt. It is current liveness/binding evidence over the same ledger,
+not a second readiness ledger and not an automatic promotion of old orphans.
+K4 workbooks and their reviewed assessments are not regenerated or restamped.
+
+The original K6/K7 proof artifacts remain byte-identical. Their original build
+Makefile is retained in `fixtures/kernel/history/pre-k8-Makefile`. Each current
+engine acceptance must execute its full native tests first. The ledger checks
+then require the same proof-input set, the same checks, this exact Git head and
+fresh current input hashes. `scripts/k8-preservation.py` admits only the reviewed
+packaging change named by `k8-build-lineage-v1.json`; any changed numerical/source
+input, historical proof, unreviewed build edit, partial/stale execution or changed
+post-execution input fails. The new `k8-preservation.json` stays beside that run's
+native receipt. It does not pretend the old proof ran on the new Makefile.

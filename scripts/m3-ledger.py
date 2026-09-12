@@ -142,10 +142,11 @@ def refresh_proof():
 def main():
  p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check']);a=p.parse_args()
  if a.command=='refresh':
-  refresh_proof();write(SUMMARY,coverage());write(m.LEDGER,materialize(load(m.LEDGER)))
+  raise ValueError('K8 preserves the accepted K7 proof; publish a reviewed successor rather than retargeting it')
  proof=load(PROOF)
- for path,h in proof['inputs'].items():
-  if m.lock(ROOT,path)['sha256']!=h:raise ValueError('stale M3 proof input: '+path)
+ spec=importlib.util.spec_from_file_location('k8_preservation',ROOT/'scripts/k8-preservation.py')
+ preservation=importlib.util.module_from_spec(spec);spec.loader.exec_module(preservation)
+ preservation.check('m3',ROOT)
  if load(SUMMARY)!=coverage():raise ValueError('M3 coverage stale')
  ledger=load(m.LEDGER);m.verify(ROOT,ledger)
  if materialize(ledger)!=ledger:raise ValueError('K7 ledger stale; refresh preserving other verticals')

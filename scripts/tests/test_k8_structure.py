@@ -38,7 +38,7 @@ class StructuralPromotion(unittest.TestCase):
         self.assertEqual(origin['repository'], 'EpiLogos/QL-MEF')
         self.assertEqual(origin['revision'], self.promotion['authority']['revision'])
         self.assertNotEqual(origin['revision'], self.current['source_revision'])
-        lines = (ROOT / origin['path']).read_text().splitlines()
+        lines = (ROOT / k8.AUTHORITY_CAPTURE).read_text().splitlines()
         for record in self.current['records'][len(self.base['records']):]:
             line = record['record_index']
             self.assertEqual(record['file'], len(self.current['files']) - 1)

@@ -56,27 +56,12 @@ jobs:
         run: |
           set -o pipefail
           bash scripts/test-k8-native.sh 2>&1 | tee target/k8/native.log
+      - name: Complete current inventory without restamping historical K4 evidence
+        run: python3 scripts/k8-census.py --check
       - name: Preserve accepted Rust engines
         run: |
           set -o pipefail
           cargo test --workspace --locked 2>&1 | tee target/k8/rust-tests.log
-      - name: Retain temporary offline compiler reproduction kit
-        if: always() && github.head_ref == 'agent/k8-shared-live-field'
-        run: |
-          mkdir -p target/k8-toolchain
-          toolchain="$(dirname "$(dirname "$(rustup which rustc)")")"
-          tar -C "$toolchain" -cf - bin lib | gzip -1 > target/k8-toolchain/rust.tar.gz
-          tar -C "$HOME/.cargo" -cf - registry | gzip -1 > target/k8-toolchain/registry.tar.gz
-          { rustc --version; cargo --version; } > target/k8-toolchain/versions.txt
-      - name: Export temporary offline compiler reproduction kit
-        if: always() && github.head_ref == 'agent/k8-shared-live-field'
-        uses: actions/upload-artifact@v4
-        with:
-          name: k8-offline-toolchain-${{ github.event.pull_request.head.sha || github.sha }}
-          path: target/k8-toolchain/
-          retention-days: 1
-          compression-level: 0
-          if-no-files-found: error
       - name: Retain native evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -86,5 +71,7 @@ jobs:
             target/k8/
             target/k8-native/*log
             target/k8-native/*json
+            target/k8-registry/c-rust-parity.jsonl
+            target/m-ledger/current/
           retention-days: 14
           if-no-files-found: error

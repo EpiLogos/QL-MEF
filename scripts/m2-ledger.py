@@ -169,10 +169,11 @@ def proof_refresh():
 def main():
     p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check']);a=p.parse_args()
     if a.command=='refresh':
-        proof_refresh();write(m.LEDGER,materialize(load(m.LEDGER)))
+        raise ValueError('K8 preserves the accepted K6 proof; publish a reviewed successor rather than retargeting it')
     proof=load(PROOF)
-    for path,sha in proof['inputs'].items():
-        if lock(path)['sha256']!=sha:raise ValueError('stale finite proof input: '+path)
+    spec=importlib.util.spec_from_file_location('k8_preservation',ROOT/'scripts/k8-preservation.py')
+    preservation=importlib.util.module_from_spec(spec);spec.loader.exec_module(preservation)
+    preservation.check('m2',ROOT)
     # Fresh executable observations must accompany CI/local acceptance.
     for key,path in [('finite_observation','rust-parity.json'),('vimarsha_observation','vimarsha-parity.json'),('condition_observation','condition-parity.json')]:
         if proof[key]!=load('target/m2-receipt/'+path):raise ValueError('fresh observations do not match checked-in scoped proof')

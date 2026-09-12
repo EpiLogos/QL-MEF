@@ -5,7 +5,7 @@ cd "$root"
 out="${K8_OUT:-target/k8-native}"
 mkdir -p "$out"
 python3 scripts/k8-structure.py --check --out "$out/generated"
-python3 -m unittest discover -s scripts/tests -p test_k8_structure.py -v 2>&1 | tee "$out/structure-tests.log"
+python3 -m unittest discover -s scripts/tests -p 'test_k8*.py' -v 2>&1 | tee "$out/structure-tests.log"
 make -C c all
 cc -std=c11 -Wall -Wextra -Werror -pedantic -Ic/include migration/epi-kernel/k8/native.c c/build/libql-mef-c.a -lm -o "$out/native"
 "$out/native" | tee "$out/native-observation.json"
