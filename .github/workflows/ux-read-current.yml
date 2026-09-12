@@ -1,0 +1,22 @@
+name: UX concurrent source basis
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/O-I
+          ref: edd6d970005f9308f6baa0d0601d4e388440877a
+      - run: |
+          mkdir -p recovered-source
+          git rev-parse HEAD > recovered-source/revision.txt
+          git archive --format=tar HEAD > recovered-source/source.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: concurrent-oi-source
+          path: recovered-source/
+          retention-days: 3
