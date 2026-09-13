@@ -22,8 +22,6 @@ pub const REQUEST_V2: &str = "ql.coupled-event-request/v2";
 pub const REQUEST_V3: &str = "ql.coupled-event-request/v3";
 pub const CONTRACT: &str = "ql.coupled-event/v1";
 const FACTORY_VAK_CONTRACT: &str = "factory.vak-orchestration/v1";
-const FACTORY_QL_PROFILE_CONTRACT: &str = "ql.vak-composition.profile/v1";
-const FACTORY_AIKIT_SCOPE_CONTRACT: &str = "aikit.operative-scope/v1";
 
 /// A deliberate instrument mapping, not a claim that symbolic frequencies are
 /// measured eigenvalues. Modes not listed here keep their supplied frequency.
@@ -168,7 +166,10 @@ fn factory_vak_performance(receipts: &[Value]) -> Result<Option<FactoryVakPerfor
         if receipt_ref(receipt, "musicalRole")? != expected_role {
             return Err("Factory Vāk performance thread/musical role disagree".into());
         }
-        if !matches!(receipt_ref(receipt, "sequence")?, "CS0" | "CS1" | "CS2" | "CS3" | "CS4" | "CS5") {
+        if !matches!(
+            receipt_ref(receipt, "sequence")?,
+            "CS0" | "CS1" | "CS2" | "CS3" | "CS4" | "CS5"
+        ) {
             return Err("Factory Vāk performance has unknown Context Sequence".into());
         }
         if !matches!(receipt_ref(receipt, "direction")?, "forward" | "returning") {
@@ -299,11 +300,11 @@ impl CoupledInput {
         let sublens = SublensRef::canonical(lens, clock.tick12() % 6).map_err(|e| e.to_string())?;
         let reading = Reading72::from_sublens(sublens);
         let m1_cf = ContextFrameId::ALL[usize::from(self.m1.context_frame - 1)];
-        let cf = ContextFrameId::ALL[
-            performance
-                .as_ref()
-                .map_or(usize::from(self.m1.context_frame - 1), |value| value.frame_index),
-        ];
+        let cf_index = performance.as_ref().map_or(
+            usize::from(self.m1.context_frame - 1),
+            |value| value.frame_index,
+        );
+        let cf = ContextFrameId::ALL[cf_index];
         let mode = ModeKind::ALL
             .into_iter()
             .find(|m| m.context_frame() == cf)
@@ -319,7 +320,11 @@ impl CoupledInput {
             request.mef_conditions.push(reading.index());
         }
         for context_frame in [m1_cf, cf] {
-            if !request.context_frames.iter().any(|v| v == context_frame.code()) {
+            if !request
+                .context_frames
+                .iter()
+                .any(|v| v == context_frame.code())
+            {
                 request.context_frames.push(context_frame.code().into());
             }
         }
