@@ -1,0 +1,61 @@
+name: Agent-world native acceptance
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/agent-world.yml'
+      - 'crates/**'
+      - 'scripts/**'
+      - 'fixtures/**'
+      - 'docs/integrations/epi-logos/**'
+      - 'docs/kernel-rebuild/**'
+      - '.oi/product.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  retained-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2.9.2
+      - name: Record exact acceptance subject
+        run: |
+          mkdir -p evidence
+          git rev-parse HEAD > evidence/ql-source-sha.txt
+          git rev-parse HEAD^{tree} > evidence/ql-source-tree.txt
+          rustc --version > evidence/toolchain.txt
+      - name: Check formatting and lint without rewriting source
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check 2>&1 | tee evidence/format.txt
+          cargo clippy --workspace --all-targets --locked -- -D warnings 2>&1 | tee evidence/clippy.txt
+      - name: Exercise original C-prime laws and retained runtime
+        run: |
+          set -euo pipefail
+          cargo test --workspace --locked 2>&1 | tee evidence/rust-tests.txt
+          python3 scripts/check-capability-matrix-registry.py 2>&1 | tee evidence/matrix-registry.txt
+          python3 scripts/check-pre-k8-lock.py 2>&1 | tee evidence/pre-k8-lock.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aw94-retained-floor-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          retention-days: 14
+
+# Read-only historical/native source acquisition is retained in run 34668440432.
+# Build inputs were captured in run 34668652176. Neither is runtime evidence;
+# neither needs to be re-archived on each source change.

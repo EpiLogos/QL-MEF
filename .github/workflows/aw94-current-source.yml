@@ -1,0 +1,40 @@
+name: AW94 current-source receipt
+on:
+  pull_request:
+    paths: ['.github/workflows/aw94-current-source.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.head_ref == 'agent/aw94-full-field'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - repo: ai-kit
+            name: aikit-main
+            ref: 75ac68f4b3912908f55c1ef0f9031d35fc694d59
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/${{ matrix.repo }}
+          ref: ${{ matrix.ref }}
+          persist-credentials: false
+      - name: Archive exact source without Git credentials
+        env:
+          EXPECTED_SHA: ${{ matrix.ref }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          mkdir evidence
+          git archive --format=tar.gz HEAD > evidence/source.tar.gz
+          git rev-parse HEAD > evidence/source-sha.txt
+          git rev-parse HEAD^{tree} > evidence/source-tree.txt
+          git cat-file -p HEAD > evidence/commit-object.txt
+          git ls-tree -r HEAD > evidence/tracked-blobs.txt
+          sha256sum evidence/source.tar.gz > evidence/archive-digest.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aw94-${{ matrix.name }}-${{ matrix.ref }}
+          path: evidence/
+          retention-days: 7
