@@ -229,6 +229,15 @@
       "rationale": "Reviewed graph transaction/projection over the existing K8 source compiler and captured native graph joins. Transport, target admission and rollback do not define new semantic coordinates, property vocabulary or readiness.",
       "tests": ["scripts/tests/test_k8_graph.py", "scripts/test-k8-graph-live.py"],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#1", "#2", "#3", "#4"],
+      "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced.",
+      "tests": ["crates/ql-mef/src/nara.rs"],
+      "kind": "computational"
     }
   ]
 }
