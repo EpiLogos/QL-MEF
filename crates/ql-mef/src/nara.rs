@@ -242,6 +242,7 @@ impl PersonalConstitution {
 #[serde(deny_unknown_fields)]
 pub struct EventBasisRefs {
     pub event_ref: String,
+    pub subject_ref: String,
     pub profile_generation: u64,
     pub registry_revision: String,
     pub m1_revision: String,
@@ -264,6 +265,7 @@ impl EventBasisRefs {
             return Err("M2/M3 registry revisions differ".into());
         }
         for (value, label) in [
+            (&m3.subject_ref, "M3 subject"),
             (&m1.revision, "M1 revision"),
             (&m2.stamp.source_ref, "M2 source"),
             (&m2.stamp.contract_ref, "M2 contract"),
@@ -275,6 +277,7 @@ impl EventBasisRefs {
         }
         Ok(Self {
             event_ref: event.event_ref.clone(),
+            subject_ref: m3.subject_ref.clone(),
             profile_generation: event.profile_generation,
             registry_revision: m2.registry_revision.clone(),
             m1_revision: m1.revision.clone(),
@@ -444,6 +447,9 @@ impl PersonalFieldInstance {
             return Err("personal field instance is not active".into());
         }
         let refs = EventBasisRefs::from_basis(basis)?;
+        if self.constitution.subject_id != refs.subject_ref {
+            return Err("personal constitution subject does not match accepted world event".into());
+        }
         input.validate(&refs)?;
         if let Some(previous) = &self.last_event {
             if previous.event_ref == input.event_ref
