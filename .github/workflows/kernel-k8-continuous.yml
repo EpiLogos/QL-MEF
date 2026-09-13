@@ -21,7 +21,7 @@ jobs:
           components: rustfmt, clippy
       - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
-          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/tests/k8_coupled.rs; do
+          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/nara_personal_field.rs; do
             mkdir -p "target/k8-format/$(dirname "$path")"
             cp "$path" "target/k8-format/$path"
             rustfmt --edition 2024 --config skip_children=true "target/k8-format/$path"
@@ -75,6 +75,12 @@ jobs:
         run: |
           cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \
             target/k8-continuous/basis.json target/k8-continuous/initial.json target/k8-coupled-v2 v2
+      - name: Subject-bound Nara reception on that installed owner
+        run: |
+          mkdir -p target/k8-personal
+          cargo test --locked -p ql-mef --test nara_personal_field
+          cargo run --locked -p ql-mef --example k8_personal -- target/k8-cpp/bin/ql-field-worker \
+            target/k8-coupled-v2/input.json target/k8-personal
       - name: Managed coupled native host, compact delivery and source inspection
         run: |
           mkdir -p target/k8-host target/k8-host-debug
@@ -161,6 +167,7 @@ jobs:
             target/k8-gpu/
             target/k8-coupled/
             target/k8-coupled-v2/
+            target/k8-personal/
             target/k8-audio/
             target/k8-host/
             target/k8-host-v2/
