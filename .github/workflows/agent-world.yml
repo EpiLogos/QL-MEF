@@ -1,0 +1,66 @@
+name: Agent-world native acceptance
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/agent-world.yml'
+      - 'crates/**'
+      - 'scripts/**'
+      - 'docs/integrations/epi-logos/**'
+      - 'docs/kernel-rebuild/**'
+      - '.oi/product.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: agent-world-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  retained-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.98.1'
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2.9.2
+      - name: Exact source subject
+        run: |
+          mkdir -p evidence
+          git rev-parse HEAD > evidence/source-sha.txt
+          git rev-parse HEAD^{tree} > evidence/source-tree.txt
+          rustc --version > evidence/toolchain.txt
+      - name: Native property operations and retained workspace
+        run: |
+          set -euo pipefail
+          cargo test --workspace --locked 2>&1 | tee evidence/rust-tests.txt
+          gzip -dc docs/integrations/epi-logos/aw-property-source.json.gz > evidence/original-properties.json
+          cargo run --locked -p ql-mef --example property_source_check -- evidence/original-properties.json 2>&1 | tee evidence/property-coverage.txt
+          cargo clippy --workspace --all-targets --locked -- -D warnings 2>&1 | tee evidence/clippy.txt
+          python3 scripts/check-capability-matrix-registry.py | tee evidence/matrix.txt
+          python3 scripts/check-pre-k8-lock.py | tee evidence/pre-k8.txt
+          python3 scripts/check-ux-spine.py --self-test | tee evidence/ux.txt
+      - name: Check original source formatting
+        if: always()
+        run: |
+          set -o pipefail
+          cargo fmt --all -- --check 2>&1 | tee evidence/format.txt
+      - name: Retain formatter proposal separately from tested source
+        if: failure()
+        run: |
+          cargo fmt --all
+          git diff -- crates/ql-mef/src/property.rs crates/ql-mef/src/property/ crates/ql-mef/examples/property_source_check.rs > evidence/format-proposal.patch
+          for file in crates/ql-mef/src/property.rs crates/ql-mef/src/property/model.rs crates/ql-mef/src/property/tests.rs crates/ql-mef/examples/property_source_check.rs; do
+            echo "FORMATTED SOURCE: $file"
+            cat "$file"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aw94-properties-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          retention-days: 14
