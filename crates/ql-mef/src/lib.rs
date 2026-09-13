@@ -28,6 +28,7 @@ mod music;
 mod music_completion;
 mod pole_state;
 pub mod property;
+pub mod qv;
 mod provenance;
 mod reading;
 mod refraction;
