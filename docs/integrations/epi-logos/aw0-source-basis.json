@@ -1,0 +1,48 @@
+{
+  "columns": [
+    "owner",
+    "path",
+    "git_blob"
+  ],
+  "repositories": {
+    "Actuation": {
+      "repository": "EpiLogos/Actuation",
+      "revision": "4af495f6509bb0dd779112a225d71a9df8145b6e"
+    },
+    "Central": {
+      "repository": "EpiLogos/Central",
+      "revision": "5fe7976f467096066692cda3c1018b73a88562df"
+    },
+    "Factory": {
+      "repository": "EpiLogos/Factory",
+      "revision": "c3c0677accdbeefb8e6cf1272cf45a9efa949873"
+    },
+    "O-I": {
+      "repository": "EpiLogos/O-I",
+      "revision": "4a43142a6ce9fff628e9ffe1b2d1c87ff88930a0"
+    },
+    "Original": {
+      "repository": "EpiLogos/Epi-Logos-C-Experiments",
+      "revision": "daa660cbc1b8c5da83828698665a753852cb0287"
+    },
+    "QL-MEF": {
+      "repository": "EpiLogos/QL-MEF",
+      "revision": "1dbd5150c0b264b2180bdf654cd944c59037ea24"
+    },
+    "Workcell": {
+      "repository": "EpiLogos/Workcell",
+      "revision": "e4e40a91fe7ed1776e634cad768f1049c39fd34e"
+    },
+    "ai-kit": {
+      "repository": "EpiLogos/ai-kit",
+      "revision": "75ac68f4b3912908f55c1ef0f9031d35fc694d59"
+    }
+  },
+  "schema_version": "epi.aw-source-basis/v1",
+  "members": [
+    "aw0-sources-native.json",
+    "aw0-sources-original-law.json",
+    "aw0-sources-original-skills.json",
+    "aw0-sources-original-agents.json"
+  ]
+}

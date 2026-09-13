@@ -1,0 +1,180 @@
+{
+  "schema_version": "epi.aw-native-binding/v1",
+  "groups": {
+    "resolve": [
+      "ai-kit:crates/aikit-core/src/resource/operative.rs",
+      "ai-kit:crates/aikit-core/src/resolve/mod.rs",
+      "ai-kit:crates/aikit-core/src/resource/model.rs"
+    ],
+    "execution": [
+      "Workcell:crates/workcell-core/src/provider/execution.rs",
+      "Actuation:crates/actuation-adapters/src/admission.rs",
+      "Factory:factory/src/attempt_owner_dispatch.rs"
+    ],
+    "session": [
+      "ai-kit:crates/aikit-core/src/session_space_application.rs",
+      "ai-kit:crates/aikit-core/src/session_lifecycle.rs",
+      "ai-kit:crates/aikit-core/src/session_ecology.rs"
+    ],
+    "context": [
+      "ai-kit:crates/aikit-core/src/context_resolution.rs",
+      "ai-kit:crates/aikit-cli/src/app/root_context.rs",
+      "Central:ctrl/src/world_source.rs"
+    ],
+    "source": [
+      "Central:ctrl/src/source_return.rs",
+      "Central:ctrl/src/source_safety.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_source_pool.rs"
+    ],
+    "wiki": [
+      "ai-kit:crates/aikit-core/src/knowledge_wiki.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_wiki_shape.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_wiki_write.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_ingest.rs"
+    ],
+    "now": [
+      "Central:ctrl/src/projectcentral_now.rs",
+      "Central:ctrl/src/continuous_work/source.rs",
+      "ai-kit:crates/aikit-core/src/flow.rs"
+    ],
+    "registry": [
+      "QL-MEF:crates/ql-mef/src/m_tree.rs",
+      "QL-MEF:crates/ql-mef/src/m_map.rs"
+    ],
+    "knowledge": [
+      "ai-kit:crates/aikit-core/src/knowledge_living.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_living_relations.rs",
+      "ai-kit:crates/aikit-core/src/knowledge_navigation.rs"
+    ],
+    "provider": [
+      "ai-kit:crates/aikit-core/src/resource/operative_provider.rs",
+      "ai-kit:crates/aikit-core/src/resource/operative_scope.rs",
+      "ai-kit:crates/aikit-core/src/resource/operative_scope/knowledge.rs"
+    ],
+    "methods": [
+      "ai-kit:crates/aikit-core/src/method.rs",
+      "ai-kit:crates/aikit-core/src/praxis.rs",
+      "ai-kit:crates/aikit-core/src/routine.rs",
+      "ai-kit:crates/aikit-core/src/familiarity.rs"
+    ],
+    "clock": [
+      "QL-MEF:crates/ql-mef/src/continuous.rs",
+      "QL-MEF:crates/ql-mef/src/m2_condition.rs",
+      "QL-MEF:crates/ql-mef/src/m3_engine.rs"
+    ],
+    "agents": [
+      "Central:ctrl/src/agent_profile.rs",
+      "Central:ctrl/src/agent_profile_actions.rs",
+      "ai-kit:crates/aikit-adapters/src/central_agent_profile.rs",
+      "ai-kit:crates/aikit-core/src/application_context.rs"
+    ],
+    "vak": [
+      "QL-MEF:crates/ql-mef/src/vak.rs",
+      "QL-MEF:crates/ql-mef/src/vak_composition.rs",
+      "QL-MEF:crates/ql-mef/src/vak_composition/production.rs",
+      "QL-MEF:crates/ql-mef/src/music.rs"
+    ],
+    "workflow": [
+      "Factory:factory/src/orchestration.rs",
+      "Factory:factory/src/workflow.rs",
+      "Factory:factory/src/journey_praxis.rs"
+    ],
+    "thought": [
+      "Factory:factory/src/core/run/thought.rs",
+      "Factory:factory/tests/thought_consumption.rs",
+      "ai-kit:crates/aikit-adapters/src/factory_run_thought_authored_wiki.rs"
+    ],
+    "development": [
+      "Factory:factory/src/attempt_learning.rs",
+      "ai-kit:crates/aikit-core/src/resource/development_field.rs"
+    ]
+  },
+  "sp_groups": [
+    ["resolve", "execution"],
+    ["resolve", "registry"],
+    ["execution"],
+    ["session"],
+    ["context", "now"],
+    ["session", "source"],
+    ["source", "wiki"],
+    ["wiki", "vak"],
+    ["wiki", "source"],
+    ["wiki", "knowledge"],
+    ["now"],
+    ["source", "registry"],
+    ["registry"],
+    ["registry", "wiki"],
+    ["knowledge", "source"],
+    ["knowledge", "provider"],
+    ["knowledge", "source"],
+    ["knowledge", "provider"],
+    ["provider", "session"],
+    ["methods", "resolve"],
+    ["session", "now"],
+    ["clock", "session"],
+    ["clock", "now"],
+    ["now", "thought"],
+    ["context", "agents"],
+    ["agents", "wiki"],
+    ["execution", "resolve"],
+    ["now", "methods", "workflow"],
+    ["vak", "provider", "workflow"],
+    ["thought", "development"],
+    ["agents", "registry"],
+    ["knowledge", "thought"],
+    ["knowledge", "source"],
+    ["now", "knowledge"],
+    ["development", "workflow"],
+    ["source", "methods", "development"]
+  ],
+  "gaps": {
+    "AW1-ROOT": {
+      "issue": "EpiLogos/QL-MEF#94",
+      "coordinator": "EpiLogos/QL-MEF#132",
+      "need": "Complete rooted family/face/S5/property structural joins through K8.0; retain existing M registry IDs."
+    },
+    "AW1-PROPERTY": {
+      "issue": "EpiLogos/QL-MEF#94",
+      "need": "Source-defined property assertions, compact expansion, named synthesis/graph provenance and native graph persistence."
+    },
+    "AW2-SCOPE": {
+      "issue": "EpiLogos/ai-kit#267",
+      "need": "Production QL provider and source-qualified native invocation beyond the accepted Contemplate foundation."
+    },
+    "AW2-CONDUCT": {
+      "issue": "EpiLogos/Factory#217",
+      "need": "All source-defined CFP forms and Z through real native Units/Attempts, scoped children and Return."
+    },
+    "AW3-NAME": {
+      "issue": "EpiLogos/ai-kit#267",
+      "need": "Recognition-to-native Method Skill registration and parameterised reuse, not parser-only naming."
+    },
+    "AW3-CONSUME": {
+      "issue": "EpiLogos/QL-MEF#94",
+      "need": "Actual direct/commissioned source report consumption and subsequent agency across all twelve meanings; native Factory primitive is accepted."
+    },
+    "NARA": {
+      "issue": "EpiLogos/QL-MEF#134",
+      "need": "Protected personal reception and M4.5 through its existing lane."
+    },
+    "SURFACE": {
+      "issue": "EpiLogos/QL-MEF#133",
+      "need": "Same-subject field/Bimba/Epii surface use through the existing UX lane; human ratification remains separate."
+    }
+  },
+  "sp_gap": [
+    "AW2-SCOPE", "AW2-SCOPE", "AW2-CONDUCT", "SURFACE", "AW1-ROOT", "AW3-CONSUME",
+    "AW1-PROPERTY", "AW1-PROPERTY", "AW1-PROPERTY", "AW2-SCOPE", "AW3-CONSUME", "AW1-ROOT",
+    "AW1-ROOT", "AW1-PROPERTY", "AW1-PROPERTY", "AW2-SCOPE", "NARA", "AW2-SCOPE",
+    "AW2-SCOPE", "AW3-NAME", "AW2-SCOPE", "SURFACE", "NARA", "AW3-CONSUME",
+    "AW2-SCOPE", "AW2-SCOPE", "AW2-CONDUCT", "AW2-CONDUCT", "AW2-CONDUCT", "AW3-CONSUME",
+    "AW2-SCOPE", "AW3-CONSUME", "AW2-SCOPE", "AW3-CONSUME", "AW3-CONSUME", "AW3-NAME"
+  ],
+  "authority": "Resolution/read access is not execution, source-write, Recognition or unattended authority. Native source/agency/product owners admit the actual operation; human source stays authored. Denial precedes effect.",
+  "lifecycle": "Retain original subject/actor/source revisions, current context and native NOW/Run/session identities separately; expected-revision writes, refusal, interruption, retries, late Return, retention and reopening preserve evidence.",
+  "participation": "Existing AgentProfiles, Skills, SkillSets and Method-classified Skills; M0 Bimba and canonical M5 Epii are real referents. Constitutional roles are not replacement M agents.",
+  "tests_required": [
+    "positive", "denied-before-effect", "invalid-input", "stale-source-or-authority", "recovery-and-original-return"
+  ],
+  "standing": "Code pins show inspected native mechanics only. Full composition remains EPI-GAP unless a row-specific accepted receipt replaces that assessment. Source coverage is not runtime acceptance."
+}
