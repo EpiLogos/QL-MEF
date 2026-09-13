@@ -10,6 +10,7 @@ use ql_mef::{
 };
 use ql_semantic::{Operation, ProviderState};
 use ql_service::QlService;
+use ql_wiki::RegistryDisclosureProvider;
 use serde::Serialize;
 use std::error::Error;
 use std::fmt::{self, Display};
@@ -343,7 +344,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
         product: "quaternal-logic",
         version: env!("CARGO_PKG_VERSION"),
         kernel: kernel_view(),
-        service: service_view(&QlService::new()),
+        service: service_view(&cli_service()),
         mef_registry_version: MEF_REGISTRY_VERSION,
         mef_registry_revision: MEF_REGISTRY_REVISION,
         context_frame_grammar_version: CONTEXT_FRAME_GRAMMAR_VERSION,
@@ -812,7 +813,7 @@ fn vak_relation_kind(kind: VakRelationKind) -> &'static str {
 }
 
 fn service_command(args: &[String], json: bool) -> Result<String, CliError> {
-    let service = QlService::new();
+    let service = cli_service();
     match args.first().map(String::as_str) {
         Some("capabilities") => {
             let view = service_view(&service);
@@ -914,6 +915,14 @@ fn context_frame_registry_view() -> ContextFrameRegistryView {
     }
 }
 
+/// The CLI service path negotiates through the production registry-disclosure
+/// provider so every service disclosure states what the CLI can actually do:
+/// capabilities, locate and refract are available and deterministic; relate and
+/// synthesise remain honestly absent until a provider implements them.
+fn cli_service() -> QlService {
+    QlService::with_provider(RegistryDisclosureProvider::new())
+}
+
 fn service_view(service: &QlService) -> ServiceCapabilitiesView {
     let capabilities = service.capabilities();
     let operations = [
@@ -962,9 +971,12 @@ fn verify_command(json: bool) -> Result<String, CliError> {
     if vak.len() != VAK_ENTRY_COUNT {
         return Err(CliError("Vāk source registry verification failed".into()));
     }
-    let service = QlService::new();
+    let service = cli_service();
     if !service.negotiate(Operation::Capabilities).supported
-        || service.negotiate(Operation::Locate).supported
+        || !service.negotiate(Operation::Locate).supported
+        || !service.negotiate(Operation::Refract).supported
+        || service.negotiate(Operation::Relate).supported
+        || service.negotiate(Operation::Synthesise).supported
     {
         return Err(CliError(
             "service capability negotiation verification failed".into(),
@@ -1068,7 +1080,7 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(&output).unwrap();
         assert_eq!(value["contract"], QL_CLI_CONTRACT);
         assert_eq!(value["product"], "quaternal-logic");
-        assert_eq!(value["service"]["providerState"], "absent");
+        assert_eq!(value["service"]["providerState"], "available");
         assert_eq!(value["mefRegistryVersion"], MEF_REGISTRY_VERSION);
         assert_eq!(
             value["contextFrameGrammarVersion"],
@@ -1261,7 +1273,7 @@ mod tests {
     }
 
     #[test]
-    fn absent_provider_is_truthfully_negotiated() {
+    fn registry_provider_is_truthfully_negotiated() {
         let output = execute_cli(&[
             "service".into(),
             "negotiate".into(),
@@ -1270,8 +1282,58 @@ mod tests {
         ])
         .unwrap();
         let value: serde_json::Value = serde_json::from_str(&output).unwrap();
-        assert_eq!(value["supported"], false);
-        assert_eq!(value["deterministic"], false);
+        assert_eq!(value["supported"], true);
+        assert_eq!(value["deterministic"], true);
+
+        let output = execute_cli(&[
+            "service".into(),
+            "negotiate".into(),
+            "locate".into(),
+            "--json".into(),
+        ])
+        .unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["supported"], true);
+        assert_eq!(value["deterministic"], true);
+    }
+
+    #[test]
+    fn unsupported_relational_operations_stay_honestly_absent() {
+        for operation in ["relate", "synthesise"] {
+            let output = execute_cli(&[
+                "service".into(),
+                "negotiate".into(),
+                operation.into(),
+                "--json".into(),
+            ])
+            .unwrap();
+            let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+            assert_eq!(value["supported"], false, "operation {operation}");
+            assert_eq!(value["deterministic"], false, "operation {operation}");
+        }
+    }
+
+    #[test]
+    fn service_capabilities_disclose_available_provider() {
+        let output =
+            execute_cli(&["service".into(), "capabilities".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["providerState"], "available");
+        let operations: Vec<&serde_json::Value> =
+            value["operations"].as_array().unwrap().iter().collect();
+        let supported = |name: &str| {
+            operations
+                .iter()
+                .find(|operation| operation["operation"] == name)
+                .expect("disclosed operation")["supported"]
+                .as_bool()
+                .unwrap()
+        };
+        assert!(supported("capabilities"));
+        assert!(supported("locate"));
+        assert!(supported("refract"));
+        assert!(!supported("relate"));
+        assert!(!supported("synthesise"));
     }
 
     #[test]

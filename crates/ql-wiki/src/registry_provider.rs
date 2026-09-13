@@ -1,12 +1,15 @@
-use ql_core::QlFormRef;
+use core::str::FromStr;
+
+use ql_core::{QlAddress, QlFormRef};
 use ql_mef::{
     ClientRef, InputRefRevision, LensId, LensRef, QlProvenance, QlProviderRef, QlReading,
     ResultClass, lens_definition,
 };
 use ql_semantic::{
-    InputLimits, LocateRequest, LocateResult, Operation, ProviderCapabilities, ProviderClass,
-    ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest, SemanticDisclosure,
-    SemanticReading, SemanticRelationReading, SemanticStatus, SemanticSynthesis, SynthesiseRequest,
+    InputLimits, LocateRequest, LocateResult, LocateStatus, Operation, ProviderCapabilities,
+    ProviderClass, ProviderError, ProviderHealth, QlProvider, RefractRequest, RelateRequest,
+    SemanticDisclosure, SemanticReading, SemanticRelationReading, SemanticStatus,
+    SemanticSynthesis, SynthesiseRequest,
 };
 
 use crate::WIKI_REFRACTION_CONTRACT;
@@ -14,8 +17,11 @@ use crate::WIKI_REFRACTION_CONTRACT;
 /// Minimal production reference provider for the Wiki refraction wire contract.
 ///
 /// It is intentionally deterministic and registry-backed: it proves the external
-/// provider path and exposes canonical lens/sublens semantics already owned by
-/// QL-MEF, but does not pretend to be a model-backed relational discovery engine.
+/// provider path and exposes canonical QL addresses and lens/sublens semantics
+/// already owned by QL-MEF, but does not pretend to be a model-backed relational
+/// discovery engine. Locate resolves exactly what the canonical address registry
+/// owns: a well-formed canonical address locates uniquely, and any other subject
+/// reports honestly that the registry holds insufficient information for it.
 /// More capable semantic providers can replace it through the existing
 /// [`QlProvider`] boundary without changing the Wiki wire contract.
 #[derive(Debug, Clone)]
@@ -37,9 +43,17 @@ impl RegistryDisclosureProvider {
                     QlFormRef::DIRECT_CONJUGATE_V1,
                 ],
                 supported_lenses: LensId::ALL.into_iter().map(LensRef::canonical).collect(),
-                operations: vec![Operation::Capabilities, Operation::Refract],
+                operations: vec![
+                    Operation::Capabilities,
+                    Operation::Locate,
+                    Operation::Refract,
+                ],
                 extension_namespaces: vec![WIKI_REFRACTION_CONTRACT.into()],
-                deterministic_operations: vec![Operation::Capabilities, Operation::Refract],
+                deterministic_operations: vec![
+                    Operation::Capabilities,
+                    Operation::Locate,
+                    Operation::Refract,
+                ],
                 input_limits: InputLimits {
                     max_relation_subjects: 16,
                     max_synthesis_readings: 12,
@@ -61,8 +75,31 @@ impl QlProvider for RegistryDisclosureProvider {
         self.capabilities.clone()
     }
 
-    fn locate(&self, _request: LocateRequest) -> Result<LocateResult, ProviderError> {
-        Err(ProviderError::UnsupportedOperation(Operation::Locate))
+    fn locate(&self, request: LocateRequest) -> Result<LocateResult, ProviderError> {
+        let subject = request.input.target.subject.clone();
+        let provenance = QlProvenance::new(
+            self.capabilities.provider.clone(),
+            Operation::Locate.as_str(),
+            vec![InputRefRevision::new(
+                subject.clone(),
+                request.input.revision.clone(),
+            )],
+            ResultClass::Deterministic,
+        );
+        // The registry owns the canonical address space: a well-formed canonical
+        // address locates uniquely; anything else is honestly reported as a
+        // subject the registry holds no mapping for.
+        let parsed = QlAddress::from_str(subject.as_str());
+        let (candidates, status) = match parsed {
+            Ok(address) => (vec![address], LocateStatus::Unique),
+            Err(_) => (Vec::new(), LocateStatus::InsufficientInformation),
+        };
+        Ok(LocateResult {
+            target: request.input.target,
+            candidates,
+            status,
+            provenance,
+        })
     }
 
     fn refract(&self, request: RefractRequest) -> Result<SemanticReading, ProviderError> {
@@ -133,4 +170,67 @@ fn sanitise_ref(value: &str) -> String {
             }
         })
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ql_core::QlFormRef;
+    use ql_mef::{ClientRef, QlTarget};
+    use ql_semantic::{LocateStatus, TargetInput};
+
+    fn locate_request(subject: &str, frame: Option<QlFormRef>) -> LocateRequest {
+        LocateRequest {
+            input: TargetInput::new(
+                QlTarget::new(ClientRef::new(subject).expect("test subject is a valid ref")),
+                None,
+            ),
+            frame,
+        }
+    }
+
+    #[test]
+    fn locate_resolves_canonical_addresses_uniquely() {
+        let provider = RegistryDisclosureProvider::new();
+        let result = provider
+            .locate(locate_request("qladdr:sixfold@1/direct/P5/d0", None))
+            .expect("locate is a supported operation");
+        assert_eq!(result.status, LocateStatus::Unique);
+        assert_eq!(result.candidates.len(), 1);
+        assert_eq!(result.provenance.result_class, ResultClass::Deterministic);
+    }
+
+    #[test]
+    fn locate_reports_insufficient_information_for_unowned_subjects() {
+        let provider = RegistryDisclosureProvider::new();
+        let result = provider
+            .locate(locate_request("some free-text subject", None))
+            .expect("locate is a supported operation");
+        assert_eq!(result.status, LocateStatus::InsufficientInformation);
+        assert!(result.candidates.is_empty());
+    }
+
+    #[test]
+    fn locate_resolves_canonical_addresses_under_a_carried_frame() {
+        let provider = RegistryDisclosureProvider::new();
+        let result = provider
+            .locate(locate_request(
+                "qladdr:sixfold@1/direct/P5/d0",
+                Some(QlFormRef::SIXFOLD_V1),
+            ))
+            .expect("locate is a supported operation");
+        assert_eq!(result.status, LocateStatus::Unique);
+        assert_eq!(result.candidates.len(), 1);
+    }
+
+    #[test]
+    fn negotiation_declares_locate_and_refract_but_not_model_backed_operations() {
+        let provider = RegistryDisclosureProvider::new();
+        let capabilities = provider.capabilities();
+        assert!(capabilities.supports(Operation::Locate));
+        assert!(capabilities.supports(Operation::Refract));
+        assert!(capabilities.is_deterministic(Operation::Locate));
+        assert!(!capabilities.supports(Operation::Relate));
+        assert!(!capabilities.supports(Operation::Synthesise));
+    }
 }
