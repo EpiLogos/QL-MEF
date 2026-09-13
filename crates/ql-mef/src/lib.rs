@@ -39,6 +39,7 @@ mod vak;
 pub mod vak_composition;
 mod vak_oi;
 pub mod vak_profile;
+pub mod vak_scope;
 
 pub use context_frame::{
     CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCoordinate, ContextFrameCut, ContextFrameId,
