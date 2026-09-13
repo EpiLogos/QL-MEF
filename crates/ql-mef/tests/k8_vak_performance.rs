@@ -131,9 +131,18 @@ fn accepted_factory_performance_selects_ql_context_frame_mode_without_rewriting_
     assert_eq!(basis.m2_input.vimarsha.as_ref().unwrap().musical_mode, 4);
     assert_eq!(basis.derivation["context_frame"], "CF5");
     assert_eq!(basis.derivation["m1_context_frame"], "CF1");
-    assert_eq!(basis.derivation["factory_vak_performance"]["thread"], "CFP1");
-    assert_eq!(basis.derivation["factory_vak_performance"]["musical_role"], "chord");
-    assert_eq!(basis.derivation["factory_vak_performance"]["source_receipt_index"], 1);
+    assert_eq!(
+        basis.derivation["factory_vak_performance"]["thread"],
+        "CFP1"
+    );
+    assert_eq!(
+        basis.derivation["factory_vak_performance"]["musical_role"],
+        "chord"
+    );
+    assert_eq!(
+        basis.derivation["factory_vak_performance"]["source_receipt_index"],
+        1
+    );
     assert_eq!(serde_json::to_value(&basis.input).unwrap(), original);
     assert_eq!(basis.input.source_receipts[1], receipt);
     assert_eq!(
@@ -166,8 +175,14 @@ fn every_factory_cfp_form_retains_its_source_role_while_ql_owns_the_pitch_deriva
             .push(performance(&request.m3.subject_ref, "CF7", thread, role));
         let basis = request.compose().unwrap();
         assert_eq!(basis.m2_input.vimarsha.as_ref().unwrap().musical_mode, 6);
-        assert_eq!(basis.derivation["factory_vak_performance"]["thread"], thread);
-        assert_eq!(basis.derivation["factory_vak_performance"]["musical_role"], role);
+        assert_eq!(
+            basis.derivation["factory_vak_performance"]["thread"],
+            thread
+        );
+        assert_eq!(
+            basis.derivation["factory_vak_performance"]["musical_role"],
+            role
+        );
         assert_eq!(basis.derivation["context_frame"], "CF7");
     }
 }
@@ -178,7 +193,12 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
 
     let mut missing = base.clone();
     missing.schema = REQUEST_V3.into();
-    assert!(missing.compose().unwrap_err().contains("requires one actual Factory"));
+    assert!(
+        missing
+            .compose()
+            .unwrap_err()
+            .contains("requires one actual Factory")
+    );
 
     let mut implicit_upgrade = base.clone();
     implicit_upgrade.source_receipts.push(performance(
@@ -187,27 +207,50 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
         "CFP0",
         "single-voice",
     ));
-    assert!(implicit_upgrade.compose().unwrap_err().contains("explicit v3"));
+    assert!(
+        implicit_upgrade
+            .compose()
+            .unwrap_err()
+            .contains("explicit v3")
+    );
 
     let mut wrong_subject = base.clone();
     wrong_subject.schema = REQUEST_V3.into();
     wrong_subject
         .source_receipts
         .push(performance("subject:other", "CF5", "CFP0", "single-voice"));
-    assert!(wrong_subject.compose().unwrap_err().contains("same subject"));
+    assert!(
+        wrong_subject
+            .compose()
+            .unwrap_err()
+            .contains("same subject")
+    );
 
     let mut wrong_role = base.clone();
     wrong_role.schema = REQUEST_V3.into();
-    wrong_role
-        .source_receipts
-        .push(performance(&wrong_role.m3.subject_ref, "CF5", "CFP2", "chord"));
-    assert!(wrong_role.compose().unwrap_err().contains("thread/musical role"));
+    wrong_role.source_receipts.push(performance(
+        &wrong_role.m3.subject_ref,
+        "CF5",
+        "CFP2",
+        "chord",
+    ));
+    assert!(
+        wrong_role
+            .compose()
+            .unwrap_err()
+            .contains("thread/musical role")
+    );
 
     let mut duplicate = base.clone();
     duplicate.schema = REQUEST_V3.into();
     let event = performance(&duplicate.m3.subject_ref, "CF5", "CFP0", "single-voice");
     duplicate.source_receipts.extend([event.clone(), event]);
-    assert!(duplicate.compose().unwrap_err().contains("multiple Factory"));
+    assert!(
+        duplicate
+            .compose()
+            .unwrap_err()
+            .contains("multiple Factory")
+    );
 
     let mut no_attempt = base.clone();
     no_attempt.schema = REQUEST_V3.into();
@@ -221,5 +264,10 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
     let mut event = performance(&changed_actor.m3.subject_ref, "CF5", "CFP0", "single-voice");
     event["attempts"][0]["actorRef"] = json!("agent:other");
     changed_actor.source_receipts.push(event);
-    assert!(changed_actor.compose().unwrap_err().contains("changed actor/subject/QL identity"));
+    assert!(
+        changed_actor
+            .compose()
+            .unwrap_err()
+            .contains("changed actor/subject/QL identity")
+    );
 }
