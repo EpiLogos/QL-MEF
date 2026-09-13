@@ -1,7 +1,8 @@
 //! Installed full-event acceptance consumer. Geometry and subjects are explicitly
 //! controlled here; the dated sky comes from the actual provider receipt.
 use ql_mef::continuous::coupled::{
-    ConditionFrequencyBinding, CoupledFieldSession, CoupledInput, FrequencyBinding, HarmonicSource, REQUEST, REQUEST_V2,
+    ConditionFrequencyBinding, CoupledFieldSession, CoupledInput, FrequencyBinding, HarmonicSource,
+    REQUEST, REQUEST_V2,
 };
 use ql_mef::continuous::{FieldInput, LiftInput};
 use ql_mef::m1_engine::{EngineConfig, HarmonicSelection, M1Engine};
@@ -107,15 +108,21 @@ fn run() -> Result<(), String> {
             .rule(condition.maqam_index, condition.role)
             .ok_or("acceptance source path is absent")?;
         let resonator = m2.resonator.as_mut().unwrap();
-        let extra: Vec<_> = resonator.modes.iter().enumerate().map(|(i, original)| {
-            let mut mode = original.clone();
-            mode.mode_ref = format!("controlled:condition-mode/{i}");
-            mode.source_coordinate = path.maqam_coordinate.clone();
-            condition_bindings.push(ConditionFrequencyBinding {
-                mode_ref: mode.mode_ref.clone(), pitch_index: i as u8,
-            });
-            mode
-        }).collect();
+        let extra: Vec<_> = resonator
+            .modes
+            .iter()
+            .enumerate()
+            .map(|(i, original)| {
+                let mut mode = original.clone();
+                mode.mode_ref = format!("controlled:condition-mode/{i}");
+                mode.source_coordinate = path.maqam_coordinate.clone();
+                condition_bindings.push(ConditionFrequencyBinding {
+                    mode_ref: mode.mode_ref.clone(),
+                    pitch_index: i as u8,
+                });
+                mode
+            })
+            .collect();
         resonator.modes.extend(extra);
         field.audio_gains.extend(field.audio_gains.clone());
         for sample in &mut field.samples {
@@ -188,11 +195,21 @@ fn run() -> Result<(), String> {
         assert_eq!(mode.frequency_hz, frequency.as_f64().unwrap());
     }
     if dual_bus {
-        let modes = &owner.current_basis().m2_input.resonator.as_ref().unwrap().modes;
+        let modes = &owner
+            .current_basis()
+            .m2_input
+            .resonator
+            .as_ref()
+            .unwrap()
+            .modes;
         assert_eq!(modes.len(), 16);
         for (i, mode) in modes[8..].iter().enumerate() {
-            assert_eq!(mode.frequency_hz,
-                owner.current_basis().m2["condition"]["musical"]["pitches_hz"][i].as_f64().unwrap());
+            assert_eq!(
+                mode.frequency_hz,
+                owner.current_basis().m2["condition"]["musical"]["pitches_hz"][i]
+                    .as_f64()
+                    .unwrap()
+            );
         }
     }
     states.push(owner.advance(2048, false)?);
@@ -280,11 +297,16 @@ fn run() -> Result<(), String> {
     if dual_bus {
         let mut invalid = changed.clone();
         newer_seed(&mut invalid);
-        invalid.condition_frequency_bindings[0].mode_ref = invalid.frequency_bindings[0].mode_ref.clone();
+        invalid.condition_frequency_bindings[0].mode_ref =
+            invalid.frequency_bindings[0].mode_ref.clone();
         assert!(owner.replace(invalid).is_err());
         assert_eq!(owner.snapshot(), updated);
-        let before_hz = before["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0].as_f64().unwrap();
-        let after_hz = updated["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0].as_f64().unwrap();
+        let before_hz = before["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0]
+            .as_f64()
+            .unwrap();
+        let after_hz = updated["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0]
+            .as_f64()
+            .unwrap();
         assert!((after_hz / before_hz - 1.2).abs() < 1e-12);
     }
     states.push(owner.advance(512, true)?);

@@ -82,7 +82,11 @@ impl CoupledInput {
         if !matches!(self.schema.as_str(), REQUEST | REQUEST_V2)
             || (self.schema == REQUEST && !self.condition_frequency_bindings.is_empty())
             || self.m3_commands.len() > 64
-            || self.frequency_bindings.len().saturating_add(self.condition_frequency_bindings.len()) > 4096
+            || self
+                .frequency_bindings
+                .len()
+                .saturating_add(self.condition_frequency_bindings.len())
+                > 4096
             || self.source_receipts.len() > 64
             || serde_json::to_vec(self).map_err(|e| e.to_string())?.len() > super::MAX_MESSAGE
         {
@@ -203,7 +207,9 @@ impl CoupledInput {
                 .get(usize::from(binding.pitch_index))
                 .ok_or("condition pitch unavailable: unsupported tuning or index outside the native eight")?;
             if !seen.insert(&binding.mode_ref) {
-                return Err("duplicate material-mode frequency binding across musical buses".into());
+                return Err(
+                    "duplicate material-mode frequency binding across musical buses".into(),
+                );
             }
             let mode = request
                 .resonator
