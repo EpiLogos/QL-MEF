@@ -123,6 +123,15 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/cprime_oikonomia.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0-4", "#0-5"],
+      "rationale": "Accepted #94 QL-owned C-prime execution semantics from main/#177: six CFP forms, governed Z, directed CS passage and Return-surviving reflective receipts over the existing VakComposition owner. K8 records the current implementation disposition only; it does not absorb Factory scheduling or create a second C registry.",
+      "tests": ["crates/ql-mef/src/cprime_oikonomia.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/continuous/receipt/tests.rs",
       "stratum": "rust",
       "disposition": "infrastructural",
