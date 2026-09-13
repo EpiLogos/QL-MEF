@@ -128,3 +128,12 @@ packaging change named by `k8-build-lineage-v1.json`; any changed numerical/sour
 input, historical proof, unreviewed build edit, partial/stale execution or changed
 post-execution input fails. The new `k8-preservation.json` stays beside that run's
 native receipt. It does not pretend the old proof ran on the new Makefile.
+
+## Reviewed graph application and rollback
+
+The [K8 graph promotion contract](K8-GRAPH-PROMOTION-CONTRACT.md) supplies the
+executable projection, explicit target review and atomic application/guarded
+rollback for this exact amendment. It retains the graph's captured coordinate
+spellings, every qualified new assertion and all pre-existing source content.
+Controlled Neo4j execution and actual owner-graph application have separate
+receipts; the immutable source projection remains pending owner live application.
