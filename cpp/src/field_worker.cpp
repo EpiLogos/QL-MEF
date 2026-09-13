@@ -21,7 +21,7 @@ std::string text(J *v) { ql::require(v && json_object_get_type(v) == json_type_s
 double number(J *v) { ql::require(v && (json_object_get_type(v) == json_type_int || json_object_get_type(v) == json_type_double), "expected number"); auto n = json_object_get_double(v); ql::require(std::isfinite(n), "nonfinite number"); return n; }
 unsigned small(J *v, unsigned max = UINT32_MAX) { auto n = number(v); ql::require(n >= 0 && n <= max && std::floor(n) == n, "invalid bounded integer"); return unsigned(n); }
 bool boolean(J *v) { ql::require(v && json_object_get_type(v) == json_type_boolean, "expected boolean"); return json_object_get_boolean(v); }
-template <typename T> T decimal(J *v) { auto s = text(v); T value{}; auto r = std::from_chars(s.data(), s.data() + s.size(), value); ql::require(r.ec == std::errc() && r.ptr == s.data() + s.size(), "invalid exact decimal integer"); return value; }
+template <typename T> T decimal(J *v) { auto s = text(v); T value{}; auto r = std::from_chars(s.data(), s.data() + s.size(), value); ql::require(r.ec == std::errc() && r.ptr == s.data() + s.size() && std::to_string(value) == s, "invalid canonical exact decimal integer"); return value; }
 std::uint64_t exact_number(J *v) { auto n = number(v); ql::require(n >= 0 && n <= 9007199254740991.0 && std::floor(n) == n, "inexact numeric identity"); return std::uint64_t(n); }
 std::size_t count(J *a, std::size_t max) { ql::require(a && json_object_get_type(a) == json_type_array, "expected array"); auto n = json_object_array_length(a); ql::require(n <= max, "array budget exceeded"); return n; }
 J *at(J *a, std::size_t i) { ql::require(i < count(a, 16777216), "array index out of range"); return json_object_array_get_idx(a, i); }

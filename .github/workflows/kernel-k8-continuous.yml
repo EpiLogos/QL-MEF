@@ -21,7 +21,7 @@ jobs:
           components: rustfmt, clippy
       - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
-          for path in crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/tests/k8_coupled.rs; do
+          for path in crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/tests/k8_coupled.rs; do
             mkdir -p "target/k8-format/$(dirname "$path")"
             cp "$path" "target/k8-format/$path"
             rustfmt --edition 2024 --config skip_children=true "target/k8-format/$path"
@@ -57,6 +57,11 @@ jobs:
           cargo build --locked -p ql-mef --example m2_engine
           set -o pipefail
           python scripts/test-k8-continuous.py target/k8-cpp/bin/ql-field-worker 2>&1 | tee target/k8-continuous/native-join.log
+      - name: Receipt identity and transport failure admission
+        run: |
+          set -o pipefail
+          cargo test --locked -p ql-mef continuous::receipt::tests 2>&1 | tee target/k8-continuous/transport-tests.log
+          cargo test --locked -p ql-mef vak_profile::tests 2>&1 | tee target/k8-continuous/aw-profile-tests.log
       - name: Rust validated producer and persistent native control session
         run: |
           cargo run --locked -p ql-mef --example k8_field -- target/k8-cpp/bin/ql-field-worker \

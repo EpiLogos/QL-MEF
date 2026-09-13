@@ -35,6 +35,7 @@ mod sublens;
 mod templateure;
 mod vak;
 pub mod vak_composition;
+pub mod vak_profile;
 mod vak_oi;
 
 pub use context_frame::{
