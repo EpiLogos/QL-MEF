@@ -1,9 +1,9 @@
 # K8 native resource measurement
 
-This is the bounded native part of B07/B10/B12 under
+This is the bounded K8 part of B07/B10/B12 under
 [Optimisation and Learning](OPTIMISATION-AND-LEARNING.md), not a substitute for
-composed desktop, model/provider or human acceptance. Run the existing complete
-v2 musical/dated-sky producer first, then:
+composed desktop, model/provider, protected Nara or human acceptance. Run the
+existing complete v2 musical/dated-sky producer first, then:
 
 ```sh
 python -m unittest discover -s scripts/tests -p test_k8_resource.py
@@ -55,12 +55,41 @@ failure count as an optimisation target; do not increase a budget post hoc to
 make its original receipt green. Unit tests specifically reject empty/invalid
 observations and distinguish a slow or growing run from a pass.
 
-No GPU/VRAM, browser audio-device scheduling, Epii/model work, remote delivery,
-whole Bimba/Epii/background-task composition, cancellation-to-effect or human
-sensory judgement is measured here. Those remain explicit joined obligations.
-In particular, the browser's existing suspended-prefill synchronisation specimen
-is not sustained unsuspended source-change throughput. A short bounded native
-run is not hours of owner-machine experience and cannot close K8 by itself.
+## Unsuspended browser / audio / retained-field receipt
+
+The same continuous workflow separately executes
+`adapters/retained-field/test-instrument-browser.py` against the installed host,
+worker and adapters plus the actual retained Point-Cloud GPGPU implementation.
+The earlier exact sound/field/recovery proof remains, but the browser acceptance
+now also drives the existing `InstrumentSession.start()` data plane while the
+WebAudio context is **running** and 65,536 retained particles are being integrated.
+This is measurement around the existing owner and scheduler, not another
+simulation loop or audio generator.
+
+A controlled live window spans 72 animation frames and at least four real
+4,096-sample native advances. It records frame p50/p95/p99/max, queue high-water
+marks, acknowledged-to-presented generation age, native scheduling slack and
+attributable native-request-to-coherent-field-application time. NativeAudio's
+existing hard admission rejects a block that reaches WebAudio late; any resulting
+hold fails the live acceptance. The controlled stale-display ceiling is 0.5 s and
+the catastrophic presentation-stall ceiling is 500 ms. The declared queue
+ceilings remain eight blocks / 8 MiB. These fixed values are CI diagnostics, not
+post-hoc desktop budgets.
+
+The live window then performs an explicit hold and current-native read recovery.
+It must return with zero presentation backlog, unchanged owner identity and no
+particle reseed. Coalesced presentation frames remain explicit; PCM/native
+commands are not silently discarded. The result is retained inside
+`ql.k8-managed-browser-acceptance/v1` as `sustained_live_measurement`, alongside
+the exact native request/response trace and original replay proof.
+
+This controlled Chromium/SwiftShader receipt measures browser scheduling and
+retained-field continuity but not owner GPU/VRAM, physical speaker latency,
+long-duration desktop thermal behaviour, Epii/model work, remote delivery,
+protected Nara reception, whole Bimba/Epii/background-task composition or human
+sensory judgement. The native resource receipt supplies RSS/CPU/file-descriptor
+measurements; it does not relabel those as browser GPU observations. Those wider
+relations remain joined B07/B10/B12 obligations with their actual owners.
 
 ## Build-profile comparison without changing the instrument
 
