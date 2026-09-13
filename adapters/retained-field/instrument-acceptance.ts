@@ -128,19 +128,22 @@ async function main() {
   const recovery = session.reading;
   check(recovery.audio.interval.native_start === '16384' && recovery.audio.device_epoch === 1,
     'recovery replays old PCM or loses native identity');
-  await context.resume(); await at(context, recovery.audio.target_context_seconds + 0.01); session.present();
-  check(binding.lastReceipt.samples_elapsed === '20480' && seeds === 1, 're-entry reset or reseeded material');
 
   // Exercise the actual unsuspended periodic data plane while the retained GPU is
-  // integrating. The ceilings below are controlled CI diagnostics, not desktop
-  // budgets. NativeAudioBinding itself refuses a late block before scheduling;
-  // a missed audio deadline therefore puts this session on hold and fails here.
+  // integrating. Start the bounded driver while the first recovered interval is
+  // still ahead of the device clock. Waiting until after that interval ends before
+  // starting would create a real gap, and the receiver must reject the next
+  // contiguous native block as late rather than silently starting it "now".
   const liveCallsBefore = calls.length, liveApplicationsBefore = applications.length;
   const liveStart = performance.now(), liveDeviceStart = context.currentTime;
   const liveStartSamples = BigInt(session.reading.acknowledged.samples_elapsed);
   const frameIntervals: number[] = [], generationAges: number[] = [], audioDeadlineSlack: number[] = [];
   let lastAnimation = liveStart, maxQueuedBlocks = 0, maxQueuedBytes = 0;
+  await context.resume();
   session.start(8);
+  await at(context, recovery.audio.target_context_seconds + 0.01);
+  session.present();
+  check(binding.lastReceipt.samples_elapsed === '20480' && seeds === 1, 're-entry reset or reseeded material');
   for (let i = 0; i < 72; i++) {
     const stamp = await animationFrame();
     frameIntervals.push(stamp - lastAnimation); lastAnimation = stamp;
