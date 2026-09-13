@@ -1,0 +1,33 @@
+name: AW94 one-shot rustfmt
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/aw94-format-helper.yml'
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.head_ref == 'agent/aw94-full-field'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.98.1'
+          components: rustfmt
+      - name: Apply exact Rust formatting
+        run: |
+          set -euo pipefail
+          cargo fmt --all
+          git diff --check
+          if ! git diff --quiet; then
+            git config user.name 'Epii'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add crates/ql-mef/src/vak_performance.rs crates/ql-mef/src/lib.rs
+            git commit -m 'style(aw94): apply exact Rust 1.98.1 formatting'
+            git push origin HEAD:${{ github.head_ref }}
+          fi
