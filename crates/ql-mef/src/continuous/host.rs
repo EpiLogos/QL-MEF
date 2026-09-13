@@ -23,8 +23,8 @@ pub struct HostConfig {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "operation", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum HostOperation {
-    Read,
-    Inspect,
+    Read {},
+    Inspect {},
     Advance { frames: u32, muted: bool },
     SetAxis { axis: u8, phase: LiftInput },
     Replace { basis: Box<CoupledInput> },
@@ -129,17 +129,21 @@ impl FieldHost {
 
     pub fn execute(&mut self, request: HostRequest) -> Value {
         if let Err(error) = self.admit(&request) {
-            let status = if self.available() { "refused" } else { "unavailable" };
+            let status = if self.available() {
+                "refused"
+            } else {
+                "unavailable"
+            };
             return self.response(Some(&request.request_id), status, Some(&error));
         }
-        if matches!(&request.command, HostOperation::Inspect) {
+        if matches!(&request.command, HostOperation::Inspect { .. }) {
             let mut response = self.response(Some(&request.request_id), "ok", None);
             response["sources"] = json!({"original":self.session.original_basis(),
                 "current":self.session.current_basis(), "original_field":self.session.original_field()});
             return response;
         }
         let result = match request.command {
-            HostOperation::Read => self.session.read_field(),
+            HostOperation::Read {} => self.session.read_field(),
             HostOperation::Advance { frames, muted } => {
                 if frames > 8192 {
                     Err("native block ceiling exceeded".into())
@@ -155,7 +159,7 @@ impl FieldHost {
                 }
             }
             HostOperation::Replace { basis } => self.session.replace_field(*basis),
-            HostOperation::Inspect => unreachable!("inspection returned before dispatch"),
+            HostOperation::Inspect {} => unreachable!("inspection returned before dispatch"),
         };
         match result {
             Ok(field) => {
@@ -164,7 +168,11 @@ impl FieldHost {
                 response
             }
             Err(error) => {
-                let status = if self.available() { "refused" } else { "unavailable" };
+                let status = if self.available() {
+                    "refused"
+                } else {
+                    "unavailable"
+                };
                 self.response(Some(&request.request_id), status, Some(&error))
             }
         }
@@ -191,9 +199,12 @@ mod tests {
             json!({"operation":"advance", "frames":1.5,"muted":false}),
             json!({"operation":"shutdown"}),
         ] {
-            assert!(serde_json::from_value::<HostOperation>(value).is_err());
+            assert!(
+                serde_json::from_value::<HostOperation>(value.clone()).is_err(),
+                "accepted {value}"
+            );
         }
         let command: HostOperation = serde_json::from_value(json!({"operation":"read"})).unwrap();
-        assert!(matches!(command, HostOperation::Read));
+        assert!(matches!(command, HostOperation::Read {}));
     }
 }

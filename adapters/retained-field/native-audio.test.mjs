@@ -205,3 +205,17 @@ test('thousands of ordinary updates retain bounded live nodes, not the whole pla
   assert.equal(binding.lastReceipt.native.samples_elapsed, String(3000 * 512));
   assert.ok(context.nodes.slice(0, -2).every(node => node.disconnected)); binding.dispose();
 });
+
+
+test('pure wire validation admits no source cursor, node or presentation state', () => {
+  const { context, binding } = setup();
+  const before = binding.lastReceipt, capacity = binding.capacity;
+  binding.validate(frame(128n, Array(128).fill(0.1)));
+  binding.validate(frame(256n, Array(128).fill(0.2)));
+  assert.deepEqual(binding.lastReceipt, before); assert.deepEqual(binding.capacity, capacity);
+  assert.equal(context.nodes.length, 0);
+  unchanged(binding, () => binding.validate(frame(1n, [NaN])));
+  binding.hold('explicit-recovery');
+  assert.equal(binding.validate(frame(256n)), true);
+  binding.dispose();
+});

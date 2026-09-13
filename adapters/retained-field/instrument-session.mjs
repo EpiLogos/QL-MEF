@@ -121,9 +121,10 @@ export class InstrumentSession {
         frame?.sample_rate === this.#native.sample_rate && Array.isArray(frame.audio), 'foreign/malformed native field');
       need(JSON.stringify(frame).length * 2 <= this.#maxBytes, 'native field exceeds presentation memory ceiling');
       this.#field.validate(frame); // PURE: future targets cannot run ahead of sound.
+      this.#audio.validate(frame); // Malformed PCM/bases are transport uncertainty, not a device failure.
       const unchanged = sameState(frame, this.#native);
       if (reply.status === 'refused') {
-        need(unchanged, 'refused command changed acknowledged state');
+        need(unchanged && frame.audio.length === 0, 'refused command changed state or replayed PCM');
         this.#sequence = next;
         return { refused: true, error: reply.error ?? 'native command refused' };
       }

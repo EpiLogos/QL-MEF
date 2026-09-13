@@ -160,3 +160,23 @@ infrastructure over existing refs. They do not manufacture a new coordinate or
 retarget historical K4/ledger readiness. C/C++ numerical owners and the AW profile
 body are preserved. Actual device/GPU/desktop/private-source and human acceptance
 remain separate exact-version installation evidence under #132/#133/#134.
+
+### Joined native/browser execution
+
+`adapters/retained-field/test-instrument-browser.py` connects the installed
+Rust host and C++ worker to the installed `InstrumentSession`, actual browser
+AudioContext and retained Point-Cloud GPGPUSimulator in one controlled run.
+It admits real dated source inputs, changes the independent lensing axis and
+full coupled basis, checks that future targets remain unchanged until their
+audio interval ends, and preserves resident positions, velocities, textures,
+density and sample identities. Two companion readers make no native calls.
+After actual WebGL context loss/restore, an explicit native read establishes a
+new audio epoch without replaying the preceding interval. The exact browser-led
+native command sequence is replayed through a fresh native host.
+
+The Playwright-exposed functions are disposable test transport, not a new
+production desktop bridge or authority service. The runtime uses the host's
+authorised pipe adapter. Source/install/binary hashes, native requests/replies,
+actual GPU identity, timing observations and acceptance results are retained in
+`target/k8-instrument/`. This joined test complements the separate every-sample
+OfflineAudioContext comparison; it does not establish physical speaker timing.

@@ -161,6 +161,7 @@ test('malformed/foreign/reordered replies fail before scheduling sound or changi
   for (const mutate of [r => { r.instance_ref = 'foreign'; }, r => { r.request_id = '2'; },
     r => { r.field.subject_ref = 'foreign'; }, r => { r.field.samples_elapsed = '1024'; },
     r => { r.field.targets[0].position[0] = NaN; }, r => { r.field.audio.pop(); },
+    r => { r.field.audio[0] = NaN; }, r => { r.field.clock.generation = Number.MAX_SAFE_INTEGER + 1; },
     r => { r.available = false; }]) {
     const { session, port, context, field } = setup();
     port.effect = r => { mutate(r); return r; };

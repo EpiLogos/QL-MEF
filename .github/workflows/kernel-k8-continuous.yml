@@ -76,6 +76,7 @@ jobs:
           mkdir -p target/k8-host
           cargo build --locked -p ql-mef --bin ql-field-host
           install -m755 target/debug/ql-field-host target/k8-cpp/bin/ql-field-host
+          cp target/k8-cpp/bin/ql-field-host target/k8-host/ql-field-host
           set -o pipefail
           python scripts/test-k8-host.py target/k8-cpp/bin/ql-field-host target/k8-cpp/bin/ql-field-worker 2>&1 | tee target/k8-host/host-run.log
       - name: Fetch the exact retained renderer read-only
@@ -112,6 +113,11 @@ jobs:
         run: |
           set -o pipefail
           python adapters/retained-field/test-audio-browser.py 2>&1 | tee target/k8-audio/browser-run.log
+      - name: Managed native host into actual retained GPU and browser sound
+        run: |
+          set -o pipefail
+          mkdir -p target/k8-instrument
+          python adapters/retained-field/test-instrument-browser.py 2>&1 | tee target/k8-instrument/browser-run.log
       - name: Exact source and toolchain receipt
         if: always()
         run: |
@@ -132,5 +138,6 @@ jobs:
             target/k8-coupled/
             target/k8-audio/
             target/k8-host/
+            target/k8-instrument/
           retention-days: 14
           if-no-files-found: error

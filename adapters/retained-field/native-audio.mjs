@@ -131,6 +131,15 @@ export class NativeAudioBinding {
     return Object.freeze({ blocks: this.#maxBlocks - this.#active.size, frames: this.#maxFrames - queued,
       held: this.#held, closed: this.#closed });
   }
+  /** Pure wire admission, separate from queue capacity and device deadlines.
+   * Management transport must validate PCM/bases before acknowledging a reply.
+   * Holds still allow validation of the explicit native read used for re-entry.
+   */
+  validate(frame) {
+    need(!this.#closed, 'audio receiver disposed');
+    this.#checkIdentity(decode(frame, this.#context.sampleRate));
+    return true;
+  }
   /** Admit a contiguous native PCM interval exactly once. Refusal never advances
    * this receiver's cursor, and never rolls back an already-committed C++ owner.
    */
