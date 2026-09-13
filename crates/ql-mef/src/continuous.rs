@@ -3,6 +3,7 @@
 //! reference nor a geometry payload grants authority. No child/JSON/domain work
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
+pub mod host;
 mod receipt;
 
 use receipt::ReceiptGuard;

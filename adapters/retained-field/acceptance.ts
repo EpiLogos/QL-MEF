@@ -24,6 +24,13 @@ async function main() {
   const binding = new RetainedFieldBinding(simulator, {initialFrame: frames[0], targetA: a, targetB: b, slotsA, slotsB});
   const textures = [binding.targetA, binding.targetB], arrays = textures.map(t => t.image.data);
   const original = binding.checkpoint(renderer);
+  const targetBeforeValidation = arrays[0].slice();
+  for (const frame of frames) binding.validate(frame);
+  const afterValidation = binding.checkpoint(renderer);
+  check(JSON.stringify(binding.lastReceipt) === JSON.stringify(original.receipt), 'preflight advanced source cursor');
+  check(original.position.every((v, i) => v === afterValidation.position[i]) &&
+    original.velocity.every((v, i) => v === afterValidation.velocity[i]), 'preflight mutated resident material');
+  check(arrays[0].every((v, i) => v === targetBeforeValidation[i]), 'preflight altered targets/density');
   for (const frame of frames) binding.apply(frame);
   check(seeds === 1, 'ordinary update reseeded particles');
   const afterUpdate = binding.checkpoint(renderer);

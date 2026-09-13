@@ -54,7 +54,12 @@ export class RetainedFieldBinding {
   get targetA() { return this.#a; }
   get targetB() { return this.#b; }
   get lastReceipt() { return this.#last === null ? null : structuredClone(this.#last); }
-  apply(frame) {
+  /** Pure admission, shared with the sound/field delivery owner. No texture,
+   * cursor or particle is changed while a future audio interval is queued. */
+  validate(frame) {
+    return this.#checked(frame).repeated === false;
+  }
+  #checked(frame) {
     need(!this.#disposed && frame.schema === CONTRACT, 'unavailable or unsupported field');
     for (const key of identityKeys) need(frame[key] === this.#identity[key], 'field identity changed; explicit new binding required');
     need(frame.presentation_units_per_metre === 1, 'native target units must be metres');
@@ -76,8 +81,12 @@ export class RetainedFieldBinding {
       need(JSON.stringify(receipt) === JSON.stringify(this.#last), 'conflicting source basis at the same native cursor');
       for (let i = 0; i < this.#ids.length; i++) for (let axis = 0; axis < 3; axis++)
         need(Math.fround(frame.targets[i].position[axis]) === this.#xyz[i * 3 + axis], 'conflicting payload at the same native cursor');
-      return false;
     }
+    return { generation, elapsed, receipt, repeated };
+  }
+  apply(frame) {
+    const { generation, elapsed, receipt, repeated } = this.#checked(frame);
+    if (repeated) return false;
     for (let i = 0; i < this.#ids.length; i++) this.#xyz.set(frame.targets[i].position, i * 3);
     for (const [texture, slots] of [[this.#a, this.#slotsA], [this.#b, this.#slotsB]]) {
       const data = texture.image.data;
