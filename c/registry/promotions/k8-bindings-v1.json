@@ -265,6 +265,15 @@
       "rationale": "Installed acceptance consumer for the existing C++ field plus subject-bound Nara wrapper. It proves currentness/replay and no hidden native advance with controlled source-qualified receiver values; it does not define receiver physiology, source mappings or another runtime owner.",
       "tests": [".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/k8_vak_personal.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Cross-owner K8 acceptance consumer only: admits a Factory-owner Vāk receipt, composes it through the existing QL dual-bus material owner and receives the same occasion through #134 PersonalFieldInstance. It starts no execution owner, pitch table, Nara mapping or second field.",
+      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "kind": "computational"
     }
   ]
 }
