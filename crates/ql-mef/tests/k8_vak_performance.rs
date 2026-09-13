@@ -1,7 +1,7 @@
 #![recursion_limit = "256"]
-//! K8 consumes the accepted Factory performance contract as execution evidence.
-//! The controlled JSON below exercises that public wire shape; Factory remains
-//! the producer/attempt owner and QL remains the Context-Frame/musical owner.
+//! K8 consumes QL's accepted performance event, not Factory's wire directly.
+//! Factory owns execution actuality; `vak_performance` owns C′/musical meaning;
+//! this test proves the continuous owner only admits that qualified projection.
 use ql_mef::continuous::coupled::{
     CoupledInput, FrequencyBinding, HarmonicSource, REQUEST_V2, REQUEST_V3,
 };
@@ -67,11 +67,11 @@ fn input() -> CoupledInput {
             octet_index: 0,
         }],
         condition_frequency_bindings: vec![],
-        source_receipts: vec![json!({"standing":"controlled non-Factory source receipt"})],
+        source_receipts: vec![json!({"standing":"controlled non-performance source receipt"})],
     }
 }
 
-fn performance(subject: &str, frame: &str, thread: &str, musical_role: &str) -> Value {
+fn factory_performance(subject: &str, frame: &str, thread: &str, musical_role: &str) -> Value {
     json!({
         "contract":"factory.vak-orchestration/v1",
         "performanceRef":format!("performance:{thread}"),
@@ -120,12 +120,54 @@ fn performance(subject: &str, frame: &str, thread: &str, musical_role: &str) -> 
     })
 }
 
+fn performance_event(subject: &str, frame: &str, thread: &str, musical_role: &str) -> Value {
+    let (mode_index, mode, voice) = match frame {
+        "CF5" => (4, "mixolydian", "Anima"),
+        "CF7" => (6, "locrian", "Sophia"),
+        _ => panic!("controlled fixture only uses CF5/CF7"),
+    };
+    let factory = factory_performance(subject, frame, thread, musical_role);
+    json!({
+        "contract":"ql.vak-performance-event/v1",
+        "performanceRef":factory["performanceRef"],
+        "observation":{"observationRef":"observation:k8-live","mode":"live"},
+        "factoryContract":"factory.vak-orchestration/v1",
+        "factoryReceiptRefs":["factory-receipt:attempt","factory-receipt:return"],
+        "qlBindingRef":"ql:whole:vak-performance",
+        "qlBindingRevision":"ql-revision-1",
+        "qlBasisRefs":["docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md","evidence:ql-performance"],
+        "semantics":{
+            "profileContract":"ql.vak-composition.profile/v1",
+            "participation":"authorised-undertaking",
+            "content":"CT2",
+            "position":"4.2",
+            "contextFrame":frame,
+            "constitutionalVoice":voice,
+            "thread":thread,
+            "sequence":"CS2",
+            "direction":"forward",
+            "musicalRole":musical_role,
+            "musicalMode":mode,
+            "musicalModeIndex":mode_index,
+            "lens":"L0",
+            "musicalBasis":"chromatic",
+            "framePitch":0
+        },
+        "settled":true,
+        "hasFailure":false,
+        "hasInterruption":false,
+        "hasLateReturn":false,
+        "factory":factory,
+        "standing":"controlled QL semantic projection of retained Factory execution"
+    })
+}
+
 #[test]
-fn accepted_factory_performance_selects_ql_context_frame_mode_without_rewriting_m1() {
+fn ql_performance_event_selects_context_frame_mode_without_rewriting_m1() {
     let mut request = input();
     request.schema = REQUEST_V3.into();
-    let receipt = performance(&request.m3.subject_ref, "CF5", "CFP1", "chord");
-    request.source_receipts.push(receipt.clone());
+    let event = performance_event(&request.m3.subject_ref, "CF5", "CFP1", "chord");
+    request.source_receipts.push(event.clone());
     let original = serde_json::to_value(&request).unwrap();
     let basis = request.compose().unwrap();
 
@@ -133,19 +175,19 @@ fn accepted_factory_performance_selects_ql_context_frame_mode_without_rewriting_
     assert_eq!(basis.derivation["context_frame"], "CF5");
     assert_eq!(basis.derivation["m1_context_frame"], "CF1");
     assert_eq!(
-        basis.derivation["factory_vak_performance"]["thread"],
+        basis.derivation["vak_performance_event"]["semantics"]["thread"],
         "CFP1"
     );
     assert_eq!(
-        basis.derivation["factory_vak_performance"]["musical_role"],
+        basis.derivation["vak_performance_event"]["semantics"]["musicalRole"],
         "chord"
     );
     assert_eq!(
-        basis.derivation["factory_vak_performance"]["source_receipt_index"],
+        basis.derivation["vak_performance_event"]["source_receipt_index"],
         1
     );
     assert_eq!(serde_json::to_value(&basis.input).unwrap(), original);
-    assert_eq!(basis.input.source_receipts[1], receipt);
+    assert_eq!(basis.input.source_receipts[1], event);
     assert_eq!(
         basis.m2_input.resonator.as_ref().unwrap().modes[0].frequency_hz,
         basis.m2["vimarsha"]["reading"]["audio_octet_hz"][0]
@@ -155,12 +197,12 @@ fn accepted_factory_performance_selects_ql_context_frame_mode_without_rewriting_
     assert_eq!(
         serde_json::to_value(request.compose().unwrap()).unwrap(),
         serde_json::to_value(basis).unwrap(),
-        "same immutable performance must replay exactly"
+        "same immutable performance event must replay exactly"
     );
 }
 
 #[test]
-fn every_factory_cfp_form_retains_its_source_role_while_ql_owns_the_pitch_derivation() {
+fn every_cfp_form_retains_factory_role_while_ql_event_owns_pitch_semantics() {
     for (thread, role) in [
         ("CFP0", "single-voice"),
         ("CFP1", "chord"),
@@ -171,25 +213,28 @@ fn every_factory_cfp_form_retains_its_source_role_while_ql_owns_the_pitch_deriva
     ] {
         let mut request = input();
         request.schema = REQUEST_V3.into();
-        request
-            .source_receipts
-            .push(performance(&request.m3.subject_ref, "CF7", thread, role));
+        request.source_receipts.push(performance_event(
+            &request.m3.subject_ref,
+            "CF7",
+            thread,
+            role,
+        ));
         let basis = request.compose().unwrap();
         assert_eq!(basis.m2_input.vimarsha.as_ref().unwrap().musical_mode, 6);
         assert_eq!(
-            basis.derivation["factory_vak_performance"]["thread"],
+            basis.derivation["vak_performance_event"]["semantics"]["thread"],
             thread
         );
         assert_eq!(
-            basis.derivation["factory_vak_performance"]["musical_role"],
-            role
+            basis.derivation["vak_performance_event"]["factory"]["attempts"],
+            1
         );
         assert_eq!(basis.derivation["context_frame"], "CF7");
     }
 }
 
 #[test]
-fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
+fn performance_event_is_versioned_fail_closed_and_subject_bound() {
     let base = input();
 
     let mut missing = base.clone();
@@ -198,11 +243,26 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
         missing
             .compose()
             .unwrap_err()
-            .contains("requires one actual Factory")
+            .contains("requires one QL Vāk performance")
+    );
+
+    let mut raw_factory = base.clone();
+    raw_factory.schema = REQUEST_V3.into();
+    raw_factory.source_receipts.push(factory_performance(
+        &raw_factory.m3.subject_ref,
+        "CF5",
+        "CFP0",
+        "single-voice",
+    ));
+    assert!(
+        raw_factory
+            .compose()
+            .unwrap_err()
+            .contains("must be projected by the QL Vāk performance owner")
     );
 
     let mut implicit_upgrade = base.clone();
-    implicit_upgrade.source_receipts.push(performance(
+    implicit_upgrade.source_receipts.push(performance_event(
         &implicit_upgrade.m3.subject_ref,
         "CF5",
         "CFP0",
@@ -217,9 +277,12 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
 
     let mut wrong_subject = base.clone();
     wrong_subject.schema = REQUEST_V3.into();
-    wrong_subject
-        .source_receipts
-        .push(performance("subject:other", "CF5", "CFP0", "single-voice"));
+    wrong_subject.source_receipts.push(performance_event(
+        "subject:other",
+        "CF5",
+        "CFP0",
+        "single-voice",
+    ));
     assert!(
         wrong_subject
             .compose()
@@ -227,48 +290,36 @@ fn factory_performance_is_versioned_fail_closed_and_identity_bound() {
             .contains("same subject")
     );
 
-    let mut wrong_role = base.clone();
-    wrong_role.schema = REQUEST_V3.into();
-    wrong_role.source_receipts.push(performance(
-        &wrong_role.m3.subject_ref,
+    let mut semantic_drift = base.clone();
+    semantic_drift.schema = REQUEST_V3.into();
+    let mut event = performance_event(
+        &semantic_drift.m3.subject_ref,
         "CF5",
         "CFP2",
-        "chord",
-    ));
+        "melody",
+    );
+    event["semantics"]["musicalRole"] = json!("chord");
+    semantic_drift.source_receipts.push(event);
     assert!(
-        wrong_role
+        semantic_drift
             .compose()
             .unwrap_err()
-            .contains("thread/musical role")
+            .contains("semantics disagree")
     );
 
-    let mut duplicate = base.clone();
+    let mut duplicate = base;
     duplicate.schema = REQUEST_V3.into();
-    let event = performance(&duplicate.m3.subject_ref, "CF5", "CFP0", "single-voice");
+    let event = performance_event(
+        &duplicate.m3.subject_ref,
+        "CF5",
+        "CFP0",
+        "single-voice",
+    );
     duplicate.source_receipts.extend([event.clone(), event]);
     assert!(
         duplicate
             .compose()
             .unwrap_err()
-            .contains("multiple Factory")
-    );
-
-    let mut no_attempt = base.clone();
-    no_attempt.schema = REQUEST_V3.into();
-    let mut event = performance(&no_attempt.m3.subject_ref, "CF5", "CFP0", "single-voice");
-    event["attempts"] = json!([]);
-    no_attempt.source_receipts.push(event);
-    assert!(no_attempt.compose().unwrap_err().contains("actual attempt"));
-
-    let mut changed_actor = base;
-    changed_actor.schema = REQUEST_V3.into();
-    let mut event = performance(&changed_actor.m3.subject_ref, "CF5", "CFP0", "single-voice");
-    event["attempts"][0]["actorRef"] = json!("agent:other");
-    changed_actor.source_receipts.push(event);
-    assert!(
-        changed_actor
-            .compose()
-            .unwrap_err()
-            .contains("changed actor/subject/QL identity")
+            .contains("multiple QL Vāk performance")
     );
 }
