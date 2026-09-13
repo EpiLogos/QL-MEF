@@ -131,7 +131,11 @@ pub struct QvBakeArtifact {
 }
 
 fn require(ok: bool, message: &str) -> Result<()> {
-    if ok { Ok(()) } else { Err(message.into()) }
+    if ok {
+        Ok(())
+    } else {
+        Err(message.into())
+    }
 }
 
 fn nonempty(value: &str, what: &str) -> Result<()> {
@@ -146,15 +150,15 @@ pub fn q_position(property_key: &str) -> Result<u8> {
     let rest = property_key
         .strip_prefix("q_")
         .ok_or("quintessential property must use the source q_<0..5>_<semantic> form")?;
-    let (position, semantic) = rest
+    let (position_text, semantic) = rest
         .split_once('_')
         .ok_or("quintessential property is missing its semantic name")?;
-    let position = position
+    let position = position_text
         .parse::<u8>()
         .map_err(|_| "quintessential position is not numeric".to_owned())?;
     require(position <= 5, "quintessential position is outside #0..#5")?;
     require(
-        position.to_string() == position && !semantic.trim().is_empty(),
+        position.to_string() == position_text && !semantic.trim().is_empty(),
         "non-canonical quintessential property spelling",
     )?;
     Ok(position)
@@ -189,7 +193,10 @@ fn qv_definition<G: NativePropertyAdmission>(
     Ok(definition)
 }
 
-fn qv_subject(registry: &MRegistry, coordinate_ref: &str) -> Result<(MTreeId, crate::property::Subject)> {
+fn qv_subject(
+    registry: &MRegistry,
+    coordinate_ref: &str,
+) -> Result<(MTreeId, crate::property::Subject)> {
     nonempty(coordinate_ref, "invalid QV coordinate reference")?;
     let node = registry
         .resolve(coordinate_ref)
@@ -224,7 +231,10 @@ pub fn write_qv<G: NativePropertyAdmission>(
             && write.pithy.chars().count() <= QV_PITHY_MAX_CHARS,
         "QV pithy value must be nonempty, trimmed and <=128 characters",
     )?;
-    require(!write.sources.is_empty(), "QV write requires source support")?;
+    require(
+        !write.sources.is_empty(),
+        "QV write requires source support",
+    )?;
     write.producer.validate()?;
     write.result.validate()?;
     for source in &write.sources {
@@ -278,7 +288,10 @@ pub fn read_qv<G: NativePropertyAdmission>(
     receipt: &QvReceipt,
     gate: &G,
 ) -> Result<QvReading> {
-    require(receipt.version == QV_CONTRACT, "unsupported QV receipt contract")?;
+    require(
+        receipt.version == QV_CONTRACT,
+        "unsupported QV receipt contract",
+    )?;
     require(
         receipt.registry_revision == registry.manifest().registry_revision,
         "QV receipt belongs to another registry revision",
@@ -288,7 +301,10 @@ pub fn read_qv<G: NativePropertyAdmission>(
         "QV receipt property/position mismatch",
     )?;
     let (coordinate_id, subject) = qv_subject(registry, &receipt.coordinate_ref)?;
-    require(coordinate_id == receipt.coordinate_id, "QV coordinate identity drift")?;
+    require(
+        coordinate_id == receipt.coordinate_id,
+        "QV coordinate identity drift",
+    )?;
 
     let definition = field
         .definitions_named(&receipt.property_key, gate)?
@@ -338,7 +354,10 @@ pub fn bake_qv<G: NativePropertyAdmission>(
     receipts: &[QvReceipt],
     gate: &G,
 ) -> Result<QvBakeArtifact> {
-    require(!receipts.is_empty(), "QV bake requires at least one reading")?;
+    require(
+        !receipts.is_empty(),
+        "QV bake requires at least one reading",
+    )?;
     let mut seen = BTreeSet::new();
     let mut entries = Vec::with_capacity(receipts.len());
     for receipt in receipts {
@@ -483,7 +502,17 @@ mod tests {
         let registry = native_m_registry();
         let gate = gate();
         let mut field = PropertyField::new(registry);
-        assert!(write_qv(registry, &mut field, "write", write("q_1_thesis", "ground"), None, &gate).is_err());
+        assert!(
+            write_qv(
+                registry,
+                &mut field,
+                "write",
+                write("q_1_thesis", "ground"),
+                None,
+                &gate
+            )
+            .is_err()
+        );
 
         let mut field = field(registry, &gate, "q_1_thesis");
         let mut missing_producer = write("q_1_thesis", "ground");
@@ -502,13 +531,19 @@ mod tests {
             registry,
             &mut field,
             "write-qv",
-            write("q_1_thesis", "Ground remembered through an explicit source."),
+            write(
+                "q_1_thesis",
+                "Ground remembered through an explicit source.",
+            ),
             None,
             &gate,
         )
         .unwrap();
         let reading = read_qv(registry, &field, &receipt, &gate).unwrap();
-        assert_eq!(reading.pithy, "Ground remembered through an explicit source.");
+        assert_eq!(
+            reading.pithy,
+            "Ground remembered through an explicit source."
+        );
         assert_eq!(reading.receipt.q_position, 1);
         assert_eq!(
             field.read(&receipt.assertion, &gate).unwrap().content.role,
@@ -529,7 +564,10 @@ mod tests {
             registry,
             &mut field,
             "write-5",
-            write("q_5_integration", "Return gathers the selected relation."),
+            write(
+                "q_5_integration",
+                "Return gathers the selected relation.",
+            ),
             None,
             &gate,
         )
@@ -570,6 +608,11 @@ mod tests {
         assert!(read_qv(registry, &field, &receipt, &gate).is_err());
         assert!(bake_qv(registry, &field, std::slice::from_ref(&receipt), &gate).is_err());
         *gate.stale.borrow_mut() = None;
-        assert_eq!(read_qv(registry, &field, &receipt, &gate).unwrap().pithy, "A contextual quick view.");
+        assert_eq!(
+            read_qv(registry, &field, &receipt, &gate)
+                .unwrap()
+                .pithy,
+            "A contextual quick view."
+        );
     }
 }
