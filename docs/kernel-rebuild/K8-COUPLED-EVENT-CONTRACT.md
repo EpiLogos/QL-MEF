@@ -90,3 +90,42 @@ and its parallel owners. Root/property/graph promotion remains K8's shared-core
 integration responsibility; this operational join neither duplicates those
 registries nor makes their unlanded work disappear. The newer owner-built
 renderer is retained for later exact-version local harmonisation.
+
+## Version 2 — two source-qualified musical inputs
+
+`ql.coupled-event-request/v2` adds `condition_frequency_bindings`, each containing
+an existing `mode_ref` and `pitch_index` in 0–7. The existing
+`frequency_bindings` still addresses Vimarsha's `audio_octet_hz`; the new list
+addresses the independently derived `m2.condition.musical.pitches_hz`. The full
+M2 condition chooses maqam, tonic/dominant role, tuning and tonic. Its exact
+`source_path`, correspondence/source revision and tuning standing travel in the
+same retained basis. No pitch table, planetary correspondence or oscillator is
+reimplemented by this join.
+
+Bindings must target disjoint, supplied material-mode identities across **both**
+lists. Duplicate/unknown modes, absent conditions or correspondence paths,
+unsupported source spellings and out-of-range pitches are refusals before any
+native mutation. Even retained tuning cannot substitute a tone when the chosen
+source path is absent. Unbound modes retain their supplied frequency. The two
+musical inputs drive the same acknowledged C++ material state, PCM and retained
+particle targets; they do not start another simulation or claim measured
+material eigenvalues.
+
+Legacy `ql.coupled-event-request/v1` remains supported and cannot acquire a
+condition binding. Empty new bindings are omitted from serialization; v1 input,
+derivation and replay remain in their original form. The outer
+`ql.coupled-event/v1`, host and compact field contracts are unchanged: their
+complete nested input discloses its actual version. A v2 derivation additionally
+names both source locations and explicit condition bindings. Neither version
+fabricates #94 agent performance or #134 Nara reception.
+
+The existing `k8_coupled` native tests cover all 127 present and 17 absent
+maqam/role paths, both tuning policies and every pitch index, with negative
+cross-bus, version, missing-source and unknown-field cases. The installed
+example accepts a final `v2` argument and supplies sixteen controlled modes
+(eight per musical input) over the same retained samples. It tests replacement,
+unchanged original source/subject/clock/amplitudes, invalid-binding atomicity and
+exact native replay. The continuous workflow retains **separate** v1/v2 host,
+field and real browser/GPU/audio receipts; runtime success is claimed only from
+those executed receipts, not this contract. This is a composed musical specimen
+within the full field, not completion of Personal, agentic or resource proof.

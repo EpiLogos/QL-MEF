@@ -10,6 +10,7 @@ import hashlib
 import http.server
 import importlib.util
 import json
+import os
 from pathlib import Path
 import socketserver
 import subprocess
@@ -17,7 +18,7 @@ import threading
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'target/k8-instrument'
+OUT = Path(os.environ.get('K8_INSTRUMENT_OUT_DIR', ROOT / 'target/k8-instrument'))
 OUT.mkdir(parents=True, exist_ok=True)
 # Reuse the bounded actual host test driver; no fake native response producer.
 spec = importlib.util.spec_from_file_location('k8_host_test', ROOT / 'scripts/test-k8-host.py')
@@ -28,7 +29,7 @@ hosts.HOST = ROOT / 'target/k8-cpp/bin/ql-field-host'
 hosts.WORKER = ROOT / 'target/k8-cpp/bin/ql-field-worker'
 config = hosts.deepcopy(hosts.CONFIG)
 config['instance_ref'] = 'controlled:k8-browser:single-owner'
-changed = json.loads((ROOT / 'target/k8-coupled/changed-event.json').read_text())['basis']['input']
+changed = json.loads((hosts.COUPLED / 'changed-event.json').read_text())['basis']['input']
 console = []
 result = {}
 

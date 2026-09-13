@@ -71,6 +71,10 @@ jobs:
           cargo test --locked -p ql-mef --test k8_coupled
           cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \
             target/k8-continuous/basis.json target/k8-continuous/initial.json target/k8-coupled
+      - name: Both complete musical inputs on one installed material owner
+        run: |
+          cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \
+            target/k8-continuous/basis.json target/k8-continuous/initial.json target/k8-coupled-v2 v2
       - name: Managed coupled native host, compact delivery and source inspection
         run: |
           mkdir -p target/k8-host
@@ -79,6 +83,10 @@ jobs:
           cp target/k8-cpp/bin/ql-field-host target/k8-host/ql-field-host
           set -o pipefail
           python scripts/test-k8-host.py target/k8-cpp/bin/ql-field-host target/k8-cpp/bin/ql-field-worker 2>&1 | tee target/k8-host/host-run.log
+      - name: Dual-bus host identity, native continuation and exact replay
+        run: |
+          K8_COUPLED_DIR="$PWD/target/k8-coupled-v2" K8_HOST_OUT_DIR="$PWD/target/k8-host-v2" \
+            python scripts/test-k8-host.py target/k8-cpp/bin/ql-field-host target/k8-cpp/bin/ql-field-worker
       - name: Fetch the exact retained renderer read-only
         uses: actions/checkout@v4
         with:
@@ -118,6 +126,10 @@ jobs:
           set -o pipefail
           mkdir -p target/k8-instrument
           python adapters/retained-field/test-instrument-browser.py 2>&1 | tee target/k8-instrument/browser-run.log
+      - name: Both musical inputs into the installed retained GPU and browser sound
+        run: |
+          K8_COUPLED_DIR="$PWD/target/k8-coupled-v2" K8_INSTRUMENT_OUT_DIR="$PWD/target/k8-instrument-v2" \
+            python adapters/retained-field/test-instrument-browser.py
       - name: Exact source and toolchain receipt
         if: always()
         run: |
@@ -136,8 +148,11 @@ jobs:
             target/k8-continuous/
             target/k8-gpu/
             target/k8-coupled/
+            target/k8-coupled-v2/
             target/k8-audio/
             target/k8-host/
+            target/k8-host-v2/
             target/k8-instrument/
+            target/k8-instrument-v2/
           retention-days: 14
           if-no-files-found: error

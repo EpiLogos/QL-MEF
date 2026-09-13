@@ -18,6 +18,7 @@ use crate::m3_state::{M3Command, M3Request, M3State};
 use crate::{ContextFrameId, LensId, ModeKind, SublensRef};
 
 pub const REQUEST: &str = "ql.coupled-event-request/v1";
+pub const REQUEST_V2: &str = "ql.coupled-event-request/v2";
 pub const CONTRACT: &str = "ql.coupled-event/v1";
 
 /// A deliberate instrument mapping, not a claim that symbolic frequencies are
@@ -27,6 +28,16 @@ pub const CONTRACT: &str = "ql.coupled-event/v1";
 pub struct FrequencyBinding {
     pub mode_ref: String,
     pub octet_index: u8,
+}
+
+/// A source-qualified M2 correspondence pitch, distinct from Vimarsha's octet.
+/// The complete condition selects the maqam, role, tuning and tonic. A missing
+/// source path or unsupported spelling is a refusal, never a fallback tone.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ConditionFrequencyBinding {
+    pub mode_ref: String,
+    pub pitch_index: u8,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
@@ -46,6 +57,10 @@ pub struct CoupledInput {
     pub m3_commands: Vec<M3Command>,
     pub harmonic_source: HarmonicSource,
     pub frequency_bindings: Vec<FrequencyBinding>,
+    /// Version 2 only. An empty vector is omitted so legacy v1 replay retains
+    /// its original serialized input and derivation, not an upgraded reading.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub condition_frequency_bindings: Vec<ConditionFrequencyBinding>,
     /// Complete host-admitted receipts (for example the original sky snapshot).
     /// Retention is not authentication or permission to disclose their contents.
     pub source_receipts: Vec<Value>,
@@ -64,9 +79,10 @@ pub struct CoupledBasis {
 }
 impl CoupledInput {
     pub fn compose(&self) -> Result<CoupledBasis, String> {
-        if self.schema != REQUEST
+        if !matches!(self.schema.as_str(), REQUEST | REQUEST_V2)
+            || (self.schema == REQUEST && !self.condition_frequency_bindings.is_empty())
             || self.m3_commands.len() > 64
-            || self.frequency_bindings.len() > 4096
+            || self.frequency_bindings.len().saturating_add(self.condition_frequency_bindings.len()) > 4096
             || self.source_receipts.len() > 64
             || serde_json::to_vec(self).map_err(|e| e.to_string())?.len() > super::MAX_MESSAGE
         {
@@ -172,7 +188,52 @@ impl CoupledInput {
                 .ok_or("frequency binding does not name an existing material mode")?;
             mode.frequency_hz = f64::from(frequency);
         }
+        for binding in &self.condition_frequency_bindings {
+            let condition = initial
+                .condition
+                .as_ref()
+                .ok_or("condition frequency binding requires an explicit M2 condition")?;
+            condition
+                .source_path
+                .as_ref()
+                .ok_or("condition frequency binding has no admitted correspondence source path")?;
+            let frequency = *condition
+                .musical
+                .pitches_hz
+                .get(usize::from(binding.pitch_index))
+                .ok_or("condition pitch unavailable: unsupported tuning or index outside the native eight")?;
+            if !seen.insert(&binding.mode_ref) {
+                return Err("duplicate material-mode frequency binding across musical buses".into());
+            }
+            let mode = request
+                .resonator
+                .as_mut()
+                .ok_or("condition frequency binding has no supplied resonator")?
+                .modes
+                .iter_mut()
+                .find(|m| m.mode_ref == binding.mode_ref)
+                .ok_or("condition frequency binding does not name an existing material mode")?;
+            mode.frequency_hz = frequency;
+        }
         let frame = request.execute()?;
+        let mut derivation = json!({
+            "harmonic_ratio":ratio, "mef_sublens":sublens.to_string(),
+            "mef_table_index":reading.index(), "context_frame":cf.code(),
+            "musical_mode":format!("{mode:?}"),
+            "frequency_bindings":self.frequency_bindings,
+            "source_generations":"M1 revision, M3 operation generation and M2 composition generation remain distinct",
+            "material_standing":"explicit native musical projection onto supplied modes, not measured eigenvalue evidence",
+            "source_receipts_standing":"host-supplied retained receipts, not authentication by this composer"
+        });
+        if self.schema == REQUEST_V2 {
+            derivation["condition_frequency_bindings"] = json!(self.condition_frequency_bindings);
+            derivation["musical_sources"] = json!({
+                "vimarsha":"m2.vimarsha.reading.audio_octet_hz",
+                "condition":"m2.condition.musical.pitches_hz",
+                "condition_provenance":"m2.condition.source_path, source_revision, correspondence_ref and musical.tuning",
+                "policy":"disjoint explicit mode bindings; unbound modes retain supplied frequencies; no missing-path or tuning fallback"
+            });
+        }
         Ok(CoupledBasis {
             input: self.clone(),
             m1: m1_frame,
@@ -180,15 +241,7 @@ impl CoupledInput {
             m2: serde_json::to_value(frame).map_err(|e| e.to_string())?,
             m3: m3_frame,
             m3_receipts: receipts,
-            derivation: json!({
-                "harmonic_ratio":ratio, "mef_sublens":sublens.to_string(),
-                "mef_table_index":reading.index(), "context_frame":cf.code(),
-                "musical_mode":format!("{mode:?}"),
-                "frequency_bindings":self.frequency_bindings,
-                "source_generations":"M1 revision, M3 operation generation and M2 composition generation remain distinct",
-                "material_standing":"explicit native musical projection onto supplied modes, not measured eigenvalue evidence",
-                "source_receipts_standing":"host-supplied retained receipts, not authentication by this composer"
-            }),
+            derivation,
         })
     }
 }

@@ -15,11 +15,12 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'target/k8-host'
+COUPLED = Path(os.environ.get('K8_COUPLED_DIR', ROOT / 'target/k8-coupled'))
+OUT = Path(os.environ.get('K8_HOST_OUT_DIR', ROOT / 'target/k8-host'))
 OUT.mkdir(parents=True, exist_ok=True)
 HOST = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / 'target/debug/ql-field-host'
 WORKER = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else ROOT / 'target/k8-cpp/bin/ql-field-worker'
-CONFIG = json.loads((ROOT / 'target/k8-coupled/input.json').read_text())
+CONFIG = json.loads((COUPLED / 'input.json').read_text())
 CONFIG['instance_ref'] = 'controlled:k8-host:primary'
 
 
@@ -108,7 +109,7 @@ def main():
         for _ in range(100):
             result = host.send(dict(operation='read'))
             assert state(result) == first and 'sources' not in result and not result['field']['audio']
-        initial_native = json.loads((ROOT / 'target/k8-coupled/original-event.json').read_text())['field']
+        initial_native = json.loads((COUPLED / 'original-event.json').read_text())['field']
         assert first == initial_native, 'compact host changed the native full-producer result'
         source_bytes = len(encoded(inspection))
         compact_bytes = len(encoded(result))
@@ -142,7 +143,7 @@ def main():
         assert result['field']['clock']['inscription'] == retained['clock']['inscription']
         assert result['field']['amplitudes_metres'] == retained['amplitudes_metres']
         assert result['field']['samples_elapsed'] == retained['samples_elapsed']
-        changed = json.loads((ROOT / 'target/k8-coupled/changed-event.json').read_text())['basis']['input']
+        changed = json.loads((COUPLED / 'changed-event.json').read_text())['basis']['input']
         before = state(result)
         result = host.send(dict(operation='replace', basis=changed))
         assert result['status'] == 'ok', result.get('error')
