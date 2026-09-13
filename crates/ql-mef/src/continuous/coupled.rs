@@ -114,7 +114,9 @@ fn receipt_ref_array(value: &Value, field: &str, required: bool) -> Result<(), S
     Ok(())
 }
 
-fn factory_vak_performance(receipts: &[Value]) -> Result<Option<FactoryVakPerformance<'_>>, String> {
+fn factory_vak_performance(
+    receipts: &[Value],
+) -> Result<Option<FactoryVakPerformance<'_>>, String> {
     let mut found = None;
     for (source_receipt_index, receipt) in receipts.iter().enumerate() {
         if receipt.get("contract").and_then(Value::as_str) != Some(FACTORY_VAK_CONTRACT) {
@@ -203,7 +205,10 @@ fn factory_vak_performance(receipts: &[Value]) -> Result<Option<FactoryVakPerfor
             ] {
                 receipt_ref(attempt, field)?;
             }
-            if attempt.get("attemptIndex").and_then(Value::as_u64).is_none()
+            if attempt
+                .get("attemptIndex")
+                .and_then(Value::as_u64)
+                .is_none()
                 || attempt.get("current").and_then(Value::as_bool).is_none()
             {
                 return Err("Factory Vāk performance has invalid attempt identity".into());
@@ -300,10 +305,11 @@ impl CoupledInput {
         let sublens = SublensRef::canonical(lens, clock.tick12() % 6).map_err(|e| e.to_string())?;
         let reading = Reading72::from_sublens(sublens);
         let m1_cf = ContextFrameId::ALL[usize::from(self.m1.context_frame - 1)];
-        let cf_index = performance.as_ref().map_or(
-            usize::from(self.m1.context_frame - 1),
-            |value| value.frame_index,
-        );
+        let cf_index = performance
+            .as_ref()
+            .map_or(usize::from(self.m1.context_frame - 1), |value| {
+                value.frame_index
+            });
         let cf = ContextFrameId::ALL[cf_index];
         let mode = ModeKind::ALL
             .into_iter()
