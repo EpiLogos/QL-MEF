@@ -1000,7 +1000,9 @@ mod tests {
         assert!(compiled.project_factory_performance(foreign).is_err());
 
         let mut no_context = request(ThreadForm::Chain);
-        no_context.snapshot.chain_inputs[0].receiving_context_ref.clear();
+        no_context.snapshot.chain_inputs[0]
+            .receiving_context_ref
+            .clear();
         assert!(compiled.project_factory_performance(no_context).is_err());
     }
 }
