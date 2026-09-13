@@ -1,0 +1,22 @@
+{
+  "schema_version":"epi.aw-source-pins/v1",
+  "owners":{
+    "Original":[
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/anima.md","c9bc322a77f48e4dd6c48852d469ad55308725a9"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/eros.md","fcdc4ccfbac6c6f35908ef38428143e73ee02d63"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/logos.md","1fcc333d481c277ccd31673808c9d4c05d50bd67"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/mythos.md","d7be7be08ae5daba402cc24d6a79178a13397e53"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/nous.md","24363138965f8fbef3184fb87f14e387eb995edf"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/psyche.md","d31e471cec9c88fffced088724f6cb0179a0b200"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/sophia.md","d2d5097274c9a4a28001dc69b30badd4d0732316"],
+      ["Body/S/S4/ta-onta/S4-4p-anima/S4'/agents/techne-helper.md","13c5dbcf8e14fb9c01d3d25835dc7ab7006d08eb"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/agora.md","848a13765691675b579b09710c34ee031382ba24"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/aletheia.md","28b5f6987572042b3c9f9dd0d0987c3da8b76118"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/anansi.md","ce8fa32cac1df1d8c7581a39dafbccccab6b2988"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/janus.md","252cfc57790cf330b3aac799115f5c9532ab36f1"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/mercurius.md","358f9f67523c9ae963b8f50061a2533e241ae4f7"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/moirai.md","83d487a3ecf1446efcc4200771c700ebe92f2f50"],
+      ["Body/S/S4/ta-onta/S4-5p-aletheia/S5'/agents/zeithoven.md","ff4839d4207ad0da769779bad45d30032fa41bfc"]
+    ]
+  }
+}
