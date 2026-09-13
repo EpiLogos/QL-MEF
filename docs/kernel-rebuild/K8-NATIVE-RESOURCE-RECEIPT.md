@@ -61,3 +61,27 @@ sensory judgement is measured here. Those remain explicit joined obligations.
 In particular, the browser's existing suspended-prefill synchronisation specimen
 is not sustained unsuspended source-change throughput. A short bounded native
 run is not hours of owner-machine experience and cannot close K8 by itself.
+
+## Build-profile comparison without changing the instrument
+
+The continuous workflow retains the same-source debug binary as the diagnostic
+baseline and installs the release binary as the native instrument host. It runs
+the declared resource protocol for both. The release run replays every original
+operation through the **debug binary**, not merely a second release process, and
+requires identical canonical acknowledgement digests, including full original
+and changed source inspection. C++ worker, dated inputs, source/tree, parameters,
+policy, sample identities and all musical modes remain identical.
+
+`compare-k8-resource.py` refuses comparisons with changed controls, omitted
+cycles, invalid observations or missing cross-build replay. It records individual
+cycle measurements and median ratios for block p95, source-operation maximum,
+RSS and deadline misses. A lower median does not erase a missed fixed deadline.
+`comparison.json` explicitly distinguishes a complete comparison from meeting
+both unchanged runtime budgets. Sequential same-runner observations are not a
+randomised causal study; no universal speed-up, GPU or provider cost is inferred.
+
+The workflow's longer execution allowance covers two separately built profiles,
+two complete protocols and cross-build replay; runtime policy ceilings are not
+raised. `K8_RESOURCE_HOST`, `K8_RESOURCE_PROFILE`, `K8_RESOURCE_REPLAY_HOST` and
+`K8_RESOURCE_OUT_DIR` name these explicit measurement inputs. Omitting a profile
+records `unspecified`; it does not infer optimisation from an executable name.

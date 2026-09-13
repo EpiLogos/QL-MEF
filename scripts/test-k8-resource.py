@@ -77,7 +77,8 @@ def main():
     spec = importlib.util.spec_from_file_location('k8_resource_host', ROOT/'scripts/test-k8-host.py')
     hosts = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(hosts)
-    hosts.HOST = ROOT/'target/k8-cpp/bin/ql-field-host'
+    hosts.HOST = Path(os.environ.get('K8_RESOURCE_HOST', ROOT/'target/k8-cpp/bin/ql-field-host')).resolve()
+    replay_host = Path(os.environ.get('K8_RESOURCE_REPLAY_HOST', hosts.HOST)).resolve()
     hosts.WORKER = ROOT/'target/k8-cpp/bin/ql-field-worker'
     config = hosts.CONFIG
     changed = json.loads((coupled/'changed-event.json').read_text())['basis']['input']
@@ -89,6 +90,8 @@ def main():
         source_input_sha256=digest(config), input_schema=config['basis']['schema'],
         mode_count=len(config['basis']['m2']['resonator']['modes']), sample_count=len(config['field']['samples']),
         host_sha256=hashlib.sha256(hosts.HOST.read_bytes()).hexdigest(),
+        host_build_profile=os.environ.get('K8_RESOURCE_PROFILE', 'unspecified'),
+        replay_host_sha256=hashlib.sha256(replay_host.read_bytes()).hexdigest(),
         worker_sha256=hashlib.sha256(hosts.WORKER.read_bytes()).hexdigest(),
         standing='controlled native host/pipe with real dated sky, supplied geometry and subject; not full composed desktop load')
     (out/'conditions.json').write_text(json.dumps(conditions,indent=2)+'\n')
@@ -186,7 +189,12 @@ def main():
         assert not Path('/proc',str(child)).exists(), 'native numerical child leaked after owner disposal'
         # Original replay must reproduce every retained acknowledgement, including
         # the original dated source and replacement. Timings are not replay inputs.
-        replay=hosts.Host(config,f'resource-replay-{cycle}')
+        measured_host = hosts.HOST
+        hosts.HOST = replay_host
+        try:
+            replay=hosts.Host(config,f'resource-replay-{cycle}')
+        finally:
+            hosts.HOST = measured_host
         try:
             for line in log_path.open():
                 record=json.loads(line)
@@ -200,6 +208,7 @@ def main():
         native_deadline_pass=all(v['host']['deadline_pass'] for v in cycles),
         source_operation_budget_pass=all(v['source_budget_pass'] for v in cycles),
         resource_pass=True,exact_original_replay=True,repeated_owner_disposal=True,
+        cross_build_replay=conditions['host_sha256'] != conditions['replay_host_sha256'],
         unmeasured=['GPU/VRAM','browser/audio-device scheduling','Epii/model/provider work','full Bimba/Epii/background/remote composed load',
                     'owner-machine interaction and cancellation latency','human sensory judgement'])
     (out/'acceptance.json').write_text(json.dumps(receipt,indent=2)+'\n')
