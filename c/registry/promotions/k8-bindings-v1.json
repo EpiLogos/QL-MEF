@@ -247,6 +247,15 @@
       "rationale": "K8 subject-bound integration around the existing coupled runtime and #134 PersonalFieldInstance. It relates one acknowledged M1–M3/material owner to explicitly supplied Nara reception without another field, inferred centre inputs, hidden update or disclosure grant.",
       "tests": ["crates/ql-mef/tests/nara_personal_field.rs", ".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/k8_personal.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Installed acceptance consumer for the existing C++ field plus subject-bound Nara wrapper. It proves currentness/replay and no hidden native advance with controlled source-qualified receiver values; it does not define receiver physiology, source mappings or another runtime owner.",
+      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "kind": "computational"
     }
   ]
 }
