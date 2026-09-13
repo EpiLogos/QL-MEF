@@ -3,6 +3,9 @@
 //! reference nor a geometry payload grants authority. No child/JSON/domain work
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
+mod receipt;
+
+use receipt::ReceiptGuard;
 
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
@@ -125,6 +128,11 @@ impl Worker {
             poisoned: false,
         })
     }
+    fn invalidate(&mut self, reason: &str) -> String {
+        self.poisoned = true;
+        let _ = self.child.kill();
+        format!("worker unavailable; operation standing unknown: {reason}")
+    }
     fn exchange(&mut self, value: &Value) -> Result<Value> {
         if self.poisoned {
             return Err("worker unavailable; retained basis is unchanged".into());
@@ -149,25 +157,23 @@ impl Worker {
         let value = match result {
             Ok(value) => value,
             Err(error) => {
-                self.poisoned = true;
-                let _ = self.child.kill();
-                return Err(format!(
-                    "worker transport failed; operation standing unknown: {error}"
-                ));
+                return Err(self.invalidate(&format!("transport failed: {error}")));
             }
         };
         if value["schema"] == "ql.field-error/v1" {
             // An explicit refusal is recoverable only when native state did not
             // commit. Lost replies/timeouts may have committed; never retry them
             // automatically or pretend the previous receipt is current.
-            if value["state_committed"] != false {
-                self.poisoned = true;
+            if value["state_committed"] != false
+                || !value["error"].is_string()
+                || value.as_object().is_none_or(|object| object.len() != 3)
+            {
+                return Err(self.invalidate("unqualified or post-commit error acknowledgement"));
             }
             return Err(value.to_string());
         }
         if value["schema"] != FIELD_CONTRACT {
-            self.poisoned = true;
-            return Err("unrecognised worker response; continuation standing unknown".into());
+            return Err(self.invalidate("unrecognised worker response"));
         }
         Ok(value)
     }
@@ -192,6 +198,7 @@ pub struct FieldSession {
     original: M2Request,
     current: M2Request,
     receipt: Value,
+    guard: ReceiptGuard,
 }
 impl FieldSession {
     pub fn open(
@@ -201,13 +208,20 @@ impl FieldSession {
         timeout: Duration,
     ) -> Result<Self> {
         let frame = m2.execute()?;
+        let frame = serde_json::to_value(frame).map_err(|e| e.to_string())?;
+        let guard = ReceiptGuard::new(&frame, &field)?;
         let mut worker = Worker::open(executable, timeout)?;
-        let receipt = worker.exchange(&json!({"schema":"ql.field-control/v1", "operation":"initialize", "m2":frame, "field":field}))?;
+        let request = json!({"schema":"ql.field-control/v1", "operation":"initialize", "m2":frame, "field":field});
+        let receipt = worker.exchange(&request)?;
+        if let Err(error) = guard.validate(&request, None, &receipt) {
+            return Err(worker.invalidate(&error));
+        }
         Ok(Self {
             worker,
             original: m2.clone(),
             current: m2,
             receipt,
+            guard,
         })
     }
     pub fn original_basis(&self) -> &M2Request {
@@ -235,7 +249,14 @@ impl FieldSession {
                 .ok_or("invalid operation parameters")?
                 .clone(),
         );
-        let receipt = self.worker.exchange(&request)?;
+        self.exchange_checked(&request)
+    }
+    fn exchange_checked(&mut self, request: &Value) -> Result<Value> {
+        let receipt = self.worker.exchange(request)?;
+        if let Err(error) = self.guard.validate(request, Some(&self.receipt), &receipt) {
+            return Err(self.worker.invalidate(&error));
+        }
+        self.guard.adopted(&receipt);
         self.receipt = receipt.clone();
         Ok(receipt)
     }
@@ -255,10 +276,6 @@ impl FieldSession {
         Ok(receipt)
     }
     pub fn read(&mut self) -> Result<Value> {
-        let receipt = self
-            .worker
-            .exchange(&json!({"schema":"ql.field-control/v1", "operation":"read"}))?;
-        self.receipt = receipt.clone();
-        Ok(receipt)
+        self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))
     }
 }

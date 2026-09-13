@@ -155,6 +155,56 @@
         ".github/workflows/kernel-k8-continuous.yml"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/receipt.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Fail-closed admission of native management acknowledgements against the retained subject, source, operation and stable sample identities. No second numerical clock/field owner or authority grant.",
+      "tests": [
+        "crates/ql-mef/src/continuous/receipt/tests.rs",
+        "crates/ql-mef/examples/k8_field.rs",
+        "scripts/test-k8-continuous.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/vak_profile.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0-4",
+        "#0-5"
+      ],
+      "rationale": "AW94-authored original C-prime operational profile over the existing VakComposition owner: content, context position, paired passage and native thread validation. Exact source imported from #166 at 6a35d04caed98c61a1df903020fa05860790fad7; does not create another parser, scheduler, authority or C registry.",
+      "tests": [
+        "crates/ql-mef/src/vak_profile/tests.rs",
+        "crates/ql-mef/tests/vak_composition.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/receipt/tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
+      "tests": [
+        "crates/ql-mef/src/continuous/receipt/tests.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/vak_profile/tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
+      "tests": [
+        "crates/ql-mef/src/vak_profile/tests.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
