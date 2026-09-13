@@ -16,3 +16,6 @@
 /c/dist/
 # Python bytecode
 __pycache__/
+
+# Native C++ local products; reproducible evidence belongs in target/.
+/cpp/build/

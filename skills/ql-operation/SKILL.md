@@ -1,6 +1,6 @@
 ---
 name: ql-mef-operation
-description: Operate the standalone QL/MEF provider through its versioned capabilities, locate, refract, relate and synthesise contracts while preserving provenance and optional/no-QL behaviour.
+description: "METHOD: Operate the standalone QL/MEF provider through its versioned capabilities, locate, refract, relate and synthesise contracts while preserving provenance and optional/no-QL behaviour."
 ---
 
 # QL/MEF operation
@@ -56,3 +56,13 @@ Return the original subject/ref/revision, operation, provider health/capability 
 ## Verification
 
 Run the Rust workspace tests. The acceptance matrix must retain the `ql-adapters/tests/noql_matrix.rs` cases for disabled, optional, required, degraded/incompatible and invalid-coordinate behaviour, together with service/core/MEF contract tests.
+
+## Living-instrument scope and activation
+
+For K8/AW/Nara/UX work, first apply the source-owned `ql-experience-prepare` Method and recover the assigned activity in `docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md`. The five service operations above are real bounded support; they do not by themselves establish live ephemeris, field projection, personal activity, full musical C′ execution or named-praxis registration. Use the actual current owner descriptor/schema and preserve the same subject, source, scope and revision. Missing domain support is a named dependency, not a guessed Action.
+
+AIKit discovers this canonical Skill source and projects the selected revision. A source path is not proof that the current harness loaded it. See `docs/kernel-rebuild/AGENT-PRACTICE-AND-BOOTSTRAP.md` for the actual delivery/readback and temporary source-reading procedure. Full musical Vāk meanings come from the original ratified language lock, not a generic provider interface.
+
+## Failure and continuity
+
+On refusal, stale input, missing provider or uncertain effects, retain the original material and actual error. Do not silently substitute a different operation or broaden authority. Return the relevant difference with `ql-evidence-report`, exact source/operation/receipt and next dependency. Re-entry resolves the current native basis while retaining original evidence. A supported bounded result is not the full lived acceptance.

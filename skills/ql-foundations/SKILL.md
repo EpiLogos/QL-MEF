@@ -106,3 +106,9 @@ For lens registry beyond L0/L1 (L2 Logical/Catuṣkoṭi, L3 Processual, L4 Phen
 - `fixtures/kernel/ql-shape-contract-v1.json` — the structural floor verbatim.
 - `docs/wiki-structural-contract-v2.md` — wiki↔QL structural contract and dependency firewall.
 - NOT sourced: `docs/sources/ql-musical-derivation-v3.md` (preserved historical derivation; semantic-overload flagged — not the meanings canon).
+
+## Scope in the current living instrument
+
+This is the bounded foundational reading, not the entire 109-entry Vāk corpus or Anima's original musical execution grammar. For those, retrieve the ratified `docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md`, the full-field lock and their original source references. Its source-qualified musical/MEF account governs that specific work; the historical-musical provenance note above describes what did not supply these L0/L1 tables, not permission to discard the approved musical design.
+
+The protected-local provenance listed above may be unavailable to an agent. Do not invent access or ask for private material when the approved scoped contract suffices. Name the unrecovered source when its exact content is necessary. Use `ql-experience-prepare` to relate this reading to the current UX spine, complete capability field and actual native operation. No shape label grants source access or mutation authority.

@@ -12,6 +12,17 @@
     "primary_id": "ql-product-profile",
     "matrices": [
       {
+        "id": "epi-aw-source-native-field",
+        "role": "native-source-coverage",
+        "protocol": "epi.aw-field-projection/v1",
+        "suite_catalogue": false,
+        "carriers": {
+          "data": "docs/integrations/epi-logos/aw0-field.json",
+          "rendering": "docs/integrations/epi-logos/AW0-SOURCE-NATIVE-FIELD.md",
+          "index": "docs/integrations/epi-logos/aw0-source-basis.json"
+        }
+      },
+      {
         "id": "ql-product-profile",
         "role": "suite-profile",
         "protocol": "ql-capability-matrix/1",

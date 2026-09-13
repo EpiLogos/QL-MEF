@@ -1,7 +1,10 @@
 #include "ql/m_tree.h"
 #include <string.h>
 
-#include "m_tree_data.inc"
+#ifndef QL_M_TREE_DATA_INCLUDE
+#define QL_M_TREE_DATA_INCLUDE "m_tree_data.inc"
+#endif
+#include QL_M_TREE_DATA_INCLUDE
 
 #define COUNT(a) (sizeof(a) / sizeof((a)[0]))
 

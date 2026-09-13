@@ -28,3 +28,6 @@ grep -q 'explicit promotion' "$developer"
 grep -q 'no-QL' "$developer"
 
 echo "QL/MEF native Skills: structural contract OK"
+
+# All domain practices and exact Method descriptions participate in UX coverage.
+python3 scripts/check-ux-spine.py

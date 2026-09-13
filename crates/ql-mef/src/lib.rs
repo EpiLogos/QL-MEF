@@ -4,6 +4,7 @@
 
 mod context_frame;
 mod context_frame_target;
+pub mod continuous;
 mod coordinate;
 mod error;
 mod identity;
@@ -25,6 +26,7 @@ mod matheme;
 mod music;
 mod music_completion;
 mod pole_state;
+pub mod property;
 mod provenance;
 mod reading;
 mod refraction;

@@ -13,7 +13,12 @@ use crate::{
 };
 
 pub const M_TREE_SCHEMA: &str = "ql.m-tree/v1";
+/// Accepted v1 source view, retained with its exact historical proof.
 pub const NATIVE_M_MANIFEST: &str = include_str!("../../../fixtures/kernel/m-tree-v1.json");
+
+pub const CURRENT_M_MANIFEST: &str = include_str!(concat!(env!("OUT_DIR"), "/m-tree-v2.json"));
+pub const CURRENT_M_RECEIPT: &str =
+    include_str!(concat!(env!("OUT_DIR"), "/k8-structure-receipt-v1.json"));
 
 /// Spelling-derived ID, shared verbatim with uint64_t in the native ABI.
 /// JSON deliberately uses sixteen hexadecimal digits (not lossy JS numbers).
@@ -86,6 +91,10 @@ pub struct MTreeSourceFile {
     pub sha256: String,
     pub record_class: String,
     pub bytes: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repository: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub revision: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -147,6 +156,21 @@ pub struct MTreeManifest {
     pub alternate_notation_groups: Vec<serde_json::Value>,
     pub meta_source_records: Vec<serde_json::Value>,
     pub parent_discrepancies: Vec<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub registry_lineage: Vec<MRegistryLineage>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MRegistryLineage {
+    pub registry_revision: String,
+    pub promotion_id: String,
+    pub promotion_sha256: String,
+    pub source_repository: String,
+    pub source_revision: String,
+    pub source_path: String,
+    pub source_git_blob: String,
+    pub standing: String,
 }
 
 /// An immutable index over the common manifest. This constructor validates
@@ -163,8 +187,41 @@ pub struct MRegistry {
 impl MRegistry {
     pub fn from_json(json: &str) -> Result<Self, String> {
         let manifest: MTreeManifest = serde_json::from_str(json).map_err(|e| e.to_string())?;
-        if manifest.schema != M_TREE_SCHEMA || manifest.roots.len() != 6 {
+        if !matches!(manifest.schema.as_str(), M_TREE_SCHEMA | "ql.m-tree/v2")
+            || manifest.roots.len() != 6
+        {
             return Err("unsupported M registry schema or root count".into());
+        }
+        if (manifest.schema == M_TREE_SCHEMA && !manifest.registry_lineage.is_empty())
+            || (manifest.schema == "ql.m-tree/v2" && manifest.registry_lineage.is_empty())
+        {
+            return Err("registry schema/lineage mismatch".into());
+        }
+        let hex = |s: &str, len| {
+            s.len() == len
+                && s.bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+        };
+        for origin in &manifest.registry_lineage {
+            if !hex(&origin.registry_revision, 64)
+                || !hex(&origin.promotion_sha256, 64)
+                || !hex(&origin.source_revision, 40)
+                || !hex(&origin.source_git_blob, 40)
+                || origin.promotion_id.is_empty()
+                || origin.source_repository.is_empty()
+                || origin.source_path.is_empty()
+                || origin.standing != "owner-ratified-structural-promotion"
+            {
+                return Err("invalid structural promotion lineage".into());
+            }
+        }
+        for file in &manifest.files {
+            match (&file.repository, &file.revision) {
+                (None, None) => (),
+                (Some(repository), Some(revision))
+                    if !repository.is_empty() && hex(revision, 40) => {}
+                _ => return Err("incomplete source-file origin".into()),
+            }
         }
         let mut registry = Self {
             manifest,
@@ -388,8 +445,16 @@ impl MRegistry {
         let r = &self.manifest.records[index];
         let f = &self.manifest.files[r.file];
         SourceRecordRef {
-            repository: self.manifest.source_repository.clone(),
-            revision: self.manifest.source_revision.clone(),
+            repository: f
+                .repository
+                .as_ref()
+                .unwrap_or(&self.manifest.source_repository)
+                .clone(),
+            revision: f
+                .revision
+                .as_ref()
+                .unwrap_or(&self.manifest.source_revision)
+                .clone(),
             source_path: f.path.clone(),
             git_blob: f.git_blob.clone(),
             file_sha256: f.sha256.clone(),
@@ -475,5 +540,15 @@ pub fn native_m_registry() -> &'static MRegistry {
     static REGISTRY: OnceLock<MRegistry> = OnceLock::new();
     REGISTRY.get_or_init(|| {
         MRegistry::from_json(NATIVE_M_MANIFEST).expect("validated native M registry")
+    })
+}
+
+/// Current source projection for K8 and new map/property consumers. Accepted
+/// v1 M1–M3 producers deliberately retain `native_m_registry()` and their exact
+/// source/registry receipts; a composed event carries both versioned bases.
+pub fn native_current_m_registry() -> &'static MRegistry {
+    static REGISTRY: OnceLock<MRegistry> = OnceLock::new();
+    REGISTRY.get_or_init(|| {
+        MRegistry::from_json(CURRENT_M_MANIFEST).expect("validated current native M registry")
     })
 }

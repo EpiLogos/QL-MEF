@@ -1,0 +1,28 @@
+{
+  "before": {
+    "schema": "ql.continuous-field/v1",
+    "state_committed": null,
+    "samples_after": "32",
+    "control": {
+      "schema": "ql.field-control/v1",
+      "operation": "advance",
+      "expected_generation": "01",
+      "expected_samples_elapsed": "00",
+      "frames": 32,
+      "muted": false
+    }
+  },
+  "after": {
+    "schema": "ql.field-error/v1",
+    "state_committed": false,
+    "samples_after": "0",
+    "control": {
+      "schema": "ql.field-control/v1",
+      "operation": "advance",
+      "expected_generation": "01",
+      "expected_samples_elapsed": "00",
+      "frames": 32,
+      "muted": false
+    }
+  }
+}

@@ -1,0 +1,48 @@
+name: UX intent and practice
+on:
+  push:
+    branches: [main, agent/whole-ql-ux-spine-practice]
+    paths: ['docs/**', 'skills/**', 'scripts/**', 'AGENTS.md', '.github/workflows/ux-intent.yml']
+  pull_request:
+    paths: ['docs/**', 'skills/**', 'scripts/**', 'AGENTS.md', '.github/workflows/ux-intent.yml']
+permissions:
+  contents: read
+jobs:
+  practice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check full source coverage and invalid mutations
+        run: |
+          set -o pipefail
+          mkdir -p ux-evidence
+          git rev-parse HEAD > ux-evidence/revision.txt
+          python3 scripts/check-ux-publication.py | tee ux-evidence/publication-standing.json
+          python3 scripts/check-ux-spine.py --self-test | tee ux-evidence/source-check.json
+          bash scripts/verify-native-skills.sh
+          python3 scripts/check-ux-spine.py --prepare UX01 > ux-evidence/preparation.json
+      - uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/ai-kit
+          ref: 586b85eaf77c7232c93deb5abc75b558f15a02ed
+          path: native-aikit
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build the pinned native Skill owner
+        run: cargo build --manifest-path native-aikit/Cargo.toml --locked -p aikit-cli --bin aikit
+      - name: Exercise native discovery, set, scope, current projection and disconnect
+        run: python3 scripts/verify-ux-skill-projection.py --aikit native-aikit/target/debug/aikit --source-root . --output "$RUNNER_TEMP/ql-ux-delivery"
+      - name: Retain bounded evidence, not model or human acceptance
+        if: always()
+        run: |
+          mkdir -p ux-evidence
+          for file in result.json commands.json source-review.json; do
+            if test -f "$RUNNER_TEMP/ql-ux-delivery/$file"; then
+              cp "$RUNNER_TEMP/ql-ux-delivery/$file" "ux-evidence/$file"
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ql-ux-practice-evidence
+          path: ux-evidence/
+          retention-days: 14

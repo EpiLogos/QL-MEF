@@ -1,6 +1,6 @@
 ---
 name: ql-mef-refraction-adapter-authoring
-description: Author bounded QL/MEF client adapters and refraction experiments through public service contracts without making QL mandatory or promoting experimental readings into canon.
+description: "METHOD: Author bounded QL/MEF client adapters and refraction experiments through public service contracts without making QL mandatory or promoting experimental readings into canon."
 ---
 
 # QL/MEF refraction and adapter authoring
@@ -52,3 +52,13 @@ bounded hypothesis
 ```
 
 Benchmark wins, repeated use, model confidence and Factory Runs are evidence only. They never mutate QL canon automatically.
+
+## Living-instrument scope and activation
+
+For K8/AW/Nara/UX work, first apply the source-owned `ql-experience-prepare` Method and recover the assigned activity in `docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md`. The five service operations above are real bounded support; they do not by themselves establish live ephemeris, field projection, personal activity, full musical C′ execution or named-praxis registration. Use the actual current owner descriptor/schema and preserve the same subject, source, scope and revision. Missing domain support is a named dependency, not a guessed Action.
+
+AIKit discovers this canonical Skill source and projects the selected revision. A source path is not proof that the current harness loaded it. See `docs/kernel-rebuild/AGENT-PRACTICE-AND-BOOTSTRAP.md` for the actual delivery/readback and temporary source-reading procedure. Full musical Vāk meanings come from the original ratified language lock, not a generic provider interface.
+
+## Failure and continuity
+
+On refusal, stale input, missing provider or uncertain effects, retain the original material and actual error. Do not silently substitute a different operation or broaden authority. Return the relevant difference with `ql-evidence-report`, exact source/operation/receipt and next dependency. Re-entry resolves the current native basis while retaining original evidence. A supported bounded result is not the full lived acceptance.
