@@ -136,3 +136,12 @@ with AW1, graph application, full M1/M3 coupled event embodiment, actual retaine
 renderer transport and the independent #134 Nara producer. #133 owns the focused
 UX/disclosure path. These scopes must not be silently certified by a passing
 modal test. Local suite/desktop harmonisation remains a later stage.
+
+## Management acknowledgement admission (K8 continuation)
+
+The Rust session validates the complete returned identity, stable sample basis
+and operation cursor before publishing it. Invalid/lost acknowledgements retain
+the last known basis with unavailable/unknown standing, never an automatic retry
+or silent new owner. See [acknowledgement admission](K8-ACKNOWLEDGEMENT-CONTRACT.md)
+for exact refusal/re-entry semantics, controlled fault tests and the shared AW94
+profile registration. The numerical and retained-GPU owners above are unchanged.

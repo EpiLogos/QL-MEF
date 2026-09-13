@@ -60,7 +60,7 @@ def project():
         path = owner['path']
         if path in modules or not (ROOT / path).is_file():
             raise ValueError('duplicate/missing implementation source: ' + path)
-        if owner['stratum'] not in ('c', 'rust', 'cpp'):
+        if owner['stratum'] not in ('c', 'rust', 'cpp', 'javascript'):
             raise ValueError('unsupported implementation stratum')
         if owner['disposition'] not in ('coordinate-bound', 'cross-coordinate', 'infrastructural'):
             raise ValueError('unknown disposition')
@@ -126,13 +126,20 @@ def project():
         if owner['stratum'] == 'cpp':
             sources[path] = sha((ROOT / path).read_bytes())
             cpp_modules.append(dict(owner, sha256=sources[path], standing='declared-current-module-not-runtime-parity'))
+    # Presentation-only JavaScript joins have their own current source record.
+    # They are not relabelled C/Rust constructs or historical K4 proofs.
+    javascript_modules = []
+    for path, owner in modules.items():
+        if owner['stratum'] == 'javascript':
+            sources[path] = sha((ROOT / path).read_bytes())
+            javascript_modules.append(dict(owner, sha256=sources[path], standing='declared-current-module-not-runtime-parity'))
     result = {'schema': 'ql.m-current-inventory/v1',
               'registry_revision': registry['registry_revision'],
               'inherited_ledger_revision': ledger['ledger_revision'],
               'inherited_ledger_sha256': sha((ROOT / 'fixtures/kernel/m-ledger-v1.json').read_bytes()),
               'inherited_assessments_sha256': sha(canonical(ledger['assessments'])),
               'dispositions_sha256': sha(canonical(spec)),
-              'sources': sources, 'constructs': records, 'native_exports': public, 'cpp_modules': cpp_modules,
+              'sources': sources, 'constructs': records, 'native_exports': public, 'cpp_modules': cpp_modules, 'javascript_modules': javascript_modules,
               'standing': 'current source and linked inventory; no inherited proof retargeted; runtime parity is separate'}
     return result
 
@@ -148,6 +155,7 @@ def summary(inventory):
             'reviewed_K8_constructs': sum(c['standing'] == 'reviewed-K8-binding' for c in inventory['constructs']),
             'linked_K8_public_exports': len(inventory['native_exports']),
             'reviewed_K8_cpp_modules': len(inventory['cpp_modules']),
+            'reviewed_K8_javascript_modules': len(inventory['javascript_modules']),
             'standing': inventory['standing']}
 
 

@@ -24,3 +24,6 @@ install: all
 	install -d $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/bin
 	install -m644 include/ql/continuous_field.hpp $(DESTDIR)$(PREFIX)/include/ql/
 	install -m755 $(BUILD_DIR)/ql-field-worker $(DESTDIR)$(PREFIX)/bin/
+
+	install -d $(DESTDIR)$(PREFIX)/share/ql-mef-c/adapters/retained-field
+	install -m644 ../adapters/retained-field/retained-field.mjs ../adapters/retained-field/native-audio.mjs ../adapters/retained-field/instrument-session.mjs $(DESTDIR)$(PREFIX)/share/ql-mef-c/adapters/retained-field/

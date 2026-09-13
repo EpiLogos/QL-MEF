@@ -238,28 +238,46 @@ impl CoupledFieldSession {
             "basis":self.current, "field":self.field.last_receipt(),
             "standing":"native modal continuation from complete retained M1/M2/M3 bases; original discrete clocks are not relabelled as continuous samples"})
     }
+    /// Compact data-plane access. Full bases remain in this same owner and are
+    /// available through snapshot/inspection, not copied into every PCM block.
+    pub fn last_field(&self) -> &Value {
+        self.field.last_receipt()
+    }
+    pub fn read_field(&mut self) -> Result<Value, String> {
+        self.field.read()
+    }
+    pub fn advance_field(&mut self, frames: u32, muted: bool) -> Result<Value, String> {
+        self.field.advance(frames, muted)
+    }
+    pub fn set_axis_field(&mut self, axis: u8, phase: LiftInput) -> Result<Value, String> {
+        self.field.set_axis(axis, phase)
+    }
     pub fn read(&mut self) -> Result<Value, String> {
-        self.field.read()?;
+        self.read_field()?;
         Ok(self.snapshot())
     }
     pub fn advance(&mut self, frames: u32, muted: bool) -> Result<Value, String> {
-        self.field.advance(frames, muted)?;
+        self.advance_field(frames, muted)?;
         Ok(self.snapshot())
     }
     pub fn set_axis(&mut self, axis: u8, phase: LiftInput) -> Result<Value, String> {
-        self.field.set_axis(axis, phase)?;
+        self.set_axis_field(axis, phase)?;
         Ok(self.snapshot())
     }
     /// Full derivation completes before any native mutation. The old whole basis
     /// remains the last acknowledged one if the native operation is refused or
     /// its transport has unknown standing. No partial M1/M3 publication occurs.
-    pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
+    pub fn replace_field(&mut self, input: CoupledInput) -> Result<Value, String> {
         let next = input.compose()?;
         if next.m3["subject_ref"] != self.current.m3["subject_ref"] {
             return Err("cannot change subject during continuation".into());
         }
         self.field.replace_modes(next.m2_input.clone(), false)?;
         self.current = next;
+        Ok(self.last_field().clone())
+    }
+    pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
+        self.replace_field(input)?;
         Ok(self.snapshot())
     }
 }

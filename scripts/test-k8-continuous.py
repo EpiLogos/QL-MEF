@@ -97,7 +97,10 @@ state = w.send(initial)
 assert len(state['targets']) == 256 and len(state['amplitudes_metres']) == 8
 assert state['clock']['centre_ref'] == '#3-5-5/0'
 # Validation/rejection must leave the resident field and original basis unchanged.
-for command in [control(state, 'advance', frames=9000, muted=False),
+for command in [dict(control(state, 'advance', frames=32, muted=False), expected_generation='0' + state['generation']),
+                dict(control(state, 'advance', frames=32, muted=False), expected_samples_elapsed='-0'),
+                control(state, 'set-axis', axis=0, phase=dict(turns='00', half_degrees=0)),
+                control(state, 'advance', frames=9000, muted=False),
                 control(state, 'advance', frames=0, muted='not-a-boolean'),
                 control(state, 'set-axis', axis=1, phase=dict(turns='2', half_degrees=720)),
                 dict(control(state, 'advance', frames=64, muted=False), expected_generation='0')]:
