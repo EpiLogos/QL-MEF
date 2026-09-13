@@ -6,9 +6,9 @@
 //! musical/material relations. #134 owns PersonalFieldInstance and its explicit
 //! seven receiver mappings. This harness starts no second world simulation.
 
+use ql_mef::continuous::FieldInput;
 use ql_mef::continuous::coupled::{CoupledInput, REQUEST_V2, REQUEST_V3};
 use ql_mef::continuous::personal::PersonalCoupledSession;
-use ql_mef::continuous::FieldInput;
 use ql_mef::nara::{
     BioQuaternion, ConsentState, EarthBodyConstitution, EventBasisRefs, LifecycleState,
     PersonalConstitution, PersonalEventInput, PersonalLayer, ReceiverConstitution,
@@ -19,7 +19,11 @@ use std::path::Path;
 use std::time::Duration;
 
 fn read(path: &str) -> Result<Value, String> {
-    if std::fs::metadata(path).map_err(|error| error.to_string())?.len() > 32 * 1024 * 1024 {
+    if std::fs::metadata(path)
+        .map_err(|error| error.to_string())?
+        .len()
+        > 32 * 1024 * 1024
+    {
         return Err("input exceeds 32 MiB".into());
     }
     serde_json::from_slice(&std::fs::read(path).map_err(|error| error.to_string())?)
@@ -209,6 +213,14 @@ fn run() -> Result<(), String> {
     let observed_at_unix_ms = composed.m2_input.at_unix_ms;
     let personal = constitution(&subject, observed_at_unix_ms);
     std::fs::create_dir_all(out).map_err(|error| error.to_string())?;
+    std::fs::write(
+        out.join("input.json"),
+        format!(
+            "{}\n",
+            serde_json::to_string_pretty(&json!({"basis": &basis, "field": &field})).unwrap()
+        ),
+    )
+    .map_err(|error| error.to_string())?;
 
     let mut owner = PersonalCoupledSession::open(
         Path::new(&args[1]),
