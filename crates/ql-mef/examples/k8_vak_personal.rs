@@ -1,11 +1,12 @@
-//! Cross-owner K8 acceptance: consume an owner-executed Factory Vāk receipt,
-//! voice the existing dual-bus material owner through QL's accepted C′/musical
-//! relation, and receive that same acknowledged world event as one Nara.
+//! Cross-owner K8 acceptance: execute Factory's retained Vāk owner, project that
+//! exact snapshot through QL's accepted performance semantics, voice the existing
+//! dual-bus material owner, and receive the same acknowledged world as one Nara.
 //!
-//! Factory remains the execution/attempt owner. QL owns the CF→mode and M2
-//! musical/material relations. #134 owns PersonalFieldInstance and its explicit
-//! seven receiver mappings. This harness starts no second world simulation.
+//! Factory remains the execution/attempt owner. QL owns C′/musical meaning and
+//! M2 material projection. #134 owns PersonalFieldInstance and its explicit seven
+//! receiver mappings. This harness starts no second world simulation.
 
+use ql_core::{CallerProvenance, QlFace};
 use ql_mef::continuous::FieldInput;
 use ql_mef::continuous::coupled::{CoupledInput, REQUEST_V2, REQUEST_V3};
 use ql_mef::continuous::personal::PersonalCoupledSession;
@@ -14,7 +15,18 @@ use ql_mef::nara::{
     PersonalConstitution, PersonalEventInput, PersonalLayer, ReceiverConstitution,
     ReceiverEventInput, SourceRevision, WorldContribution,
 };
+use ql_mef::vak_composition::{ActiveFrame, Basis, PositionBasis};
+use ql_mef::vak_performance::{
+    FactoryVakPerformanceSnapshot, PERFORMANCE_EVENT_CONTRACT, PERFORMANCE_PROJECTION_REQUEST,
+    PerformanceObservation, PerformanceObservationMode, PerformanceProjectionRequest,
+};
+use ql_mef::vak_profile::{
+    CPrimeProfile, CompiledProfile, ContentPosition, ContentType, ContextSequence,
+    InquiryDirection, PROFILE_CONTRACT, PROFILE_SOURCE, Participation, ThreadForm,
+};
+use ql_mef::{ContextFrameId, LensId, MusicalBasis};
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
 use std::path::Path;
 use std::time::Duration;
 
@@ -140,6 +152,51 @@ fn reception(refs: &EventBasisRefs, observed_at_unix_ms: u64) -> PersonalEventIn
     }
 }
 
+fn ql_profile(factory: &FactoryVakPerformanceSnapshot) -> Result<CompiledProfile, String> {
+    if factory.frame != "CF5"
+        || factory.thread != "CFP0"
+        || factory.sequence != "CS2"
+        || factory.direction != "forward"
+        || factory.musical_role != "single-voice"
+    {
+        return Err("Factory K8 receipt changed its controlled QL profile".into());
+    }
+    let profile = CPrimeProfile {
+        participation: Participation::AuthorisedUndertaking,
+        content: ContentType::Operations,
+        position: ContentPosition::Operation,
+        thread: ThreadForm::Single,
+        sequence: ContextSequence::ThroughOperation,
+        direction: InquiryDirection::Forward,
+    };
+    let provenance = CallerProvenance::new(
+        "k8-cross-owner-acceptance",
+        PROFILE_SOURCE,
+        "CONTROLLED_ACCEPTANCE",
+    )
+    .map_err(|error| error.to_string())?;
+    Ok(CompiledProfile {
+        contract: PROFILE_CONTRACT,
+        whole_use: factory.whole_ref.clone(),
+        subject_ref: factory.subject_ref.clone(),
+        frame: ActiveFrame {
+            id: ContextFrameId::Cf5,
+            lens: LensId::L0,
+            basis: MusicalBasis::Chromatic,
+            face: QlFace::Direct,
+            positions: PositionBasis::Local,
+        },
+        pairs: profile.sequence.pairs(),
+        walk: profile.sequence.walk(profile.direction),
+        profile,
+        basis: vec![Basis {
+            provenance,
+            revision: factory.ql_binding_revision.clone(),
+            evidence: vec![factory.ql_binding_ref.clone()],
+        }],
+    })
+}
+
 fn run() -> Result<(), String> {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 7 {
@@ -149,7 +206,7 @@ fn run() -> Result<(), String> {
         );
     }
     let installed = read(&args[2])?;
-    let factory = read(&args[3])?;
+    let factory_json = read(&args[3])?;
     let factory_source_sha = &args[4];
     let out = Path::new(&args[5]);
     let factory_receipt_sha256 = &args[6];
@@ -167,14 +224,32 @@ fn run() -> Result<(), String> {
     {
         return Err("Factory receipt digest must be SHA-256 hex".into());
     }
-    if factory["contract"] != "factory.vak-orchestration/v1" {
-        return Err("not a Factory Vāk performance receipt".into());
+    let factory: FactoryVakPerformanceSnapshot = serde_json::from_value(factory_json.clone())
+        .map_err(|error| format!("Factory owner receipt does not match its published wire: {error}"))?;
+    let profile = ql_profile(&factory)?;
+    let performance_event = profile
+        .project_factory_performance(PerformanceProjectionRequest {
+            schema: PERFORMANCE_PROJECTION_REQUEST.into(),
+            ql_binding_ref: factory.ql_binding_ref.clone(),
+            ql_binding_revision: factory.ql_binding_revision.clone(),
+            observation: PerformanceObservation {
+                observation_ref: format!("observation:k8-live:{factory_source_sha}"),
+                mode: PerformanceObservationMode::Live,
+                replay_of: None,
+            },
+            factory_receipt_refs: BTreeSet::from([
+                format!("git:EpiLogos/Factory@{factory_source_sha}"),
+                format!("sha256:{factory_receipt_sha256}"),
+            ]),
+            snapshot: factory,
+        })
+        .map_err(|error| error.to_string())?;
+    if performance_event.contract != PERFORMANCE_EVENT_CONTRACT {
+        return Err("QL Vāk producer returned another contract".into());
     }
-    let subject = factory["subjectRef"]
-        .as_str()
-        .filter(|value| !value.is_empty())
-        .ok_or("Factory receipt lacks subjectRef")?
-        .to_owned();
+    let subject = performance_event.factory.subject_ref.clone();
+    let event_json = serde_json::to_value(&performance_event).map_err(|error| error.to_string())?;
+
     let mut basis: CoupledInput = serde_json::from_value(installed["basis"].clone())
         .map_err(|error| error.to_string())?;
     let mut field: FieldInput = serde_json::from_value(installed["field"].clone())
@@ -185,15 +260,15 @@ fn run() -> Result<(), String> {
     basis.schema = REQUEST_V3.into();
     basis.m3.subject_ref.clone_from(&subject);
     field.subject_ref.clone_from(&subject);
-    basis.source_receipts.push(factory.clone());
+    basis.source_receipts.push(event_json.clone());
 
     let composed = basis.compose()?;
-    let performance = &composed.derivation["factory_vak_performance"];
-    if performance["subject_ref"] != subject
-        || performance["performance_ref"] != factory["performanceRef"]
-        || performance["run_ref"] != factory["runRef"]
+    let projected = &composed.derivation["vak_performance_event"];
+    if projected["performance_ref"] != performance_event.performance_ref
+        || projected["factory"]["run_ref"] != performance_event.factory.run_ref
+        || projected["factory"]["subject_ref"] != subject
     {
-        return Err("Factory provenance changed during QL composition".into());
+        return Err("performance provenance changed during K8 composition".into());
     }
     if composed
         .m2_input
@@ -210,6 +285,9 @@ fn run() -> Result<(), String> {
         .as_ref()
         .ok_or("performed occasion lacks Vimarśā")?
         .musical_mode;
+    if performed_mode != performance_event.semantics.musical_mode_index {
+        return Err("K8 material voice differs from the QL performance semantics".into());
+    }
     let observed_at_unix_ms = composed.m2_input.at_unix_ms;
     let personal = constitution(&subject, observed_at_unix_ms);
     std::fs::create_dir_all(out).map_err(|error| error.to_string())?;
@@ -219,6 +297,11 @@ fn run() -> Result<(), String> {
             "{}\n",
             serde_json::to_string_pretty(&json!({"basis": &basis, "field": &field})).unwrap()
         ),
+    )
+    .map_err(|error| error.to_string())?;
+    std::fs::write(
+        out.join("ql-performance-event.json"),
+        format!("{}\n", serde_json::to_string_pretty(&event_json).unwrap()),
     )
     .map_err(|error| error.to_string())?;
 
@@ -252,21 +335,20 @@ fn run() -> Result<(), String> {
     }
 
     let acceptance = json!({
-        "schema":"ql.k8-vak-personal-acceptance/v1",
+        "schema":"ql.k8-vak-personal-acceptance/v2",
         "factory_source_sha":factory_source_sha,
         "factory_receipt_sha256":factory_receipt_sha256,
-        "factory_contract":factory["contract"],
-        "factory_performance_ref":factory["performanceRef"],
-        "factory_run_ref":factory["runRef"],
-        "factory_run_revision":factory["runRevision"],
-        "factory_actor_ref":factory["actorRef"],
+        "factory_contract":performance_event.factory_contract,
+        "factory_performance_ref":performance_event.factory.performance_ref,
+        "factory_run_ref":performance_event.factory.run_ref,
+        "factory_run_revision":performance_event.factory.run_revision,
+        "factory_actor_ref":performance_event.factory.actor_ref,
         "factory_subject_ref":subject,
-        "factory_frame":factory["frame"],
-        "factory_thread":factory["thread"],
-        "factory_sequence":factory["sequence"],
-        "factory_direction":factory["direction"],
-        "factory_musical_role":factory["musicalRole"],
-        "factory_attempts":factory["attempts"].as_array().map_or(0, Vec::len),
+        "ql_performance_contract":performance_event.contract,
+        "ql_binding_ref":performance_event.ql_binding_ref,
+        "ql_binding_revision":performance_event.ql_binding_revision,
+        "ql_semantics":performance_event.semantics,
+        "factory_attempts":performance_event.factory.attempts.len(),
         "ql_performed_musical_mode":performed_mode,
         "same_dual_bus_material_owner":owner.current_basis().m2_input.resonator.as_ref().map_or(0, |value| value.modes.len()) == 16,
         "native_field_generation":owner.last_field()["generation"],
@@ -278,7 +360,7 @@ fn run() -> Result<(), String> {
         "personal_reception_did_not_advance_native_field":true,
         "exact_personal_replay":replay == personal_state,
         "one_runtime_owner":true,
-        "standing":"Factory owner-executed Vāk performance -> QL-owned CF/music/material composition -> #134 Nara reception on one installed C++ field owner; centre inputs are controlled source-qualified acceptance values, not inferred physiology or owner-machine lived evidence"
+        "standing":"Factory owner-executed Vāk performance -> QL-owned performance event -> QL music/material composition -> #134 Nara reception on one installed C++ field owner; centre inputs are controlled source-qualified acceptance values, not inferred physiology or owner-machine lived evidence"
     });
     std::fs::write(
         out.join("acceptance.json"),
@@ -287,7 +369,7 @@ fn run() -> Result<(), String> {
     .map_err(|error| error.to_string())?;
     std::fs::write(
         out.join("factory-performance.json"),
-        format!("{}\n", serde_json::to_string_pretty(&factory).unwrap()),
+        format!("{}\n", serde_json::to_string_pretty(&factory_json).unwrap()),
     )
     .map_err(|error| error.to_string())?;
     std::fs::write(
