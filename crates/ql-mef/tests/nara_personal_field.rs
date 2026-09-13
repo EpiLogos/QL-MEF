@@ -29,10 +29,7 @@ fn world_input(subject: &str) -> CoupledInput {
     .unwrap();
     let mut m3: M3Request = serde_json::from_value(m3_fixture["request"].clone()).unwrap();
     m1.event_ref.clone_from(&m2.stamp.identity.event_ref);
-    m3.stamp
-        .identity
-        .event_ref
-        .clone_from(&m2.stamp.identity.event_ref);
+    m3.stamp.identity = m2.stamp.identity.clone();
     m3.m2_basis.as_mut().unwrap().identity = m3.stamp.identity.clone();
     m3.subject_ref = subject.into();
     CoupledInput {
@@ -188,7 +185,10 @@ fn two_distinct_naras_receive_the_same_dated_sources_without_collapsing_constitu
 
     let input_a = event(&refs_a);
     let input_b = event(&refs_b);
-    assert_eq!(input_a, input_b, "the received dated world contributions differ");
+    assert_eq!(
+        input_a, input_b,
+        "the received dated world contributions differ"
+    );
 
     let mut nara_a = PersonalFieldInstance::new(constitution(&refs_a.subject_ref, 0.8)).unwrap();
     let mut nara_b = PersonalFieldInstance::new(constitution(&refs_b.subject_ref, 1.6)).unwrap();
