@@ -10,7 +10,7 @@ permissions:
 jobs:
   native-field:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,7 +21,7 @@ jobs:
           components: rustfmt, clippy
       - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
-          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/nara_personal_field.rs; do
+          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/examples/k8_vak_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/nara_personal_field.rs; do
             mkdir -p "target/k8-format/$(dirname "$path")"
             cp "$path" "target/k8-format/$path"
             rustfmt --edition 2024 --config skip_children=true "target/k8-format/$path"
@@ -81,6 +81,32 @@ jobs:
           cargo test --locked -p ql-mef --test nara_personal_field
           cargo run --locked -p ql-mef --example k8_personal -- target/k8-cpp/bin/ql-field-worker \
             target/k8-coupled-v2/input.json target/k8-personal
+      - name: Fetch exact Factory Vāk owner read-only
+        uses: actions/checkout@v4
+        with:
+          repository: EpiLogos/Factory
+          ref: 4afab7994af51b892e126d91e9104e31179a39d1
+          path: target/factory-source
+          persist-credentials: false
+      - name: Owner-executed Vāk through the same material and Nara owner
+        run: |
+          set -euo pipefail
+          mkdir -p target/k8-factory target/k8-vak-personal
+          FACTORY_SHA=$(git -C target/factory-source rev-parse HEAD)
+          test "$FACTORY_SHA" = "4afab7994af51b892e126d91e9104e31179a39d1"
+          printf '%s\n' "$FACTORY_SHA" > target/k8-factory/source-sha.txt
+          (cd target/factory-source && cargo run -p epilogos-factory --example k8_vak_performance_receipt -- \
+            "$GITHUB_WORKSPACE/target/k8-factory/vak-performance.json") \
+            2>&1 | tee target/k8-factory/owner-execution.log
+          FACTORY_RECEIPT_SHA=$(sha256sum target/k8-factory/vak-performance.json | awk '{print $1}')
+          printf '%s  %s\n' "$FACTORY_RECEIPT_SHA" 'vak-performance.json' > target/k8-factory/vak-performance.sha256
+          cargo run --locked -p ql-mef --example k8_vak_personal -- \
+            target/k8-cpp/bin/ql-field-worker \
+            target/k8-coupled-v2/input.json \
+            target/k8-factory/vak-performance.json \
+            "$FACTORY_SHA" \
+            target/k8-vak-personal \
+            "$FACTORY_RECEIPT_SHA"
       - name: Managed coupled native host, compact delivery and source inspection
         run: |
           mkdir -p target/k8-host target/k8-host-debug
@@ -168,6 +194,8 @@ jobs:
             target/k8-coupled/
             target/k8-coupled-v2/
             target/k8-personal/
+            target/k8-factory/
+            target/k8-vak-personal/
             target/k8-audio/
             target/k8-host/
             target/k8-host-v2/
