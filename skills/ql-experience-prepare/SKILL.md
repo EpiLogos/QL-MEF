@@ -33,6 +33,25 @@ Preparation is read-only. Source visibility does not establish agent disclosure 
 5. Inspect real Action/tool descriptions and input/result schemas. Name the supported route, prerequisites, authority and failure/recovery. A declared capability or existing Rust type alone is not a callable agent affordance. Use the bounded generic QL operation Method only within its supported service scope.
 6. Return a preparation record with each dependency observed or unresolved. Implementable repository gaps remain work in their native owner. Missing local access blocks only the corresponding installed test. Preserve the user's newer renderer and accepted M1–M3 waves.
 
+## Optimisation preparation within the same task
+
+Read `docs/kernel-rebuild/OPTIMISATION-AND-LEARNING.md` for AW/agent-world and
+instrument work. Bind the applicable existing B06–B12 subcases to actual native
+operations and evidence: model/body/context fitness, T/T′ consumption and later
+praxis uptake, the versioned improvement procedure itself, or composed field/audio
+performance. Preserve the complete original A/B/SP/UX obligations; these are not
+replacement stories or a second campaign.
+
+Record the useful outcome, unchanged scope/authority/fidelity, exact baseline and
+candidate conditions, finite resource/iteration budget, relevant measurements,
+independent verifier and missing native joins. Preparation itself does not run an
+experiment. Later testing must distinguish saved practice from actual fresh-agent
+discovery/loading/use; compare optimiser O0/O1 on fixed independent holdouts and
+include rejected experiments and learning overhead. Missing measurements remain
+unknown. The H-ratification boundary and native permissions are not changed by
+this planning amendment. Do not trigger all-model benchmarking for an ordinary
+lookup or turn the optimisation programme into a global implementation blocker.
+
 ## Outputs
 
 The selected UX story and A/B obligations; original intent/source; actual root/child and subject basis; practice/source/loading state; native operation and prerequisites; exact supported/blocked branches; evidence references and next owner action. Source-only output is labelled source-only.

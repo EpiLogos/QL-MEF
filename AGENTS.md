@@ -7,6 +7,14 @@ Read current issue coordination before choosing files. K8.0 is the shared-core
 writer; #94 owns AW/M0/M5, #134 Nara, #133 the experienced instrument. Preserve
 the accepted M1–M3 field and source identities.
 
+For AW/agent-world or instrument development and its testing, also read
+`docs/kernel-rebuild/OPTIMISATION-AND-LEARNING.md`: the owner-authorised
+optimisation amendment within existing AW0–AW3 and B06–B12. Bind relevant
+baseline/resource/learning evidence at the next checkpoint, including fresh-agent
+praxis uptake and a bounded comparison of the improvement procedure itself.
+Do not replace the full field with these specimens or make them a new global
+launch gate. Native owner and shared-writer boundaries remain unchanged.
+
 For product work read `skills/ql-experience-prepare/SKILL.md` and
 `docs/kernel-rebuild/UX-INTENT-SOURCE-MINUTE.md`, then the selected whole story
 in `docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md`. This pointer is a bootstrap
