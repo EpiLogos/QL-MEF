@@ -45,6 +45,16 @@ jobs:
               '''    pub fn has_failure(&self) -> bool {\n        self.attempts.iter().any(|attempt| attempt.status.failed())\n    }\n\n    pub fn has_late_return(&self) -> bool {''',
               '''    pub fn has_failure(&self) -> bool {\n        self.attempts.iter().any(|attempt| attempt.status.failed())\n    }\n\n    pub fn has_interruption(&self) -> bool {\n        self.attempts.iter().any(|attempt| {\n            attempt.status_history.iter().any(|status| {\n                matches!(\n                    status,\n                    FactoryLegStatus::CancellationAccepted\n                        | FactoryLegStatus::ProcessTerminated\n                        | FactoryLegStatus::Quiescent\n                )\n            })\n        })\n    }\n\n    pub fn has_late_return(&self) -> bool {'''
           )
+          for struct_name in [
+              'PerformanceObservation',
+              'PerformanceProjectionRequest',
+              'PerformanceSemantics',
+              'VakPerformanceEvent',
+          ]:
+              replace(
+                  f'#[serde(deny_unknown_fields)]\npub struct {struct_name}',
+                  f'#[serde(rename_all = "camelCase", deny_unknown_fields)]\npub struct {struct_name}'
+              )
           replace(
               '''    pub musical_role: String,\n    pub lens: String,\n    pub musical_basis: String,\n    pub frame_pitch: u8,''',
               '''    pub musical_role: String,\n    pub musical_mode: String,\n    pub musical_mode_index: u8,\n    pub lens: String,\n    pub musical_basis: String,\n    pub frame_pitch: u8,'''
@@ -68,6 +78,10 @@ jobs:
           replace(
               '''        assert_eq!(event.semantics.musical_role, "melody");\n        assert_eq!(event.semantics.lens, "L0");''',
               '''        assert_eq!(event.semantics.musical_role, "melody");\n        assert_eq!(event.semantics.musical_mode, "mixolydian");\n        assert_eq!(event.semantics.musical_mode_index, 4);\n        assert_eq!(event.semantics.lens, "L0");'''
+          )
+          replace(
+              '''        assert_eq!(event.factory.attempts[0].execution_ref, "exec-inspect");\n    }''',
+              '''        assert_eq!(event.factory.attempts[0].execution_ref, "exec-inspect");\n        let wire = serde_json::to_value(&event).unwrap();\n        assert_eq!(wire["performanceRef"], "performance:factory-vak");\n        assert_eq!(wire["semantics"]["musicalMode"], "mixolydian");\n        assert_eq!(wire["semantics"]["musicalModeIndex"], 4);\n        assert_eq!(wire["factory"]["runRef"], "run:factory-vak");\n        assert!(wire.get("performance_ref").is_none());\n    }'''
           )
           replace(
               '''        let mut current = attempt("observe", 1, true, "exec-new", FactoryLegStatus::LateResult);\n        current.late_artifact_refs.insert("artifact:new-late".into());''',
