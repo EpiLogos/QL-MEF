@@ -712,7 +712,6 @@ mod tests {
             },
             pairs: ContextSequence::ThroughOperation.pairs(),
             walk: ContextSequence::ThroughOperation.walk(InquiryDirection::Forward),
-            profile,
             basis: vec![basis()],
         }
     }
