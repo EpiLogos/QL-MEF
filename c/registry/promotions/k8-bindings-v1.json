@@ -265,6 +265,18 @@
         "adapters/retained-field/instrument-session.test.mjs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "scripts/k8-graph.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Reviewed graph transaction/projection over the existing K8 source compiler and captured native graph joins. Transport, target admission and rollback do not define new semantic coordinates, property vocabulary or readiness.",
+      "tests": [
+        "scripts/tests/test_k8_graph.py",
+        "scripts/test-k8-graph-live.py"
+      ],
+      "kind": "computational"
     }
   ]
 }

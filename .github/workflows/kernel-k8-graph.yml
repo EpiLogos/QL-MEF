@@ -1,0 +1,58 @@
+name: K8 reviewed graph promotion
+on:
+  pull_request:
+    paths: ['scripts/k8-graph.py', 'scripts/test-k8-graph-live.py', 'scripts/tests/test_k8_graph.py', 'scripts/k8-structure.py', 'c/registry/promotions/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-graph.yml']
+  push:
+    branches: [main]
+    paths: ['scripts/k8-graph.py', 'scripts/test-k8-graph-live.py', 'scripts/tests/test_k8_graph.py', 'scripts/k8-structure.py', 'c/registry/promotions/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-graph.yml']
+permissions:
+  contents: read
+jobs:
+  graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      neo4j:
+        image: neo4j:5.26.20-community
+        env:
+          NEO4J_AUTH: neo4j/k8-disposable-only
+          NEO4J_server_memory_heap_initial__size: 256m
+          NEO4J_server_memory_heap_max__size: 512m
+          NEO4J_server_memory_pagecache_size: 256m
+        ports: ['7474:7474', '7687:7687']
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p k8-disposable-only 'RETURN 1'"
+          --health-interval 10s --health-timeout 10s --health-retries 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Complete projection and negative admission
+        run: |
+          mkdir -p target/k8-graph
+          set -o pipefail
+          python3 -m unittest discover -s scripts/tests -p test_k8_graph.py -v 2>&1 | tee target/k8-graph/unit.log
+      - name: Actual atomic graph application, concurrency and guarded rollback
+        env:
+          QL_K8_DISPOSABLE_GRAPH: yes-this-is-an-empty-test-database
+          QL_K8_GRAPH_ENDPOINT: http://localhost:7474
+          QL_K8_GRAPH_PASSWORD: k8-disposable-only
+        run: |
+          set -o pipefail
+          python3 scripts/test-k8-graph-live.py 2>&1 | tee target/k8-graph/live.log
+      - name: Source and environment evidence
+        if: always()
+        run: |
+          mkdir -p target/k8-graph
+          git rev-parse HEAD > target/k8-graph/source-sha.txt
+          git rev-parse 'HEAD^{tree}' > target/k8-graph/source-tree.txt
+          sha256sum scripts/k8-graph.py scripts/test-k8-graph-live.py scripts/tests/test_k8_graph.py > target/k8-graph/source-sha256.txt
+          { uname -a; python3 --version; docker image inspect neo4j:5.26.20-community --format '{{json .RepoDigests}}'; } > target/k8-graph/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k8-graph-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k8-graph/
+          retention-days: 14
+          if-no-files-found: error
