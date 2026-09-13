@@ -11,7 +11,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde::{Deserialize, Serialize};
 
 use crate::cprime_oikonomia::C_PRIME_OIKONOMIA_CONTRACT;
-use crate::music::{MUSICAL_DERIVATION_SOURCE_BLOB, MUSICAL_DERIVATION_SOURCE_PATH, MusicalBasis};
+use crate::music::{
+    MUSICAL_DERIVATION_SOURCE_BLOB, MUSICAL_DERIVATION_SOURCE_PATH, ModeKind, MusicalBasis,
+};
 use crate::vak_composition::{CompositionError, Result};
 use crate::vak_profile::{
     CompiledProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
@@ -32,7 +34,11 @@ fn error(message: impl Into<String>) -> CompositionError {
 }
 
 fn require(test: bool, message: &str) -> Result<()> {
-    if test { Ok(()) } else { Err(error(message)) }
+    if test {
+        Ok(())
+    } else {
+        Err(error(message))
+    }
 }
 
 fn reference(value: &str, what: &str) -> Result<()> {
@@ -43,7 +49,10 @@ fn reference(value: &str, what: &str) -> Result<()> {
 }
 
 fn references(values: &BTreeSet<String>, what: &str) -> Result<()> {
-    require(!values.is_empty() && values.len() <= MAX_SOURCE_REFS, what)?;
+    require(
+        !values.is_empty() && values.len() <= MAX_SOURCE_REFS,
+        what,
+    )?;
     for value in values {
         reference(value, what)?;
     }
@@ -78,14 +87,7 @@ impl FactoryLegStatus {
     }
 
     pub const fn failed(self) -> bool {
-        matches!(
-            self,
-            Self::CancellationAccepted
-                | Self::ProcessTerminated
-                | Self::Quiescent
-                | Self::Failed
-                | Self::LateResult
-        )
+        matches!(self, Self::Failed)
     }
 }
 
@@ -175,6 +177,19 @@ impl FactoryVakPerformanceSnapshot {
         self.attempts.iter().any(|attempt| attempt.status.failed())
     }
 
+    pub fn has_interruption(&self) -> bool {
+        self.attempts.iter().any(|attempt| {
+            attempt.status_history.iter().any(|status| {
+                matches!(
+                    status,
+                    FactoryLegStatus::CancellationAccepted
+                        | FactoryLegStatus::ProcessTerminated
+                        | FactoryLegStatus::Quiescent
+                )
+            })
+        })
+    }
+
     pub fn has_late_return(&self) -> bool {
         self.attempts
             .iter()
@@ -190,7 +205,7 @@ pub enum PerformanceObservationMode {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct PerformanceObservation {
     pub observation_ref: String,
     pub mode: PerformanceObservationMode,
@@ -199,7 +214,7 @@ pub struct PerformanceObservation {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct PerformanceProjectionRequest {
     pub schema: String,
     pub ql_binding_ref: String,
@@ -210,7 +225,7 @@ pub struct PerformanceProjectionRequest {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct PerformanceSemantics {
     pub profile_contract: String,
     pub participation: Participation,
@@ -222,13 +237,15 @@ pub struct PerformanceSemantics {
     pub sequence: ContextSequence,
     pub direction: InquiryDirection,
     pub musical_role: String,
+    pub musical_mode: String,
+    pub musical_mode_index: u8,
     pub lens: String,
     pub musical_basis: String,
     pub frame_pitch: u8,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct VakPerformanceEvent {
     pub contract: String,
     /// Same performed occasion as Factory's `performanceRef`; QL does not mint a
@@ -243,6 +260,7 @@ pub struct VakPerformanceEvent {
     pub semantics: PerformanceSemantics,
     pub settled: bool,
     pub has_failure: bool,
+    pub has_interruption: bool,
     pub has_late_return: bool,
     pub factory: FactoryVakPerformanceSnapshot,
     pub standing: String,
@@ -274,6 +292,10 @@ impl CompiledProfile {
         }
         ql_basis_refs.extend(snapshot.source_refs.iter().cloned());
         ql_basis_refs.extend(request.factory_receipt_refs.iter().cloned());
+        let mode = ModeKind::ALL
+            .into_iter()
+            .find(|mode| mode.context_frame() == self.frame.id)
+            .expect("the seven canonical Context Frames each have one musical mode");
 
         Ok(VakPerformanceEvent {
             contract: PERFORMANCE_EVENT_CONTRACT.into(),
@@ -295,12 +317,15 @@ impl CompiledProfile {
                 sequence: self.profile.sequence,
                 direction: self.profile.direction,
                 musical_role: self.profile.thread.musical_role().into(),
+                musical_mode: format!("{mode:?}").to_ascii_lowercase(),
+                musical_mode_index: mode.index() as u8,
                 lens: self.frame.lens.code().into(),
                 musical_basis: musical_basis(self.frame.basis).into(),
                 frame_pitch: self.frame_pitch(),
             },
             settled: snapshot.settled(),
             has_failure: snapshot.has_failure(),
+            has_interruption: snapshot.has_interruption(),
             has_late_return: snapshot.has_late_return(),
             factory: request.snapshot,
             standing: "QL semantic projection of an actual Factory owner snapshot; musical coherence is not task-fitness or Recognition evidence".into(),
@@ -353,21 +378,36 @@ fn validate_snapshot(profile: &CompiledProfile, request: &PerformanceProjectionR
         snapshot.contract == FACTORY_VAK_PERFORMANCE_CONTRACT,
         "unsupported Factory Vāk performance contract",
     )?;
-    require(snapshot.run_revision > 0, "Factory Run revision must be positive")?;
+    require(
+        snapshot.run_revision > 0,
+        "Factory Run revision must be positive",
+    )?;
     for (value, message) in [
-        (&snapshot.performance_ref, "missing Factory performance reference"),
+        (
+            &snapshot.performance_ref,
+            "missing Factory performance reference",
+        ),
         (&snapshot.run_ref, "missing Factory Run reference"),
-        (&snapshot.workflow_source_ref, "missing workflow source reference"),
+        (
+            &snapshot.workflow_source_ref,
+            "missing workflow source reference",
+        ),
         (
             &snapshot.workflow_source_revision,
             "missing workflow source revision",
         ),
-        (&snapshot.workflow_source_digest, "missing workflow source digest"),
+        (
+            &snapshot.workflow_source_digest,
+            "missing workflow source digest",
+        ),
         (&snapshot.actor_ref, "missing performance actor"),
         (&snapshot.subject_ref, "missing performance subject"),
         (&snapshot.whole_ref, "missing performance whole"),
         (&snapshot.ql_binding_ref, "missing source QL binding"),
-        (&snapshot.ql_binding_revision, "missing source QL binding revision"),
+        (
+            &snapshot.ql_binding_revision,
+            "missing source QL binding revision",
+        ),
         (
             &snapshot.ai_kit_resolve_path_ref,
             "missing scoped AIKit Resolve path",
@@ -502,14 +542,23 @@ fn validate_chain(snapshot: &FactoryVakPerformanceSnapshot, thread: ThreadForm) 
     let mut successors = BTreeSet::new();
     for material in &snapshot.chain_inputs {
         for (value, message) in [
-            (&material.predecessor_unit_ref, "missing predecessor WorkflowUnit"),
+            (
+                &material.predecessor_unit_ref,
+                "missing predecessor WorkflowUnit",
+            ),
             (
                 &material.predecessor_execution_ref,
                 "missing predecessor execution",
             ),
-            (&material.successor_unit_ref, "missing successor WorkflowUnit"),
+            (
+                &material.successor_unit_ref,
+                "missing successor WorkflowUnit",
+            ),
             (&material.subject_ref, "missing predecessor subject"),
-            (&material.subject_revision, "missing predecessor subject revision"),
+            (
+                &material.subject_revision,
+                "missing predecessor subject revision",
+            ),
         ] {
             reference(value, message)?;
         }
@@ -544,9 +593,13 @@ fn validate_chain(snapshot: &FactoryVakPerformanceSnapshot, thread: ThreadForm) 
             })
             .ok_or_else(|| error("chain material names an unknown predecessor occasion"))?;
         require(
-            predecessor.subject_ref == material.subject_ref
+            predecessor.status == FactoryLegStatus::Returned
+                && predecessor.current
+                && predecessor.subject_ref == material.subject_ref
                 && material.artifact_refs.is_subset(&predecessor.artifact_refs)
-                && material.artifact_refs.is_disjoint(&predecessor.late_artifact_refs)
+                && material
+                    .artifact_refs
+                    .is_disjoint(&predecessor.late_artifact_refs)
                 && material.evidence_refs.is_subset(&predecessor.evidence_refs),
             "chain material was not selected from the predecessor's current Return",
         )?;
@@ -616,8 +669,8 @@ const fn direction_code(direction: InquiryDirection) -> &'static str {
 mod tests {
     use ql_core::{CallerProvenance, QlFace};
 
-    use crate::{ContextFrameId, LensId};
     use crate::vak_composition::{ActiveFrame, Basis, PositionBasis};
+    use crate::{ContextFrameId, LensId};
 
     use super::*;
 
@@ -696,10 +749,22 @@ mod tests {
     }
 
     fn snapshot(thread: ThreadForm) -> FactoryVakPerformanceSnapshot {
-        let first = attempt("inspect", 0, true, "exec-inspect", FactoryLegStatus::Returned);
+        let first = attempt(
+            "inspect",
+            0,
+            true,
+            "exec-inspect",
+            FactoryLegStatus::Returned,
+        );
         let first_artifact = first.artifact_refs.iter().next().unwrap().clone();
         let first_evidence = first.evidence_refs.iter().next().unwrap().clone();
-        let second = attempt("implement", 0, true, "exec-implement", FactoryLegStatus::Returned);
+        let second = attempt(
+            "implement",
+            0,
+            true,
+            "exec-implement",
+            FactoryLegStatus::Returned,
+        );
         FactoryVakPerformanceSnapshot {
             contract: FACTORY_VAK_PERFORMANCE_CONTRACT.into(),
             performance_ref: "performance:factory-vak".into(),
@@ -773,14 +838,29 @@ mod tests {
         assert_eq!(event.semantics.constitutional_voice, "Anima");
         assert_eq!(event.semantics.thread, ThreadForm::Chain);
         assert_eq!(event.semantics.musical_role, "melody");
+        assert_eq!(event.semantics.musical_mode, "mixolydian");
+        assert_eq!(event.semantics.musical_mode_index, 4);
         assert_eq!(event.semantics.lens, "L0");
         assert_eq!(event.semantics.musical_basis, "chromatic");
-        assert_eq!(event.semantics.frame_pitch, profile(ThreadForm::Chain).frame_pitch());
+        assert_eq!(
+            event.semantics.frame_pitch,
+            profile(ThreadForm::Chain).frame_pitch()
+        );
         assert!(event.settled);
         assert!(!event.has_failure);
+        assert!(!event.has_interruption);
         assert_eq!(event.factory.chain_inputs.len(), 1);
         assert!(event.ql_basis_refs.contains("factory-receipt:return"));
-        assert_eq!(event.factory.attempts[0].execution_ref, "exec-inspect");
+        assert_eq!(
+            event.factory.attempts[0].execution_ref,
+            "exec-inspect"
+        );
+        let wire = serde_json::to_value(&event).unwrap();
+        assert_eq!(wire["performanceRef"], "performance:factory-vak");
+        assert_eq!(wire["semantics"]["musicalMode"], "mixolydian");
+        assert_eq!(wire["semantics"]["musicalModeIndex"], 4);
+        assert_eq!(wire["factory"]["runRef"], "run:factory-vak");
+        assert!(wire.get("performance_ref").is_none());
     }
 
     #[test]
@@ -801,11 +881,33 @@ mod tests {
     fn retries_keep_old_provider_and_late_return_without_relabelling_current_attempt() {
         let compiled = profile(ThreadForm::Sustained);
         let mut request = request(ThreadForm::Sustained);
-        let mut old = attempt("observe", 0, false, "exec-old", FactoryLegStatus::Failed);
+        let mut old = attempt(
+            "observe",
+            0,
+            false,
+            "exec-old",
+            FactoryLegStatus::Failed,
+        );
         old.late_artifact_refs.insert("artifact:old-late".into());
         old.evidence_refs.insert("evidence:old-late".into());
-        let mut current = attempt("observe", 1, true, "exec-new", FactoryLegStatus::LateResult);
-        current.late_artifact_refs.insert("artifact:new-late".into());
+        let mut current = attempt(
+            "observe",
+            1,
+            true,
+            "exec-new",
+            FactoryLegStatus::LateResult,
+        );
+        current.status_history = vec![
+            FactoryLegStatus::Active,
+            FactoryLegStatus::CancelRequested,
+            FactoryLegStatus::CancellationAccepted,
+            FactoryLegStatus::ProcessTerminated,
+            FactoryLegStatus::Quiescent,
+            FactoryLegStatus::LateResult,
+        ];
+        current
+            .late_artifact_refs
+            .insert("artifact:new-late".into());
         current.evidence_refs.insert("evidence:new-late".into());
         request.snapshot.attempts = vec![old, current];
         request.snapshot.sustained_stop = Some(FactoryVakSustainedStop {
@@ -818,6 +920,7 @@ mod tests {
         let event = compiled.project_factory_performance(request).unwrap();
         assert!(event.settled);
         assert!(event.has_failure);
+        assert!(event.has_interruption);
         assert!(event.has_late_return);
         assert_ne!(
             event.factory.attempts[0].provider_ref,
@@ -825,6 +928,39 @@ mod tests {
         );
         assert!(!event.factory.attempts[0].current);
         assert!(event.factory.attempts[1].current);
+    }
+
+    #[test]
+    fn cancellation_and_late_return_do_not_become_task_failure() {
+        let compiled = profile(ThreadForm::Sustained);
+        let mut request = request(ThreadForm::Sustained);
+        let mut interrupted = attempt(
+            "observe",
+            0,
+            true,
+            "exec-stop",
+            FactoryLegStatus::LateResult,
+        );
+        interrupted.status_history = vec![
+            FactoryLegStatus::Active,
+            FactoryLegStatus::CancelRequested,
+            FactoryLegStatus::CancellationAccepted,
+            FactoryLegStatus::ProcessTerminated,
+            FactoryLegStatus::Quiescent,
+            FactoryLegStatus::LateResult,
+        ];
+        interrupted
+            .late_artifact_refs
+            .insert("artifact:stopped-late".into());
+        interrupted
+            .evidence_refs
+            .insert("evidence:stopped-late".into());
+        request.snapshot.attempts = vec![interrupted];
+        let event = compiled.project_factory_performance(request).unwrap();
+        assert!(event.settled);
+        assert!(!event.has_failure);
+        assert!(event.has_interruption);
+        assert!(event.has_late_return);
     }
 
     #[test]
@@ -838,7 +974,10 @@ mod tests {
         };
         let event = compiled.project_factory_performance(replay).unwrap();
         assert_eq!(event.performance_ref, "performance:factory-vak");
-        assert_eq!(event.observation.mode, PerformanceObservationMode::Replay);
+        assert_eq!(
+            event.observation.mode,
+            PerformanceObservationMode::Replay
+        );
 
         let mut forged = request(ThreadForm::Single);
         forged.observation.mode = PerformanceObservationMode::Replay;
