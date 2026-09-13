@@ -236,7 +236,16 @@
       "disposition": "cross-coordinate",
       "coordinates": ["#1", "#2", "#3", "#4"],
       "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced.",
-      "tests": ["crates/ql-mef/src/nara.rs"],
+      "tests": ["crates/ql-mef/src/nara.rs", "crates/ql-mef/tests/nara_personal_field.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/personal.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#1", "#2", "#3", "#4"],
+      "rationale": "K8 subject-bound integration around the existing coupled runtime and #134 PersonalFieldInstance. It relates one acknowledged M1–M3/material owner to explicitly supplied Nara reception without another field, inferred centre inputs, hidden update or disclosure grant.",
+      "tests": ["crates/ql-mef/tests/nara_personal_field.rs", ".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
     }
   ]
