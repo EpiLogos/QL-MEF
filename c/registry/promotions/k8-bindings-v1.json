@@ -91,8 +91,8 @@
       "stratum": "rust",
       "disposition": "cross-coordinate",
       "coordinates": ["#1", "#2", "#3"],
-      "rationale": "Composes the complete accepted M1/M2/M3 owners into one retained event; actual M1 harmonic evidence and M3 pose feed native M2 and the existing C++ continuation. No replacement numerical engine, identity inference or geometry solver.",
-      "tests": ["crates/ql-mef/tests/k8_coupled.rs", "crates/ql-mef/examples/k8_coupled.rs"],
+      "rationale": "Composes the complete accepted M1/M2/M3 owners into one retained event; actual M1 harmonic evidence and M3 pose feed native M2 and the existing C++ continuation. V3 consumes the QL-owned performance event rather than interpreting Factory execution directly. No replacement numerical engine, identity inference or geometry solver.",
+      "tests": ["crates/ql-mef/tests/k8_coupled.rs", "crates/ql-mef/tests/k8_vak_performance.rs", "crates/ql-mef/examples/k8_coupled.rs"],
       "kind": "computational"
     },
     {
@@ -132,6 +132,15 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/vak_performance.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0-4", "#0-5"],
+      "rationale": "#94/AW2 QL-owned semantic projection of current Factory Vāk execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
+      "tests": ["crates/ql-mef/src/vak_performance.rs", "crates/ql-mef/tests/k8_vak_performance.rs", ".github/workflows/kernel-k8-continuous.yml"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/continuous/receipt/tests.rs",
       "stratum": "rust",
       "disposition": "infrastructural",
@@ -147,6 +156,15 @@
       "coordinates": [],
       "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
       "tests": ["crates/ql-mef/src/vak_profile/tests.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/k8_vak_performance.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K8 admission regressions for ql.vak-performance-event/v1. They prove versioned fail-closed consumption and Context-Frame-to-mode preservation; synthetic fixtures are not Factory execution evidence or another performance owner.",
+      "tests": ["crates/ql-mef/tests/k8_vak_performance.rs", ".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
     },
     {
@@ -271,7 +289,7 @@
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "Cross-owner K8 acceptance consumer only: admits a Factory-owner Vāk receipt, composes it through the existing QL dual-bus material owner and receives the same occasion through #134 PersonalFieldInstance. It starts no execution owner, pitch table, Nara mapping or second field.",
+      "rationale": "Cross-owner K8 acceptance consumer only: executes the retained Factory-owner receipt producer, projects that exact snapshot through the QL-owned vak_performance semantics, voices the existing dual-bus material owner and receives the same occasion through #134 PersonalFieldInstance. It creates no execution owner, pitch table, Nara mapping or second field.",
       "tests": [".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
     }
