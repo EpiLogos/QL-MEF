@@ -1,3 +1,4 @@
+#![recursion_limit = "256"]
 //! K8 consumes the accepted Factory performance contract as execution evidence.
 //! The controlled JSON below exercises that public wire shape; Factory remains
 //! the producer/attempt owner and QL remains the Context-Frame/musical owner.
