@@ -446,6 +446,7 @@ fn validate_attempts(snapshot: &FactoryVakPerformanceSnapshot) -> Result<()> {
         !snapshot.attempts.is_empty() && snapshot.attempts.len() <= MAX_ATTEMPTS,
         "performance requires bounded actual Factory attempts",
     )?;
+    let fusion_subject = snapshot.thread == "CFP3";
     let mut execution_refs = BTreeSet::new();
     let mut attempts_by_unit: BTreeMap<&str, Vec<&FactoryVakAttempt>> = BTreeMap::new();
     for attempt in &snapshot.attempts {
@@ -476,10 +477,10 @@ fn validate_attempts(snapshot: &FactoryVakPerformanceSnapshot) -> Result<()> {
         )?;
         require(
             attempt.actor_ref == snapshot.actor_ref
-                && attempt.subject_ref == snapshot.subject_ref
                 && attempt.ql_binding_ref == snapshot.ql_binding_ref
-                && attempt.ql_binding_revision == snapshot.ql_binding_revision,
-            "attempt changed the semantic actor/subject/QL binding",
+                && attempt.ql_binding_revision == snapshot.ql_binding_revision
+                && (!fusion_subject || attempt.subject_ref == snapshot.subject_ref),
+            "attempt changed the semantic actor/QL binding or fusion subject",
         )?;
         references(&attempt.source_refs, "attempt lost its source scope")?;
         require(
@@ -875,6 +876,24 @@ mod tests {
             "receiving-context:inspect-to-implement"
         );
         assert!(wire.get("performance_ref").is_none());
+    }
+
+    #[test]
+    fn delegated_unit_subjects_remain_distinct_except_for_fusion() {
+        let compiled = profile(ThreadForm::Chain);
+        let mut delegated = request(ThreadForm::Chain);
+        delegated.snapshot.attempts[1].subject_ref = "subject:delegated-child".into();
+        let event = compiled.project_factory_performance(delegated).unwrap();
+        assert_eq!(event.factory.subject_ref, "subject:nara");
+        assert_eq!(
+            event.factory.attempts[1].subject_ref,
+            "subject:delegated-child"
+        );
+
+        let compiled = profile(ThreadForm::Fusion);
+        let mut fusion = request(ThreadForm::Fusion);
+        fusion.snapshot.attempts[0].subject_ref = "subject:other-concern".into();
+        assert!(compiled.project_factory_performance(fusion).is_err());
     }
 
     #[test]
