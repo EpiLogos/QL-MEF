@@ -6,6 +6,12 @@ import { InstrumentSession } from './instrument-session.mjs';
 const check = (ok: unknown, message: string) => { if (!ok) throw new Error(message); };
 const bridge = window as any;
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const animationFrame = () => new Promise<number>(resolve => requestAnimationFrame(resolve));
+function percentile(values: number[], fraction: number) {
+  check(values.length > 0 && fraction > 0 && fraction <= 1, 'invalid percentile observation');
+  const ordered = [...values].sort((a, b) => a - b);
+  return ordered[Math.max(0, Math.ceil(ordered.length * fraction) - 1)];
+}
 async function at(context: AudioContext, time: number) {
   const deadline = performance.now() + 10000;
   while (context.currentTime < time) {
@@ -53,8 +59,10 @@ async function main() {
     async request(request: any) {
       const start = performance.now();
       const result = await bridge.testNativeExchange(request);
+      const complete = performance.now();
       calls.push({ operation: request.command.operation, request_id: request.request_id,
-        elapsed_ms: performance.now() - start, response_bytes: JSON.stringify(result).length,
+        started_at_ms: start, completed_at_ms: complete, elapsed_ms: complete - start,
+        response_bytes: JSON.stringify(result).length,
         generation: result.field.generation, samples_elapsed: result.field.samples_elapsed });
       return result;
     }, close() { endpointClosed = true; }
@@ -65,7 +73,7 @@ async function main() {
       apply(frame: any) {
         const result = binding.apply(frame);
         applications.push({ generation: frame.generation, samples_elapsed: frame.samples_elapsed,
-          device_seconds: context.currentTime });
+          device_seconds: context.currentTime, observed_at_ms: performance.now() });
         return result;
       }
     }, blockFrames: 4096, leadSeconds: 0.05, lookaheadSeconds: 0.4,
@@ -122,15 +130,87 @@ async function main() {
     'recovery replays old PCM or loses native identity');
   await context.resume(); await at(context, recovery.audio.target_context_seconds + 0.01); session.present();
   check(binding.lastReceipt.samples_elapsed === '20480' && seeds === 1, 're-entry reset or reseeded material');
+
+  // Exercise the actual unsuspended periodic data plane while the retained GPU is
+  // integrating. The ceilings below are controlled CI diagnostics, not desktop
+  // budgets. NativeAudioBinding itself refuses a late block before scheduling;
+  // a missed audio deadline therefore puts this session on hold and fails here.
+  const liveCallsBefore = calls.length, liveApplicationsBefore = applications.length;
+  const liveStart = performance.now(), liveDeviceStart = context.currentTime;
+  const liveStartSamples = BigInt(session.reading.acknowledged.samples_elapsed);
+  const frameIntervals: number[] = [], generationAges: number[] = [], audioDeadlineSlack: number[] = [];
+  let lastAnimation = liveStart, maxQueuedBlocks = 0, maxQueuedBytes = 0;
+  session.start(8);
+  for (let i = 0; i < 72; i++) {
+    const stamp = await animationFrame();
+    frameIntervals.push(stamp - lastAnimation); lastAnimation = stamp;
+    simulator.step(1 / 60, context.currentTime, config, 0, new THREE.Vector2(20, 20), new THREE.Vector2());
+    const reading = session.present();
+    check(reading.available && !reading.held, 'sustained instrument lost its admitted audio/native owner');
+    maxQueuedBlocks = Math.max(maxQueuedBlocks, reading.queued_blocks);
+    maxQueuedBytes = Math.max(maxQueuedBytes, reading.queued_bytes);
+    const acknowledged = BigInt(reading.acknowledged.samples_elapsed);
+    const presented = BigInt(reading.presented.samples_elapsed);
+    check(acknowledged >= presented, 'presentation ran ahead of native acknowledgement');
+    generationAges.push(Number(acknowledged - presented) / context.sampleRate);
+    if (reading.audio?.interval?.start_context_seconds !== undefined) {
+      audioDeadlineSlack.push(reading.audio.interval.start_context_seconds - reading.audio.observed_context_seconds);
+    }
+  }
+  session.hold('controlled-sustained-measurement-stop');
+  while (session.reading.in_flight) await delay(2);
+  const liveCallsAfter = calls.length;
+  const liveNativeCalls = calls.slice(liveCallsBefore, liveCallsAfter);
+  const liveAdvanceCalls = liveNativeCalls.filter(call => call.operation === 'advance');
+  const liveApplications = applications.slice(liveApplicationsBefore);
+  const liveAdvancedFrames = BigInt(session.reading.acknowledged.samples_elapsed) - liveStartSamples;
+  check(liveAdvanceCalls.length >= 4 && liveAdvancedFrames >= 4n * 4096n,
+    'sustained acceptance did not execute enough real native blocks');
+  check(generationAges.every(value => value <= 0.5), 'smooth browser became more than 0.5 s stale');
+  check(audioDeadlineSlack.length > 0 && audioDeadlineSlack.every(value => value >= 0), 'native audio missed its device deadline');
+  check(Math.max(...frameIntervals) <= 500, 'controlled presentation stalled for more than 500 ms');
+  check(maxQueuedBlocks <= 8 && maxQueuedBytes <= 8 * 1024 * 1024, 'presentation queue exceeded declared ceiling');
+  const coherentMs: number[] = [];
+  for (const call of liveAdvanceCalls) {
+    const application = liveApplications.find(item => item.samples_elapsed === call.samples_elapsed);
+    if (application) coherentMs.push(application.observed_at_ms - call.started_at_ms);
+  }
+  check(coherentMs.length > 0 && coherentMs.every(value => value >= 0), 'no attributable native-to-coherent-output observation');
+  await session.recover('controlled-sustained-measurement-reconcile');
+  check(session.reading.queued_blocks === 0 && session.reading.queued_bytes === 0,
+    'explicit sustained-run recovery left presentation backlog');
+  check(seeds === 1, 'sustained operation reseeded retained particles');
+  const sustained = {
+    presentation_frames: frameIntervals.length,
+    device_seconds: context.currentTime - liveDeviceStart,
+    wall_ms: performance.now() - liveStart,
+    native_calls: liveNativeCalls.length,
+    native_advance_blocks: liveAdvanceCalls.length,
+    native_frames_advanced: liveAdvancedFrames.toString(),
+    frame_ms: { p50: percentile(frameIntervals, 0.50), p95: percentile(frameIntervals, 0.95),
+      p99: percentile(frameIntervals, 0.99), max: Math.max(...frameIntervals),
+      over_100ms: frameIntervals.filter(value => value > 100).length, ceiling_ms: 500 },
+    generation_age_seconds: { p95: percentile(generationAges, 0.95), max: Math.max(...generationAges), ceiling: 0.5 },
+    audio_deadline_slack_seconds: { min: Math.min(...audioDeadlineSlack), samples: audioDeadlineSlack.length,
+      missed_deadlines: 0, standing: 'late scheduling is rejected by the native audio receiver before playback' },
+    native_to_coherent_output_ms: { samples: coherentMs.length, p95: percentile(coherentMs, 0.95), max: Math.max(...coherentMs) },
+    max_queued_blocks: maxQueuedBlocks, max_queued_bytes: maxQueuedBytes,
+    coalesced_presentation_frames: session.reading.coalesced_presentation_frames,
+    gpu_steps: frameIntervals.length,
+    end_queue_blocks: session.reading.queued_blocks, end_queue_bytes: session.reading.queued_bytes,
+    standing: 'controlled unsuspended Chromium/SwiftShader WebAudio plus retained GPU run; fixed diagnostic ceilings, not owner-hardware performance budget'
+  };
+
   const debug = renderer.getContext().getExtension('WEBGL_debug_renderer_info');
   const result = { schema: 'ql.k8-managed-browser-acceptance/v1', native_commands: calls.length,
     controlled_native_calls: calls, actual_particles: count, seeds, read_only_view_reads: 2000,
     source_complete_inspection: true, same_native_sound_field_generation: true, pure_future_admission: true,
     preserved_position_velocity: true, retained_target_identity_density: true, actual_gpu_motion: true,
-    gpu_recovery_then_explicit_audio_epoch: true, presentation_applications: applications,
+    gpu_recovery_then_explicit_audio_epoch: true, sustained_live_measurement: sustained,
+    presentation_applications: applications,
     last_reading: views[0].read(), actual_audio_sample_rate: context.sampleRate,
     renderer: debug ? renderer.getContext().getParameter(debug.UNMASKED_RENDERER_WEBGL) : 'undisclosed',
-    standing: 'actual installed Rust/C++ host, browser WebAudio clock and retained WebGL receiver; controlled host transport/geometry, not owner-machine or full Nara acceptance' };
+    standing: 'actual installed Rust/C++ host, browser WebAudio clock and retained WebGL receiver; controlled host transport/geometry, not owner-machine or full Nara/AW performance acceptance' };
   session.dispose(); check(endpointClosed, 'driver did not release its endpoint');
   binding.dispose(); simulator.destroy(); a.dispose(); b.dispose(); renderer.dispose(); await context.close();
   return result;
