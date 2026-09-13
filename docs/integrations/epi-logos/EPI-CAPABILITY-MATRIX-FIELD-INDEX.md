@@ -43,6 +43,10 @@ The machine-readable matrix-family inventory is `.oi/product.json#capability_mat
 
 Completeness is filename-audited under `ProjectCentral/user` and `docs`: names containing `capability-matrix` or `relational-field` must belong to a registered family or explicit exclusion. This index, source trace and protocol govern the instances and retain their existing exclusion. The pre-K8 lock check additionally verifies full authorial S′/language/lifecycle coverage and its Wayfinder links; it does not replace the native matrix checker or certify runtime acceptance.
 
+## AW0 executable source disposition
+
+[Agent-world source disposition](AGENT-WORLD-DISPOSITION.md) registers the complete source/native binding projection and preserves every independently held field, including the original property tables. Its generated receipt distinguishes exact source coverage, native mechanics and unresolved Epi composition; it does not upgrade runtime or human acceptance.
+
 ## One composed field
 
 ```text

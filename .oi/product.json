@@ -115,6 +115,16 @@
             "required_columns": ["id", "record_type", "view_id", "row_id", "column_id", "capability_refs", "need", "operation", "outcome", "implementation_status", "standing", "source_refs", "code_refs", "test_refs", "account_ref", "relation", "coverage", "extensions"]
           }
         ]
+      },
+      {
+        "id": "epi-agent-world-disposition",
+        "role": "native-full-field-disposition",
+        "protocol": "epi-agent-world-disposition/1",
+        "suite_catalogue": false,
+        "carriers": {
+          "data": "docs/integrations/epi-logos/agent-world-disposition.json",
+          "rendering": "docs/integrations/epi-logos/AGENT-WORLD-DISPOSITION.md"
+        }
       }
     ],
     "discovery": {

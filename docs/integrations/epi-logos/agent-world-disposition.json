@@ -1,0 +1,246 @@
+{
+  "schema_version": "epi-agent-world-disposition/1",
+  "standing": "FULL-SOURCE-DISPOSITION; NOT RUNTIME ACCEPTANCE",
+  "issue": "EpiLogos/QL-MEF#94",
+  "projection": "scripts/agent-world-disposition.py",
+  "source_inventory": "docs/integrations/epi-logos/agent-world-source-blobs.tsv",
+  "repositories": {
+    "QL-MEF": {"repository":"EpiLogos/QL-MEF","revision":"1dbd5150c0b264b2180bdf654cd944c59037ea24"},
+    "ai-kit": {"repository":"EpiLogos/ai-kit","revision":"75ac68f4b3912908f55c1ef0f9031d35fc694d59"},
+    "Factory": {"repository":"EpiLogos/Factory","revision":"c3c0677accdbeefb8e6cf1272cf45a9efa949873"},
+    "Central": {"repository":"EpiLogos/Central","revision":"5fe7976f467096066692cda3c1018b73a88562df"},
+    "Actuation": {"repository":"EpiLogos/Actuation","revision":"4af495f6509bb0dd779112a225d71a9df8145b6e"},
+    "Workcell": {"repository":"EpiLogos/Workcell","revision":"e4e40a91fe7ed1776e634cad768f1049c39fd34e"},
+    "O-I": {"repository":"EpiLogos/O-I","revision":"4a43142a6ce9fff628e9ffe1b2d1c87ff88930a0"},
+    "original": {"repository":"EpiLogos/Epi-Logos-C-Experiments","revision":"daa660cbc1b8c5da83828698665a753852cb0287"}
+  },
+  "mechanisms": {
+    "resolve": {
+      "sources":["ai-kit:crates/aikit-core/src/resource/operative.rs","ai-kit:crates/aikit-core/src/context_resolution.rs"],
+      "native_contract":"ResolveExpression / ResolvePath / resolve_expression / resolve_action_candidates / ContextResolution",
+      "effects":"Read-only resolution; stageability is not invocation.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["ai-kit:crates/aikit-core/tests/context_resolution_v2.rs","ai-kit:crates/aikit-core/tests/resource_search_familiarity_v2.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "scoped-resolve": {
+      "sources":["ai-kit:crates/aikit-core/src/resource/operative_scope.rs","ai-kit:crates/aikit-core/src/resource/operative_scope/knowledge.rs"],
+      "native_contract":"ScopedResolveExpression / ScopeAwareOperativeProvider / compose_scoped_context / explicit_scoped_contemplate",
+      "effects":"Native executor performs once after admission; late Return retains original attribution. No automatic promotion.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["ai-kit:crates/aikit-core/src/resource/operative_scope/tests.rs","ai-kit:crates/aikit-core/src/resource/operative_scope/tests/knowledge.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "wiki": {
+      "sources":["ai-kit:crates/aikit-core/src/knowledge_wiki_write.rs","ai-kit:crates/aikit-core/src/knowledge_wiki_shape.rs","ai-kit:crates/aikit-core/src/knowledge_wiki_provider.rs"],
+      "native_contract":"WikiObject / QL shaped Contemplate / native revision-checked Wiki mutation and re-indexing",
+      "effects":"Authored/derived and source/reading remain distinct; explicit native write, not automatic source graduation.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "knowledge": {
+      "sources":["ai-kit:crates/aikit-core/src/knowledge_living.rs","ai-kit:crates/aikit-core/src/knowledge_living_relations.rs","ai-kit:crates/aikit-core/src/knowledge_navigation.rs"],
+      "native_contract":"KnowledgeDependency / KnowledgeChangeHorizon / ContemplateRequest / native Knowledge navigation",
+      "effects":"Read and bounded context before explicit model execution; preserve unavailable source/return standing.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["ai-kit:crates/aikit-core/tests/living_knowledge_acceptance.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "praxis": {
+      "sources":["ai-kit:crates/aikit-core/src/method.rs","ai-kit:crates/aikit-core/src/praxis.rs","ai-kit:crates/aikit-core/src/routine.rs","ai-kit:crates/aikit-core/src/familiarity.rs"],
+      "native_contract":"METHOD:-classified Skill / situated Praxis / proof and Routine authority / learned path familiarity",
+      "effects":"Metadata or familiarity cannot grant unattended execution; exact recognised registration/reuse remains #267.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "powers": {
+      "sources":["ai-kit:crates/aikit-core/src/resource/model.rs","ai-kit:crates/aikit-core/src/composition.rs","ai-kit:crates/aikit-core/src/skillset.rs","ai-kit:crates/aikit-core/src/model_roster.rs"],
+      "native_contract":"ResourceRecord / body composition / SkillSets / ModelRoster",
+      "effects":"Resolve eligible powers; selection, observed material availability and approval remain independent.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["ai-kit:crates/aikit-core/tests/composition_v2.rs","ai-kit:crates/aikit-core/tests/skillsets.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "session": {
+      "sources":["ai-kit:crates/aikit-core/src/session_space.rs","ai-kit:crates/aikit-core/src/session_lifecycle.rs"],
+      "native_contract":"SessionSpace / lifecycle / surface body bindings",
+      "effects":"Explicit native topology/focus/reconnect; actor identity is not replaced by a surface.",
+      "authority":"ai-kit owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["ai-kit:crates/aikit-core/tests/session_space_v2.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "agency": {
+      "sources":["Actuation:crates/actuation-core/src/agency.rs","Actuation:crates/actuation-core/src/composition.rs","Actuation:crates/actuation-adapters/src/admission.rs","Actuation:crates/actuation-adapters/src/effects.rs"],
+      "native_contract":"Agent / Agency / composition / effect admission",
+      "effects":"Native agent authority and effect admission; context and contributed capability are not grants.",
+      "authority":"Actuation owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "material": {
+      "sources":["Workcell:crates/workcell-sdk/src/lib.rs","Workcell:crates/workcell-docker/src/execution.rs","Workcell:crates/workcell-control/src/service.rs"],
+      "native_contract":"Workcell SDK boundary / execution / control-service admission",
+      "effects":"Material launch/timeout/cancellation; native placement/protocol identity retained.",
+      "authority":"Workcell owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "central": {
+      "sources":["Central:ctrl/src/projectcentral.rs","Central:ctrl/src/projectcentral_ops.rs","Central:ctrl/src/control.rs"],
+      "native_contract":"ProjectCentral root/child source and document operations",
+      "effects":"Explicit source mutation under native ownership. Central is the root meta-project, not a configuration folder.",
+      "authority":"Central owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "now": {
+      "sources":["Central:ctrl/src/continuous_work/mod.rs","Central:ctrl/src/continuous_work/receiving.rs","Central:ctrl/src/continuous_work/temporal.rs","Central:ctrl/src/continuous_work/authority.rs"],
+      "native_contract":"Central Continuous Work / Day / NOW / receiving / temporal authority",
+      "effects":"One native temporal work field; freshness, human source and retention are owner controlled. No twelve report silos.",
+      "authority":"Central owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "run": {
+      "sources":["Factory:factory/src/orchestration.rs","Factory:factory/src/orchestration_persistence.rs","Factory:factory/src/attempt_runtime.rs"],
+      "native_contract":"ExecutableOrchestration / DelegationContract / ExecutionAttempt / barriers / native attempt runtime",
+      "effects":"RunMutationAuthority and execution disposition enforce launch; retain retries, failures, cancellation and late artifacts.",
+      "authority":"Factory owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":["Factory:factory/tests/orchestration.rs","Factory:factory/tests/orchestration_persistence.rs"],
+      "evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "thought": {
+      "sources":["Factory:factory/src/core/run/thought.rs"],
+      "native_contract":"RunThoughtField / thought consumption into produced outputs / retention and replay",
+      "effects":"Revision-checked native consumption; retire active material while keeping original reports and lineage. No source authority implied.",
+      "authority":"Factory owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "bimba": {
+      "sources":["QL-MEF:crates/ql-mef/src/m_tree.rs","QL-MEF:crates/ql-mef/src/m_map.rs"],
+      "native_contract":"MRegistry / native_current_m_registry / MTreeNode / MTreeRelation / MMapIndex",
+      "effects":"Read stable coordinate/relation IDs and source payloads; dynamic assertions are not kernel topology.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "vak": {
+      "sources":["QL-MEF:crates/ql-mef/src/vak.rs","QL-MEF:crates/ql-mef/src/vak_composition.rs"],
+      "native_contract":"VakRegistry / 109 source entries / siva_sakti_operative_field / VakComposition",
+      "effects":"Interpret/reframe existing whole; semantic interpretation alone does not dispatch or grant authority.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "forms": {
+      "sources":["QL-MEF:crates/ql-core/src/lib.rs","QL-MEF:crates/ql-mef/src/context_frame.rs","QL-MEF:crates/ql-wiki/src/living.rs","QL-MEF:crates/ql-wiki/src/recognition.rs"],
+      "native_contract":"QL form / ContextFrame / native Wiki whole and Recognition",
+      "effects":"Derived form and proposed change retain source/whole/face; Recognition is independently decided.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "m1": {
+      "sources":["QL-MEF:crates/ql-mef/src/m1_engine.rs"],"native_contract":"Accepted M1 source-qualified engine",
+      "effects":"Native numerical/structural operation; preserves accepted engine evidence, not proof of whole Epi agent composition.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "m2": {
+      "sources":["QL-MEF:crates/ql-mef/src/m2_engine.rs"],"native_contract":"Accepted M2 source-qualified engine",
+      "effects":"Native numerical/structural operation; preserves accepted engine evidence, not proof of whole Epi agent composition.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    },
+    "m3": {
+      "sources":["QL-MEF:crates/ql-mef/src/m3_engine.rs"],"native_contract":"Accepted M3 source-qualified engine",
+      "effects":"Native numerical/structural operation; preserves accepted engine evidence, not proof of whole Epi agent composition.",
+      "authority":"QL-MEF owns admission, source identity and effect permission; QL scope does not grant authority.",
+      "test_sources":[],"evidence_standing":"CODE-AND-TEST-SOURCE-INSPECTED; no new execution result inferred",
+      "scope":"Native mechanic only; source-defined Epi composition remains separately dispositioned."
+    }
+  },
+  "source_positions": {
+    "SP00":{"mechanisms":["resolve","powers","material","central"],"disposition":"EPI-GAP","remaining":"Complete source-scoped preferred/fallback capability selection in the composed Epi world; no fallback may bypass authority.","dependency":"QL-MEF#94"},
+    "SP01":{"mechanisms":["resolve","vak","material"],"disposition":"EPI-GAP","remaining":"Join all declared human/agent/SDK action routes and schema versions, retaining explicit unsupported aliases.","dependency":"QL-MEF#94"},
+    "SP02":{"mechanisms":["agency","material","run"],"disposition":"EPI-GAP","remaining":"Bind source/subject/C-prime regime to real native admission, process, failure and timeout Return.","dependency":"QL-MEF#94"},
+    "SP03":{"mechanisms":["session","powers"],"disposition":"EPI-GAP","remaining":"Bind Bimba/Epii selected subject through actual surface focus/split/restore without substituting agent identity.","dependency":"QL-MEF#94"},
+    "SP04":{"mechanisms":["central","now","resolve","scoped-resolve","bimba"],"disposition":"EPI-GAP","remaining":"Carry taproot/family/direct-prime and native World/Project into the same source-qualified C-prime context.","dependency":"QL-MEF#94"},
+    "SP05":{"mechanisms":["session","now","run","thought"],"disposition":"EPI-GAP","remaining":"Bind original entry to outcome, cleanup, interruption and reopened current readiness, not service health alone.","dependency":"QL-MEF#94"},
+    "SP10":{"mechanisms":["central","wiki"],"disposition":"EPI-GAP","remaining":"Finish source-qualified Epi artifact residency and reviewed promotion/rollback through native source owners.","dependency":"QL-MEF#94"},
+    "SP11":{"mechanisms":["wiki","vak"],"disposition":"EPI-GAP","remaining":"Apply original CT to actual inputs/outputs and property validation, preserving unknown producer fields.","dependency":"QL-MEF#94"},
+    "SP12":{"mechanisms":["wiki","forms","central"],"disposition":"EPI-GAP","remaining":"Drive current constellation templates and source-bound graduation from real agent operations.","dependency":"QL-MEF#94"},
+    "SP13":{"mechanisms":["wiki","knowledge","scoped-resolve"],"disposition":"EPI-GAP","remaining":"Select Epi source/channel/Skill/shape and retain actual generated artifact in native Knowledge, not another compiler.","dependency":"QL-MEF#94"},
+    "SP14":{"mechanisms":["now","knowledge"],"disposition":"EPI-GAP","remaining":"Join long-lived source objects to selected T/T-prime occasion and subsequent consumption, not session identity.","dependency":"QL-MEF#94"},
+    "SP15":{"mechanisms":["now","wiki","central"],"disposition":"EPI-GAP","remaining":"Return real synthesis/proposal to original human source with explicit review, supersession and rollback.","dependency":"QL-MEF#94"},
+    "SP20":{"mechanisms":["bimba","forms"],"disposition":"EPI-GAP","remaining":"Complete taproot/family/recursive/face/property applicability through K8.0; stable source identity remains unchanged.","dependency":"QL-MEF#132"},
+    "SP21":{"mechanisms":["bimba","wiki"],"disposition":"EPI-GAP","remaining":"Preserve multiple independently qualified assertions on the same relation, with native revision checks.","dependency":"QL-MEF#94"},
+    "SP22":{"mechanisms":["wiki","knowledge","central"],"disposition":"EPI-GAP","remaining":"Complete Epi semantic creation/qualification/invalidation/rebuild lifecycle over existing owners.","dependency":"QL-MEF#94"},
+    "SP23":{"mechanisms":["knowledge","resolve","bimba"],"disposition":"EPI-GAP","remaining":"Compose public Bimba and admitted private source in bounded retrieval without treating derived readings as source.","dependency":"QL-MEF#94"},
+    "SP24":{"mechanisms":["knowledge","scoped-resolve"],"disposition":"EPI-GAP","remaining":"Bind native cache/context freshness to exact source and selected field; invalidate stale scope before effect.","dependency":"QL-MEF#94"},
+    "SP25":{"mechanisms":["bimba","resolve","wiki"],"disposition":"EPI-GAP","remaining":"Expose native graph/property operations through the same agent/human/SDK field with explicit support states.","dependency":"QL-MEF#94"},
+    "SP30":{"mechanisms":["resolve","agency","run"],"disposition":"EPI-GAP","remaining":"Complete source-scoped native request/response and effect contracts without another gateway or parser.","dependency":"QL-MEF#94"},
+    "SP31":{"mechanisms":["praxis","powers"],"disposition":"EPI-GAP","remaining":"Resolve actual source Skill manifest/Method classification, applicability and execution rather than inferred name.","dependency":"QL-MEF#94"},
+    "SP32":{"mechanisms":["session","run","now"],"disposition":"EPI-GAP","remaining":"Preserve direct/parent-child session, subject, source and native Run/attempt lineage through reentry.","dependency":"QL-MEF#94"},
+    "SP33":{"mechanisms":["session","run"],"disposition":"EPI-GAP","remaining":"Project actual native lifecycle state and failure/late Return; do not infer state from visual or audio phase.","dependency":"QL-MEF#94"},
+    "SP34":{"mechanisms":["now","m1","m2","m3"],"disposition":"EPI-GAP","remaining":"Relate actual temporal owners and coupled-clock event to source/logical passage without conflation.","dependency":"QL-MEF#94"},
+    "SP35":{"mechanisms":["now","thought","knowledge"],"disposition":"EPI-GAP","remaining":"Consume completed native Return into subsequent context/knowledge, including rejected or partial outputs.","dependency":"QL-MEF#94"},
+    "SP40":{"mechanisms":["central","resolve","powers","agency"],"disposition":"EPI-GAP","remaining":"Bootstrap one current Epi world, retaining declared/loaded/available distinctions and actual tool authority.","dependency":"QL-MEF#94"},
+    "SP41":{"mechanisms":["agency","powers","praxis"],"disposition":"EPI-GAP","remaining":"Instantiate full Rupa/Ontology/FrameContract/Temporal/Capability/Sattva with canonical roles and source Skill affinities.","dependency":"QL-MEF#94"},
+    "SP42":{"mechanisms":["agency","material","scoped-resolve"],"disposition":"EPI-GAP","remaining":"Carry admission through subagency and actual effects, not a self-certified provider binding.","dependency":"QL-MEF#94"},
+    "SP43":{"mechanisms":["vak","resolve","scoped-resolve","run"],"disposition":"EPI-GAP","remaining":"Make every selected CPF/CT/CP/CF/CFP/CS determine native execution and same-event musical performance.","dependency":"QL-MEF#94"},
+    "SP44":{"mechanisms":["vak","now","thought"],"disposition":"EPI-GAP","remaining":"Preserve logical passage and Psyche continuity across actual native time, activity and re-framing.","dependency":"QL-MEF#94"},
+    "SP45":{"mechanisms":["run","thought","knowledge"],"disposition":"EPI-GAP","remaining":"Complete governed Z goal discovery/authorisation/performance/rehear/recompose with retained original performance.","dependency":"QL-MEF#94"},
+    "SP50":{"mechanisms":["central","now","agency"],"disposition":"EPI-GAP","remaining":"Retain human position, original request and protected subject as Epii source ground; not agent-authored identity.","dependency":"QL-MEF#94"},
+    "SP51":{"mechanisms":["knowledge","scoped-resolve","thought"],"disposition":"EPI-GAP","remaining":"Receive crystallised form and actual source evidence, not summaries detached from their production.","dependency":"QL-MEF#94"},
+    "SP52":{"mechanisms":["knowledge","resolve"],"disposition":"EPI-GAP","remaining":"Bind full Epii retrieval faculties with bounded source authority and explicit unavailable results.","dependency":"QL-MEF#94"},
+    "SP53":{"mechanisms":["thought","knowledge","praxis"],"disposition":"EPI-GAP","remaining":"Turn actual episodes into attributable patterns and useful retrieval without overgeneralisation or automatic promotion.","dependency":"QL-MEF#94"},
+    "SP54":{"mechanisms":["thought","run","praxis"],"disposition":"EPI-GAP","remaining":"Evaluate target-specific development against output/retrieval/human feedback; source changes need Recognition.","dependency":"QL-MEF#94"},
+    "SP55":{"mechanisms":["now","wiki","praxis"],"disposition":"EPI-GAP","remaining":"Complete recognised parameterised named Skill registration/reuse with collision, stale proof, retirement and rollback.","dependency":"QL-MEF#94"}
+  },
+  "groups": {
+    "organ":{"mechanisms":["central","resolve","powers","agency","material","now","vak","wiki","thought"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Complete organ participation in actual Epi context/operation/Return across its contributing native owners."},
+    "root":{"mechanisms":["central","resolve","powers","agency","material","now","vak","wiki","thought","praxis"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Complete this root-level contribution as an agent-facing operation; full original contract remains below, not replaced by 36 positions."},
+    "m-capability":{"mechanisms":["bimba","vak","forms","scoped-resolve","knowledge","run","thought"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Retain this stable capability and its exact deeper law; complete its source/subject/agent/native action/Return composition."},
+    "m-s-prime":{"mechanisms":["bimba","vak","forms","scoped-resolve","knowledge","run","thought"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Complete this M/organ relation in actual Epi composition; native mechanism presence does not prove this relation."},
+    "deep-M1":{"mechanisms":["m1","bimba"],"disposition":"EPI-GAP","dependency":"QL-MEF#132","remaining":"Native engine has separate accepted evidence. This deeper capability and complete source body remain in the Epi composition scope; consume through K8 current contracts without rewriting accepted engine proof."},
+    "deep-M2":{"mechanisms":["m2","bimba"],"disposition":"EPI-GAP","dependency":"QL-MEF#132","remaining":"Native engine has separate accepted evidence. This deeper capability and complete source body remain in the Epi composition scope; consume through K8 current contracts without rewriting accepted engine proof."},
+    "deep-M3":{"mechanisms":["m3","bimba"],"disposition":"EPI-GAP","dependency":"QL-MEF#132","remaining":"Native engine has separate accepted evidence. This deeper capability and complete source body remain in the Epi composition scope; consume through K8 current contracts without rewriting accepted engine proof."},
+    "deep-M4":{"mechanisms":["bimba","now","scoped-resolve"],"disposition":"EPI-GAP","dependency":"QL-MEF#134","remaining":"The complete Nara capability and its deeper source body remain with #134; AW composes its admitted source/subject/Return and does not implement a competing Nara producer."},
+    "vak-entry":{"mechanisms":["vak","bimba","resolve"],"disposition":"EPI-GAP","dependency":"ai-kit#267","remaining":"Existing source-backed interpretation retains this complete entry; qualify and join its supported operand/method/result/effect behavior in production agency."},
+    "operative-cell":{"mechanisms":["vak","scoped-resolve","praxis","run"],"disposition":"EPI-GAP","dependency":"ai-kit#267","remaining":"Apply this particular operation/horizon meaning to typed current operands, method and native result; reject unsupported/stale/unauthorised effects explicitly."},
+    "c-prime":{"mechanisms":["vak","scoped-resolve","run","agency","material","now"],"disposition":"EPI-GAP","dependency":"Factory#217","remaining":"Apply this exact source-defined determinant in real direct/commissioned execution and attributable musical Return, not only profile serialization."},
+    "thought":{"mechanisms":["thought","now","knowledge","scoped-resolve"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Produce the selected reading in native NOW and consume it against actual output and human feedback into useful knowledge/praxis, retaining lineage."},
+    "property":{"mechanisms":["bimba","wiki"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Recover actual property definitions/producers; implement plural node/relation assertions, compact expansion and reviewed synthesis/graph-derived Return."},
+    "epii-law":{"mechanisms":["thought","knowledge","praxis","agency","run"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Instantiate this exact target-specific law through real Epii operation/evaluation; optional learning research remains source-qualified, not required for ordinary operations."},
+    "original":{"mechanisms":["vak","scoped-resolve","run","thought","praxis"],"disposition":"EPI-GAP","dependency":"QL-MEF#94","remaining":"Reconcile every source-defined subform/agent/Skill/operation in this retained source against the corrected current lock and existing native owners; obsolete time/session labels do not survive as alternatives."}
+  },
+  "counts":{"source-position":36,"organ":6,"m-capability":36,"m-s-prime":36,"deep-capability":149,"vak-entry":109,"operative-cell":36,"c-office":6,"cf":7,"cfp":7,"cs":6,"thought":12,"property":6,"epii-law":6},
+  "law":"A projected row never upgrades itself to runtime completion. Mechanic source presence, historical native acceptance, current Epi composition and later owner-machine evidence remain separate.",
+  "property_vocabulary_sha256":"8022bd3096ae108de299ed204f4669fec9d136719bfbf6c1be2ec726eb92805f",
+  "readiness_reconciliation": {
+    "historical_source":"epi-m-capability-field.json#current_locks",
+    "law":"Those locks and counts remain September source history, not the present native runtime assessment. Landed engines below are available mechanics; full Epi composition is not ALREADY-REAL.",
+    "native_engine_receipts": {
+      "M1":{"pr":150,"revision":"bb32250109417e46ee37b9d253e7ae115234ec24"},
+      "M2":{"pr":148,"revision":"c421080371838c87f25ecee3fd53561f75a035f0"},
+      "M3":{"pr":151,"revision":"276f23e46c625a83c5dee7c1fc64f32761333ac6"},
+      "VakComposition":{"pr":142,"revision":"374cf8db5569401980a0f88ae38da1e2d11129b1"}
+    },
+    "accepted_native_joins": {
+      "ai-kit#302":{"head":"b16d7227017161b610fb1e5faaf5586d96d1f5d2","acceptance_run":34687227369,"scope":"source-scoped Resolve and native Contemplate/Return; not complete #267"},
+      "Factory#230":{"head":"d6d467210eed76de4f1e5b0b9b8ff4a322981ff9","acceptance_run":34694573912,"scope":"native thought consumption; not complete #217"}
+    }
+  }
+}
