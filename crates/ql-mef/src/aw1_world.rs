@@ -64,14 +64,14 @@ pub enum NativeOwnerStanding {
     Unbound,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct NativeOwnerDisposition {
     pub standing: NativeOwnerStanding,
     pub bindings: Vec<MTreeBinding>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RootedMWorld {
     pub version: String,
