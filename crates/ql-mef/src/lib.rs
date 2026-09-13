@@ -4,6 +4,7 @@
 
 mod context_frame;
 mod context_frame_target;
+pub mod continuous;
 mod coordinate;
 mod error;
 mod identity;
