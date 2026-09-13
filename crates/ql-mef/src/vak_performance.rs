@@ -116,6 +116,7 @@ pub struct FactoryVakChainMaterial {
     pub successor_unit_ref: String,
     pub subject_ref: String,
     pub subject_revision: String,
+    pub receiving_context_ref: String,
     pub artifact_refs: BTreeSet<String>,
     pub evidence_refs: BTreeSet<String>,
     pub semantic_differences: BTreeSet<String>,
@@ -559,6 +560,10 @@ fn validate_chain(snapshot: &FactoryVakPerformanceSnapshot, thread: ThreadForm) 
                 &material.subject_revision,
                 "missing predecessor subject revision",
             ),
+            (
+                &material.receiving_context_ref,
+                "missing successor receiving context",
+            ),
         ] {
             reference(value, message)?;
         }
@@ -707,6 +712,7 @@ mod tests {
             },
             pairs: ContextSequence::ThroughOperation.pairs(),
             walk: ContextSequence::ThroughOperation.walk(InquiryDirection::Forward),
+            profile,
             basis: vec![basis()],
         }
     }
@@ -801,6 +807,7 @@ mod tests {
                     successor_unit_ref: "implement".into(),
                     subject_ref: "subject:nara".into(),
                     subject_revision: "subject-r1".into(),
+                    receiving_context_ref: "receiving-context:inspect-to-implement".into(),
                     artifact_refs: BTreeSet::from([first_artifact]),
                     evidence_refs: BTreeSet::from([first_evidence]),
                     semantic_differences: BTreeSet::from(["source inspected".into()]),
@@ -853,6 +860,10 @@ mod tests {
         assert!(!event.has_failure);
         assert!(!event.has_interruption);
         assert_eq!(event.factory.chain_inputs.len(), 1);
+        assert_eq!(
+            event.factory.chain_inputs[0].receiving_context_ref,
+            "receiving-context:inspect-to-implement"
+        );
         assert!(event.ql_basis_refs.contains("factory-receipt:return"));
         assert_eq!(event.factory.attempts[0].execution_ref, "exec-inspect");
         let wire = serde_json::to_value(&event).unwrap();
@@ -860,6 +871,10 @@ mod tests {
         assert_eq!(wire["semantics"]["musicalMode"], "mixolydian");
         assert_eq!(wire["semantics"]["musicalModeIndex"], 4);
         assert_eq!(wire["factory"]["runRef"], "run:factory-vak");
+        assert_eq!(
+            wire["factory"]["chainInputs"][0]["receivingContextRef"],
+            "receiving-context:inspect-to-implement"
+        );
         assert!(wire.get("performance_ref").is_none());
     }
 
@@ -984,5 +999,9 @@ mod tests {
         let mut foreign = request(ThreadForm::Chain);
         foreign.snapshot.chain_inputs[0].predecessor_execution_ref = "exec:foreign".into();
         assert!(compiled.project_factory_performance(foreign).is_err());
+
+        let mut no_context = request(ThreadForm::Chain);
+        no_context.snapshot.chain_inputs[0].receiving_context_ref.clear();
+        assert!(compiled.project_factory_performance(no_context).is_err());
     }
 }
