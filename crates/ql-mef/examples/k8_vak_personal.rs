@@ -26,36 +26,27 @@ fn read(path: &str) -> Result<Value, String> {
         .map_err(|error| error.to_string())
 }
 
-fn source(name: &str, factory_source_sha: &str) -> SourceRevision {
+fn source(name: &str) -> SourceRevision {
     SourceRevision {
         source_ref: format!("source:k8-vak-personal:{name}"),
-        revision: factory_source_sha.into(),
+        revision: "controlled-personal-source-v1".into(),
         standing_ref: "controlled-cross-owner-k8-acceptance".into(),
     }
 }
 
-fn layer(
-    name: &str,
-    quaternion: BioQuaternion,
-    observed_at_unix_ms: u64,
-    factory_source_sha: &str,
-) -> PersonalLayer {
+fn layer(name: &str, quaternion: BioQuaternion, observed_at_unix_ms: u64) -> PersonalLayer {
     PersonalLayer {
-        source: source(name, factory_source_sha),
+        source: source(name),
         observed_at_unix_ms,
         quaternion,
     }
 }
 
-fn constitution(
-    subject: &str,
-    observed_at_unix_ms: u64,
-    factory_source_sha: &str,
-) -> PersonalConstitution {
+fn constitution(subject: &str, observed_at_unix_ms: u64) -> PersonalConstitution {
     PersonalConstitution {
         subject_id: subject.into(),
         constitution_ref: format!("constitution:{subject}:k8-vak-personal-v1"),
-        source_revisions: vec![source("controlled-personal-constitution", factory_source_sha)],
+        source_revisions: vec![source("controlled-personal-constitution")],
         consent: ConsentState::Granted,
         lifecycle: LifecycleState::Active,
         identity: layer(
@@ -67,7 +58,6 @@ fn constitution(
                 z: 0.0,
             },
             observed_at_unix_ms,
-            factory_source_sha,
         ),
         transit: layer(
             "transit",
@@ -78,7 +68,6 @@ fn constitution(
                 z: 0.02,
             },
             observed_at_unix_ms,
-            factory_source_sha,
         ),
         activity: layer(
             "activity",
@@ -89,16 +78,14 @@ fn constitution(
                 z: 0.04,
             },
             observed_at_unix_ms,
-            factory_source_sha,
         ),
         ephemeral: Some(layer(
             "ephemeral",
             BioQuaternion::IDENTITY,
             observed_at_unix_ms,
-            factory_source_sha,
         )),
         earth_body: EarthBodyConstitution {
-            source: source("earth-body", factory_source_sha),
+            source: source("earth-body"),
             frame_ref: "earth-fixed:k8-cross-owner".into(),
             orientation: BioQuaternion::IDENTITY,
         },
@@ -106,7 +93,7 @@ fn constitution(
             .map(|ordinal| ReceiverConstitution {
                 ordinal,
                 label: format!("source-centre-{ordinal}"),
-                source: source(&format!("centre-{ordinal}"), factory_source_sha),
+                source: source(&format!("centre-{ordinal}")),
                 world_weights: [1.0 + f64::from(ordinal) / 10.0, 0.5, 0.25],
                 orientation: BioQuaternion {
                     w: 1.0,
@@ -162,7 +149,11 @@ fn run() -> Result<(), String> {
     let factory_source_sha = &args[4];
     let out = Path::new(&args[5]);
     let factory_receipt_sha256 = &args[6];
-    if factory_source_sha.len() != 40 || !factory_source_sha.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+    if factory_source_sha.len() != 40
+        || !factory_source_sha
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit())
+    {
         return Err("Factory source SHA must be an exact Git commit".into());
     }
     if factory_receipt_sha256.len() != 64
@@ -200,7 +191,13 @@ fn run() -> Result<(), String> {
     {
         return Err("Factory provenance changed during QL composition".into());
     }
-    if composed.m2_input.resonator.as_ref().map_or(0, |value| value.modes.len()) != 16 {
+    if composed
+        .m2_input
+        .resonator
+        .as_ref()
+        .map_or(0, |value| value.modes.len())
+        != 16
+    {
         return Err("dual musical inputs did not retain one sixteen-mode material owner".into());
     }
     let performed_mode = composed
@@ -210,7 +207,7 @@ fn run() -> Result<(), String> {
         .ok_or("performed occasion lacks Vimarśā")?
         .musical_mode;
     let observed_at_unix_ms = composed.m2_input.at_unix_ms;
-    let personal = constitution(&subject, observed_at_unix_ms, factory_source_sha);
+    let personal = constitution(&subject, observed_at_unix_ms);
     std::fs::create_dir_all(out).map_err(|error| error.to_string())?;
 
     let mut owner = PersonalCoupledSession::open(
