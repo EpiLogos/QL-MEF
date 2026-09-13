@@ -15,13 +15,15 @@ use crate::m1_engine::{EngineConfig, M1Engine};
 use crate::m2::Reading72;
 use crate::m2_engine::{M2Request, VimarshaInput};
 use crate::m3_state::{M3Command, M3Request, M3State};
+use crate::vak_performance::{
+    FACTORY_VAK_PERFORMANCE_CONTRACT, PERFORMANCE_EVENT_CONTRACT, VakPerformanceEvent,
+};
 use crate::{ContextFrameId, LensId, ModeKind, SublensRef};
 
 pub const REQUEST: &str = "ql.coupled-event-request/v1";
 pub const REQUEST_V2: &str = "ql.coupled-event-request/v2";
 pub const REQUEST_V3: &str = "ql.coupled-event-request/v3";
 pub const CONTRACT: &str = "ql.coupled-event/v1";
-const FACTORY_VAK_CONTRACT: &str = "factory.vak-orchestration/v1";
 
 /// A deliberate instrument mapping, not a claim that symbolic frequencies are
 /// measured eigenvalues. Modes not listed here keep their supplied frequency.
@@ -63,9 +65,9 @@ pub struct CoupledInput {
     /// retains its original serialized input and derivation, not an upgrade.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub condition_frequency_bindings: Vec<ConditionFrequencyBinding>,
-    /// Complete host-admitted receipts (for example the original sky snapshot or
-    /// the accepted Factory Vāk performance in v3). Retention is not authentication
-    /// or permission to disclose their contents.
+    /// Complete host-admitted receipts. V3 consumes QL's accepted
+    /// `ql.vak-performance-event/v1`, which itself retains the Factory owner
+    /// snapshot. Retention is not authentication or permission to disclose.
     pub source_receipts: Vec<Value>,
 }
 
@@ -81,71 +83,42 @@ pub struct CoupledBasis {
     pub derivation: Value,
 }
 
-struct FactoryVakPerformance<'a> {
-    receipt: &'a Value,
+struct QlVakPerformance {
+    event: VakPerformanceEvent,
     source_receipt_index: usize,
     frame_index: usize,
 }
 
-fn receipt_ref<'a>(value: &'a Value, field: &str) -> Result<&'a str, String> {
-    value
-        .get(field)
-        .and_then(Value::as_str)
-        .filter(|value| !value.trim().is_empty() && value.len() <= 16_384 && !value.contains('\0'))
-        .ok_or_else(|| format!("Factory Vāk performance has invalid {field}"))
-}
-
-fn receipt_ref_array(value: &Value, field: &str, required: bool) -> Result<(), String> {
-    let values = value
-        .get(field)
-        .and_then(Value::as_array)
-        .ok_or_else(|| format!("Factory Vāk performance has invalid {field}"))?;
-    if (required && values.is_empty()) || values.len() > 4096 {
-        return Err(format!("Factory Vāk performance has invalid {field}"));
-    }
-    for entry in values {
-        let Some(entry) = entry.as_str() else {
-            return Err(format!("Factory Vāk performance has invalid {field}"));
-        };
-        if entry.trim().is_empty() || entry.len() > 16_384 || entry.contains('\0') {
-            return Err(format!("Factory Vāk performance has invalid {field}"));
-        }
-    }
-    Ok(())
-}
-
-fn factory_vak_performance(
-    receipts: &[Value],
-) -> Result<Option<FactoryVakPerformance<'_>>, String> {
+fn ql_vak_performance(receipts: &[Value]) -> Result<Option<QlVakPerformance>, String> {
     let mut found = None;
     for (source_receipt_index, receipt) in receipts.iter().enumerate() {
-        if receipt.get("contract").and_then(Value::as_str) != Some(FACTORY_VAK_CONTRACT) {
+        let contract = receipt.get("contract").and_then(Value::as_str);
+        if contract == Some(FACTORY_VAK_PERFORMANCE_CONTRACT) {
+            return Err(
+                "raw Factory Vāk performance must be projected by the QL Vāk performance owner"
+                    .into(),
+            );
+        }
+        if contract != Some(PERFORMANCE_EVENT_CONTRACT) {
             continue;
         }
         if found.is_some() {
-            return Err("multiple Factory Vāk performance receipts are ambiguous".into());
+            return Err("multiple QL Vāk performance events are ambiguous".into());
         }
-        for field in [
-            "performanceRef",
-            "runRef",
-            "workflowSourceRef",
-            "workflowSourceRevision",
-            "workflowSourceDigest",
-            "actorRef",
-            "subjectRef",
-            "wholeRef",
-            "qlBindingRef",
-            "qlBindingRevision",
-            "aiKitResolvePathRef",
-            "contextResolutionRef",
-        ] {
-            receipt_ref(receipt, field)?;
+        let event: VakPerformanceEvent = serde_json::from_value(receipt.clone())
+            .map_err(|error| format!("invalid QL Vāk performance event: {error}"))?;
+        if event.contract != PERFORMANCE_EVENT_CONTRACT
+            || event.factory_contract != FACTORY_VAK_PERFORMANCE_CONTRACT
+            || event.factory.contract != FACTORY_VAK_PERFORMANCE_CONTRACT
+            || event.performance_ref != event.factory.performance_ref
+            || event.ql_binding_ref != event.factory.ql_binding_ref
+            || event.ql_binding_revision != event.factory.ql_binding_revision
+            || event.factory_receipt_refs.is_empty()
+            || event.ql_basis_refs.is_empty()
+        {
+            return Err("QL Vāk performance event lost its owner/binding provenance".into());
         }
-        if receipt.get("runRevision").and_then(Value::as_u64).is_none() {
-            return Err("Factory Vāk performance has invalid runRevision".into());
-        }
-        receipt_ref_array(receipt, "sourceRefs", true)?;
-        let frame_index = match receipt_ref(receipt, "frame")? {
+        let frame_index = match event.semantics.context_frame.as_str() {
             "CF1" => 0,
             "CF2" => 1,
             "CF3" => 2,
@@ -153,81 +126,26 @@ fn factory_vak_performance(
             "CF5" => 4,
             "CF6" => 5,
             "CF7" => 6,
-            _ => return Err("Factory Vāk performance has unknown Context Frame".into()),
+            _ => return Err("QL Vāk performance event has unknown Context Frame".into()),
         };
-        let thread = receipt_ref(receipt, "thread")?;
-        let expected_role = match thread {
-            "CFP0" => "single-voice",
-            "CFP1" => "chord",
-            "CFP2" => "melody",
-            "CFP3" => "fusion",
-            "CFP4" => "drone",
-            "CFP5" => "canon",
-            _ => return Err("Factory Vāk performance has unknown CFP thread".into()),
-        };
-        if receipt_ref(receipt, "musicalRole")? != expected_role {
-            return Err("Factory Vāk performance thread/musical role disagree".into());
+        let cf = ContextFrameId::ALL[frame_index];
+        let mode = ModeKind::ALL
+            .into_iter()
+            .find(|mode| mode.context_frame() == cf)
+            .ok_or("missing native Context Frame to musical-mode relation")?;
+        if event.semantics.context_frame != event.factory.frame
+            || event.semantics.musical_role != event.factory.musical_role
+            || event.semantics.musical_mode_index != mode.index() as u8
+            || event.semantics.musical_mode != format!("{mode:?}").to_ascii_lowercase()
+            || event.settled != event.factory.settled()
+            || event.has_failure != event.factory.has_failure()
+            || event.has_interruption != event.factory.has_interruption()
+            || event.has_late_return != event.factory.has_late_return()
+        {
+            return Err("QL Vāk performance semantics disagree with the retained owner event".into());
         }
-        if !matches!(
-            receipt_ref(receipt, "sequence")?,
-            "CS0" | "CS1" | "CS2" | "CS3" | "CS4" | "CS5"
-        ) {
-            return Err("Factory Vāk performance has unknown Context Sequence".into());
-        }
-        if !matches!(receipt_ref(receipt, "direction")?, "forward" | "returning") {
-            return Err("Factory Vāk performance has unknown Context Sequence direction".into());
-        }
-        let attempts = receipt
-            .get("attempts")
-            .and_then(Value::as_array)
-            .ok_or("Factory Vāk performance has invalid attempts")?;
-        if attempts.is_empty() || attempts.len() > 4096 {
-            return Err("Factory Vāk performance has no bounded actual attempt".into());
-        }
-        let actor = receipt_ref(receipt, "actorRef")?;
-        let subject = receipt_ref(receipt, "subjectRef")?;
-        let ql_binding = receipt_ref(receipt, "qlBindingRef")?;
-        let ql_revision = receipt_ref(receipt, "qlBindingRevision")?;
-        for attempt in attempts {
-            for field in [
-                "unitRef",
-                "executionRef",
-                "actorRef",
-                "wholeRef",
-                "subjectRef",
-                "qlBindingRef",
-                "qlBindingRevision",
-                "aiKitResolvePathRef",
-                "contextResolutionRef",
-                "modelRef",
-                "providerRef",
-                "status",
-            ] {
-                receipt_ref(attempt, field)?;
-            }
-            if attempt
-                .get("attemptIndex")
-                .and_then(Value::as_u64)
-                .is_none()
-                || attempt.get("current").and_then(Value::as_bool).is_none()
-            {
-                return Err("Factory Vāk performance has invalid attempt identity".into());
-            }
-            if receipt_ref(attempt, "actorRef")? != actor
-                || receipt_ref(attempt, "subjectRef")? != subject
-                || receipt_ref(attempt, "qlBindingRef")? != ql_binding
-                || receipt_ref(attempt, "qlBindingRevision")? != ql_revision
-            {
-                return Err("Factory Vāk attempt changed actor/subject/QL identity".into());
-            }
-            receipt_ref_array(attempt, "sourceRefs", true)?;
-            receipt_ref_array(attempt, "statusHistory", true)?;
-            receipt_ref_array(attempt, "artifactRefs", false)?;
-            receipt_ref_array(attempt, "lateArtifactRefs", false)?;
-            receipt_ref_array(attempt, "evidenceRefs", false)?;
-        }
-        found = Some(FactoryVakPerformance {
-            receipt,
+        found = Some(QlVakPerformance {
+            event,
             source_receipt_index,
             frame_index,
         });
@@ -250,13 +168,13 @@ impl CoupledInput {
         {
             return Err("unsupported or excessive whole-event input".into());
         }
-        let performance = factory_vak_performance(&self.source_receipts)?;
+        let performance = ql_vak_performance(&self.source_receipts)?;
         match (self.schema.as_str(), performance.as_ref()) {
             (REQUEST_V3, None) => {
-                return Err("v3 requires one actual Factory Vāk performance receipt".into());
+                return Err("v3 requires one QL Vāk performance event".into());
             }
             (REQUEST | REQUEST_V2, Some(_)) => {
-                return Err("Factory Vāk performance requires explicit v3 input".into());
+                return Err("QL Vāk performance requires explicit v3 input".into());
             }
             _ => {}
         }
@@ -270,9 +188,9 @@ impl CoupledInput {
             return Err("M1/M2/M3 must refer to the same event".into());
         }
         if let Some(performance) = performance.as_ref()
-            && receipt_ref(performance.receipt, "subjectRef")? != self.m3.subject_ref
+            && performance.event.factory.subject_ref != self.m3.subject_ref
         {
-            return Err("Factory Vāk performance and M3 must retain the same subject".into());
+            return Err("QL Vāk performance and M3 must retain the same subject".into());
         }
         let m1 = M1Engine::new(self.m1.clone())?;
         let mut m3 = M3State::new(self.m3.clone())?;
@@ -340,7 +258,7 @@ impl CoupledInput {
         let mut stamp = request.stamp.clone();
         stamp.contract_ref = CONTRACT.into();
         stamp.source_ref = if performance.is_some() {
-            format!("{}:M1/M3/Factory-Vak-derived-reading", event.event_ref)
+            format!("{}:M1/M3/QL-Vak-performance-derived-reading", event.event_ref)
         } else {
             format!("{}:M1/M3-derived-reading", event.event_ref)
         };
@@ -416,7 +334,7 @@ impl CoupledInput {
             "mef_table_index":reading.index(), "context_frame":cf.code(),
             "musical_mode":format!("{mode:?}"),
             "frequency_bindings":self.frequency_bindings,
-            "source_generations":"M1 revision, M3 operation generation, Factory Run/attempt identity and M2 composition generation remain distinct",
+            "source_generations":"M1 revision, M3 operation generation, QL performance observation, retained Factory Run/attempt identity and M2 composition generation remain distinct",
             "material_standing":"explicit native musical projection onto supplied modes, not measured eigenvalue evidence",
             "source_receipts_standing":"host-supplied retained receipts, not authentication by this composer"
         });
@@ -431,26 +349,29 @@ impl CoupledInput {
         }
         if let Some(performance) = performance {
             derivation["m1_context_frame"] = json!(m1_cf.code());
-            derivation["factory_vak_performance"] = json!({
-                "contract":FACTORY_VAK_CONTRACT,
+            derivation["vak_performance_event"] = json!({
+                "contract":PERFORMANCE_EVENT_CONTRACT,
                 "source_receipt_index":performance.source_receipt_index,
-                "performance_ref":receipt_ref(performance.receipt, "performanceRef")?,
-                "run_ref":receipt_ref(performance.receipt, "runRef")?,
-                "run_revision":performance.receipt["runRevision"],
-                "actor_ref":receipt_ref(performance.receipt, "actorRef")?,
-                "subject_ref":receipt_ref(performance.receipt, "subjectRef")?,
-                "whole_ref":receipt_ref(performance.receipt, "wholeRef")?,
-                "ql_binding_ref":receipt_ref(performance.receipt, "qlBindingRef")?,
-                "ql_binding_revision":receipt_ref(performance.receipt, "qlBindingRevision")?,
-                "ai_kit_resolve_path_ref":receipt_ref(performance.receipt, "aiKitResolvePathRef")?,
-                "context_resolution_ref":receipt_ref(performance.receipt, "contextResolutionRef")?,
-                "frame":receipt_ref(performance.receipt, "frame")?,
-                "thread":receipt_ref(performance.receipt, "thread")?,
-                "sequence":receipt_ref(performance.receipt, "sequence")?,
-                "direction":receipt_ref(performance.receipt, "direction")?,
-                "musical_role":receipt_ref(performance.receipt, "musicalRole")?,
-                "attempts":performance.receipt["attempts"].as_array().map_or(0, Vec::len),
-                "standing":"actual Factory performance selects the active QL Context Frame/mode relation; Factory is execution provenance, not a pitch source"
+                "performance_ref":performance.event.performance_ref,
+                "observation":&performance.event.observation,
+                "ql_binding_ref":performance.event.ql_binding_ref,
+                "ql_binding_revision":performance.event.ql_binding_revision,
+                "semantics":&performance.event.semantics,
+                "settled":performance.event.settled,
+                "has_failure":performance.event.has_failure,
+                "has_interruption":performance.event.has_interruption,
+                "has_late_return":performance.event.has_late_return,
+                "factory":{
+                    "contract":performance.event.factory_contract,
+                    "performance_ref":performance.event.factory.performance_ref,
+                    "run_ref":performance.event.factory.run_ref,
+                    "run_revision":performance.event.factory.run_revision,
+                    "actor_ref":performance.event.factory.actor_ref,
+                    "subject_ref":performance.event.factory.subject_ref,
+                    "whole_ref":performance.event.factory.whole_ref,
+                    "attempts":performance.event.factory.attempts.len()
+                },
+                "standing":"QL-owned semantic performance event selects the active Context Frame/mode relation; retained Factory execution remains actuality/provenance, not a pitch source"
             });
         }
         Ok(CoupledBasis {
