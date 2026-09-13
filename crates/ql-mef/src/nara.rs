@@ -300,7 +300,9 @@ impl WorldContribution {
         text(&self.source_ref, "world contribution source")?;
         finite([self.value])?;
         if self.basis_ref != expected_basis {
-            return Err("world contribution is not attributable to the accepted event basis".into());
+            return Err(
+                "world contribution is not attributable to the accepted event basis".into(),
+            );
         }
         Ok(())
     }
@@ -335,7 +337,8 @@ impl PersonalEventInput {
         }
         let mut ordinals = BTreeSet::new();
         for receiver in &self.receivers {
-            if usize::from(receiver.ordinal) >= RECEIVER_COUNT || !ordinals.insert(receiver.ordinal) {
+            if usize::from(receiver.ordinal) >= RECEIVER_COUNT || !ordinals.insert(receiver.ordinal)
+            {
                 return Err("duplicate or invalid receiver event input".into());
             }
             receiver.m1.validate(&refs.m1_revision)?;
