@@ -22,8 +22,7 @@ use ql_core::{QlPosition, VakFamily};
 pub const C_PRIME_OIKONOMIA_CONTRACT: &str = "ql.cprime-oikonomia/v1";
 pub const CFP_SOURCE_REF: &str =
     "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#13-cfp-the-musical-forms-of-working";
-pub const CS_SOURCE_REF: &str =
-    "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#14-cs-the-actual-passage-through-paired-positions";
+pub const CS_SOURCE_REF: &str = "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#14-cs-the-actual-passage-through-paired-positions";
 
 fn error(message: impl Into<String>) -> CompositionError {
     CompositionError(message.into())
@@ -38,7 +37,10 @@ fn nonempty(value: &str, what: &str) -> Result<(), CompositionError> {
 }
 
 fn evidence(values: &[String]) -> Result<(), CompositionError> {
-    require(!values.is_empty(), "source-qualified operation requires evidence")?;
+    require(
+        !values.is_empty(),
+        "source-qualified operation requires evidence",
+    )?;
     for value in values {
         nonempty(value, "empty evidence reference")?;
     }
@@ -638,9 +640,7 @@ mod tests {
 
     #[test]
     fn z_requires_authorisation_and_advances_only_in_source_order() {
-        assert!(
-            CfpZCycle::authorised("work", vec![], "approval", basis("z/start")).is_err()
-        );
+        assert!(CfpZCycle::authorised("work", vec![], "approval", basis("z/start")).is_err());
         let mut cycle = CfpZCycle::authorised(
             "work",
             vec!["goal/source".into()],
