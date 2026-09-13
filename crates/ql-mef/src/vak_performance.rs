@@ -17,15 +17,14 @@ use crate::music::{
 use crate::vak_composition::{CompositionError, Result};
 use crate::vak_profile::{
     CompiledProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
-    Participation, ThreadForm, PROFILE_CONTRACT, PROFILE_SOURCE, PROFILE_SOURCE_BLOB,
+    PROFILE_CONTRACT, PROFILE_SOURCE, PROFILE_SOURCE_BLOB, Participation, ThreadForm,
     constitutional_voice,
 };
 
 pub const FACTORY_VAK_PERFORMANCE_CONTRACT: &str = "factory.vak-orchestration/v1";
 pub const PERFORMANCE_PROJECTION_REQUEST: &str = "ql.vak-performance-projection/v1";
 pub const PERFORMANCE_EVENT_CONTRACT: &str = "ql.vak-performance-event/v1";
-pub const PERFORMANCE_SOURCE: &str =
-    "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#22-compose-perform-record-rehear-recompose";
+pub const PERFORMANCE_SOURCE: &str = "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#22-compose-perform-record-rehear-recompose";
 const MAX_ATTEMPTS: usize = 4096;
 const MAX_SOURCE_REFS: usize = 4096;
 
@@ -34,11 +33,7 @@ fn error(message: impl Into<String>) -> CompositionError {
 }
 
 fn require(test: bool, message: &str) -> Result<()> {
-    if test {
-        Ok(())
-    } else {
-        Err(error(message))
-    }
+    if test { Ok(()) } else { Err(error(message)) }
 }
 
 fn reference(value: &str, what: &str) -> Result<()> {
@@ -49,10 +44,7 @@ fn reference(value: &str, what: &str) -> Result<()> {
 }
 
 fn references(values: &BTreeSet<String>, what: &str) -> Result<()> {
-    require(
-        !values.is_empty() && values.len() <= MAX_SOURCE_REFS,
-        what,
-    )?;
+    require(!values.is_empty() && values.len() <= MAX_SOURCE_REFS, what)?;
     for value in values {
         reference(value, what)?;
     }
@@ -333,16 +325,16 @@ impl CompiledProfile {
     }
 }
 
-fn validate_request(profile: &CompiledProfile, request: &PerformanceProjectionRequest) -> Result<()> {
+fn validate_request(
+    profile: &CompiledProfile,
+    request: &PerformanceProjectionRequest,
+) -> Result<()> {
     require(
         request.schema == PERFORMANCE_PROJECTION_REQUEST,
         "unsupported Vāk performance projection request",
     )?;
     reference(&request.ql_binding_ref, "missing QL binding reference")?;
-    reference(
-        &request.ql_binding_revision,
-        "missing QL binding revision",
-    )?;
+    reference(&request.ql_binding_revision, "missing QL binding revision")?;
     references(
         &request.factory_receipt_refs,
         "Factory performance projection requires actual owner receipt evidence",
@@ -352,7 +344,10 @@ fn validate_request(profile: &CompiledProfile, request: &PerformanceProjectionRe
 }
 
 fn validate_observation(observation: &PerformanceObservation, performance_ref: &str) -> Result<()> {
-    reference(&observation.observation_ref, "missing performance observation")?;
+    reference(
+        &observation.observation_ref,
+        "missing performance observation",
+    )?;
     match observation.mode {
         PerformanceObservationMode::Live => require(
             observation.replay_of.is_none(),
@@ -372,7 +367,10 @@ fn validate_observation(observation: &PerformanceObservation, performance_ref: &
     }
 }
 
-fn validate_snapshot(profile: &CompiledProfile, request: &PerformanceProjectionRequest) -> Result<()> {
+fn validate_snapshot(
+    profile: &CompiledProfile,
+    request: &PerformanceProjectionRequest,
+) -> Result<()> {
     let snapshot = &request.snapshot;
     require(
         snapshot.contract == FACTORY_VAK_PERFORMANCE_CONTRACT,
@@ -494,7 +492,9 @@ fn validate_attempts(snapshot: &FactoryVakPerformanceSnapshot) -> Result<()> {
             "attempt status history does not describe its actual occasion",
         )?;
         require(
-            attempt.artifact_refs.is_disjoint(&attempt.late_artifact_refs),
+            attempt
+                .artifact_refs
+                .is_disjoint(&attempt.late_artifact_refs),
             "current and late Return identities cannot be collapsed",
         )?;
         if let Some(reason) = &attempt.failure_reason {
@@ -617,7 +617,10 @@ fn validate_sustained(snapshot: &FactoryVakPerformanceSnapshot, thread: ThreadFo
     )?;
     for (value, message) in [
         (&stop.stop_condition_ref, "missing sustained stop condition"),
-        (&stop.native_stop_conditions, "missing native stop conditions"),
+        (
+            &stop.native_stop_conditions,
+            "missing native stop conditions",
+        ),
         (&stop.owner_ref, "missing stop observation owner"),
         (&stop.source_revision, "missing stop source revision"),
     ] {
@@ -851,10 +854,7 @@ mod tests {
         assert!(!event.has_interruption);
         assert_eq!(event.factory.chain_inputs.len(), 1);
         assert!(event.ql_basis_refs.contains("factory-receipt:return"));
-        assert_eq!(
-            event.factory.attempts[0].execution_ref,
-            "exec-inspect"
-        );
+        assert_eq!(event.factory.attempts[0].execution_ref, "exec-inspect");
         let wire = serde_json::to_value(&event).unwrap();
         assert_eq!(wire["performanceRef"], "performance:factory-vak");
         assert_eq!(wire["semantics"]["musicalMode"], "mixolydian");
@@ -881,22 +881,10 @@ mod tests {
     fn retries_keep_old_provider_and_late_return_without_relabelling_current_attempt() {
         let compiled = profile(ThreadForm::Sustained);
         let mut request = request(ThreadForm::Sustained);
-        let mut old = attempt(
-            "observe",
-            0,
-            false,
-            "exec-old",
-            FactoryLegStatus::Failed,
-        );
+        let mut old = attempt("observe", 0, false, "exec-old", FactoryLegStatus::Failed);
         old.late_artifact_refs.insert("artifact:old-late".into());
         old.evidence_refs.insert("evidence:old-late".into());
-        let mut current = attempt(
-            "observe",
-            1,
-            true,
-            "exec-new",
-            FactoryLegStatus::LateResult,
-        );
+        let mut current = attempt("observe", 1, true, "exec-new", FactoryLegStatus::LateResult);
         current.status_history = vec![
             FactoryLegStatus::Active,
             FactoryLegStatus::CancelRequested,
@@ -974,10 +962,7 @@ mod tests {
         };
         let event = compiled.project_factory_performance(replay).unwrap();
         assert_eq!(event.performance_ref, "performance:factory-vak");
-        assert_eq!(
-            event.observation.mode,
-            PerformanceObservationMode::Replay
-        );
+        assert_eq!(event.observation.mode, PerformanceObservationMode::Replay);
 
         let mut forged = request(ThreadForm::Single);
         forged.observation.mode = PerformanceObservationMode::Replay;
