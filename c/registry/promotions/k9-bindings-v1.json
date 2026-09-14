@@ -1,0 +1,51 @@
+{
+  "schema": "ql.k8-implementation-dispositions/v1",
+  "authority": "docs/kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md",
+  "modules": [
+    {
+      "path": "crates/ql-mef/src/focused_instrument.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0", "#1", "#2", "#3", "#4", "#5"],
+      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1–M3 continuous field, #134 Nara and QL/Factory Vāk performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
+      "tests": ["crates/ql-mef/src/focused_instrument.rs", "crates/ql-mef/src/focused_instrument_aw1.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/focused_instrument_aw1.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": ["M"],
+      "rationale": "Thin K9 admission join from AW1's accepted RootedMWorld into the focused selection carrier. Source, revision, Bimba face and relation identities are received from AW1 rather than re-derived; no second M registry or Bimba graph is introduced.",
+      "tests": ["crates/ql-mef/src/focused_instrument_aw1.rs", "crates/ql-mef/src/aw1_world.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/focused_instrument_aw2.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Thin K9 consumer of the accepted #94/#183 ql.operative-scope-currentness/v1 owner response. It validates QL provider/owner/interpretation identity and preserves Current/Stale/Missing for presentation consumers without reobserving C-prime state, granting authority or defining another coordinate/scope registry.",
+      "tests": ["crates/ql-mef/src/focused_instrument_aw2.rs", "crates/ql-mef/src/vak_scope_wire.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/bin/ql-focused-host.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0", "#1", "#2", "#3", "#4", "#5"],
+      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
+      "tests": ["crates/ql-mef/src/bin/ql-focused-host.rs", "crates/ql-mef/src/focused_instrument.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "adapters/retained-field/focused-instrument-session.mjs",
+      "stratum": "javascript",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "K9 browser transport/presentation driver for one already-authorised ql-focused-host. Focus/Bimba/clock requests and continuous native advances share one exact host sequence; accepted K8 NativeAudioBinding and RetainedFieldBinding receive the same acknowledged field while O:I supplies only its existing retained stage lease. Explicit source-qualified sample correspondence is required. The adapter creates no numerical owner, renderer, clock, graph, executable authority or AgentSession.",
+      "tests": ["adapters/retained-field/focused-instrument-session.test.mjs", "adapters/retained-field/instrument-session.test.mjs"],
+      "kind": "computational"
+    }
+  ]
+}

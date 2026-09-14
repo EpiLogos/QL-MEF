@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Current-source liveness and reviewed K8 dispositions over the accepted ledger.
+"""Current-source liveness and reviewed K8/K9 dispositions over the accepted ledger.
 
 K4's captured workbooks and proof artifacts are historical inputs, not scratch
 files to rewrite on every new runtime source addition. Scan current source, retain
@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = 'fixtures/kernel/k8-census-receipt-v1.json'
 BINDINGS = 'c/registry/promotions/k8-bindings-v1.json'
+K9_BINDINGS = 'c/registry/promotions/k9-bindings-v1.json'
 
 
 def module(name, path):
@@ -48,9 +49,19 @@ def project():
     lookup = {n['source_ref']: n['id'] for n in registry['nodes']}
     ledger = read('fixtures/kernel/m-ledger-v1.json')
     old_orphans = read('fixtures/kernel/census/reports/orphan-implementations.json')
-    spec = read(BINDINGS)
-    if spec['schema'] != 'ql.k8-implementation-dispositions/v1':
-        raise ValueError('unknown implementation disposition schema')
+    base_spec = read(BINDINGS)
+    k9_spec = read(K9_BINDINGS)
+    for candidate in (base_spec, k9_spec):
+        if candidate['schema'] != 'ql.k8-implementation-dispositions/v1':
+            raise ValueError('unknown implementation disposition schema')
+    # Current-source review is cumulative. K9 extends the accepted K8 census
+    # without rewriting the historical K4 ledger or pretending its consumer
+    # projections were part of the earlier K8 readiness receipt.
+    spec = {
+        'schema': base_spec['schema'],
+        'authority': [base_spec.get('authority'), k9_spec.get('authority')],
+        'modules': [*base_spec['modules'], *k9_spec['modules']],
+    }
     implementations = {}
     for item in ledger['implementations']:
         implementations.setdefault((item['stratum'], item['path'], item['symbol']), []).append(item['id'])
