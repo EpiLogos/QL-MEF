@@ -393,8 +393,7 @@ pub fn project_thought_consumption(
                     consumption.assessment.reference.clone(),
                 ]);
                 recognition_evidence_refs.extend(human_refs.iter().cloned());
-                recognition_evidence_refs
-                    .extend(request.performance_evidence_refs.iter().cloned());
+                recognition_evidence_refs.extend(request.performance_evidence_refs.iter().cloned());
 
                 let mut verification_evidence_refs = actual_refs.clone();
                 verification_evidence_refs.insert(use_reading.source.reference.clone());
@@ -497,10 +496,7 @@ fn validate_receipt(receipt: &FactoryThoughtConsumptionReceipt) -> Result<()> {
 
     let mut thought_ids = BTreeSet::new();
     for input in &consumption.inputs {
-        reference(
-            &input.thought_id,
-            "missing Factory RunThought identity",
-        )?;
+        reference(&input.thought_id, "missing Factory RunThought identity")?;
         require(
             thought_ids.insert(input.thought_id.as_str()),
             "duplicate RunThought input in consumption receipt",
@@ -812,9 +808,11 @@ mod tests {
                 thought_id: "thought-local".into(),
                 meaning,
             }],
-            performance_evidence_refs: with_performance
-                .then(|| BTreeSet::from([evidence.into()]))
-                .unwrap_or_default(),
+            performance_evidence_refs: if with_performance {
+                BTreeSet::from([evidence.into()])
+            } else {
+                Default::default()
+            },
             performance: with_performance.then(|| performance(evidence)),
         }
     }
