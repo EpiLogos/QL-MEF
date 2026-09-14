@@ -141,6 +141,24 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/vak_scope.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0-4", "#0-5"],
+      "rationale": "#94/#183 QL-owned source-qualified operative binding and reobservation over the existing VakComposition/C-prime owner. It recompiles the current whole/profile/source basis to distinguish Current, Stale and Missing without accepting client or AIKit echoes as QL authority; world generation and Method-classified Skill refs remain external correlations, not QL Context, permission or scope registries.",
+      "tests": ["crates/ql-mef/src/vak_scope.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/vak_thought_consumption.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL Vāk performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
+      "tests": ["crates/ql-mef/src/vak_thought_consumption.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/continuous/receipt/tests.rs",
       "stratum": "rust",
       "disposition": "infrastructural",
@@ -245,7 +263,7 @@
       "disposition": "infrastructural",
       "kind": "computational",
       "coordinates": [],
-      "rationale": "Bounded presentation-only receiver of the existing C++ PCM and exact source/device cursor relation. It does not own M1–M3 synthesis, astronomy, Nara identity, the retained particle integrator, authority or native simulation scheduling.",
+      "rationale": "Bounded presentation-only receiver of the existing C++ PCM and exact source/device cursor relation. It does not own M1-M3 synthesis, astronomy, Nara identity, the retained particle integrator, authority or native simulation scheduling.",
       "tests": ["adapters/retained-field/native-audio.test.mjs", "adapters/retained-field/audio-acceptance.mjs", "adapters/retained-field/test-audio-browser.py"]
     },
     {
@@ -307,7 +325,7 @@
       "stratum": "rust",
       "disposition": "cross-coordinate",
       "coordinates": ["#1", "#2", "#3", "#4"],
-      "rationale": "K8 subject-bound integration around the existing coupled runtime and #134 PersonalFieldInstance. It relates one acknowledged M1–M3/material owner to explicitly supplied Nara reception without another field, inferred centre inputs, hidden update or disclosure grant.",
+      "rationale": "K8 subject-bound integration around the existing coupled runtime and #134 PersonalFieldInstance. It relates one acknowledged M1-M3/material owner to explicitly supplied Nara reception without another field, inferred centre inputs, hidden update or disclosure grant.",
       "tests": ["crates/ql-mef/tests/nara_personal_field.rs", ".github/workflows/kernel-k8-continuous.yml"],
       "kind": "computational"
     },
