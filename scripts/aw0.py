@@ -360,7 +360,13 @@ def project():
         'ACCEPTED-NATIVE', 'READY-TO-COMPOSE', 'EXTERNAL-OWNER',
         'SOURCE-DISCREPANCY', 'RESEARCH-ONLY', 'EPI-GAP',
     }
+    if not isinstance(receipts, dict) or not receipts:
+        raise ValueError('acceptance overlay requires receipts')
+    if not isinstance(disposition_rules, list) or not disposition_rules:
+        raise ValueError('acceptance overlay requires disposition rules')
     for receipt_id, receipt in receipts.items():
+        if not isinstance(receipt_id, str) or not receipt_id:
+            raise ValueError('invalid acceptance receipt id')
         for field in ('repository', 'pull_request', 'accepted_head', 'merge_commit', 'standing', 'proves'):
             if not receipt.get(field):
                 raise ValueError(f'incomplete acceptance receipt {receipt_id}: {field}')
@@ -370,8 +376,45 @@ def project():
         if receipt['standing'] != 'ACCEPTED-NATIVE':
             raise ValueError('receipt is not accepted native evidence: ' + receipt_id)
 
+    supported_selector_keys = {'inventories', 'ids', 'gap_ids'}
+    rule_ids = set()
+    for candidate in disposition_rules:
+        rule_id = candidate.get('id')
+        if not isinstance(rule_id, str) or not rule_id:
+            raise ValueError('disposition rule requires an id')
+        if rule_id in rule_ids:
+            raise ValueError('duplicate disposition rule id: ' + rule_id)
+        rule_ids.add(rule_id)
+        priority = candidate.get('priority')
+        if not isinstance(priority, int) or isinstance(priority, bool):
+            raise ValueError('disposition rule requires integer priority: ' + rule_id)
+        selector = candidate.get('selector')
+        if not isinstance(selector, dict) or not selector:
+            raise ValueError('disposition rule requires nonempty selector: ' + rule_id)
+        unknown = set(selector) - supported_selector_keys
+        if unknown:
+            raise ValueError('unsupported disposition selector: ' + rule_id + ':' + ','.join(sorted(unknown)))
+        for key, values in selector.items():
+            if not isinstance(values, list) or not values or any(not isinstance(value, str) or not value for value in values):
+                raise ValueError('invalid disposition selector values: ' + rule_id + ':' + key)
+        disposition = candidate.get('disposition')
+        if disposition not in allowed_dispositions:
+            raise ValueError('unsupported current disposition rule: ' + rule_id)
+        receipt_ids = candidate.get('receipt_ids')
+        if not isinstance(receipt_ids, list) or any(not isinstance(value, str) or not value for value in receipt_ids):
+            raise ValueError('invalid receipt list for disposition rule: ' + rule_id)
+        missing = [receipt_id for receipt_id in receipt_ids if receipt_id not in receipts]
+        if missing:
+            raise ValueError('unknown acceptance receipt for rule ' + rule_id + ': ' + ', '.join(missing))
+        if disposition == 'ACCEPTED-NATIVE' and not receipt_ids:
+            raise ValueError('accepted disposition rule has no native receipt: ' + rule_id)
+        if disposition == 'EPI-GAP' and not candidate.get('current_dependency'):
+            raise ValueError('EPI-GAP disposition rule has no dependency: ' + rule_id)
+        if not candidate.get('reason'):
+            raise ValueError('disposition rule requires a reason: ' + rule_id)
+
     def rule_matches(candidate, record):
-        selector = candidate.get('selector', {})
+        selector = candidate['selector']
         if selector.get('inventories') and record['inventory'] not in selector['inventories']:
             return False
         if selector.get('ids') and record['id'] not in selector['ids']:
@@ -380,23 +423,22 @@ def project():
             return False
         return True
 
+    for candidate in disposition_rules:
+        if not any(rule_matches(candidate, record) for record in records):
+            raise ValueError('disposition rule matches no source record: ' + candidate['id'])
+
     disposition_counts = {}
     for record in records:
         matches = [candidate for candidate in disposition_rules if rule_matches(candidate, record)]
         if not matches:
             raise ValueError('no current disposition rule for ' + record['id'])
-        highest = max(candidate.get('priority', -1) for candidate in matches)
-        winners = [candidate for candidate in matches if candidate.get('priority', -1) == highest]
+        highest = max(candidate['priority'] for candidate in matches)
+        winners = [candidate for candidate in matches if candidate['priority'] == highest]
         if len(winners) != 1:
             raise ValueError('ambiguous current disposition for ' + record['id'])
         current = winners[0]
-        disposition = current.get('disposition')
-        if disposition not in allowed_dispositions:
-            raise ValueError('unsupported current disposition for ' + record['id'])
-        receipt_ids = current.get('receipt_ids', [])
-        missing = [receipt_id for receipt_id in receipt_ids if receipt_id not in receipts]
-        if missing:
-            raise ValueError('unknown acceptance receipt for ' + record['id'] + ': ' + ', '.join(missing))
+        disposition = current['disposition']
+        receipt_ids = current['receipt_ids']
         if disposition == 'ACCEPTED-NATIVE' and not receipt_ids:
             raise ValueError('accepted row has no native receipt: ' + record['id'])
         dependency = current.get('current_dependency')
