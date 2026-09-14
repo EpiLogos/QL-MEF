@@ -40,7 +40,9 @@ impl PersonalCoupledSession {
         if constitution.subject_id != basis.m3.subject_ref
             || constitution.subject_id != field.subject_ref
         {
-            return Err("personal constitution, M3 and continuous field must name one subject".into());
+            return Err(
+                "personal constitution, M3 and continuous field must name one subject".into(),
+            );
         }
         let personal = PersonalFieldInstance::new(constitution)?;
         let coupled = CoupledFieldSession::open(worker, basis, field, timeout)?;

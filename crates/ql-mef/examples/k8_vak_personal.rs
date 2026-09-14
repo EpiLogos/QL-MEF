@@ -225,7 +225,9 @@ fn run() -> Result<(), String> {
         return Err("Factory receipt digest must be SHA-256 hex".into());
     }
     let factory: FactoryVakPerformanceSnapshot = serde_json::from_value(factory_json.clone())
-        .map_err(|error| format!("Factory owner receipt does not match its published wire: {error}"))?;
+        .map_err(|error| {
+            format!("Factory owner receipt does not match its published wire: {error}")
+        })?;
     let profile = ql_profile(&factory)?;
     let performance_event = profile
         .project_factory_performance(PerformanceProjectionRequest {
@@ -250,10 +252,10 @@ fn run() -> Result<(), String> {
     let subject = performance_event.factory.subject_ref.clone();
     let event_json = serde_json::to_value(&performance_event).map_err(|error| error.to_string())?;
 
-    let mut basis: CoupledInput = serde_json::from_value(installed["basis"].clone())
-        .map_err(|error| error.to_string())?;
-    let mut field: FieldInput = serde_json::from_value(installed["field"].clone())
-        .map_err(|error| error.to_string())?;
+    let mut basis: CoupledInput =
+        serde_json::from_value(installed["basis"].clone()).map_err(|error| error.to_string())?;
+    let mut field: FieldInput =
+        serde_json::from_value(installed["field"].clone()).map_err(|error| error.to_string())?;
     if basis.schema != REQUEST_V2 {
         return Err("cross-owner acceptance requires the accepted dual-bus K8 input".into());
     }
@@ -374,7 +376,10 @@ fn run() -> Result<(), String> {
     .map_err(|error| error.to_string())?;
     std::fs::write(
         out.join("inspection.json"),
-        format!("{}\n", serde_json::to_string_pretty(&owner.inspect()?).unwrap()),
+        format!(
+            "{}\n",
+            serde_json::to_string_pretty(&owner.inspect()?).unwrap()
+        ),
     )
     .map_err(|error| error.to_string())?;
     Ok(())

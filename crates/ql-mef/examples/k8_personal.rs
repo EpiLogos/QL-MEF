@@ -1,8 +1,8 @@
 //! Installed K8 Nara/runtime acceptance. The existing coupled input and native
 //! worker are reused; personal reception neither advances nor duplicates them.
+use ql_mef::continuous::FieldInput;
 use ql_mef::continuous::coupled::CoupledInput;
 use ql_mef::continuous::personal::PersonalCoupledSession;
-use ql_mef::continuous::FieldInput;
 use ql_mef::nara::{
     BioQuaternion, ConsentState, EarthBodyConstitution, EventBasisRefs, LifecycleState,
     PersonalConstitution, PersonalEventInput, PersonalLayer, ReceiverConstitution,
@@ -13,7 +13,11 @@ use std::path::Path;
 use std::time::Duration;
 
 fn read(path: &str) -> Result<Value, String> {
-    if std::fs::metadata(path).map_err(|error| error.to_string())?.len() > 32 * 1024 * 1024 {
+    if std::fs::metadata(path)
+        .map_err(|error| error.to_string())?
+        .len()
+        > 32 * 1024 * 1024
+    {
         return Err("input exceeds 32 MiB".into());
     }
     serde_json::from_slice(&std::fs::read(path).map_err(|error| error.to_string())?)
@@ -184,23 +188,40 @@ fn run() -> Result<(), String> {
     let first_input = reception(&refs, observed_at_unix_ms);
     let first = owner.receive_personal(first_input.clone())?;
     assert!(owner.personal_is_current()?);
-    assert_eq!(owner.last_field(), &initial_field, "personal reception advanced native field");
+    assert_eq!(
+        owner.last_field(),
+        &initial_field,
+        "personal reception advanced native field"
+    );
     assert_eq!(first.receivers.len(), 7);
     assert_eq!(first.subject_id, refs.subject_ref);
 
     let replay = owner.receive_personal(first_input)?;
     assert_eq!(replay, first);
-    assert_eq!(owner.last_field(), &initial_field, "personal replay changed native field");
+    assert_eq!(
+        owner.last_field(),
+        &initial_field,
+        "personal replay changed native field"
+    );
 
     owner.advance_field(1024, false)?;
-    assert!(owner.personal_is_current()?, "sample advance changed world-basis identity");
-    assert_ne!(owner.last_field()["samples_elapsed"], initial_field["samples_elapsed"]);
+    assert!(
+        owner.personal_is_current()?,
+        "sample advance changed world-basis identity"
+    );
+    assert_ne!(
+        owner.last_field()["samples_elapsed"],
+        initial_field["samples_elapsed"]
+    );
 
     let before_replace_field = owner.last_field().clone();
     let mut changed = basis;
     advance_generation(&mut changed);
     owner.replace_field(changed)?;
-    assert!(!owner.personal_is_current()?, "old personal reading relabelled after world replacement");
+    assert!(
+        !owner.personal_is_current()?,
+        "old personal reading relabelled after world replacement"
+    );
     assert_eq!(
         owner.last_field()["samples_elapsed"],
         before_replace_field["samples_elapsed"],
@@ -210,7 +231,10 @@ fn run() -> Result<(), String> {
     let second = owner.receive_personal(reception(&changed_refs, observed_at_unix_ms))?;
     assert!(owner.personal_is_current()?);
     assert_eq!(second.reception_generation, 2);
-    assert_eq!(second.event.profile_generation, changed_refs.profile_generation);
+    assert_eq!(
+        second.event.profile_generation,
+        changed_refs.profile_generation
+    );
 
     let inspection = owner.inspect()?;
     let currentness = owner.currentness()?;

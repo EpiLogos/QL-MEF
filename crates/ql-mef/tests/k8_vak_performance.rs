@@ -292,12 +292,7 @@ fn performance_event_is_versioned_fail_closed_and_subject_bound() {
 
     let mut semantic_drift = base.clone();
     semantic_drift.schema = REQUEST_V3.into();
-    let mut event = performance_event(
-        &semantic_drift.m3.subject_ref,
-        "CF5",
-        "CFP2",
-        "melody",
-    );
+    let mut event = performance_event(&semantic_drift.m3.subject_ref, "CF5", "CFP2", "melody");
     event["semantics"]["musicalRole"] = json!("chord");
     semantic_drift.source_receipts.push(event);
     assert!(
@@ -309,12 +304,7 @@ fn performance_event_is_versioned_fail_closed_and_subject_bound() {
 
     let mut duplicate = base;
     duplicate.schema = REQUEST_V3.into();
-    let event = performance_event(
-        &duplicate.m3.subject_ref,
-        "CF5",
-        "CFP0",
-        "single-voice",
-    );
+    let event = performance_event(&duplicate.m3.subject_ref, "CF5", "CFP0", "single-voice");
     duplicate.source_receipts.extend([event.clone(), event]);
     assert!(
         duplicate

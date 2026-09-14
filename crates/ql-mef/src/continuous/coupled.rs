@@ -142,7 +142,9 @@ fn ql_vak_performance(receipts: &[Value]) -> Result<Option<QlVakPerformance>, St
             || event.has_interruption != event.factory.has_interruption()
             || event.has_late_return != event.factory.has_late_return()
         {
-            return Err("QL Vāk performance semantics disagree with the retained owner event".into());
+            return Err(
+                "QL Vāk performance semantics disagree with the retained owner event".into(),
+            );
         }
         found = Some(QlVakPerformance {
             event,
@@ -258,7 +260,10 @@ impl CoupledInput {
         let mut stamp = request.stamp.clone();
         stamp.contract_ref = CONTRACT.into();
         stamp.source_ref = if performance.is_some() {
-            format!("{}:M1/M3/QL-Vak-performance-derived-reading", event.event_ref)
+            format!(
+                "{}:M1/M3/QL-Vak-performance-derived-reading",
+                event.event_ref
+            )
         } else {
             format!("{}:M1/M3-derived-reading", event.event_ref)
         };

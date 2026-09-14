@@ -82,14 +82,17 @@ published under `target/k8-coupled` in the exact-head native evidence artifact.
 ## Remaining distinct proof
 
 The installed specimen uses explicitly controlled source-linked geometry and
-subject handles. It does not claim #134's full Nara constitution or independently
-active receiving centres, a universal physical material/fold solver,
-acoustic-device equivalence or owner-machine desktop acceptance. Full source
-matrices and A/B obligations remain the scope of #132 and its parallel owners.
-Root/property/graph promotion remains K8's shared-core integration
-responsibility; this operational join neither duplicates those registries nor
-makes their unlanded work disappear. The newer owner-built renderer is retained
-for later exact-version local harmonisation.
+subject handles. It now exercises the early #134 Nara producer as a distinct,
+source-qualified personal reception over the same dated world basis, including
+seven independently constituted receivers; that controlled join is not a claim
+of full #134/K10 physiological or lived Nara closure. It likewise does not claim
+a universal physical material/fold solver, acoustic-device equivalence or
+owner-machine desktop acceptance. Full source matrices and A/B obligations
+remain the scope of #132 and its parallel owners. Root/property/graph promotion
+remains K8's shared-core integration responsibility; this operational join
+neither duplicates those registries nor makes their unlanded work disappear.
+The newer owner-built renderer is retained for later exact-version local
+harmonisation.
 
 ## Version 2 — two source-qualified musical inputs
 
@@ -132,51 +135,64 @@ within the full field, not completion of Personal, agentic or resource proof.
 
 ## Version 3 — performed Vāk enters the same instrument
 
-`ql.coupled-event-request/v3` consumes the accepted Factory owner contract
-`factory.vak-orchestration/v1` as one retained `source_receipts` entry. This is
-the K8 side of Factory#217 / QL-MEF#94 AW2: K8 does not reconstruct Factory
-orchestration, parse C′ again or invent an execution event from renderer state.
-The receipt must carry an actual bounded attempt plus its performance/Run,
-workflow source and digest, actor, subject/whole, QL binding/revision, AIKit
-Resolve/ContextResolution, source refs, CF/CFP/CS direction, provider/model,
-status history, artifacts/late artifacts and evidence holdings. Attempt actor,
-subject and QL identity cannot drift from their performance identity.
+`ql.coupled-event-request/v3` consumes exactly one QL-owned
+`ql.vak-performance-event/v1` in `source_receipts`. That event is the semantic
+projection of an actual Factory `factory.vak-orchestration/v1` performance: the
+complete Factory snapshot and owner evidence remain retained inside it, while
+QL owns the C′/Context-Frame/lens/musical interpretation. K8 therefore refuses a
+raw Factory performance rather than treating execution strings as QL semantic
+authority. Factory owns execution actuality, QL owns the performed meaning, and
+K8 only embodies the already-qualified event on the existing material/audio
+owner.
 
-The Factory receipt is **execution provenance, not a pitch source**. Its active
-`CF1`–`CF7` selects QL's already accepted Context-Frame→musical-mode relation for
-the derived M2 Vimarśā reading. The original M1 Context Frame remains retained
-and separately named; both frames remain visible in the composed basis when
-they differ. Frequencies still come only from the existing
-`m2.vimarsha.reading.audio_octet_hz` and, where explicitly bound, the independent
-`m2.condition.musical.pitches_hz`. Thus performed agency can change how the same
-material instrument is voiced without Factory assigning arbitrary notes or K8
-adding a second musical table.
+The QL event is **performance meaning and provenance, not a second pitch
+source**. Its active `CF1`–`CF7` selects QL's already accepted
+Context-Frame→musical-mode relation for the derived M2 Vimarśā reading. The
+original M1 Context Frame remains retained and separately named; both frames
+remain visible in the composed basis when they differ. Frequencies still come
+only from the existing `m2.vimarsha.reading.audio_octet_hz` and, where
+explicitly bound, the independent `m2.condition.musical.pitches_hz`. Thus a
+performed occasion can change how the same material instrument is voiced
+without Factory assigning arbitrary notes or K8 adding another musical table.
 
-The six Factory thread forms must retain the source-defined role exactly:
-`CFP0/single-voice`, `CFP1/chord`, `CFP2/melody`, `CFP3/fusion`, `CFP4/drone`,
-`CFP5/canon`. `CS0`–`CS5` and `forward|returning` are accepted only as the
-source-defined values. They remain attributable performance structure in the
-retained receipt; v3 does not pretend a static K8 basis contains Factory's own
-ordering, barriers, retry, cancellation or late-Return machinery. Those effects
-remain evidenced by Factory's actual attempts, while K8 relates the performed
-frame to one continuous material/audio generation.
+The QL producer validates the source-defined performance structure before K8
+sees it: all six CFP forms and roles (`CFP0/single-voice`, `CFP1/chord`,
+`CFP2/melody`, `CFP3/fusion`, `CFP4/drone`, `CFP5/canon`), `CS0`–`CS5`,
+`forward|returning`, chain material/current Return selection, retry/late Return
+standing and QL profile/binding coherence. K8 retains those facts and checks
+that the projected event still agrees with its embedded Factory occasion for
+performance identity, QL binding, Context Frame, musical role and
+settled/failure/interruption/late-Return standing. It does not recreate
+Factory's scheduler, barriers, retry, cancellation, Return selection or
+recognition machinery.
 
-V3 is deliberately explicit. A Factory Vāk receipt in v1/v2 is refused rather
-than silently upgrading historical replay; v3 without exactly one such receipt
-is refused; duplicate receipts are ambiguous and refused. The performance
-subject must equal the M3/continuous subject. Unknown CF/CFP/CS/direction,
-thread↔musical-role disagreement, missing attempts, malformed lineage and
-actor/subject/QL identity drift fail before composition/native mutation. The
-complete original Factory receipt remains byte-for-structure retained inside
-the `CoupledInput` and deterministic replay uses that same occasion, not a later
-reinterpretation.
+V3 is deliberately explicit. A raw Factory Vāk receipt is refused in every
+version; v1/v2 cannot acquire a QL performance event by implicit upgrade; v3
+without exactly one QL performance event is refused; duplicate events are
+ambiguous and refused. The **performance subject** must equal the
+M3/continuous/Nara world subject. Delegated attempt subjects remain independent
+Factory-owned facts inside the retained QL event and are not collapsed into the
+performance subject; CFP3/fusion's same-subject constraint remains enforced by
+the Factory/QL owner where it belongs. Malformed lineage, QL semantic drift,
+unknown Context Frame or subject mismatch fail before composition/native
+mutation. Deterministic replay retains the same Factory occasion through the
+same QL event rather than reinterpreting it later.
 
-`k8_vak_performance` covers the accepted public Factory wire shape, all six CFP
-roles, actual-CF mode selection, preservation of the underlying M1 input and
-original performance receipt, exact replay and the fail-closed version/identity
-cases above. This contract is now implementable because Factory PR #231 merged
-its producer and exact native acceptance. Cross-owner source identity is
-therefore no longer represented as a future decorative slot. Full installed
-performance→native-worker→browser evidence is the next K8 acceptance extension;
-#134's independent Nara constitution and seven-centre producer remains a
-separate required input and is not inferred here.
+`k8_vak_performance` covers fail-closed versioning, raw-Factory refusal, all six
+retained CFP roles, QL Context-Frame mode selection, preservation of the
+underlying M1 input, subject binding, semantic-drift refusal, duplicate-event
+refusal and replay of the same occasion. The installed `k8_vak_personal`
+specimen executes the present cross-owner chain end to end: Factory owner
+execution/Return → QL performance projection → the existing dual-bus installed
+C++ material owner → early #134 Nara reception. The Factory source SHA and
+serialized receipt digest remain distinct provenance from the controlled Nara
+source revisions, and personal reception neither advances nor duplicates the
+world field.
+
+This installed v3 chain does **not** relabel the separate retained browser/GPU
+and WebAudio receipts as performance-qualified evidence: those current browser
+receipts are still exercised on the accepted v1/v2 material inputs. A future v3
+browser pass can join those already-proven surfaces if required. Full #134/K10
+physiological/lived Nara closure and owner-machine O:I/desktop/current-hardware
+human sensory acceptance likewise remain separate, attributable campaigns
+rather than claims manufactured by this repository CI.
