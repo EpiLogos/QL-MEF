@@ -41,7 +41,10 @@ pub fn s5_ql_mef_self_reference(
     source: SourcePin,
 ) -> Result<S5ProductSelfReference> {
     let product_revision = product_revision.into();
-    nonempty(&product_revision, "S5 self-reference requires a product revision")?;
+    nonempty(
+        &product_revision,
+        "S5 self-reference requires a product revision",
+    )?;
     source.validate()?;
     Ok(S5ProductSelfReference {
         contract: S5_SELF_REFERENCE_CONTRACT.into(),
