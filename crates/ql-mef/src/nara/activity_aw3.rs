@@ -80,7 +80,9 @@ impl Aw3ThoughtConsumptionReception {
             return Err("Nara AW3 reception must consume the accepted QL reading contract".into());
         }
         if self.factory_receipt_contract != FACTORY_THOUGHT_CONSUMPTION_CONTRACT {
-            return Err("Nara AW3 reception must retain the accepted Factory receipt contract".into());
+            return Err(
+                "Nara AW3 reception must retain the accepted Factory receipt contract".into(),
+            );
         }
         text(&self.subject_id, "Nara subject")?;
         text(&self.day_ref, "Central Day")?;
@@ -102,7 +104,9 @@ impl Aw3ThoughtConsumptionReception {
         for interpretation in &self.interpretations {
             text(&interpretation.thought_id, "thought id")?;
             if interpretation.inventory_ref != interpretation.meaning.inventory_ref() {
-                return Err("AW3 thought inventory identity does not match its typed meaning".into());
+                return Err(
+                    "AW3 thought inventory identity does not match its typed meaning".into(),
+                );
             }
             if !thought_ids.insert(interpretation.thought_id.as_str()) {
                 return Err("duplicate thought interpretation in one AW3 reception".into());
@@ -119,7 +123,10 @@ impl Aw3ThoughtConsumptionReception {
             text(&candidate.receiving_ref, "Recognition receiving target")?;
             refs(&candidate.source_thought_refs, "Recognition source thought")?;
             refs(&candidate.recognition_evidence_refs, "Recognition evidence")?;
-            refs(&candidate.verification_evidence_refs, "Recognition verification evidence")?;
+            refs(
+                &candidate.verification_evidence_refs,
+                "Recognition verification evidence",
+            )?;
         }
         refs(&self.performance_evidence_refs, "performance evidence")?;
         refs(&self.continuing_question_refs, "continuing question")?;
