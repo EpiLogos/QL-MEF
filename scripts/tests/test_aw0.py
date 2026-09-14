@@ -1,4 +1,4 @@
-"""Full-field closure checks: source coverage never turns into runtime proof."""
+"""Full-field closure checks: source coverage and accepted receipts stay distinct."""
 import importlib.util
 import json
 import tempfile
@@ -45,6 +45,7 @@ class AwFieldTests(unittest.TestCase):
         self.assertEqual(descriptor['counts'], aw0.project()['counts'])
         self.assertFalse(descriptor['runtime_acceptance'])
         self.assertFalse(descriptor['runtime_registry'])
+        self.assertEqual(descriptor['acceptance_receipts'], 'aw0-acceptance-receipts.json')
 
     def test_every_row_expands_original_fields_and_native_ownership(self):
         for row in aw0.project()['records']:
@@ -61,11 +62,55 @@ class AwFieldTests(unittest.TestCase):
                 for source in row['sources'] + row['native_bindings']:
                     self.assertRegex(source['git_blob'], r'^[0-9a-f]{40}$')
 
-    def test_no_source_or_pilot_receipt_promotes_readiness(self):
+    def test_current_disposition_is_receipt_qualified_without_rewriting_baseline_gaps(self):
         result = aw0.project()
-        self.assertTrue(all(r['disposition'] == 'EPI-GAP' for r in result['records']))
+        allowed = {'ACCEPTED-NATIVE', 'READY-TO-COMPOSE', 'EXTERNAL-OWNER',
+                   'SOURCE-DISCREPANCY', 'RESEARCH-ONLY', 'EPI-GAP'}
+        self.assertEqual(sum(result['disposition_counts'].values()), len(result['records']))
+        self.assertTrue(set(result['disposition_counts']).issubset(allowed))
         self.assertEqual(result['readiness_reconciliation']['historical']['counts']['READY-TO-COMPOSE'], 21)
         self.assertEqual(result['readiness_reconciliation']['historical']['counts']['EPI-GAP'], 15)
+        for row in result['records']:
+            with self.subTest(id=row['id']):
+                self.assertEqual(row['gap_standing'], 'AW0-BASELINE-GAP-RETAINED-FOR-PROVENANCE')
+                self.assertIn(row['disposition'], allowed)
+                if row['disposition'] == 'ACCEPTED-NATIVE':
+                    self.assertTrue(row['acceptance_receipt_ids'])
+                    for receipt_id in row['acceptance_receipt_ids']:
+                        self.assertEqual(result['acceptance_overlay']['receipts'][receipt_id]['standing'],
+                                         'ACCEPTED-NATIVE')
+                if row['disposition'] == 'EPI-GAP':
+                    self.assertTrue(row.get('current_dependency'))
+
+    def test_all_twelve_thought_meanings_are_accepted_through_the_aw3_receipt(self):
+        result = aw0.project()
+        thoughts = [row for row in result['records'] if row['inventory'] == 'thought']
+        self.assertEqual(len(thoughts), 12)
+        for row in thoughts:
+            with self.subTest(id=row['id']):
+                self.assertEqual(row['disposition'], 'ACCEPTED-NATIVE')
+                self.assertIn('ql-thought-consumption', row['acceptance_receipt_ids'])
+                self.assertNotIn('current_dependency', row)
+
+    def test_closed_aw3_is_not_a_dependency_and_scope_remains_the_only_ql94_dependency(self):
+        result = aw0.project()
+        dependencies = [
+            row['current_dependency']
+            for row in result['records']
+            if row.get('current_dependency')
+        ]
+        self.assertFalse(any('#182' in dependency for dependency in dependencies))
+
+        acceptance = aw0.load(aw0.ACCEPTANCE)
+        policy_dependencies = {
+            rule['id']: rule['current_dependency']
+            for rule in acceptance['rules']
+            if rule.get('current_dependency')
+            and rule['current_dependency'].startswith('EpiLogos/QL-MEF#')
+            and rule['current_dependency'] not in {'EpiLogos/QL-MEF#133', 'EpiLogos/QL-MEF#134'}
+        }
+        self.assertEqual(policy_dependencies, {})
+        self.assertIn('ql-operative-scope', result['acceptance_overlay']['receipts'])
 
     def test_staged_skills_are_not_deduplicated_by_the_display_name(self):
         skills = [r for r in aw0.project()['records'] if r['inventory'] == 'source-skill']
@@ -85,6 +130,7 @@ class AwFieldTests(unittest.TestCase):
         row = next(r for r in aw0.project()['records'] if r['id'] == 'source-discrepancy:legacy-20-40')
         self.assertEqual(row['inputs_and_results']['current_frame_identities'], 7)
         self.assertEqual(row['inputs_and_results']['standing'], 'SOURCE-CLAIM-NOT-CARDINALITY-PROOF')
+        self.assertEqual(row['disposition'], 'SOURCE-DISCREPANCY')
 
     def test_missing_native_pin_fails_the_whole_projection(self):
         original = aw0.load
@@ -128,6 +174,86 @@ class AwFieldTests(unittest.TestCase):
             return value
         with patch.object(aw0, 'load', broken):
             with self.assertRaisesRegex(ValueError, 'incomplete source/native disposition'):
+                aw0.project()
+
+    def test_ambiguous_current_disposition_fails_closed(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                duplicate = dict(value['rules'][0])
+                duplicate['id'] = 'duplicate-highest-rule'
+                value['rules'].append(duplicate)
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'ambiguous current disposition'):
+                aw0.project()
+
+    def test_duplicate_rule_identity_fails_closed(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'].append(dict(value['rules'][0]))
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'duplicate disposition rule id'):
+                aw0.project()
+
+    def test_unknown_selector_field_cannot_broaden_a_rule(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={'inventoriess': ['source-discrepancy']})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'unsupported disposition selector'):
+                aw0.project()
+
+    def test_dead_selector_cannot_survive_as_unused_policy(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={'ids': ['not-a-real-record:anywhere']})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'disposition rule matches no source record'):
+                aw0.project()
+
+    def test_empty_selector_cannot_match_the_entire_field(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'nonempty selector'):
+                aw0.project()
+
+    def test_unknown_acceptance_receipt_fails_closed(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], receipt_ids=['missing-receipt'])
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'unknown acceptance receipt'):
+                aw0.project()
+
+    def test_anonymous_epi_gap_fails_closed(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], disposition='EPI-GAP')
+                value['rules'][0].pop('current_dependency', None)
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'EPI-GAP disposition rule has no dependency'):
                 aw0.project()
 
     def test_source_verification_requires_real_matching_bytes(self):
