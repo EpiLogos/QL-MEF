@@ -41,6 +41,7 @@ native() {
 
 invariants() {
   python3 scripts/check-ci-topology.py
+  python3 scripts/check-q6-promotion-manifests.py
   python3 scripts/check-capability-matrix-registry.py
   python3 scripts/check-living-instrument-plan.py --self-test
   python3 scripts/check-pre-k8-lock.py --self-test
