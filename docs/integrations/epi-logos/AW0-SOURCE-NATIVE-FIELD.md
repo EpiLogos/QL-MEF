@@ -122,11 +122,12 @@ The #190 ledger records exact merged evidence from:
   evidence, emitting source-qualified Recognition candidates without stealing
   AIKit's naming/Method authority.
 
-#184 remains the sole live #94-owned repository dependency: it supplies the
-QL-owned source-qualified operative binding/currentness reading that AIKit can
-consume without fabricating MEF lens/form semantics. Until that PR merges, rows
-whose only remaining gap is AW2-SCOPE stay READY-TO-COMPOSE with that exact named
-dependency; they are not pre-certified here.
+#184 is accepted on main and supplies the QL-owned source-qualified operative
+binding/currentness reading, including the provider-neutral
+`ql.operative-scope-currentness/v1` envelope. AIKit can consume owner currentness
+without fabricating MEF lens/form semantics. No #94-owned repository dependency
+remains; retained source rows without row-specific whole-execution receipts remain
+READY-TO-COMPOSE rather than being bulk-stamped as enacted.
 
 ## Why whole-field runtime acceptance remains false
 
