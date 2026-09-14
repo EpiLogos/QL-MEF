@@ -1,0 +1,35 @@
+name: AW2 scope formatter helper
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/aw2-scope-format-helper.yml'
+permissions:
+  contents: read
+jobs:
+  format:
+    if: github.head_ref == 'agent/aw183-native-scope-binding'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.98.1'
+          components: rustfmt
+      - name: Format AW2 scope producer and retain exact source
+        run: |
+          set -euo pipefail
+          cargo fmt --all
+          mkdir -p formatter/crates/ql-mef/src
+          cp crates/ql-mef/src/vak_scope.rs formatter/crates/ql-mef/src/vak_scope.rs
+          cp crates/ql-mef/src/vak_scope_wire.rs formatter/crates/ql-mef/src/vak_scope_wire.rs
+          cp crates/ql-mef/src/lib.rs formatter/crates/ql-mef/src/lib.rs
+          git diff --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aw2-scope-formatted-${{ github.event.pull_request.head.sha || github.sha }}
+          path: formatter/
+          retention-days: 2
