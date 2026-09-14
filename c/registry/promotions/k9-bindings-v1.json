@@ -37,6 +37,15 @@
       "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
       "tests": ["crates/ql-mef/src/bin/ql-focused-host.rs", "crates/ql-mef/src/focused_instrument.rs"],
       "kind": "computational"
+    },
+    {
+      "path": "adapters/retained-field/focused-instrument-session.mjs",
+      "stratum": "javascript",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "K9 browser transport/presentation driver for one already-authorised ql-focused-host. Focus/Bimba/clock requests and continuous native advances share one exact host sequence; accepted K8 NativeAudioBinding and RetainedFieldBinding receive the same acknowledged field while O:I supplies only its existing retained stage lease. Explicit source-qualified sample correspondence is required. The adapter creates no numerical owner, renderer, clock, graph, executable authority or AgentSession.",
+      "tests": ["adapters/retained-field/focused-instrument-session.test.mjs", "adapters/retained-field/instrument-session.test.mjs"],
+      "kind": "computational"
     }
   ]
 }
