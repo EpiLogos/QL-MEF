@@ -1,8 +1,8 @@
 //! Protected multiple-Nara reception over one shared world occasion.
 //!
-//! Each Nara retains an independent `PersonalFieldInstance`; this registry does
-//! not expose a bulk raw-personal snapshot. A shared encounter is formed only
-//! from explicit consented Expression projections.
+//! Each Nara retains an independent `PersonalFieldInstance`. Shared presence is
+//! composed only from explicitly consented Expression projections, never from a
+//! bulk raw-personal snapshot.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -10,12 +10,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::continuous::coupled::CoupledBasis;
 
+use super::expression::{ExpressionDisclosure, NaraExpressionProjection, SharedPresenceConsent};
 use super::{
     EventBasisRefs, PersonalConstitution, PersonalEventInput, PersonalFieldInstance,
     PersonalFieldState,
-};
-use super::expression::{
-    ExpressionDisclosure, NaraExpressionProjection, SharedPresenceConsent,
 };
 
 pub const NARA_MULTI_FIELD_CONTRACT: &str = "ql.nara-multi-field/v1";
@@ -79,8 +77,8 @@ impl ProtectedNaraFieldSet {
         if self.instances.contains_key(&subject_id) {
             return Err("Nara subject already exists in protected field set".into());
         }
-        let instance = PersonalFieldInstance::new(constitution)?;
-        self.instances.insert(subject_id, instance);
+        self.instances
+            .insert(subject_id, PersonalFieldInstance::new(constitution)?);
         Ok(())
     }
 
@@ -88,8 +86,7 @@ impl ProtectedNaraFieldSet {
         self.instances.keys().map(String::as_str)
     }
 
-    /// Explicit per-subject read. There is intentionally no method returning all
-    /// raw Personal states at once.
+    /// Explicit per-subject read. There is intentionally no bulk raw-state read.
     pub fn current(&self, subject_id: &str) -> Option<&PersonalFieldState> {
         self.instances
             .get(subject_id)
@@ -108,8 +105,6 @@ impl ProtectedNaraFieldSet {
         }
     }
 
-    /// Receive one subject-specific accepted basis. Two Naras may carry distinct
-    /// M3 subject refs while sharing the same dated world identity/revisions.
     pub fn receive(
         &mut self,
         subject_id: &str,
@@ -121,15 +116,12 @@ impl ProtectedNaraFieldSet {
             return Err("requested Nara does not match the subject-specific world basis".into());
         }
         self.check_world(&refs)?;
-        let instance = self
-            .instances
+        self.instances
             .get_mut(subject_id)
-            .ok_or("unknown Nara subject")?;
-        instance.receive(basis, input)
+            .ok_or("unknown Nara subject")?
+            .receive(basis, input)
     }
 
-    /// Build a shared encounter only from already-safe Expression projections.
-    /// Raw Personal state never becomes the shared payload.
     pub fn shared_presence(
         &self,
         projections: Vec<NaraExpressionProjection>,
@@ -241,7 +233,10 @@ mod tests {
         let mut set = ProtectedNaraFieldSet::default();
         set.add_constitution(constitution("nara-a", 0.0)).unwrap();
         set.add_constitution(constitution("nara-b", 1.0)).unwrap();
-        assert_eq!(set.subjects().collect::<Vec<_>>(), vec!["nara-a", "nara-b"]);
+        assert_eq!(
+            set.subjects().collect::<Vec<_>>(),
+            vec!["nara-a", "nara-b"]
+        );
         assert!(set.add_constitution(constitution("nara-a", 2.0)).is_err());
     }
 
