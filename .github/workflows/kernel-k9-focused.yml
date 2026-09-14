@@ -1,0 +1,64 @@
+name: Kernel K9 focused instrument
+on:
+  pull_request:
+    paths:
+      - 'crates/ql-mef/src/focused_instrument*.rs'
+      - 'crates/ql-mef/src/bin/ql-focused-host.rs'
+      - 'adapters/retained-field/focused-instrument-session*.mjs'
+      - 'c/registry/promotions/k9-bindings-v1.json'
+      - '.github/workflows/kernel-k9-focused.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'crates/ql-mef/src/focused_instrument*.rs'
+      - 'crates/ql-mef/src/bin/ql-focused-host.rs'
+      - 'adapters/retained-field/focused-instrument-session*.mjs'
+      - 'c/registry/promotions/k9-bindings-v1.json'
+      - '.github/workflows/kernel-k9-focused.yml'
+permissions:
+  contents: read
+jobs:
+  focused-instrument:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: K9 focused projection, AW1/AW2 joins and host contract
+        run: |
+          cargo test --locked -p ql-mef focused_instrument
+          cargo test --locked -p ql-mef focused_instrument_aw2
+          cargo test --locked -p ql-mef --bin ql-focused-host
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact retained-field JS dependency
+        run: |
+          mkdir -p target/k9-node
+          echo '{"private":true,"type":"module"}' > target/k9-node/package.json
+          npm --prefix target/k9-node install --package-lock=false --ignore-scripts --save-exact three@0.186.0
+          ln -s target/k9-node/node_modules node_modules
+      - name: One-owner browser focus, refusal and re-entry
+        run: node --test adapters/retained-field/focused-instrument-session.test.mjs
+      - name: Exact K9 source receipt
+        if: always()
+        run: |
+          mkdir -p target/k9-focused
+          git rev-parse HEAD > target/k9-focused/source-sha.txt
+          git rev-parse 'HEAD^{tree}' > target/k9-focused/source-tree.txt
+          { rustc --version; node --version; npm --version; } > target/k9-focused/toolchain.txt
+          sha256sum crates/ql-mef/src/focused_instrument.rs crates/ql-mef/src/focused_instrument_aw2.rs \
+            crates/ql-mef/src/bin/ql-focused-host.rs adapters/retained-field/focused-instrument-session.mjs \
+            > target/k9-focused/source-sha256.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k9-focused-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/k9-focused/
+          retention-days: 14
+          if-no-files-found: error
