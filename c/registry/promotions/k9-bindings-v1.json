@@ -21,6 +21,15 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/focused_instrument_aw2.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Thin K9 consumer of the accepted #94/#183 ql.operative-scope-currentness/v1 owner response. It validates QL provider/owner/interpretation identity and preserves Current/Stale/Missing for presentation consumers without reobserving C-prime state, granting authority or defining another coordinate/scope registry.",
+      "tests": ["crates/ql-mef/src/focused_instrument_aw2.rs", "crates/ql-mef/src/vak_scope_wire.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/bin/ql-focused-host.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
