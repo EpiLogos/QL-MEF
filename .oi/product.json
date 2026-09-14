@@ -152,7 +152,6 @@
   },
   "verify": {
     "source_command": ["bash", "scripts/verify", "full"],
-    "quick_command": ["bash", "scripts/verify", "quick"],
     "installed_command": ["ql", "verify", "--json"]
   },
   "install": {"mode": "oi-managed-native-cli"},
