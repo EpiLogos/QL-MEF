@@ -38,6 +38,7 @@ mod templateure;
 mod vak;
 pub mod vak_composition;
 mod vak_oi;
+pub mod vak_performance;
 pub mod vak_profile;
 
 pub use context_frame::{
