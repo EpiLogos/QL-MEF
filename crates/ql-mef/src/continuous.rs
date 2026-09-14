@@ -4,6 +4,7 @@
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
 pub mod host;
+pub mod personal;
 mod receipt;
 
 use receipt::ReceiptGuard;
