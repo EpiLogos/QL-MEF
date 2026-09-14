@@ -45,13 +45,13 @@ fn reference(value: &str, message: &str) -> Result<()> {
     )
 }
 
-/// Correlations whose native identity remains outside QL. QL includes them in
-/// the binding so a changed world occasion or Method selection becomes stale,
-/// but does not claim source ownership over either object.
+/// Correlations whose native identity remains outside QL. The QL binding
+/// identity itself is derived from the compiled whole/subject and is therefore
+/// deliberately absent here. A changed world occasion or Method selection still
+/// makes reobservation stale without becoming QL-owned source material.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct OperativeScopeCorrelation {
-    pub binding_ref: String,
     pub world_ref: String,
     pub world_generation: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -60,7 +60,6 @@ pub struct OperativeScopeCorrelation {
 
 impl OperativeScopeCorrelation {
     fn validate(&self) -> Result<()> {
-        reference(&self.binding_ref, "missing QL operative binding ref")?;
         reference(&self.world_ref, "missing correlated world ref")?;
         reference(
             &self.world_generation,
@@ -144,7 +143,7 @@ pub enum OperativeScopeObservation {
 impl VakComposition {
     /// Bind from the current QL composition owner. The caller identifies an
     /// existing whole and the source-defined profile to compile; it cannot hand
-    /// QL a prebuilt reading and have that reading certify itself as current.
+    /// QL a prebuilt reading or binding identity and have either certify itself.
     pub fn bind_operative_scope(
         &self,
         whole_use: &str,
@@ -170,10 +169,6 @@ impl VakComposition {
             "unsupported QL operative binding contract",
         )?;
         correlation.validate()?;
-        require(
-            correlation.binding_ref == expected.binding_ref,
-            "reobservation must address the original QL binding",
-        )?;
         reference(current_whole_use, "missing current QL whole selection")?;
 
         let current = match self.compile_profile(current_whole_use, expected.profile.clone()) {
@@ -214,7 +209,8 @@ fn binding_from_compiled(
 
     let sources = source_projection(compiled)?;
     let frame = frame_reading(compiled);
-    let binding_revision = binding_revision(compiled, &frame)?;
+    let binding_ref = binding_identity(compiled)?;
+    let binding_revision = binding_revision(compiled, &frame, &sources)?;
     let mut evidence_refs = BTreeSet::from([
         PROFILE_SOURCE.to_owned(),
         format!("git-blob:{PROFILE_SOURCE_BLOB}"),
@@ -226,7 +222,7 @@ fn binding_from_compiled(
     Ok(CPrimeOperativeBinding {
         contract: OPERATIVE_BINDING_CONTRACT.into(),
         provider_ref: OPERATIVE_PROVIDER_REF.into(),
-        binding_ref: correlation.binding_ref,
+        binding_ref,
         binding_revision,
         owner_ref: OPERATIVE_OWNER_REF.into(),
         interpretation_ref: C_PRIME_INTERPRETATION_REF.into(),
@@ -332,25 +328,41 @@ fn frame_reading(compiled: &CompiledProfile) -> OperativeFrameReading {
     }
 }
 
-/// Transparent owner revision for native consumers. Exact source revisions remain
-/// separately addressable and are compared during reobservation; this token makes
-/// profile/frame/latest QL occasion changes visible without hiding their basis.
-fn binding_revision(compiled: &CompiledProfile, frame: &OperativeFrameReading) -> Result<String> {
+/// QL owns the binding identity. It is the stable relation between one compiled
+/// whole and its subject; changing profile/frame/source changes the revision,
+/// while changing whole/subject changes the binding identity itself.
+fn binding_identity(compiled: &CompiledProfile) -> Result<String> {
+    let identity = format!(
+        "{OPERATIVE_BINDING_CONTRACT}|{C_PRIME_INTERPRETATION_REF}|whole={}|subject={}",
+        compiled.whole_use, compiled.subject_ref
+    );
+    reference(&identity, "operative binding identity is invalid")?;
+    Ok(identity)
+}
+
+/// Transparent QL owner revision over the complete compiled semantic basis. The
+/// exact source projection includes every source revision plus caller/standing/
+/// evidence refs, so a non-latest source change cannot retain the old revision.
+fn binding_revision(
+    compiled: &CompiledProfile,
+    frame: &OperativeFrameReading,
+    sources: &[OperativeBindingSource],
+) -> Result<String> {
     let profile = serde_json::to_string(&compiled.profile)
         .map_err(|failure| CompositionError(format!("cannot encode C-prime profile: {failure}")))?;
-    let latest = compiled
-        .basis
-        .last()
-        .ok_or_else(|| error("compiled profile has no source basis"))?;
+    let source_basis = serde_json::to_string(sources)
+        .map_err(|failure| CompositionError(format!("cannot encode operative source basis: {failure}")))?;
     let revision = format!(
-        "{OPERATIVE_BINDING_CONTRACT}|{PROFILE_SOURCE_BLOB}|{}|{}|{}|{}|{}|{}|{}",
+        "{OPERATIVE_BINDING_CONTRACT}|{PROFILE_SOURCE_BLOB}|whole={}|subject={}|{}|{}|{}|{}|{}|{}|sources={}",
+        compiled.whole_use,
+        compiled.subject_ref,
         frame.context_frame,
         frame.lens,
         frame.musical_basis,
         frame.face,
         frame.position_basis,
         profile,
-        latest.revision
+        source_basis
     );
     reference(&revision, "operative binding revision is invalid")?;
     Ok(revision)
@@ -369,6 +381,7 @@ fn binding_differences(
         };
     }
     changed!(provider_ref, "provider");
+    changed!(binding_ref, "binding");
     changed!(binding_revision, "binding-revision");
     changed!(owner_ref, "owner");
     changed!(interpretation_ref, "interpretation");
@@ -443,7 +456,6 @@ mod tests {
 
     fn correlation() -> OperativeScopeCorrelation {
         OperativeScopeCorrelation {
-            binding_ref: "ql/binding/undertaking".into(),
             world_ref: "world/one".into(),
             world_generation: "generation-1".into(),
             method_skill_ref: Some("skill/recognised/revisit".into()),
@@ -458,6 +470,10 @@ mod tests {
         assert_eq!(binding.owner_ref, OPERATIVE_OWNER_REF);
         assert_eq!(binding.interpretation_ref, C_PRIME_INTERPRETATION_REF);
         assert_eq!(binding.interpretation_revision, PROFILE_SOURCE_BLOB);
+        assert_eq!(
+            binding.binding_ref,
+            "ql.cprime-operative-binding/v1|ql/interpretation/c-prime|whole=whole:undertaking|subject=subject:nara"
+        );
         assert_eq!(binding.whole_ref, "whole:undertaking");
         assert_eq!(binding.subject_ref, "subject:nara");
         assert_eq!(binding.frame.context_frame, "CF5");
@@ -475,6 +491,35 @@ mod tests {
             observation,
             OperativeScopeObservation::Current { .. }
         ));
+    }
+
+    #[test]
+    fn ql_binding_identity_changes_with_whole_or_subject_not_client_input() {
+        let baseline = binding_from_compiled(&compiled(), correlation()).unwrap();
+        let mut changed_whole = compiled();
+        changed_whole.whole_use = "whole:other".into();
+        let other_whole = binding_from_compiled(&changed_whole, correlation()).unwrap();
+        assert_ne!(baseline.binding_ref, other_whole.binding_ref);
+        assert!(binding_differences(&baseline, &other_whole).contains(&"binding".to_string()));
+
+        let mut changed_subject = compiled();
+        changed_subject.subject_ref = "subject:other".into();
+        let other_subject = binding_from_compiled(&changed_subject, correlation()).unwrap();
+        assert_ne!(baseline.binding_ref, other_subject.binding_ref);
+        assert!(binding_differences(&baseline, &other_subject).contains(&"binding".to_string()));
+    }
+
+    #[test]
+    fn binding_revision_covers_every_source_revision_not_only_the_last() {
+        let mut multiple = compiled();
+        multiple
+            .basis
+            .push(basis("source:z-last", "source-z1", "evidence:z"));
+        let baseline = binding_from_compiled(&multiple, correlation()).unwrap();
+        multiple.basis[0].revision = "source-r2".into();
+        let changed = binding_from_compiled(&multiple, correlation()).unwrap();
+        assert_ne!(baseline.binding_revision, changed.binding_revision);
+        assert!(binding_differences(&baseline, &changed).contains(&"source-basis".to_string()));
     }
 
     #[test]
@@ -555,13 +600,14 @@ mod tests {
         );
 
         let binding = binding_from_compiled(&compiled(), correlation()).unwrap();
+        let expected_ref = binding.binding_ref.clone();
         let observation = graph
             .reobserve_operative_scope(&binding, "whole:missing", correlation())
             .unwrap();
         assert!(matches!(
             observation,
             OperativeScopeObservation::Missing { ref binding_ref, .. }
-                if binding_ref == "ql/binding/undertaking"
+                if binding_ref == &expected_ref
         ));
     }
 }
