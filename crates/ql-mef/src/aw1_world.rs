@@ -7,8 +7,8 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::m_tree::{MRegistry, MTreeBinding, MTreeId};
 use crate::MFace;
+use crate::m_tree::{MRegistry, MTreeBinding, MTreeId};
 
 pub const AW1_ROOTED_WORLD_CONTRACT: &str = "ql.aw1-rooted-m-world/v1";
 pub const KERNEL_TAPROOT_REF: &str = "#";
@@ -93,18 +93,10 @@ pub struct RootedMWorld {
 }
 
 fn require(ok: bool, message: &str) -> Result<()> {
-    if ok {
-        Ok(())
-    } else {
-        Err(message.into())
-    }
+    if ok { Ok(()) } else { Err(message.into()) }
 }
 
-fn face_projection(
-    registry: &MRegistry,
-    source_ref: &str,
-    face: MFace,
-) -> Result<FaceProjection> {
+fn face_projection(registry: &MRegistry, source_ref: &str, face: MFace) -> Result<FaceProjection> {
     let node = registry.resolve(source_ref).ok_or("unknown M coordinate")?;
     let coordinate = registry.coordinate(source_ref, face)?;
     require(
@@ -267,11 +259,13 @@ mod tests {
         let world = resolve_rooted_m_world(registry, &node.source_ref).unwrap();
         assert_eq!(world.native_owner.standing, NativeOwnerStanding::Bound);
         assert!(!world.native_owner.bindings.is_empty());
-        assert!(world
-            .native_owner
-            .bindings
-            .iter()
-            .all(|binding| binding.coordinate_id == Some(world.selected_id)));
+        assert!(
+            world
+                .native_owner
+                .bindings
+                .iter()
+                .all(|binding| binding.coordinate_id == Some(world.selected_id))
+        );
     }
 
     #[test]
