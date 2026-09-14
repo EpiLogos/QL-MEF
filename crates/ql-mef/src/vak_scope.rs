@@ -368,8 +368,9 @@ fn binding_revision(
 ) -> Result<String> {
     let profile = serde_json::to_string(&compiled.profile)
         .map_err(|failure| CompositionError(format!("cannot encode C-prime profile: {failure}")))?;
-    let source_basis = serde_json::to_string(sources)
-        .map_err(|failure| CompositionError(format!("cannot encode operative source basis: {failure}")))?;
+    let source_basis = serde_json::to_string(sources).map_err(|failure| {
+        CompositionError(format!("cannot encode operative source basis: {failure}"))
+    })?;
     let revision_basis = format!(
         "{PROFILE_SOURCE_BLOB}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}",
         compiled.whole_use,
@@ -492,12 +493,16 @@ mod tests {
         assert_eq!(binding.owner_ref, OPERATIVE_OWNER_REF);
         assert_eq!(binding.interpretation_ref, C_PRIME_INTERPRETATION_REF);
         assert_eq!(binding.interpretation_revision, PROFILE_SOURCE_BLOB);
-        assert!(binding.binding_ref.starts_with(
-            "ql.cprime-operative-binding/v1|id-fnv1a64="
-        ));
-        assert!(binding.binding_revision.starts_with(
-            "ql.cprime-operative-binding/v1|revision-fnv1a64="
-        ));
+        assert!(
+            binding
+                .binding_ref
+                .starts_with("ql.cprime-operative-binding/v1|id-fnv1a64=")
+        );
+        assert!(
+            binding
+                .binding_revision
+                .starts_with("ql.cprime-operative-binding/v1|revision-fnv1a64=")
+        );
         assert_eq!(binding.whole_ref, "whole:undertaking");
         assert_eq!(binding.subject_ref, "subject:nara");
         assert_eq!(binding.frame.context_frame, "CF5");
