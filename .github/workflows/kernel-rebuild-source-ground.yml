@@ -1,28 +1,20 @@
 name: Kernel rebuild K0 source ground
 
 on:
-  pull_request:
-    paths:
-      - 'docs/kernel-rebuild/**'
-      - 'docs/KERNEL-REBUILD-SOURCE-CANON-LEDGER.md'
-      - 'scripts/verify-kernel-rebuild-ground.py'
-      - 'scripts/tests/test_kernel_rebuild_ground.py'
-      - '.github/workflows/kernel-rebuild-source-ground.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'docs/kernel-rebuild/**'
-      - 'docs/KERNEL-REBUILD-SOURCE-CANON-LEDGER.md'
-      - 'scripts/verify-kernel-rebuild-ground.py'
-      - 'scripts/tests/test_kernel_rebuild_ground.py'
-      - '.github/workflows/kernel-rebuild-source-ground.yml'
+  workflow_call:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: kernel-source-ground-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pinned-source-ground:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
