@@ -6,6 +6,8 @@
 
 #[cfg(test)]
 mod acceptance;
+#[path = "../activity_aw3.rs"]
+mod activity_aw3;
 mod capability;
 mod common;
 mod context;
@@ -20,6 +22,14 @@ mod state;
 mod transformation;
 mod transformation_field;
 
+// `activity_aw3.rs` is physically beside the Central activity owner. This small
+// alias lets it remain a child of this compact domain facade without reopening
+// the accepted, much larger Personal producer merely to add one module line.
+mod activity {
+    pub use crate::nara::activity::NaraActivityLog;
+}
+
+pub use activity_aw3::*;
 pub use capability::*;
 pub use common::{
     CENTRE_COUNT, CONTEXT_BRANCH_COUNT, ELEMENT_COUNT, EvidenceStanding, IDENTITY_SLOT_COUNT,
