@@ -1,0 +1,50 @@
+name: AW2 currentness wire census helper
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/aw2-wire-census-helper.yml'
+permissions:
+  contents: read
+jobs:
+  census:
+    if: github.head_ref == 'feat/k8-aw2-currentness-wire-disposition'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Insert bounded reviewed disposition and derive current receipt
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('c/registry/promotions/k8-bindings-v1.json')
+          data = json.loads(path.read_text())
+          target = 'crates/ql-mef/src/vak_scope_wire.rs'
+          if not any(item['path'] == target for item in data['modules']):
+              anchor = next(i for i,item in enumerate(data['modules']) if item['path'] == 'crates/ql-mef/src/vak_thought_consumption.rs')
+              data['modules'].insert(anchor, {
+                  'path': target,
+                  'stratum': 'rust',
+                  'disposition': 'cross-coordinate',
+                  'coordinates': ['#0-4', '#0-5'],
+                  'rationale': '#94/#183 transport-neutral projection of the reviewed QL operative-scope owner. It carries historical binding evidence to the same VakComposition reobservation path and returns owner-produced Current, Stale or Missing standing for transport/K9 consumers; it creates no parser, scope registry, Context store, permission owner, AIKit identity or independent semantic implementation.',
+                  'tests': [target],
+                  'kind': 'computational',
+              })
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+          PY
+          python3 scripts/k8-census.py --write-receipt
+          python3 scripts/k8-census.py --check
+          git diff --check
+          mkdir -p census/c/registry/promotions census/fixtures/kernel
+          cp c/registry/promotions/k8-bindings-v1.json census/c/registry/promotions/k8-bindings-v1.json
+          cp fixtures/kernel/k8-census-receipt-v1.json census/fixtures/kernel/k8-census-receipt-v1.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aw2-currentness-wire-census-${{ github.event.pull_request.head.sha || github.sha }}
+          path: census/
+          retention-days: 2
