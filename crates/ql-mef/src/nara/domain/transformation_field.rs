@@ -64,8 +64,7 @@ mod tests {
     fn transformation_offices_do_not_disappear_when_source_is_unavailable() {
         let field = TransformationField {
             cycle_engine: CapabilityRefs::present(vec!["cycle:engine".into()]).unwrap(),
-            operational_grammar: CapabilityRefs::present(vec!["grammar:seven-ops".into()])
-                .unwrap(),
+            operational_grammar: CapabilityRefs::present(vec!["grammar:seven-ops".into()]).unwrap(),
             dialogical_containers: CapabilityRefs::absent("container source not loaded").unwrap(),
             control_safety: CapabilityRefs::present(vec!["control:bounded".into()]).unwrap(),
             protocol_library: CapabilityRefs::present(vec!["protocol:library".into()]).unwrap(),

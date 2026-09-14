@@ -69,8 +69,7 @@ mod tests {
         let field = OracleField {
             common_symbolic_substrate: CapabilityRefs::present(vec!["symbols:ontology".into()])
                 .unwrap(),
-            cosmic_oracle_invocation: CapabilityRefs::present(vec!["m1-m3:oracle".into()])
-                .unwrap(),
+            cosmic_oracle_invocation: CapabilityRefs::present(vec!["m1-m3:oracle".into()]).unwrap(),
             tarot_engines: CapabilityRefs::present(vec!["tarot:rws".into()]).unwrap(),
             iching_integration: CapabilityRefs::present(vec!["iching:change".into()]).unwrap(),
             casting_interpretation: CapabilityRefs::present(vec!["casting:entropy".into()])

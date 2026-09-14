@@ -233,10 +233,7 @@ mod tests {
         let mut set = ProtectedNaraFieldSet::default();
         set.add_constitution(constitution("nara-a", 0.0)).unwrap();
         set.add_constitution(constitution("nara-b", 1.0)).unwrap();
-        assert_eq!(
-            set.subjects().collect::<Vec<_>>(),
-            vec!["nara-a", "nara-b"]
-        );
+        assert_eq!(set.subjects().collect::<Vec<_>>(), vec!["nara-a", "nara-b"]);
         assert!(set.add_constitution(constitution("nara-a", 2.0)).is_err());
     }
 

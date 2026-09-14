@@ -11,9 +11,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::aw1_world::{AW1_ROOTED_WORLD_CONTRACT, RootedMWorld};
 
+use super::SourceRevision;
 use super::domain::{EvidenceStanding, M4Branch, ProtectedRef};
 use super::replay::NaraOccasion;
-use super::SourceRevision;
 
 pub const NARA_EXPRESSION_PROJECTION_CONTRACT: &str = "ql.nara-expression-projection/v1";
 pub const EXPRESSION_HOST_OWNER: &str = "oi";
@@ -331,11 +331,7 @@ impl NaraExpressionProjection {
             "Expression constituent reference",
             4096,
         )?;
-        refs(
-            &self.selection_refs,
-            "Expression selection reference",
-            4096,
-        )?;
+        refs(&self.selection_refs, "Expression selection reference", 4096)?;
         if self.source_revisions.is_empty() || self.source_revisions.len() > 4096 {
             return Err("Expression projection requires 1..4096 source revisions".into());
         }

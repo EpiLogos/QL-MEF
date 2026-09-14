@@ -1,6 +1,6 @@
 use crate::nara::{
-    BioQuaternion, ConsentState, EarthBodyState, EventBasisRefs, LifecycleState, PersonalFieldState,
-    ReceiverState, SourceRevision, WorldContribution,
+    BioQuaternion, ConsentState, EarthBodyState, EventBasisRefs, LifecycleState,
+    PersonalFieldState, ReceiverState, SourceRevision, WorldContribution,
 };
 
 use super::operations::EmbodiedContinuationInput;
@@ -113,7 +113,10 @@ fn two_controlled_naras_keep_distinct_centre_states_over_the_same_dated_world() 
     let nara_b = personal("nara-b", "constitution:b", 4.0);
 
     assert_eq!(nara_a.event.event_ref, nara_b.event.event_ref);
-    assert_eq!(nara_a.event.registry_revision, nara_b.event.registry_revision);
+    assert_eq!(
+        nara_a.event.registry_revision,
+        nara_b.event.registry_revision
+    );
     assert_eq!(nara_a.event.m1_revision, nara_b.event.m1_revision);
     assert_eq!(nara_a.event.m2_source_ref, nara_b.event.m2_source_ref);
     assert_eq!(nara_a.event.m3_source_ref, nara_b.event.m3_source_ref);

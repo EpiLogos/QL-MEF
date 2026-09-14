@@ -201,11 +201,7 @@ impl EmbodiedSafetyState {
             256,
         )?;
         check_refs(&self.response_refs, "embodied response reference", 256)?;
-        check_refs(
-            &self.adjustment_refs,
-            "embodied adjustment reference",
-            256,
-        )
+        check_refs(&self.adjustment_refs, "embodied adjustment reference", 256)
     }
 }
 

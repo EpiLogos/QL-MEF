@@ -94,11 +94,7 @@ impl NaraOccasion {
             "occasion integration reference",
             4096,
         )?;
-        refs(
-            &self.expression_refs,
-            "occasion expression reference",
-            4096,
-        )?;
+        refs(&self.expression_refs, "occasion expression reference", 4096)?;
         if self.source_revisions.is_empty() || self.source_revisions.len() > 4096 {
             return Err("Nara occasion requires 1..4096 source revisions".into());
         }
@@ -136,11 +132,7 @@ impl ReinterpretationReceipt {
             text(reference, "reinterpretation method")?;
         }
         self.output_ref.validate()?;
-        refs(
-            &self.source_refs,
-            "reinterpretation source reference",
-            1024,
-        )?;
+        refs(&self.source_refs, "reinterpretation source reference", 1024)?;
         refs(
             &self.evidence_refs,
             "reinterpretation evidence reference",

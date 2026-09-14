@@ -57,11 +57,7 @@ impl EmbodiedContinuationInput {
             256,
         )?;
         check_refs(&self.response_refs, "embodied response reference", 256)?;
-        check_refs(
-            &self.adjustment_refs,
-            "embodied adjustment reference",
-            256,
-        )
+        check_refs(&self.adjustment_refs, "embodied adjustment reference", 256)
     }
 }
 
@@ -394,10 +390,7 @@ impl<'a> EntropyCursor<'a> {
 impl OracleOriginalPacket {
     /// Three-coin casting preserves the 1:3:3:1 line distribution; yarrow uses
     /// the traditional 1:5:7:3 distribution. Raw entropy is never serialized.
-    pub fn cast_iching(
-        context: OracleCastContext,
-        entropy_bytes: &[u8],
-    ) -> Result<Self, String> {
+    pub fn cast_iching(context: OracleCastContext, entropy_bytes: &[u8]) -> Result<Self, String> {
         if !matches!(
             context.system,
             OracleSystem::IChingCoins | OracleSystem::IChingYarrow
@@ -657,11 +650,9 @@ mod tests {
 
     #[test]
     fn i_ching_three_coin_cast_uses_explicit_entropy() {
-        let packet = OracleOriginalPacket::cast_iching(
-            cast_context(OracleSystem::IChingCoins),
-            &[0_u8; 18],
-        )
-        .unwrap();
+        let packet =
+            OracleOriginalPacket::cast_iching(cast_context(OracleSystem::IChingCoins), &[0_u8; 18])
+                .unwrap();
         assert_eq!(packet.tokens.len(), 6);
         assert!(
             packet
@@ -674,12 +665,9 @@ mod tests {
     #[test]
     fn tarot_draw_is_unique_and_raw_entropy_is_not_serialized() {
         let entropy = (0..=255_u8).cycle().take(256).collect::<Vec<_>>();
-        let packet = OracleOriginalPacket::draw_tarot(
-            cast_context(OracleSystem::TarotThoth),
-            5,
-            &entropy,
-        )
-        .unwrap();
+        let packet =
+            OracleOriginalPacket::draw_tarot(cast_context(OracleSystem::TarotThoth), 5, &entropy)
+                .unwrap();
         let unique = packet
             .tokens
             .iter()

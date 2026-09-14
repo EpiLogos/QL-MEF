@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use super::{INTEGRATION_OFFICE_COUNT, EvidenceStanding, ProtectedRef, check_refs, check_text};
+use super::{EvidenceStanding, INTEGRATION_OFFICE_COUNT, ProtectedRef, check_refs, check_text};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
