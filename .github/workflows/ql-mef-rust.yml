@@ -1,21 +1,15 @@
 name: QL-MEF Rust
 
-# The one pull-request gate for Quaternal Logic (branch-required). Format,
-# lint and the whole workspace test once; the ql-cli smokes and the Q6
-# promotion-manifest assertions that used to sit in their own workflows run
-# on the same build. Checks that clone Factory run weekly in cross-product.yml.
+# The one pull-request gate for Quaternal Logic. Product-local acceptance
+# campaigns run from accepted main; sibling-repository checks are commissioned
+# weekly by cross-product.yml. The required `ql-mef-rust` job below aggregates
+# the Rust, native-C and deterministic-invariant offices so branch protection
+# continues to name one stable check.
 
 on:
   pull_request:
   push:
     branches: [main]
-    paths:
-      - "crates/**"
-      - "fixtures/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "rust-toolchain.toml"
-      - ".github/workflows/ql-mef-rust.yml"
   workflow_dispatch:
 
 permissions:
@@ -25,97 +19,101 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  CARGO_INCREMENTAL: '0'
+  CARGO_TERM_COLOR: never
+
 jobs:
-  ql-mef-rust:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      native: ${{ steps.filter.outputs.native }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            native:
+              - 'c/**'
+              - 'cpp/**'
+              - 'crates/**'
+              - 'fixtures/kernel/**'
+              - 'migration/epi-kernel/**'
+              - 'vendor/epi-kernel/**'
+              - 'scripts/**'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - '.github/workflows/ql-mef-rust.yml'
+
+  core:
+    name: core-rust
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           cache-on-failure: true
-      - name: Format
-        run: cargo fmt --all -- --check
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets --locked -- -D warnings
-      - name: Test
-        run: cargo test --workspace --all-targets --locked
-      - name: Native CLI self-certifies
-        run: |
-          cargo run -p ql-cli --locked -- --version
-          cargo run -p ql-cli --locked -- capabilities --json
-          cargo run -p ql-cli --locked -- verify --json
-      - name: Verify CF promotion boundary
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
+      - name: Canonical Rust workspace and native CLI gate
+        run: bash scripts/verify core
 
-          manifest = json.loads(Path("fixtures/q6/context-frame-promotion-v1.json").read_text())
-          assert manifest["capability"] == "ql.mef.context-frame"
-          assert manifest["version"] == "1.0.0"
-          assert manifest["status"] == "specified-formal-structure"
-          assert manifest["automaticInvocation"] is False
-          assert manifest["deterministicBoundary"]["canonicalSelection"] == "3 Name -> conjugate-cross -> 4 Power"
-          assert manifest["deterministicBoundary"]["selectedPartition"] == "5 inner-four + 2 outer-two"
-          assert manifest["deterministicBoundary"]["unselectedPartition"] == "3 inner-four hooks + 2 outer-two anchors"
-          assert manifest["deterministicBoundary"]["alternateConjugateSelection"] == "not-promoted"
-          assert manifest["deterministicBoundary"]["modalReanchoring"] == "not-promoted"
-          assert manifest["deterministicBoundary"]["semanticRoleBinding"] == "not-promoted"
-          assert manifest["deterministicBoundary"]["runtimePolicy"] == "not-promoted"
-          assert len(manifest["frames"]) == 7
-          assert len(manifest["promoted"]["canonicalProgression"]) == 7
-          assert len(manifest["promoted"]["complexificationHooks"]) == 3
-          assert len(manifest["promoted"]["unpickedOuterAnchors"]) == 2
-          assert manifest["promoted"]["completeFormAddresses"] == 12
-          assert manifest["provenance"]["factoryProgramme"]["issue"] == 121
-          assert manifest["provenance"]["factoryProgramme"]["crossRepoEvidence"] == "not-required-for-this-capability"
-          PY
-      - name: Verify promotion manifest boundary
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
+  native:
+    name: native-c
+    needs: changes
+    if: needs.changes.outputs.native == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
+      - name: Native C/C++ parity, packaging and installed-consumer floor
+        run: bash scripts/verify native
 
-          manifest = json.loads(Path("fixtures/q6/mef-rotation-promotion-v1.json").read_text())
-          assert manifest["capability"] == "ql.mef.rotation"
-          assert manifest["version"] == "1.0.0"
-          assert manifest["status"] == "specified-formal-structure"
-          assert manifest["automaticInvocation"] is False
-          assert manifest["deterministicBoundary"]["localToAbsolute"] == "(anchor + local) mod 6"
-          assert manifest["deterministicBoundary"]["semanticRoleBinding"] == "not-promoted"
-          assert manifest["deterministicBoundary"]["runtimePolicy"] == "not-promoted"
-          assert manifest["promoted"]["lensAnchors"] == 12
-          assert manifest["promoted"]["localPositionsPerLens"] == 6
-          assert manifest["promoted"]["manifoldCoordinates"] == 72
-          assert manifest["provenance"]["factoryProgramme"]["issue"] == 121
-          assert manifest["provenance"]["factoryProgramme"]["crossRepoEvidence"] == "not-required-for-this-capability"
-          PY
-      - name: Verify pairing promotion manifest boundary
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
+  invariants:
+    name: repository-invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Source, registry, census, skill and CI-topology locks
+        run: bash scripts/verify invariants
 
-          manifest = json.loads(Path("fixtures/q6/pairing-promotion-v1.json").read_text())
-          assert manifest["capability"] == "ql.pairing"
-          assert manifest["version"] == "1.0.0"
-          assert manifest["status"] == "specified-formal-structure"
-          assert manifest["automaticTraversal"] is False
-          assert manifest["promoted"]["withinPassFamilies"] == ["A", "B", "C"]
-          assert manifest["promoted"]["softwareModulation"] == ["D1", "D2", "D3"]
-          assert manifest["promoted"]["squareApparatus"] == {
-              "entries": 9,
-              "orientedStructures": 8,
-              "unorderedAddressTetrads": 7,
-          }
-          assert "ql.state64.runtime-semantics" in manifest["researchExtensions"]
-          assert "ql.epogdoon.retained-difference-metric" in manifest["researchExtensions"]
-          assert "ql.topology.control-rules" in manifest["researchExtensions"]
-          assert "ql.mef.context-operational-roles" in manifest["researchExtensions"]
-          assert manifest["provenance"]["factoryHead"] == "a654c62f68b82236061986d9215b23257fe53b17"
-          assert manifest["provenance"]["factoryPairingGrammarBlob"] == "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4"
-          PY
+  ql-mef-rust:
+    name: ql-mef-rust
+    if: always()
+    needs: [changes, core, native, invariants]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every applicable native verification office
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          CORE: ${{ needs.core.result }}
+          NATIVE: ${{ needs.native.result }}
+          INVARIANTS: ${{ needs.invariants.result }}
+        run: |
+          set -euo pipefail
+          test "$CHANGES" = success
+          test "$CORE" = success
+          test "$INVARIANTS" = success
+          case "$NATIVE" in success|skipped) ;; *) exit 1 ;; esac
+          printf 'QL PR gate: core=%s native=%s invariants=%s\n' "$CORE" "$NATIVE" "$INVARIANTS"
