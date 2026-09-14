@@ -1,15 +1,15 @@
 //! Immutable Nara occasion and reinterpretation ledger.
 //!
-//! Exact replay means returning the original source-qualified occasion. A later
-//! model, commentary or changed interpretation is linked to that occasion but
-//! never mutates it or receives the standing of the original source.
+//! Exact replay returns the original source-qualified occasion. A later model,
+//! commentary or changed interpretation is linked to that occasion but never
+//! mutates it or inherits the standing of the original source.
 
 use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use super::{EventBasisRefs, SourceRevision};
 use super::domain::{EvidenceStanding, ProtectedRef};
+use super::{EventBasisRefs, SourceRevision};
 
 pub const NARA_REPLAY_CONTRACT: &str = "ql.nara-replay/v1";
 
@@ -94,7 +94,11 @@ impl NaraOccasion {
             "occasion integration reference",
             4096,
         )?;
-        refs(&self.expression_refs, "occasion expression reference", 4096)?;
+        refs(
+            &self.expression_refs,
+            "occasion expression reference",
+            4096,
+        )?;
         if self.source_revisions.is_empty() || self.source_revisions.len() > 4096 {
             return Err("Nara occasion requires 1..4096 source revisions".into());
         }
@@ -124,10 +128,7 @@ impl ReinterpretationReceipt {
     pub fn validate(&self) -> Result<(), String> {
         text(&self.reinterpretation_ref, "reinterpretation")?;
         text(&self.occasion_ref, "reinterpretation occasion")?;
-        text(
-            &self.interpretation_revision,
-            "reinterpretation revision",
-        )?;
+        text(&self.interpretation_revision, "reinterpretation revision")?;
         if let Some(reference) = &self.model_ref {
             text(reference, "reinterpretation model")?;
         }
@@ -145,7 +146,10 @@ impl ReinterpretationReceipt {
             "reinterpretation evidence reference",
             1024,
         )?;
-        if matches!(self.standing, EvidenceStanding::Source | EvidenceStanding::Observed) {
+        if matches!(
+            self.standing,
+            EvidenceStanding::Source | EvidenceStanding::Observed
+        ) {
             return Err(
                 "later reinterpretation cannot inherit Source/Observed standing from the original occasion"
                     .into(),
@@ -237,8 +241,6 @@ impl NaraReplayLedger {
         Ok(())
     }
 
-    /// Return the exact retained original rather than silently applying the most
-    /// recent interpretation.
     pub fn replay_original(&self, occasion_ref: &str) -> Option<&NaraOccasion> {
         self.originals
             .iter()
@@ -267,33 +269,21 @@ mod tests {
         }
     }
 
-    fn source_ref() -> SourceRevision {
-        SourceRevision {
-            source_ref: "source:original".into(),
-            revision: "r1".into(),
-            standing_ref: "authored".into(),
-        }
-    }
-
-    fn event() -> EventBasisRefs {
-        EventBasisRefs {
-            event_ref: "event:1".into(),
-            subject_ref: "nara-a".into(),
-            profile_generation: 7,
-            registry_revision: "registry:r1".into(),
-            m1_revision: "m1:r1".into(),
-            m2_source_ref: "m2:source".into(),
-            m2_contract_ref: "ql.m2-engine/v1".into(),
-            m3_source_ref: "m3:source".into(),
-            m3_contract_ref: "ql.m3-engine/v1".into(),
-        }
-    }
-
     fn occasion() -> NaraOccasion {
         NaraOccasion {
             occasion_ref: "occasion:1".into(),
             subject_id: "nara-a".into(),
-            event: event(),
+            event: EventBasisRefs {
+                event_ref: "event:1".into(),
+                subject_ref: "nara-a".into(),
+                profile_generation: 7,
+                registry_revision: "registry:r1".into(),
+                m1_revision: "m1:r1".into(),
+                m2_source_ref: "m2:source".into(),
+                m2_contract_ref: "ql.m2-engine/v1".into(),
+                m3_source_ref: "m3:source".into(),
+                m3_contract_ref: "ql.m3-engine/v1".into(),
+            },
             personal_reception_generation: 2,
             identity_revision: "identity:r1".into(),
             day_ref: "central:day:2026-09-14".into(),
@@ -307,7 +297,11 @@ mod tests {
             context_reading_refs: Vec::new(),
             integration_return_refs: Vec::new(),
             expression_refs: Vec::new(),
-            source_revisions: vec![source_ref()],
+            source_revisions: vec![SourceRevision {
+                source_ref: "source:original".into(),
+                revision: "r1".into(),
+                standing_ref: "authored".into(),
+            }],
         }
     }
 
