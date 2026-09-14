@@ -205,11 +205,11 @@ impl VakExpressionBinding {
         if let Some(literal) = &self.literal {
             reference(literal, "literal Vāk expression")?;
         }
-        if let Some(reference) = &self.musical_performance_ref {
-            reference(reference, "musical performance reference")?;
+        if let Some(performance_ref) = &self.musical_performance_ref {
+            reference(performance_ref, "musical performance reference")?;
             let performance = performance
                 .ok_or("musical Vāk cannot be presented without an actual QL performance event")?;
-            if &performance.performance_ref != reference {
+            if &performance.performance_ref != performance_ref {
                 return Err("musical Vāk binding names another performed occasion".into());
             }
         }
