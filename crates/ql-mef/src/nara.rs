@@ -7,6 +7,12 @@
 //! named bioquaternion relation `Q_identity · Q_transit · Q_activity`.
 //! Numerical outputs are compositional readings, not health or clinical claims.
 
+pub mod activity;
+pub mod domain;
+pub mod expression;
+pub mod multi;
+pub mod replay;
+
 use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
