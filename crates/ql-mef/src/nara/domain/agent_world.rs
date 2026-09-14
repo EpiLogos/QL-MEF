@@ -66,7 +66,10 @@ impl WikiParticipationRef {
         if self.revision == 0 {
             return Err("Wiki participation revision must be positive".into());
         }
-        text(&self.bimba_registry_revision, "Wiki Bimba registry revision")?;
+        text(
+            &self.bimba_registry_revision,
+            "Wiki Bimba registry revision",
+        )?;
         if self.bimba_member_refs.is_empty() {
             return Err("Wiki participation must retain a Bimba member".into());
         }
@@ -274,7 +277,10 @@ impl OperativePerformanceReception {
                 || event.factory.subject_ref != binding.subject_ref
                 || event.factory.whole_ref != binding.whole_ref
             {
-                return Err("Vāk performance is not the performed occasion of this operative binding".into());
+                return Err(
+                    "Vāk performance is not the performed occasion of this operative binding"
+                        .into(),
+                );
             }
         }
         let receipt = Self {
@@ -318,7 +324,10 @@ impl OperativePerformanceReception {
                 differences,
             } => {
                 text(observed_binding_ref, "observed operative binding")?;
-                text(observed_binding_revision, "observed operative binding revision")?;
+                text(
+                    observed_binding_revision,
+                    "observed operative binding revision",
+                )?;
                 if differences.is_empty() {
                     return Err("stale operative reception lost its differences".into());
                 }
@@ -374,14 +383,20 @@ impl NaraAgentWorldReception {
         activity.validate()?;
         bimba.validate()?;
         operative.validate()?;
-        if personal.subject_id != activity.subject_id || personal.subject_id != operative.subject_ref {
+        if personal.subject_id != activity.subject_id
+            || personal.subject_id != operative.subject_ref
+        {
             return Err("Personal, activity and operative subjects are not the same Nara".into());
         }
         if personal.event.registry_revision != bimba.registry_revision {
-            return Err("Personal occasion and Bimba selection use different registry revisions".into());
+            return Err(
+                "Personal occasion and Bimba selection use different registry revisions".into(),
+            );
         }
         if personal.event.event_ref != operative.world_ref {
-            return Err("operative scope is not correlated to the accepted Personal world event".into());
+            return Err(
+                "operative scope is not correlated to the accepted Personal world event".into(),
+            );
         }
         for thought in &thought_consumptions {
             thought.validate()?;
@@ -395,7 +410,9 @@ impl NaraAgentWorldReception {
             }
             if let Some(performance_ref) = &thought.performance_ref {
                 let Some(performance) = &operative.performance else {
-                    return Err("performance-bound AW3 reading has no retained Vāk performance".into());
+                    return Err(
+                        "performance-bound AW3 reading has no retained Vāk performance".into(),
+                    );
                 };
                 if performance_ref != &performance.performance_ref {
                     return Err("AW3 reading and Vāk performance name different occasions".into());
@@ -404,10 +421,14 @@ impl NaraAgentWorldReception {
             for candidate in &thought.recognition_candidates {
                 if let Some(performance_ref) = &candidate.performance_ref {
                     let Some(performance) = &operative.performance else {
-                        return Err("performance-bound Recognition candidate has no Vāk performance".into());
+                        return Err(
+                            "performance-bound Recognition candidate has no Vāk performance".into(),
+                        );
                     };
                     if performance_ref != &performance.performance_ref {
-                        return Err("Recognition candidate is detached from its performed occasion".into());
+                        return Err(
+                            "Recognition candidate is detached from its performed occasion".into(),
+                        );
                     }
                 }
             }
@@ -448,7 +469,9 @@ impl NaraAgentWorldReception {
         if self.operative.subject_ref != self.subject_id
             || self.operative.world_ref != self.personal_event_ref
         {
-            return Err("retained operative reception is no longer on this Personal occasion".into());
+            return Err(
+                "retained operative reception is no longer on this Personal occasion".into(),
+            );
         }
         for thought in &self.thought_consumptions {
             thought.validate()?;
