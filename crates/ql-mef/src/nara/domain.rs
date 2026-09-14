@@ -14,7 +14,10 @@ mod oracle;
 mod state;
 mod transformation;
 
-pub use common::*;
+pub use common::{
+    CENTRE_COUNT, CONTEXT_BRANCH_COUNT, ELEMENT_COUNT, EvidenceStanding, IDENTITY_SLOT_COUNT,
+    INTEGRATION_OFFICE_COUNT, M4_DOMAIN_CONTRACT, M4Branch, ProtectedRef,
+};
 pub use context::*;
 pub use embodied::*;
 pub use identity::*;
