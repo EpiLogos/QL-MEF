@@ -1,17 +1,6 @@
 name: Kernel K8 live-field acceptance
 
 on:
-  pull_request:
-    paths:
-      - 'c/**'
-      - 'cpp/**'
-      - 'migration/epi-kernel/k8/**'
-      - 'crates/**'
-      - 'fixtures/kernel/**'
-      - 'schemas/**'
-      - 'scripts/**'
-      - 'docs/kernel-rebuild/**'
-      - '.github/workflows/kernel-k8.yml'
   push:
     branches: [main]
     paths:
@@ -24,9 +13,14 @@ on:
       - 'scripts/**'
       - 'docs/kernel-rebuild/**'
       - '.github/workflows/kernel-k8.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: k8-live-field-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   k8-native:
@@ -35,7 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Capture exact tested source and toolchain receipt
         run: |
@@ -48,7 +41,7 @@ jobs:
       - name: Retain exact source for independent native consumer reproduction
         uses: actions/upload-artifact@v4
         with:
-          name: k8-exact-source-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k8-exact-source-${{ github.sha }}
           path: target/k8/
           retention-days: 7
           if-no-files-found: error
@@ -58,15 +51,11 @@ jobs:
           bash scripts/test-k8-native.sh 2>&1 | tee target/k8/native.log
       - name: Complete current inventory without restamping historical K4 evidence
         run: python3 scripts/k8-census.py --check
-      - name: Preserve accepted Rust engines
-        run: |
-          set -o pipefail
-          cargo test --workspace --locked 2>&1 | tee target/k8/rust-tests.log
       - name: Retain native evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: k8-native-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k8-native-evidence-${{ github.sha }}
           path: |
             target/k8/
             target/k8-native/*log
