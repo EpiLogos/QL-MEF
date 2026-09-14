@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Source/native projection of the complete AW field; not a runtime registry.
 
-The existing matrices own capability IDs. This projection expands every member,
-retaining its source fields and an explicit composition gap. Code/source pins
-are evidence of inspection, never evidence that the full composition performed.
+The existing matrices own capability IDs. This projection expands every member
+without changing source identity, then applies a separate accepted-receipt overlay
+to state what is currently accepted, ready, external, research-only or still a gap.
 """
 from __future__ import annotations
 import argparse
@@ -19,6 +19,7 @@ BASE = 'docs/integrations/epi-logos/'
 LOCK = BASE + 'TA-ONTA-FULL-FIELD-LOCK.md'
 LANGUAGE = 'docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md'
 SCHEMA = 'epi.aw-field-projection/v1'
+ACCEPTANCE = BASE + 'aw0-acceptance-receipts.json'
 ORGANS = ('Khora', 'Hen', 'Pleroma', 'Chronos', 'Anima', 'Aletheia')
 
 
@@ -76,8 +77,11 @@ def project():
 
     rule = load(BASE + 'aw0-native-bindings.json')
     source = source_basis()
+    acceptance = load(ACCEPTANCE)
     if rule['schema_version'] != 'epi.aw-native-binding/v1' or source['schema_version'] != 'epi.aw-source-basis/v1':
         raise ValueError('unsupported AW source/binding version')
+    if acceptance.get('schema_version') != 'epi.aw-acceptance-receipts/v1':
+        raise ValueError('unsupported AW acceptance-receipt version')
     pins = {}
     for row in source['files']:
         owner, path, blob = row
@@ -350,6 +354,71 @@ def project():
                 'historical_paths_are_not_current_owner_paths': True,
                 'wrong_frame_and_time_labels_are_corrected_by': LANGUAGE})
 
+    receipts = acceptance.get('receipts', {})
+    disposition_rules = acceptance.get('rules', [])
+    allowed_dispositions = {
+        'ACCEPTED-NATIVE', 'READY-TO-COMPOSE', 'EXTERNAL-OWNER',
+        'SOURCE-DISCREPANCY', 'RESEARCH-ONLY', 'EPI-GAP',
+    }
+    for receipt_id, receipt in receipts.items():
+        for field in ('repository', 'pull_request', 'accepted_head', 'merge_commit', 'standing', 'proves'):
+            if not receipt.get(field):
+                raise ValueError(f'incomplete acceptance receipt {receipt_id}: {field}')
+        for field in ('accepted_head', 'merge_commit'):
+            if not re.fullmatch(r'[0-9a-f]{40}', receipt[field]):
+                raise ValueError(f'invalid acceptance SHA {receipt_id}: {field}')
+        if receipt['standing'] != 'ACCEPTED-NATIVE':
+            raise ValueError('receipt is not accepted native evidence: ' + receipt_id)
+
+    def rule_matches(candidate, record):
+        selector = candidate.get('selector', {})
+        if selector.get('inventories') and record['inventory'] not in selector['inventories']:
+            return False
+        if selector.get('ids') and record['id'] not in selector['ids']:
+            return False
+        if selector.get('gap_ids') and record['gap']['id'] not in selector['gap_ids']:
+            return False
+        return True
+
+    disposition_counts = {}
+    for record in records:
+        matches = [candidate for candidate in disposition_rules if rule_matches(candidate, record)]
+        if not matches:
+            raise ValueError('no current disposition rule for ' + record['id'])
+        highest = max(candidate.get('priority', -1) for candidate in matches)
+        winners = [candidate for candidate in matches if candidate.get('priority', -1) == highest]
+        if len(winners) != 1:
+            raise ValueError('ambiguous current disposition for ' + record['id'])
+        current = winners[0]
+        disposition = current.get('disposition')
+        if disposition not in allowed_dispositions:
+            raise ValueError('unsupported current disposition for ' + record['id'])
+        receipt_ids = current.get('receipt_ids', [])
+        missing = [receipt_id for receipt_id in receipt_ids if receipt_id not in receipts]
+        if missing:
+            raise ValueError('unknown acceptance receipt for ' + record['id'] + ': ' + ', '.join(missing))
+        if disposition == 'ACCEPTED-NATIVE' and not receipt_ids:
+            raise ValueError('accepted row has no native receipt: ' + record['id'])
+        dependency = current.get('current_dependency')
+        if disposition == 'EPI-GAP' and not dependency:
+            raise ValueError('anonymous EPI-GAP is forbidden: ' + record['id'])
+        record['gap_standing'] = 'AW0-BASELINE-GAP-RETAINED-FOR-PROVENANCE'
+        record['disposition'] = disposition
+        record['disposition_rule'] = current['id']
+        record['disposition_reason'] = current['reason']
+        record['acceptance_receipt_ids'] = receipt_ids
+        if dependency:
+            record['current_dependency'] = dependency
+        record['mechanic_standing'] = {
+            'ACCEPTED-NATIVE': 'ACCEPTED-NATIVE-RECEIPT',
+            'READY-TO-COMPOSE': 'ACCEPTED-MECHANICS-WITHOUT-ROW-WHOLE-RECEIPT',
+            'EXTERNAL-OWNER': 'NAMED-EXTERNAL-OWNER',
+            'SOURCE-DISCREPANCY': 'SOURCE-CLAIM-RETAINED-NOT-RUNTIME-FACT',
+            'RESEARCH-ONLY': 'SOURCE-OR-RESEARCH-EVIDENCE-NOT-RUNTIME-FACT',
+            'EPI-GAP': 'NAMED-UNRESOLVED-COMPOSITION-GAP',
+        }[disposition]
+        disposition_counts[disposition] = disposition_counts.get(disposition, 0) + 1
+
     ids = [r['id'] for r in records]
     if len(ids) != len(set(ids)):
         raise ValueError('duplicate projected identity')
@@ -362,10 +431,16 @@ def project():
                 'property-definition': 194, 'source-skill': 65, 'epii-on-x': 6, 'source-discrepancy': 1, 'property-source-key': 5686, 'original-operational-job': 10}
     if any(counts.get(k) != v for k, v in expected.items()):
         raise ValueError('required field enumeration differs: ' + str(counts))
-    return {'schema_version': SCHEMA, 'scope': 'enumerated-source-field-with-explicit-implementation-and-source-gaps',
+    return {'schema_version': SCHEMA, 'scope': 'enumerated-source-field-with-receipt-qualified-current-disposition',
             'native_revisions': source['repositories'], 'counts': counts,
+            'disposition_counts': disposition_counts,
+            'runtime_acceptance': bool(acceptance.get('whole_field_runtime_acceptance')),
+            'runtime_acceptance_reason': acceptance.get('runtime_acceptance_reason'),
+            'acceptance_overlay': {
+                'schema_version': acceptance['schema_version'], 'owner': acceptance['owner'],
+                'receipts': receipts, 'rules': [candidate['id'] for candidate in disposition_rules]},
             'readiness_reconciliation': {'historical': load(BASE + 'epi-capability-readiness.json'),
-                'current': 'Retain historical 21 READY-TO-COMPOSE / 15 EPI-GAP as that source snapshot. Landed M1-M3 finite/native mechanics and AIKit#302 / Factory#230 do not certify full Epi composition.',
+                'current': 'Historical readiness remains its source snapshot. Current row disposition is derived only from the versioned AW0 acceptance-receipt overlay; source/code presence alone never upgrades a row.',
                 'preserved_engine_receipts': ['docs/KERNEL-M1-ENGINE-CONTRACT.md', 'docs/kernel-rebuild/m2-engine-v1.md', 'docs/KERNEL-M3-ENGINE-CONTRACT.md']},
             'records': records}
 
@@ -393,7 +468,8 @@ def main():
             raise SystemExit('unknown AW record: ' + args.id)
         result = matches[0]
     print(json.dumps(result if args.json or args.id else {'schema_version': SCHEMA, 'counts': result['counts'],
-          'runtime_acceptance': False}, ensure_ascii=False, sort_keys=True, indent=2))
+          'disposition_counts': result['disposition_counts'], 'runtime_acceptance': result['runtime_acceptance'],
+          'runtime_acceptance_reason': result['runtime_acceptance_reason']}, ensure_ascii=False, sort_keys=True, indent=2))
 
 
 if __name__ == '__main__':
