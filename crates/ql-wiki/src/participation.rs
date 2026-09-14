@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use ql_mef::m_tree::{MRegistry, MTreeId};
 use ql_mef::MFace;
+use ql_mef::m_tree::{MRegistry, MTreeId};
 use serde::{Deserialize, Serialize};
 
 use crate::{MappingOrigin, MetaKnowledgeProjection, MetaProvenance, ProjectedRelation};
@@ -441,7 +441,14 @@ pub fn apply_participation(
         let expected = compiled
             .relations(1)
             .into_iter()
-            .map(|relation| (relation.from_ref, relation.to_ref, relation.relation, relation.origin))
+            .map(|relation| {
+                (
+                    relation.from_ref,
+                    relation.to_ref,
+                    relation.relation,
+                    relation.origin,
+                )
+            })
             .collect::<BTreeSet<_>>();
         let actual = existing
             .iter()
@@ -597,13 +604,9 @@ mod tests {
     #[test]
     fn direct_conjugate_is_two_faces_of_the_same_bimba_identity() {
         let registry = native_m_registry();
-        let direct = bimba_participant(
-            registry,
-            "#0",
-            BimbaFace::Direct,
-            ParticipationRole::Direct,
-        )
-        .unwrap();
+        let direct =
+            bimba_participant(registry, "#0", BimbaFace::Direct, ParticipationRole::Direct)
+                .unwrap();
         let conjugate = bimba_participant(
             registry,
             "#0",
@@ -622,22 +625,19 @@ mod tests {
             compiled.members[0].canonical_ref,
             compiled.members[1].canonical_ref
         );
-        assert!(compiled
-            .members
-            .iter()
-            .all(|member| member.source_identity.contains("bimba:#0")));
+        assert!(
+            compiled
+                .members
+                .iter()
+                .all(|member| member.source_identity.contains("bimba:#0"))
+        );
     }
 
     #[test]
     fn bimba_and_wiki_members_share_one_constellation_without_identity_copying() {
         let registry = native_m_registry();
-        let bimba = bimba_participant(
-            registry,
-            "#0",
-            BimbaFace::Direct,
-            ParticipationRole::Member,
-        )
-        .unwrap();
+        let bimba = bimba_participant(registry, "#0", BimbaFace::Direct, ParticipationRole::Member)
+            .unwrap();
         let constellation = participation(
             "wiki:constellation/ground",
             ParticipationForm::Constellation,
@@ -646,12 +646,18 @@ mod tests {
         let mut projection = projection();
         let compiled = apply_participation(&mut projection, registry, &constellation).unwrap();
         assert_eq!(compiled.members.len(), 2);
-        assert!(projection.relations.iter().any(|relation| {
-            relation.to_ref.starts_with("ql:m-coordinate:bimba:M0")
-        }));
-        assert!(projection.objects.iter().all(|object| {
-            !object.canonical_ref.starts_with("ql:m-coordinate:")
-        }));
+        assert!(
+            projection
+                .relations
+                .iter()
+                .any(|relation| { relation.to_ref.starts_with("ql:m-coordinate:bimba:M0") })
+        );
+        assert!(
+            projection
+                .objects
+                .iter()
+                .all(|object| { !object.canonical_ref.starts_with("ql:m-coordinate:") })
+        );
     }
 
     #[test]
