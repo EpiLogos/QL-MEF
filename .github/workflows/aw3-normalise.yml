@@ -1,4 +1,5 @@
 name: AW3 one-shot normalise
+# second push intentionally activates the already-present one-shot workflow
 
 on:
   push:
