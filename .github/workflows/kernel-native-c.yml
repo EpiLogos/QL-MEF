@@ -55,9 +55,11 @@ jobs:
         run: bash scripts/test-native-m-tree.sh
       - name: M1 bounded engine, source pressure, sanitizers and installed consumer
         run: bash scripts/test-m1-engine.sh
-      - name: Current Rust producer and executable C parity
+      - name: Current Rust producers and executable C parity
         run: |
           set -euo pipefail
+          cargo test --locked -p ql-mef --test native_c_foundation
+          cargo test --locked -p ql-mef --test native_m_tree
           cmp target/kernel-native-c/clang-parity.tsv target/kernel-native-c/c-rust-parity.tsv
           cmp target/m-tree/native.jsonl target/m-tree/c-rust-parity.jsonl
           git diff --exit-code
