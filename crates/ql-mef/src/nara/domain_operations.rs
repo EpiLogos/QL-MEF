@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use crate::nara::activity::{ActivityOccurrence, NaraActivityLog, ThoughtConsumptionRef};
 use crate::nara::{ConsentState, PersonalFieldState, SourceRevision};
 
-use super::domain::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
