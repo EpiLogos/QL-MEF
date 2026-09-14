@@ -254,8 +254,9 @@ mod tests {
             .manifest()
             .bindings
             .iter()
-            .find_map(|binding| binding.coordinate_id)
-            .expect("fixture contains at least one coordinate binding");
+            .filter_map(|binding| binding.coordinate_id)
+            .find(|id| *id != registry.manifest().master_id)
+            .expect("fixture contains at least one source-coordinate binding");
         let node = registry.node(bound_id).unwrap();
         let world = resolve_rooted_m_world(registry, &node.source_ref).unwrap();
         assert_eq!(world.native_owner.standing, NativeOwnerStanding::Bound);
