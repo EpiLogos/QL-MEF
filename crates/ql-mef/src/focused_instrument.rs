@@ -34,9 +34,7 @@ fn decimal(value: &Value, what: &str) -> Result<String, String> {
     let value = value
         .as_str()
         .ok_or_else(|| format!("{what} must be an exact decimal string"))?;
-    let parsed: u64 = value
-        .parse()
-        .map_err(|_| format!("invalid {what}"))?;
+    let parsed: u64 = value.parse().map_err(|_| format!("invalid {what}"))?;
     if parsed.to_string() != value {
         return Err(format!("noncanonical {what}"));
     }
@@ -240,7 +238,9 @@ impl FieldCursor {
             .as_u64()
             .ok_or("field receipt lacks its M2 profile generation")?;
         if profile_generation != event.profile_generation {
-            return Err("continuous field receipt disagrees with the current world generation".into());
+            return Err(
+                "continuous field receipt disagrees with the current world generation".into(),
+            );
         }
         Ok(Self {
             event_ref: event.event_ref.clone(),
@@ -535,7 +535,9 @@ impl FocusedInstrument {
         if let Some(constituent) = &selection.field_constituent_ref
             && field_target(&view.field, constituent)?.is_none()
         {
-            return Err("Bimba selection names no constituent in the current material field".into());
+            return Err(
+                "Bimba selection names no constituent in the current material field".into(),
+            );
         }
         self.selection = Some(SelectedBimba {
             value: selection,
@@ -645,8 +647,7 @@ impl FocusedInstrument {
         axis: u8,
         phase: LiftInput,
     ) -> InstrumentOperationObservation {
-        let before = InstrumentOwnerView::from_session(session)
-            .and_then(|view| view.cursor());
+        let before = InstrumentOwnerView::from_session(session).and_then(|view| view.cursor());
         let result = session.set_axis_field(axis, phase);
         operation_observation("set-axis", session, before, result)
     }
@@ -657,8 +658,7 @@ impl FocusedInstrument {
         frames: u32,
         muted: bool,
     ) -> InstrumentOperationObservation {
-        let before = InstrumentOwnerView::from_session(session)
-            .and_then(|view| view.cursor());
+        let before = InstrumentOwnerView::from_session(session).and_then(|view| view.cursor());
         let result = session.advance_field(frames, muted);
         operation_observation("advance", session, before, result)
     }
@@ -679,14 +679,20 @@ fn focus_disclosure(
         InstrumentFocus::M2 => (
             true,
             true,
-            vec![view.event.m2_source_ref.clone(), view.event.m2_contract_ref.clone()],
+            vec![
+                view.event.m2_source_ref.clone(),
+                view.event.m2_contract_ref.clone(),
+            ],
             view.m2.clone(),
             "M2 focus discloses the retained spectral/material/aperture owner state",
         ),
         InstrumentFocus::M3 => (
             true,
             true,
-            vec![view.event.m3_source_ref.clone(), view.event.m3_contract_ref.clone()],
+            vec![
+                view.event.m3_source_ref.clone(),
+                view.event.m3_contract_ref.clone(),
+            ],
             json!({"m3":view.m3, "clock":view.field["clock"], "derivation":view.derivation}),
             "M3 focus discloses form/inscription and the existing coupled clock",
         ),
@@ -873,7 +879,10 @@ mod tests {
         let second = view(2, 64, 9.0, 1);
         let snapshot = instrument.snapshot(&second).unwrap();
         assert_eq!(snapshot.temporal, TemporalPresentation::Frozen);
-        assert_eq!(snapshot.selection_standing, Some(SelectionStanding::FieldAdvanced));
+        assert_eq!(
+            snapshot.selection_standing,
+            Some(SelectionStanding::FieldAdvanced)
+        );
         assert_eq!(snapshot.live_cursor.field_generation, "2");
         assert_eq!(snapshot.presented_cursor.field_generation, "1");
         assert_eq!(snapshot.selected_target.unwrap().position[0], 1.0);
@@ -894,7 +903,10 @@ mod tests {
         instrument.explode_clock(Some(3)).unwrap();
         let snapshot = instrument.snapshot(&source).unwrap();
         assert_eq!(snapshot.focus.focus, InstrumentFocus::M3);
-        assert_eq!(snapshot.clock.presentation, ClockPresentation::Exploded { pair: Some(3) });
+        assert_eq!(
+            snapshot.clock.presentation,
+            ClockPresentation::Exploded { pair: Some(3) }
+        );
         assert_eq!(source.field, original);
         assert!(instrument.explode_clock(Some(8)).is_err());
     }
@@ -928,7 +940,11 @@ mod tests {
             musical_performance_ref: Some("performance:1".into()),
             enactment_ref: Some("enactment:0-to-1-as-slash".into()),
         };
-        assert!(instrument.bind_vak_expression(&source, binding.clone()).is_err());
+        assert!(
+            instrument
+                .bind_vak_expression(&source, binding.clone())
+                .is_err()
+        );
         source.vak_performance = Some(VakPerformanceSummary {
             performance_ref: "performance:1".into(),
             mode: PerformanceMode::Replay,
@@ -964,6 +980,9 @@ mod tests {
         instrument.snapshot(&second).unwrap();
         instrument.set_tracking(SelectionTracking::Pinned);
         let snapshot = instrument.snapshot(&third).unwrap();
-        assert_eq!(snapshot.selection_standing, Some(SelectionStanding::FieldAdvanced));
+        assert_eq!(
+            snapshot.selection_standing,
+            Some(SelectionStanding::FieldAdvanced)
+        );
     }
 }
