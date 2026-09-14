@@ -102,7 +102,7 @@ mod tests {
 
     use crate::vak_profile::{
         CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
-        Participation, ThreadForm, PROFILE_CONTRACT,
+        PROFILE_CONTRACT, Participation, ThreadForm,
     };
     use crate::vak_scope::{CPrimeOperativeBinding, OperativeFrameReading};
 
@@ -124,8 +124,7 @@ mod tests {
             contract: OPERATIVE_BINDING_CONTRACT.into(),
             provider_ref: OPERATIVE_PROVIDER_REF.into(),
             binding_ref: "ql.cprime-operative-binding/v1|id-fnv1a64=historical".into(),
-            binding_revision:
-                "ql.cprime-operative-binding/v1|revision-fnv1a64=historical".into(),
+            binding_revision: "ql.cprime-operative-binding/v1|revision-fnv1a64=historical".into(),
             owner_ref: OPERATIVE_OWNER_REF.into(),
             interpretation_ref: C_PRIME_INTERPRETATION_REF.into(),
             interpretation_revision: "historical-profile-revision".into(),
@@ -200,7 +199,10 @@ mod tests {
             .unwrap();
         let encoded = serde_json::to_string(&response).unwrap();
         let decoded: OperativeScopeCurrentnessResponse = serde_json::from_str(&encoded).unwrap();
-        assert_eq!(decoded.requested_binding_ref, response.requested_binding_ref);
+        assert_eq!(
+            decoded.requested_binding_ref,
+            response.requested_binding_ref
+        );
         assert_eq!(
             decoded.requested_binding_revision,
             response.requested_binding_revision
