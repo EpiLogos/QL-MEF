@@ -92,7 +92,17 @@ function setup() {
         current = { ...structuredClone(current), generation: String(BigInt(current.generation) + 1n), audio: [] };
         current.clock[command.axis ? 'lensing' : 'inscription'] = command.phase; owner = structuredClone(current);
       }
+      const previousView = view;
       view = snapshot(current);
+      view.focus = { ...view.focus, focus: previousView.focus.focus };
+      view.tracking = previousView.tracking;
+      if (previousView.selection) {
+        view.selection = structuredClone(previousView.selection);
+        view.selection_standing = command.operation === 'advance' && command.frames > 0
+          ? 'field-advanced' : previousView.selection_standing;
+        const target = current.targets.find(item => item.constituent === previousView.selection.field_constituent_ref);
+        view.selected_target = target ? structuredClone(target) : null;
+      }
       if (command.operation === 'set-focus') view.focus = { ...view.focus, focus: command.focus };
       if (command.operation === 'select-bimba') {
         view.selection = selection(); view.selection_standing = 'current'; view.selected_target = structuredClone(current.targets[1]);
@@ -129,7 +139,7 @@ test('focus, Bimba and native field work share one exact focused-host sequence',
   assert.equal(result.standing, 'applied');
   assert.deepEqual(s.calls.map(call => call.request_id), ['1', '2', '3', '4']);
   assert.deepEqual(s.calls.map(call => call.command.operation), ['advance', 'set-focus', 'select-bimba', 'advance']);
-  assert.equal((await s.session.read()).focus.focus, 'm5'); // host snapshot rebuilt from actual world after advance
+  assert.equal((await s.session.read()).focus.focus, 'm2'); // encounter focus survives field advancement
   assert.equal((await s.session.readBimba()).selected_ref, 'bimba:#2');
   assert.equal(s.context.nodes.length, 1);
   s.context.currentTime = s.session.reading.audio.target_context_seconds;
