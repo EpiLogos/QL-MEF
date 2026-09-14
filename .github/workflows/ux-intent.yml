@@ -1,17 +1,20 @@
 name: UX intent and practice
 on:
-  push:
-    branches: [main, agent/whole-ql-ux-spine-practice]
-    paths: ['docs/**', 'skills/**', 'scripts/**', 'AGENTS.md', '.github/workflows/ux-intent.yml']
-  pull_request:
-    paths: ['docs/**', 'skills/**', 'scripts/**', 'AGENTS.md', '.github/workflows/ux-intent.yml']
+  workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ux-intent-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   practice:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Check full source coverage and invalid mutations
         run: |
           set -o pipefail
@@ -26,7 +29,12 @@ jobs:
           repository: EpiLogos/ai-kit
           ref: 586b85eaf77c7232c93deb5abc75b558f15a02ed
           path: native-aikit
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          workspaces: native-aikit
+          cache-on-failure: true
       - name: Build the pinned native Skill owner
         run: cargo build --manifest-path native-aikit/Cargo.toml --locked -p aikit-cli --bin aikit
       - name: Exercise native discovery, set, scope, current projection and disconnect
