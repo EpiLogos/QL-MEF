@@ -131,11 +131,7 @@ pub struct QvBakeArtifact {
 }
 
 fn require(ok: bool, message: &str) -> Result<()> {
-    if ok {
-        Ok(())
-    } else {
-        Err(message.into())
-    }
+    if ok { Ok(()) } else { Err(message.into()) }
 }
 
 fn nonempty(value: &str, what: &str) -> Result<()> {
@@ -564,10 +560,7 @@ mod tests {
             registry,
             &mut field,
             "write-5",
-            write(
-                "q_5_integration",
-                "Return gathers the selected relation.",
-            ),
+            write("q_5_integration", "Return gathers the selected relation."),
             None,
             &gate,
         )
@@ -609,9 +602,7 @@ mod tests {
         assert!(bake_qv(registry, &field, std::slice::from_ref(&receipt), &gate).is_err());
         *gate.stale.borrow_mut() = None;
         assert_eq!(
-            read_qv(registry, &field, &receipt, &gate)
-                .unwrap()
-                .pithy,
+            read_qv(registry, &field, &receipt, &gate).unwrap().pithy,
             "A contextual quick view."
         );
     }
