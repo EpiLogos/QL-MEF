@@ -282,15 +282,7 @@ impl FocusedHost {
     }
 
     fn reject_input(&mut self, error: &str) -> Value {
-        self.receipt(
-            None,
-            "refused",
-            "parse",
-            Some(error),
-            None,
-            false,
-            false,
-        )
+        self.receipt(None, "refused", "parse", Some(error), None, false, false)
     }
 
     fn admit(&mut self, request: &FocusedHostRequest) -> Result<(), String> {
@@ -363,53 +355,64 @@ impl FocusedHost {
         let mut owner_receipt = None;
         let mut status = "ok";
         let mut error = None;
-        let result: Result<(), String> = (|| {
-            match request.command {
-                FocusedHostOperation::Read {}
-                | FocusedHostOperation::Bimba {}
-                | FocusedHostOperation::Inspect {} => Ok(()),
-                FocusedHostOperation::SetFocus { focus } => {
-                    self.instrument.set_focus(focus);
-                    Ok(())
-                }
-                FocusedHostOperation::SelectBimba { selection_ref } => {
-                    let selection = self
-                        .bimba
-                        .get(&selection_ref)
-                        .map(|entry| entry.selection.clone())
-                        .ok_or_else(|| "unknown admitted Bimba selection".to_string());
-                    selection.and_then(|selection| {
-                        let view = self.view()?;
-                        self.instrument.select_bimba(&view, selection)
-                    })
-                }
-                FocusedHostOperation::ClearSelection {} => {
-                    self.instrument.clear_selection();
-                    Ok(())
-                }
-                FocusedHostOperation::SetTracking { tracking } => {
-                    self.instrument.set_tracking(tracking);
-                    Ok(())
-                }
-                FocusedHostOperation::Freeze {} => {
+        let result: Result<(), String> = (|| match request.command {
+            FocusedHostOperation::Read {}
+            | FocusedHostOperation::Bimba {}
+            | FocusedHostOperation::Inspect {} => Ok(()),
+            FocusedHostOperation::SetFocus { focus } => {
+                self.instrument.set_focus(focus);
+                Ok(())
+            }
+            FocusedHostOperation::SelectBimba { selection_ref } => {
+                let selection = self
+                    .bimba
+                    .get(&selection_ref)
+                    .map(|entry| entry.selection.clone())
+                    .ok_or_else(|| "unknown admitted Bimba selection".to_string());
+                selection.and_then(|selection| {
                     let view = self.view()?;
-                    self.instrument.freeze(&view)
-                }
-                FocusedHostOperation::ResumeLive {} => {
-                    self.instrument.resume_live();
-                    Ok(())
-                }
-                FocusedHostOperation::AssembleClock {} => {
-                    self.instrument.assemble_clock();
-                    Ok(())
-                }
-                FocusedHostOperation::ExplodeClock { pair } => {
-                    self.instrument.explode_clock(pair)
-                }
-                FocusedHostOperation::SetClockAxis { axis, phase } => {
-                    let observation =
-                        self.instrument
-                            .set_clock_axis(&mut self.session, axis, phase);
+                    self.instrument.select_bimba(&view, selection)
+                })
+            }
+            FocusedHostOperation::ClearSelection {} => {
+                self.instrument.clear_selection();
+                Ok(())
+            }
+            FocusedHostOperation::SetTracking { tracking } => {
+                self.instrument.set_tracking(tracking);
+                Ok(())
+            }
+            FocusedHostOperation::Freeze {} => {
+                let view = self.view()?;
+                self.instrument.freeze(&view)
+            }
+            FocusedHostOperation::ResumeLive {} => {
+                self.instrument.resume_live();
+                Ok(())
+            }
+            FocusedHostOperation::AssembleClock {} => {
+                self.instrument.assemble_clock();
+                Ok(())
+            }
+            FocusedHostOperation::ExplodeClock { pair } => self.instrument.explode_clock(pair),
+            FocusedHostOperation::SetClockAxis { axis, phase } => {
+                let observation = self
+                    .instrument
+                    .set_clock_axis(&mut self.session, axis, phase);
+                status = match observation.standing {
+                    OperationStanding::Applied => "ok",
+                    OperationStanding::Refused => "refused",
+                    OperationStanding::Unknown => "unavailable",
+                };
+                error = observation.error.clone();
+                owner_receipt = observation.owner_receipt.clone();
+                Ok(())
+            }
+            FocusedHostOperation::Advance { frames, muted } => {
+                if frames > 8192 {
+                    Err("native block ceiling exceeded".into())
+                } else {
+                    let observation = self.instrument.advance(&mut self.session, frames, muted);
                     status = match observation.standing {
                         OperationStanding::Applied => "ok",
                         OperationStanding::Refused => "refused",
@@ -419,38 +422,22 @@ impl FocusedHost {
                     owner_receipt = observation.owner_receipt.clone();
                     Ok(())
                 }
-                FocusedHostOperation::Advance { frames, muted } => {
-                    if frames > 8192 {
-                        Err("native block ceiling exceeded".into())
-                    } else {
-                        let observation =
-                            self.instrument.advance(&mut self.session, frames, muted);
-                        status = match observation.standing {
-                            OperationStanding::Applied => "ok",
-                            OperationStanding::Refused => "refused",
-                            OperationStanding::Unknown => "unavailable",
-                        };
-                        error = observation.error.clone();
-                        owner_receipt = observation.owner_receipt.clone();
-                        Ok(())
-                    }
-                }
-                FocusedHostOperation::ReceivePersonal { input } => self
-                    .session
-                    .receive_personal(*input)
-                    .map(|state| owner_receipt = serde_json::to_value(state).ok()),
-                FocusedHostOperation::Replace { basis } => self
-                    .session
-                    .replace_field(*basis)
-                    .map(|receipt| owner_receipt = Some(receipt)),
-                FocusedHostOperation::BindVakExpression { binding } => {
-                    let view = self.view()?;
-                    self.instrument.bind_vak_expression(&view, *binding)
-                }
-                FocusedHostOperation::ClearVakExpression {} => {
-                    self.instrument.clear_vak_expression();
-                    Ok(())
-                }
+            }
+            FocusedHostOperation::ReceivePersonal { input } => self
+                .session
+                .receive_personal(*input)
+                .map(|state| owner_receipt = serde_json::to_value(state).ok()),
+            FocusedHostOperation::Replace { basis } => self
+                .session
+                .replace_field(*basis)
+                .map(|receipt| owner_receipt = Some(receipt)),
+            FocusedHostOperation::BindVakExpression { binding } => {
+                let view = self.view()?;
+                self.instrument.bind_vak_expression(&view, *binding)
+            }
+            FocusedHostOperation::ClearVakExpression {} => {
+                self.instrument.clear_vak_expression();
+                Ok(())
             }
         })();
         if let Err(command_error) = result {
@@ -501,11 +488,7 @@ fn run() -> Result<(), String> {
     }
     let config: FocusedHostConfig =
         serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
-    let mut host = FocusedHost::open(
-        Path::new(&args[1]),
-        config,
-        Duration::from_secs(5),
-    )?;
+    let mut host = FocusedHost::open(Path::new(&args[1]), config, Duration::from_secs(5))?;
     let input = io::stdin();
     let mut input = input.lock();
     let output = io::stdout();
@@ -530,7 +513,9 @@ fn run() -> Result<(), String> {
         };
         send(&mut output, &response)?;
         if !host.available() {
-            return Err("native acknowledgement unavailable; focused host closed without retry".into());
+            return Err(
+                "native acknowledgement unavailable; focused host closed without retry".into(),
+            );
         }
     }
 }
@@ -563,28 +548,14 @@ mod tests {
             FocusedHostOperation::ExplodeClock { pair: Some(3) }
         ));
         let presentation = ClockPresentation::Exploded { pair: Some(3) };
-        assert!(matches!(
-            presentation,
-            ClockPresentation::Exploded { .. }
-        ));
+        assert!(matches!(presentation, ClockPresentation::Exploded { .. }));
     }
 
     #[test]
     fn focused_host_cursors_reject_aliases_and_overflow() {
-        for value in [
-            "",
-            "01",
-            "+1",
-            "-0",
-            " 1",
-            "1e3",
-            "18446744073709551616",
-        ] {
+        for value in ["", "01", "+1", "-0", " 1", "1e3", "18446744073709551616"] {
             assert!(exact_cursor(value).is_err());
         }
-        assert_eq!(
-            exact_cursor("18446744073709551615").unwrap(),
-            u64::MAX
-        );
+        assert_eq!(exact_cursor("18446744073709551615").unwrap(), u64::MAX);
     }
 }

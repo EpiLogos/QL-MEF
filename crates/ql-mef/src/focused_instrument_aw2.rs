@@ -13,9 +13,7 @@ use crate::vak_scope::{
     C_PRIME_INTERPRETATION_REF, OPERATIVE_OWNER_REF, OPERATIVE_PROVIDER_REF,
     OperativeScopeObservation,
 };
-use crate::vak_scope_wire::{
-    OPERATIVE_CURRENTNESS_CONTRACT, OperativeScopeCurrentnessResponse,
-};
+use crate::vak_scope_wire::{OPERATIVE_CURRENTNESS_CONTRACT, OperativeScopeCurrentnessResponse};
 
 pub const FOCUSED_OPERATIVE_CURRENTNESS_CONTRACT: &str =
     "ql.focused-instrument-operative-currentness/v1";
@@ -174,18 +172,19 @@ mod tests {
     use serde_json::{Value, json};
 
     use crate::focused_instrument::{
-        ClockDisclosure, ClockPresentation, FieldCursor, FocusDisclosure, FocusedInstrumentSnapshot,
-        InstrumentFocus, InstrumentOperationObservation, OperationStanding, SelectionTracking,
-        TemporalPresentation, FOCUSED_INSTRUMENT_CONTRACT, OPERATION_OBSERVATION_CONTRACT,
+        ClockDisclosure, ClockPresentation, FOCUSED_INSTRUMENT_CONTRACT, FieldCursor,
+        FocusDisclosure, FocusedInstrumentSnapshot, InstrumentFocus,
+        InstrumentOperationObservation, OPERATION_OBSERVATION_CONTRACT, OperationStanding,
+        SelectionTracking, TemporalPresentation,
     };
     use crate::nara::EventBasisRefs;
     use crate::vak_profile::{
         CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
-        Participation, ThreadForm, PROFILE_CONTRACT,
+        PROFILE_CONTRACT, Participation, ThreadForm,
     };
     use crate::vak_scope::{
-        CPrimeOperativeBinding, OperativeFrameReading, OperativeScopeObservation,
-        OPERATIVE_BINDING_CONTRACT,
+        CPrimeOperativeBinding, OPERATIVE_BINDING_CONTRACT, OperativeFrameReading,
+        OperativeScopeObservation,
     };
 
     use super::*;
@@ -312,43 +311,42 @@ mod tests {
 
     #[test]
     fn current_is_only_accepted_when_aw2_identity_agrees() {
-        let current = FocusedOperativeCurrentness::from_aw2(response(
-            OperativeScopeObservation::Current { binding: binding() },
-        ))
-        .unwrap();
+        let current =
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Current {
+                binding: binding(),
+            }))
+            .unwrap();
         assert_eq!(current.standing, FocusedOperativeStanding::Current);
         assert!(current.is_current());
 
         let mut other = binding();
         other.binding_revision = "binding-r2".into();
         assert!(
-            FocusedOperativeCurrentness::from_aw2(response(
-                OperativeScopeObservation::Current { binding: other },
-            ))
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Current {
+                binding: other
+            },))
             .is_err()
         );
     }
 
     #[test]
     fn stale_and_missing_remain_explicit_owner_standings() {
-        let stale = FocusedOperativeCurrentness::from_aw2(response(
-            OperativeScopeObservation::Stale {
+        let stale =
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Stale {
                 observed: binding(),
                 differences: vec!["source-basis".into()],
-            },
-        ))
-        .unwrap();
+            }))
+            .unwrap();
         assert_eq!(stale.standing, FocusedOperativeStanding::Stale);
         assert_eq!(stale.differences, vec!["source-basis"]);
 
-        let missing = FocusedOperativeCurrentness::from_aw2(response(
-            OperativeScopeObservation::Missing {
+        let missing =
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Missing {
                 binding_ref: "binding:one".into(),
                 current_whole_ref: "whole:one".into(),
                 reason: "not present".into(),
-            },
-        ))
-        .unwrap();
+            }))
+            .unwrap();
         assert_eq!(missing.standing, FocusedOperativeStanding::Missing);
     }
 
@@ -367,10 +365,11 @@ mod tests {
 
     #[test]
     fn owner_currentness_is_retained_through_snapshot_and_operation_return() {
-        let currentness = FocusedOperativeCurrentness::from_aw2(response(
-            OperativeScopeObservation::Current { binding: binding() },
-        ))
-        .unwrap();
+        let currentness =
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Current {
+                binding: binding(),
+            }))
+            .unwrap();
         let focused = currentness
             .retain_in_snapshot(snapshot("subject:nara"))
             .unwrap();
@@ -391,10 +390,11 @@ mod tests {
 
     #[test]
     fn focused_snapshot_refuses_another_aw2_subject() {
-        let currentness = FocusedOperativeCurrentness::from_aw2(response(
-            OperativeScopeObservation::Current { binding: binding() },
-        ))
-        .unwrap();
+        let currentness =
+            FocusedOperativeCurrentness::from_aw2(response(OperativeScopeObservation::Current {
+                binding: binding(),
+            }))
+            .unwrap();
         assert!(
             currentness
                 .retain_in_snapshot(snapshot("subject:other"))
