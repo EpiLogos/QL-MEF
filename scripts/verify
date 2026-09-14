@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+usage() {
+  cat <<'EOF'
+usage:
+  scripts/verify quick [-p PACKAGE ...]
+  scripts/verify core
+  scripts/verify native
+  scripts/verify invariants
+  scripts/verify full
+
+quick       inner-loop package-scoped Rust tests + clippy (defaults to ql-mef + ql-cli)
+core        canonical Rust workspace gate and native ql self-certification
+native      repository-owned native C/C++ parity and packaging floor
+invariants  source/registry/census/skills/CI-topology deterministic locks
+full        core + native + invariants; the product source-verification contract
+EOF
+}
+
+ensure_python_deps() {
+  if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
+    python3 -m pip install --disable-pip-version-check --quiet 'jsonschema==4.25.1'
+  fi
+}
+
+core() {
+  cargo fmt --all -- --check
+  cargo clippy --workspace --all-targets --locked -- -D warnings
+  cargo test --workspace --all-targets --locked
+  cargo run -q -p ql-cli --locked -- --version
+  cargo run -q -p ql-cli --locked -- capabilities --json >/dev/null
+  cargo run -q -p ql-cli --locked -- verify --json >/dev/null
+}
+
+native() {
+  bash scripts/test-epi-c-parity.sh
+  bash scripts/test-epi-c-r4.sh
+  bash scripts/test-native-c-foundation.sh
+  bash scripts/test-native-m-tree.sh
+  bash scripts/test-m1-engine.sh
+  git diff --exit-code
+}
+
+invariants() {
+  ensure_python_deps
+  python3 scripts/check-ci-topology.py
+  python3 scripts/check-q6-promotion-manifests.py
+  python3 scripts/check-capability-matrix-registry.py
+  python3 scripts/check-living-instrument-plan.py --self-test
+  python3 scripts/check-pre-k8-lock.py --self-test
+  python3 scripts/check-ux-spine.py --self-test
+  bash scripts/verify-native-skills.sh
+
+  python3 scripts/m-ledger.py check
+  python3 scripts/m-ledger.py refresh
+  python3 scripts/k8-census.py --check
+  python3 -m unittest discover -s scripts/tests -p test_m_census.py -v
+  python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v
+  python3 scripts/validate-epi-holographic-manifest.py
+  git diff --exit-code
+  git diff --check
+}
+
+quick() {
+  if [[ "$#" -eq 0 ]]; then
+    set -- -p ql-mef -p ql-cli
+  fi
+  cargo test --locked "$@"
+  cargo clippy --locked --all-targets "$@" -- -D warnings
+  git diff --check
+}
+
+grade="${1:-full}"
+if [[ "$#" -gt 0 ]]; then
+  shift
+fi
+
+case "$grade" in
+  quick) quick "$@" ;;
+  core) core ;;
+  native) native ;;
+  invariants) invariants ;;
+  full)
+    core
+    native
+    invariants
+    ;;
+  -h|--help|help) usage ;;
+  *) usage >&2; exit 2 ;;
+esac

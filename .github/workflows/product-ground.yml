@@ -1,7 +1,6 @@
 name: Product documentation maintenance
 
 on:
-  pull_request:
   push:
     branches: [main]
   workflow_dispatch:
@@ -51,7 +50,7 @@ jobs:
         continue-on-error: true
         shell: bash
         env:
-          PRODUCT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          PRODUCT_BASE: ${{ github.event.before }}
         run: |
           set -euo pipefail
           base_args=()
@@ -64,7 +63,7 @@ jobs:
         with:
           name: product-ground-result
           path: product-ground-result.json
-      - name: Annotate drift (advisory — does not block merge)
+      - name: Annotate drift (advisory — does not block accepted main)
         if: steps.check.outcome == 'failure'
         run: |
-          echo "::notice title=Capability-matrix drift::The account page and suite profile have drifted apart. This does not block merge. See the product-ground-result artifact for precise reconciliation work."
+          echo "::notice title=Capability-matrix drift::The account page and suite profile have drifted apart. See the product-ground-result artifact for precise reconciliation work."

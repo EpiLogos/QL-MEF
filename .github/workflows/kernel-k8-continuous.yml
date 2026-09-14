@@ -1,12 +1,12 @@
 name: K8 continuous native field
 on:
-  pull_request:
-    paths: ['adapters/retained-field/**', 'cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', 'scripts/test-k8-host.py', 'scripts/test-k8-resource.py', 'scripts/tests/test_k8_resource.py', 'scripts/compare-k8-resource.py', '.github/workflows/kernel-k8-continuous.yml']
-  push:
-    branches: [main]
-    paths: ['adapters/retained-field/**', 'cpp/**', 'c/**', 'crates/**', 'providers/sky/**', 'scripts/test-k8-continuous.py', 'scripts/test-k8-host.py', 'scripts/test-k8-resource.py', 'scripts/tests/test_k8_resource.py', 'scripts/compare-k8-resource.py', '.github/workflows/kernel-k8-continuous.yml']
+  workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: k8-continuous-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   native-field:
     runs-on: ubuntu-latest
@@ -14,11 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
       - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
           for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/examples/k8_vak_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/nara_personal_field.rs; do
@@ -28,7 +31,7 @@ jobs:
           done
       - uses: actions/upload-artifact@v4
         with:
-          name: k8-formatted-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k8-formatted-${{ github.sha }}
           path: target/k8-format/
           retention-days: 3
       - uses: actions/setup-python@v5
@@ -187,7 +190,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: k8-continuous-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k8-continuous-${{ github.sha }}
           path: |
             target/k8-continuous/
             target/k8-gpu/

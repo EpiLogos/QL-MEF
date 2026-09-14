@@ -1,32 +1,25 @@
 name: Epi C reference
 
 on:
-  # The migration branch agent/epi-c-kernel-migration-floor was merged; the
-  # frozen-corpus checks it escorted now run on main and on PRs touching the
-  # vendor corpus and migration sources.
-  push:
-    branches:
-      - main
-    paths:
-      - vendor/epi-kernel/reference/**
-      - migration/epi-kernel/**
-      - scripts/build-epi-c-reference.sh
-      - scripts/sync-epi-c-reference.sh
-      - .github/workflows/epi-c-reference.yml
-  pull_request:
-    paths:
-      - vendor/epi-kernel/reference/**
-      - migration/epi-kernel/**
-      - scripts/build-epi-c-reference.sh
-      - scripts/sync-epi-c-reference.sh
-      - .github/workflows/epi-c-reference.yml
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: epi-c-reference-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   reference:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out QL-MEF
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Check out locked Epi source revision
         uses: actions/checkout@v4
@@ -38,14 +31,7 @@ jobs:
           persist-credentials: false
 
       - name: Verify frozen source identity
-        run: |
-          chmod +x scripts/sync-epi-c-reference.sh
-          scripts/sync-epi-c-reference.sh --check .source/epi
+        run: bash scripts/sync-epi-c-reference.sh --check .source/epi
 
       - name: Build and run C kernel smoke
-        run: |
-          chmod +x scripts/build-epi-c-reference.sh
-          scripts/build-epi-c-reference.sh
-
-      - name: Preserve current QL-MEF package tests
-        run: cargo test --workspace --locked
+        run: bash scripts/build-epi-c-reference.sh

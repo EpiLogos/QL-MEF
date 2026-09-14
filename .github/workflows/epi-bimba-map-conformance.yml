@@ -1,50 +1,25 @@
 name: Epi Bimba Map conformance
 
 on:
-  # The parity branch agent/epi-pre-d-bimba-map-parity was merged; the
-  # conformance it escorted now runs on main pushes touching the same paths.
-  push:
-    branches:
-      - main
-    paths:
-      - 'crates/ql-mef/**'
-      - 'scripts/compile-epi-bimba-map.py'
-      - 'scripts/compile-epi-bimba-map-live.py'
-      - 'data/epi-bimba-map/**'
-      - 'c/registry/**'
-      - 'c/src/m_tree_data.inc'
-      - 'fixtures/kernel/m-tree-v1.json'
-      - 'scripts/generate-m-tree.py'
-      - '.github/workflows/epi-bimba-map-conformance.yml'
-  pull_request:
-    paths:
-      - 'crates/ql-mef/**'
-      - 'scripts/compile-epi-bimba-map.py'
-      - 'scripts/compile-epi-bimba-map-live.py'
-      - 'data/epi-bimba-map/**'
-      - 'c/registry/**'
-      - 'c/src/m_tree_data.inc'
-      - 'fixtures/kernel/m-tree-v1.json'
-      - 'scripts/generate-m-tree.py'
-      - '.github/workflows/epi-bimba-map-conformance.yml'
+  workflow_call:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
-jobs:
-  ql-mef-core:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Prove granular coordinate/reflection core
-        run: cargo test -p ql-mef
+concurrency:
+  group: epi-bimba-map-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
   bimba-map-conformance:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - name: Check out QL-MEF PRE-D
+      - name: Check out QL-MEF
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Check out exact Bimba source revision
         uses: actions/checkout@v4
@@ -52,6 +27,7 @@ jobs:
           repository: EpiLogos/Epi-Logos-C-Experiments
           ref: daa660cbc1b8c5da83828698665a753852cb0287
           path: epi-source
+          persist-credentials: false
 
       - name: Check out current Nara implementation floor
         uses: actions/checkout@v4
@@ -59,6 +35,7 @@ jobs:
           repository: EpiLogos/Epi-Logos-C-Experiments
           ref: 52e7433bee54561a767833895b59f553cca62149
           path: epi-implementation
+          persist-credentials: false
 
       - name: Compile recursive Bimba Map source pool
         run: |

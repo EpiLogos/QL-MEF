@@ -1,12 +1,12 @@
 name: M3 native engine parity
 on:
-  pull_request:
-    paths: ['c/**', 'crates/**', 'fixtures/kernel/**', 'vendor/epi-kernel/**', 'migration/epi-kernel/k7-*', 'scripts/**', 'docs/KERNEL-M3-ENGINE-CONTRACT.md', '.github/workflows/m3-engine.yml']
-  push:
-    branches: [main]
-    paths: ['c/**', 'crates/**', 'fixtures/kernel/**', 'vendor/epi-kernel/**', 'migration/epi-kernel/k7-*', 'scripts/**', 'docs/KERNEL-M3-ENGINE-CONTRACT.md', '.github/workflows/m3-engine.yml']
+  workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: m3-engine-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   m3-engine:
     runs-on: ubuntu-latest
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
@@ -27,16 +27,14 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
       - run: python3 -m pip install jsonschema==4.25.1
       - name: Full source, native C/Rust and parent-consumer acceptance
         run: bash scripts/test-m3-acceptance.sh
       - name: Canonical K7 ledger and exact proof inputs
         run: python3 scripts/m3-ledger.py check
-      - name: Workspace regressions and lint
-        run: |
-          cargo test --workspace --all-targets --locked
-          cargo fmt --all -- --check
-          cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: Exact source and tree receipt
         if: always()
         run: |
@@ -47,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m3-acceptance-${{ github.event.pull_request.head.sha || github.sha }}
+          name: m3-acceptance-${{ github.sha }}
           path: |
             target/m3-acceptance/
             target/m3-domain/*.jsonl

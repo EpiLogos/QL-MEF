@@ -151,7 +151,7 @@
     "command": ["cargo", "build", "--workspace", "--locked", "--release"]
   },
   "verify": {
-    "source_command": ["cargo", "test", "--workspace", "--all-targets", "--locked"],
+    "source_command": ["bash", "scripts/verify", "full"],
     "installed_command": ["ql", "verify", "--json"]
   },
   "install": {"mode": "oi-managed-native-cli"},

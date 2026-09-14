@@ -1,12 +1,14 @@
 name: K8 reviewed graph promotion
 on:
-  pull_request:
-    paths: ['scripts/k8-graph.py', 'scripts/test-k8-graph-live.py', 'scripts/tests/test_k8_graph.py', 'scripts/k8-structure.py', 'c/registry/promotions/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-graph.yml']
   push:
     branches: [main]
     paths: ['scripts/k8-graph.py', 'scripts/test-k8-graph-live.py', 'scripts/tests/test_k8_graph.py', 'scripts/k8-structure.py', 'c/registry/promotions/**', 'fixtures/kernel/**', '.github/workflows/kernel-k8-graph.yml']
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: k8-graph-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   graph:
     runs-on: ubuntu-latest
@@ -26,7 +28,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Complete projection and negative admission
         run: |
@@ -52,7 +53,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: k8-graph-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k8-graph-${{ github.sha }}
           path: target/k8-graph/
           retention-days: 14
           if-no-files-found: error

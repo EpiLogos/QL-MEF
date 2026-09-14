@@ -1,18 +1,6 @@
 name: Native C kernel
 
 on:
-  pull_request:
-    paths:
-      - "c/**"
-      - "crates/**"
-      - "fixtures/**"
-      - "migration/epi-kernel/**"
-      - "vendor/epi-kernel/**"
-      - "scripts/**"
-      - "docs/kernel-rebuild/**"
-      - "docs/KERNEL-NATIVE-C-FOUNDATION.md"
-      - "docs/KERNEL-RECURSIVE-M-REGISTRY.md"
-      - ".github/workflows/kernel-native-c.yml"
   push:
     branches: [main]
     paths:
@@ -31,6 +19,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: native-c-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ql-native-c:
     runs-on: ubuntu-latest
@@ -38,12 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
         with:
-          components: rustfmt
+          cache-on-failure: true
       - name: Record exact native source
         run: |
           mkdir -p target/kernel-native-c
@@ -53,8 +45,6 @@ jobs:
           git diff --name-status f97745b4715311e97e44eda5c22488de5eb2455c HEAD -- vendor/epi-kernel migration/epi-kernel/source-lock.json crates/ql-core/src crates/ql-mef/src crates/ql-cli/src fixtures/kernel/vak-composition-v1.json > target/kernel-native-c/changes-from-k0-preserved-inputs.txt
           rustc --version > target/kernel-native-c/rust-toolchain.txt
           cargo --version >> target/kernel-native-c/rust-toolchain.txt
-      - name: Format
-        run: cargo fmt --all -- --check
       - name: Primitive parity
         run: bash scripts/test-epi-c-parity.sh
       - name: Native kernel parity, install and package
@@ -68,7 +58,6 @@ jobs:
       - name: Current Rust producer and executable C parity
         run: |
           set -euo pipefail
-          cargo test --workspace --all-targets --locked 2>&1 | tee target/kernel-native-c/rust-tests.txt
           cmp target/kernel-native-c/clang-parity.tsv target/kernel-native-c/c-rust-parity.tsv
           cmp target/m-tree/native.jsonl target/m-tree/c-rust-parity.jsonl
           git diff --exit-code
@@ -76,7 +65,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-native-c-${{ github.event.pull_request.head.sha || github.sha }}
+          name: kernel-native-c-${{ github.sha }}
           path: |
             target/kernel-native-c/
             target/m-tree/

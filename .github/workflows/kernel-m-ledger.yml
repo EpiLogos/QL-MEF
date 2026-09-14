@@ -1,8 +1,6 @@
 name: M ledger / matrix lock
 
 on:
-  pull_request:
-    paths: ["c/**", "crates/**", "fixtures/kernel/**", "scripts/**", "docs/origami work/**", "docs/integrations/epi-logos/**", "docs/kernel-rebuild/**", "docs/KERNEL-M-LEDGER-MATRIX-LOCK.md", ".github/workflows/kernel-m-ledger.yml"]
   push:
     branches: [main]
     paths: ["c/**", "crates/**", "fixtures/kernel/**", "scripts/**", "docs/origami work/**", "docs/integrations/epi-logos/**", "docs/kernel-rebuild/**", "docs/KERNEL-M-LEDGER-MATRIX-LOCK.md", ".github/workflows/kernel-m-ledger.yml"]
@@ -11,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: m-ledger-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   m-ledger:
     runs-on: ubuntu-latest
@@ -18,10 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
-      - run: python3 -m pip install jsonschema==4.25.1
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          cache-on-failure: true
       - name: Source, rationale, schema and evidence locks
         run: |
           set -euo pipefail
@@ -67,7 +70,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m-ledger-${{ github.event.pull_request.head.sha || github.sha }}
+          name: m-ledger-${{ github.sha }}
           path: target/m-ledger/
           retention-days: 14
           if-no-files-found: error

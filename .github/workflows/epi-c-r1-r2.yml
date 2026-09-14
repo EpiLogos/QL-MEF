@@ -1,26 +1,25 @@
 name: Epi C R1 R2
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    paths:
-      - .github/workflows/epi-c-r1-r2.yml
-      - scripts/characterize-epi-c-reference.sh
-      - scripts/test-epi-c-parity.sh
-      - scripts/validate-epi-holographic-manifest.py
-      - docs/integrations/epi-logos/**
-      - migration/epi-kernel/**
-      - c/**
-      - vendor/epi-kernel/reference/**
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: epi-c-r1-r2-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   characterize-and-parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out QL-MEF
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Check out locked Epi historical tests
         uses: actions/checkout@v4
@@ -58,9 +57,7 @@ jobs:
           target/epi-c-historical-tests/test_m1 | tee target/epi-c-historical-tests/test_m1.txt
 
       - name: Build native C primitive floor and prove parity
-        run: |
-          chmod +x scripts/test-epi-c-parity.sh
-          scripts/test-epi-c-parity.sh
+        run: bash scripts/test-epi-c-parity.sh
 
       - name: Validate holographic coordinate manifest
         run: python3 scripts/validate-epi-holographic-manifest.py
@@ -75,7 +72,3 @@ jobs:
             target/epi-c-historical-tests
             target/epi-c-parity
           if-no-files-found: error
-
-      - name: Preserve current QL-MEF package tests
-        if: always()
-        run: cargo test --workspace --locked

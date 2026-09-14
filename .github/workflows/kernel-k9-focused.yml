@@ -1,12 +1,5 @@
 name: Kernel K9 focused instrument
 on:
-  pull_request:
-    paths:
-      - 'crates/ql-mef/src/focused_instrument*.rs'
-      - 'crates/ql-mef/src/bin/ql-focused-host.rs'
-      - 'adapters/retained-field/focused-instrument-session*.mjs'
-      - 'c/registry/promotions/k9-bindings-v1.json'
-      - '.github/workflows/kernel-k9-focused.yml'
   push:
     branches: [main]
     paths:
@@ -15,8 +8,12 @@ on:
       - 'adapters/retained-field/focused-instrument-session*.mjs'
       - 'c/registry/promotions/k9-bindings-v1.json'
       - '.github/workflows/kernel-k9-focused.yml'
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: k9-focused-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   focused-instrument:
     runs-on: ubuntu-latest
@@ -24,11 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
         with:
-          components: rustfmt, clippy
+          cache-on-failure: true
       - name: K9 focused projection, AW1/AW2 joins and host contract
         run: |
           cargo test --locked -p ql-mef focused_instrument
@@ -58,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: k9-focused-${{ github.event.pull_request.head.sha || github.sha }}
+          name: k9-focused-${{ github.sha }}
           path: target/k9-focused/
           retention-days: 14
           if-no-files-found: error
