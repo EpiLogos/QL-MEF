@@ -13,7 +13,7 @@ on:
       - 'data/epi-bimba-map/anuttara-language-map.md'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: aw-field-${{ github.ref }}
   cancel-in-progress: true
@@ -26,8 +26,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: subject
-          persist-credentials: true
-          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: EpiLogos/Epi-Logos-C-Experiments
@@ -73,86 +72,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: '1.98.1'
-      - name: AW0-CLOSE one-shot receipt-overlay wiring
-        if: github.head_ref == 'agent/aw190-receipt-disposition'
-        working-directory: subject
-        shell: bash
-        run: |
-          set -euo pipefail
-          git fetch origin agent/aw190-receipt-disposition main --no-tags
-          git checkout -B agent/aw190-receipt-disposition origin/agent/aw190-receipt-disposition
-          python3 - <<'PY'
-          from pathlib import Path
-
-          script = Path('scripts/aw0.py')
-          text = script.read_text()
-
-          replacements = [
-              (
-                  """The existing matrices own capability IDs. This projection expands every member,\nretaining its source fields and an explicit composition gap. Code/source pins\nare evidence of inspection, never evidence that the full composition performed.""",
-                  """The existing matrices own capability IDs. This projection expands every member\nwithout changing source identity, then applies a separate accepted-receipt overlay\nto state what is currently accepted, ready, external, research-only or still a gap.""",
-              ),
-              (
-                  """SCHEMA = 'epi.aw-field-projection/v1'\nORGANS = ('Khora', 'Hen', 'Pleroma', 'Chronos', 'Anima', 'Aletheia')""",
-                  """SCHEMA = 'epi.aw-field-projection/v1'\nACCEPTANCE = BASE + 'aw0-acceptance-receipts.json'\nORGANS = ('Khora', 'Hen', 'Pleroma', 'Chronos', 'Anima', 'Aletheia')""",
-              ),
-              (
-                  """    rule = load(BASE + 'aw0-native-bindings.json')\n    source = source_basis()\n    if rule['schema_version'] != 'epi.aw-native-binding/v1' or source['schema_version'] != 'epi.aw-source-basis/v1':\n        raise ValueError('unsupported AW source/binding version')""",
-                  """    rule = load(BASE + 'aw0-native-bindings.json')\n    source = source_basis()\n    acceptance = load(ACCEPTANCE)\n    if rule['schema_version'] != 'epi.aw-native-binding/v1' or source['schema_version'] != 'epi.aw-source-basis/v1':\n        raise ValueError('unsupported AW source/binding version')\n    if acceptance.get('schema_version') != 'epi.aw-acceptance-receipts/v1':\n        raise ValueError('unsupported AW acceptance-receipt version')""",
-              ),
-          ]
-          for old, new in replacements:
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'expected one guarded AW0 replacement, found {count}: {old[:80]!r}')
-              text = text.replace(old, new, 1)
-
-          marker = """    ids = [r['id'] for r in records]\n"""
-          overlay = """    receipts = acceptance.get('receipts', {})\n    disposition_rules = acceptance.get('rules', [])\n    allowed_dispositions = {\n        'ACCEPTED-NATIVE', 'READY-TO-COMPOSE', 'EXTERNAL-OWNER',\n        'SOURCE-DISCREPANCY', 'RESEARCH-ONLY', 'EPI-GAP',\n    }\n    for receipt_id, receipt in receipts.items():\n        for field in ('repository', 'pull_request', 'accepted_head', 'merge_commit', 'standing', 'proves'):\n            if not receipt.get(field):\n                raise ValueError(f'incomplete acceptance receipt {receipt_id}: {field}')\n        for field in ('accepted_head', 'merge_commit'):\n            if not re.fullmatch(r'[0-9a-f]{40}', receipt[field]):\n                raise ValueError(f'invalid acceptance SHA {receipt_id}: {field}')\n        if receipt['standing'] != 'ACCEPTED-NATIVE':\n            raise ValueError('receipt is not accepted native evidence: ' + receipt_id)\n\n    def rule_matches(candidate, record):\n        selector = candidate.get('selector', {})\n        if selector.get('inventories') and record['inventory'] not in selector['inventories']:\n            return False\n        if selector.get('ids') and record['id'] not in selector['ids']:\n            return False\n        if selector.get('gap_ids') and record['gap']['id'] not in selector['gap_ids']:\n            return False\n        return True\n\n    disposition_counts = {}\n    for record in records:\n        matches = [candidate for candidate in disposition_rules if rule_matches(candidate, record)]\n        if not matches:\n            raise ValueError('no current disposition rule for ' + record['id'])\n        highest = max(candidate.get('priority', -1) for candidate in matches)\n        winners = [candidate for candidate in matches if candidate.get('priority', -1) == highest]\n        if len(winners) != 1:\n            raise ValueError('ambiguous current disposition for ' + record['id'])\n        current = winners[0]\n        disposition = current.get('disposition')\n        if disposition not in allowed_dispositions:\n            raise ValueError('unsupported current disposition for ' + record['id'])\n        receipt_ids = current.get('receipt_ids', [])\n        missing = [receipt_id for receipt_id in receipt_ids if receipt_id not in receipts]\n        if missing:\n            raise ValueError('unknown acceptance receipt for ' + record['id'] + ': ' + ', '.join(missing))\n        if disposition == 'ACCEPTED-NATIVE' and not receipt_ids:\n            raise ValueError('accepted row has no native receipt: ' + record['id'])\n        dependency = current.get('current_dependency')\n        if disposition == 'EPI-GAP' and not dependency:\n            raise ValueError('anonymous EPI-GAP is forbidden: ' + record['id'])\n        record['gap_standing'] = 'AW0-BASELINE-GAP-RETAINED-FOR-PROVENANCE'\n        record['disposition'] = disposition\n        record['disposition_rule'] = current['id']\n        record['disposition_reason'] = current['reason']\n        record['acceptance_receipt_ids'] = receipt_ids\n        if dependency:\n            record['current_dependency'] = dependency\n        record['mechanic_standing'] = {\n            'ACCEPTED-NATIVE': 'ACCEPTED-NATIVE-RECEIPT',\n            'READY-TO-COMPOSE': 'ACCEPTED-MECHANICS-WITHOUT-ROW-WHOLE-RECEIPT',\n            'EXTERNAL-OWNER': 'NAMED-EXTERNAL-OWNER',\n            'SOURCE-DISCREPANCY': 'SOURCE-CLAIM-RETAINED-NOT-RUNTIME-FACT',\n            'RESEARCH-ONLY': 'SOURCE-OR-RESEARCH-EVIDENCE-NOT-RUNTIME-FACT',\n            'EPI-GAP': 'NAMED-UNRESOLVED-COMPOSITION-GAP',\n        }[disposition]\n        disposition_counts[disposition] = disposition_counts.get(disposition, 0) + 1\n\n"""
-          if text.count(marker) != 1:
-              raise SystemExit('AW0 record-finalisation marker drifted')
-          text = text.replace(marker, overlay + marker, 1)
-
-          old_return = """    return {'schema_version': SCHEMA, 'scope': 'enumerated-source-field-with-explicit-implementation-and-source-gaps',\n            'native_revisions': source['repositories'], 'counts': counts,\n            'readiness_reconciliation': {'historical': load(BASE + 'epi-capability-readiness.json'),\n                'current': 'Retain historical 21 READY-TO-COMPOSE / 15 EPI-GAP as that source snapshot. Landed M1-M3 finite/native mechanics and AIKit#302 / Factory#230 do not certify full Epi composition.',\n                'preserved_engine_receipts': ['docs/KERNEL-M1-ENGINE-CONTRACT.md', 'docs/kernel-rebuild/m2-engine-v1.md', 'docs/KERNEL-M3-ENGINE-CONTRACT.md']},\n            'records': records}"""
-          new_return = """    return {'schema_version': SCHEMA, 'scope': 'enumerated-source-field-with-receipt-qualified-current-disposition',\n            'native_revisions': source['repositories'], 'counts': counts,\n            'disposition_counts': disposition_counts,\n            'runtime_acceptance': bool(acceptance.get('whole_field_runtime_acceptance')),\n            'runtime_acceptance_reason': acceptance.get('runtime_acceptance_reason'),\n            'acceptance_overlay': {\n                'schema_version': acceptance['schema_version'], 'owner': acceptance['owner'],\n                'receipts': receipts, 'rules': [candidate['id'] for candidate in disposition_rules]},\n            'readiness_reconciliation': {'historical': load(BASE + 'epi-capability-readiness.json'),\n                'current': 'Historical readiness remains its source snapshot. Current row disposition is derived only from the versioned AW0 acceptance-receipt overlay; source/code presence alone never upgrades a row.',\n                'preserved_engine_receipts': ['docs/KERNEL-M1-ENGINE-CONTRACT.md', 'docs/kernel-rebuild/m2-engine-v1.md', 'docs/KERNEL-M3-ENGINE-CONTRACT.md']},\n            'records': records}"""
-          if text.count(old_return) != 1:
-              raise SystemExit('AW0 return block drifted')
-          text = text.replace(old_return, new_return, 1)
-
-          old_summary = """    print(json.dumps(result if args.json or args.id else {'schema_version': SCHEMA, 'counts': result['counts'],\n          'runtime_acceptance': False}, ensure_ascii=False, sort_keys=True, indent=2))"""
-          new_summary = """    print(json.dumps(result if args.json or args.id else {'schema_version': SCHEMA, 'counts': result['counts'],\n          'disposition_counts': result['disposition_counts'], 'runtime_acceptance': result['runtime_acceptance'],\n          'runtime_acceptance_reason': result['runtime_acceptance_reason']}, ensure_ascii=False, sort_keys=True, indent=2))"""
-          if text.count(old_summary) != 1:
-              raise SystemExit('AW0 summary block drifted')
-          script.write_text(text.replace(old_summary, new_summary, 1))
-
-          tests = Path('scripts/tests/test_aw0.py')
-          test_text = tests.read_text()
-          old_test = """    def test_no_source_or_pilot_receipt_promotes_readiness(self):\n        result = aw0.project()\n        self.assertTrue(all(r['disposition'] == 'EPI-GAP' for r in result['records']))\n        self.assertEqual(result['readiness_reconciliation']['historical']['counts']['READY-TO-COMPOSE'], 21)\n        self.assertEqual(result['readiness_reconciliation']['historical']['counts']['EPI-GAP'], 15)\n"""
-          new_test = """    def test_current_disposition_is_receipt_qualified_without_rewriting_baseline_gaps(self):\n        result = aw0.project()\n        allowed = {'ACCEPTED-NATIVE', 'READY-TO-COMPOSE', 'EXTERNAL-OWNER',\n                   'SOURCE-DISCREPANCY', 'RESEARCH-ONLY', 'EPI-GAP'}\n        self.assertEqual(sum(result['disposition_counts'].values()), len(result['records']))\n        self.assertTrue(set(result['disposition_counts']).issubset(allowed))\n        self.assertEqual(result['readiness_reconciliation']['historical']['counts']['READY-TO-COMPOSE'], 21)\n        self.assertEqual(result['readiness_reconciliation']['historical']['counts']['EPI-GAP'], 15)\n        for row in result['records']:\n            with self.subTest(id=row['id']):\n                self.assertEqual(row['gap_standing'], 'AW0-BASELINE-GAP-RETAINED-FOR-PROVENANCE')\n                self.assertIn(row['disposition'], allowed)\n                if row['disposition'] == 'ACCEPTED-NATIVE':\n                    self.assertTrue(row['acceptance_receipt_ids'])\n                    for receipt_id in row['acceptance_receipt_ids']:\n                        self.assertEqual(result['acceptance_overlay']['receipts'][receipt_id]['standing'],\n                                         'ACCEPTED-NATIVE')\n                if row['disposition'] == 'EPI-GAP':\n                    self.assertTrue(row.get('current_dependency'))\n\n"""
-          if test_text.count(old_test) != 1:
-              raise SystemExit('old AW0 readiness test drifted')
-          test_text = test_text.replace(old_test, new_test, 1)
-
-          descriptor_old = """        self.assertFalse(descriptor['runtime_acceptance'])\n        self.assertFalse(descriptor['runtime_registry'])"""
-          descriptor_new = """        self.assertFalse(descriptor['runtime_acceptance'])\n        self.assertFalse(descriptor['runtime_registry'])\n        self.assertEqual(descriptor['acceptance_receipts'], 'aw0-acceptance-receipts.json')"""
-          if test_text.count(descriptor_old) != 1:
-              raise SystemExit('AW0 descriptor test drifted')
-          test_text = test_text.replace(descriptor_old, descriptor_new, 1)
-
-          insertion = """    def test_source_verification_requires_real_matching_bytes(self):\n"""
-          ambiguity_test = """    def test_ambiguous_current_disposition_fails_closed(self):\n        original = aw0.load\n        def broken(path):\n            value = original(path)\n            if path.endswith('aw0-acceptance-receipts.json'):\n                duplicate = dict(value['rules'][0])\n                duplicate['id'] = 'duplicate-highest-rule'\n                value['rules'].append(duplicate)\n            return value\n        with patch.object(aw0, 'load', broken):\n            with self.assertRaisesRegex(ValueError, 'ambiguous current disposition'):\n                aw0.project()\n\n"""
-          if test_text.count(insertion) != 1:
-              raise SystemExit('AW0 test insertion marker drifted')
-          tests.write_text(test_text.replace(insertion, ambiguity_test + insertion, 1))
-          PY
-          git show origin/main:.github/workflows/aw-field.yml > .github/workflows/aw-field.yml
-          printf '%s\n' 'remove after AW0 receipt overlay wiring; deletion triggers final clean AW-field acceptance' > .aw190-acceptance-trigger
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add scripts/aw0.py scripts/tests/test_aw0.py .github/workflows/aw-field.yml .aw190-acceptance-trigger
-          git diff --cached --check
-          git commit -m "AW0: derive current dispositions from accepted receipts"
-          git push origin HEAD:agent/aw190-receipt-disposition
       - name: Exact accepted subject and read-only source capture
         working-directory: subject
         run: |
