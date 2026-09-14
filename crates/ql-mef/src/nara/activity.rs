@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 
 use super::SourceRevision;
-use super::domain::{EvidenceStanding, ProtectedRef};
+use super::domain::{Aw3ThoughtConsumptionReception, EvidenceStanding, ProtectedRef};
 
 pub const NARA_ACTIVITY_CONTRACT: &str = "ql.nara-activity/v1";
 
@@ -251,47 +251,35 @@ impl ActivityOccurrence {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ThoughtConsumptionRef {
-    /// Owner-defined producer contract, e.g. the current Factory/AW3 thought
-    /// consumption contract. Nara never copies the thought into twelve silos.
-    pub owner_contract_ref: String,
+    /// Compatibility handle over the landed typed AW3 reception. The earlier
+    /// free-form owner/result/source fields are deliberately gone: the typed
+    /// producer receipt is the authority and `thought_ref` is its stable
+    /// consumption identity for existing Nara mutation helpers.
     pub thought_ref: String,
-    pub thought_identity_ref: String,
-    pub run_ref: String,
-    pub result_ref: String,
-    pub source_interpretation_ref: String,
-    pub evidence_refs: Vec<String>,
-    pub human_response_ref: Option<ProtectedRef>,
-    pub retention_policy_ref: String,
-    pub recognition_or_question_ref: String,
-    pub standing: EvidenceStanding,
+    pub reception: Aw3ThoughtConsumptionReception,
 }
 
 impl ThoughtConsumptionRef {
+    pub fn from_reception(reception: Aw3ThoughtConsumptionReception) -> Result<Self, String> {
+        reception.validate()?;
+        let value = Self {
+            thought_ref: reception.consumption_id.clone(),
+            reception,
+        };
+        value.validate()?;
+        Ok(value)
+    }
+
     pub fn validate(&self) -> Result<(), String> {
-        text(
-            &self.owner_contract_ref,
-            "thought-consumption owner contract",
-        )?;
-        text(&self.thought_ref, "thought reference")?;
-        text(&self.thought_identity_ref, "thought identity")?;
-        text(&self.run_ref, "thought run")?;
-        text(&self.result_ref, "thought result")?;
-        text(
-            &self.source_interpretation_ref,
-            "thought source interpretation",
-        )?;
-        refs(&self.evidence_refs, "thought evidence reference", 512)?;
-        if let Some(response) = &self.human_response_ref {
-            response.validate()?;
+        text(&self.thought_ref, "thought consumption")?;
+        self.reception.validate()?;
+        if self.thought_ref != self.reception.consumption_id {
+            return Err("thought handle differs from its landed AW3 consumption identity".into());
         }
-        text(&self.retention_policy_ref, "thought retention policy")?;
-        text(
-            &self.recognition_or_question_ref,
-            "thought Recognition/continuing-question reference",
-        )
+        Ok(())
     }
 }
 
@@ -332,8 +320,17 @@ impl NaraActivityLog {
         let mut thought_refs = BTreeSet::new();
         for thought in &self.thought_consumptions {
             thought.validate()?;
+            let reception = &thought.reception;
+            if reception.subject_id != self.subject_id
+                || reception.day_ref != self.temporal.day_ref
+                || reception.day_revision != self.temporal.day_revision
+                || reception.now_ref != self.temporal.now_ref
+                || reception.now_revision != self.temporal.now_revision
+            {
+                return Err("typed AW3 reception is not in this Nara activity Day/NOW".into());
+            }
             if !thought_refs.insert(thought.thought_ref.as_str()) {
-                return Err("duplicate consumed thought reference".into());
+                return Err("duplicate AW3 thought-consumption receipt".into());
             }
         }
         refs(
