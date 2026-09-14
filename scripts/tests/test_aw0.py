@@ -159,6 +159,50 @@ class AwFieldTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'ambiguous current disposition'):
                 aw0.project()
 
+    def test_duplicate_rule_identity_fails_closed(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'].append(dict(value['rules'][0]))
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'duplicate disposition rule id'):
+                aw0.project()
+
+    def test_unknown_selector_field_cannot_broaden_a_rule(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={'inventoriess': ['source-discrepancy']})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'unsupported disposition selector'):
+                aw0.project()
+
+    def test_dead_selector_cannot_survive_as_unused_policy(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={'ids': ['not-a-real-record:anywhere']})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'disposition rule matches no source record'):
+                aw0.project()
+
+    def test_empty_selector_cannot_match_the_entire_field(self):
+        original = aw0.load
+        def broken(path):
+            value = original(path)
+            if path.endswith('aw0-acceptance-receipts.json'):
+                value['rules'][0] = dict(value['rules'][0], selector={})
+            return value
+        with patch.object(aw0, 'load', broken):
+            with self.assertRaisesRegex(ValueError, 'nonempty selector'):
+                aw0.project()
+
     def test_unknown_acceptance_receipt_fails_closed(self):
         original = aw0.load
         def broken(path):
@@ -179,7 +223,7 @@ class AwFieldTests(unittest.TestCase):
                 value['rules'][0].pop('current_dependency', None)
             return value
         with patch.object(aw0, 'load', broken):
-            with self.assertRaisesRegex(ValueError, 'anonymous EPI-GAP'):
+            with self.assertRaisesRegex(ValueError, 'EPI-GAP disposition rule has no dependency'):
                 aw0.project()
 
     def test_source_verification_requires_real_matching_bytes(self):
