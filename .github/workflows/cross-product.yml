@@ -1,9 +1,9 @@
 name: Cross-product (weekly)
 
-# Checks that clone Factory at a pinned revision run here weekly and on
-# demand, not per push: Factory gates its own main, and the local halves of
-# these proofs run in ql-mef-rust.yml. A red job is a rotted pin or a moved
-# seam, repaired in its own change.
+# Every Quaternal Logic proof that reads another repository is commissioned
+# here, once per week or explicitly on demand. Sibling owners gate their own
+# mains; a red result here means a pin or owner seam moved, not that every QL
+# pull request should rebuild the wider product field.
 
 on:
   schedule:
@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}
@@ -85,3 +86,36 @@ jobs:
       - name: Run Factory corrected pairing evidence
         working-directory: /tmp/factory/ql-agent-experiments/deep-ql
         run: node --test test/pairing.test.js
+
+  aw-field:
+    uses: ./.github/workflows/aw-field.yml
+
+  bimba-map:
+    uses: ./.github/workflows/epi-bimba-map-conformance.yml
+
+  epi-c-r1-r2:
+    uses: ./.github/workflows/epi-c-r1-r2.yml
+
+  epi-c-reference:
+    uses: ./.github/workflows/epi-c-reference.yml
+
+  vak-source-parity:
+    uses: ./.github/workflows/epi-vak-source-parity.yml
+
+  k8-continuous:
+    uses: ./.github/workflows/kernel-k8-continuous.yml
+
+  m2-source-parity:
+    uses: ./.github/workflows/kernel-m2.yml
+
+  m3-source-parity:
+    uses: ./.github/workflows/kernel-m3-engine.yml
+
+  kernel-source-ground:
+    uses: ./.github/workflows/kernel-rebuild-source-ground.yml
+
+  m3-native-source:
+    uses: ./.github/workflows/m3-engine.yml
+
+  ux-practice:
+    uses: ./.github/workflows/ux-intent.yml
