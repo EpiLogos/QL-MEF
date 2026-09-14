@@ -1,0 +1,14 @@
+name: K9 final census diagnostic
+on:
+  push:
+    branches: [agent/k9-final-census-check]
+permissions:
+  contents: read
+jobs:
+  census:
+    runs-on: macos-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify final current-source census receipt
+        run: python3 scripts/k8-census.py --check
