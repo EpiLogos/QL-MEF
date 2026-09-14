@@ -11,9 +11,8 @@ use ql_mef::continuous::host::{MAX_HOST_INPUT, MAX_HOST_OUTPUT};
 use ql_mef::continuous::personal::PersonalCoupledSession;
 use ql_mef::continuous::{FieldInput, LiftInput};
 use ql_mef::focused_instrument::{
-    BimbaSelection, ClockPresentation, FocusedInstrument, FocusedInstrumentSnapshot,
-    InstrumentFocus, InstrumentOwnerView, OperationStanding, SelectionTracking,
-    VakExpressionBinding,
+    BimbaSelection, FocusedInstrument, FocusedInstrumentSnapshot, InstrumentFocus,
+    InstrumentOwnerView, OperationStanding, SelectionTracking, VakExpressionBinding,
 };
 use ql_mef::m_tree::native_m_registry;
 use ql_mef::nara::{PersonalConstitution, PersonalEventInput};
@@ -234,8 +233,6 @@ impl FocusedHost {
         operation: &str,
         error: Option<&str>,
         owner_receipt: Option<Value>,
-        include_bimba: bool,
-        include_inspection: bool,
     ) -> Value {
         let snapshot = self.snapshot();
         let mut value = json!({
@@ -259,7 +256,7 @@ impl FocusedHost {
             });
             value["error"] = json!(snapshot_error);
         }
-        if include_bimba {
+        if matches!(operation, "ready" | "bimba" | "inspect") {
             match self.navigation() {
                 Ok(navigation) => value["bimba"] = navigation,
                 Err(navigation_error) => {
@@ -268,7 +265,7 @@ impl FocusedHost {
                 }
             }
         }
-        if include_inspection {
+        if operation == "inspect" {
             value["inspection"] = self
                 .session
                 .inspect()
@@ -278,11 +275,11 @@ impl FocusedHost {
     }
 
     fn ready(&mut self) -> Value {
-        self.receipt(None, "ready", "ready", None, None, true, false)
+        self.receipt(None, "ready", "ready", None, None)
     }
 
     fn reject_input(&mut self, error: &str) -> Value {
-        self.receipt(None, "refused", "parse", Some(error), None, false, false)
+        self.receipt(None, "refused", "parse", Some(error), None)
     }
 
     fn admit(&mut self, request: &FocusedHostRequest) -> Result<(), String> {
@@ -323,15 +320,7 @@ impl FocusedHost {
             } else {
                 "unavailable"
             };
-            return self.receipt(
-                Some(&request_id),
-                status,
-                "admission",
-                Some(&error),
-                None,
-                false,
-                false,
-            );
+            return self.receipt(Some(&request_id), status, "admission", Some(&error), None);
         }
         let operation_name = match &request.command {
             FocusedHostOperation::Read {} => "read",
@@ -454,8 +443,6 @@ impl FocusedHost {
             operation_name,
             error.as_deref(),
             owner_receipt,
-            matches!(operation_name, "bimba" | "inspect"),
-            operation_name == "inspect",
         )
     }
 }
@@ -530,6 +517,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ql_mef::focused_instrument::ClockPresentation;
 
     #[test]
     fn focused_host_command_contract_is_closed_and_clock_pair_is_not_a_domain_alias() {
