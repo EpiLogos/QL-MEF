@@ -76,7 +76,8 @@ The current classes are:
 
 - **ACCEPTED-NATIVE** — an exact accepted receipt proves the row or an explicitly
   family-wide native contract. Examples include all 194 recovered property
-  definitions, the finite C′/CF/CFP/CS grammar and native conduct, and the original
+  definitions, the finite C′/CF/CFP/CS grammar and native conduct, all twelve
+  T/T′ meanings through Factory consumption + QL interpretation, and the original
   musical-performance job through Factory → QL → K8.
 - **READY-TO-COMPOSE** — the relevant native mechanics/owners are accepted, but
   this source row has no row-specific whole-composition receipt. Historical SP
@@ -99,7 +100,7 @@ later evidence layer over the same records.
 
 ## Accepted return already represented
 
-The first #190 ledger records exact merged evidence from:
+The #190 ledger records exact merged evidence from:
 
 - #166 — native rich property assertions and controlled execution of all 194
   recovered definitions;
@@ -115,12 +116,17 @@ The first #190 ledger records exact merged evidence from:
 - #176 — the accepted Factory → QL → M1/M2/M3/continuous → early Nara → retained
   GPU/browser-sound join and shared current census floor;
 - #186 — rooted M/Bimba-Pratibimba, S5 self-reference, source-qualified QV and
-  native Wiki participation.
+  native Wiki participation;
+- #182 — all twelve T/T′ meanings interpreted against immutable Factory
+  consumption actuality, Central NOW/source identity and optional same-Run Vāk
+  evidence, emitting source-qualified Recognition candidates without stealing
+  AIKit's naming/Method authority.
 
-#182 supplies QL's all-twelve T/T′ consumption/Recognition interpretation and
-#184 supplies the QL-owned source-qualified operative binding/currentness reading.
-Until those PRs merge, the relevant rows remain explicitly READY-TO-COMPOSE with
-those exact named dependencies; they are not pre-certified by this document.
+#184 remains the sole live #94-owned repository dependency: it supplies the
+QL-owned source-qualified operative binding/currentness reading that AIKit can
+consume without fabricating MEF lens/form semantics. Until that PR merges, rows
+whose only remaining gap is AW2-SCOPE stay READY-TO-COMPOSE with that exact named
+dependency; they are not pre-certified here.
 
 ## Why whole-field runtime acceptance remains false
 
