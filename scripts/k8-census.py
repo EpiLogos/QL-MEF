@@ -174,14 +174,14 @@ def main():
     args = parser.parse_args()
     inventory = project()
     result = summary(inventory)
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / 'inventory.json').write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + '\n')
+    (args.out / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')
+    print(json.dumps(result, sort_keys=True))
     if args.write_receipt:
         (ROOT / RECEIPT).write_text(json.dumps(result, indent=2) + '\n')
     if args.check and read(RECEIPT) != result:
         raise ValueError('current source inventory changed; reconcile reviewed bindings/receipt, not historical K4 proofs')
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / 'inventory.json').write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + '\n')
-    (args.out / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')
-    print(json.dumps(result))
 
 
 if __name__ == '__main__':

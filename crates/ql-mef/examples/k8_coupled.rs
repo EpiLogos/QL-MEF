@@ -1,7 +1,8 @@
 //! Installed full-event acceptance consumer. Geometry and subjects are explicitly
 //! controlled here; the dated sky comes from the actual provider receipt.
 use ql_mef::continuous::coupled::{
-    CoupledFieldSession, CoupledInput, FrequencyBinding, HarmonicSource, REQUEST,
+    ConditionFrequencyBinding, CoupledFieldSession, CoupledInput, FrequencyBinding, HarmonicSource,
+    REQUEST, REQUEST_V2,
 };
 use ql_mef::continuous::{FieldInput, LiftInput};
 use ql_mef::m1_engine::{EngineConfig, HarmonicSelection, M1Engine};
@@ -36,12 +37,13 @@ fn newer_seed(input: &mut CoupledInput) {
 }
 fn run() -> Result<(), String> {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() != 5 {
-        return Err("usage: k8_coupled WORKER SKY_M2_EVENT INITIAL_FIELD_JSON OUT_DIR".into());
+    let dual_bus = args.get(5).is_some_and(|arg| arg == "v2");
+    if args.len() != 5 && !(args.len() == 6 && dual_bus) {
+        return Err("usage: k8_coupled WORKER SKY_M2_EVENT INITIAL_FIELD_JSON OUT_DIR [v2]".into());
     }
     let event = read(&args[2])?;
     let initial = read(&args[3])?;
-    let field: FieldInput =
+    let mut field: FieldInput =
         serde_json::from_value(initial["field"].clone()).map_err(|e| e.to_string())?;
     let sky_m2: M2Request =
         serde_json::from_value(event["m2_input"].clone()).map_err(|e| e.to_string())?;
@@ -96,14 +98,46 @@ fn run() -> Result<(), String> {
             octet_index: i as u8,
         })
         .collect();
+    let mut condition_bindings = Vec::new();
+    if dual_bus {
+        // Deliberately supplied instrument geometry: two musical voices may
+        // use the same spatial shape. This is not measured modal degeneracy.
+        // Original sample/constituent identities and the Vimarsha modes survive.
+        let condition = m2.condition.as_ref().unwrap();
+        let path = ql_mef::m2_condition::correspondence_field()
+            .rule(condition.maqam_index, condition.role)
+            .ok_or("acceptance source path is absent")?;
+        let resonator = m2.resonator.as_mut().unwrap();
+        let extra: Vec<_> = resonator
+            .modes
+            .iter()
+            .enumerate()
+            .map(|(i, original)| {
+                let mut mode = original.clone();
+                mode.mode_ref = format!("controlled:condition-mode/{i}");
+                mode.source_coordinate = path.maqam_coordinate.clone();
+                condition_bindings.push(ConditionFrequencyBinding {
+                    mode_ref: mode.mode_ref.clone(),
+                    pitch_index: i as u8,
+                });
+                mode
+            })
+            .collect();
+        resonator.modes.extend(extra);
+        field.audio_gains.extend(field.audio_gains.clone());
+        for sample in &mut field.samples {
+            sample.mode_shapes.extend(sample.mode_shapes.clone());
+        }
+    }
     let input = CoupledInput {
-        schema: REQUEST.into(),
+        schema: if dual_bus { REQUEST_V2 } else { REQUEST }.into(),
         m1,
         m2,
         m3,
         m3_commands: vec![],
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
         frequency_bindings: bindings,
+        condition_frequency_bindings: condition_bindings,
         source_receipts: vec![event["sky"].clone()],
     };
     let original = serde_json::to_value(&input).unwrap();
@@ -160,6 +194,24 @@ fn run() -> Result<(), String> {
     {
         assert_eq!(mode.frequency_hz, frequency.as_f64().unwrap());
     }
+    if dual_bus {
+        let modes = &owner
+            .current_basis()
+            .m2_input
+            .resonator
+            .as_ref()
+            .unwrap()
+            .modes;
+        assert_eq!(modes.len(), 16);
+        for (i, mode) in modes[8..].iter().enumerate() {
+            assert_eq!(
+                mode.frequency_hz,
+                owner.current_basis().m2["condition"]["musical"]["pitches_hz"][i]
+                    .as_f64()
+                    .unwrap()
+            );
+        }
+    }
     states.push(owner.advance(2048, false)?);
     let active = owner.snapshot();
     let read = owner.read()?;
@@ -173,6 +225,9 @@ fn run() -> Result<(), String> {
     let before = owner.snapshot();
     let mut changed = input.clone();
     newer_seed(&mut changed);
+    if dual_bus {
+        changed.m2.condition.as_mut().unwrap().tonic_hz *= 1.2;
+    }
     let mut m1_owner = M1Engine::new(changed.m1.clone())?;
     m1_owner.configure_harmonics(
         changed.m1.revision.parse::<u64>().unwrap(),
@@ -239,6 +294,21 @@ fn run() -> Result<(), String> {
     newer_seed(&mut invalid);
     assert!(owner.replace(invalid).is_err());
     assert_eq!(owner.snapshot(), updated);
+    if dual_bus {
+        let mut invalid = changed.clone();
+        newer_seed(&mut invalid);
+        invalid.condition_frequency_bindings[0].mode_ref =
+            invalid.frequency_bindings[0].mode_ref.clone();
+        assert!(owner.replace(invalid).is_err());
+        assert_eq!(owner.snapshot(), updated);
+        let before_hz = before["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0]
+            .as_f64()
+            .unwrap();
+        let after_hz = updated["basis"]["m2"]["condition"]["musical"]["pitches_hz"][0]
+            .as_f64()
+            .unwrap();
+        assert!((after_hz / before_hz - 1.2).abs() < 1e-12);
+    }
     states.push(owner.advance(512, true)?);
     assert!(
         owner.snapshot()["field"]["audio"]
@@ -269,7 +339,8 @@ fn run() -> Result<(), String> {
     save(
         "acceptance.json",
         &json!({"schema":"ql.k8-coupled-acceptance/v1", "frames":states.len(),
-        "full_M1_M2_M3":true, "native_harmonic_and_pose_to_material":true, "originals_retained":true,
+        "full_M1_M2_M3":true, "input_schema":if dual_bus { REQUEST_V2 } else { REQUEST },
+        "condition_and_vimarsha_same_native_owner":dual_bus, "native_harmonic_and_pose_to_material":true, "originals_retained":true,
         "atomic_full_basis_adoption":true,"stale_and_invalid_refused":true,"one_continuous_owner":true,
         "exact_replay":true,"current_sky_snapshot":event["sky"]["snapshot_ref"],
         "limits":["controlled source-linked geometry, not a measured eigensystem","no Nara reception proof","no local desktop or acoustic-device claim"]}),
