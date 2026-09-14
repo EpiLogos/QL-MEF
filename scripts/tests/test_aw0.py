@@ -82,6 +82,32 @@ class AwFieldTests(unittest.TestCase):
                 if row['disposition'] == 'EPI-GAP':
                     self.assertTrue(row.get('current_dependency'))
 
+    def test_all_twelve_thought_meanings_are_accepted_through_the_aw3_receipt(self):
+        result = aw0.project()
+        thoughts = [row for row in result['records'] if row['inventory'] == 'thought']
+        self.assertEqual(len(thoughts), 12)
+        for row in thoughts:
+            with self.subTest(id=row['id']):
+                self.assertEqual(row['disposition'], 'ACCEPTED-NATIVE')
+                self.assertIn('ql-thought-consumption', row['acceptance_receipt_ids'])
+                self.assertNotIn('current_dependency', row)
+
+    def test_closed_aw3_is_not_a_dependency_and_scope_remains_the_only_ql94_dependency(self):
+        result = aw0.project()
+        dependencies = [
+            row['current_dependency']
+            for row in result['records']
+            if row.get('current_dependency')
+        ]
+        self.assertFalse(any('#182' in dependency for dependency in dependencies))
+        ql94_dependencies = {
+            dependency
+            for dependency in dependencies
+            if dependency.startswith('EpiLogos/QL-MEF#')
+            and dependency not in {'EpiLogos/QL-MEF#133', 'EpiLogos/QL-MEF#134'}
+        }
+        self.assertEqual(ql94_dependencies, {'EpiLogos/QL-MEF#183/#184'})
+
     def test_staged_skills_are_not_deduplicated_by_the_display_name(self):
         skills = [r for r in aw0.project()['records'] if r['inventory'] == 'source-skill']
         tmux = [r for r in skills if r['meaning'] == 'tmux']
