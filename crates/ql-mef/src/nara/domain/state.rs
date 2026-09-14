@@ -1,12 +1,10 @@
-use std::collections::BTreeSet;
-
 use serde::{Deserialize, Serialize};
 
 use crate::nara::{BioQuaternion, EventBasisRefs, SourceRevision};
 
 use super::{
-    ContextField, EmbodiedField, IdentityField, IntegrationField, M4_DOMAIN_CONTRACT, OracleRecord,
-    TransformationHistory, check_source, check_text,
+    ContextField, EmbodiedField, IdentityField, IntegrationField, M4_DOMAIN_CONTRACT, OracleField,
+    TransformationField, check_source, check_text,
 };
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -17,8 +15,8 @@ pub struct M4DomainState {
     pub event: EventBasisRefs,
     pub identity: IdentityField,
     pub embodied: EmbodiedField,
-    pub oracle: Vec<OracleRecord>,
-    pub transformation: TransformationHistory,
+    pub oracle: OracleField,
+    pub transformation: TransformationField,
     pub context: ContextField,
     pub integration: IntegrationField,
     pub q_composed: BioQuaternion,
@@ -37,24 +35,17 @@ impl M4DomainState {
         }
         self.identity.validate()?;
         self.embodied.validate()?;
-        if self.oracle.len() > 4096 {
-            return Err("M4.2 oracle history exceeds contract bounds".into());
-        }
-        let mut oracle_ids = BTreeSet::new();
-        for record in &self.oracle {
-            record.validate()?;
+        self.oracle.validate()?;
+        for record in &self.oracle.records {
             if record.original.subject_id != self.subject_id
                 || record.original.event_ref != self.event.event_ref
                 || record.original.profile_generation != self.event.profile_generation
             {
                 return Err("oracle record does not belong to this M4 occasion".into());
             }
-            if !oracle_ids.insert(record.original.packet_ref.as_str()) {
-                return Err("duplicate oracle packet reference".into());
-            }
         }
         self.transformation.validate()?;
-        if self.transformation.subject_id != self.subject_id {
+        if self.transformation.phase_history.subject_id != self.subject_id {
             return Err("transformation history belongs to another Nara".into());
         }
         self.context.validate()?;
