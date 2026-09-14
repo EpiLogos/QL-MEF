@@ -132,7 +132,7 @@ A hard validation rule prevents Agent/provider output from being relabelled `hum
 
 The current #94/Factory T/T′ closure path is **typed**, not a provisional personal thought silo. `crates/ql-mef/src/nara/activity_aw3.rs` consumes the landed `ql.vak-thought-consumption/v1` `ThoughtConsumptionReading` and produces `ql.nara-aw3-thought-reception/v1`. The Nara receipt retains the typed twelve-meaning interpretations, Factory receipt identity, actual evidence, human response, assessment, uses, lifecycle, continuing questions and `RecognitionCandidate`s while binding them to this subject's exact Central Day/NOW/source-history revision. It does not re-run T/T′ semantics or register Recognition.
 
-The older generic owner-reference activity record remains only as a compatibility shape for previously serialized activity paths. It is not the K10 closure interface for landed AW3 producer truth.
+`NaraActivityLog` now retains the landed typed AW3 reception through a narrow `ThoughtConsumptionRef` compatibility handle. The earlier free-form owner/result/source fields are removed: the handle contains the typed `Aw3ThoughtConsumptionReception`, and its `thought_ref` must equal that receipt’s `consumption_id`. This preserves the existing Nara mutation method without preserving the provisional owner-ref model beside the real interface.
 
 ## 4. Replay
 
