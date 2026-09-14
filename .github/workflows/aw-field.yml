@@ -1,16 +1,6 @@
 name: AW full source field
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/aw-field.yml'
-      - '.oi/product.json'
-      - 'scripts/aw0*'
-      - 'scripts/tests/test_aw0.py'
-      - 'docs/integrations/epi-logos/**'
-      - 'docs/kernel-rebuild/**'
-      - 'docs/origami work/**'
-      - 'fixtures/kernel/m-tree-v1.json'
-      - 'data/epi-bimba-map/anuttara-language-map.md'
+  workflow_call:
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.sha }}
           path: subject
           persist-credentials: false
       - uses: actions/checkout@v4
@@ -102,7 +92,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: aw-field-${{ github.event.pull_request.head.sha || github.sha }}
+          name: aw-field-${{ github.sha }}
           path: evidence/
           if-no-files-found: error
           retention-days: 14
