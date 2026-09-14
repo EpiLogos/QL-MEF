@@ -1,0 +1,24 @@
+name: K10 Windows validation
+
+on:
+  push:
+    branches:
+      - agent/k10-windows-validation
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt,clippy
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Test workspace
+        run: cargo test --workspace --all-targets --locked
+      - name: Clippy workspace
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
