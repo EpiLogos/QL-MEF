@@ -109,10 +109,8 @@ class AwFieldTests(unittest.TestCase):
             and rule['current_dependency'].startswith('EpiLogos/QL-MEF#')
             and rule['current_dependency'] not in {'EpiLogos/QL-MEF#133', 'EpiLogos/QL-MEF#134'}
         }
-        self.assertEqual(
-            policy_dependencies,
-            {'aw2-scope-fallback': 'EpiLogos/QL-MEF#183/#184'},
-        )
+        self.assertEqual(policy_dependencies, {})
+        self.assertIn('ql-operative-scope', result['acceptance_overlay']['receipts'])
 
     def test_staged_skills_are_not_deduplicated_by_the_display_name(self):
         skills = [r for r in aw0.project()['records'] if r['inventory'] == 'source-skill']
