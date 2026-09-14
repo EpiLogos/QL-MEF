@@ -10,6 +10,8 @@ pub mod continuous;
 mod coordinate;
 pub mod cprime_oikonomia;
 mod error;
+pub mod focused_instrument;
+mod focused_instrument_aw1;
 mod identity;
 pub mod l5_projection;
 mod lens;
