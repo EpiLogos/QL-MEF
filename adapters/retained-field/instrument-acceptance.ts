@@ -129,11 +129,25 @@ async function main() {
   check(recovery.audio.interval.native_start === '16384' && recovery.audio.device_epoch === 1,
     'recovery replays old PCM or loses native identity');
 
+  // A suspended device clock is the lawful place to establish bounded lookahead.
+  // One recovered block is not enough to prove a sustained run because a cold
+  // native exchange may legitimately take longer than the remaining first-block
+  // deadline once WebAudio is resumed. Prefill without advancing device time,
+  // then let the periodic driver replenish that bounded queue while it runs.
+  const firstRecoveryEnd = recovery.audio.target_context_seconds;
+  while (session.reading.queued_blocks < 3) {
+    const before = session.reading.acknowledged.samples_elapsed;
+    await session.pump();
+    check(session.reading.available && !session.reading.held,
+      `sustained prefill lost its admitted owner: ${session.reading.reason ?? 'unknown reason'}`);
+    if (session.reading.acknowledged.samples_elapsed === before) break;
+  }
+  check(session.reading.queued_blocks >= 3, 'sustained acceptance could not establish bounded device lookahead');
+
   // Exercise the actual unsuspended periodic data plane while the retained GPU is
-  // integrating. Start the bounded driver while the first recovered interval is
-  // still ahead of the device clock. Waiting until after that interval ends before
-  // starting would create a real gap, and the receiver must reject the next
-  // contiguous native block as late rather than silently starting it "now".
+  // integrating. The prefilled blocks are already admitted against the same native
+  // owner; start() may only replenish that queue, never catch up by replaying or
+  // shifting a late native interval to the current device time.
   const liveCallsBefore = calls.length, liveApplicationsBefore = applications.length;
   const liveStart = performance.now(), liveDeviceStart = context.currentTime;
   const liveStartSamples = BigInt(session.reading.acknowledged.samples_elapsed);
@@ -141,7 +155,7 @@ async function main() {
   let lastAnimation = liveStart, maxQueuedBlocks = 0, maxQueuedBytes = 0;
   await context.resume();
   session.start(8);
-  await at(context, recovery.audio.target_context_seconds + 0.01);
+  await at(context, firstRecoveryEnd + 0.01);
   session.present();
   check(binding.lastReceipt.samples_elapsed === '20480' && seeds === 1, 're-entry reset or reseeded material');
   for (let i = 0; i < 72; i++) {
@@ -149,7 +163,8 @@ async function main() {
     frameIntervals.push(stamp - lastAnimation); lastAnimation = stamp;
     simulator.step(1 / 60, context.currentTime, config, 0, new THREE.Vector2(20, 20), new THREE.Vector2());
     const reading = session.present();
-    check(reading.available && !reading.held, 'sustained instrument lost its admitted audio/native owner');
+    check(reading.available && !reading.held,
+      `sustained instrument lost its admitted audio/native owner: ${reading.reason ?? reading.audio?.reason ?? 'unknown reason'}`);
     maxQueuedBlocks = Math.max(maxQueuedBlocks, reading.queued_blocks);
     maxQueuedBytes = Math.max(maxQueuedBytes, reading.queued_bytes);
     const acknowledged = BigInt(reading.acknowledged.samples_elapsed);
