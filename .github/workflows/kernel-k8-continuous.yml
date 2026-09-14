@@ -85,7 +85,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: EpiLogos/Factory
-          ref: 63d4147fdde2f67f5fbbdea002e5d61e2f7f1175
+          ref: 63d4147dfcef4785047c97fbdda9cd12bb5e03df
           path: target/factory-source
           persist-credentials: false
       - name: Owner-executed Vāk through the same material and Nara owner
@@ -93,7 +93,7 @@ jobs:
           set -euo pipefail
           mkdir -p target/k8-factory target/k8-vak-personal
           FACTORY_SHA=$(git -C target/factory-source rev-parse HEAD)
-          test "$FACTORY_SHA" = "63d4147fdde2f67f5fbbdea002e5d61e2f7f1175"
+          test "$FACTORY_SHA" = "63d4147dfcef4785047c97fbdda9cd12bb5e03df"
           printf '%s\n' "$FACTORY_SHA" > target/k8-factory/source-sha.txt
           (cd target/factory-source && cargo run -p epilogos-factory --example k8_vak_performance_receipt -- \
             "$GITHUB_WORKSPACE/target/k8-factory/vak-performance.json") \
