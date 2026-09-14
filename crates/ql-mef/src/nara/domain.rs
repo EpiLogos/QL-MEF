@@ -8,6 +8,7 @@
 mod acceptance;
 #[path = "activity_aw3.rs"]
 mod activity_aw3;
+mod agent_world;
 mod capability;
 mod common;
 mod context;
@@ -30,6 +31,7 @@ mod activity {
 }
 
 pub use activity_aw3::*;
+pub use agent_world::*;
 pub use capability::*;
 pub use common::{
     CENTRE_COUNT, CONTEXT_BRANCH_COUNT, ELEMENT_COUNT, EvidenceStanding, IDENTITY_SLOT_COUNT,
