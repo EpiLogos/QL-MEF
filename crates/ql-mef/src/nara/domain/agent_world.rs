@@ -495,3 +495,59 @@ impl NaraAgentWorldReception {
             .flat_map(|reading| reading.recognition_candidates.iter())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn source_revision() -> SourceRevision {
+        SourceRevision {
+            source_ref: "source/wiki-participation".into(),
+            revision: "rev-1".into(),
+            standing_ref: "standing/source-qualified".into(),
+        }
+    }
+
+    #[test]
+    fn wiki_participation_requires_landed_contract_and_lineage() {
+        let mut participation = WikiParticipationRef {
+            contract_ref: WIKI_PARTICIPATION_CONTRACT_REF.into(),
+            participation_ref: "wiki/participation/nara-bimba".into(),
+            revision: 1,
+            bimba_registry_revision: "registry-r1".into(),
+            bimba_member_refs: BTreeSet::from(["bimba:#4".into()]),
+            source_revisions: vec![source_revision()],
+        };
+        participation.validate().unwrap();
+
+        participation.contract_ref = "ql.nara-private-wiki/v1".into();
+        assert!(participation.validate().is_err());
+    }
+
+    #[test]
+    fn stale_operative_currentness_cannot_be_upgraded_by_nara() {
+        let mut reception = OperativePerformanceReception {
+            schema: NARA_OPERATIVE_RECEPTION_CONTRACT.into(),
+            binding_ref: "binding/c-prime/1".into(),
+            binding_revision: "rev-1".into(),
+            world_ref: "world/event/1".into(),
+            world_generation: "generation-1".into(),
+            whole_ref: "whole/1".into(),
+            subject_ref: "nara/subject/1".into(),
+            method_skill_ref: None,
+            currentness: OperativeCurrentness::Stale {
+                observed_binding_ref: "binding/c-prime/2".into(),
+                observed_binding_revision: "rev-2".into(),
+                differences: vec!["whole-ref".into()],
+            },
+            performance: None,
+        };
+        reception.validate().unwrap();
+        assert!(!reception.is_current());
+
+        if let OperativeCurrentness::Stale { differences, .. } = &mut reception.currentness {
+            differences.clear();
+        }
+        assert!(reception.validate().is_err());
+    }
+}
