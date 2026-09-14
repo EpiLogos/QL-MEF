@@ -45,6 +45,7 @@ mod vak_oi;
 pub mod vak_performance;
 pub mod vak_profile;
 pub mod vak_scope;
+pub mod vak_scope_wire;
 pub mod vak_thought_consumption;
 
 pub use context_frame::{
