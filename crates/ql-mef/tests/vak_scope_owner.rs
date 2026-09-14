@@ -10,7 +10,9 @@ use ql_mef::vak_profile::{
     CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
     Participation, ThreadForm,
 };
-use ql_mef::vak_scope::{OperativeScopeCorrelation, OperativeScopeObservation};
+use ql_mef::vak_scope::{
+    CPrimeOperativeBinding, OperativeScopeCorrelation, OperativeScopeObservation,
+};
 use ql_mef::{ContextFrameId, LensId, MusicalBasis, VakRegistry, VakStanding};
 
 fn basis(source: &str, revision: &str, evidence: &str) -> Basis {
@@ -132,6 +134,10 @@ fn public_owner_path_binds_and_reobserves_the_current_ql_whole() {
     assert_eq!(binding.sources[0].source_ref, "source:vak");
     assert_eq!(binding.sources[0].revision, "source-r1");
 
+    let wire = serde_json::to_string(&binding).unwrap();
+    let decoded: CPrimeOperativeBinding = serde_json::from_str(&wire).unwrap();
+    assert_eq!(decoded, binding);
+
     let current = graph
         .reobserve_operative_scope(
             &binding,
@@ -139,6 +145,10 @@ fn public_owner_path_binds_and_reobserves_the_current_ql_whole() {
             correlation("generation-1"),
         )
         .unwrap();
+    let current_wire = serde_json::to_string(&current).unwrap();
+    let current_decoded: OperativeScopeObservation =
+        serde_json::from_str(&current_wire).unwrap();
+    assert_eq!(current_decoded, current);
     assert!(matches!(
         current,
         OperativeScopeObservation::Current { binding: observed } if observed == binding
@@ -155,5 +165,32 @@ fn public_owner_path_binds_and_reobserves_the_current_ql_whole() {
         stale,
         OperativeScopeObservation::Stale { differences, .. }
             if differences.contains(&"world-generation".to_string())
+    ));
+}
+
+#[test]
+fn client_replay_cannot_widen_the_ql_owned_source_basis() {
+    let graph = owner_graph();
+    let binding = graph
+        .bind_operative_scope("whole:undertaking", profile(), correlation("generation-1"))
+        .unwrap();
+    let mut widened = binding.clone();
+    let mut foreign = binding.sources[0].clone();
+    foreign.source_ref = "source:foreign".into();
+    foreign.revision = "foreign-r1".into();
+    foreign.evidence_refs.insert("evidence:foreign".into());
+    widened.sources.push(foreign);
+
+    let observation = graph
+        .reobserve_operative_scope(
+            &widened,
+            "whole:undertaking",
+            correlation("generation-1"),
+        )
+        .unwrap();
+    assert!(matches!(
+        observation,
+        OperativeScopeObservation::Stale { differences, .. }
+            if differences.contains(&"source-basis".to_string())
     ));
 }
