@@ -510,7 +510,7 @@ mod tests {
             .is_err()
         );
 
-        let mut field = field(registry, &gate, "q_1_thesis");
+        let mut field = self::field(registry, &gate, "q_1_thesis");
         let mut missing_producer = write("q_1_thesis", "ground");
         missing_producer.producer.reference.clear();
         assert!(write_qv(registry, &mut field, "write", missing_producer, None, &gate).is_err());
