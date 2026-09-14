@@ -1,0 +1,265 @@
+{
+  "schema_version": "epi.aw-acceptance-receipts/v1",
+  "owner": "EpiLogos/QL-MEF#190",
+  "purpose": "Current disposition overlay for the exhaustive AW0 source census. This file never changes source identities or source pins; it only records what later accepted native receipts prove about those rows.",
+  "receipts": {
+    "ql-aw1-property": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 166,
+      "accepted_head": "2e826deeabf95582d85ef049b3d2ea42b06657fd",
+      "merge_commit": "55067ce0dfb508286e40108a4cbe52ffb5fd4bd0",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Six property offices, plural node/relation assertions, source/derivation/validity/revision, compact-rich expansion, Recognition/rollback, and controlled execution of all 194 recovered source property definitions."
+    },
+    "ql-cprime-conduct": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 177,
+      "accepted_head": "1031fa6db2dbb631c7ac0d5786e804c8e2bb0a1c",
+      "merge_commit": "f09d2a4ee7c859bbbefb95f8522efd56411111d4",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Source-defined C-prime conduct including all six CFP forms, Z, all six CS profiles, directed forward/returning passage and existing CPF/CT/CP/CF receipt integration."
+    },
+    "factory-vak-conduct": {
+      "repository": "EpiLogos/Factory",
+      "pull_request": 231,
+      "accepted_head": "9fcd66f165775fa5e56d62ebf36671afc1b35842",
+      "merge_commit": "d7b5355f128c8ed19a430a06f3b29688b497d986",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "All six CFP forms through native WorkflowUnit/Run/Attempt/Return conduct, Z, durable retry/cancellation/late Return, Run thought consumption and Journey praxis Return while preserving Factory ownership."
+    },
+    "aikit-native-action-recognition": {
+      "repository": "EpiLogos/ai-kit",
+      "pull_request": 308,
+      "accepted_head": "03235b9a0596974360dd01a921a0b81a6cde055c",
+      "merge_commit": "980c5b4a143e4ac70a588bb8c0c63e5b8b15c8c4",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Source-qualified Resolve to native single Action/attempt/Return plus Recognition -> = name -> existing Skill/Method proof and ordinary reuse."
+    },
+    "aikit-scope-currentness-correction": {
+      "repository": "EpiLogos/ai-kit",
+      "pull_request": 310,
+      "accepted_head": "2bc8d1fc60900d20a2d4847ddb0b028f4e99f186",
+      "merge_commit": "856f454778e5a44e8055751bb59ed933caf210ce",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Operative-scope currentness is a distinct owner observation capability and is no longer fabricated by overloading MEF lens/form refraction fields."
+    },
+    "ql-vak-performance": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 181,
+      "accepted_head": "a85c808d5f39aa2a4d096e455a6889fbace5ea32",
+      "merge_commit": "9cd5f729a0b69bc9e206aebf9b757d95812d58ed",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Actual Factory performance projected into one QL C-prime/musical event with owner evidence, current-vs-late Return, delegated subjects, replay and failure/interruption distinctions retained."
+    },
+    "ql-k8-native-instrument": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 176,
+      "accepted_head": "4d173628e2a850af6698d17558477670489767a8",
+      "merge_commit": "a15b01ee17cdf5444022719e158062e5f5ee8082",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Accepted shared census floor and Factory -> QL performance -> M1/M2/M3 material -> same installed continuous owner -> early Nara reception -> retained GPU/browser sound join."
+    },
+    "ql-aw1-root-qv-wiki": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 186,
+      "accepted_head": "f14f511e5231dc2d72e236c13b285055efe89aa6",
+      "merge_commit": "05b6d4ae29c20774f6afe69bffe3df9cd1346a90",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "Rooted M world/Bimba-Pratibimba relation, S5 self-reference, source-qualified QV read/write/bake and five native Wiki participation forms over the existing owners."
+    }
+  },
+  "rules": [
+    {
+      "id": "source-discrepancy",
+      "priority": 100,
+      "selector": {"inventories": ["source-discrepancy"]},
+      "disposition": "SOURCE-DISCREPANCY",
+      "receipt_ids": [],
+      "reason": "The authored 20-frame/40-direction claim has no enumerated current basis and must remain a source discrepancy rather than become fabricated runtime cardinality."
+    },
+    {
+      "id": "nara-owner",
+      "priority": 95,
+      "selector": {"gap_ids": ["NARA"]},
+      "disposition": "EXTERNAL-OWNER",
+      "receipt_ids": ["ql-k8-native-instrument"],
+      "current_dependency": "EpiLogos/QL-MEF#134",
+      "reason": "Repository-native early Nara reception is proven where K8 consumes it, but full M4/Nara physiological and lived closure remains owned by #134."
+    },
+    {
+      "id": "surface-owner",
+      "priority": 95,
+      "selector": {"gap_ids": ["SURFACE"]},
+      "disposition": "EXTERNAL-OWNER",
+      "receipt_ids": [],
+      "current_dependency": "EpiLogos/QL-MEF#133",
+      "reason": "Focused Epi/Nara desktop and reusable expression-surface composition belongs to the K9/#133 lane, not AW0/#94 runtime ownership."
+    },
+    {
+      "id": "deep-source-conditions",
+      "priority": 90,
+      "selector": {"inventories": ["deep-source-condition"]},
+      "disposition": "RESEARCH-ONLY",
+      "receipt_ids": [],
+      "reason": "These records are explicit unresolved/open/drift conditions from retained source matrices; preserving them is the correct disposition, not silently implementing them as facts."
+    },
+    {
+      "id": "property-source-key-evidence",
+      "priority": 90,
+      "selector": {"inventories": ["property-source-key"]},
+      "disposition": "RESEARCH-ONLY",
+      "receipt_ids": ["ql-aw1-property", "ql-aw1-root-qv-wiki"],
+      "reason": "The 5,686 keys are source-payload occurrences, not implicit canonical property definitions or q_* producers. Current property/QV owners can consume qualified keys without promoting every occurrence into vocabulary."
+    },
+    {
+      "id": "accepted-property-floor",
+      "priority": 85,
+      "selector": {"inventories": ["property-office", "property-definition"]},
+      "disposition": "ACCEPTED-NATIVE",
+      "receipt_ids": ["ql-aw1-property"],
+      "reason": "The accepted property floor explicitly covers all six offices and executes the complete 194-definition recovered registry through current typed operations and negative checks."
+    },
+    {
+      "id": "accepted-qv-property-producers",
+      "priority": 85,
+      "selector": {"ids": ["property-producer:overlay-read", "property-producer:overlay-write", "property-producer:knowing-read", "property-producer:bake"]},
+      "disposition": "ACCEPTED-NATIVE",
+      "receipt_ids": ["ql-aw1-property", "ql-aw1-root-qv-wiki"],
+      "reason": "Historical QV read/write/knowing/bake semantics now have source-qualified current owners; q_* spelling still supplies no authority by itself."
+    },
+    {
+      "id": "accepted-cprime-runtime",
+      "priority": 85,
+      "selector": {"inventories": ["c-prime-office", "context-frame", "thread-form", "context-sequence", "participation-regime", "content-type", "context-position"]},
+      "disposition": "ACCEPTED-NATIVE",
+      "receipt_ids": ["ql-cprime-conduct", "factory-vak-conduct", "ql-vak-performance", "ql-k8-native-instrument"],
+      "reason": "QL owns the complete finite C-prime grammar/meaning, Factory owns all six native conduct forms and Return, and accepted QL/K8 receipts prove actual performed C-prime/musical projection without moving owner boundaries."
+    },
+    {
+      "id": "accepted-musical-performance-job",
+      "priority": 85,
+      "selector": {"ids": ["original-operational-job:9"]},
+      "disposition": "ACCEPTED-NATIVE",
+      "receipt_ids": ["factory-vak-conduct", "ql-vak-performance", "ql-k8-native-instrument"],
+      "reason": "The source job requiring source-qualified musical/structural performance is directly proven by actual Factory performance, QL projection and same-owner native material/audio acceptance."
+    },
+    {
+      "id": "remaining-property-producers",
+      "priority": 80,
+      "selector": {"inventories": ["property-producer"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-aw1-property", "ql-aw1-root-qv-wiki"],
+      "reason": "Current property mechanics are accepted, but historical relationship-write/GDS producer rows are not promoted en masse into new current producer authority without row-specific graph receipts."
+    },
+    {
+      "id": "thought-consumption-ready",
+      "priority": 80,
+      "selector": {"inventories": ["thought"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["factory-vak-conduct", "aikit-native-action-recognition"],
+      "current_dependency": "EpiLogos/QL-MEF#182",
+      "reason": "Factory owns accepted T/T-prime consumption and AIKit owns recognised Method reuse; QL's all-twelve semantic interpretation receipt is still the named final #94 dependency until #182 merges."
+    },
+    {
+      "id": "rooted-source-field-ready",
+      "priority": 60,
+      "selector": {"inventories": ["historical-sp", "organ", "root-contribution"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-aw1-root-qv-wiki", "ql-k8-native-instrument", "aikit-native-action-recognition"],
+      "reason": "Root/Bimba, context, continuous and native Action mechanics are accepted, but the historical SP/source rows remain individually addressable source obligations rather than being bulk-stamped as executed occasions."
+    },
+    {
+      "id": "m-field-ready",
+      "priority": 60,
+      "selector": {"inventories": ["m-capability", "m-inhabitation", "deep-capability"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-aw1-root-qv-wiki", "ql-k8-native-instrument"],
+      "reason": "Current rooted registry and M1-M3/continuous mechanics are accepted; individual retained capability rows remain source-qualified compositional possibilities unless a row-specific native receipt exists."
+    },
+    {
+      "id": "vak-field-ready",
+      "priority": 60,
+      "selector": {"inventories": ["vak-entry", "vak-cell"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-cprime-conduct", "aikit-native-action-recognition", "factory-vak-conduct", "ql-vak-performance"],
+      "reason": "The complete Vāk source registry and operation/horizon contracts are available to accepted native owners, but one working path does not prove each of the 109 entries or 36 cells was separately enacted."
+    },
+    {
+      "id": "participation-source-ready",
+      "priority": 60,
+      "selector": {"inventories": ["source-skill", "agent-definition-office", "specialist-mode", "agent-source", "original-participation"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["aikit-native-action-recognition", "ql-aw1-root-qv-wiki"],
+      "reason": "Native Skill/Method and agent participation owners are accepted, while historical/staged source members retain their own restrictions and are not mass-registered or granted authority."
+    },
+    {
+      "id": "epii-development-ready",
+      "priority": 60,
+      "selector": {"inventories": ["epii-on-x"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["aikit-native-action-recognition", "factory-vak-conduct"],
+      "current_dependency": "EpiLogos/QL-MEF#182",
+      "reason": "The native Action/Return/Recognition/reuse loop exists, but each Epii-on-X developmental law is not retroactively claimed as a separately observed agency occasion."
+    },
+    {
+      "id": "remaining-operational-jobs",
+      "priority": 60,
+      "selector": {"inventories": ["original-operational-job"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["aikit-native-action-recognition", "factory-vak-conduct", "ql-cprime-conduct", "ql-aw1-root-qv-wiki"],
+      "reason": "The relevant native owners now exist, but historical job statements are not all upgraded to observed end-to-end runtime events without exact job receipts."
+    },
+    {
+      "id": "aw2-scope-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW2-SCOPE"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["aikit-native-action-recognition", "aikit-scope-currentness-correction"],
+      "current_dependency": "EpiLogos/QL-MEF#183/#184",
+      "reason": "AIKit's outer source-qualified invocation/currentness consumer is accepted; QL's source-backed owner binding/currentness producer remains the named final repository dependency until #184 merges."
+    },
+    {
+      "id": "aw3-name-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW3-NAME"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["aikit-native-action-recognition"],
+      "reason": "Recognition -> = name -> Method proof/reuse is accepted in its native AIKit owner; rows remain source-qualified rather than being bulk-named."
+    },
+    {
+      "id": "aw3-consume-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW3-CONSUME"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["factory-vak-conduct", "aikit-native-action-recognition"],
+      "current_dependency": "EpiLogos/QL-MEF#182",
+      "reason": "Factory consumption and downstream native Recognition/reuse are accepted; QL's complete semantic consumption interpretation remains the named dependency until #182 merges."
+    },
+    {
+      "id": "aw2-conduct-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW2-CONDUCT"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-cprime-conduct", "factory-vak-conduct", "ql-vak-performance"],
+      "reason": "Finite C-prime/native conduct owners are accepted, while source rows not covered by the explicit accepted-runtime selectors remain ready rather than being bulk-stamped as enacted."
+    },
+    {
+      "id": "aw1-root-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW1-ROOT"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-aw1-root-qv-wiki"],
+      "reason": "Rooted/Bimba participation is accepted; retained historical rows without row-specific execution receipts remain ready-to-compose."
+    },
+    {
+      "id": "aw1-property-fallback",
+      "priority": 20,
+      "selector": {"gap_ids": ["AW1-PROPERTY"]},
+      "disposition": "READY-TO-COMPOSE",
+      "receipt_ids": ["ql-aw1-property", "ql-aw1-root-qv-wiki"],
+      "reason": "Current property/QV mechanics are accepted; any retained source row not explicitly proven by the accepted-property selectors remains ready, not inferred complete."
+    }
+  ],
+  "whole_field_runtime_acceptance": false,
+  "runtime_acceptance_reason": "Repository-native #94 rows can be accepted, ready, external-owner or research/source-only without claiming owner-machine desktop/hardware/human-sensory whole-field acceptance."
+}
