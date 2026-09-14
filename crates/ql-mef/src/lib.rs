@@ -2,6 +2,8 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+pub mod aw1_self_reference;
+pub mod aw1_world;
 mod context_frame;
 mod context_frame_target;
 pub mod continuous;
@@ -26,9 +28,11 @@ pub mod m_tree;
 mod matheme;
 mod music;
 mod music_completion;
+pub mod nara;
 mod pole_state;
 pub mod property;
 mod provenance;
+pub mod qv;
 mod reading;
 mod refraction;
 mod registry;
