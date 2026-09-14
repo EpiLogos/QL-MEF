@@ -1,0 +1,60 @@
+name: K9 browser fixture repair
+on:
+  push:
+    branches: [agent/k9-browser-fixture-fix]
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: macos-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/k9-browser-fixture-fix
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Repair mock host continuity
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('adapters/retained-field/focused-instrument-session.test.mjs')
+          text = path.read_text()
+          old = '''      view = snapshot(current);\n      if (command.operation === 'set-focus') view.focus = { ...view.focus, focus: command.focus };\n      if (command.operation === 'select-bimba') {\n        view.selection = selection(); view.selection_standing = 'current'; view.selected_target = structuredClone(current.targets[1]);\n      }'''
+          new = '''      const previousView = view;\n      view = snapshot(current);\n      view.focus = { ...view.focus, focus: previousView.focus.focus };\n      view.tracking = previousView.tracking;\n      if (previousView.selection) {\n        view.selection = structuredClone(previousView.selection);\n        view.selection_standing = command.operation === 'advance' && command.frames > 0\n          ? 'field-advanced' : previousView.selection_standing;\n        const target = current.targets.find(item => item.constituent === previousView.selection.field_constituent_ref);\n        view.selected_target = target ? structuredClone(target) : null;\n      }\n      if (command.operation === 'set-focus') view.focus = { ...view.focus, focus: command.focus };\n      if (command.operation === 'select-bimba') {\n        view.selection = selection(); view.selection_standing = 'current'; view.selected_target = structuredClone(current.targets[1]);\n      }'''
+          if old not in text:
+              raise SystemExit('mock-host continuity marker missing')
+          text = text.replace(old, new, 1)
+          old_assert = '''  assert.equal((await s.session.read()).focus.focus, 'm5'); // host snapshot rebuilt from actual world after advance'''
+          new_assert = '''  assert.equal((await s.session.read()).focus.focus, 'm2'); // encounter focus survives field advancement'''
+          if old_assert not in text:
+              raise SystemExit('focus assertion marker missing')
+          text = text.replace(old_assert, new_assert, 1)
+          path.write_text(text)
+          PY
+      - name: Install exact retained-field JS dependency
+        run: |
+          mkdir -p target/k9-node
+          echo '{"private":true,"type":"module"}' > target/k9-node/package.json
+          npm --prefix target/k9-node install --package-lock=false --ignore-scripts --save-exact three@0.186.0
+          ln -s "$PWD/target/k9-node/node_modules" node_modules
+      - name: Prove all K9 browser-session regressions terminate green
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          subprocess.run([
+              'node','--test','--test-reporter=tap',
+              'adapters/retained-field/focused-instrument-session.test.mjs'
+          ], check=True, timeout=30)
+          PY
+      - name: Commit only the corrected fixture
+        run: |
+          git rm .github/workflows/k9-browser-fixture-fix-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add adapters/retained-field/focused-instrument-session.test.mjs
+          git commit -m 'K9: preserve host focus and selection in browser fixture'
+          git push origin HEAD:agent/k9-browser-fixture-fix
