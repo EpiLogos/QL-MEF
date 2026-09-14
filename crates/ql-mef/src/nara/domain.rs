@@ -6,7 +6,7 @@
 
 #[cfg(test)]
 mod acceptance;
-#[path = "../activity_aw3.rs"]
+#[path = "activity_aw3.rs"]
 mod activity_aw3;
 mod capability;
 mod common;
