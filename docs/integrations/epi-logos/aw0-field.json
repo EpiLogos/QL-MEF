@@ -36,7 +36,10 @@
   },
   "source_basis": "aw0-source-basis.json",
   "native_bindings": "aw0-native-bindings.json",
+  "acceptance_receipts": "aw0-acceptance-receipts.json",
+  "disposition_overlay_schema": "epi.aw-acceptance-receipts/v1",
   "source_captures": ["aw-property-source.json.gz", "aw-original-participation.json.gz"],
   "runtime_registry": false,
-  "runtime_acceptance": false
+  "runtime_acceptance": false,
+  "runtime_acceptance_reason": "The exhaustive field now has receipt-qualified repository-native dispositions, but mixed READY-TO-COMPOSE / EXTERNAL-OWNER / research standing is not whole owner-machine, desktop, hardware or human-sensory runtime acceptance."
 }
