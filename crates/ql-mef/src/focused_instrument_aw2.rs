@@ -2,10 +2,13 @@
 //!
 //! AW2 remains the semantic owner of operative C-prime scope and currentness.
 //! K9 only validates the producer envelope and projects its explicit
-//! Current/Stale/Missing standing for presentation/host consumers.
+//! Current/Stale/Missing standing for presentation/host consumers. The wrappers
+//! here retain that owner observation through focused snapshots and operation
+//! Returns without performing another reobservation in K9.
 
 use serde::{Deserialize, Serialize};
 
+use crate::focused_instrument::{FocusedInstrumentSnapshot, InstrumentOperationObservation};
 use crate::vak_scope::{
     C_PRIME_INTERPRETATION_REF, OPERATIVE_OWNER_REF, OPERATIVE_PROVIDER_REF,
     OperativeScopeObservation,
@@ -16,6 +19,10 @@ use crate::vak_scope_wire::{
 
 pub const FOCUSED_OPERATIVE_CURRENTNESS_CONTRACT: &str =
     "ql.focused-instrument-operative-currentness/v1";
+pub const SOURCE_QUALIFIED_SNAPSHOT_CONTRACT: &str =
+    "ql.focused-instrument-source-qualified-snapshot/v1";
+pub const SOURCE_QUALIFIED_RETURN_CONTRACT: &str =
+    "ql.focused-instrument-source-qualified-return/v1";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -80,6 +87,65 @@ impl FocusedOperativeCurrentness {
     pub const fn is_current(&self) -> bool {
         matches!(self.standing, FocusedOperativeStanding::Current)
     }
+
+    /// Attach the already-produced AW2 observation to a K9 snapshot. This does
+    /// not make the observation fresher; it only keeps the owner relation visible
+    /// through the focused presentation aperture.
+    pub fn retain_in_snapshot(
+        &self,
+        snapshot: FocusedInstrumentSnapshot,
+    ) -> Result<SourceQualifiedFocusedSnapshot, String> {
+        if let Some(subject) = observed_subject(&self.owner_response.observation)
+            && subject != snapshot.event.subject_ref
+        {
+            return Err("AW2 currentness and focused snapshot name different subjects".into());
+        }
+        Ok(SourceQualifiedFocusedSnapshot {
+            contract: SOURCE_QUALIFIED_SNAPSHOT_CONTRACT.into(),
+            instrument: snapshot,
+            operative_currentness: self.clone(),
+        })
+    }
+
+    /// Retain the same owner observation beside an operation Return. This is
+    /// explicitly the observation supplied at the operation aperture, not a
+    /// post-effect reobservation or an assertion that the Return made it current.
+    pub fn retain_in_return(
+        &self,
+        operation: InstrumentOperationObservation,
+    ) -> SourceQualifiedOperationReturn {
+        SourceQualifiedOperationReturn {
+            contract: SOURCE_QUALIFIED_RETURN_CONTRACT.into(),
+            currentness_aperture: "supplied-owner-observation-not-post-effect-reobservation".into(),
+            operation,
+            operative_currentness: self.clone(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct SourceQualifiedFocusedSnapshot {
+    pub contract: String,
+    pub instrument: FocusedInstrumentSnapshot,
+    pub operative_currentness: FocusedOperativeCurrentness,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct SourceQualifiedOperationReturn {
+    pub contract: String,
+    pub currentness_aperture: String,
+    pub operation: InstrumentOperationObservation,
+    pub operative_currentness: FocusedOperativeCurrentness,
+}
+
+fn observed_subject(observation: &OperativeScopeObservation) -> Option<&str> {
+    match observation {
+        OperativeScopeObservation::Current { binding } => Some(binding.subject_ref.as_str()),
+        OperativeScopeObservation::Stale { observed, .. } => Some(observed.subject_ref.as_str()),
+        OperativeScopeObservation::Missing { .. } => None,
+    }
 }
 
 fn validate_owner_response(response: &OperativeScopeCurrentnessResponse) -> Result<(), String> {
@@ -105,6 +171,14 @@ fn validate_owner_response(response: &OperativeScopeCurrentnessResponse) -> Resu
 mod tests {
     use std::collections::BTreeSet;
 
+    use serde_json::{Value, json};
+
+    use crate::focused_instrument::{
+        ClockDisclosure, ClockPresentation, FieldCursor, FocusDisclosure, FocusedInstrumentSnapshot,
+        InstrumentFocus, InstrumentOperationObservation, OperationStanding, SelectionTracking,
+        TemporalPresentation, FOCUSED_INSTRUMENT_CONTRACT, OPERATION_OBSERVATION_CONTRACT,
+    };
+    use crate::nara::EventBasisRefs;
     use crate::vak_profile::{
         CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
         Participation, ThreadForm, PROFILE_CONTRACT,
@@ -173,6 +247,69 @@ mod tests {
         }
     }
 
+    fn snapshot(subject: &str) -> FocusedInstrumentSnapshot {
+        let cursor = FieldCursor {
+            event_ref: "event:one".into(),
+            subject_ref: subject.into(),
+            profile_generation: 1,
+            field_generation: "1".into(),
+            samples_elapsed: "0".into(),
+        };
+        FocusedInstrumentSnapshot {
+            schema: FOCUSED_INSTRUMENT_CONTRACT.into(),
+            available: true,
+            event: EventBasisRefs {
+                event_ref: "event:one".into(),
+                subject_ref: subject.into(),
+                profile_generation: 1,
+                registry_revision: "registry:r1".into(),
+                m1_revision: "m1:r1".into(),
+                m2_source_ref: "m2:source".into(),
+                m2_contract_ref: "m2:contract".into(),
+                m3_source_ref: "m3:source".into(),
+                m3_contract_ref: "m3:contract".into(),
+            },
+            live_cursor: cursor.clone(),
+            presented_cursor: cursor,
+            temporal: TemporalPresentation::Live,
+            tracking: SelectionTracking::Follow,
+            selection: None,
+            selection_standing: None,
+            selected_target: None,
+            focus: FocusDisclosure {
+                focus: InstrumentFocus::M5,
+                available: true,
+                current: true,
+                source_refs: vec!["source:one".into()],
+                payload: Value::Null,
+                standing: "controlled".into(),
+            },
+            clock: ClockDisclosure {
+                presentation: ClockPresentation::Assembled,
+                owner_clock: json!({"field_ref":"#3-0","centre_ref":"#3-5-5/0"}),
+                field_ref: "#3-0".into(),
+                centre_ref: "#3-5-5/0".into(),
+                standing: "controlled".into(),
+            },
+            vak_expression: None,
+            vak_performance: None,
+            personal_current: false,
+            standing: "controlled".into(),
+        }
+    }
+
+    fn operation() -> InstrumentOperationObservation {
+        InstrumentOperationObservation {
+            schema: OPERATION_OBSERVATION_CONTRACT.into(),
+            operation: "advance".into(),
+            standing: OperationStanding::Applied,
+            before: None,
+            after: None,
+            owner_receipt: Some(json!({"result":"applied"})),
+            error: None,
+        }
+    }
+
     #[test]
     fn current_is_only_accepted_when_aw2_identity_agrees() {
         let current = FocusedOperativeCurrentness::from_aw2(response(
@@ -221,11 +358,47 @@ mod tests {
         foreign.provider_ref = "provider/client-echo".into();
         assert!(FocusedOperativeCurrentness::from_aw2(foreign).is_err());
 
-        let mut stale = response(OperativeScopeObservation::Stale {
+        let stale = response(OperativeScopeObservation::Stale {
             observed: binding(),
             differences: Vec::new(),
         });
-        stale.owner_ref = OPERATIVE_OWNER_REF.into();
         assert!(FocusedOperativeCurrentness::from_aw2(stale).is_err());
+    }
+
+    #[test]
+    fn owner_currentness_is_retained_through_snapshot_and_operation_return() {
+        let currentness = FocusedOperativeCurrentness::from_aw2(response(
+            OperativeScopeObservation::Current { binding: binding() },
+        ))
+        .unwrap();
+        let focused = currentness
+            .retain_in_snapshot(snapshot("subject:nara"))
+            .unwrap();
+        assert_eq!(
+            focused.operative_currentness.standing,
+            FocusedOperativeStanding::Current
+        );
+        assert_eq!(focused.contract, SOURCE_QUALIFIED_SNAPSHOT_CONTRACT);
+
+        let returned = currentness.retain_in_return(operation());
+        assert_eq!(returned.contract, SOURCE_QUALIFIED_RETURN_CONTRACT);
+        assert_eq!(returned.operation.standing, OperationStanding::Applied);
+        assert_eq!(
+            returned.currentness_aperture,
+            "supplied-owner-observation-not-post-effect-reobservation"
+        );
+    }
+
+    #[test]
+    fn focused_snapshot_refuses_another_aw2_subject() {
+        let currentness = FocusedOperativeCurrentness::from_aw2(response(
+            OperativeScopeObservation::Current { binding: binding() },
+        ))
+        .unwrap();
+        assert!(
+            currentness
+                .retain_in_snapshot(snapshot("subject:other"))
+                .is_err()
+        );
     }
 }
