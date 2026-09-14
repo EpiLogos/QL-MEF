@@ -7,8 +7,8 @@ use ql_core::{
 };
 use ql_mef::vak_composition::{ActiveFrame, Basis, PositionBasis, VakComposition, WholeInput};
 use ql_mef::vak_profile::{
-    CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection,
-    Participation, ThreadForm,
+    CPrimeProfile, ContentPosition, ContentType, ContextSequence, InquiryDirection, Participation,
+    ThreadForm,
 };
 use ql_mef::vak_scope::{
     CPrimeOperativeBinding, OperativeScopeCorrelation, OperativeScopeObservation,
@@ -78,14 +78,16 @@ fn owner_graph() -> VakComposition {
     let form = StructuralConstellation::new(
         anchor,
         members.clone(),
-        vec![AnchorReturn::new(
-            "source-result:undertaking",
-            anchor,
-            ground,
-            QlFace::Direct,
-            GroundKind::Own,
-        )
-        .unwrap()],
+        vec![
+            AnchorReturn::new(
+                "source-result:undertaking",
+                anchor,
+                ground,
+                QlFace::Direct,
+                GroundKind::Own,
+            )
+            .unwrap(),
+        ],
     )
     .unwrap();
     let source = basis("source:vak", "source-r1", "evidence:vak");
@@ -93,7 +95,10 @@ fn owner_graph() -> VakComposition {
         "subject:nara",
         QlShape::Constellation(form.grain()).shape_ref(),
         anchor,
-        members.iter().map(|member| member.subject_ref.clone()).collect(),
+        members
+            .iter()
+            .map(|member| member.subject_ref.clone())
+            .collect(),
         members,
         vec![],
         None,
@@ -139,15 +144,10 @@ fn public_owner_path_binds_and_reobserves_the_current_ql_whole() {
     assert_eq!(decoded, binding);
 
     let current = graph
-        .reobserve_operative_scope(
-            &binding,
-            "whole:undertaking",
-            correlation("generation-1"),
-        )
+        .reobserve_operative_scope(&binding, "whole:undertaking", correlation("generation-1"))
         .unwrap();
     let current_wire = serde_json::to_string(&current).unwrap();
-    let current_decoded: OperativeScopeObservation =
-        serde_json::from_str(&current_wire).unwrap();
+    let current_decoded: OperativeScopeObservation = serde_json::from_str(&current_wire).unwrap();
     assert_eq!(current_decoded, current);
     assert!(matches!(
         current,
@@ -155,11 +155,7 @@ fn public_owner_path_binds_and_reobserves_the_current_ql_whole() {
     ));
 
     let stale = graph
-        .reobserve_operative_scope(
-            &binding,
-            "whole:undertaking",
-            correlation("generation-2"),
-        )
+        .reobserve_operative_scope(&binding, "whole:undertaking", correlation("generation-2"))
         .unwrap();
     assert!(matches!(
         stale,
@@ -182,11 +178,7 @@ fn client_replay_cannot_widen_the_ql_owned_source_basis() {
     widened.sources.push(foreign);
 
     let observation = graph
-        .reobserve_operative_scope(
-            &widened,
-            "whole:undertaking",
-            correlation("generation-1"),
-        )
+        .reobserve_operative_scope(&widened, "whole:undertaking", correlation("generation-1"))
         .unwrap();
     assert!(matches!(
         observation,
