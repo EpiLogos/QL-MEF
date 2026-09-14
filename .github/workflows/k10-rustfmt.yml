@@ -1,5 +1,6 @@
 name: K10 one-shot rustfmt
 
+# Temporary exact-branch normalizer. Delete after it pushes the rustfmt commit.
 on:
   push:
     branches:
