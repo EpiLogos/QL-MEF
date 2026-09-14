@@ -32,7 +32,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Fetch exact frozen Factory runtime foundation
         run: |
-          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/Factory.git /tmp/factory
           git -C /tmp/factory checkout --detach 7690069846eb6fc89f6aa78dcf7aab886ac7c737
           test "$(git -C /tmp/factory rev-parse HEAD)" = "7690069846eb6fc89f6aa78dcf7aab886ac7c737"
       - name: Run frozen Factory foundation acceptance
@@ -79,7 +79,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Fetch exact Factory Deep QL evidence source
         run: |
-          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/agent-system-design.git /tmp/factory
+          git clone --filter=blob:none --no-checkout https://github.com/EpiLogos/Factory.git /tmp/factory
           git -C /tmp/factory checkout --detach a654c62f68b82236061986d9215b23257fe53b17
           test "$(git -C /tmp/factory rev-parse HEAD)" = "a654c62f68b82236061986d9215b23257fe53b17"
           test "$(git -C /tmp/factory hash-object ql-agent-experiments/deep-ql/formal/pairing-grammar.js)" = "0d6aa49197dd4d06646ea5a5fb094c03b10a74e4"
