@@ -1,13 +1,6 @@
 name: Pre-K8 full-field planning lock
 
 on:
-  pull_request:
-    paths:
-      - 'docs/KERNEL-REBUILD-WAYFINDER.md'
-      - 'docs/kernel-rebuild/**'
-      - 'docs/integrations/epi-logos/**'
-      - 'scripts/check-pre-k8-lock.py'
-      - '.github/workflows/pre-k8-lock.yml'
   push:
     branches: [main]
     paths:
@@ -21,10 +14,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: pre-k8-lock-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   pre-k8-full-field-lock:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Verify complete planning coverage and rejection of invalid mutations
         run: python3 scripts/check-pre-k8-lock.py --self-test
