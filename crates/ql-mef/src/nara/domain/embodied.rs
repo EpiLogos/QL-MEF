@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::nara::{ConsentState, SourceRevision};
+use crate::nara::{ConsentState, SourceRevision, WorldContribution};
 
 use super::{
     CENTRE_COUNT, ELEMENT_COUNT, EvidenceStanding, check_optional_finite, check_refs, check_source,
@@ -33,6 +33,33 @@ impl ElementalEfwa {
 
     pub const fn as_array(self) -> [f64; ELEMENT_COUNT] {
         [self.earth, self.fire, self.water, self.air]
+    }
+}
+
+/// Exact M1/M2/M3 contribution triple acknowledged by one centre. The order is
+/// explicit in the field names rather than inferred from a three-element array.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CentreWorldInputs {
+    pub m1: WorldContribution,
+    pub m2: WorldContribution,
+    pub m3: WorldContribution,
+}
+
+impl CentreWorldInputs {
+    pub fn validate(&self) -> Result<(), String> {
+        for (contribution, label) in [
+            (&self.m1, "M1 centre contribution"),
+            (&self.m2, "M2 centre contribution"),
+            (&self.m3, "M3 centre contribution"),
+        ] {
+            check_text(&contribution.basis_ref, label)?;
+            check_text(&contribution.source_ref, label)?;
+            if !contribution.value.is_finite() {
+                return Err(format!("non-finite {label}"));
+            }
+        }
+        Ok(())
     }
 }
 
@@ -84,6 +111,7 @@ pub struct CentreEmbodiment {
     pub ordinal: u8,
     pub label: String,
     pub source: SourceRevision,
+    pub world_inputs: CentreWorldInputs,
     pub amplitude: Option<f64>,
     pub phase_radians: Option<f64>,
     pub modes: Vec<CentreMode>,
@@ -102,6 +130,7 @@ impl CentreEmbodiment {
         }
         check_text(&self.label, "centre label")?;
         check_source(&self.source)?;
+        self.world_inputs.validate()?;
         check_optional_finite(self.amplitude, "centre amplitude")?;
         check_optional_finite(self.phase_radians, "centre phase")?;
         if self.modes.len() > 128 || self.couplings.len() > CENTRE_COUNT - 1 {
@@ -145,6 +174,41 @@ impl EarthBodyEmbodiment {
     }
 }
 
+/// M4.1.5 keeps embodied intensity/consent/response distinct from the
+/// transformation branch's own perturbation/safety state.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EmbodiedSafetyState {
+    pub consent: ConsentState,
+    pub intensity: Option<f64>,
+    pub contraindication_refs: Vec<String>,
+    pub response_refs: Vec<String>,
+    pub adjustment_refs: Vec<String>,
+    pub standing: EvidenceStanding,
+}
+
+impl EmbodiedSafetyState {
+    pub fn validate(&self) -> Result<(), String> {
+        if self
+            .intensity
+            .is_some_and(|value| !value.is_finite() || value < 0.0)
+        {
+            return Err("embodied intensity must be finite and non-negative".into());
+        }
+        check_refs(
+            &self.contraindication_refs,
+            "embodied contraindication reference",
+            256,
+        )?;
+        check_refs(&self.response_refs, "embodied response reference", 256)?;
+        check_refs(
+            &self.adjustment_refs,
+            "embodied adjustment reference",
+            256,
+        )
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct EmbodiedField {
@@ -159,7 +223,7 @@ pub struct EmbodiedField {
     pub temporal_astrology_refs: Vec<String>,
     pub materia_refs: Vec<String>,
     pub operation_refs: Vec<String>,
-    pub consent: ConsentState,
+    pub safety: EmbodiedSafetyState,
 }
 
 impl EmbodiedField {
@@ -191,7 +255,8 @@ impl EmbodiedField {
             256,
         )?;
         check_refs(&self.materia_refs, "materia reference", 256)?;
-        check_refs(&self.operation_refs, "embodied operation reference", 256)
+        check_refs(&self.operation_refs, "embodied operation reference", 256)?;
+        self.safety.validate()
     }
 }
 
@@ -207,6 +272,14 @@ mod tests {
         }
     }
 
+    fn contribution(layer: &str, ordinal: usize) -> WorldContribution {
+        WorldContribution {
+            basis_ref: format!("basis:{layer}"),
+            source_ref: format!("source:{layer}:centre-{ordinal}"),
+            value: ordinal as f64 + 0.5,
+        }
+    }
+
     #[test]
     fn seven_centres_remain_independent_and_earth_body_is_not_an_eighth_peer() {
         let centres = (0..CENTRE_COUNT)
@@ -214,6 +287,11 @@ mod tests {
                 ordinal: ordinal as u8,
                 label: format!("centre-{ordinal}"),
                 source: source(&format!("centre-{ordinal}")),
+                world_inputs: CentreWorldInputs {
+                    m1: contribution("m1", ordinal),
+                    m2: contribution("m2", ordinal),
+                    m3: contribution("m3", ordinal),
+                },
                 amplitude: Some(ordinal as f64 / 7.0),
                 phase_radians: Some(ordinal as f64 / 10.0),
                 modes: Vec::new(),
@@ -249,11 +327,19 @@ mod tests {
             temporal_astrology_refs: Vec::new(),
             materia_refs: Vec::new(),
             operation_refs: Vec::new(),
-            consent: ConsentState::Granted,
+            safety: EmbodiedSafetyState {
+                consent: ConsentState::Granted,
+                intensity: Some(0.5),
+                contraindication_refs: Vec::new(),
+                response_refs: vec!["response:1".into()],
+                adjustment_refs: Vec::new(),
+                standing: EvidenceStanding::Reported,
+            },
         };
         field.validate().unwrap();
         assert_eq!(field.centres.len(), CENTRE_COUNT);
         assert_eq!(field.earth_body.frame_ref, "earth-fixed");
+        assert_eq!(field.centres[3].world_inputs.m2.value, 3.5);
     }
 
     #[test]
