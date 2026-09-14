@@ -103,10 +103,11 @@ fn face_projection(registry: &MRegistry, source_ref: &str, face: MFace) -> Resul
         coordinate.source_ref == node.source_ref,
         "face projection changed source identity",
     )?;
+    let canonical_ref = coordinate.canonical_ref();
     Ok(FaceProjection {
         coordinate_id: node.id,
         source_ref: coordinate.source_ref,
-        canonical_ref: coordinate.canonical_ref(),
+        canonical_ref,
         face: RootedFace::from_m_face(coordinate.face),
     })
 }
