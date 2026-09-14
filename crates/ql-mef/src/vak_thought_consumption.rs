@@ -19,8 +19,7 @@ use crate::vak_composition::{CompositionError, Result};
 use crate::vak_performance::{PERFORMANCE_EVENT_CONTRACT, VakPerformanceEvent};
 
 pub const FACTORY_THOUGHT_CONSUMPTION_CONTRACT: &str = "factory.run-thought-consumption/v1";
-pub const THOUGHT_CONSUMPTION_PROJECTION_REQUEST: &str =
-    "ql.vak-thought-consumption-projection/v1";
+pub const THOUGHT_CONSUMPTION_PROJECTION_REQUEST: &str = "ql.vak-thought-consumption-projection/v1";
 pub const THOUGHT_CONSUMPTION_READING_CONTRACT: &str = "ql.vak-thought-consumption/v1";
 pub const THOUGHT_SOURCE_PATH: &str = "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md";
 pub const THOUGHT_SOURCE_BLOB: &str = "09f7d29ad6262f85bc2858f7c468f22d0bd398f3";
@@ -143,9 +142,7 @@ impl ThoughtMeaning {
     }
 }
 
-#[derive(
-    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
-)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct FactoryThoughtSource {
     pub owner: String,
@@ -396,11 +393,13 @@ pub fn project_thought_consumption(
                     consumption.assessment.reference.clone(),
                 ]);
                 recognition_evidence_refs.extend(human_refs.iter().cloned());
-                recognition_evidence_refs.extend(request.performance_evidence_refs.iter().cloned());
+                recognition_evidence_refs
+                    .extend(request.performance_evidence_refs.iter().cloned());
 
                 let mut verification_evidence_refs = actual_refs.clone();
                 verification_evidence_refs.insert(use_reading.source.reference.clone());
-                verification_evidence_refs.extend(request.performance_evidence_refs.iter().cloned());
+                verification_evidence_refs
+                    .extend(request.performance_evidence_refs.iter().cloned());
 
                 recognition_candidates.push(RecognitionCandidate {
                     target_ref: use_reading.source.reference.clone(),
@@ -472,7 +471,10 @@ fn validate_receipt(receipt: &FactoryThoughtConsumptionReceipt) -> Result<()> {
     for (value, message) in [
         (&consumption.consumption_id, "missing consumption identity"),
         (&consumption.run_ref, "missing Factory Run reference"),
-        (&consumption.consumer_ref, "missing consumption actor/consumer"),
+        (
+            &consumption.consumer_ref,
+            "missing consumption actor/consumer",
+        ),
     ] {
         reference(value, message)?;
     }
@@ -495,7 +497,10 @@ fn validate_receipt(receipt: &FactoryThoughtConsumptionReceipt) -> Result<()> {
 
     let mut thought_ids = BTreeSet::new();
     for input in &consumption.inputs {
-        reference(&input.thought_id, "missing Factory RunThought identity")?;
+        reference(
+            &input.thought_id,
+            "missing Factory RunThought identity",
+        )?;
         require(
             thought_ids.insert(input.thought_id.as_str()),
             "duplicate RunThought input in consumption receipt",
@@ -547,7 +552,10 @@ fn validate_interpretations(
     )?;
     let mut selected = BTreeMap::new();
     for selection in selections {
-        reference(&selection.thought_id, "missing selected RunThought identity")?;
+        reference(
+            &selection.thought_id,
+            "missing selected RunThought identity",
+        )?;
         require(
             selected
                 .insert(selection.thought_id.as_str(), selection.meaning)
@@ -560,10 +568,9 @@ fn validate_interpretations(
             .get(input.thought_id.as_str())
             .copied()
             .ok_or_else(|| error("consumed RunThought has no QL T/T-prime meaning"))?;
-        let interpretation = input
-            .interpretation
-            .as_ref()
-            .ok_or_else(|| error("T/T-prime projection requires Factory's typed interpretation ref"))?;
+        let interpretation = input.interpretation.as_ref().ok_or_else(|| {
+            error("T/T-prime projection requires Factory's typed interpretation ref")
+        })?;
         require(
             interpretation.reference == meaning.inventory_ref(),
             "Factory interpretation ref does not match the recovered QL thought identity",
@@ -601,7 +608,8 @@ fn validate_performance(request: &ThoughtConsumptionProjectionRequest) -> Result
             let event_refs = performance_refs(event);
             for reference in &request.performance_evidence_refs {
                 require(
-                    actual_refs.contains(reference.as_str()) && event_refs.contains(reference.as_str()),
+                    actual_refs.contains(reference.as_str())
+                        && event_refs.contains(reference.as_str()),
                     "performance evidence ref is not present in both Factory consumption and performed event",
                 )?;
             }
@@ -675,7 +683,10 @@ mod tests {
             working_field: source("central:now/2026-09-13"),
             inputs: vec![input],
             actual_evidence: vec![source(actual_ref)],
-            human_response: human_response.then(|| source("human:response/1")).into_iter().collect(),
+            human_response: human_response
+                .then(|| source("human:response/1"))
+                .into_iter()
+                .collect(),
             assessment: source("evaluation:1"),
             uses: vec![FactoryThoughtUse {
                 kind: use_kind,
@@ -824,7 +835,10 @@ mod tests {
                 .count(),
             6
         );
-        assert_eq!(ThoughtMeaning::Question.meaning(), "Question: articulate what is open.");
+        assert_eq!(
+            ThoughtMeaning::Question.meaning(),
+            "Question: articulate what is open."
+        );
         assert_eq!(
             ThoughtMeaning::Integration.meaning(),
             "Integration: work through how it belongs and returns."
