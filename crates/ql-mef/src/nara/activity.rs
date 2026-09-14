@@ -233,7 +233,9 @@ impl ActivityOccurrence {
             return Err("activity receipt precedes occurrence".into());
         }
         if self.human_authored && self.actor_kind != ActivityActorKind::Human {
-            return Err("Agent/provider output cannot be relabelled human-authored activity".into());
+            return Err(
+                "Agent/provider output cannot be relabelled human-authored activity".into(),
+            );
         }
         if let Some(parse) = &self.parse {
             parse.validate()?;
@@ -269,12 +271,18 @@ pub struct ThoughtConsumptionRef {
 
 impl ThoughtConsumptionRef {
     pub fn validate(&self) -> Result<(), String> {
-        text(&self.owner_contract_ref, "thought-consumption owner contract")?;
+        text(
+            &self.owner_contract_ref,
+            "thought-consumption owner contract",
+        )?;
         text(&self.thought_ref, "thought reference")?;
         text(&self.thought_identity_ref, "thought identity")?;
         text(&self.run_ref, "thought run")?;
         text(&self.result_ref, "thought result")?;
-        text(&self.source_interpretation_ref, "thought source interpretation")?;
+        text(
+            &self.source_interpretation_ref,
+            "thought source interpretation",
+        )?;
         refs(&self.evidence_refs, "thought evidence reference", 512)?;
         if let Some(response) = &self.human_response_ref {
             response.validate()?;
@@ -449,6 +457,9 @@ mod tests {
             abstention_reason: None,
             evidence_refs: Vec::new(),
         };
-        assert_eq!(receipt.validate().unwrap_err(), "activity parse spans overlap");
+        assert_eq!(
+            receipt.validate().unwrap_err(),
+            "activity parse spans overlap"
+        );
     }
 }
