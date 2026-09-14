@@ -9,6 +9,8 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
+use crate::aw1_world::{AW1_ROOTED_WORLD_CONTRACT, RootedMWorld};
+
 use super::SourceRevision;
 use super::domain::{EvidenceStanding, M4Branch, ProtectedRef};
 use super::replay::NaraOccasion;
@@ -105,6 +107,76 @@ impl ExpressionTargetRef {
     }
 }
 
+/// Compact consumption of #94/AW1's real rooted Bimba selection. The complete
+/// `RootedMWorld` remains with its owner; Nara carries the same selected source
+/// and direct/conjugate identities rather than rebuilding a graph store.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BimbaSelectionBinding {
+    pub owner_contract_ref: String,
+    pub registry_revision: String,
+    pub selected_source_ref: String,
+    pub direct_canonical_ref: String,
+    pub conjugate_canonical_ref: String,
+}
+
+impl BimbaSelectionBinding {
+    pub fn from_rooted_world(world: &RootedMWorld) -> Result<Self, String> {
+        if world.version != AW1_ROOTED_WORLD_CONTRACT {
+            return Err("unsupported rooted Bimba world contract".into());
+        }
+        let binding = Self {
+            owner_contract_ref: world.version.clone(),
+            registry_revision: world.registry_revision.clone(),
+            selected_source_ref: world.selected_source_ref.clone(),
+            direct_canonical_ref: world.direct.canonical_ref.clone(),
+            conjugate_canonical_ref: world.conjugate.canonical_ref.clone(),
+        };
+        binding.validate()?;
+        Ok(binding)
+    }
+
+    pub fn validate(&self) -> Result<(), String> {
+        if self.owner_contract_ref != AW1_ROOTED_WORLD_CONTRACT {
+            return Err("Bimba selection is not the accepted AW1 rooted-world contract".into());
+        }
+        text(&self.registry_revision, "Bimba registry revision")?;
+        text(&self.selected_source_ref, "Bimba selected source")?;
+        text(&self.direct_canonical_ref, "Bimba direct canonical reference")?;
+        text(
+            &self.conjugate_canonical_ref,
+            "Bimba conjugate canonical reference",
+        )?;
+        if self.direct_canonical_ref == self.conjugate_canonical_ref {
+            return Err("Bimba direct/conjugate faces were collapsed".into());
+        }
+        Ok(())
+    }
+}
+
+/// Same-session seam for the #94-owned Epii/M5 operation. The session and its
+/// Returns stay with their owner; this binding merely keeps the Nara expression
+/// on that exact encounter rather than starting a second agent session.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EpiiSessionBinding {
+    pub owner_contract_ref: String,
+    pub agent_session_ref: String,
+    pub operation_return_refs: Vec<String>,
+}
+
+impl EpiiSessionBinding {
+    pub fn validate(&self) -> Result<(), String> {
+        text(&self.owner_contract_ref, "Epii owner contract")?;
+        text(&self.agent_session_ref, "Epii AgentSession reference")?;
+        refs(
+            &self.operation_return_refs,
+            "Epii operation Return reference",
+            4096,
+        )
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SharedPresenceConsent {
@@ -196,6 +268,10 @@ pub struct NaraExpressionProjection {
     pub constituent_refs: Vec<String>,
     pub selection_refs: Vec<String>,
     pub source_revisions: Vec<SourceRevision>,
+    /// Exact #94/AW1 Bimba selection, when a Bimba companion participates.
+    pub bimba_selection: Option<BimbaSelectionBinding>,
+    /// Exact external #94 Epii session identity, when an Epii companion participates.
+    pub epii_session: Option<EpiiSessionBinding>,
     /// Host-side durable artifact/envelope refs returned after O:I saves an
     /// Expression. QL does not create or interpret those host artifacts.
     pub host_artifact_refs: Vec<String>,
@@ -232,6 +308,8 @@ impl NaraExpressionProjection {
             constituent_refs: Vec::new(),
             selection_refs: Vec::new(),
             source_revisions: occasion.source_revisions.clone(),
+            bimba_selection: None,
+            epii_session: None,
             host_artifact_refs: Vec::new(),
             cue_refs: Vec::new(),
             disclosure: ExpressionDisclosure::PrivateLocal,
@@ -269,6 +347,12 @@ impl NaraExpressionProjection {
         for revision in &self.source_revisions {
             source(revision)?;
         }
+        if let Some(binding) = &self.bimba_selection {
+            binding.validate()?;
+        }
+        if let Some(binding) = &self.epii_session {
+            binding.validate()?;
+        }
         refs(
             &self.host_artifact_refs,
             "Expression host artifact reference",
@@ -276,6 +360,34 @@ impl NaraExpressionProjection {
         )?;
         refs(&self.cue_refs, "Expression cue reference", 256)?;
         Ok(())
+    }
+
+    pub fn bind_bimba(mut self, world: &RootedMWorld) -> Result<Self, String> {
+        let binding = BimbaSelectionBinding::from_rooted_world(world)?;
+        if world.registry_revision != self.source_revisions[0].revision
+            && self
+                .source_revisions
+                .iter()
+                .all(|source| source.revision != world.registry_revision)
+        {
+            // The selected rooted world remains valid even when the occasion's
+            // other sources use different revisions, but its registry revision
+            // must be visible as a constituent rather than silently implied.
+            self.constituent_refs
+                .push(format!("registry:{}", world.registry_revision));
+        }
+        self.selection_refs
+            .push(binding.selected_source_ref.clone());
+        self.bimba_selection = Some(binding);
+        self.validate()?;
+        Ok(self)
+    }
+
+    pub fn bind_epii_session(mut self, binding: EpiiSessionBinding) -> Result<Self, String> {
+        binding.validate()?;
+        self.epii_session = Some(binding);
+        self.validate()?;
+        Ok(self)
     }
 
     pub fn share_with(
@@ -301,6 +413,8 @@ impl NaraExpressionProjection {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::aw1_world::resolve_rooted_m_world;
+    use crate::m_tree::native_m_registry;
     use crate::nara::EventBasisRefs;
 
     fn source_ref() -> SourceRevision {
@@ -376,6 +490,17 @@ mod tests {
         assert!(!encoded.contains("aggregate_resonance"));
         assert!(!encoded.contains("journal_bytes"));
         assert!(encoded.contains("central:protected:embodied-state"));
+    }
+
+    #[test]
+    fn accepted_aw1_bimba_selection_is_consumed_without_a_second_graph_store() {
+        let world = resolve_rooted_m_world(native_m_registry(), "#4").unwrap();
+        let value = projection("expression:1").bind_bimba(&world).unwrap();
+        let binding = value.bimba_selection.unwrap();
+        assert_eq!(binding.owner_contract_ref, AW1_ROOTED_WORLD_CONTRACT);
+        assert_eq!(binding.selected_source_ref, world.selected_source_ref);
+        assert_eq!(binding.direct_canonical_ref, world.direct.canonical_ref);
+        assert_eq!(binding.conjugate_canonical_ref, world.conjugate.canonical_ref);
     }
 
     #[test]
