@@ -322,10 +322,12 @@ pub fn read_qv<G: NativePropertyAdmission>(
             && assertion.content.result == receipt.result,
         "QV receipt does not match its exact rich assertion",
     )?;
-    for source in assertion.content.sources.iter().chain([
-        &assertion.content.producer,
-        &assertion.content.result,
-    ]) {
+    for source in assertion
+        .content
+        .sources
+        .iter()
+        .chain([&assertion.content.producer, &assertion.content.result])
+    {
         source.validate()?;
         gate.check_source(source)?;
     }
