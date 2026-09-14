@@ -12,6 +12,7 @@ pub mod cprime_oikonomia;
 mod error;
 pub mod focused_instrument;
 mod focused_instrument_aw1;
+pub mod focused_instrument_aw2;
 mod identity;
 pub mod l5_projection;
 mod lens;
