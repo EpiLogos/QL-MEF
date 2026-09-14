@@ -4,6 +4,8 @@
 //! C identities are preserved where authoritative, while old stubs and placeholder
 //! behaviours are not promoted into present implementation truth.
 
+#[cfg(test)]
+mod acceptance;
 mod capability;
 mod common;
 mod context;
