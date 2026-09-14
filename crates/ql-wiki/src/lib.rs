@@ -6,6 +6,7 @@
 
 mod living;
 mod living_methods;
+pub mod participation;
 mod portal;
 mod recognition;
 mod refraction;
@@ -23,6 +24,12 @@ pub use living_methods::{
     LivingWikiMethodPassResult, LivingWikiMethodProfile, LivingWikiMethodResult,
     LivingWikiPresentationDepth, compare_living_wiki_entry, execute_living_wiki_methods,
     response_truth_state,
+};
+pub use participation::{
+    BimbaFace, CompiledParticipationMember, CompiledWikiParticipation, ParticipationError,
+    ParticipationForm, ParticipationMember, ParticipationReferent, ParticipationRole,
+    WIKI_PARTICIPATION_CONTRACT, WikiParticipation, apply_participation, bimba_participant,
+    compile_participation, participation_context,
 };
 pub use portal::{
     CrossWikiTraversalRequest, CrossWikiTraversalResponse, ForeignKnowledgeResolver,
