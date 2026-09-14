@@ -45,6 +45,21 @@ fn reference(value: &str, message: &str) -> Result<()> {
     )
 }
 
+/// Stable compact wire token over evidence that is also retained explicitly in
+/// the binding. This is not a cryptographic authority proof: currentness still
+/// compares the full whole/subject/profile/frame/source evidence below. A fixed
+/// algorithm is used rather than `DefaultHasher` so tokens survive Rust upgrades.
+fn stable_token(value: &[u8]) -> String {
+    const FNV_OFFSET: u64 = 0xcbf29ce484222325;
+    const FNV_PRIME: u64 = 0x100000001b3;
+    let mut hash = FNV_OFFSET;
+    for byte in value {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(FNV_PRIME);
+    }
+    format!("{hash:016x}")
+}
+
 /// Correlations whose native identity remains outside QL. The QL binding
 /// identity itself is derived from the compiled whole/subject and is therefore
 /// deliberately absent here. A changed world occasion or Method selection still
@@ -328,21 +343,24 @@ fn frame_reading(compiled: &CompiledProfile) -> OperativeFrameReading {
     }
 }
 
-/// QL owns the binding identity. It is the stable relation between one compiled
-/// whole and its subject; changing profile/frame/source changes the revision,
-/// while changing whole/subject changes the binding identity itself.
+/// QL owns the binding identity. The full whole/subject fields remain explicit;
+/// this compact token is only their stable owner-generated wire identity.
 fn binding_identity(compiled: &CompiledProfile) -> Result<String> {
-    let identity = format!(
-        "{OPERATIVE_BINDING_CONTRACT}|{C_PRIME_INTERPRETATION_REF}|whole={}|subject={}",
+    let basis = format!(
+        "{C_PRIME_INTERPRETATION_REF}\0{}\0{}",
         compiled.whole_use, compiled.subject_ref
+    );
+    let identity = format!(
+        "{OPERATIVE_BINDING_CONTRACT}|id-fnv1a64={}",
+        stable_token(basis.as_bytes())
     );
     reference(&identity, "operative binding identity is invalid")?;
     Ok(identity)
 }
 
-/// Transparent QL owner revision over the complete compiled semantic basis. The
-/// exact source projection includes every source revision plus caller/standing/
-/// evidence refs, so a non-latest source change cannot retain the old revision.
+/// Compact owner revision over the complete compiled semantic basis. The full
+/// exact source projection remains in `sources` and is compared independently;
+/// this token therefore stays bounded even at the declared source ceiling.
 fn binding_revision(
     compiled: &CompiledProfile,
     frame: &OperativeFrameReading,
@@ -352,8 +370,8 @@ fn binding_revision(
         .map_err(|failure| CompositionError(format!("cannot encode C-prime profile: {failure}")))?;
     let source_basis = serde_json::to_string(sources)
         .map_err(|failure| CompositionError(format!("cannot encode operative source basis: {failure}")))?;
-    let revision = format!(
-        "{OPERATIVE_BINDING_CONTRACT}|{PROFILE_SOURCE_BLOB}|whole={}|subject={}|{}|{}|{}|{}|{}|{}|sources={}",
+    let revision_basis = format!(
+        "{PROFILE_SOURCE_BLOB}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}",
         compiled.whole_use,
         compiled.subject_ref,
         frame.context_frame,
@@ -363,6 +381,10 @@ fn binding_revision(
         frame.position_basis,
         profile,
         source_basis
+    );
+    let revision = format!(
+        "{OPERATIVE_BINDING_CONTRACT}|revision-fnv1a64={}",
+        stable_token(revision_basis.as_bytes())
     );
     reference(&revision, "operative binding revision is invalid")?;
     Ok(revision)
@@ -470,10 +492,12 @@ mod tests {
         assert_eq!(binding.owner_ref, OPERATIVE_OWNER_REF);
         assert_eq!(binding.interpretation_ref, C_PRIME_INTERPRETATION_REF);
         assert_eq!(binding.interpretation_revision, PROFILE_SOURCE_BLOB);
-        assert_eq!(
-            binding.binding_ref,
-            "ql.cprime-operative-binding/v1|ql/interpretation/c-prime|whole=whole:undertaking|subject=subject:nara"
-        );
+        assert!(binding.binding_ref.starts_with(
+            "ql.cprime-operative-binding/v1|id-fnv1a64="
+        ));
+        assert!(binding.binding_revision.starts_with(
+            "ql.cprime-operative-binding/v1|revision-fnv1a64="
+        ));
         assert_eq!(binding.whole_ref, "whole:undertaking");
         assert_eq!(binding.subject_ref, "subject:nara");
         assert_eq!(binding.frame.context_frame, "CF5");
@@ -520,6 +544,24 @@ mod tests {
         let changed = binding_from_compiled(&multiple, correlation()).unwrap();
         assert_ne!(baseline.binding_revision, changed.binding_revision);
         assert!(binding_differences(&baseline, &changed).contains(&"source-basis".to_string()));
+    }
+
+    #[test]
+    fn binding_tokens_remain_bounded_at_declared_source_ceiling() {
+        let mut large = compiled();
+        large.basis = (0..MAX_SOURCES)
+            .map(|index| {
+                basis(
+                    &format!("source:{index}"),
+                    &format!("revision:{index}"),
+                    &format!("evidence:{index}"),
+                )
+            })
+            .collect();
+        let binding = binding_from_compiled(&large, correlation()).unwrap();
+        assert_eq!(binding.sources.len(), MAX_SOURCES);
+        assert!(binding.binding_ref.len() <= MAX_REF);
+        assert!(binding.binding_revision.len() <= MAX_REF);
     }
 
     #[test]
