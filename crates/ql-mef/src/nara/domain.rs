@@ -23,4 +23,4 @@ pub use oracle::*;
 pub use state::*;
 pub use transformation::*;
 
-pub(crate) use common::{check_refs, check_source, check_text};
+pub(crate) use common::{check_optional_finite, check_refs, check_source, check_text};
