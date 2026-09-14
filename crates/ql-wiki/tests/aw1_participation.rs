@@ -66,13 +66,8 @@ fn participation(
 fn all_five_source_defined_wiki_participation_forms_compile() {
     let registry = native_m_registry();
     let projection = projection();
-    let direct = bimba_participant(
-        registry,
-        "#0",
-        BimbaFace::Direct,
-        ParticipationRole::Direct,
-    )
-    .unwrap();
+    let direct =
+        bimba_participant(registry, "#0", BimbaFace::Direct, ParticipationRole::Direct).unwrap();
     let conjugate = bimba_participant(
         registry,
         "#0",
