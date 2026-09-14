@@ -204,6 +204,42 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/aw1_self_reference.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Source-qualified S5 to QL-MEF product/revision affinity. It carries the selected registry revision but explicitly does not claim a coordinate capability, copied kernel or same-index exclusive owner.",
+      "tests": ["crates/ql-mef/src/aw1_self_reference.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/aw1_world.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": ["M"],
+      "rationale": "Read-only rooted view over the accepted M-family registry: preserves kernel taproot versus M-family master, exact recursive ancestry, direct/conjugate faces, source relations and only the native bindings actually present. It creates no second registry or implementation owner.",
+      "tests": ["crates/ql-mef/src/aw1_world.rs", "crates/ql-mef/tests/native_m_tree.rs"],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-mef/src/qv.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0", "#5"],
+      "rationale": "Source-qualified quintessential-view operation joining the accepted M0/Bimba PropertyField with Epii's historical M5 quick-view self-API. q_* spelling never supplies producer authority; read/write/bake preserve explicit source, subject, revision and result without a second graph/property store or shared-C writer.",
+      "tests": ["crates/ql-mef/src/qv.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-wiki/src/participation.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": ["#0"],
+      "rationale": "Hen's constellation/pair/triad/whole/direct-conjugate participation over the existing Wiki meta projection and M0/Bimba identities. It preserves exact Wiki revision and Bimba registry/face identity instead of copying Bimba into a second Wiki/graph ontology.",
+      "tests": ["crates/ql-wiki/tests/aw1_participation.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "adapters/retained-field/native-audio.mjs",
       "stratum": "javascript",
       "disposition": "infrastructural",
