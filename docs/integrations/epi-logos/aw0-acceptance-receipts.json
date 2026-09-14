@@ -74,6 +74,14 @@
       "merge_commit": "357eae508442981a3354583838b4e04c08769811",
       "standing": "ACCEPTED-NATIVE",
       "proves": "All twelve T/T-prime source meanings interpreted against immutable Factory thought-consumption actuality with Central NOW/source identity, current-source standing, optional same-Run Vāk evidence and source-qualified Recognition candidates while leaving Skill/Method registration and reuse to AIKit."
+    },
+    "ql-operative-scope": {
+      "repository": "EpiLogos/QL-MEF",
+      "pull_request": 184,
+      "accepted_head": "015e942f3cbf6acf6bd7360dd0b2f9549c678503",
+      "merge_commit": "3a2307d20b3a4588b2fba7591ff4523ed630e6b2",
+      "standing": "ACCEPTED-NATIVE",
+      "proves": "QL-owned source-qualified operative binding/currentness from actual VakComposition state, including owner-derived identity/revision, complete whole/profile/frame/source evidence, Current/Stale/Missing reobservation, client-widening refusal and the provider-neutral ql.operative-scope-currentness/v1 transport envelope without another scope registry or authority owner."
     }
   },
   "rules": [
@@ -220,9 +228,8 @@
       "priority": 20,
       "selector": {"gap_ids": ["AW2-SCOPE"]},
       "disposition": "READY-TO-COMPOSE",
-      "receipt_ids": ["aikit-native-action-recognition", "aikit-scope-currentness-correction"],
-      "current_dependency": "EpiLogos/QL-MEF#183/#184",
-      "reason": "AIKit's outer source-qualified invocation/currentness consumer is accepted; QL's source-backed owner binding/currentness producer remains the named final repository dependency until #184 merges."
+      "receipt_ids": ["aikit-native-action-recognition", "aikit-scope-currentness-correction", "ql-operative-scope"],
+      "reason": "AIKit native invocation/currentness consumption and QL owner-derived operative binding/reobservation are accepted. Retained source rows remain READY-TO-COMPOSE unless a row-specific whole-execution receipt exists; owner-currentness mechanics do not bulk-stamp historical rows as enacted."
     },
     {
       "id": "aw3-name-fallback",
