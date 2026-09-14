@@ -1,0 +1,33 @@
+name: K9 browser-session diagnostic
+on:
+  push:
+    branches: [agent/k9-node-diagnostic]
+permissions:
+  contents: read
+jobs:
+  browser-session:
+    runs-on: macos-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact retained-field JS dependency
+        run: |
+          mkdir -p target/k9-node
+          echo '{"private":true,"type":"module"}' > target/k9-node/package.json
+          npm --prefix target/k9-node install --package-lock=false --ignore-scripts --save-exact three@0.186.0
+          ln -s "$PWD/target/k9-node/node_modules" node_modules
+      - name: Bound test process and expose partial output
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          command = ["node", "--test", "--test-reporter=spec", "adapters/retained-field/focused-instrument-session.test.mjs"]
+          print("RUN", " ".join(command), flush=True)
+          try:
+              subprocess.run(command, check=True, timeout=30)
+          except subprocess.TimeoutExpired:
+              print("K9_BROWSER_TEST_TIMEOUT_AFTER_30S", flush=True)
+              raise
+          PY
