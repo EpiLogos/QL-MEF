@@ -150,6 +150,15 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-mef/src/vak_scope_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "#94/#183 transport-neutral currentness envelope over the existing QL-owned operative binding/reobservation path. It serialises owner-produced Current/Stale/Missing observations for external consumers without defining another coordinate, parser, scope registry, permission system, RPC owner or semantic refraction operation.",
+      "tests": ["crates/ql-mef/src/vak_scope_wire.rs", "crates/ql-mef/tests/vak_scope_owner.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/vak_thought_consumption.rs",
       "stratum": "rust",
       "disposition": "infrastructural",
