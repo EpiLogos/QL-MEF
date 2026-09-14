@@ -75,6 +75,11 @@ mod tests {
         assert_eq!(selection.source_ref, world.selected_source_ref);
         assert_eq!(selection.source_revision, world.registry_source_revision);
         assert_eq!(selection.coordinate_ref, world.direct.canonical_ref);
-        assert!(selection.assertion_refs.iter().any(|reference| reference.contains("registry")));
+        assert!(
+            selection
+                .assertion_refs
+                .iter()
+                .any(|reference| reference.contains("registry"))
+        );
     }
 }
