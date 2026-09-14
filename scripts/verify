@@ -21,6 +21,12 @@ full        core + native + invariants; the product source-verification contract
 EOF
 }
 
+ensure_python_deps() {
+  if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
+    python3 -m pip install --disable-pip-version-check --quiet 'jsonschema==4.25.1'
+  fi
+}
+
 core() {
   cargo fmt --all -- --check
   cargo clippy --workspace --all-targets --locked -- -D warnings
@@ -40,6 +46,7 @@ native() {
 }
 
 invariants() {
+  ensure_python_deps
   python3 scripts/check-ci-topology.py
   python3 scripts/check-q6-promotion-manifests.py
   python3 scripts/check-capability-matrix-registry.py
