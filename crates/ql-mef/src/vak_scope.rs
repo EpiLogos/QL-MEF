@@ -283,7 +283,9 @@ fn source_projection(compiled: &CompiledProfile) -> Result<Vec<OperativeBindingS
                 )?;
                 existing.caller_refs.insert(caller_ref);
                 existing.standing_refs.insert(standing_ref);
-                existing.evidence_refs.extend(basis.evidence.iter().cloned());
+                existing
+                    .evidence_refs
+                    .extend(basis.evidence.iter().cloned());
             }
             None => {
                 by_source.insert(
@@ -333,10 +335,7 @@ fn frame_reading(compiled: &CompiledProfile) -> OperativeFrameReading {
 /// Transparent owner revision for native consumers. Exact source revisions remain
 /// separately addressable and are compared during reobservation; this token makes
 /// profile/frame/latest QL occasion changes visible without hiding their basis.
-fn binding_revision(
-    compiled: &CompiledProfile,
-    frame: &OperativeFrameReading,
-) -> Result<String> {
+fn binding_revision(compiled: &CompiledProfile, frame: &OperativeFrameReading) -> Result<String> {
     let profile = serde_json::to_string(&compiled.profile)
         .map_err(|failure| CompositionError(format!("cannot encode C-prime profile: {failure}")))?;
     let latest = compiled
