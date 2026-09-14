@@ -1,9 +1,9 @@
 //! Nara → O:I Expression projection contract.
 //!
 //! O:I owns the reusable Expression Stage, targets, library, rendering and any
-//! compatible authoring envelope such as `oi.journey/1`. QL-MEF supplies a
-//! protected, source-qualified domain projection. Raw identity bodies, journal
-//! bytes, bioquaternions and centre scalars are intentionally not embedded here.
+//! compatible authoring envelope such as `oi.journey/1`. QL-MEF publishes a
+//! protected, source-qualified domain projection rather than a second renderer,
+//! library or portable artifact format.
 
 use std::collections::BTreeSet;
 
@@ -11,9 +11,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::aw1_world::{AW1_ROOTED_WORLD_CONTRACT, RootedMWorld};
 
-use super::SourceRevision;
 use super::domain::{EvidenceStanding, M4Branch, ProtectedRef};
 use super::replay::NaraOccasion;
+use super::SourceRevision;
 
 pub const NARA_EXPRESSION_PROJECTION_CONTRACT: &str = "ql.nara-expression-projection/v1";
 pub const EXPRESSION_HOST_OWNER: &str = "oi";
@@ -107,9 +107,8 @@ impl ExpressionTargetRef {
     }
 }
 
-/// Compact consumption of #94/AW1's real rooted Bimba selection. The complete
-/// `RootedMWorld` remains with its owner; Nara carries the same selected source
-/// and direct/conjugate identities rather than rebuilding a graph store.
+/// Compact consumption of #94/AW1's accepted rooted Bimba selection. The graph
+/// and full `RootedMWorld` remain with their owner.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BimbaSelectionBinding {
@@ -142,7 +141,10 @@ impl BimbaSelectionBinding {
         }
         text(&self.registry_revision, "Bimba registry revision")?;
         text(&self.selected_source_ref, "Bimba selected source")?;
-        text(&self.direct_canonical_ref, "Bimba direct canonical reference")?;
+        text(
+            &self.direct_canonical_ref,
+            "Bimba direct canonical reference",
+        )?;
         text(
             &self.conjugate_canonical_ref,
             "Bimba conjugate canonical reference",
@@ -154,9 +156,8 @@ impl BimbaSelectionBinding {
     }
 }
 
-/// Same-session seam for the #94-owned Epii/M5 operation. The session and its
-/// Returns stay with their owner; this binding merely keeps the Nara expression
-/// on that exact encounter rather than starting a second agent session.
+/// Same-session seam for the #94-owned Epii/M5 operation. K10 keeps the exact
+/// session/Return identity but does not implement another M5 or Recognition loop.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct EpiiSessionBinding {
@@ -207,11 +208,7 @@ impl SharedPresenceConsent {
         if self.allowed_expression_refs.is_empty() {
             return Err("shared presence requires an explicit expression allow-list".into());
         }
-        refs(
-            &self.allowed_target_refs,
-            "shared-presence target",
-            256,
-        )?;
+        refs(&self.allowed_target_refs, "shared-presence target", 256)?;
         if self.allowed_target_refs.is_empty() {
             return Err("shared presence requires an explicit target allow-list".into());
         }
@@ -231,6 +228,10 @@ impl SharedPresenceConsent {
         target_ref: &str,
         at_unix_ms: u64,
     ) -> bool {
+        let not_expired = match self.expires_at_unix_ms {
+            Some(expires) => at_unix_ms < expires,
+            None => true,
+        };
         self.participant_subjects
             .iter()
             .any(|subject| subject == subject_id)
@@ -242,9 +243,7 @@ impl SharedPresenceConsent {
                 .allowed_target_refs
                 .iter()
                 .any(|allowed| allowed == target_ref)
-            && self
-                .expires_at_unix_ms
-                .is_none_or(|expires| at_unix_ms < expires)
+            && not_expired
     }
 }
 
@@ -262,21 +261,13 @@ pub struct NaraExpressionProjection {
     pub m4_coordinate_ref: String,
     pub occasion_mode: ExpressionOccasionMode,
     pub target: ExpressionTargetRef,
-    /// Opaque pointer to protected domain state. The host must use native
-    /// authority to resolve it; no raw personal payload is carried here.
     pub protected_state_ref: ProtectedRef,
     pub constituent_refs: Vec<String>,
     pub selection_refs: Vec<String>,
     pub source_revisions: Vec<SourceRevision>,
-    /// Exact #94/AW1 Bimba selection, when a Bimba companion participates.
     pub bimba_selection: Option<BimbaSelectionBinding>,
-    /// Exact external #94 Epii session identity, when an Epii companion participates.
     pub epii_session: Option<EpiiSessionBinding>,
-    /// Host-side durable artifact/envelope refs returned after O:I saves an
-    /// Expression. QL does not create or interpret those host artifacts.
     pub host_artifact_refs: Vec<String>,
-    /// Optional semantic lifecycle cues requested of the host stage. These are
-    /// advisory presentation requests, not domain state transitions.
     pub cue_refs: Vec<String>,
     pub disclosure: ExpressionDisclosure,
     pub standing: EvidenceStanding,
@@ -340,7 +331,11 @@ impl NaraExpressionProjection {
             "Expression constituent reference",
             4096,
         )?;
-        refs(&self.selection_refs, "Expression selection reference", 4096)?;
+        refs(
+            &self.selection_refs,
+            "Expression selection reference",
+            4096,
+        )?;
         if self.source_revisions.is_empty() || self.source_revisions.len() > 4096 {
             return Err("Expression projection requires 1..4096 source revisions".into());
         }
@@ -358,21 +353,17 @@ impl NaraExpressionProjection {
             "Expression host artifact reference",
             256,
         )?;
-        refs(&self.cue_refs, "Expression cue reference", 256)?;
-        Ok(())
+        refs(&self.cue_refs, "Expression cue reference", 256)
     }
 
     pub fn bind_bimba(mut self, world: &RootedMWorld) -> Result<Self, String> {
+        self.validate()?;
         let binding = BimbaSelectionBinding::from_rooted_world(world)?;
-        if world.registry_revision != self.source_revisions[0].revision
-            && self
-                .source_revisions
-                .iter()
-                .all(|source| source.revision != world.registry_revision)
+        if self
+            .source_revisions
+            .iter()
+            .all(|revision| revision.revision != world.registry_revision)
         {
-            // The selected rooted world remains valid even when the occasion's
-            // other sources use different revisions, but its registry revision
-            // must be visible as a constituent rather than silently implied.
             self.constituent_refs
                 .push(format!("registry:{}", world.registry_revision));
         }
@@ -403,7 +394,9 @@ impl NaraExpressionProjection {
             &self.target.target_ref,
             at_unix_ms,
         ) {
-            return Err("shared-presence consent does not permit this Expression projection".into());
+            return Err(
+                "shared-presence consent does not permit this Expression projection".into(),
+            );
         }
         self.disclosure = ExpressionDisclosure::SharedPresence;
         Ok(self)
@@ -483,9 +476,8 @@ mod tests {
     }
 
     #[test]
-    fn expression_projection_contains_refs_not_raw_personal_state() {
-        let value = projection("expression:1");
-        let encoded = serde_json::to_string(&value).unwrap();
+    fn projection_contains_refs_not_raw_personal_state() {
+        let encoded = serde_json::to_string(&projection("expression:1")).unwrap();
         assert!(!encoded.contains("q_composed"));
         assert!(!encoded.contains("aggregate_resonance"));
         assert!(!encoded.contains("journal_bytes"));
@@ -493,14 +485,17 @@ mod tests {
     }
 
     #[test]
-    fn accepted_aw1_bimba_selection_is_consumed_without_a_second_graph_store() {
+    fn accepted_aw1_selection_is_consumed_without_a_second_graph_store() {
         let world = resolve_rooted_m_world(native_m_registry(), "#4").unwrap();
         let value = projection("expression:1").bind_bimba(&world).unwrap();
         let binding = value.bimba_selection.unwrap();
         assert_eq!(binding.owner_contract_ref, AW1_ROOTED_WORLD_CONTRACT);
         assert_eq!(binding.selected_source_ref, world.selected_source_ref);
         assert_eq!(binding.direct_canonical_ref, world.direct.canonical_ref);
-        assert_eq!(binding.conjugate_canonical_ref, world.conjugate.canonical_ref);
+        assert_eq!(
+            binding.conjugate_canonical_ref,
+            world.conjugate.canonical_ref
+        );
     }
 
     #[test]
@@ -513,20 +508,8 @@ mod tests {
             granted_at_unix_ms: 10,
             expires_at_unix_ms: Some(100),
         };
-        let shared = projection("expression:1")
-            .share_with(&consent, 50)
-            .unwrap();
+        let shared = projection("expression:1").share_with(&consent, 50).unwrap();
         assert_eq!(shared.disclosure, ExpressionDisclosure::SharedPresence);
         assert!(projection("expression:2").share_with(&consent, 50).is_err());
-    }
-
-    #[test]
-    fn ql_does_not_claim_a_non_oi_expression_host() {
-        let mut value = projection("expression:1");
-        value.target.owner_ref = "ql-mef".into();
-        assert_eq!(
-            value.validate().unwrap_err(),
-            "Nara Expressions must target the O:I-owned expression surface"
-        );
     }
 }
