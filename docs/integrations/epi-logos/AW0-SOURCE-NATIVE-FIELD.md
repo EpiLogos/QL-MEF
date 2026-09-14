@@ -1,16 +1,23 @@
 # AW0 source and native-owner field
 
-Standing: **source/native binding projection, not whole-field runtime acceptance**.
-Owner: QL-MEF #94, under the current Kernel Rebuild Wayfinder and pre-K8 lock.
+Standing: **exhaustive source/native census with receipt-qualified current disposition; not whole-field owner-machine or human runtime acceptance**.
+Owner: QL-MEF #94, under the Kernel Rebuild Wayfinder, Ta-Onta full-field lock and the final #190 reconciliation.
 
 The executable projection is `python3 scripts/aw0.py`. It expands the existing
 registered matrices and source inventories rather than authoring another runtime
 registry. `--json` returns every record; `--id historical-sp:SP44` retrieves one
-exact record with its original source, current native owner, inputs/result,
-authority, lifecycle, participation, required tests and named remaining gap.
+exact record with its source identity, native owner bindings, inputs/results,
+authority, lifecycle, participation, original AW0 gap and **current** disposition.
 An unknown identity fails rather than falling back to a convenient example.
 
-## Independent coverage
+Current disposition is a separate layer in
+`aw0-acceptance-receipts.json`. That ledger pins exact accepted heads and merge
+commits. A row is upgraded only when an explicit disposition rule names accepted
+receipt evidence that really covers it. Source/code presence never certifies a
+runtime join, and one successful specimen never upgrades a whole family unless
+the accepted receipt itself proves the family-wide contract.
+
+## Independent coverage remains unchanged
 
 The projection preserves all 36 SP00–SP55 records, six current S′ organs and nine
 root-contribution source paragraphs; all 36 M capabilities and 36 M×S′ cells;
@@ -58,37 +65,86 @@ parent contains the exact owner checkouts named by the source-basis file.
 Verification reads but never rewrites original or native source files. Projection
 hashes are read afresh for each invocation, including current local QL carriers.
 
-## Readiness is not inferred from enumeration
+## Current disposition is not the old AW0 gap
 
-Every projected row presently retains an explicit **EPI-GAP at full composition
-scope** and names the owning implementation dependency. This is not a claim that
-its underlying mechanic is absent. The current source APIs and their exact
-revisions are separately attached to each record. Source coverage, code presence,
-finite operation, native composition, live provider use and human acceptance are
-independent evidence classes.
+The original AW0 gap remains on every row as provenance and is marked
+`AW0-BASELINE-GAP-RETAINED-FOR-PROVENANCE`. It answers: *what still had to be
+proved when the exhaustive census was first made?* The `disposition` field now
+answers a different question: *what does accepted returned reality support now?*
 
-The older readiness source remains 21 READY-TO-COMPOSE / 15 EPI-GAP at its original
-scope. Accepted M1–M3 engine receipts are not restamped. AIKit #302 / `75ac68f…`
-provides the native scoped Resolve/Contemplate foundation; Factory #230 /
-`c3c0677…` provides native thought consumption. Neither certifies all C′ operation,
-all live T/T′ learning, or named Skill registration. Row-specific runtime receipts
-may refine the full-composition assessment only after the actual join is tested.
+The current classes are:
 
-The original 20-frame / 40-directional-sequence statement is retained as an
-explicit source discrepancy: the inspected statement is not an enumerated
-20-member current grammar. Current seven CF identities and six paired CS walks
-remain distinct. No fabricated cross-product is used as a cardinality proof.
+- **ACCEPTED-NATIVE** — an exact accepted receipt proves the row or an explicitly
+  family-wide native contract. Examples include all 194 recovered property
+  definitions, the finite C′/CF/CFP/CS grammar and native conduct, and the original
+  musical-performance job through Factory → QL → K8.
+- **READY-TO-COMPOSE** — the relevant native mechanics/owners are accepted, but
+  this source row has no row-specific whole-composition receipt. Historical SP
+  rows, 109 Vāk entries, 36 operation/horizon cells, staged Skills and many deep
+  capability records intentionally remain here rather than being bulk-promoted.
+- **EXTERNAL-OWNER** — the row belongs to a named current lane. Full Nara/M4 is
+  #134 and the focused Epi/Nara desktop/surface experience is #133.
+- **SOURCE-DISCREPANCY** — an authored claim is retained while its current
+  cardinality/identity basis remains unproved. The legacy 20-frame / 40-direction
+  statement is the canonical example.
+- **RESEARCH-ONLY** — unresolved/open/drift source conditions and deep property-key
+  occurrences are retained as evidence without turning them into runtime facts or
+  canonical definitions.
+- **EPI-GAP** — permitted only with an exact named unresolved dependency. Anonymous
+  EPI-GAP is now a projection error.
 
-## Work owners and continuation
+The older readiness source remains 21 READY-TO-COMPOSE / 15 EPI-GAP at its
+original historical scope. It is not rewritten. The new disposition overlay is a
+later evidence layer over the same records.
 
-AW1 root/property promotion is coordinated through #132 K8.0, the single shared
-C/registry/census writer. Rich property operations remain #94. Native scoped
-invocation and recognised `= name` Skill registration/reuse remain ai-kit #267;
-actual CFP/Z/Unit/Attempt/Return conduct remains Factory #217. Native report
-production, consumption and subsequent Epii agency remain #94, using Central NOW
-and the accepted native owners. Nara/M4 remains #134 and experienced surfaces #133.
+## Accepted return already represented
 
-The projection does not close AW1–AW3 or #94. It prevents a selected implementation
-or demonstration from deleting unused source scope. The existing frozen C′
-profile import in K8 is not duplicated here. No C registry, M IDs, historical K4
-evidence, private Control, native source store or human UX ratification changes.
+The first #190 ledger records exact merged evidence from:
+
+- #166 — native rich property assertions and controlled execution of all 194
+  recovered definitions;
+- #177 — complete finite C′ conduct semantics, six CFP forms plus Z, six CS
+  profiles and directed passage;
+- Factory #231 — all six CFP forms through native WorkflowUnit/Run/Attempt/Return,
+  durable retry/cancellation/late Return and native thought/Journey Return;
+- AIKit #308 — source-qualified native Action invocation and
+  Recognition → `= name` → Skill/Method proof/reuse;
+- AIKit #310 — the correction that keeps operative-scope currentness distinct from
+  genuine MEF semantic refraction;
+- #181 — actual Factory performance projected into one QL C′/musical event;
+- #176 — the accepted Factory → QL → M1/M2/M3/continuous → early Nara → retained
+  GPU/browser-sound join and shared current census floor;
+- #186 — rooted M/Bimba-Pratibimba, S5 self-reference, source-qualified QV and
+  native Wiki participation.
+
+#182 supplies QL's all-twelve T/T′ consumption/Recognition interpretation and
+#184 supplies the QL-owned source-qualified operative binding/currentness reading.
+Until those PRs merge, the relevant rows remain explicitly READY-TO-COMPOSE with
+those exact named dependencies; they are not pre-certified by this document.
+
+## Why whole-field runtime acceptance remains false
+
+Repository-native #94 closure and full owner-machine experience are different
+evidence claims. The receipt overlay can exhaustively disposition #94 rows while
+still refusing to call the whole field live on a particular O:I desktop, provider,
+GPU, body or human encounter. Full Nara physiological/lived work remains #134;
+focused desktop/surface composition remains #133; owner-machine/hardware/human
+acceptance keeps its own attributable lanes.
+
+`runtime_acceptance: false` therefore does **not** mean every AW0 record is still a
+gap. It means the projection refuses to collapse accepted native contracts,
+ready compositional source, external ownership, research standing and lived
+acceptance into one boolean success claim.
+
+## Closure law
+
+#94 can close only when the exhaustive census is unchanged, every row has one
+unambiguous current disposition, every ACCEPTED-NATIVE row names real accepted
+receipts, every EPI-GAP names an exact dependency, and #94's own remaining rows
+are accepted or honestly ready rather than anonymous gaps. External/research
+standing remains visible rather than being counted as #94 implementation.
+
+This returned disposition changes no C registry, M identity, historical K4
+evidence, private Control, native source store, permission owner or human UX
+ratification. It lets the original source field remain whole while allowing later
+reality to revise its implementation standing explicitly.
