@@ -1,6 +1,9 @@
 CC ?= cc
 AR ?= ar
-ARFLAGS = rcsD
+# GNU ar takes the deterministic 'D' flag; BSD ar (Darwin) rejects it.
+# Linux/CI keeps rcsD exactly as before.
+AR_DETERMINISTIC := $(if $(findstring GNU,$(shell $(AR) --version 2>/dev/null || echo BSD)),D,)
+ARFLAGS = rcs$(AR_DETERMINISTIC)
 CFLAGS ?= -std=c11 -O2 -Wall -Wextra -Werror -pedantic
 CPPFLAGS ?=
 PREFIX ?= /usr/local
