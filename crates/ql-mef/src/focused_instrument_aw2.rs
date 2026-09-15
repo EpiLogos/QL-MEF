@@ -293,6 +293,7 @@ mod tests {
             vak_expression: None,
             vak_performance: None,
             personal_current: false,
+            nara_expression: None,
             standing: "controlled".into(),
         }
     }
