@@ -3,6 +3,7 @@
 use ql_mef::continuous::FieldInput;
 use ql_mef::continuous::coupled::CoupledInput;
 use ql_mef::continuous::personal::PersonalCoupledSession;
+use ql_mef::focused_instrument::{FocusedInstrument, InstrumentFocus, InstrumentOwnerView};
 use ql_mef::nara::{
     BioQuaternion, ConsentState, EarthBodyConstitution, EventBasisRefs, LifecycleState,
     PersonalConstitution, PersonalEventInput, PersonalLayer, ReceiverConstitution,
@@ -172,6 +173,22 @@ fn run() -> Result<(), String> {
         serde_json::from_value(installed["field"].clone()).map_err(|error| error.to_string())?;
     let observed_at_unix_ms = basis.m2.at_unix_ms;
     let constitution = constitution(&basis.m3.subject_ref, observed_at_unix_ms);
+    let mut revoked = ql_mef::nara::PersonalFieldInstance::new({
+        let mut value = constitution.clone();
+        value.consent = ConsentState::Withdrawn;
+        value
+    })?;
+    let revoked_basis = basis.clone().compose()?;
+    let revoked_refs = EventBasisRefs::from_basis(&revoked_basis)?;
+    assert!(
+        revoked
+            .receive(
+                &revoked_basis,
+                reception(&revoked_refs, observed_at_unix_ms)
+            )
+            .is_err(),
+        "withdrawn Nara consent admitted a personal reception"
+    );
     let out = Path::new(&args[3]);
     std::fs::create_dir_all(out).map_err(|error| error.to_string())?;
 
@@ -195,6 +212,31 @@ fn run() -> Result<(), String> {
     );
     assert_eq!(first.receivers.len(), 7);
     assert_eq!(first.subject_id, refs.subject_ref);
+    assert_ne!(first.receivers[0].resonance, first.receivers[6].resonance);
+    assert_ne!(first.receivers[0].source, first.receivers[6].source);
+
+    let mut instrument = FocusedInstrument::new();
+    let owner_view = InstrumentOwnerView::from_session(&owner)?;
+    let cursor = owner_view.cursor()?;
+    for focus in [
+        InstrumentFocus::M1,
+        InstrumentFocus::M2,
+        InstrumentFocus::M3,
+        InstrumentFocus::M4,
+        InstrumentFocus::M5,
+    ] {
+        instrument.set_focus(focus);
+        let focused = instrument.snapshot(&owner_view)?;
+        assert_eq!(focused.event.event_ref, refs.event_ref);
+        assert_eq!(focused.event.profile_generation, refs.profile_generation);
+        assert_eq!(focused.live_cursor, cursor);
+        let nara = focused
+            .nara_expression
+            .expect("current Personal session has Nara Expression projection");
+        assert!(nara.current);
+        assert_eq!(nara.centres.len(), 7);
+        assert_ne!(nara.centres[0].resonance, nara.centres[6].resonance);
+    }
 
     let replay = owner.receive_personal(first_input)?;
     assert_eq!(replay, first);
@@ -221,6 +263,13 @@ fn run() -> Result<(), String> {
     assert!(
         !owner.personal_is_current()?,
         "old personal reading relabelled after world replacement"
+    );
+    let stale = FocusedInstrument::new().snapshot(&InstrumentOwnerView::from_session(&owner)?)?;
+    assert!(
+        !stale
+            .nara_expression
+            .expect("stale Personal reading remains inspectable")
+            .current
     );
     assert_eq!(
         owner.last_field()["samples_elapsed"],
@@ -254,6 +303,8 @@ fn run() -> Result<(), String> {
                 "world_replacement_made_old_personal_reading_stale":true,
                 "explicit_rereception_restored_currentness":owner.personal_is_current()?,
                 "exact_personal_replay":replay == first,
+                "m1_to_m5_focus_preserved_one_event":true,
+                "withdrawn_consent_refused":true,
                 "currentness":currentness,
                 "standing":"installed C++ field worker plus subject-bound #134 PersonalFieldInstance; receiver values are controlled source-qualified inputs, not owner-machine lived/clinical evidence"
             }))

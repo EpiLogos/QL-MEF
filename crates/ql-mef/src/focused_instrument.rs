@@ -503,12 +503,18 @@ pub struct NaraExpressionSession {
     pub m2_reading_refs: Vec<String>,
     pub m3_reading_refs: Vec<String>,
     pub action_refs: Vec<String>,
+    pub m1_presentation: Value,
+    pub m2_presentation: Value,
+    pub m3_presentation: Value,
     pub portable: NaraExpressionPortableCues,
     pub standing: String,
 }
 
 impl NaraExpressionSession {
-    fn from_personal(personal: &PersonalFieldState, current: bool) -> Result<Self, String> {
+    fn from_view(
+        personal: &PersonalFieldState,
+        view: &InstrumentOwnerView,
+    ) -> Result<Self, String> {
         if personal.receivers.len() != 7 {
             return Err("Nara Expression requires exactly seven accepted centres".into());
         }
@@ -534,7 +540,12 @@ impl NaraExpressionSession {
             .iter()
             .enumerate()
             .any(|(ordinal, centre)| usize::from(centre.ordinal) != ordinal)
-            || centres.iter().any(|centre| !centre.resonance.is_finite())
+            || centres.iter().any(|centre| {
+                !centre.resonance.is_finite()
+                    || !centre.m1.value.is_finite()
+                    || !centre.m2.value.is_finite()
+                    || !centre.m3.value.is_finite()
+            })
         {
             return Err("Nara Expression centre reading is incomplete or non-finite".into());
         }
@@ -572,7 +583,7 @@ impl NaraExpressionSession {
             event_ref: personal.event.event_ref.clone(),
             profile_generation: personal.event.profile_generation,
             personal_reception_generation: personal.reception_generation,
-            current,
+            current: view.personal_current,
             centres,
             earth_body,
             resonance_stations: NaraResonanceStationDisclosure {
@@ -584,6 +595,22 @@ impl NaraExpressionSession {
             m2_reading_refs: vec![personal.event.m2_source_ref.clone(), personal.event.m2_contract_ref.clone()],
             m3_reading_refs: vec![personal.event.m3_source_ref.clone(), personal.event.m3_contract_ref.clone()],
             action_refs: Vec::new(),
+            m1_presentation: json!({
+                "reflection":view.m1.get("reflection").cloned().unwrap_or(Value::Null),
+                "rotor":view.m1.get("rotor").cloned().unwrap_or(Value::Null),
+                "carrier":view.m1.get("carrier").cloned().unwrap_or(Value::Null),
+            }),
+            m2_presentation: json!({
+                "colour":view.m2.pointer("/condition/colour").cloned().unwrap_or(Value::Null),
+                "physical_material":view.m2.pointer("/condition/physical_material").cloned().unwrap_or(Value::Null),
+                "m3_form_potential_ref":view.m2.pointer("/condition/m3_form_potential_ref").cloned().unwrap_or(Value::Null),
+                "modal":view.m2.get("modal").cloned().unwrap_or(Value::Null),
+            }),
+            m3_presentation: json!({
+                "form":view.m3.get("form").cloned().unwrap_or(Value::Null),
+                "clock":view.m3.get("clock").cloned().unwrap_or(Value::Null),
+                "transcription":view.m3.get("transcription").cloned().unwrap_or(Value::Null),
+            }),
             portable,
             standing: "private session-local K10 presentation reading; portable contains refs and cues only".into(),
         })
@@ -774,7 +801,7 @@ impl FocusedInstrument {
         let nara_expression = view
             .personal
             .as_ref()
-            .map(|personal| NaraExpressionSession::from_personal(personal, view.personal_current))
+            .map(|personal| NaraExpressionSession::from_view(personal, view))
             .transpose()?;
         Ok(FocusedInstrumentSnapshot {
             schema: FOCUSED_INSTRUMENT_CONTRACT.into(),
