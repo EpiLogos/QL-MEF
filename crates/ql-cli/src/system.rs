@@ -8,7 +8,6 @@
 //!
 //! Read-only: this command performs no mutation and writes nothing.
 
-use ql_service::QlService;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
@@ -66,7 +65,7 @@ fn build_descriptor() -> Result<Value, crate::CliError> {
     let stochastic_operations = kernel.stochastic_operations;
     let research_operations = kernel.research_operations;
 
-    let service = QlService::new();
+    let service = crate::cli_service();
     let service_view = crate::service_view(&service);
     let provider_state = service_view.provider_state;
     let service_operations: Vec<Value> = service_view

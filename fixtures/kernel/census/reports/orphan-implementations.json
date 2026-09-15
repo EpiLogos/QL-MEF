@@ -18855,6 +18855,18 @@
       "tokens": [
         "failure"
       ]
+    },
+    {
+      "symbol": "cli_service",
+      "path": "crates/ql-cli/src/lib.rs",
+      "kind": "fn",
+      "line": 922,
+      "context": "/// The CLI service path negotiates through the production registry-disclosure /// provider so every service disclosure states what the CLI can actually do: /// capabilities, locate and refract are available and deterministic; relate and /// synthesise remain honestly absent until a provider implements them.",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "service"
+      ]
     }
   ]
 }
