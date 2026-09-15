@@ -55,7 +55,7 @@ Return the original subject/ref/revision, operation, provider health/capability 
 
 ## Verification
 
-Run the Rust workspace tests. The acceptance matrix must retain the `ql-adapters/tests/noql_matrix.rs` cases for disabled, optional, required, degraded/incompatible and invalid-coordinate behaviour, together with service/core/MEF contract tests.
+Run the Rust workspace tests. The acceptance matrix must retain the `crates/ql-adapters/tests/noql_matrix.rs` cases for disabled, optional, required, degraded/incompatible and invalid-coordinate behaviour, together with service/core/MEF contract tests.
 
 ## Living-instrument scope and activation
 
