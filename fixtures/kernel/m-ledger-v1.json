@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "da4dbc7665b3fbbbb322a1707111e6cb86780dd49bebeeae7ddabb9623a4884e",
+  "ledger_revision": "769a8ab963a9522446ffe6a083cbb8784bcdc21272eefbb1ad9b131350811042",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "cea2250af4f5165183c03c7d2e38e945e05c6f97cd2f3b8ced1efc6ed3292480",
@@ -16455,19 +16455,7 @@
         "rust:crates/ql-core/src/pole/transcription.rs:transduce_vibration_to_symbol",
         "rust:crates/ql-core/src/structural.rs:AnchorReturn",
         "rust:crates/ql-core/src/structural.rs:GroundKind",
-        "rust:crates/ql-mef/examples/k8_field.rs:run",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/continuous.rs:FieldSession",
-        "rust:crates/ql-mef/src/continuous/coupled.rs:ConditionFrequencyBinding",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/lens.rs:LensId",
         "rust:crates/ql-mef/src/lens.rs:LensRef",
         "rust:crates/ql-mef/src/m1.rs:DR_RING_MAHAMAYA",
@@ -16527,28 +16515,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
         "rust:crates/ql-mef/src/m_ledger.rs:path",
         "rust:crates/ql-mef/src/m_ledger.rs:transition",
-        "rust:crates/ql-mef/src/m_tree.rs:native_current_m_registry",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara.rs:finite",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-        "rust:crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-        "rust:crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField",
-        "rust:crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-        "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
-        "rust:crates/ql-mef/src/property/model.rs:Assertion",
         "rust:crates/ql-mef/src/provenance.rs:QlProviderRef",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
@@ -16575,7 +16541,6 @@
         "rust:crates/ql-mef/src/vak_composition.rs:Determination",
         "rust:crates/ql-mef/src/vak_composition.rs:Transition",
         "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
         "rust:crates/ql-semantic/src/capability.rs:InputLimits",
         "rust:crates/ql-semantic/src/capability.rs:Operation",
         "rust:crates/ql-semantic/src/capability.rs:ProviderClass",
@@ -19391,19 +19356,7 @@
         "rust:crates/ql-core/src/pole/transcription.rs:transduce_vibration_to_symbol",
         "rust:crates/ql-core/src/structural.rs:AnchorReturn",
         "rust:crates/ql-core/src/structural.rs:GroundKind",
-        "rust:crates/ql-mef/examples/k8_field.rs:run",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/continuous.rs:FieldSession",
-        "rust:crates/ql-mef/src/continuous/coupled.rs:ConditionFrequencyBinding",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/lens.rs:LensId",
         "rust:crates/ql-mef/src/lens.rs:LensRef",
         "rust:crates/ql-mef/src/m1.rs:DR_RING_PARASHAKTI",
@@ -19445,23 +19398,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:StructureAssertion",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
         "rust:crates/ql-mef/src/m_ledger.rs:path",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara.rs:finite",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-        "rust:crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
-        "rust:crates/ql-mef/src/property/model.rs:Assertion",
         "rust:crates/ql-mef/src/provenance.rs:QlProviderRef",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
@@ -19486,7 +19422,6 @@
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
         "rust:crates/ql-mef/src/vak_composition.rs:Determination",
         "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
         "rust:crates/ql-semantic/src/capability.rs:InputLimits",
         "rust:crates/ql-semantic/src/capability.rs:ProviderClass",
         "rust:crates/ql-semantic/src/capability.rs:ProviderState",
@@ -19571,13 +19506,6 @@
         "rust:crates/ql-mef/src/m2_vimarsha.rs:POLICY",
         "rust:crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
         "rust:crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-        "rust:crates/ql-mef/src/property/model.rs:Assertion",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/templateure.rs:FormPotential",
         "rust:crates/ql-mef/src/vak.rs:SelfOtherForm",
@@ -19620,7 +19548,6 @@
         "neo4j:live:M2-1-0",
         "rust:crates/ql-mef/src/lens.rs:LensId",
         "rust:crates/ql-mef/src/lens.rs:LensRef",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ],
       "dispositions": {
@@ -19724,8 +19651,7 @@
         "c:vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
         "neo4j:live:M2-1-0-3",
         "rust:crates/ql-mef/src/lens.rs:LensId",
-        "rust:crates/ql-mef/src/lens.rs:LensRef",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
+        "rust:crates/ql-mef/src/lens.rs:LensRef"
       ],
       "dispositions": {
         "c": "bound",
@@ -19971,8 +19897,6 @@
         "rust:crates/ql-mef/src/lens.rs:LensId",
         "rust:crates/ql-mef/src/lens.rs:LensRef",
         "rust:crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/property/model.rs:Assertion",
         "rust:crates/ql-semantic/src/capability.rs:InputLimits",
         "rust:crates/ql-wiki/src/portal.rs:MetaPortal"
       ],
@@ -20019,8 +19943,7 @@
       "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
       "bindings": [
         "neo4j:live:M2-1-2-1",
-        "rust:crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-        "rust:crates/ql-mef/src/property/model.rs:Assertion"
+        "rust:crates/ql-mef/src/m_ledger.rs:StructureAssertion"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -20040,15 +19963,14 @@
         "#2-1-2-2"
       ],
       "source": null,
-      "assessment": "k4:c=implemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=implemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
         "c:vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
-        "neo4j:live:M2-1-2-2",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
+        "neo4j:live:M2-1-2-2"
       ],
       "dispositions": {
         "c": "bound",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -20311,11 +20233,7 @@
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
         "rust:crates/ql-mef/src/lens.rs:LensId",
         "rust:crates/ql-mef/src/lens.rs:LensRef",
-        "rust:crates/ql-mef/src/m2.rs:context_condition",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField"
+        "rust:crates/ql-mef/src/m2.rs:context_condition"
       ],
       "dispositions": {
         "c": "bound",
@@ -20401,16 +20319,13 @@
         "#2-1-4-3"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-1-4-3",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal"
+        "neo4j:live:M2-1-4-3"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -20430,8 +20345,7 @@
       "bindings": [
         "neo4j:live:M2-1-4-4",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/m2.rs:context_condition",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField"
+        "rust:crates/ql-mef/src/m2.rs:context_condition"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -20659,13 +20573,10 @@
         "rust:crates/ql-cli/src/lib.rs:vak_relation_kind",
         "rust:crates/ql-core/src/form.rs:QlForm",
         "rust:crates/ql-core/src/form.rs:QlFormRef",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m1_engine.rs:FiniteField",
         "rust:crates/ql-mef/src/m1_engine.rs:finite_field",
         "rust:crates/ql-mef/src/m2_engine.rs:finite",
-        "rust:crates/ql-mef/src/nara.rs:finite",
         "rust:crates/ql-mef/src/vak.rs:SelfOtherForm",
         "rust:crates/ql-mef/src/vak.rs:VakActionRelationKind",
         "rust:crates/ql-mef/src/vak.rs:VakEntry",
@@ -20674,8 +20585,7 @@
         "rust:crates/ql-mef/src/vak.rs:VakRelation",
         "rust:crates/ql-mef/src/vak.rs:VakRelationKind",
         "rust:crates/ql-mef/src/vak.rs:VakRelationOp",
-        "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind"
       ],
       "dispositions": {
         "c": "bound",
@@ -20833,11 +20743,9 @@
       "bindings": [
         "neo4j:live:M2-2-1",
         "rust:crates/ql-adapters/src/attachment.rs:QlAttachment",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
         "rust:crates/ql-mef/src/m1_engine.rs:FiniteField",
         "rust:crates/ql-mef/src/m1_engine.rs:finite_field",
-        "rust:crates/ql-mef/src/m2_engine.rs:finite",
-        "rust:crates/ql-mef/src/nara.rs:finite"
+        "rust:crates/ql-mef/src/m2_engine.rs:finite"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -20882,11 +20790,9 @@
       "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
       "bindings": [
         "neo4j:live:M2-2-1-2",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
         "rust:crates/ql-mef/src/m1_engine.rs:FiniteField",
         "rust:crates/ql-mef/src/m1_engine.rs:finite_field",
-        "rust:crates/ql-mef/src/m2_engine.rs:finite",
-        "rust:crates/ql-mef/src/nara.rs:finite"
+        "rust:crates/ql-mef/src/m2_engine.rs:finite"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -21006,7 +20912,6 @@
         "rust:crates/ql-cli/src/lib.rs:vak_relation_kind",
         "rust:crates/ql-core/src/form.rs:QlForm",
         "rust:crates/ql-core/src/form.rs:QlFormRef",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/vak.rs:SelfOtherForm",
         "rust:crates/ql-mef/src/vak.rs:VakActionRelationKind",
@@ -21016,8 +20921,7 @@
         "rust:crates/ql-mef/src/vak.rs:VakRelation",
         "rust:crates/ql-mef/src/vak.rs:VakRelationKind",
         "rust:crates/ql-mef/src/vak.rs:VakRelationOp",
-        "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "rust:crates/ql-mef/src/vak_oi.rs:VakOiRelationKind"
       ],
       "dispositions": {
         "c": "bound",
@@ -21059,15 +20963,13 @@
         "#2-2-2-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-2-2-1",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-2-2-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -21127,14 +21029,13 @@
         "#2-2-2-1-2"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-2-2-1-2",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-2-2-1-2"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -21150,14 +21051,13 @@
         "#2-2-2-2"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-2-2-2",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF"
+        "neo4j:live:M2-2-2-2"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -21269,7 +21169,6 @@
         "c:vendor/epi-kernel/reference/src/m0.c:m0_vak_ct",
         "neo4j:live:M2-2-2-3",
         "rust:crates/ql-cli/src/lib.rs:vak_relation_kind",
-        "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/vak.rs:VakActionRelationKind",
         "rust:crates/ql-mef/src/vak.rs:VakEntry",
@@ -21700,7 +21599,6 @@
         "rust:crates/ql-cli/src/lib.rs:provider_state",
         "rust:crates/ql-cli/src/vak_composition.rs:face",
         "rust:crates/ql-core/src/face.rs:QlFace",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost",
         "rust:crates/ql-mef/src/m1.rs:DR_RING_PARASHAKTI",
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
@@ -23810,14 +23708,13 @@
         "#2-3-4"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-3-4",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost"
+        "neo4j:live:M2-3-4"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -23833,14 +23730,13 @@
         "#2-3-4-0"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-3-4-0",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost"
+        "neo4j:live:M2-3-4-0"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -23922,14 +23818,13 @@
         "#2-3-4-0-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-3-4-0-1",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost"
+        "neo4j:live:M2-3-4-0-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -23945,14 +23840,13 @@
         "#2-3-4-0-1-0"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-3-4-0-1-0",
-        "rust:crates/ql-mef/src/continuous/host.rs:FieldHost"
+        "neo4j:live:M2-3-4-0-1-0"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -24535,11 +24429,6 @@
         "rust:crates/ql-core/src/operator.rs:FourPlusTwoClass",
         "rust:crates/ql-core/src/pole/coin.rs:Polarity",
         "rust:crates/ql-core/src/pole/fold.rs:FoldState",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m1_engine.rs:Grammar",
@@ -24559,25 +24448,12 @@
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
         "rust:crates/ql-mef/src/m_ledger.rs:path",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/templateure.rs:FormPotential",
         "rust:crates/ql-mef/src/templateure.rs:TemplateureField",
         "rust:crates/ql-mef/src/vak.rs:SelfOtherForm",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
         "rust:crates/ql-service/src/service.rs:QlService",
         "rust:crates/ql-wiki/src/recognition.rs:RecognitionState"
       ],
@@ -24605,9 +24481,6 @@
         "c:c/src/m_tree.c:ql_m_child_at",
         "neo4j:live:M2-4.0",
         "rust:crates/ql-core/src/pole/coin.rs:Polarity",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m2.rs:asma_is_internal",
         "rust:crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -24619,12 +24492,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -24654,9 +24521,6 @@
         "c:c/src/m_tree.c:ql_m_child_at",
         "neo4j:live:M2-4.0-(0/1)",
         "rust:crates/ql-core/src/pole/coin.rs:Polarity",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
         "rust:crates/ql-mef/src/m2_condition.rs:SourceRelation",
@@ -24667,12 +24531,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -26975,9 +26833,6 @@
       "bindings": [
         "c:c/src/m1_state.c:ql_m1_grammar",
         "neo4j:live:M2-4.1",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m1_engine.rs:Grammar",
@@ -26989,12 +26844,6 @@
         "rust:crates/ql-mef/src/m3_source.rs:SourceNode",
         "rust:crates/ql-mef/src/m3_source.rs:SourceRelation",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry"
       ],
       "dispositions": {
@@ -27018,9 +26867,6 @@
       "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
       "bindings": [
         "neo4j:live:M2-4.1-0",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -27030,12 +26876,6 @@
         "rust:crates/ql-mef/src/m3_source.rs:SourceNode",
         "rust:crates/ql-mef/src/m3_source.rs:SourceRelation",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry"
       ],
       "dispositions": {
@@ -27059,9 +26899,6 @@
       "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
       "bindings": [
         "neo4j:live:M2-4.1-0-0",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -27071,12 +26908,6 @@
         "rust:crates/ql-mef/src/m3_source.rs:SourceNode",
         "rust:crates/ql-mef/src/m3_source.rs:SourceRelation",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry"
       ],
       "dispositions": {
@@ -27232,9 +27063,6 @@
       "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
       "bindings": [
         "neo4j:live:M2-4.1-0-0-14",
-        "rust:crates/ql-mef/examples/k8_personal.rs:source",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-        "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "rust:crates/ql-mef/src/m1.rs:SOURCE_REF",
         "rust:crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
         "rust:crates/ql-mef/src/m2_condition.rs:SourceRelation",
@@ -27243,12 +27071,6 @@
         "rust:crates/ql-mef/src/m3_source.rs:SourceNode",
         "rust:crates/ql-mef/src/m3_source.rs:SourceRelation",
         "rust:crates/ql-mef/src/m_ledger.rs:MatrixSource",
-        "rust:crates/ql-mef/src/nara/activity.rs:source",
-        "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-        "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-        "rust:crates/ql-mef/src/nara/expression.rs:source",
-        "rust:crates/ql-mef/src/nara/replay.rs:source",
         "rust:crates/ql-mef/src/vak.rs:parse_source_entry"
       ],
       "dispositions": {
@@ -28445,13 +28267,7 @@
         "neo4j:live:M2-4.2",
         "rust:crates/ql-core/src/operator.rs:FourPlusTwoClass",
         "rust:crates/ql-mef/src/m2_condition.rs:resolve",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-        "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame"
       ],
       "dispositions": {
         "c": "bound",
@@ -28471,15 +28287,14 @@
         "#2-4.2-0"
       ],
       "source": null,
-      "assessment": "k4:c=partial,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=partial,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
         "c:vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
-        "neo4j:live:M2-4.2-0",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
+        "neo4j:live:M2-4.2-0"
       ],
       "dispositions": {
         "c": "bound",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -28495,15 +28310,14 @@
         "#2-4.2-0-0"
       ],
       "source": null,
-      "assessment": "k4:c=implemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=implemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
         "c:vendor/epi-kernel/reference/src/m4.c:m4_print_identity",
-        "neo4j:live:M2-4.2-0-0",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
+        "neo4j:live:M2-4.2-0-0"
       ],
       "dispositions": {
         "c": "bound",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -28657,14 +28471,13 @@
         "#2-4.2-2"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.2-2",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-4.2-2"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -28702,14 +28515,13 @@
         "#2-4.2-2-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.2-2-1",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-4.2-2-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -29013,18 +28825,13 @@
         "#2-4.2-6"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.2-6",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-4.2-6"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -29062,17 +28869,13 @@
         "#2-4.2-6-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.2-6-1",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-        "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-        "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-        "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal"
+        "neo4j:live:M2-4.2-6-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -29088,14 +28891,13 @@
         "#2-4.2-6-2"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.2-6-2",
-        "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+        "neo4j:live:M2-4.2-6-2"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -31035,12 +30837,9 @@
       "bindings": [
         "neo4j:live:M2-4.5",
         "rust:crates/ql-core/src/pole/fold.rs:FoldState",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:Decision",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass",
         "rust:crates/ql-service/src/service.rs:QlService"
       ],
       "dispositions": {
@@ -31281,14 +31080,13 @@
         "#2-4.5-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-1",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass"
+        "neo4j:live:M2-4.5-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -31436,14 +31234,13 @@
         "#2-4.5-1-7"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-1-7",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass"
+        "neo4j:live:M2-4.5-1-7"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -31943,15 +31740,13 @@
         "#2-4.5-4"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-4",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception"
+        "neo4j:live:M2-4.5-4"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -32011,15 +31806,13 @@
         "#2-4.5-4-3"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-4-3",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception"
+        "neo4j:live:M2-4.5-4-3"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -32615,14 +32408,13 @@
         "#2-4.5-7"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-7",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass"
+        "neo4j:live:M2-4.5-7"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -32660,14 +32452,13 @@
         "#2-4.5-7-2"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M2-4.5-7-2",
-        "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass"
+        "neo4j:live:M2-4.5-7-2"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -32853,14 +32644,12 @@
         "rust:crates/ql-core/src/operator.rs:QlOperator",
         "rust:crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
         "rust:crates/ql-core/src/structural.rs:AnchorReturn",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
         "rust:crates/ql-mef/src/m1_engine.rs:Carrier",
         "rust:crates/ql-mef/src/m1_engine.rs:M1Engine",
         "rust:crates/ql-mef/src/m1_engine.rs:carrier",
         "rust:crates/ql-mef/src/m2_engine.rs:ResonatorState",
         "rust:crates/ql-mef/src/m3_engine.rs:M3Engine",
         "rust:crates/ql-mef/src/m3_state.rs:M3Command",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
         "rust:crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
         "rust:crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
         "rust:crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -32904,7 +32693,6 @@
         "rust:crates/ql-mef/src/m1_engine.rs:M1Engine",
         "rust:crates/ql-mef/src/m3_engine.rs:M3Engine",
         "rust:crates/ql-mef/src/m3_state.rs:M3Command",
-        "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
         "rust:crates/ql-mef/src/vak.rs:structural_relation"
       ],
       "dispositions": {
@@ -33164,8 +32952,7 @@
       "bindings": [
         "neo4j:live:M2-5-4",
         "rust:crates/ql-core/src/operator.rs:OperatorValue",
-        "rust:crates/ql-core/src/operator.rs:QlOperator",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase"
+        "rust:crates/ql-core/src/operator.rs:QlOperator"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -33423,11 +33210,7 @@
         "rust:crates/ql-core/src/pole/transcription.rs:RNA_T_FREE_CODONS",
         "rust:crates/ql-core/src/pole/transcription.rs:fn",
         "rust:crates/ql-core/src/structural.rs:AnchorReturn",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/continuous.rs:FieldSession",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
         "rust:crates/ql-mef/src/m1.rs:DR_RING_MAHAMAYA",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m1_engine.rs:FiniteField",
@@ -33457,13 +33240,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:Transition",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
         "rust:crates/ql-mef/src/m_ledger.rs:transition",
-        "rust:crates/ql-mef/src/m_tree.rs:native_current_m_registry",
-        "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-        "rust:crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-        "rust:crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-        "rust:crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField",
-        "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/vak.rs:structural_relation",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -33489,15 +33265,13 @@
         "#3-0"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M3-0",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception"
+        "neo4j:live:M3-0"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -33513,16 +33287,14 @@
         "#3-1"
       ],
       "source": null,
-      "assessment": "k4:c=implemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=implemented,rust=partial,neo4j=structural-index-only",
       "bindings": [
         "c:c/src/m3.c:ql_m3_hexagram",
         "c:c/src/m3.c:ql_m3_trigram",
         "c:vendor/epi-kernel/reference/src/m3.c:m3_print_hexagram",
         "neo4j:live:M3-1",
         "rust:crates/ql-cli/src/vak_composition.rs:frame_view",
-        "rust:crates/ql-cli/src/vak_composition.rs:return_view",
-        "rust:crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-        "rust:crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField"
+        "rust:crates/ql-cli/src/vak_composition.rs:return_view"
       ],
       "dispositions": {
         "c": "bound",
@@ -35143,8 +34915,6 @@
         "c:c/src/holographic.c:ql_relation_tag",
         "neo4j:live:M3-2",
         "rust:crates/ql-cli/src/vak_composition.rs:parse_language",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
         "rust:crates/ql-mef/src/m3_state.rs:code"
       ],
       "dispositions": {
@@ -35165,15 +34935,13 @@
         "#3-2-1"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=partial,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M3-2-1",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception"
+        "neo4j:live:M3-2-1"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -35519,15 +35287,13 @@
         "#3-2-1-4"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M3-2-1-4",
-        "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-        "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception"
+        "neo4j:live:M3-2-1-4"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -37043,8 +36809,6 @@
         "rust:crates/ql-mef/src/m1_engine.rs:reflection",
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
-        "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/vak.rs:structural_relation",
         "rust:crates/ql-mef/src/vak_composition.rs:ActiveFrame"
@@ -42353,8 +42117,6 @@
         "rust:crates/ql-core/src/structural.rs:AnchorReturn",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
         "rust:crates/ql-mef/src/m1.rs:DR_RING_MAHAMAYA",
-        "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
         "rust:crates/ql-mef/src/vak.rs:structural_relation"
       ],
       "dispositions": {
@@ -42721,8 +42483,7 @@
         "rust:crates/ql-core/src/operator.rs:OperatorValue",
         "rust:crates/ql-core/src/operator.rs:QlOperator",
         "rust:crates/ql-core/src/pole/tarot.rs:TranscendentOperator",
-        "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField"
+        "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId"
       ],
       "dispositions": {
         "c": "unimplemented",
@@ -42789,14 +42550,13 @@
         "#3-3-4-4"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M3-3-4-4",
-        "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch"
+        "neo4j:live:M3-3-4-4"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -43576,7 +43336,6 @@
         "rust:crates/ql-core/src/form.rs:QlForm",
         "rust:crates/ql-core/src/form.rs:QlFormRef",
         "rust:crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
         "rust:crates/ql-mef/src/m1_engine.rs:Action",
         "rust:crates/ql-mef/src/m1_engine.rs:Reflection",
         "rust:crates/ql-mef/src/m1_engine.rs:reflection",
@@ -43584,8 +43343,6 @@
         "rust:crates/ql-mef/src/m_ledger.rs:Transition",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
         "rust:crates/ql-mef/src/m_ledger.rs:transition",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-        "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis",
         "rust:crates/ql-mef/src/vak_composition.rs:Transition",
         "rust:crates/ql-semantic/src/capability.rs:InputLimits",
@@ -44940,7 +44697,6 @@
         "neo4j:live:M3-4-(5/0)",
         "rust:crates/ql-mef/src/m_ledger.rs:Authority",
         "rust:crates/ql-mef/src/m_ledger.rs:authority",
-        "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
         "rust:crates/ql-mef/src/reading.rs:QlSynthesis"
       ],
       "dispositions": {
@@ -45071,14 +44827,13 @@
         "#3-4-5/0-13"
       ],
       "source": null,
-      "assessment": "k4:c=unimplemented,rust=implemented,neo4j=structural-index-only",
+      "assessment": "k4:c=unimplemented,rust=unimplemented,neo4j=structural-index-only",
       "bindings": [
-        "neo4j:live:M3-4-(5/0)-13",
-        "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase"
+        "neo4j:live:M3-4-(5/0)-13"
       ],
       "dispositions": {
         "c": "unimplemented",
-        "rust": "bound"
+        "rust": "unimplemented"
       },
       "invariants": [],
       "relations": [],
@@ -45460,7 +45215,6 @@
         "rust:crates/ql-mef/src/m1_engine.rs:reflection",
         "rust:crates/ql-mef/src/m_ledger.rs:Transition",
         "rust:crates/ql-mef/src/m_ledger.rs:transition",
-        "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
         "rust:crates/ql-mef/src/vak_composition.rs:Transition",
         "rust:crates/ql-semantic/src/capability.rs:InputLimits",
         "rust:crates/ql-wiki/src/recognition.rs:RecognitionState"
@@ -108607,794 +108361,6 @@
       "relations": [],
       "rationale": "K4 census: configuration-plane owner contribution (disclosure-only); no coordinate identity.",
       "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/examples/k8_field.rs:run",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/examples/k8_field.rs",
-      "symbol": "run",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/examples/k8_personal.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/examples/k8_personal.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/examples/k8_personal.rs:reception",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/examples/k8_personal.rs",
-      "symbol": "reception",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.5",
-        "#2-4.5-4",
-        "#2-4.5-4-3",
-        "#3",
-        "#3-0",
-        "#3-2",
-        "#3-2-1",
-        "#3-2-1-4"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.5-4-3 via bimba-name-anchor (reception); #3-0 via bimba-name-anchor (reception); #3-2-1-4 via bimba-name-anchor (reception)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/examples/k8_vak_personal.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/examples/k8_vak_personal.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/examples/k8_vak_personal.rs:reception",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/examples/k8_vak_personal.rs",
-      "symbol": "reception",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.5",
-        "#2-4.5-4",
-        "#2-4.5-4-3",
-        "#3",
-        "#3-0",
-        "#3-2",
-        "#3-2-1",
-        "#3-2-1-4"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.5-4-3 via bimba-name-anchor (reception); #3-0 via bimba-name-anchor (reception); #3-2-1-4 via bimba-name-anchor (reception)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/aw1_self_reference.rs",
-      "symbol": "S5_ORGAN_REF",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-2",
-        "#2-2-2",
-        "#2-2-2-1",
-        "#2-2-2-2",
-        "#2-2-2-3"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-2-2-1 via bimba-name-anchor (organ); #2-2-2-2 via bimba-name-anchor (organ); #2-2-2-3 via bimba-name-anchor (organ)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/continuous/coupled.rs:ConditionFrequencyBinding",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/continuous/coupled.rs",
-      "symbol": "ConditionFrequencyBinding",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/continuous/host.rs:FieldHost",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/continuous/host.rs",
-      "symbol": "FieldHost",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-3",
-        "#2-3-4",
-        "#2-3-4-0",
-        "#2-3-4-0-1",
-        "#2-3-4-0-1-0"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-3-4-0-1-0 via bimba-name-anchor (host)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/continuous/receipt.rs:finite",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/continuous/receipt.rs",
-      "symbol": "finite",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-2",
-        "#2-2-1",
-        "#2-2-1-2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-2-1-2 via bimba-name-anchor (finite)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/continuous/receipt.rs:phase",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/continuous/receipt.rs",
-      "symbol": "phase",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-3",
-        "#2",
-        "#2-5",
-        "#2-5-4",
-        "#3",
-        "#3-4"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-3 via bimba-name-anchor (phase); #2-5-4 via bimba-name-anchor (phase); #3-4 via bimba-name-anchor (phase)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/continuous.rs:FieldSession",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/continuous.rs",
-      "symbol": "FieldSession",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#2",
-        "#3"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1 via coordinate-spelling (); #2 via coordinate-spelling (); #3 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/cprime_oikonomia.rs",
-      "symbol": "CS_SOURCE_REF",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/focused_instrument.rs:reference",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/focused_instrument.rs",
-      "symbol": "reference",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/m_tree.rs:native_current_m_registry",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/m_tree.rs",
-      "symbol": "native_current_m_registry",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#3"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1 via coordinate-spelling (); #3 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/activity.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/activity.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/activity.rs",
-      "symbol": "ProtectionClass",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.5",
-        "#2-4.5-1",
-        "#2-4.5-1-7",
-        "#2-4.5-7",
-        "#2-4.5-7-2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.5-1-7 via bimba-name-anchor (protection); #2-4.5-7-2 via bimba-name-anchor (protection)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/activity_aw3.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/activity_aw3.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/acceptance.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/acceptance.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/acceptance.rs",
-      "symbol": "personal",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-4",
-        "#2-1-4-3",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-6",
-        "#2-4.2-6-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-4-3 via bimba-name-anchor (personal); #2-4.2-6-1 via bimba-name-anchor (personal)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/agent_world.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/agent_world.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/common.rs",
-      "symbol": "M4Branch",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#3",
-        "#3-3",
-        "#3-3-4",
-        "#3-3-4-4"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #3-3-4-4 via bimba-name-anchor (branch)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/context.rs:ContextField",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/context.rs",
-      "symbol": "ContextField",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-4",
-        "#2-1-4-4",
-        "#3",
-        "#3-3",
-        "#3-3-4",
-        "#3-3-4-22",
-        "#3-4",
-        "#3-4.0"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-4-4 via bimba-name-anchor (context); #3-3-4-22 via bimba-name-anchor (context); #3-4.0 via bimba-name-anchor (context)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/embodied.rs",
-      "symbol": "CentreWorldInputs",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#2",
-        "#3"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1 via coordinate-spelling (); #2 via coordinate-spelling (); #3 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/identity.rs",
-      "symbol": "IdentityField",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-0",
-        "#2-1-0-3",
-        "#2-1-2",
-        "#2-1-2-2",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-0",
-        "#2-4.2-0-0",
-        "#2-5",
-        "#2-5-0/1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-0-3 via bimba-name-anchor (identity); #2-1-2-2 via bimba-name-anchor (identity); #2-4.2-0-0 via bimba-name-anchor (identity); #2-5-0/1 via bimba-name-anchor (identity)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/oracle.rs",
-      "symbol": "OracleSystem",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#3",
-        "#3-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #3-1 via bimba-name-anchor (oracle)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/oracle_field.rs",
-      "symbol": "OracleField",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#3",
-        "#3-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #3-1 via bimba-name-anchor (oracle)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/state.rs",
-      "symbol": "M4DomainState",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1 via bimba-name-anchor (domain)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/domain/transformation.rs",
-      "symbol": "TransformationPhase",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#3",
-        "#3-4",
-        "#3-4-5/0",
-        "#3-4-5/0-13"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #3-4-5/0-13 via bimba-name-anchor (phase,transformation)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/expression.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/expression.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara/replay.rs:source",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara/replay.rs",
-      "symbol": "source",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.0",
-        "#2-4.0-0/1",
-        "#2-4.1",
-        "#2-4.1-0",
-        "#2-4.1-0-0",
-        "#2-4.1-0-0-14"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.0-0/1 via bimba-name-anchor (source); #2-4.1-0-0-14 via bimba-name-anchor (source)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara.rs:finite",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara.rs",
-      "symbol": "finite",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-2",
-        "#2-2-1",
-        "#2-2-1-2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-2-1-2 via bimba-name-anchor (finite)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara.rs:PersonalLayer",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara.rs",
-      "symbol": "PersonalLayer",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-4",
-        "#2-1-4-3",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-6",
-        "#2-4.2-6-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-4-3 via bimba-name-anchor (personal); #2-4.2-6-1 via bimba-name-anchor (personal)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara.rs:PersonalFieldState",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara.rs",
-      "symbol": "PersonalFieldState",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-4",
-        "#2-1-4-3",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-6",
-        "#2-4.2-6-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-4-3 via bimba-name-anchor (personal); #2-4.2-6-1 via bimba-name-anchor (personal)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/nara.rs",
-      "symbol": "PersonalFieldInstance",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-6",
-        "#2-4.2-6-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-4.2-6-1 via bimba-name-anchor (instance,personal)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/property/model.rs:reference",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/property/model.rs",
-      "symbol": "reference",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/property/model.rs:Assertion",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/property/model.rs",
-      "symbol": "Assertion",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-1",
-        "#2-1-2",
-        "#2-1-2-1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-1-2-1 via bimba-name-anchor (assertion)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/qv.rs:QvBakeArtifact",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/qv.rs",
-      "symbol": "QvBakeArtifact",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1 via coordinate-spelling ()",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/vak_performance.rs:reference",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/vak_performance.rs",
-      "symbol": "reference",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/vak_performance.rs:references",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/vak_performance.rs",
-      "symbol": "references",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/vak_scope.rs:reference",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/vak_scope.rs",
-      "symbol": "reference",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/vak_thought_consumption.rs:reference",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/vak_thought_consumption.rs",
-      "symbol": "reference",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#1",
-        "#1-5",
-        "#1-5-0",
-        "#1-5-5"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #1-5-0 via bimba-name-anchor (reference); #1-5-5 via bimba-name-anchor (reference)",
-      "structure": []
-    },
-    {
-      "id": "rust:crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
-      "stratum": "rust",
-      "kind": "computational",
-      "path": "crates/ql-mef/src/vak_thought_consumption.rs",
-      "symbol": "ThoughtMeaning",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2",
-        "#2-2",
-        "#2-2-2",
-        "#2-2-2-1",
-        "#2-2-2-1-2",
-        "#2-4",
-        "#2-4.2",
-        "#2-4.2-2",
-        "#2-4.2-2-1",
-        "#2-4.2-6",
-        "#2-4.2-6-2"
-      ],
-      "relations": [],
-      "rationale": "K4 census discovery: #2-2-2-1-2 via bimba-name-anchor (thought); #2-4.2-2-1 via bimba-name-anchor (thought); #2-4.2-6-2 via bimba-name-anchor (thought)",
-      "structure": []
     }
   ],
   "evidence": [
@@ -109430,7 +108396,7 @@
       "kind": "implementation",
       "artifact": {
         "path": "fixtures/kernel/census/discovery-c-v1.json",
-        "sha256": "f90262d3f15afb4c682d9e3083ad94beea5fe5ae343679fe60877817d2089e01"
+        "sha256": "d874fd84ea30335e60298418803dcfd817bd9e311a139d5a16459e65dbb735eb"
       },
       "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
       "subjects": [
@@ -111218,7 +110184,7 @@
       "kind": "implementation",
       "artifact": {
         "path": "fixtures/kernel/census/discovery-rust-v1.json",
-        "sha256": "1c51bf1a65199599bd67396e3b63ce76f5f0912742b76e7eebb40cc32049377a"
+        "sha256": "7bdf28fdabea1b2b282673d2c668286f2e1a46e7bd9034d5bc91abefc9907ffd"
       },
       "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
       "subjects": [
@@ -111265,7 +110231,6 @@
         "census:#2-1-1-3",
         "census:#2-1-2",
         "census:#2-1-2-1",
-        "census:#2-1-2-2",
         "census:#2-1-2-4",
         "census:#2-1-3",
         "census:#2-1-3-0",
@@ -111273,7 +110238,6 @@
         "census:#2-1-3-3",
         "census:#2-1-3-5",
         "census:#2-1-4",
-        "census:#2-1-4-3",
         "census:#2-1-4-4",
         "census:#2-1-5",
         "census:#2-1-5-5",
@@ -111284,9 +110248,6 @@
         "census:#2-2-1-2",
         "census:#2-2-1-4",
         "census:#2-2-2",
-        "census:#2-2-2-1",
-        "census:#2-2-2-1-2",
-        "census:#2-2-2-2",
         "census:#2-2-2-3",
         "census:#2-2-2-3-0/1",
         "census:#2-2-2-4",
@@ -111302,10 +110263,6 @@
         "census:#2-3-2-0-1-0",
         "census:#2-3-2-2",
         "census:#2-3-2-2-1",
-        "census:#2-3-4",
-        "census:#2-3-4-0",
-        "census:#2-3-4-0-1",
-        "census:#2-3-4-0-1-0",
         "census:#2-4",
         "census:#2-4.0",
         "census:#2-4.0-0/1",
@@ -111329,30 +110286,17 @@
         "census:#2-4.1-0-0-14",
         "census:#2-4.1-0-0-5",
         "census:#2-4.2",
-        "census:#2-4.2-0",
-        "census:#2-4.2-0-0",
         "census:#2-4.2-1",
         "census:#2-4.2-1-2",
-        "census:#2-4.2-2",
-        "census:#2-4.2-2-1",
         "census:#2-4.2-5",
-        "census:#2-4.2-6",
-        "census:#2-4.2-6-1",
-        "census:#2-4.2-6-2",
         "census:#2-4.3",
         "census:#2-4.3-4",
         "census:#2-4.3-9",
         "census:#2-4.5",
-        "census:#2-4.5-1",
-        "census:#2-4.5-1-7",
-        "census:#2-4.5-4",
-        "census:#2-4.5-4-3",
         "census:#2-4.5-5",
         "census:#2-4.5-5-9",
         "census:#2-4.5-6",
         "census:#2-4.5-6-0/1",
-        "census:#2-4.5-7",
-        "census:#2-4.5-7-2",
         "census:#2-5",
         "census:#2-5-0/1",
         "census:#2-5-0/1-1",
@@ -111363,13 +110307,10 @@
         "census:#2-5-5",
         "census:#2-5-6",
         "census:#3",
-        "census:#3-0",
         "census:#3-1",
         "census:#3-1-1",
         "census:#3-1-1-3",
         "census:#3-2",
-        "census:#3-2-1",
-        "census:#3-2-1-4",
         "census:#3-3",
         "census:#3-3-2",
         "census:#3-3-2-0",
@@ -111382,7 +110323,6 @@
         "census:#3-3-4-19",
         "census:#3-3-4-22",
         "census:#3-3-4-23",
-        "census:#3-3-4-4",
         "census:#3-3-4-6",
         "census:#3-3-5",
         "census:#3-3-5-0",
@@ -111394,7 +110334,6 @@
         "census:#3-4",
         "census:#3-4-4",
         "census:#3-4-5/0",
-        "census:#3-4-5/0-13",
         "census:#3-4-5/0-4",
         "census:#3-4.0",
         "census:#3-4.0-2",

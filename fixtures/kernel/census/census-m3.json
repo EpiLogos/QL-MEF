@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M3",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "da4dbc7665b3fbbbb322a1707111e6cb86780dd49bebeeae7ddabb9623a4884e",
+  "ledger_revision": "b8444c34cd2c1b0a38a5d154590988af60c8e2249795eb4c7ff3205a51d51596",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 996,
   "counts": {
@@ -12,9 +12,9 @@
       "partial": 10
     },
     "rust": {
-      "implemented": 39,
-      "partial": 8,
-      "unimplemented": 949
+      "implemented": 34,
+      "unimplemented": 954,
+      "partial": 8
     }
   },
   "coordinates": [
@@ -146,11 +146,7 @@
           "crates/ql-core/src/pole/transcription.rs:RNA_T_FREE_CODONS",
           "crates/ql-core/src/pole/transcription.rs:fn",
           "crates/ql-core/src/structural.rs:AnchorReturn",
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception",
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-          "crates/ql-mef/src/continuous.rs:FieldSession",
-          "crates/ql-mef/src/continuous/receipt.rs:phase",
           "crates/ql-mef/src/m1.rs:DR_RING_MAHAMAYA",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
@@ -180,13 +176,6 @@
           "crates/ql-mef/src/m_ledger.rs:Transition",
           "crates/ql-mef/src/m_ledger.rs:authority",
           "crates/ql-mef/src/m_ledger.rs:transition",
-          "crates/ql-mef/src/m_tree.rs:native_current_m_registry",
-          "crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
-          "crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-          "crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-          "crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField",
-          "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak.rs:structural_relation",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -214,11 +203,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#3-0"
     },
@@ -242,12 +227,13 @@
         ]
       },
       "rust": {
-        "state": "implemented",
+        "state": "partial",
+        "covered_by_descendants": [
+          "#3-1-1-3"
+        ],
         "constructs": [
           "crates/ql-cli/src/vak_composition.rs:frame_view",
-          "crates/ql-cli/src/vak_composition.rs:return_view",
-          "crates/ql-mef/src/nara/domain/oracle.rs:OracleSystem",
-          "crates/ql-mef/src/nara/domain/oracle_field.rs:OracleField"
+          "crates/ql-cli/src/vak_composition.rs:return_view"
         ]
       },
       "row": "census:#3-1"
@@ -276,8 +262,6 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-cli/src/vak_composition.rs:parse_language",
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception",
           "crates/ql-mef/src/m3_state.rs:code"
         ]
       },
@@ -326,8 +310,7 @@
           "#3-3-4-15",
           "#3-3-4-19",
           "#3-3-4-22",
-          "#3-3-4-23",
-          "#3-3-4-4"
+          "#3-3-4-23"
         ],
         "constructs": [
           "crates/ql-adapters/src/attachment.rs:QlAttachment",
@@ -345,8 +328,6 @@
           "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:authority",
-          "crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak.rs:structural_relation",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
@@ -383,7 +364,6 @@
           "crates/ql-core/src/form.rs:QlForm",
           "crates/ql-core/src/form.rs:QlFormRef",
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-          "crates/ql-mef/src/continuous/receipt.rs:phase",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:Reflection",
           "crates/ql-mef/src/m1_engine.rs:reflection",
@@ -391,8 +371,6 @@
           "crates/ql-mef/src/m_ledger.rs:Transition",
           "crates/ql-mef/src/m_ledger.rs:authority",
           "crates/ql-mef/src/m_ledger.rs:transition",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
-          "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak_composition.rs:Transition",
           "crates/ql-semantic/src/capability.rs:InputLimits",
@@ -635,14 +613,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-4.5-4-3"
-        ],
-        "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#3-2-1"
     },
@@ -838,8 +809,7 @@
           "#3-3-4-15",
           "#3-3-4-19",
           "#3-3-4-22",
-          "#3-3-4-23",
-          "#3-3-4-4"
+          "#3-3-4-23"
         ],
         "constructs": [
           "crates/ql-core/src/operator.rs:OperatorValue",
@@ -851,8 +821,6 @@
           "crates/ql-core/src/structural.rs:AnchorReturn",
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
           "crates/ql-mef/src/m1.rs:DR_RING_MAHAMAYA",
-          "crates/ql-mef/src/nara/domain/common.rs:M4Branch",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
           "crates/ql-mef/src/vak.rs:structural_relation"
         ]
       },
@@ -1025,7 +993,6 @@
           "crates/ql-mef/src/m1_engine.rs:reflection",
           "crates/ql-mef/src/m_ledger.rs:Transition",
           "crates/ql-mef/src/m_ledger.rs:transition",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
           "crates/ql-mef/src/vak_composition.rs:Transition",
           "crates/ql-semantic/src/capability.rs:InputLimits",
           "crates/ql-wiki/src/recognition.rs:RecognitionState"
@@ -2481,11 +2448,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#3-2-1-4"
     },
@@ -3306,8 +3269,7 @@
           "crates/ql-core/src/operator.rs:OperatorValue",
           "crates/ql-core/src/operator.rs:QlOperator",
           "crates/ql-core/src/pole/tarot.rs:TranscendentOperator",
-          "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField"
+          "crates/ql-mef/src/context_frame.rs:ContextFrameId"
         ]
       },
       "row": "census:#3-3-4-22"
@@ -3373,10 +3335,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/domain/common.rs:M4Branch"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#3-3-4-4"
     },
@@ -4765,7 +4724,6 @@
         "constructs": [
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:authority",
-          "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
           "crates/ql-mef/src/reading.rs:QlSynthesis"
         ]
       },
@@ -10503,10 +10461,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#3-4-5/0-13"
     },

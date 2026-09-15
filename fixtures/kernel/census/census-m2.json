@@ -2,7 +2,7 @@
   "schema": "ql.m-census/v1",
   "root": "M2",
   "registry_revision": "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
-  "ledger_revision": "da4dbc7665b3fbbbb322a1707111e6cb86780dd49bebeeae7ddabb9623a4884e",
+  "ledger_revision": "b8444c34cd2c1b0a38a5d154590988af60c8e2249795eb4c7ff3205a51d51596",
   "live_capture": "fixtures/kernel/census/live-bimba-capture-v1.json",
   "coordinate_count": 597,
   "counts": {
@@ -12,9 +12,9 @@
       "partial": 17
     },
     "rust": {
-      "implemented": 84,
-      "partial": 28,
-      "unimplemented": 485
+      "implemented": 71,
+      "partial": 19,
+      "unimplemented": 507
     }
   },
   "coordinates": [
@@ -114,19 +114,7 @@
           "crates/ql-core/src/pole/transcription.rs:transduce_vibration_to_symbol",
           "crates/ql-core/src/structural.rs:AnchorReturn",
           "crates/ql-core/src/structural.rs:GroundKind",
-          "crates/ql-mef/examples/k8_field.rs:run",
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-          "crates/ql-mef/src/continuous.rs:FieldSession",
-          "crates/ql-mef/src/continuous/coupled.rs:ConditionFrequencyBinding",
-          "crates/ql-mef/src/continuous/host.rs:FieldHost",
-          "crates/ql-mef/src/continuous/receipt.rs:finite",
-          "crates/ql-mef/src/continuous/receipt.rs:phase",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
           "crates/ql-mef/src/m1.rs:DR_RING_PARASHAKTI",
@@ -168,23 +156,6 @@
           "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
           "crates/ql-mef/src/m_ledger.rs:authority",
           "crates/ql-mef/src/m_ledger.rs:path",
-          "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara.rs:finite",
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
-          "crates/ql-mef/src/nara/domain/embodied.rs:CentreWorldInputs",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-          "crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
-          "crates/ql-mef/src/property/model.rs:Assertion",
           "crates/ql-mef/src/provenance.rs:QlProviderRef",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
@@ -209,7 +180,6 @@
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
           "crates/ql-mef/src/vak_composition.rs:Determination",
           "crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
           "crates/ql-semantic/src/capability.rs:InputLimits",
           "crates/ql-semantic/src/capability.rs:ProviderClass",
           "crates/ql-semantic/src/capability.rs:ProviderState",
@@ -296,13 +266,6 @@
           "crates/ql-mef/src/m2_vimarsha.rs:POLICY",
           "crates/ql-mef/src/m2_vimarsha.rs:SOURCE",
           "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-          "crates/ql-mef/src/nara/domain/state.rs:M4DomainState",
-          "crates/ql-mef/src/property/model.rs:Assertion",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/templateure.rs:FormPotential",
           "crates/ql-mef/src/vak.rs:SelfOtherForm",
@@ -354,8 +317,6 @@
           "#2-2-0-5",
           "#2-2-1-2",
           "#2-2-1-4",
-          "#2-2-2-1",
-          "#2-2-2-1-2",
           "#2-2-2-3-0/1"
         ],
         "constructs": [
@@ -363,13 +324,10 @@
           "crates/ql-cli/src/lib.rs:vak_relation_kind",
           "crates/ql-core/src/form.rs:QlForm",
           "crates/ql-core/src/form.rs:QlFormRef",
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
-          "crates/ql-mef/src/continuous/receipt.rs:finite",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
           "crates/ql-mef/src/m1_engine.rs:finite_field",
           "crates/ql-mef/src/m2_engine.rs:finite",
-          "crates/ql-mef/src/nara.rs:finite",
           "crates/ql-mef/src/vak.rs:SelfOtherForm",
           "crates/ql-mef/src/vak.rs:VakActionRelationKind",
           "crates/ql-mef/src/vak.rs:VakEntry",
@@ -378,8 +336,7 @@
           "crates/ql-mef/src/vak.rs:VakRelation",
           "crates/ql-mef/src/vak.rs:VakRelationKind",
           "crates/ql-mef/src/vak.rs:VakRelationOp",
-          "crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+          "crates/ql-mef/src/vak_oi.rs:VakOiRelationKind"
         ]
       },
       "row": "census:#2-2"
@@ -410,7 +367,6 @@
           "crates/ql-cli/src/lib.rs:provider_state",
           "crates/ql-cli/src/vak_composition.rs:face",
           "crates/ql-core/src/face.rs:QlFace",
-          "crates/ql-mef/src/continuous/host.rs:FieldHost",
           "crates/ql-mef/src/m1.rs:DR_RING_PARASHAKTI",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:authority",
@@ -457,11 +413,6 @@
           "crates/ql-core/src/operator.rs:FourPlusTwoClass",
           "crates/ql-core/src/pole/coin.rs:Polarity",
           "crates/ql-core/src/pole/fold.rs:FoldState",
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:Grammar",
@@ -481,25 +432,12 @@
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
           "crates/ql-mef/src/m_ledger.rs:path",
-          "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/templateure.rs:FormPotential",
           "crates/ql-mef/src/templateure.rs:TemplateureField",
           "crates/ql-mef/src/vak.rs:SelfOtherForm",
           "crates/ql-mef/src/vak.rs:parse_source_entry",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning",
           "crates/ql-service/src/service.rs:QlService",
           "crates/ql-wiki/src/recognition.rs:RecognitionState"
         ]
@@ -544,8 +482,6 @@
         "covered_by_descendants": [
           "#1",
           "#1-3",
-          "#1-5-3",
-          "#2-1-0-3",
           "#2-1-3-3",
           "#2-5-0/1",
           "#2-5-0/1-6",
@@ -561,14 +497,12 @@
           "crates/ql-core/src/operator.rs:QlOperator",
           "crates/ql-core/src/pole/transcription.rs:AA_ANCHOR",
           "crates/ql-core/src/structural.rs:AnchorReturn",
-          "crates/ql-mef/src/continuous/receipt.rs:phase",
           "crates/ql-mef/src/m1_engine.rs:Carrier",
           "crates/ql-mef/src/m1_engine.rs:M1Engine",
           "crates/ql-mef/src/m1_engine.rs:carrier",
           "crates/ql-mef/src/m2_engine.rs:ResonatorState",
           "crates/ql-mef/src/m3_engine.rs:M3Engine",
           "crates/ql-mef/src/m3_state.rs:M3Command",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
           "crates/ql-mef/src/registry/articulation.rs:L0_PRIME",
           "crates/ql-mef/src/registry/articulation.rs:L5_PRIME",
           "crates/ql-mef/src/registry/becoming.rs:L2_PRIME",
@@ -609,13 +543,11 @@
         "state": "partial",
         "covered_by_descendants": [
           "#1-4.5",
-          "#2-1-0-2",
-          "#2-1-0-3"
+          "#2-1-0-2"
         ],
         "constructs": [
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
         ]
       },
@@ -679,8 +611,6 @@
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
           "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-          "crates/ql-mef/src/property/model.rs:Assertion",
           "crates/ql-semantic/src/capability.rs:InputLimits",
           "crates/ql-wiki/src/portal.rs:MetaPortal"
         ]
@@ -748,11 +678,7 @@
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
           "crates/ql-mef/src/lens.rs:LensId",
           "crates/ql-mef/src/lens.rs:LensRef",
-          "crates/ql-mef/src/m2.rs:context_condition",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField"
+          "crates/ql-mef/src/m2.rs:context_condition"
         ]
       },
       "row": "census:#2-1-4"
@@ -849,11 +775,9 @@
         ],
         "constructs": [
           "crates/ql-adapters/src/attachment.rs:QlAttachment",
-          "crates/ql-mef/src/continuous/receipt.rs:finite",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
           "crates/ql-mef/src/m1_engine.rs:finite_field",
-          "crates/ql-mef/src/m2_engine.rs:finite",
-          "crates/ql-mef/src/nara.rs:finite"
+          "crates/ql-mef/src/m2_engine.rs:finite"
         ]
       },
       "row": "census:#2-2-1"
@@ -891,15 +815,12 @@
           "#2-1-3",
           "#2-1-5",
           "#2-2-0-5",
-          "#2-2-2-1",
-          "#2-2-2-1-2",
           "#2-2-2-3-0/1"
         ],
         "constructs": [
           "crates/ql-cli/src/lib.rs:vak_relation_kind",
           "crates/ql-core/src/form.rs:QlForm",
           "crates/ql-core/src/form.rs:QlFormRef",
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/vak.rs:SelfOtherForm",
           "crates/ql-mef/src/vak.rs:VakActionRelationKind",
@@ -909,8 +830,7 @@
           "crates/ql-mef/src/vak.rs:VakRelation",
           "crates/ql-mef/src/vak.rs:VakRelationKind",
           "crates/ql-mef/src/vak.rs:VakRelationOp",
-          "crates/ql-mef/src/vak_oi.rs:VakOiRelationKind",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+          "crates/ql-mef/src/vak_oi.rs:VakOiRelationKind"
         ]
       },
       "row": "census:#2-2-2"
@@ -1018,13 +938,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-3-4-0-1-0"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/continuous/host.rs:FieldHost"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-3-4"
     },
@@ -1057,9 +971,6 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-core/src/pole/coin.rs:Polarity",
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m2.rs:asma_is_internal",
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -1071,12 +982,6 @@
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak.rs:parse_source_entry",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -1105,9 +1010,6 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m1_engine.rs:Grammar",
@@ -1119,12 +1021,6 @@
           "crates/ql-mef/src/m3_source.rs:SourceNode",
           "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
       },
@@ -1162,13 +1058,7 @@
         "constructs": [
           "crates/ql-core/src/operator.rs:FourPlusTwoClass",
           "crates/ql-mef/src/m2_condition.rs:resolve",
-          "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
-          "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+          "crates/ql-mef/src/vak_composition.rs:ActiveFrame"
         ]
       },
       "row": "census:#2-4.2"
@@ -1225,12 +1115,9 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-core/src/pole/fold.rs:FoldState",
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception",
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:Decision",
           "crates/ql-mef/src/m_ledger.rs:authority",
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass",
           "crates/ql-service/src/service.rs:QlService"
         ]
       },
@@ -1317,8 +1204,7 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-core/src/operator.rs:OperatorValue",
-          "crates/ql-core/src/operator.rs:QlOperator",
-          "crates/ql-mef/src/continuous/receipt.rs:phase"
+          "crates/ql-core/src/operator.rs:QlOperator"
         ]
       },
       "row": "census:#2-5-4"
@@ -1564,8 +1450,7 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-mef/src/lens.rs:LensId",
-          "crates/ql-mef/src/lens.rs:LensRef",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
+          "crates/ql-mef/src/lens.rs:LensRef"
         ]
       },
       "row": "census:#2-1-0-3"
@@ -1793,8 +1678,7 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
-          "crates/ql-mef/src/property/model.rs:Assertion"
+          "crates/ql-mef/src/m_ledger.rs:StructureAssertion"
         ]
       },
       "row": "census:#2-1-2-1"
@@ -1818,10 +1702,7 @@
         ]
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-1-2-2"
     },
@@ -2096,12 +1977,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-1-4-3"
     },
@@ -2124,8 +2000,7 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-          "crates/ql-mef/src/m2.rs:context_condition",
-          "crates/ql-mef/src/nara/domain/context.rs:ContextField"
+          "crates/ql-mef/src/m2.rs:context_condition"
         ]
       },
       "row": "census:#2-1-4-4"
@@ -2393,11 +2268,9 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/src/continuous/receipt.rs:finite",
           "crates/ql-mef/src/m1_engine.rs:FiniteField",
           "crates/ql-mef/src/m1_engine.rs:finite_field",
-          "crates/ql-mef/src/m2_engine.rs:finite",
-          "crates/ql-mef/src/nara.rs:finite"
+          "crates/ql-mef/src/m2_engine.rs:finite"
         ]
       },
       "row": "census:#2-2-1-2"
@@ -2541,11 +2414,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-2-2-1"
     },
@@ -2567,10 +2436,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-2-2-2"
     },
@@ -2604,7 +2470,6 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-cli/src/lib.rs:vak_relation_kind",
-          "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/vak.rs:VakActionRelationKind",
           "crates/ql-mef/src/vak.rs:VakEntry",
@@ -2903,13 +2768,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-3-4-0-1-0"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/continuous/host.rs:FieldHost"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-3-4-0"
     },
@@ -2995,9 +2854,6 @@
           "#2-4.0-0/1"
         ],
         "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -3007,12 +2863,6 @@
           "crates/ql-mef/src/m3_source.rs:SourceNode",
           "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
       },
@@ -3059,13 +2909,7 @@
         ]
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-1-0-3"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-0"
     },
@@ -3118,13 +2962,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-2-2-1-2"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-2"
     },
@@ -3210,19 +3048,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-1-4-3",
-          "#2-2-2-1-2",
-          "#2-4.2-6-1"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal",
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-6"
     },
@@ -3494,13 +3320,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-4.5-1-7"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-1"
     },
@@ -3560,14 +3380,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-4.5-4-3"
-        ],
-        "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-4"
     },
@@ -3642,13 +3455,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-4.5-1-7"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-7"
     },
@@ -3691,7 +3498,6 @@
           "crates/ql-mef/src/m1_engine.rs:M1Engine",
           "crates/ql-mef/src/m3_engine.rs:M3Engine",
           "crates/ql-mef/src/m3_state.rs:M3Command",
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField",
           "crates/ql-mef/src/vak.rs:structural_relation"
         ]
       },
@@ -3807,10 +3613,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-2-2-1-2"
     },
@@ -4789,13 +4592,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "partial",
-        "covered_by_descendants": [
-          "#2-3-4-0-1-0"
-        ],
-        "constructs": [
-          "crates/ql-mef/src/continuous/host.rs:FieldHost"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-3-4-0-1"
     },
@@ -4970,9 +4767,6 @@
         "state": "implemented",
         "constructs": [
           "crates/ql-core/src/pole/coin.rs:Polarity",
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
@@ -4983,12 +4777,6 @@
           "crates/ql-mef/src/m_ledger.rs:Authority",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
           "crates/ql-mef/src/m_ledger.rs:authority",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/reading.rs:QlSynthesis",
           "crates/ql-mef/src/vak.rs:parse_source_entry",
           "crates/ql-mef/src/vak_composition.rs:ActiveFrame",
@@ -5019,9 +4807,6 @@
           "#2-4.0-0/1"
         ],
         "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m1_engine.rs:Action",
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
@@ -5031,12 +4816,6 @@
           "crates/ql-mef/src/m3_source.rs:SourceNode",
           "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
       },
@@ -5080,10 +4859,7 @@
         ]
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/domain/identity.rs:IdentityField"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-0-0"
     },
@@ -5230,10 +5006,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-2-1"
     },
@@ -5473,13 +5246,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
-          "crates/ql-mef/src/nara.rs:PersonalFieldState",
-          "crates/ql-mef/src/nara.rs:PersonalLayer",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:personal"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-6-1"
     },
@@ -5499,10 +5266,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.2-6-2"
     },
@@ -7165,10 +6929,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-1-7"
     },
@@ -7568,11 +7329,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:reception",
-          "crates/ql-mef/examples/k8_vak_personal.rs:reception"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-4-3"
     },
@@ -8037,10 +7794,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-4.5-7-2"
     },
@@ -9591,10 +9345,7 @@
         "state": "unimplemented"
       },
       "rust": {
-        "state": "implemented",
-        "constructs": [
-          "crates/ql-mef/src/continuous/host.rs:FieldHost"
-        ]
+        "state": "unimplemented"
       },
       "row": "census:#2-3-4-0-1-0"
     },
@@ -10143,9 +9894,6 @@
       "rust": {
         "state": "implemented",
         "constructs": [
-          "crates/ql-mef/examples/k8_personal.rs:source",
-          "crates/ql-mef/examples/k8_vak_personal.rs:source",
-          "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
           "crates/ql-mef/src/m1.rs:SOURCE_REF",
           "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
           "crates/ql-mef/src/m2_condition.rs:SourceRelation",
@@ -10154,12 +9902,6 @@
           "crates/ql-mef/src/m3_source.rs:SourceNode",
           "crates/ql-mef/src/m3_source.rs:SourceRelation",
           "crates/ql-mef/src/m_ledger.rs:MatrixSource",
-          "crates/ql-mef/src/nara/activity.rs:source",
-          "crates/ql-mef/src/nara/activity_aw3.rs:source",
-          "crates/ql-mef/src/nara/domain/acceptance.rs:source",
-          "crates/ql-mef/src/nara/domain/agent_world.rs:source",
-          "crates/ql-mef/src/nara/expression.rs:source",
-          "crates/ql-mef/src/nara/replay.rs:source",
           "crates/ql-mef/src/vak.rs:parse_source_entry"
         ]
       },
