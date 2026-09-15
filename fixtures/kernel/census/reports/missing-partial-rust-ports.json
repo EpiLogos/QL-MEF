@@ -70,21 +70,6 @@
       ]
     },
     {
-      "coordinate": "#3-1",
-      "names": [
-        "I-Ching System",
-        "I-Ching System",
-        "The Book of Changes - 64 Hexagram Oracle System"
-      ],
-      "c_state": "implemented",
-      "rust_state": "partial",
-      "c_bodies": [
-        "c/src/m3.c:ql_m3_hexagram",
-        "c/src/m3.c:ql_m3_trigram",
-        "vendor/epi-kernel/reference/src/m3.c:m3_print_hexagram"
-      ]
-    },
-    {
       "coordinate": "#3-3",
       "names": [
         "Mahamaya Universal Transcription Engine",
@@ -367,19 +352,6 @@
       ]
     },
     {
-      "coordinate": "#2-1-2-2",
-      "names": [
-        "Negation (is not)",
-        "Negation (is not)",
-        "Negation (Is Not) - Identity Through Difference"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
-      ]
-    },
-    {
       "coordinate": "#2-1-3-4",
       "names": [
         "Flowering (contextual expression)",
@@ -425,7 +397,7 @@
         "La Maqam (لا مقام) - The Station of No-Station"
       ],
       "c_state": "partial",
-      "rust_state": "unimplemented",
+      "rust_state": "partial",
       "c_bodies": [
         "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
       ]
@@ -520,19 +492,6 @@
       "rust_state": "partial",
       "c_bodies": [
         "c/src/holographic.c:ql_relation_tag"
-      ]
-    },
-    {
-      "coordinate": "#2-4.2-0-0",
-      "names": [
-        "La Maqam Malamatiyya",
-        "La Maqam Malamatiyya",
-        "People of Blame - Transcending Spiritual Identity"
-      ],
-      "c_state": "implemented",
-      "rust_state": "unimplemented",
-      "c_bodies": [
-        "vendor/epi-kernel/reference/src/m4.c:m4_print_identity"
       ]
     },
     {
@@ -674,6 +633,18 @@
       ]
     },
     {
+      "coordinate": "#3-0",
+      "names": [
+        "Quaternionic Reception & Parashakti Integration Matrix",
+        "Quaternionic Reception & Parashakti Integration Matrix",
+        "Primordial Cause Foundation - Initiatory Essence Reception Hub"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/examples/k8_personal.rs:reception",
+        "crates/ql-mef/examples/k8_vak_personal.rs:reception"
+      ]
+    },
+    {
       "coordinate": "#3-5",
       "names": [
         "The 360° Mythic Synthesis Wheel",
@@ -722,8 +693,14 @@
       "rust_bodies": [
         "crates/ql-cli/src/vak_composition.rs:ground",
         "crates/ql-core/src/structural.rs:GroundKind",
+        "crates/ql-mef/src/focused_instrument.rs:reference",
+        "crates/ql-mef/src/property/model.rs:reference",
         "crates/ql-mef/src/vak_composition.rs:reference",
-        "crates/ql-mef/src/vak_composition.rs:references"
+        "crates/ql-mef/src/vak_composition.rs:references",
+        "crates/ql-mef/src/vak_performance.rs:reference",
+        "crates/ql-mef/src/vak_performance.rs:references",
+        "crates/ql-mef/src/vak_scope.rs:reference",
+        "crates/ql-mef/src/vak_thought_consumption.rs:reference"
       ]
     },
     {
@@ -735,9 +712,15 @@
         "Purposive Synthesis: Why Genus-1 is Topologically Necessary and Sufficient for Self-Reference"
       ],
       "rust_bodies": [
+        "crates/ql-mef/src/focused_instrument.rs:reference",
+        "crates/ql-mef/src/property/model.rs:reference",
         "crates/ql-mef/src/reading.rs:QlSynthesis",
         "crates/ql-mef/src/vak_composition.rs:reference",
-        "crates/ql-mef/src/vak_composition.rs:references"
+        "crates/ql-mef/src/vak_composition.rs:references",
+        "crates/ql-mef/src/vak_performance.rs:reference",
+        "crates/ql-mef/src/vak_performance.rs:references",
+        "crates/ql-mef/src/vak_scope.rs:reference",
+        "crates/ql-mef/src/vak_thought_consumption.rs:reference"
       ]
     },
     {
@@ -749,9 +732,12 @@
       ],
       "rust_bodies": [
         "crates/ql-core/src/pole/fold.rs:FoldState",
+        "crates/ql-mef/examples/k8_personal.rs:reception",
+        "crates/ql-mef/examples/k8_vak_personal.rs:reception",
         "crates/ql-mef/src/m_ledger.rs:Authority",
         "crates/ql-mef/src/m_ledger.rs:Decision",
         "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-mef/src/nara/activity.rs:ProtectionClass",
         "crates/ql-service/src/service.rs:QlService"
       ]
     },
@@ -764,7 +750,8 @@
       ],
       "rust_bodies": [
         "crates/ql-core/src/operator.rs:OperatorValue",
-        "crates/ql-core/src/operator.rs:QlOperator"
+        "crates/ql-core/src/operator.rs:QlOperator",
+        "crates/ql-mef/src/continuous/receipt.rs:phase"
       ]
     },
     {
@@ -879,7 +866,8 @@
         "Affirmation (Is) - Cataphatic Positive Assertion"
       ],
       "rust_bodies": [
-        "crates/ql-mef/src/m_ledger.rs:StructureAssertion"
+        "crates/ql-mef/src/m_ledger.rs:StructureAssertion",
+        "crates/ql-mef/src/property/model.rs:Assertion"
       ]
     },
     {
@@ -924,6 +912,19 @@
       ]
     },
     {
+      "coordinate": "#2-1-4-3",
+      "names": [
+        "Psychology (mediating structure)",
+        "Psychology (mediating structure)",
+        "Psychology - Knowing the Knower (Personal History)"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara.rs:PersonalFieldState",
+        "crates/ql-mef/src/nara.rs:PersonalLayer",
+        "crates/ql-mef/src/nara/domain/acceptance.rs:personal"
+      ]
+    },
+    {
       "coordinate": "#2-1-4-4",
       "names": [
         "Contextual domain (when/where)",
@@ -932,7 +933,8 @@
       ],
       "rust_bodies": [
         "crates/ql-mef/src/context_frame.rs:ContextFrameId",
-        "crates/ql-mef/src/m2.rs:context_condition"
+        "crates/ql-mef/src/m2.rs:context_condition",
+        "crates/ql-mef/src/nara/domain/context.rs:ContextField"
       ]
     },
     {
@@ -956,9 +958,11 @@
         "Kala Tattva - The Limitation of Infinite Power into Finite Agency"
       ],
       "rust_bodies": [
+        "crates/ql-mef/src/continuous/receipt.rs:finite",
         "crates/ql-mef/src/m1_engine.rs:FiniteField",
         "crates/ql-mef/src/m1_engine.rs:finite_field",
-        "crates/ql-mef/src/m2_engine.rs:finite"
+        "crates/ql-mef/src/m2_engine.rs:finite",
+        "crates/ql-mef/src/nara.rs:finite"
       ]
     },
     {
@@ -971,6 +975,29 @@
       ],
       "rust_bodies": [
         "crates/ql-adapters/src/attachment.rs:QlAttachment"
+      ]
+    },
+    {
+      "coordinate": "#2-2-2-1",
+      "names": [
+        "Antahkarana",
+        "Antahkarana",
+        "Antahkarana - The Fourfold Internal Instrument of Cognition"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF",
+        "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+      ]
+    },
+    {
+      "coordinate": "#2-2-2-2",
+      "names": [
+        "Jnanendriyas",
+        "Jnanendriyas",
+        "Jnanendriyas - The Five Organs of Sensory Knowledge"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/aw1_self_reference.rs:S5_ORGAN_REF"
       ]
     },
     {
@@ -1006,6 +1033,18 @@
       "rust_bodies": [
         "crates/ql-cli/src/vak_composition.rs:frame_view",
         "crates/ql-cli/src/vak_composition.rs:return_view"
+      ]
+    },
+    {
+      "coordinate": "#3-2-1-4",
+      "names": [
+        "AG_Pair",
+        "AG_Pair",
+        "AG Dinucleotide - Expansion into Reception"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/examples/k8_personal.rs:reception",
+        "crates/ql-mef/examples/k8_vak_personal.rs:reception"
       ]
     },
     {
@@ -1065,7 +1104,8 @@
         "crates/ql-core/src/operator.rs:OperatorValue",
         "crates/ql-core/src/operator.rs:QlOperator",
         "crates/ql-core/src/pole/tarot.rs:TranscendentOperator",
-        "crates/ql-mef/src/context_frame.rs:ContextFrameId"
+        "crates/ql-mef/src/context_frame.rs:ContextFrameId",
+        "crates/ql-mef/src/nara/domain/context.rs:ContextField"
       ]
     },
     {
@@ -1082,6 +1122,17 @@
       ]
     },
     {
+      "coordinate": "#3-3-4-4",
+      "names": [
+        "Isoleucine",
+        "Isoleucine",
+        "The Precise Branch - Chiral Specificity Master"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara/domain/common.rs:M4Branch"
+      ]
+    },
+    {
       "coordinate": "#3-4-5/0",
       "names": [
         "Major Arcana",
@@ -1091,6 +1142,7 @@
       "rust_bodies": [
         "crates/ql-mef/src/m_ledger.rs:Authority",
         "crates/ql-mef/src/m_ledger.rs:authority",
+        "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase",
         "crates/ql-mef/src/reading.rs:QlSynthesis"
       ]
     },
@@ -1113,6 +1165,18 @@
       ],
       "rust_bodies": [
         "crates/ql-core/src/pole/fold.rs:FoldState"
+      ]
+    },
+    {
+      "coordinate": "#2-2-2-1-2",
+      "names": [
+        "Manas Tattva",
+        "Manas Tattva",
+        "मनस् तत्त्व",
+        "Manas Tattva - Mind as Sensory Coordinator and Thought Processor"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
       ]
     },
     {
@@ -1139,6 +1203,65 @@
       ]
     },
     {
+      "coordinate": "#2-4.2-2-1",
+      "names": [
+        "Wara' Khawas",
+        "Wara' Khawas",
+        "Select Watchfulness - Guarding Hidden Thoughts"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-6-1",
+      "names": [
+        "Tawakkul Khawas",
+        "Tawakkul Khawas",
+        "Select Trust - Surrendering Personal Will"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara.rs:PersonalFieldInstance",
+        "crates/ql-mef/src/nara.rs:PersonalFieldState",
+        "crates/ql-mef/src/nara.rs:PersonalLayer",
+        "crates/ql-mef/src/nara/domain/acceptance.rs:personal"
+      ]
+    },
+    {
+      "coordinate": "#2-4.2-6-2",
+      "names": [
+        "Tawakkul Khawas al-Khawas",
+        "Tawakkul Khawas al-Khawas",
+        "Very Select Trust - Every Thought Divinely Directed"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/vak_thought_consumption.rs:ThoughtMeaning"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5-1-7",
+      "names": [
+        "Hakamiah",
+        "Hakamiah",
+        "Angel of Divine Uprising and Loyalty Protection"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5-4-3",
+      "names": [
+        "Rehael",
+        "Rehael",
+        "Angel of Divine Reception and Parental Healing"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/examples/k8_personal.rs:reception",
+        "crates/ql-mef/examples/k8_vak_personal.rs:reception"
+      ]
+    },
+    {
       "coordinate": "#2-4.5-5-9",
       "names": [
         "Nithael",
@@ -1149,6 +1272,17 @@
         "crates/ql-mef/src/m_ledger.rs:Authority",
         "crates/ql-mef/src/m_ledger.rs:authority",
         "crates/ql-service/src/service.rs:QlService"
+      ]
+    },
+    {
+      "coordinate": "#2-4.5-7-2",
+      "names": [
+        "Damabiah",
+        "Damabiah",
+        "Angel of Divine Wisdom Fountain and Naval Protection"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara/activity.rs:ProtectionClass"
       ]
     },
     {
@@ -1210,6 +1344,17 @@
         "crates/ql-mef/src/m_ledger.rs:Authority",
         "crates/ql-mef/src/m_ledger.rs:authority",
         "crates/ql-mef/src/vak.rs:structural_relation"
+      ]
+    },
+    {
+      "coordinate": "#3-4-5/0-13",
+      "names": [
+        "Death",
+        "Death",
+        "Death - Scorpio and Transformation"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/nara/domain/transformation.rs:TransformationPhase"
       ]
     },
     {
@@ -1286,6 +1431,17 @@
       ]
     },
     {
+      "coordinate": "#2-3-4-0-1-0",
+      "names": [
+        "Cancer Decan 2 Light",
+        "Cancer Decan 2 Light",
+        "The Joyful Host"
+      ],
+      "rust_bodies": [
+        "crates/ql-mef/src/continuous/host.rs:FieldHost"
+      ]
+    },
+    {
       "coordinate": "#2-4.1-0-0-14",
       "names": [
         "ANUSVĀRA",
@@ -1293,6 +1449,9 @@
         "Nasal Completion Sound - Return to Unmanifest Source"
       ],
       "rust_bodies": [
+        "crates/ql-mef/examples/k8_personal.rs:source",
+        "crates/ql-mef/examples/k8_vak_personal.rs:source",
+        "crates/ql-mef/src/cprime_oikonomia.rs:CS_SOURCE_REF",
         "crates/ql-mef/src/m1.rs:SOURCE_REF",
         "crates/ql-mef/src/m2_condition.rs:SOURCE_FIELD",
         "crates/ql-mef/src/m2_condition.rs:SourceRelation",
@@ -1301,6 +1460,12 @@
         "crates/ql-mef/src/m3_source.rs:SourceNode",
         "crates/ql-mef/src/m3_source.rs:SourceRelation",
         "crates/ql-mef/src/m_ledger.rs:MatrixSource",
+        "crates/ql-mef/src/nara/activity.rs:source",
+        "crates/ql-mef/src/nara/activity_aw3.rs:source",
+        "crates/ql-mef/src/nara/domain/acceptance.rs:source",
+        "crates/ql-mef/src/nara/domain/agent_world.rs:source",
+        "crates/ql-mef/src/nara/expression.rs:source",
+        "crates/ql-mef/src/nara/replay.rs:source",
         "crates/ql-mef/src/vak.rs:parse_source_entry"
       ]
     },

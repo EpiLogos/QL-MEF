@@ -1,9 +1,9 @@
 {
   "schema": "ql.m-census-discovery/v1",
   "stratum": "c",
-  "construct_count": 407,
+  "construct_count": 423,
   "bound_count": 97,
-  "orphan_count": 310,
+  "orphan_count": 326,
   "bound": [
     {
       "symbol": "engine_lemniscate_dive",
@@ -2902,7 +2902,7 @@
       "symbol": "ql_m_resolve",
       "path": "c/src/m_tree.c",
       "kind": "function",
-      "line": 28,
+      "line": 31,
       "stratum": "c",
       "coordinates": [
         "#2-4.2-1-2"
@@ -2928,7 +2928,7 @@
       "symbol": "ql_m_child_at",
       "path": "c/src/m_tree.c",
       "kind": "function",
-      "line": 52,
+      "line": 55,
       "stratum": "c",
       "coordinates": [
         "#2-4.0-0/1-1-0",
@@ -3000,7 +3000,7 @@
       "symbol": "ql_m_relation_resolve",
       "path": "c/src/m_tree.c",
       "kind": "function",
-      "line": 85,
+      "line": 88,
       "stratum": "c",
       "coordinates": [
         "#2-4.2-1-2"

@@ -19,7 +19,7 @@
         "Quaternionic Reception & Parashakti Integration Matrix",
         "Primordial Cause Foundation - Initiatory Essence Reception Hub"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-5",
@@ -148,7 +148,7 @@
         "Water Element Decans",
         "Aqueous Archetypal Expressions - Cancer, Scorpio, Pisces"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-4.5",
@@ -227,7 +227,7 @@
         "Adenine",
         "Adenine - The Primary Yang Nucleotide"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#3-2-3",
@@ -543,7 +543,7 @@
         "Psychology (mediating structure)",
         "Psychology - Knowing the Knower (Personal History)"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-1-4-4",
@@ -715,7 +715,7 @@
         "Antahkarana",
         "Antahkarana - The Fourfold Internal Instrument of Cognition"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-2-2-2",
@@ -724,7 +724,7 @@
         "Jnanendriyas",
         "Jnanendriyas - The Five Organs of Sensory Knowledge"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-2-2-5",
@@ -814,7 +814,7 @@
         "Cancer Decans",
         "The Crab - Cardinal Water Expressions"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-3-4-1",
@@ -868,7 +868,7 @@
         "Wara'",
         "Wara' (الورع) - The Station of Watchfulness and Scrupulousness"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-4.2-3",
@@ -895,7 +895,7 @@
         "Tawakkul",
         "Tawakkul (التوكل) - The Station of Trust and Divine Reliance"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-4.2-7",
@@ -1003,7 +1003,7 @@
         "Cherubim",
         "Second Choir"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-4.5-2",
@@ -1030,7 +1030,7 @@
         "Bene Elohim",
         "Fifth Choir"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-4.5-5",
@@ -1057,7 +1057,7 @@
         "Highest Seraphim",
         "Eighth Choir"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#3-1-0-0",
@@ -1733,7 +1733,7 @@
         "AG_Pair",
         "AG Dinucleotide - Expansion into Reception"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-2-2-2",
@@ -2055,7 +2055,7 @@
         "Isoleucine",
         "The Precise Branch - Chiral Specificity Master"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-3-4-5",
@@ -2826,7 +2826,7 @@
         "मनस् तत्त्व",
         "Manas Tattva - Mind as Sensory Coordinator and Thought Processor"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-2-2-2-2",
@@ -3228,7 +3228,7 @@
         "Cancer Decan 2",
         "The Mystic Mother - Mercurial Intuition"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "partial"
     },
     {
       "coordinate": "#2-3-4-0-2",
@@ -3363,7 +3363,7 @@
         "Wara' Khawas",
         "Select Watchfulness - Guarding Hidden Thoughts"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.2-2-2",
@@ -3471,7 +3471,7 @@
         "Tawakkul Khawas",
         "Select Trust - Surrendering Personal Will"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.2-6-2",
@@ -3480,7 +3480,7 @@
         "Tawakkul Khawas al-Khawas",
         "Very Select Trust - Every Thought Divinely Directed"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.2-7-0",
@@ -4218,7 +4218,7 @@
         "Hakamiah",
         "Angel of Divine Uprising and Loyalty Protection"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.5-1-8",
@@ -4398,7 +4398,7 @@
         "Rehael",
         "Angel of Divine Reception and Parental Healing"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.5-4-4",
@@ -4605,7 +4605,7 @@
         "Damabiah",
         "Angel of Divine Wisdom Fountain and Naval Protection"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-4.5-7-3",
@@ -6735,7 +6735,7 @@
         "Death",
         "Death - Scorpio and Transformation"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#3-4-5/0-14",
@@ -10859,7 +10859,7 @@
         "Cancer Decan 2 Light",
         "The Joyful Host"
       ],
-      "rust_state": "unimplemented"
+      "rust_state": "implemented"
     },
     {
       "coordinate": "#2-3-4-0-1-1",

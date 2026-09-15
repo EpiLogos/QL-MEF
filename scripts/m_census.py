@@ -498,9 +498,11 @@ INFRASTRUCTURAL_C_FILES = {
     "vendor/epi-kernel/reference/src/arena.c": "arena memory machinery",
 }
 # Rust disclosure machinery: product-identity strings for the Wave 5 System
-# surface; they describe the product, they carry no coordinate identity.
+# surface and the configuration-plane owner contribution; they describe the
+# product and its read-only settings, they carry no coordinate identity.
 INFRASTRUCTURAL_RUST_FILES = {
     "crates/ql-cli/src/system.rs": "Wave 5 per-owner System settings disclosure",
+    "crates/ql-cli/src/configuration.rs": "configuration-plane owner contribution (disclosure-only)",
 }
 C_KEYWORD_SYMBOLS = frozenset({
     "if", "while", "for", "switch", "return", "sizeof", "Static_assert",
