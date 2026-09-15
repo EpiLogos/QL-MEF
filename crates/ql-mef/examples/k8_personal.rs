@@ -287,6 +287,8 @@ fn run() -> Result<(), String> {
 
     let inspection = owner.inspect()?;
     let currentness = owner.currentness()?;
+    let focused_snapshot =
+        FocusedInstrument::new().snapshot(&InstrumentOwnerView::from_session(&owner)?)?;
     std::fs::write(
         out.join("acceptance.json"),
         format!(
@@ -315,6 +317,14 @@ fn run() -> Result<(), String> {
     std::fs::write(
         out.join("inspection.json"),
         format!("{}\n", serde_json::to_string_pretty(&inspection).unwrap()),
+    )
+    .map_err(|error| error.to_string())?;
+    std::fs::write(
+        out.join("focused-snapshot.json"),
+        format!(
+            "{}\n",
+            serde_json::to_string_pretty(&focused_snapshot).unwrap()
+        ),
     )
     .map_err(|error| error.to_string())?;
     Ok(())
