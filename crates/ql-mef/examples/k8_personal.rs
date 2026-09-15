@@ -13,6 +13,21 @@ use serde_json::{Value, json};
 use std::path::Path;
 use std::time::Duration;
 
+fn write_private(path: &Path, value: &Value) -> Result<(), String> {
+    std::fs::write(
+        path,
+        format!("{}\n", serde_json::to_string_pretty(value).unwrap()),
+    )
+    .map_err(|error| error.to_string())?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600))
+            .map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
 fn read(path: &str) -> Result<Value, String> {
     if std::fs::metadata(path)
         .map_err(|error| error.to_string())?
@@ -195,14 +210,35 @@ fn run() -> Result<(), String> {
     let mut owner = PersonalCoupledSession::open(
         Path::new(&args[1]),
         basis.clone(),
-        field,
-        constitution,
+        field.clone(),
+        constitution.clone(),
         Duration::from_secs(20),
     )?;
     assert!(!owner.personal_is_current()?);
     let initial_field = owner.last_field().clone();
     let refs = EventBasisRefs::from_basis(owner.current_basis())?;
     let first_input = reception(&refs, observed_at_unix_ms);
+    write_private(
+        &out.join("focused-host-config.json"),
+        &json!({
+            "schema":"ql.focused-host-config/v1",
+            "instance_ref":"controlled:k8-personal:focused-host",
+            "basis":basis.clone(),
+            "field":field.clone(),
+            "constitution":constitution.clone(),
+            "bimba":[{
+                "source_ref":"#3-0",
+                "selection_ref":"selection:controlled:k8-personal:root",
+                "disclosure_ref":"disclosure:controlled:k8-personal:root",
+                "label":"Controlled M root",
+                "field_constituent_ref":"#3-0"
+            }]
+        }),
+    )?;
+    write_private(
+        &out.join("focused-host-reception.json"),
+        &serde_json::to_value(&first_input).map_err(|error| error.to_string())?,
+    )?;
     let first = owner.receive_personal(first_input.clone())?;
     assert!(owner.personal_is_current()?);
     assert_eq!(
