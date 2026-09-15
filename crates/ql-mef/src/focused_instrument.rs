@@ -12,7 +12,7 @@ use serde_json::{Value, json};
 use crate::continuous::LiftInput;
 use crate::continuous::coupled::CoupledBasis;
 use crate::continuous::personal::PersonalCoupledSession;
-use crate::nara::{EventBasisRefs, PersonalFieldState};
+use crate::nara::{EventBasisRefs, PersonalFieldState, SourceRevision, WorldContribution};
 use crate::vak_performance::{
     PERFORMANCE_EVENT_CONTRACT, PerformanceObservationMode, VakPerformanceEvent,
 };
@@ -21,6 +21,8 @@ pub const FOCUSED_INSTRUMENT_CONTRACT: &str = "ql.focused-instrument/v1";
 pub const BIMBA_SELECTION_CONTRACT: &str = "ql.focused-instrument-bimba-selection/v1";
 pub const VAK_EXPRESSION_BINDING_CONTRACT: &str = "ql.focused-instrument-vak-expression/v1";
 pub const OPERATION_OBSERVATION_CONTRACT: &str = "ql.focused-instrument-operation/v1";
+pub const NARA_EXPRESSION_SESSION_CONTRACT: &str = "ql.nara-expression-session/v1";
+pub const NARA_EXPRESSION_PORTABLE_CUES_CONTRACT: &str = "ql.nara-expression-portable-cues/v1";
 
 fn reference(value: &str, what: &str) -> Result<(), String> {
     if value.trim().is_empty() || value.len() > 16_384 || value.contains('\0') {
@@ -432,6 +434,189 @@ pub struct ClockDisclosure {
     pub standing: String,
 }
 
+/// Private, session-local presentation reading for the O:I Expression host.
+/// It carries the actual accepted K10 receiver results required to render this
+/// Nara, but deliberately omits identity layers, quaternions and constitution.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraCentreExpressionReading {
+    pub locus_ref: String,
+    pub ordinal: u8,
+    pub label: String,
+    pub source: SourceRevision,
+    pub m1: WorldContribution,
+    pub m2: WorldContribution,
+    pub m3: WorldContribution,
+    pub resonance: f64,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraEarthBodyExpressionReading {
+    pub locus_ref: String,
+    pub source: SourceRevision,
+    pub frame_ref: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum NaraExpressionAvailability {
+    Available,
+    Unavailable,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraResonanceStationDisclosure {
+    pub availability: NaraExpressionAvailability,
+    pub station_refs: Vec<String>,
+    pub standing: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraExpressionPortableCues {
+    pub schema: String,
+    pub subject_ref: String,
+    pub event_ref: String,
+    pub profile_generation: u64,
+    pub personal_reception_generation: u64,
+    pub centre_locus_refs: Vec<String>,
+    pub earth_body_locus_ref: String,
+    pub source_refs: Vec<String>,
+    pub cue_refs: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraExpressionSession {
+    pub schema: String,
+    pub subject_ref: String,
+    pub event_ref: String,
+    pub profile_generation: u64,
+    pub personal_reception_generation: u64,
+    pub current: bool,
+    pub centres: Vec<NaraCentreExpressionReading>,
+    pub earth_body: NaraEarthBodyExpressionReading,
+    pub resonance_stations: NaraResonanceStationDisclosure,
+    pub m1_reading_refs: Vec<String>,
+    pub m2_reading_refs: Vec<String>,
+    pub m3_reading_refs: Vec<String>,
+    pub action_refs: Vec<String>,
+    pub m1_presentation: Value,
+    pub m2_presentation: Value,
+    pub m3_presentation: Value,
+    pub portable: NaraExpressionPortableCues,
+    pub standing: String,
+}
+
+impl NaraExpressionSession {
+    fn from_view(
+        personal: &PersonalFieldState,
+        view: &InstrumentOwnerView,
+    ) -> Result<Self, String> {
+        if personal.receivers.len() != 7 {
+            return Err("Nara Expression requires exactly seven accepted centres".into());
+        }
+        let mut centres = personal
+            .receivers
+            .iter()
+            .map(|receiver| NaraCentreExpressionReading {
+                locus_ref: format!(
+                    "ql:nara:{}:centre:{}",
+                    personal.subject_id, receiver.ordinal
+                ),
+                ordinal: receiver.ordinal,
+                label: receiver.label.clone(),
+                source: receiver.source.clone(),
+                m1: receiver.input_basis[0].clone(),
+                m2: receiver.input_basis[1].clone(),
+                m3: receiver.input_basis[2].clone(),
+                resonance: receiver.resonance,
+            })
+            .collect::<Vec<_>>();
+        centres.sort_by_key(|centre| centre.ordinal);
+        if centres
+            .iter()
+            .enumerate()
+            .any(|(ordinal, centre)| usize::from(centre.ordinal) != ordinal)
+            || centres.iter().any(|centre| {
+                !centre.resonance.is_finite()
+                    || !centre.m1.value.is_finite()
+                    || !centre.m2.value.is_finite()
+                    || !centre.m3.value.is_finite()
+            })
+        {
+            return Err("Nara Expression centre reading is incomplete or non-finite".into());
+        }
+        let earth_body = NaraEarthBodyExpressionReading {
+            locus_ref: format!("ql:nara:{}:earth-body", personal.subject_id),
+            source: personal.earth_body.source.clone(),
+            frame_ref: personal.earth_body.frame_ref.clone(),
+        };
+        let source_refs = centres
+            .iter()
+            .map(|centre| format!("{}@{}", centre.source.source_ref, centre.source.revision))
+            .chain(std::iter::once(format!(
+                "{}@{}",
+                earth_body.source.source_ref, earth_body.source.revision
+            )))
+            .collect::<Vec<_>>();
+        let centre_locus_refs = centres
+            .iter()
+            .map(|centre| centre.locus_ref.clone())
+            .collect();
+        let portable = NaraExpressionPortableCues {
+            schema: NARA_EXPRESSION_PORTABLE_CUES_CONTRACT.into(),
+            subject_ref: personal.subject_id.clone(),
+            event_ref: personal.event.event_ref.clone(),
+            profile_generation: personal.event.profile_generation,
+            personal_reception_generation: personal.reception_generation,
+            centre_locus_refs,
+            earth_body_locus_ref: earth_body.locus_ref.clone(),
+            source_refs,
+            cue_refs: vec!["ql:nara:focus:m4".into()],
+        };
+        Ok(Self {
+            schema: NARA_EXPRESSION_SESSION_CONTRACT.into(),
+            subject_ref: personal.subject_id.clone(),
+            event_ref: personal.event.event_ref.clone(),
+            profile_generation: personal.event.profile_generation,
+            personal_reception_generation: personal.reception_generation,
+            current: view.personal_current,
+            centres,
+            earth_body,
+            resonance_stations: NaraResonanceStationDisclosure {
+                availability: NaraExpressionAvailability::Unavailable,
+                station_refs: Vec::new(),
+                standing: "the accepted owner does not disclose cymatic station identities; centres are not substituted".into(),
+            },
+            m1_reading_refs: vec![personal.event.m1_revision.clone()],
+            m2_reading_refs: vec![personal.event.m2_source_ref.clone(), personal.event.m2_contract_ref.clone()],
+            m3_reading_refs: vec![personal.event.m3_source_ref.clone(), personal.event.m3_contract_ref.clone()],
+            action_refs: Vec::new(),
+            m1_presentation: json!({
+                "reflection":view.m1.get("reflection").cloned().unwrap_or(Value::Null),
+                "rotor":view.m1.get("rotor").cloned().unwrap_or(Value::Null),
+                "carrier":view.m1.get("carrier").cloned().unwrap_or(Value::Null),
+            }),
+            m2_presentation: json!({
+                "colour":view.m2.pointer("/condition/colour").cloned().unwrap_or(Value::Null),
+                "physical_material":view.m2.pointer("/condition/physical_material").cloned().unwrap_or(Value::Null),
+                "m3_form_potential_ref":view.m2.pointer("/condition/m3_form_potential_ref").cloned().unwrap_or(Value::Null),
+                "modal":view.m2.get("modal").cloned().unwrap_or(Value::Null),
+            }),
+            m3_presentation: json!({
+                "form":view.m3.get("form").cloned().unwrap_or(Value::Null),
+                "clock":view.m3.get("clock").cloned().unwrap_or(Value::Null),
+                "transcription":view.m3.get("transcription").cloned().unwrap_or(Value::Null),
+            }),
+            portable,
+            standing: "private session-local K10 presentation reading; portable contains refs and cues only".into(),
+        })
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FocusedInstrumentSnapshot {
@@ -450,6 +635,7 @@ pub struct FocusedInstrumentSnapshot {
     pub vak_expression: Option<VakExpressionBinding>,
     pub vak_performance: Option<VakPerformanceSummary>,
     pub personal_current: bool,
+    pub nara_expression: Option<NaraExpressionSession>,
     pub standing: String,
 }
 
@@ -612,6 +798,11 @@ impl FocusedInstrument {
             return Err("focused clock is not the accepted M3 field/centre".into());
         }
 
+        let nara_expression = view
+            .personal
+            .as_ref()
+            .map(|personal| NaraExpressionSession::from_view(personal, view))
+            .transpose()?;
         Ok(FocusedInstrumentSnapshot {
             schema: FOCUSED_INSTRUMENT_CONTRACT.into(),
             available: view.available,
@@ -634,6 +825,7 @@ impl FocusedInstrument {
             vak_expression: self.vak_expression.clone(),
             vak_performance: view.vak_performance.clone(),
             personal_current: view.personal_current,
+            nara_expression,
             standing: "K9 consumer projection: one K8 field, source-qualified Bimba selection, source-owned Vāk, Nara reception and native-host companions; no renderer/graph/clock/agent ownership".into(),
         })
     }
@@ -808,7 +1000,9 @@ fn operation_observation(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::nara::EventBasisRefs;
+    use crate::nara::{
+        BioQuaternion, ConsentState, EarthBodyState, EventBasisRefs, LifecycleState, ReceiverState,
+    };
 
     fn field(generation: u64, elapsed: u64, x: f64, profile_generation: u64) -> Value {
         json!({
@@ -865,6 +1059,74 @@ mod tests {
             subject_ref: "nara:1".into(),
             field_constituent_ref: Some("M2-0-2-0-0".into()),
             assertion_refs: vec!["assertion:1".into()],
+        }
+    }
+
+    fn source(name: &str) -> SourceRevision {
+        SourceRevision {
+            source_ref: format!("source:{name}"),
+            revision: "r1".into(),
+            standing_ref: "accepted".into(),
+        }
+    }
+
+    fn personal(profile_generation: u64) -> PersonalFieldState {
+        let event = view(1, 0, 1.0, profile_generation).event;
+        PersonalFieldState {
+            schema: "ql.nara-personal-field/v1".into(),
+            subject_id: "nara:1".into(),
+            constitution_ref: "protected:constitution:DO-NOT-EXPORT".into(),
+            reception_generation: 9,
+            event: event.clone(),
+            observed_at_unix_ms: 1,
+            consent: ConsentState::Granted,
+            lifecycle: LifecycleState::Active,
+            q_identity: BioQuaternion::IDENTITY,
+            q_transit: BioQuaternion::IDENTITY,
+            q_activity: BioQuaternion::IDENTITY,
+            q_composed: BioQuaternion::IDENTITY,
+            ephemeral_source: Some(source("private-journal-DO-NOT-EXPORT")),
+            receivers: (0..7)
+                .map(|ordinal| ReceiverState {
+                    ordinal,
+                    label: format!("centre-{ordinal}"),
+                    source: source(&format!("centre-{ordinal}")),
+                    input_basis: [
+                        WorldContribution {
+                            basis_ref: event.m1_revision.clone(),
+                            source_ref: format!("m1:centre:{ordinal}"),
+                            value: ordinal as f64 + 0.1,
+                        },
+                        WorldContribution {
+                            basis_ref: event.m2_source_ref.clone(),
+                            source_ref: format!("m2:centre:{ordinal}"),
+                            value: ordinal as f64 + 0.2,
+                        },
+                        WorldContribution {
+                            basis_ref: event.m3_source_ref.clone(),
+                            source_ref: format!("m3:centre:{ordinal}"),
+                            value: ordinal as f64 + 0.3,
+                        },
+                    ],
+                    bioquaternion: BioQuaternion::IDENTITY,
+                    receiver_orientation: BioQuaternion::IDENTITY,
+                    composed_orientation: BioQuaternion::IDENTITY,
+                    orientation_alignment: 1.0,
+                    drive: ordinal as f64,
+                    resonance: ordinal as f64 + 0.5,
+                    reradiation: ordinal as f64 + 0.25,
+                })
+                .collect(),
+            earth_body: EarthBodyState {
+                source: source("earth-body"),
+                frame_ref: "earth-fixed".into(),
+                orientation: BioQuaternion::IDENTITY,
+                relation_alignment: 1.0,
+            },
+            aggregate_resonance: 3.5,
+            aggregate_reradiation: 2.5,
+            source_revisions: vec![source("private-whole-DO-NOT-EXPORT")],
+            standing: "accepted".into(),
         }
     }
 
@@ -984,5 +1246,51 @@ mod tests {
             snapshot.selection_standing,
             Some(SelectionStanding::FieldAdvanced)
         );
+    }
+
+    #[test]
+    fn nara_expression_projects_actual_independent_centres_and_distinct_earth_body() {
+        let mut source = view(1, 0, 1.0, 1);
+        source.personal = Some(personal(1));
+        source.personal_current = true;
+        let snapshot = FocusedInstrument::new().snapshot(&source).unwrap();
+        let nara = snapshot.nara_expression.unwrap();
+        assert_eq!(nara.centres.len(), 7);
+        assert_eq!(nara.centres[6].resonance, 6.5);
+        assert_eq!(nara.centres[6].m2.source_ref, "m2:centre:6");
+        assert_eq!(nara.earth_body.locus_ref, "ql:nara:nara:1:earth-body");
+        assert!(
+            nara.centres
+                .iter()
+                .all(|centre| centre.locus_ref != nara.earth_body.locus_ref)
+        );
+        assert_eq!(
+            nara.resonance_stations.availability,
+            NaraExpressionAvailability::Unavailable
+        );
+        assert!(nara.resonance_stations.station_refs.is_empty());
+    }
+
+    #[test]
+    fn portable_nara_cues_exclude_live_and_protected_values() {
+        let mut source = view(1, 0, 1.0, 1);
+        source.personal = Some(personal(1));
+        let snapshot = FocusedInstrument::new().snapshot(&source).unwrap();
+        let nara = snapshot.nara_expression.unwrap();
+        let portable = serde_json::to_string(&nara.portable).unwrap();
+        assert!(!portable.contains("DO-NOT-EXPORT"));
+        assert!(!portable.contains("resonance"));
+        assert!(!portable.contains("bioquaternion"));
+        assert!(!portable.contains("constitution"));
+        assert_eq!(nara.portable.centre_locus_refs.len(), 7);
+    }
+
+    #[test]
+    fn stale_personal_generation_remains_stale_in_session_projection() {
+        let mut source = view(8, 512, 4.0, 2);
+        source.personal = Some(personal(1));
+        source.personal_current = false;
+        let snapshot = FocusedInstrument::new().snapshot(&source).unwrap();
+        assert!(!snapshot.nara_expression.unwrap().current);
     }
 }

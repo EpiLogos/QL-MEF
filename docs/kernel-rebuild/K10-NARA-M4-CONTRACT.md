@@ -148,6 +148,16 @@ A `NaraOccasion` records the original accepted world event, personal reception g
 
 The projection deliberately contains **references**, not raw personal bodies. In particular it does not serialize the raw journal, identity layers, bioquaternion or seven-centre scalar field into the portable expression envelope.
 
+The focused host may additionally disclose `ql.nara-expression-session/v1` to
+the local O:I Expression renderer. Its seven `locus_ref` values and distinct
+EarthBody locus are presentation addresses over the existing K10 subject and
+source identities; they do not mint Nara, centre, chakra or body identity.
+This session-only reading may carry current centre contribution and resonance
+values. Its nested `ql.nara-expression-portable-cues/v1` is the exportable
+boundary and contains refs/cues only. A stale reading remains explicitly stale,
+and absent M2 cymatic-station identities remain unavailable rather than being
+derived from the seven centres.
+
 The projection carries:
 
 - stable expression and occasion refs;
