@@ -19,3 +19,8 @@ sha2 = "0.10"
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+# Schema conformance only: the frozen C0 schemas are vendored verbatim and
+# validated in-process, so no resolver/network features are needed.
+jsonschema = { version = "0.30", default-features = false }

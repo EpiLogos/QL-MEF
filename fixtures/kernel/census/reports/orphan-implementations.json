@@ -18843,6 +18843,18 @@
       "tokens": [
         "sanitise"
       ]
+    },
+    {
+      "symbol": "CliFailure",
+      "path": "crates/ql-cli/src/lib.rs",
+      "kind": "enum",
+      "line": 251,
+      "context": "/// Failure of a CLI command. Plain commands fail with a message on stderr; /// a configuration-plane `--json` transport failure carries the structured /// `oi.config-error/v1` document, which goes to stdout with a non-zero exit /// (09-CONFIGURATION-PLANE.md §6).",
+      "stratum": "rust",
+      "reason": "no token/spelling anchor matched an M1/M2/M3 coordinate",
+      "tokens": [
+        "failure"
+      ]
     }
   ]
 }

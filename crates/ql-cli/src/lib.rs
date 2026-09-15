@@ -16,6 +16,7 @@ use std::fmt::{self, Display};
 use std::process::ExitCode;
 use std::str::FromStr;
 
+pub mod configuration;
 pub mod m_ledger;
 pub mod vak_composition;
 
@@ -242,6 +243,42 @@ struct VakContextView {
     relations: Vec<VakContextRelationView>,
 }
 
+/// Failure of a CLI command. Plain commands fail with a message on stderr;
+/// a configuration-plane `--json` transport failure carries the structured
+/// `oi.config-error/v1` document, which goes to stdout with a non-zero exit
+/// (09-CONFIGURATION-PLANE.md §6).
+#[derive(Debug)]
+pub enum CliFailure {
+    Message(CliError),
+    ConfigDocument(String),
+}
+
+impl Display for CliFailure {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CliFailure::Message(error) => error.fmt(formatter),
+            CliFailure::ConfigDocument(document) => formatter.write_str(document),
+        }
+    }
+}
+
+impl CliFailure {
+    /// The structured error document, when this failure is a configuration
+    /// plane transport failure.
+    pub fn config_document(&self) -> Option<&str> {
+        match self {
+            CliFailure::Message(_) => None,
+            CliFailure::ConfigDocument(document) => Some(document),
+        }
+    }
+}
+
+impl From<CliError> for CliFailure {
+    fn from(error: CliError) -> Self {
+        CliFailure::Message(error)
+    }
+}
+
 pub fn cli_main() -> ExitCode {
     let args = std::env::args().skip(1).collect::<Vec<_>>();
     match execute_cli(&args) {
@@ -251,39 +288,51 @@ pub fn cli_main() -> ExitCode {
             }
             ExitCode::SUCCESS
         }
-        Err(error) => {
+        Err(CliFailure::Message(error)) => {
             eprintln!("ql: {error}");
+            ExitCode::from(2)
+        }
+        Err(CliFailure::ConfigDocument(document)) => {
+            println!("{document}");
             ExitCode::from(2)
         }
     }
 }
 
-pub fn execute_cli(args: &[String]) -> Result<String, CliError> {
+pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
     let mut args = args.to_vec();
     let json = remove_flag(&mut args, "--json");
+    let plain = |result: Result<String, CliError>| result.map_err(CliFailure::Message);
     match args.first().map(String::as_str) {
         None | Some("help") | Some("--help") | Some("-h") => Ok(help()),
         Some("--version") | Some("version") => Ok(format!("ql {}", env!("CARGO_PKG_VERSION"))),
-        Some("capabilities") => render_capabilities(json),
-        Some("kernel") => kernel_command(&args[1..], json),
-        Some("matheme") => matheme_command(&args[1..], json),
-        Some("mef") => mef_command(&args[1..], json),
-        Some("context-frame") => context_frame_command(&args[1..], json),
-        Some("vak") => vak_command(&args[1..], json),
-        Some("service") => service_command(&args[1..], json),
-        Some("system") => system::system_command(json),
-        Some("verify") => verify_command(json),
-        Some(command) => Err(CliError(format!(
+        Some("capabilities") => plain(render_capabilities(json)),
+        Some("kernel") => plain(kernel_command(&args[1..], json)),
+        Some("matheme") => plain(matheme_command(&args[1..], json)),
+        Some("mef") => plain(mef_command(&args[1..], json)),
+        Some("context-frame") => plain(context_frame_command(&args[1..], json)),
+        Some("vak") => plain(vak_command(&args[1..], json)),
+        Some("service") => plain(service_command(&args[1..], json)),
+        Some("system") => plain(system::system_command(json)),
+        Some("config-contribution") => plain(configuration::contribution_command(json)),
+        Some("config") => {
+            configuration::command(&args[1..], json).map_err(|failure| match failure.document {
+                Some(document) => CliFailure::ConfigDocument(document),
+                None => CliFailure::Message(CliError(failure.message)),
+            })
+        }
+        Some("verify") => plain(verify_command(json)),
+        Some(command) => Err(CliFailure::Message(CliError(format!(
             "unknown command `{command}`; run `ql help`"
-        ))),
+        )))),
     }
 }
 
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql verify [--json]\n\n\
-The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.",
+Usage:\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n  ql verify [--json]\n\n\
+The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.\nThe configuration surface is disclosure-only: every contributed setting is read-only, and the\nconfig transport refuses mutation with a structured unsupported_setting error.",
         env!("CARGO_PKG_VERSION")
     )
 }
@@ -316,6 +365,11 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.compose",
             "service.capabilities",
             "service.negotiate",
+            "config.contribute",
+            "config.validate",
+            "config.plan",
+            "config.apply",
+            "config.reset",
             "verify",
         ],
     };

@@ -1,6 +1,6 @@
 use ql_cli::execute_cli;
 
-fn run(args: &[&str]) -> Result<String, ql_cli::CliError> {
+fn run(args: &[&str]) -> Result<String, ql_cli::CliFailure> {
     execute_cli(&args.iter().map(|s| s.to_string()).collect::<Vec<_>>())
 }
 

@@ -424,7 +424,7 @@
     },
     {
       "path": "scripts/m_census.py",
-      "sha256": "9198a246ee609f57613c68d53f8865e6cc398be33cc421fb327e76e38703dbe1"
+      "sha256": "48d29841f40966c9e3fa2e0c4792e7231ddbca26259300bc1a47cccaf2d2871d"
     },
     {
       "path": "scripts/tests/test_m_census.py",
@@ -436,7 +436,7 @@
     },
     {
       "path": "crates/ql-cli/src/lib.rs",
-      "sha256": "5ba40a2f4d058c9e27b5174728cb8f63f52a98c26088f4f29d1629d01e4a4c2a"
+      "sha256": "1479dfc3a19c6ae4c09ad3923a09b829b3227b44bbdcf7f3e44cea50801502d5"
     },
     {
       "path": "crates/ql-cli/tests/m1_engine_cli.rs",

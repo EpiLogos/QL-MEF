@@ -188,7 +188,7 @@ fn build_descriptor() -> Result<Value, crate::CliError> {
     Ok(descriptor)
 }
 
-fn readiness() -> (String, usize, Option<String>) {
+pub(crate) fn readiness() -> (String, usize, Option<String>) {
     match crate::verify_command(true) {
         Ok(output) => {
             let parsed: Value = serde_json::from_str(&output).unwrap_or_default();
@@ -239,7 +239,7 @@ fn axes(value: Value, native_path: &str, observed_at: i64) -> Value {
     })
 }
 
-fn now_ms() -> i64 {
+pub(crate) fn now_ms() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|duration| duration.as_millis() as i64)
@@ -248,7 +248,7 @@ fn now_ms() -> i64 {
 
 /// Zero every `*_unix_ms` field in the descriptor, recursively, so the canonical
 /// reading body is independent of when the reading was taken (§4.5).
-fn zero_unix_ms(value: &mut Value) {
+pub(crate) fn zero_unix_ms(value: &mut Value) {
     match value {
         Value::Object(map) => {
             let keys: Vec<String> = map
@@ -272,7 +272,7 @@ fn zero_unix_ms(value: &mut Value) {
     }
 }
 
-fn sha256_hex(input: &str) -> String {
+pub(crate) fn sha256_hex(input: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(input.as_bytes());
     let result = hasher.finalize();

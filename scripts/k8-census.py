@@ -114,7 +114,9 @@ def project():
     # registry exports that the historical conservative K4 text scan cannot see.
     subprocess.run(['make', '-s', '-C', str(ROOT / 'c'), 'all'], check=True)
     native = subprocess.check_output(['nm', '-P', '--defined-only', str(ROOT / 'c/build/libql-mef-c.a')], text=True)
-    exports = {line.split()[0] for line in native.splitlines() if len(line.split()) >= 2 and line.split()[1] == 'T'}
+    # Darwin prepends a "_" to every C symbol; the API names come from the
+    # headers without it, so normalise the platform prefix away.
+    exports = {line.split()[0].removeprefix('_') for line in native.splitlines() if len(line.split()) >= 2 and line.split()[1] == 'T'}
     public = []
     for path, owner in modules.items():
         if owner['stratum'] != 'c':
