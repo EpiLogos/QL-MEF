@@ -61,6 +61,9 @@ function mapped(command) {
     case 'explode-clock': return { operation: 'explode-clock', pair: command.pair ?? null };
     case 'set-clock-axis': return { operation: 'set-clock-axis', axis: command.axis, phase: clone(command.phase) };
     case 'advance': return { operation: 'advance', frames: command.frames, muted: command.muted };
+    case 'receive-personal':
+      need(command.input && typeof command.input === 'object', 'explicit Personal reception input required');
+      return { operation: 'receive-personal', input: clone(command.input) };
     default: throw new Error(`unsupported focused instrument command: ${String(command?.kind)}`);
   }
 }

@@ -134,11 +134,12 @@ test('focus, Bimba and native field work share one exact focused-host sequence',
   assert.equal(s.calls[0].command.operation, 'advance'); assert.equal(s.calls[0].command.frames, 0);
   assert.equal(s.targetWrites.length, 1); assert.equal(s.checkpointCount, 1);
   await s.session.command({ kind: 'set-focus', focus: 'm2' });
+  await s.session.command({ kind: 'receive-personal', input: { event_ref: 'event:test', receivers: [] } });
   await s.session.command({ kind: 'select-bimba', selection: selection() });
   const result = await s.session.command({ kind: 'advance', frames: 128, muted: false });
   assert.equal(result.standing, 'applied');
-  assert.deepEqual(s.calls.map(call => call.request_id), ['1', '2', '3', '4']);
-  assert.deepEqual(s.calls.map(call => call.command.operation), ['advance', 'set-focus', 'select-bimba', 'advance']);
+  assert.deepEqual(s.calls.map(call => call.request_id), ['1', '2', '3', '4', '5']);
+  assert.deepEqual(s.calls.map(call => call.command.operation), ['advance', 'set-focus', 'receive-personal', 'select-bimba', 'advance']);
   assert.equal((await s.session.read()).focus.focus, 'm2'); // encounter focus survives field advancement
   assert.equal((await s.session.readBimba()).selected_ref, 'bimba:#2');
   assert.equal(s.context.nodes.length, 1);
