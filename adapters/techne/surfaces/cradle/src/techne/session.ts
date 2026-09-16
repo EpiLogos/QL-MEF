@@ -17,6 +17,7 @@
  */
 import {
   TECHNE_CONTRACT,
+  instrumentReading,
   validateSelection,
   validateSession,
   type DisclosureSelection,
@@ -72,14 +73,18 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
       const sameBasis = current !== null
         && current.subject_ref === selection.subject_ref
         && current.reading_ref === selection.reading_ref;
+      // TB0-1: the session carries its active application cut, derived from
+      // the instrument — never set by hand.
+      const application_cut = instrumentReading(selection.instrument);
       const next: DisclosureSession = sameBasis && current
-        ? {...current, selection, instrument: selection.instrument}
+        ? {...current, selection, instrument: selection.instrument, application_cut}
         : {
             contract: TECHNE_CONTRACT,
             session_ref: mintSessionRef(),
             subject_ref: selection.subject_ref,
             selection,
             instrument: selection.instrument,
+            application_cut,
             reading_ref: selection.reading_ref,
             navigation: [],
           };
@@ -96,6 +101,7 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
         ...current,
         selection,
         instrument,
+        application_cut: instrumentReading(instrument),
         navigation: [...current.navigation ?? [], {
           from_instrument: current.instrument,
           to_instrument: instrument,
