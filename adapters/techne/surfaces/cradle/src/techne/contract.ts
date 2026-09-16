@@ -528,7 +528,7 @@ function validateQlWarrant(value: unknown, label: string, errors: string[]): voi
 
 function validateQlReading(value: unknown, errors: string[]): void {
   if (!isObject(value)) { errors.push("ql: must be an object"); return; }
-  keysAllowed(value, ["address", "shape_ref", "constellation_ref", "lens_ref", "sublens_ref", "context_frame_ref", "refraction_summary", "harmonic_reading", "geometric_reading", "vak_source_ref", "derivation_refs", "warrant"], "ql", errors);
+  keysAllowed(value, ["address", "m_coordinate_ref", "shape_ref", "constellation_ref", "lens_ref", "sublens_ref", "context_frame_ref", "refraction_summary", "harmonic_reading", "geometric_reading", "vak_source_ref", "derivation_refs", "return_ref", "warrant"], "ql", errors);
   for (const key of ["address", "shape_ref", "constellation_ref", "context_frame_ref", "vak_source_ref"]) {
     if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`ql.${key}: must be a ref or null`);
   }
