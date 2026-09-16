@@ -7,7 +7,7 @@
     "OpaqueRef": {"type": "string", "minLength": 1},
     "NullableRef": {"type": ["string", "null"], "minLength": 1},
     "ContractTag": {"type": "string", "const": "ql.techne/v1"},
-    "Instrument": {"type": "string", "enum": ["canvas", "timeline", "place", "story", "palace", "expressions", "m1234"]},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"]},
     "DisclosureSelection": {
       "type": "object",
       "description": "Source-qualified selection co-referenced by every instrument. Extends the K9 SourceQualifiedSelection discipline to the whole constellation.",

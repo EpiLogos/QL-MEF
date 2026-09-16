@@ -11,19 +11,32 @@ use serde::{Deserialize, Serialize};
 
 pub const TECHNE_CONTRACT: &str = "ql.techne/v1";
 
-/// The seven Technē instruments of the constellation. Instrument identity is
-/// disclosure vocabulary, not an application boundary.
+/// The instrument set of the one M′ field's two readings (amended
+/// 2026-09-16, owner-ratified). The six 4:2 deep instruments bind M0′–M5′:
+/// project (ground), canvas, timeline (relation field), journey, place
+/// (world), palace. `Expressions` is the conjugate 3:3 Expression reading —
+/// not a deep instrument. Instrument identity is disclosure vocabulary, not
+/// an application boundary.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum TechneInstrument {
+    Project,
     Canvas,
     Timeline,
+    Journey,
     Place,
-    Story,
     Palace,
     Expressions,
-    /// M1′–M4′ embodiment through the production physics/sensory runtime.
-    M1234,
+}
+
+/// Which reading of the one M′ field an aperture carries. Crossing changes
+/// the mode of disclosure and available operations, never the subject.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TechneReadingKind {
+    #[serde(rename = "4:2-deep")]
+    DeepFourTwo,
+    #[serde(rename = "3:3-conjugate")]
+    ConjugateThreeThree,
 }
 
 /// Snapshot/revision basis shared by every view of one coherent reading.
@@ -367,6 +380,12 @@ pub struct InstrumentDisclosure {
     pub available: bool,
     #[serde(default)]
     pub reason: Option<String>,
+    /// The M′ office this instrument is the Technē face of. Absent on the
+    /// conjugate 3:3 reading.
+    #[serde(default)]
+    pub m_prime: Option<u8>,
+    #[serde(default)]
+    pub reading: Option<TechneReadingKind>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -453,6 +472,14 @@ impl TechneReading {
                     instrument.instrument
                 )));
             }
+            if let Some(m_prime) = instrument.m_prime {
+                if m_prime > 5 {
+                    return Err(crate::AdapterError::InvalidTechneReading(format!(
+                        "instrument {:?} binds M′{m_prime}; the field has M′0–M′5 only",
+                        instrument.instrument
+                    )));
+                }
+            }
         }
         Ok(())
     }
@@ -465,6 +492,16 @@ impl TechneReading {
     /// `true` when the reading carries a warranted QL facet.
     pub fn has_warranted_ql(&self) -> bool {
         self.ql.is_some()
+    }
+
+    /// The M0′ ground entry: the subject's own bounded whole when the whole
+    /// is disclosed, else the subject itself — step 0 of the canonical
+    /// traversal.
+    pub fn ground_ref(&self) -> &str {
+        match &self.whole {
+            Some(whole) => &whole.whole_ref,
+            None => &self.subject.subject_ref,
+        }
     }
 }
 

@@ -45,13 +45,13 @@ fn representative_fixture_parses_and_discloses_every_instrument() {
     assert!(!warrant.evidence_refs.is_empty());
 
     for instrument in [
+        TechneInstrument::Project,
         TechneInstrument::Canvas,
         TechneInstrument::Timeline,
+        TechneInstrument::Journey,
         TechneInstrument::Place,
-        TechneInstrument::Story,
         TechneInstrument::Palace,
         TechneInstrument::Expressions,
-        TechneInstrument::M1234,
     ] {
         let entry = reading
             .disclosure
@@ -86,8 +86,14 @@ fn absent_facets_fixture_keeps_absence_as_data() {
         *instrument == TechneInstrument::Place && reason == "no disclosed spatial reading"
     }));
     assert!(unavailable.iter().any(|(instrument, reason)| {
-        *instrument == TechneInstrument::M1234 && reason == "no warranted lens binding"
+        *instrument == TechneInstrument::Expressions
+            && reason == "no Expression is bound to this subject"
     }));
+    assert!(
+        unavailable
+            .iter()
+            .any(|(instrument, _)| *instrument == TechneInstrument::Journey)
+    );
     assert!(
         unavailable
             .iter()
@@ -100,6 +106,34 @@ fn absent_facets_fixture_keeps_absence_as_data() {
             "{instrument:?} unavailable without a reason"
         );
     }
+
+    // The amended geometry: the six deep instruments carry M′ bindings and
+    // the 4:2 reading; Expressions carries the conjugate 3:3 reading.
+    let project = reading
+        .disclosure
+        .instruments
+        .iter()
+        .find(|entry| entry.instrument == TechneInstrument::Project)
+        .expect("project (M0′ ground) is disclosed");
+    assert_eq!(project.m_prime, Some(0));
+    assert!(matches!(
+        project.reading,
+        Some(ql_adapters::TechneReadingKind::DeepFourTwo)
+    ));
+    let expressions = reading
+        .disclosure
+        .instruments
+        .iter()
+        .find(|entry| entry.instrument == TechneInstrument::Expressions)
+        .expect("expressions (conjugate 3:3) is disclosed");
+    assert_eq!(
+        expressions.m_prime, None,
+        "the conjugate reading binds no M′ office"
+    );
+    assert!(matches!(
+        expressions.reading,
+        Some(ql_adapters::TechneReadingKind::ConjugateThreeThree)
+    ));
 }
 
 #[test]
@@ -200,12 +234,30 @@ fn view_state_cannot_ride_the_reading_or_the_session() {
 }
 
 #[test]
+fn m_prime_binding_above_five_is_rejected() {
+    let mut reading = parse(REPRESENTATIVE);
+    reading.disclosure.instruments[0].m_prime = Some(6);
+    assert!(reading.validate().is_err(), "the field has M′0–M′5 only");
+}
+
+#[test]
+fn the_ground_ref_is_step_zero_of_the_traversal() {
+    let reading = parse(REPRESENTATIVE);
+    assert_eq!(
+        reading.ground_ref(),
+        reading.whole.as_ref().unwrap().whole_ref
+    );
+}
+
+#[test]
 fn unavailable_instrument_without_reason_fails_validation() {
     let mut reading = parse(ABSENT_FACETS);
-    reading.disclosure.instruments[2] = InstrumentDisclosure {
+    reading.disclosure.instruments[4] = InstrumentDisclosure {
         instrument: TechneInstrument::Place,
         available: false,
         reason: None,
+        m_prime: Some(4),
+        reading: Some(ql_adapters::TechneReadingKind::DeepFourTwo),
     };
     assert!(reading.validate().is_err());
 

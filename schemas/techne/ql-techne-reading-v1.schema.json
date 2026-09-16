@@ -7,7 +7,7 @@
     "OpaqueRef": {"type": "string", "minLength": 1, "description": "Native-owner ref carried verbatim. Adapters must not translate, re-key or shorten it."},
     "NullableRef": {"type": ["string", "null"], "minLength": 1, "description": "Optional native-owner ref: present, absent, or explicitly null — never rewritten."},
     "ContractTag": {"type": "string", "const": "ql.techne/v1"},
-    "Instrument": {"type": "string", "enum": ["canvas", "timeline", "place", "story", "palace", "expressions", "m1234"]},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"], "description": "Amended 2026-09-16 (owner-ratified): the six 4:2 deep instruments bind M0-prime through M5-prime (project, canvas, timeline, journey, place, palace); expressions is the conjugate 3:3 Expression reading, not a deep instrument."},
     "TemporalKind": {"type": "string", "enum": ["occurrence", "receipt", "valid", "source-created", "source-modified", "day", "now", "session", "run", "generation", "presentation"]},
     "TemporalPrecision": {"type": "string", "enum": ["millennium", "century", "decade", "year", "month", "day", "hour", "minute", "second", "subsecond"]},
     "PlacePrecision": {"type": "string", "enum": ["exact", "approximate", "region", "unlocated"]},
@@ -16,6 +16,7 @@
     "NullableLensRef": {"oneOf": [{"$ref": "#/$defs/LensRef"}, {"type": "null"}]},
     "NullableSublensRef": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]},
     "QlResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
+    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"], "description": "Which reading of the one M-prime field this aperture carries. Crossing changes the mode of disclosure and available operations, never the subject."},
     "ReadingSnapshot": {
       "type": "object",
       "description": "Shared snapshot/revision basis for one coherent cross-view reading.",
@@ -288,7 +289,7 @@
     },
     "Disclosure": {
       "type": "object",
-      "description": "Capability honesty: available instruments and explicit degraded/unavailable reasons. Drives every instrument affordance; availability is never hard-coded per route.",
+      "description": "Capability honesty: available instruments and explicit degraded/unavailable reasons. Drives every instrument affordance; availability is never hard-coded per route. The six deep instruments are the Techne faces of M0-prime..M5-prime; expressions discloses the conjugate 3:3 Expression reading over the same subject.",
       "required": ["instruments"],
       "properties": {
         "instruments": {
@@ -309,7 +310,9 @@
             "properties": {
               "instrument": {"$ref": "#/$defs/Instrument"},
               "available": {"type": "boolean"},
-              "reason": {"type": "string", "minLength": 1}
+              "reason": {"type": "string", "minLength": 1},
+              "m_prime": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The M-prime office this instrument is the Techne face of. Absent on the conjugate 3:3 reading."},
+              "reading": {"$ref": "#/$defs/TechneReadingKind"}
             },
             "additionalProperties": false
           }

@@ -27,8 +27,8 @@ pub use techne::{
     PlaceIdentity, PlaceName, PlacePrecision, QlResultClass, QlWarrant, ReadingSnapshot,
     SourceProvenance, SourceSelector, SubjectReading, TECHNE_CONTRACT, TechneActionRoute,
     TechneActionRouteReceipt, TechneAdapter, TechneDisclosure, TechneInstrument, TechneReading,
-    TechneSubject, TechneWhole, TemporalFacet, TemporalInterval, TemporalKind, TemporalPrecision,
-    WarrantedQlReading, WholeRelation,
+    TechneReadingKind, TechneSubject, TechneWhole, TemporalFacet, TemporalInterval, TemporalKind,
+    TemporalPrecision, WarrantedQlReading, WholeRelation,
 };
 
 pub(crate) use core::AdapterCore;
