@@ -11,6 +11,7 @@ mod portal;
 mod recognition;
 mod refraction;
 mod registry_provider;
+mod shape_binding;
 
 pub use living::{
     CanonicalReturnTransit, ContextFrameDepth, EntryAperture, LIVING_WIKI_ENTRY_APERTURE,
@@ -51,6 +52,10 @@ pub use refraction::{
     WikiTargetRelation,
 };
 pub use registry_provider::RegistryDisclosureProvider;
+pub use shape_binding::{
+    ShapeAwareWikiRefractionEngine, WIKI_SHAPE_BINDING_EXTENSION, WikiShapeBindingProvenance,
+    WikiShapeBindingView, WikiShapeMember, attach_shape_binding, shape_binding_from_target,
+};
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
