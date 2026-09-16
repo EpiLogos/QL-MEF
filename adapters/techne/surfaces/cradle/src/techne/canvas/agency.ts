@@ -29,7 +29,7 @@
 import type {
   DisclosureSelection,
   NativeActionRef,
-  TechneAgencyRole,
+  AgencyRole,
   TechneQlWarrant,
   TechneReading,
   TechneWholeRelation,
@@ -91,8 +91,8 @@ export interface CanvasAgencyState {
   /** The situated-Agency role bindings the reading itself discloses,
    * verbatim — plus the honest local report of THIS instrument's Technē_1
    * binding (present only when the reading situates it). */
-  agency_roles: TechneAgencyRole[];
-  techne_1_binding: TechneAgencyRole | null;
+  agency_roles: AgencyRole[];
+  techne_1_binding: AgencyRole | null;
   techne_1_note: string;
   disclosure: TechneReading["disclosure"];
   authority_note: "arrangement/frames/views are presentation state; typed relations and sources change only through the disclosed native Actions";
@@ -176,8 +176,8 @@ export function canvasAgencyState(args: {
       ql && warrant
         ? `layout standing: ${warrant.result_class} — warrant ${warrant.provenance_ref}`
         : "no warranted QL reading is disclosed — arrangements here are presentation only, never QL",
-    agency_roles: structuredClone(roles) as unknown as TechneAgencyRole[],
-    techne_1_binding: techne1 ? (structuredClone(techne1) as unknown as TechneAgencyRole) : null,
+    agency_roles: structuredClone(roles) as unknown as AgencyRole[],
+    techne_1_binding: techne1 ? (structuredClone(techne1) as unknown as AgencyRole) : null,
     techne_1_note: techne1
       ? `Technē_1 is situated on canvas by the reading (session ${techne1.agent_session_ref ?? "unspecified"})`
       : `the reading situates no Technē_1 canvas binding — roles present: ${
