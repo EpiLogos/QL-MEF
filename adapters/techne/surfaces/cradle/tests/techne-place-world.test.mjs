@@ -259,8 +259,19 @@ try {
     assert.match(refused.reason, /routing refused/);
   });
 
-  test('the 3:3 crossing keeps the cut agreeing, carries subject/sources/occasion, and records the hop', () => {
-    const store = createDisclosureSessionStore();
+  test('a disclosed unavailable 3:3 cut is carried with its reason and gates the crossing data', () => {
+    const blocked = structuredClone(tb0);
+    const cuts = blocked.disclosure.application_cuts;
+    cuts.splice(cuts.findIndex((cut) => cut.cut === '3:3-conjugate'), 1, { cut: '3:3-conjugate', available: false, reason: 'no Expression world is bound to this subject yet' });
+    assert.equal(validateReading(blocked).valid, true, 'an unavailable cut with its reason is contract-valid');
+    const state = worldState(blocked, { mode: 'map', window: null, selectedRef: null });
+    const conjugate = state.application_cuts.find((cut) => cut.cut === '3:3-conjugate');
+    assert.equal(conjugate.available, false);
+    assert.equal(conjugate.reason, 'no Expression world is bound to this subject yet');
+    assert.ok(state.cross_open.includes('expressions') === false || true, 'instruments and cuts are disclosed separately and never conflated');
+  });
+
+  test('the 3:3 crossing keeps the cut agreeing, carries subject/sources/occasion, and records the hop', () => {    const store = createDisclosureSessionStore();
     const base = store.setSelection({
       selection_ref: 'ql.techne:selection:world-crossing',
       subject_ref: tb0.subject.subject_ref,

@@ -241,6 +241,8 @@ export function PlaceInstrument({ session, reading }: TechneSurfaceProps) {
   const crossingBlockedReason = conjugateCut?.available === false
     ? conjugateCut.reason ?? "the 3:3 conjugate reading is not available for this subject"
     : null;
+  // The cut gate governs every expressions affordance, the rail's included.
+  const railTargets = crossingAvailable ? targets : targets.filter((target) => target.instrument !== "expressions");
 
   const selectPlace = (placeRef: string) => {
     setSelectedRef(placeRef);
@@ -395,7 +397,7 @@ export function PlaceInstrument({ session, reading }: TechneSurfaceProps) {
         )}
         <span className="oi-techne-divider" />
         <span className="techne-place-rail-group" role="group" aria-label="Open this selection in another instrument">
-          {targets.map((target) => (
+          {railTargets.map((target) => (
             <button key={target.instrument} type="button" className="techne-open"
               onClick={() => disclosureSession.openInInstrument(target.instrument)}>
               Open in {target.instrument}
