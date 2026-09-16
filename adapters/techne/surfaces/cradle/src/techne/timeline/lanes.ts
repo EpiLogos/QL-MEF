@@ -49,6 +49,9 @@ export interface TimelineItem {
   now_ref?: string;
   session_ref?: string;
   run_ref?: string;
+  /** TB0: attempt / Return continuity, verbatim when the owner supplies it. */
+  attempt_ref?: string;
+  return_ref?: string;
   source_ref?: string | null;
   timezone_policy_ref?: string | null;
   uncertainty?: string | null;
@@ -106,6 +109,8 @@ function toItem(facet: TechneTemporalFacet, index: number, laneId: string): Time
     ...(facet.now_ref !== undefined ? { now_ref: facet.now_ref } : {}),
     ...(facet.session_ref !== undefined ? { session_ref: facet.session_ref } : {}),
     ...(facet.run_ref !== undefined ? { run_ref: facet.run_ref } : {}),
+    ...(facet.attempt_ref !== undefined ? { attempt_ref: facet.attempt_ref } : {}),
+    ...(facet.return_ref !== undefined ? { return_ref: facet.return_ref } : {}),
     ...(facet.source_ref !== undefined ? { source_ref: facet.source_ref } : {}),
     ...(facet.timezone_policy_ref !== undefined ? { timezone_policy_ref: facet.timezone_policy_ref } : {}),
     ...(facet.uncertainty !== undefined ? { uncertainty: facet.uncertainty } : {}),
