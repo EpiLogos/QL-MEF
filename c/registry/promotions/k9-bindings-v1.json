@@ -46,6 +46,33 @@
       "rationale": "K9 browser transport/presentation driver for one already-authorised ql-focused-host. Focus/Bimba/clock requests and continuous native advances share one exact host sequence; accepted K8 NativeAudioBinding and RetainedFieldBinding receive the same acknowledged field while O:I supplies only its existing retained stage lease. Explicit source-qualified sample correspondence is required. The adapter creates no numerical owner, renderer, clock, graph, executable authority or AgentSession.",
       "tests": ["adapters/retained-field/focused-instrument-session.test.mjs", "adapters/retained-field/instrument-session.test.mjs"],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-core/src/shape.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#1", "#2", "#3"],
+      "rationale": "QL #204 completes the existing L5.3 Geometry/constellation morphology, with M1 retaining the formal Spanda/QL owner while the canonical Second-Spanda body consumes the already-owned M2 six-by-six and M3 three-site fold body. The module adds shape/compression carriers and projections only; it creates no new M coordinates or competing geometry ontology. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+      "tests": ["crates/ql-core/tests/geometry_constellation_resolution.rs", "crates/ql-mef/tests/second_spanda_geometry.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/matheme.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#1", "#2", "#3"],
+      "rationale": "QL #206 restores the already-authored Second-Spanda equation as one executable M1 formal reading of the existing M2 6^2 field and M3 4^3=2^6 body, including the derived decadic Geometry projection. It does not relocate M2/M3 numerical ownership or create a second Spanda source. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+      "tests": ["crates/ql-mef/tests/second_spanda_geometry.rs", "crates/ql-core/tests/geometry_constellation_resolution.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/vak_composition.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0-4", "#0-5"],
+      "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+      "tests": ["crates/ql-mef/tests/compressed_geometry_vak.rs", "crates/ql-mef/tests/vak_composition.rs"],
+      "kind": "computational"
     }
   ]
 }

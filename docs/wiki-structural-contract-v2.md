@@ -80,12 +80,12 @@ No v1 executable QL kernel operator is removed: Q1's existing `conjugate-address
 
 ## 4. Whole-anchor and constellation canon
 
-The central `0/1` whole-anchor is a structural parent/ground and is **not a seventh positional member**.
+The central `0/1` whole-anchor is a structural parent/ground and is **not a seventh positional member**. In L5.3 Geometry that same anchor is the **1-fold whole**: geometric fold-count and positional-member count are distinct readings of one QL object.
 
 The representation permits arbitrary partial constellations up to six positions on two faces. Canonical named grains are:
 
 ```text
-anchor-only      central 0/1 whole-anchor, zero positional members
+anchor-only      central 0/1 whole-anchor, zero positional members / Geometry 1-fold
 2-fold           any two direct positional participations
 3-fold 123       direct {1,2,3}
 3-fold 450       direct {4,5,0}
@@ -93,21 +93,17 @@ anchor-only      central 0/1 whole-anchor, zero positional members
 4+1 ground       direct {0,1,2,3,4}
 4+1 synthesis    direct {1,2,3,4,5}
 6-fold           direct {0,1,2,3,4,5}
+7-fold           all six direct + exactly 1 corresponding conjugate position
+8-fold           all six direct + exactly 2 corresponding conjugate positions
+9-fold           all six direct + exactly 3 corresponding conjugate positions
+10-fold          all six direct + exactly 4 corresponding conjugate positions
+11-fold          all six direct + exactly 5 corresponding conjugate positions
 12-fold          all six direct + all six conjugates
 ```
 
-The 8/9/10/11 signatures are formalised conservatively rather than receiving invented semantics:
+Which conjugate positions are present remains explicit data. The names state the canonical fold/grain of the disclosed constellation; the actual coordinates remain the object.
 
-```text
-8  = all six direct + exactly 2 corresponding conjugate positions
-9  = all six direct + exactly 3 corresponding conjugate positions
-10 = all six direct + exactly 4 corresponding conjugate positions
-11 = all six direct + exactly 5 corresponding conjugate positions
-```
-
-Which conjugate positions are present remains explicit data. Cardinality alone does not claim a harmonic/lens meaning.
-
-A conjugate positional participation requires the same direct position to be present in this v2 constellation representation. Richer future fields can compose separate constellations rather than use a conjugate node as an identity substitute.
+A conjugate positional participation requires the same direct position to be present in this v2 constellation representation. Richer higher-order Geometry — including the `18 = 6 + 6′ + relational-6` closure and matrix/product forms — composes these constellations through the existing QL shape/carrier system rather than pretending eighteen positional members exist in one structural constellation.
 
 ## 5. Return canon
 
@@ -132,4 +128,4 @@ The anchor ref must match the containing constellation. This gives clients enoug
 
 This contract is deterministic, content-free Rust in `ql-core`. Generic clients may implement it locally from the versioned fixture/schema and do **not** need a QL-MEF network call for ordinary Wiki correctness.
 
-MEF lenses, harmonics, musical interval realisations and semantic refraction remain QL-MEF-owned developed intelligence layered above this floor.
+MEF lenses, harmonics, musical interval realisations, L5.3 Geometry compression/disclosure and semantic refraction remain QL-MEF-owned developed intelligence layered above this floor. The structural whole-anchor and constellation grains are the common carrier on which those readings operate.

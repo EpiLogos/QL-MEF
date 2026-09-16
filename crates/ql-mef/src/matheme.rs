@@ -1,13 +1,13 @@
 use ql_core::{
-    CanonicalCrossPass, QlAddress, QlFace, QlFamily, QlPosition, RelationalSixfold, SixBySixField,
-    WHOLE_ANCHOR_SYMBOL, canonical_cross_pass_d1,
+    CanonicalCrossPass, QlAddress, QlFace, QlFamily, QlPosition, RelationalSixfold,
+    SecondSpandaGeometry, WHOLE_ANCHOR_SYMBOL, canonical_cross_pass_d1,
 };
 
 use crate::{CANONICAL_RATIOS, HarmonicRatio, SECOND_SPANDA_VERTICAL};
 
 /// Version of `fixtures/kernel/matheme-derivation-contract-v1.tsv`, the
 /// machine-readable conformance boundary for this module.
-pub const MATHEME_DERIVATION_CONTRACT_VERSION: &str = "1.1.0";
+pub const MATHEME_DERIVATION_CONTRACT_VERSION: &str = "1.2.0";
 
 /// The matheme derivation is the definitional 0-layer; the kernel
 /// coordinates remain the governing 1.
@@ -99,20 +99,51 @@ pub mod eq2 {
         u32::from(SECOND_SPANDA_VERTICAL.0 + SECOND_SPANDA_VERTICAL.1)
     }
 
-    /// `2^6`: the hexad read in the binary register.
+    /// `2^6 = 4^3 = 64`: the same M3 form field read through its six binary
+    /// properties or through its three quaternary fold sites. The executable
+    /// Geometry supplies the canonical `4×4×4`; the binary expression remains
+    /// independently computed and is required to coincide with it.
     pub fn binary_register() -> u32 {
-        2u32.pow(position_hexad())
+        let binary = 2u32.pow(position_hexad());
+        let geometry = SecondSpandaGeometry::canonical();
+        let cubic = geometry.m3_quaternary_cubic.address_cardinality as u32;
+        assert_eq!(binary, cubic, "Second Spanda requires 2^6 = 4^3");
+        binary
     }
 
-    /// `6^2`: the hexad read against itself — computed as the six-by-six
-    /// field's own address cardinality.
+    /// The M3/Mahāmāyā cubic presentation of the 64 field.
+    pub fn quaternary_cubic_register() -> u32 {
+        SecondSpandaGeometry::canonical()
+            .m3_quaternary_cubic
+            .address_cardinality as u32
+    }
+
+    /// `6^2 = 36`: the M2/Paraśakti senary field read against its conjugate,
+    /// computed from the same canonical Geometry object used by Second Spanda.
     pub fn self_register() -> u32 {
-        SixBySixField::canonical().addresses.len() as u32
+        SecondSpandaGeometry::canonical()
+            .m2_senary_square
+            .addresses
+            .len() as u32
     }
 
-    /// The decomposed totality `2^6 + 6^2 = 100`.
+    /// The canonical Second-Spanda body `4^3 + 6^2 = 64 + 36 = 100`, with
+    /// the independently computed binary reading required to remain identical.
     pub fn decomposed_totality() -> u32 {
-        binary_register() + self_register()
+        let geometry = SecondSpandaGeometry::canonical();
+        assert_eq!(
+            binary_register(),
+            geometry.m3_quaternary_cubic.address_cardinality as u32
+        );
+        geometry.totality() as u32
+    }
+
+    /// The derived decadic presentation `(4+6)^2 = 10^2 = 100`. It preserves
+    /// the canonical 64|36 partition and does not replace the M3|M2 body.
+    pub fn decadic_projection() -> u32 {
+        SecondSpandaGeometry::canonical()
+            .decadic_projection
+            .address_cardinality as u32
     }
 
     /// The totality ratio `64/36 = 16/9` in lowest terms.
@@ -302,8 +333,8 @@ pub use det::{
 };
 pub use eq1::{beat, double_beat, one_circuit, standing_whole};
 pub use eq2::{
-    binary_register, decomposed_totality, field_cardinality, position_hexad, ring_octave,
-    self_register, totality_ratio, twelve_ring,
+    binary_register, decadic_projection, decomposed_totality, field_cardinality, position_hexad,
+    quaternary_cubic_register, ring_octave, self_register, totality_ratio, twelve_ring,
 };
 pub use eq3::{cardinality_sum, door_ascent, door_descent, epogdoon, octave_through_door};
 
