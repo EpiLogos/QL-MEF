@@ -135,6 +135,10 @@ A human-facing report states the relevant result/difference, its basis, remainin
 
 Report quality and method fitness are distinct from self-reported confidence. Use this evidence to refine instructions, retrieval, methods and appropriate Epii-on-X learning. A corrected report remains linked to the earlier assertion. The person's disagreement is part of the learning loop, not a nuisance to be summarised away.
 
+### The implemented carrier (2026-09-16)
+
+Central has implemented the carrier this section describes. Every NOW clearing now carries raw thought fixtures under `T/` and distilled learnings under `T-prime/`, written and read through the native actions `central.now.thoughts.append` and `central.now.learnings.distill`. A fixture may declare which reading it carries: the machine spelling in the fixture front-matter is `T0`–`T5` and `T0-prime`–`T5-prime`, with the human names in the table above as their meanings. The anti-silo clause stands — the twelve readings are types on one carrier, not twelve files. The contemplative passage from T to T′ is the contemplate contract (ai-kit now-contemplation; ai-kit #304, O-I #276), and consumption into Recognition/Return remains with Aletheia/Epii per OPTIMISATION-AND-LEARNING.md.
+
 ## 4. M0-5: full six-operation × six-horizon operative language
 
 QL already provides source-backed `VakRelationOp`, `VakAddressHorizon`, `VakSivaSaktiCell` and `VakSivaSaktiField`. AIKit owns the shared `ResolveExpression` parser/AST/paths used by structured agents and human Search. Apply the full Epi interpretation through those bindings. The agent is the primary operative user; the Search UX is also a human projection of the same field.
