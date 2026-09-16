@@ -1,5 +1,5 @@
 use ql_core::{
-    CallerProvenance, COMPRESS_TO_WHOLE_OPERATOR_REF, ConstellationGrain,
+    COMPRESS_TO_WHOLE_OPERATOR_REF, CallerProvenance, ConstellationGrain,
     EIGHTEEN_TO_THREE_OPERATOR_REF, EighteenFoldGeometry, FourByFourByFourField, QlShape,
     QlShapeCompression, SecondSpandaGeometry, ShapeBinding, THREE_TO_ONE_OPERATOR_REF,
 };
@@ -8,15 +8,18 @@ use ql_core::{
 fn geometry_reads_the_existing_anchor_as_onefold_and_completes_the_sevenfold_gap() {
     assert_eq!(QlShape::onefold().fold_count(), Some(1));
     assert_eq!(QlShape::canonical_sevenfold().fold_count(), Some(7));
-    assert!(QlShape::canonical_sevenfold().shape_ref().contains("partial-conjugate-7"));
+    assert!(
+        QlShape::canonical_sevenfold()
+            .shape_ref()
+            .contains("partial-conjugate-7")
+    );
 }
 
 #[test]
 fn three_to_one_compression_preserves_the_disclosed_basis_in_the_existing_binding_contract() {
-    let compression = QlShapeCompression::to_onefold(QlShape::Constellation(
-        ConstellationGrain::ThreeFold123,
-    ))
-    .expect("canonical threefold compresses to 0/1");
+    let compression =
+        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::ThreeFold123))
+            .expect("canonical threefold compresses to 0/1");
     assert_eq!(compression.presented, QlShape::onefold());
     assert_eq!(compression.disclosed_fold, 3);
     assert_eq!(compression.operator_ref, THREE_TO_ONE_OPERATOR_REF);
@@ -45,17 +48,22 @@ fn three_to_one_compression_preserves_the_disclosed_basis_in_the_existing_bindin
     .unwrap();
 
     assert_eq!(binding.shape_ref, QlShape::onefold().shape_ref());
-    assert_eq!(binding.derivation_ref.as_deref(), Some(derivation_ref.as_str()));
-    assert_eq!(binding.operator_ref.as_deref(), Some(THREE_TO_ONE_OPERATOR_REF));
+    assert_eq!(
+        binding.derivation_ref.as_deref(),
+        Some(derivation_ref.as_str())
+    );
+    assert_eq!(
+        binding.operator_ref.as_deref(),
+        Some(THREE_TO_ONE_OPERATOR_REF)
+    );
     assert_eq!(binding.basis_refs.len(), 3);
 }
 
 #[test]
 fn twofold_can_also_be_carried_as_the_basis_of_a_presented_onefold() {
-    let compression = QlShapeCompression::to_onefold(QlShape::Constellation(
-        ConstellationGrain::TwoFold,
-    ))
-    .expect("canonical twofold compresses to 0/1");
+    let compression =
+        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::TwoFold))
+            .expect("canonical twofold compresses to 0/1");
     assert_eq!(compression.disclosed_fold, 2);
     assert_eq!(compression.operator_ref, COMPRESS_TO_WHOLE_OPERATOR_REF);
 }
@@ -75,7 +83,10 @@ fn second_spanda_and_its_decadic_projection_preserve_the_same_sixty_four_thirty_
     assert_eq!(geometry.m3_quaternary_cubic.address_cardinality, 64);
     assert_eq!(geometry.m2_senary_square.addresses.len(), 36);
     assert_eq!(geometry.totality(), 100);
-    assert_eq!(geometry.decadic_projection.block_cardinalities, [16, 24, 24, 36]);
+    assert_eq!(
+        geometry.decadic_projection.block_cardinalities,
+        [16, 24, 24, 36]
+    );
     assert_eq!(geometry.decadic_projection.m3_partition_cardinality, 64);
     assert_eq!(geometry.decadic_projection.m2_partition_cardinality, 36);
     assert_eq!(geometry.decadic_projection.address_cardinality, 100);
@@ -87,5 +98,8 @@ fn eighteenfold_is_the_three_sixfold_geometry_and_compresses_by_six_to_three() {
     assert_eq!(geometry.sixfold_cardinality, 6);
     assert_eq!(geometry.fold_cardinality, 18);
     assert_eq!(geometry.compressed_fold_cardinality, 3);
-    assert_eq!(geometry.compression_operator_ref(), EIGHTEEN_TO_THREE_OPERATOR_REF);
+    assert_eq!(
+        geometry.compression_operator_ref(),
+        EIGHTEEN_TO_THREE_OPERATOR_REF
+    );
 }
