@@ -45,7 +45,10 @@ fn compressed_binding(subject_ref: &str) -> WikiShapeBindingView {
         subject_ref: subject_ref.into(),
         shape_ref: compression.presented.shape_ref(),
         whole_ref: "example:whole-anchor".into(),
-        basis_refs: members.iter().map(|(reference, _)| (*reference).into()).collect(),
+        basis_refs: members
+            .iter()
+            .map(|(reference, _)| (*reference).into())
+            .collect(),
         members: members
             .iter()
             .map(|(reference, position)| WikiShapeMember {
@@ -103,12 +106,8 @@ fn core_shape_binding_view_round_trips_without_reowning_geometry() {
         Some(compression.derivation_ref()),
         Some(compression.operator_ref.into()),
         vec!["example:return".into()],
-        ql_core::CallerProvenance::new(
-            "ql-wiki:test",
-            "example:source",
-            "AUTHORED-ARCHITECTURE",
-        )
-        .unwrap(),
+        ql_core::CallerProvenance::new("ql-wiki:test", "example:source", "AUTHORED-ARCHITECTURE")
+            .unwrap(),
     )
     .unwrap();
     let view = WikiShapeBindingView::from_core(&core);
@@ -129,7 +128,10 @@ fn compressed_onefold_is_validated_then_carried_into_every_wiki_reading() {
     let mut target = target("example:subject");
     let binding = compressed_binding(&target.target_ref);
     attach_shape_binding(&mut target, &binding).unwrap();
-    assert_eq!(shape_binding_from_target(&target).unwrap(), Some(binding.clone()));
+    assert_eq!(
+        shape_binding_from_target(&target).unwrap(),
+        Some(binding.clone())
+    );
 
     let provider = RegistryDisclosureProvider::new();
     let response = ShapeAwareWikiRefractionEngine::new(Some(&provider))
@@ -158,7 +160,8 @@ fn aliases_and_false_compression_derivations_fail_closed() {
 
     let mut target = target("example:subject");
     let mut binding = compressed_binding(&target.target_ref);
-    binding.derivation_ref = Some("ql:shape:1.1.0:compression:3-to-1-recognition:from:bogus".into());
+    binding.derivation_ref =
+        Some("ql:shape:1.1.0:compression:3-to-1-recognition:from:bogus".into());
     assert!(attach_shape_binding(&mut target, &binding).is_err());
 }
 
