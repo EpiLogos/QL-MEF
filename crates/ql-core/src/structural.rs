@@ -469,6 +469,7 @@ impl StructuralConstellation {
         }
         if direct.as_slice() == [0, 1, 2, 3, 4, 5] {
             return match conjugate.len() {
+                1 => ConstellationGrain::PartialConjugate7,
                 2 => ConstellationGrain::PartialConjugate8,
                 3 => ConstellationGrain::PartialConjugate9,
                 4 => ConstellationGrain::PartialConjugate10,
@@ -497,6 +498,7 @@ pub enum ConstellationGrain {
     FourPlusOneGround,
     FourPlusOneSynthesis,
     SixFold,
+    PartialConjugate7,
     PartialConjugate8,
     PartialConjugate9,
     PartialConjugate10,
@@ -516,6 +518,7 @@ impl ConstellationGrain {
             Self::FourPlusOneGround => "four-plus-one-ground",
             Self::FourPlusOneSynthesis => "four-plus-one-synthesis",
             Self::SixFold => "sixfold",
+            Self::PartialConjugate7 => "partial-conjugate-7",
             Self::PartialConjugate8 => "partial-conjugate-8",
             Self::PartialConjugate9 => "partial-conjugate-9",
             Self::PartialConjugate10 => "partial-conjugate-10",

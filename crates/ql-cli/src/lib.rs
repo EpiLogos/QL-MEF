@@ -306,7 +306,11 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
     let plain = |result: Result<String, CliError>| result.map_err(CliFailure::Message);
     match args.first().map(String::as_str) {
         None | Some("help") | Some("--help") | Some("-h") => Ok(help()),
-        Some("--version") | Some("version") => Ok(format!("ql {}", env!("CARGO_PKG_VERSION"))),
+        Some("--version") | Some("version") => Ok(format!(
+            "ql {} ({})",
+            env!("CARGO_PKG_VERSION"),
+            option_env!("SUITE_BUILD_REVISION").unwrap_or("unknown")
+        )),
         Some("capabilities") => plain(render_capabilities(json)),
         Some("kernel") => plain(kernel_command(&args[1..], json)),
         Some("matheme") => plain(matheme_command(&args[1..], json)),
@@ -1072,9 +1076,11 @@ mod tests {
 
     #[test]
     fn version_and_capabilities_are_stable() {
-        assert_eq!(
-            execute_cli(&["--version".into()]).unwrap(),
-            format!("ql {}", env!("CARGO_PKG_VERSION"))
+        let version = execute_cli(&["--version".into()]).unwrap();
+        assert!(
+            version == format!("ql {}", env!("CARGO_PKG_VERSION"))
+                || version.starts_with(&format!("ql {} (", env!("CARGO_PKG_VERSION"))),
+            "version must be '<pkg-version>' or '<pkg-version> (<build-revision>)': {version:?}"
         );
         let output = execute_cli(&["capabilities".into(), "--json".into()]).unwrap();
         let value: serde_json::Value = serde_json::from_str(&output).unwrap();

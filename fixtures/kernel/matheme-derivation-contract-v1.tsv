@@ -1,5 +1,5 @@
 # ql.matheme-derivation-contract/v1
-meta	contract-version	1.1.0
+meta	contract-version	1.2.0
 meta	layer	0
 meta	kernel-contract	ql.holographic-kernel-contract/v1
 meta	kernel-contract-version	1.1.0
@@ -14,9 +14,14 @@ eq1	double-beat	n->n'->n	turns	2
 eq1	recognition	degrees	720	identity	n->n'->n==n
 eq1	sum	(0/1)+(1/0)	1/1
 eq2	totality	1/1	100
-eq2	decomposition	100	2^6+6^2
+eq2	decomposition	100	2^6+6^2=4^3+6^2
 eq2	binary-register	2^6	64
-eq2	self-register	6^2	36
+eq2	quaternary-cubic-register	4^3	64	shape	ql:shape:1.1.0:4x4x4:m3-three-quaternary-sites	owner	M3/Mahamaya
+eq2	binary-quaternary-identity	2^6=4^3	64
+eq2	self-register	6^2	36	shape	ql:shape:1.0.0:6x6:direct-conjugate	owner	M2/Parashakti
+eq2	canonical-body	4^3|6^2	64|36
+eq2	decadic-projection	(4+6)^2	100	shape	ql:shape:1.1.0:10x10:second-spanda-4-plus-6
+eq2	decadic-blocks	4^2+4x6+6x4+6^2	16+24+24+36	partition	64+36
 eq2	ratio-field	64/36	16/9
 eq2	prime-factorisation	16/9	2^4/3^2
 eq2	prime-factor-count	4+2	6
