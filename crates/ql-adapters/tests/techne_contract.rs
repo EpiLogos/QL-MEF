@@ -8,6 +8,8 @@ const REPRESENTATIVE: &str =
     include_str!("../../../fixtures/techne/representative-subject-v1.json");
 const ABSENT_FACETS: &str = include_str!("../../../fixtures/techne/absent-facets-v1.json");
 const DEVELOPMENT_DAY: &str = include_str!("../../../fixtures/techne/development-day-v1.json");
+const TB0_CONNECTIVE_BASE: &str =
+    include_str!("../../../fixtures/techne/tb0-connective-base-v1.json");
 const READING_SCHEMA: &str =
     include_str!("../../../schemas/techne/ql-techne-reading-v1.schema.json");
 const SESSION_SCHEMA: &str =
@@ -180,7 +182,12 @@ fn development_day_fixture_preserves_occurrence_receipt_and_continuity() {
 
 #[test]
 fn native_refs_round_trip_byte_exact() {
-    for fixture in [REPRESENTATIVE, ABSENT_FACETS, DEVELOPMENT_DAY] {
+    for fixture in [
+        REPRESENTATIVE,
+        ABSENT_FACETS,
+        DEVELOPMENT_DAY,
+        TB0_CONNECTIVE_BASE,
+    ] {
         let reading = parse(fixture);
         let round: TechneReading =
             serde_json::from_str(&serde_json::to_string(&reading).unwrap()).unwrap();
@@ -280,6 +287,7 @@ fn schemas_pin_the_language_neutral_contract() {
         "ExpressionBinding",
         "NativeActionRef",
         "Disclosure",
+        "AgencyRole",
     ] {
         assert!(
             READING_SCHEMA.contains(&format!("\"{definition}\"")),
@@ -301,6 +309,7 @@ fn schemas_pin_the_language_neutral_contract() {
         "DisclosureSession",
         "ActionRoute",
         "ActionRouteReceipt",
+        "TechneReadingKind",
     ] {
         assert!(
             SESSION_SCHEMA.contains(&format!("\"{definition}\"")),
@@ -400,10 +409,19 @@ fn disclosure_selection_co_reference_holds_across_instruments() {
         subject_ref: reading.subject.subject_ref.clone(),
         selection: expression_selection.clone(),
         instrument: TechneInstrument::Expressions,
+        application_cut: Some(ql_adapters::TechneReadingKind::ConjugateThreeThree),
+        whole_ref: None,
+        project_ref: None,
+        world_ref: None,
+        context_frame_ref: None,
+        occasion_ref: None,
+        return_target_ref: None,
         reading_ref: Some(reading.reading_ref.clone()),
         time_window: None,
         spatial_focus_ref: None,
+        reference_frame_ref: None,
         expression_focus_ref: Some(reading.expressions[0].expression_ref.clone()),
+        scene_focus_ref: None,
         navigation: vec![ql_adapters::DisclosureNavigation {
             from_instrument: TechneInstrument::Canvas,
             to_instrument: TechneInstrument::Expressions,
@@ -411,6 +429,409 @@ fn disclosure_selection_co_reference_holds_across_instruments() {
         }],
     };
     session.validate().expect("session validates");
+}
+
+#[test]
+fn tb0_connective_fixture_drives_every_lane() {
+    let reading = parse(TB0_CONNECTIVE_BASE);
+
+    // M0′ Project/Wiki/Graph identity: real bounded whole over real sources.
+    let whole = reading.whole.as_ref().expect("bounded whole");
+    assert!(!whole.member_refs.is_empty());
+    assert!(
+        whole
+            .member_refs
+            .iter()
+            .all(|member| member.starts_with("central:source:control:root:Work/Quaternal-Logic/"))
+    );
+
+    // M2′ Relation Field: several distinct non-temporal typed relation
+    // families, one trans-temporal (no dated qualification, interpretation
+    // standing) and one temporal-qualified through a real facet ref.
+    let relations = &whole.relations;
+    assert!(relations.len() >= 4, "several distinct relation families");
+    let families: std::collections::HashSet<&str> =
+        relations.iter().map(|r| r.relation.as_str()).collect();
+    assert_eq!(
+        families.len(),
+        relations.len(),
+        "relation families distinct"
+    );
+    let instantiates = relations
+        .iter()
+        .find(|r| r.relation == "INSTANTIATES")
+        .expect("trans-temporal archetype relation");
+    assert_eq!(instantiates.standing.as_deref(), Some("interpretation"));
+    assert!(instantiates.temporal_facet_ref.is_none());
+    let implemented_in = relations
+        .iter()
+        .find(|r| r.relation == "implemented-in")
+        .expect("temporal-qualified relation");
+    let facet_ref = implemented_in.temporal_facet_ref.as_deref().unwrap();
+    assert!(
+        reading
+            .temporal
+            .iter()
+            .any(|f| f.facet_ref.as_deref() == Some(facet_ref)),
+        "a relation's temporal qualification resolves against a real facet"
+    );
+    assert!(relations.iter().all(|r| r.relation_ref.is_some()));
+
+    // QL reading: warranted, with the TB0 M-coordinate and Return refs.
+    let ql = reading.ql.as_ref().expect("warranted QL reading");
+    assert_eq!(ql.m_coordinate_ref.as_deref(), Some("ql:structural:5.0.0"));
+    assert!(ql.return_ref.is_some());
+    assert_eq!(
+        ql.warrant.result_class,
+        ql_adapters::QlResultClass::Canonical
+    );
+
+    // M2′/M4′ temporal distinctions: occurrence, receipt, validity, day,
+    // now, session and run — with attempt and Return continuity refs.
+    for kind in [
+        ql_adapters::TemporalKind::Occurrence,
+        ql_adapters::TemporalKind::Receipt,
+        ql_adapters::TemporalKind::Valid,
+        ql_adapters::TemporalKind::Day,
+        ql_adapters::TemporalKind::Now,
+        ql_adapters::TemporalKind::Session,
+        ql_adapters::TemporalKind::Run,
+    ] {
+        assert!(
+            reading.temporal.iter().any(|f| f.kind == kind),
+            "temporal facet missing: {kind:?}"
+        );
+    }
+    let run = reading
+        .temporal
+        .iter()
+        .find(|f| f.kind == ql_adapters::TemporalKind::Run)
+        .unwrap();
+    assert!(run.attempt_ref.is_some(), "run carries attempt continuity");
+    let session = reading
+        .temporal
+        .iter()
+        .find(|f| f.kind == ql_adapters::TemporalKind::Session)
+        .unwrap();
+    assert!(
+        session.return_ref.is_some(),
+        "session carries Return continuity"
+    );
+
+    // M4′ World/Places: a dated factual place with uncertainty and hierarchy
+    // validity, and a mythic place that is truthfully unlocated.
+    assert_eq!(reading.spatial.len(), 2);
+    let factual = &reading.spatial[0];
+    assert_eq!(factual.relation.as_deref(), Some("OCCURRED_AT"));
+    assert_eq!(factual.precision, ql_adapters::PlacePrecision::Approximate);
+    assert!(factual.uncertainty.is_some());
+    assert!(factual.geometry.is_some());
+    assert!(
+        factual.hierarchy.iter().any(|h| h.valid_to.is_some()),
+        "hierarchy carries historical validity"
+    );
+    let mythic = &reading.spatial[1];
+    assert_eq!(mythic.relation.as_deref(), Some("MYTH_LOCATED_AT"));
+    assert_eq!(mythic.precision, ql_adapters::PlacePrecision::Unlocated);
+    assert!(
+        mythic.geometry.is_none(),
+        "an unlocated place carries no geometry"
+    );
+
+    // Source selectors and standing.
+    assert!(reading.provenance.iter().any(|p| p.selector.is_some()));
+    assert!(reading.provenance.iter().all(|p| !p.standing.is_none()));
+
+    // M3′ Journey/Scenes + Expression binding.
+    let expression = &reading.expressions[0];
+    assert!(expression.scene_ref.is_some());
+    assert!(expression.composition_ref.is_some());
+    assert!(expression.profile_ref.is_some());
+
+    // Native Actions, including the governed-write Return leg.
+    assert!(reading.actions.len() >= 4);
+    assert!(
+        reading
+            .actions
+            .iter()
+            .any(|a| a.authority == "governed-write")
+    );
+
+    // The situated-Agency floor: Guardian stewardship, Anima expressive,
+    // Aletheia disclosure and Technē deep-instrument roles.
+    assert_eq!(reading.agency.len(), 4);
+    let anima = reading
+        .agency
+        .iter()
+        .find(|r| r.role == ql_adapters::AgencyRoleKind::Anima)
+        .expect("Anima role example");
+    assert_eq!(anima.m_index, 4);
+    assert!(matches!(
+        anima.reading,
+        Some(ql_adapters::TechneReadingKind::ConjugateThreeThree)
+    ));
+    assert_eq!(anima.instrument, Some(TechneInstrument::Expressions));
+    assert!(
+        anima.privacy.is_some(),
+        "Anima carries its disclosure limits"
+    );
+    let techne = reading
+        .agency
+        .iter()
+        .find(|r| r.role == ql_adapters::AgencyRoleKind::Techne)
+        .expect("Technē role example");
+    assert_eq!(techne.m_index, 2);
+    assert_eq!(techne.instrument, Some(TechneInstrument::Timeline));
+    let guardian = reading
+        .agency
+        .iter()
+        .find(|r| r.role == ql_adapters::AgencyRoleKind::Guardian)
+        .expect("Guardian stewardship example");
+    assert!(
+        guardian.reading.is_none(),
+        "stewardship spans both readings"
+    );
+    for role in &reading.agency {
+        assert!(
+            role.guardian_ref.is_some(),
+            "every situated role names its anchoring Guardian"
+        );
+    }
+
+    // Capability honesty: one deliberately unavailable instrument with a
+    // reason, degraded facets recorded, both cuts disclosed.
+    let palace = reading
+        .disclosure
+        .instruments
+        .iter()
+        .find(|entry| entry.instrument == TechneInstrument::Palace)
+        .unwrap();
+    assert!(!palace.available);
+    assert!(palace.reason.as_deref().unwrap().len() > 10);
+    assert!(!reading.disclosure.degraded.is_empty());
+    let deep_cut = reading
+        .disclosure
+        .cut(ql_adapters::TechneReadingKind::DeepFourTwo)
+        .expect("4:2 cut disclosed");
+    let conjugate_cut = reading
+        .disclosure
+        .cut(ql_adapters::TechneReadingKind::ConjugateThreeThree)
+        .expect("3:3 cut disclosed");
+    assert!(deep_cut.available && conjugate_cut.available);
+}
+
+#[test]
+fn agency_role_law_rejects_cross_reading_bindings() {
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+
+    let mut anima_as_deep = reading.agency[1].clone();
+    anima_as_deep.reading = Some(ql_adapters::TechneReadingKind::DeepFourTwo);
+    reading.agency[1] = anima_as_deep;
+    assert!(
+        reading.validate().is_err(),
+        "Anima_i cannot inhabit the 4:2 deep reading"
+    );
+
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut techne_as_conjugate = reading.agency[3].clone();
+    techne_as_conjugate.reading = Some(ql_adapters::TechneReadingKind::ConjugateThreeThree);
+    reading.agency[3] = techne_as_conjugate;
+    assert!(
+        reading.validate().is_err(),
+        "Technē_i cannot inhabit the 3:3 conjugate reading"
+    );
+
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut techne_wrong_coordinate = reading.agency[3].clone();
+    techne_wrong_coordinate.instrument = Some(TechneInstrument::Journey);
+    reading.agency[3] = techne_wrong_coordinate;
+    assert!(
+        reading.validate().is_err(),
+        "Technē_2 cannot operate another coordinate's deep instrument"
+    );
+
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut anima_wrong_instrument = reading.agency[1].clone();
+    anima_wrong_instrument.instrument = Some(TechneInstrument::Canvas);
+    reading.agency[1] = anima_wrong_instrument;
+    assert!(
+        reading.validate().is_err(),
+        "Anima_i operates the Expression reading, not a deep instrument"
+    );
+
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut guardian_everywhere = reading.agency[0].clone();
+    guardian_everywhere.reading = Some(ql_adapters::TechneReadingKind::DeepFourTwo);
+    reading.agency[0] = guardian_everywhere;
+    reading
+        .validate()
+        .expect("Guardian stewardship may name either reading");
+}
+
+#[test]
+fn unavailable_application_cut_requires_a_reason() {
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    reading.disclosure.application_cuts[0].available = false;
+    assert!(reading.validate().is_err());
+    reading.disclosure.application_cuts[0].reason =
+        Some("no deep-instrument reading can be composed for this subject".to_string());
+    reading.validate().expect("an unavailable cut states why");
+}
+
+#[test]
+fn cross_cut_crossing_preserves_identity_and_co_reference() {
+    let reading = parse(TB0_CONNECTIVE_BASE);
+
+    // A 4:2 deep session over the fixture subject, situated with an
+    // AgentSession, occasion and Return target.
+    let mut session = session_fixture(&reading);
+    session.selection.agent_session_ref = Some("aikit:agent-session:fixture:l5-techne".to_string());
+    session.selection.source_ref = Some(reading.provenance[0].source_ref.clone());
+    session.selection.source_revision = reading.provenance[0].source_revision.clone();
+    session.occasion_ref = Some(
+        reading
+            .temporal
+            .iter()
+            .find(|f| f.kind == ql_adapters::TemporalKind::Now)
+            .unwrap()
+            .now_ref
+            .clone()
+            .unwrap(),
+    );
+    session.return_target_ref = Some("aikit:wiki:stage:l5-techne-contract-ground".to_string());
+    session.world_ref = Some("central:world:control:root".to_string());
+    session.context_frame_ref = Some("mef:context-frame:CF4".to_string());
+    session
+        .validate()
+        .expect("deep session over the fixture subject validates");
+
+    let before_selection = session.selection.clone();
+    let before_subject = session.subject_ref.clone();
+    let before_occasion = session.occasion_ref.clone();
+    let before_return = session.return_target_ref.clone();
+    let before_session = session.selection.agent_session_ref.clone();
+
+    // Cross 4:2 → 3:3: disclosure changes, identity does not.
+    let crossed = session
+        .cross_cut(TechneInstrument::Expressions)
+        .expect("the crossing onto the conjugate cut");
+    assert!(matches!(
+        crossed,
+        ql_adapters::TechneReadingKind::ConjugateThreeThree
+    ));
+    session.expression_focus_ref = Some(reading.expressions[0].expression_ref.clone());
+    session.scene_focus_ref = reading.expressions[0].scene_ref.clone();
+    session.navigation.push(ql_adapters::DisclosureNavigation {
+        from_instrument: TechneInstrument::Timeline,
+        to_instrument: TechneInstrument::Expressions,
+        selection_ref: session.selection.selection_ref.clone(),
+    });
+    session.validate().expect("the crossed session validates");
+
+    assert_eq!(
+        session.subject_ref, before_subject,
+        "subject is not reminted"
+    );
+    assert_eq!(
+        session.selection.source_ref, before_selection.source_ref,
+        "source basis is not reminted"
+    );
+    assert_eq!(
+        session.selection.source_revision, before_selection.source_revision,
+        "revision basis is not reminted"
+    );
+    assert_eq!(
+        session.occasion_ref, before_occasion,
+        "occasion survives the cut"
+    );
+    assert_eq!(
+        session.return_target_ref, before_return,
+        "Return target survives"
+    );
+    assert_eq!(
+        session.selection.agent_session_ref, before_session,
+        "one AgentSession across the cut"
+    );
+    assert!(
+        session.selection.co_referenced(&before_selection),
+        "the two readings stay co-referenced over one subject and reading basis"
+    );
+
+    // Reading-level identity is byte-stable: the same reading backs both
+    // cuts, its actions and provenance untouched.
+    let same_reading_actions = reading.actions.len();
+    assert_eq!(same_reading_actions, 4);
+    assert!(
+        reading
+            .actions
+            .iter()
+            .any(|a| a.action_ref == "oi.expression.open"),
+        "the crossing Action is the same native ref either side of the cut"
+    );
+
+    // Crossing back to the deep field through the M0′ ground instrument.
+    session
+        .cross_cut(TechneInstrument::Project)
+        .expect("the crossing back onto the deep cut");
+    assert_eq!(session.instrument, TechneInstrument::Project);
+    session.validate().expect("the returned session validates");
+
+    // A crossing onto the cut already occupied is refused.
+    let mut settled = session_fixture(&reading);
+    assert!(settled.cross_cut(TechneInstrument::Canvas).is_err());
+}
+
+#[test]
+fn session_cut_and_instrument_must_agree() {
+    let reading = parse(TB0_CONNECTIVE_BASE);
+    let mut session = session_fixture(&reading);
+    session.application_cut = Some(ql_adapters::TechneReadingKind::ConjugateThreeThree);
+    assert!(
+        session.validate().is_err(),
+        "a 3:3 cut cannot sit under a 4:2 deep instrument"
+    );
+}
+
+#[test]
+fn transport_aliases_map_onto_canonical_instruments() {
+    // Research Canvas transport vocabulary resolves onto the canonical
+    // contract instruments; unknown names are never guessed.
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("Story"),
+        Some(TechneInstrument::Journey)
+    );
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("globe"),
+        Some(TechneInstrument::Place)
+    );
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("Projects"),
+        Some(TechneInstrument::Project)
+    );
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("timeline"),
+        Some(TechneInstrument::Timeline)
+    );
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("expressions"),
+        Some(TechneInstrument::Expressions)
+    );
+    assert_eq!(
+        ql_adapters::TechneInstrument::from_transport_alias("not-a-surface"),
+        None
+    );
+
+    // The amended geometry is readable off the instrument itself.
+    assert_eq!(TechneInstrument::Expressions.m_prime(), None);
+    assert!(matches!(
+        TechneInstrument::Expressions.reading(),
+        ql_adapters::TechneReadingKind::ConjugateThreeThree
+    ));
+    assert_eq!(TechneInstrument::Timeline.m_prime(), Some(2));
+    assert!(matches!(
+        TechneInstrument::Palace.reading(),
+        ql_adapters::TechneReadingKind::DeepFourTwo
+    ));
 }
 
 fn session_fixture(reading: &TechneReading) -> DisclosureSession {
@@ -433,10 +854,19 @@ fn session_fixture(reading: &TechneReading) -> DisclosureSession {
             selection_standing: None,
         },
         instrument: TechneInstrument::Timeline,
+        application_cut: Some(ql_adapters::TechneReadingKind::DeepFourTwo),
+        whole_ref: None,
+        project_ref: None,
+        world_ref: None,
+        context_frame_ref: None,
+        occasion_ref: None,
+        return_target_ref: None,
         reading_ref: Some(reading.reading_ref.clone()),
         time_window: None,
         spatial_focus_ref: None,
+        reference_frame_ref: None,
         expression_focus_ref: None,
+        scene_focus_ref: None,
         navigation: vec![],
     }
 }

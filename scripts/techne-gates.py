@@ -85,9 +85,11 @@ def main() -> int:
 
     # G0 — contract truth ---------------------------------------------------
     try:
+        fixture_count = 0
         for name in sorted(p.name for p in FIXTURES.glob("*.json")):
             validate(json.loads((FIXTURES / name).read_text()), reading_schema)
-        record("G0", "pass", "all three conformance fixtures validate against ql.techne/reading/v1")
+            fixture_count += 1
+        record("G0", "pass", f"all {fixture_count} conformance fixtures validate against ql.techne/reading/v1")
     except Exception as error:  # noqa: BLE001
         record("G0", "FAIL", f"fixture/schema validation failed: {error}")
         return finish()
@@ -149,6 +151,37 @@ def main() -> int:
                              "RC transport identity tests (pnpm vitest run packages/desktop-api)")
     else:
         record("G1", "FAIL", "a cited evidence file is missing")
+
+    # G-TB0 — the pinned connective base (issue #212) -------------------------
+    tb0 = json.loads((FIXTURES / "tb0-connective-base-v1.json").read_text())
+    roles = {role["role"] for role in tb0.get("agency", [])}
+    cuts = {cut["cut"]: cut["available"] for cut in tb0["disclosure"].get("application_cuts", [])}
+    relations = tb0["whole"]["relations"]
+    trans_temporal = [r for r in relations if not r.get("temporal_facet_ref")]
+    dated = [r for r in relations if r.get("temporal_facet_ref")]
+    facet_refs = {f.get("facet_ref") for f in tb0["temporal"]}
+    mythic = [p for p in tb0["spatial"] if p.get("relation") == "MYTH_LOCATED_AT"]
+    if (
+        roles == {"guardian", "anima", "aletheia", "techne"}
+        and len(cuts) == 2
+        and any(i["instrument"] == "palace" and not i["available"] and i.get("reason")
+                for i in tb0["disclosure"]["instruments"])
+        and tb0["disclosure"]["degraded"]
+        and trans_temporal and dated
+        and all(r["temporal_facet_ref"] in facet_refs for r in dated)
+        and mythic and mythic[0]["precision"] == "unlocated" and "geometry" not in mythic[0]
+        and tb0.get("ql", {}).get("m_coordinate_ref")
+        and any(a["action_ref"] == "aikit.wiki.stage" and a["authority"] == "governed-write"
+                for a in tb0["actions"])
+    ):
+        record("G-TB0", "pass",
+               "the pinned TB0 fixture carries all four situated-Agency roles, both application cuts, "
+               "dated and trans-temporal typed relations whose qualifications resolve against real "
+               "facets, a truthfully unlocated mythic place, a warranted M-coordinate ref, and the "
+               "governed-write Return action — one specimen driving #213–#219 "
+               "(cargo test -p ql-adapters proves the session cross-cut identity law alongside)")
+    else:
+        record("G-TB0", "FAIL", "the TB0 fixture lost a required facet or disclosure")
 
     # G-T — the canonical traversal 0→1→2→3→4→5→0 (amended geometry) -------
     deep = sorted(
