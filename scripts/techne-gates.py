@@ -81,6 +81,7 @@ def main() -> int:
 
     reading_schema = json.loads(SCHEMA_READING.read_text())
     session_schema = json.loads(SCHEMA_SESSION.read_text())
+    rep = json.loads((FIXTURES / "representative-subject-v1.json").read_text())
 
     # G0 — contract truth ---------------------------------------------------
     try:
@@ -149,6 +150,29 @@ def main() -> int:
     else:
         record("G1", "FAIL", "a cited evidence file is missing")
 
+    # G-T — the canonical traversal 0→1→2→3→4→5→0 (amended geometry) -------
+    deep = sorted(
+        (entry for entry in rep["disclosure"]["instruments"]
+         if entry.get("reading") == "4:2-deep"),
+        key=lambda entry: entry.get("m_prime", -1),
+    )
+    conjugate = [entry for entry in rep["disclosure"]["instruments"]
+                 if entry.get("reading") == "3:3-conjugate"]
+    offices = [entry["instrument"] for entry in deep]
+    if offices == ["project", "canvas", "timeline", "journey", "place", "palace"] \
+            and [entry.get("m_prime") for entry in deep] == [0, 1, 2, 3, 4, 5] \
+            and len(conjugate) == 1 and conjugate[0]["instrument"] == "expressions" \
+            and any(action["action_ref"] == "aikit.wiki.stage"
+                    and action["authority"] == "governed-write"
+                    for action in rep["actions"]):
+        record("G-T", "pass",
+               "the reading discloses the six deep instruments bound M0′–M5′ in traversal order plus the "
+               "conjugate 3:3 Expression reading; the Return leg carries a governed-write native Action "
+               "(aikit.wiki.stage) — ground_ref (step 0) is contract-pinned by the Rust suite; hop co-reference "
+               "across instruments is pinned by the O-I session suite; full desktop traversal remains G8")
+    else:
+        record("G-T", "FAIL", f"traversal geometry wrong: deep={offices}, conjugate={conjugate}")
+
     # G2 — temporal development case over LIVE Central data -----------------
     try:
         policy = run_json(["ctrl", "--json", "action", "run", "central.time.policy", "{}"])
@@ -184,13 +208,17 @@ def main() -> int:
                          "authority": "registered-read-action", "summary": None,
                          "expected_effects": ["none — read only"], "input_schema_ref": None}],
             "disclosure": {"instruments": [
-                {"instrument": "canvas", "available": True},
-                {"instrument": "timeline", "available": True},
-                {"instrument": "place", "available": False, "reason": "no disclosed spatial reading"},
-                {"instrument": "story", "available": False, "reason": "no Expression scenes bound to this subject"},
-                {"instrument": "palace", "available": False, "reason": "no Expression composition available for this subject"},
-                {"instrument": "expressions", "available": False, "reason": "no Expression is bound to this subject"},
-                {"instrument": "m1234", "available": False, "reason": "no warranted lens binding"},
+                {"instrument": "project", "available": True, "m_prime": 0, "reading": "4:2-deep"},
+                {"instrument": "canvas", "available": True, "m_prime": 1, "reading": "4:2-deep"},
+                {"instrument": "timeline", "available": True, "m_prime": 2, "reading": "4:2-deep"},
+                {"instrument": "journey", "available": False, "m_prime": 3, "reading": "4:2-deep",
+                 "reason": "no Expression scenes bound to this subject"},
+                {"instrument": "place", "available": False, "m_prime": 4, "reading": "4:2-deep",
+                 "reason": "no disclosed spatial reading"},
+                {"instrument": "palace", "available": False, "m_prime": 5, "reading": "4:2-deep",
+                 "reason": "no Expression composition available for this subject"},
+                {"instrument": "expressions", "available": False, "reading": "3:3-conjugate",
+                 "reason": "no Expression is bound to this subject"},
             ], "degraded": [], "suggestions": []},
         }
         validate(reading, reading_schema)
@@ -206,7 +234,6 @@ def main() -> int:
         record("G2", "FAIL", f"live Central reading failed: {error}")
 
     # G3 — spatial case ------------------------------------------------------
-    rep = json.loads((FIXTURES / "representative-subject-v1.json").read_text())
     place = rep["spatial"][0]
     if place["precision"] in ("exact", "approximate", "region", "unlocated") and place["hierarchy"]:
         record("G3", "open",
@@ -219,11 +246,11 @@ def main() -> int:
         record("G3", "FAIL", "fixture place facet lost precision/hierarchy")
 
     # G4 — Story / Expression identity ---------------------------------------
-    if marker(oi(suite, "tests/techne-story-beats.test.mjs"), "scene_ref") and \
+    if marker(oi(suite, "tests/techne-journey-beats.test.mjs"), "scene_ref") and \
        marker(oi(suite, "tests/techne-expressions-cue.test.mjs"), "expressionDocumentFromCue"):
-        record("G4", "pass", "Story sequences real Expression scene refs and proposes reordering through the "
-                             "Expression owner's native Action; the cue binds subject refs byte-verbatim with "
-                             "no shadow Journey persistence (O-I story/expression suites)")
+        record("G4", "pass", "Journey (M3′) sequences real Expression scene refs and proposes reordering through "
+                             "the Expression owner's native Action; the cue binds subject refs byte-verbatim with "
+                             "no shadow persistence — the formal hinge into the 3:3 reading (O-I journey/expression suites)")
     else:
         record("G4", "FAIL", "a cited evidence file is missing")
 
@@ -237,7 +264,8 @@ def main() -> int:
 
     # G6 — Epii co-reference --------------------------------------------------
     if marker(oi(suite, "src/workspace/store.ts"), "subscribeTechneOpen") and \
-       marker(oi(suite, "src/techne/session.ts"), "export function coReferenced"):
+       marker(oi(suite, "src/techne/session.ts"), "export function coReferenced") and \
+       marker(oi(suite, "src/techne/project/register.ts"), "registerProjectSurface"):
         record("G6", "pass", "one DisclosureSession carries subject + agent_session_ref across instruments; "
                              "the AgentLayer co-references through the kernel's one focus subject "
                              "(O-I session suite + store wiring); proposal receipts surface in-instrument "
