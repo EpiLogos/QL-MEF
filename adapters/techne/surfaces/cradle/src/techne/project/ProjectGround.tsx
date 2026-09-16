@@ -413,6 +413,11 @@ export function ProjectGround({ session, selection, reading }: ProjectSurfacePro
         <p className="project-meta">
           {view.nodes.length} nodes ({view.boundary_refs.length} outside the whole) · {view.edges.length} relations · focus {refTail(view.query.focus_ref)}
         </p>
+        <p className="project-meta">
+          {reading.ql?.warrant
+            ? `warranted QL overlay disclosed (${reading.ql.warrant.result_class}) — the deep QL constellation layout lives in the Canvas aperture; this ground never mints a coordinate`
+            : "no warranted QL facet is disclosed for this subject — none is fabricated here"}
+        </p>
         {view.truncated && (
           <ul className="project-warnings">
             {view.warnings.map((warning) => <li key={warning}>{warning}</li>)}
