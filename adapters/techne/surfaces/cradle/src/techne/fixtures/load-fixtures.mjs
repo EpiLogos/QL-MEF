@@ -18,6 +18,7 @@ export const FIXTURE_FILES = [
   "representative-subject-v1.json",
   "development-day-v1.json",
   "absent-facets-v1.json",
+  "tb0-connective-base-v1.json",
 ];
 
 const here = fileURLToPath(new URL(".", import.meta.url));

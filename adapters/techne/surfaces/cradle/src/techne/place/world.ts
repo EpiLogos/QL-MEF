@@ -30,7 +30,6 @@
 import type {
   ApplicationCutDisclosure,
   NativeActionRef,
-  TechneReadingKind,
   TechneInstrument,
   TechnePlaceFacet,
   TechneReading,
