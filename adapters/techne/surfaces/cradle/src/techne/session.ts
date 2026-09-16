@@ -17,6 +17,7 @@
  */
 import {
   TECHNE_CONTRACT,
+  instrumentReading,
   validateSelection,
   validateSession,
   type DisclosureSelection,
@@ -83,6 +84,12 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
             reading_ref: selection.reading_ref,
             navigation: [],
           };
+      // TB0: when the session carries an application cut it must keep
+      // agreeing with the instrument; sessions that never carry one are
+      // untouched (the field stays optional).
+      if (next.application_cut !== undefined) {
+        next.application_cut = instrumentReading(next.instrument);
+      }
       const session = checkedSession(next);
       current = session;
       notify(listeners);
@@ -102,6 +109,12 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
           selection_ref: current.selection.selection_ref,
         }],
       };
+      // TB0: a crossing onto the other application cut moves the cut with
+      // the instrument; subject, selection basis, sources, occasion, Actions
+      // and Return target ride untouched (the cross-cut identity law).
+      if (next.application_cut !== undefined || instrumentReading(instrument) !== instrumentReading(current.instrument)) {
+        next.application_cut = instrumentReading(instrument);
+      }
       const session = checkedSession(next);
       current = session;
       notify(listeners);
