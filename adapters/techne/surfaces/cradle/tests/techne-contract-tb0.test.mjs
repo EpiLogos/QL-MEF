@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   TECHNE_CONTRACT,
-  instrumentMPrime,
+  mPrimeOf,
   instrumentReading,
   validateReading,
   validateSession,
@@ -42,13 +42,13 @@ test('instrument → application cut and M′ office mappings mirror the canonic
   assert.equal(instrumentReading('project'), '4:2-deep');
   assert.equal(instrumentReading('palace'), '4:2-deep');
   assert.equal(instrumentReading('expressions'), '3:3-conjugate');
-  assert.equal(instrumentMPrime('project'), 0);
-  assert.equal(instrumentMPrime('canvas'), 1);
-  assert.equal(instrumentMPrime('timeline'), 2);
-  assert.equal(instrumentMPrime('journey'), 3);
-  assert.equal(instrumentMPrime('place'), 4);
-  assert.equal(instrumentMPrime('palace'), 5);
-  assert.equal(instrumentMPrime('expressions'), null);
+  assert.equal(mPrimeOf('project'), 0);
+  assert.equal(mPrimeOf('canvas'), 1);
+  assert.equal(mPrimeOf('timeline'), 2);
+  assert.equal(mPrimeOf('journey'), 3);
+  assert.equal(mPrimeOf('place'), 4);
+  assert.equal(mPrimeOf('palace'), 5);
+  assert.equal(mPrimeOf('expressions'), null);
 });
 
 test('the situated-Agency role law is enforced: readings that break it are refused', async () => {

@@ -861,7 +861,11 @@ export function validateSession(value: unknown): TechneValidation {
   if (!ref(value.subject_ref)) errors.push("session.subject_ref: required");
   if (!ref(value.reading_ref)) errors.push("session.reading_ref: required");
   if (!isInstrument(value.instrument)) errors.push("session.instrument: not an instrument");
-  for (const key of ["spatial_focus_ref", "expression_focus_ref", "whole_ref", "project_ref", "world_ref", "context_frame_ref", "occasion_ref", "return_target_ref", "reference_frame_ref", "scene_focus_ref"]) if (value[key] !== undefined && !ref(value[key])) errors.push(`session.${key}: must be a ref`);
+  // Canonical nullability (ql-techne-session-v1): whole/project/world/context-frame,
+  // occasion and return-target refs are NullableRef — explicitly-absent stays valid;
+  // the focus refs are OpaqueRef — string or absent, never null.
+  for (const key of ["whole_ref", "project_ref", "world_ref", "context_frame_ref", "occasion_ref", "return_target_ref"]) if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`session.${key}: must be a ref or null`);
+  for (const key of ["spatial_focus_ref", "expression_focus_ref", "reference_frame_ref", "scene_focus_ref"]) if (value[key] !== undefined && !ref(value[key])) errors.push(`session.${key}: must be a ref`);
   if (value.application_cut !== undefined && value.application_cut !== "4:2-deep" && value.application_cut !== "3:3-conjugate") {
     errors.push("session.application_cut: must be \"4:2-deep\" or \"3:3-conjugate\"");
   }
