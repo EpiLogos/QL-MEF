@@ -1,7 +1,7 @@
 # Geometry constellation completion Wayfinder
 
-Status: **#204–#207 landed; runtime consumer completion active as #222, 2026-09-16**  
-Branch: `agent/geometry-g4-wiki-shape-propagation`  
+Status: **#204–#207 and #222 landed; canonical Geometry plus Vāk/Wiki runtime propagation complete, 2026-09-16**  
+Landed via: `#208` and `#223`  
 Canonical spec: [`CANONICAL-CONSTELLATION-RESOLUTION.md`](CANONICAL-CONSTELLATION-RESOLUTION.md)
 
 This lane completes the existing L5.3 Geometry office. It does not create a second shape ontology, a new Vāk layer, or a replacement for the accepted structural carrier.
@@ -99,13 +99,13 @@ QlShape
 
 Acceptance coverage proves that a one-fold `0/1` binding can retain a threefold basis and the exact `3→1` compression derivation/operator through the existing `ShapeBinding` contract. Explicit member focus reopens the retained body while the default read presents the whole anchor.
 
-That is the shared carrier floor. It does not by itself prove that every downstream product surface has wired the new fields into its own runtime response.
+That is the shared carrier floor. Downstream runtime propagation is separately proven by G4b rather than inferred from the carrier alone.
 
-## G4b — Wiki runtime propagation — #222 — implementation active
+## G4b — Wiki runtime propagation — #222/#223 — implemented
 
-The post-merge consumer audit found that `crates/ql-wiki` still validated pair/D1/D2/D3 structural fields directly while its runtime `WikiReading` did not retain the newly canonical `ShapeBinding` shape/basis/derivation metadata. The prior Wiki contract-document update therefore described a valid shared seam but did not yet constitute runtime propagation.
+The post-#208 consumer audit found that `crates/ql-wiki` still validated pair/D1/D2/D3 structural fields directly while its runtime `WikiReading` did not retain the newly canonical `ShapeBinding` shape/basis/derivation metadata. #223 closes that gap through the existing Wiki extension/refraction path.
 
-The completion route is deliberately thin:
+The landed route is deliberately thin:
 
 ```text
 QlShape::shape_ref
@@ -117,7 +117,7 @@ QlShape::shape_ref
                     {ql_form_refs, operator_refs, exact shape-binding extension}
 ```
 
-Rules:
+Rules now enforced in runtime:
 
 - `ql-core` is the only owner that resolves versioned shape refs; Wiki does not parse shape strings locally;
 - Wiki `ParticipationForm` remains its source-participation vocabulary and is not identified with `QlShape`;
@@ -126,9 +126,9 @@ Rules:
 - ordinary Wiki refraction with no shape extension remains byte/structure compatible with the existing contract;
 - no new service, source registry, Geometry owner or provider semantics are introduced.
 
-## G5 — conformance and admission — current for #222
+## G5 — conformance and admission — complete
 
-Repository checks required before the G4b merge:
+#223 closes against the intended repository checks:
 
 1. canonical shape refs round-trip through the kernel resolver, while aliases/unknown versions/anonymous grains fail closed;
 2. a core `ShapeBinding` can project into the Wiki transport view without changing subject, whole, basis, member, derivation, operator, Return or provenance identity;
@@ -139,9 +139,9 @@ Repository checks required before the G4b merge:
 7. current-source census records the new resolver as part of the existing Geometry owner and the Wiki layer as an infrastructural consumer;
 8. format/clippy/CI pass with no historical K4 proof rewritten.
 
-## G6 — next research discriminators after this merge
+## G6 — next research discriminators after base implementation
 
-These are research on top of the canonical carrier and its first runtime consumers, not missing base implementation:
+These are research on top of the canonical carrier and its admitted Vāk/Wiki runtime consumers, not missing base implementation:
 
 - determine the exact operator interpretation of the `4×6` and `6×4` decadic cross-blocks;
 - test how quaternionic transformation carries the `4^3` body into decadic/other dimensional presentations;
