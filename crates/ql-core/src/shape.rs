@@ -9,18 +9,13 @@ pub const SIX_BY_SIX_SHAPE_REF: &str = "ql:shape:1.0.0:6x6:direct-conjugate";
 pub const RELATIONAL_SIXFOLD_SHAPE_REF: &str = "ql:shape:1.0.0:6-plus-6-prime";
 pub const RELATIONAL_SIXFOLD_OPERATOR_REF: &str =
     "ql:shape:1.0.0:generation:same-position-direct-conjugate";
-pub const SEVEN_FOLD_SHAPE_REF: &str =
-    "ql:shape:1.1.0:constellation:partial-conjugate-7";
-pub const FOUR_BY_FOUR_BY_FOUR_SHAPE_REF: &str =
-    "ql:shape:1.1.0:4x4x4:m3-three-quaternary-sites";
+pub const SEVEN_FOLD_SHAPE_REF: &str = "ql:shape:1.1.0:constellation:partial-conjugate-7";
+pub const FOUR_BY_FOUR_BY_FOUR_SHAPE_REF: &str = "ql:shape:1.1.0:4x4x4:m3-three-quaternary-sites";
 pub const TEN_BY_TEN_SHAPE_REF: &str = "ql:shape:1.1.0:10x10:second-spanda-4-plus-6";
-pub const EIGHTEEN_FOLD_SHAPE_REF: &str =
-    "ql:shape:1.1.0:18-fold:6-plus-6-prime-plus-relational-6";
-pub const COMPRESS_TO_WHOLE_OPERATOR_REF: &str =
-    "ql:shape:1.1.0:compression:disclosed-to-0-1";
+pub const EIGHTEEN_FOLD_SHAPE_REF: &str = "ql:shape:1.1.0:18-fold:6-plus-6-prime-plus-relational-6";
+pub const COMPRESS_TO_WHOLE_OPERATOR_REF: &str = "ql:shape:1.1.0:compression:disclosed-to-0-1";
 pub const THREE_TO_ONE_OPERATOR_REF: &str = "ql:shape:1.1.0:compression:3-to-1-recognition";
-pub const EIGHTEEN_TO_THREE_OPERATOR_REF: &str =
-    "ql:shape:1.1.0:compression:18-by-6-to-threefold";
+pub const EIGHTEEN_TO_THREE_OPERATOR_REF: &str = "ql:shape:1.1.0:compression:18-by-6-to-threefold";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum QlShape {
@@ -71,8 +66,7 @@ impl QlShape {
             Self::Constellation(ConstellationGrain::FourFold1234) => Some(4),
             Self::Constellation(ConstellationGrain::FourPlusOneGround)
             | Self::Constellation(ConstellationGrain::FourPlusOneSynthesis) => Some(5),
-            Self::Constellation(ConstellationGrain::SixFold)
-            | Self::RelationalSixfold => Some(6),
+            Self::Constellation(ConstellationGrain::SixFold) | Self::RelationalSixfold => Some(6),
             Self::Constellation(ConstellationGrain::PartialConjugate7)
             | Self::Constellation(ConstellationGrain::Other {
                 direct: 6,
@@ -141,9 +135,9 @@ impl QlShapeCompression {
             return None;
         }
         let recognition_superset = match disclosed {
-            QlShape::Constellation(ConstellationGrain::ThreeFold123) => Some(
-                QlShape::Constellation(ConstellationGrain::FourFold1234),
-            ),
+            QlShape::Constellation(ConstellationGrain::ThreeFold123) => {
+                Some(QlShape::Constellation(ConstellationGrain::FourFold1234))
+            }
             _ => None,
         };
         Some(Self {
@@ -510,7 +504,10 @@ mod tests {
     fn fold_ladder_has_named_one_and_seven_readings() {
         assert_eq!(QlShape::onefold().fold_count(), Some(1));
         assert_eq!(QlShape::canonical_sevenfold().fold_count(), Some(7));
-        assert_eq!(QlShape::canonical_sevenfold().shape_ref(), SEVEN_FOLD_SHAPE_REF);
+        assert_eq!(
+            QlShape::canonical_sevenfold().shape_ref(),
+            SEVEN_FOLD_SHAPE_REF
+        );
         assert_eq!(
             QlShape::Constellation(ConstellationGrain::TwelveFold).fold_count(),
             Some(12)
@@ -519,10 +516,9 @@ mod tests {
 
     #[test]
     fn disclosed_two_and_threefolds_compress_to_the_onefold_anchor() {
-        let two = QlShapeCompression::to_onefold(QlShape::Constellation(
-            ConstellationGrain::TwoFold,
-        ))
-        .unwrap();
+        let two =
+            QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::TwoFold))
+                .unwrap();
         assert_eq!(two.presented, QlShape::onefold());
         assert_eq!(two.operator_ref, COMPRESS_TO_WHOLE_OPERATOR_REF);
 
@@ -554,7 +550,10 @@ mod tests {
         assert_eq!(geometry.m3_quaternary_cubic.address_cardinality, 64);
         assert_eq!(geometry.m2_senary_square.addresses.len(), 36);
         assert_eq!(geometry.totality(), 100);
-        assert_eq!(geometry.decadic_projection.block_cardinalities, [16, 24, 24, 36]);
+        assert_eq!(
+            geometry.decadic_projection.block_cardinalities,
+            [16, 24, 24, 36]
+        );
         assert_eq!(geometry.decadic_projection.m3_partition_cardinality, 64);
         assert_eq!(geometry.decadic_projection.m2_partition_cardinality, 36);
     }
