@@ -307,3 +307,172 @@
   gap: var(--oi-space-3);
   align-items: baseline;
 }
+
+/* --- M3′ bridge additions (issue #216): crossing, presence, compose, C′,
+   agency state — same tokens, quiet editorial register --- */
+
+.techne-journey-return {
+  margin: 0;
+  padding: var(--oi-space-2) var(--oi-space-3);
+  border: 1px solid var(--oi-accent);
+  border-radius: var(--oi-shell-radius);
+  background: var(--oi-canvas-ground);
+  font-size: var(--oi-type-xs);
+  color: var(--oi-foreground);
+}
+
+.techne-journey-actions {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-3);
+  flex-wrap: wrap;
+}
+
+.techne-journey-enter {
+  border-color: var(--oi-accent);
+}
+
+.techne-journey-bridge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--oi-space-2);
+  padding: var(--oi-space-3);
+  border: 1px solid var(--oi-hairline-soft);
+  border-radius: var(--oi-shell-radius);
+  background: var(--oi-canvas-ground);
+}
+
+.techne-journey-bridge p {
+  margin: 0;
+}
+
+.techne-journey-compose {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-2);
+  flex-wrap: wrap;
+}
+
+.techne-journey-compose label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-1);
+  font-size: var(--oi-type-xs);
+  color: var(--oi-muted-2);
+}
+
+.techne-journey-compose select {
+  font-size: var(--oi-type-xs);
+  color: var(--oi-foreground);
+  background: var(--oi-surface);
+  border: 1px solid var(--oi-hairline);
+  border-radius: var(--oi-shell-radius);
+  padding: calc(var(--oi-space-1) * 0.5) var(--oi-space-2);
+}
+
+.techne-journey-input {
+  font-size: var(--oi-type-sm);
+  color: var(--oi-foreground);
+  background: var(--oi-surface);
+  border: 1px solid var(--oi-hairline);
+  border-radius: var(--oi-shell-radius);
+  padding: var(--oi-space-1) var(--oi-space-2);
+  min-width: 16rem;
+  flex: 1 1 16rem;
+}
+
+.techne-journey-input:focus-visible {
+  outline: var(--oi-focus-ring-width) solid var(--oi-focus);
+}
+
+.techne-journey-cprime-edit {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-3);
+  flex-wrap: wrap;
+  padding-top: var(--oi-space-2);
+  border-top: 1px solid var(--oi-hairline-soft);
+}
+
+.techne-journey-cprime-edit label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-1);
+  font-size: var(--oi-type-xs);
+  color: var(--oi-muted-2);
+}
+
+.techne-journey-cprime-edit select {
+  font-size: var(--oi-type-xs);
+  color: var(--oi-foreground);
+  background: var(--oi-surface);
+  border: 1px solid var(--oi-hairline);
+  border-radius: var(--oi-shell-radius);
+  padding: calc(var(--oi-space-1) * 0.5) var(--oi-space-2);
+}
+
+.techne-journey-traversal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--oi-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.techne-journey-traversal-step {
+  display: flex;
+  align-items: baseline;
+  gap: var(--oi-space-3);
+  flex-wrap: wrap;
+  font-size: var(--oi-type-xs);
+  color: var(--oi-muted);
+  padding: var(--oi-space-2);
+  border: 1px solid var(--oi-hairline-soft);
+  border-radius: var(--oi-shell-radius);
+}
+
+.techne-journey-traversal-step[data-chord],
+.techne-journey-traversal-step[data-fusion],
+.techne-journey-traversal-step[data-sustained] {
+  border-color: var(--oi-accent);
+}
+
+.techne-journey-traversal-step ul {
+  display: flex;
+  gap: var(--oi-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.techne-journey-traversal-step code {
+  font-family: var(--oi-font-mono);
+  overflow-wrap: anywhere;
+}
+
+.techne-journey-agent {
+  font-size: var(--oi-type-xs);
+  color: var(--oi-muted);
+}
+
+.techne-journey-agent summary {
+  cursor: pointer;
+}
+
+.techne-journey-agent summary:focus-visible {
+  outline: var(--oi-focus-ring-width) solid var(--oi-focus);
+}
+
+.techne-journey-agent-state {
+  font-family: var(--oi-font-mono);
+  font-size: var(--oi-type-xs);
+  overflow: auto;
+  max-height: 24rem;
+  padding: var(--oi-space-3);
+  border: 1px solid var(--oi-hairline-soft);
+  border-radius: var(--oi-shell-radius);
+  background: var(--oi-canvas-ground);
+  color: var(--oi-foreground);
+}
