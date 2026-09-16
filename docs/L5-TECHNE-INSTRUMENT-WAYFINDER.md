@@ -36,7 +36,22 @@ Executed the same day, on the local suite, per §19 (one integration owner, lane
 
 The five mature Research Canvas disclosure families and the Expression system are no longer to be developed as isolated product modes.
 
-They are a **constellation of Technē instruments over the same selected knowledge field**:
+They are a **constellation of Technē instruments over the same selected knowledge field**.
+
+> **Amendment, 2026-09-16 (owner-ratified; grounds: QL-MEF #73, #201, #42).** There is one M′ field with two primary application readings: **3:3 is the lived/expressive reading; 4:2 is the deep/Technē reading.** The deep suite is therefore **not** the sixfold below with Expressions as a peer. The corrected 4:2 grouping binds the instruments to M0′–M5′:
+>
+> ```text
+> M0′ Project / Wiki / Knowledge Map   — ground, source horizon, address, local-whole orientation
+> M1′ Canvas / Constellation           — first explicit construction; authored spatial material
+> M2′ Relations / Timeline             — the Relation Field: movement, causation, recurrence, phase;
+>                                        chronology is its strongest ordinary projection, not its definition
+> M3′ Journey / Scenes                 — formal mediation; the hinge into the 3:3 reading
+> M4′ Places / World                   — situation: Earth, world occasion, the vertical solar→Earth→
+>                                        geography→Nara frame chain
+> M5′ Palace / Integral Whole          — reflexive articulation, memory, pedagogy, Return
+> ```
+>
+> **Expressions is the conjugate 3:3 reading** of the same field — the living authored/experiential body (physics/point-field/Nara/Epii) which the six deep instruments read from, write toward and compose through. The original sixfold listing is retained below as the pre-amendment record; where it conflicts with this block, this block governs.
 
 ```text
 Canvas / Constellation
@@ -484,10 +499,10 @@ Lock these laws:
 
 First inspect current O:I Expression composition/Expression-of-Expression capability. Prefer using/extending that actual composition relation. Introduce no `Palace` persistence primitive merely because the old application had one.
 
-## 11. Expressions
+## 11. Expressions — the conjugate 3:3 reading
 
-**Source technology:** current O:I Expression-world substrate + installed/current physics field and M1′–M4′ instrument.  
-**Office:** the most directly generative Technē in this constellation: disclosure becomes an authored living experience.
+**Source technology:** current O:I Expression-world substrate + installed/current physics field and M1′–M4′ embodiment.  
+**Office (amended 2026-09-16):** not a deep instrument. Expressions is the **other major reading of the same M′ field** — the lived/expressive body foregrounded through Nara/Anima, with M0 knowledge and M5 Epii available as depths. The deep instruments instantiate into it (M3′ Journey → Scenes is the strongest formal bridge), and its M1′–M4′ embodiment depths are the production physics runtime — not a seventh aperture.
 
 Expressions already provide revisioned scenes, entities, subject bindings, representations, provenance, selection, parameter state and structured human/Agent operations. The current Expression-world Wayfinder further establishes profiles, reciprocal front/verso presentation, native content bindings and Ta-Onta/Epi participation.
 
@@ -649,7 +664,9 @@ This supports interactions such as:
 
 The agent may gently propose a disclosure switch. It must not simulate the result in chat when a native instrument reading/action exists and is available.
 
-Agent proposals to change source, Wiki, Expression or developmental state retain their actual authority/review path. Visual co-presence never expands authority.
+> **Amendment, 2026-09-16 (owner-ratified): the Ta-Onta agent grammar across both readings.** The canonical six Guardians (#42) remain the enduring M/S coordinate stewards. The twelve situated operator roles are Agencies built through the ordinary Actuation + AIKit machinery: `Anima_i = M_i × S4′`, the expressive operator of the 3:3 reading, and `Aletheia_i = M_i × S5′`, the disclosure/research/Return operator of the 4:2 reading. `Technē_i := Aletheia_i` when situated in and operating the M_i′ deep instrument — that is the proper home of the name Technē Agent. Aletheia is an S5′ office, not a synonym of the L5-5 office. Two orthogonal 0→5 cycles are thereby locked and must never be collapsed: the **instrument cycle** across M′ (Project→Canvas→Relation→Journey→World→Palace), and the **Ta-Onta act cycle** within any single act (Khora→Hen→Pleroma→Chronos→Anima→Aletheia). A `Techne.Timeline` act passes through all six S′ offices while Timeline remains M2′ in the instrument topology.
+>
+> Agent proposals to change source, Wiki, Expression or developmental state retain their actual authority/review path. Visual co-presence never expands authority.
 
 ---
 
@@ -676,6 +693,16 @@ T0  ql.techne/v1 contract + adapter floor + fixtures
                          v
                  T9 joined convergence
 ```
+
+> **Amendment, 2026-09-16 (owner-ratified): the first integration acceptance path is the canonical traversal.**
+>
+> ```text
+> 0 PROJECT/GROUND → 1 CANVAS → 2 RELATION FIELD → 3 JOURNEY → 4 WORLD/PLACES → 5 PALACE
+>                                                                                    ↓
+>                                     RECOGNITION / RETURN → 0 PROJECT/WIKI/GROUND
+> ```
+>
+> Not a wizard and not a restriction — lateral jumps remain first-class (§4). But `0→1→2→3→4→5→0` is the canonical path against which every seam is tested, and its last leg is a **Return**: a Palace/Recognition composition written back to Wiki/Project ground through a native Action with a visible receipt.
 
 T1–T8 may run in parallel as soon as T0 publishes the minimal fixture/read-model contract. They must not wait for every real provider: use the shared conformance fixtures and then replace fixture inputs with native providers as those lanes land.
 
@@ -743,9 +770,10 @@ Prove both a historical dataset and a non-historical/project/field case where re
 
 If retained, deliver a composition surface over real Expression refs with mnemonic/spatial navigation. If rejected, record the useful interaction elements and implement them through the current composition owner instead of preserving a product noun for its own sake.
 
-### T7 — Expressions and M1′–M4′
+### T7 — Expressions (conjugate 3:3 bridge) and M′ embodiment
 
 **Primary owners:** O:I Expression-world substrate + current physics renderer + QL-MEF M′ producers.  
+**Amended 2026-09-16:** re-scoped from instrument lane to the conjugate-reading bridge — instantiation/focus/composition/embodiment over the shared selection; the `m1234` aperture is dissolved into the Expression reading.  
 **Deliver:** open/create/focus Expression from shared Technē selection; QL-backed profile/layout/transition inputs; same-subject graph companion; M1′–M4′ embodied manipulation; stable source/verso; scenes/compositions consumed by T5/T6; no duplicate point-field host.
 
 This is the deepest technology layer, not a separate data world.
@@ -896,6 +924,9 @@ Human acceptance on the installed desktop must verify:
 | Does Epii get a separate session per instrument? | No. One AgentSession co-references the changing disclosure of the same field. |
 | Should porting Research Canvas require migrating all Antichrist data first? | No. Port surfaces against adapter fixtures/current Wiki; content migration is separate. |
 | Which UI is the style authority? | The actual current local Expressions physics UI, reconciled into shared Cradle primitives; older hosted editor CSS is implementation evidence, not a design target. |
+| Are Expressions one of the six deep instruments? | No (amended 2026-09-16). The six 4:2 deep instruments are Project, Canvas, Relation/Timeline, Journey, Places/World, Palace, bound to M0′–M5′. Expressions is the conjugate 3:3 reading over the same subjects, refs and Actions. |
+| Do the deep instruments replace the M′ domains' meanings? | No. Each instrument is the Technē face of its M′ domain (#73); the deep-product meanings of M1′–M4′ are unchanged. |
+| Is the 0→1→2→3→4→5→0 traversal a wizard? | No. It is the first integration acceptance path; lateral jumps stay first-class. |
 
 ---
 
