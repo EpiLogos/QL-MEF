@@ -20,6 +20,16 @@ Reconciled against the current local suite before implementation, per the standi
 - **Factory Runs carry no wall-clock timestamps at all** — ordering is revision/cursor based. Time-indexed Factory activity for the Timeline comes from ProjectCentral `now/agents` handoffs (`recorded_at_unix_seconds`) joined by opaque run/session refs.
 - **"M1′–M4′" has no module-level referent in the physics engine code** — its referents there are the GPGPU point-field engine, the `FieldEngineAdapter` render/needsRender/command/capture/dispose lifecycle (the already-proven "one renderer per active surface" law), and the cymatic resonator. M′ embodiment integrates through those, not through invented engine modules.
 
+## Execution status (T0–T9 first pass, 2026-09-16)
+
+Executed the same day, on the local suite, per §19 (one integration owner, lane branches, contract pinned first). State of the world:
+
+- **T0 pinned.** QL-MEF branch `techne/t0-adapter`: `schemas/techne/ql-techne-reading-v1.schema.json` + `ql-techne-session-v1.schema.json`, conformance fixtures `fixtures/techne/` (representative subject, absent-facets, a real-refs development day), Rust contract types + `TechneAdapter` + `DisclosureSelection` seam in `crates/ql-adapters/src/techne.rs`, and 10 contract tests (`crates/ql-adapters/tests/techne_contract.rs`). O-I branch `techne/convergence`: the TS mirror + validators (`desktop/cradle/src/techne/contract.ts`), the source registry, the DisclosureSession store, surface kind `"techne"`.
+- **Lanes landed.** T1 ai-kit `techne/t1-facets` (`aikit.techne-facet/v1` declared extensions + Central temporal mapping); T2-transport Research Canvas `techne/t2-transport` (read-only `createTechneTransport` over techne field bundles); T8 O-I `packages/oi-design-system` techne.css + theme derivation + surface lifecycle; T2–T7 instrument lanes as six O-I worktree branches, merged through the integration owner into `techne/convergence` with the composition root wired (`techne/bootstrap.ts`, `techne/open.ts`, `workspace/store.ts` consumer).
+- **Gates.** `python3 scripts/techne-gates.py` proves G0–G2 and G4–G7 (G2 against LIVE Central ctrl data), reports G3's second real spatial case open (no local PlaceFacet producer yet), and hands G8 to the owner. Full O-I integrated suite: 170/170; build green.
+- **Open items.** Production QL `FocusedInstrumentSource` registration (today only the K9 dev-walk harness registers one) — the m1234 embodiment path needs it live; real T1 provider feeds replace conformance fixtures in the instruments; the tiled basemap and a second real spatial producer for G3; Research Canvas lane branches are not merged to its main line.
+
+
 ---
 
 ## 0. The decision this Wayfinder locks
