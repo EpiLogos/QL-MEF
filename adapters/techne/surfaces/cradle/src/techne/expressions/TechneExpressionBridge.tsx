@@ -31,9 +31,22 @@ import {summonExpression} from "../../expression/summon";
 import {requestFocusedInstrumentOpen} from "../../instrument/source";
 import {buildExpressionCue, expressionDocumentFromCue} from "./cue";
 import {embody} from "./embody";
+import {deepEntryInstrument, requestTechneCrossing, resolveCrossing, type TechneCrossingKind, type TechneCrossingResolution} from "../open";
+import {disclosureSession} from "../session";
+import {instrumentReading} from "../contract";
+import type {TechneInstrument} from "../contract";
 import type {TechneSurfaceProps} from "../registry";
 
 const ACTOR = "human:techne-expression";
+
+/** The deep instrument this reading's own Technē_i role operates — the
+ * conjugate partner of the Expression reading; falls back to the
+ * disclosure-derived entry instrument when no Technē role is situated. */
+function technepartnerInstrument(reading: NonNullable<TechneSurfaceProps["reading"]>): ReturnType<typeof deepEntryInstrument> {
+  const techne = reading.agency?.find((role) => role.role === "techne" && role.instrument);
+  if (techne?.instrument) return techne.instrument;
+  return deepEntryInstrument(reading.disclosure);
+}
 
 function selectorSummary(selector: unknown): string | null {
   if (!selector || typeof selector !== "object") return null;
@@ -48,7 +61,7 @@ function selectorSummary(selector: unknown): string | null {
   }
 }
 
-export function TechneExpressionBridge({selection, reading}: TechneSurfaceProps) {
+export function TechneExpressionBridge({session, selection, reading}: TechneSurfaceProps) {
   const kernel = useKernel();
   const [busy, setBusy] = useState(false);
   const [openError, setOpenError] = useState<string | null>(null);
@@ -74,6 +87,36 @@ export function TechneExpressionBridge({selection, reading}: TechneSurfaceProps)
       return {embodyable: false as const, reason: cause instanceof Error ? cause.message : String(cause)};
     }
   }, [reading, selection]);
+
+  // The cross-cut legs of the conjugate reading (issue #219): availability is
+  // resolved from the reading's own disclosure; a refused leg renders its
+  // recorded reason and never fakes a disabled-but-secretly-working surface.
+  const crossingLegs = useMemo(() => {
+    if (!reading || !session) return [] as Array<{kind: TechneCrossingKind; label: string; target?: TechneInstrument; resolution: TechneCrossingResolution}>;
+    const deepTarget = technepartnerInstrument(reading);
+    const legs: Array<{kind: TechneCrossingKind; label: string; target?: TechneInstrument}> = [
+      {kind: "open-deep-instrument", label: `Open deep instrument · ${deepTarget} (Technē)`, target: deepTarget},
+      {kind: "open-source-graph-depth", label: "Open source/graph depth (M0)"},
+      {kind: "open-agent-depth", label: "Open Agent/Epii depth"},
+    ];
+    if ((reading.expressions ?? []).some((binding) => !!binding.scene_ref)) {
+      legs.unshift({kind: "return-to-journey-position", label: "Return to Journey position (M3)"});
+    }
+    return legs.map((leg) => ({...leg, resolution: resolveCrossing(reading, session, leg.kind, leg.target)}));
+  }, [reading, session]);
+
+  const cross = (kind: TechneCrossingKind, target?: TechneInstrument) => {
+    if (!reading || !session || busy) return;
+    const resolution = resolveCrossing(reading, session, kind, target);
+    if (!resolution.available) return; // the reason is already on the surface
+    const crossing = resolution.crossing;
+    const next = crossing.crossesCut
+      ? disclosureSession.crossCut(crossing.target).session
+      : crossing.target !== session.instrument
+        ? disclosureSession.openInInstrument(crossing.target)
+        : session;
+    requestTechneCrossing({crossing, session: next});
+  };
 
   if (!reading || !selection) {
     return <p className="techne-absent">No selection is disclosed — the Expression bridge has no subject to instantiate over.</p>;
@@ -129,12 +172,14 @@ export function TechneExpressionBridge({selection, reading}: TechneSurfaceProps)
   };
 
   const cue = gate.cue;
+  const cut = session ? session.application_cut ?? instrumentReading(session.instrument) : null;
 
   return (
     <div style={{flex: 1, display: "flex", flexDirection: "column", gap: "var(--oi-space-3)", padding: "var(--oi-space-3)", background: "var(--oi-canvas-ground)", overflow: "auto"}}>
       <header>
         <p className="techne-eyebrow">Expressions · Technē bridge</p>
         <code className="techne-subject">{reading.subject.subject_ref}</code>
+        {cut && <span className="techne-standing" data-cut={cut}>{cut === "3:3-conjugate" ? "3:3 Expression — the conjugate reading" : "4:2 Technē — the deep reading"}</span>}
       </header>
 
       <section aria-label="Expression bindings">
@@ -168,6 +213,44 @@ export function TechneExpressionBridge({selection, reading}: TechneSurfaceProps)
       {note && <p role="status" className="techne-absent">{note}</p>}
       {embodiment && !embodiment.embodyable && <p role="status" className="techne-absent">M′ embodiment unavailable — {embodiment.reason}</p>}
       {embodyError && <p role="alert" className="techne-absent">{embodyError}</p>}
+
+      {session && crossingLegs.length > 0 && (
+        <section aria-label="Cross-cut readings and depths">
+          <p className="techne-eyebrow">Cross-cut · the other reading of this field</p>
+          <div style={{display: "flex", gap: "var(--oi-space-2)", flexWrap: "wrap", alignItems: "center"}}>
+            {crossingLegs.map((leg) => (
+              leg.resolution.available
+                ? <button key={leg.kind} type="button" className="techne-open" disabled={busy} onClick={() => cross(leg.kind, leg.target)}>{leg.label}</button>
+                : <span key={leg.kind} className="techne-unavailable" role="status" title={leg.resolution.reason}>{leg.label} unavailable — {leg.resolution.reason}</span>
+            ))}
+          </div>
+          <p className="techne-absent">
+            Crossing preserves subject, sources, occasion, Actions and Return target —
+            {session.occasion_ref ? <> occasion <code className="techne-subject">{session.occasion_ref}</code></> : " no occasion is in scope"}
+            {session.return_target_ref ? <> · return target <code className="techne-subject">{session.return_target_ref}</code></> : " · no return target is addressed"}
+          </p>
+        </section>
+      )}
+
+      {(reading.agency?.length ?? 0) > 0 && (
+        <section aria-label="Situated agencies">
+          <p className="techne-eyebrow">Situated Agencies · the role floor over existing machinery</p>
+          <ul className="techne-instruments">
+            {reading.agency!.map((role, index) => (
+              <li key={`${role.role}:${String(role.m_index)}:${String(index)}`} className="techne-instrument" data-role={role.role}>
+                <span className="techne-standing">{role.role} · M{role.m_index}{role.reading ? ` · ${role.reading}` : ""}</span>
+                <code className="techne-subject">{role.guardian_ref ?? "no guardian named"}</code>
+                <span className="techne-standing">
+                  {role.agent_session_ref ? `session ${role.agent_session_ref}` : "no agent session"}
+                  {role.instrument ? ` · operates ${role.instrument}` : ""}
+                  {role.authority ? ` · ${role.authority}` : ""}
+                </span>
+                {role.privacy && <span className="techne-standing" data-privacy="true">{role.privacy}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {embodiment?.embodyable && (
         <section aria-label="M-prime embodiment descriptor">

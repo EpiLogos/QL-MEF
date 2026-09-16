@@ -17,6 +17,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { techneSource, subscribeTechneSource, subscribeTechneSources } from "./adapter";
 import { techneSurface } from "./registry";
 import { disclosureSession } from "./session";
+import { deepEntryInstrument, requestTechneCrossing, resolveCrossing } from "./open";
+import { instrumentReading } from "./contract";
 import type { SurfaceBinding } from "../surface/types";
 import type { TechneInstrument, TechneReading } from "./contract";
 import "./techne.css";
@@ -68,6 +70,7 @@ export function TechneSurfaceHost({ binding }: { binding: SurfaceBinding }) {
       <header className="techne-head">
         <span className="techne-eyebrow">Technē · {instrument ?? "instrument"}</span>
         <code className="techne-subject" title="Subject ref">{subjectRef}</code>
+        {session && <span className="techne-standing" data-cut={session.application_cut ?? instrumentReading(session.instrument)}>{(session.application_cut ?? instrumentReading(session.instrument)) === "3:3-conjugate" ? "3:3 Expression" : "4:2 Technē"}</span>}
         {session?.selection.selection_standing
           ? <span className="techne-standing" data-standing={session.selection.selection_standing}>selection {session.selection.selection_standing}</span>
           : null}
@@ -97,6 +100,35 @@ export function TechneSurfaceHost({ binding }: { binding: SurfaceBinding }) {
                 {!!disclosure.degraded?.length && (
                   <ul className="techne-notes" aria-label="Degraded instruments">
                     {disclosure.degraded.map((note) => <li key={`${note.instrument}:${note.reason}`}><strong>{note.instrument} degraded</strong> — {note.reason}</li>)}
+                  </ul>
+                )}
+                {reading && !!disclosure.application_cuts?.length && (
+                  <ul className="techne-notes" aria-label="Application cuts">
+                    {disclosure.application_cuts.map((cutEntry) => {
+                      const currentCut = session.application_cut ?? instrumentReading(session.instrument);
+                      if (cutEntry.cut === currentCut) {
+                        return <li key={cutEntry.cut} data-cut={cutEntry.cut}><strong>{cutEntry.cut === "3:3-conjugate" ? "3:3 Expression" : "4:2 Technē"} — current reading</strong></li>;
+                      }
+                      const kind = cutEntry.cut === "3:3-conjugate" ? "open-as-expression" as const : "open-deep-instrument" as const;
+                      const target: TechneInstrument | undefined = cutEntry.cut === "3:3-conjugate" ? undefined : deepEntryInstrument(disclosure);
+                      const resolution = resolveCrossing(reading, session, kind, target);
+                      return (
+                        <li key={cutEntry.cut} data-cut={cutEntry.cut}>
+                          {resolution.available
+                            ? <button
+                                type="button"
+                                className="techne-open"
+                                onClick={() => {
+                                  const crossed = disclosureSession.crossCut(resolution.crossing.target).session;
+                                  requestTechneCrossing({ crossing: resolution.crossing, session: crossed });
+                                }}
+                              >
+                                {cutEntry.cut === "3:3-conjugate" ? "Enter the 3:3 Expression reading" : "Enter the 4:2 Technē reading"}
+                              </button>
+                            : <span className="techne-unavailable" title={resolution.reason}>{cutEntry.cut} unavailable — {resolution.reason}</span>}
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
                 {!!disclosure.suggestions?.length && (
