@@ -153,8 +153,8 @@ export function canvasAgencyState(args: {
       directionality: proposal.directionality,
       standing: proposal.standing ?? null,
       outside_disclosed_vocabulary: proposal.outside_disclosed_vocabulary,
-      action_ref: proposal.action_ref,
-      receipt_routed: proposal.receipt?.routed,
+      ...(proposal.action_ref !== undefined ? { action_ref: proposal.action_ref } : {}),
+      ...(proposal.receipt?.routed !== undefined ? { receipt_routed: proposal.receipt.routed } : {}),
     })),
     actions: structuredClone(reading.actions ?? []) as unknown as NativeActionRef[],
     warranted_ql:
