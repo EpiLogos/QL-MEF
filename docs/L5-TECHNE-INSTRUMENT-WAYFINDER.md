@@ -6,6 +6,22 @@
 
 ---
 
+## Local drift reconciliation (execution pass, 2026-09-16)
+
+Reconciled against the current local suite before implementation, per the standing rule above. Material findings; the plan text above stands unless explicitly corrected here.
+
+- **Suite locations.** Research Canvas lives locally at `~/Central/Work/projects/Antichrist Project` (its own Tauri app; `WorkspaceTransport` in `packages/desktop-api/src/index.ts` with three working implementations — Tauri IPC, browser bridge, and a read-only static-bundle transport that already proves surfaces run over an injected read model). The Expressions physics reference lives at `~/Documents/fluid-dynamic-typographic-point-cloud-engine` ("O:I — Expressions", vanilla TS + three.js); O-I already vendors it into `packages/oi-design-system/expressions-engine` via `scripts/vendor-expressions-engine.mjs`.
+- **Nothing named `TechneAdapter` / `ql.techne/v1` / `DisclosureSession` exists in any local repo yet.** T0 creates it. The nearest existing seams, which T0 extends rather than replaces: QL-MEF's `QlProvider` + `RegistryDisclosureProvider` + Q4 `ClientSubject` adapters (crates `ql-semantic`, `ql-adapters`); O-I's K9 `ql.focused-instrument/v1` `SourceQualifiedSelection` (`desktop/cradle/src/instrument/source.ts`) — the direct predecessor of the DisclosureSession selection, currently instrument-local and registered only in the dev-walk harness.
+- **O-I has no Timeline, Map/Street/Globe, Story or Palace surfaces.** These instruments are greenfield inside the Cradle; Research Canvas is their interaction source, reached through the compatibility-transport direction of §12 (a Techne transport implemented in the Research Canvas repo), not by copying substrate records. Research Canvas is privately licensed; same-owner porting stays inside its repo boundary as a transport implementation.
+- **O-I transport law is stricter than "language bindings may differ": the desktop reaches native owners only through subprocess CLIs and registered renderer-side source adapters — no crate, HTTP or WASM dependency on QL-MEF or AIKit.** The `TechneAdapter` in O-I is therefore a renderer-side composition over those seams (pattern: `FocusedInstrumentSource`), with native Actions crossing the existing `KernelOp {op:"invoke_action"}` authority seam.
+- **Warranted QL readings today are `QlReading` + `QlProvenance` + `ResultClass` (`canonical | deterministic | semantic-stochastic | research`) with evidence refs — there is no separate warrant object.** The `ql?` facet of `TechneReading` maps onto exactly that; its schema requires warrant provenance so unwarranted QL metadata cannot be expressed.
+- **AIKit's knowledge model has no temporal, spatial, or exact-selector facets yet.** Its sanctioned ride-along is versioned declared extensions on the open `extensions` maps (precedent `aikit.ql-stance/v1`), and `crates/aikit-adapters/src/central_temporal.rs` already reads Central DAY/NOW through `ctrl` while refusing to mint a parallel temporal model. T1 extends those; it does not add a second read model. Note: ai-kit's working tree carries unrelated uncommitted work in `aikit-cli` — facet work must stay in `aikit-core`/`aikit-adapters` modules that do not collide.
+- **Occurrence vs receipt time is implicit in Central:** author-declared `created_at`/`recorded_at` versus reconciler-declared `observed_at` on `central.source-change-horizon/v1` changes; there is no explicit `occurred_at` field. Timeline preserves the distinction by labelling which native field each temporal facet carries; it does not wait on a Central schema change.
+- **Factory Runs carry no wall-clock timestamps at all** — ordering is revision/cursor based. Time-indexed Factory activity for the Timeline comes from ProjectCentral `now/agents` handoffs (`recorded_at_unix_seconds`) joined by opaque run/session refs.
+- **"M1′–M4′" has no module-level referent in the physics engine code** — its referents there are the GPGPU point-field engine, the `FieldEngineAdapter` render/needsRender/command/capture/dispose lifecycle (the already-proven "one renderer per active surface" law), and the cymatic resonator. M′ embodiment integrates through those, not through invented engine modules.
+
+---
+
 ## 0. The decision this Wayfinder locks
 
 The five mature Research Canvas disclosure families and the Expression system are no longer to be developed as isolated product modes.
