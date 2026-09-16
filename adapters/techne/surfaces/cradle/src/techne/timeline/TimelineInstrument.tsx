@@ -93,6 +93,15 @@ const MODE_LABEL: Record<RelationProjectionMode, string> = {
 };
 const MODE_ORDER: readonly RelationProjectionMode[] = ["timeline", "relations", "cause", "echo", "opposition", "phase", "activity"];
 
+const MODES: readonly string[] = MODE_ORDER;
+
+export interface TimelineInstrumentProps extends TechneSurfaceProps {
+  /** Optional opening projection (e.g. a future deep link or an agency
+   * request); the mode bar stays in charge afterwards. Defaults to
+   * "timeline" — the strongest ordinary projection of the office. */
+  initialMode?: RelationProjectionMode;
+}
+
 function trunc(value: string, max: number): string {
   return value.length > max ? `${value.slice(0, max - 1)}…` : value;
 }
@@ -158,11 +167,13 @@ function edgeMark(edge: RelationEdge, view: TimeRange | null, plotX: number, plo
   return { x, width: Math.max(2, toX - x) };
 }
 
-export function TimelineInstrument({ session, selection, reading, capabilities }: TechneSurfaceProps) {
+export function TimelineInstrument({ session, selection, reading, capabilities, initialMode }: TimelineInstrumentProps) {
   // The active projection: LOCAL presentation state, never persisted into
   // the session or the reading. Timeline stays the default — the strongest
   // ordinary projection of the office.
-  const [mode, setMode] = useState<RelationProjectionMode>("timeline");
+  const [mode, setMode] = useState<RelationProjectionMode>(
+    initialMode && MODES.includes(initialMode) ? initialMode : "timeline",
+  );
 
   const field: RelationField | null = useMemo(() => (reading ? relationField(reading) : null), [reading]);
   const availability = useMemo(() => (reading ? projectionAvailability(reading) : []), [reading]);
@@ -559,6 +570,75 @@ export function TimelineInstrument({ session, selection, reading, capabilities }
       );
     };
 
+    const renderItem = (item: TimelineItem, laneY: number) => {
+      const selected = selection?.focus_refs?.includes(item.id) ?? false;
+      const outline = item.kind === "occurrence";
+      const receipt = item.kind === "receipt";
+      const fill = receipt ? "var(--oi-accent)" : outline ? "transparent" : "var(--oi-muted)";
+      const stroke = outline ? "var(--oi-foreground)" : "none";
+      const mark = itemMark(item, view!, plotX, plotW);
+      const title = itemTitle(item);
+      const common = {
+        className: "techne-timeline-item",
+        "data-selected": selected,
+        tabIndex: 0,
+        role: "button",
+        "aria-label": title.replace(/\n/g, "; "),
+        onClick: () => select(item),
+        onKeyDown: (event: ReactKeyboardEvent) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            select(item);
+          }
+        },
+      };
+      return (
+        <g key={item.id} {...common}>
+          <title>{title}</title>
+          {!item.positioned ? (
+            <rect
+              className="tl-unpositioned"
+              x={plotX + plotW + 10}
+              y={laneY + BAND_Y}
+              width={14}
+              height={BAND_H}
+              rx={3}
+            />
+          ) : mark && mark.width < 3 ? (
+            <circle
+              className="tl-shape"
+              cx={mark.x + mark.width / 2}
+              cy={laneY + BAND_Y + BAND_H / 2}
+              r={4.5}
+              fill={fill}
+              stroke={stroke}
+              strokeWidth={outline ? 1.6 : 0}
+            />
+          ) : (
+            mark && (
+              <rect
+                className="tl-shape"
+                x={mark.x}
+                y={laneY + BAND_Y}
+                width={mark.width}
+                height={BAND_H}
+                rx={4}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={outline ? 1.6 : 0}
+              />
+            )
+          )}
+          {item.kind === "day" && item.day_ref && mark && mark.width >= 150 && (
+            <text className="tl-band-label" x={mark.x + 6} y={laneY + BAND_Y + 13}>{trunc(item.day_ref, 34)}</text>
+          )}
+          {item.kind === "run" && item.run_ref && mark && mark.width >= 150 && (
+            <text className="tl-band-label" x={mark.x + 6} y={laneY + BAND_Y + 13}>{trunc(item.run_ref, 34)}</text>
+          )}
+        </g>
+      );
+    };
+
     return (
       <div className="techne-timeline-frame">
         <svg viewBox={`0 0 ${VIEW_W} ${svgH}`} role="group" aria-label={`Timeline over ${shownLanes.length} lanes${relationLaneShown ? " and the relation lane" : ""}`}>
@@ -594,93 +674,13 @@ export function TimelineInstrument({ session, selection, reading, capabilities }
                   {hasUnpositioned && lane.items.some((item) => !item.positioned) ? " · ◇ unpositioned" : ""}
                 </text>
                 {laneRef ? <title>{laneRef}</title> : null}
-                {!compressed && lane.items.map((item) => {
-                  const laneYItem = laneY;
-                  const selected = selection?.focus_refs?.includes(item.id) ?? false;
-                  const outline = item.kind === "occurrence";
-                  const receipt = item.kind === "receipt";
-                  const fill = receipt ? "var(--oi-accent)" : outline ? "transparent" : "var(--oi-muted)";
-                  const stroke = outline ? "var(--oi-foreground)" : "none";
-                  const mark = itemMark(item, view!, plotX, plotW);
-                  const title = itemTitle(item);
-                  const common = {
-                    className: "techne-timeline-item",
-                    "data-selected": selected,
-                    tabIndex: 0,
-                    role: "button",
-                    "aria-label": title.replace(/\n/g, "; "),
-                    onClick: () => select(item),
-                    onKeyDown: (event: ReactKeyboardEvent) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        select(item);
-                      }
-                    },
-                  };
-                  return (
-                    <g key={item.id} {...common}>
-                      <title>{title}</title>
-                      {!item.positioned ? (
-                        <rect
-                          className="tl-unpositioned"
-                          x={plotX + plotW + 10}
-                          y={laneYItem + BAND_Y}
-                          width={14}
-                          height={BAND_H}
-                          rx={3}
-                        />
-                      ) : mark && mark.width < 3 ? (
-                        <circle
-                          className="tl-shape"
-                          cx={mark.x + mark.width / 2}
-                          cy={laneYItem + BAND_Y + BAND_H / 2}
-                          r={4.5}
-                          fill={fill}
-                          stroke={stroke}
-                          strokeWidth={outline ? 1.6 : 0}
-                        />
-                      ) : (
-                        mark && (
-                          <rect
-                            className="tl-shape"
-                            x={mark.x}
-                            y={laneYItem + BAND_Y}
-                            width={mark.width}
-                            height={BAND_H}
-                            rx={4}
-                            fill={fill}
-                            stroke={stroke}
-                            strokeWidth={outline ? 1.6 : 0}
-                          />
-                        )
-                      )}
-                      {item.kind === "day" && item.day_ref && mark && mark.width >= 150 && (
-                        <text className="tl-band-label" x={mark.x + 6} y={laneYItem + BAND_Y + 13}>{trunc(item.day_ref, 34)}</text>
-                      )}
-                      {item.kind === "run" && item.run_ref && mark && mark.width >= 150 && (
-                        <text className="tl-band-label" x={mark.x + 6} y={laneYItem + BAND_Y + 13}>{trunc(item.run_ref, 34)}</text>
-                      )}
-                    </g>
-                  );
-                })}
+                {!compressed && lane.items.map((item) => renderItem(item, laneY))}
                 {compressed && (aggregation?.buckets ?? []).map((bucket) => {
                   const x0 = plotX + project(Math.max(bucket.fromMs, view!.fromMs), view!, plotW);
                   const x1 = bucket.toMs >= view!.toMs ? plotX + plotW : plotX + project(bucket.toMs, view!, plotW);
                   if (bucket.count === 1) {
                     const item = itemById.get(bucket.item_ids[0]);
-                    return item ? (
-                      <g key={item.id}>
-                        <title>{itemTitle(item)}</title>
-                        <rect
-                          className="tl-shape"
-                          x={x0 + 1}
-                          y={laneY + BAND_Y}
-                          width={Math.max(2, x1 - x0 - 2)}
-                          height={BAND_H}
-                          rx={4}
-                        />
-                      </g>
-                    ) : null;
+                    return item ? renderItem(item, laneY) : null;
                   }
                   return (
                     <g key={`bucket:${bucket.fromMs}`}>
