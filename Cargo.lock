@@ -571,6 +571,8 @@ dependencies = [
  "ql-mef",
  "ql-semantic",
  "ql-service",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
