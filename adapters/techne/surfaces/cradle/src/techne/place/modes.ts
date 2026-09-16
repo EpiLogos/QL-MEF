@@ -105,6 +105,8 @@ export function renderMapModel(facets: readonly TechnePlaceFacet[], options: Pla
 export interface GlobePoint {
   place_ref: string;
   precision: TechnePlaceFacet["precision"];
+  /** The subject's native place-relation type, verbatim (TB0). */
+  relation: string | null;
   marker: PlaceMarker;
   label: string | null;
   /** View coordinates on the disc; null when the place is on the far side. */
@@ -204,6 +206,7 @@ export function renderGlobeModel(facets: readonly TechnePlaceFacet[], options: P
     const view: GlobePoint = {
       place_ref: facet.place_ref,
       precision: facet.precision,
+      relation: facet.relation ?? null,
       marker: precisionMarker(facet.precision),
       label: nameInWindow(facet, window)?.name ?? null,
       position: projected?.visible ? { x: projected.x, y: projected.y } : null,
@@ -258,6 +261,10 @@ export interface StreetModel {
   standing_name: string | null;
   precision: TechnePlaceFacet["precision"] | null;
   precision_note: string | null;
+  /** The subject's native place-relation type, verbatim (TB0). */
+  relation: string | null;
+  /** The owner-supplied uncertainty, verbatim (TB0); never inferred. */
+  uncertainty: string | null;
   geometry: { kind: "point"; lon: number; lat: number } | { kind: "polygon"; vertices: number } | { kind: "none" };
   hierarchy: StreetHierarchyRow[];
   source_ref: string | null;
@@ -273,6 +280,7 @@ export function renderStreetModel(facets: readonly TechnePlaceFacet[], options: 
       mode: "street",
       place: null, place_ref: null, names: [], standing_name: null,
       precision: null, precision_note: null,
+      relation: null, uncertainty: null,
       geometry: { kind: "none" },
       hierarchy: [], source_ref: null, observer_frame: null,
       valid_from: null, valid_to: null,
@@ -312,6 +320,8 @@ export function renderStreetModel(facets: readonly TechnePlaceFacet[], options: 
     standing_name: nameInWindow(place, window)?.name ?? null,
     precision: place.precision,
     precision_note: precisionMarker(place.precision).note,
+    relation: place.relation ?? null,
+    uncertainty: place.uncertainty ?? null,
     geometry: detail,
     hierarchy,
     source_ref: place.source_ref ?? null,
