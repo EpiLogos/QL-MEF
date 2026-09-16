@@ -85,7 +85,10 @@ impl WikiShapeBindingView {
 
     pub fn shape(&self) -> Result<QlShape, WikiRefractionError> {
         resolve_shape_ref(&self.shape_ref).ok_or_else(|| {
-            invalid_shape(format!("unknown or non-canonical QL shape ref {}", self.shape_ref))
+            invalid_shape(format!(
+                "unknown or non-canonical QL shape ref {}",
+                self.shape_ref
+            ))
         })
     }
 
@@ -147,7 +150,9 @@ impl WikiShapeBindingView {
             }
             let disclosed = QlShape::Constellation(form.grain());
             let compression = QlShapeCompression::to_onefold(disclosed).ok_or_else(|| {
-                invalid_shape("one-fold compression requires an actual disclosed two- or three-fold basis")
+                invalid_shape(
+                    "one-fold compression requires an actual disclosed two- or three-fold basis",
+                )
             })?;
             if self.operator_ref.as_deref() != Some(compression.operator_ref)
                 || self.derivation_ref.as_deref() != Some(compression.derivation_ref().as_str())
@@ -181,12 +186,17 @@ impl WikiShapeBindingView {
             .iter()
             .map(|member| {
                 let position = ql_core::QlPosition::new(member.position).map_err(|_| {
-                    invalid_shape(format!("shape member position {} outside 0..5", member.position))
+                    invalid_shape(format!(
+                        "shape member position {} outside 0..5",
+                        member.position
+                    ))
                 })?;
                 let face = match member.face.as_str() {
                     "direct" => QlFace::Direct,
                     "conjugate" => QlFace::Conjugate,
-                    other => return Err(invalid_shape(format!("unknown shape member face {other}"))),
+                    other => {
+                        return Err(invalid_shape(format!("unknown shape member face {other}")));
+                    }
                 };
                 StructuralParticipation::new(&member.subject_ref, position, face)
                     .map_err(|error| invalid_shape(error.to_string()))
@@ -260,10 +270,9 @@ impl<'a> ShapeAwareWikiRefractionEngine<'a> {
                     reading.operator_refs.push(operator_ref.clone());
                 }
             }
-            reading.extensions.insert(
-                WIKI_SHAPE_BINDING_EXTENSION.into(),
-                extension_value.clone(),
-            );
+            reading
+                .extensions
+                .insert(WIKI_SHAPE_BINDING_EXTENSION.into(), extension_value.clone());
         }
         Ok(response)
     }
