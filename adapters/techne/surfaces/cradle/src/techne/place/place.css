@@ -222,3 +222,208 @@
   font-size: var(--oi-type-xs, 11px);
   color: var(--oi-muted);
 }
+
+/* --- M4′ World / Places (issue #217) ------------------------------------- */
+
+.techne-place-office {
+  margin: 0 0 var(--oi-space-2, 8px);
+  font-size: var(--oi-type-xs, 11px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--oi-muted);
+}
+
+/* The relation legend: the hard geography distinctions stay visibly
+   distinct, verbatim; the mythic class never reads as factual. */
+
+.techne-place-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--oi-space-2, 8px);
+  margin: 0 0 var(--oi-space-2, 8px);
+}
+
+.techne-place-relation-chip {
+  font-family: var(--oi-font-mono);
+  font-size: 10px;
+  padding: 1px 6px;
+  border: 1px solid var(--oi-border, currentColor);
+  border-radius: 8px;
+  color: var(--oi-foreground);
+}
+
+.techne-place-relation-chip[data-standing="mythic"] {
+  border-style: dashed;
+  color: var(--oi-techne-accent);
+}
+
+.techne-place-relation-chip[data-standing="owner-vocabulary"] {
+  font-style: italic;
+}
+
+.techne-place-relation-chip[data-empty="true"] {
+  opacity: 0.45;
+}
+
+/* Markers carry their standing class; mythic markers stay visibly apart. */
+
+.techne-place-marker[data-standing="mythic"] .techne-place-label {
+  font-style: italic;
+}
+
+/* The movement overlay: a presentation ordering, drawn dashed — never a
+   minted route identity. */
+
+.techne-place-route {
+  fill: none;
+  stroke: var(--oi-techne-accent);
+  stroke-dasharray: 4 4;
+  stroke-width: 1.5;
+  opacity: 0.8;
+}
+
+.techne-place-overlay-toggle {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.techne-place-route-note {
+  margin: var(--oi-space-2, 8px) 0 0;
+  font-size: var(--oi-type-xs, 11px);
+  color: var(--oi-muted);
+}
+
+/* The world panel: reference-frame ladder, carried occasion, provider-bound
+   depth, privacy constraints, routed Actions and the 3:3 crossing. */
+
+.techne-place-world {
+  margin-top: var(--oi-space-2, 8px);
+  padding: var(--oi-space-2, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--oi-space-2, 8px);
+}
+
+.techne-place-ladder {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.techne-place-rung {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--oi-space-2, 8px);
+  padding-left: 12px;
+  position: relative;
+}
+
+.techne-place-rung::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  color: var(--oi-muted);
+}
+
+.techne-place-rung[data-availability="disclosed"]::before {
+  content: "◉";
+}
+
+.techne-place-rung[data-availability="absent-facet"]::before,
+.techne-place-rung[data-availability="producer-unavailable"]::before {
+  content: "◌";
+}
+
+.techne-place-rung-label {
+  min-width: 22ch;
+  color: var(--oi-foreground);
+}
+
+.techne-place-rung[data-availability="producer-unavailable"] .techne-place-rung-label,
+.techne-place-rung[data-availability="absent-facet"] .techne-place-rung-label {
+  color: var(--oi-muted);
+}
+
+.techne-place-rung-detail {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.techne-place-rung-reason {
+  font-size: var(--oi-type-xs, 11px);
+  color: var(--oi-muted);
+}
+
+.techne-place-world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--oi-space-2, 8px);
+}
+
+.techne-place-world-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.techne-place-depths {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.techne-place-depth-name {
+  font-family: var(--oi-font-mono);
+  font-size: 10px;
+  color: var(--oi-foreground);
+}
+
+.techne-place-depth[data-availability="producer-unavailable"] .techne-place-depth-name {
+  color: var(--oi-muted);
+}
+
+.techne-place-depth-reason,
+.techne-place-depth-detail {
+  margin: 0;
+  font-size: 10px;
+  color: var(--oi-muted);
+  overflow-wrap: anywhere;
+}
+
+.techne-place-privacy {
+  margin: 0;
+  font-size: 10px;
+  color: var(--oi-techne-accent);
+}
+
+.techne-place-receipt {
+  margin: 0;
+  font-size: var(--oi-type-xs, 11px);
+  overflow-wrap: anywhere;
+}
+
+.techne-place-receipt[data-routed="false"] {
+  color: var(--oi-techne-accent);
+}
+
+/* Relation and uncertainty rows in the detail view; lapsed hierarchy rows
+   (historical polity vs current geography) read as muted with their note. */
+
+.techne-place-rows dd[data-standing="mythic"] {
+  color: var(--oi-techne-accent);
+  font-style: italic;
+}
+
+.techne-place-name-row[data-standing="lapsed"] {
+  opacity: 0.65;
+}

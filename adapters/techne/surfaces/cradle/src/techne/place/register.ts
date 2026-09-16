@@ -13,7 +13,7 @@
  * Erasable TypeScript: loadable by the renderer, Vite, and `node --test`.
  */
 import { registerTechneSurface } from "../registry";
-import type { DisclosureSelection, DisclosureSession, TechneDisclosureEntry, TechneReading } from "../contract";
+import type { DisclosureSelection, DisclosureSession, TechneDisclosureEntry, TechnePlaceFacet, TechneReading } from "../contract";
 import { PlaceInstrument } from "./PlaceInstrument";
 
 /** Mount the Place surface (map | globe | street). Returns the unregister
@@ -35,6 +35,28 @@ export function selectionForPlace(session: DisclosureSession, placeRef: string):
     instrument: "place",
     focus_refs: [placeRef],
   };
+}
+
+/**
+ * The place the session's shared selection focuses, when it names one this
+ * reading discloses: the selection's focus refs first, then the session's
+ * spatial focus. This is the reopen seam for cross-instrument focus (e.g. a
+ * Journey Scene frame binding a real Place ref — M3′↔M4′, #217 §7): another
+ * instrument sets the shared selection, and this aperture honours it instead
+ * of substituting its own. Never minted: the ref must match a disclosed
+ * facet, else null.
+ */
+export function placeFocusFromSession(
+  session: DisclosureSession | null,
+  facets: readonly TechnePlaceFacet[],
+): string | null {
+  if (!session) return null;
+  const candidates = [...(session.selection.focus_refs ?? [])];
+  if (session.spatial_focus_ref) candidates.push(session.spatial_focus_ref);
+  for (const ref of candidates) {
+    if (facets.some((facet) => facet.place_ref === ref)) return ref;
+  }
+  return null;
 }
 
 /**

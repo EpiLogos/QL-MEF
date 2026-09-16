@@ -94,6 +94,9 @@ export interface ProjectedPlace {
   /** The caller's own facet object, carried verbatim — never cloned. */
   facet: TechnePlaceFacet;
   precision: TechnePlacePrecision;
+  /** The subject's native place-relation type, verbatim (TB0); null when
+   * undisclosed. Never relabelled, never inferred. */
+  relation: string | null;
   marker: PlaceMarker;
   /** point | polygon | none (no or malformed geometry, or unlocated). */
   shape: "point" | "polygon" | "none";
@@ -225,6 +228,7 @@ export function projectPlaces(facets: readonly TechnePlaceFacet[], options: Proj
       place_ref: facet.place_ref,
       facet,
       precision: facet.precision,
+      relation: facet.relation ?? null,
       marker,
       shape,
       position,
