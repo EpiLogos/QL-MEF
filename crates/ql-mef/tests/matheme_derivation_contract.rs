@@ -46,7 +46,7 @@ fn contract_meta_pins_the_zero_layer_to_the_kernel_contract_and_v3_source() {
         value(CONTRACT, "meta", "contract-version"),
         ql_mef::MATHEME_DERIVATION_CONTRACT_VERSION
     );
-    assert_eq!(ql_mef::MATHEME_DERIVATION_CONTRACT_VERSION, "1.1.0");
+    assert_eq!(ql_mef::MATHEME_DERIVATION_CONTRACT_VERSION, "1.2.0");
     assert_eq!(value(CONTRACT, "meta", "layer"), "0");
     assert_eq!(
         value(CONTRACT, "meta", "kernel-contract"),
@@ -189,7 +189,7 @@ fn eq2_totality_decomposes_into_both_registers_of_the_sixfold() {
 
     let decomposition = row(CONTRACT, "eq2", "decomposition");
     assert_eq!(decomposition[2], "100");
-    assert_eq!(decomposition[3], "2^6+6^2");
+    assert_eq!(decomposition[3], "2^6+6^2=4^3+6^2");
 
     let binary = row(CONTRACT, "eq2", "binary-register");
     assert_eq!(binary[2], "2^6");
