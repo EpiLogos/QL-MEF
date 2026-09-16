@@ -75,12 +75,12 @@ pub use matheme::{
     DEEP_SOURCE_REVISION, DOUBLE_BEAT_TURNS, FIBRE_COUNT, FIBRE_SOURCE_CARDINALITY,
     FIBRE_TARGET_CARDINALITY, MATHEME_DERIVATION_CONTRACT_VERSION, MATHEME_DERIVATION_LAYER,
     MathemeDerivation, MathemeTopLine, OCTAVE_POINT, RECOGNITION_DEGREES, RETAINED_ONE, SHADOW_CAP,
-    TOP_LINE, beat, binary_register, cardinality_sum, collision_addresses, decomposed_totality,
-    derive_matheme, door_ascent, door_descent, double_beat, epogdoon, epogdoon_compression,
-    exact_closures, fibre_source_span, fibre_target_span, field_cardinality, fold_sources,
-    is_evolutionary_gap, octave_through_door, one_circuit, position_hexad, ring_octave,
-    self_register, shadow, source_roundtrip_nonclosures, standing_whole, totality_ratio,
-    twelve_ring,
+    TOP_LINE, beat, binary_register, cardinality_sum, collision_addresses, decadic_projection,
+    decomposed_totality, derive_matheme, door_ascent, door_descent, double_beat, epogdoon,
+    epogdoon_compression, exact_closures, fibre_source_span, fibre_target_span, field_cardinality,
+    fold_sources, is_evolutionary_gap, octave_through_door, one_circuit, position_hexad,
+    quaternary_cubic_register, ring_octave, self_register, shadow, source_roundtrip_nonclosures,
+    standing_whole, totality_ratio, twelve_ring,
 };
 pub use music::{
     ALL_PITCH_CLASSES, AUTHORED_INTERVAL_REFERENCES, AuthoredIntervalReference, CANONICAL_RATIOS,
