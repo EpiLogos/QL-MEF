@@ -99,12 +99,26 @@ export function deepEntryInstrument(disclosure: TechneDisclosure | null | undefi
 /** The cut-level disclosure entry for one cut, and the per-instrument entry
  * for `instrument`. Both govern: a cut is enterable only when the reading's
  * own disclosure says so — an unavailable leg carries its recorded reason,
- * never a fake disabled-but-secretly-working surface. */
-function resolveCutLeg(reading: TechneReading, session: DisclosureSession, kind: TechneCrossingKind, target: TechneInstrument, actionRef: string | null, sceneFocus: string | null): TechneCrossingResolution {
+ * never a fake disabled-but-secretly-working surface. `allowSameCutHop`
+ * marks the depth/Return legs: when the session already occupies the
+ * target's cut, the leg degrades honestly to a same-cut navigation hop
+ * (gated on the instrument entry) instead of a crossing refusal — M0 is
+ * both the 4:2 ground and a summonable depth of the 3:3 reading. */
+function resolveCutLeg(reading: TechneReading, session: DisclosureSession, kind: TechneCrossingKind, target: TechneInstrument, actionRef: string | null, sceneFocus: string | null, allowSameCutHop = false): TechneCrossingResolution {
   const cut = instrumentReading(target);
   const current_cut = session.application_cut ?? instrumentReading(session.instrument);
   if (cut === current_cut) {
-    return { available: false, reason: `the session already occupies the ${cut} reading (${session.instrument}) — crossing requires the other cut` };
+    if (!allowSameCutHop) {
+      return { available: false, reason: `the session already occupies the ${cut} reading (${session.instrument}) — crossing requires the other cut` };
+    }
+    const hop = instrumentEntry(reading.disclosure, target);
+    if (hop && !hop.available) {
+      return { available: false, reason: hop.reason ?? `${target} is unavailable for this subject` };
+    }
+    return {
+      available: true,
+      crossing: { kind, target, cut, crossesCut: false, action_ref: actionRef, scene_focus_ref: sceneFocus },
+    };
   }
   const cutEntry: ApplicationCutDisclosure | undefined = disclosedCut(reading.disclosure, cut);
   if (cutEntry && !cutEntry.available) {
@@ -128,6 +142,9 @@ function resolveCutLeg(reading: TechneReading, session: DisclosureSession, kind:
  * the session as-is) and emits it with `requestTechneCrossing`.
  */
 export function resolveCrossing(reading: TechneReading, session: DisclosureSession, kind: TechneCrossingKind, targetInstrument?: TechneInstrument): TechneCrossingResolution {
+  if (session.subject_ref !== reading.subject.subject_ref) {
+    return { available: false, reason: `the session names ${session.subject_ref}, the reading discloses ${reading.subject.subject_ref} — one subject, one crossing` };
+  }
   switch (kind) {
     case "open-as-expression":
       return resolveCutLeg(reading, session, kind, "expressions", disclosedActionRef(reading, "oi.expression.open"), null);
@@ -139,9 +156,9 @@ export function resolveCrossing(reading: TechneReading, session: DisclosureSessi
       return resolveCutLeg(reading, session, kind, target, null, null);
     }
     case "open-source-graph-depth":
-      return resolveCutLeg(reading, session, kind, "project", null, null);
+      return resolveCutLeg(reading, session, kind, "project", null, null, true);
     case "return-to-project-ground":
-      return resolveCutLeg(reading, session, kind, "project", null, null);
+      return resolveCutLeg(reading, session, kind, "project", null, null, true);
     case "return-to-journey-position": {
       const sceneFocus = reading.expressions?.find((binding) => !!binding.scene_ref)?.scene_ref ?? null;
       return resolveCutLeg(reading, session, kind, "journey", null, sceneFocus);

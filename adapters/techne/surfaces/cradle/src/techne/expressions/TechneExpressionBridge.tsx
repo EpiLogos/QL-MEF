@@ -109,10 +109,13 @@ export function TechneExpressionBridge({session, selection, reading}: TechneSurf
     if (!reading || !session || busy) return;
     const resolution = resolveCrossing(reading, session, kind, target);
     if (!resolution.available) return; // the reason is already on the surface
-    const next = resolution.crossing.crossesCut
-      ? disclosureSession.crossCut(resolution.crossing.target).session
-      : session;
-    requestTechneCrossing({crossing: resolution.crossing, session: next});
+    const crossing = resolution.crossing;
+    const next = crossing.crossesCut
+      ? disclosureSession.crossCut(crossing.target).session
+      : crossing.target !== session.instrument
+        ? disclosureSession.openInInstrument(crossing.target)
+        : session;
+    requestTechneCrossing({crossing, session: next});
   };
 
   if (!reading || !selection) {
