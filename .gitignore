@@ -19,3 +19,6 @@ __pycache__/
 
 # Native C++ local products; reproducible evidence belongs in target/.
 /cpp/build/
+
+# JS refinement homes (L5 Technē surfaces)
+node_modules/
