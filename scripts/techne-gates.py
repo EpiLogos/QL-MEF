@@ -286,7 +286,7 @@ def main() -> int:
                    f"warrant discipline is contract-pinned (result_class '{warrant['result_class']}', evidence "
                    f"{len(warrant['evidence_refs'])}); embodiment gate: O-I expressions suite "
                    "(techne-expressions-*.test.mjs) proves the warranted subject embodies and the unwarranted "
-                   "one reports 'no warranted lens binding'. The full production QL FocusedInstrumentSource "
+                   "one is refused with the conjugate disclosure's own reason. The production QL FocusedInstrumentSource "
                    "registration stays with the K9 harness path (open item).")
         else:
             record("G7", "FAIL", f"ql service not available: {service}")
