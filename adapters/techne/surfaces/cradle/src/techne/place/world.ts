@@ -28,6 +28,7 @@
  * Erasable TypeScript: loadable by the renderer, Vite, and `node --test`.
  */
 import type {
+  ApplicationCutDisclosure,
   NativeActionRef,
   TechneReadingKind,
   TechneInstrument,
@@ -404,7 +405,7 @@ export interface WorldState {
   /** Privacy constraints, verbatim from the reading's agency terms. */
   privacy_constraints: string[];
   /** The disclosed application cuts, verbatim; null when undisclosed. */
-  application_cuts: TechneReadingKind[] | null;
+  application_cuts: ApplicationCutDisclosure[] | null;
   /** Available cross-open instruments from the reading's own disclosure. */
   cross_open: TechneInstrument[];
   /** The reading's disclosed native Actions, verbatim (routing only). */
