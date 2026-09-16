@@ -1,6 +1,6 @@
 use ql_mef::{
-    MATHEME_DERIVATION_CONTRACT_VERSION, binary_register, decadic_projection,
-    decomposed_totality, quaternary_cubic_register, self_register,
+    MATHEME_DERIVATION_CONTRACT_VERSION, binary_register, decadic_projection, decomposed_totality,
+    quaternary_cubic_register, self_register,
 };
 
 #[test]
