@@ -23,7 +23,7 @@
 import type {
   DisclosureSelection,
   NativeActionRef,
-  TechneAgencyRole,
+  AgencyRole,
   TechneReading,
 } from "../contract.ts";
 import {
@@ -73,7 +73,7 @@ export interface RelationFieldState {
   derivation: { derived_ids: string[]; unresolved_temporal_refs: string[] };
   disclosed_actions: NativeActionRef[];
   /** The reading's situated-Agency role bindings, verbatim (role floor). */
-  agency: TechneAgencyRole[];
+  agency: AgencyRole[];
 }
 
 /** The structured M2′ state for the situated agency, over one reading.
