@@ -31,7 +31,11 @@ fn member(reference: &str, position: u8) -> StructuralParticipation {
 #[test]
 fn compressed_threefold_presents_as_onefold_and_reopens_through_member_focus() {
     let registry = VakRegistry::from_authoritative_source().unwrap();
-    let members = vec![member("wiki:a", 1), member("wiki:b", 2), member("wiki:c", 3)];
+    let members = vec![
+        member("wiki:a", 1),
+        member("wiki:b", 2),
+        member("wiki:c", 3),
+    ];
     let form = StructuralConstellation::new("wiki:whole", members.clone(), Vec::new()).unwrap();
     assert_eq!(form.grain(), ConstellationGrain::ThreeFold123);
 
@@ -40,7 +44,10 @@ fn compressed_threefold_presents_as_onefold_and_reopens_through_member_focus() {
         "wiki:subject",
         compression.presented.shape_ref(),
         "wiki:whole",
-        members.iter().map(|member| member.subject_ref.clone()).collect(),
+        members
+            .iter()
+            .map(|member| member.subject_ref.clone())
+            .collect(),
         members,
         Vec::new(),
         Some(compression.derivation_ref()),
