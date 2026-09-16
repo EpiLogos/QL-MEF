@@ -10,6 +10,7 @@ mod core;
 mod error;
 mod factory;
 mod runtime;
+mod techne;
 
 pub use aikit::AiKitAdapter;
 pub use attachment::{AdapterResult, QlAttachment, QlMode};
@@ -18,6 +19,16 @@ pub use error::AdapterError;
 pub use factory::FactoryAdapter;
 pub use runtime::{
     RuntimeEnvelope, RuntimeRefractionAdapter, RuntimeSelection, RuntimeStatus, RuntimeSubject,
+};
+pub use techne::{
+    DegradedDisclosure, DisclosureNavigation, DisclosureSelection, DisclosureSession,
+    DisclosureSuggestion, DisclosureTimeWindow, ExpressionBinding, InstrumentDisclosure,
+    NativeActionRef, PlaceFacet, PlaceGeometry, PlaceGeometryType, PlaceHierarchyMember,
+    PlaceIdentity, PlaceName, PlacePrecision, QlResultClass, QlWarrant, ReadingSnapshot,
+    SourceProvenance, SourceSelector, SubjectReading, TECHNE_CONTRACT, TechneActionRoute,
+    TechneActionRouteReceipt, TechneAdapter, TechneDisclosure, TechneInstrument, TechneReading,
+    TechneReadingKind, TechneSubject, TechneWhole, TemporalFacet, TemporalInterval, TemporalKind,
+    TemporalPrecision, WarrantedQlReading, WholeRelation,
 };
 
 pub(crate) use core::AdapterCore;

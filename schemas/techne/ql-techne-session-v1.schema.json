@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ql.techne/session/v1",
+  "title": "QL-MEF L5 Techne Disclosure Session seam (ql.techne/v1)",
+  "description": "The shared cross-instrument selection seam: one selected subject, one source-qualified selection, one reading basis, one agent session — carried across Canvas, Timeline, Place, Story, Palace, Expressions and M1′–M4′. This is ephemeral disclosure state over the adapter, not a canonical domain object. View/layout/camera/lane state is presentation state and is deliberately inexpressible here. Canonical contract text: docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md §3–§5, §17.",
+  "$defs": {
+    "OpaqueRef": {"type": "string", "minLength": 1},
+    "NullableRef": {"type": ["string", "null"], "minLength": 1},
+    "ContractTag": {"type": "string", "const": "ql.techne/v1"},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"]},
+    "DisclosureSelection": {
+      "type": "object",
+      "description": "Source-qualified selection co-referenced by every instrument. Extends the K9 SourceQualifiedSelection discipline to the whole constellation.",
+      "required": ["selection_ref", "subject_ref", "reading_ref", "instrument"],
+      "properties": {
+        "selection_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "coordinate_ref": {"$ref": "#/$defs/NullableRef"},
+        "source_ref": {"$ref": "#/$defs/NullableRef"},
+        "source_revision": {"type": ["string", "null"]},
+        "disclosure_ref": {"$ref": "#/$defs/NullableRef"},
+        "focus_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "reading_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "snapshot_revision": {"type": ["string", "null"]},
+        "instrument": {"$ref": "#/$defs/Instrument"},
+        "agent_session_ref": {"type": ["string", "null"], "description": "Ref into the owner's real agent-session grammar; never a desktop-owned session record."},
+        "selection_standing": {"type": ["string", "null"], "description": "current | field-advanced | stale, following the K9 discipline."}
+      },
+      "additionalProperties": false
+    },
+    "DisclosureSession": {
+      "type": "object",
+      "required": ["contract", "session_ref", "subject_ref", "selection", "instrument"],
+      "properties": {
+        "contract": {"$ref": "#/$defs/ContractTag"},
+        "session_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "selection": {"$ref": "#/$defs/DisclosureSelection"},
+        "instrument": {"$ref": "#/$defs/Instrument"},
+        "reading_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "time_window": {
+          "type": "object",
+          "properties": {
+            "from": {"type": ["string", "null"], "format": "date-time"},
+            "to": {"type": ["string", "null"], "format": "date-time"}
+          },
+          "additionalProperties": false
+        },
+        "spatial_focus_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "expression_focus_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "navigation": {
+          "type": "array",
+          "description": "Cross-instrument transition history (§4): each hop preserves subject, source basis and selection unless the person deliberately refreshed.",
+          "items": {
+            "type": "object",
+            "required": ["from_instrument", "to_instrument", "selection_ref"],
+            "properties": {
+              "from_instrument": {"$ref": "#/$defs/Instrument"},
+              "to_instrument": {"$ref": "#/$defs/Instrument"},
+              "selection_ref": {"$ref": "#/$defs/OpaqueRef"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ActionRoute": {
+      "type": "object",
+      "description": "A mutation request entering the adapter. The adapter resolves the native owner and returns a route; it never executes. Execution crosses the native authority seam (desktop KernelOp invoke_action / owner CLI).",
+      "required": ["action_ref", "subject_ref"],
+      "properties": {
+        "action_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "selection_ref": {"$ref": "#/$defs/NullableRef"},
+        "input": {}
+      },
+      "additionalProperties": false
+    },
+    "ActionRouteReceipt": {
+      "type": "object",
+      "required": ["action_ref", "native_owner", "routed"],
+      "properties": {
+        "action_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "native_owner": {"type": "string", "minLength": 1},
+        "routed": {"type": "boolean"},
+        "reason": {"type": ["string", "null"]},
+        "authority": {"type": ["string", "null"]},
+        "expected_effects": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "oneOf": [
+    {"$ref": "#/$defs/DisclosureSession"},
+    {"$ref": "#/$defs/ActionRoute"},
+    {"$ref": "#/$defs/ActionRouteReceipt"}
+  ]
+}

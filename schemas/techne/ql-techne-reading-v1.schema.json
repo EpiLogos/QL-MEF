@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ql.techne/reading/v1",
+  "title": "QL-MEF L5 Techne Reading (ql.techne/v1)",
+  "description": "Language-neutral Technē reading over native owners. The reading composes attributable facts; it never rewrites native identity, never fabricates QL/temporal/spatial metadata, and treats absent facets as data. Canonical contract text: docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md §2.",
+  "$defs": {
+    "OpaqueRef": {"type": "string", "minLength": 1, "description": "Native-owner ref carried verbatim. Adapters must not translate, re-key or shorten it."},
+    "NullableRef": {"type": ["string", "null"], "minLength": 1, "description": "Optional native-owner ref: present, absent, or explicitly null — never rewritten."},
+    "ContractTag": {"type": "string", "const": "ql.techne/v1"},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"], "description": "Amended 2026-09-16 (owner-ratified): the six 4:2 deep instruments bind M0-prime through M5-prime (project, canvas, timeline, journey, place, palace); expressions is the conjugate 3:3 Expression reading, not a deep instrument."},
+    "TemporalKind": {"type": "string", "enum": ["occurrence", "receipt", "valid", "source-created", "source-modified", "day", "now", "session", "run", "generation", "presentation"]},
+    "TemporalPrecision": {"type": "string", "enum": ["millennium", "century", "decade", "year", "month", "day", "hour", "minute", "second", "subsecond"]},
+    "PlacePrecision": {"type": "string", "enum": ["exact", "approximate", "region", "unlocated"]},
+    "LensRef": {"type": "string", "pattern": "^mef:lens:L[0-5]'?@1$"},
+    "SublensRef": {"type": "string", "pattern": "^mef:sublens:L[0-5]'?\\.[0-5]@1$"},
+    "NullableLensRef": {"oneOf": [{"$ref": "#/$defs/LensRef"}, {"type": "null"}]},
+    "NullableSublensRef": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]},
+    "QlResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
+    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"], "description": "Which reading of the one M-prime field this aperture carries. Crossing changes the mode of disclosure and available operations, never the subject."},
+    "ReadingSnapshot": {
+      "type": "object",
+      "description": "Shared snapshot/revision basis for one coherent cross-view reading.",
+      "properties": {
+        "revision": {"type": ["string", "null"]},
+        "basis_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "Subject": {
+      "type": "object",
+      "required": ["subject_ref", "native_owner"],
+      "properties": {
+        "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "native_owner": {"type": "string", "minLength": 1},
+        "native_revision": {"type": ["string", "null"]},
+        "readings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["ref"],
+            "properties": {
+              "ref": {"$ref": "#/$defs/OpaqueRef"},
+              "revision": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "kind": {"type": ["string", "null"]},
+        "standing": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "Whole": {
+      "type": "object",
+      "description": "Bounded local whole; relations keep provider vocabulary and origin without relabelling.",
+      "required": ["whole_ref"],
+      "properties": {
+        "whole_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "member_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["relation", "from_ref", "to_ref"],
+            "properties": {
+              "relation": {"type": "string", "minLength": 1, "description": "Provider-relation vocabulary, preserved verbatim."},
+              "from_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "to_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "origin": {"type": ["string", "null"]},
+              "origin_ref": {"$ref": "#/$defs/NullableRef"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "focus_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}}
+      },
+      "additionalProperties": false
+    },
+    "QlWarrant": {
+      "type": "object",
+      "description": "A QL facet exists only when warranted; the warrant is the existing QlProvenance + ResultClass + evidence discipline, not a new authority.",
+      "required": ["result_class", "evidence_refs", "provenance_ref"],
+      "properties": {
+        "result_class": {"$ref": "#/$defs/QlResultClass"},
+        "evidence_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "provenance_ref": {"$ref": "#/$defs/OpaqueRef"}
+      },
+      "additionalProperties": false
+    },
+    "WarrantedQlReading": {
+      "type": "object",
+      "required": ["warrant"],
+      "properties": {
+        "address": {"$ref": "#/$defs/NullableRef"},
+        "shape_ref": {"$ref": "#/$defs/NullableRef"},
+        "constellation_ref": {"$ref": "#/$defs/NullableRef"},
+        "lens_ref": {"$ref": "#/$defs/NullableLensRef"},
+        "sublens_ref": {"$ref": "#/$defs/NullableSublensRef"},
+        "context_frame_ref": {"$ref": "#/$defs/NullableRef"},
+        "refraction_summary": {"type": ["string", "null"]},
+        "harmonic_reading": {"type": ["string", "null"]},
+        "geometric_reading": {"type": ["string", "null"]},
+        "vak_source_ref": {"$ref": "#/$defs/NullableRef"},
+        "derivation_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "warrant": {"$ref": "#/$defs/QlWarrant"}
+      },
+      "additionalProperties": false
+    },
+    "TemporalFacet": {
+      "type": "object",
+      "description": "One labelled native time fact. Occurrence, receipt, validity and continuity stay distinct; consumers never collapse them to created_at.",
+      "required": ["kind"],
+      "anyOf": [
+        {"required": ["instant"]},
+        {"required": ["interval"]},
+        {"required": ["day_ref"]},
+        {"required": ["now_ref"]},
+        {"required": ["session_ref"]},
+        {"required": ["run_ref"]}
+      ],
+      "properties": {
+        "facet_ref": {"$ref": "#/$defs/NullableRef"},
+        "kind": {"$ref": "#/$defs/TemporalKind"},
+        "instant": {"type": "string", "format": "date-time"},
+        "interval": {
+          "type": "object",
+          "properties": {
+            "from": {"type": ["string", "null"], "format": "date-time"},
+            "to": {"type": ["string", "null"], "format": "date-time"},
+            "from_precision": {"$ref": "#/$defs/TemporalPrecision"},
+            "to_precision": {"$ref": "#/$defs/TemporalPrecision"}
+          },
+          "additionalProperties": false
+        },
+        "precision": {"$ref": "#/$defs/TemporalPrecision"},
+        "day_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "now_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "session_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "run_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "timezone_policy_ref": {"$ref": "#/$defs/NullableRef"},
+        "uncertainty": {"type": ["string", "null"]},
+        "source_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "PlaceFacet": {
+      "type": "object",
+      "description": "Temporally valid Place identity independent of coordinates; precision and hierarchy are inspectable, uncertainty is data.",
+      "required": ["place_ref", "precision"],
+      "properties": {
+        "place_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "identity": {
+          "type": "object",
+          "properties": {
+            "names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string", "minLength": 1},
+                  "valid_from": {"type": ["string", "null"]},
+                  "valid_to": {"type": ["string", "null"]}
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "geometry": {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": {"type": "string", "enum": ["point", "polygon"]},
+            "coordinates": {}
+          },
+          "additionalProperties": false
+        },
+        "precision": {"$ref": "#/$defs/PlacePrecision"},
+        "hierarchy": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["place_ref", "relation"],
+            "properties": {
+              "place_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "relation": {"type": "string", "minLength": 1},
+              "valid_from": {"type": ["string", "null"]},
+              "valid_to": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "valid_from": {"type": ["string", "null"]},
+        "valid_to": {"type": ["string", "null"]},
+        "observer_frame": {"$ref": "#/$defs/NullableRef"},
+        "source_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "SourceProvenance": {
+      "type": "object",
+      "description": "Exact source selector where the native producer supplies one; spans, ranges and regions return to the same source unit from every instrument.",
+      "required": ["source_ref", "native_owner"],
+      "properties": {
+        "source_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "source_revision": {"type": ["string", "null"]},
+        "native_owner": {"type": "string", "minLength": 1},
+        "selector": {
+          "description": "Absent or null when the native producer supplies no exact selector.",
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["unit", "start", "end"],
+              "properties": {
+                "unit": {"const": "text_span"},
+                "start": {"type": "integer", "minimum": 0},
+                "end": {"type": "integer", "minimum": 0},
+                "anchor_ref": {"$ref": "#/$defs/NullableRef"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "from", "to"],
+              "properties": {
+                "unit": {"const": "timestamp_range"},
+                "from": {"type": "string", "format": "date-time"},
+                "to": {"type": "string", "format": "date-time"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "x", "y", "width", "height"],
+              "properties": {
+                "unit": {"const": "image_region"},
+                "x": {"type": "number"},
+                "y": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "kind", "value"],
+              "properties": {
+                "unit": {"const": "other"},
+                "kind": {"type": "string", "minLength": 1},
+                "value": {"type": "string", "minLength": 1}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "standing": {"type": ["string", "null"]},
+        "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}}
+      },
+      "additionalProperties": false
+    },
+    "ExpressionBinding": {
+      "type": "object",
+      "required": ["expression_ref"],
+      "properties": {
+        "expression_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "revision": {"type": ["string", "null"]},
+        "scene_ref": {"$ref": "#/$defs/NullableRef"},
+        "composition_ref": {"$ref": "#/$defs/NullableRef"},
+        "profile_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "NativeActionRef": {
+      "type": "object",
+      "description": "A native owner's disclosed Action. The adapter routes; only the native owner executes, under its own authority.",
+      "required": ["action_ref", "native_owner", "authority"],
+      "properties": {
+        "action_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "native_owner": {"type": "string", "minLength": 1},
+        "authority": {"type": "string", "minLength": 1},
+        "summary": {"type": ["string", "null"]},
+        "expected_effects": {"type": "array", "items": {"type": "string"}},
+        "input_schema_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "Disclosure": {
+      "type": "object",
+      "description": "Capability honesty: available instruments and explicit degraded/unavailable reasons. Drives every instrument affordance; availability is never hard-coded per route. The six deep instruments are the Techne faces of M0-prime..M5-prime; expressions discloses the conjugate 3:3 Expression reading over the same subject.",
+      "required": ["instruments"],
+      "properties": {
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "available"],
+            "oneOf": [
+              {
+                "required": ["available", "reason"],
+                "properties": {"available": {"const": false}}
+              },
+              {
+                "required": ["available"],
+                "properties": {"available": {"const": true}}
+              }
+            ],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "available": {"type": "boolean"},
+              "reason": {"type": "string", "minLength": 1},
+              "m_prime": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The M-prime office this instrument is the Techne face of. Absent on the conjugate 3:3 reading."},
+              "reading": {"$ref": "#/$defs/TechneReadingKind"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "degraded": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "reason"],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "reason"],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": ["contract", "reading_ref", "subject", "disclosure"],
+  "properties": {
+    "contract": {"$ref": "#/$defs/ContractTag"},
+    "reading_ref": {"$ref": "#/$defs/OpaqueRef"},
+    "snapshot": {"$ref": "#/$defs/ReadingSnapshot"},
+    "subject": {"$ref": "#/$defs/Subject"},
+    "whole": {"$ref": "#/$defs/Whole"},
+    "ql": {"$ref": "#/$defs/WarrantedQlReading"},
+    "temporal": {"type": "array", "items": {"$ref": "#/$defs/TemporalFacet"}},
+    "spatial": {"type": "array", "items": {"$ref": "#/$defs/PlaceFacet"}},
+    "provenance": {"type": "array", "items": {"$ref": "#/$defs/SourceProvenance"}},
+    "expressions": {"type": "array", "items": {"$ref": "#/$defs/ExpressionBinding"}},
+    "actions": {"type": "array", "items": {"$ref": "#/$defs/NativeActionRef"}},
+    "disclosure": {"$ref": "#/$defs/Disclosure"}
+  },
+  "additionalProperties": false
+}
