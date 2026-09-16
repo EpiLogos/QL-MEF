@@ -153,16 +153,16 @@ fn compressed_onefold_is_validated_then_carried_into_every_wiki_reading() {
 
 #[test]
 fn aliases_and_false_compression_derivations_fail_closed() {
-    let mut target = target("example:subject");
-    let mut binding = compressed_binding(&target.target_ref);
+    let mut alias_target = target("example:subject");
+    let mut binding = compressed_binding(&alias_target.target_ref);
     binding.shape_ref = "ql:shape:1.0.0:constellation:partial-conjugate-7".into();
-    assert!(attach_shape_binding(&mut target, &binding).is_err());
+    assert!(attach_shape_binding(&mut alias_target, &binding).is_err());
 
-    let mut target = target("example:subject");
-    let mut binding = compressed_binding(&target.target_ref);
+    let mut derivation_target = target("example:subject");
+    let mut binding = compressed_binding(&derivation_target.target_ref);
     binding.derivation_ref =
         Some("ql:shape:1.1.0:compression:3-to-1-recognition:from:bogus".into());
-    assert!(attach_shape_binding(&mut target, &binding).is_err());
+    assert!(attach_shape_binding(&mut derivation_target, &binding).is_err());
 }
 
 #[test]
