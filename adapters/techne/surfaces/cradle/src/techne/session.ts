@@ -12,11 +12,17 @@
  * kernel's one GlobalFocusState (the surface binding names the subject as
  * its ref; focus.subject follows the active surface; AgentLayer reads it).
  *
+ * TB0 (2026-09-16): the session derives and carries its `application_cut`
+ * from the instrument (expressions ↔ 3:3-conjugate, deep instruments ↔
+ * 4:2-deep) so cut crossings stay explicit and contract-agreeing; cut-level
+ * hops keep every identity ref byte-exact.
+ *
  * Plain observable store (subscribe/get); zero React dependency. Erasable
  * TypeScript: loadable by the renderer, Vite, and `node --test`.
  */
 import {
   TECHNE_CONTRACT,
+  applicationCutFor,
   validateSelection,
   validateSession,
   type DisclosureSelection,
@@ -72,14 +78,19 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
       const sameBasis = current !== null
         && current.subject_ref === selection.subject_ref
         && current.reading_ref === selection.reading_ref;
+      // TB0: the session carries its application cut, derived from the
+      // instrument (expressions ↔ 3:3-conjugate, deep instruments ↔ 4:2-deep)
+      // — never an independent claim.
+      const application_cut = applicationCutFor(selection.instrument);
       const next: DisclosureSession = sameBasis && current
-        ? {...current, selection, instrument: selection.instrument}
+        ? {...current, selection, instrument: selection.instrument, application_cut}
         : {
             contract: TECHNE_CONTRACT,
             session_ref: mintSessionRef(),
             subject_ref: selection.subject_ref,
             selection,
             instrument: selection.instrument,
+            application_cut,
             reading_ref: selection.reading_ref,
             navigation: [],
           };
@@ -96,6 +107,7 @@ export function createDisclosureSessionStore(): DisclosureSessionStore {
         ...current,
         selection,
         instrument,
+        application_cut: applicationCutFor(instrument),
         navigation: [...current.navigation ?? [], {
           from_instrument: current.instrument,
           to_instrument: instrument,

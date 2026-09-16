@@ -8,6 +8,19 @@
  *   - fixtures: QL-MEF `fixtures/techne/*.json`
  *   - contract text: QL-MEF `docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md` §2–§5, §17
  *
+ * TB0-1 adoption (2026-09-16): this mirror now carries the pinned TB0
+ * connective-base fields as a purely mechanical, additive-optional update —
+ * relation identity/standing/evidence/temporal-qualification/derivation
+ * (`Whole.relations[]`), attempt/return continuity (`TemporalFacet`), place
+ * relation type and uncertainty (`PlaceFacet`), warranted M-coordinate and
+ * Return refs (`WarrantedQlReading`), cut-level availability
+ * (`Disclosure.application_cuts`), the situated-Agency role floor
+ * (`TechneReading.agency[]`), and the dual-reading session state
+ * (`DisclosureSession` cut/whole/project/world/frame/occasion/Return/scene
+ * focus). Field names and semantics mirror the canonical schemas at
+ * `schemas/techne/` (record: `docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md`); the
+ * contract itself changes only through #212.
+ *
  * This file is a mirror; drift is a contract bug. Native refs are opaque and
  * carried verbatim — never translated, re-keyed or shortened. Missing
  * QL/temporal/spatial/Expression facets are data, not errors. View, layout,
@@ -53,6 +66,12 @@ export const TECHNE_INSTRUMENTS: readonly TechneInstrument[] = [
 /** Which reading of the one M′ field an aperture carries. Crossing changes
  * the mode of disclosure and available operations, never the subject. */
 export type TechneReadingKind = "4:2-deep" | "3:3-conjugate";
+
+/** TB0 cut law: the application cut an instrument carries — expressions is
+ * the conjugate 3:3 reading; the six deep instruments are 4:2-deep. */
+export function applicationCutFor(instrument: TechneInstrument): TechneReadingKind {
+  return instrument === "expressions" ? "3:3-conjugate" : "4:2-deep";
+}
 
 /** One labelled native time fact. Occurrence, receipt, validity and
  * continuity stay distinct; consumers never collapse them to created_at. */
@@ -115,13 +134,32 @@ export interface TechneSubject {
   standing?: string | null;
 }
 
-/** Provider-relation vocabulary is preserved verbatim, never relabelled. */
+/** Provider-relation vocabulary is preserved verbatim, never relabelled.
+ * TB0-1 adds the optional evidence/standing/qualification fields the owner
+ * supplies; the adapter never infers any of them. */
 export interface TechneWholeRelation {
   relation: string;
+  /** TB0: stable native relation identity, carried verbatim across
+   * instruments and cuts, when the owner supplies one. */
+  relation_ref?: string | null;
   from_ref: string;
   to_ref: string;
   origin?: string | null;
   origin_ref?: string | null;
+  /** TB0: evidence standing in the owner's vocabulary (fact, interpretation,
+   * myth, disputed, …). Trans-temporal relations stay distinct from dated
+   * ones through standing plus absence of temporal qualification. */
+  standing?: string | null;
+  /** TB0: where the relation claim comes from. */
+  source_ref?: string | null;
+  evidence_refs?: string[];
+  /** TB0: optional real temporal qualification resolving against a
+   * facet_ref in the same reading's `temporal[]`. Absent = trans-temporal;
+   * never manufactured. */
+  temporal_facet_ref?: string | null;
+  /** TB0: owner-supplied derivation and confidence only. */
+  derivation_ref?: string | null;
+  confidence?: string | null;
 }
 
 /** Bounded local whole; never a global graph. */
@@ -142,6 +180,9 @@ export interface TechneQlWarrant {
 
 export interface WarrantedQlReading {
   address?: string | null;
+  /** TB0: warranted canonical M-coordinate ref of the reading itself;
+   * M′ instrument bindings stay on the disclosure entries. */
+  m_coordinate_ref?: string | null;
   shape_ref?: string | null;
   constellation_ref?: string | null;
   lens_ref?: TechneLensRef | null;
@@ -152,6 +193,9 @@ export interface WarrantedQlReading {
   geometric_reading?: string | null;
   vak_source_ref?: string | null;
   derivation_refs?: string[];
+  /** TB0: where this warranted reading Returns into knowledge ground, when
+   * the owner supplies one. */
+  return_ref?: string | null;
   warrant: TechneQlWarrant;
 }
 
@@ -174,6 +218,12 @@ export interface TechneTemporalFacet {
   now_ref?: string;
   session_ref?: string;
   run_ref?: string;
+  /** TB0: Factory attempt continuity when the owner supplies it; rides a
+   * run/session facet, never replaces one. */
+  attempt_ref?: string;
+  /** TB0: Return continuity (e.g. a late Factory Return); occurrence and
+   * receipt stay distinct regardless. */
+  return_ref?: string;
   timezone_policy_ref?: string | null;
   uncertainty?: string | null;
   source_ref?: string | null;
@@ -201,9 +251,16 @@ export interface TechnePlaceHierarchyEntry {
  * is data. */
 export interface TechnePlaceFacet {
   place_ref: string;
+  /** TB0: the subject's native place-relation type, preserved verbatim
+   * (OCCURRED_AT, LOCATED_IN, OPERATED_IN, TRAVELLED_TO, MYTH_LOCATED_AT, …).
+   * These are not interchangeable. */
+  relation?: string | null;
   identity?: { names?: TechnePlaceName[] };
   geometry?: TechnePlaceGeometry;
   precision: TechnePlacePrecision;
+  /** TB0: owner-supplied spatial uncertainty in the owner's terms; never
+   * inferred to fill this in. */
+  uncertainty?: string | null;
   hierarchy?: TechnePlaceHierarchyEntry[];
   valid_from?: string | null;
   valid_to?: string | null;
@@ -262,6 +319,33 @@ export interface TechneDisclosureNote {
   reason: string;
 }
 
+/** TB0: cut-level availability — whether each reading of the one M′ field
+ * can actually be entered for this subject, with the reason when not. */
+export interface TechneApplicationCut {
+  cut: TechneReadingKind;
+  available: boolean;
+  /** Required when available is false. */
+  reason?: string;
+}
+
+/** TB0 situated-Agency role floor: role bindings over the existing native
+ * machinery — never new canonical Agent identities, never a runtime.
+ * Guardian_i remains the steward and is not identical to its situated roles. */
+export interface TechneAgencyRole {
+  role: "guardian" | "anima" | "aletheia" | "techne";
+  /** The coordinate i (M′0–M′5) this situated role inhabits. */
+  m_index: number;
+  /** Anima binds 3:3; Aletheia/Technē bind 4:2; Guardian spans both. */
+  reading?: TechneReadingKind;
+  /** The deep instrument Technē operates, or Expressions for Anima. */
+  instrument?: TechneInstrument;
+  guardian_ref?: string | null;
+  agent_session_ref?: string | null;
+  profile_ref?: string | null;
+  authority?: string | null;
+  privacy?: string | null;
+}
+
 /** Capability honesty: available instruments and explicit degraded/unavailable
  * reasons. Drives every instrument affordance; availability is never
  * hard-coded per route. */
@@ -269,6 +353,8 @@ export interface TechneDisclosure {
   instruments: TechneDisclosureEntry[];
   degraded?: TechneDisclosureNote[];
   suggestions?: TechneDisclosureNote[];
+  /** TB0: cut-level availability over and above per-instrument entries. */
+  application_cuts?: TechneApplicationCut[];
 }
 
 /** The portable Technē reading: attributable facts over native owners. */
@@ -284,6 +370,9 @@ export interface TechneReading {
   provenance?: TechneSourceProvenance[];
   expressions?: TechneExpressionBinding[];
   actions?: NativeActionRef[];
+  /** TB0: the situated-Agency role floor — role bindings, never Agents,
+   * never a runtime. */
+  agency?: TechneAgencyRole[];
   disclosure: TechneDisclosure;
 }
 
@@ -327,7 +416,22 @@ export interface DisclosureSession {
   subject_ref: string;
   selection: DisclosureSelection;
   instrument: TechneInstrument;
+  /** TB0: the active reading of the one M′ field. Must agree with
+   * instrument: expressions ↔ 3:3-conjugate, the six deep instruments ↔
+   * 4:2-deep. */
+  application_cut?: TechneReadingKind;
   reading_ref: string;
+  /** TB0: whole / Project / World / Context-Frame / occasion / Return-target
+   * focus, and the wider reference frame and scene focus. Every ref stays
+   * native and byte-exact across cut crossings. */
+  whole_ref?: string | null;
+  project_ref?: string | null;
+  world_ref?: string | null;
+  context_frame_ref?: string | null;
+  occasion_ref?: string | null;
+  return_target_ref?: string | null;
+  reference_frame_ref?: string;
+  scene_focus_ref?: string;
   time_window?: { from: string | null; to: string | null };
   spatial_focus_ref?: string;
   expression_focus_ref?: string;
@@ -434,17 +538,20 @@ function validateQlReading(value: unknown, errors: string[]): void {
     if (value[key] !== undefined && !stringOrNull(value[key])) errors.push(`ql.${key}: must be a string or null`);
   }
   if (value.derivation_refs !== undefined && !refArray(value.derivation_refs)) errors.push("ql.derivation_refs: must be an array of refs");
+  for (const key of ["m_coordinate_ref", "return_ref"]) {
+    if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`ql.${key}: must be a ref or null`);
+  }
   if (value.warrant === undefined) errors.push("ql.warrant: a QL facet exists only when warranted");
   else validateQlWarrant(value.warrant, "ql.warrant", errors);
 }
 
 function validateTemporalFacet(value: unknown, label: string, errors: string[]): void {
   if (!isObject(value)) { errors.push(`${label}: must be an object`); return; }
-  keysAllowed(value, ["facet_ref", "kind", "instant", "interval", "precision", "day_ref", "now_ref", "session_ref", "run_ref", "timezone_policy_ref", "uncertainty", "source_ref"], label, errors);
+  keysAllowed(value, ["facet_ref", "kind", "instant", "interval", "precision", "day_ref", "now_ref", "session_ref", "run_ref", "attempt_ref", "return_ref", "timezone_policy_ref", "uncertainty", "source_ref"], label, errors);
   if (!TEMPORAL_KINDS.includes(value.kind as string)) errors.push(`${label}.kind: not a temporal kind`);
   if (value.facet_ref !== undefined && !nullableRef(value.facet_ref)) errors.push(`${label}.facet_ref: must be a ref or null`);
   if (value.precision !== undefined && !TEMPORAL_PRECISIONS.includes(value.precision as string)) errors.push(`${label}.precision: not a temporal precision`);
-  for (const key of ["day_ref", "now_ref", "session_ref", "run_ref"]) {
+  for (const key of ["day_ref", "now_ref", "session_ref", "run_ref", "attempt_ref", "return_ref"]) {
     if (value[key] !== undefined && !ref(value[key])) errors.push(`${label}.${key}: must be a ref`);
   }
   for (const key of ["timezone_policy_ref", "source_ref"]) {
@@ -466,9 +573,11 @@ function validateTemporalFacet(value: unknown, label: string, errors: string[]):
 
 function validatePlaceFacet(value: unknown, label: string, errors: string[]): void {
   if (!isObject(value)) { errors.push(`${label}: must be an object`); return; }
-  keysAllowed(value, ["place_ref", "identity", "geometry", "precision", "hierarchy", "valid_from", "valid_to", "observer_frame", "source_ref"], label, errors);
+  keysAllowed(value, ["place_ref", "relation", "identity", "geometry", "precision", "uncertainty", "hierarchy", "valid_from", "valid_to", "observer_frame", "source_ref"], label, errors);
   if (!ref(value.place_ref)) errors.push(`${label}.place_ref: required`);
   if (!PLACE_PRECISIONS.includes(value.precision as string)) errors.push(`${label}.precision: not a place precision`);
+  if (value.relation !== undefined && !stringOrNull(value.relation)) errors.push(`${label}.relation: must be a string or null`);
+  if (value.uncertainty !== undefined && !stringOrNull(value.uncertainty)) errors.push(`${label}.uncertainty: must be a string or null`);
   for (const key of ["valid_from", "valid_to"]) if (value[key] !== undefined && !stringOrNull(value[key])) errors.push(`${label}.${key}: must be a string or null`);
   for (const key of ["observer_frame", "source_ref"]) if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`${label}.${key}: must be a ref or null`);
   if (value.identity !== undefined) {
@@ -563,7 +672,7 @@ function validateNativeAction(value: unknown, label: string, errors: string[]): 
 
 function validateDisclosure(value: unknown, label: string, errors: string[]): void {
   if (!isObject(value)) { errors.push(`${label}: must be an object`); return; }
-  keysAllowed(value, ["instruments", "degraded", "suggestions"], label, errors);
+  keysAllowed(value, ["instruments", "degraded", "suggestions", "application_cuts"], label, errors);
   if (!Array.isArray(value.instruments)) { errors.push(`${label}.instruments: required array`); return; }
   value.instruments.forEach((entry, index) => {
     const entryLabel = `${label}.instruments[${index}]`;
@@ -591,13 +700,44 @@ function validateDisclosure(value: unknown, label: string, errors: string[]): vo
       if (!ref(entry.reason)) errors.push(`${noteLabel}.reason: required`);
     });
   }
+  if (value.application_cuts !== undefined) {
+    if (!Array.isArray(value.application_cuts)) { errors.push(`${label}.application_cuts: must be an array`); return; }
+    value.application_cuts.forEach((entry, index) => {
+      const cutLabel = `${label}.application_cuts[${index}]`;
+      if (!isObject(entry)) { errors.push(`${cutLabel}: must be an object`); return; }
+      keysAllowed(entry, ["cut", "available", "reason"], cutLabel, errors);
+      if (entry.cut !== "4:2-deep" && entry.cut !== "3:3-conjugate") errors.push(`${cutLabel}.cut: must be "4:2-deep" or "3:3-conjugate"`);
+      if (typeof entry.available !== "boolean") { errors.push(`${cutLabel}.available: boolean`); return; }
+      if (entry.available === false && !ref(entry.reason)) errors.push(`${cutLabel}: an unavailable cut requires a reason`);
+      if (entry.reason !== undefined && !stringOrNull(entry.reason)) errors.push(`${cutLabel}.reason: must be a string or null`);
+    });
+  }
+}
+
+const AGENCY_ROLES: readonly string[] = ["guardian", "anima", "aletheia", "techne"];
+
+/** TB0 situated-Agency role floor: role bindings over existing native
+ * machinery, validated as bindings — never Agents, never a runtime. */
+function validateAgencyRole(value: unknown, label: string, errors: string[]): void {
+  if (!isObject(value)) { errors.push(`${label}: must be an object`); return; }
+  keysAllowed(value, ["role", "m_index", "reading", "instrument", "guardian_ref", "agent_session_ref", "profile_ref", "authority", "privacy"], label, errors);
+  if (!AGENCY_ROLES.includes(value.role as string)) errors.push(`${label}.role: guardian, anima, aletheia or techne`);
+  if (typeof value.m_index !== "number" || !Number.isInteger(value.m_index) || value.m_index < 0 || value.m_index > 5) {
+    errors.push(`${label}.m_index: must be an integer 0-5 (the field has M′0–M′5 only)`);
+  }
+  if (value.reading !== undefined && value.reading !== "4:2-deep" && value.reading !== "3:3-conjugate") {
+    errors.push(`${label}.reading: must be "4:2-deep" or "3:3-conjugate"`);
+  }
+  if (value.instrument !== undefined && !isInstrument(value.instrument)) errors.push(`${label}.instrument: not an instrument`);
+  for (const key of ["guardian_ref", "agent_session_ref", "profile_ref"]) if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`${label}.${key}: must be a ref or null`);
+  for (const key of ["authority", "privacy"]) if (value[key] !== undefined && !stringOrNull(value[key])) errors.push(`${label}.${key}: must be a string or null`);
 }
 
 /** Validate one ql.techne/v1 reading against the canonical schema laws. */
 export function validateReading(value: unknown): TechneValidation {
   const errors: string[] = [];
   if (!isObject(value)) return invalid(["reading: must be an object"]);
-  keysAllowed(value, ["contract", "reading_ref", "snapshot", "subject", "whole", "ql", "temporal", "spatial", "provenance", "expressions", "actions", "disclosure"], "reading", errors);
+  keysAllowed(value, ["contract", "reading_ref", "snapshot", "subject", "whole", "ql", "temporal", "spatial", "provenance", "expressions", "actions", "agency", "disclosure"], "reading", errors);
   if (value.contract !== TECHNE_CONTRACT) errors.push(`reading.contract: must be "${TECHNE_CONTRACT}"`);
   if (!ref(value.reading_ref)) errors.push("reading.reading_ref: required");
   if (value.snapshot !== undefined) {
@@ -639,17 +779,22 @@ export function validateReading(value: unknown): TechneValidation {
         else whole.relations.forEach((entry, index) => {
           const label = `reading.whole.relations[${index}]`;
           if (!isObject(entry)) { errors.push(`${label}: must be an object`); return; }
-          keysAllowed(entry, ["relation", "from_ref", "to_ref", "origin", "origin_ref"], label, errors);
+          keysAllowed(entry, ["relation", "relation_ref", "from_ref", "to_ref", "origin", "origin_ref", "standing", "source_ref", "evidence_refs", "temporal_facet_ref", "derivation_ref", "confidence"], label, errors);
           if (!ref(entry.relation)) errors.push(`${label}.relation: required`);
           if (!ref(entry.from_ref)) errors.push(`${label}.from_ref: required`);
           if (!ref(entry.to_ref)) errors.push(`${label}.to_ref: required`);
-          for (const key of ["origin"]) if (entry[key] !== undefined && !stringOrNull(entry[key])) errors.push(`${label}.${key}: must be a string or null`);
-          for (const key of ["origin_ref"]) if (entry[key] !== undefined && !nullableRef(entry[key])) errors.push(`${label}.${key}: must be a ref or null`);
+          for (const key of ["origin", "standing", "confidence"]) if (entry[key] !== undefined && !stringOrNull(entry[key])) errors.push(`${label}.${key}: must be a string or null`);
+          for (const key of ["origin_ref", "relation_ref", "source_ref", "temporal_facet_ref", "derivation_ref"]) if (entry[key] !== undefined && !nullableRef(entry[key])) errors.push(`${label}.${key}: must be a ref or null`);
+          if (entry.evidence_refs !== undefined && !refArray(entry.evidence_refs)) errors.push(`${label}.evidence_refs: must be an array of refs`);
         });
       }
     }
   }
   if (value.ql !== undefined) validateQlReading(value.ql, errors);
+  if (value.agency !== undefined) {
+    if (!Array.isArray(value.agency)) errors.push("reading.agency: must be an array");
+    else value.agency.forEach((entry, index) => validateAgencyRole(entry, `reading.agency[${index}]`, errors));
+  }
   for (const key of ["temporal", "spatial", "provenance", "expressions", "actions"]) {
     const facet = value[key];
     if (facet === undefined) continue;
@@ -687,13 +832,22 @@ export function validateSelection(value: unknown): TechneValidation {
 export function validateSession(value: unknown): TechneValidation {
   const errors: string[] = [];
   if (!isObject(value)) return invalid(["session: must be an object"]);
-  keysAllowed(value, ["contract", "session_ref", "subject_ref", "selection", "instrument", "reading_ref", "time_window", "spatial_focus_ref", "expression_focus_ref", "navigation"], "session", errors);
+  keysAllowed(value, ["contract", "session_ref", "subject_ref", "selection", "instrument", "application_cut", "reading_ref", "whole_ref", "project_ref", "world_ref", "context_frame_ref", "occasion_ref", "return_target_ref", "reference_frame_ref", "scene_focus_ref", "time_window", "spatial_focus_ref", "expression_focus_ref", "navigation"], "session", errors);
   if (value.contract !== TECHNE_CONTRACT) errors.push(`session.contract: must be "${TECHNE_CONTRACT}"`);
   if (!ref(value.session_ref)) errors.push("session.session_ref: required");
   if (!ref(value.subject_ref)) errors.push("session.subject_ref: required");
   if (!ref(value.reading_ref)) errors.push("session.reading_ref: required");
   if (!isInstrument(value.instrument)) errors.push("session.instrument: not an instrument");
-  for (const key of ["spatial_focus_ref", "expression_focus_ref"]) if (value[key] !== undefined && !ref(value[key])) errors.push(`session.${key}: must be a ref`);
+  if (value.application_cut !== undefined && value.application_cut !== "4:2-deep" && value.application_cut !== "3:3-conjugate") {
+    errors.push("session.application_cut: must be \"4:2-deep\" or \"3:3-conjugate\"");
+  }
+  if (value.application_cut !== undefined && isInstrument(value.instrument) && applicationCutFor(value.instrument) !== value.application_cut) {
+    errors.push(`session.application_cut: must agree with the instrument (${value.instrument} carries ${applicationCutFor(value.instrument)})`);
+  }
+  for (const key of ["whole_ref", "project_ref", "world_ref", "context_frame_ref", "occasion_ref", "return_target_ref"]) {
+    if (value[key] !== undefined && !nullableRef(value[key])) errors.push(`session.${key}: must be a ref or null`);
+  }
+  for (const key of ["reference_frame_ref", "scene_focus_ref", "spatial_focus_ref", "expression_focus_ref"]) if (value[key] !== undefined && !ref(value[key])) errors.push(`session.${key}: must be a ref`);
   if (value.time_window !== undefined) {
     const window = value.time_window;
     if (!isObject(window)) errors.push("session.time_window: must be an object");
