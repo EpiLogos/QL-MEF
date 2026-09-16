@@ -353,10 +353,11 @@ impl EighteenFoldGeometry {
     pub fn canonical() -> Self {
         let relational = RelationalSixfold::canonical();
         let sixfold_cardinality = relational.sites.len();
+        let relational_basis_ref = relational.shape_ref().into();
         Self {
             direct_basis_ref: relational.direct_basis_ref,
             conjugate_basis_ref: relational.conjugate_basis_ref,
-            relational_basis_ref: relational.shape_ref().into(),
+            relational_basis_ref,
             sixfold_cardinality,
             fold_cardinality: sixfold_cardinality * 3,
             compressed_fold_cardinality: 3,
