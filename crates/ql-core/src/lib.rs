@@ -79,9 +79,9 @@ pub use shape::{
     EighteenFoldGeometry, FOUR_BY_FOUR_BY_FOUR_SHAPE_REF, FourByFourByFourField, FourByFourField,
     QL_GEOMETRY_SHAPE_VERSION, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShape,
     QlShapeAddress, QlShapeCompression, QlShapeKind, RELATIONAL_SIXFOLD_OPERATOR_REF,
-    RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold, SEVEN_FOLD_SHAPE_REF,
-    SIX_BY_SIX_SHAPE_REF, SecondSpandaGeometry, SixBySixField, TEN_BY_TEN_SHAPE_REF,
-    THREE_TO_ONE_OPERATOR_REF, TenByTenProjection,
+    RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold, SEVEN_FOLD_SHAPE_REF, SIX_BY_SIX_SHAPE_REF,
+    SecondSpandaGeometry, SixBySixField, TEN_BY_TEN_SHAPE_REF, THREE_TO_ONE_OPERATOR_REF,
+    TenByTenProjection,
 };
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
