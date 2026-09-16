@@ -1,7 +1,6 @@
 use crate::shape::{
-    EIGHTEEN_FOLD_SHAPE_REF, FOUR_BY_FOUR_BY_FOUR_SHAPE_REF, QL_SHAPE_CONTRACT_VERSION,
-    RELATIONAL_SIXFOLD_SHAPE_REF, SEVEN_FOLD_SHAPE_REF, SIX_BY_SIX_SHAPE_REF,
-    TEN_BY_TEN_SHAPE_REF, QlShape,
+    EIGHTEEN_FOLD_SHAPE_REF, FOUR_BY_FOUR_BY_FOUR_SHAPE_REF, QL_SHAPE_CONTRACT_VERSION, QlShape,
+    RELATIONAL_SIXFOLD_SHAPE_REF, SEVEN_FOLD_SHAPE_REF, SIX_BY_SIX_SHAPE_REF, TEN_BY_TEN_SHAPE_REF,
 };
 use crate::structural::{ConstellationGrain, RelationFamily};
 
@@ -106,8 +105,14 @@ mod tests {
             resolve_shape_ref("ql:shape:1.0.0:constellation:partial-conjugate-7"),
             None
         );
-        assert_eq!(resolve_shape_ref("ql:shape:9.9.9:10x10:second-spanda-4-plus-6"), None);
-        assert_eq!(resolve_shape_ref("ql:shape:1.0.0:constellation:other"), None);
+        assert_eq!(
+            resolve_shape_ref("ql:shape:9.9.9:10x10:second-spanda-4-plus-6"),
+            None
+        );
+        assert_eq!(
+            resolve_shape_ref("ql:shape:1.0.0:constellation:other"),
+            None
+        );
         assert_eq!(resolve_shape_ref("ql:shape:1.0.0:4x4:A:9"), None);
     }
 }
