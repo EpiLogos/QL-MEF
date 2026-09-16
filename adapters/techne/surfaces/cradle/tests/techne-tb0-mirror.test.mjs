@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { applicationCutFor, validateReading, validateSession } from '../src/techne/contract.ts';
+import { instrumentReading, validateReading, validateSession } from '../src/techne/contract.ts';
 import { createDisclosureSessionStore } from '../src/techne/session.ts';
 import { loadFixtureReadings } from '../src/techne/fixtures/load-fixtures.mjs';
 
@@ -42,9 +42,9 @@ test('the mirror stays strict: unknown fields and bad agency bindings are still 
 });
 
 test('the TB0 cut law: the application cut agrees with the instrument, in type and validator', () => {
-  assert.equal(applicationCutFor('timeline'), '4:2-deep');
-  assert.equal(applicationCutFor('canvas'), '4:2-deep');
-  assert.equal(applicationCutFor('expressions'), '3:3-conjugate');
+  assert.equal(instrumentReading('timeline'), '4:2-deep');
+  assert.equal(instrumentReading('canvas'), '4:2-deep');
+  assert.equal(instrumentReading('expressions'), '3:3-conjugate');
 
   const base = {
     contract: 'ql.techne/v1',
