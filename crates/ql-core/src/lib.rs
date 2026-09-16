@@ -75,9 +75,13 @@ pub use pole::{
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};
 pub use shape::{
-    FourByFourField, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShape, QlShapeAddress,
-    QlShapeKind, RELATIONAL_SIXFOLD_OPERATOR_REF, RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold,
-    SIX_BY_SIX_SHAPE_REF, SixBySixField,
+    COMPRESS_TO_WHOLE_OPERATOR_REF, EIGHTEEN_FOLD_SHAPE_REF, EIGHTEEN_TO_THREE_OPERATOR_REF,
+    EighteenFoldGeometry, FOUR_BY_FOUR_BY_FOUR_SHAPE_REF, FourByFourByFourField, FourByFourField,
+    QL_GEOMETRY_SHAPE_VERSION, QL_SHAPE_CONTRACT_VERSION, QlGenerationSite, QlShape,
+    QlShapeAddress, QlShapeCompression, QlShapeKind, RELATIONAL_SIXFOLD_OPERATOR_REF,
+    RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold, SEVEN_FOLD_SHAPE_REF,
+    SIX_BY_SIX_SHAPE_REF, SecondSpandaGeometry, SixBySixField, TEN_BY_TEN_SHAPE_REF,
+    THREE_TO_ONE_OPERATOR_REF, TenByTenProjection,
 };
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
