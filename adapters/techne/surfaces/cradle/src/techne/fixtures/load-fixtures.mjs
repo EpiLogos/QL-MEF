@@ -2,15 +2,10 @@
  * Fixture provenance: these JSON files are byte-exact copies of the canonical
  * conformance fixtures at QL-MEF `fixtures/techne/`
  * (representative-subject-v1.json, development-day-v1.json,
-<<<<<<< HEAD
  * absent-facets-v1.json, tb0-connective-base-v1.json); drift is a contract
  * bug — re-copy, never edit. The three T0 conformance fixtures load through
  * `loadFixtureReadings()`; the TB0-1 rich specimen loads by name through
  * `loadFixture("tb0-connective-base-v1.json")`.
-=======
- * absent-facets-v1.json, and the TB0-1 rich shared specimen
- * tb0-connective-base-v1.json); drift is a contract bug — re-copy, never edit.
->>>>>>> techne/m5-palace
  *
  * Node-side loader for tests and conformance runs (`node --test` cannot
  * import JSON without import attributes, and the renderer bundle never
@@ -23,7 +18,6 @@ export const FIXTURE_FILES = [
   "representative-subject-v1.json",
   "development-day-v1.json",
   "absent-facets-v1.json",
-  "tb0-connective-base-v1.json",
 ];
 
 const here = fileURLToPath(new URL(".", import.meta.url));
