@@ -73,6 +73,15 @@
       "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
       "tests": ["crates/ql-mef/tests/compressed_geometry_vak.rs", "crates/ql-mef/tests/vak_composition.rs"],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-adapters/src/techne.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#0", "#1", "#2", "#3", "#4", "#5"],
+      "rationale": "L5 Technē contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation — native owners keep their refs and authority. M′ instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
+      "tests": ["crates/ql-adapters/tests/techne_contract.rs", "fixtures/techne/tb0-connective-base-v1.json"],
+      "kind": "computational"
     }
   ]
 }
