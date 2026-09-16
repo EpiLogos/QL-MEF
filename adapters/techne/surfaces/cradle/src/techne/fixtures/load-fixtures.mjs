@@ -1,8 +1,9 @@
 /**
- * Fixture provenance: these three JSON files are byte-exact copies of the
- * canonical conformance fixtures at QL-MEF `fixtures/techne/`
+ * Fixture provenance: these JSON files are byte-exact copies of the canonical
+ * conformance fixtures at QL-MEF `fixtures/techne/`
  * (representative-subject-v1.json, development-day-v1.json,
- * absent-facets-v1.json); drift is a contract bug — re-copy, never edit.
+ * absent-facets-v1.json, and the TB0-1 rich shared specimen
+ * tb0-connective-base-v1.json); drift is a contract bug — re-copy, never edit.
  *
  * Node-side loader for tests and conformance runs (`node --test` cannot
  * import JSON without import attributes, and the renderer bundle never
@@ -15,6 +16,7 @@ export const FIXTURE_FILES = [
   "representative-subject-v1.json",
   "development-day-v1.json",
   "absent-facets-v1.json",
+  "tb0-connective-base-v1.json",
 ];
 
 const here = fileURLToPath(new URL(".", import.meta.url));

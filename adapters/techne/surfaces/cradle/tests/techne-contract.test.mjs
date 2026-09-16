@@ -28,8 +28,10 @@ const validSession = () => ({
   reading_ref: developmentDay.reading_ref,
 });
 
-test('all three canonical conformance fixtures validate against the reading mirror', () => {
-  assert.equal(readings.length, 3);
+test('the canonical conformance fixtures validate against the reading mirror', () => {
+  // The three T0 fixtures plus the TB0-1 rich shared specimen (byte-exact
+  // copies; see src/techne/fixtures/load-fixtures.mjs).
+  assert.equal(readings.length, 4);
   for (const reading of readings) {
     const checked = validateReading(reading);
     assert.deepEqual(checked, { valid: true, errors: [] }, JSON.stringify(checked.errors));
