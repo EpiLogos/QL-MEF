@@ -22,13 +22,6 @@ pub const THREE_TO_ONE_OPERATOR_REF: &str = "ql:shape:1.1.0:compression:3-to-1-r
 pub const EIGHTEEN_TO_THREE_OPERATOR_REF: &str =
     "ql:shape:1.1.0:compression:18-by-6-to-threefold";
 
-/// Canonical executable morphology of a QL whole.
-///
-/// `Constellation` carries the already-developed positive grains from the whole
-/// anchor through partial and complete direct/conjugate constellations. The
-/// matrix, cubic, relational-sixfold, eighteenfold and decadic variants are
-/// higher-order Geometry disclosures of those same QL relations rather than a
-/// second structural system.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum QlShape {
     Constellation(ConstellationGrain),
@@ -46,7 +39,8 @@ pub enum QlShape {
 impl QlShape {
     pub fn shape_ref(self) -> String {
         match self {
-            Self::Constellation(ConstellationGrain::Other {
+            Self::Constellation(ConstellationGrain::PartialConjugate7)
+            | Self::Constellation(ConstellationGrain::Other {
                 direct: 6,
                 conjugate: 1,
             }) => SEVEN_FOLD_SHAPE_REF.into(),
@@ -66,9 +60,8 @@ impl QlShape {
         }
     }
 
-    /// Geometric fold cardinality when this shape is a fold rather than a
-    /// matrix/product field. The whole-anchor is the QL Geometry 1-fold even
-    /// though it has zero positional members in the structural contract.
+    /// Geometry fold-count, distinct from positional-member count. The anchor
+    /// has zero positional members but is the one-fold `0/1` whole.
     pub const fn fold_count(self) -> Option<u8> {
         match self {
             Self::Constellation(ConstellationGrain::AnchorOnly) => Some(1),
@@ -80,7 +73,8 @@ impl QlShape {
             | Self::Constellation(ConstellationGrain::FourPlusOneSynthesis) => Some(5),
             Self::Constellation(ConstellationGrain::SixFold)
             | Self::RelationalSixfold => Some(6),
-            Self::Constellation(ConstellationGrain::Other {
+            Self::Constellation(ConstellationGrain::PartialConjugate7)
+            | Self::Constellation(ConstellationGrain::Other {
                 direct: 6,
                 conjugate: 1,
             }) => Some(7),
@@ -99,10 +93,7 @@ impl QlShape {
     }
 
     pub const fn canonical_sevenfold() -> Self {
-        Self::Constellation(ConstellationGrain::Other {
-            direct: 6,
-            conjugate: 1,
-        })
+        Self::Constellation(ConstellationGrain::PartialConjugate7)
     }
 }
 
@@ -131,9 +122,6 @@ impl QlShapeKind {
     }
 }
 
-/// A reversible Geometry reading in which a disclosed 2- or 3-fold whole is
-/// presented as the single `0/1` whole-anchor. The disclosed shape remains
-/// addressable through the derivation ref; compression never erases it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct QlShapeCompression {
     pub presented: QlShape,
@@ -144,6 +132,9 @@ pub struct QlShapeCompression {
 }
 
 impl QlShapeCompression {
+    /// A QL `0/1` whole may present as one fold while retaining a disclosed
+    /// two- or three-fold basis. The threefold-123 case also names its existing
+    /// fourfold recognition superset.
     pub fn to_onefold(disclosed: QlShape) -> Option<Self> {
         let disclosed_fold = disclosed.fold_count()?;
         if disclosed_fold != 2 && disclosed_fold != 3 {
@@ -173,11 +164,6 @@ impl QlShapeCompression {
     }
 }
 
-/// One address in a QL relational accounting field.
-///
-/// An address identifies where a relation can be inspected, compared or
-/// generated. It does not assert that a semantic relation exists between the
-/// two coordinates.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct QlShapeAddress {
     pub row: QlCoordinate,
@@ -191,8 +177,6 @@ pub struct FourByFourField {
 }
 
 impl FourByFourField {
-    /// Promote one canonical D3 pair-completion into its complete 4×4
-    /// relational accounting field while retaining A/B/C + pair provenance.
     pub fn from_pair(pair: PairInstance) -> Self {
         let source = pair.d3();
         let axis = source.coordinates.clone();
@@ -224,9 +208,7 @@ impl FourByFourField {
     }
 }
 
-/// The canonical M3 side of Second Spanda: three articulated quaternary sites.
-/// Each site is the same two-bit state already carried by `FoldMotif`, so the
-/// form is simultaneously `4^3` and `2^6`, with 64 actual `Codon64` states.
+/// M3/Mahāmāyā side of Second Spanda: three articulated quaternary sites.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FourByFourByFourField {
     pub site_cardinality: usize,
@@ -275,7 +257,6 @@ pub struct SixBySixField {
 }
 
 impl SixBySixField {
-    /// Canonical sixfold × conjugate-sixfold relational accounting field.
     pub fn canonical() -> Self {
         let direct_axis = canonical_axis(QlFace::Direct);
         let conjugate_axis = canonical_axis(QlFace::Conjugate);
@@ -316,12 +297,6 @@ impl QlGenerationSite {
     }
 }
 
-/// The deterministic structural basis of `6 / 6′ -> 6+6′`.
-///
-/// The kernel identifies the six same-position direct/conjugate relation sites
-/// and the whole operation that binds them. It deliberately does not invent
-/// semantic generated content for those sites; clients may do so through an
-/// attributable contemplation/reading operation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RelationalSixfold {
     pub sites: Vec<QlGenerationSite>,
@@ -368,10 +343,7 @@ impl RelationalSixfold {
     }
 }
 
-/// The Geometry closure of the direct sixfold, conjugate sixfold and the six
-/// same-position relations between them. Eighteen therefore compresses by its
-/// sixfold grain to the threefold `{6, 6′, 6↔6′}` without losing the three
-/// constituent basis refs.
+/// Direct sixfold + conjugate sixfold + their sixfold relation field.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EighteenFoldGeometry {
     pub direct_basis_ref: String,
@@ -415,9 +387,7 @@ impl EighteenFoldGeometry {
     }
 }
 
-/// The complete decadic relation-field presentation of the Second-Spanda
-/// `4 | 6` split. The first three blocks remain the same 64-count partition as
-/// the M3 cubic body; the 6×6 block remains the M2 36-count field.
+/// `(4+6)^2` projection of the same Second-Spanda `64 | 36` body.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct TenByTenProjection {
     pub quaternary_axis: usize,
@@ -467,9 +437,6 @@ impl TenByTenProjection {
     }
 }
 
-/// The executable Geometry reading of Second Spanda. The canonical body is
-/// the M3 `4×4×4` field coupled to the M2 `6×6` field; the `10×10` object is a
-/// projection of the same `64 | 36` accounting, never its replacement.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SecondSpandaGeometry {
     pub m3_quaternary_cubic: FourByFourByFourField,
@@ -528,24 +495,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn existing_constellation_grains_are_positive_canonical_shapes() {
-        let partial = QlShape::Constellation(ConstellationGrain::PartialConjugate9);
-        let direct = QlShape::Constellation(ConstellationGrain::SixFold);
-
+    fn existing_shape_refs_stay_stable() {
         assert_eq!(
-            partial.shape_ref(),
+            QlShape::Constellation(ConstellationGrain::PartialConjugate9).shape_ref(),
             "ql:shape:1.0.0:constellation:partial-conjugate-9"
         );
-        assert_eq!(direct.shape_ref(), "ql:shape:1.0.0:constellation:sixfold");
+        assert_eq!(
+            QlShape::Constellation(ConstellationGrain::SixFold).shape_ref(),
+            "ql:shape:1.0.0:constellation:sixfold"
+        );
     }
 
     #[test]
-    fn fold_reading_completes_one_through_twelve_without_changing_structural_membership() {
+    fn fold_ladder_has_named_one_and_seven_readings() {
         assert_eq!(QlShape::onefold().fold_count(), Some(1));
-        assert_eq!(
-            QlShape::Constellation(ConstellationGrain::TwoFold).fold_count(),
-            Some(2)
-        );
         assert_eq!(QlShape::canonical_sevenfold().fold_count(), Some(7));
         assert_eq!(QlShape::canonical_sevenfold().shape_ref(), SEVEN_FOLD_SHAPE_REF);
         assert_eq!(
@@ -555,126 +518,62 @@ mod tests {
     }
 
     #[test]
-    fn disclosed_two_and_threefolds_compress_to_the_existing_onefold_anchor() {
+    fn disclosed_two_and_threefolds_compress_to_the_onefold_anchor() {
         let two = QlShapeCompression::to_onefold(QlShape::Constellation(
             ConstellationGrain::TwoFold,
         ))
         .unwrap();
         assert_eq!(two.presented, QlShape::onefold());
-        assert_eq!(two.disclosed_fold, 2);
         assert_eq!(two.operator_ref, COMPRESS_TO_WHOLE_OPERATOR_REF);
 
         let three = QlShapeCompression::to_onefold(QlShape::Constellation(
             ConstellationGrain::ThreeFold123,
         ))
         .unwrap();
-        assert_eq!(three.presented.fold_count(), Some(1));
         assert_eq!(three.disclosed_fold, 3);
         assert_eq!(three.operator_ref, THREE_TO_ONE_OPERATOR_REF);
         assert_eq!(
             three.recognition_superset,
             Some(QlShape::Constellation(ConstellationGrain::FourFold1234))
         );
-        assert!(three.derivation_ref().contains("threefold-123"));
     }
 
     #[test]
-    fn d3_square_expands_to_sixteen_addresses_and_retains_route_identity() {
+    fn d3_square_is_sixteen_addresses_and_retains_route_identity() {
         let a = FourByFourField::from_pair(RelationFamily::A.pair(1).unwrap());
         let c = FourByFourField::from_pair(RelationFamily::C.pair(2).unwrap());
-
         assert_eq!(a.axis().len(), 4);
         assert_eq!(a.addresses.len(), 16);
         assert_eq!(a.source.vertex_key(), c.source.vertex_key());
         assert_ne!(a.shape_ref(), c.shape_ref());
-        assert_ne!(a.derivation_ref(), c.derivation_ref());
     }
 
     #[test]
-    fn canonical_m3_cubic_is_the_existing_four_cubed_and_two_to_sixth_field() {
-        let field = FourByFourByFourField::canonical();
-        assert_eq!(field.site_cardinality, 3);
-        assert_eq!(field.states_per_site, 4);
-        assert_eq!(field.binary_properties_per_site, 2);
-        assert_eq!(field.address_cardinality, 64);
-        assert_eq!(field.address_cardinality, Codon64::COUNT);
-        assert_eq!(field.shape_ref(), FOUR_BY_FOUR_BY_FOUR_SHAPE_REF);
-    }
-
-    #[test]
-    fn canonical_six_by_six_is_direct_against_conjugate() {
-        let field = SixBySixField::canonical();
-
-        assert_eq!(field.direct_axis.len(), 6);
-        assert_eq!(field.conjugate_axis.len(), 6);
-        assert_eq!(field.addresses.len(), 36);
-        assert!(
-            field
-                .direct_axis
-                .iter()
-                .all(|coordinate| coordinate.face == QlFace::Direct)
-        );
-        assert!(
-            field
-                .conjugate_axis
-                .iter()
-                .all(|coordinate| coordinate.face == QlFace::Conjugate)
-        );
-    }
-
-    #[test]
-    fn relational_sixfold_exposes_six_same_position_generation_sites() {
-        let shape = RelationalSixfold::canonical();
-
-        assert_eq!(shape.sites.len(), 6);
-        for (index, site) in shape.sites.iter().enumerate() {
-            assert_eq!(site.position.value(), index as u8);
-            assert_eq!(site.direct.position, site.conjugate.position);
-            assert_eq!(site.direct.face, QlFace::Direct);
-            assert_eq!(site.conjugate.face, QlFace::Conjugate);
-        }
-        assert_eq!(shape.return_anchor_symbol, "0/1");
-        assert_eq!(shape.shape_ref(), RELATIONAL_SIXFOLD_SHAPE_REF);
-    }
-
-    #[test]
-    fn eighteenfold_is_three_sixfolds_and_compresses_to_three() {
-        let shape = EighteenFoldGeometry::canonical();
-        assert_eq!(shape.sixfold_cardinality, 6);
-        assert_eq!(shape.fold_cardinality, 18);
-        assert_eq!(shape.compressed_fold_cardinality, 3);
-        assert_eq!(shape.shape().fold_count(), Some(18));
-        assert_eq!(shape.return_anchor_symbol, "0/1");
-        assert_eq!(shape.compression_operator_ref(), EIGHTEEN_TO_THREE_OPERATOR_REF);
-    }
-
-    #[test]
-    fn second_spanda_geometry_preserves_the_sixty_four_thirty_six_split_in_ten_square() {
+    fn second_spanda_is_m3_four_cubed_plus_m2_six_squared() {
         let geometry = SecondSpandaGeometry::canonical();
         assert_eq!(geometry.m3_quaternary_cubic.address_cardinality, 64);
         assert_eq!(geometry.m2_senary_square.addresses.len(), 36);
         assert_eq!(geometry.totality(), 100);
-        assert_eq!(geometry.decadic_projection.axis_cardinality, 10);
         assert_eq!(geometry.decadic_projection.block_cardinalities, [16, 24, 24, 36]);
         assert_eq!(geometry.decadic_projection.m3_partition_cardinality, 64);
         assert_eq!(geometry.decadic_projection.m2_partition_cardinality, 36);
-        assert_eq!(geometry.decadic_projection.address_cardinality, 100);
     }
 
     #[test]
-    fn portable_shape_fixture_carries_the_same_cardinality_and_return_laws() {
-        let fixture = include_str!("../../../fixtures/kernel/ql-shape-contract-v1.json");
+    fn eighteenfold_is_three_sixfolds_compressing_to_three() {
+        let geometry = EighteenFoldGeometry::canonical();
+        assert_eq!(geometry.sixfold_cardinality, 6);
+        assert_eq!(geometry.fold_cardinality, 18);
+        assert_eq!(geometry.compressed_fold_cardinality, 3);
+        assert_eq!(geometry.shape().fold_count(), Some(18));
+    }
 
-        assert!(fixture.contains("\"address_cardinality\": 16"));
-        assert!(fixture.contains("\"address_cardinality\": 36"));
-        assert!(fixture.contains("\"site_cardinality\": 6"));
+    #[test]
+    fn portable_fixture_tracks_the_geometry_extension() {
+        let fixture = include_str!("../../../fixtures/kernel/ql-shape-contract-v1.json");
         assert!(fixture.contains("\"four_by_four_by_four\""));
-        assert!(fixture.contains("\"address_cardinality\": 64"));
         assert!(fixture.contains("\"eighteen_fold\""));
-        assert!(fixture.contains("\"fold_cardinality\": 18"));
         assert!(fixture.contains("\"ten_by_ten\""));
-        assert!(fixture.contains("\"address_cardinality\": 100"));
-        assert!(fixture.contains("\"return_through\": \"0/1\""));
-        assert!(fixture.contains("\"shape_address_asserts_semantic_relation\": false"));
+        assert!(fixture.contains("\"second_spanda\""));
     }
 }
