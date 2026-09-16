@@ -7,9 +7,14 @@
       "header": "c/include/ql/m_tree_live.h",
       "stratum": "c",
       "disposition": "coordinate-bound",
-      "coordinates": ["M"],
+      "coordinates": [
+        "M"
+      ],
       "rationale": "Current structural projection over the same accepted index implementation, not whole-M computational readiness.",
-      "tests": ["migration/epi-kernel/k8/native.c", "scripts/tests/test_k8_structure.py"],
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "scripts/tests/test_k8_structure.py"
+      ],
       "kind": "structural-index"
     },
     {
@@ -17,9 +22,18 @@
       "header": "c/include/ql/coupled_clock.h",
       "stratum": "c",
       "disposition": "cross-coordinate",
-      "coordinates": ["#3-0", "#3-5-5/0", "#2-0-0", "#2-0-1", "#2-2"],
+      "coordinates": [
+        "#3-0",
+        "#3-5-5/0",
+        "#2-0-0",
+        "#2-0-1",
+        "#2-2"
+      ],
       "rationale": "Exact lifted clock and phase/grid laws; validation/arithmetic helpers belong to this bounded owner.",
-      "tests": ["migration/epi-kernel/k8/native.c", "cpp/tests/k8_installed.cpp"],
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "cpp/tests/k8_installed.cpp"
+      ],
       "kind": "computational"
     },
     {
@@ -27,18 +41,28 @@
       "header": "c/include/ql/m2_aperture.h",
       "stratum": "c",
       "disposition": "coordinate-bound",
-      "coordinates": ["#2-0"],
+      "coordinates": [
+        "#2-0"
+      ],
       "rationale": "Eighteen immutable native aperture descriptors; source-generated descendant IDs, not another lens catalogue.",
-      "tests": ["migration/epi-kernel/k8/native.c", "scripts/tests/test_k8_structure.py"],
+      "tests": [
+        "migration/epi-kernel/k8/native.c",
+        "scripts/tests/test_k8_structure.py"
+      ],
       "kind": "structural-index"
     },
     {
       "path": "crates/ql-mef/src/m_tree.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["M"],
+      "coordinates": [
+        "M"
+      ],
       "rationale": "Current source lineage and registry lookups extend accepted index machinery; historical readiness remains at its original revision.",
-      "tests": ["crates/ql-mef/tests/native_m_tree.rs", "crates/ql-mef/tests/k8_structure.rs"],
+      "tests": [
+        "crates/ql-mef/tests/native_m_tree.rs",
+        "crates/ql-mef/tests/k8_structure.rs"
+      ],
       "kind": "structural-index"
     },
     {
@@ -47,25 +71,40 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Compile reviewed source amendments into Cargo build outputs; does not create an independent coordinate owner.",
-      "tests": ["crates/ql-mef/tests/k8_structure.rs"],
+      "tests": [
+        "crates/ql-mef/tests/k8_structure.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/continuous.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#2", "#3-0"],
+      "coordinates": [
+        "#2",
+        "#3-0"
+      ],
       "rationale": "Validated full M2 request producer and persistent control bridge to native C/C++ continuation; not another numerical engine or host authority.",
-      "tests": ["crates/ql-mef/examples/k8_field.rs", "scripts/test-k8-continuous.py"],
+      "tests": [
+        "crates/ql-mef/examples/k8_field.rs",
+        "scripts/test-k8-continuous.py"
+      ],
       "kind": "computational"
     },
     {
       "path": "cpp/include/ql/continuous_field.hpp",
       "stratum": "cpp",
       "disposition": "cross-coordinate",
-      "coordinates": ["#2", "#3-0", "#3-5-5/0"],
-      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1–M3 laws and GPU particle integration remain separate owners.",
-      "tests": ["cpp/tests/continuous_field.cpp", "scripts/test-k8-continuous.py"],
+      "coordinates": [
+        "#2",
+        "#3-0",
+        "#3-5-5/0"
+      ],
+      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
+      "tests": [
+        "cpp/tests/continuous_field.cpp",
+        "scripts/test-k8-continuous.py"
+      ],
       "kind": "computational"
     },
     {
@@ -74,7 +113,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Bounded installed JSON management transport to the same typed C++ owner; no real-time provider or private authority inference.",
-      "tests": ["scripts/test-k8-continuous.py"],
+      "tests": [
+        "scripts/test-k8-continuous.py"
+      ],
       "kind": "computational"
     },
     {
@@ -83,16 +124,26 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Installed headless consumer tests the full validated producer and one persistent C++ session; not a new domain model.",
-      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/continuous/coupled.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#1", "#2", "#3"],
+      "coordinates": [
+        "#1",
+        "#2",
+        "#3"
+      ],
       "rationale": "Composes the complete accepted M1/M2/M3 owners into one retained event; actual M1 harmonic evidence and M3 pose feed native M2 and the existing C++ continuation. V3 consumes the QL-owned performance event rather than interpreting Factory execution directly. No replacement numerical engine, identity inference or geometry solver.",
-      "tests": ["crates/ql-mef/tests/k8_coupled.rs", "crates/ql-mef/tests/k8_vak_performance.rs", "crates/ql-mef/examples/k8_coupled.rs"],
+      "tests": [
+        "crates/ql-mef/tests/k8_coupled.rs",
+        "crates/ql-mef/tests/k8_vak_performance.rs",
+        "crates/ql-mef/examples/k8_coupled.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -101,7 +152,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Installed full-event consumer executes actual M1/M3 operations, real sky/M2, one existing C++ field, atomic adoption and exact replay. Controlled input is not Nara or physical eigenvalue acceptance.",
-      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
@@ -110,43 +163,70 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Fail-closed admission of native management acknowledgements against the retained subject, source, operation and stable sample identities. No second numerical clock/field owner or authority grant.",
-      "tests": ["crates/ql-mef/src/continuous/receipt/tests.rs", "crates/ql-mef/examples/k8_field.rs", "scripts/test-k8-continuous.py"],
+      "tests": [
+        "crates/ql-mef/src/continuous/receipt/tests.rs",
+        "crates/ql-mef/examples/k8_field.rs",
+        "scripts/test-k8-continuous.py"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/vak_profile.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0-4", "#0-5"],
+      "coordinates": [
+        "#0-4",
+        "#0-5"
+      ],
       "rationale": "AW94-authored original C-prime operational profile over the existing VakComposition owner: content, context position, paired passage and native thread validation. Exact source imported from #166 at 6a35d04caed98c61a1df903020fa05860790fad7; does not create another parser, scheduler, authority or C registry.",
-      "tests": ["crates/ql-mef/src/vak_profile/tests.rs", "crates/ql-mef/tests/vak_composition.rs"],
+      "tests": [
+        "crates/ql-mef/src/vak_profile/tests.rs",
+        "crates/ql-mef/tests/vak_composition.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/cprime_oikonomia.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0-4", "#0-5"],
+      "coordinates": [
+        "#0-4",
+        "#0-5"
+      ],
       "rationale": "Accepted #94 QL-owned C-prime execution semantics from main/#177: six CFP forms, governed Z, directed CS passage and Return-surviving reflective receipts over the existing VakComposition owner. K8 records the current implementation disposition only; it does not absorb Factory scheduling or create a second C registry.",
-      "tests": ["crates/ql-mef/src/cprime_oikonomia.rs"],
+      "tests": [
+        "crates/ql-mef/src/cprime_oikonomia.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/vak_performance.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0-4", "#0-5"],
-      "rationale": "#94/AW2 QL-owned semantic projection of current Factory Vāk execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
-      "tests": ["crates/ql-mef/src/vak_performance.rs", "crates/ql-mef/tests/k8_vak_performance.rs", ".github/workflows/kernel-k8-continuous.yml"],
+      "coordinates": [
+        "#0-4",
+        "#0-5"
+      ],
+      "rationale": "#94/AW2 QL-owned semantic projection of current Factory V\u0101k execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
+      "tests": [
+        "crates/ql-mef/src/vak_performance.rs",
+        "crates/ql-mef/tests/k8_vak_performance.rs",
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/vak_scope.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0-4", "#0-5"],
+      "coordinates": [
+        "#0-4",
+        "#0-5"
+      ],
       "rationale": "#94/#183 QL-owned source-qualified operative binding and reobservation over the existing VakComposition/C-prime owner. It recompiles the current whole/profile/source basis to distinguish Current, Stale and Missing without accepting client or AIKit echoes as QL authority; world generation and Method-classified Skill refs remain external correlations, not QL Context, permission or scope registries.",
-      "tests": ["crates/ql-mef/src/vak_scope.rs"],
+      "tests": [
+        "crates/ql-mef/src/vak_scope.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -155,7 +235,10 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "#94/#183 transport-neutral currentness envelope over the existing QL-owned operative binding/reobservation path. It serialises owner-produced Current/Stale/Missing observations for external consumers without defining another coordinate, parser, scope registry, permission system, RPC owner or semantic refraction operation.",
-      "tests": ["crates/ql-mef/src/vak_scope_wire.rs", "crates/ql-mef/tests/vak_scope_owner.rs"],
+      "tests": [
+        "crates/ql-mef/src/vak_scope_wire.rs",
+        "crates/ql-mef/tests/vak_scope_owner.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -163,8 +246,10 @@
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL Vāk performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
-      "tests": ["crates/ql-mef/src/vak_thought_consumption.rs"],
+      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL V\u0101k performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
+      "tests": [
+        "crates/ql-mef/src/vak_thought_consumption.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -173,7 +258,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
-      "tests": ["crates/ql-mef/src/continuous/receipt/tests.rs"],
+      "tests": [
+        "crates/ql-mef/src/continuous/receipt/tests.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -182,7 +269,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
-      "tests": ["crates/ql-mef/src/vak_profile/tests.rs"],
+      "tests": [
+        "crates/ql-mef/src/vak_profile/tests.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -191,25 +280,38 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled K8 admission regressions for ql.vak-performance-event/v1. They prove versioned fail-closed consumption and Context-Frame-to-mode preservation; synthetic fixtures are not Factory execution evidence or another performance owner.",
-      "tests": ["crates/ql-mef/tests/k8_vak_performance.rs", ".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        "crates/ql-mef/tests/k8_vak_performance.rs",
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/property.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#0"],
+      "coordinates": [
+        "#0"
+      ],
       "rationale": "Accepted AW1 operational property ground over borrowed native Bimba node/relation identities. M0 owns the source/property ground; applicability remains explicit and may reference existing native subjects without inventing M1-M3 ownership, C vocabulary, graph persistence or authority.",
-      "tests": ["crates/ql-mef/src/property/tests.rs", "crates/ql-mef/examples/property_source_check.rs"],
+      "tests": [
+        "crates/ql-mef/src/property/tests.rs",
+        "crates/ql-mef/examples/property_source_check.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/property/model.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#0"],
+      "coordinates": [
+        "#0"
+      ],
       "rationale": "Source-defined rich value types and Recognition/rollback provenance subordinate to the accepted M0 property ground. Structural subjects are borrowed from the native registry; this is not coordinate creation or a second graph schema.",
-      "tests": ["crates/ql-mef/src/property/tests.rs", "crates/ql-mef/examples/property_source_check.rs"],
+      "tests": [
+        "crates/ql-mef/src/property/tests.rs",
+        "crates/ql-mef/examples/property_source_check.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -218,7 +320,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled AW1 property conformance and rollback tests. Test helpers are not live native admission, coordinate existence, canonical vocabulary or Neo4j evidence.",
-      "tests": ["crates/ql-mef/src/property/tests.rs"],
+      "tests": [
+        "crates/ql-mef/src/property/tests.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -227,7 +331,10 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled FixtureGate acceptance consumer for all 194 recovered original property definitions. It exercises current Rust operations only and grants no native authority, coordinate standing, C promotion or live graph persistence.",
-      "tests": ["crates/ql-mef/examples/property_source_check.rs", ".github/workflows/agent-world.yml"],
+      "tests": [
+        "crates/ql-mef/examples/property_source_check.rs",
+        ".github/workflows/agent-world.yml"
+      ],
       "kind": "computational"
     },
     {
@@ -236,34 +343,50 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Source-qualified S5 to QL-MEF product/revision affinity. It carries the selected registry revision but explicitly does not claim a coordinate capability, copied kernel or same-index exclusive owner.",
-      "tests": ["crates/ql-mef/src/aw1_self_reference.rs"],
+      "tests": [
+        "crates/ql-mef/src/aw1_self_reference.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/aw1_world.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["M"],
+      "coordinates": [
+        "M"
+      ],
       "rationale": "Read-only rooted view over the accepted M-family registry: preserves kernel taproot versus M-family master, exact recursive ancestry, direct/conjugate faces, source relations and only the native bindings actually present. It creates no second registry or implementation owner.",
-      "tests": ["crates/ql-mef/src/aw1_world.rs", "crates/ql-mef/tests/native_m_tree.rs"],
+      "tests": [
+        "crates/ql-mef/src/aw1_world.rs",
+        "crates/ql-mef/tests/native_m_tree.rs"
+      ],
       "kind": "structural-index"
     },
     {
       "path": "crates/ql-mef/src/qv.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0", "#5"],
+      "coordinates": [
+        "#0",
+        "#5"
+      ],
       "rationale": "Source-qualified quintessential-view operation joining the accepted M0/Bimba PropertyField with Epii's historical M5 quick-view self-API. q_* spelling never supplies producer authority; read/write/bake preserve explicit source, subject, revision and result without a second graph/property store or shared-C writer.",
-      "tests": ["crates/ql-mef/src/qv.rs"],
+      "tests": [
+        "crates/ql-mef/src/qv.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-wiki/src/participation.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#0"],
+      "coordinates": [
+        "#0"
+      ],
       "rationale": "Hen's constellation/pair/triad/whole/direct-conjugate participation over the existing Wiki meta projection and M0/Bimba identities. It preserves exact Wiki revision and Bimba registry/face identity instead of copying Bimba into a second Wiki/graph ontology.",
-      "tests": ["crates/ql-wiki/tests/aw1_participation.rs"],
+      "tests": [
+        "crates/ql-wiki/tests/aw1_participation.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -273,7 +396,11 @@
       "kind": "computational",
       "coordinates": [],
       "rationale": "Bounded presentation-only receiver of the existing C++ PCM and exact source/device cursor relation. It does not own M1-M3 synthesis, astronomy, Nara identity, the retained particle integrator, authority or native simulation scheduling.",
-      "tests": ["adapters/retained-field/native-audio.test.mjs", "adapters/retained-field/audio-acceptance.mjs", "adapters/retained-field/test-audio-browser.py"]
+      "tests": [
+        "adapters/retained-field/native-audio.test.mjs",
+        "adapters/retained-field/audio-acceptance.mjs",
+        "adapters/retained-field/test-audio-browser.py"
+      ]
     },
     {
       "path": "crates/ql-mef/src/continuous/host.rs",
@@ -281,7 +408,10 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Bounded local command admission, inspection and compact delivery over the existing coupled owner; native identities are received, not invented.",
-      "tests": ["scripts/test-k8-host.py", "crates/ql-mef/src/continuous/host.rs"],
+      "tests": [
+        "scripts/test-k8-host.py",
+        "crates/ql-mef/src/continuous/host.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -290,7 +420,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Installed supervised pipe host with bounded framing and lifecycle. It is not another numerical, authority or graph owner.",
-      "tests": ["scripts/test-k8-host.py"],
+      "tests": [
+        "scripts/test-k8-host.py"
+      ],
       "kind": "computational"
     },
     {
@@ -299,7 +431,10 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "One presentation driver schedules native PCM and end-of-block targets with bounded lookahead; companion reads have no native execution or source-disclosure authority.",
-      "tests": ["adapters/retained-field/instrument-session.test.mjs", "scripts/test-k8-host.py"],
+      "tests": [
+        "adapters/retained-field/instrument-session.test.mjs",
+        "scripts/test-k8-host.py"
+      ],
       "kind": "computational"
     },
     {
@@ -308,7 +443,10 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Retained GPU target admission and memory-preserving application/checkpoint; no domain derivation or duplicate particle integration.",
-      "tests": ["adapters/retained-field/acceptance.ts", "adapters/retained-field/instrument-session.test.mjs"],
+      "tests": [
+        "adapters/retained-field/acceptance.ts",
+        "adapters/retained-field/instrument-session.test.mjs"
+      ],
       "kind": "computational"
     },
     {
@@ -317,25 +455,44 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Reviewed graph transaction/projection over the existing K8 source compiler and captured native graph joins. Transport, target admission and rollback do not define new semantic coordinates, property vocabulary or readiness.",
-      "tests": ["scripts/tests/test_k8_graph.py", "scripts/test-k8-graph-live.py"],
+      "tests": [
+        "scripts/tests/test_k8_graph.py",
+        "scripts/test-k8-graph-live.py"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#1", "#2", "#3", "#4"],
+      "coordinates": [
+        "#1",
+        "#2",
+        "#3",
+        "#4"
+      ],
       "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced.",
-      "tests": ["crates/ql-mef/src/nara.rs", "crates/ql-mef/tests/nara_personal_field.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara.rs",
+        "crates/ql-mef/tests/nara_personal_field.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/continuous/personal.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#1", "#2", "#3", "#4"],
+      "coordinates": [
+        "#1",
+        "#2",
+        "#3",
+        "#4"
+      ],
       "rationale": "K8 subject-bound integration around the existing coupled runtime and #134 PersonalFieldInstance. It relates one acknowledged M1-M3/material owner to explicitly supplied Nara reception without another field, inferred centre inputs, hidden update or disclosure grant.",
-      "tests": ["crates/ql-mef/tests/nara_personal_field.rs", ".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        "crates/ql-mef/tests/nara_personal_field.rs",
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
@@ -344,7 +501,9 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Installed acceptance consumer for the existing C++ field plus subject-bound Nara wrapper. It proves currentness/replay and no hidden native advance with controlled source-qualified receiver values; it does not define receiver physiology, source mappings or another runtime owner.",
-      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
@@ -353,34 +512,50 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Cross-owner K8 acceptance consumer only: executes the retained Factory-owner receipt producer, projects that exact snapshot through the QL-owned vak_performance semantics, voices the existing dual-bus material owner and receives the same occasion through #134 PersonalFieldInstance. It creates no execution owner, pitch table, Nara mapping or second field.",
-      "tests": [".github/workflows/kernel-k8-continuous.yml"],
+      "tests": [
+        ".github/workflows/kernel-k8-continuous.yml"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/activity.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4 Central Day/NOW activity and occurrence reception. It retains source-qualified human/agent activity for one Nara without taking Central ownership or inventing T/T-prime semantics.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/activity_aw3.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4 reception of the landed #94/AW3 thought-consumption reading into one Nara's exact Central Day/NOW. The typed T/T-prime meanings, lifecycle mutation and Recognition candidate remain with their landed owners.",
-      "tests": ["crates/ql-mef/src/nara/activity_aw3.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/activity_aw3.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/agent_world.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
-      "coordinates": ["#0", "#4"],
+      "coordinates": [
+        "#0",
+        "#4"
+      ],
       "rationale": "K10 whole-M Personal join over landed AW1 Bimba/property, ql-wiki participation identity, #94 C-prime/Vak currentness-performance and AW3 Recognition readings. It relates them to one accepted Nara Personal occasion without copying M0/M5, Wiki, Factory, AIKit, K8 runtime or renderer ownership.",
-      "tests": ["crates/ql-mef/src/nara/domain/agent_world.rs", "crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/agent_world.rs",
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
@@ -389,142 +564,217 @@
       "disposition": "infrastructural",
       "coordinates": [],
       "rationale": "Controlled K10/M4 repository acceptance fixtures. They prove source and subject separation but are not live human/sensory evidence or another M4 producer.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/capability.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4 source-qualified capability readings for Nara's six domain branches; no M0/M5 capability catalogue or agent execution owner is reproduced.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/common.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4 shared source/protection/standing vocabulary used only by the Nara domain branches.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/context.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.4 contextual branch over the accepted Nara subject; it does not create AIKit Context or operative scope ownership.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/embodied.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.1 embodied seven-centre and EarthBody state over explicit source-qualified Personal inputs; no clinical, particle-inferred or K8 runtime owner is introduced.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/identity.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.0 identity offices over explicit Nara source lineage; agent or renderer state is never promoted into human identity authority.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/integration.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.5 integration offices assemble Nara-owned return state while external operative owners remain referenced rather than copied.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/oracle.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.2 oracle domain preserves original utterance, interpretation, evidence and reinterpretation lineage without claiming source or agent authority.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/oracle_field.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.2 oracle field aggregates source-qualified Nara oracle readings only; it is not a new model, source registry or execution owner.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/state.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 complete M4 state composes the six distinct Nara branches over one protected subject and Personal basis without flattening their provenance.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/transformation.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.3 transformation readings retain the source-defined 12-by-3/24 structure and occurrence/evidence distinction for Nara.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain/transformation_field.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 M4.3 transformation field assembles validated Nara transformation readings without creating another world runtime or source owner.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/domain_operations.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 repository-native mutation/validation operations over the complete M4 state. They operate only on Nara-owned records and do not schedule agents or mutate external owners.",
-      "tests": ["crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/expression.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 source-qualified Expression projection of Nara state for the external O:I renderer. It emits references/receipts rather than renderer state and does not take O:I or K9 presentation ownership.",
-      "tests": ["crates/ql-mef/src/nara/expression.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/expression.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/multi.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 protected multi-Nara composition preserves distinct subjects over shared world evidence; it does not merge Personal identity or grant shared disclosure authority.",
-      "tests": ["crates/ql-mef/src/nara/multi.rs", "crates/ql-mef/src/nara/domain/acceptance.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/multi.rs",
+        "crates/ql-mef/src/nara/domain/acceptance.rs"
+      ],
       "kind": "computational"
     },
     {
       "path": "crates/ql-mef/src/nara/replay.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
-      "coordinates": ["#4"],
+      "coordinates": [
+        "#4"
+      ],
       "rationale": "K10 Nara replay validates exact source/subject/world invariants without advancing the K8 runtime or silently accepting stale Personal state.",
-      "tests": ["crates/ql-mef/src/nara/replay.rs", "crates/ql-mef/tests/nara_personal_field.rs"],
+      "tests": [
+        "crates/ql-mef/src/nara/replay.rs",
+        "crates/ql-mef/tests/nara_personal_field.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/build.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Stamp the suite build revision into Cargo build outputs; does not create an independent coordinate owner.",
+      "tests": [
+        "crates/ql-cli/tests/m1_engine_cli.rs"
+      ],
       "kind": "computational"
     }
   ]
