@@ -17,6 +17,7 @@ mod pole;
 mod position;
 mod relation_classification;
 mod shape;
+mod shape_ref;
 mod structural;
 #[path = "carrier.rs"]
 mod structural_carrier;
@@ -83,6 +84,7 @@ pub use shape::{
     SecondSpandaGeometry, SixBySixField, TEN_BY_TEN_SHAPE_REF, THREE_TO_ONE_OPERATOR_REF,
     TenByTenProjection,
 };
+pub use shape_ref::resolve_shape_ref;
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,

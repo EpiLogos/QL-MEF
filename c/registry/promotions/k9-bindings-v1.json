@@ -57,6 +57,15 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-core/src/shape_ref.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": ["#1", "#2", "#3"],
+      "rationale": "QL #222 is the inverse lookup seam for the already-owned L5.3 Geometry shapes. It resolves only exact canonical versioned refs produced by QlShape::shape_ref, rejects aliases and anonymous Other grains, and introduces no new shape, coordinate or semantic authority.",
+      "tests": ["crates/ql-core/src/shape_ref.rs", "crates/ql-core/tests/geometry_constellation_resolution.rs"],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/matheme.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",
@@ -72,6 +81,15 @@
       "coordinates": ["#0-4", "#0-5"],
       "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
       "tests": ["crates/ql-mef/tests/compressed_geometry_vak.rs", "crates/ql-mef/tests/vak_composition.rs"],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-wiki/src/shape_binding.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #222 is a transport/projection consumer of the existing ShapeBinding and Wiki refraction contracts. It validates canonical ql-core shape refs and compression metadata, carries that view through Wiki readings, and deliberately leaves ParticipationForm, Geometry semantics, source relations and provider execution in their existing owners.",
+      "tests": ["crates/ql-wiki/tests/shape_binding_refraction.rs", "crates/ql-wiki/tests/wiki_refraction.rs"],
       "kind": "computational"
     }
   ]

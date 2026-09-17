@@ -1,7 +1,7 @@
 # Geometry constellation completion Wayfinder
 
-Status: **active implementation map for #204, 2026-09-16**  
-Branch: `agent/geometry-constellation-spanda-completion`  
+Status: **#204–#207 and #222 landed; canonical Geometry plus Vāk/Wiki runtime propagation complete, 2026-09-16**  
+Landed via: `#208` and `#223`  
 Canonical spec: [`CANONICAL-CONSTELLATION-RESOLUTION.md`](CANONICAL-CONSTELLATION-RESOLUTION.md)
 
 This lane completes the existing L5.3 Geometry office. It does not create a second shape ontology, a new Vāk layer, or a replacement for the accepted structural carrier.
@@ -84,7 +84,7 @@ The derived decadic projection is:
 
 `TenByTenProjection` preserves that block structure. It is a view of the canonical `4^3 | 6^2` Second-Spanda body, not its replacement.
 
-## G4 — existing-consumer propagation — #207 — implemented at the shared seam
+## G4 — shared Vāk propagation — #207 — implemented
 
 No new Vāk payload is introduced. Existing consumer flow is retained:
 
@@ -97,30 +97,55 @@ QlShape
      {binding, GeometryReading, ...}
 ```
 
-Acceptance coverage proves that a one-fold `0/1` binding can retain a threefold basis and the exact `3→1` compression derivation/operator through the existing `ShapeBinding` contract.
+Acceptance coverage proves that a one-fold `0/1` binding can retain a threefold basis and the exact `3→1` compression derivation/operator through the existing `ShapeBinding` contract. Explicit member focus reopens the retained body while the default read presents the whole anchor.
 
-Downstream Wiki/refraction/Research Canvas/Epii/Expression consumers therefore receive the same binding contract they already consume. They may expose, collapse or reopen Geometry without reconstructing shape arithmetic or losing the subject identity.
+That is the shared carrier floor. Downstream runtime propagation is separately proven by G4b rather than inferred from the carrier alone.
 
-## G5 — conformance and admission — current
+## G4b — Wiki runtime propagation — #222/#223 — implemented
 
-Repository checks required before merge:
+The post-#208 consumer audit found that `crates/ql-wiki` still validated pair/D1/D2/D3 structural fields directly while its runtime `WikiReading` did not retain the newly canonical `ShapeBinding` shape/basis/derivation metadata. #223 closes that gap through the existing Wiki extension/refraction path.
 
-1. `ql-core` unit + integration tests, especially `geometry_constellation_resolution`;
-2. `ql-mef` Second-Spanda conformance test;
-3. existing structural/carrier/Vāk tests remain green;
-4. fixture consumers accept matheme contract 1.2.0 and the additive shape Geometry extension;
-5. no public API consumer breaks from the added `ConstellationGrain::PartialConjugate7` exhaustive match;
-6. format/clippy/CI as required by the repository.
+The landed route is deliberately thin:
 
-Any exhaustive-match break is fixed at its actual consumer. The new variant is not hidden behind `Other` merely to avoid propagation work.
+```text
+QlShape::shape_ref
+  <-> ql-core canonical shape-ref resolver
+        -> Wiki ShapeBinding transport view
+           -> existing Wiki target extension channel
+              -> existing Wiki refraction engine
+                 -> shape-aware Wiki reading
+                    {ql_form_refs, operator_refs, exact shape-binding extension}
+```
 
-## G6 — next research discriminators after this merge
+Rules now enforced in runtime:
 
-These are now research on top of a complete canonical carrier, not missing base implementation:
+- `ql-core` is the only owner that resolves versioned shape refs; Wiki does not parse shape strings locally;
+- Wiki `ParticipationForm` remains its source-participation vocabulary and is not identified with `QlShape`;
+- the Wiki transport view carries subject/whole identity, basis refs, members, derivation, operator, Return refs and caller provenance, while semantic relation assertions continue through Wiki's existing relation structures;
+- compressed one-fold readings are admitted only when their retained member body reconstructs a lawful two- or three-fold `StructuralConstellation` and the existing `QlShapeCompression` produces the exact operator/derivation supplied;
+- ordinary Wiki refraction with no shape extension remains byte/structure compatible with the existing contract;
+- no new service, source registry, Geometry owner or provider semantics are introduced.
+
+## G5 — conformance and admission — complete
+
+#223 closes against the intended repository checks:
+
+1. canonical shape refs round-trip through the kernel resolver, while aliases/unknown versions/anonymous grains fail closed;
+2. a core `ShapeBinding` can project into the Wiki transport view without changing subject, whole, basis, member, derivation, operator, Return or provenance identity;
+3. a compressed threefold→onefold view validates through the actual kernel compression law and is carried into every shape-aware Wiki reading;
+4. invalid shape refs and false compression derivations fail before provider execution;
+5. ordinary Wiki refraction remains unchanged when no shape binding is present;
+6. existing structural/carrier/Vāk/Wiki tests remain green;
+7. current-source census records the new resolver as part of the existing Geometry owner and the Wiki layer as an infrastructural consumer;
+8. format/clippy/CI pass with no historical K4 proof rewritten.
+
+## G6 — next research discriminators after base implementation
+
+These are research on top of the canonical carrier and its admitted Vāk/Wiki runtime consumers, not missing base implementation:
 
 - determine the exact operator interpretation of the `4×6` and `6×4` decadic cross-blocks;
 - test how quaternionic transformation carries the `4^3` body into decadic/other dimensional presentations;
-- exercise resolution switching in the live Wiki/Research Canvas/Expression UX so a `0/1` node can be opened through its preserved 2/3-fold basis and wider constellation;
+- exercise resolution switching in the live Research Canvas/Expression UX so a `0/1` node can be opened through its preserved 2/3-fold basis and wider constellation;
 - relate the 18→3 compression to the root `{0, /, 1} → 0/1` reading in actual Epii/agent reasoning traces without hard-coding semantic content into `ql-core`.
 
-Those follow from this implementation. They do not block the Geometry base admitted by #204.
+Those follow from the admitted Geometry system and its consumer contract. They do not redefine the L5.3 owner.
