@@ -43,6 +43,13 @@ fn actual_c_source_relation_and_state_match_independent_rust() {
     let out = root.join("target/m1-state");
     std::fs::create_dir_all(&out).unwrap();
     let exe = out.join("probe");
+    // Section GC is --gc-sections on ELF linkers, -dead_strip on macOS ld64 —
+    // the same linker-flavour split scripts/test-m1-engine.sh applies.
+    let gc: [&str; 1] = if cfg!(target_os = "macos") {
+        ["-Wl,-dead_strip"]
+    } else {
+        ["-Wl,--gc-sections"]
+    };
     let result = Command::new(std::env::var("CC").unwrap_or("cc".into()))
         .current_dir(&root)
         .args([
@@ -64,10 +71,9 @@ fn actual_c_source_relation_and_state_match_independent_rust() {
             "c/src/m1_state.c",
             "c/src/kernel.c",
             "c/src/primitive.c",
-            "-Wl,--gc-sections",
-            "-lm",
-            "-o",
         ])
+        .args(gc)
+        .args(["-lm", "-o"])
         .arg(&exe)
         .output()
         .unwrap();
