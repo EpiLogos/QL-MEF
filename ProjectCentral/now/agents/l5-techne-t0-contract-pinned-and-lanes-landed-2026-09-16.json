@@ -1,0 +1,11 @@
+{
+ "schema": "central.project-now.handoff/v1",
+ "id": "l5-techne-t0-contract-pinned-and-lanes-landed-2026-09-16",
+ "provenance": "agent-authored-bounded-return",
+ "actor": "zcode-session-2026-09-16-l5-techne-execution",
+ "kind": "handoff",
+ "recorded_at_unix_seconds": 1789552600,
+ "subject": "L5 Techne T0 pinned; Wave A/B lanes landed on lane branches",
+ "result": "Executed docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md from PR #203. Drift reconciled first and recorded in the map. T0 on techne/t0-adapter: schemas/techne reading+session schemas, fixtures/techne (representative, absent-facets, real-refs development day), ql-adapters techne.rs contract types + TechneAdapter + DisclosureSelection, 10 contract tests (cargo test -p ql-adapters green). T9 gates: python3 scripts/techne-gates.py proves G0-G2/G4-G7 (G2 live via ctrl, G7 live via ql capabilities); G3 second spatial case open; G8 is the owner's desktop walk. Commit 2a19450.",
+ "status": "active"
+}
