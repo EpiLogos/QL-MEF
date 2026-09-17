@@ -30,6 +30,15 @@ Executed the same day, on the local suite, per §19 (one integration owner, lane
 - **Gates.** `python3 scripts/techne-gates.py` proves G0–G2 and G4–G7 (G2 against LIVE Central ctrl data), reports G3's second real spatial case open (no local PlaceFacet producer yet), and hands G8 to the owner. Full O-I integrated suite: 170/170; build green.
 - **Open items.** Production QL `FocusedInstrumentSource` registration (today only the K9 dev-walk harness registers one) — the m1234 embodiment path needs it live; real T1 provider feeds replace conformance fixtures in the instruments; the tiled basemap and a second real spatial producer for G3; Research Canvas lane branches are not merged to its main line.
 
+## Convergence disposition (2026-09-17, post-harmonised-cut)
+
+Reconciliation pass over what actually landed after the 09-16 first pass. Recorded so the section above reads as history, not current state:
+
+- **Fan-out converged and landed.** All seven lanes (#213–#219) ran against TB0-1 and converged onto `techne/tb0-surfaces-port` (`07cfe4a`); the harmonised cut landed that port, the K/AW production line and dialogical Nara on main via #229 (`e9eefd6`), with the held session returns via #230 (`99020d5`). The TB0 contract, schemas, fixtures, gates and adapter on main are byte-identical to the `techne/tb0-connective-base` branch — the pin is canonical on main, and PR #224 is retained-content (closed as such).
+- **T9 first proving increment landed.** The 10-leg integrated-field walk over the real Central ground (#220) reached main through the stacked chain #228 → `techne/tb0-surfaces-port` @ `7b080a7` → #231: central-ground `TechneSource` provider, provenance-stamped capture fixture, walk test, ledger (`docs/L5-TECHNE-T9-INTEGRATION-LEDGER.md`) and `docs/t9-evidence/`. Verified on the reconciled tree: `cargo test -p ql-adapters` 43/43 (18 techne contract), cradle node suite 359/359, `tsc --noEmit` clean, `scripts/techne-gates.py` all machine-provable gates pass (G2 live against Central day 2026-09-17).
+- **Planning maps canonical.** `docs/L5-TECHNE-INTEGRATED-DEVELOPMENT-WAYFINDER.md` and `docs/L5-TECHNE-PARALLEL-DISPATCH-MAP.md` (PR #221's delta, superseded-branch landing) are now on main, and `AGENTS.md` routes Technē work to them.
+- **Still open, each with its owner:** O-I port-back + installed-desktop round and the O-I TS-mirror TB0-1 adoption (O-I `techne/convergence` line, actively owned — not merged into O-I PR #370; the two lines are parallel from `3a1a65a`); live `actuation.agency/v1` actualisation (Actuation); SemanticWiki/ProjectMap provider install (AIKit); C′ profile CLI surface (ql-cli); G3's second real spatial producer (T1 successor); G8 (the owner's). The Geometry-closeout instructions of 2026-09-17 on #214/#215/#219 are active lane work, not yet landed.
+
 
 ---
 
