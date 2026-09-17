@@ -124,3 +124,73 @@ fn native_cli_lineage_retains_return_snapshots_and_replays_identically() {
     assert_eq!(lineage["returns"][0]["producing"]["standing"], "DERIVED");
     assert_eq!(lineage["returns"][0]["route"]["anchorRef"], "anchor:outer");
 }
+
+fn oikonomia_specimen() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/kernel/vak-cprime-oikonomia-v1.json")
+}
+#[test]
+fn full_cs0_walk_survives_cfp_form_z_cycle_and_cs_profile_into_operative_return() {
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_ql"))
+        .args(["vak", "compose"])
+        .arg(oikonomia_specimen())
+        .arg("--json")
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let v: Value = serde_json::from_slice(&output.stdout).unwrap();
+    let results = v["results"].as_array().unwrap();
+    let selected = &results[3]["result"];
+    assert_eq!(
+        selected["csWalk"]["marker"],
+        "ql.cprime-oikonomia/v1:cs0:forward-synthesis:extent:6"
+    );
+    let inspected = &results[results.len() - 2]["result"];
+    assert!(inspected["zCycle"]["complete"].as_bool().unwrap());
+    assert!(inspected["csComplete"].as_bool().unwrap());
+    let operative = &results[results.len() - 1]["result"];
+    assert_eq!(
+        operative["cfpForm"],
+        "ql.cprime-oikonomia/v1:cfp0:base-one-voice"
+    );
+    assert_eq!(
+        operative["csWalk"]["marker"],
+        "ql.cprime-oikonomia/v1:cs0:forward-synthesis:extent:6"
+    );
+    let executed: Vec<(u64, u64)> = operative["csWalk"]["executed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| (h["from"].as_u64().unwrap(), h["to"].as_u64().unwrap()))
+        .collect();
+    assert_eq!(
+        executed,
+        vec![(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 0)]
+    );
+    assert_eq!(operative["return"]["standing"], "DERIVED");
+}
+#[test]
+fn cs_hop_rejects_a_return_outside_the_selected_pair() {
+    let mut v: Value =
+        serde_json::from_slice(&std::fs::read(oikonomia_specimen()).unwrap()).unwrap();
+    v["steps"][7]["target"] = json!("src0");
+    let err = ql_cli::vak_composition::execute_request(&v).unwrap_err();
+    assert!(err.to_string().contains("CS pair/direction"));
+}
+#[test]
+fn z_cycle_refuses_to_skip_stages_through_the_cli() {
+    let mut v: Value =
+        serde_json::from_slice(&std::fs::read(oikonomia_specimen()).unwrap()).unwrap();
+    let steps = v["steps"].as_array().unwrap().clone();
+    let reduced: Vec<Value> = steps
+        .into_iter()
+        .filter(|s| s["op"] != "z-advance" || s["stage"] != json!("compose"))
+        .collect();
+    v["steps"] = json!(reduced);
+    let err = ql_cli::vak_composition::execute_request(&v).unwrap_err();
+    assert!(err.to_string().contains("out of source-defined order"));
+}

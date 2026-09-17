@@ -1,6 +1,7 @@
 //! JSON command adapter, not a parser for AIKit's expression language.
 use crate::CliError;
 use ql_core::*;
+use ql_mef::cprime_oikonomia as oik;
 use ql_mef::vak_composition::*;
 use ql_mef::*;
 use serde_json::{Value, json};
@@ -124,6 +125,45 @@ fn ground(v: &str) -> R<GroundKind> {
         "conjugate" => Ok(GroundKind::Conjugate),
         _ => Err(error("unknown ground relation")),
     }
+}
+fn cfp_form(v: &str) -> R<oik::CfpThreadForm> {
+    Ok(match v {
+        "base" => oik::CfpThreadForm::Base,
+        "parallel" => oik::CfpThreadForm::IndependentParallel,
+        "chain" => oik::CfpThreadForm::Chain,
+        "fusion" => oik::CfpThreadForm::Fusion,
+        "sustained" => oik::CfpThreadForm::Sustained,
+        "nested" => oik::CfpThreadForm::Nested,
+        _ => return Err(error("unknown CFP thread form")),
+    })
+}
+fn z_stage(v: &str) -> R<oik::CfpZStage> {
+    Ok(match v {
+        "compose" => oik::CfpZStage::Compose,
+        "perform" => oik::CfpZStage::Perform,
+        "record" => oik::CfpZStage::Record,
+        "rehear" => oik::CfpZStage::Rehear,
+        "recompose" => oik::CfpZStage::Recompose,
+        _ => return Err(error("unknown Z stage")),
+    })
+}
+fn cs_profile(v: &str) -> R<oik::CsProfile> {
+    Ok(match v {
+        "full-traverse" => oik::CsProfile::FullTraverse,
+        "quick-grounding-context" => oik::CsProfile::QuickGroundingContext,
+        "ground-through-operation" => oik::CsProfile::GroundThroughOperation,
+        "through-pattern" => oik::CsProfile::ThroughPattern,
+        "context-focused" => oik::CsProfile::ContextFocused,
+        "direct-synthesis" => oik::CsProfile::DirectSynthesis,
+        _ => return Err(error("unknown CS profile")),
+    })
+}
+fn cs_direction(v: &str) -> R<oik::CsDirection> {
+    Ok(match v {
+        "forward-synthesis" => oik::CsDirection::ForwardSynthesis,
+        "returning-inquiry" => oik::CsDirection::ReturningInquiry,
+        _ => return Err(error("unknown CS direction")),
+    })
 }
 fn parse_language(v: &Value) -> R<Option<FullVakBinding>> {
     if v.is_null() {
@@ -315,6 +355,7 @@ pub fn execute_request(request: &Value) -> R<Value> {
     let registry = VakRegistry::from_authoritative_source().map_err(error)?;
     let mut graph = VakComposition::default();
     let mut contexts: BTreeMap<String, CPrimeContext> = BTreeMap::new();
+    let mut oikonomias: BTreeMap<String, oik::CPrimeOikonomia> = BTreeMap::new();
     let mut results = Vec::new();
     for (index, s) in steps.iter().enumerate() {
         let operation = text(s, "op")?;
@@ -523,6 +564,77 @@ pub fn execute_request(request: &Value) -> R<Value> {
                         .get(text(s, "context")?)
                         .ok_or_else(|| error("unknown context"))?,
                 )),
+                "cfp-form" | "z-begin" | "z-advance" | "z-reopen" | "cs-select" | "cs-hop" => {
+                    let id = text(s, "oikonomia")?;
+                    let c = contexts
+                        .get_mut(text(s, "context")?)
+                        .ok_or_else(|| error("unknown context"))?;
+                    let state = oikonomias.entry(id.to_owned()).or_default();
+                    match operation {
+                        "cfp-form" => state
+                            .select_cfp(c, cfp_form(text(s, "form")?)?, parse_basis(&s["basis"])?)
+                            .map_err(error)?,
+                        "z-begin" => state
+                            .begin_z(
+                                c,
+                                oik::CfpZCycle::authorised(
+                                    text(s, "undertakingRef")?,
+                                    strings(s, "goalEvidence")?,
+                                    text(s, "authorisationRef")?,
+                                    parse_basis(&s["basis"])?,
+                                )
+                                .map_err(error)?,
+                            )
+                            .map_err(error)?,
+                        "z-advance" => state
+                            .advance_z(
+                                c,
+                                z_stage(text(s, "stage")?)?,
+                                text(s, "resultRef")?,
+                                strings(s, "evidence")?,
+                                parse_basis(&s["basis"])?,
+                            )
+                            .map_err(error)?,
+                        "z-reopen" => state
+                            .reopen_z(
+                                c,
+                                strings(s, "reevaluationEvidence")?,
+                                parse_basis(&s["basis"])?,
+                            )
+                            .map_err(error)?,
+                        "cs-select" => state
+                            .select_cs(
+                                c,
+                                cs_profile(text(s, "profile")?)?
+                                    .passage(cs_direction(text(s, "direction")?)?),
+                                parse_basis(&s["basis"])?,
+                            )
+                            .map_err(error)?,
+                        "cs-hop" => {
+                            let input = parse_return(s)?;
+                            state
+                                .perform_cs_hop(c, &mut graph, input)
+                                .map_err(error)?;
+                        }
+                        _ => unreachable!(),
+                    }
+                    Ok(oikonomia_view(state))
+                }
+                "inspect-oikonomia" => Ok(oikonomia_view(
+                    oikonomias
+                        .get(text(s, "oikonomia")?)
+                        .ok_or_else(|| error("unknown oikonomia"))?,
+                )),
+                "operative-return" => {
+                    let state = oikonomias
+                        .get(text(s, "oikonomia")?)
+                        .ok_or_else(|| error("unknown oikonomia"))?;
+                    Ok(operative_return_view(
+                        &state
+                            .returned(&graph, text(s, "returnRef")?)
+                            .map_err(error)?,
+                    ))
+                }
                 _ => Err(error(format!(
                     "unknown QL composition operation {operation}"
                 ))),
@@ -635,6 +747,26 @@ fn context_view(c: &CPrimeContext) -> Value {
     "allowedOperators":c.allowed_operators.iter().map(|o|o.glyph()).collect::<Vec<_>>(),"contentFields":c.content_fields.iter().map(|f|f.symbol()).collect::<Vec<_>>(),
     "thread":c.thread,"threadBindings":c.thread_bindings.iter().map(|b|json!({"sourceStep":b.source_step.to_string(),"path":paths_view(&b.path)})).collect::<Vec<_>>(),
     "rPath":c.r_path.as_ref().map(rpath_view),"operations":c.operations.iter().map(receipt_view).collect::<Vec<_>>()})
+}
+fn z_cycle_view(z: &oik::CfpZCycle) -> Value {
+    json!({"undertakingRef":z.undertaking_ref,"authorisationRef":z.authorisation_ref,"iteration":z.iteration,
+    "expectedStage":z.expected_stage().map(|s|s.marker()),"complete":z.complete(),
+    "stages":z.stages.iter().map(|r|json!({"iteration":r.iteration,"stage":r.stage.marker(),"resultRef":r.result_ref,"evidence":r.evidence,"basis":basis_view(&r.basis)})).collect::<Vec<_>>(),
+    "reevaluationEvidence":z.reevaluation_evidence})
+}
+fn cs_walk_view(p: &oik::CsPassage, executed: &[oik::CsExecutedHop]) -> Value {
+    json!({"marker":p.marker(),"profile":p.profile.index(),"direction":p.direction.marker(),
+    "hops":p.hops.iter().map(|h|json!({"index":h.index,"from":h.from.value(),"to":h.to.value()})).collect::<Vec<_>>(),
+    "executed":executed.iter().map(|h|json!({"index":h.index,"returnRef":h.return_ref,"determinationRef":h.determination_ref,"targetUse":h.target_use,"from":h.from.value(),"to":h.to.value()})).collect::<Vec<_>>()})
+}
+fn oikonomia_view(o: &oik::CPrimeOikonomia) -> Value {
+    json!({"cfpForm":o.cfp_form.map(|f|f.marker()),"zCycle":o.z_cycle.as_ref().map(z_cycle_view),
+    "csWalk":o.cs_passage.as_ref().map(|p|cs_walk_view(p,&o.cs_executed)),"csComplete":o.cs_complete()})
+}
+fn operative_return_view(r: &oik::OperativeReturn) -> Value {
+    json!({"return":return_view(&r.base),"cfpForm":r.cfp_form.marker(),
+    "zCycle":r.z_cycle.as_ref().map(z_cycle_view),
+    "csWalk":cs_walk_view(&r.cs_passage,&r.cs_executed)})
 }
 fn determination_view(d: &Determination) -> Value {
     json!({"reference":d.reference,"wholeUse":d.whole_use,"reading":read_view(&d.reading),"sources":d.sources.iter().map(source_view).collect::<Vec<_>>(),

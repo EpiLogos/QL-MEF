@@ -372,11 +372,11 @@
     },
     {
       "path": "crates/ql-mef/tests/m1_engine.rs",
-      "sha256": "2a6644895a9f6cf1447cdb0e1e9ddef7b2e5a7ea4b26ab8a0a5bd77ab0edd714"
+      "sha256": "1443a8657d5369827469456b111fefddcd2f00253d21b48d8917363748922efe"
     },
     {
       "path": "crates/ql-mef/tests/m1_state.rs",
-      "sha256": "571b1bbfe0b594982b9c9d516e544cd57cf473d926de3383314d18fd40cbb54d"
+      "sha256": "6836f48a998bec4c04e6f3105765f2156ff58d922828aab412efda7084741e5b"
     },
     {
       "path": "migration/epi-kernel/m1-state-probe.c",
