@@ -1,0 +1,315 @@
+{
+  "capture_ref": "ql.techne:capture:central-ground-t9@1",
+  "captured_at": 1789606025,
+  "captured_local": "2026-09-17T01:47:05+01:00",
+  "day_read": {
+    "action": "central.day.read",
+    "data": {
+      "automatic_agent_or_model_invocation": false,
+      "content": "",
+      "day_ref": "central:day:control:root:2026-09-15",
+      "relations_revision": "central.content-fnv1a64/v1:23987:684d0fc1cc915bca",
+      "revision": {
+        "byte_len": 0,
+        "revision": "central.content-fnv1a64/v1:0:cbf29ce484222325"
+      },
+      "schema": "central.day-reading/v1",
+      "source": {
+        "agent_retrieval_allowed": true,
+        "path": "Control/user/day/2026-09-15/day.md",
+        "provenance": "observed",
+        "ref": "central:source:control:root:Control/user/day/2026-09-15/day.md",
+        "roles": [
+          "human-day",
+          "personal-human-source-aperture"
+        ],
+        "standing": "current-development-state",
+        "treatment": "projectcentral-user"
+      },
+      "temporal": {
+        "civil_date": "2026-09-15",
+        "created_at_unix_seconds": 1789476515,
+        "day_ref": "central:day:control:root:2026-09-15",
+        "lifecycle": "closed",
+        "lifecycle_actor_ref": "central:source:control:root:Control/user/identity",
+        "lifecycle_at_unix_seconds": 1789476575,
+        "preexisting_bytes_retained": false,
+        "project_day_refs": [],
+        "schema": "central.human-day/v1",
+        "template_fidelity": "native-blank-text-not-an-original-HTML-fixture",
+        "time_policy_ref": "central:source:control:root:Control/user/civil-time-policy.json",
+        "time_policy_revision": "central.content-fnv1a64/v1:741:0ef7b5aaedd35e27",
+        "timezone": "Europe/London"
+      },
+      "today": {
+        "civil_date": "2026-09-15",
+        "day_ref": "central:day:control:root:2026-09-15",
+        "updated_at_unix_seconds": 1789476515
+      }
+    },
+    "ok": true,
+    "status": "success"
+  },
+  "now_list": {
+    "action": "central.now.list",
+    "data": {
+      "automatic_agent_or_model_invocation": false,
+      "pointer_note": "Records are pointers, not authority: follow the governing guidance, and search the native surface before building anything new.",
+      "records": [
+        {
+          "created_at_unix_seconds": 1789605761,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:08b57a8ea4e6eaaf6a92be5bbd9c8e736849c50de01a42c1b5cb12055e05ca1c",
+          "participant_refs": [],
+          "purpose": "All three designed remainers built by parallel subagents and integrated; the harness-profile pieces now slot together. (1) MODEL BINDING: aikit-core/src/model_harness_binding.rs - ModelsLayer facts become roster facts through one typed seam (HarnessModelDemand, HarnessProviderGate LimitedTo/Open/Ungated, capabilities map, fitness_scope harness-profile/<slug> convention); proven through the real rank_model_roster - a fitter foreign-provider candidate loses to the harness gate, Ungated passes with disclosed reason. (2) ACP MCP POPULATION: aikit-cli/src/encounter_mcp.rs + minimal open_native wiring - active tool-protocol capsules resolve through the same application engine aikit status uses, BEFORE any provider process spawns; wire shape verified against the authoritative ACP v1 schema.json (stdio {name,command,args,env:[{name,value}]}, http {type,name,url,headers}); capability-gated (negotiated mcp_servers false, e.g. pi-rpc, keeps empty exactly as before); export-name collisions refuse; the previously hardwired-empty field is now fed by composition. (3) DISCLOSURE READ MODEL: aikit-adapters/src/harness_disclosure.rs - layer-uniform per-harness render (posture, native, composed, activation, drift) with posture-gated drift rules (OwnedNotComposed via the aikit tool-protocol marker, ComposedNotNative), serializable for status/TUI, hook_seam_present wired honestly rather than left dead. EVIDENCE: full workspace cargo test (with the one evidenced pre-existing tmux-environment hang skipped) 2635 passed 0 failed across 270 binaries (was 2604); core 481, adapters 270, cli 48 lib tests; clippy clean on new modules (2 pre-existing type_complexity warnings in client.rs Reach enum, in-flight code, untouched); fmt clean on all new files. The designed loop is now connected end to end: profiles declare, projection composes, encounter supplies on the wire, detection observes natively, disclosure renders both plus drift, roster binds model facts. HONEST REMAINERS: production consumers for the binding and disclosure seams (feeding real roster calls and a status/TUI surface) are the next wiring pass; client_effects still dispatches via its own guard-pinned match; the Reach enum type_complexity warnings are in-flight code. Design: docs/plans/2026-09-16-harness-profile-design.md. Follow-up agent: read that design doc and this record, run cargo test --workspace -- --skip persisted_working_surface_opens_and_focuses_real_tmux_after_store_restart, execute from there.",
+          "revision": {
+            "byte_len": 3321,
+            "revision": "central.content-fnv1a64/v1:3321:f1f008b925452965"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/08b57a8ea4e6eaaf6a92be5bbd9c8e736849c50de01a42c1b5cb12055e05ca1c/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/d0062e26aeaea01e12c4340d3f6d42dd1e774bb8b08a7679497199e28b5a9aca/now.json"
+          ],
+          "task_ref": "control:task:harness-profile-integration-remainers-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789446530,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:17eab19e010bb3c8e2186860dc902ba85e410a372d6aef9fb247758b4fed8f95",
+          "participant_refs": [],
+          "purpose": "O-I #299 configuration plane: Gate A (PR 302) fan-out executed across 12 parallel lanes and converged. Gate B merged to EpiLogos/O-I main (PR 322): oi config / oi profile run the real kernel; owner plans relay verbatim. Owner lanes on native mains: Central 181, Actuation 87, ai-kit 314, Factory 235, Workcell 81. Gate B proven live against real AIKit: kernel apply mutated owner declared+effective state with owner receipt and replay no_op; v2 reread reconciliation verified; sparse profile import/use/diff works. Conformance 14/14 executable, connector fixture leg bound, 3 partials pending desktop-live and bootstrap bindings. Contract observations returned on #299 (comment 5674619431). Remaining to Gate C: QL-MEF 198 census merge with main (in resolution), desktop live KernelOp binding, bootstrap/adopt binding, full CLI/Desktop parity. Follow-up agent: read EpiLogos/O-I issue 299 and docs/cradle/09-CONFIGURATION-PLANE.md on main, then execute from them.",
+          "revision": {
+            "byte_len": 1734,
+            "revision": "central.content-fnv1a64/v1:1734:b4f96e2730f1ab28"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/17eab19e010bb3c8e2186860dc902ba85e410a372d6aef9fb247758b4fed8f95/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/user/native-action-authority.json"
+          ],
+          "task_ref": "control:task:oi-299-configuration-plane-fanout-2026-09-15"
+        },
+        {
+          "created_at_unix_seconds": 1789576872,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:3c0c2aebe8e77607d76f598d9a2b90a058b874ec65c0b4e33b1fedf4474345e1",
+          "participant_refs": [],
+          "purpose": "MCP capability source tested and hardened end-to-end across the suite. DETECTION: Actuation harness detection gained a file-based mcp-config facet (catalog revision 9: claude-code, openclaw, gemini, zcode descriptors); the detector now reads real MCP configs and names observed servers with redacted command lines (secret-flag values redacted, env never read), exposed via ProbeEffects.read_text_file, admission grammar extended for file inventories, frozen scenarios regenerated, 18/18+82/82 tests green. Detection exposed real drift: openclaw bimba-mcp pointed at the dead docker v1 container and zcode bimba at the repo legacy adapter with empty local password; both corrected to Work/epi/bimba-portable modern server (openclaw launcher script; zcode dist/main.js at bolt://100.92.62.101:7687). PROJECTION + INVOCATION: built the missing Pi MCP bridge (Work/epi/bimba-portable/pi-mcp-bridge/, @modelcontextprotocol/client 2.0, config ~/.pi/agent/mcp.json or PI_MCP_CONFIG): bridges all 21 bimba tools into Pi as native tools over stateless 2026-07-28. Verified live through AIKit: provider configured (pi-rpc argv carries the bridge), SessionSpace session-space/bimba-mcp-test attached, encounter open launched real Pi (native session 01a0ab15), prompt driven via draft/prompt, journal cursor 43 shows tool-call bimba_list_coordinates limit 5 and cursor 44 tool-result isError false with live coordinates (M2-5-9 Pluto, C0 Bimba...), TurnEnded, resident shutdown clean, no orphan processes. Known pi-0.84.4 gap documented in the bridge: -p print mode emits no shutdown events, so the bridge closes bridged servers on a schedule (90s failsafe, 45s per tool call) to avoid pi hangs; rpc mode uses session_shutdown. Still open in ai-kit: no capsule kind or projection target for mcpServers (detection is Actuation-side; AIKit carries it via generic DetectionFacet), encounter adapter still refuses mcp_servers at attach.",
+          "revision": {
+            "byte_len": 2755,
+            "revision": "central.content-fnv1a64/v1:2755:4f97a1c002dae56b"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/3c0c2aebe8e77607d76f598d9a2b90a058b874ec65c0b4e33b1fedf4474345e1/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/86bcb8f6240ff71d1ed4699d647ad6087f1ddfa224f2b467b1cb267e085abcb63/now.json"
+          ],
+          "task_ref": "control:task:mcp-capability-detection-projection-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789581613,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:3f43a461330fe2e76cb9412ee319475ee47fe5445a0c8675b89d493ba9c2ae33",
+          "participant_refs": [],
+          "purpose": "General harness outline designed (docs/plans/2026-09-16-harness-profile-design.md in ai-kit working tree): aikit.harness-profile/v1, one declarative outline per harness whose LAYERS (presence/skills/guidance/hooks/tools/models/sessions/settings) each declare observe/project/disclose plus an ownership posture (managed/brokered/observed) making the superset-subset relation explicit. Grounded by two full censuses: bespoke handling has rotted (3 copies of skills projection shape, 2 hook-merge grammars, 2 divergent registries with live qwen/ollama drift, machine-specific admission evidence, zero MCP reads/writes across 17 adapters) while Actuation catalog already carries the declarative seam data (CapabilitySeam, model_dispatch, probes, typed facet inventories) and the model-routing stack (catalogue/routes/roster/selection) already parameterises by profile and harness_composition. Design reuses: TargetAdapter/ProjectionPlan/ActivationEffect truth, WorldEdit/Inverse/Procedure receipts, config.* replace-merge algebra, ConnectionCapabilities (mcp_servers wire field exists but is hardwired empty), roster scope facts. New, deliberately small: the profile schema, a tool-protocol capsule kind (MCP servers as capability sources), one layer merge-grammar table, a layer read model for UI/disclosure. Staging: parity goldens first (byte-match hand-written outputs), profiles for claude/codex/zcode/pi, tool-protocol + mcpServers population for ACP-capable sessions, registry unification, model layer binding. Follow-up agent: read the design doc and docs/v2/03, then execute from them.",
+          "revision": {
+            "byte_len": 2420,
+            "revision": "central.content-fnv1a64/v1:2420:98a8833648fb9a28"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/3f43a461330fe2e76cb9412ee319475ee47fe5445a0c8675b89d493ba9c2ae33/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/3c0c2aebe8e77607d76f598d9a2b90a058b874ec65c0b4e33b1fedf4474345e1/now.json"
+          ],
+          "task_ref": "control:task:harness-profile-general-outline-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789562145,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:755f36a8b185fbdac9354137976363230c9a984211a65da913cce476db66de2c",
+          "participant_refs": [],
+          "purpose": "Secret origin & cross-machine projection (Workcell, on the Omarchy host). Track A implemented and committed (8b4bcea, local main, not pushed): new epilogos-workcell-secret-service crate (org.freedesktop.secrets SecretProvider, linux-secret-service:// refs, resolve reads only, declared refusals, live GNOME-keyring roundtrip in suite); new epilogos-workcell-secret-scan crate plus workcell secret scan/vault/project/projections/revoke-projection CLI; SecretProjectionRequest/target/receipt in core; origin projection ledger at <state-root>/secrets/projections.json in workcell-control (refs only, revocation keeps record and reaches target at next use); project_credential_to_sandbox wraps the existing OpenSandbox Credential Vault broker with deny-before-write parity; secret origin/projection sections added to MULTI-WORKCELL-PLACEMENT.md and CROSS-CELL-CONNECTIONS.md. Evidence: cargo test --workspace 402 passed / 0 failed (one pre-existing flake under load: cli tests/connections_lifecycle.rs disconnect_offline_state_and_reconnect_reconcile, file untouched by this session, passes 3/3 isolated). Live: scan found the real key at /home/frank/.pi/agent/auth.json (zai.key, presence only) and vaulted it to linux-secret-service://pi-agent/zai (49 bytes, value never printed); Mac->Omarchy cross-cell connection over tailnet proven incl. --store-credential into the Mac keychain, revocation refused at next use, credential rotation reconnect. Track B OpenSandbox VM NOT stood up \u2014 named gaps: no bring-up runbook in the docs (pinned upstream source revisions require a source build of opensandbox-group/OpenSandbox), lifecycle server/execd/egress not running on the host, and OpenSandboxExecutionProvider is not registered in the runtime composition (CollapsedLocalWorkcell registers only host-process/directory providers), so plan/prepare cannot select it; only workcell sandboxes reconcile touches a live lifecycle server. Track C: desktop walk proved no remote-machine surface exists in cradle (Tauri 2); first broken relation is machine->disclosed World mapping (world.rs read_world single local owner call; membership guard lib.rs:826-830); connection credentials have no desktop-legal home (config accepts secret refs only, localStorage is presentation-only). Story MC09 written to /Users/admin/Central/Work/O-I/docs/experience/STORIES.md (uncommitted in O-I working tree); no desktop UI built \u2014 contract gap returned as the named seam. Follow-up agent: read /home/frank/Work/Workcell commit 8b4bcea and docs/SESSION-SECRET-PROJECTION-PROMPT.md, then execute from them; open items are the OpenSandbox VM bring-up (source build + runtime registration) and the desktop machine-disclosure seam.",
+          "revision": {
+            "byte_len": 3545,
+            "revision": "central.content-fnv1a64/v1:3545:248ed7020ed72ee1"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/755f36a8b185fbdac9354137976363230c9a984211a65da913cce476db66de2c/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/user/civil-time-policy.json",
+            "central:source:control:root:Control/user/native-action-authority.json"
+          ],
+          "task_ref": "control:task:workcell-secret-origin-projection-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789569061,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:80419aa9c861aeea7e3330abc0bbf1be44b5d6d43d99dbe002fea1825748340f",
+          "participant_refs": [],
+          "purpose": "Instantiate the O:I development world on Omarchy and run terminal-side factory/agency testing through it, owner observing via Moonlight",
+          "revision": {
+            "byte_len": 975,
+            "revision": "central.content-fnv1a64/v1:975:70ac92e7faf8d805"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/80419aa9c861aeea7e3330abc0bbf1be44b5d6d43d99dbe002fea1825748340f/now.json",
+          "source_refs": [
+            "central:source:control:root:Work/O-I/dev-world/README.md",
+            "central:source:control:root:Work/O-I/docs/experience/SESSION-GROUNDING.md"
+          ],
+          "task_ref": "control:task:oi-dev-world-omarchy-instantiation-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789569623,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:86bcb8f6240ff71d1ed4699d647ad6cded5a8451a590d9c7b34646156627bf2f",
+          "participant_refs": [],
+          "purpose": "Bimba portable MCP made independent: one stateless 2026-07-28 server with full depth, no legacy surface. All 20 legacy-era capabilities now on canonical names (bimba_get/resolve/list_coordinates/context/graph_context/spec_retrieve/traverse/traverse_positions/disclosure/search/semantic_search/rerank/validate/schema/embed/sync/chunk/admin + 3 telegram tools); v1 index, legacy adapter and modern/legacy split deleted from the package. Engine still tracks upstream bimba-mcp (sync policy in README); MCP surface and application seam are portable-own. Neo4j 5.26 fixes now also cover var-length [rel:*N..M] (invalid Cypher, now [*1..N]) and list_coordinates LIMIT int() in engine.ts; upstream graph.ts fixes remain UNCOMMITTED for owner. New 8MiB response budget refuses oversized results with guidance (SDK stdio cap is 10MiB; a 10.9MB depth-2 traverse was silently killing the connection). Verified live on 100.92.62.101:7474: 21-tool catalog, deep reads OK, write/admin gates hold, smoke PASS; 20/20 conformance tests. Install: bimba-mcp.sh; README has the tool mapping and sync rules.",
+          "revision": {
+            "byte_len": 1916,
+            "revision": "central.content-fnv1a64/v1:1916:3efb6c0732066299"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/86bcb8f6240ff71d1ed4699d647ad6cded5a8451a590d9c7b34646156627bf2f/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/e3230e6baba6b9690f599c13906ff709e142a9401596bc2e93824390df38d2c4/now.json"
+          ],
+          "task_ref": "control:task:bimba-portable-mcp-independence-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789207077,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:b417a7c3d37cd47c2762deee3224687d59db1a9015a322e9a8d7584b3947adf6",
+          "participant_refs": [
+            "central:source:control:root:Control/user/identity"
+          ],
+          "purpose": "Enable native root NOW/DAY authority and integrate capability-drift fixes across the suite",
+          "revision": {
+            "byte_len": 984,
+            "revision": "central.content-fnv1a64/v1:984:cbdf9673f4d375d8"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/b417a7c3d37cd47c2762deee3224687d59db1a9015a322e9a8d7584b3947adf6/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/user/civil-time-policy.json",
+            "central:source:control:root:Control/user/native-action-authority.json"
+          ],
+          "task_ref": "control:task:root-native-day-enablement-2026-09-12"
+        },
+        {
+          "created_at_unix_seconds": 1789602816,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:d0062e26ae2798c92ccfdb0f197e9b65c8be8c3728f38c40d8473e355f261865",
+          "participant_refs": [],
+          "purpose": "Harness profile system BUILT and verified in ai-kit working tree (branch techne/t1-facets, no commits - 117 files of unrelated in-flight work on the branch; file manifest in this record). Landed: (1) aikit.harness-profile/v1 schema module in aikit-core (layers presence/skills/guidance/hooks/tools/models/sessions/settings, LayerPosture managed/brokered/observed, posture validation, 8 tests); (2) Kind::ToolProtocol capsule section - MCP servers as first-class capability sources, command-xor-url validation, trust-required (7 tests, forced exhaustive matches in aikit-store inbox.rs); (3) unified layer merge engine in aikit-adapters layers/ - claude-hook-map, zcode-hook-wrapper, mcp-servers-record grammars behind apply_merge with MergeReport, parity goldens captured from pre-refactor behavior, hand-written duplicate bodies in hook_map.rs and zcode.rs deleted, existing tests green unmodified (39 new tests); (4) profiles.rs - 10 embedded validated profile documents carrying only census-evidenced facts (6 tests incl. pi refusal-boundary-as-data and registry-join checks); (5) tool_sources.rs - managed tools-layer projection: tool-protocol capsules merged into native configs via the engine through profile project declarations, outcome-typed not silently empty, acceptance test includes the real bimba launcher with foreign-entry preservation and owned-entry sweep (10 tests); (6) registry unification in aikit-cli - qwen-code and ollama rostered (the live divergence fixed), divergence-guard test proves unrostered dispatch fails loudly, surface pin updated 15 to 17. EVIDENCE: full workspace cargo test 2604 passed 0 failed across 270 binaries; core lib 471, adapters lib 263, store 33+18, cli lib 34, surface 5; clippy clean core+adapters; fmt clean on all new files; README harness-profiles entry added. PRE-EXISTING ISSUE EVIDENCED NOT INTRODUCED: session_space_working_surface persisted_working_surface_opens_and_focuses_real_tmux_after_store_restart hangs reproducibly in isolation (tmux attach-session without -d under non-TTY; test from merged #311 cc00077) - skipped in the workspace run with that evidence. HONEST REMAINERS: client_effects still dispatches via its own match (now guard-pinned); model-layer roster binding, ACP mcp_servers population at encounter, and the disclosure read model are designed (harness-profile-design.md) but not built this pass. Design+plan docs: docs/plans/2026-09-16-harness-profile-design.md and -plan.md. Follow-up agent: read the design doc and the plan, run cargo test --workspace -- --skip persisted_working_surface_opens_and_focuses_real_tmux_after_store_restart, execute from there.",
+          "revision": {
+            "byte_len": 3472,
+            "revision": "central.content-fnv1a64/v1:3472:ecb0c55b28ec8818"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/d0062e26ae2798c92ccfdb0f197e9b65c8be8c3728f38c40d8473e355f261865/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/3f43a461330fe2e76cb9412ee31947130aa9d7c832891925240677737e72525ba/now.json"
+          ],
+          "task_ref": "control:task:harness-profile-implementation-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789477760,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:e3230e6baba6b9690f599c13906ff709e142a9401596bc2e93824390df38d2c4",
+          "participant_refs": [],
+          "purpose": "Move Docker data off the Mac to oi-omarchy and retire Docker Desktop locally",
+          "revision": {
+            "byte_len": 827,
+            "revision": "central.content-fnv1a64/v1:827:a34d8a4bc67e56f0"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/e3230e6baba6b9690f599c13906ff709e142a9401596bc2e93824390df38d2c4/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/user/placement.json"
+          ],
+          "task_ref": "control:task:docker-to-omarchy-migration-2026-09-15"
+        },
+        {
+          "created_at_unix_seconds": 1789561068,
+          "lifecycle": "closed",
+          "now_ref": "central:now:control:root:f7519f692b568c27791c7c11efebc5eb3fed0b5bbf404843fab09085322dabb5",
+          "participant_refs": [],
+          "purpose": "Bimba portable MCP resynced to the stateless 2.0 implementation and verified live. Work/epi/bimba-portable now carries the current bimba-mcp (MCP 2026-07-28) synced from Epi-Logos-C-Experiments Body/S/S2/external/bimba-mcp at daa660cb; the superseded Dec-2025 Python stack moved intact to legacy-python-stack/. Two Neo4j 5.26 fixes in src/api/graph.ts: LIMIT params wrapped with driver int() (JS floats rejected), and size(()--(node)) replaced by COUNT { ()--(node) }. Mirrored to the C-Experiments working tree UNCOMMITTED: owner should commit graph.ts so syncs keep the fix. Verified: 21/21 conformance tests both copies, legacy 20-tool fixture, live smoke PASS (bimba_get #1, bimba_search) against bimba-neo4j on 100.92.62.101:7474 (NEO4J_AUTH=none, ~2141 :Bimba nodes). Install for any client: bimba-mcp.sh; see README.md.",
+          "revision": {
+            "byte_len": 1650,
+            "revision": "central.content-fnv1a64/v1:1650:84f83fd6db249975"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/f7519f692b568c27791c7c11efebc5eb3fed0b5bbf404843fab09085322dabb5/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/agents/now/clearings/e3230e6baba6b9690f599c13906ff709e142a9401596bc2e93824390df38d2c4/now.json"
+          ],
+          "task_ref": "control:task:bimba-portable-mcp-resync-2026-09-16"
+        },
+        {
+          "created_at_unix_seconds": 1789315698,
+          "lifecycle": "active",
+          "now_ref": "central:now:control:root:fc19cccaebf0cb11c9db78be24471f9136980fba203a8ef535af0d5f10e35266",
+          "participant_refs": [],
+          "purpose": "Establish private remote operation of the Omarchy second machine as an inhabited O:I Reference World, Workcell host and small private server; Phase A connection bootstrap handoff",
+          "revision": {
+            "byte_len": 1082,
+            "revision": "central.content-fnv1a64/v1:1082:4647231a826bf5f5"
+          },
+          "scope_ref": "control:root",
+          "source_ref": "central:source:control:root:Control/agents/now/clearings/fc19cccaebf0cb11c9db78be24471f9136980fba203a8ef535af0d5f10e35266/now.json",
+          "source_refs": [
+            "central:source:control:root:Control/user/civil-time-policy.json",
+            "central:source:control:root:Control/user/native-action-authority.json",
+            "central:source:control:root:Control/user/placement.json"
+          ],
+          "task_ref": "control:task:omarchy-second-machine-bootstrap-2026-09-13"
+        }
+      ],
+      "schema": "central.now-listing/v1"
+    },
+    "ok": true,
+    "status": "success"
+  },
+  "provenance": [
+    {
+      "authority": "registered-read-action",
+      "command": "ctrl --json action run central.now.list '{}'",
+      "native_owner": "central/ctrl"
+    },
+    {
+      "authority": "registered-read-action",
+      "command": "ctrl --json action run central.time.policy '{}'",
+      "native_owner": "central/ctrl"
+    },
+    {
+      "authority": "registered-read-action",
+      "command": "ctrl --json action run central.day.read '{}'",
+      "native_owner": "central/ctrl"
+    }
+  ],
+  "schema": "ql.techne.capture/v1",
+  "time_policy": {
+    "action": "central.time.policy",
+    "data": {
+      "civil_date": "2026-09-17",
+      "local_time": "2026-09-17T01:47:05+01:00",
+      "observed_at_unix_seconds": 1789606025,
+      "policy": {
+        "automatic_day_rollover": false,
+        "day_boundary_minutes": 0,
+        "schema": "central.civil-time-policy/v1",
+        "scope_ref": "control:root",
+        "timezone": "Europe/London"
+      },
+      "revision": "central.content-fnv1a64/v1:741:0ef7b5aaedd35e27",
+      "schema": "central.civil-time-reading/v1",
+      "source_ref": "central:source:control:root:Control/user/civil-time-policy.json",
+      "source_revision": "central.content-fnv1a64/v1:173:af2f69d678e69b3c"
+    },
+    "ok": true,
+    "status": "success"
+  }
+}
