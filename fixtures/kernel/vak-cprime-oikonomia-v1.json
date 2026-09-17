@@ -1,0 +1,702 @@
+{
+ "contract": "ql.vak-composition/v1",
+ "steps": [
+  {
+   "op": "whole",
+   "useRef": "w",
+   "subjectRef": "subject:w",
+   "wholeRef": "anchor:w",
+   "category": "M",
+   "groundRef": "ground:w",
+   "groundFace": "direct",
+   "frame": {
+    "id": "CF2",
+    "lens": "L0",
+    "basis": "chromatic",
+    "face": "direct",
+    "positions": "local"
+   },
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "members": [
+    {
+     "subjectRef": "w:0:direct",
+     "position": 0,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:1:direct",
+     "position": 1,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:2:direct",
+     "position": 2,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:3:direct",
+     "position": 3,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:4:direct",
+     "position": 4,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:5:direct",
+     "position": 5,
+     "face": "direct"
+    },
+    {
+     "subjectRef": "w:0:conjugate",
+     "position": 0,
+     "face": "conjugate"
+    },
+    {
+     "subjectRef": "w:1:conjugate",
+     "position": 1,
+     "face": "conjugate"
+    },
+    {
+     "subjectRef": "w:2:conjugate",
+     "position": 2,
+     "face": "conjugate"
+    },
+    {
+     "subjectRef": "w:3:conjugate",
+     "position": 3,
+     "face": "conjugate"
+    },
+    {
+     "subjectRef": "w:4:conjugate",
+     "position": 4,
+     "face": "conjugate"
+    },
+    {
+     "subjectRef": "w:5:conjugate",
+     "position": 5,
+     "face": "conjugate"
+    }
+   ],
+   "sourceReturns": [
+    {
+     "fromRef": "source-result:w",
+     "anchorRef": "anchor:w",
+     "groundRef": "ground:w",
+     "face": "direct",
+     "kind": "own"
+    }
+   ]
+  },
+  {
+   "op": "enter",
+   "id": "ctx",
+   "useRef": "w",
+   "categoryGround": {
+    "position": 4,
+    "face": "direct"
+   }
+  },
+  {
+   "op": "cfp-form",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "form": "base",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-select",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "profile": "full-traverse",
+   "direction": "forward-synthesis",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt0",
+   "coordinate": {
+    "position": 5,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src0",
+   "coordinate": {
+    "position": 0,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d0",
+   "useRef": "src0",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r0",
+   "determination": "d0",
+   "target": "tgt0",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-0-5"
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt1",
+   "coordinate": {
+    "position": 4,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src1",
+   "coordinate": {
+    "position": 1,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d1",
+   "useRef": "src1",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r1",
+   "determination": "d1",
+   "target": "tgt1",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-1-4"
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt2",
+   "coordinate": {
+    "position": 3,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src2",
+   "coordinate": {
+    "position": 2,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d2",
+   "useRef": "src2",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r2",
+   "determination": "d2",
+   "target": "tgt2",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-2-3"
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt3",
+   "coordinate": {
+    "position": 2,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src3",
+   "coordinate": {
+    "position": 3,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d3",
+   "useRef": "src3",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r3",
+   "determination": "d3",
+   "target": "tgt3",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-3-2"
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt4",
+   "coordinate": {
+    "position": 1,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src4",
+   "coordinate": {
+    "position": 4,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d4",
+   "useRef": "src4",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r4",
+   "determination": "d4",
+   "target": "tgt4",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-4-1"
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "tgt5",
+   "coordinate": {
+    "position": 0,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cp",
+   "context": "ctx",
+   "into": "src5",
+   "coordinate": {
+    "position": 5,
+    "face": "direct"
+   },
+   "positions": "local",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "determine",
+   "id": "d5",
+   "useRef": "src5",
+   "lens": "L0",
+   "context": "ctx",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "cs-hop",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "id": "r5",
+   "determination": "d5",
+   "target": "tgt5",
+   "kind": "other",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   },
+   "relationEvidence": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#cs0-forward-pair-5-0"
+  },
+  {
+   "op": "z-begin",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "undertakingRef": "undertaking:cs0-walk",
+   "goalEvidence": [
+    "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md#14-cs-the-actual-passage-through-paired-positions"
+   ],
+   "authorisationRef": "authorisation:cs0-walk",
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "z-advance",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "stage": "compose",
+   "resultRef": "result:z-compose",
+   "evidence": [
+    "evidence:z-compose"
+   ],
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "z-advance",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "stage": "perform",
+   "resultRef": "result:z-perform",
+   "evidence": [
+    "evidence:z-perform"
+   ],
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "z-advance",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "stage": "record",
+   "resultRef": "result:z-record",
+   "evidence": [
+    "evidence:z-record"
+   ],
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "z-advance",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "stage": "rehear",
+   "resultRef": "result:z-rehear",
+   "evidence": [
+    "evidence:z-rehear"
+   ],
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "z-advance",
+   "oikonomia": "oik",
+   "context": "ctx",
+   "stage": "recompose",
+   "resultRef": "result:z-recompose",
+   "evidence": [
+    "evidence:z-recompose"
+   ],
+   "basis": {
+    "caller": "specimen:ql-cprime-oikonomia",
+    "source": "docs/kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md",
+    "revision": "synthetic-v1",
+    "standing": "PROPOSED",
+    "evidence": [
+     "specimen:caller-input"
+    ]
+   }
+  },
+  {
+   "op": "inspect-oikonomia",
+   "oikonomia": "oik"
+  },
+  {
+   "op": "operative-return",
+   "oikonomia": "oik",
+   "returnRef": "r0"
+  }
+ ]
+}
