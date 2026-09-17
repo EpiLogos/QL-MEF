@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::context_frame::ContextFrameId;
 use crate::vak_profile::{
-    ContentPosition, ContentType, ContextSequence, Participation, ThreadForm,
+    ContentPosition, ContentType, ContextSequence, Participation, ThreadForm, constitutional_voice,
 };
 
 use super::domain::{EvidenceStanding, M4Branch};
@@ -114,6 +114,12 @@ impl DialogueFrame {
             Self::Psyche => ContextFrameId::Cf6,
             Self::Sophia => ContextFrameId::Cf7,
         }
+    }
+
+    /// The accepted constitutional voice name, read through the kernel's own
+    /// mapping so this binding and `vak_profile` can never drift.
+    pub const fn voice(self) -> &'static str {
+        constitutional_voice(self.to_context_frame_id())
     }
 }
 
@@ -1729,5 +1735,19 @@ mod tests {
             serde_json::to_string(&Participation::Dialogical).unwrap(),
             "\"dialogical\""
         );
+        // Every named frame agrees with the kernel's own constitutional
+        // voice mapping — the dialogue binding cannot drift from vak_profile.
+        let frames = [
+            (DialogueFrame::Nous, "Nous"),
+            (DialogueFrame::Logos, "Logos"),
+            (DialogueFrame::Eros, "Eros"),
+            (DialogueFrame::Mythos, "Mythos"),
+            (DialogueFrame::Anima, "Anima"),
+            (DialogueFrame::Psyche, "Psyche"),
+            (DialogueFrame::Sophia, "Sophia"),
+        ];
+        for (frame, name) in frames {
+            assert_eq!(frame.voice(), name);
+        }
     }
 }
