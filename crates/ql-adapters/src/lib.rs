@@ -11,6 +11,7 @@ mod error;
 mod factory;
 mod runtime;
 mod techne;
+pub mod techne_wiki;
 
 pub use aikit::AiKitAdapter;
 pub use attachment::{AdapterResult, QlAttachment, QlMode};
@@ -30,5 +31,6 @@ pub use techne::{
     TechneReadingKind, TechneSubject, TechneWhole, TemporalFacet, TemporalInterval, TemporalKind,
     TemporalPrecision, WarrantedQlReading, WholeRelation,
 };
+pub use techne_wiki::{WikiSubjectSource, WikiTechneAdapter};
 
 pub(crate) use core::AdapterCore;
