@@ -7,6 +7,19 @@ Read current issue coordination before choosing files. K8.0 is the shared-core
 writer; #94 owns AW/M0/M5, #134 Nara, #133 the experienced instrument. Preserve
 the accepted M1–M3 field and source identities.
 
+For **L5 Technē / deep-instrument / Research Canvas convergence / 3:3↔4:2 work**,
+also read `docs/L5-TECHNE-DUAL-READING-LOCK.md`, then
+`docs/L5-TECHNE-INTEGRATED-DEVELOPMENT-WAYFINDER.md` and
+`docs/L5-TECHNE-PARALLEL-DISPATCH-MAP.md` before implementation. #212 is the
+shared connective-base writer; after its contract/fixture revision is pinned,
+#213–#219 are the parallel M0′–M5′ plus Expression/Agency/Desktop lanes and #220
+is joined convergence. The professional deep names are Project/Wiki/Graph,
+Canvas/Constellation, Relation Field/Timeline, Journey/Scenes, World/Places and
+Palace/Integral Whole. Expression is the conjugate 3:3 lived reading, not a
+sixth 4:2 peer instrument. Do not privately fork `ql.techne/v1`, duplicate
+native stores, or reinterpret Guardians versus Anima/Aletheia-Technē roles in
+a child lane.
+
 For AW/agent-world or instrument development and its testing, also read
 `docs/kernel-rebuild/OPTIMISATION-AND-LEARNING.md`: the owner-authorised
 optimisation amendment within existing AW0–AW3 and B06–B12. Bind relevant
