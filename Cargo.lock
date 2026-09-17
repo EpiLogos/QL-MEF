@@ -571,6 +571,9 @@ dependencies = [
  "ql-mef",
  "ql-semantic",
  "ql-service",
+ "ql-wiki",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -578,6 +581,7 @@ name = "ql-cli"
 version = "0.1.0"
 dependencies = [
  "jsonschema",
+ "ql-adapters",
  "ql-core",
  "ql-mef",
  "ql-semantic",

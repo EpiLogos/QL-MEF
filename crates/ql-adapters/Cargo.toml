@@ -8,7 +8,10 @@ rust-version.workspace = true
 ql-core = { path = "../ql-core" }
 ql-mef = { path = "../ql-mef" }
 ql-semantic = { path = "../ql-semantic" }
+ql-wiki = { path = "../ql-wiki" }
 ql-service = { path = "../ql-service" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
 
 [lints]
 workspace = true

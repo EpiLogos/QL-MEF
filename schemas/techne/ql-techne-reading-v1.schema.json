@@ -1,0 +1,420 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ql.techne/reading/v1",
+  "title": "QL-MEF L5 Techne Reading (ql.techne/v1)",
+  "description": "Language-neutral Technē reading over native owners. The reading composes attributable facts; it never rewrites native identity, never fabricates QL/temporal/spatial metadata, and treats absent facets as data. Canonical contract text: docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md §2. TB0 extension (2026-09-16, issue #212): purely additive optional fields — relation evidence/standing/temporal qualification, place relation type and uncertainty, attempt/return continuity, warranted M-coordinate and Return refs, application-cut disclosure and the situated-Agency role floor. Contract tag unchanged.",
+  "$defs": {
+    "OpaqueRef": {"type": "string", "minLength": 1, "description": "Native-owner ref carried verbatim. Adapters must not translate, re-key or shorten it."},
+    "NullableRef": {"type": ["string", "null"], "minLength": 1, "description": "Optional native-owner ref: present, absent, or explicitly null — never rewritten."},
+    "ContractTag": {"type": "string", "const": "ql.techne/v1"},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"], "description": "Amended 2026-09-16 (owner-ratified): the six 4:2 deep instruments bind M0-prime through M5-prime (project, canvas, timeline, journey, place, palace); expressions is the conjugate 3:3 Expression reading, not a deep instrument. TB0 (2026-09-16) pins these as the canonical contract spellings: Research Canvas transport vocabulary (Story, Place/Map, Projects) maps onto them through the adapter's alias mapping, never by re-keying native refs."},
+    "AgencyRole": {
+      "type": "object",
+      "description": "TB0 situated-Agency role floor (2026-09-16). Structured state from which ordinary Actuation/AIKit machinery constructs a situated Agency: Guardian_i stewardship, Anima_i = M_i x S4-prime expressive role, Aletheia_i = M_i x S5-prime disclosure/Return role, and Technē_i := Aletheia_i while operating the M_i-prime deep instrument. These are role bindings, never new canonical Agent identities; Guardian_i remains the steward and is not renamed.",
+      "required": ["role", "m_index"],
+      "properties": {
+        "role": {"type": "string", "enum": ["guardian", "anima", "aletheia", "techne"]},
+        "m_index": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The coordinate i this situated role inhabits."},
+        "reading": {"$ref": "#/$defs/TechneReadingKind", "description": "Anima binds the 3:3 conjugate reading; Aletheia/Technē bind the 4:2 deep reading; Guardian stewardship spans both and may leave this absent."},
+        "instrument": {"$ref": "#/$defs/Instrument", "description": "The instrument this role operates: the M_i-prime deep instrument for Technē; the Expression reading for Anima."},
+        "guardian_ref": {"$ref": "#/$defs/NullableRef", "description": "The canonical Guardian identity anchoring this situated role (stewardship context). Present does not mean identical: Guardian_i != Anima_i != Technē_i."},
+        "agent_session_ref": {"$ref": "#/$defs/NullableRef", "description": "The existing native AgentSession the Agency is situated in; never a new runtime."},
+        "profile_ref": {"$ref": "#/$defs/NullableRef", "description": "The AIKit Profile the Agency is constructed through."},
+        "authority": {"type": ["string", "null"], "description": "The authority this role operates under, in disclosure terms; execution always crosses the native owner seam."},
+        "privacy": {"type": ["string", "null"], "description": "Disclosure limits, e.g. Nara-private state excluded."}
+      },
+      "additionalProperties": false
+    },
+    "TemporalKind": {"type": "string", "enum": ["occurrence", "receipt", "valid", "source-created", "source-modified", "day", "now", "session", "run", "generation", "presentation"]},
+    "TemporalPrecision": {"type": "string", "enum": ["millennium", "century", "decade", "year", "month", "day", "hour", "minute", "second", "subsecond"]},
+    "PlacePrecision": {"type": "string", "enum": ["exact", "approximate", "region", "unlocated"]},
+    "LensRef": {"type": "string", "pattern": "^mef:lens:L[0-5]'?@1$"},
+    "SublensRef": {"type": "string", "pattern": "^mef:sublens:L[0-5]'?\\.[0-5]@1$"},
+    "NullableLensRef": {"oneOf": [{"$ref": "#/$defs/LensRef"}, {"type": "null"}]},
+    "NullableSublensRef": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]},
+    "QlResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
+    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"], "description": "Which reading of the one M-prime field this aperture carries. Crossing changes the mode of disclosure and available operations, never the subject."},
+    "ReadingSnapshot": {
+      "type": "object",
+      "description": "Shared snapshot/revision basis for one coherent cross-view reading.",
+      "properties": {
+        "revision": {"type": ["string", "null"]},
+        "basis_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "Subject": {
+      "type": "object",
+      "required": ["subject_ref", "native_owner"],
+      "properties": {
+        "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "native_owner": {"type": "string", "minLength": 1},
+        "native_revision": {"type": ["string", "null"]},
+        "readings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["ref"],
+            "properties": {
+              "ref": {"$ref": "#/$defs/OpaqueRef"},
+              "revision": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "kind": {"type": ["string", "null"]},
+        "standing": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "Whole": {
+      "type": "object",
+      "description": "Bounded local whole; relations keep provider vocabulary and origin without relabelling. TB0 (2026-09-16): relations gained optional stable identity, evidence/standing, owner-supplied derivation/confidence and a temporal qualification that resolves against this reading's temporal facets.",
+      "required": ["whole_ref"],
+      "properties": {
+        "whole_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "member_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["relation", "from_ref", "to_ref"],
+            "properties": {
+              "relation": {"type": "string", "minLength": 1, "description": "Provider-relation vocabulary, preserved verbatim."},
+              "relation_ref": {"$ref": "#/$defs/NullableRef", "description": "Stable native relation identity, when the owner supplies one; carried verbatim across instruments and cuts."},
+              "from_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "to_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "origin": {"type": ["string", "null"]},
+              "origin_ref": {"$ref": "#/$defs/NullableRef"},
+              "standing": {"type": ["string", "null"], "description": "Evidence standing (fact, interpretation, myth, allegation, disputed, ...) in the owner's vocabulary. Trans-temporal/archetypal relations stay distinct from dated ones through standing plus absence of temporal qualification."},
+              "source_ref": {"$ref": "#/$defs/NullableRef"},
+              "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+              "temporal_facet_ref": {"$ref": "#/$defs/NullableRef", "description": "Optional real temporal qualification: resolves against a facet_ref in this reading's temporal array. Absent means the relation carries no dated qualification; never manufacture one."},
+              "derivation_ref": {"$ref": "#/$defs/NullableRef", "description": "Owner-supplied derivation only. The adapter never infers it."},
+              "confidence": {"type": ["string", "null"], "description": "Owner-supplied confidence only, in the owner's own terms."}
+            },
+            "additionalProperties": false
+          }
+        },
+        "focus_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}}
+      },
+      "additionalProperties": false
+    },
+    "QlWarrant": {
+      "type": "object",
+      "description": "A QL facet exists only when warranted; the warrant is the existing QlProvenance + ResultClass + evidence discipline, not a new authority.",
+      "required": ["result_class", "evidence_refs", "provenance_ref"],
+      "properties": {
+        "result_class": {"$ref": "#/$defs/QlResultClass"},
+        "evidence_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "provenance_ref": {"$ref": "#/$defs/OpaqueRef"}
+      },
+      "additionalProperties": false
+    },
+    "WarrantedQlReading": {
+      "type": "object",
+      "required": ["warrant"],
+      "properties": {
+        "address": {"$ref": "#/$defs/NullableRef"},
+        "m_coordinate_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: canonical M-coordinate ref where warranted (the subject's M0–M5 registry coordinate). M′ instrument bindings stay on the disclosure entries; this carries the warranted M identity of the warranted reading itself."},
+        "shape_ref": {"$ref": "#/$defs/NullableRef"},
+        "constellation_ref": {"$ref": "#/$defs/NullableRef"},
+        "lens_ref": {"$ref": "#/$defs/NullableLensRef"},
+        "sublens_ref": {"$ref": "#/$defs/NullableSublensRef"},
+        "context_frame_ref": {"$ref": "#/$defs/NullableRef"},
+        "refraction_summary": {"type": ["string", "null"]},
+        "harmonic_reading": {"type": ["string", "null"]},
+        "geometric_reading": {"type": ["string", "null"]},
+        "vak_source_ref": {"$ref": "#/$defs/NullableRef"},
+        "derivation_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}},
+        "return_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: the Return target where this warranted reading returns into knowledge ground, when the owner supplies one."},
+        "warrant": {"$ref": "#/$defs/QlWarrant"}
+      },
+      "additionalProperties": false
+    },
+    "TemporalFacet": {
+      "type": "object",
+      "description": "One labelled native time fact. Occurrence, receipt, validity and continuity stay distinct; consumers never collapse them to created_at.",
+      "required": ["kind"],
+      "anyOf": [
+        {"required": ["instant"]},
+        {"required": ["interval"]},
+        {"required": ["day_ref"]},
+        {"required": ["now_ref"]},
+        {"required": ["session_ref"]},
+        {"required": ["run_ref"]}
+      ],
+      "properties": {
+        "facet_ref": {"$ref": "#/$defs/NullableRef"},
+        "kind": {"$ref": "#/$defs/TemporalKind"},
+        "instant": {"type": "string", "format": "date-time"},
+        "interval": {
+          "type": "object",
+          "properties": {
+            "from": {"type": ["string", "null"], "format": "date-time"},
+            "to": {"type": ["string", "null"], "format": "date-time"},
+            "from_precision": {"$ref": "#/$defs/TemporalPrecision"},
+            "to_precision": {"$ref": "#/$defs/TemporalPrecision"}
+          },
+          "additionalProperties": false
+        },
+        "precision": {"$ref": "#/$defs/TemporalPrecision"},
+        "day_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "now_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "session_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "run_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "attempt_ref": {"$ref": "#/$defs/OpaqueRef", "description": "TB0: Factory attempt continuity when the owner supplies it; rides a run/session facet, never replaces it."},
+        "return_ref": {"$ref": "#/$defs/OpaqueRef", "description": "TB0: Return continuity (e.g. a late Factory Return) when the owner supplies it; occurrence and receipt stay distinct regardless."},
+        "timezone_policy_ref": {"$ref": "#/$defs/NullableRef"},
+        "uncertainty": {"type": ["string", "null"]},
+        "source_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "PlaceFacet": {
+      "type": "object",
+      "description": "Temporally valid Place identity independent of coordinates; precision and hierarchy are inspectable, uncertainty is data.",
+      "required": ["place_ref", "precision"],
+      "properties": {
+        "place_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "relation": {"type": ["string", "null"], "description": "TB0: the subject's native place-relation type, preserved verbatim (OCCURRED_AT, LOCATED_IN, OPERATED_IN, TRAVELLED_TO, MYTH_LOCATED_AT, ...). These are not interchangeable."},
+        "identity": {
+          "type": "object",
+          "properties": {
+            "names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string", "minLength": 1},
+                  "valid_from": {"type": ["string", "null"]},
+                  "valid_to": {"type": ["string", "null"]}
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "geometry": {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": {"type": "string", "enum": ["point", "polygon"]},
+            "coordinates": {}
+          },
+          "additionalProperties": false
+        },
+        "precision": {"$ref": "#/$defs/PlacePrecision"},
+        "uncertainty": {"type": ["string", "null"], "description": "TB0: owner-supplied spatial uncertainty in the owner's terms; never inferred to fill this in."},
+        "hierarchy": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["place_ref", "relation"],
+            "properties": {
+              "place_ref": {"$ref": "#/$defs/OpaqueRef"},
+              "relation": {"type": "string", "minLength": 1},
+              "valid_from": {"type": ["string", "null"]},
+              "valid_to": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "valid_from": {"type": ["string", "null"]},
+        "valid_to": {"type": ["string", "null"]},
+        "observer_frame": {"$ref": "#/$defs/NullableRef"},
+        "source_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "SourceProvenance": {
+      "type": "object",
+      "description": "Exact source selector where the native producer supplies one; spans, ranges and regions return to the same source unit from every instrument.",
+      "required": ["source_ref", "native_owner"],
+      "properties": {
+        "source_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "source_revision": {"type": ["string", "null"]},
+        "native_owner": {"type": "string", "minLength": 1},
+        "selector": {
+          "description": "Absent or null when the native producer supplies no exact selector.",
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["unit", "start", "end"],
+              "properties": {
+                "unit": {"const": "text_span"},
+                "start": {"type": "integer", "minimum": 0},
+                "end": {"type": "integer", "minimum": 0},
+                "anchor_ref": {"$ref": "#/$defs/NullableRef"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "from", "to"],
+              "properties": {
+                "unit": {"const": "timestamp_range"},
+                "from": {"type": "string", "format": "date-time"},
+                "to": {"type": "string", "format": "date-time"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "x", "y", "width", "height"],
+              "properties": {
+                "unit": {"const": "image_region"},
+                "x": {"type": "number"},
+                "y": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["unit", "kind", "value"],
+              "properties": {
+                "unit": {"const": "other"},
+                "kind": {"type": "string", "minLength": 1},
+                "value": {"type": "string", "minLength": 1}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "standing": {"type": ["string", "null"]},
+        "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/OpaqueRef"}}
+      },
+      "additionalProperties": false
+    },
+    "ExpressionBinding": {
+      "type": "object",
+      "required": ["expression_ref"],
+      "properties": {
+        "expression_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "revision": {"type": ["string", "null"]},
+        "scene_ref": {"$ref": "#/$defs/NullableRef"},
+        "composition_ref": {"$ref": "#/$defs/NullableRef"},
+        "profile_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "NativeActionRef": {
+      "type": "object",
+      "description": "A native owner's disclosed Action. The adapter routes; only the native owner executes, under its own authority.",
+      "required": ["action_ref", "native_owner", "authority"],
+      "properties": {
+        "action_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "native_owner": {"type": "string", "minLength": 1},
+        "authority": {"type": "string", "minLength": 1},
+        "summary": {"type": ["string", "null"]},
+        "expected_effects": {"type": "array", "items": {"type": "string"}},
+        "input_schema_ref": {"$ref": "#/$defs/NullableRef"}
+      },
+      "additionalProperties": false
+    },
+    "Disclosure": {
+      "type": "object",
+      "description": "Capability honesty: available instruments and explicit degraded/unavailable reasons. Drives every instrument affordance; availability is never hard-coded per route. The six deep instruments are the Techne faces of M0-prime..M5-prime; expressions discloses the conjugate 3:3 Expression reading over the same subject.",
+      "required": ["instruments"],
+      "properties": {
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "available"],
+            "oneOf": [
+              {
+                "required": ["available", "reason"],
+                "properties": {"available": {"const": false}}
+              },
+              {
+                "required": ["available"],
+                "properties": {"available": {"const": true}}
+              }
+            ],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "available": {"type": "boolean"},
+              "reason": {"type": "string", "minLength": 1},
+              "m_prime": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The M-prime office this instrument is the Techne face of. Absent on the conjugate 3:3 reading."},
+              "reading": {"$ref": "#/$defs/TechneReadingKind"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "degraded": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "reason"],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "application_cuts": {
+          "type": "array",
+          "description": "TB0: cut-level availability over and above per-instrument entries — whether the 4:2 deep reading and the 3:3 conjugate reading can actually be entered for this subject, and why not when they cannot.",
+          "items": {
+            "type": "object",
+            "required": ["cut", "available"],
+            "oneOf": [
+              {
+                "required": ["available", "reason"],
+                "properties": {"available": {"const": false}}
+              },
+              {
+                "required": ["available"],
+                "properties": {"available": {"const": true}}
+              }
+            ],
+            "properties": {
+              "cut": {"$ref": "#/$defs/TechneReadingKind"},
+              "available": {"type": "boolean"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["instrument", "reason"],
+            "properties": {
+              "instrument": {"$ref": "#/$defs/Instrument"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": ["contract", "reading_ref", "subject", "disclosure"],
+  "properties": {
+    "contract": {"$ref": "#/$defs/ContractTag"},
+    "reading_ref": {"$ref": "#/$defs/OpaqueRef"},
+    "snapshot": {"$ref": "#/$defs/ReadingSnapshot"},
+    "subject": {"$ref": "#/$defs/Subject"},
+    "whole": {"$ref": "#/$defs/Whole"},
+    "ql": {"$ref": "#/$defs/WarrantedQlReading"},
+    "temporal": {"type": "array", "items": {"$ref": "#/$defs/TemporalFacet"}},
+    "spatial": {"type": "array", "items": {"$ref": "#/$defs/PlaceFacet"}},
+    "provenance": {"type": "array", "items": {"$ref": "#/$defs/SourceProvenance"}},
+    "expressions": {"type": "array", "items": {"$ref": "#/$defs/ExpressionBinding"}},
+    "actions": {"type": "array", "items": {"$ref": "#/$defs/NativeActionRef"}},
+    "agency": {"type": "array", "items": {"$ref": "#/$defs/AgencyRole"}, "description": "TB0: situated-Agency role bindings constructible through existing Actuation/AIKit machinery. Absent when no role is situated for this reading."},
+    "disclosure": {"$ref": "#/$defs/Disclosure"}
+  },
+  "additionalProperties": false
+}
