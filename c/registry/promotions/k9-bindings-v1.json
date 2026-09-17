@@ -224,6 +224,18 @@
         "crates/ql-mef/tests/nara_dialogue_conformance.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-wiki/src/shape_binding.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #222 is a transport/projection consumer of the existing ShapeBinding and Wiki refraction contracts. It validates canonical ql-core shape refs and compression metadata, carries that view through Wiki readings, and deliberately leaves ParticipationForm, Geometry semantics, source relations and provider execution in their existing owners.",
+      "tests": [
+        "crates/ql-wiki/tests/shape_binding_refraction.rs",
+        "crates/ql-wiki/tests/wiki_refraction.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
