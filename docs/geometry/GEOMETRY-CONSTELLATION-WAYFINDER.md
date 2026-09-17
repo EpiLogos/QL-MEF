@@ -1,6 +1,6 @@
 # Geometry constellation completion Wayfinder
 
-Status: **#204–#207 and #222 landed; canonical Geometry plus Vāk/Wiki runtime propagation complete, 2026-09-16**  
+Status: **#204–#207 and #222 landed; canonical Geometry plus Vāk/Wiki runtime propagation complete; source-grounded handoff closed 2026-09-17**  
 Landed via: `#208` and `#223`  
 Canonical spec: [`CANONICAL-CONSTELLATION-RESOLUTION.md`](CANONICAL-CONSTELLATION-RESOLUTION.md)
 
@@ -66,7 +66,7 @@ Implementation:
 
 ## G3 — 18-fold and decadic views — #205/#206 — implemented
 
-The existing direct/conjugate relation system now exposes:
+The existing direct/conjugate relation system exposes:
 
 ```text
 6 + 6′ + relational-6 = 18
@@ -83,6 +83,11 @@ The derived decadic projection is:
 ```
 
 `TenByTenProjection` preserves that block structure. It is a view of the canonical `4^3 | 6^2` Second-Spanda body, not its replacement.
+
+The source-grounded closeout adds two discriminations without changing code:
+
+- `4×6` and `6×4` are the two directional mixed-axis relation/refraction fields between the established quaternary/form and senary/process axes; their 24-address cardinality does not mint a new 24-element ontology;
+- the M2→M3 dimensional seam is already authored as four persistent carriers with internal `18 = 3×3×2 → 16 = 4×4` epogdoon transduction. M3's quaternionic/SU(2) orientation and the decadic matrix are related views, not an asserted shape isomorphism.
 
 ## G4 — shared Vāk propagation — #207 — implemented
 
@@ -139,13 +144,106 @@ Rules now enforced in runtime:
 7. current-source census records the new resolver as part of the existing Geometry owner and the Wiki layer as an infrastructural consumer;
 8. format/clippy/CI pass with no historical K4 proof rewritten.
 
-## G6 — next research discriminators after base implementation
+## G6 — source-grounded closure and downstream handoff — closed here
 
-These are research on top of the canonical carrier and its admitted Vāk/Wiki runtime consumers, not missing base implementation:
+The four items previously listed as open Geometry research are resolved differently after tracing the authored Bimba/Spanda field and the Antykathera etymological archaeology. They are **not reasons to reopen L5.3 Geometry**.
 
-- determine the exact operator interpretation of the `4×6` and `6×4` decadic cross-blocks;
-- test how quaternionic transformation carries the `4^3` body into decadic/other dimensional presentations;
-- exercise resolution switching in the live Research Canvas/Expression UX so a `0/1` node can be opened through its preserved 2/3-fold basis and wider constellation;
-- relate the 18→3 compression to the root `{0, /, 1} → 0/1` reading in actual Epii/agent reasoning traces without hard-coding semantic content into `ql-core`.
+### G6.1 — `4×6 / 6×4`: office resolved, semantic cells remain source-owned
 
-Those follow from the admitted Geometry system and its consumer contract. They do not redefine the L5.3 owner.
+The Spanda/Bimba corpus already establishes the 4/6 dual-track expansion, while Second Spanda fixes the quaternary `64 = 4³` and senary `36 = 6²` bodies. In the decadic block matrix:
+
+```text
+4×6  = form/quaternary → process/senary directional field
+6×4  = process/senary → form/quaternary directional field
+```
+
+The two 24-address blocks are therefore mixed-axis relation/refraction fields. The exact meaning of a cell is not a missing kernel theorem: it comes from the actual row/column subjects, typed relation, source standing and consumer context. Runtime embodiment belongs to **#214 M1′ Canvas/Constellation** and **#215 M2′ Relation Field/Timeline**, with #219 carrying the Expression cross-cut.
+
+### G6.2 — quaternionic/dimensional relation: already grounded, do not assert an isomorphism
+
+`FOLD-AND-RULING-GRAMMAR.md` already supplies the dimensional passage:
+
+```text
+72 = 4×18
+      ↓ 8/9
+64 = 4×16
+```
+
+The four carriers persist while the internal Paraśakti ternary/conjugate organisation `18 = 3×3×2` becomes the Mahāmāyā quaternary body `16 = 4×4`. M3's receiving/orientation field is already quaternionic/SU(2). The `10×10` decadic matrix is a two-dimensional refraction preserving `64|36`; it is not declared topologically identical to `4×4×4`.
+
+The remaining obligation is presentation/conformance through the existing instruments, not discovery of another Geometry model.
+
+### G6.3 — live resolution switching: existing product acceptance, not Geometry research
+
+The shared carrier already permits:
+
+```text
+presented one-fold 0/1
+  ↕ reopen retained basis
+2/3-fold disclosed constellation
+  ↕ bounded expansion
+wider source-qualified constellation / relation field
+```
+
+This is now an explicit acceptance inheritance for:
+
+- **#214 M1′ Canvas / Constellation** — semantic zoom and bounded expansion over exact `ShapeBinding` refs;
+- **#219 X3** — M1′ Canvas ↔ 3:3 Expression topology/geometry switching without changing subject/source/constellation identity.
+
+UI opening/closing changes disclosure only. It does not mutate semantic membership merely because nodes are visually expanded or collapsed.
+
+### G6.4 — `18→3→1`: semantic exemplar already authored; real Epii proof belongs downstream
+
+The Antykathera arbitration archaeology supplies the concrete earned field:
+
+```text
+6:   Continuity → Criterion → Delineation → Arbitration → Con-text → Resolution
+6′:  Indeterminacy → Distinction → Difference → Crisis → Diaphaneity → Reconciliation
+
+6+6′ generated slash:
+Origin → Measure/Limit → Perspective/Frame → Decision/Hybris → Regard → Anamnesis/Return
+```
+
+Its own form-growth grammar then compresses:
+
+```text
+6       :      6+6′      :       6′
+0       :        /       :        1
+              ↓
+             0/1
+```
+
+That is the semantic exemplar for the executable composite route:
+
+```text
+18-fold
+  ↓ EighteenFoldGeometry 18→3
+{6, relation-6, 6′}
+  ↓ QlShapeCompression 3→1
+0/1
+```
+
+The kernel must **not** hard-code `Arbitration`, `Crisis`, `Hybris`, `Regard` or any other source vocabulary. It carries basis and reversible compression. The source-qualified Wiki/Vāk/Epii reading supplies the semantic field.
+
+A real Agent/Epii proof is therefore inherited by **#201 Ta-Onta / Expression SDK**: use an actual Bimba/source-qualified whole, preserve the 18 lower determinations through `18→3→1`, reason or disclose at one resolution, reopen it, and Return without source/subject drift.
+
+### G6.5 — closure boundary
+
+No new Geometry ticket is created by this closeout.
+
+```text
+L5.3 Geometry
+  CLOSED: canonical shapes, Second Spanda, 18→3, 2/3→1,
+          Vāk/Wiki transport and source-grounded interpretation boundary
+
+#214 / #215
+  ACTIVE: constructive and relation-field embodiment
+
+#219
+  ACTIVE: live 3:3 / 4:2 resolution and Expression cross-cut
+
+#201
+  ACTIVE: Bimba/M/M′/Epii source-qualified semantic inhabitation
+```
+
+If later evidence changes the authored Spanda, Bimba or etymological relation, revise that source explicitly and then reconcile Geometry. Do not keep a permanent miscellaneous G6 bucket around as a substitute for provenance.

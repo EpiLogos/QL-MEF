@@ -1,16 +1,23 @@
 # Canonical constellation resolution — L5.3 Geometry
 
-Status: **canonical architecture and executable Geometry contract extension, 2026-09-16**  
-Programme: #204, with implementation tranches #205–#207.  
+Status: **canonical architecture and executable Geometry contract extension, 2026-09-16; source-grounded closeout clarified 2026-09-17**  
+Programme: #204, with implementation tranches #205–#207 and runtime Wiki completion #222/#223.  
 Owner: the existing QL Kernel / L5.3 **Geometry** office. This document does not create a new layer, service, ontology, or replacement constellation system.
 
 Read with:
 
 - `docs/QL-VAK-KERNEL-RECONCILIATION.md` — L5.3 Geometry is the formal/topological disclosure office of the one QL Kernel;
 - `docs/wiki-structural-contract-v2.md` — structural whole-anchor, constellation grains and D1/D2/D3 carrier floor;
-- `docs/geometry/FOLD-AND-RULING-GRAMMAR.md` — geometric and M1→M2→M3 research foundation;
+- `docs/geometry/FOLD-AND-RULING-GRAMMAR.md` — geometric and M1→M2→M3 research foundation, including the carrier-preserving `72 = 4×18 → 4×16 = 64` epogdoon and quaternionic M3 reception;
 - `docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.md` — authored M1/Spanda canon, including `2^6 = 4^3 = 64`;
+- `data/epi-bimba-map/anuttara-language-map.md` — source-faithful M0 language map, including the 18-fold archetypal language, `0/1`, the Mirror and the O/X/N generative bases;
 - `fixtures/kernel/ql-shape-contract-v1.json` and `fixtures/kernel/matheme-derivation-contract-v1.tsv` — portable executable boundary.
+
+Cross-repository authored provenance used by this closeout:
+
+- `EpiLogos/Antykathera-Essay-Work/working/final-argument-quilt-2026-08-23/RELATIONAL-FORM-GROWTH-GRAMMAR.md` — earned `N / N′ / (N+N′)` growth, higher `0 / / / 1` compression and the arbitration sixfold exemplar;
+- `EpiLogos/Antykathera-Essay-Work/working/final-argument-quilt-2026-08-23/ETYMOLOGICAL-ARCHAEOLOGY-TREE-SEAMS.md` — whole etymological relational fields and the arbitration/hybris/regard/anamnesis carrier;
+- the historical Epi-Logos/Bimba Spanda corpus — authored `100% → 64/36 → 16/9 = 4²/3²`, 4/6 expansion and dual-track resolution. These historical records ground intended meaning; current QL-MEF code remains the authority for what executes now.
 
 ## 1. One existing Geometry system
 
@@ -99,7 +106,51 @@ This gives the recursive geometric route behind the larger constellation family:
 1-fold 0/1
 ```
 
-At the deepest authored reading the triadic relation is again `0 / 1`: source, relation, determination recognised as one `0/1` event. The code in this tranche establishes the generic geometric compression carriers; semantic use of that root triad remains supplied by the QL/Vāk context that invokes it.
+At the deepest authored reading the triadic relation is again `0 / 1`: source, relation, determination recognised as one `0/1` event. The code establishes the generic geometric compression carriers. Semantic content remains supplied by the source-qualified QL/Vāk context that invokes them rather than being hard-coded into `ql-core`.
+
+### 3.1 The arbitration archaeology is the canonical semantic exemplar, not a new core ontology
+
+The Antykathera etymological-archaeology work already supplies a materially earned `6 / 6′ / (6+6′)` instance:
+
+```text
+6                            6′
+Continuity                   Indeterminacy
+Criterion                    Distinction
+Delineation                  Difference
+Arbitration                  Crisis
+Con-text                     Diaphaneity
+Resolution                   Reconciliation
+
+             ↓ generated relational sixfold ↓
+
+Continuity-in-Indeterminacy     → Origin / unmeasurable
+Criterion-through-Distinction   → Measure / Limit
+Delineation-through-Difference  → Perspective / Frame
+Arbitration-in-Crisis           → Decision / Hybris
+Con-text-through-Diaphaneity    → Regard
+Resolution-in-Reconciliation    → Anamnesis / Recognition / Return
+```
+
+At the next scale that source grammar explicitly reads the three sixfolds as:
+
+```text
+6       :      6+6′      :       6′
+0       :        /       :        1
+```
+
+and the complete named field as the achieved higher `0/1` Symbolon. This is the semantic body the generic Geometry law was designed to preserve: eighteen articulated determinations compress to the three `{pole, relation, conjugate pole}` while every lower determination remains reopenable; the three then admit the existing `3→1` recognition carrier.
+
+Nothing in this exemplar licenses `ql-core` to decide that every direct sixfold means Continuity→Resolution or that every slash means the arbitration vocabulary. The relation is deliberately split:
+
+```text
+ql-core
+  owns fold cardinality + basis + reversible compression
+
+source-qualified Etymology / Vāk / Wiki / Epii context
+  owns which sixfolds, relation terms and semantic consequences are actually warranted
+```
+
+That separation lets the same `18→3→1` geometry carry other earned relational fields without flattening their meaning.
 
 ## 4. Second Spanda — canonical dual Geometry
 
@@ -162,9 +213,24 @@ and Third Spanda remains the later development:
 
 where the M2 36 field has entered its doubled/conjugate 72 reading while the M3 64 form field remains the receiving register.
 
-## 5. The decadic `10×10` projection
+### 4.3 The `100 → 64/36 → 16/9` provenance is already authored
 
-The full decadic field is now an explicit Geometry projection of Second Spanda:
+The historical Spanda/Bimba corpus does not present `64|36` as an accidental partition discovered after the fact. The Percentile Identity `1/1 = 100%` completes the Spanda unfolding and then differentiates as:
+
+```text
+100%
+  ↓
+64 / 36
+  ↓ simplify
+16 / 9
+  = 4² / 3²
+```
+
+The 64 side seeds the quaternary/doubling Mahāmāyā track and the 36 side the senary/ternary Paraśakti track. Current QL-MEF does not inherit every historical numerological claim as executable truth; it does preserve the relation that has survived reconciliation: the Second-Spanda totality is one whole whose two established bodies are `4³ = 64` and `6² = 36`.
+
+## 5. The decadic `10×10` projection and the mixed `4×6 / 6×4` fields
+
+The full decadic field is an explicit Geometry projection of Second Spanda:
 
 ```text
 (4+6)^2
@@ -187,7 +253,39 @@ and the final `6×6` block remains 36. Therefore:
 
 is executable as a cardinal/shape projection of the same Second-Spanda totality.
 
-The canonical body is still `4×4×4 | 6×6`. The `10×10` field is a derived whole-field view through the `4|6` split. The live research question is now finer: what exact QL transformations inhabit the `4×6` and `6×4` cross-blocks, and how do those transforms correspond to the dimensional change between the cubic 64 field and its decadic projection? The implementation makes the projection and its partition first-class so that question can be tested without confusing it with the already-settled equation.
+The canonical body is still `4×4×4 | 6×6`. The `10×10` field is a derived whole-field view through the `4|6` split.
+
+The mixed blocks no longer need to be left as an unowned question about what they "mean." Their **geometric office** is fixed by the axes that generate them:
+
+```text
+4×6  = quaternary/form row axis read across the senary/process column axis
+6×4  = senary/process row axis read across the quaternary/form column axis
+```
+
+Each is therefore a 24-address **directional mixed-axis relation/refraction field**. The two are transposes as address spaces; they need not carry identical directional semantics in a source-qualified reading. Their cardinality does not create a new 24-element ontology. What any individual cell means is supplied by the actual relation/source context using the Geometry, exactly as `RelationFieldComposition` already preserves row/column ownership rather than inventing a generic `CONNECTED_TO` meaning.
+
+This reading is continuous with the authored Spanda/Bimba material, which already places `4/6` at the expansion of the quaternal frame and describes the later Spanda flowering as dual-track parallel resolution. Geometry makes that old relation inspectable as a matrix rather than asking each consumer to rediscover it.
+
+### 5.1 Quaternionic and dimensional standing
+
+The relation between the M3 `4³` body and its other presentations is also narrower than the previous "research question" wording suggested.
+
+Current source-grounded Geometry already gives:
+
+```text
+M2 fibre: 18 = 3×3×2
+              ↓ ×8/9
+M3 fibre: 16 = 4×4
+
+4 carriers persist:
+72 = 4×18  →  4×16 = 64
+```
+
+`FOLD-AND-RULING-GRAMMAR.md` seats the receiving M3 field in quaternionic/SU(2) orientation and treats the `72→64` epogdoon as a carrier-preserving transduction: four carriers remain while the internal ternary/conjugate organisation `18` is rewritten as the quaternary `16` body. This is the dimensional seam that the current Geometry must retain.
+
+The decadic `10×10` is **not** asserted to be topologically or quaternionically identical to the cubic `4×4×4`. It is a two-dimensional whole-field refraction which preserves the same `64|36` accounting. Quaternionic orientation belongs to the M3 form/rotation body; the decadic matrix belongs to presentation of the coupled M3/M2 totality. A consumer may correlate those views only through the exact shape/basis/derivation evidence it has received.
+
+So the remaining work here is not discovery of a missing Geometry ontology. It is conformance and embodiment: ensure M1′/M2′/Expression surfaces can show the directional mixed fields and the M2→M3 dimensional passage without silently upgrading a visual correspondence into a semantic or mathematical equivalence.
 
 ## 6. Propagation to existing consumers
 
@@ -211,13 +309,38 @@ The propagation rules are:
 - `ShapeBinding` carries the presented shape plus actual basis/derivation/operator provenance;
 - `FramedReading` already returns that whole binding, so compression metadata survives Vāk composition and downstream refraction;
 - `FourByFourByFourField`, `SixBySixField`, `EighteenFoldGeometry`, `TenByTenProjection` and `SecondSpandaGeometry` are all `ql-core` Geometry types consumed by the existing QL-MEF matheme and instruments;
-- the matheme's exported `binary_register`, `quaternary_cubic_register`, `self_register`, `decomposed_totality` and `decadic_projection` now expose the complete Second-Spanda accounting.
+- the matheme's exported `binary_register`, `quaternary_cubic_register`, `self_register`, `decomposed_totality` and `decadic_projection` expose the complete Second-Spanda accounting.
 
 Consumers should therefore request or retain the `QlShape`/binding they are given rather than rebuild fold arithmetic locally. The Wiki/Research-Canvas/Expression surfaces can choose a resolution — one-fold, disclosed constellation, relation field or higher Geometry — while retaining the same subject and derivation.
 
+### 6.1 Downstream embodiment is already owned
+
+The remaining visible/product proofs belong to existing active lanes rather than to another Geometry programme:
+
+- **#214 — M1′ Canvas / Constellation:** constructive constellation disclosure, bounded neighbour expansion and semantic zoom. This is where a presented `0/1` must be openable into its retained 2/3-fold basis and wider warranted constellation while preserving source and derivation.
+- **#215 — M2′ Relation Field / Timeline:** truthful directed relation projections. This is the natural consumer for mixed `4×6` / `6×4` row/column relation fields when an actual source-qualified relation warrants them.
+- **#219 — X3 / 3:3 Expression cross-cut:** live M1′ Canvas ↔ Expression topology/geometry and M2′ Relation ↔ Expression dynamics/resonance switching with the same subject, constellation and source basis.
+- **#201 — Ta-Onta / Expression SDK:** Bimba/M/M′/Nara/Epii domain binding. This is where an Epii/agent reasoning specimen can use a source-qualified semantic field such as the arbitration archaeology while the kernel continues to carry only generic fold/compression mechanics.
+
+A valid live resolution path is therefore:
+
+```text
+presented 0/1
+  ↕ M1′ / Expression resolution switch
+retained 2- or 3-fold basis
+  ↕ wider ShapeBinding / relation context
+18-fold {6,6′,relation-6}
+  ↓ kernel 18→3
+threefold {pole, relation, conjugate pole}
+  ↓ kernel 3→1
+recognised 0/1
+```
+
+The user/agent can move either direction only while the retained basis and provenance remain available. UI expansion is disclosure, not semantic mutation.
+
 ## 7. Executable acceptance
 
-The tranche is accepted when the repository proves all of the following:
+The landed Geometry tranche proves all of the following:
 
 ```text
 anchor-only -> Geometry fold 1
@@ -234,4 +357,11 @@ matheme binary register == quaternary cubic register == 64
 ShapeBinding preserves disclosed basis + compression derivation/operator
 ```
 
-That is the Geometry completion required by #204. Deeper research can now operate on actual canonical shapes rather than reconstructing these relations ad hoc in each consumer.
+The four questions previously listed as a generic G6 research layer are therefore **not missing base Geometry**:
+
+1. `4×6 / 6×4` already have a source-grounded mixed-axis office; exact cell semantics remain source-owned.
+2. the M2→M3 dimensional/quaternionic seam is already authored; the decadic view is a projection, not an asserted isomorphism.
+3. live resolution switching is an existing M1′/X3 product acceptance obligation.
+4. `18→3→1` already has an authored semantic exemplar in the etymological-arbitration field; real Epii use belongs to the Ta-Onta/Expression lane while `ql-core` remains semantics-neutral.
+
+That closes the L5.3 constellation/Second-Spanda session at its proper boundary. Further discoveries may revise the authored sources explicitly, but consumers no longer need to reconstruct these relations ad hoc or reopen the Geometry owner merely to embody them.
