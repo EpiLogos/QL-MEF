@@ -74,12 +74,37 @@ impl VoiceCapabilityStatus {
 
 /// How the bounded `NaraDialogueContext` reaches the body across a turn:
 /// pushed on change, pulled by the body through a tool access, or neither.
+/// This names the declaration's mechanism; the requirement side is
+/// [`ContextRefreshRequirement`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum ContextRefreshDisposition {
     PushOnChange,
     ToolAccess,
     None,
+}
+
+/// Whether a requirement demands that the body's context can be refreshed
+/// from host truth while the session lives.
+///
+/// The dialogical law supplies the bounded `NaraDialogueContext` from the
+/// caller and the host adjudicates it, so the floor demands the capability
+/// that context can be refreshed from host truth — not any particular
+/// mechanism. `push-on-change` (per-turn recomposition or over the
+/// structured event channel) and `tool-access` both provide it; `none` does
+/// not. Model-initiated tool pull is an acceptable stronger mechanism, never
+/// the floor requirement.
+///
+/// Revision note: 2026-09-18 owner-commissioned correction — the floor
+/// originally required `ContextRefreshDisposition::ToolAccess` with
+/// strict-equality satisfaction, which no host-pushed composition can
+/// satisfy; the requirement is recast from mechanism to capability. Contract
+/// version unchanged (unreleased outside the thread4 lanes).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ContextRefreshRequirement {
+    NotRequired,
+    Refreshable,
 }
 
 /// The voice body actually coupled to a dialogue turn. The ref is opaque; its
@@ -136,8 +161,9 @@ pub struct VoiceBodyRequirements {
     /// reconnect preserves the canonical Nara/Expression instead of
     /// inventing a second dialogue.
     pub reconnect_status_reporting: VoiceCapabilityStatus,
-    /// How the bounded context refreshes across turns.
-    pub context_refresh: ContextRefreshDisposition,
+    /// Whether the body's context can be refreshed from host truth while
+    /// the session lives.
+    pub context_refresh: ContextRefreshRequirement,
 }
 
 impl VoiceBodyRequirements {
@@ -150,7 +176,7 @@ impl VoiceBodyRequirements {
 
     /// The floor for foreground dialogical Nara: streamed interaction,
     /// disclosed barge-in, manual stop, a structured channel, observable
-    /// reconnect status, and a context path that is not absent.
+    /// reconnect status, and host-refreshable context.
     pub fn dialogical_floor() -> Self {
         Self {
             schema: NARA_VOICE_BODY_CONTRACT.into(),
@@ -159,7 +185,7 @@ impl VoiceBodyRequirements {
             manual_interrupt: VoiceCapabilityStatus::Supported,
             structured_event_channel: VoiceCapabilityStatus::Supported,
             reconnect_status_reporting: VoiceCapabilityStatus::Supported,
-            context_refresh: ContextRefreshDisposition::ToolAccess,
+            context_refresh: ContextRefreshRequirement::Refreshable,
         }
     }
 }
@@ -232,14 +258,24 @@ impl VoiceBodyDeclaration {
                 ));
             }
         }
+        // The requirement is the capability (host-refreshable context while
+        // the session lives), not a mechanism: host push and tool pull both
+        // meet it, an absent path does not.
         let context_meets = match requirements.context_refresh {
-            ContextRefreshDisposition::None => true,
-            required => self.context_refresh == required,
+            ContextRefreshRequirement::NotRequired => true,
+            ContextRefreshRequirement::Refreshable => matches!(
+                self.context_refresh,
+                ContextRefreshDisposition::PushOnChange | ContextRefreshDisposition::ToolAccess
+            ),
         };
         if !context_meets {
+            let disclosed = match self.context_refresh {
+                ContextRefreshDisposition::PushOnChange => "push-on-change",
+                ContextRefreshDisposition::ToolAccess => "tool-access",
+                ContextRefreshDisposition::None => "none",
+            };
             unmet.push(format!(
-                "context refresh: requires {:?}, body discloses {:?}",
-                requirements.context_refresh, self.context_refresh
+                "context refresh: body discloses {disclosed}; the floor requires host-refreshable context"
             ));
         }
         if unmet.is_empty() {
@@ -270,7 +306,7 @@ mod tests {
             manual_interrupt: VoiceCapabilityStatus::Supported,
             structured_event_channel: VoiceCapabilityStatus::Supported,
             reconnect_status_reporting: VoiceCapabilityStatus::Supported,
-            context_refresh: ContextRefreshDisposition::ToolAccess,
+            context_refresh: ContextRefreshDisposition::PushOnChange,
             observation_refs: vec!["observation:latency:1".into()],
         }
     }
@@ -293,10 +329,54 @@ mod tests {
     }
 
     #[test]
-    fn dialogical_floor_is_satisfied_by_a_capable_body() {
+    fn dialogical_floor_is_satisfied_by_push_on_change_and_tool_access() {
+        // Host push is the normal dialogical mechanism (per-turn
+        // recomposition or over the structured event channel).
         declaration()
             .satisfies(&VoiceBodyRequirements::dialogical_floor())
             .unwrap();
+
+        // Model-initiated tool pull is a stronger, equally lawful mechanism.
+        let mut pull = declaration();
+        pull.context_refresh = ContextRefreshDisposition::ToolAccess;
+        pull.satisfies(&VoiceBodyRequirements::dialogical_floor())
+            .unwrap();
+    }
+
+    #[test]
+    fn dialogical_floor_names_the_gap_for_a_body_with_no_refresh_path() {
+        let mut silent = declaration();
+        silent.context_refresh = ContextRefreshDisposition::None;
+        let error = silent
+            .satisfies(&VoiceBodyRequirements::dialogical_floor())
+            .unwrap_err();
+        assert_eq!(
+            error,
+            "context refresh: body discloses none; the floor requires host-refreshable context"
+        );
+    }
+
+    #[test]
+    fn not_required_is_trivially_met_even_without_a_refresh_path() {
+        let requirements = VoiceBodyRequirements {
+            context_refresh: ContextRefreshRequirement::NotRequired,
+            ..VoiceBodyRequirements::dialogical_floor()
+        };
+        let mut silent = declaration();
+        silent.context_refresh = ContextRefreshDisposition::None;
+        silent.satisfies(&requirements).unwrap();
+    }
+
+    #[test]
+    fn context_refresh_requirement_serde_is_kebab() {
+        assert_eq!(
+            serde_json::to_string(&ContextRefreshRequirement::NotRequired).unwrap(),
+            "\"not-required\""
+        );
+        assert_eq!(
+            serde_json::to_string(&ContextRefreshRequirement::Refreshable).unwrap(),
+            "\"refreshable\""
+        );
     }
 
     #[test]
