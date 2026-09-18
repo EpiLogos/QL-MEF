@@ -1,0 +1,52 @@
+{
+  "kind": "frame",
+  "target_ref": "example:frame",
+  "target_snapshot_hash": "sha256:techne-reading-fixture",
+  "provenance": [
+    {
+      "source_ref": "example:source"
+    }
+  ],
+  "subjects": [],
+  "relations": [],
+  "material": {},
+  "extensions": {
+    "ql-mef/shape-binding/v1": {
+      "basis_refs": [
+        "example:a",
+        "example:b",
+        "example:c"
+      ],
+      "derivation_ref": "ql:shape:1.1.0:compression:3-to-1-recognition:from:ql:shape:1.0.0:constellation:threefold-123",
+      "members": [
+        {
+          "face": "direct",
+          "position": 1,
+          "subject_ref": "example:a"
+        },
+        {
+          "face": "direct",
+          "position": 2,
+          "subject_ref": "example:b"
+        },
+        {
+          "face": "direct",
+          "position": 3,
+          "subject_ref": "example:c"
+        }
+      ],
+      "operator_ref": "ql:shape:1.1.0:compression:3-to-1-recognition",
+      "provenance": {
+        "caller_ref": "ql-cli:techne-reading-fixture",
+        "source_ref": "example:source",
+        "standing_ref": "AUTHORED-ARCHITECTURE"
+      },
+      "return_refs": [
+        "example:return"
+      ],
+      "shape_ref": "ql:shape:1.0.0:constellation:anchor-only",
+      "subject_ref": "example:frame",
+      "whole_ref": "example:whole-anchor"
+    }
+  }
+}
