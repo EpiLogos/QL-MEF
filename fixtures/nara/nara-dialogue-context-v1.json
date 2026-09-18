@@ -50,5 +50,10 @@
     "sequence": "CS4"
   },
   "shared_field": null,
+  "shared_reading": {
+    "session_ref": "ql.techne:session:fixture-1",
+    "reading_ref": "ql.techne:reading:fixture-1",
+    "reading_revision": "tb0-1"
+  },
   "expressive_act": null
 }
