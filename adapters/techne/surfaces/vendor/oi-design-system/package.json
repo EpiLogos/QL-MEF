@@ -1,0 +1,11 @@
+{
+  "name": "@epilogos/oi-design-system",
+  "version": "0.0.0-techne-slice",
+  "private": true,
+  "description": "Vendored Technē slice of the O:I design system (techne.css chrome tier, theme derivation, surface lifecycle) for the QL-MEF surface refinement home. Canonical source: EpiLogos/O-I packages/oi-design-system. Runtime hosts import the real package; this slice exists so the ported surfaces typecheck and test standalone.",
+  "exports": {
+    "./techne.css": "./techne.css",
+    "./techne-theme": "./src/techne-theme.mjs",
+    "./techne-surface-lifecycle": "./src/techne-surface-lifecycle.mjs"
+  }
+}

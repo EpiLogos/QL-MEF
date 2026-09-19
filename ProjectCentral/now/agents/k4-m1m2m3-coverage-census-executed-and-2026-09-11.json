@@ -1,0 +1,14 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "k4-m1m2m3-coverage-census-executed-and-2026-09-11",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "ZCode (GLM-5.3-Flash)",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1789094154,
+  "subject": "K4 M1/M2/M3 coverage census executed and merged (PR #153, main 5b24b95); ticket #128 closed",
+  "result": "Automated census joined a read-only live Neo4j Bimba capture (2,141 coordinate nodes, neo4j 5.26.20, 2026-09-11T01:33Z) plus the serialized K2 registry to discovered C and Rust bodies, coordinate by coordinate: ledger now 1,828 rows (1,636 new census rows) and 1,873 implementation records (90 C incl. infrastructural arena, 148 Rust, 1,635 live-graph structural indexes); 76 capability rows bound; readiness claims are implementation-presence only, all parity axes left unassessed for K5-K7. Outputs: scripts/m_census.py (byte-deterministic, CI reruns it from the committed capture without a database), fixtures/kernel/census/ (live capture, census-m1/m2/m3 workbooks, discovery receipts, orphan 257C/672R, missing-C 1553, missing-Rust 49+73, disagreement reports, work-graph.json for #129/#130/#131), docs/kernel-rebuild/K4-M123-CENSUS.md. Live-vs-serialized deltas preserved: 18 live-only spellings (M-primes, two composite families, M2-3-1-51000) and 8 serialized-only; two composite-spelling discrepancies are open in the ledger beside k2-parent-0; registry stays at lock 259a2f49 pending reviewed promotion. Exact handoffs posted to #129/#130/#131; #135 ladder marks K1-K4. Live-graph access basis for future sessions: operator Docker neo4j on localhost:7474/7687, password via EPI_BIMBA_PASSWORD env, read-only.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-11"
+  ]
+}

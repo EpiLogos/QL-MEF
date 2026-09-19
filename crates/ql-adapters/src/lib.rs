@@ -22,14 +22,14 @@ pub use runtime::{
     RuntimeEnvelope, RuntimeRefractionAdapter, RuntimeSelection, RuntimeStatus, RuntimeSubject,
 };
 pub use techne::{
-    DegradedDisclosure, DisclosureNavigation, DisclosureSelection, DisclosureSession,
-    DisclosureSuggestion, DisclosureTimeWindow, ExpressionBinding, InstrumentDisclosure,
-    NativeActionRef, PlaceFacet, PlaceGeometry, PlaceGeometryType, PlaceHierarchyMember,
-    PlaceIdentity, PlaceName, PlacePrecision, QlResultClass, QlWarrant, ReadingSnapshot,
-    SourceProvenance, SourceSelector, SubjectReading, TECHNE_CONTRACT, TechneActionRoute,
-    TechneActionRouteReceipt, TechneAdapter, TechneDisclosure, TechneInstrument, TechneReading,
-    TechneReadingKind, TechneSubject, TechneWhole, TemporalFacet, TemporalInterval, TemporalKind,
-    TemporalPrecision, WarrantedQlReading, WholeRelation,
+    AgencyRole, AgencyRoleKind, ApplicationCutDisclosure, DegradedDisclosure, DisclosureNavigation,
+    DisclosureSelection, DisclosureSession, DisclosureSuggestion, DisclosureTimeWindow,
+    ExpressionBinding, InstrumentDisclosure, NativeActionRef, PlaceFacet, PlaceGeometry,
+    PlaceGeometryType, PlaceHierarchyMember, PlaceIdentity, PlaceName, PlacePrecision,
+    QlResultClass, QlWarrant, ReadingSnapshot, SourceProvenance, SourceSelector, SubjectReading,
+    TECHNE_CONTRACT, TechneActionRoute, TechneActionRouteReceipt, TechneAdapter, TechneDisclosure,
+    TechneInstrument, TechneReading, TechneReadingKind, TechneSubject, TechneWhole, TemporalFacet,
+    TemporalInterval, TemporalKind, TemporalPrecision, WarrantedQlReading, WholeRelation,
 };
 pub use techne_wiki::{WikiSubjectSource, WikiTechneAdapter};
 

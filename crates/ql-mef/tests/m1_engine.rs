@@ -12,6 +12,13 @@ fn actual_native_c_matches_rust_and_retained_c_return() {
     let out = root.join("target/m1-engine");
     std::fs::create_dir_all(&out).unwrap();
     let exe = out.join("probe");
+    // Section GC is --gc-sections on ELF linkers, -dead_strip on macOS ld64 —
+    // the same linker-flavour split scripts/test-m1-engine.sh applies.
+    let gc: [&str; 1] = if cfg!(target_os = "macos") {
+        ["-Wl,-dead_strip"]
+    } else {
+        ["-Wl,--gc-sections"]
+    };
     let build = Command::new(std::env::var("CC").unwrap_or_else(|_| "cc".into()))
         .current_dir(&root)
         .args([
@@ -31,10 +38,9 @@ fn actual_native_c_matches_rust_and_retained_c_return() {
             "vendor/epi-kernel/reference/src/m1.c",
             "c/src/m_tree.c",
             "c/src/m1.c",
-            "-Wl,--gc-sections",
-            "-lm",
-            "-o",
         ])
+        .args(gc)
+        .args(["-lm", "-o"])
         .arg(&exe)
         .output()
         .unwrap();

@@ -8,6 +8,7 @@
     "NullableRef": {"type": ["string", "null"], "minLength": 1},
     "ContractTag": {"type": "string", "const": "ql.techne/v1"},
     "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"]},
+    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"]},
     "DisclosureSelection": {
       "type": "object",
       "description": "Source-qualified selection co-referenced by every instrument. Extends the K9 SourceQualifiedSelection discipline to the whole constellation.",
@@ -30,6 +31,7 @@
     },
     "DisclosureSession": {
       "type": "object",
+      "description": "TB0 (2026-09-16): the session now carries the dual-reading state explicitly — active application cut (3:3 | 4:2), the selected bounded whole, Project/World/Context-Frame focus, the current occasion, scene and reference-frame focus, and the Return target — while every identity ref stays native and byte-exact across cuts. Crossing 3:3↔4:2 changes disclosure and operation, never the subject, refs, sources or Actions.",
       "required": ["contract", "session_ref", "subject_ref", "selection", "instrument"],
       "properties": {
         "contract": {"$ref": "#/$defs/ContractTag"},
@@ -37,6 +39,13 @@
         "subject_ref": {"$ref": "#/$defs/OpaqueRef"},
         "selection": {"$ref": "#/$defs/DisclosureSelection"},
         "instrument": {"$ref": "#/$defs/Instrument"},
+        "application_cut": {"$ref": "#/$defs/TechneReadingKind", "description": "TB0: the active reading of the one M′ field. Consistent with instrument: expressions ↔ 3:3-conjugate; the six deep instruments ↔ 4:2-deep."},
+        "whole_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: the selected bounded whole when the selection is whole-scoped."},
+        "project_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: active Project/ProjectCentral focus."},
+        "world_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: active World focus (Central root World)."},
+        "context_frame_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: active QL Context Frame focus."},
+        "occasion_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: the current shared occasion (event/now continuity) that must survive cut crossings unchanged."},
+        "return_target_ref": {"$ref": "#/$defs/NullableRef", "description": "TB0: where attributable Return from this session is addressed."},
         "reading_ref": {"$ref": "#/$defs/OpaqueRef"},
         "time_window": {
           "type": "object",
@@ -47,7 +56,9 @@
           "additionalProperties": false
         },
         "spatial_focus_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "reference_frame_ref": {"$ref": "#/$defs/OpaqueRef", "description": "TB0: the wider situated reference frame in focus (solar/Earth/geography scale chain) distinct from any single place."},
         "expression_focus_ref": {"$ref": "#/$defs/OpaqueRef"},
+        "scene_focus_ref": {"$ref": "#/$defs/OpaqueRef", "description": "TB0: focused Expression Scene when the focus is scene-scoped; the scene ref stays the Expression owner's."},
         "navigation": {
           "type": "array",
           "description": "Cross-instrument transition history (§4): each hop preserves subject, source basis and selection unless the person deliberately refreshed.",

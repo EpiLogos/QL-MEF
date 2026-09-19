@@ -115,6 +115,10 @@ impl<'a> WikiTechneAdapter<'a> {
 
         let ql = WarrantedQlReading {
             address: Some(target.target_ref.clone()),
+            // The refraction target carries no warranted M identity and the
+            // owner supplies no return ground here: both stay absent rather
+            // than manufactured.
+            m_coordinate_ref: None,
             shape_ref: binding
                 .as_ref()
                 .map(|binding| binding.shape_ref.clone())
@@ -128,6 +132,7 @@ impl<'a> WikiTechneAdapter<'a> {
             geometric_reading: None,
             vak_source_ref: None,
             derivation_refs,
+            return_ref: None,
             warrant: QlWarrant {
                 result_class: QlResultClass::Deterministic,
                 evidence_refs,
@@ -245,9 +250,14 @@ impl<'a> WikiTechneAdapter<'a> {
                 .collect(),
             expressions: Vec::new(),
             actions: Vec::new(),
+            // No situated-Agency role arises from a Wiki refraction source.
+            agency: Vec::new(),
             disclosure: TechneDisclosure {
                 instruments,
                 degraded: Vec::new(),
+                // Cut-level availability is disclosed by the instrument
+                // surfaces; the Wiki source contributes none of its own.
+                application_cuts: Vec::new(),
                 suggestions: Vec::new(),
             },
         };

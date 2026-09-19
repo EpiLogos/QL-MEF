@@ -1,0 +1,437 @@
+{
+  "contract": "ql.techne/v1",
+  "reading_ref": "ql.techne:reading:fixture:tb0-connective-base@1",
+  "snapshot": {
+    "revision": null,
+    "basis_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md"
+  },
+  "subject": {
+    "subject_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+    "native_owner": "central",
+    "native_revision": null,
+    "readings": [
+      {
+        "ref": "ql-mef:doc-reading:l5-techne-dual-reading-lock",
+        "revision": null
+      }
+    ],
+    "kind": "source",
+    "standing": "architecture-contract"
+  },
+  "whole": {
+    "whole_ref": "ql.techne:whole:fixture:l5-techne-contract-ground",
+    "member_refs": [
+      "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+      "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md",
+      "central:source:control:root:Work/Quaternal-Logic/docs/integrations/epi-logos/TA-ONTA-VAK-COMPOSITIONAL-EXECUTION-LOCK.md",
+      "central:source:control:root:Work/Quaternal-Logic/docs/integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md",
+      "central:source:control:root:Work/Quaternal-Logic/schemas/techne/ql-techne-reading-v1.schema.json",
+      "central:source:control:root:Work/Quaternal-Logic/schemas/techne/ql-techne-session-v1.schema.json"
+    ],
+    "relations": [
+      {
+        "relation": "supersedes",
+        "relation_ref": "ql.techne:relation:fixture:tb0-supersedes-grouping",
+        "from_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "to_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md",
+        "origin": "authored",
+        "origin_ref": null,
+        "standing": "architecture-contract",
+        "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "evidence_refs": [],
+        "temporal_facet_ref": null,
+        "derivation_ref": null,
+        "confidence": null
+      },
+      {
+        "relation": "companion",
+        "relation_ref": "ql.techne:relation:fixture:tb0-companion-execution",
+        "from_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "to_ref": "central:source:control:root:Work/Quaternal-Logic/docs/integrations/epi-logos/TA-ONTA-VAK-COMPOSITIONAL-EXECUTION-LOCK.md",
+        "origin": "authored",
+        "origin_ref": null,
+        "standing": "architecture-contract",
+        "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "evidence_refs": [],
+        "temporal_facet_ref": null,
+        "derivation_ref": null,
+        "confidence": null
+      },
+      {
+        "relation": "INSTANTIATES",
+        "relation_ref": "ql.techne:relation:fixture:tb0-instantiates-office",
+        "from_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "to_ref": "ql:vak:composition:l5-para-vak",
+        "origin": "authored",
+        "origin_ref": null,
+        "standing": "interpretation",
+        "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "evidence_refs": [],
+        "temporal_facet_ref": null,
+        "derivation_ref": null,
+        "confidence": null
+      },
+      {
+        "relation": "implemented-in",
+        "relation_ref": "ql.techne:relation:fixture:tb0-implemented-in-schema",
+        "from_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+        "to_ref": "central:source:control:root:Work/Quaternal-Logic/schemas/techne/ql-techne-reading-v1.schema.json",
+        "origin": "recorded",
+        "origin_ref": "ql-mef:commit:2159c7df8aa8f8db0fbd2fcd800d61feb9b7d0d4",
+        "standing": "fact",
+        "source_ref": "ql-mef:commit:2159c7df8aa8f8db0fbd2fcd800d61feb9b7d0d4",
+        "evidence_refs": [
+          "ql-mef:commit:2159c7df8aa8f8db0fbd2fcd800d61feb9b7d0d4"
+        ],
+        "temporal_facet_ref": "ql.techne:facet:tb0:received",
+        "derivation_ref": null,
+        "confidence": "commit-landed on the Techne-amended main line"
+      }
+    ],
+    "focus_refs": [
+      "central:source:control:root:Work/Quaternal-Logic/schemas/techne/ql-techne-reading-v1.schema.json"
+    ]
+  },
+  "ql": {
+    "address": null,
+    "m_coordinate_ref": "ql:structural:5.0.0",
+    "shape_ref": "ql:shape:1.0.0:6x6:direct-conjugate",
+    "constellation_ref": "ql.techne:constellation:fixture:l5-dual-reading",
+    "lens_ref": "mef:lens:L5@1",
+    "sublens_ref": null,
+    "context_frame_ref": "mef:context-frame:CF4",
+    "refraction_summary": "The one M′ field read through the L5 office: six deep instruments as M0′–M5′ Technē faces over the 6×6 direct-conjugate shape, with 3:3 Cosmic/Personal as parent readings and Expression as the conjugate 3:3 body.",
+    "harmonic_reading": null,
+    "geometric_reading": null,
+    "vak_source_ref": "ql:vak:composition:l5-para-vak",
+    "derivation_refs": [
+      "ql:fixture:tb0-dual-reading-derivation"
+    ],
+    "return_ref": "ql.techne:whole:fixture:l5-techne-contract-ground",
+    "warrant": {
+      "result_class": "canonical",
+      "evidence_refs": [
+        "central:source:control:root:Work/Quaternal-Logic/docs/integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md"
+      ],
+      "provenance_ref": "ql-mef:provider:registry-disclosure"
+    }
+  },
+  "temporal": [
+    {
+      "facet_ref": "ql.techne:facet:tb0:authored",
+      "kind": "occurrence",
+      "instant": "2026-09-16T00:00:00+01:00",
+      "precision": "day",
+      "timezone_policy_ref": "central:source:control:root:Control/user/civil-time-policy.json",
+      "uncertainty": "the lock records its owner ratification at day precision",
+      "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:received",
+      "kind": "receipt",
+      "instant": "2026-09-16T17:24:36+01:00",
+      "precision": "second",
+      "source_ref": "central:source:control:root:.central/source-change-horizon.json",
+      "uncertainty": "reconciler-declared receipt of the lock commit on main"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:valid",
+      "kind": "valid",
+      "interval": {
+        "from": "2026-09-16T00:00:00+01:00",
+        "to": null,
+        "from_precision": "day"
+      },
+      "uncertainty": "stands until a later owner decision explicitly supersedes the lock"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:day",
+      "kind": "day",
+      "day_ref": "central:day:control:root:2026-09-16",
+      "timezone_policy_ref": "central:source:control:root:Control/user/civil-time-policy.json"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:now",
+      "kind": "now",
+      "now_ref": "central:now:control:root:b417a7c3d37cd47c2762deee3224687d59db1a9015a322e9a8d7584b3947adf6"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:session",
+      "kind": "session",
+      "session_ref": "zcode-session-2026-09-16-tb0-connective-base",
+      "return_ref": "factory:run:01JBD3Z4X7Q9M2A6K4P8T3W5NQ/return",
+      "uncertainty": "Return continuity joins the session to the development run's Return path; Factory orders by revision, not wall-clock"
+    },
+    {
+      "facet_ref": "ql.techne:facet:tb0:run",
+      "kind": "run",
+      "run_ref": "factory:run:01JBD3Z4X7Q9M2A6K4P8T3W5NQ",
+      "attempt_ref": "factory:run:01JBD3Z4X7Q9M2A6K4P8T3W5NQ#attempt-1",
+      "interval": {
+        "from": "2026-09-15T09:10:00+01:00",
+        "to": "2026-09-15T16:40:00+01:00"
+      },
+      "uncertainty": "Factory orders by revision, not wall-clock; bounds are the handoff-declared activity window"
+    }
+  ],
+  "spatial": [
+    {
+      "place_ref": "place:fixture:royal-observatory-greenwich",
+      "relation": "OCCURRED_AT",
+      "identity": {
+        "names": [
+          {
+            "name": "Royal Observatory, Greenwich",
+            "valid_from": "1675",
+            "valid_to": null
+          }
+        ]
+      },
+      "geometry": {
+        "type": "point",
+        "coordinates": [0.0015, 51.4769]
+      },
+      "precision": "approximate",
+      "uncertainty": "gazetteer-derived coordinates, approximate to roughly one hundred metres",
+      "hierarchy": [
+        {
+          "place_ref": "place:fixture:greenwich",
+          "relation": "within",
+          "valid_from": "1675",
+          "valid_to": null
+        },
+        {
+          "place_ref": "place:fixture:county-of-london",
+          "relation": "within",
+          "valid_from": "1889",
+          "valid_to": "1965"
+        },
+        {
+          "place_ref": "place:fixture:greater-london",
+          "relation": "within",
+          "valid_from": "1965",
+          "valid_to": null
+        }
+      ],
+      "valid_from": "1675",
+      "valid_to": null,
+      "observer_frame": null,
+      "source_ref": "aikit:source:fixture:place-gazetteer"
+    },
+    {
+      "place_ref": "place:fixture:avalon",
+      "relation": "MYTH_LOCATED_AT",
+      "identity": {
+        "names": [
+          {
+            "name": "Avalon",
+            "valid_from": null,
+            "valid_to": null
+          }
+        ]
+      },
+      "precision": "unlocated",
+      "uncertainty": "mythic locus; tradition associates it with Glastonbury but the identity is not coordinate-resolvable",
+      "hierarchy": [],
+      "valid_from": null,
+      "valid_to": null,
+      "observer_frame": null,
+      "source_ref": "aikit:source:fixture:myth-gazetteer"
+    }
+  ],
+  "provenance": [
+    {
+      "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/L5-TECHNE-DUAL-READING-LOCK.md",
+      "source_revision": null,
+      "native_owner": "central",
+      "selector": {
+        "unit": "text_span",
+        "start": 0,
+        "end": 1200,
+        "anchor_ref": null
+      },
+      "standing": "architecture-contract",
+      "evidence_refs": []
+    },
+    {
+      "source_ref": "central:source:control:root:Work/Quaternal-Logic/docs/integrations/epi-logos/EPI-TA-ONTA-AGENT-WORLD-CAPABILITY-MATRIX.md",
+      "source_revision": null,
+      "native_owner": "central",
+      "selector": null,
+      "standing": "design-commitment",
+      "evidence_refs": []
+    }
+  ],
+  "expressions": [
+    {
+      "expression_ref": "oi:expression:l5-dual-reading",
+      "revision": "1",
+      "scene_ref": "oi:expression:l5-dual-reading/scene/crossing",
+      "composition_ref": "oi:composition:l5-dual-reading-integral",
+      "profile_ref": "oi:expression-profile:l5-techne"
+    }
+  ],
+  "actions": [
+    {
+      "action_ref": "central.day.read",
+      "native_owner": "central/ctrl",
+      "authority": "registered-read-action",
+      "summary": "Read the owning civil day record.",
+      "expected_effects": [
+        "none — read only"
+      ],
+      "input_schema_ref": null
+    },
+    {
+      "action_ref": "central.now.read",
+      "native_owner": "central/ctrl",
+      "authority": "registered-read-action",
+      "summary": "Read the root NOW clearing.",
+      "expected_effects": [
+        "none — read only"
+      ],
+      "input_schema_ref": null
+    },
+    {
+      "action_ref": "oi.expression.open",
+      "native_owner": "oi/desktop",
+      "authority": "owner-disclosed",
+      "summary": "Open the bound Expression and its crossing scene in the Cradle over the same subject refs.",
+      "expected_effects": [
+        "an Expression surface opens; no native mutation by itself"
+      ],
+      "input_schema_ref": null
+    },
+    {
+      "action_ref": "aikit.wiki.stage",
+      "native_owner": "aikit/wiki",
+      "authority": "governed-write",
+      "summary": "Stage a wiki change for review — the Return leg of the canonical traversal.",
+      "expected_effects": [
+        "staged proposal only; no direct mutation of authored ground"
+      ],
+      "input_schema_ref": null
+    }
+  ],
+  "agency": [
+    {
+      "role": "guardian",
+      "m_index": 5,
+      "guardian_ref": "actuation:agent:epii",
+      "authority": "stewardship of the coordinate and review of returned evidence; not the transient executor of acts",
+      "privacy": null
+    },
+    {
+      "role": "anima",
+      "m_index": 4,
+      "reading": "3:3-conjugate",
+      "instrument": "expressions",
+      "guardian_ref": "actuation:agent:nara",
+      "agent_session_ref": "aikit:agent-session:fixture:l5-techne",
+      "profile_ref": null,
+      "authority": "performs the situated expressive act through the Expression owner's native operations",
+      "privacy": "Nara-private personal state stays outside the 3:3 disclosure"
+    },
+    {
+      "role": "aletheia",
+      "m_index": 2,
+      "reading": "4:2-deep",
+      "guardian_ref": "actuation:agent:parasakti",
+      "agent_session_ref": "aikit:agent-session:fixture:l5-techne",
+      "profile_ref": null,
+      "authority": "leads disclosure and Return; carries no direct mutation authority",
+      "privacy": null
+    },
+    {
+      "role": "techne",
+      "m_index": 2,
+      "reading": "4:2-deep",
+      "instrument": "timeline",
+      "guardian_ref": "actuation:agent:parasakti",
+      "agent_session_ref": "aikit:agent-session:fixture:l5-techne",
+      "profile_ref": null,
+      "authority": "operates the M2′ relation-field instrument through native Actions under owner authority",
+      "privacy": null
+    }
+  ],
+  "disclosure": {
+    "instruments": [
+      {
+        "instrument": "project",
+        "available": true,
+        "m_prime": 0,
+        "reading": "4:2-deep"
+      },
+      {
+        "instrument": "canvas",
+        "available": true,
+        "m_prime": 1,
+        "reading": "4:2-deep"
+      },
+      {
+        "instrument": "timeline",
+        "available": true,
+        "m_prime": 2,
+        "reading": "4:2-deep"
+      },
+      {
+        "instrument": "journey",
+        "available": true,
+        "m_prime": 3,
+        "reading": "4:2-deep"
+      },
+      {
+        "instrument": "place",
+        "available": true,
+        "m_prime": 4,
+        "reading": "4:2-deep"
+      },
+      {
+        "instrument": "palace",
+        "available": false,
+        "m_prime": 5,
+        "reading": "4:2-deep",
+        "reason": "no integral composition is bound to this subject yet; the composition ref exists on the Expression but no Palace composition owner has claimed it"
+      },
+      {
+        "instrument": "expressions",
+        "available": true,
+        "reading": "3:3-conjugate"
+      }
+    ],
+    "degraded": [
+      {
+        "instrument": "canvas",
+        "reason": "a warranted constellation layout is disclosed but no authored presentation view exists yet"
+      },
+      {
+        "instrument": "place",
+        "reason": "the mythic place reading is unlocated by nature; the globe can name it but cannot site it"
+      }
+    ],
+    "application_cuts": [
+      {
+        "cut": "4:2-deep",
+        "available": true
+      },
+      {
+        "cut": "3:3-conjugate",
+        "available": true
+      }
+    ],
+    "suggestions": [
+      {
+        "instrument": "journey",
+        "reason": "an Expression with scenes is bound — Journey is the formal crossing into the 3:3 reading"
+      },
+      {
+        "instrument": "timeline",
+        "reason": "occurrence, receipt, validity, day, now, session and run facets are all disclosed"
+      },
+      {
+        "instrument": "place",
+        "reason": "two place readings are disclosed, one historical and one mythic"
+      }
+    ]
+  }
+}
