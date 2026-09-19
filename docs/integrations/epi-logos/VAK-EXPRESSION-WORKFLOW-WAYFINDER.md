@@ -2,7 +2,9 @@
 
 **Standing:** owner-directed design and execution clarification, 19 September 2026. The owner commissioned publication after correcting the previous proposal: operative Skills must not be development reports; Vāk should have a lean TypeScript workflow definition which becomes the first source stamp of a Factory undertaking; real subagent roles and dynamic Expression discovery/invocation are essential. This document specifies the work to execute after the current integration churn. It does not claim an installed TypeScript SDK, loaded agents, a live run or human-assessed craft.
 
-**Existing owners:** QL-MEF #201 / #135 and #94; Factory #217 and its current execution/Return successors; AIKit #267 and its current native practice/provider successors; O:I #65, #306/#335/#366 and #375; Point-Cloud-Demo #6. The [K/AW production map](../../../.wayfinder/maps/k-aw-expression-production.md) remains the parent entry. This is its focused implementation and proving line, not another agent runtime, acceptance campaign or kernel wave.
+**Ownership correction, 19 September 2026:** TypeScript workflow/run authoring is **base Factory functionality**, already assigned by Factory #195/#197. Factory owns the generic typed interface, validation/lowering, native compiled identity, first authored source stamp and source-to-SSSF/trajectory publication. QL/Vāk/Epi are optional source-qualified interpretations/projections through that technology. VW1 below owns only the Vāk adapter and its conformance; it does not commission a QL-owned generic frontend. Consume [Factory's native authoring plan](https://github.com/EpiLogos/Factory/blob/main/docs/program/NATIVE-WORKFLOW-AUTHORING.md), including #199/#145 SSSF and DSH-native correlation. Ordinary no-QL workflows remain complete.
+
+**Existing owners:** QL-MEF #201 / #135 and #94; Factory #195/#197/#198/#199 for generic authoring/execution/publication, #143/#145 for Build/trajectory, and #217 for optional Vāk conduct; AIKit #267 and its current native practice/provider successors; O:I #65, #306/#335/#366 and #375; Point-Cloud-Demo #6. The [K/AW production map](../../../.wayfinder/maps/k-aw-expression-production.md) remains the parent entry. This is its focused domain implementation and proving line, not another agent runtime, acceptance campaign or kernel wave.
 
 **Source precedence:** current author corrections; [Ta-Onta full field](TA-ONTA-FULL-FIELD-LOCK.md); [Vāk/Oikonomia](../../kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md); [K/AW production alignment](K-AW-EXPRESSION-PRODUCTION-ALIGNMENT.md); [dual reading](../../L5-TECHNE-DUAL-READING-LOCK.md); current native owner contracts and evidence. Preserve the complete M×S′/SP capability fields. Older Atelier-service and replacement-agent-roster proposals are superseded, not alternate production modes.
 
@@ -17,7 +19,7 @@ The separation is operational:
 | Layer | Carries | Must not carry |
 |---|---|---|
 | Lean Vāk language / role instructions | How to determine, compose, perform and return; stable source identity and relevant constraints | Issue chronology, build commands, migration diary, old missing-feature claims, whole-repo reading instructions |
-| `*.vak.ts` workflow source | This undertaking's typed C′ composition, role requirements, subjects, effects, passage and return/proof requirements | A second scheduler, self-granted credentials, arbitrary embedded page scripts or copied native stores |
+| Factory-owned typed workflow source | Generic concern, participants, dependencies, effects and Return; a `*.vak.ts` source adds explicit QL interpretation through the same interface | A QL-only authoring runtime, second scheduler, self-granted credentials, arbitrary embedded page scripts or copied native stores |
 | Native live tools | What work/faculties/parameters are available now; exact reads, permitted acts, currentness and observations | A frozen inventory in a Skill, private debug handles, ambient authority |
 | Development/proving records | Implementation gaps, migration, tests, revisions and readiness | Mandatory context for every runtime actor |
 
@@ -33,47 +35,49 @@ The [Skill guide](https://code.claude.com/docs/en/agent-sdk/skills) and [tool-se
 
 ### Native choice
 
-Use **TypeScript as the readable, typed source form of a Vāk undertaking**. The provider-neutral native composition is the authority; a Claude `AgentDefinition` is one target projection. Other admitted harnesses/model bodies must receive equivalent roles, context and native faculties through their actual adapters. No Claude dependency belongs in the QL kernel or generic Factory workflow meaning.
+Use **Factory's readable, typed workflow source interface**, with an optional Vāk interpretation layer for this domain. A generic TypeScript definition must author, validate, compile, run and appear in SSSF/trajectory inspection with QL absent. QL supplies its domain types/semantics and lawful bindings; a Claude `AgentDefinition` is one target projection of the actual participant requirements. Other admitted harnesses/model bodies receive equivalent roles, context and native faculties through their adapters. No Claude or QL dependency belongs in generic Factory authoring or Run meaning.
 
 The inspected native bases are:
 
 - Factory `factory/src/workflow.rs`: `factory.agent-workflow-source/v1`, `WorkflowSourceProvenance`, `AgentRequirements`, `WorkflowUnitSource`, dependencies, independence, barriers/nesting and `CompiledWorkflow`.
-- Factory `factory/src/vak_orchestration/model.rs`: `CPrimeExecutionBinding` over `ql.vak-composition.profile/v1` plus `aikit.operative-scope/v1`; original actor/whole/subject/source/path/context and participation.
+- Factory `factory/src/vak_orchestration/model.rs`: optional `CPrimeExecutionBinding` over `ql.vak-composition.profile/v1` plus `aikit.operative-scope/v1`; original actor/whole/subject/source/path/context and participation.
 - QL `crates/ql-mef/src/vak_composition.rs`, `vak_profile.rs`, `cprime_oikonomia.rs`: source-owned language/form/composition and performance qualification.
 - AIKit `resource/operative.rs`, `operative_scope.rs` and native invocation/practice implementations: the existing AST, scoped resolution, effective context and reusable praxis.
 
 Those entry paths were inspected in September 2026 source. Reinspect current mains and relevant pushed candidates before changing them. A compatible existing TypeScript frontend wins over creating another one.
 
-The deliverable is a small source frontend/SDK projection into these owners, with types generated or contract-checked against the owning schemas. **Do not fork their Rust types into an independently maintained TypeScript ontology.** Missing fields are added at their real owner with compatibility tests. The adjacent [TypeScript specimen](specimens/expression-craft.vak.ts) illustrates the desired authoring separation; it is self-contained specification material, not a shipped SDK or executable Factory entry.
+The **generic frontend/SDK, native workflow type projection, first-stamp lifecycle and public authoring entry are delivered by Factory** under #197/#195. QL's deliverable is the optional Vāk adapter with generated or contract-checked domain types. **Do not fork Factory's Rust types into an independently maintained TypeScript ontology in QL.** Missing fields are added at their real owner with compatibility tests. The adjacent [TypeScript specimen](specimens/expression-craft.vak.ts) illustrates domain authoring only; its generic-looking carrier types are explanatory scaffolding to replace with the Factory-owned SDK types, not QL-owned production interfaces.
 
 ## 2. The first stamp of a Factory undertaking
 
-The creation path is:
+The shared creation path is:
 
 ```text
 human request / permitted NOW ground
-  → authored or agent-prepared *.vak.ts
-  → typecheck and restricted deterministic lowering
-  → source-qualified QL C′ binding + native Factory WorkflowSource
-  → inspectable first-source stamp on the Commission/Run basis
+  → Factory typed workflow definition
+      + optional Vāk-authored *.vak.ts interpretation
+  → Factory-owned typecheck and restricted deterministic lowering
+  → native WorkflowSource / CompiledWorkflow
+      + explicit source-qualified QL C′ binding when selected
+  → first authored source stamp on the existing Commission/Run basis
   → actual role/body/tool resolution and authority
   → native admitted dispatch / performance
-  → observed results / Return
+  → observed results / Return and source-linked SSSF/native trajectory
 ```
 
-Attach the source ref/revision, transitive source/import digest, compiler/schema version, lowered native semantic digest, subject/whole/source basis, participation regime, capability/role requirements, intended effects and return address through existing provenance/Run fields. The source stamp records what is to be performed **before** its effects; it is not an extra database, a new Run identity or permission to execute.
+Factory attaches the source ref/revision, transitive source/import digest, compiler/schema version, lowered native semantic digest, subject/source basis, capability/role requirements, intended effects and return address through existing provenance/Run fields. Optional Vāk whole/participation/interpretation is qualified additional basis, not a universal field requirement. The stamp records what is to be performed **before** its effects; it is not an extra database, a new Run identity or permission to execute.
 
-Keep source bytes and semantic digest distinct: harmless source formatting can alter the source revision without changing native semantic identity. Execution-relevant changes in roles, C′ choices, dependencies, effects, inputs or bounds must change the applicable compiled basis. Resolve current bodies/faculties against that basis at dispatch and retain the actual resolution independently. A later legitimate recomposition creates a new attributable revision/continuation, not retroactive editing of the original stamp.
+Keep source bytes and semantic digest distinct: harmless source formatting can alter the source revision without changing native semantic identity. Execution-relevant changes in roles, selected C′ choices, dependencies, effects, inputs or bounds must change the applicable compiled basis. Resolve current bodies/faculties against that basis at dispatch and retain the actual resolution independently. A later legitimate recomposition creates a new attributable revision/continuation, not retroactive editing of the original stamp.
 
-Use a constrained data/builder subset and allowlisted imports with deterministic lowering. Do not `eval`/import arbitrary submitted TypeScript in the desktop, a live user context or a privileged compiler. Any authorised build-time execution needs the existing Workcell isolation, bounded resources and explicitly declared inputs. No network, clock, randomness or environment-dependent values may silently change the resulting workflow. Expression/page files do not gain executable-script authority from this authoring format.
+Factory owns the constrained data/builder subset and allowlisted imports with deterministic lowering. Do not `eval`/import arbitrary submitted TypeScript in the desktop, a live user context or a privileged compiler. Any authorised build-time execution needs the existing Workcell isolation, bounded resources and explicitly declared inputs. No network, clock, randomness or environment-dependent values may silently change the resulting workflow. Expression/page files do not gain executable-script authority from this authoring format.
 
 A definition is allowed to be dialogical: it can propose or ask without authorising mutation. The commissioned craft test receives its normal bounded execution grant once. No approval on every harmless parameter change; no source-authorship, publication or privilege escalation hidden in that grant.
 
-The public user entry must be discoverable through the current Factory/AIKit interfaces. Implement the native capability/CLI/provider action and its help rather than inventing an unregistered command in a Skill. The person sees purpose, proposed participants, intended changes and controls; exact bindings and source remain an inspection away.
+The generic entry and its source-to-unit-to-attempt/read/Action projection belong to Factory; AIKit and O:I consume them. QL adds its optional domain validation, not an alternative command. The person sees purpose, proposed participants, intended changes and controls; exact bindings and source remain an inspection away. Retain the Factory #145 SSSF/DSH relation: authored source → compiled unit → real attempt → native event/tool result → evidence → source. QL/musical readings enrich the same event and source identity. No-QL/no-DSH work retains complete generic inspection; an actual DSH execution additionally retains its native trajectory/fingerprint and honest supported depth.
 
 ## 3. Vāk remains precise and lean
 
-The authoring surface keeps **CPF, CT, CP, CF, CFP, CS** explicit with their existing values and QL interpretation:
+The domain authoring projection keeps **CPF, CT, CP, CF, CFP, CS** explicit with their existing values and QL interpretation:
 
 - CPF: dialogical or authorised-undertaking participation.
 - CT: content/material kind, including the retained CT4b′ source specialization where applicable.
@@ -90,7 +94,7 @@ For every selected C′ determination test what changes in real conduct: partici
 
 ## 4. Real roles, not a list of decorative agent names
 
-The declared field and the actually selected cast are different. Pleroma makes the real capabilities available; Anima selects participants according to the undertaking and their current faculties. A small act can remain one agent. Plural work must really delegate when its composition requires it; do not report simulated personas as independent subagents.
+The declared field and the actually selected cast are different. Pleroma makes the real capabilities available; Anima selects participants according to the undertaking and their current faculties. A small act can remain one agent. Plural work must really delegate when its composition requires it; do not report simulated personas as independent subagents. These are Epi-specific role interpretations over Factory's generic participant requirements; ordinary Factory work does not require this roster.
 
 ### Constitutional field hosted by Anima
 
@@ -167,13 +171,15 @@ The labels VW0–VW6 below are local work packets under the existing owners, not
 
 Parent owns this bounded entry. Consume the current Mac-cut and Factory/Day/NOW returns, the current O:I integrated/new-UI contracts and real QL/AIKit/Factory source. Inspect relevant pushed work before declaring gaps. Preserve the QL/M kernel freeze from the separate installation/review commission; this line changes no mathematical canon and does not silently update the Mac's held QL install.
 
-Account for the complete S′/C′/role field and intended expressive controls through: source → code → tool/transport → discovery/loaded role → native effect → observation → Return. Distinguish existing implementation, current candidate, missing binding, missing practice and runtime question. Confirm the baseline findings from the prior source pass: rich native material versus limited agent parameters; ExpressionWorld operations versus external socket reachability; current role/Skill delivery. Do not make another monolithic audit a prerequisite for straightforward independent checks.
+Account for the complete S′/C′/role field and intended expressive controls through: source → code → tool/transport → discovery/loaded role → native effect → observation → Return. Distinguish existing implementation, current candidate, missing binding, missing practice and runtime question. Confirm the baseline findings from the prior source pass: rich native material versus limited agent parameters; ExpressionWorld operations versus external socket reachability; current role/Skill delivery. Account for the existing generic Factory authoring/publication route before assigning its domain adapter. Do not make another monolithic audit a prerequisite for straightforward independent checks.
 
-### VW1 — TypeScript source and first native stamp
+### VW1 — Vāk projection onto Factory-owned typed authoring
 
-QL owns the Vāk source frontend and exact meaning; Factory owns native workflow compilation/admission and first-stamp attachment; AIKit/Actuation own effective participant/body resolution. Reuse/complete the existing TypeScript/native route if present. Deliver generated/contract-checked types, clean role projections, deterministic restricted lowering, source/digest relation, descriptive compile errors and a real public entry.
+**Factory #197/#195 owns the generic TypeScript source frontend/SDK, native schema/compilation/admission and first-stamp lifecycle; #199/#145 owns public source/SSSF/native-trajectory correlation.** Reuse or complete those at Factory through its native authoring plan, with no-QL/no-Epi acceptance. Do not assign their implementation to QL or keep a QL-local duplicate.
 
-Test valid and invalid CPF/CT/CP/CF/CFP/CS; source/import changes; illegal effects; missing/refused role bindings; dependency/independence conflicts; same semantics/different formatting; changed semantics/new basis; honest resume/recompose. Compile emits no action. No speculative package import or example-only CLI counts as shipped support.
+VW1 supplies the optional Vāk types/interpretation adapter: map exact CPF/CT/CP/CF/CFP/CS, source/whole, harmonic basis and domain role requirements into existing generic units and the accepted C′ binding. Generated/contract-checked domain types compose the Factory-owned type surface. AIKit/Actuation retain effective participant/body/authority resolution. A generic source must not require the Vāk adapter; a selected required interpretation must not be silently omitted.
+
+Test generic authoring/source stamp/public trace with QL absent at the Factory owner, then valid and invalid C′ bindings here; source/import changes; illegal effects; missing/refused roles; dependency/independence conflicts; same semantics/different formatting; changed semantics/new basis; honest resume/recompose. Compile emits no action. Domain conduct can change lawful execution while retaining the native Run/unit/attempt/trace identities. No speculative package import or example-only CLI counts as shipped support.
 
 ### VW2 — live Expression search and performance tools
 
@@ -201,13 +207,13 @@ Prove compose→perform→record→rehear→recompose against observed outcomes;
 
 ### VW6 — integrated experience and handoff
 
-Prove the same source-bound work through current Factory chat/full Run and Run/Agents/Context, focused Expression/Nara, relevant Technē/Epii depth, Library/page, subtle/embedded placement and admitted shared presentation where commissioned. Follow current #375 placement, not older permanent sidebars or old desk layouts.
+Prove the same source-bound work through current Factory Desk/Tasks and Run/Agents/Context, focused Expression/Nara, relevant Technē/Epii depth, Library/page, subtle/embedded placement and admitted shared presentation where commissioned. Follow current #375 placement, not older permanent sidebars or old desk layouts. Show the authored source beside compiled SSSF units and actual native attempts/trajectory, including DSH depth when DSH is used; the generic experience remains valid with QL and DSH absent.
 
 Corpus work consumes the actual source→Wiki/Knowledge→bounded whole→Expression path of #366; a detached export cannot stand in for this relation. Inspect the current image/video fallback separately from live behaviour. Preserve the same subject/edition/occasion and privacy through transitions. User craft judgement is obtained on meaningful joined work, not used as a veto on unfinished infrastructure.
 
 ## 8. Parallelism and landing
 
-After the bounded VW0 account, **VW1, VW2 and VW3 may run in parallel** under one integration lead. Publish their shared operation/role/type contracts early and coordinate common files. VW3 can draft the lean grammar immediately but cannot declare missing tool support available. VW4's fixtures can be prepared alongside; real runs consume the returned working joins. VW5 and VW6 widen exercised work, not restart the earlier programmes.
+After the bounded VW0 account, **Factory generic authoring/publication, VW1's optional domain adapter, VW2 live tools and VW3 role guidance can develop in parallel against one agreed native boundary**. Factory remains the shared authoring/source-stamp writer; QL does not create a second frontend to avoid waiting for it. VW3 can draft the lean grammar immediately but cannot declare missing tool support available. VW4's fixtures can be prepared alongside; real runs consume the returned working joins. VW5 and VW6 widen exercised work, not restart the earlier programmes.
 
 Use Omarchy and existing sandboxes for code/build/provider/engine tests. One reusable code worktree per coherent feature line, not per agent/session/finding. Disjoint artifact production requires no additional worktree. Serialise writes to the same Expression revision, shared source index, Git index, resident endpoint and active GUI. Preserve the Mac's frontend branch, installed candidate and current tasks. A sandbox with software WebGL is scoped material evidence, not Mac/hardware or personal aesthetic acceptance.
 
@@ -215,8 +221,8 @@ Repairs land at native owners through current PR/CI and coordinated consumer joi
 
 ## 9. Spine and closure
 
-The O:I counterpart is `docs/experience/EXPRESSION-FIELD.md` §9 with a registered `vak-expression-craft.json` source module in #65. It retains EF01/02/04/07/08/09/10 and QL UX01/04/05/06/08/09/10/11. Existing #65 C0–C5 governs preparation, actual use, stress, native repair and independent return.
+The O:I counterpart is `docs/experience/EXPRESSION-FIELD.md` §9 with a registered `vak-expression-craft.json` source module in #65. It retains EF01/02/04/07/08/09/10 and QL UX01/04/05/06/08/09/10/11. Existing #65 C0–C5 governs preparation, actual use, stress, native repair and independent return. Factory's native authoring plan owns generic TS/SSSF/DSH acceptance; this domain line consumes it rather than hiding it inside QL closure.
 
-Close each bounded packet from its explicit proof, not from a full-system feeling. Final return contains: exact source/installed/provider/UI vector; source-to-faculty/role coverage; real TypeScript source and native stamped workflow; actual loaded cast and tools; expressive artifacts/editions; original failures and native repairs; independent material and negative/recovery evidence; named-practice reuse; remaining UI/hardware/human questions. Preserve implemented, reachable, loaded, exercised and human-assessed as different statements.
+Close each bounded packet from its explicit proof, not from a full-system feeling. Final return contains: exact source/installed/provider/UI vector; source-to-faculty/role coverage; real Factory-owned TypeScript source and native stamped workflow with optional Vāk projection; actual loaded cast and tools; expressive artifacts/editions; original failures and native repairs; independent material and negative/recovery evidence; named-practice reuse; remaining UI/hardware/human questions. Preserve implemented, reachable, loaded, exercised and human-assessed as different statements.
 
 The completion object is **an agent that can genuinely make, vary, inspect, curate and invoke expressive work through the Vāk-composed native world**, with Factory carrying the commissioned work and its improvement. It is not a cleaned-up prompt pack standing in for that world.
