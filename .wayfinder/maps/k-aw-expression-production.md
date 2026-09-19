@@ -4,7 +4,7 @@
 **Ground:** `docs/integrations/epi-logos/K-AW-EXPRESSION-PRODUCTION-ALIGNMENT.md`  
 **Prerequisites:** accepted K8–K10, #94/AW, Ta-Onta full-field lock, Vāk/Oikonomia lock, L5 Technē dual-reading lock.
 
-**Current operative-form and testing continuation — 19 September 2026:** [Vāk Expression Workflow Wayfinder](../../docs/integrations/epi-logos/VAK-EXPRESSION-WORKFLOW-WAYFINDER.md) gives Q2/Q4 their concrete clean TypeScript authoring, first Factory-source stamp, real role/subagent, dynamic Expression-tool and curated-invocation work. It does not reopen K/AW production or replace Q0–Q4. Runtime agents receive lean Vāk/role guidance and actual tools, not this development map as a permanent prompt.
+**Current operative-form and testing continuation — 19 September 2026:** [Vāk Expression Workflow Wayfinder](../../docs/integrations/epi-logos/VAK-EXPRESSION-WORKFLOW-WAYFINDER.md) gives Q2/Q4 their domain projection, real role/subagent, dynamic Expression-tool and curated-invocation work. **Base TypeScript workflow authoring, deterministic native lowering and first-source stamping belong to Factory #195/#197, with source-to-SSSF/DSH-native trajectory publication under #199/#145.** Consume [Factory's native authoring plan](https://github.com/EpiLogos/Factory/blob/main/docs/program/NATIVE-WORKFLOW-AUTHORING.md); QL VW1 supplies only optional Vāk types/semantics/adaptation. This does not reopen K/AW production or replace Q0–Q4. Runtime agents receive lean Vāk/role guidance and actual tools, not this development map as a permanent prompt.
 
 ## Q0 — parent integration
 
@@ -73,7 +73,8 @@ After the current cut settles, consume the focused VW0–VW6 packets in the link
 
 ```text
 actual source/faculty/role coverage
-   → [typed Vāk source + native Factory lowering]
+   → [Factory generic typed authoring / source stamp / trace publication]
+       ↔ [optional QL Vāk projection and conformance]
    ∥ [live Expression search / inspect / act / observe]
    ∥ [clean canonical role/Skill delivery]
    → actual Factory expressive commission
@@ -81,7 +82,7 @@ actual source/faculty/role coverage
    → Z / T/T′ / independent Return in the same #65 campaign
 ```
 
-TypeScript is the authored projection of the existing language and workflow contracts; it is not a second scheduler or Claude-only ontology. The source stamp precedes effects. Match actual participant IDs, loaded guidance, tools, task material and returned work; named roles in a file are not proof that subagents ran.
+TypeScript authoring is base Factory operation; Vāk/Epi supplies an optional interpretation through it, not ownership of a second frontend or Claude-only ontology. The source stamp precedes effects, and both source and actual attempts remain navigable in Factory's existing SSSF/trajectory surfaces. Generic workflows work with QL absent. Match actual participant IDs, loaded guidance, tools, task material and returned work; named roles in a file are not proof that subagents ran.
 
 Keep whole-field coverage, source meaning and the existing constitutional/specialist field intact. The runtime needing a current Expression search/inspection/invocation tool is native implementation work, not another paragraph in a Skill. Preserve ordinary non-Factory performance while using Factory for this commissioned production and proving workload.
 
