@@ -297,6 +297,9 @@ M3 authors sequence, pacing, relation, framing and transition; the Expression wo
 
 ## 10. M4′ — Places / World: situated whole and Earth relation
 
+> 2026-09-19 amendment: Places/World is the professional *lens* of the M4′ coordinate; the
+> coordinate's whole-application embodiment is defined in §11a. The lens below is unchanged.
+
 **Professional office:** situate the field in the concrete spatial/world context in which its relations hold.
 
 The current map/street/globe work remains the Earth-facing interaction body, but the office is broader than geographic pins.
@@ -346,6 +349,10 @@ Where providers are absent, the instrument reports that depth unavailable rather
 
 ## 11. M5′ — Palace / integral articulation: inhabitable whole and Return
 
+> 2026-09-19 amendment: Palace is the integral-articulation *lens* of the M5′ coordinate;
+> M5′ itself is the same application in M5/M0 deep-working mode (§11a) and is not reducible
+> to this screen. The lens below is unchanged.
+
 **Professional office:** make the articulated field inhabitable, memorable, teachable and reflexively available as a whole.
 
 Palace now has a precise reason to exist: it is the explicit deep objectification of the otherwise ambient M5 articulation/pedagogy/recognition pole.
@@ -377,6 +384,38 @@ Project / Wiki / Ground
 The existing Palace UI is retained only to the degree real interaction testing confirms it serves this office.
 
 ---
+
+## 11a. Owner amendment 2026-09-19 — whole-application embodiment vs professional lens
+
+The owner clarified (2026-09-19, carried into this lock by the Mac Track 3 session) how the
+M4′ and M5′ coordinates are embodied now that the Expressions system and the Technē HUD are
+one application with two operating modes:
+
+```text
+M4′  the general Expressions application body, with the operative
+     M1–M2–M3 backend (topology/resonance/form) feeding its actual
+     controls and material behaviour
+
+M5′  the SAME application in M5/M0 deep-working mode: graph/Wiki/web
+     disclosure, collection management/development, and composition of
+     material returned by the other Technē instruments
+```
+
+Two distinctions follow, and both are load-bearing:
+
+- **Whole-application embodiment is not a lens.** The Sections above define the professional
+  lens projections — M1′ Canvas, M2′ Relation/Timeline, M3′ Journey, M4′ Places/World,
+  M5′ Palace, M0′ Project/Wiki/Graph. Those lenses keep their capabilities, names and
+  canonical identities unchanged. What changes is their relation to the coordinates: they are
+  narrower professional projections of the field, not the whole of M4′ or M5′.
+- **M5′ is not reducible to a Palace screen.** Palace remains the integral-articulation lens
+  inside the deep mode; M5′ itself is the entire same application operating in deep mode,
+  including the Wiki/graph/web disclosure and the collection management surfaces.
+
+No rename is performed anywhere by this amendment. Crossing the 3:3 Expressions body and the
+4:2 deep mode changes disclosure and available operation — exactly as §0 already states —
+while subject identity, source authority, constellation identity and native Action ownership
+are preserved. The canonical M×S′ fourfold (§2) and the Guardians (§14) are untouched.
 
 # IV — 0 → 5 TECHNĒ INTERACTION SPINE
 
@@ -735,6 +774,7 @@ H/EX remains human evidence. Repository and provider proofs cannot self-ratify t
 | Is Aletheia identical to Technē? | No. `Technē_i` is the operative role of `Aletheia_i` while inhabiting M_i′. L5-5 Technē remains the general generative office. |
 | Must every act follow 0→1→2→3→4→5? | No. It is the first canonical integration spine, not a compulsory workflow. |
 | Does changing cut change subject ontology? | No. 3:3 ↔ 4:2 preserves the same underlying subject/ref/source relation unless an explicit native Action changes it. |
+| Is M5′ only the Palace screen? | No (2026-09-19 §11a). M5′ is the whole application in M5/M0 deep-working mode; Palace is one lens inside it, M4′ is the whole Expressions body, and the professional lenses keep their canonical identities. |
 
 ---
 
