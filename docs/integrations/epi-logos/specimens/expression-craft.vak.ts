@@ -1,4 +1,12 @@
-// Typed authoring specimen; native lowering and execution are supplied by VW1.
+// Optional Vāk authoring specimen, not the base Factory SDK or a runtime.
+// Factory #195/#197 owns TypeScript workflow authoring, native lowering and
+// first-source stamping; #199/#145 owns SSSF/native-trajectory publication.
+// See EpiLogos/Factory:docs/program/NATIVE-WORKFLOW-AUTHORING.md.
+// VW1 supplies only QL domain types/interpretation against that native route.
+// Source/Participant/Act/Ground/Workflow-shaped carriers below are illustrative
+// scaffolding. Production replaces their generic parts with Factory-owned,
+// generated/contract-checked types, not a QL-maintained duplicate or fake import.
+// Generic Factory workflows require none of this file's C′ fields or role names.
 export type Source = Readonly<{ ref: string; revision: string }>;
 export type CP = '4.0' | '4.1' | '4.2' | '4.3' | '4.4' | '4.5';
 export type CF = 'CF1' | 'CF2' | 'CF3' | 'CF4' | 'CF5' | 'CF6' | 'CF7';
