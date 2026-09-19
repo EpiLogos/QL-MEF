@@ -8,10 +8,12 @@
 //! Numerical outputs are compositional readings, not health or clinical claims.
 
 pub mod activity;
+pub mod dialogue;
 pub mod domain;
 pub mod expression;
 pub mod multi;
 pub mod replay;
+pub mod voice;
 
 use std::collections::BTreeSet;
 
