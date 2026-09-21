@@ -1,16 +1,9 @@
 name: Nara personal native regressions
+# The canonical PR gate runs all ql-cli tests. This is a bounded diagnostic replay.
 on:
-  pull_request:
-    paths:
-      - 'crates/ql-cli/src/nara_personal/**'
-      - 'crates/ql-cli/tests/nara_practice_reference_reuse.rs'
-      - '.github/workflows/nara-practice-repair.yml'
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: nara-practice-${{ github.ref }}
-  cancel-in-progress: false
 jobs:
   native:
     runs-on: ubuntu-latest
@@ -19,21 +12,8 @@ jobs:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
       - uses: dtolnay/rust-toolchain@stable
+        with: {components: 'rustfmt, clippy'}
       - uses: Swatinem/rust-cache@v2.9.2
-      - name: Actual native CLI regression in an isolated private World
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/nara-native-evidence
-          git rev-parse HEAD > /tmp/nara-native-evidence/source-head.txt
-          cargo test --locked -p ql-cli --test nara_practice_reference_reuse 2>&1 | tee /tmp/nara-native-evidence/practice.log
-      - name: All native CLI library and integration tests, without weakened assertions
-        if: ${{ !cancelled() }}
-        run: |
-          set -o pipefail
-          cargo test --locked -p ql-cli 2>&1 | tee /tmp/nara-native-evidence/native-cli.log
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: nara-personal-native-${{ github.sha }}
-          path: /tmp/nara-native-evidence
-          if-no-files-found: error
+      - run: cargo fmt --all --check
+      - run: cargo test --locked -p ql-cli --all-targets
+      - run: cargo clippy --locked -p ql-cli --all-targets -- -D warnings

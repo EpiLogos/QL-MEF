@@ -1,0 +1,61 @@
+name: Finish bounded Nara source repair
+on:
+  push:
+    branches: ['agent/nara-practice-reference-repair-20260921']
+    paths: ['.github/workflows/nara-source-lint-repair.yml']
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: dtolnay/rust-toolchain@stable
+        with: {components: 'rustfmt, clippy'}
+      - uses: Swatinem/rust-cache@v2.9.2
+      - name: Repair only the two borrowed-path helpers and claimed source formatting
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/agent/nara-practice-reference-repair-20260921
+          git merge-base --is-ancestor ef214b22e8964a2b48564d0ea81b0cefcd773aa3 HEAD
+          mkdir -p /tmp/nara-final-repair
+          git rev-parse HEAD > /tmp/nara-final-repair/base.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('crates/ql-cli/src/nara_personal/tests.rs')
+          s=p.read_text()
+          assert s.count('root: &PathBuf')==2,'test helper basis changed'
+          p.write_text(s.replace('root: &PathBuf','root: &std::path::Path'))
+          PY
+          rustfmt --edition 2024 crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
+          git diff > /tmp/nara-final-repair/patch.diff
+      - name: Actual locked tests, formatting, Clippy and repository invariants
+        run: |
+          set -o pipefail
+          cargo fmt --all --check
+          cargo test --locked -p ql-cli --all-targets 2>&1 | tee /tmp/nara-final-repair/tests.log
+          cargo clippy --locked -p ql-cli --all-targets -- -D warnings 2>&1 | tee /tmp/nara-final-repair/clippy.log
+          bash scripts/verify invariants 2>&1 | tee /tmp/nara-final-repair/invariants.log
+      - name: Commit only the verified three-file source repair to this branch
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import subprocess
+          paths=set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())
+          assert paths==set(['crates/ql-cli/src/nara_personal/mod.rs','crates/ql-cli/src/nara_personal/tests.rs','crates/ql-cli/tests/nara_practice_reference_reuse.rs']),paths
+          subprocess.run(['git','add','--',*sorted(paths)],check=True)
+          PY
+          git config user.name Epii
+          git config user.email noreply@openai.com
+          git commit -m 'fix(nara): borrow native test paths and preserve repository formatting'
+          test "$(git ls-remote origin refs/heads/agent/nara-practice-reference-repair-20260921 | cut -f1)" = "$GITHUB_SHA"
+          git push origin HEAD:refs/heads/agent/nara-practice-reference-repair-20260921
+          git rev-parse HEAD > /tmp/nara-final-repair/head.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nara-final-source-repair-${{ github.sha }}
+          path: /tmp/nara-final-repair
+          if-no-files-found: error
