@@ -10,7 +10,12 @@ static ID: AtomicU64 = AtomicU64::new(0);
 struct World(PathBuf);
 impl World {
     fn new() -> Self {
-        let root = std::env::temp_dir().join(format!(
+        // Canonicalize the base temp dir so macOS's /var -> /private/var (and
+        // /tmp -> /private/tmp) symlink does not trip the store's non-symlink
+        // storage guard; the unique leaf we create is never itself a symlink.
+        let base =
+            std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir());
+        let root = base.join(format!(
             "ql-nara-reuse-{}-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()

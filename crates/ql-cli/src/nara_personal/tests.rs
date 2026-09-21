@@ -9,7 +9,13 @@ static ID: AtomicU64 = AtomicU64::new(0);
 struct Temp(PathBuf);
 impl Temp {
     fn new() -> Self {
-        Self(std::env::temp_dir().join(format!(
+        // Resolve the base temp dir's own symlinks (macOS /var -> /private/var,
+        // /tmp -> /private/tmp) so the store's non-symlink storage guard sees an
+        // already-canonical ancestry. The unique leaf we create is never a
+        // symlink, so the guard's real protection is untouched.
+        let base =
+            std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir());
+        Self(base.join(format!(
             "ql-nara-{}-{}-{}",
             std::process::id(),
             now().unwrap(),
