@@ -613,3 +613,61 @@ Person/Nara identifies a real defect in an Epi coordinate-space → Epii diagnos
 ## 11. Closure
 
 This successor tranche is complete when Ta-Onta is no longer only a capability description around Epi operations but is also the **actual domain SDK/API through which Epi Agents enter and operate the general Expression-world substrate**; Bimba provides addressable derived places; M/M′ determine those places dynamically; Nara provides the foreground dialogical/voice relation; Epii supplies deeper M5 enrichment/development; and all of this preserves the accepted native product owners beneath it.
+
+
+## W6 native identity material return — 21 September 2026
+
+This is a dependent native increment over #235 at
+`0807b827b63732a38c58660a36ca7e5988e09164`, not closure of TA3/TA4,
+the entire M4 matrix, or physical/human acceptance. Ownership remains
+QL #201; the receiving personal/identity UI is the dependent O:I
+`agent/nara-personal-completion-20260921` above #460. Coordination:
+QL #201 comment5759425569 and O:I #220 comment5759371739.
+
+The exact typed accepted six-office source/provenance basis now has a
+native material contract, `ql.nara-identity-material/v1`, with
+`sha256-native-identity-basis/v1`. Native ordinal ordering and sorted
+evidence/reference sets are part of v1. Nara and personal subject bind
+the basis; record/receipt/review labels, current encounter, provider,
+M3 address and quaternion do not become hash bits. Missing layers stay
+absent; an empty stack cannot produce a completed identity material.
+This implements M4-C64's stable exact provenance/variation role. It
+does not invent the open archetypal-quintessence compression law,
+semantic similarity, a natal chart, a medical assessment or a person.
+
+`ql nara --request-file - --json` accepts the read-only operation
+`identity_material` with existing target, explicit human consent and
+expected personal revision. It returns the digest, protected hash ref,
+supplied-office/source basis, acceptance standing and separately typed
+native form and current orientation. `apply` with mutation
+`identity_seal` and `expected_value` is the ordinary revision-checked,
+receipt-bearing acceptance path. Rejection/preview changes nothing;
+stale expected values refuse. An accepted identity replacement clears
+old hash, M3-form and identity-quaternion derivation refs. Central
+continues to own source prose and its current retrieval policy.
+
+Production implementation was published at
+`cce5d34b555640043f88c2334df0ab5d27c4e447` only after run
+**35592841086** passed all **70 ql-cli all-target tests** and clippy
+with warnings denied. The earlier run **35592309909** passed those
+tests but failed three borrowed-path lint checks; it remains original
+evidence. No tests or lint rules were suppressed. New tests exercise
+empty/mismatched/stale/private inputs, deterministic native basis,
+read-only preview, exact acceptance, idempotent replay and derivative
+invalidation; inherited #235 practice/privacy regressions remain.
+
+Reproduce from the PR head:
+
+```sh
+cargo test --locked -p ql-cli --all-targets
+cargo clippy --locked -p ql-cli --all-targets -- -D warnings
+```
+
+Controlled sources and temporary private Worlds are not installed
+personal material, microphone/audio, a paid provider or human evidence.
+The desktop must recheck Central source revisions, require explicit
+acceptance and pass only digest/orientation/form into a private
+Expressions frame. Native records, notes, audio and dialogue are not
+public editions, shared search inputs or generic diagnostics. Both
+installable/self-inhabiting technology and complete published corpus
+remain programme outcomes; this private material is not corpus input.
