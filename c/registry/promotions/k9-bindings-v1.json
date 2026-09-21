@@ -236,6 +236,55 @@
         "crates/ql-wiki/tests/wiki_refraction.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_personal/mod.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Native personal CLI wire, explicit consent and identity/revision validation over existing M4 domain operations; no provider, model or public personal export authority.",
+      "tests": [
+        "crates/ql-cli/src/nara_personal/tests/mod.rs",
+        "crates/ql-cli/tests/nara_practice_reference_reuse.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_personal/store.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Owner-only native persistence, lock/revision and idempotent receipt infrastructure for the existing Nara personal domain; source references remain with Central and private records are not census evidence.",
+      "tests": [
+        "crates/ql-cli/src/nara_personal/tests/mod.rs",
+        "crates/ql-cli/tests/nara_practice_reference_reuse.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_personal/operations.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Source-attributed operations over the existing M4 identity, embodied seven-centre, oracle, transformation, context and integration domain. Source links remain unique while distinct receipts retain performed acts; no new QL ontology or human acceptance is inferred.",
+      "tests": [
+        "crates/ql-cli/src/nara_personal/tests/mod.rs",
+        "crates/ql-cli/tests/nara_practice_reference_reuse.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_personal/identity_material.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Native identity-material format and its sha256-native-identity-basis digest over the accepted, canonically ordered identity evidence - a stable private variation seed, not a person assessment; it derives no chart, M3 address or quaternion from the hash bits and adds no coordinate ontology, leaving the M4 identity operations with operations.rs. [disposition authored during local integration; flagged for QL native-owner review].",
+      "tests": [
+        "crates/ql-cli/src/nara_personal/tests/identity_material_tests.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
