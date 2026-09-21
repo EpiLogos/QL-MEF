@@ -1,0 +1,75 @@
+name: Nara practice source-reference repair
+on:
+  push:
+    branches: ['agent/nara-practice-reference-repair-20260921']
+    paths: ['.github/workflows/nara-practice-repair.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: nara-practice-repair
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.9.2
+      - name: Preserve original failing native lifecycle
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/agent/nara-practice-reference-repair-20260921
+          mkdir -p /tmp/nara-practice-repair
+          git rev-parse HEAD > /tmp/nara-practice-repair/test-base.txt
+          set +e
+          cargo test --locked -p ql-cli --test nara_practice_reference_reuse > /tmp/nara-practice-repair/before.log 2>&1
+          status=$?
+          set -e
+          cat /tmp/nara-practice-repair/before.log
+          test "$status" -ne 0
+          grep -q 'duplicate transformation feedback reference' /tmp/nara-practice-repair/before.log
+      - name: Repair only the three source-reference accumulation hunks
+        run: |
+          set -euo pipefail
+          test "$(git hash-object crates/ql-cli/src/nara_personal/operations.rs)" = 3412a29debffb7bdcaf2b5d709ebddeec4c21912
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('crates/ql-cli/src/nara_personal/operations.rs')
+          s=p.read_text()
+          edits=[
+              ('phase.feedback_refs.push(feedback_ref);','// Links are unique; distinct native receipts retain each performed act.\n            if !phase.feedback_refs.contains(&feedback_ref) {\n                phase.feedback_refs.push(feedback_ref);\n            }'),
+              ('phase.feedback_refs.push(safety_review_ref);','if !phase.feedback_refs.contains(&safety_review_ref) {\n                phase.feedback_refs.push(safety_review_ref);\n            }'),
+              ('phase.feedback_refs.extend(feedback_refs);','for reference in feedback_refs {\n                if !phase.feedback_refs.contains(&reference) {\n                    phase.feedback_refs.push(reference);\n                }\n            }')
+          ]
+          for before,after in edits:
+              assert s.count(before)==1,'exact repair basis changed'
+              s=s.replace(before,after)
+          p.write_text(s)
+          PY
+          rustfmt --edition 2021 crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
+      - name: Prove real CLI lifecycle and all existing personal unit tests
+        run: |
+          set -euo pipefail
+          cargo test --locked -p ql-cli --test nara_practice_reference_reuse 2>&1 | tee /tmp/nara-practice-repair/after.log
+          cargo test --locked -p ql-cli --lib nara_personal 2>&1 | tee /tmp/nara-practice-repair/personal.log
+      - name: Publish only tested repair to this dependent branch
+        run: |
+          set -euo pipefail
+          git add crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = 2
+          git diff --cached > /tmp/nara-practice-repair/repair.patch
+          git config user.name Epii
+          git config user.email noreply@openai.com
+          git commit -m 'fix(nara): retain unique practice sources across distinct lifecycle receipts'
+          test "$(git ls-remote origin refs/heads/agent/nara-practice-reference-repair-20260921 | cut -f1)" = "$GITHUB_SHA"
+          git push origin HEAD:refs/heads/agent/nara-practice-reference-repair-20260921
+          git rev-parse HEAD > /tmp/nara-practice-repair/implemented-head.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nara-practice-repair-${{ github.sha }}
+          path: /tmp/nara-practice-repair
+          if-no-files-found: error
