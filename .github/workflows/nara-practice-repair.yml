@@ -18,12 +18,24 @@ jobs:
         with: {fetch-depth: 0}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.9.2
+      - name: Correct regression fixture expression syntax before native reproduction
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('crates/ql-cli/tests/nara_practice_reference_reuse.rs')
+          s=p.read_text()
+          before='"input_basis":["m1","m2","m3"].map(|m| json!({"basis_ref":format!("{m}:r1"),"source_ref":format!("{m}:{n}"),"value":n})),'
+          after='"input_basis":(["m1","m2","m3"].map(|m| json!({"basis_ref":format!("{m}:r1"),"source_ref":format!("{m}:{n}"),"value":n}))),'
+          assert s.count(before)==1,'test syntax repair basis changed'
+          p.write_text(s.replace(before,after))
+          PY
       - name: Preserve original failing native lifecycle
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = refs/heads/agent/nara-practice-reference-repair-20260921
           mkdir -p /tmp/nara-practice-repair
           git rev-parse HEAD > /tmp/nara-practice-repair/test-base.txt
+          git diff > /tmp/nara-practice-repair/test-syntax-repair.patch
           set +e
           cargo test --locked -p ql-cli --test nara_practice_reference_reuse > /tmp/nara-practice-repair/before.log 2>&1
           status=$?
