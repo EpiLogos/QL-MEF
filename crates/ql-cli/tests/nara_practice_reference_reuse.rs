@@ -1,5 +1,5 @@
 //! Actual native CLI in an isolated private World; no model or human data.
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::{
     io::Write,
     path::PathBuf,
@@ -150,8 +150,7 @@ fn one_source_can_support_distinct_hold_resume_close_acts_without_duplicate_link
     let stale = world.call(json!({"operation":"apply","request_id":"stale","consent":consent(),"target":record["target"],"expected_revision":1,"mutation":{"kind":"practice_hold","phase_ref":"practice:one","feedback_ref":"source:unapplied"}}));
     assert_eq!(stale["ok"], false);
     assert_eq!(
-        world.call(json!({"operation":"read","target":record["target"],"consent":consent()}))
-            ["record"],
+        world.call(json!({"operation":"read","target":record["target"],"consent":consent()}))["record"],
         record
     );
 }
@@ -171,8 +170,7 @@ fn reference_reuse_does_not_relax_resume_safety_or_input_validation() {
     ));
     assert_eq!(invalid["ok"], false);
     assert_eq!(
-        world.call(json!({"operation":"read","target":record["target"],"consent":consent()}))
-            ["record"],
+        world.call(json!({"operation":"read","target":record["target"],"consent":consent()}))["record"],
         record,
         "rejected actions do not mutate native state"
     );

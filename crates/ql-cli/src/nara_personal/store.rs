@@ -1,6 +1,6 @@
 //! Private, atomically replaced native state. An OS advisory lock is released
 //! on process death. No recursive scan, public export, raw journal or secrets.
-use super::{digest, PersonalRecord, MAX_BYTES};
+use super::{MAX_BYTES, PersonalRecord, digest};
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
