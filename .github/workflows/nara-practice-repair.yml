@@ -29,7 +29,7 @@ jobs:
           assert s.count(before)==1,'test syntax repair basis changed'
           p.write_text(s.replace(before,after))
           PY
-      - name: Preserve original failing native lifecycle
+      - name: Preserve original failing native lifecycle and privacy contract
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = refs/heads/agent/nara-practice-reference-repair-20260921
@@ -39,14 +39,20 @@ jobs:
           set +e
           cargo test --locked -p ql-cli --test nara_practice_reference_reuse > /tmp/nara-practice-repair/before.log 2>&1
           status=$?
+          cargo test --locked -p ql-cli --lib nara_personal > /tmp/nara-practice-repair/privacy-before.log 2>&1
+          privacy_status=$?
           set -e
           cat /tmp/nara-practice-repair/before.log
+          cat /tmp/nara-practice-repair/privacy-before.log
           test "$status" -ne 0
+          test "$privacy_status" -ne 0
           grep -q 'duplicate transformation feedback reference' /tmp/nara-practice-repair/before.log
-      - name: Repair only the three source-reference accumulation hunks
+          grep -q 'raw_transcript' /tmp/nara-practice-repair/privacy-before.log
+      - name: Repair only native source-reference accumulation and empty variant admission
         run: |
           set -euo pipefail
           test "$(git hash-object crates/ql-cli/src/nara_personal/operations.rs)" = 3412a29debffb7bdcaf2b5d709ebddeec4c21912
+          test "$(git hash-object crates/ql-cli/src/nara_personal/mod.rs)" = 41b18a821282c1d2e1004e7f60728ce44fc4e43c
           python3 - <<'PY'
           from pathlib import Path
           p=Path('crates/ql-cli/src/nara_personal/operations.rs')
@@ -60,8 +66,21 @@ jobs:
               assert s.count(before)==1,'exact repair basis changed'
               s=s.replace(before,after)
           p.write_text(s)
+          p=Path('crates/ql-cli/src/nara_personal/mod.rs')
+          s=p.read_text()
+          assert s.count('    Capabilities,')==1
+          s=s.replace('    Capabilities,','    // An empty struct, not a unit variant: serde must reject private extras.\n    Capabilities {},')
+          s=s.replace('Request::Capabilities)', 'Request::Capabilities {})').replace('Request::Capabilities =>','Request::Capabilities {} =>')
+          p.write_text(s)
+          # Update a direct constructor only if the tests use one. Assertions,
+          # JSON requests and the existing raw_transcript rejection are kept.
+          p=Path('crates/ql-cli/src/nara_personal/tests.rs')
+          s=p.read_text()
+          import re
+          updated=re.sub(r'Request::Capabilities(?!\s*\{)', 'Request::Capabilities {}',s)
+          if updated!=s:p.write_text(updated)
           PY
-          rustfmt --edition 2021 crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
+          rustfmt --edition 2021 crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
       - name: Prove real CLI lifecycle and all existing personal unit tests
         run: |
           set -euo pipefail
@@ -70,12 +89,16 @@ jobs:
       - name: Publish only tested repair to this dependent branch
         run: |
           set -euo pipefail
-          git add crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
-          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = 2
+          git add crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/src/nara_personal/tests.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
+          python3 - <<'PY'
+          import subprocess
+          paths=set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())
+          assert len(paths)>=3 and paths<=set(['crates/ql-cli/src/nara_personal/operations.rs','crates/ql-cli/src/nara_personal/mod.rs','crates/ql-cli/src/nara_personal/tests.rs','crates/ql-cli/tests/nara_practice_reference_reuse.rs'])
+          PY
           git diff --cached > /tmp/nara-practice-repair/repair.patch
           git config user.name Epii
           git config user.email noreply@openai.com
-          git commit -m 'fix(nara): retain unique practice sources across distinct lifecycle receipts'
+          git commit -m 'fix(nara): preserve practice source identity and reject unknown private capability fields'
           test "$(git ls-remote origin refs/heads/agent/nara-practice-reference-repair-20260921 | cut -f1)" = "$GITHUB_SHA"
           git push origin HEAD:refs/heads/agent/nara-practice-reference-repair-20260921
           git rev-parse HEAD > /tmp/nara-practice-repair/implemented-head.txt
