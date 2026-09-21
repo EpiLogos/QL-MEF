@@ -380,7 +380,10 @@ pub(super) fn apply(
             let phase = current_phase(record, &phase_ref)?;
             // Explicit hold is consent-required, not a guessed arousal diagnosis.
             phase.safety = TransformationSafety::ConsentRequired;
-            phase.feedback_refs.push(feedback_ref);
+            // Links are unique; distinct native receipts retain each performed act.
+            if !phase.feedback_refs.contains(&feedback_ref) {
+                phase.feedback_refs.push(feedback_ref);
+            }
         }
         Mutation::PracticeResume {
             phase_ref,
@@ -392,7 +395,9 @@ pub(super) fn apply(
                 return Err("only the explicit personal hold may resume here; unsafe/unavailable protocols require new review".into());
             }
             phase.safety = TransformationSafety::Clear;
-            phase.feedback_refs.push(safety_review_ref);
+            if !phase.feedback_refs.contains(&safety_review_ref) {
+                phase.feedback_refs.push(safety_review_ref);
+            }
         }
         Mutation::PracticeClose {
             phase_ref,
@@ -406,7 +411,11 @@ pub(super) fn apply(
                 return Err("practice cannot close before opening".into());
             }
             phase.closed_at_unix_ms = Some(at);
-            phase.feedback_refs.extend(feedback_refs);
+            for reference in feedback_refs {
+                if !phase.feedback_refs.contains(&reference) {
+                    phase.feedback_refs.push(reference);
+                }
+            }
         }
         Mutation::ContextRecord { branch, reading } => {
             derived(reading.standing)?;

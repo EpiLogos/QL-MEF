@@ -4,9 +4,9 @@ mod operations;
 mod store;
 use crate::CliError;
 use ql_mef::nara::domain::operations::EmbodiedContinuationInput;
-use ql_mef::nara::{PersonalFieldState, domain::*};
+use ql_mef::nara::{domain::*, PersonalFieldState};
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{io::Read, path::PathBuf};
 pub const CONTRACT: &str = "ql.nara-personal-operations/v1";
@@ -45,7 +45,8 @@ pub struct Seed {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "operation", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
-    Capabilities,
+    // An empty struct, not a unit variant: serde must reject private extras.
+    Capabilities {},
     List {
         consent: Consent,
     },
@@ -164,12 +165,12 @@ fn execute_with(
     random: &mut dyn FnMut(&mut [u8]) -> Result<(), String>,
     clock: &dyn Fn() -> Result<u64, String>,
 ) -> Result<Value, String> {
-    if matches!(request, Request::Capabilities) {
+    if matches!(request, Request::Capabilities {}) {
         return Ok(capabilities());
     }
     let request_digest = digest(&serde_json::to_vec(&request).map_err(|_| "invalid request")?);
     match request {
-        Request::Capabilities => unreachable!(),
+        Request::Capabilities {} => unreachable!(),
         Request::List { consent } => {
             consent.validate()?;
             let records = store::list(root)?;

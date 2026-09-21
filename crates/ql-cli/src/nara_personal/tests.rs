@@ -184,17 +184,15 @@ fn explicit_consent_before_storage() {
     let t = Temp::new();
     let mut c = consent();
     c.personal_data = false;
-    assert!(
-        execute(
-            &t.0,
-            Request::Create {
-                request_id: "r".into(),
-                consent: c,
-                seed: Box::new(seed())
-            }
-        )
-        .is_err()
-    );
+    assert!(execute(
+        &t.0,
+        Request::Create {
+            request_id: "r".into(),
+            consent: c,
+            seed: Box::new(seed())
+        }
+    )
+    .is_err());
     assert!(!t.0.exists());
     let mut c = consent();
     c.actor_kind = "agent".into();
@@ -210,7 +208,7 @@ fn absent_record_is_empty_not_fixture_or_side_effect() {
     );
     assert!(!t.0.exists());
     assert_eq!(
-        execute(&t.0, Request::Capabilities).unwrap()["public_export"],
+        execute(&t.0, Request::Capabilities {}).unwrap()["public_export"],
         false
     );
     assert!(!t.0.exists());
@@ -230,7 +228,7 @@ fn seven_centres_all_six_branches_without_inferred_identity() {
     assert_eq!(r.domain.embodied.centres[4].amplitude, Some(0.4));
     assert!(r.domain.embodied.earth_body.amplitude.is_none());
     assert_eq!(
-        execute(&t.0, Request::Capabilities).unwrap()["centres_are_cymatic_stations"],
+        execute(&t.0, Request::Capabilities {}).unwrap()["centres_are_cymatic_stations"],
         false
     );
 }
@@ -283,32 +281,28 @@ fn stale_writes_and_wrong_nara_preserve_bytes() {
         r.target.record_ref.rsplit(':').next().unwrap()
     ));
     let before = std::fs::read(&path).unwrap();
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "stale",
-                Mutation::JournalLink {
-                    source: protected("journal")
-                }
-            )
-        )
-        .unwrap_err()
-        .contains("revision conflict")
-    );
-    let mut target = changed.target.clone();
-    target.nara_ref = "nara:other".into();
-    assert!(
-        execute(
-            &t.0,
-            Request::Read {
-                target,
-                consent: consent()
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "stale",
+            Mutation::JournalLink {
+                source: protected("journal")
             }
         )
-        .is_err()
-    );
+    )
+    .unwrap_err()
+    .contains("revision conflict"));
+    let mut target = changed.target.clone();
+    target.nara_ref = "nara:other".into();
+    assert!(execute(
+        &t.0,
+        Request::Read {
+            target,
+            consent: consent()
+        }
+    )
+    .is_err());
     assert_eq!(std::fs::read(path).unwrap(), before);
 }
 #[test]
@@ -339,20 +333,18 @@ fn invalid_identity_never_partially_persists() {
     let r = create(&t.0);
     let mut slot = r.domain.identity.slots[0].clone();
     slot.coordinate_ref = "M4.0.5".into();
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "bad",
-                Mutation::IdentityReplace {
-                    slot,
-                    identity_revision: "r2".into()
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "bad",
+            Mutation::IdentityReplace {
+                slot,
+                identity_revision: "r2".into()
+            }
         )
-        .is_err()
-    );
+    )
+    .is_err());
     assert_eq!(store::read(&t.0, &r.target.record_ref).unwrap().revision, 1);
 }
 #[test]
@@ -377,20 +369,18 @@ fn newer_reception_preserves_exact_inputs_refuses_other_occasion() {
         s.personal.receivers[2].input_basis[0]
     );
     s.personal.event.event_ref = "another-event".into();
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &next,
-                "wrong",
-                Mutation::EmbodiedReceive {
-                    personal: Box::new(s.personal),
-                    input: s.embodied
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &next,
+            "wrong",
+            Mutation::EmbodiedReceive {
+                personal: Box::new(s.personal),
+                input: s.embodied
+            }
         )
-        .is_err()
-    );
+    )
+    .is_err());
 }
 #[test]
 fn os_entropy_cast_persists_once_replay_never_recasts() {
@@ -438,23 +428,19 @@ fn entropy_failure_never_falls_back_to_zero() {
     let t = Temp::new();
     let r = create(&t.0);
     let mut unavailable = |_: &mut [u8]| Err("entropy-unavailable".into());
-    assert!(
-        execute_with(
-            &t.0,
-            request(&r, "cast", cast(OracleSystem::TarotQl)),
-            &mut unavailable,
-            &|| Ok(2)
-        )
-        .is_err()
-    );
-    assert!(
-        store::read(&t.0, &r.target.record_ref)
-            .unwrap()
-            .domain
-            .oracle
-            .records
-            .is_empty()
-    );
+    assert!(execute_with(
+        &t.0,
+        request(&r, "cast", cast(OracleSystem::TarotQl)),
+        &mut unavailable,
+        &|| Ok(2)
+    )
+    .is_err());
+    assert!(store::read(&t.0, &r.target.record_ref)
+        .unwrap()
+        .domain
+        .oracle
+        .records
+        .is_empty());
 }
 #[test]
 fn reinterpretation_never_changes_original_or_claims_source() {
@@ -485,20 +471,18 @@ fn reinterpretation_never_changes_original_or_claims_source() {
     assert_eq!(r.domain.oracle.records[0].original, original);
     let mut forged = i;
     forged.standing = EvidenceStanding::Observed;
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "forged",
-                Mutation::OracleInterpret {
-                    packet_ref: original.packet_ref,
-                    interpretation: forged
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "forged",
+            Mutation::OracleInterpret {
+                packet_ref: original.packet_ref,
+                interpretation: forged
+            }
         )
-        .is_err()
-    );
+    )
+    .is_err());
 }
 #[test]
 fn practice_explicit_hold_resume_close_and_next_native_coordinate() {
@@ -532,13 +516,11 @@ fn practice_explicit_hold_resume_close_and_next_native_coordinate() {
             safety_review_ref: "review:user-resume".into(),
         },
     );
-    assert!(
-        execute(
-            &t.0,
-            request(&r, "early", Mutation::PracticeStart { phase: phase() })
-        )
-        .is_err()
-    );
+    assert!(execute(
+        &t.0,
+        request(&r, "early", Mutation::PracticeStart { phase: phase() })
+    )
+    .is_err());
     let r = apply(
         &t.0,
         &r,
@@ -580,13 +562,12 @@ fn six_context_branches_accept_attributable_interpretation() {
             Mutation::ContextRecord { branch: b, reading },
         );
     }
-    assert!(
-        r.domain
-            .context
-            .branches
-            .iter()
-            .all(|b| b.readings.len() == 1 && b.absence_reason.is_none())
-    );
+    assert!(r
+        .domain
+        .context
+        .branches
+        .iter()
+        .all(|b| b.readings.len() == 1 && b.absence_reason.is_none()));
 }
 #[test]
 fn integration_and_journal_keep_owner_refs_only() {
@@ -637,41 +618,37 @@ fn request_id_cannot_change_effect() {
             feedback_ref: "one".into(),
         },
     );
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "same",
-                Mutation::CentreFeedback {
-                    ordinal: 1,
-                    feedback_ref: "two".into()
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "same",
+            Mutation::CentreFeedback {
+                ordinal: 1,
+                feedback_ref: "two".into()
+            }
         )
-        .unwrap_err()
-        .contains("different input")
-    );
+    )
+    .unwrap_err()
+    .contains("different input"));
 }
 #[test]
 fn concurrent_writer_refuses() {
     let t = Temp::new();
     let r = create(&t.0);
     let _lock = store::lock(&t.0, &r.target.record_ref).unwrap();
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "blocked",
-                Mutation::JournalLink {
-                    source: protected("journal")
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "blocked",
+            Mutation::JournalLink {
+                source: protected("journal")
+            }
         )
-        .unwrap_err()
-        .contains("busy")
-    );
+    )
+    .unwrap_err()
+    .contains("busy"));
 }
 #[cfg(unix)]
 #[test]
@@ -707,19 +684,17 @@ fn symlink_state_never_read_or_overwritten() {
     std::fs::rename(&path, &other).unwrap();
     std::os::unix::fs::symlink(&other, &path).unwrap();
     assert!(store::read(&t.0, &r.target.record_ref).is_err());
-    assert!(
-        execute(
-            &t.0,
-            request(
-                &r,
-                "bad",
-                Mutation::JournalLink {
-                    source: protected("journal")
-                }
-            )
+    assert!(execute(
+        &t.0,
+        request(
+            &r,
+            "bad",
+            Mutation::JournalLink {
+                source: protected("journal")
+            }
         )
-        .is_err()
-    );
+    )
+    .is_err());
     assert!(other.exists());
 }
 #[test]
@@ -730,21 +705,17 @@ fn traversal_and_unknown_fields_refuse_without_creation() {
         nara_ref: "one".into(),
         subject_ref: "one".into(),
     };
-    assert!(
-        execute(
-            &t.0,
-            Request::Read {
-                target,
-                consent: consent()
-            }
-        )
-        .is_err()
-    );
-    assert!(
-        serde_json::from_value::<Request>(
-            json!({"operation":"capabilities","raw_transcript":"private"})
-        )
-        .is_err()
-    );
+    assert!(execute(
+        &t.0,
+        Request::Read {
+            target,
+            consent: consent()
+        }
+    )
+    .is_err());
+    assert!(serde_json::from_value::<Request>(
+        json!({"operation":"capabilities","raw_transcript":"private"})
+    )
+    .is_err());
     assert!(!t.0.exists());
 }
