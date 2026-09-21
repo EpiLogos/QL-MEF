@@ -14,58 +14,26 @@ jobs:
         with: {fetch-depth: 0}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.9.2
-      - name: Join only the previously read native operation hunks
+      - name: Join the previously verified registration and repair borrowed test paths
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = refs/heads/agent/nara-native-identity-material-20260921
           mkdir -p /tmp/nara-identity
           git rev-parse HEAD > /tmp/nara-identity/source-head.txt
           python3 - <<'PY'
-          from pathlib import Path
           import subprocess
-          base='0807b827b63732a38c58660a36ca7e5988e09164'
-          paths=['crates/ql-cli/src/nara_personal/mod.rs','crates/ql-cli/src/nara_personal/operations.rs','crates/ql-cli/src/nara_personal/tests.rs']
-          for path in paths:
-              assert Path(path).read_bytes()==subprocess.check_output(['git','show',f'{base}:{path}']),f'Native basis changed: {path}'
-          p=Path(paths[0]);s=p.read_text().replace('mod operations;','mod identity_material;\nmod operations;',1)
-          s=s.replace('    Read {\n','    IdentityMaterial {\n        target: Target,\n        consent: Consent,\n        expected_revision: u64,\n    },\n    Read {\n',1)
-          b='        Request::Read { target, consent } => {'
-          a='''        Request::IdentityMaterial { target, consent, expected_revision } => {
-                      consent.validate()?;
-                      let record = store::read(root, &target.record_ref)?;
-                      if !same_target(&target, &record.target) {
-                          return Err("personal target mismatch".into());
-                      }
-                      if record.revision != expected_revision {
-                          return Err("personal revision changed before identity material read".into());
-                      }
-                      let material = identity_material::material(&record)?;
-                      Ok(json!({"schema":CONTRACT,"ok":true,"material":material,"private":true,
-                          "source_mutated":false,"automatic_agent_or_model_invocation":false}))
-                  }
-          '''+b
-          assert b in s;s=s.replace(b,a,1)
-          s=s.replace('"operations":["list","read","create","identity_replace"','"identity_material_contract":identity_material::SCHEMA,"identity_material_algorithm":identity_material::ALGORITHM,\n    "operations":["list","read","create","identity_material","identity_seal","identity_replace"',1);p.write_text(s)
-          p=Path(paths[1]);s=p.read_text().replace('pub enum Mutation {','pub enum Mutation {\n    IdentitySeal {\n        expected_value: String,\n    },',1)
-          s=s.replace('            Self::IdentityReplace { .. } =>','            Self::IdentitySeal { .. } => "identity_seal",\n            Self::IdentityReplace { .. } =>',1)
-          b='''        } => record
-                      .domain
-                      .identity
-                      .replace_slot(slot, identity_revision)?,'''
-          # Exact indentation is part of the verified source hunk.
-          b=b.replace('                      .','            .')
-          a='''        } => {
-                      record.domain.identity.replace_slot(slot, identity_revision)?;
-                      // A changed identity basis invalidates derived references.
-                      record.domain.identity.identity_hash_ref = None;
-                      record.domain.identity.identity_quaternion_ref = None;
-                      record.domain.identity.m3_form_address_ref = None;
-                  }
-                  Mutation::IdentitySeal { expected_value } => {
-                      identity_material::seal(record, &expected_value)?;
-                  }'''
-          assert b in s,'identity replacement hunk changed';s=s.replace(b,a,1);p.write_text(s)
-          p=Path(paths[2]);p.write_text(p.read_text()+'\ninclude!("identity_material_tests.rs");\n')
+          from pathlib import Path
+          # Replay the exact registration which passed all 70 native tests.
+          source=subprocess.check_output(['git','show','ce5572cc8727678c911131a5f17d1f7ce1246258:.github/workflows/nara-identity-material-intake.yml'],text=True)
+          begin=source.index("          python3 - <<'PY'\n")+len("          python3 - <<'PY'\n")
+          end=source.index('\n          PY',begin)
+          code='\n'.join(line[10:] for line in source[begin:end].splitlines())
+          exec(compile(code,'verified-native-registration','exec'))
+          for name in ['tests.rs','identity_material_tests.rs']:
+              p=Path('crates/ql-cli/src/nara_personal')/name
+              s=p.read_text()
+              assert 'root: &PathBuf' in s
+              p.write_text(s.replace('root: &PathBuf','root: &std::path::Path'))
           PY
           rustfmt --edition 2021 crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/src/nara_personal/identity_material_tests.rs
       - name: Native regression and complete CLI suite
