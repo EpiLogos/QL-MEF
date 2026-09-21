@@ -1,0 +1,77 @@
+name: Nara native personal operations
+on:
+  push:
+    branches: ['agent/nara-personal-native-20260921']
+  pull_request:
+    paths: ['crates/ql-cli/src/nara_personal/**', 'crates/ql-cli/src/lib.rs', 'crates/ql-cli/Cargo.toml', '.github/workflows/nara-personal-native.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Narrow native command registration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('crates/ql-cli/src/lib.rs')
+          s=p.read_text()
+          edits=[('pub mod m_ledger;', 'pub mod m_ledger;\npub mod nara_personal;'),
+                 ('Some("vak") => plain(vak_command(&args[1..], json)),', 'Some("vak") => plain(vak_command(&args[1..], json)),\n        Some("nara") => plain(nara_personal::command(&args[1..])),'),
+                 ('            "vak.compose",', '            "vak.compose",\n            "nara.capabilities",\n            "nara.private-request",')]
+          for before,after in edits:
+            if after in s: continue
+            assert s.count(before)==1, 'native registration basis changed; do not overwrite'
+            s=s.replace(before,after,1)
+          p.write_text(s)
+          PY
+          rustfmt --edition 2024 crates/ql-cli/src/nara_personal/*.rs
+          cargo generate-lockfile
+      - name: Commit only this lane's mechanical registration and locked dependencies
+        if: github.event_name == 'push' && github.ref == 'refs/heads/agent/nara-personal-native-20260921' && github.repository == 'EpiLogos/QL-MEF'
+        run: |
+          set -euo pipefail
+          git add -- crates/ql-cli/src/lib.rs crates/ql-cli/src/nara_personal Cargo.lock
+          if git diff --cached --quiet; then exit 0; fi
+          test "$(git ls-remote origin refs/heads/agent/nara-personal-native-20260921 | cut -f1)" = "$GITHUB_SHA"
+          git -c user.name=Epii -c user.email=noreply@openai.com commit -m 'build(nara): register native operations and lock tested dependency graph'
+          git push origin HEAD:refs/heads/agent/nara-personal-native-20260921
+      - name: Native personal and existing QL CLI tests
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/nara-native
+          git rev-parse HEAD > /tmp/nara-native/source-revision.txt
+          cargo test --locked -p ql-cli --all-targets 2>&1 | tee /tmp/nara-native/tests.log
+      - name: Lint native personal adapter
+        if: ${{ !cancelled() }}
+        run: cargo clippy --locked -p ql-cli --all-targets -- -D warnings
+      - name: Check native source format
+        if: ${{ !cancelled() }}
+        run: rustfmt --edition 2024 --check crates/ql-cli/src/nara_personal/*.rs
+      - name: Build exact native executable
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p /tmp/nara-native
+          SUITE_BUILD_REVISION=$(git rev-parse HEAD) cargo build --locked -p ql-cli --bin ql
+          cp target/debug/ql /tmp/nara-native/
+      - name: Preserve complete scoped source and original checks
+        if: always()
+        run: |
+          mkdir -p /tmp/nara-native
+          cp Cargo.lock /tmp/nara-native/
+          git rev-parse HEAD > /tmp/nara-native/source-revision.txt
+          tar -czf /tmp/nara-native/source.tar.gz crates/ql-cli/src/nara_personal crates/ql-cli/src/lib.rs crates/ql-cli/Cargo.toml Cargo.lock
+          git diff > /tmp/nara-native/uncommitted.patch
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nara-native-${{ github.sha }}
+          path: /tmp/nara-native
+          retention-days: 3
