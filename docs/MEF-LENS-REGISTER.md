@@ -1,5 +1,17 @@
 # MEF Lens Register — Canonical Reference (L0–L5, L0'–L5')
 
+> Copied into ql-mef docs 2026-09-21 at the owner's direction.
+> Canonical source: `Work/personal/Nara-Personal/context/mef-lens-register.md`
+> (personal context surface); authored index mirror:
+> `Central/Control/user/context/mef-lens-register.md`.
+> Reconciled 2026-09-21: the ql-mef registry's square membership matches this
+> register's lens sets; the registry does not carry the P-position pair
+> bindings, the per-sublens machinery meanings, or the square title sets.
+
+---
+
+# MEF Lens Register — Canonical Reference (L0–L5, L0'–L5')
+
 *Canonical register of the twelve MEF lenses. Source of truth: `epi_logos_coordinate_system.md` and `epi_logos_cheat_sheet.md`. This register exists because lenses were being named without their machinery run — L-numbers used as vibes. A lens named in prose must run its defined machinery.*
 
 ---
