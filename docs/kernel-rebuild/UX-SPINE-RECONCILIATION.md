@@ -4,6 +4,8 @@
 
 Standing: agent-authored source-grounded UX/design reconciliation; **specified, awaiting H ratification, not human-validated**. Owner: #133 with #135; agent-world #94; runtime #132; Nara #134. The [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md) remains the single development map. This file is its domain-to-spine crosswalk and human walk, not another master plan.
 
+**20 September 2026 constructive-Wiki extension:** §8 adds the owner's linked-source → editable constellation → real Expression → native Return practice to these existing activities. Read the [native Technè amendment](../L5-TECHNE-WIKI-CONSTELLATION-WAYFINDER.md) and its linked WC01–WC15 decision record before implementation. This scoped planning commission does not ratify unrelated older H-pending material, replace UX01–UX12 or claim runtime success.
+
 ## 1. The experience being recovered
 
 A person enters a real, continuing world. In its Epi instrument mode, a dated planetary condition around Earth is received through this particular Nara's constitution, active centres and history. It becomes movement, image, glyph, colour and sound. The person can simply encounter it, write about it, or ask Epii to work with what they have selected. Deeper structure opens within the same event: the carrier, spectral relations, apertures, inscriptions, personal interpretation, actual Bimba source and the agent's work remain connected.
@@ -148,3 +150,41 @@ For each walk record: story and A/B IDs; actual versions and material environmen
 #132 receives the real-data/material and stable-state obligations; #94 receives full source/language/practice/consumption/naming; #134 receives all Nara and personal evidence; #133 receives the native joined experience and host state transitions. AIKit #267 and Factory #217 remain required joins. The full source scope is already locked. Publish usable implementations in their existing lanes; local harmonisation exercises the retained current desktop/particle body after native repository acceptance. Missing installed access does not defer an implementable owner operation.
 
 The next participant starts from the Wayfinder, this pending crosswalk and the preparation Method, checks actual support and standing, and receives one exact context/contract/owned-file handoff. Neither a later successful specimen nor the convenience of an existing interface can delete the remaining source-defined obligations.
+
+## 8. Constructive Wiki and constellation practice — 20 September 2026
+
+**Standing of this addition:** owner-directed design clarification and requested planning publication. It does not change the older H-ratification status above or claim an observed human outcome. It adds concrete activities to the existing stories, not new UX identities. The native implementation entry is [Technè's constructive-Wiki amendment](../L5-TECHNE-WIKI-CONSTELLATION-WAYFINDER.md); O:I PR #414 carries the explicit product decisions, host spec, work packages and campaign mapping.
+
+### 8.1 The decisions must be visible in the experience
+
+An ordinary linked Markdown collection is already a useful Wiki without QL. A person can read, follow wikilinks/backlinks, browse tags, select exact passages and filter the quiet small-node/thin-line graph. QL is a further power of organisation, not an admission schema for the source corpus.
+
+Constellations are editable contextual wholes. The person can start from selected material or choose a QL frame and explore what belongs in its roles. Formal validity, evidential support and acceptance are distinct. A passage can occupy different roles in different constellations, and an unfilled position remains an honest question rather than fabricated source material.
+
+Technè operates through the real existing 3D Expression medium: selectable glyphs, text and writing overlays, images, lines and particle relations, spatial arrangement, physical material, actual Scenes and Palace compositions. The QL-shaped agent staging space is the same editable working construction over the corpus. Its question, source refs, frame, assignments, proposals and revisions are structurally available to the actual situated agent.
+
+Deliberately authored QL relations and resulting artifacts return to native Wiki discovery with their frame, source revisions, attribution and derivation. Visual proximity alone creates no assertion. The distinction protects intentional authoring; it does not prohibit it. Retained kernel resource state makes source/graph/Expression travel and restart useful without requiring fresh reads for every view.
+
+Source/constellation layers, 3:3/4:2 readings and native/resource/presentation state responsibilities are different distinctions. Both application readings can expose original sources and constructed constellations.
+
+### 8.2 Additional cases within the existing stories
+
+**Within UX01 and UX05:** begin with an ordinary project, not only the curated Bimba corpus. Find a remembered passage without its filename; follow a rendered link and its exact graph occurrence, inspect backlink context, resolve a duplicate-title ambiguity and leave an unresolved link visible. Select several exact passages into M0′ without sending the entire collection to the agent. Original source linking remains usable with QL absent.
+
+**Within UX04 and UX06:** construct one constellation material-first and another frame-first. Assign roles, connect and type relations, annotate, leave a real gap, compare an alternative and make the work visible as glyphs/text/images/line or particle relations in the actual 3D Stage. Ask the real agent to propose a refinement; directly change one role while it works; require its subsequent operation to respect the newer working revision. A staged screenshot, detached JSON or fluent description of the work does not complete the act.
+
+**Within UX05 and UX09:** reuse one source in two different contextual roles and reuse a constellation in another composition. Distinguish live reference, revision-bound reference, deliberate variant and presentation-only instance change. The same source and whole identities survive; an instance layout edit does not rewrite every composition. This modular composition case supplements named-praxis reuse rather than redefining a constellation as a Method.
+
+**Within UX06 and UX08:** use the explicit relation tool to save an intended native QL relationship, save the constellation/Expression and return an explanatory artifact. Find those outputs through ordinary Wiki/search/Library routes and inspect their source/derivation. Preserve whole/member roles rather than flattening every constellation into a pairwise clique. Force one relation write to fail after presentation save; show partial success and retry without duplicate output. A generated artifact is not independent corroboration of its own sources.
+
+**Within UX04, UX06 and UX09:** compose the same material into actual M3′ Expression Scenes and an M5′ Palace of Expressions/constellations. Move across the 4:2 and 3:3 readings, open source/verso, and return without reminting subject, whole, Scene or session. Instruments are available ways of working, not a compulsory wizard or six separate applications.
+
+**Within UX11:** filter a composite while retaining or explicitly hiding its structural context; a partially displayed sixfold does not become a twofold. Switch modes, release a view, restart and return while a directory or supplementary provider is delayed. Warm useful content and the working construction survive through existing kernel/model continuity. Change a source externally and show only affected links/interpretations/bindings requiring review; preserve dirty work and pinned history.
+
+**Within UX12:** stage a selected result for sharing through the actual owner/audience boundary. Excluded sources, private agent context and hidden members must not enter shared bindings, counts or cached expansion. Ordinary local work remains useful offline. Saving a constellation locally is not publication.
+
+### 8.3 Joined finish line and source mapping
+
+Prove linked writing → exact selection → editable QL-framed construction → actual human/agent collaboration → real 3D Expression/Scenes/Palace → native QL relationship and artifact Return → Wiki rediscovery → mode/restart recovery → source-change review. Include the two starting routes, a second constellation sharing a source, stale agent writes, partial save, ambiguous links, denied/private material and slow/offline providers.
+
+Host WCT01–WCT18 and the native amendment retain the precise failures, owner routing and work packages. O:I's `wiki-constellation.json`, registered in its existing `campaign.json`, attaches WC01–WC15 to the current host stories. This whole QL source remains the existing delegated `story_path`; the original trace, A/B/SP/M coverage and UX01–UX12 identities are unchanged. Source checks are not live-operation or human-use evidence.

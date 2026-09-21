@@ -20,6 +20,21 @@ sixth 4:2 peer instrument. Do not privately fork `ql.techne/v1`, duplicate
 native stores, or reinterpret Guardians versus Anima/Aletheia-Technē roles in
 a child lane.
 
+**Wiki/constellation clarification, 20 September 2026:** read
+`docs/L5-TECHNE-WIKI-CONSTELLATION-WAYFINDER.md` and the constructive extension
+in `docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md` before this work. They link
+the owner's explicit WC01–WC15 decisions, host specification and joined Wiki/
+Technè plan in O:I PR #414. Ordinary Markdown links/backlinks/tags are complete
+without QL; contextual constellations are editable through both material-first
+and frame-first construction; the actual 3D Expression medium and shared
+QL-shaped agent working space are required; native QL relations and artifacts
+return to Wiki discovery. Geometry cannot automatically assert semantic edges,
+but deliberate native relational authoring must work. Adapter non-ownership
+does not forbid the existing kernel's retained resource/cache layer. Reconcile
+incoming mains and preserve newer local work; do not reduce the product to an
+old first-ten demo path. This is a scoped implementation-planning extension,
+not blanket H ratification, a new kernel programme or another agent runtime.
+
 For AW/agent-world or instrument development and its testing, also read
 `docs/kernel-rebuild/OPTIMISATION-AND-LEARNING.md`: the owner-authorised
 optimisation amendment within existing AW0–AW3 and B06–B12. Bind relevant
