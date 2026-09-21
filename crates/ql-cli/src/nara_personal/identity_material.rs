@@ -52,7 +52,10 @@ pub(super) fn material(record: &PersonalRecord) -> Result<IdentityMaterial, Stri
     let mut sources = Vec::new();
     for slot in &mut slots {
         if slot.protected_value_ref.is_some() {
-            let source = slot.source.as_ref().ok_or("identity value has no attributable source basis")?;
+            let source = slot
+                .source
+                .as_ref()
+                .ok_or("identity value has no attributable source basis")?;
             supplied_offices.push(slot.kind);
             sources.push(source.clone());
         }
@@ -60,7 +63,9 @@ pub(super) fn material(record: &PersonalRecord) -> Result<IdentityMaterial, Stri
         slot.tensions.sort();
     }
     if supplied_offices.is_empty() {
-        return Err("no identity source is supplied; an empty stack is not a completed identity".into());
+        return Err(
+            "no identity source is supplied; an empty stack is not a completed identity".into(),
+        );
     }
     let mut derivation_refs = identity.derivation_refs.clone();
     derivation_refs.sort();
@@ -71,7 +76,8 @@ pub(super) fn material(record: &PersonalRecord) -> Result<IdentityMaterial, Stri
         slots,
         derivation_refs,
     };
-    let value = digest(&serde_json::to_vec(&basis).map_err(|_| "identity basis serialization failed")?);
+    let value =
+        digest(&serde_json::to_vec(&basis).map_err(|_| "identity basis serialization failed")?);
     let reference = ProtectedRef {
         ref_id: format!("ql:nara-identity:sha256:{value}"),
         revision: value.clone(),
@@ -105,7 +111,9 @@ pub(super) fn material(record: &PersonalRecord) -> Result<IdentityMaterial, Stri
 pub(super) fn seal(record: &mut PersonalRecord, expected_value: &str) -> Result<(), String> {
     let material = material(record)?;
     if expected_value != material.value {
-        return Err("identity basis changed since review; no identity material was accepted".into());
+        return Err(
+            "identity basis changed since review; no identity material was accepted".into(),
+        );
     }
     record.domain.identity.identity_hash_ref = Some(material.identity_hash_ref);
     Ok(())

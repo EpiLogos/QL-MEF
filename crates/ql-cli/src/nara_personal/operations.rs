@@ -17,6 +17,9 @@ pub struct Cast {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Mutation {
+    IdentitySeal {
+        expected_value: String,
+    },
     IdentityReplace {
         slot: IdentityEvidenceSlot,
         identity_revision: String,
@@ -65,6 +68,7 @@ pub enum Mutation {
 impl Mutation {
     pub(super) fn name(&self) -> &'static str {
         match self {
+            Self::IdentitySeal { .. } => "identity_seal",
             Self::IdentityReplace { .. } => "identity_replace",
             Self::EmbodiedReceive { .. } => "embodied_receive",
             Self::CentreFeedback { .. } => "centre_feedback",
@@ -218,10 +222,19 @@ pub(super) fn apply(
         Mutation::IdentityReplace {
             slot,
             identity_revision,
-        } => record
-            .domain
-            .identity
-            .replace_slot(slot, identity_revision)?,
+        } => {
+            record
+                .domain
+                .identity
+                .replace_slot(slot, identity_revision)?;
+            // A changed identity basis invalidates derived references.
+            record.domain.identity.identity_hash_ref = None;
+            record.domain.identity.identity_quaternion_ref = None;
+            record.domain.identity.m3_form_address_ref = None;
+        }
+        Mutation::IdentitySeal { expected_value } => {
+            identity_material::seal(record, &expected_value)?;
+        }
         Mutation::EmbodiedReceive { personal, input } => {
             validate_personal(&personal)?;
             if personal.event != record.domain.event

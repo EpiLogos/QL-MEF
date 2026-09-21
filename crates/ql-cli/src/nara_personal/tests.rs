@@ -122,7 +122,7 @@ fn seed() -> Seed {
         },
     }
 }
-fn create(root: &PathBuf) -> PersonalRecord {
+fn create(root: &std::path::Path) -> PersonalRecord {
     serde_json::from_value(
         execute(
             root,
@@ -146,7 +146,7 @@ fn request(r: &PersonalRecord, id: &str, mutation: Mutation) -> Request {
         mutation: Box::new(mutation),
     }
 }
-fn apply(root: &PathBuf, r: &PersonalRecord, id: &str, m: Mutation) -> PersonalRecord {
+fn apply(root: &std::path::Path, r: &PersonalRecord, id: &str, m: Mutation) -> PersonalRecord {
     serde_json::from_value(execute(root, request(r, id, m)).unwrap()["record"].clone()).unwrap()
 }
 fn cast(system: OracleSystem) -> Mutation {
@@ -719,3 +719,5 @@ fn traversal_and_unknown_fields_refuse_without_creation() {
     .is_err());
     assert!(!t.0.exists());
 }
+
+include!("identity_material_tests.rs");

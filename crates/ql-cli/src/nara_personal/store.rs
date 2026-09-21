@@ -1,6 +1,6 @@
 //! Private, atomically replaced native state. An OS advisory lock is released
 //! on process death. No recursive scan, public export, raw journal or secrets.
-use super::{MAX_BYTES, PersonalRecord, digest};
+use super::{digest, PersonalRecord, MAX_BYTES};
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
@@ -168,7 +168,9 @@ pub(super) fn write(root: &Path, record: &PersonalRecord) -> Result<(), String> 
             .map_err(|_| "private state write failed")?;
         file.sync_all().map_err(|_| "private state sync failed")?;
         fs::rename(&tmp, &destination).map_err(|_| "private state atomic replacement failed")?;
-        File::open(root).and_then(|f|f.sync_all()).map_err(|_|"personal commit durability is uncertain; read the same request receipt before retry")?;
+        File::open(root).and_then(|f| f.sync_all()).map_err(|_| {
+            "personal commit durability is uncertain; read the same request receipt before retry"
+        })?;
         Ok(())
     })();
     if staged.is_err() {

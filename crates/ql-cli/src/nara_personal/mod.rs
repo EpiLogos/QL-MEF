@@ -1,5 +1,6 @@
 //! Native operations over accepted K10 personal records, not a journal or
 //! Agent runtime. Central human/source content stays by reference.
+mod identity_material;
 mod operations;
 mod store;
 use crate::CliError;
@@ -49,6 +50,11 @@ pub enum Request {
     Capabilities {},
     List {
         consent: Consent,
+    },
+    IdentityMaterial {
+        target: Target,
+        consent: Consent,
+        expected_revision: u64,
     },
     Read {
         target: Target,
@@ -178,6 +184,25 @@ fn execute_with(
                 json!({"schema":CONTRACT,"ok":true,"records":records,"private":true,"automatic_agent_or_model_invocation":false}),
             )
         }
+        Request::IdentityMaterial {
+            target,
+            consent,
+            expected_revision,
+        } => {
+            consent.validate()?;
+            let record = store::read(root, &target.record_ref)?;
+            if !same_target(&target, &record.target) {
+                return Err("personal target mismatch".into());
+            }
+            if record.revision != expected_revision {
+                return Err("personal revision changed before identity material read".into());
+            }
+            let material = identity_material::material(&record)?;
+            Ok(
+                json!({"schema":CONTRACT,"ok":true,"material":material,"private":true,
+                "source_mutated":false,"automatic_agent_or_model_invocation":false}),
+            )
+        }
         Request::Read { target, consent } => {
             consent.validate()?;
             let record = store::read(root, &target.record_ref)?;
@@ -291,7 +316,8 @@ fn execute_with(
 fn capabilities() -> Value {
     json!({"schema":CONTRACT,"ok":true,"domain_contract":M4_DOMAIN_CONTRACT,
     "private":true,"storage":"owner-private-derived-working-record; Central source remains by reference",
-    "operations":["list","read","create","identity_replace","embodied_receive","centre_feedback","oracle_cast","oracle_interpret","practice_start","practice_hold","practice_resume","practice_close","context_record","integration_return","journal_link"],
+    "identity_material_contract":identity_material::SCHEMA,"identity_material_algorithm":identity_material::ALGORITHM,
+    "operations":["list","read","create","identity_material","identity_seal","identity_replace","embodied_receive","centre_feedback","oracle_cast","oracle_interpret","practice_start","practice_hold","practice_resume","practice_close","context_record","integration_return","journal_link"],
     "identity_slots":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],
     "oracle_systems":["tarot-rws","tarot-thoth","tarot-marseille","tarot-ql","i-ching-coins","i-ching-yarrow"],
     "context_branches":["gebser","ontological","epistemological","jungian-depth","phenomenological","trika-kashmir"],
