@@ -1,110 +1,39 @@
-name: Nara practice source-reference repair
+name: Nara personal native regressions
 on:
-  push:
-    branches: ['agent/nara-practice-reference-repair-20260921']
-    paths: ['.github/workflows/nara-practice-repair.yml']
+  pull_request:
+    paths:
+      - 'crates/ql-cli/src/nara_personal/**'
+      - 'crates/ql-cli/tests/nara_practice_reference_reuse.rs'
+      - '.github/workflows/nara-practice-repair.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: nara-practice-repair
+  group: nara-practice-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  repair:
+  native:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        with: {fetch-depth: 0}
+        with: {persist-credentials: false}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.9.2
-      - name: Correct regression fixture expression syntax before native reproduction
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('crates/ql-cli/tests/nara_practice_reference_reuse.rs')
-          s=p.read_text()
-          before='"input_basis":["m1","m2","m3"].map(|m| json!({"basis_ref":format!("{m}:r1"),"source_ref":format!("{m}:{n}"),"value":n})),'
-          after='"input_basis":(["m1","m2","m3"].map(|m| json!({"basis_ref":format!("{m}:r1"),"source_ref":format!("{m}:{n}"),"value":n}))),'
-          assert s.count(before)==1,'test syntax repair basis changed'
-          p.write_text(s.replace(before,after))
-          PY
-      - name: Preserve original failing native lifecycle and privacy contract
+      - name: Actual native CLI regression in an isolated private World
         run: |
           set -euo pipefail
-          test "$GITHUB_REF" = refs/heads/agent/nara-practice-reference-repair-20260921
-          mkdir -p /tmp/nara-practice-repair
-          git rev-parse HEAD > /tmp/nara-practice-repair/test-base.txt
-          git diff > /tmp/nara-practice-repair/test-syntax-repair.patch
-          set +e
-          cargo test --locked -p ql-cli --test nara_practice_reference_reuse > /tmp/nara-practice-repair/before.log 2>&1
-          status=$?
-          cargo test --locked -p ql-cli --lib nara_personal > /tmp/nara-practice-repair/privacy-before.log 2>&1
-          privacy_status=$?
-          set -e
-          cat /tmp/nara-practice-repair/before.log
-          cat /tmp/nara-practice-repair/privacy-before.log
-          test "$status" -ne 0
-          test "$privacy_status" -ne 0
-          grep -q 'duplicate transformation feedback reference' /tmp/nara-practice-repair/before.log
-          grep -q 'raw_transcript' /tmp/nara-practice-repair/privacy-before.log
-      - name: Repair only native source-reference accumulation and empty variant admission
+          mkdir -p /tmp/nara-native-evidence
+          git rev-parse HEAD > /tmp/nara-native-evidence/source-head.txt
+          cargo test --locked -p ql-cli --test nara_practice_reference_reuse 2>&1 | tee /tmp/nara-native-evidence/practice.log
+      - name: All native CLI library and integration tests, without weakened assertions
+        if: ${{ !cancelled() }}
         run: |
-          set -euo pipefail
-          test "$(git hash-object crates/ql-cli/src/nara_personal/operations.rs)" = 3412a29debffb7bdcaf2b5d709ebddeec4c21912
-          test "$(git hash-object crates/ql-cli/src/nara_personal/mod.rs)" = 41b18a821282c1d2e1004e7f60728ce44fc4e43c
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('crates/ql-cli/src/nara_personal/operations.rs')
-          s=p.read_text()
-          edits=[
-              ('phase.feedback_refs.push(feedback_ref);','// Links are unique; distinct native receipts retain each performed act.\n            if !phase.feedback_refs.contains(&feedback_ref) {\n                phase.feedback_refs.push(feedback_ref);\n            }'),
-              ('phase.feedback_refs.push(safety_review_ref);','if !phase.feedback_refs.contains(&safety_review_ref) {\n                phase.feedback_refs.push(safety_review_ref);\n            }'),
-              ('phase.feedback_refs.extend(feedback_refs);','for reference in feedback_refs {\n                if !phase.feedback_refs.contains(&reference) {\n                    phase.feedback_refs.push(reference);\n                }\n            }')
-          ]
-          for before,after in edits:
-              assert s.count(before)==1,'exact repair basis changed'
-              s=s.replace(before,after)
-          p.write_text(s)
-          p=Path('crates/ql-cli/src/nara_personal/mod.rs')
-          s=p.read_text()
-          assert s.count('    Capabilities,')==1
-          s=s.replace('    Capabilities,','    // An empty struct, not a unit variant: serde must reject private extras.\n    Capabilities {},')
-          s=s.replace('Request::Capabilities)', 'Request::Capabilities {})').replace('Request::Capabilities =>','Request::Capabilities {} =>')
-          p.write_text(s)
-          # Update a direct constructor only if the tests use one. Assertions,
-          # JSON requests and the existing raw_transcript rejection are kept.
-          p=Path('crates/ql-cli/src/nara_personal/tests.rs')
-          s=p.read_text()
-          import re
-          updated=re.sub(r'Request::Capabilities(?!\s*\{)', 'Request::Capabilities {}',s)
-          if updated!=s:p.write_text(updated)
-          PY
-          rustfmt --edition 2021 crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
-      - name: Prove real CLI lifecycle and all existing personal unit tests
-        run: |
-          set -euo pipefail
-          cargo test --locked -p ql-cli --test nara_practice_reference_reuse 2>&1 | tee /tmp/nara-practice-repair/after.log
-          cargo test --locked -p ql-cli --lib nara_personal 2>&1 | tee /tmp/nara-practice-repair/personal.log
-      - name: Publish only tested repair to this dependent branch
-        run: |
-          set -euo pipefail
-          git add crates/ql-cli/src/nara_personal/operations.rs crates/ql-cli/src/nara_personal/mod.rs crates/ql-cli/src/nara_personal/tests.rs crates/ql-cli/tests/nara_practice_reference_reuse.rs
-          python3 - <<'PY'
-          import subprocess
-          paths=set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())
-          assert len(paths)>=3 and paths<=set(['crates/ql-cli/src/nara_personal/operations.rs','crates/ql-cli/src/nara_personal/mod.rs','crates/ql-cli/src/nara_personal/tests.rs','crates/ql-cli/tests/nara_practice_reference_reuse.rs'])
-          PY
-          git diff --cached > /tmp/nara-practice-repair/repair.patch
-          git config user.name Epii
-          git config user.email noreply@openai.com
-          git commit -m 'fix(nara): preserve practice source identity and reject unknown private capability fields'
-          test "$(git ls-remote origin refs/heads/agent/nara-practice-reference-repair-20260921 | cut -f1)" = "$GITHUB_SHA"
-          git push origin HEAD:refs/heads/agent/nara-practice-reference-repair-20260921
-          git rev-parse HEAD > /tmp/nara-practice-repair/implemented-head.txt
+          set -o pipefail
+          cargo test --locked -p ql-cli 2>&1 | tee /tmp/nara-native-evidence/native-cli.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: nara-practice-repair-${{ github.sha }}
-          path: /tmp/nara-practice-repair
+          name: nara-personal-native-${{ github.sha }}
+          path: /tmp/nara-native-evidence
           if-no-files-found: error
