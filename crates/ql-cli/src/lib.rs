@@ -19,6 +19,7 @@ use std::str::FromStr;
 
 pub mod configuration;
 pub mod m_ledger;
+pub mod nara_personal;
 pub mod vak_composition;
 
 pub const QL_CLI_CONTRACT: &str = "ql.cli/v1";
@@ -317,6 +318,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
         Some("mef") => plain(mef_command(&args[1..], json)),
         Some("context-frame") => plain(context_frame_command(&args[1..], json)),
         Some("vak") => plain(vak_command(&args[1..], json)),
+        Some("nara") => plain(nara_personal::command(&args[1..])),
         Some("service") => plain(service_command(&args[1..], json)),
         Some("system") => plain(system::system_command(json)),
         Some("config-contribution") => plain(configuration::contribution_command(json)),
@@ -368,6 +370,8 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.locate",
             "vak.context",
             "vak.compose",
+            "nara.capabilities",
+            "nara.private-request",
             "service.capabilities",
             "service.negotiate",
             "config.contribute",
