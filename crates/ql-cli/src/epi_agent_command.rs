@@ -2,10 +2,10 @@
 
 use crate::CliError;
 use ql_mef::epi_agent::{
-    self, LogosReturnRequest, NaraElementalRequest, RepresentationBindingRequest, TdaRequest,
-    EPI_AGENT_INVOCATION_VERSION,
+    self, EPI_AGENT_INVOCATION_VERSION, LogosReturnRequest, NaraElementalRequest,
+    RepresentationBindingRequest, TdaRequest,
 };
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::io::Read;
 
 type R<T> = Result<T, CliError>;
@@ -100,8 +100,7 @@ fn invoke(path: &str) -> R<Value> {
             epi_agent::anuttara_read(reference, limit).map_err(error)?
         }
         "tda.vietoris-rips" => {
-            let request: TdaRequest =
-                serde_json::from_value(input.clone()).map_err(error)?;
+            let request: TdaRequest = serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::persistent_homology(request).map_err(error)?
         }
         "bimba.neighborhood" => {
