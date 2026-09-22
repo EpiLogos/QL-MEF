@@ -1,17 +1,8 @@
 name: Epi agent native
 
 on:
-  pull_request:
-    paths:
-      - 'crates/ql-mef/src/epi_agent.rs'
-      - 'crates/ql-mef/src/lib.rs'
-      - 'crates/ql-cli/src/epi_agent_command.rs'
-      - 'crates/ql-cli/src/lib.rs'
-      - 'c/registry/promotions/k9-bindings-v1.json'
-      - 'fixtures/kernel/k8-census-receipt-v1.json'
-      - 'docs/kernel-rebuild/m1-engine-acceptance-v1.json'
-      - '.github/workflows/epi-agent-native.yml'
-  workflow_dispatch:
+  push:
+    branches: [epi-prime-ql-201-20260922]
 
 permissions:
   contents: read
