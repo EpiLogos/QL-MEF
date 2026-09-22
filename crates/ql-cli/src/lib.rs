@@ -370,6 +370,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.locate",
             "vak.context",
             "vak.compose",
+            "techne.reading",
             "service.capabilities",
             "service.negotiate",
             "config.contribute",

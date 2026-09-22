@@ -72,3 +72,23 @@ fn techne_reading_refuses_an_unbound_subject_instead_of_inventing_one() {
     assert!(!output.status.success());
     assert!(String::from_utf8_lossy(&output.stderr).contains("shape-binding subject must equal"));
 }
+
+#[test]
+fn capabilities_disclose_the_techne_reading_command() {
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_ql"))
+        .args(["capabilities", "--json"])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let v: Value = serde_json::from_slice(&output.stdout).unwrap();
+    let commands: Vec<&str> = v["commands"]
+        .as_array()
+        .expect("capabilities commands array")
+        .iter()
+        .map(|c| c.as_str().expect("command names are strings"))
+        .collect();
+    assert!(
+        commands.contains(&"techne.reading"),
+        "a dispatched command must be disclosed by `ql capabilities`: {commands:?}"
+    );
+}
