@@ -81,7 +81,11 @@ fn invoke(path: &str) -> R<Value> {
         1 => &["tda.vietoris-rips"][..],
         2 => &["bimba.neighborhood"][..],
         3 => &["representation.bind"][..],
-        4 => &["nara.activity.validate", "nara.elemental-map", "nara.personal-receive"][..],
+        4 => &[
+            "nara.activity.validate",
+            "nara.elemental-map",
+            "nara.personal-receive",
+        ][..],
         5 => &["logos.return"][..],
         _ => unreachable!(),
     };
