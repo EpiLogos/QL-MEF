@@ -1,0 +1,51 @@
+name: Epi agent ledger refresh
+
+on:
+  push:
+    branches: [epi-prime-ql-201-20260922]
+    paths:
+      - '.github/workflows/epi-agent-ledger-refresh.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: epi-prime-ql-201-20260922
+          fetch-depth: 1
+      - name: Refresh exact M-ledger evidence lock
+        run: |
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          ledger_path=Path("fixtures/kernel/m-ledger-v1.json")
+          evidence_path=Path("docs/kernel-rebuild/m1-engine-acceptance-v1.json")
+          doc=json.loads(ledger_path.read_text())
+          sha=hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+          matches=[row for row in doc["evidence"] if row["artifact"]["path"]==str(evidence_path)]
+          if len(matches)!=1:
+              raise SystemExit(f"expected one M-ledger acceptance row, found {len(matches)}")
+          matches[0]["artifact"]["sha256"]=sha
+          basis={k:v for k,v in doc.items() if k!="ledger_revision"}
+          canonical=json.dumps(basis,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+          doc["ledger_revision"]=hashlib.sha256(canonical).hexdigest()
+          ledger_path.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+"\n")
+          print(json.dumps({"acceptance_sha256":sha,"ledger_revision":doc["ledger_revision"]}))
+          PY
+          python3 scripts/m-ledger.py check
+      - name: Publish generated ledger only
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- fixtures/kernel/m-ledger-v1.json; then
+            echo "ledger already current"
+            exit 0
+          fi
+          git config user.name "EpiLogos CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add fixtures/kernel/m-ledger-v1.json
+          git commit -m "evidence(epi-agent): refresh M-ledger acceptance lock"
+          git push origin HEAD:epi-prime-ql-201-20260922
