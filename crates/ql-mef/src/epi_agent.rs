@@ -7,10 +7,10 @@
 
 use crate::{
     m_tree::native_current_m_registry,
-    nara::{activity::NaraActivityLog, BioQuaternion, ConsentState, SourceRevision},
+    nara::{BioQuaternion, ConsentState, SourceRevision, activity::NaraActivityLog},
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const EPI_AGENT_CONSTITUTION_VERSION: &str = "ql.epi-logos-agent-constitution/v1";
@@ -386,7 +386,9 @@ pub fn persistent_homology(request: TdaRequest) -> Result<Value, String> {
     let intervals = births
         .iter()
         .enumerate()
-        .filter(|(index, born)| **born && simplices[*index].dimension <= request.max_homology_dimension)
+        .filter(|(index, born)| {
+            **born && simplices[*index].dimension <= request.max_homology_dimension
+        })
         .map(|(birth_index, _)| {
             let birth = &simplices[birth_index];
             let death_index = death_for_birth.get(&birth_index).copied();
@@ -510,8 +512,8 @@ pub fn nara_elemental_map(request: NaraElementalRequest) -> Result<Value, String
 }
 
 pub fn validate_nara_activity(value: Value) -> Result<Value, String> {
-    let log: NaraActivityLog =
-        serde_json::from_value(value).map_err(|error| format!("invalid Nara activity log: {error}"))?;
+    let log: NaraActivityLog = serde_json::from_value(value)
+        .map_err(|error| format!("invalid Nara activity log: {error}"))?;
     log.validate()?;
     Ok(json!({
         "schema":"ql.nara-activity-validation/v1",
@@ -649,7 +651,12 @@ mod tests {
     fn anuttara_reading_joins_formulation_and_declared_relations() {
         let reading = anuttara_read("M0-2-9", 128).unwrap();
         assert_eq!(reading["language"]["coordinate"], "M0-2-9");
-        assert!(reading["language"]["complete_formulation"].as_str().unwrap().contains("Paramesvara"));
+        assert!(
+            reading["language"]["complete_formulation"]
+                .as_str()
+                .unwrap()
+                .contains("Paramesvara")
+        );
         assert!(reading["bimba_node"].is_object());
         assert!(reading["relations"].is_array());
         assert_eq!(reading["canonical_mutation"], false);
@@ -669,21 +676,40 @@ mod tests {
                 vec![1.0, 1.0, 0.0],
             ],
             source_basis: json!({"ref":"fixture:triangle","revision":"r1"}),
-        }).unwrap();
+        })
+        .unwrap();
         let intervals = result["intervals"].as_array().unwrap();
-        assert!(intervals.iter().any(|row| row["dimension"] == 1 && row["birth"] == 1.0 && row["death"] == 1.0));
+        assert!(
+            intervals
+                .iter()
+                .any(|row| row["dimension"] == 1 && row["birth"] == 1.0 && row["death"] == 1.0)
+        );
     }
 
     #[test]
     fn missing_element_is_unknown_not_zero() {
         let reading = nara_elemental_map(NaraElementalRequest {
-            fire: Some(ElementReading { contribution_strength: 1.0, confidence: Some(0.8) }),
+            fire: Some(ElementReading {
+                contribution_strength: 1.0,
+                confidence: Some(0.8),
+            }),
             water: None,
-            earth: Some(ElementReading { contribution_strength: 2.0, confidence: Some(0.6) }),
-            air: Some(ElementReading { contribution_strength: 3.0, confidence: None }),
-            source: SourceRevision { source_ref:"central:activity/1".into(), revision:"r1".into(), standing_ref:"observed".into() },
+            earth: Some(ElementReading {
+                contribution_strength: 2.0,
+                confidence: Some(0.6),
+            }),
+            air: Some(ElementReading {
+                contribution_strength: 3.0,
+                confidence: None,
+            }),
+            source: SourceRevision {
+                source_ref: "central:activity/1".into(),
+                revision: "r1".into(),
+                standing_ref: "observed".into(),
+            },
             consent: ConsentState::Granted,
-        }).unwrap();
+        })
+        .unwrap();
         assert_eq!(reading["unknown_elements"], json!(["water"]));
         assert!(reading["normalized_quaternion"].is_null());
         assert_eq!(reading["effect_authority_granted"], false);
