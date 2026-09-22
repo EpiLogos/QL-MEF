@@ -425,7 +425,6 @@ pub fn persistent_homology(request: TdaRequest) -> Result<Value, String> {
     }))
 }
 
-
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct NaraPersonalReceiveRequest {
@@ -728,7 +727,10 @@ mod tests {
             "world":{"schema":"bad"},
             "input":{"event_ref":"event:x","profile_generation":0,"observed_at_unix_ms":0,"receivers":[]}
         }));
-        assert!(value.is_err(), "incomplete native inputs must not be defaulted into a personal reading");
+        assert!(
+            value.is_err(),
+            "incomplete native inputs must not be defaulted into a personal reading"
+        );
     }
 
     #[test]
