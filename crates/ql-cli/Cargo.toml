@@ -11,9 +11,10 @@ path = "src/main.rs"
 [dependencies]
 ql-core = { path = "../ql-core" }
 ql-mef = { path = "../ql-mef" }
+ql-adapters = { path = "../ql-adapters" }
+ql-wiki = { path = "../ql-wiki" }
 ql-semantic = { path = "../ql-semantic" }
 ql-service = { path = "../ql-service" }
-ql-wiki = { path = "../ql-wiki" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"

@@ -238,6 +238,55 @@ impl SharedFieldRelation {
     }
 }
 
+/// The shared reading state this dialogue participates in, when the
+/// encounter is disclosed through the O:I-hosted DisclosureSession
+/// (`ql.techne/session/v1`, pinned revision TB0-1 of `ql.techne/v1`, the
+/// dual-reading connective base of QL-MEF #212).
+///
+/// This is a reference INTO that accepted contract, never a duplicate of
+/// its state: the session alone owns the active `3:3-conjugate` /
+/// `4:2-deep` application cut, the subject selection, and the navigation
+/// and Return history. Crossing the cut changes disclosure and available
+/// operation, never subject, source, constellation or occasion identity;
+/// this context names where that state lives instead of restating it, so
+/// the two contracts cannot drift and the cut identity is not forked here.
+///
+/// Admission treatment — structural, like `expression_ref` and
+/// `profile_ref`: the host constructing a dialogue context inside a
+/// disclosure session puts that session on the table by the same act that
+/// puts the Expression there, so the session and reading identity refs are
+/// admitted by construction, without a separate disclosure receipt. This
+/// admits the frame only. No ref *inside* the reading (its sources,
+/// relations, facets) is admitted through this field — reading content
+/// still enters a turn only through the disclosed/selected/structural law,
+/// and protected personal material still travels only through
+/// `shared_field`'s K10 `SharedPresenceConsent` ref, which remains
+/// authoritative.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SharedReadingState {
+    /// Identity of the DisclosureSession instance.
+    pub session_ref: String,
+    /// The reading basis the session's selection is disclosed against (the
+    /// session selection's `reading_ref` in `ql.techne/session/v1`).
+    pub reading_ref: String,
+    /// The reading's snapshot revision, exactly as pinned by the session.
+    /// Absent when the session carries no pinned snapshot revision; never
+    /// fabricated here.
+    pub reading_revision: Option<String>,
+}
+
+impl SharedReadingState {
+    pub fn validate(&self) -> Result<(), String> {
+        text(&self.session_ref, "shared reading session reference")?;
+        text(&self.reading_ref, "shared reading reference")?;
+        if let Some(revision) = &self.reading_revision {
+            text(revision, "shared reading revision")?;
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum ExpressiveActPhase {
@@ -441,6 +490,10 @@ pub struct NaraDialogueContext {
     pub available_action_refs: Vec<String>,
     pub c_prime: Option<CPrimeDialogueBinding>,
     pub shared_field: Option<SharedFieldRelation>,
+    /// The #212 shared reading state (DisclosureSession reference), when
+    /// the turn is disclosed through one. See `SharedReadingState` for the
+    /// reference-only standing and the structural admission treatment.
+    pub shared_reading: Option<SharedReadingState>,
     pub expressive_act: Option<ExpressiveActState>,
 }
 
@@ -506,6 +559,9 @@ impl NaraDialogueContext {
         if let Some(shared) = &self.shared_field {
             shared.validate()?;
         }
+        if let Some(reading) = &self.shared_reading {
+            reading.validate()?;
+        }
         if let Some(act) = &self.expressive_act {
             act.validate()?;
             if act.basis_expression_revision != self.expression_revision {
@@ -552,6 +608,9 @@ impl NaraDialogueContext {
             || ref_id == self.expression_ref
             || ref_id == self.profile_ref
             || self.scene_ref.as_deref() == Some(ref_id)
+            || self.shared_reading.as_ref().is_some_and(|reading| {
+                reading.session_ref == ref_id || reading.reading_ref == ref_id
+            })
             || self.bimba.as_ref().is_some_and(|bimba| {
                 bimba.selected_source_ref == ref_id
                     || bimba.direct_canonical_ref == ref_id
@@ -1327,8 +1386,53 @@ mod tests {
                 sequence: ContextSequence::ContextFocused,
             }),
             shared_field: None,
+            shared_reading: None,
             expressive_act: None,
         }
+    }
+
+    #[test]
+    fn shared_reading_frame_is_structural_but_admits_no_reading_content() {
+        let mut value = context();
+        value.shared_reading = Some(SharedReadingState {
+            session_ref: "ql.techne:session:1".into(),
+            reading_ref: "ql.techne:reading:1".into(),
+            reading_revision: Some("tb0-1".into()),
+        });
+        value.validate().unwrap();
+
+        // The host-constructed reading frame is structural (like the
+        // Expression and profile anchors): the turn may focus the session
+        // and its reading basis without another receipt.
+        assert!(value.is_admitted("ql.techne:session:1"));
+        assert!(value.is_admitted("ql.techne:reading:1"));
+        let request = DeixisRequest {
+            schema: NARA_DEIXIS_CONTRACT.into(),
+            deixis_ref: "deixis:6".into(),
+            nara_ref: "nara:a".into(),
+            turn_ref: "turn:1".into(),
+            basis_expression_revision: "rev-7".into(),
+            kind: DeicticKind::Pointed,
+            target: DeicticTarget::Exact {
+                ref_id: "ql.techne:session:1".into(),
+                target_kind: SemanticTargetKind::Relation,
+            },
+            requested_at_unix_ms: 16,
+        };
+        let resolution = value.resolve_deixis(&request).unwrap();
+        resolution.validate().unwrap();
+        assert!(matches!(resolution.outcome, DeixisOutcome::Focused { .. }));
+
+        // The frame admits itself only. A source inside the reading is not
+        // auto-admitted by the session's presence: crossing the cut changes
+        // disclosure, so reading content still enters through the normal
+        // disclosed/selected/structural law — and the shared reading never
+        // substitutes for the K10 shared-presence consent in `shared_field`.
+        assert!(!value.is_admitted("source:inside-the-reading"));
+        assert_eq!(
+            value.admit_refs(["source:inside-the-reading"]).unwrap_err(),
+            "reference source:inside-the-reading is not admitted to Nara context: it is neither disclosed, selected, nor structural"
+        );
     }
 
     #[test]

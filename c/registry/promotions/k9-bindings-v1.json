@@ -198,6 +198,24 @@
       "kind": "computational"
     },
     {
+      "path": "crates/ql-cli/src/techne_command.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "rationale": "JSON command adapter for the production Technē reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser — a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
+      "tests": [
+        "crates/ql-cli/tests/techne_reading.rs"
+      ],
+      "kind": "computational"
+    },
+    {
       "path": "crates/ql-mef/src/nara/voice.rs",
       "stratum": "rust",
       "disposition": "cross-coordinate",

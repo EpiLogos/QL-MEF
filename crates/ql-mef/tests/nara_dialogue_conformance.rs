@@ -37,6 +37,13 @@ fn bounded_context_fixture_is_the_exact_wire_shape() {
     let value = context();
     value.validate().unwrap();
     assert_eq!(value.schema, NARA_DIALOGUE_CONTEXT_CONTRACT);
+    // The #212 shared-reading reference round-trips the wire: the dialogue
+    // context names the DisclosureSession it participates in without
+    // carrying the session's own state (cut, selection, navigation).
+    let reading = value.shared_reading.as_ref().unwrap();
+    assert_eq!(reading.session_ref, "ql.techne:session:fixture-1");
+    assert_eq!(reading.reading_ref, "ql.techne:reading:fixture-1");
+    assert_eq!(reading.reading_revision.as_deref(), Some("tb0-1"));
     assert_eq!(serde_json::to_value(&value).unwrap(), fixture);
 }
 
@@ -53,6 +60,10 @@ fn bounded_context_admits_only_disclosed_selected_and_structural_refs() {
         "bimba:#4",
         "pratibimba:#4",
         "scene:fixture-1",
+        // The shared reading frame is structural (host-constructed, like
+        // the Expression anchor); its content is not.
+        "ql.techne:session:fixture-1",
+        "ql.techne:reading:fixture-1",
     ];
     for ref_id in admitted {
         assert!(value.is_admitted(ref_id), "{ref_id} should be admitted");
@@ -65,6 +76,9 @@ fn bounded_context_admits_only_disclosed_selected_and_structural_refs() {
         "the fixture must not carry the private source"
     );
     assert!(!value.is_admitted(private));
+    // A ref inside the shared reading is not admitted by the session's
+    // presence: the frame admits itself, never its content.
+    assert!(!value.is_admitted("source:fixture-reading-member"));
     let error = value.admit_refs([private]).unwrap_err();
     assert!(
         error.contains("neither disclosed, selected, nor structural"),
