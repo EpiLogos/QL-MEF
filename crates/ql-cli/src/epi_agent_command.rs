@@ -57,7 +57,7 @@ fn position(value: &Value) -> R<u8> {
         .ok_or_else(|| error("epi-agent invocation position must be #0..#5"))
 }
 
-fn input<'a>(value: &'a Value) -> R<&'a Value> {
+fn input(value: &Value) -> R<&Value> {
     value
         .get("input")
         .filter(|input| input.is_object())
