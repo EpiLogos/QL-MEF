@@ -254,6 +254,43 @@
         "crates/ql-wiki/tests/wiki_refraction.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/epi_agent.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
+      "tests": [
+        "crates/ql-mef/src/epi_agent.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/epi_agent_command.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0–#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
+      "tests": [
+        "crates/ql-cli/src/epi_agent_command.rs",
+        "crates/ql-mef/src/epi_agent.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }

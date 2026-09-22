@@ -9,6 +9,7 @@ mod context_frame_target;
 pub mod continuous;
 mod coordinate;
 pub mod cprime_oikonomia;
+pub mod epi_agent;
 mod error;
 pub mod focused_instrument;
 mod focused_instrument_aw1;
