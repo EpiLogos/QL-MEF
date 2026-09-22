@@ -5,6 +5,8 @@
 **Provenance:** PR #93 R3 field, #161 living instrument, and #163 owner-approved full agent-world lock, 2026-09-12.  
 **Current entry:** [Kernel Rebuild Wayfinder](../../KERNEL-REBUILD-WAYFINDER.md). **Execution:** #94 AW0–AW3 alongside #132/#133/#134.
 
+**Composed-agent continuation, 22 September 2026:** [Epi-Logos agent architecture](EPI-LOGOS-AGENT-ARCHITECTURE.md) joins the full M0′ representation/processing body and Epii-on-X capacities under a containing Prime–QL `#0/1`, with **explicit distinct #0** Anuttara–Jev–EBM and #1–#5 faculties. It preserves S4′ Anima / S5′ Aletheia and the full 109-node syntax alongside C′/Ta-Onta. Execution continues through #201/#135, Actuation #107 and O:I #220/#65 as a mode-quality integration lane; no completed K/AW work or matrix inventory is reopened. The source lock specifies the default Epi-Logos agent/body in Expressions and Technē, not an already installed result. Read the original M0′, Nara activity and M5 Logos sources linked there rather than treating `epi-epii-operational-capacities.json` as the whole technological body.
+
 ## Full-field lock before implementation
 
 Read [Pre-K8 agent-world lock](../../kernel-rebuild/PRE-K8-AGENT-WORLD-LOCK.md), [Ta-Onta full defined field](TA-ONTA-FULL-FIELD-LOCK.md) and [Vāk/Oikonomia/knowledge Return](../../kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md) first. They record the owner's approved original musical C′ semantics, complete T/T′ consumption lifecycle, agent-led recognised naming, property sixfold and the M0/M5 relation to Nara. The full known field determines scope before implementation slices. The earlier #94 first-proving-composition strategy does not delimit completion.
