@@ -6,8 +6,12 @@
 //! #0/1 belongs to the constituted acting body; this module exposes #0..#5.
 
 use crate::{
+    continuous::coupled::CoupledInput,
     m_tree::native_current_m_registry,
-    nara::{BioQuaternion, ConsentState, SourceRevision, activity::NaraActivityLog},
+    nara::{
+        BioQuaternion, ConsentState, PersonalConstitution, PersonalEventInput,
+        PersonalFieldInstance, SourceRevision, activity::NaraActivityLog,
+    },
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -85,7 +89,7 @@ pub fn constitution() -> Value {
             {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
             {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
             {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
-            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
+            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
             {"position":"#5","name":"Epii","operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
         "source": {
@@ -421,6 +425,37 @@ pub fn persistent_homology(request: TdaRequest) -> Result<Value, String> {
     }))
 }
 
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraPersonalReceiveRequest {
+    pub constitution: PersonalConstitution,
+    pub world: CoupledInput,
+    pub input: PersonalEventInput,
+}
+
+pub fn nara_personal_receive(request: NaraPersonalReceiveRequest) -> Result<Value, String> {
+    let basis = request.world.compose()?;
+    let mut field = PersonalFieldInstance::new(request.constitution)?;
+    let state = field.receive(&basis, request.input)?;
+    Ok(json!({
+        "schema":"ql.nara-personal-reception-result/v1",
+        "state":state,
+        "world_basis":{
+            "event_ref":state.event.event_ref,
+            "registry_revision":state.event.registry_revision,
+            "m1_revision":state.event.m1_revision,
+            "m2_source_ref":state.event.m2_source_ref,
+            "m3_source_ref":state.event.m3_source_ref
+        },
+        "composition_order":["identity","transit","activity"],
+        "standing":"native subject-local Nara reception over an accepted coupled M1/M2/M3 world basis",
+        "inferred_physiology":false,
+        "identity_mutation":false,
+        "effect_authority_granted":false
+    }))
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct ElementReading {
@@ -684,6 +719,16 @@ mod tests {
                 .iter()
                 .any(|row| row["dimension"] == 1 && row["birth"] == 1.0 && row["death"] == 1.0)
         );
+    }
+
+    #[test]
+    fn personal_receive_refuses_an_unaccepted_or_cross_event_basis() {
+        let value = serde_json::from_value::<NaraPersonalReceiveRequest>(json!({
+            "constitution":{"subject_id":"subject:x"},
+            "world":{"schema":"bad"},
+            "input":{"event_ref":"event:x","profile_generation":0,"observed_at_unix_ms":0,"receivers":[]}
+        }));
+        assert!(value.is_err(), "incomplete native inputs must not be defaulted into a personal reading");
     }
 
     #[test]
