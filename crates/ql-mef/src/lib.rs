@@ -7,6 +7,7 @@ pub mod aw1_world;
 mod context_frame;
 mod context_frame_target;
 pub mod continuous;
+pub mod epi_agent;
 mod coordinate;
 pub mod cprime_oikonomia;
 mod error;
