@@ -42,6 +42,98 @@ fn parsed_json(source: &str, label: &str) -> Value {
     serde_json::from_str(source).unwrap_or_else(|error| panic!("{label} is invalid JSON: {error}"))
 }
 
+/// Per-instrument availability for every optional instrument named by the
+/// constitution. A genuinely unavailable instrument is disclosed as degraded
+/// here — never silently absent and never presented as invoked. Native owners
+/// are named so resolution stays with them.
+pub fn instrument_resolution() -> Value {
+    json!({
+        "schema": "ql.epi-logos-agent-instrument-resolution/v1",
+        "jev": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": [
+                "AIKit #388 general Jev transport (branch origin/agent/388-jev-redis-now, unmerged)",
+                "Actuation experiments/model-types/jev domain thread",
+                "Actuation ql_reflect Night instrument (QL_REFLECT_BIN)"
+            ],
+            "disclosure": "no native QL-MEF Jev classification operation exists; classification against the syntax is not fabricated here, and absence is disclosed rather than silently substituted"
+        },
+        "ananda-m1-2": {
+            "standing": "native-current-code",
+            "availability": "available",
+            "native_owners": ["ql-mef::m1_engine ananda-field operation at #1-2 (engine_json, ql.m1.engine/v1)"],
+            "disclosure": "numerical-relational reading at M1-2; participation in the #0 composed basis does not reparent it to M0 or admit it as a universal semantic verifier"
+        },
+        "ebm": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": [
+                "Actuation experiments/model-types/ebm",
+                "Actuation experiments/model-types/hybrid-loop/EBM-GATE-DESIGN.md"
+            ],
+            "disclosure": "no native QL-MEF energy-field operation exists; no energy value is manufactured here, and low or absent energy is never truth, worth or permission"
+        },
+        "external-tda-provider": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["external TDA pipelines named by the recovered research"],
+            "disclosure": "the native vietoris-rips H0/H1 operation is the current callable scope; higher-dimensional or library-backed TDA is not fabricated"
+        },
+        "neo4j-cypher-apoc": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["the graph-services genealogy and current graph owners"],
+            "disclosure": "exact source adjacency is served by bimba.neighborhood; traversal, inference and analytics are not impersonated by it"
+        },
+        "neo4j-gds": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["the graph-services genealogy and current graph owners"],
+            "disclosure": "algorithm availability is observed by its own owner, not claimed here"
+        },
+        "learned-graph-representations": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["the recovered graph-ML research line"],
+            "disclosure": "no learned representation is served from this surface"
+        },
+        "cross-modal-retrieval": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["the recovered multimodal research line"],
+            "disclosure": "representation.bind records provenance; it does not retrieve"
+        },
+        "learned-process-pathways": {
+            "standing": "research-only",
+            "availability": "degraded",
+            "native_owners": ["the process-reward/federated/symbolic-genetic research, separately commissioned"],
+            "disclosure": "no learnable pathway is executed from this surface"
+        }
+    })
+}
+
+/// The resolution rows for one faculty's own optional instruments, in its own
+/// readback. Unknown instrument names resolve to an explicit degraded row
+/// rather than disappearing.
+fn resolve_instruments(names: &[Value]) -> Value {
+    let resolution = instrument_resolution();
+    let resolved: Vec<Value> = names
+        .iter()
+        .map(|name| {
+            let key = name.as_str().unwrap_or_default();
+            resolution.get(key).cloned().unwrap_or_else(|| {
+                json!({
+                    "standing":"research-only",
+                    "availability":"degraded",
+                    "disclosure":"instrument is named by the constitution but has no resolved native owner in this surface; it is disclosed degraded"
+                })
+            })
+        })
+        .collect();
+    json!({"schema":"ql.epi-logos-agent-instrument-resolution/v1","instruments":resolved})
+}
+
 fn syntax_row_count() -> usize {
     ANUTTARA_LANGUAGE
         .lines()
@@ -85,7 +177,7 @@ pub fn constitution() -> Value {
             ]
         },
         "faculties": [
-            {"position":"#0","name":"Anuttara","operations":["anuttara.read"],"source_owner":"QL-MEF","optional_instruments":["jev","ananda-m1-2","ebm"]},
+            {"position":"#0","name":"Anuttara","operations":["anuttara.read","ananda.m1-2"],"source_owner":"QL-MEF","optional_instruments":["jev","ebm"]},
             {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
             {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
             {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
@@ -103,9 +195,10 @@ pub fn constitution() -> Value {
             "lock": source_lock()
         },
         "capability_field": parsed_json(CAPABILITY_FIELD, "Epi capability field"),
+        "instrument_resolution": instrument_resolution(),
         "standing": {
             "native_operations": "callable-current-code",
-            "optional_instruments": "availability-must-be-resolved-by-their-native-owner",
+            "optional_instruments": "degraded-instruments-are-disclosed-in-instrument-resolution",
             "training": "not-authorised-by-mode-selection",
             "canonical_mutation": false
         }
@@ -122,6 +215,12 @@ pub fn faculty(position: u8) -> Result<Value, String> {
         "position": format!("#{position}"),
         "constitution": constitution["faculties"][usize::from(position)].clone(),
         "capability_field": capability_document(position),
+        "instrument_resolution": resolve_instruments(
+            constitution["faculties"][usize::from(position)]["optional_instruments"]
+                .as_array()
+                .map(Vec::as_slice)
+                .unwrap_or_default(),
+        ),
         "source_revision": constitution["source"]["revision"].clone(),
         "canonical_mutation": false
     }))
@@ -202,6 +301,55 @@ pub fn anuttara_read(reference: &str, max_relations: usize) -> Result<Value, Str
         },
         "standing": if node.is_some() {"source-qualified-language-plus-bimba-relations"} else {"formal-layer-language-row-no-bimba-node"},
         "canonical_mutation": false
+    }))
+}
+
+/// Ananda's own numerical-relational reading at M1-2, executed by the existing
+/// native M1 engine — no new algebra is introduced here. The engine request is
+/// the engine's own `ql.m1.engine/v1` request; the selected coordinate must be
+/// an Ananda coordinate so the reading stays scoped to M1-2. Participation in
+/// the #0 composed basis does not reparent Ananda to M0 and is never admitted
+/// as a universal verifier of semantic interpretation.
+pub fn ananda_m1_2(engine_request: Value) -> Result<Value, String> {
+    if !engine_request.is_object() {
+        return Err("ananda.m1-2 requires the ql.m1.engine/v1 request object".into());
+    }
+    if engine_request["schema"] != crate::m1_engine::CONTRACT {
+        return Err(format!(
+            "ananda.m1-2 requires engine schema {}",
+            crate::m1_engine::CONTRACT
+        ));
+    }
+    let selected = engine_request["config"]["selected_coordinate"]
+        .as_str()
+        .ok_or_else(|| "ananda.m1-2 requires config.selected_coordinate".to_string())?;
+    match crate::m1_engine::coordinate_operation(selected)? {
+        "ananda-field" | "ananda-cell-and-source" => {}
+        other => {
+            return Err(format!(
+                "ananda.m1-2 requires an #1-2 Ananda coordinate; {selected} resolves to {other}"
+            ));
+        }
+    }
+    let snapshot: Value = serde_json::from_str(&crate::m1_engine::engine_json(
+        &serde_json::to_string(&engine_request).map_err(|e| e.to_string())?,
+    )?)
+    .map_err(|e| format!("M1 engine snapshot is not JSON: {e}"))?;
+    Ok(json!({
+        "schema":"ql.ananda-m1-2-reading/v1",
+        "engine_operation":snapshot["operation"],
+        "ananda_role_stage":snapshot["ananda_role_stage"],
+        "reflection":snapshot["reflection"],
+        "source_traits":snapshot["source_traits"],
+        "selected_reading":snapshot["selected_reading"],
+        "cell":snapshot["cell"],
+        "source_cell":snapshot["source_cell"],
+        "source":snapshot["source"],
+        "engine_snapshot_schema":snapshot["schema"],
+        "engine_snapshot":snapshot,
+        "standing":"native M1-2 numerical-relational reading over the existing M1 engine; not a semantic verifier and not reparented to M0",
+        "semantic_verification":"refused",
+        "canonical_mutation":false
     }))
 }
 
@@ -694,6 +842,81 @@ mod tests {
         assert!(reading["bimba_node"].is_object());
         assert!(reading["relations"].is_array());
         assert_eq!(reading["canonical_mutation"], false);
+    }
+
+    #[test]
+    fn degraded_instruments_are_disclosed_not_silent() {
+        let resolution = instrument_resolution();
+        assert_eq!(resolution["jev"]["availability"], "degraded");
+        assert_eq!(resolution["ebm"]["availability"], "degraded");
+        assert_eq!(resolution["ananda-m1-2"]["availability"], "available");
+        assert_eq!(resolution["ananda-m1-2"]["standing"], "native-current-code");
+        let constitution = constitution();
+        assert_eq!(
+            constitution["instrument_resolution"]["jev"]["standing"],
+            "research-only"
+        );
+        let faculty = faculty(0).unwrap();
+        let instruments = faculty["instrument_resolution"]["instruments"]
+            .as_array()
+            .unwrap();
+        assert_eq!(instruments.len(), 2, "#0 discloses exactly jev and ebm");
+        assert!(
+            instruments
+                .iter()
+                .all(|row| row["availability"] == "degraded")
+        );
+    }
+
+    #[test]
+    fn ananda_m1_2_reads_through_the_native_engine_and_refuses_other_coordinates() {
+        let request = json!({
+            "schema":"ql.m1.engine/v1",
+            "config":{
+                "event_ref":"event:epi-ananda-fixture",
+                "subject_coordinate":"#1",
+                "selected_coordinate":"#1-2-0",
+                "revision":"0",
+                "cycle":"0",
+                "tick12":0,
+                "family":0,
+                "row12":0,
+                "col12":0,
+                "flowering_substage":0,
+                "lens12":0,
+                "context_frame":1,
+                "basis":"chromatic"
+            }
+        });
+        let reading = ananda_m1_2(request).unwrap();
+        assert_eq!(reading["schema"], "ql.ananda-m1-2-reading/v1");
+        assert_eq!(reading["engine_operation"], "ananda-cell-and-source");
+        assert!(reading["ananda_role_stage"].is_u64());
+        assert!(reading["engine_snapshot"].is_object());
+        assert_eq!(reading["semantic_verification"], "refused");
+        let wrong = json!({
+            "schema":"ql.m1.engine/v1",
+            "config":{
+                "event_ref":"event:epi-ananda-fixture",
+                "subject_coordinate":"#1",
+                "selected_coordinate":"#1-4.0",
+                "revision":"0",
+                "cycle":"0",
+                "tick12":0,
+                "family":0,
+                "row12":0,
+                "col12":0,
+                "flowering_substage":0,
+                "lens12":0,
+                "context_frame":1,
+                "basis":"chromatic"
+            }
+        });
+        let error = ananda_m1_2(wrong).unwrap_err();
+        assert!(
+            error.contains("requires an #1-2 Ananda coordinate"),
+            "{error}"
+        );
     }
 
     #[test]

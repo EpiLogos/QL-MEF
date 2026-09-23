@@ -77,7 +77,7 @@ fn invoke(path: &str) -> R<Value> {
     let input = input(&request)?;
 
     let expected = match position {
-        0 => &["anuttara.read"][..],
+        0 => &["anuttara.read", "ananda.m1-2"][..],
         1 => &["tda.vietoris-rips"][..],
         2 => &["bimba.neighborhood"][..],
         3 => &["representation.bind"][..],
@@ -103,6 +103,7 @@ fn invoke(path: &str) -> R<Value> {
             let limit = input["max_relations"].as_u64().unwrap_or(128) as usize;
             epi_agent::anuttara_read(reference, limit).map_err(error)?
         }
+        "ananda.m1-2" => epi_agent::ananda_m1_2(input.clone()).map_err(error)?,
         "tda.vietoris-rips" => {
             let request: TdaRequest = serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::persistent_homology(request).map_err(error)?
