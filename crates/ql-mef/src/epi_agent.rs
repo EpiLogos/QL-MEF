@@ -984,4 +984,104 @@ mod tests {
         assert!(reading["normalized_quaternion"].is_null());
         assert_eq!(reading["effect_authority_granted"], false);
     }
+
+    #[test]
+    fn validate_nara_activity_accepts_a_well_formed_empty_log_and_rejects_wrong_schema() {
+        use crate::nara::activity::{CentralTemporalRefs, TemporalScope};
+
+        let temporal = CentralTemporalRefs {
+            owner_ref: "central".into(),
+            contract_ref: "central.now-clearing/v1".into(),
+            scope: TemporalScope::RootMetaProject,
+            project_ref: None,
+            day_ref: "day:2026-09-23".into(),
+            day_revision: "r1".into(),
+            now_ref: "central:now:control:root:fixture".into(),
+            now_revision: "r1".into(),
+            flow_dialogue_refs: vec![],
+            source_history_ref: "central:source-history:fixture".into(),
+        };
+        let value = json!({
+            "schema": "ql.nara-activity/v1",
+            "subject_id": "subject:fixture",
+            "temporal": temporal,
+            "occurrences": [],
+            "thought_consumptions": [],
+            "identity_proposal_refs": ["identity-proposal:fixture-1"]
+        });
+        let reading = validate_nara_activity(value).unwrap();
+        assert_eq!(reading["schema"], "ql.nara-activity-validation/v1");
+        assert_eq!(reading["occurrence_count"], 0);
+        assert_eq!(reading["thought_consumption_count"], 0);
+        assert_eq!(reading["identity_mutation"], false);
+
+        let wrong_schema = json!({
+            "schema": "ql.nara-activity/v0",
+            "subject_id": "subject:fixture",
+            "temporal": temporal,
+            "occurrences": [],
+            "thought_consumptions": [],
+            "identity_proposal_refs": []
+        });
+        let error = validate_nara_activity(wrong_schema).unwrap_err();
+        assert!(
+            error.contains("unsupported Nara activity contract"),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn logos_return_records_the_full_cycle_and_rejects_empty_fields() {
+        let request = LogosReturnRequest {
+            inquiry_ref: "inquiry:fixture".into(),
+            t: "the K8 aperture count is twenty".into(),
+            c: "unchecked against the registry".into(),
+            t_prime: "the K8 aperture count is eighteen".into(),
+            c_prime: "checked against docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md".into(),
+            source_refs: vec!["docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md".into()],
+            evidence_refs: vec!["fixture:read-back".into()],
+            practice_ref: None,
+            fresh_participant_ref: None,
+        };
+        let envelope = logos_return(request).unwrap();
+        assert_eq!(envelope["schema"], "ql.epii-logos-return/v1");
+        assert_eq!(
+            envelope["cycle"]["T_prime"],
+            "the K8 aperture count is eighteen"
+        );
+        assert_eq!(envelope["fresh_uptake_reference_present"], false);
+        assert_eq!(envelope["learning_demonstrated"], false);
+        assert_eq!(envelope["promotion_authority_granted"], false);
+
+        let empty_t = LogosReturnRequest {
+            inquiry_ref: "inquiry:fixture".into(),
+            t: "".into(),
+            c: "c".into(),
+            t_prime: "t-prime".into(),
+            c_prime: "c-prime".into(),
+            source_refs: vec!["s".into()],
+            evidence_refs: vec!["e".into()],
+            practice_ref: None,
+            fresh_participant_ref: None,
+        };
+        let error = logos_return(empty_t).unwrap_err();
+        assert!(error.contains("must be non-empty"), "{error}");
+
+        let no_evidence = LogosReturnRequest {
+            inquiry_ref: "inquiry:fixture".into(),
+            t: "t".into(),
+            c: "c".into(),
+            t_prime: "t-prime".into(),
+            c_prime: "c-prime".into(),
+            source_refs: vec!["s".into()],
+            evidence_refs: vec![],
+            practice_ref: None,
+            fresh_participant_ref: None,
+        };
+        let error = logos_return(no_evidence).unwrap_err();
+        assert!(
+            error.contains("requires source_refs and evidence_refs"),
+            "{error}"
+        );
+    }
 }

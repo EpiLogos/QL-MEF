@@ -16,7 +16,10 @@
     "AGENTS.md",
     "skills/ql-experience-prepare/SKILL.md",
     "skills/ql-experience-walk/SKILL.md",
-    "skills/ql-evidence-report/SKILL.md"
+    "skills/ql-evidence-report/SKILL.md",
+    "skills/ql-vak-compose/SKILL.md",
+    "skills/ql-nara-faculty/SKILL.md",
+    "skills/ql-logos-return/SKILL.md"
   ],
   "existing_skill_amendments": [
     "skills/ql-operation/SKILL.md",
