@@ -5,7 +5,7 @@ import argparse, copy, json, pathlib, re, sys, unittest
 P=pathlib.Path
 ROOT=P(__file__).resolve().parents[1]
 DOC='docs/kernel-rebuild/'
-METHODS={'ql-operation','bimba-cypher','refraction-adapter-authoring','ql-experience-prepare','ql-experience-walk'}
+METHODS={'ql-operation','bimba-cypher','refraction-adapter-authoring','ql-experience-prepare','ql-experience-walk','ql-vak-compose','ql-nara-faculty','ql-logos-return'}
 SKILLS=METHODS|{'ql-foundations','ql-evidence-report'}
 TEXTS=['UX-INTENT-SOURCE-MINUTE.md','UX-SPINE-RECONCILIATION.md','AGENT-PRACTICE-AND-BOOTSTRAP.md']
 
@@ -61,7 +61,7 @@ def validate(data: dict, root: P, oi: P|None=None, override: dict|None=None)->di
         path=f'skills/{folder}/SKILL.md';text=read(path)
         require(text.startswith('---\n') and re.search(r'^name:',text,re.M),f'bad Skill {folder}')
         desc=description(text);require(desc.startswith('METHOD:')==(folder in METHODS),f'wrong Method classification {folder}')
-        if folder in {'ql-experience-prepare','ql-experience-walk','ql-evidence-report','bimba-cypher'}:
+        if folder in {'ql-experience-prepare','ql-experience-walk','ql-evidence-report','bimba-cypher','ql-vak-compose','ql-nara-faculty','ql-logos-return'}:
             for token in ['## Inputs','## Outputs','## Verification','## Authority','## Continuity']:require(token in text,f'{folder} missing {token}')
     for token in ['source','discovery','projection','harness','METHOD:','Central','consum','B0','B1','B2']:require(token.lower() in practice.lower(),f'practice loses {token}')
     for token in ['0→1','109','18','Oikonomia','T/T′','METHOD:']:
