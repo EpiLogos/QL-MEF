@@ -8,7 +8,7 @@ description: "METHOD: Distil the thought stream of a NOW clearing (T0–T5 and t
 ## Contract metadata
 
 - Semantic ref: `ql:skill:thought-distil` (`skill/ql/thought-distil`)
-- Native owners: Central `central.now.thoughts.read`, `central.now.learnings.distill`, `central.now.learnings.read`, `projectcentral.now.promote` (the only door from NOW into a wiki); QL-MEF `ql epi-agent invoke` faculty #5 `logos.return` (`skill/ql/ql-logos-return`) for the typed T/C/T′/C′ envelope; AIKit `aikit gateway send` to reach the Epii-side Position.
+- Native owners: Central `central.now.thoughts.read`, `central.now.learnings.distill`, `central.now.learnings.read`, `projectcentral.now.promote` (the only door from NOW into a wiki); QL-MEF `ql epi-agent invoke` faculty #5 `logos.return` for the typed T/C/T′/C′ envelope; AIKit `aikit gateway send` to reach the Epii-side Position.
 - Replaces the Pi tools `aletheia_crystallise`, `aletheia_session_promote`, `aletheia_ingest`, `aletheia_episodic_ingest_thoughts`.
 - Source: `Body/S/S4/ta-onta/S4-5p-aletheia/S5'/skills/thought-distil/SKILL.md`, blob `6893c1b34b351966748b3e1256da6d35ca0f1650` (pinned and HEAD agree).
 - Used by: `agent/aletheia-moirai` (Atropos mode), `agent/anima-sophia` (review pressure), `agent/aletheia`.
@@ -29,7 +29,7 @@ ctrl --json action run central.now.thoughts.read '{"now_ref":"<ref>","include_co
 ctrl --json action run central.now.learnings.distill '{"now_ref":"<ref>","slug":"<slug>","day":"<YYYY-MM-DD>","actor":"agent/aletheia-moirai","actor_kind":"agent","reading":"T5","source_fixtures":["<T fixture>", "…"],"content":"<what the stream means, in plain statements>"}'
 ```
 
-   When the T/T′ cycle must be recorded formally (actual output against corrected output), run `skill/ql/ql-logos-return` and keep its envelope ref with the learning.
+   When the T/T′ cycle must be recorded formally (actual output against corrected output), invoke QL's Logos Return faculty (`ql epi-agent invoke <request.json> --json`, position `#5`, operation `logos.return`; confirm with `ql epi-agent faculty '#5' --json`) and keep its envelope ref with the learning.
 4. **Route.** A project learning that deserves wiki standing goes through `projectcentral.now.promote` with `target` `agent-wiki` and `acceptance` `agent-return`; the wiki owner's maintenance incorporates it. Material that needs Epii's review, canon or pedagogy is handed to the Aletheia/Epii Position as a NOW handoff (`projectcentral.now.return`, `kind` `handoff`) and, if a body occupies it, a Communique (`aikit gateway send`). Human-ground change goes to the owner through Recognition, never by this Method.
 5. **Open, not close.** A distillation that ends inquiry is Sophia's error. Name the P0′ questions it opens (`T0` thoughts) for the next cycle.
 

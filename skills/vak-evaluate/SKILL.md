@@ -8,7 +8,7 @@ description: "METHOD: Assign the six C′ Vāk coordinates (CPF, CT, CP, CF, CFP
 ## Contract metadata
 
 - Semantic ref: `ql:skill:vak-evaluate` (`skill/ql/vak-evaluate`)
-- Native owner: `EpiLogos/QL-MEF`. Executable support: `ql context-frame list`, `ql vak compose <request.json> --json` (contract `ql.vak-composition/v1`; steps `whole`, `enter`, `cpf`, `ct`, `cp`, `cf`, `cfp`, `cfp-form`, `cs-select`, `inspect-oikonomia`), composed through `skill/ql/ql-vak-compose`.
+- Native owner: `EpiLogos/QL-MEF`. Executable support: `ql context-frame list`, `ql vak compose <request.json> --json` (contract `ql.vak-composition/v1`; steps `whole`, `enter`, `cpf`, `ct`, `cp`, `cf`, `cfp`, `cfp-form`, `cs-select`, `inspect-oikonomia`).
 - Replaces the Pi tool `vak_evaluate` (`S4-4p-anima/extension/tools.ts`).
 - Source: `Body/S/S4/ta-onta/S4-4p-anima/S4'/skills/vak-evaluate/SKILL.md`, blob `d582a158bdcaabe5342977110d99ad2a6bb0755e` (pinned and HEAD agree).
 - Used by: `agent/anima` (owner), `agent/anima-psyche`, `agent/anima-logos`, `agent/anima-eros`, `agent/anima-mythos`. Reference grammar: `skill/ql/vak-coordinate-frame`.

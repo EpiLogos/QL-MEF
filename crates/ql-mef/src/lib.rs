@@ -52,6 +52,7 @@ pub mod vak_profile;
 pub mod vak_scope;
 pub mod vak_scope_wire;
 pub mod vak_thought_consumption;
+pub mod vak_workflow_types;
 
 pub use context_frame::{
     CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCoordinate, ContextFrameCut, ContextFrameId,

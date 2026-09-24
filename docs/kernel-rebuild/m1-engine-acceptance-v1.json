@@ -436,7 +436,7 @@
     },
     {
       "path": "crates/ql-cli/src/lib.rs",
-      "sha256": "f0e2549bcb88cb5d1333774ee90c1870341648dcefa058f392b1ea830e6ff2de"
+      "sha256": "c7d2b26052e33724668a7f3510a24e1bc9a42679de86c5e4a50bc1662bdfc688"
     },
     {
       "path": "crates/ql-cli/tests/m1_engine_cli.rs",

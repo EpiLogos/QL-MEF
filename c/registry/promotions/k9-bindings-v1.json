@@ -291,6 +291,18 @@
         "crates/ql-mef/src/epi_agent.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/vak_workflow_types.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "VW1 projection of the existing ql.vak-composition.profile/v1 vocabulary (vak_profile.rs, context_frame.rs) into the types-only @epilogos/ql-vak module that Factory's registered domain adapter admits. It renders TypeScript from the Rust enums' serde spellings and validates an authored C-prime; it adds no coordinate, composition owner, scheduler, registry or execution authority.",
+      "tests": [
+        "crates/ql-mef/tests/vak_workflow_types.rs",
+        "crates/ql-mef/src/vak_workflow_types.rs"
+      ],
+      "kind": "structural-index"
     }
   ]
 }
