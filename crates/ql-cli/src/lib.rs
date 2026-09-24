@@ -340,7 +340,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql techne reading <target.json> [--json]\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n  ql verify [--json]\n\n\
+Usage:\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql techne reading <target.json> [--json]\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql vak workflow-types [--check <path>] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n  ql verify [--json]\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.\nThe configuration surface is disclosure-only: every contributed setting is read-only, and the\nconfig transport refuses mutation with a structured unsupported_setting error.",
         env!("CARGO_PKG_VERSION")
     )
@@ -372,6 +372,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.locate",
             "vak.context",
             "vak.compose",
+            "vak.workflow-types",
             "techne.reading",
             "epi-agent.constitution",
             "epi-agent.faculty",
@@ -703,6 +704,39 @@ fn vak_command(args: &[String], json: bool) -> Result<String, CliError> {
         }
         Some("context") => vak_context_command(&args[1..], json),
         Some("compose") => vak_composition::command(&args[1..], json),
+        Some("workflow-types") => {
+            use ql_mef::vak_workflow_types as types;
+            let module = types::typescript_module();
+            match args.get(1..).unwrap_or_default() {
+                [] if json => serde_json::to_string_pretty(&serde_json::json!({
+                    "contract": types::WORKFLOW_TYPES_CONTRACT,
+                    "specifier": types::WORKFLOW_TYPES_SPECIFIER,
+                    "path": types::WORKFLOW_TYPES_PATH,
+                    "module": module,
+                }))
+                .map_err(CliError::from),
+                // Printed without its final newline; println restores it, so
+                // redirecting stdout reproduces the checked-in bytes exactly.
+                [] => Ok(module.trim_end().to_owned()),
+                [flag, path] if flag == "--check" => {
+                    let current = std::fs::read_to_string(path)
+                        .map_err(|error| CliError(format!("{path}: {error}")))?;
+                    if current == module {
+                        Ok(format!(
+                            "{path} matches the QL Rust contract ({})",
+                            types::WORKFLOW_TYPES_CONTRACT
+                        ))
+                    } else {
+                        Err(CliError(format!(
+                            "{path} drifted from the QL Rust contract; regenerate with `ql vak workflow-types > {path}`"
+                        )))
+                    }
+                }
+                _ => Err(CliError(
+                    "usage: ql vak workflow-types [--check <path>] [--json]".into(),
+                )),
+            }
+        }
         Some(operation) => Err(CliError(format!("unknown Vāk operation `{operation}`"))),
         None => Err(CliError("missing Vāk operation".into())),
     }
@@ -1108,6 +1142,43 @@ mod tests {
                 .iter()
                 .any(|value| value == "vak.context")
         );
+    }
+
+    #[test]
+    fn vak_workflow_types_renders_and_checks_the_published_module() {
+        let output =
+            execute_cli(&["vak".into(), "workflow-types".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["contract"], "ql.vak-workflow-types/v1");
+        assert_eq!(value["specifier"], "@epilogos/ql-vak");
+        let published = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(value["path"].as_str().unwrap());
+        assert_eq!(
+            value["module"].as_str().unwrap(),
+            std::fs::read_to_string(&published).unwrap()
+        );
+        let checked = execute_cli(&[
+            "vak".into(),
+            "workflow-types".into(),
+            "--check".into(),
+            published.to_string_lossy().into_owned(),
+        ])
+        .unwrap();
+        assert!(checked.contains("matches the QL Rust contract"));
+        let drifted =
+            std::env::temp_dir().join(format!("ql-vak-drift-{}.d.ts", std::process::id()));
+        std::fs::write(&drifted, "export type ContextFrame = \"CF1\";\n").unwrap();
+        let refused = execute_cli(&[
+            "vak".into(),
+            "workflow-types".into(),
+            "--check".into(),
+            drifted.to_string_lossy().into_owned(),
+        ]);
+        std::fs::remove_file(&drifted).unwrap();
+        assert!(refused.is_err());
+        let capabilities = execute_cli(&["capabilities".into(), "--json".into()]).unwrap();
+        assert!(capabilities.contains("vak.workflow-types"));
     }
 
     #[test]

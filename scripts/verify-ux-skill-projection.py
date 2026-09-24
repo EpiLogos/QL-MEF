@@ -4,8 +4,7 @@ from __future__ import annotations
 import argparse, hashlib, json, os, pathlib, shutil, subprocess, sys, tomllib
 P = pathlib.Path
 MEMBERS = ('ql-foundations','ql-operation','ql-experience-prepare','ql-evidence-report','ql-experience-walk')
-METHODS = {'ql-operation','bimba-cypher','refraction-adapter-authoring','ql-experience-prepare','ql-experience-walk',
-           'ql-vak-compose','ql-nara-faculty','ql-logos-return'}
+METHODS = {'ql-operation','bimba-cypher','refraction-adapter-authoring','ql-experience-prepare','ql-experience-walk'}
 # Anima/Aletheia team skills (docs/integrations/epi-logos/ANIMA-ALETHEIA-TEAMS.md). darshana, repl and
 # vak-coordinate-frame are reference Skills, not Methods.
 TEAM_METHODS = {'vak-evaluate','anima-orchestration','day-night-pass','klein-mode','ouroboros','symbolic-protein-reading',
