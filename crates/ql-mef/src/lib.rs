@@ -33,6 +33,7 @@ mod matheme;
 mod music;
 mod music_completion;
 pub mod nara;
+pub mod anima_expression_profile;
 mod pole_state;
 pub mod property;
 mod provenance;

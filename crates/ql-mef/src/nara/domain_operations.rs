@@ -198,6 +198,11 @@ impl IdentityField {
             .ok_or("identity office is not present in the six-office matrix")?;
         *existing = slot;
         self.identity_revision = identity_revision;
+        // A changed identity source invalidates sealed digest / orientation /
+        // M3 form derivative refs; callers must recompute and reseal.
+        self.identity_hash_ref = None;
+        self.identity_quaternion_ref = None;
+        self.m3_form_address_ref = None;
         self.validate()
     }
 }
