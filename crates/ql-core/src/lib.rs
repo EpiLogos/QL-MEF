@@ -18,6 +18,7 @@ mod position;
 mod relation_classification;
 mod shape;
 mod shape_ref;
+mod shape_presentation;
 mod structural;
 #[path = "carrier.rs"]
 mod structural_carrier;
@@ -85,6 +86,8 @@ pub use shape::{
     TenByTenProjection,
 };
 pub use shape_ref::resolve_shape_ref;
+pub use shape_presentation::{shape_presentation, ShapePresentation, PresentationAddress,
+    PresentationSite, SHAPE_PRESENTATION_VERSION};
 pub use structural::{
     AnchorReturn, ConjugateOpposition, ConjugationDegree, ConstellationGrain, ExpansionSide,
     GroundKind, PairInstance, QlCoordinate, RelationFamily, RelationField,
