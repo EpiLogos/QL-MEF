@@ -86,6 +86,41 @@ test('native sound and field are admitted together but targets wait for END-of-b
   assert.equal(session.reading.presented.samples_elapsed, '512'); session.dispose();
 });
 
+test('an empty rebased device origin does not count as queued lookahead', async () => {
+  const { session, context, calls } = setup({ blockFrames: 8192, leadSeconds: 0.5, lookaheadSeconds: 0.5 });
+  try {
+    await session.recover('source admission finished');
+    assert.equal(session.reading.audio.scheduled_blocks, 0);
+    await session.pump();
+    assert.deepEqual(calls.map(call => call.command.operation), ['read', 'advance']);
+    assert.equal(context.nodes.length, 1);
+    assert.equal(context.nodes[0].time, 0.5);
+    assert.equal(session.reading.acknowledged.samples_elapsed, '8192');
+  } finally { session.dispose(); }
+});
+
+test('a late acknowledged PCM block realigns only the device clock without replaying native advance', async () => {
+  const { session, context, calls, field } = setup({ blockFrames: 8192, leadSeconds: 0.5, lookaheadSeconds: 0.5 });
+  try {
+    await session.pump();
+    context.currentTime = 0.7; // the prior interval has ended during a main-thread stall
+    await session.pump();
+    assert.equal(calls.length, 2);
+    assert.ok(calls.every(call => call.command.operation === 'advance'));
+    assert.equal(session.reading.acknowledged.samples_elapsed, '16384');
+    assert.equal(session.reading.audio.native_origin, '8192');
+    assert.equal(session.reading.audio.device_epoch, 1);
+    assert.equal(session.reading.audio.scheduled_blocks, 1);
+    assert.equal(context.nodes.length, 2);
+    assert.equal(context.nodes[1].time, 1.2);
+    assert.equal(field.last.samples_elapsed, '8192');
+    context.currentTime = session.reading.audio.target_context_seconds;
+    session.present();
+    assert.equal(field.last.samples_elapsed, '16384');
+    assert.equal(session.reading.held, false);
+  } finally { session.dispose(); }
+});
+
 test('read-only views cannot advance, inspect private sources or obtain an audio/native control owner', async () => {
   const { session, calls } = setup({ maxViews: 2 });
   const a = session.openView(), b = session.openView();

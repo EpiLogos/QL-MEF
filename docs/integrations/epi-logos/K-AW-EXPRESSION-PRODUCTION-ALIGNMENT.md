@@ -119,6 +119,12 @@ Dispatch them through the existing CF/Anima/Aletheia composition only when the u
 
 Techne remains Pleroma's atomic-skill substrate. It is not an Aletheia subagent.
 
+### Dated note — 24 September 2026: the teams are built as native agent sets
+
+The owner instructed that Anima and Aletheia be made properly as agent sets (teams), with all of their actual subagents and those subagents' skills and tools defined from the recovered source, and that this does not wait for the QL prime agent loop: the teams exist relative to Factory's TypeScript workflows (which carry the Vāk execution language) and work across Expression development, Technè on constellations, and ordinary development and knowledge work.
+
+This does not reopen the prohibition above. The roster is the source-defined one — Anima with Nous, Logos, Eros, Mythos, Psyche, Sophia and the Techne helper; Aletheia with Anansi, Janus, Moirai, Mercurius, Agora and Zeithoven — carried as Central agent sets `anima` and `aletheia` with one Central AgentProfile per member, and their domain skills ported into `skills/` as `skill/ql/*`. Aletheia stays outside the constitutional frames; Techne stays distinct (Technē_i := Aletheia_i situated in M_i′; the Techne helper is Anima's bounded workshop helper; Pleroma's atomic substrate is now AIKit and the native products). Members, crosswalks and the Factory relation: [`ANIMA-ALETHEIA-TEAMS.md`](ANIMA-ALETHEIA-TEAMS.md).
+
 ## 5. Expression production in Point-Cloud-Demo
 
 Point-Cloud-Demo is the isolated authoring/demo copy of the same Expression engine already integrated into O:I. It is a convenient artifact-production sandbox, not a new Ta-Onta runtime.

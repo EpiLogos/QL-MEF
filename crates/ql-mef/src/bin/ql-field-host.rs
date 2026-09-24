@@ -34,7 +34,7 @@ fn run() -> Result<(), String> {
         return Err("host configuration ceiling exceeded".into());
     }
     let config: HostConfig = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
-    let mut host = FieldHost::open(Path::new(&args[1]), config, Duration::from_secs(5))?;
+    let mut host = FieldHost::open(Path::new(&args[1]), config, Duration::from_secs(20))?;
     let input = io::stdin();
     let mut input = input.lock();
     let output = io::stdout();

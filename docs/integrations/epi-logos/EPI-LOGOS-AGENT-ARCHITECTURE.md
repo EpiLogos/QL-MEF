@@ -175,3 +175,20 @@ Read the following original bodies in `EpiLogos/Epi-Logos-C-Experiments` (read-o
 - [`M5 architecture`](https://github.com/EpiLogos/Epi-Logos-C-Experiments/blob/main/Idea/Bimba/Seeds/M/M5'/M5-ARCHITECTURE.md), [`autoresearch spine`](https://github.com/EpiLogos/Epi-Logos-C-Experiments/blob/main/Idea/Bimba/Seeds/M/M5'/m5-prime-autoresearch-self-improvement-loop.md) and [`m5.h`](https://github.com/EpiLogos/Epi-Logos-C-Experiments/blob/main/Body/S/S0/epi-lib/include/m5.h): knowledge/pedagogy, evaluation/review/recomposition and the full Logos carrier distinct from archaeology.
 
 Publication bases: QL-MEF `2bcdc78c2f97ce13312bf96011bd18bea7b73ea5`, Actuation `8459d503542e3707dc03919ba6f467abb9f60e09`, O:I `fdb7958d16c94cc4538cc4208bf62f8192486ec2`. Inspect actual source successors and callable implementations at execution. No mathematical source, coordinate registry, live graph, machine or model weights are changed by this publication.
+
+## 12. Implemented candidate — 2026-09-22
+
+The cloud implementation lane is published as [#241](https://github.com/EpiLogos/QL-MEF/pull/241). The implementation source is `crates/ql-mef/src/epi_agent.rs`, reached natively through `ql epi-agent constitution|faculty|invoke`; this is an adapter over existing QL owners, not a second coordinate/capability registry.
+
+Current callable standing is intentionally discriminating:
+
+- **#0 Anuttara:** `anuttara.read` joins one of the complete 109 source-language rows to the current compiled Bimba node and declared source relations. Jev, Ananda M1-2 and EBM remain separately named instruments; their absence is not presented as a successful invocation.
+- **#1 Paramaśiva:** `tda.vietoris-rips` runs deterministic persistent H0/H1 over an explicitly supplied precomputed metric, Vietoris–Rips filtration, F2 coefficients, scale and source basis. It reports the algorithm and does not infer canonical topology from a convenient embedding.
+- **#2 Paraśakti:** `bimba.neighborhood` returns exact source adjacency from the current MRegistry. It explicitly reports no inferred reasoning. Neo4j/APOC/GDS and learned representations keep their actual installed/research standing; this operation does not impersonate them.
+- **#3 Mahāmāyā:** `representation.bind` retains source, exact formal-state, representation, modality, asset, rendering, operation and temporal revisions. The actual Expression/Technē renderer remains O:I-owned; learned cross-modal/pathway systems are not fabricated here.
+- **#4 Nara:** `nara.activity.validate` consumes the existing protected source-span/activity contract; `nara.elemental-map` keeps contribution strength separate from confidence and unknown separate from zero under the source EFWA→quaternion remap; `nara.personal-receive` executes the existing subject-local receiver over one accepted coupled M1/M2/M3 event basis, preserving identity/transit/activity order and stale/cross-event refusal. A semantic classifier or decay implementation not present in current native code remains a named gap.
+- **#5 Epii:** `logos.return` carries a complete T/C/T′/C′ evidence envelope and fresh-participant/practice references while explicitly refusing to equate a saved Return with demonstrated later learning. Existing Vāk path/Recognition and C′ Oikonomia bodies retain their own contracts until a joined observed episode binds them.
+
+The constitution read keeps **#0/1 distinct from #0**, and preserves **M4/M4′ = Nara, M5/M5′ = Epii, S4′ = Anima, S5′ = Aletheia**. Canonical graph mutation, training and promotion are false in the returned contracts.
+
+Cloud tests exercise the constitution, full-source Anuttara join, TDA computation, Nara unknown/confidence law and wrong-position refusal. These are implementation/conformance evidence, not a live Jev/EBM/model result or human acceptance. Joined provider, protected-source egress and fresh-participant transfer remain acceptance episodes under #201/#220/#65.
