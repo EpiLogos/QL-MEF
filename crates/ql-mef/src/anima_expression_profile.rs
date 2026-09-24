@@ -250,18 +250,29 @@ mod tests {
         assert_eq!(profile.schema, ANIMA_EXPRESSION_PROFILE_CONTRACT);
         assert_eq!(profile.centres.len(), 7);
         assert!(profile.centre_identity_neq_cymatic_station);
-        assert!(!profile
-            .centres
-            .iter()
-            .any(|c| c.locus_ref == profile.earth_body.locus_ref));
+        assert!(
+            !profile
+                .centres
+                .iter()
+                .any(|c| c.locus_ref == profile.earth_body.locus_ref)
+        );
         assert!(profile.earth_body.standing.contains("not an eighth"));
-        assert!(profile.presentation_mapping.standing.contains("presentation"));
+        assert!(
+            profile
+                .presentation_mapping
+                .standing
+                .contains("presentation")
+        );
     }
 
     #[test]
     fn refuses_wrong_centre_count() {
         let mut bad = session();
         bad.centres.pop();
-        assert!(project_anima_profile(&bad).unwrap_err().contains("exactly seven"));
+        assert!(
+            project_anima_profile(&bad)
+                .unwrap_err()
+                .contains("exactly seven")
+        );
     }
 }

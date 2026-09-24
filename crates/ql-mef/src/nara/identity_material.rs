@@ -236,13 +236,7 @@ mod tests {
     fn seal_accepts_matching_value_and_refuses_stale() {
         let mut identity = field(true, "r1");
         let produced = material("nara:1", "subject:1", &identity).unwrap();
-        let sealed = seal(
-            &mut identity,
-            "nara:1",
-            "subject:1",
-            &produced.value,
-        )
-        .unwrap();
+        let sealed = seal(&mut identity, "nara:1", "subject:1", &produced.value).unwrap();
         assert_eq!(identity.identity_hash_ref.as_ref(), Some(&sealed));
         assert!(material("nara:1", "subject:1", &identity).unwrap().sealed);
         let err = seal(&mut identity, "nara:1", "subject:1", "stale").unwrap_err();
@@ -253,13 +247,7 @@ mod tests {
     fn replace_slot_invalidates_derivative_refs() {
         let mut identity = field(true, "r1");
         let produced = material("nara:1", "subject:1", &identity).unwrap();
-        seal(
-            &mut identity,
-            "nara:1",
-            "subject:1",
-            &produced.value,
-        )
-        .unwrap();
+        seal(&mut identity, "nara:1", "subject:1", &produced.value).unwrap();
         assert!(identity.identity_hash_ref.is_some());
         identity
             .replace_slot(
