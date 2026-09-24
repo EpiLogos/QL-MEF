@@ -1145,6 +1145,43 @@ mod tests {
     }
 
     #[test]
+    fn vak_workflow_types_renders_and_checks_the_published_module() {
+        let output =
+            execute_cli(&["vak".into(), "workflow-types".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(value["contract"], "ql.vak-workflow-types/v1");
+        assert_eq!(value["specifier"], "@epilogos/ql-vak");
+        let published = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(value["path"].as_str().unwrap());
+        assert_eq!(
+            value["module"].as_str().unwrap(),
+            std::fs::read_to_string(&published).unwrap()
+        );
+        let checked = execute_cli(&[
+            "vak".into(),
+            "workflow-types".into(),
+            "--check".into(),
+            published.to_string_lossy().into_owned(),
+        ])
+        .unwrap();
+        assert!(checked.contains("matches the QL Rust contract"));
+        let drifted =
+            std::env::temp_dir().join(format!("ql-vak-drift-{}.d.ts", std::process::id()));
+        std::fs::write(&drifted, "export type ContextFrame = \"CF1\";\n").unwrap();
+        let refused = execute_cli(&[
+            "vak".into(),
+            "workflow-types".into(),
+            "--check".into(),
+            drifted.to_string_lossy().into_owned(),
+        ]);
+        std::fs::remove_file(&drifted).unwrap();
+        assert!(refused.is_err());
+        let capabilities = execute_cli(&["capabilities".into(), "--json".into()]).unwrap();
+        assert!(capabilities.contains("vak.workflow-types"));
+    }
+
+    #[test]
     fn matheme_derive_projects_the_zero_layer_over_the_kernel_contract() {
         let output = execute_cli(&["matheme".into(), "derive".into(), "--json".into()]).unwrap();
         let value: serde_json::Value = serde_json::from_str(&output).unwrap();
