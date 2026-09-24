@@ -8,7 +8,7 @@ description: "METHOD: Gate 5 of Aletheia's six — check CT3 archetypal coherenc
 ## Contract metadata
 
 - Semantic ref: `ql:skill:aletheia-rupa-gate` (`skill/ql/aletheia-rupa-gate`)
-- Native checks: the thought meaning on the Central NOW fixture (`central.now.thoughts.read`); `skill/ql/ql-nara-faculty` for M4 Nara activity and oracle records; `ql mef lenses` for archetypal lenses; `skill/ql/symbolic-protein-reading` voice law for pattern readings.
+- Native checks: the thought meaning on the Central NOW fixture (`central.now.thoughts.read`); QL's Nara faculty (`ql epi-agent invoke <request.json> --json`, position `#4`) for M4 Nara activity and oracle records; `ql mef lenses` for archetypal lenses; `skill/ql/symbolic-protein-reading` voice law for pattern readings.
 - Source: `Body/S/S4/ta-onta/S4-5p-aletheia/S5'/skills/aletheia-rupa-gate/SKILL.md`, blob `9a6cbfbb4b5d6eac388f6e7170abfd3461b47405` (pinned and HEAD agree), with the stub `S5'/skills/gates/aletheia-rupa-gate.md` (HEAD blob `1e56a79b…`).
 - Primary contact: Mythos (`agent/anima-mythos`). Moirai pattern: full CFP3 use of Klotho, Lachesis and Atropos when needed. Frame: CT3, CP 4.5. Human in loop: no.
 

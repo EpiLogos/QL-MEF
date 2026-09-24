@@ -188,7 +188,7 @@ Return doors used below: `projectcentral.now.return` (project with `project`, ro
 | `aletheia_gnosis_enrich` | assign a coordinate or resonance to an entity | Bimba relation through `skill/ql/bimba-cypher` (explicit authority) or a wiki relation return through NOW promotion |
 | `aletheia_session_promote` | promote high-signal memory into Gnosis | `central.now.learnings.distill`, then `projectcentral.now.promote` (`target` `agent-wiki`, `acceptance` `agent-return`) |
 | `aletheia_thought_route` | classify into T0–T5 buckets | `central.now.thoughts.append` with `reading` `T0`…`T5` or `T0-prime`…`T5-prime` (Central) |
-| `aletheia_crystallise` | distil T buckets into canonical form | `central.now.learnings.distill`; formal T/T′ envelope through `ql epi-agent invoke` `logos.return` (`skill/ql/ql-logos-return`) |
+| `aletheia_crystallise` | distil T buckets into canonical form | `central.now.learnings.distill`; formal T/T′ envelope through `ql epi-agent invoke` `logos.return` |
 | `aletheia_seed_refresh` | morning SEED.md from evening crystallisation | carried records with next-review conditions in NOW; the day close (`central.day.lifecycle`, owner token); `aikit now-context prepare` builds the next participant view |
 | `aletheia_ingest` | Sophia disclosure + Moirai summaries into Epii's inbox | NOW `handoff` with source and evidence refs; `aikit gateway send` to the Aletheia/Epii Position; owner-side `aikit flow contemplate` |
 | `epii_invoke_anima` | Epii asks an Anima session for VAK evaluation | `aikit gateway send` to `central:position:project:O-I:anima-4` |
@@ -196,7 +196,7 @@ Return doors used below: `projectcentral.now.return` (project with `project`, ro
 | `aletheia_episodic_record` | QL-typed personal episode | `central.now.thoughts.append` (dated, attributed, T reading); astrological stamp waits on spec B |
 | `aletheia_episodic_search` | BFS over the episodic graph | `central.now.thoughts.read`, `aikit knowledge search`; decan/tick12 filters wait on spec B |
 | `aletheia_episodic_arc_open` / `_arc_close` / `_arc_status` | named arcs (sagas) | NOW clearings: `central.now.list\|read` for status; allocation and lifecycle are owner-token Actions (`central.now.allocate`, `central.now.lifecycle`) requested through a NOW `question` |
-| `aletheia_episodic_oracle_arc` | oracle cast as a four-face saga | `skill/ql/ql-nara-faculty` (`nara.activity.validate`) + the cast's thoughts in NOW |
+| `aletheia_episodic_oracle_arc` | oracle cast as a four-face saga | QL's Nara faculty `ql epi-agent invoke` position `#4` (`nara.activity.validate`) + the cast's thoughts in NOW |
 | `aletheia_episodic_logos_stage` | Logos cycle stage episodes | thoughts in NOW carrying the stage; the formal return through `logos.return` |
 | `aletheia_episodic_mobius_arc` | Möbius return arc | `T5` + `T0` thoughts and a NOW `question` (`skill/ql/day-night-pass`) |
 | `aletheia_episodic_ingest_thoughts` | T buckets → typed episodes | `central.now.learnings.distill` over the named fixtures |
