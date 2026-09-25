@@ -20,6 +20,7 @@ use std::str::FromStr;
 pub mod configuration;
 mod epi_agent_command;
 pub mod m_ledger;
+mod shape_command;
 mod techne_command;
 pub mod vak_composition;
 
@@ -320,6 +321,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
         Some("context-frame") => plain(context_frame_command(&args[1..], json)),
         Some("vak") => plain(vak_command(&args[1..], json)),
         Some("techne") => plain(techne_command::command(&args[1..], json)),
+        Some("shape") => plain(shape_command::command(&args[1..], json)),
         Some("epi-agent") => plain(epi_agent_command::command(&args[1..], json)),
         Some("service") => plain(service_command(&args[1..], json)),
         Some("system") => plain(system::system_command(json)),
@@ -374,6 +376,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.compose",
             "vak.workflow-types",
             "techne.reading",
+            "shape.presentation",
             "epi-agent.constitution",
             "epi-agent.faculty",
             "epi-agent.invoke",
