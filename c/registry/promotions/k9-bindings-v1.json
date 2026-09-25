@@ -303,6 +303,30 @@
         "crates/ql-mef/src/vak_workflow_types.rs"
       ],
       "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-core/src/shape_presentation.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Read-only numerical presentation of an already-owned ql-core shape. It supplies versioned display coordinates for the sixfold ring and the 6x6 grid and checks local slot constraints. It creates no members, relations, semantic metric, or second geometry owner.",
+      "tests": [
+        "crates/ql-core/src/shape_presentation.rs",
+        "crates/ql-cli/src/shape_command.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/shape_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "JSON and plain-text CLI adapter for the existing ql-core shape presentation. It discloses one exact shape reference and refuses unknown references. It does not persist, mutate, or interpret the presentation as a semantic relation.",
+      "tests": [
+        "crates/ql-cli/src/shape_command.rs",
+        "crates/ql-core/src/shape_presentation.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
