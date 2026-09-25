@@ -17,6 +17,7 @@ mod pole;
 mod position;
 mod relation_classification;
 mod shape;
+mod shape_presentation;
 mod shape_ref;
 mod structural;
 #[path = "carrier.rs"]
@@ -83,6 +84,10 @@ pub use shape::{
     RELATIONAL_SIXFOLD_SHAPE_REF, RelationalSixfold, SEVEN_FOLD_SHAPE_REF, SIX_BY_SIX_SHAPE_REF,
     SecondSpandaGeometry, SixBySixField, TEN_BY_TEN_SHAPE_REF, THREE_TO_ONE_OPERATOR_REF,
     TenByTenProjection,
+};
+pub use shape_presentation::{
+    PresentationAddress, PresentationSite, SHAPE_PRESENTATION_VERSION, ShapePresentation,
+    shape_presentation,
 };
 pub use shape_ref::resolve_shape_ref;
 pub use structural::{

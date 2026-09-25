@@ -16,14 +16,14 @@ def parse_frontmatter(content):
     match = FRONTMATTER_PATTERN.match(content)
     if not match:
         return None, content
-    
+
     fm_text = match.group(1)
     fm_data = {}
     for line in fm_text.split('\n'):
         if ':' in line:
             key, val = line.split(':', 1)
             fm_data[key.strip()] = val.strip()
-            
+
     # Remove frontmatter from content for body processing
     body = content[match.end():]
     return fm_data, body
@@ -37,15 +37,15 @@ def scout(file_path):
     """P1: Scout - The Map"""
     if not os.path.exists(file_path):
         return {"error": "File not found"}
-    
+
     with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
         full_text = f.read()
 
     fm_data, body = parse_frontmatter(full_text)
-    
+
     skeleton = []
     lines = body.split('\n')
-    
+
     # Calculate offset if frontmatter existed
     fm_lines = full_text[:full_text.find(body)].count('\n') if body != full_text else 0
 
@@ -56,7 +56,7 @@ def scout(file_path):
 
     for i, line in enumerate(lines):
         line_stripped = line.strip()
-        
+
         # 1. Header Match (Standard Markdown Headers)
         match_header = HEADER_PATTERN.match(line)
         if match_header:
@@ -125,7 +125,7 @@ def read_section(file_path, target_header=None, target_ql=None):
     # Find start line
     start_idx = -1
     found_level = 0
-    
+
     for i, line in enumerate(lines):
         match = HEADER_PATTERN.match(line)
         if match:
@@ -140,7 +140,7 @@ def read_section(file_path, target_header=None, target_ql=None):
                 start_idx = i
                 found_level = len(match.group(1))
                 break
-    
+
     if start_idx == -1:
         return f"Error: Section '{target_header or target_ql}' not found."
 
@@ -153,17 +153,17 @@ def read_section(file_path, target_header=None, target_ql=None):
             if level <= found_level:
                 end_idx = i
                 break
-    
+
     return "".join(lines[start_idx:end_idx])
 
 def extract_threads(file_path):
     """P3: Threads - The Weave"""
     if not os.path.exists(file_path):
         return []
-    
+
     with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
         text = f.read()
-        
+
     links = LINK_PATTERN.findall(text)
     # Dedup and sort
     return sorted(list(set(links)))
