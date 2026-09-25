@@ -19,6 +19,23 @@ fn all_three_consumers_share_one_event_generation_clock_and_source_return() {
     let (mut s, commands) = setup();
     let before = s.snapshot();
     assert_eq!(before["clock"]["degree720"], 359);
+    assert_eq!(
+        before["form"]["orientation_standing"],
+        "M3-source-codon-rotation-not-identity-quaternion"
+    );
+    assert_eq!(
+        before["form"]["physical_form"]["schema"],
+        "ql.m3-physical-form-target/v1"
+    );
+    assert_eq!(
+        before["form"]["physical_form"]["standing"],
+        "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose"
+    );
+    assert!(
+        before["form"]["physical_form"]["pose_ordinal"]
+            .as_u64()
+            .is_some()
+    );
     let first = s.apply(commands[0].clone()).unwrap();
     let f = s.snapshot();
     assert_eq!(f["form"]["address"], 56);

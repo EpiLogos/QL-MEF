@@ -776,6 +776,32 @@
         "crates/ql-cli/tests/m1_engine_cli.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/anima_expression_profile.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Nara Anima expression profile: seven-centre projection for the Expression stage. Centres are not cymatic stations and do not invent clinical or particle identity.",
+      "tests": [
+        "crates/ql-mef/src/anima_expression_profile.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/identity_material.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Sealed Nara identity material over explicit native identity fields. Derivative refs invalidate on slot replace; no renderer or agent state becomes identity authority.",
+      "tests": [
+        "crates/ql-mef/src/nara/identity_material.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }

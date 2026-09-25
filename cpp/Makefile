@@ -4,8 +4,15 @@ PREFIX ?= /usr/local
 BUILD_DIR ?= build
 C_ROOT ?= ../c
 CPPFLAGS += -Iinclude -I$(C_ROOT)/include
-JSON_CFLAGS := $(shell pkg-config --cflags json-c)
+JSON_CFLAGS := $(shell pkg-config --cflags json-c | sed 's/-I/-isystem /g')
 JSON_LIBS := $(shell pkg-config --libs json-c)
+# On Darwin, Homebrew LLVM/json-c need runtime search paths when CXX is not the CLT.
+comma := ,
+RPATH_FLAGS :=
+ifeq ($(shell uname -s),Darwin)
+  RPATH_FLAGS += $(foreach d,$(wildcard /opt/homebrew/opt/llvm/lib/c++ /opt/homebrew/opt/llvm/lib/unwind /opt/homebrew/opt/json-c/lib /usr/local/opt/llvm/lib/c++ /usr/local/opt/json-c/lib),-Wl$(comma)-rpath$(comma)$(d))
+endif
+
 LIB := $(C_ROOT)/build/libql-mef-c.a
 .PHONY: all test install
 all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test
@@ -14,7 +21,7 @@ $(BUILD_DIR):
 $(LIB):
 	$(MAKE) -C $(C_ROOT) all
 $(BUILD_DIR)/ql-field-worker: src/field_worker.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) -lm -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
 test: all
