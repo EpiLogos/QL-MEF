@@ -78,6 +78,16 @@ Psyche's own file writes `(4.0/1-4.4/5)` (the CT4b′ fractal doubling); the sou
 | `…/aletheia-plugin-integrate` | `skill/ql/aletheia-plugin-integrate` | Aletheia |
 | `…/aletheia-{ql,m,s,m-prime,rupa,collab}-gate` (+ `gates/*.md` stubs) | `skill/ql/aletheia-ql-gate`, `…-m-gate`, `…-s-gate`, `…-m-prime-gate`, `…-rupa-gate`, `…-collab-gate` | Aletheia — the source's six-skill gate family kept as six skills with one result vocabulary |
 
+### New — written for the O:I Expressions medium (2026-09-26)
+
+No source skill preceded these; they give the organs native operations over the Expression act (§6a).
+
+| Native id | Team | Office |
+|---|---|---|
+| `skill/ql/anima-expressive-composition` ([skill](../../../skills/anima-expressive-composition/SKILL.md)) | Anima (Anima, Eros, Mythos) | choose existing material first, bind roles, perform; create or fork only when missing and always save reusable |
+| `skill/ql/aletheia-expressive-return` ([skill](../../../skills/aletheia-expressive-return/SKILL.md)) | Aletheia (Aletheia, Moirai, Agora, Zeithoven) | explanatory content, Technè continuation, evaluation, `act_complete` with Return, curation of reusable forms |
+| `skill/ql/chronos-act-continuity` ([skill](../../../skills/chronos-act-continuity/SKILL.md)) | both (Psyche, Janus, Sophia) | read and seek the act timeline, playback, completion versus continuation, re-entry, outward versus returning passages |
+
 ### Mapped — an existing native skill or command does the job
 
 | Source skill | Native mapping | Why this one |
@@ -243,6 +253,21 @@ The teams exist relative to Factory's TypeScript workflows (Factory #195/#197; `
 1. **Expression development** (3:3 reading, Anima_i). Anima composes the undertaking through C′; Nous grounds, Logos specifies, Eros operates and verifies, Mythos finds the organising image, Psyche keeps continuity, Sophia integrates. Aletheia returns what happened: Moirai rehears, Agora fuses plural readings, Zeithoven hands the next score forward; the M′ and Rupa gates check the artifact.
 2. **Technè on constellations** (4:2 reading). Technē_i := Aletheia_i situated in M_i′, operating the deep instrument through its native Actions (`ql techne reading`, the instrument's published Actions). Aletheia leads with stack traverse, the QL and M′ gates, Anansi placement and Moirai distillation; the collaboration gate stands before any canonical change. `agent/anima-techne-helper` is not Technē: it only prepares worktrees and terminal workspaces.
 3. **Ordinary development and knowledge work.** No QL prime loop is required. The Anima lead dispatches Logos for plans, Eros for tests and verification, Mythos for debugging, Sophia for finishing and landing, Nous for clearing and retrieval, Psyche for NOW continuity; Aletheia serves retrieval, distillation, audits and improvement proposals. A Vāk block is at most a silent one-line reading.
+
+## 6a. The Expressions medium: operations per organ
+
+Factory, Expressions and Technè share one act whose concrete operation differs by mode (O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §6–§7). The operations are Expression-world requests (`"schema":"oi.expression-world/v1"`, snake_case `operation`) sent through the existing `oi desktop expression [SOCKET] REQUEST_JSON` seam; saving reusable material uses the ordinary Expression requests `edit` (change `reuse_set`) and `save_as`/`save`. Shapes: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 and §4. Reusable material lives in the Central root register `Control/agents/expressive-material/<kind>/<slug>.expression.json`.
+
+| Organ | Operative contribution | Expression-system consequence | Native operations | Method |
+|---|---|---|---|---|
+| Khora | enter and continue the actual World, work and participants | open the selected Expression and restore cast, Scene and selection | `act_open` (new or resumed `act_ref`, `mode`, `expression_ref`, `cast`, `subject_ref`, `instrument_ref`); `open_file` for saved material | opening step of `skill/ql/anima-expressive-composition`; resume in `skill/ql/chronos-act-continuity` §5 |
+| Hen | resolve forms, subjects, artifacts and reusable material | supply characters, goal and object forms, Scenes and exact role bindings | `material_list` (`kind`, `association`); `central.files.resolve`; `bindings` of `act_select` (`agent`, `object`, `text`, `value`); profile `expressive_character_ref` | `skill/ql/anima-expressive-composition` §2–§3 |
+| Pleroma | resolve the available skills, actions and instruments | disclose the material and performance operations available to this act | `oi desktop expression capabilities`; `{"schema":"oi.expression-world/v1","operation":"capabilities"}`; `act_operate` records each skill, task, message or instrument operation with its native ref | `skill/ql/anima-expressive-composition` §4; `skill/ql/aletheia-expressive-return` §3 |
+| Chronos | relate occasion, events, order, completion and continuation | advance, resume and play Scene passages; present re-entry | `act_list`, `act_inspect`, `act_seek`, `act_continue`, `act_complete`, `act_checkpoint`/`act_restore`; Central `central.day.read`, NOW Actions; `aikit routine` | `skill/ql/chronos-act-continuity` |
+| Anima | compose and conduct the undertaking through C′ and its team | choose, create and perform its composition, transformations and gestures | `act_select`, `act_text`, `act_gesture`; `fork` + `edit` with `reuse_set` (incl. `variation_of`, `authored_by`) + `save_as` | `skill/ql/anima-expressive-composition` |
+| Aletheia | develop knowledge, evaluate the result and carry Return | populate explanatory material, conduct Technè work, curate reusable forms | `act_text` for explanatory roles; `act_continue` to `techne` and back with `act_operate`; `act_complete` with `return_ref`; `reuse_set` + `save_as`/`save` with associations | `skill/ql/aletheia-expressive-return` |
+
+Khora, Hen and Pleroma have no team of their own here: their operations are steps inside the Anima, Aletheia and Chronos Methods. The law across all of them: choose premade material first, create only when it is missing, and always save what was created as reusable material.
 
 ## 7. Positions and the twelve situated roles
 
