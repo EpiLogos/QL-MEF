@@ -256,7 +256,7 @@ The teams exist relative to Factory's TypeScript workflows (Factory #195/#197; `
 
 ## 6a. The Expressions medium: operations per organ
 
-Factory, Expressions and Technè share one act whose concrete operation differs by mode (O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §6–§7). The operations are Expression-world requests (`"schema":"oi.expression-world/v1"`, snake_case `operation`) sent through the existing `oi desktop expression [SOCKET] REQUEST_JSON` seam; saving reusable material uses the ordinary Expression requests `edit` (change `reuse_set`) and `save_as`/`save`. Shapes: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 and §4. Reusable material lives in the Central root register `Control/agents/expressive-material/<kind>/<slug>.expression.json`.
+Factory, Expressions and Technè share one act whose concrete operation differs by mode (O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §6–§7). The operations are Expression-world requests (`"schema":"oi.expression-world/v1"`, snake_case `operation`) sent through the existing `oi desktop expression [SOCKET] REQUEST_JSON` seam; saving reusable material uses the ordinary Expression requests `edit` (change `reuse_set`) and `save_as`/`save`. Shapes: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 and §4. Reusable material lives in the Central root register `Work/O-I/desktop/cradle/material/expressive-material/<kind>/<slug>.expression.json`.
 
 | Organ | Operative contribution | Expression-system consequence | Native operations | Method |
 |---|---|---|---|---|

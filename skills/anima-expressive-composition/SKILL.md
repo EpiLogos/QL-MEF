@@ -9,7 +9,7 @@ description: "METHOD: Choose, adapt and perform the Expression material for an a
 
 - Semantic ref: `ql:skill:anima-expressive-composition` (`skill/ql/anima-expressive-composition`)
 - Native owner of every operation: the O:I desktop kernel, through the existing `oi desktop expression [SOCKET] REQUEST_JSON` seam. A body whose `schema` is `oi.expression-world/v1` is an Expression-world request (`act_*`, `material_list`); a body without it is an ordinary Expression request (`open_file`, `fork`, `edit`, `save_as`, `save`, `inspect`). Discovery of the implemented operations: `oi desktop expression capabilities` and `oi desktop expression '{"schema":"oi.expression-world/v1","operation":"capabilities"}'`.
-- Material register: Central root, `Control/agents/expressive-material/<kind>/<slug>.expression.json`, read through `central.files.*` (`ctrl --json action run central.files.list '{"path":"Control/agents/expressive-material/scene"}'`, `central.files.resolve '{"ref":"<file_ref>"}'`).
+- Material register: `Work/O-I/desktop/cradle/material/expressive-material/<kind>/<slug>.expression.json` (O:I `MATERIAL_REGISTER`). `material_list` answers `{materials, folders, unreadable, truncated}`; `folders[kind]` is the owner-disclosed `parent` for `save_as` into the register.
 - Contract: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 (reuse block), §3 (bindings), §4 (act and operations). The kernel types in `desktop/cradle/kernel/src/expression_world.rs` are the contract of record; requests refuse unknown fields.
 - Source: O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §1, §4, §6, §7 (Anima row), §9 items 3, 4 and 7. No C-Experiments skill body preceded this one; it is new practice for the S4′ Anima organ.
 - Used by: `agent/anima` (owner, CF5 conduct), `agent/anima-eros` (CF3 exchange with the Expression powers), `agent/anima-mythos` (CF4 organising image); dispatch per `skill/ql/anima-orchestration`. Continuation and replay are `skill/ql/chronos-act-continuity`; Return and curation are `skill/ql/aletheia-expressive-return`.
@@ -33,7 +33,7 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_open"
   "act_ref":"act:explain-handoff-01","mode":"expressions","expression_ref":"expression:live-run",
   "cast":[{"role":"lead","participant_ref":"agent:anima","profile_ref":"agent-profile:anima","character_ref":"central:…/character/anima.expression.json"},
           {"role":"goal","participant_ref":"goal:…"}],
-  "subject_ref":"<goal or subject ref>","instrument_ref":null,"actor":"agent:anima"}'
+  "subject_ref":"<goal or subject ref>","actor":"agent:anima"}'
 ```
 
 `act_open` on an existing `act_ref` resumes that act with its cast, material and selection; open a new act only for a new undertaking.
@@ -63,7 +63,7 @@ Each entry is `{file_ref, revision, title, kind, roles, states, gestures, associ
 
 ```sh
 oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_select",
-  "act_ref":"act:explain-handoff-01","file_ref":"<file_ref from material_list>","scene_ref":"<scene ref>",
+  "act_ref":"act:explain-handoff-01","material":{"file_ref":"<file_ref from material_list>","scene_ref":"<scene ref>"},
   "bindings":{"lead":{"kind":"agent","agent_ref":"agent:anima","profile_ref":"agent-profile:anima","character_ref":"central:…","state":"speaking","label":"Anima"},
               "goal":{"kind":"object","subject_ref":"<goal ref>","label":"Goal"},
               "caption":{"kind":"text","text":"Why the draft goes to Logos next"}},
@@ -72,7 +72,7 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_text"
   "act_ref":"act:explain-handoff-01","role":"progressText","value":0.4,"text":"Specification 2 of 5","actor":"agent:anima"}'
 ```
 
-For a character, select a named state instead of a Scene (`"state":"working"` with the character's `file_ref`). Bind every role the material exposes; an unbound role keeps its authored placeholder, which is acceptable only when that is the intent. `act_select` appends a passage to the act's sequence and performs through the kernel's `scene_material_set`; the engine carries the physics and transition.
+For a character, change its state object-locally instead of changing the Scene: `"role":"lead","state":"working","material":{"file_ref":"<the character's file_ref>"}` and no `scene_ref` — the role's occupant takes that state's `self` material while the current Scene continues. A `material.scene_ref` is a Scene change. Bind every role the material exposes; an unbound role keeps its authored placeholder, which is acceptable only when that is the intent. `act_select` appends a passage to the act's sequence and performs through the kernel's `scene_material_set`; the engine carries the physics and transition.
 
 ## 4. Gestures for skill invocations
 
@@ -105,7 +105,7 @@ oi desktop expression '{"operation":"edit","expression_ref":"expression:explanat
       "variation_of":{"file_ref":"<source file_ref>","revision":"<source revision>"},
       "authored_by":"agent:anima"}}]}'
 oi desktop expression '{"operation":"save_as","expression_ref":"expression:explanation-two-voices","expected_revision":<n>,
-  "parent":<location of Control/agents/expressive-material/scene>,"name":"explanation-two-voices.expression.json",
+  "parent":<folders.scene from material_list>,"name":"explanation-two-voices.expression.json",
   "operation_ref":"op:…","actor":"agent:anima","actor_kind":"agent"}'
 ```
 
