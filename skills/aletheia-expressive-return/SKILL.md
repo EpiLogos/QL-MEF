@@ -64,6 +64,8 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_compl
   "act_ref":"<act_ref>","return_ref":"<ref returned by the NOW Action>","result":"<one-paragraph result>","result_role":"resultText","actor":"agent:aletheia"}'
 ```
 
+Write material refs in Central's canonical form (`central:path:<root>:<relative path>`, exactly as `material_list` returns them) so the Return resolves. A Return is never rewritten by re-sending it (that allocates a new record): to correct one, write the corrected Return, then resolve the earlier record pointing at its successor — `ctrl --json action run projectcentral.now.update '{"project":"<Name>","id":"<earlier id>","status":"resolved","preserve_refs":"ProjectCentral/now/agents/<successor id>.json"}'`. The act's `return_ref` keeps naming the original; the resolved record carries the way forward.
+
 `act_complete` appends the `return` passage. Completion with unfinished work is not a completion: continue the act instead (`skill/ql/chronos-act-continuity`, incomplete branch).
 
 ## 6. Curate reusable material
