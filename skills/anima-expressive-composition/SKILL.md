@@ -42,7 +42,7 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_open"
 
 ```sh
 oi desktop expression '{"schema":"oi.expression-world/v1","operation":"material_list",
-  "kind":"scene","association":{"workflow_keys":["expression-development"]}}'
+  "kind":"scene","association":{"workflow_key":"expression-development"}}'
 oi desktop expression '{"schema":"oi.expression-world/v1","operation":"material_list","kind":"scene"}'
 ```
 
@@ -85,7 +85,7 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_gestu
   "actor":"agent:anima"}'
 ```
 
-Use the gesture named in the bound character's `gestures`, or the skill's associated gesture material (`material_list` with `association.skill_refs`). Each separate invocation is its own occurrence. Record the functional operation itself with `act_operate` (`mode` + its native ref: the Factory task, skill or message ref), so the expressive passage and the operation stay tied.
+Use the gesture named in the bound character's `gestures`, or the skill's associated gesture material (`material_list` with `association.skill_ref`; the filter takes one singular value per key — `workflow_key`, `task_type`, `skill_set_ref`, `skill_ref`, `event_family` — while the stored `reuse.associations` holds the plural lists). Each separate invocation is its own occurrence. Record the functional operation itself with `act_operate` (`mode` + its native ref: the Factory task, skill or message ref), so the expressive passage and the operation stay tied.
 
 ## 5. Create or adapt when nothing fits
 
