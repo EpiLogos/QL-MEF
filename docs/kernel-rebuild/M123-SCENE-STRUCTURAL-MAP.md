@@ -36,7 +36,7 @@ decisions only the owner can make.
   So the map cites the pin. How the registry should follow the live
   authority that C-Experiments declared on 13 July is a separate open task,
   not settled here. That session measured the pin against the live graph
-  (branch `feat/bimba-live-divergence`, `41ad072`,
+  (draft #255, `41ad072`,
   `docs/kernel-rebuild/BIMBA-LIVE-DIVERGENCE.md`) and ledgered the
   differences:
   - Live has no counterpart for decan `planetaryRuler` (114 values) or
@@ -296,7 +296,7 @@ ledger's own JSON shape are in each appendix.
 | g0-m2:shem-links | synthetic `planet_link`/`decan_link`/`element_id` vs arcs | 63/72, 67/72, 56/72 | owner (D11) |
 | g0-m2:shem-expresses | 26 `EXPRESSES_THROUGH`, 7 `MANIFESTS_THROUGH` | 33 | owner (D11) |
 | g0-m2:maqam-ruler | family constant vs mode tonic/dominant | 43/72 | owner (D12) |
-| g0-m2:straggler-relations | 9 Neptune/Pluto edges not compiled; **already ledgered** as `bimba-live-relation-stragglers-uncompiled` on `feat/bimba-live-divergence`, so do not duplicate | 9 | fix the compiler |
+| g0-m2:straggler-relations | 9 Neptune/Pluto edges not compiled; **already ledgered** as `bimba-live-relation-stragglers-uncompiled` in #255, so do not duplicate. The compiler fix ships with the owner's pin ruling, because it regenerates the registry the same way a pin move does | 9 | fix the compiler |
 | g0-m2:chromatic-paths | 40 chromatic edges unread; supersedes "17 gaps" | 10 of 17 | fix the generator |
 | gate0-m3-clock-inscription-family-order | LUT A,T,C,G from 0° vs graph G,A,C,T | 270/360 | fix after D1 |
 | gate0-m3-codon-hexagram-pairing | GGG↔Li vs GGG=Qian | 3 of 4 prototypes | owner (D2) |
