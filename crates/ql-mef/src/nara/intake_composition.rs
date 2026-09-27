@@ -5,7 +5,8 @@
 
 use serde_json::{Value, json};
 
-use super::BioQuaternion;
+use super::{BioQuaternion, ConsentState, SourceRevision};
+use crate::epi_agent::{ElementReading, NaraElementalRequest, nara_elemental_map};
 use crate::m2;
 
 const POLICY: &str = "ql.nara-natal-keplerian-dignity-efwa/v1";
@@ -102,6 +103,61 @@ fn column(table: &m2::RetainedTable, name: &str) -> Result<usize, String> {
         .ok_or_else(|| format!("native M2 planet table lacks {name}"))
 }
 
+fn centre_natal_orientation(
+    raw: Option<[f64; 4]>,
+    snapshot_ref: &str,
+    registry_revision: &str,
+    ordinal: usize,
+    planet_ids: &[usize],
+) -> Result<Value, String> {
+    if raw.is_some_and(|values| values.iter().any(|v| !v.is_finite() || *v < 0.0)) {
+        return Err("natal centre evidence must be finite and nonnegative".into());
+    }
+    let available = raw.is_some_and(|values| values.iter().any(|value| *value > 0.0));
+    let quaternion = if available {
+        let [earth, fire, water, air] = raw.expect("available evidence");
+        let contribution = |contribution_strength| {
+            Some(ElementReading {
+                contribution_strength,
+                confidence: None,
+            })
+        };
+        // This is the existing strict native elemental mapper. No permission
+        // to actuate is inferred from astronomical source material.
+        nara_elemental_map(NaraElementalRequest {
+            earth: contribution(earth),
+            fire: contribution(fire),
+            water: contribution(water),
+            air: contribution(air),
+            source: SourceRevision {
+                source_ref: snapshot_ref.into(),
+                revision: snapshot_ref.into(),
+                standing_ref: POLICY.into(),
+            },
+            consent: ConsentState::Withheld,
+        })?["normalized_quaternion"]
+            .clone()
+    } else {
+        Value::Null
+    };
+    Ok(json!({
+        "status": if available { "available" } else { "unavailable" },
+        "quaternion": quaternion,
+        "reason": if available { None } else { Some("no nonzero natal elemental evidence") },
+        "derivation": {
+            "method": "ql.nara-elemental-reading/v1", "input": "raw_efwa_evidence",
+            "normalization": "L2; zero unavailable",
+            "mapping": {"w":"Earth", "x":"Fire", "y":"Water", "z":"Air"},
+            "snapshot_ref": snapshot_ref, "policy": POLICY,
+            "source_revision": SOURCE_REVISION, "source_blob": SOURCE_BLOB,
+            "native_m2_registry_revision": registry_revision,
+            "native_m2_chakra_id": ordinal + 1, "planet_ids": planet_ids
+        },
+        "role": "natal-only elemental direction; not complete identity, amplitude, phase or coupling",
+        "effect_authority_granted": false
+    }))
+}
+
 /// Calculate a source-attributed natal reading from the existing provider's
 /// `sky.bodies` boundary. The caller remains responsible for admitting the
 /// provider receipt. Missing/unknown birth time must not become a zero chart.
@@ -175,8 +231,9 @@ pub fn natal_composition(natal: &Value) -> Result<Value, String> {
         planetary_raw[element] = weight;
         raw[element] += weight;
 
-        // This partitions evidence by the actual M2 relation. It does not
-        // derive centre orientation, gain, oscillation phase, or coupling.
+        // Membership comes from the actual retained M2 relation. Its evidence
+        // determines a natal direction below, independently of receiver gain,
+        // oscillation phase, or coupling.
         let ordinal = if id == 0 {
             if chakra != 0 {
                 return Err("native M2 Sun parent mapping changed".into());
@@ -222,14 +279,22 @@ pub fn natal_composition(natal: &Value) -> Result<Value, String> {
     .normalized()?;
     let centres: Vec<Value> = (0..7)
         .map(|ordinal| {
-            json!({
+            let natal_orientation = centre_natal_orientation(
+                Some(centre_raw[ordinal]),
+                snapshot_ref,
+                catalogue.registry_revision(),
+                ordinal,
+                &centre_planets[ordinal],
+            )?;
+            Ok(json!({
                 "ordinal": ordinal, "native_m2_chakra_id": ordinal + 1,
                 "label": CENTRES[ordinal], "planet_ids": centre_planets[ordinal],
                 "raw_efwa_evidence": centre_raw[ordinal],
-                "standing": "native M2 evidence partition; receiver dynamics not derived"
-            })
+                "natal_orientation": natal_orientation,
+                "standing": "native M2 evidence membership and normalized natal direction; receiver dynamics not derived"
+            }))
         })
-        .collect();
+        .collect::<Result<_, String>>()?;
     Ok(json!({
         "schema": "ql.nara-natal-composition/v1", "policy": POLICY,
         "policy_source": {
@@ -250,7 +315,7 @@ pub fn natal_composition(natal: &Value) -> Result<Value, String> {
         "normalization": {"elemental_balance": "L1", "q_natal": "L2; zero refused"},
         "centre_evidence": centres,
         "earth_body": {"role": "distinct grounding anchor; not an eighth chakra or planetary-array entry"},
-        "dynamics_standing": "orientation, gain, oscillator phase, modes and pairwise coupling require their own admitted source policy",
+        "dynamics_standing": "centre natal elemental directions are derived; full identity, receiver gain, oscillator phase, modes and pairwise coupling are not supplied by this reading",
         "private": true, "public_export": false
     }))
 }
@@ -339,10 +404,66 @@ mod tests {
             let centre = &reading["centre_evidence"][ordinal];
             assert_eq!(centre["planet_ids"], json!(planets));
             assert_eq!(centre["native_m2_chakra_id"], json!(ordinal + 1));
+            let direction = &centre["natal_orientation"];
+            assert_eq!(direction["status"], "available");
+            assert_eq!(
+                direction["quaternion"],
+                json!({"w":0.0,"x":1.0,"y":0.0,"z":0.0})
+            );
+            assert_eq!(direction["derivation"]["planet_ids"], centre["planet_ids"]);
+            assert_eq!(direction["derivation"]["native_m2_chakra_id"], ordinal + 1);
+            assert_eq!(
+                direction["derivation"]["snapshot_ref"],
+                reading["snapshot_ref"]
+            );
+            assert_eq!(direction["effect_authority_granted"], false);
             assert!(centre.get("orientation").is_none());
             assert!(centre.get("amplitude").is_none());
         }
         assert!(reading["planetary_contributions"][0]["receiving_centre_ordinal"].is_null());
+    }
+
+    #[test]
+    fn centre_direction_uses_actual_evidence_ratios_without_inventing_strength() {
+        let reading = natal_composition(&controlled_input([
+            45.0, 105.0, 75.0, 75.0, 75.0, 195.0, 30.0, 75.0, 75.0, 75.0,
+        ]))
+        .unwrap();
+        for centre in reading["centre_evidence"].as_array().unwrap() {
+            let raw = values(centre, "raw_efwa_evidence");
+            let norm = raw.iter().map(|x| x * x).sum::<f64>().sqrt();
+            let q: BioQuaternion =
+                serde_json::from_value(centre["natal_orientation"]["quaternion"].clone()).unwrap();
+            for (actual, raw) in [q.w, q.x, q.y, q.z].iter().zip(raw) {
+                assert!((actual - raw / norm).abs() < 1e-12);
+            }
+            assert!(centre.get("gain").is_none());
+            assert!(centre.get("q_identity").is_none());
+        }
+        let root = &reading["centre_evidence"][0]["natal_orientation"]["quaternion"];
+        assert!(root["w"].as_f64().unwrap() > 0.0);
+        assert!(root["z"].as_f64().unwrap() > 0.0);
+    }
+
+    #[test]
+    fn missing_or_zero_centre_evidence_never_becomes_neutral_orientation() {
+        for raw in [None, Some([0.0; 4])] {
+            let direction = centre_natal_orientation(raw, "source", "revision", 0, &[]).unwrap();
+            assert_eq!(direction["status"], "unavailable");
+            assert!(direction["quaternion"].is_null());
+        }
+        for value in [f64::NAN, f64::INFINITY, -1.0] {
+            assert!(
+                centre_natal_orientation(
+                    Some([value, 0.0, 0.0, 0.0]),
+                    "source",
+                    "revision",
+                    0,
+                    &[]
+                )
+                .is_err()
+            );
+        }
     }
 
     #[test]
@@ -389,6 +510,10 @@ mod tests {
         assert_eq!(before["planetary_contributions"][6]["element"], "Fire");
         assert_eq!(after["planetary_contributions"][6]["element"], "Earth");
         assert_ne!(before["centre_evidence"][0], after["centre_evidence"][0]);
+        assert_ne!(
+            before["centre_evidence"][0]["natal_orientation"]["quaternion"],
+            after["centre_evidence"][0]["natal_orientation"]["quaternion"]
+        );
         for ordinal in 1..7 {
             assert_eq!(
                 before["centre_evidence"][ordinal],
