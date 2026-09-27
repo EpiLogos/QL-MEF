@@ -2,6 +2,40 @@
 
 **UX/practice amendments: publication authorised; H ratification pending (Satya).** The new UX source minute, crosswalk, trace and practice guidance are available for review and provisional use against the already-approved source. Merge and passing checks do not ratify them. Existing architecture, native authority and source standings remain unchanged. See `docs/kernel-rebuild/ux-publication-standing.json`.
 
+## Read this first: one system, not a stack of engines
+
+Everything here is **one construction**. Its layers are not alternatives, and no
+layer is "old code":
+
+- **Bimba coordinate graph** — the source of meaning. Every M coordinate, its
+  properties and its typed relations (compiled in `fixtures/kernel/m-tree-v1.json`
+  / `m_tree`; full property content in Epi-Logos-C-Experiments
+  `Idea/Bimba/Map/datasets/*-deep/`, pinned by `source_revision`).
+- **C kernel** (`c/`, `vendor/epi-kernel/reference/`) — the canonical structural
+  and numerical construction: tables, clock, forms, ratios. Where a retained C
+  table disagrees with the graph, that is a reconciliation defect to record and
+  fix, not permission to pick either.
+- **Rust** (`crates/`) — typed owners, providers, Actions and provenance over the
+  same structure. **C++** (`cpp/`) — the continuous modal/audio owner.
+  **O:I** — presentation of the same event.
+
+Before designing, derive the work from coordinates. When an engine function takes
+a "supplied input" (a maqam index, a clock step, a centre weight), that is where
+structure is meant to flow in: trace it through the graph's typed relations
+before calling anything open or inventing a policy. Cite coordinates.
+
+Two corrections that previous sessions got wrong:
+
+- **M2 is the sky.** `#2-5` Planetary Harmonic Integration holds the planets
+  (`#2-5-2`…`#2-5-9`) and the Sun `#2-5-0/1`, which holds Earth `#2-5-0/1-0` and
+  the seven chakras `#2-5-0/1-1`…`-7`; decans, maqamat, stations, names and
+  chakras are joined to them by typed relations. A dated sky is M2-5's state.
+- **The M3-5 clock is a geometric construction**, not an astrological or solar
+  clock: the 64-codon charge integral closes to 360 (720 double cover, 24
+  backbone); sixteen static aperture lenses (plus the Fibonacci 60×6° ground and
+  the 16+1 fold aperture) are readings of the same inscription. The 30°×12 zodiac
+  is one lens. See `docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md` §11.
+
 Begin with `docs/KERNEL-REBUILD-WAYFINDER.md` and the actual assigned issue.
 Read current issue coordination before choosing files. K8.0 is the shared-core
 writer; #94 owns AW/M0/M5, #134 Nara, #133 the experienced instrument. Preserve
