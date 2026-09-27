@@ -87,6 +87,17 @@ and refuses its old basis.
 
 ## Open design questions (owner)
 
+- **Sky → condition.** LIVING-INSTRUMENT-ARCHITECTURE §3.2 directs "Sky → M2
+  planetary/decan/aspect condition → source-backed musical/elemental/chakral
+  relations → M1–M3 current composition", and M2-ARCHITECTURE makes maqam
+  transitions "Kerykeion + planetary-hour driven". Today the dated sky reaches
+  only M2 world readings (decans, aspects); the condition's maqam, and so the
+  voices' element, colour and condition pitches, is still supplied by the event.
+  Measured 27 Sep: the eight voices at the current sky equal those of the
+  sky-less default event. Which rule selects the condition — the planetary-hour
+  ruler (needs an observer and sunrise), the Sun's decan ruler, or another — is
+  not fixed by source and is not invented here.
+
 - Material policy: damping (0.35/s), strike (0.08 m), strike on each event, gain
   (1/m) and scale are declared defaults, not source.
 - Tick cadence: PPS gives 12 ticks/s as the user-facing rate; M4′ gives a 1 Hz
