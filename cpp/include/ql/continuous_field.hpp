@@ -66,18 +66,19 @@ inline Complex phi1(Complex z) {
     }
     return (std::exp(z) - Complex(1, 0)) / z;
 }
+// One bounded printable reference law for field, mode, sample and shape refs.
+inline void reference(const std::string &s) {
+    require(!s.empty() && s.size() <= 2048, "missing/excessive field reference");
+    for (unsigned char c : s) require(c >= 32 && c != 127, "control character in reference");
+}
 class ContinuousField {
     struct Prepared { Mode input; Complex step, forcing, state; };
     ContinuationInput source_;
     std::vector<Prepared> modes_;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
-    static void text(const std::string &s) {
-        require(!s.empty() && s.size() <= 2048, "missing/excessive field reference");
-        for (unsigned char c : s) require(c >= 32 && c != 127, "control character in reference");
-    }
     Prepared prepare(const Mode &m) const {
-        text(m.reference); text(m.source_coordinate);
+        reference(m.reference); reference(m.source_coordinate);
         auto node = ql_m_live_resolve(m.source_coordinate.c_str());
         require(node && node->root_position == 2, "mode needs an existing exact M2 coordinate");
         require(std::isfinite(m.frequency_hz) && m.frequency_hz >= 0 &&
@@ -96,7 +97,7 @@ class ContinuousField {
 public:
     explicit ContinuousField(ContinuationInput input) : source_(std::move(input)) {
         for (const auto *s : {&source_.event_ref, &source_.subject_ref, &source_.geometry_ref,
-                              &source_.material_ref, &source_.model_ref}) text(*s);
+                              &source_.material_ref, &source_.model_ref}) reference(*s);
         require(source_.sample_rate >= 8000 && source_.sample_rate <= 192000, "unsupported sample rate");
         require(ql_clock_validate(&source_.clock) == QL_CLOCK_OK, "invalid native coupled clock");
         require(source_.driver_denominator > 0 && source_.driver_denominator <= 1000000 &&
@@ -112,7 +113,7 @@ public:
         }
         for (std::size_t i = 0; i < source_.samples.size(); ++i) {
             const auto &sample = source_.samples[i];
-            text(sample.constituent);
+            reference(sample.constituent);
             require(ql_m_live_resolve(sample.constituent.c_str()), "unknown sample constituent");
             // Ordered monotone IDs provide linear validation without quadratic
             // sample lookup or changing the supplied correspondence.
@@ -148,6 +149,24 @@ public:
         }
         auto retained = modes; // all allocations complete before commit
         source_.modes.swap(retained); modes_.swap(prepared); ++source_.generation;
+    }
+    // Explicit nodal re-reading: the same samples and modal voices receive a newly
+    // supplied shape basis (shapes[i] replaces sample i's mode_shapes). Sample
+    // identity/order/constituent/attachment/rest, mode identity, resident z and
+    // clock are unchanged, so audio is unaffected; only targets move. Validation
+    // and allocation precede the first mutation. Never a silent reseed.
+    void replace_shapes(std::uint64_t expected, const std::vector<std::vector<Vec3>> &shapes) {
+        require(expected == source_.generation && expected != UINT64_MAX, "stale/overflow field generation");
+        require(shapes.size() == source_.samples.size(), "shape replacement must keep the sample basis");
+        for (const auto &sample : shapes) {
+            require(sample.size() == modes_.size(), "shape/mode basis mismatch");
+            for (const auto &shape : sample)
+                for (double x : shape)
+                    require(std::isfinite(x) && std::abs(x) <= 1e6, "invalid dimensionless shape coefficient");
+        }
+        auto next = shapes; // all allocations complete before commit
+        for (std::size_t i = 0; i < next.size(); ++i) source_.samples[i].mode_shapes.swap(next[i]);
+        ++source_.generation;
     }
     void set_axis(std::uint64_t expected, unsigned axis, QL_PhaseLift phase) {
         require(expected == source_.generation && expected != UINT64_MAX, "stale/overflow field generation");

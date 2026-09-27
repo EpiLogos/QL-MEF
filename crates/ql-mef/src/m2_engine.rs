@@ -530,7 +530,7 @@ impl M2Request {
             condition: None,
             schema: m2::ENGINE_CONTRACT.into(),
             registry_revision: catalogue.registry_revision().into(),
-            ledger_revision: crate::m_ledger::native_m_ledger()?.ledger_revision,
+            ledger_revision: crate::m_ledger::native_m_ledger_revision()?.to_owned(),
             identity: self.stamp.identity.clone(),
             input_stamp: self.stamp.clone(),
             at_unix_ms: self.at_unix_ms,

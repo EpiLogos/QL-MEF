@@ -1143,3 +1143,12 @@ fn transition(from: &str, to: &str) -> bool {
 pub fn native_m_ledger() -> Result<MLedger, String> {
     MLedger::from_json(NATIVE_M_LEDGER, native_m_registry())
 }
+
+/// The compiled-in ledger is immutable for the process; validate it once.
+pub fn native_m_ledger_revision() -> Result<&'static str, String> {
+    static REVISION: std::sync::OnceLock<Result<String, String>> = std::sync::OnceLock::new();
+    REVISION
+        .get_or_init(|| native_m_ledger().map(|ledger| ledger.ledger_revision))
+        .as_deref()
+        .map_err(Clone::clone)
+}
