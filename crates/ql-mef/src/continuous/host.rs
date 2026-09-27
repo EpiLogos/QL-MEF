@@ -48,6 +48,13 @@ pub enum HostOperation {
     },
     /// K² only: the acting influence reading with its basis and warrant.
     Influence {},
+    /// K² with a Nara constitution: receive supplied seven-centre inputs
+    /// against the current event. The material field does not change.
+    ReceivePersonal {
+        input: Box<crate::nara::PersonalEventInput>,
+    },
+    /// K² with a Nara constitution: the last reception and its currentness.
+    Personal {},
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -213,6 +220,32 @@ impl FieldHost {
             }
             return response;
         }
+        if matches!(
+            &request.command,
+            HostOperation::ReceivePersonal { .. } | HostOperation::Personal {}
+        ) {
+            let Owner::K2(instrument) = &mut self.session else {
+                return self.response(
+                    Some(&request.request_id),
+                    "refused",
+                    Some("personal reception belongs to a K² owner with a Nara constitution"),
+                );
+            };
+            let result = match request.command {
+                HostOperation::ReceivePersonal { input } => instrument
+                    .receive_personal(*input)
+                    .and_then(|_| instrument.personal_reading()),
+                _ => instrument.personal_reading(),
+            };
+            return match result {
+                Ok(personal) => {
+                    let mut response = self.response(Some(&request.request_id), "ok", None);
+                    response["personal"] = personal;
+                    response
+                }
+                Err(error) => self.response(Some(&request.request_id), "refused", Some(&error)),
+            };
+        }
         if matches!(&request.command, HostOperation::Influence {}) {
             let mut response = self.response(Some(&request.request_id), "ok", None);
             match &self.session {
@@ -258,9 +291,13 @@ impl FieldHost {
             (HostOperation::M1Advance { .. } | HostOperation::ReplaceEvent { .. }, _) => {
                 Err("determinant operations belong to a provider-composed K² owner".into())
             }
-            (HostOperation::Inspect {} | HostOperation::Influence {}, _) => {
-                unreachable!("inspection returned before dispatch")
-            }
+            (
+                HostOperation::Inspect {}
+                | HostOperation::Influence {}
+                | HostOperation::ReceivePersonal { .. }
+                | HostOperation::Personal {},
+                _,
+            ) => unreachable!("reads and reception returned before dispatch"),
         };
         match result {
             Ok(field) => {

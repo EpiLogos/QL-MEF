@@ -26,6 +26,10 @@ use crate::m1_engine::M1Engine;
 use crate::m2_engine::{
     CarrierWeight, ContinuousMode, MaterialFibre, PhysicalParameter, ResonatorState,
 };
+use crate::nara::{
+    EventBasisRefs, PersonalConstitution, PersonalEventInput, PersonalFieldInstance,
+    PersonalFieldState,
+};
 
 pub const CONFIG: &str = "ql.k2-expression-config/v1";
 pub const PROVIDER: &str = "ql.k2-torus-provider/v1";
@@ -83,6 +87,10 @@ pub struct K2Config {
     pub field: K2Field,
     pub geometry: K2Geometry,
     pub material: K2Material,
+    /// One subject's Nara constitution (K10), when this owner is that person's
+    /// reception of the event. Its receiver inputs arrive separately.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reception: Option<PersonalConstitution>,
 }
 
 /// One voice's source-read surface term.
@@ -150,6 +158,12 @@ impl K2Config {
             return Err("K² damping must be finite and non-negative".into());
         }
         finite_positive(m.strike_metres, "strike amplitude")?;
+        if let Some(constitution) = &self.reception
+            && (constitution.subject_id != self.basis.m3.subject_ref
+                || constitution.subject_id != self.field.subject_ref)
+        {
+            return Err("Nara constitution, M3 and field must name one subject".into());
+        }
         if m.strike_metres > 1.0
             || !m.audio_gain_per_metre.is_finite()
             || m.audio_gain_per_metre.abs() > 1e6
@@ -386,6 +400,9 @@ pub struct BindingRequest {
     pub geometry: Option<K2Geometry>,
     #[serde(default)]
     pub material: Option<K2Material>,
+    /// Optional Nara constitution for a personal reception of this event.
+    #[serde(default)]
+    pub reception: Option<PersonalConstitution>,
 }
 
 pub fn default_geometry() -> K2Geometry {
@@ -506,6 +523,7 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
         field: request.field.unwrap_or_else(|| default_field(&subject)),
         geometry: request.geometry.unwrap_or_else(default_geometry),
         material: request.material.unwrap_or_else(default_material),
+        reception: request.reception,
     };
     config.validate()?;
     // Compose once here so an unusable event is refused before any owner opens.
@@ -559,6 +577,7 @@ pub struct K2Instrument {
     session: CoupledFieldSession,
     shape: ShapeBasis,
     event: CoupledInput,
+    personal: Option<PersonalFieldInstance>,
 }
 
 impl K2Instrument {
@@ -583,6 +602,10 @@ impl K2Instrument {
             samples: shape.samples(&config.geometry)?,
             shape_ref: Some(shape.shape_ref.clone()),
         };
+        let personal = config
+            .reception
+            .map(PersonalFieldInstance::new)
+            .transpose()?;
         let session = CoupledFieldSession::open(worker, input.clone(), field, timeout)?;
         Ok(Self {
             instance_ref: config.instance_ref,
@@ -591,7 +614,41 @@ impl K2Instrument {
             session,
             shape,
             event: input,
+            personal,
         })
+    }
+
+    /// The exact event basis a personal reception must cite.
+    pub fn event_basis(&self) -> Result<EventBasisRefs, String> {
+        EventBasisRefs::from_basis(self.session.current_basis())
+    }
+
+    /// Receives supplied seven-centre inputs against the current event without
+    /// advancing or replacing the material field. Stale/cross-event is refused.
+    pub fn receive_personal(
+        &mut self,
+        input: PersonalEventInput,
+    ) -> Result<PersonalFieldState, String> {
+        let personal = self
+            .personal
+            .as_mut()
+            .ok_or("this K² owner carries no Nara constitution")?;
+        personal.receive(self.session.current_basis(), input)
+    }
+
+    /// The last reception and whether it belongs to the exact current event;
+    /// a determinant event never relabels an older reception as current.
+    pub fn personal_reading(&self) -> Result<Value, String> {
+        let personal = self
+            .personal
+            .as_ref()
+            .ok_or("this K² owner carries no Nara constitution")?;
+        let event = self.event_basis()?;
+        let current = personal
+            .current()
+            .is_some_and(|state| state.event == event && state.subject_id == event.subject_ref);
+        Ok(json!({"schema":"ql.k2-nara-reception/v1", "event": event,
+            "state": personal.current(), "current": current}))
     }
 
     pub fn instance_ref(&self) -> &str {

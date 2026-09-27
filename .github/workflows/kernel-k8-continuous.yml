@@ -24,7 +24,7 @@ jobs:
           cache-on-failure: true
       - name: Retain Rust 2024 formatted sources without changing tested HEAD
         run: |
-          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/k2.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/examples/k8_vak_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/k8_reshape.rs crates/ql-mef/tests/k2_instrument.rs crates/ql-mef/tests/nara_personal_field.rs; do
+          for path in crates/ql-mef/src/continuous/host.rs crates/ql-mef/src/bin/ql-field-host.rs crates/ql-mef/src/continuous/receipt.rs crates/ql-mef/src/continuous/receipt/tests.rs crates/ql-mef/src/continuous.rs crates/ql-mef/src/continuous/coupled.rs crates/ql-mef/src/continuous/k2.rs crates/ql-mef/src/continuous/personal.rs crates/ql-mef/src/nara.rs crates/ql-mef/examples/k8_field.rs crates/ql-mef/examples/k8_coupled.rs crates/ql-mef/examples/k8_personal.rs crates/ql-mef/examples/k8_vak_personal.rs crates/ql-mef/tests/k8_coupled.rs crates/ql-mef/tests/k8_reshape.rs crates/ql-mef/tests/k2_instrument.rs crates/ql-mef/tests/k2_nara_reception.rs crates/ql-mef/tests/nara_personal_field.rs; do
             mkdir -p "target/k8-format/$(dirname "$path")"
             cp "$path" "target/k8-format/$path"
             rustfmt --edition 2024 --config skip_children=true "target/k8-format/$path"
@@ -81,6 +81,7 @@ jobs:
           set -o pipefail
           cargo test --locked -p ql-mef --test k8_reshape -- --ignored 2>&1 | tee target/k8-continuous/reshape.log
           cargo test --locked -p ql-mef --test k2_instrument -- --ignored 2>&1 | tee target/k8-continuous/k2.log
+          cargo test --locked -p ql-mef --test k2_nara_reception -- --ignored 2>&1 | tee target/k8-continuous/k2-nara.log
       - name: Both complete musical inputs on one installed material owner
         run: |
           cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \

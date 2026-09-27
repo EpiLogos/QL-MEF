@@ -22,7 +22,7 @@ function sameState(a, b) {
 }
 
 const EVENT_OPERATIONS = ['m1-advance', 'replace-event'];
-const READ_OPERATIONS = ['read', 'inspect', 'influence'];
+const READ_OPERATIONS = ['read', 'inspect', 'influence', 'personal', 'receive-personal'];
 
 export class InstrumentSession {
   #context; #owner; #port; #field; #audio; #native; #instance; #sequence;
@@ -145,7 +145,7 @@ export class InstrumentSession {
       // The native operation is now acknowledged even if presentation later
       // fails. Recovery reads this cursor; no claim of rolling native state back.
       this.#native = withoutAudio(frame);
-      return { frame, sources: reply.sources, influence: reply.influence };
+      return { frame, sources: reply.sources, influence: reply.influence, personal: reply.personal };
     } catch (error) {
       this.#unknown(String(error)); throw error;
     } finally { clearTimeout(timer); }
@@ -246,6 +246,17 @@ export class InstrumentSession {
     try {
       const reply = await this.#exchange({ operation: 'influence' });
       need(!reply.refused, String(reply.error)); return reply.influence;
+    } finally { this.#busy = false; }
+  }
+
+  /** A Nara-constituted K² owner's reception: `input` (seven supplied centre
+   * inputs citing the current event) receives; without it, reads. The material
+   * field never changes. Protected state stays with the calling host. */
+  async personal(input) {
+    need(!this.#busy && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
+    try {
+      const reply = await this.#exchange(input === undefined ? { operation: 'personal' } : { operation: 'receive-personal', input });
+      need(!reply.refused, String(reply.error)); return reply.personal;
     } finally { this.#busy = false; }
   }
 
