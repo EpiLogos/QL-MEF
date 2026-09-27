@@ -327,6 +327,68 @@
         "crates/ql-core/src/shape_presentation.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL-MEF #201 identity intake transport over the existing M4 identity producer and real Kerykeion/M2 sky provider. It bounds process input/output and timeout, materialises embedded provider resources, and discloses configured or managed provider readiness. It owns no identity calculation policy, native profile persistence, event, receiver dynamics, or full personal Expression.",
+      "tests": [
+        "crates/ql-mef/src/nara/intake_tests.rs",
+        "providers/nara/test_natal.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/intake.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "M4.0 intake into the accepted #134 six-office IdentityField: source-qualified birth facts, attributable report/import routes, chart request identity and corrections. It validates and seals source material; Central owns saving/reopening. Natal-only composition is explicitly separate from the unadopted full identity weighting and seven-centre receiver law.",
+      "tests": [
+        "crates/ql-mef/src/nara/intake_tests.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/intake_composition.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2",
+        "#4"
+      ],
+      "rationale": "M4 natal-only reading from actual M2 sky observations and native planet/centre correspondence, using the recovered personal_identity.rs policy at Epi-Logos-C-Experiments daa660cbc1b8c5da83828698665a753852cb0287. It distinguishes L1 EFWA balances from L2-normalised natal quaternion and seven evidence partitions; it creates no full identity quaternion, receiver constitution, centre-local dynamics, world event or sonal coupling law.",
+      "tests": [
+        "crates/ql-mef/src/nara/intake_composition.rs",
+        "crates/ql-mef/src/nara/intake_tests.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/intake_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Executable acceptance of native M4 identity validation, correction lineage, report route boundaries and actual natal envelope binding. Test support asserts production intake behavior; it is not a new coordinate or runtime identity owner.",
+      "tests": [
+        "crates/ql-mef/src/nara/intake_tests.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "providers/nara/natal.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Real Kerykeion natal chart adapter and existing M2 sky projection, preserving exact entered timezone, clock precision, DST fold and source request identity. Unknown time and provider-adjusted polar houses remain explicit unavailable/partial readings; no invented time, coordinates, chart or complete identity composition. Actual chart/sky agreement and correction routes are exercised by the provider tests.",
+      "tests": [
+        "providers/nara/test_natal.py"
+      ],
+      "kind": "computational"
     }
   ]
 }

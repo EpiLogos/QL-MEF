@@ -2,6 +2,13 @@
 # Focused K5 checks; reuses existing native CI rather than adding a new job matrix.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# Receipt refresh must execute the native contract before replacing input locks.
+# Normal CI remains check-only; the refresh driver verifies the renewed receipt.
+case "${1:-}" in
+  "") check_receipt=true ;;
+  --execute-for-receipt-refresh) check_receipt=false ;;
+  *) printf '%s\n' 'usage: test-m1-engine.sh [--execute-for-receipt-refresh]' >&2; exit 2 ;;
+esac
 mkdir -p target/m1-engine
 cc=${CC:-clang}
 flags=(-std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -ffunction-sections -fdata-sections)
@@ -16,7 +23,6 @@ sources=(migration/epi-kernel/m1-engine-probe.c migration/epi-kernel/m1-return/m
 ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 target/m1-engine/sanitized > target/m1-engine/sanitized.jsonl
 python3 scripts/check-m1-source.py --observations target/m1-engine/sanitized.jsonl
 python3 scripts/generate-m1-source.py
-python3 scripts/check-m1-acceptance.py
 mkdir -p target/m1-state
 "$cc" "${flags[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer -Ic/include -Ivendor/epi-kernel/reference/include vendor/epi-kernel/reference/src/m1.c vendor/epi-kernel/reference/src/psychoid_numbers.c migration/epi-kernel/m1-state-probe.c c/src/m_tree.c c/src/m1.c c/src/m1_state.c c/src/kernel.c c/src/primitive.c "${gc[@]}" -lm -o target/m1-state/sanitized
 ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 target/m1-state/sanitized > target/m1-state/sanitized.jsonl
@@ -46,4 +52,5 @@ int main() {
 CPP
 "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -pedantic -Itarget/m1-engine/installed/ql-mef-c/include target/m1-engine/consumer.cpp target/m1-engine/installed/ql-mef-c/lib/libql-mef-c.a -lm -o target/m1-engine/consumer
 target/m1-engine/consumer
+if "$check_receipt"; then python3 scripts/check-m1-acceptance.py; fi
 printf '%s\n' 'M1 native sanitizers and installed C++ consumer passed (not C++ instrument parity).'

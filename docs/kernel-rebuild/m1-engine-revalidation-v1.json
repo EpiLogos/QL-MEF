@@ -1,0 +1,189 @@
+{
+  "schema": "ql.m1.kernel-revalidation/v1",
+  "historical_acceptance": {
+    "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
+    "sha256": "f6761e9d7bc017e2ad61bc7cb231c3ee17c3950e990275c5e5ba0b0772828217"
+  },
+  "input_locks": [
+    {
+      "path": "c/include/ql/m1.h",
+      "sha256": "087d84a96bc92bb0b620b4e5a1b69df3fba941c694fa59adfee973d7e032b046"
+    },
+    {
+      "path": "c/src/m1.c",
+      "sha256": "46d44b7ee37a5a78999b11e63b2a07dc8c11b375f3fe5d861bc129cb749875ab"
+    },
+    {
+      "path": "c/src/m1_state.c",
+      "sha256": "a7d949e543e52b4e2a7191eb662a0b1af3a793138946c661f8e7a4076955754e"
+    },
+    {
+      "path": "c/src/m1_source_data.inc",
+      "sha256": "530f2d3c24d62b4fcf2f8a6cc1fbabea15d083f728de68957b5640a28cb9f925"
+    },
+    {
+      "path": "crates/ql-mef/src/m1.rs",
+      "sha256": "0ad921c1dc99506beb0830873b06b2abcb16b2c1e67955b0a693a64c500e9fd7"
+    },
+    {
+      "path": "crates/ql-mef/src/m1_engine.rs",
+      "sha256": "6720e4f61d3c7a069fbfe6e305e54fed2b177d56e5ec365f8483da0bba0ee886"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_engine.rs",
+      "sha256": "1443a8657d5369827469456b111fefddcd2f00253d21b48d8917363748922efe"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_state.rs",
+      "sha256": "6836f48a998bec4c04e6f3105765f2156ff58d922828aab412efda7084741e5b"
+    },
+    {
+      "path": "migration/epi-kernel/m1-state-probe.c",
+      "sha256": "e11b03bdbcc7503adfd8b5464c3f00412edb4a6bdc61c5cc644749bf4b5ff2bc"
+    },
+    {
+      "path": "migration/epi-kernel/m1-engine-probe.c",
+      "sha256": "8155422678e070ec42cc6ccc80e5f717772d35b122e807e8be4581564413e08f"
+    },
+    {
+      "path": "migration/epi-kernel/m1-return/source-lock.json",
+      "sha256": "9d3e25cdb9acbf54f1369e4181f4c9c6698f1c2c13503a1f90ddc1a1234b651a"
+    },
+    {
+      "path": "scripts/check-m1-source.py",
+      "sha256": "c13605795ba15b3230518f31bfb5baf0b09867235239acc2d8f77fa43c2cfcdb"
+    },
+    {
+      "path": "scripts/check-m1-literals.py",
+      "sha256": "bfa9a11b752e37fd84b278d7444cef55ef3f2ba050e409f99f4374e65520a91d"
+    },
+    {
+      "path": "scripts/generate-m1-source.py",
+      "sha256": "dd07022a46599ba0d7625fc2c75b41582b5fd51b8521f02fde5623880812ccbd"
+    },
+    {
+      "path": "scripts/test-m1-engine.sh",
+      "sha256": "c1b61bf8fe16b7202fb86d3712e33148fa4dbc69e7ff56814b07670d8a1bbffe"
+    },
+    {
+      "path": "fixtures/kernel/m1-source-literals-v1.json",
+      "sha256": "aac66e27e5e7f38c6ab61f8c422ecbcf06cf4f5ef98397c2c78b4ad186a14076"
+    },
+    {
+      "path": "fixtures/kernel/m1-engine-v1.schema.json",
+      "sha256": "cf0a1bc192870d5522d851aed0262b864eb7c5d07e5a90668275a73447d25d6a"
+    },
+    {
+      "path": "fixtures/kernel/m1-engine-v1.request.json",
+      "sha256": "0e040db95d3f18546dc63deac869d020da84f96fc85a1b0f34c5dbbaf88cdb20"
+    },
+    {
+      "path": "scripts/check-m1-acceptance.py",
+      "sha256": "1b39eeac02cfadeffdcdd602b1b82bab1f3fb3ee561fe9193792204db5e2cb74"
+    },
+    {
+      "path": "scripts/m_census.py",
+      "sha256": "48d29841f40966c9e3fa2e0c4792e7231ddbca26259300bc1a47cccaf2d2871d"
+    },
+    {
+      "path": "scripts/tests/test_m_census.py",
+      "sha256": "46e1d6c572003162e636ee2a1c799596c8b605cc9901670d93819b942b4e7799"
+    },
+    {
+      "path": "crates/ql-mef/tests/m1_acceptance.rs",
+      "sha256": "aafbc4eaabc483717b21d39f72bea7cff215ba11bb0534753e471a426fe53dfd"
+    },
+    {
+      "path": "crates/ql-cli/src/lib.rs",
+      "sha256": "4ca4505b5ee92039fe100f988b48cb614e16c9ea4285c0ab7a741d74559f8045"
+    },
+    {
+      "path": "crates/ql-cli/tests/m1_engine_cli.rs",
+      "sha256": "6d4e81217dda0744389087706236b025ae2094fc8cbaf34ac7c908e81838d889"
+    },
+    {
+      "path": "scripts/refresh-m1-acceptance.py",
+      "sha256": "ed1716c5f37f8a2cb98ca19fa584fa2786a3ff69326671ea955feb1cc24244e3"
+    },
+    {
+      "path": "c/Makefile",
+      "sha256": "3b0910315fa52dd6fff5cb9cdedd4403d9c630fda1f3ea9a770f632dfbb25410"
+    }
+  ],
+  "revalidation": {
+    "standing": "fresh native execution under existing exact/literal and floating tolerances; historical observations retained separately",
+    "platform": "Darwin arm64",
+    "c_compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "rust_compiler": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "commands": [
+      [
+        "bash",
+        "scripts/test-m1-engine.sh",
+        "--execute-for-receipt-refresh"
+      ],
+      [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "ql-mef",
+        "--test",
+        "m1_engine",
+        "--test",
+        "m1_state"
+      ],
+      [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "ql-cli",
+        "--test",
+        "m1_engine_cli"
+      ],
+      [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_m_census.py",
+        "-v"
+      ]
+    ],
+    "observations": [
+      {
+        "local_path": "target/m1-engine/c-rust.jsonl",
+        "sha256": "e7ee82fd94268bc0e6ef397621afb507fcc1f44b5dcc925e5049b0a34e6f1d2e",
+        "retained_path": "target/m1-engine/revalidation/1790536070914369000/m1-engine-c-rust.jsonl",
+        "matches_historical_bytes": true
+      },
+      {
+        "local_path": "target/m1-state/c-rust.jsonl",
+        "sha256": "ea834423395b365a32fea5231e4d325a8842b51fd1501232b31eb2d5d6be0096",
+        "retained_path": "target/m1-engine/revalidation/1790536070914369000/m1-state-c-rust.jsonl",
+        "matches_historical_bytes": false
+      }
+    ],
+    "logs": [
+      {
+        "local_path": "target/m1-engine/revalidation/1790536070914369000/1.log",
+        "sha256": "8a64e24659056a39629e6e1db71c3270132862c43c0c51216f629f296f30d88c"
+      },
+      {
+        "local_path": "target/m1-engine/revalidation/1790536070914369000/2.log",
+        "sha256": "d09013e50d417a0e7b1b4e1483cb2a35b05c461eaab91b98db9f5942e819db5c"
+      },
+      {
+        "local_path": "target/m1-engine/revalidation/1790536070914369000/3.log",
+        "sha256": "cfd6ef1885433b8c992774dc9eb20ec78c7bcd3e899d528b81e277170d0ab088"
+      },
+      {
+        "local_path": "target/m1-engine/revalidation/1790536070914369000/4.log",
+        "sha256": "9087b8cbaed90ca222d3ec90498df2ccae2c572dece7acb468574b33e33500f9"
+      }
+    ]
+  }
+}
