@@ -134,6 +134,10 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
     put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale)); return o;
 }
 int main() {
+    // Buffered, unsynchronised streams: a multi-megabyte control line must not
+    // take a stdio lock per character. Framing and budgets are unchanged.
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::unique_ptr<ql::ContinuousField> field;
     Json basis = own(nullptr), gains = own(nullptr);
     std::string shape_ref;
