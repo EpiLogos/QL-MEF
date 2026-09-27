@@ -1,9 +1,9 @@
 {
   "schema": "ql.k8-current-inventory-receipt/v1",
-  "inventory_sha256": "f9fde21d9e5fdfb7b0bc9fa4b34c62b47065a0687411bf79f217d55cfe2898a2",
+  "inventory_sha256": "e2754a15394aa7bbe965c4e6bba8d45d94a1ada439dae5c9bb53f231be0c22e3",
   "registry_revision": "0fd161f6c820705991b90f300288035e618f5939aef80a74c18fa630b322bba5",
-  "inherited_ledger_revision": "6fdf5186186389bf28a4bd53d6293dd3d47419f35acd5335b9a2bf86306eece1",
-  "inherited_ledger_sha256": "a71143c7f99a2537216e041f8ca2c4ea0392f03d8a508391a5b8efd39093ffb6",
+  "inherited_ledger_revision": "e6e2e26628d3b1d8e9abbe0dcf8f55a383169865efec35b22148339941ae104f",
+  "inherited_ledger_sha256": "e3b41333b5b18b4f4d07427b60f435f7281b79cbc30c252636c818b75f55621c",
   "constructs": 2277,
   "inherited_unresolved": 918,
   "reviewed_K8_constructs": 886,
