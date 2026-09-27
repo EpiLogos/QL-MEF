@@ -40,7 +40,7 @@ const VOICE_COORDINATE: &str = "#2-1";
 const MAX_SAMPLES: usize = 262_144 / VOICES;
 const MATERIAL_STANDING: &str = "declared-material-policy: no source table fixes presentation scale, damping, strike amplitude or output gain (QL-MEF #135 design question)";
 
-/// Sampling of the one torus surface. PPS §3 gives 128×64 as the typical mesh.
+/// Sampling of the one torus surface (declared; PPS §3 gives 128×64 as a typical render mesh).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct K2Geometry {
@@ -411,9 +411,11 @@ pub struct BindingRequest {
     pub reception: Option<PersonalConstitution>,
 }
 
+/// 64×64 resolves the highest nodal order (m, n ≤ 12: at most 12 crossings a
+/// turn) with every per-block transfer half that of PPS's 128×64 render mesh.
 pub fn default_geometry() -> K2Geometry {
     K2Geometry {
-        longitude_samples: 128,
+        longitude_samples: 64,
         latitude_samples: 64,
         metres_per_unit: 1.0,
         attachment: 1,
