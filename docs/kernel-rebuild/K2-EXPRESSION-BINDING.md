@@ -1,5 +1,14 @@
 # K² Expression binding: native events to the live instrument, and Nara reception
 
+> **Superseded as a semantic account (27 September 2026).** The owner found this
+> K² model was built from engine entry points rather than the Bimba graph and C
+> kernel: sky-independent voices, invented centre inputs, an M3 "1°/s" rotation,
+> a surface seam. Its "open questions" are mostly answered by structure. See
+> `docs/kernel-rebuild/M123-GROUNDING-AUDIT-2026-09-27.md` (QL-MEF #253). The
+> infrastructure it describes (host operations, explicit reshape, composer and
+> install path) remains usable; the mapping from M1–M3 to the body, voices,
+> centres and clock does not stand.
+
 Owner: #135 (M1–M3 engine effect), consumer O:I #335. Shared binding for the
 parallel M4 identity work (#201). Implementation: `crates/ql-mef/src/continuous/k2.rs`,
 `continuous/host.rs`, `adapters/retained-field/instrument-session.mjs`.
