@@ -1140,11 +1140,6 @@ fn transition(from: &str, to: &str) -> bool {
     )
 }
 
-/// The compiled-in ledger is immutable for the process: parse and validate it
-/// once, then hand out copies.
 pub fn native_m_ledger() -> Result<MLedger, String> {
-    static LEDGER: std::sync::OnceLock<Result<MLedger, String>> = std::sync::OnceLock::new();
-    LEDGER
-        .get_or_init(|| MLedger::from_json(NATIVE_M_LEDGER, native_m_registry()))
-        .clone()
+    MLedger::from_json(NATIVE_M_LEDGER, native_m_registry())
 }

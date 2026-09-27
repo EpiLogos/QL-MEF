@@ -280,7 +280,10 @@ impl ShapeBasis {
                     .iter()
                     .map(|voice| {
                         let x = chi(voice, phi, theta);
+                        // Dimensionless coefficients travel at 1e-6, far below
+                        // what the float32 targets resolve; it halves transfer.
                         [normal[0] * x, normal[1] * x, normal[2] * x]
+                            .map(|v| (v * 1e6).round() / 1e6)
                     })
                     .collect())
             })
@@ -348,10 +351,13 @@ fn resonator(input: &CoupledInput, material: &K2Material, fibre: MaterialFibre) 
 }
 
 /// Completes a caller's event with the provider's voices. The element comes from
-/// the event's own M2 condition path; an event without one is refused.
+/// the event's own M2 condition path; an event without one is refused. `hint` is
+/// the element last seen (a tick never changes the condition), so one compose
+/// usually suffices.
 pub fn complete(
     event: &CoupledInput,
     material: &K2Material,
+    hint: MaterialFibre,
 ) -> Result<(CoupledInput, CoupledBasis), String> {
     let mut input = event.clone();
     input.frequency_bindings = (0..VOICES)
@@ -360,7 +366,7 @@ pub fn complete(
             octet_index: i as u8,
         })
         .collect();
-    input.m2.resonator = Some(resonator(&input, material, MaterialFibre::Earth));
+    input.m2.resonator = Some(resonator(&input, material, hint));
     let first = input.compose()?;
     let fibre: MaterialFibre = serde_json::from_value(
         first.m2["condition"]["source_path"]["material_fibre"].clone(),
@@ -368,7 +374,7 @@ pub fn complete(
     .map_err(
         |_| "K² voices need the active M2 condition's source element; this event admits none",
     )?;
-    if fibre == MaterialFibre::Earth {
+    if fibre == hint {
         return Ok((input, first));
     }
     input.m2.resonator = Some(resonator(&input, material, fibre));
@@ -527,7 +533,7 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
     };
     config.validate()?;
     // Compose once here so an unusable event is refused before any owner opens.
-    complete(&config.basis, &config.material)?;
+    complete(&config.basis, &config.material, MaterialFibre::Earth)?;
     let samples =
         u64::from(config.geometry.longitude_samples) * u64::from(config.geometry.latitude_samples);
     let slots: Vec<u64> = (0..particles).map(|p| p % samples).collect();
@@ -583,7 +589,7 @@ pub struct K2Instrument {
 impl K2Instrument {
     pub fn open(worker: &Path, config: K2Config, timeout: Duration) -> Result<Self, String> {
         config.validate()?;
-        let (input, basis) = complete(&config.basis, &config.material)?;
+        let (input, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth)?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let field = FieldInput {
             subject_ref: config.field.subject_ref.clone(),
@@ -616,6 +622,16 @@ impl K2Instrument {
             event: input,
             personal,
         })
+    }
+
+    /// The element the voices currently sound in.
+    fn fibre(&self) -> MaterialFibre {
+        self.event
+            .m2
+            .resonator
+            .as_ref()
+            .and_then(|r| r.modes.first())
+            .map_or(MaterialFibre::Earth, |m| m.material_fibre)
     }
 
     /// The exact event basis a personal reception must cite.
@@ -675,7 +691,7 @@ impl K2Instrument {
     /// a re-read nodal quartet/72-address reshapes the same voices explicitly.
     pub fn replace(&mut self, event: &CoupledInput, strike: bool) -> Result<Value, String> {
         let event = next_generation(event, self.event.m2.stamp.identity.profile_generation)?;
-        let (input, basis) = complete(&event, &self.material)?;
+        let (input, basis) = complete(&event, &self.material, self.fibre())?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let mut field = self.session.replace_field_state(input.clone(), strike)?;
         self.event = input;
