@@ -260,6 +260,12 @@ impl FieldHost {
             }
             return response;
         }
+        // A K² determinant event answers with its new influence reading, so a
+        // consumer needs no second exchange while its audio waits.
+        let determinant = matches!(
+            &request.command,
+            HostOperation::M1Advance { .. } | HostOperation::ReplaceEvent { .. }
+        );
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
             (HostOperation::Advance { frames, muted }, owner) => {
@@ -303,6 +309,9 @@ impl FieldHost {
             Ok(field) => {
                 let mut response = self.response(Some(&request.request_id), "ok", None);
                 response["field"] = field;
+                if let (true, Owner::K2(instrument)) = (determinant, &self.session) {
+                    response["influence"] = instrument.influence();
+                }
                 response
             }
             Err(error) => {

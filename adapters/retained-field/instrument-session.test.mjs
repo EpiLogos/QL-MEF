@@ -69,7 +69,8 @@ function setup(options = {}) {
       let reply = { ...initial, status: 'ok', request_id: request.request_id,
         last_request_id: request.request_id, field: structuredClone(current) };
       if (request.command.operation === 'inspect') reply.sources = { private: 'owner-only-source' };
-      if (request.command.operation === 'influence') reply.influence = { schema: 'ql.expression-influence/v1' };
+      if (['influence', 'm1-advance', 'replace-event'].includes(request.command.operation))
+        reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation };
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -265,6 +266,8 @@ test('a K² determinant event re-reads the basis through the same serial owner',
   await session.operate({ operation: 'm1-advance', ticks: 1 });
   assert.equal(calls.at(-1).command.operation, 'm1-advance');
   assert.equal(session.reading.acknowledged.generation, '3');
+  // The acknowledgement carried the new influence: no second exchange needed.
+  assert.equal(session.lastInfluence.generation, '3');
   // Re-read targets wait behind already scheduled sound, then present.
   context.currentTime = end; session.present();
   assert.equal(field.last.targets[0].position[1], 0.5);
