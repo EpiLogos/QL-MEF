@@ -19,3 +19,5 @@ Depends: nothing. Parallel-with: infrastructure.
 
 Done-when: every §5 row is applied or explicitly held, and the C tables that
 `m2_engine` reads are regenerated from map literals.
+
+State (28 Sep): #255, #257, #260 and #262 have landed. Next: the §5 ledger records.

@@ -13,3 +13,8 @@ Work:
 
 Depends: map-and-kernel. Done-when: the native oscillator matches the C
 reference, and codons advance on the Spanda state, never on `tick12`.
+
+State (28 Sep): the Spanda field is native (`ql_mef::spanda_field`, #264), with
+C parity over 2,029 observations. Codons advance on the ring state
+(`M3Operation::SpandaAdvance`). Still open: the two Hopf sheets with the SU(2)
+sign in C++, and the D16/D17 records.

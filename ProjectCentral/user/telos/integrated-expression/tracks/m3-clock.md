@@ -29,3 +29,11 @@ Work:
 Depends: map-and-kernel. Done-when: the native clock yields the same codon,
 hexagram and rotational state as the C kernel for all 384 positions and every
 matrix environment, and a test pins that parity against the live map.
+
+State (28 Sep): QL builds from the live map, including the 36 decan → pip-card
+edges (#262). The rotation machinery is native (`ql_core::pole`:
+`quat_active_state`, `det_overlay`, the 472 poses). The form advances from the
+M1 ring state (#264).
+
+Still open: `M3Clock` reads a fixed 360-entry recorded table and does not yet
+draw its inscription from the map through `pole`. That is the next change.
