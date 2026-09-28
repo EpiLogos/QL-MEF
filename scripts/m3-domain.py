@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build/verify the M3 source-backed domain catalogue using the accepted source audit.
+"""Build/verify the M3 map-backed domain catalogue using the map audit.
 
 The catalogue is a projection at K2 identities, not a second registry or a new
 semantic authority. Source payloads and qualified edges remain source readings.
@@ -19,29 +19,28 @@ SOURCE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(SOURCE)
 
 
-def build(source_root: Path) -> dict:
-    registry, nodes, edges = SOURCE.read_source(source_root)
-    projection = SOURCE.project(registry, nodes, edges)
+def build(map_path: Path) -> dict:
+    registry, read = SOURCE.read_source(map_path)
+    projection = SOURCE.project(registry, read)
     audit = SOURCE.Audit(projection).run()
     by_ref = {n['ref']: n for n in projection['nodes']}
-    dna = {n['properties']['sequence']: n for n in projection['nodes'] if n['role'] == 'dna-codon'}
-    by_king = {h['king_wen']: h for h in audit['details']['hexagrams']}
+    by_address = {h['trigram_derived_address']: h for h in audit['details']['hexagrams']}
     backbones = []
     for node in projection['nodes']:
         if node['role'] != 'clock-backbone':
             continue
-        p = node['properties']
-        seq = p.get('codonSequence')
-        symbol = p.get('hexagramNumber', '')
-        # Resolve through named source content, not integer suffixes or LUT estimates.
-        codon = dna.get(seq)
-        h = by_king.get(int(symbol.removeprefix('H'))) if symbol.removeprefix('H').isdigit() else None
+        # The map states a governor's codon as EMBODIES_PALINDROMIC_CODON; it states
+        # no backbone -> hexagram fact, so that stays an explicit gap.
+        embodied = [e for e in projection['relations']
+                    if e['from_ref'] == node['ref'] and e['kind'] == 'EMBODIES_PALINDROMIC_CODON']
+        codon = by_ref.get(embodied[0]['to_ref']) if len(embodied) == 1 else None
+        seq = codon['properties'].get('p_3_sequence') if codon else None
         backbones.append({'id': node['id'], 'ref': node['ref'],
             'codon_id': codon['id'] if codon else None,
-            'codon_address': sum('ATCG'.index(n) << s for n, s in zip(seq, (4, 2, 0))) if codon else None,
-            'hexagram_id': h['id'] if h else None,
-            'hexagram_address': h['trigram_derived_address'] if h else None,
-            'source_record': node['record'], 'standing': 'source-recorded-backbone-prototype-not-current-form'})
+            'codon_address': sum('ATCG'.index(n) << s for n, s in zip(seq, (4, 2, 0))) if seq else None,
+            'hexagram_id': None, 'hexagram_address': None,
+            'source_record': node['record'],
+            'standing': 'map-embodied-codon; no map backbone-hexagram fact'})
     result = {'schema': 'ql.m3-domain/v1', 'registry_revision': projection['registry_revision'],
         'source_revision': projection['source_revision'], 'source_files': projection['files'],
         'projection_digest': audit['projection_sha256'],
@@ -65,10 +64,12 @@ def verify(data: dict, registry: dict) -> None:
         raise ValueError('M3 catalogue/registry revision mismatch')
     nodes = {n['id']: n for n in registry['nodes']}
     relations = {e['id']: e for e in registry['relations']}
-    if len(data['nodes']) != 996 or len(data['relations']) != 4891:
-        raise ValueError('incomplete M3 source field')
-    if len({n['id'] for n in data['nodes']}) != 996 or len({e['id'] for e in data['relations']}) != 4891:
-        raise ValueError('duplicate M3 source identity')
+    field = {n['id'] for n in registry['nodes'] if n['root_position'] == 3}
+    edges = {e['id'] for e in registry['relations'] if e['from_id'] in field}
+    if {n['id'] for n in data['nodes']} != field or {e['id'] for e in data['relations']} != edges:
+        raise ValueError('incomplete M3 map field')
+    if len(data['nodes']) != len(field) or len(data['relations']) != len(edges):
+        raise ValueError('duplicate M3 map identity')
     for n in data['nodes']:
         actual = nodes.get(n['id'])
         if actual is None or actual['source_ref'] != n['ref'] or actual['root_position'] != 3 or actual['parent_id'] != n['parent_id']:
@@ -119,17 +120,17 @@ def c_tables(data: dict) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source-root', type=Path)
+    parser.add_argument('--map', type=Path, help='read of the map the registry was built from')
     parser.add_argument('--refresh', action='store_true')
     parser.add_argument('--c-output', type=Path)
     args = parser.parse_args()
     path = ROOT / PATH
-    data = build(args.source_root) if args.source_root else json.loads(path.read_text())
+    data = build(args.map) if args.map else json.loads(path.read_text())
     verify(data, json.loads((ROOT / SOURCE.REGISTRY).read_text()))
     if args.refresh:
-        if not args.source_root: parser.error('--refresh requires exact source root')
+        if not args.map: parser.error('--refresh requires --map')
         path.write_text(canonical(data))
-    elif args.source_root and path.read_text() != canonical(data):
+    elif args.map and path.read_text() != canonical(data):
         raise ValueError('source-backed M3 catalogue drift')
     if args.c_output:
         content = c_tables(data)

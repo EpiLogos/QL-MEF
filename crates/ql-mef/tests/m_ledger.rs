@@ -71,9 +71,9 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
     for (scope, count) in [
         ("M0", 108),
         ("M1", 43),
-        ("M2", 597),
+        ("M2", 598),
         ("M3", 996),
-        ("M4", 100),
+        ("M4", 106),
         ("M5", 31),
         ("M", 1876),
     ] {
@@ -743,7 +743,8 @@ fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumer
             .iter()
             .filter(|d| d.id.starts_with("k7-source-"))
             .count(),
-        563
+        // The July seed audit's findings stay in history beside the map audit's.
+        743
     );
     let index = l
         .rows
