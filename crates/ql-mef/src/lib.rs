@@ -43,6 +43,7 @@ mod reading;
 mod refraction;
 mod registry;
 mod ruling;
+pub mod scene_sky;
 pub mod spanda_field;
 mod sublens;
 mod templateure;

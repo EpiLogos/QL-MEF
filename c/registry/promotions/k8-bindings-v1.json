@@ -833,6 +833,21 @@
         "crates/ql-mef/tests/m3_inscription.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/scene_sky.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-5",
+        "#2-3",
+        "#3-5-5/0"
+      ],
+      "rationale": "The accepted dated sky placed on the M3-5 clock: each body is its #2-5 coordinate by map name at theta = lambda, with the inscription seed at that degree, its PLANETARY_RESONANCE chakra and its decan's RULED_BY rulers; Earth #2-5-0/1-0 is the observer; bodies the map does not hold stay unmapped.",
+      "tests": [
+        "crates/ql-mef/tests/scene_sky.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
