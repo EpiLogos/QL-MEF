@@ -1,7 +1,7 @@
 {
   "schema": "ql.m1.kernel-acceptance/v1",
   "k4_revision": "5b24b95d17234ab5d23d84e658c0cc06434b41a3",
-  "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
+  "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
   "source_return_revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
   "status": "executed-native-contract; downstream provider/instrument/experiential dispositions remain separate",
   "evidence_scope": {
@@ -420,7 +420,7 @@
     },
     {
       "path": "scripts/check-m1-acceptance.py",
-      "sha256": "896b5706dab5e17d755cc5de447fb5db04e33fafd4e29381063e6846f184e09e"
+      "sha256": "0185d96f900b88184db7a083cd8d0e0534fb2d964b4d7fc8480d9e1daf6f02ad"
     },
     {
       "path": "scripts/m_census.py",

@@ -1,6 +1,6 @@
 {
 "schema":"ql.m2-retained-c/v1",
-"registry_revision":"f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
+"registry_revision":"2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
 "standing":"retained-source-reading-not-whole-subsystem-parity",
 "sources":[{"path":"vendor/epi-kernel/reference/include/m2.h","sha256":"7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8"},{"path":"vendor/epi-kernel/reference/src/m2.c","sha256":"9b89cefd560e5b3ad9259282b35abb5f0811077a9d4d03cc77675d7f29162002"}],
 "tables":[
