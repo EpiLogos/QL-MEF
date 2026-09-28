@@ -181,7 +181,7 @@ pub fn constitution() -> Value {
             {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
             {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
             {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
-            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
+            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read","nara.lived-context.compose"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
             {"position":"#5","name":"Epii","operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
         "source": {
@@ -1166,4 +1166,13 @@ pub fn nara_journey_read(request: NaraJourneyReadRequest) -> Result<Value, Strin
     request.journey.validate()?;
     let window = request.window_unix_ms.map(|[from, to]| (from, to));
     serde_json::to_value(request.journey.reading(window)?).map_err(|error| error.to_string())
+}
+
+/// `nara.lived-context.compose` — the person's relevant Day/Flow history for a
+/// concern, selected with exact source identity for delivery to Nara.
+pub fn nara_lived_context(
+    request: crate::nara::lived_context::LivedContextRequest,
+) -> Result<Value, String> {
+    let context = crate::nara::lived_context::compose(request)?;
+    serde_json::to_value(context).map_err(|error| error.to_string())
 }

@@ -12,6 +12,7 @@ pub mod dialogue;
 pub mod domain;
 pub mod expression;
 pub mod identity_material;
+pub mod lived_context;
 pub mod multi;
 pub mod replay;
 pub mod voice;

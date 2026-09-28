@@ -89,6 +89,7 @@ fn invoke(path: &str) -> R<Value> {
             "nara.journey.open",
             "nara.journey.apply",
             "nara.journey.read",
+            "nara.lived-context.compose",
         ][..],
         5 => &["logos.return"][..],
         _ => unreachable!(),
@@ -155,6 +156,11 @@ fn invoke(path: &str) -> R<Value> {
             let request: NaraJourneyReadRequest =
                 serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::nara_journey_read(request).map_err(error)?
+        }
+        "nara.lived-context.compose" => {
+            let request: ql_mef::nara::lived_context::LivedContextRequest =
+                serde_json::from_value(input.clone()).map_err(error)?;
+            epi_agent::nara_lived_context(request).map_err(error)?
         }
         "logos.return" => {
             let request: LogosReturnRequest =
