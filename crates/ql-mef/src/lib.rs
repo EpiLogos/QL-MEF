@@ -42,6 +42,7 @@ mod reading;
 mod refraction;
 mod registry;
 mod ruling;
+pub mod spanda_field;
 mod sublens;
 mod templateure;
 mod vak;
