@@ -127,7 +127,7 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(sum(e["kind"] == "LINE_CHANGE" for e in self.projection["relations"]), 384)
 
     def test_deleted_trigram_or_duplicate_line_relation_fails(self):
-        for kind in ("HAS_UPPER_Trigram", "LINE_CHANGE"):
+        for kind in ("HAS_UPPER_TRIGRAM", "LINE_CHANGE"):
             changed = self.changed()
             index = next(i for i, e in enumerate(changed["relations"]) if e["kind"] == kind)
             changed["relations"].pop(index)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check executed K7 native observations against independent locked Bimba bindings.
+"""Check executed K7 native observations against independent Bimba map bindings.
 
 This is the missing third side of Bimba/C/Rust parity: two implementations can
 agree while both attach an operation to the wrong source coordinate. This reader
@@ -41,7 +41,7 @@ def expected_rows(projection: dict, audit: dict) -> list:
     by_ref = {n["ref"]: n for n in nodes}
 
     def named(name: str, role: str | None = None) -> dict:
-        found = [n for n in nodes if n["properties"].get("name") == name and
+        found = [n for n in nodes if n["properties"].get("c_1_name") == name and
                  (role is None or n["role"] == role)]
         source.require(len(found) == 1, "ambiguous source name: " + name)
         return found[0]
@@ -49,16 +49,20 @@ def expected_rows(projection: dict, audit: dict) -> list:
     def role_nodes(role: str) -> list:
         return [n for n in nodes if n["role"] == role]
 
-    nuc = {n["properties"]["symbol"]: n for n in role_nodes("nucleotide")}
-    pair = {n["properties"]["sequence"]: n for n in role_nodes("dinucleotide")}
-    codon = {n["properties"]["sequence"]: n for n in role_nodes("dna-codon")}
+    nuc = {n["properties"]["c_1_symbol"]: n for n in role_nodes("nucleotide")}
+    pair = {n["properties"]["p_3_sequence"]: n for n in role_nodes("dinucleotide")}
+    codon = {n["properties"]["p_3_sequence"]: n for n in role_nodes("dna-codon")}
+
+    def rank(n: dict) -> int:
+        # The map holds a card's rank/number only as its coordinate's last segment.
+        return int(re.split(r"[-./]", n["ref"])[-1])
     minor = []
     for suit in ("Cups", "Wands", "Pentacles", "Swords"):
         parent = named(suit)
         children = [n for n in role_nodes("minor-arcana") if n["parent_id"] == parent["id"]]
-        source.require({n["properties"]["qlPosition"] for n in children} == set(range(14)),
+        source.require({rank(n) for n in children} == set(range(14)),
                        "incomplete source suit rank field: " + suit)
-        minor.extend(sorted(children, key=lambda n: n["properties"]["qlPosition"]))
+        minor.extend(sorted(children, key=rank))
     groups = [
         [by_ref["#3"]],
         [nuc[c] for c in ALPHABET],
@@ -68,9 +72,9 @@ def expected_rows(projection: dict, audit: dict) -> list:
         [by_ref[h["ref"]] for h in sorted(audit["details"]["hexagrams"], key=lambda h: h["trigram_derived_address"])],
         [named(f"Matrix {i}") for i in range(1, 4)],
         minor,
-        sorted(role_nodes("major-arcana"), key=lambda n: n["properties"]["number"]),
-        sorted(role_nodes("clock-degree"), key=lambda n: n["properties"]["degree"]),
-        sorted(role_nodes("clock-backbone"), key=lambda n: (n["properties"]["quadrant"], n["properties"]["position"])),
+        sorted(role_nodes("major-arcana"), key=rank),
+        sorted(role_nodes("clock-degree"), key=lambda n: n["properties"]["m_3_5_degree"]),
+        sorted(role_nodes("clock-backbone"), key=lambda n: (n["properties"]["m_3_5_quadrant"], n["properties"]["p_3_position"])),
         [by_ref["#3-4.0"]],
     ]
     source.require(tuple(map(len, groups)) == GROUP_COUNTS, "native/source group cardinality drift")
@@ -78,7 +82,7 @@ def expected_rows(projection: dict, audit: dict) -> list:
             for kind, group in enumerate(groups) for i, node in enumerate(group)]
     rna = {r["dna"]: r["rna"] for r in audit["details"]["genetics"]["rna"]}
     for address in range(64):
-        dna = codon[sequence(address)]["properties"]["sequence"]
+        dna = codon[sequence(address)]["properties"]["p_3_sequence"]
         rows.append(["transcription", address, 0, dna])
         # Non-T forms are shared, not invented extra RNA coordinates.
         rows.append(["transcription", address, 1, rna.get(dna, dna)])
@@ -165,7 +169,7 @@ def read_observations(path: Path) -> tuple[list, str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", required=True, type=Path)
+    parser.add_argument("--map", type=Path, default=source.bimba_map.CACHE)
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--producer-revision-file", required=True, type=Path)
     parser.add_argument("--expected-revision", required=True)
@@ -175,8 +179,7 @@ def main() -> int:
         revision = args.producer_revision_file.read_text().strip()
         source.require(re.fullmatch(r"[0-9a-f]{40}", revision) is not None and revision == args.expected_revision,
                        "native producer/expected revision mismatch")
-        registry, nodes, edges = source.read_source(args.source_root)
-        projection = source.project(registry, nodes, edges)
+        projection = source.projection_for(args.map)
         audit = source.Audit(projection).run()
         source.require(source.lock_for(projection, audit) == source.load_json(ROOT / source.LOCK),
                        "source audit lock drift")

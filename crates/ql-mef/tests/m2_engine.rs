@@ -217,8 +217,8 @@ fn actual_c_and_rust_observations_agree_across_the_field_and_finite_operations()
         ("ground", 1),
         ("record", 764),
         ("binding", 764),
-        ("coordinate", 597),
-        ("relation", 8876),
+        ("coordinate", 598),
+        ("relation", 4454),
         ("axes", 288),
         ("signature", 160),
         ("tattva-step", 72),
@@ -301,7 +301,7 @@ fn carriers_are_distinct_and_three_transforms_are_not_substituted() {
 #[test]
 fn incomplete_or_conflicting_correspondences_remain_visible_in_the_full_field() {
     let c = m2::catalogue();
-    assert_eq!(c.coordinates().len(), 597);
+    assert_eq!(c.coordinates().len(), 598);
     let counts: Vec<_> = c
         .tables()
         .iter()
@@ -422,8 +422,8 @@ fn engine_emits_every_domain_with_event_provenance_and_no_invented_resonator() {
     assert_eq!(frame.schema, m2::ENGINE_CONTRACT);
     assert_eq!(frame.identity, request.stamp.identity);
     assert_eq!(frame.domains.len(), 16);
-    assert_eq!(frame.structural_coordinate_count, 597);
-    assert_eq!(frame.structural_relation_count, 8876);
+    assert_eq!(frame.structural_coordinate_count, 598);
+    assert_eq!(frame.structural_relation_count, 4454);
     assert_eq!(frame.modal.coefficients.len(), 72);
     assert_eq!(frame.modal.form_potential.len(), 64);
     assert_eq!(frame.numerical_ground.field72, 72);

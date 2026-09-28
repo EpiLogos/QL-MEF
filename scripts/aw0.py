@@ -470,7 +470,7 @@ def project():
     expected = {'historical-sp': 36, 'organ': 6, 'm-capability': 36, 'm-inhabitation': 36,
                 'vak-entry': 109, 'vak-cell': 36, 'c-prime-office': 6, 'context-frame': 7,
                 'thread-form': 7, 'context-sequence': 6, 'thought': 12, 'property-office': 6,
-                'property-definition': 194, 'source-skill': 65, 'epii-on-x': 6, 'source-discrepancy': 1, 'property-source-key': 5686, 'original-operational-job': 10}
+                'property-definition': 194, 'source-skill': 65, 'epii-on-x': 6, 'source-discrepancy': 1, 'property-source-key': 2588, 'original-operational-job': 10}
     if any(counts.get(k) != v for k, v in expected.items()):
         raise ValueError('required field enumeration differs: ' + str(counts))
     return {'schema_version': SCHEMA, 'scope': 'enumerated-source-field-with-receipt-qualified-current-disposition',

@@ -215,7 +215,8 @@ fn installed_cpp_consumer_receives_the_same_changed_subject_and_full_form() {
         .arg(format!("BUILD_DIR={}", out.join("build").display()))
         .arg(format!("DESTDIR={}", out.join("install").display()))
         .arg("PREFIX=/ql"));
-    let id = |v: &Value| format!("UINT64_C(0x{})", v.as_str().unwrap());
+    // A null id (e.g. a backbone codon the map does not state) is the C ABI's zero id.
+    let id = |v: &Value| format!("UINT64_C(0x{})", v.as_str().unwrap_or("0000000000000000"));
     let values = |v: &Value| {
         v.as_array()
             .unwrap()

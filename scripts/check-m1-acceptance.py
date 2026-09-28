@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = "docs/kernel-rebuild/m1-engine-acceptance-v1.json"
-REGISTRY_REVISION = "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4"
+REGISTRY_REVISION = "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b"
 
 
 def verify(root: Path = ROOT) -> dict[str, int]:

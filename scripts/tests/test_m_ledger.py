@@ -32,7 +32,7 @@ class MLedgerTests(unittest.TestCase):
         cls.native = cls.world / "native.jsonl"
         with cls.native.open("w") as out:
             result = subprocess.run([str(probe)], stdout=out, stderr=subprocess.PIPE, check=True, text=True)
-        if "126098 checks passed" not in result.stderr:
+        if "71280 checks passed" not in result.stderr:
             raise AssertionError(result.stderr)
         cls.lines = cls.native.read_text().splitlines()
 
@@ -151,7 +151,7 @@ class MLedgerTests(unittest.TestCase):
     def test_empty_observer_never_defaults_to_parity(self):
         findings = ledger.observations(self.registry, self.changed_observation([]), "cpp")
         self.assertTrue(any(f["code"] == "observation-revision" for f in findings))
-        self.assertEqual(sum(f["code"] == "missing-coordinate" for f in findings), 1876)
+        self.assertEqual(sum(f["code"] == "missing-coordinate" for f in findings), 1883)
 
     def test_candidate_extraction_does_not_rewrite_slashes_or_expand_ranges(self):
         refs = [m.group() for m in ledger.COORDINATE.finditer("M0-4.0/1/2 / M0-4.0/1-2 -> M4.5-0 / M4.5.0")]

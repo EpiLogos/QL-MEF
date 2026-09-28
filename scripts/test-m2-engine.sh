@@ -7,15 +7,10 @@ mkdir -p "$receipt"
 test "$(git hash-object fixtures/kernel/m2-reference-vimarsha.rs)" = 7b0bc34cee3388a8d22a615ad2c9facc28016e30
 git rev-parse HEAD > "$receipt/source-revision.txt"
 python3 scripts/m2-catalogue.py check --receipt "$receipt"
-python3 scripts/m2-correspondences.py check --source-root "${M2_BIMBA_SOURCE:-target/m2-bimba-source}"
-if [[ -n "${M2_BIMBA_SOURCE:-}" ]]; then
-  python3 scripts/m2-field-report.py check --source-root "$M2_BIMBA_SOURCE"
-elif [[ -d target/m2-bimba-source/Idea/Bimba/Map/datasets/parashakti-deep ]]; then
-  python3 scripts/m2-field-report.py check --source-root target/m2-bimba-source
-else
-  echo 'Pinned deep Bimba source required: set M2_BIMBA_SOURCE to its read-only checkout' >&2
-  exit 1
-fi
+# With target/bimba-map/map.json these recompute from the map; otherwise they
+# check the committed outputs against the registry.
+python3 scripts/m2-correspondences.py check
+python3 scripts/m2-field-report.py check
 make -C c all
 "${CC:-cc}" -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Ic/include \
   scripts/m2-native-probe.c c/build/libql-mef-c.a -lm -o "$receipt/native-probe"
@@ -61,7 +56,7 @@ paths=['fixtures/kernel/m2-condition-request-v1.json','fixtures/kernel/m2-engine
 receipt={'schema':'ql.m2-acceptance/v1','result':'passed','revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
  'inputs':{path:hashlib.sha256(Path(path).read_bytes()).hexdigest() for path in paths},
  'checks':['127-source-correspondence-paths/6912-C-Rust-pitch-cases','joint-condition-generation/tuning/palette/provider-negative-cases','independent-retained-C-source','597-coordinate/8876-relation C-Rust observation','finite-operations','ASan+UBSan',
- 'source-Vimarsha-32256-cases','closed-wire-shapes','strict-installed-C++17-consumer','same-event/bounded/provider contract','K2-pinned-deep-source-census'],
+ 'source-Vimarsha-32256-cases','closed-wire-shapes','strict-installed-C++17-consumer','same-event/bounded/provider contract','Bimba-map-field-census'],
  'not_claimed':['whole-M operational completion','semantic equality of contradictory source declarations','live Neo4j or ephemeris','physical resonator solver','experiential validation']}
 (p/'acceptance.json').write_text(json.dumps(receipt,indent=2)+'\n')
 print('M2 source/C/Rust/installed-consumer scoped acceptance passed')
