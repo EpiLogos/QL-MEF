@@ -53,16 +53,20 @@ int main() {
     assert(r->musical_relation_id && r->planetary_relation_id);
     assert(r->fibre == 1 && r->colour_name && std::strcmp(r->colour_name, "red") == 0);
     double pitch = -17.0;
-    assert(ql_m2_correspondence_pitch(2, 0, 1, 0, 220.0, &pitch) == QL_M2_OK);
+    assert(ql_m2_correspondence_pitch(2, 0, 0, 0, 220.0, &pitch) == QL_M2_OK);
     assert(pitch == 220.0);
-    assert(ql_m2_correspondence_pitch(2, 0, 1, 7, 220.0, &pitch) == QL_M2_OK);
+    assert(ql_m2_correspondence_pitch(2, 0, 0, 7, 220.0, &pitch) == QL_M2_OK);
     assert(std::abs(pitch - 440.0) < 1e-10);
     const double prior = pitch;
-    assert(ql_m2_correspondence_pitch(2, 0, 1, 8, 220.0, &pitch) == QL_M2_INVALID);
+    // The Bimba map states no full maqam scale spelling: the spelled tuning
+    // is unavailable and leaves the output untouched.
+    assert(ql_m2_correspondence_pitch(2, 0, 1, 0, 220.0, &pitch) == QL_M2_UNAVAILABLE);
     assert(pitch == prior);
-    assert(ql_m2_correspondence_pitch(2, 0, 1, 0, NAN, &pitch) == QL_M2_NONFINITE);
+    assert(ql_m2_correspondence_pitch(2, 0, 0, 8, 220.0, &pitch) == QL_M2_INVALID);
     assert(pitch == prior);
-    assert(ql_m2_correspondence_pitch(2, 0, 1, 0, 220.0, nullptr) == QL_M2_INVALID);
+    assert(ql_m2_correspondence_pitch(2, 0, 0, 0, NAN, &pitch) == QL_M2_NONFINITE);
+    assert(pitch == prior);
+    assert(ql_m2_correspondence_pitch(2, 0, 0, 0, 220.0, nullptr) == QL_M2_INVALID);
     assert(ql_m2_correspondence(72, 0) == nullptr);
     assert(ql_m2_correspondence(2, 2) == nullptr);
     const auto count = ql_m2_correspondence_count();
