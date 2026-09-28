@@ -1,0 +1,51 @@
+{
+  "schema": "ql.k-move-reference-receipt/v1",
+  "recorded": "2026-09-28",
+  "transition": {
+    "from": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "to": "c7872e96a12e8253de6818876c2a039fd8082e46",
+    "lock": "migration/epi-kernel/source-lock.json"
+  },
+  "reference_sources_sha256": {
+    "vendor/epi-kernel/reference/src/m1.c": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a",
+    "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
+    "vendor/epi-kernel/reference/include/m3.h": "f036b5ada8b1232c355a1268bf84fa5effba02aafca850707560cd4c1d39937c",
+    "vendor/epi-kernel/reference/src/kernel.c": "0e954004115abca9c0e84e3b5877206855123bd9da097233701d782d9b39e59e"
+  },
+  "executed": [
+    {
+      "command": "scripts/sync-epi-c-reference.sh --check",
+      "result": "passed",
+      "detail": "vendored == c7872e96 o ratified corrections (M3-COIN-1); BLAKE3 tree locked"
+    },
+    {
+      "command": "scripts/build-epi-c-reference.sh",
+      "result": "passed",
+      "detail": "epi C reference smoke: ok"
+    },
+    {
+      "command": "scripts/test-epi-c-parity.sh",
+      "result": "passed"
+    },
+    {
+      "command": "scripts/test-epi-c-r4.sh (parity sections)",
+      "result": "passed",
+      "detail": "holographic kernel + VAK/pointer-web parity PASS, incl. kernel.energy.total under the 4:5:6 law"
+    },
+    {
+      "command": "historical test_kernel and test_m1 on the reference library set",
+      "result": "passed",
+      "detail": "Kernel Math 8/8; M1 190 passed, 0 failed"
+    },
+    {
+      "command": "upstream epi-lib C suites on the reference",
+      "result": "passed",
+      "detail": "all suites pass except test_m3's coin-value assertions, which encode the unratified 7/8 table (M3-COIN-1 stands)"
+    },
+    {
+      "command": "scripts/check-m1-acceptance.py",
+      "result": "passed",
+      "detail": "witness names the 12×12 successors m1_ananda_get / m1_ananda_dr_get"
+    }
+  ]
+}
