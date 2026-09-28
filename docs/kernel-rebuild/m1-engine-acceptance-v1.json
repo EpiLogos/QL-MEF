@@ -404,7 +404,7 @@
     },
     {
       "path": "scripts/test-m1-engine.sh",
-      "sha256": "910e06cc1e7079531c304f36b8503de0b850fd6c3b377a5300c35de609c434a3"
+      "sha256": "af69f8d15024d396ee4ecf24dc2f15eec5a6a413830dd4e74781d0f3797e8c81"
     },
     {
       "path": "fixtures/kernel/m1-source-literals-v1.json",
