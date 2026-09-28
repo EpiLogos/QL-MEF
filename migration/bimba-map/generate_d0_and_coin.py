@@ -164,19 +164,18 @@ def main() -> None:
         x, y = (OLD[c] for c in seq)
         total, diff = int(total), int(diff)
         nx, ny = (NEW[c] for c in seq)
-        if (total, diff) == (nx + ny, nx - ny):
+        # The ruling corrects magnitudes; each recorded difference sign is kept
+        # (AG=GA and TC=CT are class-stable, M3 unresolved item 2), as the
+        # ratified kernel correction M3-COIN-1 keeps them.
+        sign = (diff > 0) - (diff < 0)
+        want = (nx + ny, sign * abs(nx - ny))
+        if (total, diff) == want:
             continue  # already corrected
-        if total != x + y:
-            raise SystemExit(f"{coord} {seq}: pair sum is not the old-table value")
-        if diff != x - y:
-            # Already inconsistent before the coin correction (AG, TC carry the
-            # opposite sign); the corrected value follows the same x - y law.
-            lines.append(f"// {coord} {seq}: difference {diff} disagreed with its own table (x - y = {x - y}); corrected below.")
-        nx, ny = (NEW[c] for c in seq)
-        if (nx + ny, nx - ny) != (total, diff):
-            lines.append(f"MATCH (n:Bimba {{coordinate:{lit(coord)}}}) WHERE n.c_3_sum_value = {total} AND "
-                         f"n.c_3_difference_value = {diff} SET n.c_3_sum_value = {nx + ny}, n.c_3_difference_value = {nx - ny};")
-            changed += 1
+        if total != x + y or abs(diff) != abs(x - y):
+            raise SystemExit(f"{coord} {seq}: pair values are not the old-table values")
+        lines.append(f"MATCH (n:Bimba {{coordinate:{lit(coord)}}}) WHERE n.c_3_sum_value = {total} AND "
+                     f"n.c_3_difference_value = {diff} SET n.c_3_sum_value = {want[0]}, n.c_3_difference_value = {want[1]};")
+        changed += 1
 
     # Nucleotide integrals: sum of each charge over the 16 codons with that outer nucleotide, / 4.
     codons = [a + b + c for a in NUC for b in NUC for c in NUC]
