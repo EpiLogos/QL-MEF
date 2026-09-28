@@ -69,3 +69,16 @@ factory workflow inspect <state.json> <run-ref> --json
 
 Commission stamps the source and its lowered C′ before any attempt. Normal
 `factory attempt` Actions own start, dispatch, verification and Return.
+
+## #258 programme: `epi-domain-journeys.workflow.ts` (commissioned)
+
+Packets EA0–EA5 of `docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md`
+plus an independent first-episode verifier (V01–V12). Participants are the
+product Guardians and the Anima/Aletheia sets; the six M-domain identities are
+EA0's to create. Commissioned on 2026-09-28 into this project's Factory state
+(`factory project locate <QL root>`) from `epi-domain-journeys.commission-request.json`:
+run `run:01M3MA68600YZYJETC82RJVDE8`, journey `journey:01M3MA68603QC0NCAQMYD63QCM`.
+
+```sh
+factory workflow inspect <state.json> run:01M3MA68600YZYJETC82RJVDE8 --json
+```
