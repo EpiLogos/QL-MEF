@@ -198,6 +198,7 @@ impl Catalogue {
                         .collect()
                 })
                 .unwrap_or_default(),
+            via: Vec::new(),
         })
     }
     /// All actual coordinates, not just leaves with a retained numeric record.
@@ -247,6 +248,9 @@ pub struct DescriptorReading {
     #[serde(with = "decimal_fields")]
     pub fields: BTreeMap<String, u64>,
     pub source_relation_refs: Vec<String>,
+    /// For a linked reading: the map relation types that produced the link.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub via: Vec<String>,
 }
 /// Decimal-string wire integers avoid JavaScript rounding of bitmask fields.
 mod decimal_fields {
@@ -566,40 +570,81 @@ pub fn maqam_pitches(mode: u8, root_hz: f64) -> Result<[f64; 8], String> {
     }
     Ok(result)
 }
-/// Typed cross-table links retain their register; a same integer is never used
-/// as an implicit element/planet/decan identity conversion.
+/// Cross-table links are the Bimba map's typed relations. A row links to every
+/// catalogued coordinate its coordinate relates to; where a row is finer than
+/// the relation (a decan face under its decan's `RULED_BY`), the nearest
+/// ancestor below the table scope supplies the links for tables the row itself
+/// does not reach. The retained C index columns (ruling_planet, planet_link,
+/// decan_link, planet_ruler, element_id) are not used as links: they disagree
+/// with the map. The maqam tuning ratio has no map coordinate and stays the
+/// retained branch law.
 pub fn linked_readings(table: &str, index: usize) -> Result<Vec<DescriptorReading>, String> {
-    let r = catalogue().table(table)?.row(index)?;
-    let links: Vec<(&str, usize)> = match table {
-        "shem" => vec![
-            ("element", r[3] as usize),
-            ("decan", r[4] as usize),
-            ("planet", r[5] as usize),
-        ],
-        "decan" => {
-            // Decan F/E/A/W/quintessence is not the five-element ID order.
-            let element = catalogue()
-                .table("element")?
-                .rows()
-                .iter()
-                .position(|throughline| throughline[1] == r[0])
-                .ok_or("decan element has no retained throughline")?;
-            let mut links = vec![("element", element)];
-            if index < 72 {
-                links.push(("planet", r[4] as usize));
+    let catalogue = catalogue();
+    let source = catalogue.table(table)?;
+    let row = source.row(index)?;
+    let registry = native_m_registry();
+    let bound = catalogued_coordinates();
+    let position = |name: &str| TABLE_NAMES.iter().position(|t| *t == name);
+    let own = (position(table).ok_or("unknown M2 table")?, index);
+    let mut links: BTreeMap<(usize, usize), std::collections::BTreeSet<String>> = BTreeMap::new();
+    if let Some(reference) = source.binding(index) {
+        let scope = registry
+            .resolve(&source.scope)
+            .ok_or("unknown M2 table scope")?
+            .id;
+        let mut reached = std::collections::BTreeSet::new();
+        let mut node = registry.resolve(reference).ok_or("unknown M2 binding")?;
+        while node.id != scope {
+            let mut found: BTreeMap<(usize, usize), Vec<String>> = BTreeMap::new();
+            for relation in registry
+                .relations_for(node.id)
+                .filter(|r| r.from_id == Some(node.id))
+            {
+                let targets = relation.to_id.and_then(|to| bound.get(&to));
+                for link in targets.into_iter().flatten() {
+                    if *link != own && !reached.contains(&link.0) {
+                        found.entry(*link).or_default().push(relation.source_kind.clone());
+                    }
+                }
             }
-            links
+            reached.extend(found.keys().map(|link| link.0));
+            for (link, kinds) in found {
+                links.entry(link).or_default().extend(kinds);
+            }
+            match registry.parent(node.id) {
+                Some(parent) => node = parent,
+                None => break,
+            }
         }
-        "element" => vec![("tattva", r[0] as usize), ("chakra", r[3] as usize)],
-        "maqam" => vec![("ratio", r[0] as usize), ("planet", r[9] as usize)],
-        "mantra" => vec![("element", r[2] as usize)],
-        "asma" => vec![("element", r[3] as usize)],
-        _ => Vec::new(),
-    };
+    }
+    if table == "maqam" {
+        let ratio = (position("ratio").expect("ratio table"), row[0] as usize);
+        links.entry(ratio).or_default();
+    }
     links
         .into_iter()
-        .map(|(t, i)| catalogue().reading(t, i))
+        .map(|((t, i), via)| {
+            let mut reading = catalogue.reading(TABLE_NAMES[t], i)?;
+            reading.via = via.into_iter().collect();
+            Ok(reading)
+        })
         .collect()
+}
+/// Every catalogued row by its exact coordinate: (table position, row).
+fn catalogued_coordinates() -> &'static BTreeMap<MTreeId, Vec<(usize, usize)>> {
+    static VALUE: OnceLock<BTreeMap<MTreeId, Vec<(usize, usize)>>> = OnceLock::new();
+    VALUE.get_or_init(|| {
+        let registry = native_m_registry();
+        let mut result: BTreeMap<MTreeId, Vec<(usize, usize)>> = BTreeMap::new();
+        for (t, table) in catalogue().tables().iter().enumerate() {
+            for i in 0..table.rows().len() {
+                if let Some(node) = table.binding(i).and_then(|r| registry.resolve(r)) {
+                    result.entry(node.id).or_default().push((t, i));
+                }
+            }
+        }
+        result
+    })
 }
 
 /// A checked boundary around the existing Templateure authority. Keeping a
