@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "63fbde8ab9624b7573de86c54782a616a7584e958bc4f52312007e9761f544ab",
+  "ledger_revision": "cb5f5177a99952ed0e7ebe80c1699ecb5e807836a187946fb6e756d74e294685",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1cc9a51733e667e036d6a680c89926e493dad7a483583516c5a5fe0a6a358d44",
@@ -115454,7 +115454,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m2-finite-proof-v1.json",
-        "sha256": "cb5d7192b444021c82753e8b6555b0d5f3fe2c14e315a941cccba579db92de4b"
+        "sha256": "93734250cb2d39a61b38edc6cb96b1b0daa456a14029e83cd6926db41ecf1a2f"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
@@ -115541,7 +115541,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
-        "sha256": "3687176de26265d6d173b8396192a77e034ab5bfb594570d22f44a3db2a025cf"
+        "sha256": "6e2ffc250d494d2e00b1d4bda9f7e7190e19959e3d05b8192a40b835e7ba5f18"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
@@ -115644,7 +115644,7 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/m3-coverage-v1.json",
-        "sha256": "a94fd46bae8ed33520a7b088f1857d362c733c00d7c92c126af94e827539c791"
+        "sha256": "be360e3c5417d13b58915a2be072950ebf3b23a5eb735e77b61507ad434af3f0"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
