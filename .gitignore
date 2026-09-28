@@ -22,3 +22,6 @@ __pycache__/
 
 # JS refinement homes (L5 Technē surfaces)
 node_modules/
+
+# Daily Bimba graph dumps pulled from Omarchy (neo4j-vault-pull); never source.
+/.neo4j-backups/
