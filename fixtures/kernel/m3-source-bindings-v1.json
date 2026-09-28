@@ -1,9 +1,9 @@
 {
-  "audit_sha256": "adba69b06616d21d2ff49248c9e2362338ce6aedebcfe67109b8581874226e4d",
+  "audit_sha256": "6983605c5063b76604b1e674f2238d754c9a85f649aa3fc4f6fc5cbeb4ad4b3c",
   "counts": {
     "native_orientation_states": 472,
     "nodes": 996,
-    "open_findings": 307,
+    "open_findings": 183,
     "relation_kinds": {
       "ADJACENT_TO": 2,
       "ALIGNS_WITH_COMPASS": 4,
@@ -150,18 +150,16 @@
   },
   "detail_sha256": {
     "clock": "b7e902f852e1789e187bf5ada37abe1c1bba283e39ed083acb6e873dc576b250",
-    "genetics": "bb2331a8037289c800fcc0570291acd8f96e87df5a4830ef63e916434435a666",
+    "genetics": "b2772dd8177c4e116fbf862c865f9c20fea91cda37e929cf4ad871c55fb56e60",
     "hexagrams": "4ff88ca0cc57d6bc20ff0d29f707e6e2b264abde847cb64e2797c32b92090053",
     "matrices": "44b19405df3bc8665ef447ea3d1055659c4af9fa9ab032e9e49eb41de1c6fa51"
   },
   "finding_counts": {
-    "codon-charge": 112,
     "legacy-clock-placeholder": 1,
     "line-change": 75,
     "line-change-field": 45,
     "nuclear-register": 60,
     "orientation-count": 1,
-    "pair-descriptor": 12,
     "resonance-admissibility": 1
   },
   "generator": "scripts/m3-source-parity.py",
@@ -173,20 +171,20 @@
     "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
     "vendor/epi-kernel/reference/src/m3_clock_lut.c": "e4aab6c7394cb45528dead0ad63f12965a25b6d10987e190a02ce8f85caf92e1"
   },
-  "projection_sha256": "6bdd9c8f545b8526f3fa9a7c758365a0fe090fa1a9f52b73cc9a3d5d6642bbae",
-  "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+  "projection_sha256": "7050d86e8768534c2155a0dc5a74d59be0dd1acb7b67f0757bc0adab01db23ff",
+  "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
   "schema": "ql.m3-source-bindings-lock/v1",
   "source_files": [
     {
-      "bytes": 39503381,
-      "git_blob": "c87cf6e62e6bbc42a1f88d32bb5f147f4f553dde",
+      "bytes": 39513389,
+      "git_blob": "f5938952c039fb46a682ad30ab0646fc4262760c",
       "path": "bimba-map:http://100.92.62.101:7474",
       "record_class": "bimba-map-read",
-      "sha256": "2be28c0db9a58712bec0f914433a9e83e0f9f6e373fa293226bd62eb5421cbfa"
+      "sha256": "f2e9996a28c4df6f712a90516b8ca765ef34d0332c16c6b0e9c6f04e279b41d8"
     }
   ],
   "source_repository": "bimba-map",
-  "source_revision": "2be28c0db9a58712bec0f914433a9e83e0f9f6e373fa293226bd62eb5421cbfa",
+  "source_revision": "f2e9996a28c4df6f712a90516b8ca765ef34d0332c16c6b0e9c6f04e279b41d8",
   "standing": {
     "K4_acceptance": "not-claimed",
     "c_rust_execution": "not-claimed-by-this-source-audit",
