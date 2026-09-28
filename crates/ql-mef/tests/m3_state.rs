@@ -276,3 +276,33 @@ int main(){{
         .arg(out.join("consumer")));
     run(Command::new(out.join("consumer")).current_dir("/tmp"));
 }
+#[test]
+fn spanda_advance_takes_the_form_from_the_m1_ring_state() {
+    use ql_mef::spanda_field::ring_codon_advance;
+    let (mut s, c) = setup();
+    let mut seen = std::collections::BTreeSet::new();
+    for cycle in 0..6u64 {
+        for tick12 in 0..12u8 {
+            let mut cmd = c[0].clone();
+            cmd.expected_generation = s.generation();
+            cmd.operations = vec![M3Operation::SpandaAdvance { tick12, cycle }];
+            let r = s.apply(cmd).unwrap();
+            assert_eq!(r.status, "applied");
+            let expected = ring_codon_advance(tick12, cycle).address();
+            assert_eq!(s.snapshot()["form"]["address"], expected);
+            seen.insert(expected);
+        }
+    }
+    // The ring state really drives the form: 72 generations do not collapse
+    // onto one codon (a disconnected advance would leave the form fixed).
+    assert!(seen.len() > 48, "{} distinct codons", seen.len());
+    let before = s.snapshot();
+    let mut bad = c[0].clone();
+    bad.expected_generation = s.generation();
+    bad.operations = vec![M3Operation::SpandaAdvance {
+        tick12: 12,
+        cycle: 0,
+    }];
+    assert!(s.apply(bad).is_err());
+    assert_eq!(s.snapshot(), before);
+}
