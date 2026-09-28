@@ -44,6 +44,24 @@ static const Holographic_Coordinate* HC_RAW_PSYCHOIDS[HC_BEDROCK_POSITION_COUNT]
     &Psychoid_3, &Psychoid_4, &Psychoid_5
 };
 
+typedef struct {
+    uint8_t first;
+    uint8_t second;
+    HC_HarmonicFamily family;
+} HC_HarmonicPairRow;
+
+static const HC_HarmonicPairRow HC_HARMONIC_PAIR_ROWS[] = {
+    {0u, 1u, HC_HARMONIC_FAMILY_A},
+    {2u, 3u, HC_HARMONIC_FAMILY_A},
+    {4u, 5u, HC_HARMONIC_FAMILY_A},
+    {0u, 5u, HC_HARMONIC_FAMILY_B},
+    {1u, 4u, HC_HARMONIC_FAMILY_B},
+    {2u, 3u, HC_HARMONIC_FAMILY_B},
+    {1u, 2u, HC_HARMONIC_FAMILY_C},
+    {3u, 4u, HC_HARMONIC_FAMILY_C},
+    {5u, 0u, HC_HARMONIC_FAMILY_C}
+};
+
 uint8_t hc_bimba_pitch_class(uint8_t ql_position) {
     return (uint8_t)((2u * (ql_position % HC_WEB_HELIX_SIZE)) % HC_WEB_RING_SIZE);
 }
@@ -82,6 +100,154 @@ uint8_t hc_mirror_ratio_role(uint8_t ql_position) {
     if (interval == HC_INTERVAL_TRITONE) return HC_RATIO_NONE;
     if (interval == HC_INTERVAL_TOTALITY_16_9) return HC_RATIO_TOTALITY;
     return HC_RATIO_NONE;
+}
+
+uint8_t hc_harmonic_families_for_pair(
+    uint8_t first_ql_position,
+    uint8_t second_ql_position,
+    uint8_t* out,
+    uint8_t out_capacity
+) {
+    if (!out || out_capacity == 0u) return 0u;
+
+    uint8_t first = (uint8_t)(first_ql_position % HC_WEB_HELIX_SIZE);
+    uint8_t second = (uint8_t)(second_ql_position % HC_WEB_HELIX_SIZE);
+    uint8_t count = 0u;
+    uint8_t row_count = (uint8_t)(sizeof(HC_HARMONIC_PAIR_ROWS) / sizeof(HC_HARMONIC_PAIR_ROWS[0]));
+    for (uint8_t i = 0u; i < row_count && count < out_capacity; i++) {
+        const HC_HarmonicPairRow* row = &HC_HARMONIC_PAIR_ROWS[i];
+        if (row->first == first && row->second == second) {
+            out[count++] = row->family;
+        }
+    }
+    return count;
+}
+
+uint8_t hc_harmonic_depth_for_d_face(uint8_t face) {
+    switch (face) {
+        case HC_D_FACE_LEFT:
+        case HC_D_FACE_RIGHT:
+            return 3u;
+        case HC_D_FACE_BOTH:
+            return 4u;
+        case HC_D_FACE_NONE:
+        default:
+            return 2u;
+    }
+}
+
+uint8_t hc_harmonic_d_face(uint8_t first_is_prime, uint8_t second_is_prime) {
+    if (first_is_prime && second_is_prime) return HC_D_FACE_BOTH;
+    if (first_is_prime) return HC_D_FACE_LEFT;
+    if (second_is_prime) return HC_D_FACE_RIGHT;
+    return HC_D_FACE_NONE;
+}
+
+uint8_t hc_harmonic_register_for_family(uint8_t family) {
+    switch (family) {
+        case HC_HARMONIC_FAMILY_A:
+            return HC_HARMONIC_REGISTER_BEING;
+        case HC_HARMONIC_FAMILY_B:
+            return HC_HARMONIC_REGISTER_BECOMING;
+        case HC_HARMONIC_FAMILY_C:
+            return HC_HARMONIC_REGISTER_KNOWING_UNKNOWING;
+        case HC_HARMONIC_FAMILY_D:
+            return HC_HARMONIC_REGISTER_INVERSION;
+        case HC_HARMONIC_FAMILY_NONE:
+        default:
+            return HC_HARMONIC_REGISTER_NONE;
+    }
+}
+
+uint8_t hc_harmonic_relation_type(uint8_t family, uint8_t face) {
+    switch (face) {
+        case HC_D_FACE_LEFT:
+            return HC_REL_INVERTS_THROUGH_FIRST;
+        case HC_D_FACE_RIGHT:
+            return HC_REL_INVERTS_THROUGH_SECOND;
+        case HC_D_FACE_BOTH:
+            return HC_REL_INVERTS_THROUGH_PAIR;
+        case HC_D_FACE_NONE:
+        default:
+            break;
+    }
+
+    switch (family) {
+        case HC_HARMONIC_FAMILY_A:
+            return HC_REL_ADJACENTLY_ARTICULATES;
+        case HC_HARMONIC_FAMILY_B:
+            return HC_REL_MIRRORS_COMPLEMENT;
+        case HC_HARMONIC_FAMILY_C:
+            return HC_REL_CROSSES_KNOWING_LIMIT;
+        default:
+            return HC_REL_HARMONIC_NONE;
+    }
+}
+
+const char* hc_harmonic_family_name(uint8_t family) {
+    switch (family) {
+        case HC_HARMONIC_FAMILY_A:
+            return "A";
+        case HC_HARMONIC_FAMILY_B:
+            return "B";
+        case HC_HARMONIC_FAMILY_C:
+            return "C";
+        case HC_HARMONIC_FAMILY_D:
+            return "D";
+        case HC_HARMONIC_FAMILY_NONE:
+        default:
+            return "NONE";
+    }
+}
+
+const char* hc_harmonic_register_name(uint8_t harmonic_register) {
+    switch (harmonic_register) {
+        case HC_HARMONIC_REGISTER_BEING:
+            return "Being";
+        case HC_HARMONIC_REGISTER_BECOMING:
+            return "Becoming";
+        case HC_HARMONIC_REGISTER_KNOWING_UNKNOWING:
+            return "KnowingUnknowing";
+        case HC_HARMONIC_REGISTER_INVERSION:
+            return "Inversion";
+        case HC_HARMONIC_REGISTER_NONE:
+        default:
+            return "None";
+    }
+}
+
+const char* hc_harmonic_d_face_name(uint8_t face) {
+    switch (face) {
+        case HC_D_FACE_LEFT:
+            return "D_LEFT";
+        case HC_D_FACE_RIGHT:
+            return "D_RIGHT";
+        case HC_D_FACE_BOTH:
+            return "D_BOTH";
+        case HC_D_FACE_NONE:
+        default:
+            return "NONE";
+    }
+}
+
+const char* hc_harmonic_relation_type_name(uint8_t relation_type) {
+    switch (relation_type) {
+        case HC_REL_ADJACENTLY_ARTICULATES:
+            return "ADJACENTLY_ARTICULATES";
+        case HC_REL_MIRRORS_COMPLEMENT:
+            return "MIRRORS_COMPLEMENT";
+        case HC_REL_CROSSES_KNOWING_LIMIT:
+            return "CROSSES_KNOWING_LIMIT";
+        case HC_REL_INVERTS_THROUGH_FIRST:
+            return "INVERTS_THROUGH_FIRST";
+        case HC_REL_INVERTS_THROUGH_SECOND:
+            return "INVERTS_THROUGH_SECOND";
+        case HC_REL_INVERTS_THROUGH_PAIR:
+            return "INVERTS_THROUGH_PAIR";
+        case HC_REL_HARMONIC_NONE:
+        default:
+            return "NONE";
+    }
 }
 
 static HC_BedrockRef make_bedrock_ref(
