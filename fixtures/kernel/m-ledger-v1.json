@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "63834cce15e65223cd5aaac2963fac67d46a2457c7095cd887386d3f2778e1b7",
+  "ledger_revision": "810a5efcb5901841246620002d8b528b5776afd02a1ca7018ee63e918ecbcb08",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1cc9a51733e667e036d6a680c89926e493dad7a483583516c5a5fe0a6a358d44",
@@ -115541,7 +115541,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
-        "sha256": "6e2ffc250d494d2e00b1d4bda9f7e7190e19959e3d05b8192a40b835e7ba5f18"
+        "sha256": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [

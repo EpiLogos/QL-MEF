@@ -4,7 +4,7 @@
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
     "m2": "93734250cb2d39a61b38edc6cb96b1b0daa456a14029e83cd6926db41ecf1a2f",
-    "m3": "6e2ffc250d494d2e00b1d4bda9f7e7190e19959e3d05b8192a40b835e7ba5f18"
+    "m3": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -69,6 +69,13 @@
       "sha256": "6e2ffc250d494d2e00b1d4bda9f7e7190e19959e3d05b8192a40b835e7ba5f18",
       "accepted_at_revision": "b52eb2f92f00d7dbbb0b45dfc234db1ddf2f2148",
       "reason": "Map refresh: the 36 owner-approved decan -> tarot pip-card edges (registry 2264f568). Acceptance run 36458763210 at b52eb2f."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "6e2ffc250d494d2e00b1d4bda9f7e7190e19959e3d05b8192a40b835e7ba5f18",
+      "sha256": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47",
+      "accepted_at_revision": "dc9d7c5299af4ef91808e2f87a66c9d89052458d",
+      "reason": "SpandaAdvance: the M3 form advances from the live M1 ring state (spanda_field::ring_codon_advance). Acceptance run 36463716289 at dc9d7c5."
     }
   ]
 }
