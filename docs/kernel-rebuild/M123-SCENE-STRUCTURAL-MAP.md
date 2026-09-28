@@ -121,6 +121,143 @@ above where they differ.
     decans and 64 codons are carried as ring bodies and fields, not as
     one entity each.
 
+**Third owner review, 28 September 2026 (#254 comment 5872629938).** These
+replace everything above where they differ.
+
+### Rulings, and where each one landed
+
+| Ruling | What it says | Where it stands |
+|---|---|---|
+| D0 | Re-author the just octave, the Shem planetary colour and the codon ↔ hexagram pairing into the live map | **Applied to the map**. Record: `migration/bimba-map/2026-09-28-d0-reauthor-and-coin.cypher`. Writes: 9 planets, 72 Shem relations, 64 hexagrams. Made durable at source by Epi-Logos-C-Experiments #40 (importer keys + recovery allowlist). |
+| Coin | C = 8, G = 7 (odd is yang); the 7/8 in the map and upstream are errors | **Applied** in the map (charges, pair values, integrals C 92 / G 88, prose), in QL (ratified `M3-COIN-1`), and in the prototype and its mirrors (C-Experiments #40). The M3 source audit falls from 307 to 183 findings: all 112 codon-charge and 12 pair-descriptor findings resolve. The pair-difference law is x − y, except AG and TC, which carry GA's and CT's class-stable values, as the kernel does. |
+| D5 | One tick = 30° | Proceeds. |
+| D6 | θ = λ: the torus is the clock; planets sit at their ecliptic degree; the cardinal season anchors are a lens reading | Replaces the second review's "cardinals re-origin nothing". The ring's θ is ecliptic longitude. The `#3-5-q` anchors are read through a lens, not as the ring's origin. |
+| D10 | The map wins; the M2′ spec tables are not authority | Governs the signal chain below. |
+| D12 | The hour ruler uses the observer's actual place | The Nara location via #252, else a declared world place. |
+| D13 | M1 is the oscillator source; M2 pitch structures are tuning and modulation targets | Governs the signal chain below. |
+| D30 | Every magnitude is tunable, with its standing | Each constant below names its standing: map, ratified, reference, or agent-proposed. |
+| D1–D4, D7–D9, D11, D14–D29 | Proceed on this map's recommendations | — |
+
+The 60-relation clock inscription is prepared and dry-run clean, but **not
+applied**. It is on branch `map/m3-5-clock-inscription`, in
+`2026-09-28-m3-5-clock-inscription.cypher`:
+- 36 `CARRIES_PIP_REFLECTION`, decan → `#3-4.0`;
+- 24 `EMBODIES_PALINDROMIC_CODON`, governor → palindrome.
+
+It waits for an explicit apply.
+
+### The M2 signal chain
+
+This is derived from the M2 subsystems and the live map (read 28 September,
+READ access); the M2′ spec is used only where it agrees. Paths are QL-MEF
+unless marked C-Exp.
+
+**0. Source: M1.**
+- **Map:** `M1-3` Spanda (`c_1_oscillatory_pattern`, `c_1_dual_track_genesis`), with poles `M1-3-1` / `M1-3-2`.
+- **Generator:** the dual oscillator `φ̇ = Δω − a·sin φ − 2b·sin 2φ` (a = 1, b = 9/16, beat ≈ 2.5 Hz). Standing: reference.
+  - It exists only in `vendor/epi-kernel/reference/src/m1.c:483-512`.
+  - The native M1 hands M2 only a ratio, a mode, `tick12` and the lens (`crates/ql-mef/src/continuous/coupled.rs:206-281`).
+- **Build:** port the oscillator natively. Its phase and beat become the carrier. Codons advance on `spanda_codon_advance`, never on `tick12`.
+
+**1. Modulation matrix (the live sky).**
+- **Longitude.** `providers/sky/kerykeion_snapshot.py`. It drives θ = λ directly.
+- **Speed and retrograde.**
+  - Computed at `kerykeion_snapshot.py:211-215`, then dropped by the hand-off at `:338` (`WorldObservation`, `m2_engine.rs:80-86`).
+  - Build: carry them through. They are modulation depth and direction.
+- **Aspects.** Code only (`m2.rs:508`, `c/src/m2.c:107`: 0/60/90/120/180°, orbs 10/6/8/8/10). No map key holds aspect angles, so standing is ratified-C and the orbs are tunable.
+- **Hour ruler.**
+  - Map: the Chaldean order on `M2-5` (`c_2_chaldean_order_verified`).
+  - No QL owner. The only implementation is C-Exp `parashakti/f_routing.rs:596-604`, and it falls back to ticks.
+  - Build: take sunrise and sunset from the observer's place (D12). The sky provider must emit them.
+- **Decan Spanda rhythm.**
+  - Map: 36 `SPANDA_TEMPORAL_RHYTHM` edges, decan → ruler. They carry only a kind label, no rate.
+  - No consumer yet.
+  - Build: they route which planet pulses in which decan. The rate comes from M1's beat, as an agent-proposed, tunable standing.
+
+**2. Filter / resonator bank.**
+- **Apertures.**
+  - Lenses `M2-1-0…5` are in the map. The 18 apertures stand on the ratified promotion `c/registry/promotions/k8-apertures-v1.json`, with `c/include/ql/m2_aperture.h`.
+  - `M2-0` has no child nodes.
+- **Vimarśā `audio_octet` / `nodal_quartet`.**
+  - Code: `crates/ql-mef/src/m2_vimarsha.rs:57-107`, mirrored in `c/src/m2.c:158-181`.
+  - It uses 12-TET degrees {0,2,4,5,7,9,11} over 130.81279 Hz, scaled by M1's ratio.
+  - Under D13 these seven degrees take the map's **planetary just octave** as their tuning target: Sun 1:1, Venus 9:8, Mercury 5:4, Moon 4:3, Saturn 3:2, Jupiter 5:3, Mars 15:8 (`m_2_5_scalar_degree` / `_interval_from_root` / `_scale_function`, authored today).
+  - That octave is the same seven scale degrees in just intonation. Neptune 9:5 and Pluto 9:4 extend it.
+  - No code produces these pitches yet.
+- **Maqam.**
+  - Map: `M2-4.3` has 72 modes with `c_2_tonic_note`, `c_2_dominant_note` and `c_2_ajnas`. Planets bind by `TONIC_PLANETARY_RESONANCE` (62) and `DOMINANT_PLANETARY_RESONANCE` (65).
+  - Code computes 24-TET pitch sets (`m2.rs:557`, `c/src/m2.c:121`), but `m2_condition.rs:263-277` takes a *supplied* `maqam_index`.
+  - Build: select the mode from the hour ruler and the sky through those map relations.
+  - The C family-ruler constant (`c/src/m2_data.inc:808`) has no map relation. Under D10 it stops being reported (`m2_condition.rs:454-456`).
+- **Mantra bands.** `M2-4.1-0-0-*` (50 nodes) carry `c_2_fundamental_frequency` and `c_2_cymatics_pattern`. They are resonant-band candidates: map-backed and tunable.
+
+**3. Texture / material.**
+- **Map:**
+  - `M2-2` tattvas (`c_4_tattva_category`);
+  - the elements at `M2-2-2-5-*` and subtle elements at `M2-2-2-4-*`;
+  - the decan element (`M2-3-e.l_2_elemental_nature`).
+- **Code:** the element fibre (`m2_engine.rs:89-143`, `m2.rs:441 decan_to_fibre`) and the 72 → 64 template field (`templateure.rs`).
+- **Gap:** nothing maps a tattva or element to material constants (damping, stiffness); they are supplied. Build: a tattva → material table, agent-proposed and tunable (D30), for owner review.
+
+**4. Cymatic skin.**
+- **Map:** `M2-4.c_2_cymatic_dimension`, the 50 `c_2_cymatics_pattern` labels, and `M3-3-2-*.c_3_cymatic_function`.
+- **Code:** `M2_TO_M3_CYMATIC_PROJECTION` (`m2_data.inc:813`) and `cpp/include/ql/continuous_field.hpp:193-212` (mode shapes supplied by the mesh provider).
+- **Build:** `nodal_quartet` drives the skin; today nothing consumes it. The Chladni solver exists only in C-Exp `pratibimba-app` and is ported, not re-invented.
+
+**5. Output.** `continuous_field.hpp:162 render_audio` and `cpp/src/field_worker.cpp:64,159`.
+
+**Map findings to record at Gate 1, not adjudicate:**
+- Cancer III (`M2-3-4-0-2`): `RULED_BY` → Saturn, while its four other decan relations → Moon.
+- Element order: `c/include/ql/m2.h` uses F/E/A/W against E/F/W/A.
+- Uranus: in the C planet table, but it has no map node.
+- The map holds 322 of 384 `YIELDS_CODON` edges. The rest regenerate from the matrix law, with provenance (M3′-SPEC §8.15).
+
+### Build plan, with #252 and #258/#259
+
+#252 (Nara identity/natal) and #258/#259 (domain agents, Day/Flow, the
+Tarot/I-Ching journey) are the same field as this scene and enter Gate 1.
+
+1. **Gate 1 records.**
+   - The map findings above.
+   - The #252 defects already listed in §2 (ordinals, `{m1,m2,m3}`, the `elem_sig` route).
+   - The discrepancies in the ledger.
+2. **Kernel (QL).**
+   - Native Spanda oscillator (step 0).
+   - `WorldObservation` keeps speed and retrograde, plus sunrise/sunset for the observer's place (D12, place from #252).
+   - Hour ruler from the Chaldean order.
+   - Maqam and octave selection from the map relations (step 2).
+   - One tunables table in which every magnitude carries its standing (D30).
+3. **Nara (#252).**
+   - The observer's place and natal chart enter as the personal field.
+   - Natal planets bind to `#2-5-*` and the centres to `#2-5-0/1-1…7`, with Earth `#2-5-0/1-0` as the observer.
+   - Natal positions are a second θ = λ layer on the same torus.
+4. **Journey (#258/#259).**
+   - A cast hexagram enters Clock B (hexagram → `YIELDS_CODON` → codon). A drawn card enters through its codon (`REFLECTS_DNA_FORM`, the courts' 64 → 56 role).
+   - Journey placements and readings are entities or subjects bound (`subject_bind`) to those coordinates.
+   - They read and write the scene's one M3 codon state through the `native-field/` channel. There is no second clock.
+   - A selection in the scene binds to Nara as the journey's focus.
+5. **Scene (O:I).** One `oi.expression/v1` Document, 3D view, within the 32-entity cap:
+   - Earth;
+   - the Sun and 8 planets;
+   - the 7 Nara centres;
+   - the torus;
+   - the Clock A and Clock B rings;
+   - the decan ring;
+   - the backbone ring (24 governors);
+   - the codon field;
+   - the lens overlay;
+   - up to 3 journey/natal markers.
+
+   That is 28–30 entities. Degrees, decans and codons are ring bodies and fields, not one entity each. Sound comes from the M1 carrier through the M2 chain; the cymatic skin is the visible shaping.
+6. **Verification.**
+   - Vary each determinant (time, place, lens, cast) and show the expected structural change.
+   - A disconnected consumer must fail.
+   - Replay on Omarchy.
+   - The owner's listening walk.
+
+The infrastructure split of #251/#545 (`m123-scene-map/infra-split.md`)
+is mine and runs alongside step 2.
+
 **Staleness found while tracing these.** QL's frozen C reference
 (`vendor/epi-kernel/reference`, locked at C-Experiments `daa660c`) lacks
 37 later `Body/S/S0/epi-lib` commits that are on `origin/main`. They
@@ -135,6 +272,10 @@ include:
 
 So the owner's ruling that "QL is stale" covers the kernel reference as
 well as the registry. The port (§8, step 0) has to take the kernel too.
+
+**Resolved, 28 September:** #257 moved the reference to C-Experiments
+`c7872e96` (these commits included, with `M3-COIN-1` and BLAKE3), and #260
+builds the registry from the live map.
 
 ## 0. Sources, and which graph
 
