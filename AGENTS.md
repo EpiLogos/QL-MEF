@@ -36,6 +36,12 @@ Two corrections that previous sessions got wrong:
   the 16+1 fold aperture) are readings of the same inscription. The 30°×12 zodiac
   is one lens. See `docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md` §11.
 
+**Open work and its sources:** `ProjectCentral/user/telos/`. The M1–M2–M3
+Expression scene is `telos/integrated-expression/goal.md`. It holds the
+sources, the owner's final rulings, and the tracks in order. Anything those
+sources hold is derived from them, not asked of the owner. One session
+integrates that goal at a time; others send it questions rather than the owner.
+
 Begin with `docs/KERNEL-REBUILD-WAYFINDER.md` and the actual assigned issue.
 Read current issue coordination before choosing files. K8.0 is the shared-core
 writer; #94 owns AW/M0/M5, #134 Nara, #133 the experienced instrument. Preserve

@@ -25,6 +25,7 @@ pub mod m2_condition;
 pub mod m2_engine;
 pub mod m2_vimarsha;
 pub mod m3_engine;
+pub mod m3_inscription;
 pub mod m3_source;
 pub mod m3_state;
 pub mod m_ledger;

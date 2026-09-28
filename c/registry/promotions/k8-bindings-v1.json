@@ -833,6 +833,21 @@
         "migration/epi-kernel/spanda-field-probe.c"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m3_inscription.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-3",
+        "#3-4",
+        "#3-5-5/0"
+      ],
+      "rationale": "M3-5 inscription seed read through the map's relations: lambda -> decan (lens 9) -> EXPRESSES_AS_TAROT_PIP -> #3-4.0 reflection -> REFLECTS_DNA_FORM codon; wheel degree from the winter-solstice anchor -> ANCHORED_BY governor -> season palindrome. The live pose composes through quat_active_state.",
+      "tests": [
+        "crates/ql-mef/tests/m3_inscription.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
