@@ -327,6 +327,33 @@
         "crates/ql-core/src/shape_presentation.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/domain/oracle_journey.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4-2"
+      ],
+      "rationale": "QL-MEF #258 EA2 continuing M4.2 oracle journey: one Tarot deck shuffled once under the Quaternal Tarot protocol and one I-Ching change history across a Day/Flow concern. Card identity resolves against the M3 kernel Tarot bridge and hexagrams follow the M3/C line law; journey state is returned for its Central owner to persist, never persisted or scheduled here.",
+      "tests": [
+        "crates/ql-mef/tests/nara_oracle_journey.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/lived_context.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "QL-MEF #258 EA1 lived Day/Flow context for one Nara concern: selects source-exact, attributed, correction-aware passages from Central document readings and the continuing journey for the dialogue context's occasion and disclosed refs. It reads host-supplied material only and never writes to the person's source or takes Central ownership.",
+      "tests": [
+        "crates/ql-mef/tests/nara_lived_context.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
