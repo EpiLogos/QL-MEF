@@ -30,12 +30,28 @@ fn bare_and_help_print_the_grouped_reference_without_side_effects() {
             assert!(stdout.contains(section), "{args:?}: missing `{section}`");
         }
         for route in [
-            "ql kernel m1", "ql kernel coverage", "ql kernel ledger", "ql kernel apply",
-            "ql matheme derive", "ql matheme shadow", "ql mef lenses", "ql context-frame list",
-            "ql vak compose", "ql vak locate", "ql vak context", "ql vak workflow-types",
-            "ql techne reading", "ql epi-agent constitution", "ql epi-agent faculty",
-            "ql epi-agent invoke", "ql service negotiate", "ql verify", "ql capabilities",
-            "ql system", "ql config-contribution", "ql config apply",
+            "ql kernel m1",
+            "ql kernel coverage",
+            "ql kernel ledger",
+            "ql kernel apply",
+            "ql matheme derive",
+            "ql matheme shadow",
+            "ql mef lenses",
+            "ql context-frame list",
+            "ql vak compose",
+            "ql vak locate",
+            "ql vak context",
+            "ql vak workflow-types",
+            "ql techne reading",
+            "ql epi-agent constitution",
+            "ql epi-agent faculty",
+            "ql epi-agent invoke",
+            "ql service negotiate",
+            "ql verify",
+            "ql capabilities",
+            "ql system",
+            "ql config-contribution",
+            "ql config apply",
         ] {
             assert!(stdout.contains(route), "{args:?}: missing `{route}`");
         }
