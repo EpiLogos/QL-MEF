@@ -583,7 +583,19 @@ pub fn linked_readings(table: &str, index: usize) -> Result<Vec<DescriptorReadin
     let source = catalogue.table(table)?;
     let row = source.row(index)?;
     let registry = native_m_registry();
-    let bound = catalogued_coordinates();
+    // Every catalogued row by its exact coordinate: (table position, row).
+    static BOUND: OnceLock<BTreeMap<MTreeId, Vec<(usize, usize)>>> = OnceLock::new();
+    let bound = BOUND.get_or_init(|| {
+        let mut result: BTreeMap<MTreeId, Vec<(usize, usize)>> = BTreeMap::new();
+        for (t, table) in catalogue.tables().iter().enumerate() {
+            for i in 0..table.rows().len() {
+                if let Some(node) = table.binding(i).and_then(|r| registry.resolve(r)) {
+                    result.entry(node.id).or_default().push((t, i));
+                }
+            }
+        }
+        result
+    });
     let position = |name: &str| TABLE_NAMES.iter().position(|t| *t == name);
     let own = (position(table).ok_or("unknown M2 table")?, index);
     let mut links: BTreeMap<(usize, usize), std::collections::BTreeSet<String>> = BTreeMap::new();
@@ -603,7 +615,10 @@ pub fn linked_readings(table: &str, index: usize) -> Result<Vec<DescriptorReadin
                 let targets = relation.to_id.and_then(|to| bound.get(&to));
                 for link in targets.into_iter().flatten() {
                     if *link != own && !reached.contains(&link.0) {
-                        found.entry(*link).or_default().push(relation.source_kind.clone());
+                        found
+                            .entry(*link)
+                            .or_default()
+                            .push(relation.source_kind.clone());
                     }
                 }
             }
@@ -629,22 +644,6 @@ pub fn linked_readings(table: &str, index: usize) -> Result<Vec<DescriptorReadin
             Ok(reading)
         })
         .collect()
-}
-/// Every catalogued row by its exact coordinate: (table position, row).
-fn catalogued_coordinates() -> &'static BTreeMap<MTreeId, Vec<(usize, usize)>> {
-    static VALUE: OnceLock<BTreeMap<MTreeId, Vec<(usize, usize)>>> = OnceLock::new();
-    VALUE.get_or_init(|| {
-        let registry = native_m_registry();
-        let mut result: BTreeMap<MTreeId, Vec<(usize, usize)>> = BTreeMap::new();
-        for (t, table) in catalogue().tables().iter().enumerate() {
-            for i in 0..table.rows().len() {
-                if let Some(node) = table.binding(i).and_then(|r| registry.resolve(r)) {
-                    result.entry(node.id).or_default().push((t, i));
-                }
-            }
-        }
-        result
-    })
 }
 
 /// A checked boundary around the existing Templateure authority. Keeping a

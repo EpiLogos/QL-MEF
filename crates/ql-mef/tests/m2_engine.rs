@@ -639,7 +639,10 @@ fn cross_table_links_are_the_maps_typed_relations() {
     // Decan faces take their decan's Chaldean RULED_BY (the retained C column
     // held triplicity rulers: Aries decan 3 was Jupiter).
     for (face, ruler) in [(0, "Mars"), (1, "Mars"), (2, "Sun"), (4, "Venus")] {
-        assert_eq!(linked_via("decan", face, "planet", Some("RULED_BY")), [ruler]);
+        assert_eq!(
+            linked_via("decan", face, "planet", Some("RULED_BY")),
+            [ruler]
+        );
     }
     for face in 0..72 {
         let rulers = linked_via("decan", face, "planet", Some("RULED_BY"));
@@ -647,11 +650,20 @@ fn cross_table_links_are_the_maps_typed_relations() {
     }
     // Cancer decan 3 is RULED_BY Saturn and RESONATES_WITH the Moon: both are
     // map relations, and `via` tells them apart.
-    assert_eq!(linked_via("decan", 58, "planet", Some("RULED_BY")), ["Saturn"]);
-    assert_eq!(linked_via("decan", 58, "planet", Some("RESONATES_WITH")), ["Moon"]);
+    assert_eq!(
+        linked_via("decan", 58, "planet", Some("RULED_BY")),
+        ["Saturn"]
+    );
+    assert_eq!(
+        linked_via("decan", 58, "planet", Some("RESONATES_WITH")),
+        ["Moon"]
+    );
     assert!(linked_names("decan", 72, "planet").is_empty());
     // Shem name 0 is ENERGIZED_BY Mars and EXPRESSES_THROUGH Aries decan 1 face 0.
-    assert_eq!(linked_via("shem", 0, "planet", Some("ENERGIZED_BY")), ["Mars"]);
+    assert_eq!(
+        linked_via("shem", 0, "planet", Some("ENERGIZED_BY")),
+        ["Mars"]
+    );
     let faces: Vec<usize> = m2::linked_readings("shem", 0)
         .unwrap()
         .into_iter()
@@ -660,8 +672,14 @@ fn cross_table_links_are_the_maps_typed_relations() {
         .collect();
     assert_eq!(faces, [0]);
     // Maqam 0: tonic Sun, dominant Moon; the tuning ratio stays retained law.
-    assert_eq!(linked_via("maqam", 0, "planet", Some("TONIC_PLANETARY_RESONANCE")), ["Sun"]);
-    assert_eq!(linked_via("maqam", 0, "planet", Some("DOMINANT_PLANETARY_RESONANCE")), ["Moon"]);
+    assert_eq!(
+        linked_via("maqam", 0, "planet", Some("TONIC_PLANETARY_RESONANCE")),
+        ["Sun"]
+    );
+    assert_eq!(
+        linked_via("maqam", 0, "planet", Some("DOMINANT_PLANETARY_RESONANCE")),
+        ["Moon"]
+    );
     assert!(
         m2::linked_readings("maqam", 0)
             .unwrap()
