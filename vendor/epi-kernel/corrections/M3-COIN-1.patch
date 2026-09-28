@@ -1,8 +1,32 @@
+diff --git a/vendor/epi-kernel/reference/include/m0_calculus.h b/vendor/epi-kernel/reference/include/m0_calculus.h
+index cad8f7f..824a42d 100644
+--- a/vendor/epi-kernel/reference/include/m0_calculus.h
++++ b/vendor/epi-kernel/reference/include/m0_calculus.h
+@@ -224,15 +224,15 @@ M0CalcDashReading m0_calc_dash_reading(const char* term, size_t pos);
+ int m0_calc_tokenize(const char* formulation, M0CalcToken* tokens, int max_tokens);
+ 
+ /**
+- * Derive the I-Ching nucleotide value {6,9,7,8} from the coin method.
++ * Derive the I-Ching nucleotide value {6,9,8,7} from the coin method.
+  *
+  * Coin method: Yin (R#) = 2, Yang (##) = 3. Value = yang_count + 5.
+  *   A = 3×R# + 1×##  →  6   (yin_count=3, yang_count=1)
+  *   T = 0×R# + 4×##  →  9   (yin_count=0, yang_count=4)
+- *   C = 2×R# + 2×##  →  7   (yin_count=2, yang_count=2)
+- *   G = 1×R# + 3×##  →  8   (yin_count=1, yang_count=3)
++ *   C = 1×R# + 3×##  →  8   (yin_count=1, yang_count=3)  (M3-COIN-1)
++ *   G = 2×R# + 2×##  →  7   (yin_count=2, yang_count=2)  (M3-COIN-1)
+  *
+- * Reproduces NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8} (m3 canon).
++ * Reproduces NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7} (m3 canon, M3-COIN-1).
+  *
+  * @param yin_count  Number of R# (Yin) elements (0-4).
+  * @param yang_count Number of ## (Yang) elements (0-4).
 diff --git a/vendor/epi-kernel/reference/include/m3.h b/vendor/epi-kernel/reference/include/m3.h
-index 5cfc92a..42658c7 100644
+index 28054e4..35461db 100644
 --- a/vendor/epi-kernel/reference/include/m3.h
 +++ b/vendor/epi-kernel/reference/include/m3.h
-@@ -32,16 +32,24 @@
+@@ -32,22 +32,30 @@
  /* ===================================================================
   * FR 2.3.12: NUCLEOTIDE_ICHING_VALUE — Canonical I-Ching Numeric LUT
   *
@@ -20,18 +44,24 @@ index 5cfc92a..42658c7 100644
 + * this table in the same commit.
   * =================================================================== */
  
--static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8};
-+static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
+ #define M3_ICHING_A_VALUE  6u
+ #define M3_ICHING_T_VALUE  9u
+-#define M3_ICHING_C_VALUE  7u
+-#define M3_ICHING_G_VALUE  8u
++#define M3_ICHING_C_VALUE  8u
++#define M3_ICHING_G_VALUE  7u
+ 
+ extern const uint8_t NUCLEOTIDE_ICHING_VALUE[4];
  
  _Static_assert(
--    6 + 9 + 7 + 8 == 30,
+     M3_ICHING_A_VALUE + M3_ICHING_T_VALUE +
+     M3_ICHING_C_VALUE + M3_ICHING_G_VALUE == 30,
 -    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+7+8)"
-+    6 + 9 + 8 + 7 == 30,
 +    "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+8+7)"
  );
- _Static_assert(NUCLEOTIDE_ICHING_VALUE[0] + NUCLEOTIDE_ICHING_VALUE[1] == 15,
+ _Static_assert(M3_ICHING_A_VALUE + M3_ICHING_T_VALUE == 15,
      "Complementary pair A+T must sum to 15");
-@@ -69,8 +77,8 @@ static inline uint8_t get_codon_iching_sum(uint8_t codon6bit) {
+@@ -69,8 +77,8 @@ uint8_t get_codon_iching_sum(uint8_t codon6bit);
   *
   * A=0b00(0) Yin/Moving   — Old Yin (6)   — CUPS (Water)
   * T=0b01(1) Yang/Moving  — Old Yang (9)  — WANDS (Fire)
@@ -42,7 +72,7 @@ index 5cfc92a..42658c7 100644
   * =================================================================== */
  
  #define M3_NUC_A  0x00
-@@ -582,14 +590,14 @@ extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
+@@ -518,14 +526,14 @@ extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
   * FR 2.3.15: 360 INTEGRAL INVARIANT
   *
   * Sum of all (+,+) codon evaluations = 360.
@@ -60,11 +90,96 @@ index 5cfc92a..42658c7 100644
  
  _Static_assert(
      M3_SUIT_A_INTEGRAL + M3_SUIT_T_INTEGRAL +
+diff --git a/vendor/epi-kernel/reference/src/lib.rs b/vendor/epi-kernel/reference/src/lib.rs
+index 9f1aad9..625fe23 100644
+--- a/vendor/epi-kernel/reference/src/lib.rs
++++ b/vendor/epi-kernel/reference/src/lib.rs
+@@ -2190,7 +2190,7 @@ mod m0_calc_dash_pentavalence {
+ 
+ /// Tranche 01.T1.17 — R#/## tao-elements: the classic coin method
+ /// (Yin R# = 2, Yang ## = 3, 4-slot frame, value = yang-count + 5)
+-/// constructs the canonical nucleotide I-Ching values {6, 9, 7, 8}.
++/// constructs the canonical nucleotide I-Ching values {6, 9, 8, 7} (M3-COIN-1).
+ #[cfg(test)]
+ mod m0_calc_tao_coin_method {
+     use std::os::raw::c_int;
+@@ -2201,11 +2201,11 @@ mod m0_calc_tao_coin_method {
+     }
+ 
+     // (yin R#, yang ##) counts per nucleotide A/T/C/G — findings §III.6 table.
+-    const COIN: [(i32, i32); 4] = [(3, 1), (0, 4), (2, 2), (1, 3)];
++    const COIN: [(i32, i32); 4] = [(3, 1), (0, 4), (1, 3), (2, 2)]; // M3-COIN-1
+ 
+     #[test]
+     fn coin_method_reproduces_the_canonical_iching_values() {
+-        let expected = [6, 9, 7, 8]; // A Old Yin, T Old Yang, C Young Yin, G Young Yang
++        let expected = [6, 9, 8, 7]; // A Old Yin, T Old Yang, C Young Yin, G Young Yang (M3-COIN-1)
+         for (n, (yin, yang)) in COIN.iter().enumerate() {
+             let v = unsafe { m0_calc_nucleotide_from_coin(*yin, *yang) };
+             assert_eq!(v, expected[n], "nucleotide {n}");
+@@ -2246,7 +2246,7 @@ mod m0_calc_tao_is_codon_eval {
+ 
+     #[test]
+     fn charges_are_the_sign_algebra_over_coin_values_for_every_codon() {
+-        const COIN: [(i32, i32); 4] = [(3, 1), (0, 4), (2, 2), (1, 3)];
++        const COIN: [(i32, i32); 4] = [(3, 1), (0, 4), (1, 3), (2, 2)]; // M3-COIN-1
+         for codon in 0u8..64 {
+             let value = |shift: u8| {
+                 let (yin, yang) = COIN[((codon >> shift) & 0x03) as usize];
+diff --git a/vendor/epi-kernel/reference/src/m0_calculus.c b/vendor/epi-kernel/reference/src/m0_calculus.c
+index 571864f..239e225 100644
+--- a/vendor/epi-kernel/reference/src/m0_calculus.c
++++ b/vendor/epi-kernel/reference/src/m0_calculus.c
+@@ -732,7 +732,7 @@ int m0_calc_witness(const KernelState* state, uint8_t* syntax_witness_out) {
+ int m0_calc_nucleotide_from_coin(int yin_count, int yang_count) {
+     /* Coin method: Yin (R#) = 2, Yang (##) = 3.
+      * Value = yang_count + 5 over a 4-slot frame.
+-     * Produces NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8} */
++     * Produces NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7} (M3-COIN-1) */
+     if (yin_count < 0 || yang_count < 0) return -1;
+     if (yin_count + yang_count != 4) return -1;
+     return yang_count + 5;
+@@ -745,14 +745,14 @@ bool m0_calc_tao_is_codon_eval(void) {
+      *   (1) the apex exists: Tao at kinship position 5, dominant
+      *       synthesis on the verbatim 5-/5 chiral coordinate;
+      *   (2) the R#/## coin construction (4-slot frame, yang+5)
+-     *       regenerates NUCLEOTIDE_ICHING_VALUE {6,9,7,8};
++     *       regenerates NUCLEOTIDE_ICHING_VALUE {6,9,8,7} (M3-COIN-1);
+      *   (3) for every codon, m3_compute_charges equals the X#
+      *       sign-algebra over those coin-constructed values. */
+     static const int coin_counts[4][2] = {
+         { 3, 1 }, /* A — Old Yin     3xR# + 1x## -> 6 */
+         { 0, 4 }, /* T — Old Yang    0xR# + 4x## -> 9 */
+-        { 2, 2 }, /* C — Young Yin   2xR# + 2x## -> 7 */
+-        { 1, 3 }, /* G — Young Yang  1xR# + 3x## -> 8 */
++        { 1, 3 }, /* C — Young Yin   1xR# + 3x## -> 8 (M3-COIN-1) */
++        { 2, 2 }, /* G — Young Yang  2xR# + 2x## -> 7 (M3-COIN-1) */
+     };
+ 
+     const Nara_Entry* tao = &NARA_MSHARP_LUT[5];
+@@ -948,7 +948,7 @@ static void test_nucleotide_from_coin(void) {
+     assert(m0_calc_nucleotide_from_coin(2, 3) == -1);  /* sums to 5 */
+     assert(m0_calc_nucleotide_from_coin(0, 0) == -1);
+ 
+-    printf("  PASS: nucleotide I-Ching derivation {6,9,7,8}\n");
++    printf("  PASS: nucleotide I-Ching derivation {6,9,8,7}\n");
+ }
+ 
+ static void test_tao_codon_binding(void) {
 diff --git a/vendor/epi-kernel/reference/src/m3.c b/vendor/epi-kernel/reference/src/m3.c
-index d7f2c2e..1408a07 100644
+index 5dd2b33..e52fe26 100644
 --- a/vendor/epi-kernel/reference/src/m3.c
 +++ b/vendor/epi-kernel/reference/src/m3.c
-@@ -15,6 +15,13 @@
+@@ -22,7 +22,7 @@ const Quaternion M3_MATRIX_QUATERNION_AXIS[M3_MATRIX_COUNT] = {
+     [M3_MATRIX_SAME_QUALITY]   = { .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 1.0f },
+ };
+ 
+-const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 7, 8};
++const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
+ 
+ const char* const TAROT_RANK_NAMES[14] = {
+     "Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
+@@ -447,6 +447,13 @@ void m3_compute_charges_ffi(
   * FR 2.3.2: M3_PAIR_MATRIX[16] — The Unified Dinucleotide LUT
   *
   * Indexed by (nuc1 << 2) | nuc2.
@@ -78,7 +193,7 @@ index d7f2c2e..1408a07 100644
   * 3-Matrix system — each matrix has 8 pairs (4 homogeneous shared):
   *   Matrix 1 (Watson-Crick): homos + AT,TA,CG,GC = 8 pairs
   *   Matrix 2 (Cross-compl):  homos + AG,GA,TC,CT = 8 pairs
-@@ -26,8 +33,8 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
+@@ -458,8 +465,8 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
      /* Homogeneous pairs — differenceValue=0, SHARED across all 3 matrices */
      [0]  = { 12,  0 },  /* AA (Yin/Moving  + Yin/Moving)  — K'un  */
      [5]  = { 18,  0 },  /* TT (Yang/Moving + Yang/Moving) — Ch'ien (MAX SUM) */
@@ -89,7 +204,7 @@ index d7f2c2e..1408a07 100644
  
      /* Matrix 1 pairs — Watson-Crick (polarity-complementary, same mobility) */
      [1]  = { 15, -3 },  /* AT (Yin/Moving  + Yang/Moving) — Tui   */
-@@ -36,16 +43,16 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
+@@ -468,16 +475,16 @@ const M3_SD_Value M3_PAIR_MATRIX[16] = {
      [14] = { 15, -1 },  /* CG (Yin/Rest    + Yang/Rest)   — Sun   */
  
      /* Matrix 2 pairs — Cross-complementary (dataset keeps class-stable polarity) */
@@ -114,7 +229,7 @@ index d7f2c2e..1408a07 100644
  };
  
  const uint8_t M3_MATRIX_PAIR[M3_MATRIX_COUNT][4] = {
-@@ -297,18 +304,18 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
+@@ -816,18 +823,18 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
       * Suit integral: 84 */
      {
          {0, M3_TAROT_PIP_ACE,       COD(A,A,A), NONE},      /* Ace:    AAA pp=18 */
@@ -141,7 +256,7 @@ index d7f2c2e..1408a07 100644
          {0, M3_TAROT_PIP_KING,      COD(A,C,T), COD(A,T,C)},/* King:   ACT+ATC (dual) */
          {0, 0, 0, NONE}, {0, 0, 0, NONE}, /* padding to 16 — unused */
      },
-@@ -317,56 +324,56 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
+@@ -836,56 +843,56 @@ const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16] = {
      {
          {1, M3_TAROT_PIP_ACE,       COD(T,T,T), NONE},      /* Ace:    TTT pp=27 */
          {1, 1,                      COD(T,T,A), NONE},      /* Two:    TTA pp=24 */
@@ -230,7 +345,7 @@ index d7f2c2e..1408a07 100644
          {3, 0, 0, NONE}, {3, 0, 0, NONE}, /* padding */
      },
  };
-@@ -439,7 +446,7 @@ static int m3_verify_integral_invariant(void) {
+@@ -958,7 +965,7 @@ static int m3_verify_integral_invariant(void) {
      for (uint8_t codon = 0; codon < 64; codon++) {
          /* Use m3_compute_charges (pp = X+Y+Z from I-Ching values) —
           * NOT evaluate_codon() which uses pair S-value sums.

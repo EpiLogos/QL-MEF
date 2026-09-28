@@ -22,7 +22,6 @@
 #include "psychoid_numbers.h"
 #include "arena.h"
 #include <stdbool.h>
-#include <math.h>
 #include <stdint.h>
 
 /* ===================================================================
@@ -57,15 +56,10 @@ typedef struct {
 _Static_assert(sizeof(DR_Matrix_12x12) == 72, "DR_Matrix_12x12 must be 72 bytes");
 
 /* O(1) bitwise extraction — single CPU cycle */
-static inline uint8_t get_ananda_harmonic(
+uint8_t get_ananda_harmonic(
         const DR_Matrix_12x12* mat,
         uint8_t row_0_to_11,
-        uint8_t col_0_to_11)
-{
-    uint8_t flat = (uint8_t)((row_0_to_11 * 12u) + col_0_to_11);
-    uint8_t byte_val = mat->packed_cells[flat / 2u];
-    return (flat % 2u == 0u) ? (uint8_t)(byte_val & 0x0Fu) : (uint8_t)(byte_val >> 4u);
-}
+        uint8_t col_0_to_11);
 
 /* The six Ananda matrices — all .rodata (BIMBA), defined in m1.c */
 extern const DR_Matrix_12x12 ANANDA_BIMBA;         /* #X+0 — Original source        */
@@ -91,24 +85,13 @@ _Static_assert(sizeof(Quintessence_Matrix) == 144, "Quintessence_Matrix must be 
 extern const Quintessence_Matrix ANANDA_QUINTESSENCE;  /* #1-2-5: Dyadic integration */
 
 /* Read one Quintessence bimba cell — O(1) */
-static inline uint8_t get_quint_bimba(uint8_t row_0_to_11, uint8_t col_0_to_11) {
-    uint8_t flat = (uint8_t)((row_0_to_11 * 12u) + col_0_to_11);
-    uint8_t byte_val = ANANDA_QUINTESSENCE.bimba[flat / 2u];
-    return (flat % 2u == 0u) ? (uint8_t)(byte_val & 0x0Fu) : (uint8_t)(byte_val >> 4u);
-}
+uint8_t get_quint_bimba(uint8_t row_0_to_11, uint8_t col_0_to_11);
 
 /* Read one Quintessence sum cell — O(1) */
-static inline uint8_t get_quint_sum(uint8_t row_0_to_11, uint8_t col_0_to_11) {
-    uint8_t flat = (uint8_t)((row_0_to_11 * 12u) + col_0_to_11);
-    uint8_t byte_val = ANANDA_QUINTESSENCE.sum[flat / 2u];
-    return (flat % 2u == 0u) ? (uint8_t)(byte_val & 0x0Fu) : (uint8_t)(byte_val >> 4u);
-}
+uint8_t get_quint_sum(uint8_t row_0_to_11, uint8_t col_0_to_11);
 
 /* Quintessence diff (DIFF_A) — always M1_QUINT_DIFF = -1, no storage needed */
-static inline int8_t get_quint_diff(uint8_t row, uint8_t col) {
-    (void)row; (void)col;
-    return (int8_t)M1_QUINT_DIFF;
-}
+int8_t get_quint_diff(uint8_t row, uint8_t col);
 
 #define ANANDA_RING_SIZE 12
 /* Indexed 0-5  = matrices (ANANDA_BIMBA through ANANDA_QUINTESSENCE)
@@ -129,26 +112,154 @@ typedef enum {
 extern const uint8_t DR_RING_MAHAMAYA[6];    /* {1,2,4,8,7,5} — doubling,  64-bit */
 extern const uint8_t DR_RING_PARASHAKTI[6];  /* {3,6,9,3,6,9} — tripling,  72-bit */
 
+/* Per-family implicate/explicate signature, indexed by Ananda_Matrix_Op (0-5).
+ * {-1,+1,+1,+1,+1,-1}: Bimba (#X+0) and Quintessence (#X+0/1) are the two
+ * implicate boundaries (-1); Pratibimba/Sum/DiffA/DiffB are explicate (+1).
+ * Substrate source for the M1-2 ananda-vortex perspex cross-fade tint
+ * (M1-2-ANANDA-VORTEX-ARCHITECTURE.md §5.2/§5.4) — the renderer reads this,
+ * it never invents the six-family character. Mirrors CL42_BASIS signature
+ * shape on the family axis (cf. the position axis at CL42_BASIS). */
+extern const int8_t ANANDA_FAMILY_SIGNATURE[6];
+
 
 /* ===================================================================
- * ANANDA RUNTIME API — #1-2 dataset, mod10 operational space
+ * ANANDA RUNTIME API — #1-2 dataset, canonical 12×12 Vortex Modulae
  *
- * 6 core matrices (0=Bimba, 1=Pratibimba, 2=Sum, 3=FirstDiff,
- *                  4=SecondDiff, 5=NonDual) + 6 DR reflections.
+ * Dual-faced per the canonical CSV ("(0_1) Vortex Modulae … 12Fold"):
+ * every family has a RAW/no-digi-root face and a digit-root mirror.
+ * 6 families per Ananda_Matrix_Op (0=Bimba rX+0, 1=Pratibimba rX+1,
+ * 2=Sum, 3=DiffA, 4=DiffB, 5=NonDual rule).
  *
- * Ananda Axiom: m1_ananda_get(1,i,j) - m1_ananda_get(0,i,j) == 1 (mod10)
- * This is Pratibimba = Bimba + 1 — the non-dual constant.
- * Source: dataset-bridge/06-ananda-matrices-analysis.md
+ * Ananda Axiom (RAW face): m1_ananda_get(1,i,j) - m1_ananda_get(0,i,j)
+ * == +1 exactly — Pratibimba = Bimba + 1, the non-dual constant.
+ * The former 10×10 %10 "operational space" is retired (Tranche 10.10).
  * =================================================================== */
 
-/* Get cell value from core matrix (matrix_idx 0–5, row/col 0–9) */
+/* RAW face (matrix_idx 0–5, row/col 0–11). Scalar families 0/1/2/4;
+ * family 3 (constant -1, signed) and 5 (rule tuple) return 0 here —
+ * their values route via the DR face / Quintessence getters. */
 uint8_t m1_ananda_get(uint8_t matrix_idx, uint8_t row, uint8_t col);
 
-/* Get digital-root reflection of cell */
+/* DR face (digi-root mirror) — reads the canonical nibble-packed
+ * ANANDA_* .rodata matrices (row/col 0–11), never recomputed. */
 uint8_t m1_ananda_dr_get(uint8_t matrix_idx, uint8_t row, uint8_t col);
 
-/* Runtime axiom check: returns 1 if Pratibimba-Bimba=+1 holds, 0 if corrupted */
+/* Runtime axiom check: returns 1 if RAW Pratibimba-Bimba == +1 holds
+ * across the full 12×12 grid, 0 if corrupted */
 int m1_ananda_verify_axiom(void);
+
+
+/* ===================================================================
+ * FR 2.1.10: ANANDA SEAT SEMANTICS — the [[M0-3]] number-dozen binding
+ *
+ * The 12 matrix positions ARE the M0-3 archetypal number language's
+ * substance-dozen. Positions 0-9 carry the archetypal numbers 0-9;
+ * the two frame positions carry the two meta-elements added to the
+ * digits (M0-3 q_1/q_3; Vortex Modulae CSV "Position 0-9 | 10,11"):
+ *   position 10 = (0/1) Non-Dual Binary — Rosetta Stone   (M0-3-4)
+ *   position 11 = (-)   Mirror / Vimarsa apparatus        (M0-3-(0/1))
+ * Matrix order is positional (digits first, meta-elements last); the
+ * m0 ARCHETYPE_LUT order is genealogical ((-) and (0/1) at slots 0-1).
+ * The bridge below is the single seam between the two orderings —
+ * consumers read THIS authority, never a local copy.
+ * =================================================================== */
+
+typedef enum {
+    ANANDA_SEAT_NUMBER         = 0,  /* archetypal number 0-9 (positions 0-9) */
+    ANANDA_SEAT_NONDUAL_BINARY = 1,  /* (0/1) Rosetta Stone   (position 10)   */
+    ANANDA_SEAT_MIRROR         = 2   /* (-)  Mirror / Vimarsa (position 11)   */
+} Ananda_Seat_Kind;
+
+/* Matrix position (0-11) -> m0 ARCHETYPE_LUT slot:
+ * {2..11, 1, 0} — digits 0-9 -> slots 2-11; (0/1) -> 1; (-) -> 0. */
+extern const uint8_t ANANDA_SEAT_TO_ARCHETYPE_IDX[12];
+
+Ananda_Seat_Kind m1_ananda_seat_kind(uint8_t position12);
+
+/* Canonical Bimba coordinate of the seat (delegates to the compiled m0
+ * ARCHETYPE_COORDINATE_LUT — pos 0 -> "M0-3-2", pos 9 -> "M0-2-9",
+ * pos 10 -> "M0-3-4", pos 11 -> "M0-3-(0/1)"). NULL if position12 > 11. */
+const char* m1_ananda_seat_coordinate(uint8_t position12);
+
+/* Short mathematical symbol of the seat ("0".."9", "(0/1)", "(-)"). */
+const char* m1_ananda_seat_symbol(uint8_t position12);
+
+/* ---- 8+4 bus partition (M0-3 hidden formula "4/(8)/3/(4)"):
+ * masculine (8) = 4 zero-elements {0,1,(0/1),(-)} + 4 Adam evens {2,4,6,8}
+ * feminine  (4) = 3 Eve odds {3,5,7} + Wholeness {9}
+ * Derived from ARCHETYPE_LUT polarity (EVE -> quartet; ADAM|NEUTRAL ->
+ * octet). This is the archetypal ground of the M2-1' 8+4 bus CARDINALITY
+ * (audio_octet[8] motion carriers / nodal_quartet[4] stillness anchors);
+ * binding is by cardinality+role — no pitch-class index equality is
+ * implied (the 7+5 diatonic/silent partition is a sibling, distinct law). */
+typedef enum { ANANDA_BUS_OCTET = 0, ANANDA_BUS_QUARTET = 1 } Ananda_Bus_Role;
+extern const uint8_t ANANDA_MASCULINE_OCTET[8];    /* {0,1,2,4,6,8,10,11} */
+extern const uint8_t ANANDA_FEMININE_QUARTET[4];   /* {3,5,7,9}           */
+Ananda_Bus_Role m1_ananda_seat_bus_role(uint8_t position12);
+
+/* ---- Dual-base accounting (the +1-base law; CSV per-row sum columns).
+ * Every row is accounted twice: core (positions 0-9, the digit decad)
+ * and frame (positions 0-11, decad + the two meta-elements).
+ * Unshifted identity row sums T9=45 / T11=66; shifted (+1) row sums
+ * T10=55 / T12=78. Consecutive-triangular closure: the 0-based and
+ * 1-based readings of one row fuse into the core and frame squares. */
+#define ANANDA_CORE_SUM_UNSHIFTED   45   /* T9  — identity row, base 0 */
+#define ANANDA_CORE_SUM_SHIFTED     55   /* T10 — identity row, base 1 */
+#define ANANDA_FRAME_SUM_UNSHIFTED  66   /* T11 */
+#define ANANDA_FRAME_SUM_SHIFTED    78   /* T12 */
+_Static_assert(ANANDA_CORE_SUM_UNSHIFTED + ANANDA_CORE_SUM_SHIFTED == 10 * 10,
+               "T9+T10 must fuse to the 10x10 core square");
+_Static_assert(ANANDA_FRAME_SUM_UNSHIFTED + ANANDA_FRAME_SUM_SHIFTED == 12 * 12,
+               "T11+T12 must fuse to the 12x12 frame square");
+
+/* RAW-face row sum over the core (frame12=0: cols 0-9) or the frame
+ * (frame12=1: cols 0-11). Scalar families 0-4 only (family 3 sums are
+ * negative; family 5 is a rule face and returns 0). */
+int16_t m1_ananda_row_sum(uint8_t matrix_idx, uint8_t row, uint8_t frame12);
+
+/* Full dual-base audit: per-row sums (45k/66k Bimba; +10/+12 Pratibimba;
+ * -10/-12 DiffA; +10/+12 DiffB), grand totals (Bimba = 66^2 = 4356,
+ * Pratibimba = 4500). Returns 1 when every identity holds. */
+int m1_ananda_verify_dual_base(void);
+
+/* ---- Rule face (family 5), CSV verbatim ("Rule; 0/1 != 0/1"):
+ * RAW: kp == 0 -> "-1/0/1" (tetralemmic seed cell)
+ *      kp != 0 -> "-1/1/{2kp+1}"  ({DiffA, DiffB, Sum} of the cell)
+ * DR:  kp == 0 -> "0/1", else "1/{dr(2kp+1)}".
+ * Returns chars written (snprintf semantics), or -1 on bad args. */
+int m1_ananda_rule_face(uint8_t row, uint8_t col, int dr_face,
+                        char* buf, uint32_t buflen);
+
+/* ---- DIFF faces, named by register (do not conflate):
+ * raw = -1 / +1 (the Ananda Axiom pair); mod-10 face of DiffA = 9
+ * (-1 ≡ 9 mod 10 — Paramesvara wholeness, the HELD canonical face that
+ * m1_ananda_dr_get exposes per FR 2.1.9); arithmetic digit-root of |−1|
+ * = 1 (CSV Digi-rooting block: orientation is erased in DR — DiffA and
+ * DiffB both root to 1; only the mod-10 face keeps the ± distinction). */
+#define ANANDA_DIFF_A_MOD10_FACE    9u
+#define ANANDA_DIFF_DR_ARITHMETIC   1u
+
+/* ---- Annex accounting (CSV rows 52-71 — the "8_9fold" grids).
+ * Grand totals per scalar family over both bases, with/without the k=0
+ * seed row. Closed forms, CSV-annotated: Bimba 2025/4356 (= 45²/66²),
+ * Pratibimba 2125/4500 (seedless 2115/4488), Sum 4150/8856 (seedless
+ * 4140/8844 = 12·11·67, the header's "Root of Doubling Motif" total). */
+int32_t m1_ananda_grand_total(uint8_t matrix_idx, uint8_t frame12,
+                              uint8_t exclude_seed_row);
+
+/* Cumulative DR traces of the frame row-sums (annex trace columns):
+ * reverse=0 -> forward partial-sum DR trace (Bimba: 0,3,9,9,3,9,9,…);
+ * reverse=1 -> remaining-total DR trace (Bimba: 9,9,6,9,9,6,…).
+ * The ascending/descending accumulation faces of one motion.
+ * Fills trace[12]; returns 1 on success, 0 on bad args. */
+int m1_ananda_cumulative_dr_trace(uint8_t matrix_idx, uint8_t reverse,
+                                  uint8_t trace[12]);
+
+/* 11-mirror pair table (annex rows 54-61): for n = 3..10 the pair
+ * (DR(n), 11-n) — the symmetric reversal channel of the decad; the
+ * n = 10 row degenerates to (1, 1). Returns 1 on success. */
+int m1_ananda_mirror_pair(uint8_t n_3_to_10, uint8_t* dr_n,
+                          uint8_t* complement11);
 
 
 /* ===================================================================
@@ -175,30 +286,8 @@ typedef enum {
     SPANDA_META      = 5,    /* Meta-Reflection — fold-count sieve              */
 } Spanda_Stage;
 
-/* -------------------------------------------------------------------
- * SPANDA_SEED_TOTALIZATION_INVARIANT
- *
- * The six coordinates forming the complete boundary of the QL field:
- *
- *   P0  — Position ground (Torus outward start)    TOPO_TORUS
- *   P5  — Position synthesis (Torus return point)  TOPO_TORUS
- *   P0' — Position ground inverted (Klein start)   TOPO_KLEIN
- *   P5' — Position synthesis inverted (Klein end)  TOPO_KLEIN
- *   C0  — Bimba (categorical ground / source)      TOPO_ZERO_SPHERE
- *   C5  — Pratibimba (categorical synthesis/refl.) TOPO_ZERO_SPHERE
- *
- * Invariant: (0/1) seed = P0 ↔ P5 = C0 ↔ C5
- *   The binary poles (0 and 1) ARE the ground and synthesis of the Torus
- *   (P0 and P5), which ARE the Bimba and Pratibimba (C0 and C5).
- *   "0 and 1 are equal to 5 and 0" — they are the same oscillation at
- *   different ontological registers. The Spanda seed totalizes the system
- *   by simultaneously encapsulating both registers.
- *
- * These six coordinates are the only ones that can validly claim
- * TOPO_ZERO_SPHERE (C0/C5) or serve as the seed boundary (P0/P5/P0'/P5').
- * All other coordinates are TOPO_TORUS (P normal), TOPO_KLEIN (P'),
- * or TOPO_LEMNISCATE (P4 specifically).
- * ------------------------------------------------------------------- */
+/* SPANDA_SEED_TOTALIZATION_INVARIANT:
+ * (0/1) seed binds P0/P5, P0'/P5', and C0/C5 as the valid seed boundary. */
 
 /* The Trika (#1-3-3) — odd-cardinality singularity */
 typedef enum {
@@ -207,42 +296,8 @@ typedef enum {
     TRIKA_MEDIATOR = 2,  /* Relational bridge                                   */
 } Trika_Position;
 
-/* -------------------------------------------------------------------
- * SPANDA CHAIN — how binary non-dual generates the 6-state system
- * and the complete 36+64=100% QL field:
- *
- * STEP 0 — S⁰ Seed (SPANDA_SEED_BITS = 0x03, TOPO_ZERO_SPHERE):
- *   The (0/1) binary as two disconnected poles, not yet connected.
- *   Both SPANDA_BIT_POLE_A and SPANDA_BIT_POLE_B are simultaneously
- *   active. This is the non-dual ground — "0 and 1 are equal to 5 and 0."
- *   Maps to: P0/P5 (ground and synthesis of the Torus) and
- *             C0/C5 (Bimba/Pratibimba — source and reflection).
- *   See SPANDA_SEED_TOTALIZATION_INVARIANT below.
- *
- * STEP 1 — Differentiation (SPANDA_POLE_A / SPANDA_POLE_B):
- *   Pole A (0x01): (0/1) outward = Mahamaya track {1,2,4,8,7,5}, 64-bit
- *   Pole B (0x02): (1/0) return  = Parashakti track {3,6,9,3,6,9}, 72-bit
- *   Pole A → P (Torus outward). Pole B → P' (Klein return).
- *
- * STEP 2 — Trika (SPANDA_TRIKA):
- *   (0/1)+(1/0) = (0/1/2) — the first stable genus-1 torus.
- *   The two punctures = the two generators of π₁(T²) = Z⊕Z.
- *
- * STEP 3 — Torus arithmetic (4g+2g = 6 positions, QL_POSITIONS):
- *   4g = 4 edges of the fundamental polygon (positions 1-4: the explicates)
- *   2g = 2 identification vertices (positions 0 and 5: ground and synthesis)
- *   Total: 4(1) + 2(1) = 6 [QL_POSITIONS]
- *
- * STEP 4 — Complete QL field:
- *   P × P' = 6 × 6 = 36 [M2_TATTVA]  — all position-inversion combinations
- *   P / P' = 2^6    = 64 [M3_WORD]   — all 6-bit binary sequences
- *   36 + 64 = 100% — the complete QL field
- *
- * STEP 5 — Klein double-cover:
- *   P (outward 0-5) + P' (return 0'-5') = 12 positions [RING_SIZE]
- *   Klein bottle needs 6 colours (Heawood) = the 6 QL positions.
- *   P alone IS the Torus. P + P' IS the Klein. P' COMPLETES the Klein.
- * ------------------------------------------------------------------- */
+/* Spanda chain: seed poles split into Mahamaya/Parashakti tracks, stabilize as
+ * Trika, close the 6-position torus, and complete the 36+64 QL field. */
 
 /* Spanda state_bits bitmask — 2-bit field encoding active poles */
 #define SPANDA_BIT_POLE_A  (1u << 0u)   /* bit 0: Mahamaya pole active   */
@@ -260,15 +315,9 @@ typedef struct {
 
 /* Fold-count sieve — 14 valid topological fold-counts (FR 2.1.2-F) */
 #define VALID_FOLD_COUNT 14
-static const uint8_t VALID_FOLDS[VALID_FOLD_COUNT] = {
-    0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 16, 18, 24
-};
+extern const uint8_t VALID_FOLDS[VALID_FOLD_COUNT];
 
-static inline bool is_valid_fold(uint8_t n) {
-    for (int i = 0; i < VALID_FOLD_COUNT; i++)
-        if (VALID_FOLDS[i] == n) return true;
-    return false;
-}
+bool is_valid_fold(uint8_t n);
 
 /* Fold count per CF sub-stage — SPANDA_FLOWERING (#1-3-4) internal progression:
  * sub-stage 0 → 4-fold  static  {0/0, 0/1, 1/0, 1/1}
@@ -277,7 +326,7 @@ static inline bool is_valid_fold(uint8_t n) {
  * sub-stage 3 → 10-fold dual-track  T1/T2 superposition (double-slit)
  * sub-stage 4 → 12-fold synthesis   O(2,6)/O(3,4) complete
  * sub-stage 5 → 0(meta) Möbius return / percentile identity */
-static const uint8_t SPANDA_CF_FOLD_COUNT[6] = { 4, 6, 8, 10, 12, 0 };
+extern const uint8_t SPANDA_CF_FOLD_COUNT[6];
 
 /* CF sub-stage formulation entry — one per SPANDA_FLOWERING sub-stage */
 typedef struct {
@@ -299,8 +348,13 @@ extern const CF_Substage_Entry SPANDA_CF_SUBSTAGE_LUT[6];
  * Float M_PI BANNED from the traversal hot path.
  * =================================================================== */
 
-/* Full SU(2) double-cover ring */
-#define RING_SIZE       12u    /* 6 × 2 (ascent + descent) */
+/* Full SU(2) double-cover ring.
+ * Causality (T2.11): 12 = spanda's intrinsic twelvefold, generated by the
+ * flowering's own fold-count progression 4→6→8→10→12 (SPANDA_CF_FOLD_COUNT,
+ * M1-3) — the ring MANIFESTS that internal flowering; QL's 6 positions
+ * derive from it (6 = 12/2), never the reverse. The discrete tick12 integer
+ * is a readout of the oscillation, not the grounding. */
+#define RING_SIZE       12u    /* flowering-generated twelvefold (4→6→8→10→12); QL 6 = 12/2 derives from it */
 #define RING_HALF        6u    /* One 360° cycle            */
 
 /* Safely wrap any position into the 0-11 ring */
@@ -326,16 +380,12 @@ extern const CF_Substage_Entry SPANDA_CF_SUBSTAGE_LUT[6];
 typedef uint8_t QL_Tick;
 
 /* Branchless: tick 0-5 = ascending (Explicate), 6-11 = descending (Implicate) */
-static inline bool ql_is_ascending(QL_Tick tick) {
-    return tick < (QL_Tick)RING_HALF;
-}
+bool ql_is_ascending(QL_Tick tick);
 
 /* Branchless stage computation — CMOV-friendly, no branches on hot path
  * tick 0 -> stage 0, tick 5 -> stage 5 (ascending)
  * tick 6 -> stage 5, tick 11 -> stage 0 (descending: Möbius return moment) */
-static inline uint8_t ql_get_stage(QL_Tick tick) {
-    return ql_is_ascending(tick) ? tick : (uint8_t)(11u - tick);
-}
+uint8_t ql_get_stage(QL_Tick tick);
 
 
 /* ===================================================================
@@ -357,7 +407,7 @@ static inline uint8_t ql_get_stage(QL_Tick tick) {
 #define FRAME_TOTAL      10u    /* 4 + 6         */
 
 /* Stage 2: Inversion table — QL_INVERT[i] gives the mirror of position i */
-static const uint8_t QL_INVERT[6] = { 5u, 4u, 3u, 2u, 1u, 0u };
+extern const uint8_t QL_INVERT[6];
 
 /* Stage 3: Bidirectional ring (aligns with FR 2.1.3 macros) — already defined above */
 /* RING_SIZE = 12, RING_HALF = 6 */
@@ -388,22 +438,7 @@ typedef struct {
 extern const QL_Stage QL_FLOWERING[6];
 
 
-/* ===================================================================
- * FR 2.1.5b: PERCENTILE IDENTITY AND VORTEX CONSTANTS
- *
- * The complete QL field closes at exactly 100%:
- *   P × P' = 6 × 6 = 36   (Parashakti: 36 tattvas — tripling track)
- *   P / P' = 2^6   = 64   (Mahamaya:  64 hexagrams — doubling track)
- *   100%   = 64 + 36 = 16/9 = 4²/3²
- *
- * Archetype 7 (Divine Action) = 1.777... = 16/9 — the generative code.
- * The cosmos is born from Divine Action operating on the void.
- *
- * Vortex fraction inner sums (soteriological signposts):
- *   5× → sum = 24  (Spanda completion ceiling; seeds Parashakti)
- *   6× → sum =  8  (structural perfection)
- *   9× → sum = 2/4 (cyclical return, dual outcome)
- * =================================================================== */
+/* FR 2.1.5b: Percentile identity and vortex constants. */
 
 #define QL_PERCENTILE_TOTAL       100u
 #define QL_PERCENTILE_MAHAMAYA     64u   /* P/P' = 2^6 hexagrams (doubling track) */
@@ -427,21 +462,7 @@ _Static_assert(QL_PERCENTILE_PARASHAKTI == M2_TATTVA, "Parashakti 36 = M2_TATTVA
 /* 9× series inner sum → 2 or 4 (dual cyclical return, not a single constant)              */
 
 
-/* ===================================================================
- * FR 2.1.6: #1-5 — TOROIDAL RECOGNITION (Quaternionic Foundation)
- *
- * WHY 6 positions: 4g + 2g = 6 for genus g = 1 (torus necessity proof).
- * WHY 720°: π₁(T²) = Z⊕Z — two independent 2π generators.
- * Clifford algebra: Cl(4,2) — 4 explicate (+1) + 2 implicate (−1) positions.
- * Hopf bundle: S³ (tick12/720°) → S² (QL/360°) → S¹ (phase/binary).
- * See: 00-canonical-invariants.md §5, CL42_BASIS[6] and QL_TRIG_TABLE[6] below.
- * =================================================================== */
-
-/* Quaternion struct — torus parametrization formalism
- * Element mapping [w=EARTH, x=FIRE, y=WATER, z=AIR] derives from Hopf fibration:
- *   w = real part = cos(θ/2) = Hopf projection axis = P5/Integration = geocentric center
- *   x,y,z = imaginary = 3 explicate rotation axes around the earthed observer
- * See: oracle.rs Quaternion Elemental Derivation comment block */
+/* FR 2.1.6: #1-5 — toroidal recognition / quaternion foundation. */
 typedef struct {
     float w;    /* real part — EARTH/cos-pole (P5); Hopf projection axis  */
     float x;    /* i component — FIRE; meridian rotation axis             */
@@ -451,76 +472,19 @@ typedef struct {
 
 _Static_assert(sizeof(Quaternion) == 16, "Quaternion must be 16 bytes");
 
-static inline float quat_norm_sq(Quaternion q) {
-    return q.w*q.w + q.x*q.x + q.y*q.y + q.z*q.z;
-}
+float quat_norm_sq(Quaternion q);
 
-static inline Quaternion quat_mul(Quaternion a, Quaternion b) {
-    return (Quaternion){
-        .w = a.w*b.w - a.x*b.x - a.y*b.y - a.z*b.z,
-        .x = a.w*b.x + a.x*b.w + a.y*b.z - a.z*b.y,
-        .y = a.w*b.y - a.x*b.z + a.y*b.w + a.z*b.x,
-        .z = a.w*b.z + a.x*b.y - a.y*b.x + a.z*b.w
-    };
-}
+Quaternion quat_mul(Quaternion a, Quaternion b);
 
-static inline Quaternion quat_conj(Quaternion q) {
-    return (Quaternion){ .w = q.w, .x = -q.x, .y = -q.y, .z = -q.z };
-}
+Quaternion quat_conj(Quaternion q);
 
-static inline Quaternion quat_neg(Quaternion q) {
-    return (Quaternion){ .w = -q.w, .x = -q.x, .y = -q.y, .z = -q.z };
-}
+Quaternion quat_neg(Quaternion q);
 
-static inline Quaternion quat_normalize(Quaternion q) {
-    float norm_sq = quat_norm_sq(q);
-    if (norm_sq <= 0.0f) {
-        return q;
-    }
-    float scale = 1.0f / sqrtf(norm_sq);
-    return (Quaternion){
-        .w = q.w * scale,
-        .x = q.x * scale,
-        .y = q.y * scale,
-        .z = q.z * scale
-    };
-}
+Quaternion quat_normalize(Quaternion q);
 
-static inline Quaternion quat_rotate(Quaternion q, Quaternion v) {
-    return quat_mul(quat_mul(q, v), quat_conj(q));
-}
+Quaternion quat_rotate(Quaternion q, Quaternion v);
 
-static inline Quaternion quat_slerp(Quaternion a, Quaternion b, float t) {
-    float dot = a.w*b.w + a.x*b.x + a.y*b.y + a.z*b.z;
-    if (dot < 0.0f) {
-        b = quat_neg(b);
-        dot = -dot;
-    }
-    if (dot > 0.9995f) {
-        Quaternion lerp = {
-            .w = a.w + t * (b.w - a.w),
-            .x = a.x + t * (b.x - a.x),
-            .y = a.y + t * (b.y - a.y),
-            .z = a.z + t * (b.z - a.z)
-        };
-        return quat_normalize(lerp);
-    }
-    if (dot < -1.0f) dot = -1.0f;
-    if (dot > 1.0f) dot = 1.0f;
-    float theta = acosf(dot);
-    float sin_theta = sinf(theta);
-    if (fabsf(sin_theta) < 0.0001f) {
-        return quat_normalize(a);
-    }
-    float wa = sinf((1.0f - t) * theta) / sin_theta;
-    float wb = sinf(t * theta) / sin_theta;
-    return (Quaternion){
-        .w = wa*a.w + wb*b.w,
-        .x = wa*a.x + wb*b.x,
-        .y = wa*a.y + wb*b.y,
-        .z = wa*a.z + wb*b.z
-    };
-}
+Quaternion quat_slerp(Quaternion a, Quaternion b, float t);
 
 /* Topological constants — derived from genus-1 necessity */
 #define TORUS_GENUS              1u
@@ -548,26 +512,125 @@ _Static_assert(DEGREE_PER_TICK * DOUBLE_COVER_STEPS == FULL_CYCLE_DEG,
 _Static_assert(TRIG_STEP_DEG == DEGREE_PER_TICK * 2u,
     "60° = 2 × 30° (QL position spans 2 tick12 steps)");
 
-static const Quaternion RING_QUATERNION_LUT[12] = {
-    [0]  = { .w = 1.0f,    .x = 0.0f,    .y = 0.0f, .z = 0.0f },
-    [1]  = { .w = 0.8660254f,  .x = 0.5f,    .y = 0.0f, .z = 0.0f },
-    [2]  = { .w = 0.5f,    .x = 0.8660254f,  .y = 0.0f, .z = 0.0f },
-    [3]  = { .w = 0.0f,    .x = 1.0f,    .y = 0.0f, .z = 0.0f },
-    [4]  = { .w = -0.5f,   .x = 0.8660254f,  .y = 0.0f, .z = 0.0f },
-    [5]  = { .w = -0.8660254f, .x = 0.5f,    .y = 0.0f, .z = 0.0f },
-    [6]  = { .w = 0.8660254f,  .x = -0.5f,   .y = 0.0f, .z = 0.0f },
-    [7]  = { .w = 0.5f,    .x = -0.8660254f, .y = 0.0f, .z = 0.0f },
-    [8]  = { .w = 0.0f,    .x = -1.0f,   .y = 0.0f, .z = 0.0f },
-    [9]  = { .w = -0.5f,   .x = -0.8660254f, .y = 0.0f, .z = 0.0f },
-    [10] = { .w = -0.8660254f, .x = -0.5f,   .y = 0.0f, .z = 0.0f },
-    [11] = { .w = -1.0f,   .x = 0.0f,    .y = 0.0f, .z = 0.0f },
-};
+extern const Quaternion RING_QUATERNION_LUT[12];
 
-static inline Quaternion quat_from_ring_pos(QL_Tick tick) {
-    return RING_QUATERNION_LUT[tick % RING_SIZE];
-}
+Quaternion quat_from_ring_pos(QL_Tick tick);
 
 #define M1_FULL_DOUBLE_COVER_STEPS  (2u * RING_SIZE)
+
+
+/* ===================================================================
+ * T2.11: SPANDA DUAL-OSCILLATOR — THE TICK FLOOR (M1-3)
+ *
+ * The (0/1)/(1/0) dual counter-phase oscillation as a continuous
+ * Haken–Kelso–Bunz relative-phase field:
+ *
+ *   φ̇ = Δω − a·sin φ − 2b·sin 2φ,   V(φ) = −a·cos φ − b·cos 2φ
+ *
+ * Bistable: φ=0 (in-phase, poles fused = SPANDA_SEED, the `=`) and φ=π
+ * (antiphase, poles opposed, the `≠`). The slash in 0/1 is the potential
+ * barrier (the b·cos 2φ term). The landscape is ASYMMETRIC and the
+ * asymmetry is the non-dual content: V″(0)=a+4b>0 at every positive
+ * coupling (identity unconditional); V″(π)=4b−a>0 ⇔ b/a>1/4 (difference
+ * real but conditional — a held achievement). This continuous field is
+ * the stratum BENEATH the integer ring above: the ring stays integer-pure
+ * (M_PI ban holds for ring traversal); the field is where the twelvefold
+ * flowers before the ring reads it out.
+ *
+ * Two distinct involutions on the twelvefold (both order-2, composing to
+ * 5−n — Klein four-group with identity):
+ *   reflection  #(n) = 11−n  — traversal-reversal, the 1/0 return-switch;
+ *               on RING_QUATERNION_LUT this IS the SU(2) antipode:
+ *               quat_neg(RING_QUATERNION_LUT[n]) == RING_QUATERNION_LUT[11−n]
+ *   half-turn   n ↦ (n+6) mod 12 — the antiphase pole-swap; on the field
+ *               it is the π polarity flip of the reflection pole
+ *               (6 ticks × DEGREE_PER_TICK 30° = 180°), invisible on any
+ *               solo-pole observable, detectable ONLY in superposition
+ *               where it exchanges node and antinode.
+ * Every # application must name WHICH involution it means. spanda_invert
+ * (Rust surface) remains the reflection and is not redefined here.
+ *
+ * Standing identity (spanda file-four, canonical-candidate resources):
+ * 0/1 + 1/0 = 1/1 — constructive interference at the antinode (amplitude
+ * 2× = the 100%); the SAME two waves cancel at the node (the ≠ heard as
+ * silence). Genesis / Base Frame / M-Stack equations propagate from
+ * Body/S/S5/plugins/epi-logos/resources/updated-ql-mef/non-dual-binary/
+ * canonical-candidate/ — the 16/9 octave-minus-wholetone IS the
+ * second-harmonic coupling (hence the derived default b/a = 9/16).
+ *
+ * Frequency anchor: conserved-delta band centre ≈2.5 Hz — a CITED BAND,
+ * never a fake-precise 2.0 (2.0 Hz is human-only spontaneous motor
+ * tempo). Config-driven via [ml.m1_paramasiva] (Rust surface loads it);
+ * defaults here are DERIVED, not guessed. Three rates never conflated:
+ * the ~2.5 Hz beat ≠ the 1 Hz profile.update heartbeat ≠ any UI display
+ * framerate. Honesty fences: HKB 0/π bistability resonates with but is
+ * NOT the SU(2) 720° double cover (that stays the M1-5 quaternionic
+ * layer); the beat is not a physical frequency across M2/M3 — the codon
+ * relation is a shared clock index, never a resonance.
+ * =================================================================== */
+
+/* HKB coefficients — config-driven ([ml.m1_paramasiva]); defaults derived:
+ * a = 1.0 (fundamental normalization), b = 9/16 (the 16/9 generative gap
+ * inverted — octave-minus-wholetone as second-harmonic coupling; keeps
+ * b/a = 0.5625 > 1/4 so both wells stand), Δω = 0 (bimba/pratibimba
+ * co-original, no detuning), base_freq_hz = 2.5 (delta-band centre). */
+typedef struct {
+    double delta_omega;    /* pole detuning Δω */
+    double a;              /* first-harmonic coupling — the fundamental */
+    double b;              /* second-harmonic coupling — the octave hook */
+    double base_freq_hz;   /* carrier anchor ~2.5 Hz (cited band) — readout only, not in φ̇ */
+} Spanda_HKB_Params;
+
+Spanda_HKB_Params spanda_hkb_params_default(void);
+
+/* The cited delta band [1.5, 4.0] Hz and its citation line. */
+void spanda_hkb_frequency_band(double* lo_hz, double* hi_hz);
+const char* spanda_hkb_frequency_citation(void);
+
+double spanda_hkb_drift(double phi, const Spanda_HKB_Params* p);      /* φ̇ */
+double spanda_hkb_potential(double phi, const Spanda_HKB_Params* p);  /* V(φ) */
+double spanda_hkb_curvature(double phi, const Spanda_HKB_Params* p);  /* V″(φ) */
+
+/* Integrate φ̇ from phi0 (forward Euler, dt·steps of settling); returns the
+ * settled relative phase wrapped to (−π, π]. */
+double spanda_hkb_settle(double phi0, double dt, uint32_t steps,
+                         const Spanda_HKB_Params* p);
+
+/* Counter-phase pole waves (unit amplitude/frequency, k = ω = 1):
+ * pole 0 = bimba (0/1) rightward cos(x−t); pole 1 = pratibimba (1/0)
+ * leftward cos(x+t). pole_swapped applies the half-turn on the field —
+ * the π polarity flip of the reflection pole. */
+double spanda_pole_wave(double x, double t, uint8_t pole, bool pole_swapped);
+double spanda_superposition(double x, double t, bool pole_swapped);
+/* Standing-wave amplitude envelope at x: 2|cos x| (swapped: 2|sin x|) —
+ * antinode 2.0 = 0/1 + 1/0 = 1/1 (the 100%); node 0.0 (the ≠ as silence). */
+double spanda_standing_envelope(double x, bool pole_swapped);
+/* Solo-pole RMS over one full period — pole-swap invariant (the phase flip
+ * of a lone wave is inaudible; the ≠ is only audible relationally). */
+double spanda_pole_rms(uint8_t pole, bool pole_swapped);
+
+/* The half-turn involution as index arithmetic — (n+6) mod 12. */
+uint8_t spanda_half_turn_index(uint8_t n);
+
+/* The intrinsic twelvefold: iterates the flowering progression from the
+ * 4-fold static seed (+2 per contextual flowering sub-stage, cross-checked
+ * against SPANDA_CF_FOLD_COUNT) and returns its 12-fold terminal; 0 if the
+ * LUT ever disagrees with the generation law. */
+uint8_t spanda_intrinsic_twelvefold(void);
+/* QL derives FROM the twelvefold: 6 = 12/2 (double cover halved). */
+uint8_t spanda_ql_positions_derived(void);
+/* tick12 as READOUT: projects a continuous oscillation cycle phase
+ * (radians) onto the flowered twelvefold. Nothing re-grounds on this. */
+uint8_t spanda_tick12_readout(double cycle_phase);
+
+/* Codon advancement — derived rule, never a build-time choice: the active
+ * codon steps from (1) the REAL quaternionic-rotational state (atan2 over
+ * w/x reads the SU(2) sign, so antipodal states q and −q — the same SO(3)
+ * face — resolve to different arcs), (2) the clock cycle (→ lens class),
+ * and (3) the epogdoon (the canonical 72 → 64 9:8 compression,
+ * apply_epogdoon_compression). It NEVER reads the bare tick12 integer.
+ * M3 owns the codon space; this owns only the advancement clock. */
+uint8_t spanda_codon_advance(Quaternion rot, uint64_t cycle);
 
 
 /* ===================================================================
@@ -577,17 +640,12 @@ static inline Quaternion quat_from_ring_pos(QL_Tick tick) {
  * Source: dataset topologicalElementCount property.
  * =================================================================== */
 
-static const uint8_t TOPOLOGICAL_ELEMENT_COUNT_LUT[12] = {
-     1,  2,  2,  3,  4,  5,   /* Explicate phase (positions 0-5) */
-     8, 10, 12,  6,  7, 11    /* Implicate phase (positions 6-11) */
-};
+extern const uint8_t TOPOLOGICAL_ELEMENT_COUNT_LUT[12];
 
 _Static_assert(sizeof(TOPOLOGICAL_ELEMENT_COUNT_LUT) == 12,
     "TOPOLOGICAL_ELEMENT_COUNT_LUT must have exactly 12 entries");
 
-static inline uint8_t get_topological_element_count(uint8_t ring_pos) {
-    return TOPOLOGICAL_ELEMENT_COUNT_LUT[RING_WRAP(ring_pos)];
-}
+uint8_t get_topological_element_count(uint8_t ring_pos);
 
 
 /* ===================================================================
@@ -626,14 +684,7 @@ typedef struct {
     Trig_Function trig_fn;       /* Which trig function this position IS */
 } Cl42_Basis_Entry;
 
-static const Cl42_Basis_Entry CL42_BASIS[6] = {
-    [0] = { .position = 0, .signature = -1, .trig_fn = TRIG_SIN }, /* P0 Ground      — sinθ (generator) */
-    [1] = { .position = 1, .signature = +1, .trig_fn = TRIG_TAN }, /* P1 Definition  — tanθ = sin/cos   */
-    [2] = { .position = 2, .signature = +1, .trig_fn = TRIG_SEC }, /* P2 Operation   — secθ = 1/cos     */
-    [3] = { .position = 3, .signature = +1, .trig_fn = TRIG_COT }, /* P3 Pattern     — cotθ = cos/sin   */
-    [4] = { .position = 4, .signature = +1, .trig_fn = TRIG_CSC }, /* P4 Context     — cscθ = 1/sin     */
-    [5] = { .position = 5, .signature = -1, .trig_fn = TRIG_COS }, /* P5 Integration — cosθ (generator) */
-};
+extern const Cl42_Basis_Entry CL42_BASIS[6];
 
 _Static_assert(sizeof(CL42_BASIS) == 6 * sizeof(Cl42_Basis_Entry),
     "CL42_BASIS must have exactly 6 entries");
@@ -651,36 +702,20 @@ typedef struct {
 
 #define TRIG_UNITY 6u  /* Sentinel: "1" in numerator/denominator (no QL position) */
 
-static const QL_Trig_Entry QL_TRIG_TABLE[6] = {
-    [0] = { "sin", "sinθ",       0,          TRIG_UNITY, -1 }, /* P0 — generator pole 1       */
-    [1] = { "tan", "sinθ/cosθ",  0,          5,          +1 }, /* P1 — ratio of two generators */
-    [2] = { "sec", "1/cosθ",     TRIG_UNITY, 5,          +1 }, /* P2 — cos reciprocal          */
-    [3] = { "cot", "cosθ/sinθ",  5,          0,          +1 }, /* P3 — inverse of tan          */
-    [4] = { "csc", "1/sinθ",     TRIG_UNITY, 0,          +1 }, /* P4 — sin reciprocal          */
-    [5] = { "cos", "cosθ",       5,          TRIG_UNITY, -1 }, /* P5 — generator pole 2       */
-};
+extern const QL_Trig_Entry QL_TRIG_TABLE[6];
 
 _Static_assert(sizeof(QL_TRIG_TABLE) == 6 * sizeof(QL_Trig_Entry),
     "QL_TRIG_TABLE must have exactly 6 entries");
 
 /* Hopf bundle projection functions — names the % 360 for what it is */
-static inline uint16_t hopf_project(uint16_t exact_degree_720) {
-    return exact_degree_720 % FULL_CYCLE_DEG;
-}
+uint16_t hopf_project(uint16_t exact_degree_720);
 
-static inline uint8_t hopf_fiber(uint16_t exact_degree_720) {
-    return (exact_degree_720 >= FULL_CYCLE_DEG) ? 1u : 0u;
-}
+uint8_t hopf_fiber(uint16_t exact_degree_720);
 
-static inline uint8_t hopf_tick12(uint16_t exact_degree_720) {
-    return (uint8_t)(hopf_project(exact_degree_720) / DEGREE_PER_TICK);
-}
+uint8_t hopf_tick12(uint16_t exact_degree_720);
 
 /* S³ membership check — quaternion must be unit for Hopf fibration */
-static inline bool quat_is_unit(Quaternion q) {
-    float norm_sq = quat_norm_sq(q);
-    return fabsf(1.0f - norm_sq) < 1e-4f;
-}
+bool quat_is_unit(Quaternion q);
 
 
 /* ===================================================================
@@ -720,15 +755,9 @@ extern const M1_QL_Category M1_BRANCH_QL_CATEGORY[6];
 #define ANANDA_DIFF_A_CONSTANT  9u   /* DR of all (#X+0)-(#X+1) differences */
 #define ANANDA_DIFF_B_CONSTANT  1u   /* DR of all (#X+1)-(#X+0) differences */
 
-static inline uint8_t get_ananda_diff_a(uint8_t row, uint8_t col) {
-    (void)row; (void)col;
-    return ANANDA_DIFF_A_CONSTANT;
-}
+uint8_t get_ananda_diff_a(uint8_t row, uint8_t col);
 
-static inline uint8_t get_ananda_diff_b(uint8_t row, uint8_t col) {
-    (void)row; (void)col;
-    return ANANDA_DIFF_B_CONSTANT;
-}
+uint8_t get_ananda_diff_b(uint8_t row, uint8_t col);
 
 
 /* ===================================================================
@@ -802,12 +831,7 @@ _Static_assert(MEF_DOUBLED * EPOGDOON_DEN == M3_WORD * EPOGDOON_NUM,
 extern const Holographic_Coordinate* const M1_M0_CROSSLINK[12];
 
 /* Boot-time verification */
-static inline bool verify_m1_m0_crosslink(void) {
-    for (int i = 0; i < 12; i++) {
-        if (M1_M0_CROSSLINK[i] == NULL) return false;
-    }
-    return true;
-}
+bool verify_m1_m0_crosslink(void);
 
 _Static_assert(ANANDA_RING_SIZE == 12, "M1_M0_CROSSLINK size must match ANANDA_RING_SIZE");
 

@@ -8,13 +8,16 @@ CC_BIN=${CC:-cc}
 
 mkdir -p "$OUT_DIR"
 
+# shellcheck source=scripts/epi-c-reference-lib.sh
+. "$REPO_ROOT/scripts/epi-c-reference-lib.sh"
+
 "$CC_BIN" \
   -std=c11 \
   -Wall \
   -Wextra \
-  -I"$REFERENCE_ROOT/include" \
+  "${EPI_C_REFERENCE_FLAGS[@]}" \
   "$REPO_ROOT/migration/epi-kernel/reference-smoke.c" \
-  "$REFERENCE_ROOT/src/kernel.c" \
+  "${EPI_C_REFERENCE_SOURCES[@]}" \
   -lm \
   -o "$OUT_DIR/kernel-smoke"
 

@@ -185,16 +185,10 @@ extern const MEF_Condition_Desc M2_MEF_DESC[72];
 extern const char* const M2_MEF_LENS_NAMES[12];
 
 /* O(1) routing into the 12x6 matrix */
-static inline MEF_Condition get_mef_condition(
+MEF_Condition get_mef_condition(
         uint8_t lens_0_to_5,
         uint8_t pos_0_to_5,
-        bool is_inverted)
-{
-    uint8_t actual_lens = is_inverted
-        ? (uint8_t)(lens_0_to_5 + 6u)
-        : lens_0_to_5;
-    return M2_ARCHETYPES.mef_lenses[actual_lens][pos_0_to_5];
-}
+        bool is_inverted);
 
 /* L-family structural linkage */
 #define MEF_TO_L_FAMILY(lens_0_to_5)               (lens_0_to_5)
@@ -292,9 +286,7 @@ typedef enum {
 /* Uranus/Neptune/Pluto: analytically preempted — valid for hot-path use */
 #define MEANING_ID_PREEMPTED  0xFFFEu
 
-static inline bool m2_planet_is_preempted(uint8_t id) {
-    return (id == PLANET_URANUS || id == PLANET_NEPTUNE || id == PLANET_PLUTO);
-}
+bool m2_planet_is_preempted(uint8_t id);
 
 typedef struct {
     uint8_t             id;              /* Planet_Id */
@@ -389,9 +381,7 @@ typedef struct {
 
 extern const Shem_Name_Desc M2_SHEM_DESC[72];
 
-static inline uint8_t shem_flat_index(uint8_t choir, uint8_t pos_in_choir) {
-    return (uint8_t)((choir * 9u) + pos_in_choir);
-}
+uint8_t shem_flat_index(uint8_t choir, uint8_t pos_in_choir);
 
 _Static_assert(7u * 9u + 8u == 71u, "8x9 Shem matrix: max flat index must be 71");
 
@@ -491,19 +481,9 @@ _Static_assert(sizeof(Routing_Mask_128) == 16,
 extern const Routing_Mask_128 ASMA_36_INTERNAL_MASK;
 extern const Routing_Mask_128 ASMA_64_PROJECTIVE_MASK;
 
-static inline bool m2_is_projective(uint8_t asma_index) {
-    if (asma_index < 64)
-        return (bool)((ASMA_64_PROJECTIVE_MASK.low_64 >> asma_index) & 1ULL);
-    else
-        return (bool)((ASMA_64_PROJECTIVE_MASK.high_64 >> (asma_index - 64u)) & 1ULL);
-}
+bool m2_is_projective(uint8_t asma_index);
 
-static inline bool m2_is_internal(uint8_t asma_index) {
-    if (asma_index < 64)
-        return (bool)((ASMA_36_INTERNAL_MASK.low_64 >> asma_index) & 1ULL);
-    else
-        return (bool)((ASMA_36_INTERNAL_MASK.high_64 >> (asma_index - 64u)) & 1ULL);
-}
+bool m2_is_internal(uint8_t asma_index);
 
 
 /* ===================================================================
@@ -530,25 +510,14 @@ extern const Element_Throughline M2_ELEMENTS[5];
 extern const uint64_t M2_TO_M3_CYMATIC_PROJECTION[72];
 
 /* Wave superposition: OR active M2 states into M3 bitboard */
-static inline uint64_t transduce_vibration_to_symbol(
+uint64_t transduce_vibration_to_symbol(
         const uint8_t m2_active_indices[],
-        uint8_t count)
-{
-    uint64_t m3_bitboard = 0;
-    for (uint8_t i = 0; i < count; i++) {
-        m3_bitboard |= M2_TO_M3_CYMATIC_PROJECTION[m2_active_indices[i]];
-    }
-    return m3_bitboard;
-}
+        uint8_t count);
 
 /* Epogdoon integer transforms — 9:8 ratio */
-static inline uint8_t m2_epogdoon_compress(uint8_t val_72) {
-    return (uint8_t)((val_72 * 8u) / 9u);
-}
+uint8_t m2_epogdoon_compress(uint8_t val_72);
 
-static inline uint8_t m3_epogdoon_expand(uint8_t val_64) {
-    return (uint8_t)((val_64 * 9u) / 8u);
-}
+uint8_t m3_epogdoon_expand(uint8_t val_64);
 
 
 /* ===================================================================
@@ -608,8 +577,8 @@ bool     m2_verify(void);
 #define ASPECT_OPPOSITION   4
 #define ASPECT_COUNT        5
 
-static const uint16_t MAJOR_ASPECT_ANGLE[5] = { 0, 60, 90, 120, 180 };
-static const uint8_t  MAJOR_ASPECT_ORB[5]   = { 10, 6, 8, 8, 10 };
+extern const uint16_t MAJOR_ASPECT_ANGLE[5];
+extern const uint8_t  MAJOR_ASPECT_ORB[5];
 
 typedef struct {
     uint8_t aspect_type;  /* ASPECT_CONJUNCTION..ASPECT_OPPOSITION, or ASPECT_NONE */
@@ -619,24 +588,7 @@ typedef struct {
 
 /* Compute aspect between two zodiacal degrees (0-360).
  * Returns the tightest matching major aspect, or ASPECT_NONE. */
-static inline Aspect_Result m2_aspect_between(float deg_a, float deg_b) {
-    float diff = deg_a - deg_b;
-    if (diff < 0.0f) diff = -diff;
-    if (diff > 180.0f) diff = 360.0f - diff;
-
-    Aspect_Result best = { .aspect_type = ASPECT_NONE, .angle = diff, .orb = 999.0f };
-
-    for (uint8_t i = 0; i < ASPECT_COUNT; i++) {
-        float dev = diff - (float)MAJOR_ASPECT_ANGLE[i];
-        if (dev < 0.0f) dev = -dev;
-        if (dev <= (float)MAJOR_ASPECT_ORB[i] && dev < best.orb) {
-            best.aspect_type = i;
-            best.orb = dev;
-        }
-    }
-
-    return best;
-}
+Aspect_Result m2_aspect_between(float deg_a, float deg_b);
 
 
 #endif /* M2_H */

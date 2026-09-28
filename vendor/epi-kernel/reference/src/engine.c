@@ -11,6 +11,7 @@
 
 #include "engine.h"
 #include "psychoid_numbers.h"
+#include <math.h>
 #include <stdio.h>
 
 static const struct { uint8_t from; const Holographic_Coordinate* to; } torus_map[] = {
@@ -196,6 +197,40 @@ void engine_walk_by_mode(
  * ============================================================================= */
 
 #include "vak.h"
+
+
+/* Header-remediated constants and former inline bodies. */
+
+/* Public lookup tables relocated from the coordinate header. */
+const uint16_t WALK_TYPE_STEPS[WALK_TYPE_COUNT] = {
+    360, 24, 12, 12, 36, 64, 9, 4, 384
+};
+
+
+/* Public helper bodies relocated from the coordinate header. */
+Walk_Mode walk_mode_from_quaternion(float w, float x, float y, float z) {
+    float aw = fabsf(w), ax = fabsf(x), ay = fabsf(y), az = fabsf(z);
+    Walk_Mode mode = WALK_GROUND;
+    float best = aw;
+    if (ax > best) { best = ax; mode = WALK_TORUS; }
+    if (ay > best) { best = ay; mode = WALK_FIBER; }
+    if (az > best) { mode = WALK_SPANDA; }
+    (void)best;
+    return mode;
+}
+
+float walk_bifurcation_param(float w, float x, float y, float z) {
+    (void)w;
+    return sqrtf(x * x + y * y + z * z);
+}
+
+uint8_t walk_resolution_level(float lambda) {
+    if (lambda < 0.25f) return 0;
+    if (lambda < 0.50f) return 1;
+    if (lambda < 0.75f) return 2;
+    return 3;
+}
+
 
 /* Default handler table — all return VAK_ERR_FAMILY until M-branches register */
 static int vak_default_handler(Holographic_Coordinate* s, VAK_Instruction i) {

@@ -5,10 +5,442 @@
  * FR Coverage: 2.3.0 – 2.3.21
  */
 
+#define M3_BUILDING_SOURCE 1
 #include "m3.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+
+/* Header-remediated constants and former inline bodies. */
+
+/* Public lookup tables relocated from the coordinate header. */
+const Quaternion M3_MATRIX_QUATERNION_AXIS[M3_MATRIX_COUNT] = {
+    [M3_MATRIX_COMPLEMENTARY]  = { .w = 0.0f, .x = 1.0f, .y = 0.0f, .z = 0.0f },
+    [M3_MATRIX_MOVING_RESTING] = { .w = 0.0f, .x = 0.0f, .y = 1.0f, .z = 0.0f },
+    [M3_MATRIX_SAME_QUALITY]   = { .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 1.0f },
+};
+
+const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
+
+const char* const TAROT_RANK_NAMES[14] = {
+    "Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
+    "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"
+};
+
+const char* const SUIT_NAMES[4] = {"Cups", "Wands", "Pentacles", "Swords"};
+
+
+/* Public helper bodies relocated from the coordinate header. */
+uint8_t get_iching_value(uint8_t nuc2bit) {
+    return NUCLEOTIDE_ICHING_VALUE[nuc2bit & 0x03];
+}
+
+uint8_t get_codon_iching_sum(uint8_t codon6bit) {
+    return NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03]
+         + NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03]
+         + NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
+}
+
+uint8_t get_base_pair(uint8_t nuc) {
+    return nuc ^ 0x01;
+}
+
+uint8_t encode_codon(uint8_t n1, uint8_t n2, uint8_t n3) {
+    return (uint8_t)((n1 << 4) | (n2 << 2) | n3);
+}
+
+uint8_t codon_outer(uint8_t c)  { return (c >> 4) & 0x03; }
+
+uint8_t codon_middle(uint8_t c) { return (c >> 2) & 0x03; }
+
+uint8_t codon_inner(uint8_t c)  { return c & 0x03; }
+
+uint8_t get_polarity_phased(uint8_t nuc, bool is_rna) {
+    return GET_POLARITY(nuc) ^ (uint8_t)is_rna;
+}
+
+char nuc_to_char(uint8_t nuc) {
+    static const char NUC_CHARS[4] = {'A', 'T', 'C', 'G'};
+    return NUC_CHARS[nuc & 0x03];
+}
+
+uint8_t m3_line_change(uint8_t hex, uint8_t line) {
+    return hex ^ (1u << line);
+}
+
+uint8_t upper_trigram(uint8_t hex_id) { return (hex_id >> 3) & 0x07; }
+
+uint8_t lower_trigram(uint8_t hex_id) { return hex_id & 0x07; }
+
+uint8_t compose_hexagram(uint8_t upper, uint8_t lower) {
+    return (uint8_t)((upper << 3) | lower);
+}
+
+uint8_t m3_complement(uint8_t hex_id) { return hex_id ^ 0x3F; }
+
+uint64_t integral_symmetry_field(uint64_t m3_word) {
+    return __builtin_bswap64(m3_word);
+}
+
+Rotational_State compute_rotational_state(uint8_t p1_idx, uint8_t p2_idx) {
+    return (Rotational_State){
+        .total_sum_value = (int8_t)(M3_PAIR_MATRIX[p1_idx].sum_value + M3_PAIR_MATRIX[p2_idx].sum_value),
+        .total_difference_value =
+            (int8_t)(M3_PAIR_MATRIX[p1_idx].difference_value + M3_PAIR_MATRIX[p2_idx].difference_value)
+    };
+}
+
+bool compute_rotational_state_safe(
+    uint8_t p1_idx, uint8_t p2_idx,
+    Rotational_State* out, uint32_t* coord_flags)
+{
+    if (p2_idx == M3_RESONANCE_GAP) {
+        *coord_flags |= STATUS_PROVISIONAL_BIT;
+        return false;
+    }
+    *out = compute_rotational_state(p1_idx, p2_idx);
+    return true;
+}
+
+Quaternion m3_quat_from_codon(uint8_t codon_id) {
+    uint8_t n1 = (codon_id >> 4) & 0x03;
+    uint8_t n2 = (codon_id >> 2) & 0x03;
+    uint8_t n3 = codon_id & 0x03;
+    uint8_t v1 = NUCLEOTIDE_ICHING_VALUE[n1];
+    uint8_t v2 = NUCLEOTIDE_ICHING_VALUE[n2];
+    uint8_t v3 = NUCLEOTIDE_ICHING_VALUE[n3];
+    uint8_t sum = (uint8_t)(v1 + v2 + v3);
+    int8_t diff = (int8_t)v1 - (int8_t)v3;
+    return (Quaternion){
+        .w = (float)sum,
+        .x = (float)diff,
+        .y = 0.0f,
+        .z = (float)(sum % 6u)
+    };
+}
+
+Quaternion m3_quat_codon_state(uint8_t codon_id, uint8_t state) {
+    Quaternion base = m3_quat_from_codon(codon_id);
+    if ((state & 0x07u) == 0u) {
+        return base;
+    }
+    float angle = (float)(state & 0x07u) * 0.7853981633974483f;
+    Quaternion rot = {
+        .w = cosf(angle * 0.5f),
+        .x = sinf(angle * 0.5f),
+        .y = 0.0f,
+        .z = 0.0f
+    };
+    return quat_mul(rot, base);
+}
+
+uint8_t m3_quat_active_state(Quaternion env, uint8_t codon_id) {
+    Quaternion composed = quat_mul(env, m3_quat_from_codon(codon_id));
+    /* Full rotation angle about the composed axis: 2*atan2(|v|, w), with
+     * |v| = sqrt(x^2 + y^2 + z^2). All three matrix axes contribute — i
+     * (Complementary/x), j (Moving-Resting/y), k (Same-Quality/z) — not only i.
+     * The retired law read atan2(x, w), the i-only half-angle, so a codon's Mod
+     * (k/z = sum%6) and any j environmental torque were discarded (HMS Sec.V
+     * j/k-symmetry; DR-ENV). w < 0 (opposite hemisphere) reaches the composite
+     * state 7. angle in [0, 2*pi]; the &0x07 folds the 2*pi edge back to 0. */
+    float vmag = sqrtf(composed.x * composed.x
+                     + composed.y * composed.y
+                     + composed.z * composed.z);
+    float angle = 2.0f * atan2f(vmag, composed.w);
+    if (angle < 0.0f) {
+        angle += 6.2831853071795865f;
+    }
+    return (uint8_t)(angle / 0.7853981633974483f) & 0x07u;
+}
+
+Unified_Clock_State read_cosmic_clock(uint16_t d) {
+    return m0_read_cosmic_clock(d);
+}
+
+uint8_t get_parashakti_frequency(Rotational_State m3_state,
+                                                bool is_shadow_phase) {
+    uint8_t base_frequency = (uint8_t)m3_state.total_sum_value;
+    return is_shadow_phase ? (uint8_t)(base_frequency + 36u) : base_frequency;
+}
+
+uint8_t apply_epogdoon_compression(uint8_t m2_idx_0_to_71) {
+    return (uint8_t)((m2_idx_0_to_71 * 8u) / 9u);
+}
+
+bool epogdoon_has_round_trip_loss(uint8_t m2_vibration_index) {
+    uint8_t compressed = apply_epogdoon_compression(m2_vibration_index);
+    uint8_t expanded   = (uint8_t)((compressed * 9u) / 8u);
+    return (expanded != m2_vibration_index);
+}
+
+uint16_t polar_opposite_su2(uint16_t current_720_degree) {
+    uint16_t layer_offset = (current_720_degree >= 360u) ? 360u : 0u;
+    uint16_t base_degree  = current_720_degree % 360u;
+    return layer_offset + (uint16_t)((base_degree + 180u) % 360u);
+}
+
+uint16_t flow_clockwise(uint16_t d)         { return (d + 1u) % 360u; }
+
+uint16_t polar_opposite_simple(uint16_t d)   { return (d + 180u) % 360u; }
+
+uint8_t  m3_quadrant(uint16_t d)             { return (uint8_t)(d / 90u); }
+
+uint8_t m3_resonance_lookup(uint8_t codon_id,
+                                           uint32_t* coord_flags) {
+    uint8_t result = M3_RES_MATRIX[codon_id];
+    if (result == M3_RESONANCE_GAP) {
+        *coord_flags |= STATUS_PROVISIONAL_BIT;
+        return M3_RESONANCE_GAP;
+    }
+    return result;
+}
+
+uint8_t m3_codon_t_count(uint8_t codon6bit) {
+    uint8_t outer = codon_outer(codon6bit);
+    uint8_t middle = codon_middle(codon6bit);
+    uint8_t inner = codon_inner(codon6bit);
+    return (uint8_t)((outer == M3_NUC_T) + (middle == M3_NUC_T) + (inner == M3_NUC_T));
+}
+
+M3_TranscriptClass m3_codon_transcript_class(uint8_t codon6bit) {
+    return m3_codon_t_count(codon6bit) == 0u
+        ? M3_TRANSCRIPT_CLASS_SHARED
+        : M3_TRANSCRIPT_CLASS_TRANSCRIBABLE;
+}
+
+M3_GovernanceRole m3_codon_governance_role(uint8_t codon6bit) {
+    if (codon6bit == M3_CODON_ATG_AUG) {
+        return M3_GOVERNANCE_ROLE_START;
+    }
+    if (codon6bit < 64u && M3_CODON_TO_AA[codon6bit] == M3_STOP_CODON_AA) {
+        return M3_GOVERNANCE_ROLE_STOP;
+    }
+    return M3_GOVERNANCE_ROLE_NONE;
+}
+
+bool identity_returned(const M3_Wheel_State* ws) {
+    return ws->current_degree >= 720u;
+}
+
+M3_CodonEvaluation evaluate_codon(uint8_t codon6bit) {
+    uint8_t X = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03];
+    uint8_t Y = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03];
+    uint8_t Z = NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
+    M3_CodonEvaluation ev;
+    ev.pp = (int8_t)(X + Y + Z);
+    ev.mm = (int8_t)(X - Y - Z);
+    ev.mp = (int8_t)(X - Y + Z);
+    ev.pm = (int8_t)(X + Y - Z);
+    return ev;
+}
+
+Quaternion m3_eval_to_quat(M3_CodonEvaluation eval) {
+    return (Quaternion){
+        .w = (float)eval.pp,
+        .x = (float)eval.mm,
+        .y = (float)eval.mp,
+        .z = (float)eval.pm
+    };
+}
+
+M3_CodonEvaluation m3_quat_to_eval(Quaternion q) {
+    return (M3_CodonEvaluation){
+        .pp = (int8_t)q.w,
+        .mm = (int8_t)q.x,
+        .mp = (int8_t)q.y,
+        .pm = (int8_t)q.z
+    };
+}
+
+uint8_t m3_encode_pair(uint8_t n1, uint8_t n2) {
+    return (uint8_t)((n1 << 2) | n2);
+}
+
+uint8_t m3_pair_first(uint8_t pair_idx) {
+    return (pair_idx >> 2) & 0x03;
+}
+
+uint8_t m3_pair_second(uint8_t pair_idx) {
+    return pair_idx & 0x03;
+}
+
+uint8_t compose_rotational_state(uint8_t xy, uint8_t za, int positive) {
+    uint8_t X = (xy >> 2) & 0x03;
+    uint8_t y = (xy)      & 0x03;
+    uint8_t Z = (za >> 2) & 0x03;
+    uint8_t a = (za)      & 0x03;
+    return positive
+        ? (uint8_t)((X << 4) | (y << 2) | a)
+        : (uint8_t)((X << 4) | (Z << 2) | a);
+}
+
+int is_nondual_composition(uint8_t xy, uint8_t za) {
+    return ((xy) & 0x03) == ((za >> 2) & 0x03);
+}
+
+int is_nondual_codon(uint8_t codon6bit) {
+    return ((codon6bit >> 4) & 0x03) == (codon6bit & 0x03);
+}
+
+Codon_Class m3_classify_codon(uint8_t codon6bit) {
+    uint8_t n1 = (codon6bit >> 4) & 0x03;
+    uint8_t n2 = (codon6bit >> 2) & 0x03;
+    uint8_t n3 = codon6bit & 0x03;
+    if (n1 == n3) {
+        return (n1 == n2) ? CODON_PERFECT_PALINDROMIC
+                          : CODON_IMPERFECT_PALINDROMIC;
+    }
+    return (n1 == n2 || n2 == n3) ? CODON_NON_PALINDROMIC_NONDUAL
+                                  : CODON_DUAL;
+}
+
+bool codon_is_dual(Codon_Class c)               { return c == CODON_DUAL; }
+
+bool codon_is_non_dual(Codon_Class c)            { return c != CODON_DUAL; }
+
+bool codon_is_palindromic(Codon_Class c)         { return c <= CODON_IMPERFECT_PALINDROMIC; }
+
+bool codon_is_perfect_palindrome(Codon_Class c)  { return c == CODON_PERFECT_PALINDROMIC; }
+
+uint8_t m3_codon_rotation_count(uint8_t codon6bit) {
+    return m3_classify_codon(codon6bit) == CODON_DUAL ? 8u : 7u;
+}
+
+void m3_compute_charges(
+    uint8_t codon6bit,
+    int8_t *pp_out, int8_t *nn_out, int8_t *np_out, int8_t *pn_out)
+{
+    uint8_t X = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03];
+    uint8_t Y = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03];
+    uint8_t Z = NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
+
+    *pp_out = (int8_t)(X + Y + Z);
+    *nn_out = (int8_t)(X - Y - Z);
+    *np_out = (int8_t)(X - Y + Z);
+    *pn_out = (int8_t)(X + Y - Z);
+}
+
+int m3_is_prime_attractor(uint8_t codon_a, uint8_t codon_b) {
+    uint16_t total = (uint16_t)get_codon_iching_sum(codon_a)
+                   + (uint16_t)get_codon_iching_sum(codon_b);
+    return total == M3_EULER_PRIME_41 || total == M3_EULER_PRIME_43;
+}
+
+int m3_codon_is_rna_capable(uint8_t codon6bit) {
+    return ((codon6bit >> 4) & 0x03) == M3_NUC_T ||
+           ((codon6bit >> 2) & 0x03) == M3_NUC_T ||
+           ((codon6bit)      & 0x03) == M3_NUC_T;
+}
+
+Quaternion m3_element_to_quat(Elemental_Signature sig) {
+    return quat_from_ring_pos((QL_Tick)ELEM_SIG_GET_ELEMENT(sig));
+}
+
+Quaternion m3_tarot_rotation(uint8_t card_id) {
+    if (card_id < M3_MINOR_ARCANA_COUNT) {
+        uint8_t suit = (uint8_t)(card_id / 14u);
+        uint8_t rank = (uint8_t)(card_id % 14u);
+        const M3_TarotCodonEntry* entry = &M3_TAROT_CODON_MAP[suit][rank];
+        Quaternion primary = quat_normalize(m3_quat_from_codon(entry->codon_a));
+        if (entry->codon_b != M3_TAROT_SINGLE_CODON) {
+            Quaternion secondary = quat_normalize(m3_quat_from_codon(entry->codon_b));
+            return quat_slerp(primary, secondary, 0.5f);
+        }
+        return primary;
+    }
+
+    if (card_id < (M3_MINOR_ARCANA_COUNT + M3_MAJOR_ARCANA_COUNT)) {
+        uint8_t major_idx = (uint8_t)(card_id - M3_MINOR_ARCANA_COUNT);
+        float angle = ((float)major_idx / (float)M3_MAJOR_ARCANA_COUNT) * 6.2831853071795865f;
+        return (Quaternion){
+            .w = cosf(angle * 0.5f),
+            .x = 0.0f,
+            .y = sinf(angle * 0.5f),
+            .z = 0.0f
+        };
+    }
+
+    return (card_id == (M3_TAROT_QUATERNION_COUNT - 2u))
+        ? (Quaternion){ .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 1.0f }
+        : (Quaternion){ .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = -1.0f };
+}
+
+uint8_t m3_tarot_translate(
+    uint8_t card_id,
+    uint8_t source_pos,
+    int codon_to_hexagram)
+{
+    uint8_t source = (uint8_t)(source_pos & 0x3Fu);
+    uint8_t offset = (uint8_t)(card_id & 0x3Fu);
+    if (codon_to_hexagram) {
+        return (uint8_t)((source + offset) & 0x3Fu);
+    }
+    return (uint8_t)((source + 64u - offset) & 0x3Fu);
+}
+
+M3_CodonEvaluation m3_evaluate_with_nondual_guard(
+    uint8_t codon6bit, uint8_t *flags_out)
+{
+    M3_CodonEvaluation ev = evaluate_codon(codon6bit);
+    if (is_nondual_codon(codon6bit)) {
+        if (flags_out) *flags_out |= M3_NONDUAL_CODON_FLAG;
+        ev.mp = 0;
+        ev.pm = 0;
+    }
+    return ev;
+}
+
+
+
+static const uint8_t M3_BACKBONE_AMINO_ACID_IDX[24] = {
+    0, 1, 2, 3, 4, 5, 6, 7,
+    8, 9, 10, 11, 12, 13, 14, 15,
+    16, 17, 18, 19, 20, 21, 22, 23,
+};
+
+_Static_assert(sizeof(M3_BACKBONE_AMINO_ACID_IDX) == 24,
+    "M3 backbone amino table must have exactly 24 entries");
+
+Clock_Backbone_Node CLOCK_BACKBONE[24] = {{0}};
+
+void m3_build_backbone(void) {
+    for (uint8_t i = 0; i < 24u; i++) {
+        CLOCK_BACKBONE[i] = (Clock_Backbone_Node){
+            /* handoff §2.3 law: 24 spokes × 15° = 360 — the backbone degree
+             * IS the spoke degree (the earlier `.degree = i` was a defect
+             * caught by backbone_table_contract, Tranche 4.15) */
+            .degree = (uint16_t)(i * 15u),
+            .backbone_index = i,
+            .hour_of_day = i,
+            .zodiac_sign = (uint8_t)(i / 2u),
+            .is_cusp = (uint8_t)((i % 2u) == 0u),
+            .amino_acid_idx = M3_BACKBONE_AMINO_ACID_IDX[i],
+            .is_palindromic = 1u,
+            ._pad = {0, 0, 0, 0},
+        };
+    }
+}
+
+
+/* Fibonacci ground digit cycle — F(n) % 10 over the full Pisano-60 period
+ * (Track 35 §1.2; generated from the recurrence, verified by contract test:
+ * lut[n] = (lut[n-1] + lut[n-2]) % 10 with seed 0,1 and a closed 60-wrap). */
+const uint8_t pisano_digit_lut[60] = {
+    0, 1, 1, 2, 3, 5, 8, 3, 1, 4, 5, 9, 4, 3, 7, 0, 7, 7, 4, 1,
+    5, 6, 1, 7, 8, 5, 3, 8, 1, 9, 0, 9, 9, 8, 7, 5, 2, 7, 9, 6,
+    5, 1, 6, 7, 3, 0, 3, 3, 6, 9, 5, 4, 9, 3, 2, 5, 7, 2, 9, 1,
+};
+
+/* FFI-exportable wrapper around the inline m3_compute_charges.
+   Rust / foreign callers use this; C callers inside m3.c use the inline. */
+void m3_compute_charges_ffi(
+    uint8_t codon6bit,
+    int8_t *pp_out, int8_t *nn_out, int8_t *np_out, int8_t *pn_out)
+{
+    m3_compute_charges(codon6bit, pp_out, nn_out, np_out, pn_out);
+}
 
 
 /* ===================================================================
@@ -130,12 +562,12 @@ const uint8_t M3_NONDUAL_CODONS[16] = {
 _Static_assert(sizeof(M3_NONDUAL_CODONS) == 16,
     "M3 must have exactly 16 non-dual (palindromic) codons");
 
-const uint64_t M3_RNA_FUNCTIONAL_MASK = 0x22F222F2FFFF22F2ULL;
-const uint64_t M3_RNA_DARK_MASK       = 0xDD0DDD0D0000DD0DULL;
+const uint64_t M3_RNA_FUNCTIONAL_MASK = M3_RNA_FUNCTIONAL_MASK_VALUE;
+const uint64_t M3_RNA_DARK_MASK       = M3_RNA_DARK_MASK_VALUE;
 
-_Static_assert((M3_RNA_FUNCTIONAL_MASK & M3_RNA_DARK_MASK) == 0ULL,
+_Static_assert((M3_RNA_FUNCTIONAL_MASK_VALUE & M3_RNA_DARK_MASK_VALUE) == 0ULL,
     "RNA functional/dark masks must not overlap");
-_Static_assert((M3_RNA_FUNCTIONAL_MASK | M3_RNA_DARK_MASK) == 0xFFFFFFFFFFFFFFFFULL,
+_Static_assert((M3_RNA_FUNCTIONAL_MASK_VALUE | M3_RNA_DARK_MASK_VALUE) == 0xFFFFFFFFFFFFFFFFULL,
     "RNA functional/dark masks must cover all 64 codons");
 
 
@@ -175,11 +607,13 @@ const uint8_t M3_MOVE_MATRIX[64] = {
     #undef MOVE
 };
 
-/* Resonance — 56 valid entries + 8 evolutionary gaps (0xFF)
- * The 8 gaps correspond to M2 frequencies that cannot manifest.
+/* Resonance — 56 resolved entries + 8 unresolved sentinels (0xFF).
  * Gap positions: the 8 hexagrams where both trigrams are complementary
  * AND form a non-trivial crossing (Kan/Li variants).
- * Exact positions calibrated to the epogdoon compression boundary. */
+ *
+ * This is a codon-indexed partial resonance operator. It is not the 72→64
+ * epogdoon map: every M2 address is accepted by that total compression, while
+ * these sentinels only mark codons without a materialised resonance target. */
 const uint8_t M3_RES_MATRIX[64] = {
     /* Row 0 (upper=Kun=000):    gap at 0x05 (Kun/Li) */
     0x00, 0x01, 0x02, 0x03, 0x04, 0xFF, 0x06, 0x07,
@@ -251,6 +685,63 @@ const uint8_t M3_CODON_TO_AA[64] = {
     20, 20, 20, 20, /* GGA=Gly GGT=Gly GGC=Gly GGG=Gly */
 };
 
+const uint8_t M3_CODON_ATG_AUG = M3_CODON_ATG_AUG_VALUE;
+const uint8_t M3_STOP_CODONS[3] = {
+    M3_STOP_CODON_TAA_VALUE,
+    M3_STOP_CODON_TAG_VALUE,
+    M3_STOP_CODON_TGA_VALUE,
+};
+
+uint8_t m3_codon_t_count_ffi(uint8_t codon6bit) {
+    return m3_codon_t_count(codon6bit);
+}
+
+M3_TranscriptClass m3_codon_transcript_class_ffi(uint8_t codon6bit) {
+    return m3_codon_transcript_class(codon6bit);
+}
+
+M3_GovernanceRole m3_codon_governance_role_ffi(uint8_t codon6bit) {
+    return m3_codon_governance_role(codon6bit);
+}
+
+int m3_verify_transcript_surface(void) {
+    uint8_t shared = 0u;
+    uint8_t transcribable = 0u;
+    uint8_t starts = 0u;
+    uint8_t stops = 0u;
+
+    for (uint8_t codon = 0u; codon < 64u; codon++) {
+        M3_TranscriptClass cls = m3_codon_transcript_class(codon);
+        M3_GovernanceRole role = m3_codon_governance_role(codon);
+
+        if (cls == M3_TRANSCRIPT_CLASS_SHARED) {
+            shared++;
+        } else if (cls == M3_TRANSCRIPT_CLASS_TRANSCRIBABLE) {
+            transcribable++;
+        } else {
+            return -1;
+        }
+
+        if (role == M3_GOVERNANCE_ROLE_START) {
+            starts++;
+            if (codon != M3_CODON_ATG_AUG) return -2;
+        } else if (role == M3_GOVERNANCE_ROLE_STOP) {
+            stops++;
+            if (M3_CODON_TO_AA[codon] != M3_STOP_CODON_AA) return -3;
+        } else if (role != M3_GOVERNANCE_ROLE_NONE) {
+            return -4;
+        }
+    }
+
+    if ((uint8_t)(shared + transcribable) != 64u) return -5;
+    if (shared != 27u) return -6;
+    if (transcribable != 37u) return -7;
+    if (starts != 1u) return -8;
+    if (stops != 3u) return -9;
+
+    return 0;
+}
+
 
 /* ===================================================================
  * FR 2.3.19: M3_TAROT_CODON_MAP[4][16] — Complete Tarot-Codon LUT
@@ -294,6 +785,34 @@ const M3_Major_Arcana_Entry M3_MAJOR_ARCANA[M3_MAJOR_ARCANA_COUNT] = {
     { 20, "Aeon",              21, 20 },
     { 21, "The Universe",      22, 21 },
 };
+
+/* Transcribe a codon to its Major Arcana card index.
+ *
+ * codon -> amino-acid index (M3_CODON_TO_AA) -> Major Arcana card whose
+ * amino_acid_index matches. STOP codons (amino-acid index 10) and any
+ * amino-acid index with no Major Arcana assignment return 0xFF.
+ *
+ * Inverse of M3_MAJOR_ARCANA[card].amino_acid_index for non-STOP codons.
+ * The M5 Mobius return walks each codon of a session's M3 trace through
+ * this transcription. */
+uint8_t m3_major_arcana_from_codon(uint8_t codon) {
+    if (codon >= 64u) {
+        return 0xFFu;
+    }
+
+    uint8_t aa_index = M3_CODON_TO_AA[codon];
+    if (aa_index == M3_STOP_CODON_AA) {
+        return 0xFFu;  /* STOP codons carry no arcana */
+    }
+
+    for (uint8_t card = 0u; card < M3_MAJOR_ARCANA_COUNT; ++card) {
+        if (M3_MAJOR_ARCANA[card].amino_acid_index == aa_index) {
+            return card;
+        }
+    }
+
+    return 0xFFu;  /* amino acid with no Major Arcana assignment */
+}
 
 /* Helper: encode a 3-letter codon string to 6-bit value */
 #define COD(a,b,c) (uint8_t)((M3_NUC_##a << 4) | (M3_NUC_##b << 2) | M3_NUC_##c)
@@ -650,6 +1169,9 @@ M3_Root* m3_init(Coordinate_Arena* arena, Holographic_Coordinate* hc) {
     /* Initialize codon classification LUT */
     m3_init_codon_class_lut();
 
+    /* Build the 24-node clock backbone during M3 boot. */
+    m3_build_backbone();
+
     return root;
 }
 
@@ -672,6 +1194,8 @@ void m3_teardown(M3_Root* root) {
  * =================================================================== */
 
 bool m3_verify(void) {
+    m3_build_backbone();
+
     /* PAIR_MATRIX integrity */
     if (M3_PAIR_MATRIX[5].sum_value != 18) return false;   /* TT = MAX */
     if (M3_PAIR_MATRIX[0].sum_value != 12) return false;   /* AA = MIN */
@@ -707,6 +1231,16 @@ bool m3_verify(void) {
         if (!is_nondual_codon(M3_NONDUAL_CODONS[i])) return false;
     }
 
+    for (uint8_t i = 0; i < 24u; i++) {
+        if (CLOCK_BACKBONE[i].degree != (uint16_t)(i * 15u)) return false;
+        if (CLOCK_BACKBONE[i].backbone_index != i) return false;
+        if (CLOCK_BACKBONE[i].hour_of_day != i) return false;
+        if (CLOCK_BACKBONE[i].zodiac_sign != (uint8_t)(i / 2u)) return false;
+        if (CLOCK_BACKBONE[i].is_cusp != (uint8_t)((i % 2u) == 0u)) return false;
+        if (CLOCK_BACKBONE[i].amino_acid_idx != M3_BACKBONE_AMINO_ACID_IDX[i]) return false;
+        if (CLOCK_BACKBONE[i].is_palindromic != 1u) return false;
+    }
+
     /* Complementarity matrix: comp[i] ^ 0x3F == i */
     for (int i = 0; i < 64; i++) {
         if (M3_COMP_MATRIX[i] != (uint8_t)(i ^ 0x3F)) return false;
@@ -727,6 +1261,9 @@ bool m3_verify(void) {
 
     /* 360 integral invariant */
     if (m3_verify_integral_invariant() != 0) return false;
+
+    /* Transcript class / governance invariant */
+    if (m3_verify_transcript_surface() != 0) return false;
 
     /* Tarot codon coverage: 56 cards + 8 court duals = 64 unique codons */
     {
@@ -822,7 +1359,7 @@ static void m3_print_info(const M3_Root* root) {
     printf("  Hexagrams:     64 (.rodata)\n");
     printf("  Non-dual:      16 palindromic codons (XyX)\n");
     printf("  Tarot:         4 suits × 16 = 64 codons\n");
-    printf("  Resonance:     56 valid + 8 evolutionary gaps\n");
+    printf("  Resonance:     56 resolved + 8 unresolved sentinels\n");
     printf("  360 Integral:  Cups=%u Wands=%u Pent=%u Swords=%u = %u\n",
            M3_SUIT_A_INTEGRAL, M3_SUIT_T_INTEGRAL,
            M3_SUIT_C_INTEGRAL, M3_SUIT_G_INTEGRAL,
@@ -984,7 +1521,7 @@ static void m3_print_hexagram(int argc, char** argv) {
     uint32_t flags = 0;
     uint8_t res = m3_resonance_lookup((uint8_t)id, &flags);
     if (flags & STATUS_PROVISIONAL_BIT) {
-        printf("  Resonance:      EVOLUTIONARY GAP (STATUS_PROVISIONAL)\n");
+        printf("  Resonance:      UNRESOLVED TARGET (STATUS_PROVISIONAL)\n");
     } else {
         printf("  Resonance:      %u\n", res);
     }
