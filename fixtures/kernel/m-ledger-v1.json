@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "3e4df712d3b1903b16ccdfc919954e1276aada4d91cfa8834316f4a7c505390f",
+  "ledger_revision": "b2514484ddf3fff82cfad7f709ae0dbacb86e2d046bf42d244d0d300c8dbd0a7",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1a1be256d52bc3d6ce938902aedf0de3f16543bf98d59f6ead3a542e3125fbad",
@@ -115454,7 +115454,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m2-finite-proof-v1.json",
-        "sha256": "08807a158ec5452c4b68bb4a9f8d74308ce5b90d0b728435345ca75546a0424c"
+        "sha256": "b76591abd3a26e7fa0f86d040df9b7b2783b88a2121e4c6f4f9a7d9993069ebc"
       },
       "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
       "subjects": [
@@ -115541,7 +115541,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
-        "sha256": "9eb42586f84e53f799a1c66706168dc523ee80f128b4014da91a9eef2ed4c182"
+        "sha256": "d8fcfd49aff62d34041418a07d94c6f70cb6a0cdcc6982b4aa8aa1425c94df5d"
       },
       "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
       "subjects": [
