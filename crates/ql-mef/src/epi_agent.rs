@@ -1229,6 +1229,7 @@ pub fn operation_inputs(position: u8) -> Value {
         opened_at_unix_ms: 0,
     };
     let act = |id: &str, request: JourneyRequest| JourneyAct {
+        day_ref: Some("central:day:control:root:2026-09-28".into()),
         request_id: id.into(),
         actor_ref: "agent/nara".into(),
         at_unix_ms: 0,
@@ -1247,12 +1248,29 @@ pub fn operation_inputs(position: u8) -> Value {
         JourneyRequest::Read {
             placement_ref: "<placement_ref from the reading>".into(),
             reading: NewReading {
+                author_ref: None,
                 reading_ref: "reading:<slug>".into(),
                 kind: ReadingKind::Original,
                 actor_kind: ActorKind::Agent,
                 text: "<interpretation>".into(),
                 supersedes: None,
                 source_refs: vec![source.source_ref.clone()],
+                occurred_at_unix_ms: 0,
+            },
+        },
+    );
+    let correction = act(
+        "correct-1",
+        JourneyRequest::Read {
+            placement_ref: "<placement_ref>".into(),
+            reading: NewReading {
+                author_ref: Some("<the person's ref, e.g. person:...>".into()),
+                reading_ref: "reading:<slug>-correction".into(),
+                kind: ReadingKind::Correction,
+                actor_kind: ActorKind::Human,
+                text: "<the person's own words>".into(),
+                supersedes: Some("<reading_ref being corrected>".into()),
+                source_refs: vec!["<the person's Day/Flow passage key>".into()],
                 occurred_at_unix_ms: 0,
             },
         },
@@ -1265,9 +1283,9 @@ pub fn operation_inputs(position: u8) -> Value {
         },
         "nara.journey.apply": {
             "input": {"journey": placeholder_journey, "act": draw, "entropy": null},
-            "other_act_examples": [read],
+            "other_act_examples": [read, correction],
             "act_ops": ["draw","assign-symbol","relate-event","read","set-target-aspect","dispose","track-recognitions","evaluate-aliveness","cast-iching","record-computed-iching","read-iching","close"],
-            "note": "spread kinds: sphere, torus-day, klein-night{day_spread_ref}, lemniscate{within_placement_ref}, single{count}, closing. cast-iching needs entropy.hex (at least 18 bytes for coins). Card names are in the returned `reading`, not in `journey.placements`."
+            "note": "spread kinds: sphere, torus-day, klein-night{day_spread_ref}, lemniscate{within_placement_ref}, single{count}, closing. cast-iching needs entropy.hex (at least 18 bytes for coins). Card names are in the returned `reading`, not in `journey.placements`. Set act.day_ref to the civil Day the act happens on. The person's words are a human reading: author_ref names the person and source_refs cite their passage; a correction also names the reading it supersedes. Persist exactly the returned `journey`; never edit it by hand."
         },
         "nara.journey.read": {"input": {"journey": placeholder_journey, "window_unix_ms": null}},
         "nara.lived-context.compose": {
@@ -1318,6 +1336,10 @@ mod operation_input_tests {
             serde_json::from_value(inputs["nara.journey.apply"]["other_act_examples"][0].clone())
                 .unwrap();
         assert_eq!(read.request_id, "read-1");
+        let correction: crate::nara::domain::JourneyAct =
+            serde_json::from_value(inputs["nara.journey.apply"]["other_act_examples"][1].clone())
+                .unwrap();
+        assert!(correction.day_ref.is_some());
         let compose: crate::nara::lived_context::LivedContextRequest = serde_json::from_value({
             let mut value = inputs["nara.lived-context.compose"]["input"].clone();
             value["documents"] = json!([]);

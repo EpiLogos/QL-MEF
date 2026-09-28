@@ -80,6 +80,7 @@ fn open(seed: &str) -> OracleJourney {
 
 fn act(id: &str, at: u64, request: JourneyRequest) -> JourneyAct {
     JourneyAct {
+        day_ref: None,
         request_id: id.into(),
         actor_ref: "agent/nara".into(),
         at_unix_ms: at,
@@ -336,6 +337,8 @@ fn a_correction_supersedes_without_erasing_the_original_reading() {
         JourneyRequest::Read {
             placement_ref: target.clone(),
             reading: NewReading {
+                author_ref: (actor_kind == ActorKind::Human)
+                    .then(|| "person:controlled-a".to_string()),
                 reading_ref: reading_ref.into(),
                 kind,
                 actor_kind,
@@ -403,6 +406,11 @@ fn a_correction_supersedes_without_erasing_the_original_reading() {
     assert_eq!(placement.current_readings.len(), 1);
     assert_eq!(placement.current_readings[0].reading_ref, "reading:3");
     assert_eq!(placement.current_readings[0].actor_kind, ActorKind::Human);
+    assert_eq!(
+        placement.current_readings[0].author_ref,
+        "person:controlled-a"
+    );
+    assert_eq!(placement.reading_history[0].author_ref, "agent/nara");
     assert_eq!(placement.reading_history[0].actor_kind, ActorKind::Agent);
 }
 
@@ -501,6 +509,7 @@ fn iching_cast_follows_the_c_line_law_and_keeps_the_original_beside_later_readin
                 JourneyRequest::ReadIChing {
                     reading_ref: original.reading_ref.clone(),
                     reading: NewReading {
+                        author_ref: None,
                         reading_ref: "iching-reading:retro".into(),
                         kind: ReadingKind::Retrospective,
                         actor_kind: ActorKind::Agent,
@@ -816,4 +825,69 @@ fn a_tampered_persisted_journey_is_refused() {
     value["dealt"] = serde_json::json!(5);
     let tampered: OracleJourney = serde_json::from_value(value).unwrap();
     assert!(tampered.validate().is_err());
+}
+
+#[test]
+fn the_persons_words_keep_their_author_and_a_later_day_joins_the_journey() {
+    let mut journey = open("seed-k");
+    let effect = draw(
+        &mut journey,
+        "d1",
+        SpreadKind::Sphere,
+        "central:day:controlled:2026-09-01",
+        T0,
+    );
+    let target = effect.effect_refs[1].clone();
+    let human = |author: Option<&str>, sources: Vec<String>| NewReading {
+        author_ref: author.map(str::to_string),
+        reading_ref: "reading:person".into(),
+        kind: ReadingKind::Development,
+        actor_kind: ActorKind::Human,
+        text: "Staying until spring is what I want.".into(),
+        supersedes: None,
+        source_refs: sources,
+        occurred_at_unix_ms: T0 + DAY,
+    };
+    let passage = vec!["central:source:controlled:day/2026-09-02/day.md/doc/e1/c1@r".to_string()];
+    for (id, reading) in [
+        ("h1", human(None, passage.clone())),
+        ("h2", human(Some("agent/nara"), passage.clone())),
+        ("h3", human(Some("person:controlled-a"), Vec::new())),
+    ] {
+        let refused = journey.apply(
+            act(
+                id,
+                T0 + DAY,
+                JourneyRequest::Read {
+                    placement_ref: target.clone(),
+                    reading,
+                },
+            ),
+            &[],
+        );
+        assert!(
+            refused.is_err(),
+            "{id}: the recording agent cannot author the person's words"
+        );
+    }
+    let mut recorded = act(
+        "h4",
+        T0 + DAY,
+        JourneyRequest::Read {
+            placement_ref: target.clone(),
+            reading: human(Some("person:controlled-a"), passage),
+        },
+    );
+    recorded.day_ref = Some("central:day:controlled:2026-09-02".into());
+    journey.apply(recorded, &[]).unwrap();
+    let entry = &placement(&journey, &target).readings[0];
+    assert_eq!(entry.author_ref, "person:controlled-a");
+    assert_eq!(entry.actor_kind, ActorKind::Human);
+    assert_eq!(
+        journey.day_refs,
+        [
+            "central:day:controlled:2026-09-01",
+            "central:day:controlled:2026-09-02"
+        ]
+    );
 }

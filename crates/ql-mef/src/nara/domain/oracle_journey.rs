@@ -764,6 +764,11 @@ pub struct NewReading {
     pub reading_ref: String,
     pub kind: ReadingKind,
     pub actor_kind: ActorKind,
+    /// Whose words these are. Required for a human reading, which is the
+    /// person's own writing even when an agent records it; an agent reading
+    /// is authored by the acting agent.
+    #[serde(default)]
+    pub author_ref: Option<String>,
     pub text: String,
     pub supersedes: Option<String>,
     pub source_refs: Vec<String>,
@@ -885,6 +890,10 @@ pub struct JourneyAct {
     pub request_id: String,
     pub actor_ref: String,
     pub at_unix_ms: u64,
+    /// The civil Day the act happens on. Every act on a later Day joins that
+    /// Day to the journey, not only draws and casts.
+    #[serde(default)]
+    pub day_ref: Option<String>,
     pub request: JourneyRequest,
 }
 
@@ -1088,6 +1097,9 @@ impl OracleJourney {
             });
         }
         let mut next = self.clone();
+        if let Some(day_ref) = &act.day_ref {
+            next.note_day(day_ref)?;
+        }
         let op = act.request.name();
         let effect_refs = next.perform(&act, entropy_bytes)?;
         next.operations.push(JourneyOperation {
@@ -1558,11 +1570,31 @@ fn klein_face_of(position: Option<SpreadPosition>) -> KleinFace {
 }
 
 fn new_entry(reading: &NewReading, actor: &str, at: u64) -> Result<JourneyReadingEntry, String> {
+    let author_ref = match (reading.actor_kind, &reading.author_ref) {
+        (ActorKind::Human, Some(author)) if author != actor => {
+            if reading.source_refs.is_empty() {
+                return Err(
+                    "a human reading cites the person's own source passage it records".into(),
+                );
+            }
+            author.clone()
+        }
+        (ActorKind::Human, _) => {
+            return Err(
+                "a human reading names the person as author_ref; the recording agent is not its author"
+                    .into(),
+            );
+        }
+        (ActorKind::Agent, Some(author)) if author != actor => {
+            return Err("an agent reading is authored by the acting agent".into());
+        }
+        (ActorKind::Agent, _) => actor.to_string(),
+    };
     let entry = JourneyReadingEntry {
         reading_ref: reading.reading_ref.clone(),
         kind: reading.kind,
         actor_kind: reading.actor_kind,
-        author_ref: actor.to_string(),
+        author_ref,
         text: reading.text.clone(),
         supersedes: reading.supersedes.clone(),
         source_refs: reading.source_refs.clone(),

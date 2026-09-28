@@ -111,6 +111,7 @@ fn journey_recognising(source_ref: &str, revision: &str, entry: &str) -> OracleJ
     let effect = journey
         .apply(
             JourneyAct {
+                day_ref: None,
                 request_id: "d1".into(),
                 actor_ref: "agent/nara".into(),
                 at_unix_ms: T0,
@@ -126,6 +127,7 @@ fn journey_recognising(source_ref: &str, revision: &str, entry: &str) -> OracleJ
     journey
         .apply(
             JourneyAct {
+                day_ref: None,
                 request_id: "r1".into(),
                 actor_ref: "person:controlled-a".into(),
                 at_unix_ms: T0 + DAY,

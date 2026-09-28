@@ -1,6 +1,6 @@
 {
   "schema": "ql.k8-current-inventory-receipt/v1",
-  "inventory_sha256": "7f9a127f60b9571d68eb647755d9d5a5490c01d37ab0065917c9ffee86cbfbdd",
+  "inventory_sha256": "8fb640a8a577a343d2172e1b9dc851bf36e173cec99ea960f685080187487bb5",
   "registry_revision": "e478dbd020caabec2cfa2295c0296bece46e2807987f8476ca842cb2346bb8a5",
   "inherited_ledger_revision": "b2514484ddf3fff82cfad7f709ae0dbacb86e2d046bf42d244d0d300c8dbd0a7",
   "inherited_ledger_sha256": "cf9b2ca005666f08456ba2de0662176e2fdc46a6697f6ca9664063554369e2b8",
