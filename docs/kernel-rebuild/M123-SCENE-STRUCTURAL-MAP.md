@@ -82,6 +82,45 @@ traced to the design sources in Epi-Logos-C-Experiments `origin/main`
    2.5 Hz beat, the 1 Hz profile heartbeat and the 12 Hz display rate
    stay distinct. This answers D5 and D18.
 
+**Second owner review, 28 September 2026.** These replace the items
+above where they differ.
+
+- **Degree.** The degree ring follows the live map. The cardinals are
+  canonical I-Ching (`#3-5-1` North 0°, `#3-5-3` East 90°, `#3-5-2`
+  South 180°, `#3-5-4` West 270°). The ecliptic, and the planets on it,
+  superposes as its own reading and does not re-origin the ring. D6 is
+  closed.
+- **Court cards.** The HOPF read's placement of court cards on sign cusps
+  or on the backbone is withdrawn. Courts keep their given role in the
+  64 → 56 Minor Arcana compression: 48 single-codon cards plus 8
+  dual-codon court cards × 2 codons (M3 matrix §10; M3'-SPEC §8.7).
+- **The 384.**
+  - The 24 backbone governors `#3-5-q-p` are nodes **in addition to**
+    the 360 degree nodes, not a subset of them. 360 + 24 = 384 = 64 × 6.
+  - Each governor carries its season's perfect palindrome, per the live
+    map's `c_1_description` on all 24: GGG ×6 (Winter), AAA ×6 (Spring),
+    CCC ×6 (Summer), TTT ×6 (Autumn). These are the four ace codons.
+  - All 360 degree nodes are dynamic.
+  - HOPF §XI's "336 = 360 − 24" is wrong and is not used.
+- **The visual is a native Expression.**
+  - The scene is an `oi.expression/v1` Document in O:I's Expressions
+    format. It is not a separate renderer.
+  - The contract lives in O:I `desktop/cradle/kernel/src/expression.rs`,
+    `expression_scene.rs` and `expression_carrier.rs`, and in
+    `docs/contracts/EXPRESSION-APPLICATION-V1.md`.
+  - Structure:
+    - one Scene with a 3D view;
+    - bodies (Earth, the planets, the clock torus and its rings) as
+      entities bound to Bimba coordinates through `subject_bind`, with
+      the trace read on the verso;
+    - `scene_material_set` carrying `oi.journey-scene/v1`;
+    - the Scene body carrier `engine_composition`;
+    - the live field attached through `native-field/` (controller,
+      channel, domain, projection).
+  - The kernel caps a Scene at 32 entities, so the 360 degrees, 36
+    decans and 64 codons are carried as ring bodies and fields, not as
+    one entity each.
+
 **Staleness found while tracing these.** QL's frozen C reference
 (`vendor/epi-kernel/reference`, locked at C-Experiments `daa660c`) lacks
 37 later `Body/S/S0/epi-lib` commits that are on `origin/main`. They
