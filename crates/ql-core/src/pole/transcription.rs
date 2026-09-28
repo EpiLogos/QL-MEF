@@ -63,6 +63,8 @@ pub const M2_VIBRATION_CYCLE: usize = 72;
 
 const M2_SOURCE: &str = include_str!("../../../../vendor/epi-kernel/reference/src/m2.c");
 const M3_SOURCE: &str = include_str!("../../../../vendor/epi-kernel/reference/src/m3.c");
+/// The RNA mask values are header macros (`*_MASK_VALUE`) that m3.c assigns.
+const M3_HEADER: &str = include_str!("../../../../vendor/epi-kernel/reference/include/m3.h");
 
 /// Index of the first occurrence of `anchor` at or after `from`; a missing
 /// vendor table is a compile-time failure, not a runtime one.
@@ -438,7 +440,7 @@ pub const fn amino_acid_name(index: u8) -> Option<&'static str> {
 
 // ===================================================================
 // FR 2.3.20 / M3-C17 — the RNA phase law
-// vendor m3.c:133-134 (masks), m3.h:793-800 (`m3_codon_is_rna_capable`)
+// vendor m3.h (`M3_RNA_*_MASK_VALUE`, assigned in m3.c), m3.h (`m3_codon_is_rna_capable`)
 // ===================================================================
 
 const fn parse_rna_mask(source: &[u8], anchor: &[u8]) -> u64 {
@@ -448,17 +450,17 @@ const fn parse_rna_mask(source: &[u8], anchor: &[u8]) -> u64 {
     value
 }
 
-/// The RNA-functional codon bitboard (vendor m3.c:133, FR 2.3.20): bit
+/// The RNA-functional codon bitboard (vendor m3.h, FR 2.3.20): bit
 /// `i` addresses codon `i`. Ratified reading (deep matrix §9 /
 /// `M3-C17`): exactly the 37 T-containing codons — the T→U expressive
 /// descendants. Pinned to the T-set by test.
 pub const M3_RNA_FUNCTIONAL_MASK: u64 =
-    parse_rna_mask(M3_SOURCE.as_bytes(), b"M3_RNA_FUNCTIONAL_MASK = ");
+    parse_rna_mask(M3_HEADER.as_bytes(), b"M3_RNA_FUNCTIONAL_MASK_VALUE ");
 
-/// The RNA-dark codon bitboard (vendor m3.c:134): the complement — the
+/// The RNA-dark codon bitboard (vendor m3.h): the complement — the
 /// 27 T-free codons, which no transcription can reach. Pinned to the
 /// T-free set by test.
-pub const M3_RNA_DARK_MASK: u64 = parse_rna_mask(M3_SOURCE.as_bytes(), b"M3_RNA_DARK_MASK");
+pub const M3_RNA_DARK_MASK: u64 = parse_rna_mask(M3_HEADER.as_bytes(), b"M3_RNA_DARK_MASK_VALUE ");
 
 /// The ratified transcription model (deep matrix §9 / `M3-C17`):
 /// 64 − 3³ = 37 codons carry a T and transcribe to a U-form.
