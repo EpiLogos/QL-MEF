@@ -176,7 +176,8 @@ mod tests {
         // The C reference kernel (FR 2.3.12, corrected 2026-09-07 by owner
         // ratification) must carry the exact same table as the Rust contract:
         // one law, two languages, zero drift.
-        let header = include_str!("../../../../vendor/epi-kernel/reference/include/m3.h");
+        // The table is defined in m3.c; m3.h declares it and pins its values.
+        let header = include_str!("../../../../vendor/epi-kernel/reference/src/m3.c");
         let anchor = "NUCLEOTIDE_ICHING_VALUE[4] = {";
         let start = header.find(anchor).expect("C array anchor") + anchor.len();
         let end = header[start..].find('}').expect("array close");

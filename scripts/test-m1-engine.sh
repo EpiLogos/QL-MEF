@@ -4,7 +4,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p target/m1-engine
 cc=${CC:-clang}
-flags=(-std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -ffunction-sections -fdata-sections)
+# _DEFAULT_SOURCE: the vendored reference m1.c uses M_PI, which glibc hides under strict c11.
+flags=(-std=c11 -D_DEFAULT_SOURCE -O1 -g -Wall -Wextra -Werror -pedantic -ffunction-sections -fdata-sections)
 # section GC is --gc-sections on ELF linkers, -dead_strip on macOS ld64
 case "$(uname -s)" in
   Darwin) gc=(-Wl,-dead_strip); asan="detect_leaks=0:halt_on_error=1" ;;  # LeakSanitizer is unsupported on macOS

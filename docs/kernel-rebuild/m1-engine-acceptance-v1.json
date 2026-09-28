@@ -372,11 +372,11 @@
     },
     {
       "path": "crates/ql-mef/tests/m1_engine.rs",
-      "sha256": "1443a8657d5369827469456b111fefddcd2f00253d21b48d8917363748922efe"
+      "sha256": "e526e029487bd8dd3cca3befd0ea4ed9fabafef7361ad9a2e1bb5b32bf53a915"
     },
     {
       "path": "crates/ql-mef/tests/m1_state.rs",
-      "sha256": "15e7f9f2ba4ab58ad296d13fec6322c209e0b9eeb0e89df416bdde46c5df24a3"
+      "sha256": "4d180fccf833e036206061f671750723b73bf5489852525af2fd39638baede7f"
     },
     {
       "path": "migration/epi-kernel/m1-state-probe.c",
@@ -404,7 +404,7 @@
     },
     {
       "path": "scripts/test-m1-engine.sh",
-      "sha256": "910e06cc1e7079531c304f36b8503de0b850fd6c3b377a5300c35de609c434a3"
+      "sha256": "af69f8d15024d396ee4ecf24dc2f15eec5a6a413830dd4e74781d0f3797e8c81"
     },
     {
       "path": "fixtures/kernel/m1-source-literals-v1.json",
@@ -420,7 +420,7 @@
     },
     {
       "path": "scripts/check-m1-acceptance.py",
-      "sha256": "5127b301a01d376f3b8aef8f36435ee308c39a904e1e96901f581801f9f5f89d"
+      "sha256": "93c4ae1940314fc8f3c216822c338568814bf76bbb3d552a5a3978a56b638a43"
     },
     {
       "path": "scripts/m_census.py",

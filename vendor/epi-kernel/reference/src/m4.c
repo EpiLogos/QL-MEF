@@ -45,6 +45,79 @@ static int m4_lens_annotate_stub(uint8_t lens_id, const void* experience,
     return 0;
 }
 
+static uint32_t m4_protein_capacity_or_default(uint32_t requested) {
+    if (requested == 0u) return M4_SYMBOLIC_PROTEIN_DEFAULT_CAPACITY;
+    if (requested > M4_SYMBOLIC_PROTEIN_MAX_STEPS) return M4_SYMBOLIC_PROTEIN_MAX_STEPS;
+    return requested;
+}
+
+static void m4_identity_hash_for_session(const M4_Identity_Matrix* identity, uint8_t out[32]) {
+    if (!identity || !out) return;
+    if (identity->computed) {
+        memcpy(out, identity->quintessence_hash, 32);
+        return;
+    }
+
+    blake3_hasher hasher;
+    blake3_hasher_init(&hasher);
+    blake3_hasher_update(&hasher, &identity->layer_presence, sizeof(identity->layer_presence));
+    blake3_hasher_update(&hasher, &identity->numerological_key, sizeof(identity->numerological_key));
+    blake3_hasher_update(&hasher, &identity->jung_type, sizeof(identity->jung_type));
+    blake3_hasher_finalize(&hasher, out, 32);
+}
+
+static void m4_symbolic_protein_init(M4_Symbolic_Protein* protein,
+                                     const M4_Identity_Matrix* identity,
+                                     uint64_t kairos,
+                                     uint32_t capacity) {
+    memset(protein, 0, sizeof(M4_Symbolic_Protein));
+    snprintf(protein->session_id, sizeof(protein->session_id),
+             "m4-%016llx", (unsigned long long)kairos);
+    protein->start_codon = M3_CODON_ATG_AUG;
+    protein->stop_codon = 0u;
+    protein->kairos_open = kairos;
+    protein->capacity = m4_protein_capacity_or_default(capacity);
+    m4_identity_hash_for_session(identity, protein->identity_hash);
+}
+
+static void m4_transcription_tail_marker(M4_Symbolic_Protein* protein,
+                                         uint16_t degree,
+                                         uint8_t hexagram) {
+    if (!protein || protein->capacity == 0u) return;
+    uint32_t idx = protein->capacity - 1u;
+    protein->steps[idx] = (M4_TranscriptionStep){
+        .degree = degree,
+        .hexagram = hexagram,
+        .codon = M4_TRANSCRIPTION_TAIL_MARKER_CODON,
+        .amino_acid = 0xFFu,
+        .transcript_class = M3_TRANSCRIPT_CLASS_TRANSCRIBABLE,
+        .governance_role = M3_GOVERNANCE_ROLE_NONE,
+        .flags = M4_TRANSCRIPTION_STEP_TAIL,
+    };
+    protein->step_count = protein->capacity;
+    protein->truncated = 1u;
+}
+
+static uint8_t m4_select_stop_codon(M4_Session_Frame* frame) {
+    static uint8_t round_robin_index = 0u;
+    switch (frame->stop_codon_policy) {
+        case M4_STOP_CODON_POLICY_ROUND_ROBIN: {
+            uint8_t codon = M3_STOP_CODONS[round_robin_index % 3u];
+            round_robin_index = (uint8_t)((round_robin_index + 1u) % 3u);
+            return codon;
+        }
+        case M4_STOP_CODON_POLICY_FIXED_TAA:
+            return M3_STOP_CODON_TAA_VALUE;
+        case M4_STOP_CODON_POLICY_FIXED_TAG:
+            return M3_STOP_CODON_TAG_VALUE;
+        case M4_STOP_CODON_POLICY_FIXED_TGA:
+            return M3_STOP_CODON_TGA_VALUE;
+        case M4_STOP_CODON_POLICY_KAIROS_DERIVED:
+        default:
+            return M3_STOP_CODONS[frame->kairos % 3u];
+    }
+}
+
 
 /* ===================================================================
  * .RODATA: M4_LENS_REGISTRY[6] — 6-lens vtable
@@ -172,6 +245,8 @@ const M4_Container_Entry M4_CONTAINER_LUT[M4_CONTAINER_COUNT] = {
     { 2, 6, {0, 0} },      /* Vessel: group (up to 6) */
 };
 
+const uint16_t M4_EMPTY_PLANET_DEGREES[M2_PLANET_COUNT] = {0};
+
 
 /* ===================================================================
  * _Static_asserts for size claims
@@ -181,6 +256,153 @@ _Static_assert(sizeof(M4_Voice_Config) == 8,
     "M4_Voice_Config must be 8 bytes");
 _Static_assert(sizeof(M4_Container_Entry) == 4,
     "M4_Container_Entry must be 4 bytes");
+
+
+uint8_t m4_identity_layer_count(const M4_Identity_Matrix* id) {
+    uint8_t count = 0;
+    uint8_t mask = id->layer_presence;
+    while (mask) {
+        count += (uint8_t)(mask & 1u);
+        mask >>= 1u;
+    }
+    return count;
+}
+
+KairosFrame m4_kairos_frame_init(KairosFrameKind kind, uint64_t captured_at_ns) {
+    KairosFrame frame;
+    frame.kind = kind;
+    frame.captured_at_ns = captured_at_ns;
+    frame.decays_at_ns = 0;
+    for (int i = 0; i < (int)M2_PLANET_COUNT; i++) {
+        frame.planet_degrees[i] = 0;
+    }
+    frame.pp = 0.0f;
+    frame.mm = 0.0f;
+    frame.mp = 0.0f;
+    frame.pn = 0.0f;
+    frame._pad = 0;
+    return frame;
+}
+
+void m4_kairos_frame_set_planets(KairosFrame* frame,
+                                 const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                 uint16_t planet_valid) {
+    (void)planet_valid;
+    if (frame == NULL || planet_degrees == NULL) return;
+    for (int i = 0; i < (int)M2_PLANET_COUNT; i++) {
+        frame->planet_degrees[i] = planet_degrees[i] % 720u;
+    }
+}
+
+M4_Temporal_Now m4_snapshot_now(uint16_t degree, uint32_t epoch) {
+    M4_Temporal_Now now;
+    uint64_t captured_at_ns = m4_epoch_to_ns(epoch);
+    now.clock = m0_read_cosmic_clock(degree);
+    now.degree = degree;
+    now.chronos_epoch = epoch;
+    now.natal = m4_kairos_frame_init(KAIROS_FRAME_NATAL, captured_at_ns);
+    now.realtime = m4_kairos_frame_init(KAIROS_FRAME_REALTIME, captured_at_ns);
+    now.kairotic = m4_kairos_frame_init(KAIROS_FRAME_KAIROTIC, captured_at_ns);
+    now.kairotic_active = 0;
+    now.planet_valid = 0x00;
+    return now;
+}
+
+void m4_temporal_now_set_planets(M4_Temporal_Now* now,
+                                 const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                 uint16_t planet_valid) {
+    if (now == NULL || planet_degrees == NULL) return;
+    m4_kairos_frame_set_planets(&now->realtime, planet_degrees, planet_valid);
+    now->planet_valid = (uint16_t)(planet_valid & M4_PLANET_VALID_ALL);
+}
+
+void m4_temporal_now_capture_kairotic(M4_Temporal_Now* now,
+                                      const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                      uint16_t planet_valid,
+                                      uint64_t captured_at_ns,
+                                      uint64_t ttl_ns) {
+    if (now == NULL || planet_degrees == NULL) return;
+    m4_kairos_frame_set_planets(&now->kairotic, planet_degrees, planet_valid);
+    now->kairotic.captured_at_ns = captured_at_ns;
+    now->kairotic.decays_at_ns =
+        captured_at_ns + (ttl_ns != 0 ? ttl_ns : M4_KAIROTIC_DEFAULT_TTL_NS);
+    now->kairotic_active = 1;
+    now->planet_valid = (uint16_t)(planet_valid & M4_PLANET_VALID_ALL);
+}
+
+const uint16_t* m4_planet_degrees_live(const M4_Temporal_Now* now) {
+    if (now == NULL) return M4_EMPTY_PLANET_DEGREES;
+    if (now->kairotic_active) return now->kairotic.planet_degrees;
+    return now->realtime.planet_degrees;
+}
+
+const uint16_t* m4_planet_degrees_live_at(M4_Temporal_Now* now, uint64_t now_ns) {
+    if (now == NULL) return M4_EMPTY_PLANET_DEGREES;
+    if (now->kairotic_active && now->kairotic.decays_at_ns != 0 && now_ns > now->kairotic.decays_at_ns) {
+        now->kairotic_active = 0;
+    }
+    return m4_planet_degrees_live(now);
+}
+
+M4_Temporal_Now m4_snapshot_now_with_planets(uint16_t degree,
+                                             uint32_t epoch,
+                                             const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                             uint16_t planet_valid) {
+    M4_Temporal_Now now = m4_snapshot_now(degree, epoch);
+    m4_temporal_now_set_planets(&now, planet_degrees, planet_valid);
+    return now;
+}
+
+void m4_advance_transformation(M4_Cycle_Engine* engine) {
+    engine->current_stroke = (uint8_t)((engine->current_stroke + 1) % 24);
+    if (engine->current_stroke % 2 == 0) {
+        engine->current_storey = (uint8_t)((engine->current_storey + 1) % 12);
+        if (engine->current_storey % 4 == 0) {
+            engine->current_decan = (uint8_t)((engine->current_decan + 1) % 3);
+        }
+    }
+}
+
+M4_Safety_Governor m4_safety_check(
+    const M4_Cycle_Engine* engine,
+    const M4_Sympathetic_Medicine* med,
+    const M4_Sacred_Random* rng)
+{
+    M4_Safety_Governor gov = {STALL_NONE, 0, 10, 0};
+    if (med->contraindicated) {
+        gov.type = STALL_CONTRAINDICATED;
+        gov.severity = 255;
+        return gov;
+    }
+    if (!m4_transformation_safe(engine)) {
+        gov.type = STALL_AROUSAL;
+        gov.severity = (uint8_t)(engine->arousal_level - engine->safety_threshold);
+        return gov;
+    }
+    if (rng && !rng->consent_granted) {
+        gov.type = STALL_CONSENT;
+        gov.severity = 128;
+        return gov;
+    }
+    return gov;
+}
+
+bool m4_alchemy_can_advance(M4_Alchemical_Stage current,
+                            M4_Alchemical_Stage target) {
+    return target == (M4_Alchemical_Stage)(current + 1) || target == ALCH_PRIMA_MATERIA;
+}
+
+void m4_mobius_return(M4_Epii_Integration* epii,
+                      M4_Identity_Matrix* identity) {
+    uint64_t tmp;
+    memcpy(&tmp, identity->quintessence_hash, 8);
+    tmp ^= epii->wisdom_delta;
+    memcpy(identity->quintessence_hash, &tmp, 8);
+    identity->computed = false;
+    epii->return_ready = false;
+    epii->logos.position = 0;
+    epii->logos.cycle_count++;
+}
 
 
 /* ===================================================================
@@ -194,6 +416,24 @@ _Static_assert(sizeof(M4_Container_Entry) == 4,
 bool m4_sacred_random(M4_Sacred_Random* rng, uint8_t* buf, size_t len) {
     if (!rng || !buf || len == 0) return false;
     if (!rng->consent_granted) return false;
+
+    /* Deterministic mode: a non-zero session_nonce fixes the stream
+     * (splitmix64 keyed on the nonce). This is how a kairos moment recalls
+     * the same draw — the seed is the moment. A zero nonce falls through to
+     * true random: the live oracle's necessary openness. */
+    if (rng->session_nonce != 0) {
+        uint64_t state = rng->session_nonce;
+        for (size_t i = 0; i < len; i++) {
+            state += 0x9E3779B97F4A7C15ULL;
+            uint64_t z = state;
+            z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+            z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+            z = z ^ (z >> 31);
+            buf[i] = (uint8_t)(z & 0xFFu);
+        }
+        return true;
+    }
+
 #ifdef __APPLE__
     arc4random_buf(buf, len);
 #else
@@ -452,6 +692,140 @@ int m4_draw_tarot(M4_Sacred_Random* rng, uint8_t count, uint16_t cast_degree,
 
 
 /* ===================================================================
+ * API: m4_session_open — Inherit kairos + identity, draw conditioning cards
+ *
+ * The session frame inherits three things at once: the moment (kairos),
+ * who is present (identity), and the cards drawn at that moment. The draw
+ * does nothing mechanically — it conditions the contemplation. Seeded from
+ * kairos (mixed with identity) so the same moment recalls the same draw;
+ * different moments open different draws. That openness is the point.
+ * =================================================================== */
+
+int m4_session_open(M4_Identity_Matrix* identity, uint64_t kairos,
+                    M4_Session_Frame* out) {
+    if (!identity || !out) return -1;
+
+    memset(out, 0, sizeof(M4_Session_Frame));
+    out->kairos = kairos;
+    out->identity = identity;
+    out->stop_codon_policy = M4_STOP_CODON_POLICY_KAIROS_DERIVED;
+    out->protein = &out->protein_storage;
+    m4_symbolic_protein_init(out->protein, identity, kairos, M4_SYMBOLIC_PROTEIN_DEFAULT_CAPACITY);
+
+    /* Count derived from identity: one card per populated layer, a standard
+     * three-card spread when identity is bare. Clamped to the tarot range. */
+    uint8_t count = m4_identity_layer_count(identity);
+    if (count == 0) count = 3;
+    if (count > 12) count = 12;
+
+    /* Cast degree derived from identity: its quintessence fingerprint once
+     * computed, else the numerological key. Both fold to the 0-719 wheel. */
+    uint16_t cast_degree;
+    if (identity->computed) {
+        cast_degree = (uint16_t)((((uint16_t)identity->quintessence_hash[0] << 8) |
+                                  (uint16_t)identity->quintessence_hash[1]) % 720u);
+    } else {
+        cast_degree = (uint16_t)(identity->numerological_key % 720u);
+    }
+
+    /* Seed the RNG from kairos, mixed with identity so the same moment +
+     * same person recalls the same draw. A non-zero seed engages the
+     * deterministic stream in m4_sacred_random. */
+    uint64_t seed = kairos;
+    seed ^= (uint64_t)identity->numerological_key * 0x9E3779B97F4A7C15ULL;
+    if (identity->computed) {
+        uint64_t h = 0;
+        for (int i = 0; i < 8; i++) {
+            h = (h << 8) | (uint64_t)identity->quintessence_hash[i];
+        }
+        seed ^= h;
+    }
+    if (seed == 0) seed = 0x9E3779B97F4A7C15ULL;   /* never fall to non-deterministic path */
+
+    M4_Sacred_Random rng = { .consent_granted = true, .session_nonce = seed };
+
+    int rc = m4_draw_tarot(&rng, count, cast_degree, &out->tarot_psyche_anchor);
+    if (rc != 0) return rc;
+
+    rc = m4_symbolic_protein_append_step(out->protein,
+                                         (uint16_t)(kairos % 720u),
+                                         M3_CODON_ATG_AUG,
+                                         M3_CODON_ATG_AUG,
+                                         M3_GOVERNANCE_ROLE_START);
+    if (rc != 0) return rc;
+
+    out->opened = true;
+    return 0;
+}
+
+int m4_symbolic_protein_append_step(M4_Symbolic_Protein* protein,
+                                    uint16_t degree,
+                                    uint8_t hexagram,
+                                    uint8_t codon,
+                                    M3_GovernanceRole role) {
+    if (!protein || protein->sealed) return -1;
+
+    uint32_t capacity = m4_protein_capacity_or_default(protein->capacity);
+    protein->capacity = capacity;
+    if (capacity == 0u) return -1;
+
+    if (protein->step_count >= capacity) {
+        m4_transcription_tail_marker(protein, degree, hexagram);
+        return 0;
+    }
+
+    M3_GovernanceRole governance_role = role;
+    if (governance_role == M3_GOVERNANCE_ROLE_NONE && codon < 64u) {
+        governance_role = m3_codon_governance_role(codon);
+    }
+
+    uint8_t flags = 0u;
+    if (governance_role == M3_GOVERNANCE_ROLE_START) flags |= M4_TRANSCRIPTION_STEP_START;
+    if (governance_role == M3_GOVERNANCE_ROLE_STOP) flags |= M4_TRANSCRIPTION_STEP_STOP;
+
+    uint8_t amino = codon < 64u ? M3_CODON_TO_AA[codon] : 0xFFu;
+    uint32_t idx = protein->step_count++;
+    protein->steps[idx] = (M4_TranscriptionStep){
+        .degree = degree,
+        .hexagram = hexagram,
+        .codon = codon,
+        .amino_acid = amino,
+        .transcript_class = (uint8_t)(codon < 64u
+            ? m3_codon_transcript_class(codon)
+            : M3_TRANSCRIPT_CLASS_TRANSCRIBABLE),
+        .governance_role = (uint8_t)governance_role,
+        .flags = flags,
+    };
+    return 0;
+}
+
+int m4_session_close(M4_Session_Frame* frame, M4_Symbolic_Protein* out) {
+    if (!frame || !out || !frame->opened || !frame->protein) return -1;
+
+    M4_Symbolic_Protein* protein = frame->protein;
+    if (protein->sealed) {
+        if (out != protein) memcpy(out, protein, sizeof(M4_Symbolic_Protein));
+        return 0;
+    }
+
+    uint64_t kairos_close = frame->kairos;
+    uint8_t stop_codon = m4_select_stop_codon(frame);
+    int rc = m4_symbolic_protein_append_step(protein,
+                                             (uint16_t)(kairos_close % 720u),
+                                             stop_codon,
+                                             stop_codon,
+                                             M3_GOVERNANCE_ROLE_STOP);
+    if (rc != 0) return rc;
+
+    protein->stop_codon = stop_codon;
+    protein->kairos_close = kairos_close;
+    protein->sealed = 1u;
+    if (out != protein) memcpy(out, protein, sizeof(M4_Symbolic_Protein));
+    return 0;
+}
+
+
+/* ===================================================================
  * API: m4_verify — Boot-time .rodata verification
  * =================================================================== */
 
@@ -478,11 +852,13 @@ bool m4_verify(void) {
         }
     }
 
-    /* Elemental Throughline: nucleotide == element index */
-    if (M3_NUC_A != M4_ELEM_WATER) return false;
-    if (M3_NUC_T != M4_ELEM_FIRE)  return false;
-    if (M3_NUC_C != M4_ELEM_EARTH) return false;
-    if (M3_NUC_G != M4_ELEM_AIR)   return false;
+    /* Elemental Throughline: nucleotide maps to canonical L2' element ID.
+     * Routed through m4_nuc_to_elem (not raw equality) since nucleotide IDs
+     * (A=0..G=3) no longer coincide with canonical element IDs. */
+    if (m4_nuc_to_elem(M3_NUC_A) != M4_ELEM_WATER) return false;
+    if (m4_nuc_to_elem(M3_NUC_T) != M4_ELEM_FIRE)  return false;
+    if (m4_nuc_to_elem(M3_NUC_C) != M4_ELEM_EARTH) return false;
+    if (m4_nuc_to_elem(M3_NUC_G) != M4_ELEM_AIR)   return false;
 
     /* Lens registry populated */
     for (int i = 0; i < 6; i++) {
@@ -560,7 +936,7 @@ static void m4_print_now(int argc, char** argv) {
     printf("  M2 Decan Phase:  %u (of 72)\n", now.clock.m2_decan_phase);
     printf("  M3 Hexagram:     %u (of 64)\n", now.clock.m3_hexagram_id);
     printf("  Layer:           %s\n", now.clock.is_implicate_phase ? "Shadow (implicate)" : "Primary (explicate)");
-    printf("  Planets:         %u of 7 valid\n", now.planet_valid);
+    printf("  Planets:         %u of 10 valid\n", now.planet_valid);
 }
 
 static void m4_print_pratibimba(const M4_Root* root) {

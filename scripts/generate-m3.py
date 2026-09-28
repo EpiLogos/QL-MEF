@@ -139,7 +139,7 @@ def generate(root: Path = ROOT) -> str:
     # Constants used by the retained declarative initializers, not an oracle header.
     for name, value in [('M3_NUC_A',0),('M3_NUC_T',1),('M3_NUC_C',2),('M3_NUC_G',3),('M3_MATRIX_COUNT',3),('M3_MATRIX_COMPLEMENTARY',0),('M3_MATRIX_MOVING_RESTING',1),('M3_MATRIX_SAME_QUALITY',2),('M3_MAJOR_ARCANA_COUNT',22),('M3_TAROT_SINGLE_CODON',255),('M3_TAROT_PIP_ACE',0),('M3_TAROT_PIP_PRINCESS',10),('M3_TAROT_PIP_PRINCE',11),('M3_TAROT_PIP_QUEEN',12),('M3_TAROT_PIP_KING',13),('M3_ROTATIONAL_NON_DUAL_INITIATED',0),('M3_ROTATIONAL_FULL_ROTATIONAL',1),('M3_ROTATIONAL_NO_PAIR',255),('M3_ROTATIONAL_NO_PAIRING',255)]:
         out.append(f'#define {name} {value}')
-    array('NUCLEOTIDE_ICHING_VALUE','native_values','uint8_t',body=header)
+    array('NUCLEOTIDE_ICHING_VALUE','native_values','uint8_t')
     array('M3_PAIR_MATRIX','native_pairs','int8_t','[2]')
     array('M3_MATRIX_PAIR','native_matrix_pairs','uint8_t')
     array('M3_TRIGRAM_LUT','native_trigrams','uint16_t','[7]')

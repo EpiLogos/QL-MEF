@@ -21,7 +21,7 @@
  * Public interface — all consumers need only:
  *   m5_init(arena, hc)                — allocate and HC-link M5 root
  *   m5_advance_logos(root)            — advance Logos FSM, return state
- *   m5_execute_mobius_return(root, m0)— Sacred Violation (tick 11 only)
+ *   m5_execute_mobius_return(root, target)— Sacred Violation (tick 11 only)
  *   m5_lookup(root, coord, gran)      — quintessential view self-API
  *   m5_teardown(root)                 — release heap state
  *   m5_cli_dispatch(argc, argv, root) — CLI entry point
@@ -34,6 +34,7 @@
 #include "psychoid_numbers.h"
 #include "arena.h"
 #include "m0.h"
+#include "m4.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -218,12 +219,7 @@ typedef struct {
     bool               write_back_ready;
 } M5_Etymology_FSM;
 
-static inline void m5_etymology_advance(M5_Etymology_FSM* fsm) {
-    if (fsm->stage < ETYM_STAGE_MOBIUS_WRITEBACK) {
-        fsm->stage = (M5_Etymology_Stage)(fsm->stage + 1);
-    }
-    fsm->write_back_ready = (fsm->stage == ETYM_STAGE_MOBIUS_WRITEBACK);
-}
+void m5_etymology_advance(M5_Etymology_FSM* fsm);
 
 
 /* ===================================================================
@@ -247,27 +243,96 @@ typedef struct {
     bool     resolved;
 } M5_Paradox_Hold;
 
-static inline void m5_hold_paradox(M5_Paradox_Hold* ph, uint64_t thesis,
-                                    uint64_t antithesis, uint8_t current_tick) {
-    ph->thesis_mask     = thesis;
-    ph->antithesis_mask = antithesis;
-    ph->hold_since_tick = current_tick;
-    ph->resolution_stage = ANALOGOS;
-    ph->holding         = true;
-    ph->resolved        = false;
-}
+void m5_hold_paradox(M5_Paradox_Hold* ph, uint64_t thesis,
+                     uint64_t antithesis, uint8_t current_tick);
 
-static inline uint64_t m5_resolve_paradox(M5_Paradox_Hold* ph) {
-    if (!ph->holding) return 0;
-    uint64_t synthesis = ph->thesis_mask ^ ph->antithesis_mask;
-    ph->resolved = (synthesis != 0);
-    ph->holding  = !ph->resolved;
-    return synthesis;
-}
+uint64_t m5_resolve_paradox(M5_Paradox_Hold* ph);
 
 
 /* ===================================================================
- * VII. M5_ROOT — The Holographic Container
+ * VII. CONTEMPLATION OBJECT — Session-Close Hologram
+ * =================================================================== */
+
+#define M5_CONTEMPLATION_PLANET_COUNT 10u
+#define M5_CONTEMPLATION_SYNTAX_SEED_COUNT 4u
+
+typedef struct {
+    uint32_t tick;
+    double   w;
+    double   x;
+    double   y;
+    double   z;
+} M5_Q_BioQuaternion_Tick;
+
+typedef struct {
+    uint8_t     codon;
+    const char* label;
+    const char* m3_route;
+} M5_Codon_Trace;
+
+typedef struct {
+    const char* dispatch;
+    uint32_t    profile_generation;
+    const char* profile_anchor;
+    const char* acr_route;
+} M5_Vak_Profile_Pair;
+
+typedef struct {
+    uint32_t pp;
+    uint32_t nn;
+    uint32_t np;
+    uint32_t pn;
+    uint32_t outer;
+} M5_ArchNineChargeState;
+
+typedef struct {
+    const char* name;
+} M5_Skeleton_Event;
+
+typedef struct {
+    const char* prompt;
+} M5_Syntax_Compliance_Seed;
+
+typedef struct {
+    const char*                    session_id;
+    M4_Temporal_Now                kairos_at_open;
+    M4_Temporal_Now                kairos_at_close;
+    M4_Tarot_Draw                  tarot_psyche_anchor;
+    const M5_Q_BioQuaternion_Tick* q_composed_trajectory;
+    uint32_t                       q_composed_trajectory_count;
+    const M5_Codon_Trace*          codon_trace;
+    uint32_t                       codon_trace_count;
+    const M5_Vak_Profile_Pair*     vak_profile_pairs;
+    uint32_t                       vak_profile_pair_count;
+    M5_ArchNineChargeState         m1_charge_state;
+    const M5_Skeleton_Event*       m1_2_skeleton_events_fired;
+    uint32_t                       m1_2_skeleton_event_count;
+    M5_Syntax_Compliance_Seed      four_syntax_compliance_seeds[M5_CONTEMPLATION_SYNTAX_SEED_COUNT];
+} M5_ContemplationObject;
+
+typedef uint64_t (*M5_ContemplateSessionCloseFn)(const M5_ContemplationObject* object,
+                                                  void* user_data);
+
+#define M5_MOBIUS_RETURN_TARGET_MAGIC 0x4D354D52u /* "M5MR" */
+
+typedef struct {
+    uint32_t                         magic;
+    uint32_t                         size;
+    M4_Epii_Integration*             epii;
+    M4_Identity_Matrix*              identity;
+    M5_ContemplateSessionCloseFn     contemplate_session_close;
+    void*                            user_data;
+} M5_Mobius_Return_Target;
+
+M5_Mobius_Return_Target m5_mobius_return_target(
+    M4_Epii_Integration* epii,
+    M4_Identity_Matrix* identity,
+    M5_ContemplateSessionCloseFn contemplate_session_close,
+    void* user_data);
+
+
+/* ===================================================================
+ * VIII. M5_ROOT — The Holographic Container
  * =================================================================== */
 
 typedef struct {
@@ -288,7 +353,7 @@ typedef struct {
 
 
 /* ===================================================================
- * VIII. PUBLIC API
+ * IX. PUBLIC API
  * =================================================================== */
 
 M5_Root* m5_init(Coordinate_Arena* arena, Holographic_Coordinate* hc);

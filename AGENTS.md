@@ -93,3 +93,20 @@ Run `python3 scripts/check-ux-spine.py --self-test` and existing affected checks
 before claiming source-level consistency. Actual native agent use, local
 harmonisation and human judgement require separate receipts. Missing local
 access blocks that test only; do not fake a live operation in a Skill.
+
+## Epi domain-agent and Nara journey programme — 28 September 2026
+
+For the six M-domain agents, their product-guardian conjugacy, Nara's Day/Flow
+knowing, continuing single-deck Tarot/I-Ching journeys, native Bimba access,
+M5 holography or their SkillSet/Methodology development, continue #258 under
+#201/#135 and read:
+`docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md`.
+
+This is a joined development tranche, not a new engine programme. Recover the
+current #135/#201 source corrections and active writer claims; in particular,
+consume the current source-qualified personal computation rather than the
+superseded per-centre M1/M2/M3 triple model. The programme records owner scope,
+proposed implementation packaging and separate behavioural/installed proof.
+M5-0's proposed M-matrix placement keeps its proposal standing. Its EA0–EA5
+packets and V01–V12 cases provide the concrete execution/verification entry;
+existing complete matrix, UX-spine, TA0–TA7 and kernel obligations remain.

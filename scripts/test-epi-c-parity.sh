@@ -3,6 +3,8 @@ set -euo pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 REFERENCE_ROOT="$REPO_ROOT/vendor/epi-kernel/reference"
+# shellcheck source=scripts/epi-c-reference-lib.sh
+. "$REPO_ROOT/scripts/epi-c-reference-lib.sh"
 OUT_DIR="$REPO_ROOT/target/epi-c-parity"
 CC_BIN=${CC:-cc}
 
@@ -15,7 +17,8 @@ mkdir -p "$OUT_DIR"
   -I"$REFERENCE_ROOT/include" \
   "$REPO_ROOT/migration/epi-kernel/parity-first-tranche.c" \
   "$REPO_ROOT/c/src/primitive.c" \
-  "$REFERENCE_ROOT/src/kernel.c" \
+  "${EPI_C_REFERENCE_SOURCES[@]}" \
+  "${EPI_C_REFERENCE_FLAGS[@]}" \
   -lm \
   -o "$OUT_DIR/first-tranche-parity"
 

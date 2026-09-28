@@ -58,8 +58,6 @@ const Holographic_Coordinate* engine_next_coordinate(uint8_t current_position);
  *   z (air/interaction)  → WALK_SPANDA  (12-step M1 tick cycle)
  * =================================================================== */
 
-#include <math.h>
-
 typedef enum {
     WALK_GROUND = 0,  /* Emit start position, return */
     WALK_TORUS  = 1,  /* QL 6-step torus cycle       */
@@ -71,30 +69,13 @@ typedef enum {
 typedef void (*Walk_Callback)(uint8_t position, void* ctx);
 
 /* Select walk mode from quaternion — argmax of |w|,|x|,|y|,|z| */
-static inline Walk_Mode walk_mode_from_quaternion(float w, float x, float y, float z) {
-    float aw = fabsf(w), ax = fabsf(x), ay = fabsf(y), az = fabsf(z);
-    Walk_Mode mode = WALK_GROUND;
-    float best = aw;
-    if (ax > best) { best = ax; mode = WALK_TORUS; }
-    if (ay > best) { best = ay; mode = WALK_FIBER; }
-    if (az > best) { mode = WALK_SPANDA; }
-    (void)best;
-    return mode;
-}
+Walk_Mode walk_mode_from_quaternion(float w, float x, float y, float z);
 
 /* Bifurcation parameter: magnitude of imaginary part sqrt(x²+y²+z²) */
-static inline float walk_bifurcation_param(float w, float x, float y, float z) {
-    (void)w;
-    return sqrtf(x * x + y * y + z * z);
-}
+float walk_bifurcation_param(float w, float x, float y, float z);
 
 /* Resolution level: quantize lambda into 4 bands */
-static inline uint8_t walk_resolution_level(float lambda) {
-    if (lambda < 0.25f) return 0;
-    if (lambda < 0.50f) return 1;
-    if (lambda < 0.75f) return 2;
-    return 3;
-}
+uint8_t walk_resolution_level(float lambda);
 
 /* Unified walk dispatcher — selects engine function by Walk_Mode.
  * callback receives position indices as walk progresses.
@@ -129,9 +110,7 @@ typedef enum {
 } Walk_Type;
 #define WALK_TYPE_COUNT 9u
 
-static const uint16_t WALK_TYPE_STEPS[WALK_TYPE_COUNT] = {
-    360, 24, 12, 12, 36, 64, 9, 4, 384
-};
+extern const uint16_t WALK_TYPE_STEPS[WALK_TYPE_COUNT];
 
 
 #include "vak.h"  /* VAK instruction dispatch */

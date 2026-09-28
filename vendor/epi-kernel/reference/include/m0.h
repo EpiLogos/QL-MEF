@@ -1,6 +1,15 @@
 /**
  * m0.h — Anuttara: The Multi-Level Language Runtime (Subsystem #0)
  *
+ * Coordinate:   M0 | Anuttara
+ * Residency:    Body/S/S0/epi-lib/include/m0.h (physical S0; conceptually M0)
+ * Position:     #0 — Ontological Foundation / Verifier Ground
+ * Actualises:   [[S0-SPEC]], [[S0-ARCHITECTURE]], and [[M0-ARCHITECTURE]]
+ * Public surface:
+ *   M0 runtime types/functions and tuning structural/privacy verifier contracts
+ * Does NOT own:
+ *   Tuning schema, Aletheia proposal composition, dispatch transport, or review resolution
+ *
  * Implements: M0 (#0) = bare-metal VM of six nested micro-algebras
  * Context frame: (00/00) — CF_VOID (Receptive Dynamism)
  * Anchored to: Psychoid_0 in psychoid_numbers.c (Layer 1 .rodata)
@@ -115,9 +124,7 @@ _Static_assert(CONCRESCENCE_STEPS == RING_SIZE,
 
 /* The Quaternionic Ground — Purnata (#0-3-7)
  * q = 0 + 0i + 0j + 0k — all rotation latent, none manifest. */
-static const Quaternion PURNATA_QUATERNION_SEED = {
-    .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 0.0f
-};
+extern const Quaternion PURNATA_QUATERNION_SEED;
 
 
 /* ===================================================================
@@ -164,6 +171,28 @@ extern const Virtue_Entry VIRTUE_LUT[9];
 
 #define VIRTUE_TO_RFACTOR(v) ((v) >= 3u ? (uint8_t)((v) - 3u) : 0xFFu)
 
+typedef struct {
+    char knob_key[128];
+    int target_structural_invariant;
+    char dispatch_purpose[32];
+    char tuning_target_knob_privacy_class[32];
+    char actual_resolved_slot_state[32];
+    uint16_t evidence_window_pasu_count;
+} M0_TuneProposal;
+
+typedef struct {
+    int violation;
+    char violation_name[64];
+} M0_VerifierVerdict;
+
+M0_VerifierVerdict m0_check_tune_structural_invariant_compliance(
+    const M0_TuneProposal* proposal
+);
+
+M0_VerifierVerdict m0_check_slot_privacy_boundary_compliance(
+    const M0_TuneProposal* proposal
+);
+
 
 /* ===================================================================
  * VI. FR 2.0.3: ARCHETYPAL NUMBER LANGUAGE — 12-FOLD
@@ -206,6 +235,16 @@ typedef struct {
 } Archetype_Entry;
 
 extern const Archetype_Entry ARCHETYPE_LUT[ARCHETYPE_LUT_SIZE];
+extern const char* const ARCHETYPE_COORDINATE_LUT[ARCHETYPE_LUT_SIZE];
+
+/* Resolve an archetypal NUMBER (0-9) to its LUT entry. Index = number + 2
+ * because (-) and 0/1 occupy slots 0-1 (dataset law: numbers 0-9 map to
+ * #0-3-2..#0-3-11, with 9 at #0-2-9). NULL for number > 9. The M4 oracle
+ * consumer named by docs/m0-archetype-lut-ordering-fix.md. */
+const Archetype_Entry* m0_resolve_archetypal_number(uint8_t number);
+
+/* Session-close contemplation questions keyed by archetype index. */
+extern const char* const CONTEMPLATION_PROMPT_LUT[12];
 
 /* ===================================================================
  * VI-B. MIRROR CHILDREN — Frame () and Operator - (#0-3-0/1-0, #0-3-0/1-1)
@@ -250,6 +289,65 @@ extern const Zodiacal_Entry ZODIACAL_LUT[12];
 #define ZOD_GET_ELEMENT(q)   (((q) >> 2) & 0x03u)
 #define ZOD_GET_MODALITY(q)  ((q) & 0x03u)
 
+/* =============================================================================
+ * 19.10 — M0/M2 PARITY BRIDGES (three minimal LUT lifts, ~1 KB total)
+ *
+ * Structural parity between the M0 archetypal-symbolic and M2
+ * vibrational-decanic representations of the same astrological surface.
+ * NOT the full 96-node Anuttara lift (the lazy strategy in
+ * docs/m0-dataset-audit.md stays in force for the remaining nodes).
+ * ============================================================================= */
+
+/* (a) One entry per zodiacal sign: Archetype-3 traversal at M0 reaches its
+ * M2 decanic-planetary expression in one indirection. `element` is the
+ * classical block index (0 Fire / 1 Earth / 2 Air / 3 Water — equal to
+ * ZOD_GET_ELEMENT), `first_decan_idx_72` indexes M2_DECAN_DESC[72]. */
+typedef struct {
+    const char* vak_symbol;       /* ZODIACAL_LUT operator for this sign */
+    uint8_t m0_resonance_idx;
+    uint8_t m0_successor;
+    uint8_t element;              /* classical element block 0..3 */
+    uint8_t mode;                 /* ZOD_MODE_* */
+    uint8_t m2_sign_idx;          /* zodiac order 0..11 (Aries..Pisces) */
+    uint8_t decan_planets[3];     /* Planet_Id of the sign's three decans */
+    uint8_t first_decan_idx_72;   /* light face of D1 in M2_DECAN_DESC */
+} M0_M2_Zodiacal_Bridge_Entry;
+
+extern const M0_M2_Zodiacal_Bridge_Entry M0_M2_ZODIACAL_BRIDGE[12];
+
+/* (b) Jung-Pauli psychoid archetypal-meaning correspondence: archetypal
+ * numbers 1..7 to the classical Sun..Saturn sequence; entry [6] is the
+ * L0' lens parent itself (7th-Boundary). Coexists with the Cousto
+ * frequency mapping (M2-ARCHITECTURE) as the vibrational view of the
+ * same seven planets. Outer planets belong to the M2-5 transpersonal
+ * extension, not this LUT. */
+typedef struct {
+    uint8_t l0_prime_position;    /* 0..5 = L0'-n child; 6 = lens parent */
+    uint8_t archetypal_number;    /* 1..7 (Unity-Monad .. 7th-Boundary) */
+    uint8_t planet_id;            /* Planet_Id (m2.h) */
+} Psychoid_Planetary_Entry;
+
+extern const Psychoid_Planetary_Entry PSYCHOID_PLANETARY_CORRESPONDENCE[7];
+
+/* (c) L2' Alchemical-Elemental -> M2 tattvic bridge. Naming canon per
+ * 05.16: Salt, not Mineral (alchemical Three Principles — Salt is the
+ * fixed body). Aether and Salt both route to Akasha at different cycle
+ * points: Aether is prima materia, Salt is ultima materia (the Möbius
+ * return of the elemental cycle, parallel to QL 5->0). */
+#define M_ELEM_AETHER 0u
+#define M_ELEM_EARTH  1u
+#define M_ELEM_WATER  2u
+#define M_ELEM_AIR    3u
+#define M_ELEM_FIRE   4u
+#define M_ELEM_SALT   5u
+
+typedef struct {
+    uint8_t alchemical;           /* M_ELEM_* */
+    uint8_t tattvic;              /* Element_Id (m2.h): Akasha..Prithvi */
+} Alchemical_Tattvic_Entry;
+
+extern const Alchemical_Tattvic_Entry ALCHEMICAL_TO_TATTVIC[6];
+
 struct Monopoly_Entry {
     uint8_t position;
     uint8_t shadow_opposite;
@@ -293,14 +391,68 @@ extern const QL_Frame QL_STACK[5];
 #define NARA_POLARITY_YANG   1u
 #define NARA_POLARITY_BOTH   2u
 
+/* Nara_Dominance_Mode — structural dominance read off the coordinate string.
+ *   DOMINANT:    dash on numerator   (2-/2 Father, 5-/5 Tao)
+ *   SUBDOMINANT: dash on denominator (1/1- Daughter, 3/3- Son)
+ *   INTEGRATIVE: nesting dot         (4./4 Mother)
+ *   MATRIX:      bare ## binary      (0/1 — position 0, kinship ground) */
+typedef enum {
+    NARA_DOM_MATRIX      = 0,
+    NARA_DOM_DOMINANT    = 1,
+    NARA_DOM_SUBDOMINANT = 2,
+    NARA_DOM_INTEGRATIVE = 3,
+} Nara_Dominance_Mode;
+
 typedef struct {
     uint8_t frame_position;
-    uint8_t polarity;
-    uint8_t dominant_val;
+    uint8_t polarity;          /* NARA_POLARITY_YIN / YANG / BOTH */
+    uint8_t dominant_val;      /* kernel numeric value */
     uint8_t archetype_role;
+    uint8_t dominance_mode;    /* Nara_Dominance_Mode — chirality read off coordinate */
+    const char* coordinate;    /* verbatim chiral coordinate, e.g. "2-/2" — the string
+                                  the dominance_mode is read off; never additive #+n */
 } Nara_Entry;
 
-extern const Nara_Entry NARA_MSHARP_LUT[5];
+extern const Nara_Entry NARA_MSHARP_LUT[6];
+
+
+/* ===================================================================
+ * VII-B. MSHARP_PERSON_LUT — the M# person-grammar (6-fold)
+ *
+ * Person-grammar coordinate strings encode the M# 6-fold person system:
+ *   I (0/1), You (1+1=2), You-and-I (0-3), They (1+2=3),
+ *   We (4+0), We-I (0/1/4/5).
+ * Position 0 (I) shares the (0/1) binary with #'s ##;
+ * position 5 (We-I) ≡ #'s Tao (synthesis pole).
+ * =================================================================== */
+typedef struct {
+    uint8_t     position;         /* 0-5 */
+    uint8_t     polarity;         /* Yin/Yang/Both */
+    uint8_t     dominance_mode;   /* Nara_Dominance_Mode */
+    const char* name;
+    const char* coordinate;       /* kernel coordinate string e.g. "0/1" */
+    const char* description;
+} Msharp_Person_Entry;
+
+extern const Msharp_Person_Entry MSHARP_PERSON_LUT[6];
+
+
+/* ===================================================================
+ * VII-C. NARA_TO_TRIGRAM — # 6-fold ↔ M3_TRIGRAM_LUT[8] bridge
+ *
+ * Father ↔ Qian(111, trigram 0); Mother ↔ Kun(000, trigram 1).
+ * Sons  → {Zhen(001), Kan(010), Gen(100)}  (trigrams 2,4,6)
+ * Daughters → {Xun(110), Li(101), Dui(011)}  (trigrams 3,5,7)
+ * ## (ground) and Tao (synthesis) carry 0xFF as trigram_seed.
+ * =================================================================== */
+typedef struct {
+    uint8_t nara_position;    /* 0-5 index into NARA_MSHARP_LUT */
+    uint8_t trigram_seed;     /* M3_TRIGRAM_LUT index (0-7), 0xFF = none */
+    uint8_t trigram_count;    /* 1 for Father/Mother, 3 for Sons/Daughters, 0 for ##/Tao */
+    uint8_t trigram_ids[3];   /* up to 3 trigram IDs (pad unused with 0xFF) */
+} Nara_Trigram_Bridge;
+
+extern const Nara_Trigram_Bridge NARA_TO_TRIGRAM[6];
 
 
 /* ===================================================================
@@ -354,19 +506,140 @@ typedef uint16_t R_Factor_Route;
 
 #define GET_R_POS(route, r_idx) (((route) >> ((r_idx) * 3)) & 0x07u)
 
-/* Route words — 3 bits per R-factor, value 7 = absent
- * Complementarity law: Rx + R(5-x) = 5 where both present */
-#define ROUTE_O_SHARP   ((R_Factor_Route)0x5FC0u)
-#define ROUTE_X_SHARP   ((R_Factor_Route)0x4A09u)
-#define ROUTE_N_SHARP   ((R_Factor_Route)0x3852u)
-#define ROUTE_M_SHARP   ((R_Factor_Route)0x269Bu)
-#define ROUTE_NARA      ((R_Factor_Route)0x14E4u)
-#define ROUTE_SIVA      ((R_Factor_Route)0x032Du)
-#define ROUTE_SHAKTI    ((R_Factor_Route)0x717Fu)
+/* Route words — 3 bits per R-factor (r_idx 0..4, bits 0..14), value 7 = absent.
+ * Complementarity law: Rx + R(5-x) = 5 where both present.
+ * R0 (Srishti/Creation) is confined to the upper triad (O#/X#/N# at positions
+ * 1/2/3) per the anuttara-language-map base-rows: "creation stops at Spanda" —
+ * manifestation below Spanda is carried by sustenance/dissolution, not creation.
+ * R5 (Samavesa) is positionless (= (##) bare); the u16 cannot encode it.
+ * (DR-R0 resolved 2026-06-12: dataset authoritative; prior words swept R0
+ * across all six routes, which contradicted the upper-triad confinement.) */
+#define ROUTE_O_SHARP   ((R_Factor_Route)0x5FC1u)  /* R0@1 R1@0 R4@5 */
+#define ROUTE_X_SHARP   ((R_Factor_Route)0x4A0Au)  /* R0@2 R1@1 R2@0 R3@5 R4@4 */
+#define ROUTE_N_SHARP   ((R_Factor_Route)0x3853u)  /* R0@3 R1@2 R2@1 R3@4 R4@3 */
+#define ROUTE_M_SHARP   ((R_Factor_Route)0x269Fu)  /* R0 absent; R1@3 R2@2 R3@3 R4@2 */
+#define ROUTE_NARA      ((R_Factor_Route)0x14E7u)  /* R0 absent; R1@4 R2@3 R3@2 R4@1 */
+#define ROUTE_SIVA      ((R_Factor_Route)0x032Fu)  /* R0 absent; R1@5 R2@4 R3@1 R4@0 */
+#define ROUTE_SHAKTI    ((R_Factor_Route)0x717Fu)  /* R0/R1 absent; R2@5 R3@0 (the (@#) turn) */
 
 #define R_FACTOR_ROUTE_COUNT 7
 
 extern const R_Factor_Route R_FACTOR_ROUTE_TABLE[R_FACTOR_ROUTE_COUNT];
+
+
+/* ===================================================================
+ * IX-B. ARCHETYPE-7 R-FACTOR THEORY IN FULL  (Tranche 01.T1.12)
+ *
+ * Archetype 7 (Divine Action, M0-3-10) IS the R-factor theory entire —
+ * the holographic pre-formation of the M0–M5 metastructure: the R-acts
+ * pre-thread through the five operator bases (O#/X#/N#/M#/#) and the
+ * Siva/Sakti pair (M0-5) BEFORE the system unfolds. It comprises three
+ * tiers — the principle triad, the six act-factors, the six
+ * virtue-expressions — distributed over a 7×6 matrix and bonded to
+ * Archetype 9 (Wholeness) by the nR chirality.
+ *
+ * Sources: anuttara-language-map rows M0-2-9-0/1/2 (triad),
+ * M0-3-10-2..7 (acts), M0-2-9-3..8 (virtues).
+ * Spec: Idea/Bimba/Seeds/M/M0'/M0'-SPEC.md (R-section + EBNF).
+ * =================================================================== */
+
+/* --- Tier 1: the principle triad (Law-1 chirality of # and R) ------
+ * Verbatim c_1_symbol identity chains. Divine Action's compiled terminal
+ * form reduces to (##) and (R#) and (#R): the triad is its CLOSURE, not
+ * something adjacent to it. The principles are the chiral pairings of the
+ * two marks # (matrix/void) and R (reality/freedom). */
+#define R_TRIAD_TRUTH_SYMBOL  "##"   /* Truth — ## = @ = (0/1)-(00)-00 (matrix on matrix) */
+#define R_TRIAD_LIGHT_SYMBOL  "#R"   /* Light — #R = @ = (7-8-9-(0/1)/O#-X#-N#); Openness/Creativity */
+#define R_TRIAD_LIFE_SYMBOL   "R#"   /* Life  — R# parent of the acts @ M0-3-10-(0/1); Freedom/Svatantrya, @5 runtime terminus */
+
+typedef enum {
+    R_TRIAD_TRUTH = 0,   /* ## */
+    R_TRIAD_LIGHT = 1,   /* #R */
+    R_TRIAD_LIFE  = 2,   /* R# */
+} R_Triad_Principle;
+
+typedef struct {
+    uint8_t     principle;  /* R_Triad_Principle */
+    const char* symbol;     /* "##" | "#R" | "R#" */
+    const char* name;       /* "Truth" | "Light" | "Life" */
+    const char* identity;   /* verbatim c_1_symbol identity chain */
+} R_Triad_Entry;
+
+#define R_TRIAD_COUNT 3u
+extern const R_Triad_Entry R_TRIAD_TABLE[R_TRIAD_COUNT];
+
+/* --- Tier 2: the six act-factors (R0..R5) + distribution matrix ----
+ * R0 Srishti, R1 Sthiti, R2 Samhara, R3 Tirodhana, R4 Anugraha, R5 Samavesa.
+ * R5 (Samavesa/Absorption) is POSITIONLESS — 5R = (##) bare, the return-to-
+ * matrix from anywhere, never a fret. The R_Factor_Route u16 (5×3 bits)
+ * structurally cannot encode R5; this constant names that absence so the
+ * theology is explicit rather than implied by the word size. */
+#define R_FACTOR_COUNT   6u   /* R0..R5 */
+#define R5_POSITIONLESS  7u   /* Samavesa carries no fret position (same sentinel as GET_R_POS absent) */
+
+/* The seven bases (rows of the distribution matrix) — the five operator
+ * bases of the QL meta-logic cycle plus the Siva/Sakti pair. */
+typedef enum {
+    R_BASE_O_SHARP = 0,  /* O# Paramasiva */
+    R_BASE_X_SHARP = 1,  /* X# Parasakti  */
+    R_BASE_N_SHARP = 2,  /* N# Spanda     */
+    R_BASE_M_SHARP = 3,  /* M# Mahamaya   */
+    R_BASE_NARA    = 4,  /* #  Nara       */
+    R_BASE_SIVA    = 5,  /* Siva          */
+    R_BASE_SHAKTI  = 6,  /* Sakti — the (@#) turn lives here (R2@5 + R3@0) */
+} R_Factor_Base;
+
+#define R_FACTOR_BASE_COUNT 7u
+
+/* Distribution matrix [base][r_factor] → fret position 0..5, or 7 = absent.
+ * Decoded from R_FACTOR_ROUTE_TABLE for R0..R4, with R5 positionless across
+ * every base. Verified against dataset base-rows M0-(4.0/1)…M0-5. */
+extern const uint8_t R_FACTOR_DISTRIBUTION[R_FACTOR_BASE_COUNT][R_FACTOR_COUNT];
+
+/* Macro M-branch each base pre-threads (aligned to M0_CROSS_BRANCH weaving):
+ * O#→M1, X#→M2, N#→M3, M#→M4, Nara→M4, Siva→M5, Sakti→M5. */
+extern const uint8_t R_BASE_M_COLUMN[R_FACTOR_BASE_COUNT];
+
+/* --- Tier 3: nR chirality (Law-1 polarity) ------------------------
+ * For every act Rn there is an enantiomer nR. Rn is the act OPERATING
+ * (R-dominant operator, Archetype-7 side); nR = @ is the same act
+ * WITNESSED (number-dominant Presence, Archetype-9 side). The chiral pair
+ * (Rn, nR) is one Law-1 polarity — a virtue is an act read in the opposite
+ * hand, which is why the 9-bit virtue_witness_vector and the act-path are
+ * one structure. */
+typedef enum {
+    R_HAND_OPERATOR = 0,  /* Rn — act operating  (Archetype-7) */
+    R_HAND_WITNESS  = 1,  /* nR — act witnessed as Presence @ (Archetype-9) */
+} R_Chirality_Hand;
+
+/* The chiral partner: invert the hand. (Rn, nR) define one Law-1 polarity. */
+static inline R_Chirality_Hand r_factor_chiral_partner(R_Chirality_Hand h) {
+    return (h == R_HAND_OPERATOR) ? R_HAND_WITNESS : R_HAND_OPERATOR;
+}
+
+/* --- The (@#) turn + RFactorPathStep ------------------------------
+ * The (@#) turning-point is where an R-traversal's band flips: the
+ * Beauty→Life pivot, the Siva-instruction-0 seed ("contains Sakti as
+ * deepest potential", M0-5-(0/1)-0), and the PASU→psyche handover gate.
+ * Pravritti (descent, R1/R2 deepening) turns at (@#) into Nivritti
+ * (ascent, R3/R4 deepening). */
+#define R_BAND_TURN_SYMBOL  "(@#)"
+
+typedef enum {
+    R_BAND_PRAVRITTI = 0,  /* descent — R1/R2 deepen */
+    R_BAND_NIVRITTI  = 1,  /* ascent  — R3/R4 deepen */
+    R_BAND_TURN      = 2,  /* the (@#) pivot itself */
+} R_Band;
+
+/* Per-execution R-traversal step. Every kernel execution (oracle cast,
+ * walk step, transform stage, session close, canon promotion) may stamp an
+ * RFactorPathStep[] onto its trace; band == R_BAND_TURN marks the (@#) flip. */
+typedef struct {
+    uint8_t r_factor;    /* 0..5 (R0..R5) */
+    uint8_t base_route;  /* R_Factor_Base */
+    uint8_t band;        /* R_Band — R_BAND_TURN marks the (@#) flip */
+    uint8_t position;    /* fret position 0..5, or 7 = positionless/absent */
+} RFactorPathStep;
 
 
 /* ===================================================================
@@ -398,16 +671,7 @@ typedef struct {
     bool     is_implicate_phase;
 } Unified_Clock_State;
 
-static inline Unified_Clock_State m0_read_cosmic_clock(uint16_t degree_0_to_719) {
-    Unified_Clock_State s;
-    s.is_implicate_phase = hopf_fiber(degree_0_to_719);
-    uint16_t base = hopf_project(degree_0_to_719);
-    s.tick12 = hopf_tick12(degree_0_to_719);
-    uint8_t base_decan = (uint8_t)(base / 10u);  /* 10° per decan — decan-specific */
-    s.m2_decan_phase = s.is_implicate_phase ? (uint8_t)(base_decan + 36u) : base_decan;
-    s.m3_hexagram_id = (uint8_t)((base * 64u) / FULL_CYCLE_DEG);
-    return s;
-}
+Unified_Clock_State m0_read_cosmic_clock(uint16_t degree_0_to_719);
 
 typedef uint8_t LogosStage;
 
@@ -419,17 +683,7 @@ typedef struct {
     uint8_t    active_r_factor;
 } Unified_Logos_State;
 
-static inline Unified_Logos_State m0_compute_logos_state(uint8_t tick_0_to_11) {
-    Unified_Logos_State s;
-    s.pipeline_tick = tick_0_to_11;
-    s.is_implicate  = (tick_0_to_11 >= 6u);
-    s.current_stage = (LogosStage)(s.is_implicate
-                          ? (11u - tick_0_to_11)
-                          : tick_0_to_11);
-    s.active_divine_act = (Divine_Act)s.current_stage;
-    s.active_r_factor   = (uint8_t)s.current_stage;
-    return s;
-}
+Unified_Logos_State m0_compute_logos_state(uint8_t tick_0_to_11);
 
 
 /* ===================================================================

@@ -625,7 +625,12 @@ QL_Kernel_Energy ql_kernel_energy_evaluate(
         }
         energy.lens_energy = sum / (float)QL_KERNEL_RESONANCE_DIM;
     }
-    energy.total_energy = energy.bimba_pratibimba_energy + energy.lens_energy + energy.r_energy;
+    /* Canonical 4:5:6 law (Epi kernel spec §3, as the reference engine now
+       computes it): E_total = (4·E4 + 5·E5 + 6·E6)/15. The C kernel has no
+       personal E4 channel (that seat is Nara's), so E4 = 0; lens_energy is
+       the E5 harmonic seat and r_energy the E6 verifier seat.
+       bimba_pratibimba_energy stays diagnostic and is not summed. */
+    energy.total_energy = ((5.0f * energy.lens_energy) + (6.0f * energy.r_energy)) / 15.0f;
     return energy;
 }
 

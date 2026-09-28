@@ -1,3 +1,6 @@
+/* This TU textually includes the reference m3.c, so it is that source unit:
+ * m3.h then declares the mutable CLOCK_BACKBONE m3.c defines (as m3.c does). */
+#define M3_BUILDING_SOURCE 1
 #include "ql/m3.h"
 #include "compat/m3-reference.h"
 #include <assert.h>

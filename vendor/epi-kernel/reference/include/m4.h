@@ -20,6 +20,7 @@
  *   m4_init(arena, hc)              — allocate and HC-link M4 root
  *   m4_identity_compute(id, input)  — compute-once Symbol DNA + BLAKE3
  *   m4_snapshot_now(degree, epoch)  — create M4_Temporal_Now
+ *   m4_planet_degrees_live(now)     — live kairos planet vector
  *   m4_advance_transformation(eng)  — modulo cascade cycle engine
  *   m4_teardown(root)               — release heap state
  *   m4_cli_dispatch(argc, argv, rt) — CLI entry point
@@ -34,9 +35,10 @@
 #include "m0.h"
 #include "m2.h"
 #include "m3.h"
+#include "m_canonical.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 
 /* ===================================================================
@@ -47,16 +49,21 @@
  * C=Earth=Pentacles=Sensation, G=Air=Swords=Thinking.
  * =================================================================== */
 
-#define M4_ELEM_WATER   0   /* Adenine  — Cups — Feeling     (Yin)  */
-#define M4_ELEM_FIRE    1   /* Thymine  — Wands — Intuition  (Yang) */
-#define M4_ELEM_EARTH   2   /* Cytosine — Pentacles — Sensation (Yin) */
-#define M4_ELEM_AIR     3   /* Guanine  — Swords — Thinking  (Yang) */
+/* Canonical L2' element IDs (see m_canonical.h). The nucleotide↔element
+ * identity is preserved (A=Water, T=Fire, C=Earth, G=Air) but the numeric
+ * IDs are now the L2' canonical ordering, NOT the historical 0-3 sequence. */
+#define M4_ELEM_WATER   ELEMENT_WATER   /* Adenine  — Cups — Feeling     (Yin)  — canonical 2 */
+#define M4_ELEM_FIRE    ELEMENT_FIRE    /* Thymine  — Wands — Intuition  (Yang) — canonical 4 */
+#define M4_ELEM_EARTH   ELEMENT_EARTH   /* Cytosine — Pentacles — Sensation (Yin) — canonical 1 */
+#define M4_ELEM_AIR     ELEMENT_AIR     /* Guanine  — Swords — Thinking  (Yang) — canonical 3 */
 
-/* Nucleotide-to-element consistency check */
-_Static_assert(M3_NUC_A == M4_ELEM_WATER,  "Elemental Throughline: A must be Water(0)");
-_Static_assert(M3_NUC_T == M4_ELEM_FIRE,   "Elemental Throughline: T must be Fire(1)");
-_Static_assert(M3_NUC_C == M4_ELEM_EARTH,  "Elemental Throughline: C must be Earth(2)");
-_Static_assert(M3_NUC_G == M4_ELEM_AIR,    "Elemental Throughline: G must be Air(3)");
+/* Nucleotide-to-element consistency check — routed through the canonical
+ * throughline mapping rather than raw integer equality, since nucleotide
+ * IDs (A=0..G=3) no longer coincide with canonical element IDs. */
+_Static_assert(m4_nuc_to_elem(M3_NUC_A) == M4_ELEM_WATER, "Elemental Throughline: A must be Water");
+_Static_assert(m4_nuc_to_elem(M3_NUC_T) == M4_ELEM_FIRE,  "Elemental Throughline: T must be Fire");
+_Static_assert(m4_nuc_to_elem(M3_NUC_C) == M4_ELEM_EARTH, "Elemental Throughline: C must be Earth");
+_Static_assert(m4_nuc_to_elem(M3_NUC_G) == M4_ELEM_AIR,   "Elemental Throughline: G must be Air");
 
 
 /* ===================================================================
@@ -231,12 +238,7 @@ static inline bool m4_identity_ready(const M4_Identity_Matrix* id) {
     return id->computed;
 }
 
-static inline uint8_t m4_identity_layer_count(const M4_Identity_Matrix* id) {
-    uint8_t count = 0;
-    uint8_t mask = id->layer_presence;
-    while (mask) { count += (uint8_t)(mask & 1u); mask >>= 1u; }
-    return count;
-}
+uint8_t m4_identity_layer_count(const M4_Identity_Matrix* id);
 
 /* Compute quintessence hash from present layers only */
 void m4_identity_hash_compute(M4_Identity_Matrix* id);
@@ -252,28 +254,85 @@ void m4_identity_augment(M4_Identity_Matrix* id,
  * FR 2.4.11: M4_Temporal_Now — The Lived Moment
  *
  * Composes M1/M2/M3 clock with planetary preemption slots.
- * Works at 0 planets (stub mode) through 7 planets (full).
+ * Works at 0 planets (stub mode) through 10 planets (full mod-10 relay).
  * =================================================================== */
+
+typedef enum {
+    KAIROS_FRAME_NATAL = 0,
+    KAIROS_FRAME_REALTIME = 1,
+    KAIROS_FRAME_KAIROTIC = 2
+} KairosFrameKind;
+
+typedef struct {
+    KairosFrameKind kind;                /* NATAL, REALTIME, or KAIROTIC */
+    uint64_t        captured_at_ns;      /* Monotonic or wall-clock capture time */
+    uint64_t        decays_at_ns;        /* 0 means no decay deadline */
+    uint16_t        planet_degrees[10];  /* All 10 planets (Planet_Id order from m2.h) */
+    float           pp;                  /* Oracle charge: prospective/prospective */
+    float           mm;                  /* Oracle charge: mirror/mirror */
+    float           mp;                  /* Oracle charge: mirror/prospective */
+    float           pn;                  /* Oracle charge: prospective/null */
+    uint32_t        _pad;
+} KairosFrame;
+
+_Static_assert(sizeof(KairosFrame) == 64, "KairosFrame must be one 64-byte L1 line");
 
 typedef struct {
     Unified_Clock_State clock;          /* M1/M2/M3 concentric state */
     uint16_t            degree;         /* 0-719 (SU(2) double cover) */
     uint32_t            chronos_epoch;  /* Unix seconds */
 
-    uint16_t planet_degrees[10];        /* All 10 planets (Planet_Id order from m2.h) */
-    uint8_t  planet_valid;              /* Bitmask: which planets have data */
-    uint8_t  _pad[1];                   /* Alignment pad after 7→10 expansion */
+    KairosFrame natal;                  /* Birth-session frame; persists across realtime refreshes */
+    KairosFrame realtime;               /* Mercurius live relay frame */
+    KairosFrame kairotic;               /* Oracle consultation frame; may decay */
+    uint8_t     kairotic_active;        /* Live accessor prefers kairotic only while active */
+    uint16_t planet_valid;              /* 10-bit mask: which planets have data */
 } M4_Temporal_Now;
 
-static inline M4_Temporal_Now m4_snapshot_now(uint16_t degree, uint32_t epoch) {
-    M4_Temporal_Now now;
-    now.clock = m0_read_cosmic_clock(degree);
-    now.degree = degree;
-    now.chronos_epoch = epoch;
-    for (int i = 0; i < 10; i++) now.planet_degrees[i] = 0;
-    now.planet_valid = 0x00;
-    return now;
+#define M4_PLANET_VALID_ALL ((uint16_t)((1u << M2_PLANET_COUNT) - 1u))
+
+/* Default kairotic decay: a captured oracle-consultation sky preempts realtime
+ * for 4 hours, after which m4_planet_degrees_live_at reverts to realtime. */
+#define M4_KAIROTIC_DEFAULT_TTL_NS ((uint64_t)4 * 3600ull * 1000000000ull)
+
+extern const uint16_t M4_EMPTY_PLANET_DEGREES[M2_PLANET_COUNT];
+
+static inline uint64_t m4_epoch_to_ns(uint32_t epoch) {
+    return ((uint64_t)epoch) * 1000000000ull;
 }
+
+KairosFrame m4_kairos_frame_init(KairosFrameKind kind, uint64_t captured_at_ns);
+
+void m4_kairos_frame_set_planets(KairosFrame* frame,
+                                 const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                 uint16_t planet_valid);
+
+M4_Temporal_Now m4_snapshot_now(uint16_t degree, uint32_t epoch);
+
+void m4_temporal_now_set_planets(M4_Temporal_Now* now,
+                                 const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                 uint16_t planet_valid);
+
+/* Arm the kairotic tier: capture a live oracle-consultation sky, activate it
+ * (it now preempts realtime in m4_planet_degrees_live), and set its decay
+ * deadline to captured_at_ns + ttl_ns. ttl_ns == 0 uses M4_KAIROTIC_DEFAULT_TTL_NS
+ * (4h). After the deadline, m4_planet_degrees_live_at deactivates it and the
+ * live accessor reverts to realtime. This is the ONLY setter that arms the
+ * kairotic frame on a live path (m4_temporal_now_set_planets writes realtime). */
+void m4_temporal_now_capture_kairotic(M4_Temporal_Now* now,
+                                      const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                      uint16_t planet_valid,
+                                      uint64_t captured_at_ns,
+                                      uint64_t ttl_ns);
+
+const uint16_t* m4_planet_degrees_live(const M4_Temporal_Now* now);
+
+const uint16_t* m4_planet_degrees_live_at(M4_Temporal_Now* now, uint64_t now_ns);
+
+M4_Temporal_Now m4_snapshot_now_with_planets(uint16_t degree,
+                                             uint32_t epoch,
+                                             const uint16_t planet_degrees[M2_PLANET_COUNT],
+                                             uint16_t planet_valid);
 
 
 /* ===================================================================
@@ -478,15 +537,7 @@ typedef struct {
 } M4_Cycle_Engine;
 
 /* FR 2.4.4: Modulo cascade — no nested if/else */
-static inline void m4_advance_transformation(M4_Cycle_Engine* engine) {
-    engine->current_stroke = (uint8_t)((engine->current_stroke + 1) % 24);
-    if (engine->current_stroke % 2 == 0) {
-        engine->current_storey = (uint8_t)((engine->current_storey + 1) % 12);
-        if (engine->current_storey % 4 == 0) {
-            engine->current_decan = (uint8_t)((engine->current_decan + 1) % 3);
-        }
-    }
-}
+void m4_advance_transformation(M4_Cycle_Engine* engine);
 
 static inline bool m4_transformation_safe(const M4_Cycle_Engine* engine) {
     return engine->arousal_level <= engine->safety_threshold;
@@ -512,29 +563,10 @@ typedef struct {
     uint8_t       _pad;
 } M4_Safety_Governor;
 
-static inline M4_Safety_Governor m4_safety_check(
+M4_Safety_Governor m4_safety_check(
     const M4_Cycle_Engine* engine,
     const M4_Sympathetic_Medicine* med,
-    const M4_Sacred_Random* rng)
-{
-    M4_Safety_Governor gov = {STALL_NONE, 0, 10, 0};
-    if (med->contraindicated) {
-        gov.type = STALL_CONTRAINDICATED;
-        gov.severity = 255;
-        return gov;
-    }
-    if (!m4_transformation_safe(engine)) {
-        gov.type = STALL_AROUSAL;
-        gov.severity = (uint8_t)(engine->arousal_level - engine->safety_threshold);
-        return gov;
-    }
-    if (rng && !rng->consent_granted) {
-        gov.type = STALL_CONSENT;
-        gov.severity = 128;
-        return gov;
-    }
-    return gov;
-}
+    const M4_Sacred_Random* rng);
 
 
 /* ===================================================================
@@ -586,10 +618,8 @@ typedef enum {
     ALCH_TRANSCENDENT  = 5
 } M4_Alchemical_Stage;
 
-static inline bool m4_alchemy_can_advance(M4_Alchemical_Stage current,
-                                           M4_Alchemical_Stage target) {
-    return target == (M4_Alchemical_Stage)(current + 1) || target == ALCH_PRIMA_MATERIA;
-}
+bool m4_alchemy_can_advance(M4_Alchemical_Stage current,
+                            M4_Alchemical_Stage target);
 
 
 /* ===================================================================
@@ -680,18 +710,77 @@ typedef struct {
     bool     return_ready;
 } M4_Epii_Integration;
 
-static inline void m4_mobius_return(M4_Epii_Integration* epii,
-                                     M4_Identity_Matrix* identity) {
-    /* XOR wisdom_delta into the first 8 bytes of the 32-byte hash (Möbius fold) */
-    uint64_t tmp;
-    memcpy(&tmp, identity->quintessence_hash, 8);
-    tmp ^= epii->wisdom_delta;
-    memcpy(identity->quintessence_hash, &tmp, 8);
-    identity->computed = false;     /* RESEEDS_IDENTITY */
-    epii->return_ready = false;
-    epii->logos.position = 0;
-    epii->logos.cycle_count++;
-}
+void m4_mobius_return(M4_Epii_Integration* epii,
+                      M4_Identity_Matrix* identity);
+
+
+/* ===================================================================
+ * M4_Symbolic_Protein — Session-as-transcription body
+ * =================================================================== */
+
+#define M4_SYMBOLIC_PROTEIN_MAX_STEPS 256u
+#define M4_SYMBOLIC_PROTEIN_DEFAULT_CAPACITY 256u
+#define M4_TRANSCRIPTION_TAIL_MARKER_CODON 0xFEu
+
+#define M4_TRANSCRIPTION_STEP_START  (1u << 0u)
+#define M4_TRANSCRIPTION_STEP_STOP   (1u << 1u)
+#define M4_TRANSCRIPTION_STEP_TAIL   (1u << 2u)
+
+typedef enum {
+    M4_STOP_CODON_POLICY_KAIROS_DERIVED = 0,
+    M4_STOP_CODON_POLICY_ROUND_ROBIN = 1,
+    M4_STOP_CODON_POLICY_FIXED_TAA = 2,
+    M4_STOP_CODON_POLICY_FIXED_TAG = 3,
+    M4_STOP_CODON_POLICY_FIXED_TGA = 4
+} M4_Stop_Codon_Policy;
+
+typedef struct {
+    uint16_t degree;
+    uint8_t  hexagram;
+    uint8_t  codon;
+    uint8_t  amino_acid;
+    uint8_t  transcript_class;      /* M3_TranscriptClass */
+    uint8_t  governance_role;       /* M3_GovernanceRole */
+    uint8_t  flags;                 /* M4_TRANSCRIPTION_STEP_* */
+} M4_TranscriptionStep;
+
+typedef struct {
+    char     session_id[64];
+    uint8_t  start_codon;
+    uint8_t  stop_codon;
+    uint8_t  sealed;
+    uint8_t  truncated;
+    uint64_t kairos_open;
+    uint64_t kairos_close;
+    uint8_t  identity_hash[32];
+    uint32_t step_count;
+    uint32_t capacity;
+    uint8_t  has_mythos_archetype_reading;
+    char     mythos_archetype_reading[256];
+    M4_TranscriptionStep steps[M4_SYMBOLIC_PROTEIN_MAX_STEPS];
+} M4_Symbolic_Protein;
+
+
+/* ===================================================================
+ * M4_Session_Frame — Session-context inheritance at open
+ *
+ * Opening a session inherits three things together: the lived moment
+ * (kairos), who is present (identity), and the cards drawn at that
+ * moment (tarot_psyche_anchor). The draw is the contextual envelope
+ * around the START marker, not a parallel lifecycle mechanism. Seeded
+ * from kairos so the same moment recalls the same draw; the randomness
+ * across moments is the necessary openness.
+ * =================================================================== */
+
+typedef struct {
+    uint64_t        kairos;              /* Inherited moment (RNG seed source) */
+    M4_Identity_Matrix* identity;       /* Inherited identity (caller-owned) */
+    M4_Tarot_Draw   tarot_psyche_anchor;/* Cards drawn at open — context, not event */
+    M4_Symbolic_Protein protein_storage;/* Owned bounded session protein */
+    M4_Symbolic_Protein* protein;       /* Protected handle to protein_storage */
+    M4_Stop_Codon_Policy stop_codon_policy;
+    bool            opened;             /* True once m4_session_open succeeds */
+} M4_Session_Frame;
 
 
 /* ===================================================================
@@ -764,6 +853,27 @@ int m4_cast_iching(M4_Sacred_Random* rng, uint16_t cast_degree,
                    M4_IChing_Cast* out);
 int m4_draw_tarot(M4_Sacred_Random* rng, uint8_t count, uint16_t cast_degree,
                   M4_Tarot_Draw* out);
+
+/* Open a session: inherit kairos + identity, draw the conditioning cards.
+ * Seeds the RNG deterministically from kairos (mixed with identity) so the
+ * same moment recalls the same draw. Returns 0 on success, <0 on error.
+ * The drawn cards land in out->tarot_psyche_anchor as session context. */
+int m4_session_open(M4_Identity_Matrix* identity, uint64_t kairos,
+                    M4_Session_Frame* out);
+
+/* Append a transcription step to a session protein. If the bounded capacity is
+ * exhausted, the final slot is replaced with a tail marker and no overflow
+ * occurs. Returns 0 on success, <0 on error. */
+int m4_symbolic_protein_append_step(M4_Symbolic_Protein* protein,
+                                    uint16_t degree,
+                                    uint8_t hexagram,
+                                    uint8_t codon,
+                                    M3_GovernanceRole role);
+
+/* Close a session protein by emitting a STOP marker selected by the frame's
+ * stop_codon_policy (default: kairos-derived). The sealed protein is copied to
+ * out as an opaque handle payload for protected write-through. */
+int m4_session_close(M4_Session_Frame* frame, M4_Symbolic_Protein* out);
 
 /* Consent-gated true random */
 bool m4_sacred_random(M4_Sacred_Random* rng, uint8_t* buf, size_t len);

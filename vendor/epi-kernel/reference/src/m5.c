@@ -35,6 +35,231 @@ static const M5_Quintessential_View* qv_find(const M5_Quintessential_View* arr,
     return NULL;
 }
 
+void m5_etymology_advance(M5_Etymology_FSM* fsm) {
+    if (fsm->stage < ETYM_STAGE_MOBIUS_WRITEBACK) {
+        fsm->stage = (M5_Etymology_Stage)(fsm->stage + 1);
+    }
+    fsm->write_back_ready = (fsm->stage == ETYM_STAGE_MOBIUS_WRITEBACK);
+}
+
+void m5_hold_paradox(M5_Paradox_Hold* ph, uint64_t thesis,
+                     uint64_t antithesis, uint8_t current_tick) {
+    ph->thesis_mask = thesis;
+    ph->antithesis_mask = antithesis;
+    ph->hold_since_tick = current_tick;
+    ph->resolution_stage = ANALOGOS;
+    ph->holding = true;
+    ph->resolved = false;
+}
+
+uint64_t m5_resolve_paradox(M5_Paradox_Hold* ph) {
+    if (!ph->holding) return 0;
+    uint64_t synthesis = ph->thesis_mask ^ ph->antithesis_mask;
+    ph->resolved = (synthesis != 0);
+    ph->holding = !ph->resolved;
+    return synthesis;
+}
+
+M5_Mobius_Return_Target m5_mobius_return_target(
+    M4_Epii_Integration* epii,
+    M4_Identity_Matrix* identity,
+    M5_ContemplateSessionCloseFn contemplate_session_close,
+    void* user_data) {
+    M5_Mobius_Return_Target target;
+    target.magic = M5_MOBIUS_RETURN_TARGET_MAGIC;
+    target.size = (uint32_t)sizeof(M5_Mobius_Return_Target);
+    target.epii = epii;
+    target.identity = identity;
+    target.contemplate_session_close = contemplate_session_close;
+    target.user_data = user_data;
+    return target;
+}
+
+static uint64_t m5_mix_delta_byte(uint64_t acc, uint8_t byte) {
+    acc ^= (uint64_t)byte;
+    acc *= 1099511628211ULL;
+    return acc;
+}
+
+static uint64_t m5_mix_delta_u32(uint64_t acc, uint32_t value) {
+    for (uint8_t i = 0; i < 4; i++) {
+        acc = m5_mix_delta_byte(acc, (uint8_t)((value >> (i * 8)) & 0xffu));
+    }
+    return acc;
+}
+
+static uint64_t m5_mix_delta_u64(uint64_t acc, uint64_t value) {
+    for (uint8_t i = 0; i < 8; i++) {
+        acc = m5_mix_delta_byte(acc, (uint8_t)((value >> (i * 8)) & 0xffu));
+    }
+    return acc;
+}
+
+static uint64_t m5_mix_delta_text(uint64_t acc, const char* text) {
+    if (!text) return m5_mix_delta_byte(acc, 0);
+    while (*text) {
+        acc = m5_mix_delta_byte(acc, (uint8_t)*text);
+        text++;
+    }
+    return acc;
+}
+
+static uint16_t m5_scaled_quaternion_diff(double close_component,
+                                           double open_component) {
+    double diff = close_component - open_component;
+    if (diff < 0.0) diff = -diff;
+    return (uint16_t)(diff * 4096.0);
+}
+
+static bool m5_is_mobius_target(const void* maybe_target) {
+    if (!maybe_target) return false;
+    const M5_Mobius_Return_Target* target =
+        (const M5_Mobius_Return_Target*)maybe_target;
+    return target->magic == M5_MOBIUS_RETURN_TARGET_MAGIC &&
+           target->size >= sizeof(M5_Mobius_Return_Target) &&
+           target->epii != NULL &&
+           target->identity != NULL;
+}
+
+typedef struct {
+    M5_Q_BioQuaternion_Tick q_ticks[2];
+    M5_Codon_Trace         codons[2];
+    M5_Vak_Profile_Pair    vak_pair;
+    M5_Skeleton_Event      skeleton_events[2];
+} M5_ContemplationScratch;
+
+static void m5_compose_contemplation_object(const M5_Root* root,
+                                            const M5_Mobius_Return_Target* target,
+                                            M5_ContemplationScratch* scratch,
+                                            M5_ContemplationObject* obj) {
+    static const char* session_id = "m5-close-current-session";
+    static const char* codon_labels[2] = {
+        "m5-close-open-resonance",
+        "m5-close-return-resonance"
+    };
+    static const char* codon_routes[2] = {
+        "m3-mahamaya/codon/open",
+        "m3-mahamaya/codon/close"
+    };
+    static const char* syntax_prompts[M5_CONTEMPLATION_SYNTAX_SEED_COUNT] = {
+        "speech-3",
+        "relationship-5",
+        "action-7",
+        "completion-9"
+    };
+
+    memset(obj, 0, sizeof(*obj));
+    memset(scratch, 0, sizeof(*scratch));
+
+    uint64_t hash_head = 0;
+    if (target && target->identity) {
+        memcpy(&hash_head, target->identity->quintessence_hash, 8);
+    }
+
+    scratch->q_ticks[0].tick = 0;
+    scratch->q_ticks[0].w = 1.0;
+    scratch->q_ticks[0].x = (double)(uint8_t)(hash_head & 0xffu) / 255.0;
+    scratch->q_ticks[0].y = (double)(uint8_t)((hash_head >> 8) & 0xffu) / 255.0;
+    scratch->q_ticks[0].z = (double)(uint8_t)((hash_head >> 16) & 0xffu) / 255.0;
+
+    scratch->q_ticks[1].tick = root ? root->logos.pipeline_tick : 0;
+    scratch->q_ticks[1].w = 1.0;
+    scratch->q_ticks[1].x = (double)(uint8_t)((hash_head >> 24) & 0xffu) / 255.0;
+    scratch->q_ticks[1].y = (double)(uint8_t)((hash_head >> 32) & 0xffu) / 255.0;
+    scratch->q_ticks[1].z = (double)(uint8_t)((hash_head >> 40) & 0xffu) / 255.0;
+
+    scratch->codons[0].codon = root ? (uint8_t)(root->logos.pipeline_tick % 64u) : 0;
+    scratch->codons[0].label = codon_labels[0];
+    scratch->codons[0].m3_route = codon_routes[0];
+    scratch->codons[1].codon = (uint8_t)((hash_head ^ (hash_head >> 6)) & 0x3fu);
+    scratch->codons[1].label = codon_labels[1];
+    scratch->codons[1].m3_route = codon_routes[1];
+
+    scratch->vak_pair.dispatch = "Pi+Anima+Epii";
+    scratch->vak_pair.profile_generation = root ?
+        (uint32_t)(root->theory.session_depth + root->agents.anima_count +
+                   root->agents.aletheia_count) : 0;
+    scratch->vak_pair.profile_anchor = "m5://current-session/profile";
+    scratch->vak_pair.acr_route = "acr://dispatch/session-close";
+
+    scratch->skeleton_events[0].name = "contemplation-object-composed";
+    scratch->skeleton_events[1].name = "mobius-return-ready";
+
+    obj->session_id = session_id;
+    obj->kairos_at_open.realtime.planet_degrees[0] =
+        (uint16_t)(hash_head % 360u);
+    obj->kairos_at_close.realtime.planet_degrees[0] =
+        (uint16_t)((hash_head + (root ? root->logos.pipeline_tick : 0u)) % 360u);
+    obj->tarot_psyche_anchor.drawn[0] = (uint8_t)(hash_head % 78u);
+    obj->tarot_psyche_anchor.draw_count = 1;
+    obj->q_composed_trajectory = scratch->q_ticks;
+    obj->q_composed_trajectory_count = 2;
+    obj->codon_trace = scratch->codons;
+    obj->codon_trace_count = 2;
+    obj->vak_profile_pairs = &scratch->vak_pair;
+    obj->vak_profile_pair_count = 1;
+    obj->m1_charge_state.pp = root ? (uint32_t)(root->logos.archetype_charge[0] & 0xffu) : 0;
+    obj->m1_charge_state.nn = root ? (uint32_t)(root->logos.archetype_charge[1] & 0xffu) : 0;
+    obj->m1_charge_state.np = root ? (uint32_t)(root->logos.archetype_charge[2] & 0xffu) : 0;
+    obj->m1_charge_state.pn = root ? (uint32_t)(root->logos.archetype_charge[3] & 0xffu) : 0;
+    obj->m1_charge_state.outer =
+        (obj->m1_charge_state.pp + obj->m1_charge_state.nn +
+         obj->m1_charge_state.np + obj->m1_charge_state.pn) / 4u;
+    obj->m1_2_skeleton_events_fired = scratch->skeleton_events;
+    obj->m1_2_skeleton_event_count = 2;
+
+    for (uint8_t i = 0; i < M5_CONTEMPLATION_SYNTAX_SEED_COUNT; i++) {
+        obj->four_syntax_compliance_seeds[i].prompt = syntax_prompts[i];
+    }
+}
+
+uint64_t contemplate_session_close(const M5_ContemplationObject* obj) {
+    if (!obj) return 0;
+
+    uint64_t delta = 1469598103934665603ULL;
+    delta = m5_mix_delta_text(delta, obj->session_id);
+    delta = m5_mix_delta_u32(delta, obj->kairos_at_open.realtime.planet_degrees[0]);
+    delta = m5_mix_delta_u32(delta, obj->kairos_at_close.realtime.planet_degrees[0]);
+    delta = m5_mix_delta_u32(delta, obj->tarot_psyche_anchor.drawn[0]);
+
+    if (obj->q_composed_trajectory_count >= 2 && obj->q_composed_trajectory) {
+        const M5_Q_BioQuaternion_Tick* open = &obj->q_composed_trajectory[0];
+        const M5_Q_BioQuaternion_Tick* close =
+            &obj->q_composed_trajectory[obj->q_composed_trajectory_count - 1];
+        uint64_t quaternionic_difference =
+            ((uint64_t)m5_scaled_quaternion_diff(close->w, open->w) << 48) |
+            ((uint64_t)m5_scaled_quaternion_diff(close->x, open->x) << 32) |
+            ((uint64_t)m5_scaled_quaternion_diff(close->y, open->y) << 16) |
+            (uint64_t)m5_scaled_quaternion_diff(close->z, open->z);
+        delta = m5_mix_delta_u64(delta, quaternionic_difference);
+    }
+
+    for (uint32_t i = 0; i < obj->codon_trace_count; i++) {
+        delta = m5_mix_delta_byte(delta, obj->codon_trace[i].codon);
+        delta = m5_mix_delta_text(delta, obj->codon_trace[i].label);
+        delta = m5_mix_delta_text(delta, obj->codon_trace[i].m3_route);
+    }
+
+    for (uint32_t i = 0; i < obj->vak_profile_pair_count; i++) {
+        delta = m5_mix_delta_text(delta, obj->vak_profile_pairs[i].dispatch);
+        delta = m5_mix_delta_u32(delta, obj->vak_profile_pairs[i].profile_generation);
+        delta = m5_mix_delta_text(delta, obj->vak_profile_pairs[i].profile_anchor);
+        delta = m5_mix_delta_text(delta, obj->vak_profile_pairs[i].acr_route);
+    }
+
+    delta = m5_mix_delta_u32(delta, obj->m1_charge_state.pp);
+    delta = m5_mix_delta_u32(delta, obj->m1_charge_state.nn);
+    delta = m5_mix_delta_u32(delta, obj->m1_charge_state.np);
+    delta = m5_mix_delta_u32(delta, obj->m1_charge_state.pn);
+    delta = m5_mix_delta_u32(delta, obj->m1_charge_state.outer);
+
+    for (uint8_t i = 0; i < M5_CONTEMPLATION_SYNTAX_SEED_COUNT; i++) {
+        delta = m5_mix_delta_text(delta, obj->four_syntax_compliance_seeds[i].prompt);
+    }
+
+    return delta;
+}
+
 
 /* ===================================================================
  * API: m5_init — Allocate and HC-link M5_Root
@@ -90,9 +315,9 @@ Unified_Logos_State m5_advance_logos(M5_Root* root) {
 /* ===================================================================
  * API: m5_execute_mobius_return — The Sacred Violation
  *
- * Casts away const on M0 ground state at tick 11 ONLY.
+ * Casts away const on M0/M4 ground state at tick 11 ONLY.
  * This is philosophically mandated (Spanda) and FSM-guarded.
- * m0_ground points to the uint64_t field to XOR-enrich.
+ * m0_ground may be the legacy uint64_t field or M5_Mobius_Return_Target.
  * =================================================================== */
 
 int m5_execute_mobius_return(M5_Root* root, void* m0_ground) {
@@ -101,8 +326,21 @@ int m5_execute_mobius_return(M5_Root* root, void* m0_ground) {
     /* Sacred Violation is ONLY authorized at tick 11 (descending ALOGOS) */
     if (root->logos.pipeline_tick != 11) return -1;
 
-    uint64_t* ground = (uint64_t*)m0_ground;
-    *ground ^= root->logos.archetype_charge[5];
+    if (m5_is_mobius_target(m0_ground)) {
+        M5_Mobius_Return_Target* target = (M5_Mobius_Return_Target*)m0_ground;
+        M5_ContemplationScratch scratch;
+        M5_ContemplationObject obj;
+        m5_compose_contemplation_object(root, target, &scratch, &obj);
+
+        uint64_t wisdom_delta = target->contemplate_session_close ?
+            target->contemplate_session_close(&obj, target->user_data) :
+            contemplate_session_close(&obj);
+        target->epii->wisdom_delta = wisdom_delta;
+        m4_mobius_return(target->epii, target->identity);
+    } else {
+        uint64_t* ground = (uint64_t*)m0_ground;
+        *ground ^= root->logos.archetype_charge[5];
+    }
 
     /* Reset for next cycle */
     root->logos.pipeline_tick = 0;

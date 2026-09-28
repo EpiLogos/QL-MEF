@@ -169,8 +169,8 @@
     "crates/ql-core/src/pole/codon.rs": "4fcedb4594ec17dc9097b3ec28ff4535437dcd8b56a9c71cc6330e4e22250cd3",
     "crates/ql-core/src/pole/fold.rs": "31cdc9fb6e74eb9c93e04c90f6be4a3ca9118ceef0842d3cc3ecef87256b590d",
     "crates/ql-core/src/pole/iching.rs": "e1c080c0e62359127483164adb793ce314d4a605a1e91c30e1b797ca4633bf90",
-    "vendor/epi-kernel/corrections/M3-COIN-1.patch": "36ad761bcc6a16be2b2edec62710b1ae1a3cf9ef827ecfcc7d75f77f4c8e3d13",
-    "vendor/epi-kernel/reference/src/m3.c": "7d5841d963596b2c8ae5923493489e4bd12d2af2210fb88a1ca39ab61c4a905b",
+    "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14",
+    "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
     "vendor/epi-kernel/reference/src/m3_clock_lut.c": "e4aab6c7394cb45528dead0ad63f12965a25b6d10987e190a02ce8f85caf92e1"
   },
   "projection_sha256": "6bdd9c8f545b8526f3fa9a7c758365a0fe090fa1a9f52b73cc9a3d5d6642bbae",

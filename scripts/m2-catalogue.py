@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import unicodedata
 
@@ -51,7 +52,7 @@ def observe():
         exe=Path(temp)/'probe'
         subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O2','-ffunction-sections','-fdata-sections',
             '-I'+str(ROOT/'vendor/epi-kernel/reference/include'),str(ROOT/'scripts/m2-source-probe.c'),
-            str(ROOT/'vendor/epi-kernel/reference/src/m2.c'),'-Wl,--gc-sections','-lm','-o',str(exe)],check=True)
+            str(ROOT/'vendor/epi-kernel/reference/src/m2.c'),'-Wl,-dead_strip' if sys.platform=='darwin' else '-Wl,--gc-sections','-lm','-o',str(exe)],check=True)
         text=subprocess.check_output([str(exe)],text=True)
     result={name:[] for name,_,_,_ in TABLES}
     for line in text.splitlines():
