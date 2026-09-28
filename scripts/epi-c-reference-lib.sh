@@ -14,5 +14,6 @@ for epi_c_unit in psychoid_numbers engine arena families pointer_web \
 done
 EPI_C_REFERENCE_SOURCES+=("$EPI_C_BLAKE3_ROOT/blake3.c" "$EPI_C_BLAKE3_ROOT/blake3_dispatch.c" "$EPI_C_BLAKE3_ROOT/blake3_portable.c")
 # The vendored BLAKE3 is the portable C subset only; SIMD backends are off on
-# every architecture, including arm64/NEON.
-EPI_C_REFERENCE_FLAGS=(-DBLAKE3_NO_SSE2 -DBLAKE3_NO_SSE41 -DBLAKE3_NO_AVX2 -DBLAKE3_NO_AVX512 -DBLAKE3_USE_NEON=0 -I"$EPI_C_REFERENCE_ROOT/include" -I"$EPI_C_BLAKE3_ROOT")
+# every architecture, including arm64/NEON. The reference uses M_PI, which
+# glibc hides under strict -std=c11 unless _DEFAULT_SOURCE is defined.
+EPI_C_REFERENCE_FLAGS=(-D_DEFAULT_SOURCE -DBLAKE3_NO_SSE2 -DBLAKE3_NO_SSE41 -DBLAKE3_NO_AVX2 -DBLAKE3_NO_AVX512 -DBLAKE3_USE_NEON=0 -I"$EPI_C_REFERENCE_ROOT/include" -I"$EPI_C_BLAKE3_ROOT")
