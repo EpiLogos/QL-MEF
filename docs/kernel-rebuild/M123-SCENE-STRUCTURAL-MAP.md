@@ -1,6 +1,6 @@
 # M1–M2–M3 live Expression scene: Gate 0 structural map
 
-**Standing:** agent-derived, 27 September 2026, for owner review before any engine
+**Standing:** agent-derived, 27 September 2026, re-grounded on the live map 28 September, for owner review before any engine
 code (QL-MEF #135 / O:I #335, Gate 0). This map is not authority: where it
 differs from the owner or the graph, they win. It extends
 `M123-GROUNDING-AUDIT-2026-09-27.md` and corrects that audit in §9 below. The
@@ -9,46 +9,196 @@ full per-field derivations, with every property literal and file:line, are in
 `infra-split.md`). This file is their summary, the joined dataflow, and the
 decisions only the owner can make.
 
+## Owner corrections, 28 September 2026 (supersede the sections below where they differ)
+
+The owner reviewed this map and corrected it on five points. Each is now
+traced to the design sources in Epi-Logos-C-Experiments `origin/main`
+`Idea/Bimba/Seeds/`, which this map had not read:
+
+- `M/INTEGRATED-1-2-3-COSMIC-ENGINE-ARCHITECTURE.md`
+- `M/M1'/M1'-SPEC.md`
+- `M/M3'/M3'-SPEC.md` §8.6, §8.15
+- `M/M4'/Legacy/plans/CLOCK-AND-NARA-SPECS/HOPF-INTEGRATION-READ.md` §XI–XII, §XV–XVII
+- `S/S4/S4'/Legacy/superpowers/specs/2026-04-02-cosmic-clock-unified-scene-design.md` §2
+
+1. **M1 is the sound generator; M2 is the surface and the modulator.**
+   - M1 generates: Prakāśa, the played K² torus as oscillator, and the
+     M1-3 Spanda dual oscillator (`φ̇ = Δω − a·sin φ − 2b·sin 2φ`,
+     a = 1, b = 9/16, beat ≈ 2.5 Hz; M1'-SPEC §14.1).
+   - M2-1′ Vimarśa reads that cloud through the MEF lenses and writes
+     `audio_octet[8]` / `nodal_quartet[4]`. M2 is also the cymatic skin
+     on the torus.
+   - The carrier reading is: torus = oscillator, lens system = modulator,
+     clock = temporal carrier, profile = patch (INTEGRATED §7.3).
+   - So this map's "M2's own sounding" is wrong. The planetary octave and
+     the maqam are M2 **modulations** of M1's generated sound, not a
+     second generator.
+2. **Earth is at the centre; the scene is geocentric in 3D.**
+   - Earth (`#2-5-0/1-0`) is the observer at the Axis Mundi, identity
+     quaternion `(1,0,0,0)`.
+   - The ten planets sit around it at their live positions.
+   - The clocks are orbital structure around Earth: the solar system as
+     a computational object, rooted in Earth through the planet →
+     chakra relations (HOPF §XVI–XVII).
+3. **The clock is the dual orthogonal codon clock, and the torus is the
+   clock.**
+   - θ, the major circle, is the ecliptic degree: **Clock A**, degree →
+     decan (lens 5) → codon.
+   - φ, the minor circle, is the Spanda fibre tick: **Clock B**,
+     hexagram → codon.
+   - They are two orthogonal projections of one quaternionic state, and
+     they meet at the codon on the torus surface (scene design §2;
+     HOPF §XI).
+   - Planets sit on the equator at their ecliptic θ, so θ = λ in these
+     designs. The M3-5 graph's cardinal season anchors (0° =
+     Winter_Solstice) read the ring differently; that is the one
+     registration left to rule, D6.
+4. **The inscription is dynamic.** It is not a fixed per-degree table
+   (D1 is replaced):
+   - **The 384 line-change graph** is 64 × 6 = 360 dynamic degree states
+     + 24 backbone (M3'-SPEC §8.6). It equals 64 base codons × 3 matrix
+     paths × 2 polarities through `YIELDS_CODON` (§8.15). The live map
+     holds 322 of those 384 edges; the spec says to regenerate the
+     missing ones from the matrix law, with provenance.
+   - **The seed placement is already in the live map** and needs only
+     placing:
+     - 36 pip-card codon reflections sit on the 36 decans, joined by
+       tarot card: decan `m_2_3_tarot_card` = `#3-4.0` `m_3_4_tarot_card`,
+       then `REFLECTS_DNA_FORM` → codon. All 36/36 match, e.g. 0–10°
+       Two of Wands → TTA.
+     - The 4 aces are the XXX palindromes, the four quadrant
+       prototypes: AAA Cups, TTT Wands, CCC Pentacles, GGG Swords.
+     - 24 court-card codons pair with the 24 backbone positions.
+   - The 7-state/8-state split is 40/24: pips 27/9, courts 8/16,
+     aces 4/0.
+   - The 24 backbone nodes are the fixed points. The 336 others (168
+     complementary pairs) are where the state evolves: symmetry is made
+     and broken as the three matrices `#3-3-2-0/1/2` act, over 472
+     rotational states. That behaviour is what the instrument lets the
+     user discover (HOPF §XI–XII).
+5. **What drives the clock.** Codons advance on the real SU(2)
+   rotational state, via `spanda_codon_advance` and the 9:8 compression
+   from 72 to 64, **never on the bare `tick12`** (M1'-SPEC §14.1). The
+   2.5 Hz beat, the 1 Hz profile heartbeat and the 12 Hz display rate
+   stay distinct. This answers D5 and D18.
+
+**Staleness found while tracing these.** QL's frozen C reference
+(`vendor/epi-kernel/reference`, locked at C-Experiments `daa660c`) lacks
+37 later `Body/S/S0/epi-lib` commits that are on `origin/main`. They
+include:
+- the T2.11 Spanda dual oscillator (`spanda_codon_advance`, the HKB
+  field);
+- the canonical 12×12 raw Vortex Modulae Ananda core (10.T10.10);
+- `pisano_digit_lut[60]` and a backbone degree-defect fix (04.T4.15);
+- the three-matrix `m3_quat_active_state` fold;
+- the 4:5:6 energy law;
+- the epogdoon bridge and the planetary-elemental feed.
+
+So the owner's ruling that "QL is stale" covers the kernel reference as
+well as the registry. The port (§8, step 0) has to take the kernel too.
+
 ## 0. Sources, and which graph
 
-- **Coordinates and relations:** the C-compiled registry
-  `fixtures/kernel/m-tree-v1.json` (`c/src/m_tree.c`, `m_tree_data.inc`;
-  registry `259a2f49…`), plus the K8 promotions in the build registry
-  `c/build/live/m-tree-v2.json` (the aperture identities `#2-0*`).
-- **Property values:** the pinned source that the registry hashes,
-  Epi-Logos-C-Experiments@`daa660c` `Idea/Bimba/Map/datasets/`. All 57
-  pinned files re-hashed equal to `m-tree-v1.json.files[].sha256`. They are
-  read the way `scripts/m2-correspondences.py` reads them (literal claims
-  per coordinate and property). No new index was built.
-- **Code bindings and known disagreements:** `fixtures/kernel/m-ledger-v1.json`
-  (1,915 rows, 588 discrepancies).
-- **The live Neo4j graph** (Omarchy `bimba-neo4j`, read-only snapshot
-  27 Sep: 2,141 :Bimba nodes, 13,844 relations) was checked only where the
-  scene depends on it:
-  - It agrees with the pin on `PLANETARY_RESONANCE` (7 edges), on Cancer
-    decan 3 `RULED_BY → Saturn`, and on the M3-5 degree nodes (same content,
-    renamed keys, no codon or hexagram).
-  - It carries the Neptune/Pluto `HAS_CHAKRAL_ANCHOR` edges that the
-    registry compiler drops.
-  - It has **lost** the decan `planetaryRuler` and `degreesRange`
-    properties.
+**The live Bimba map is the authority.** The owner ruled this on
+28 September 2026, in the closing comment of #255. QL's registry
+(`fixtures/kernel/m-tree-v1.json`) and its M2/M3 generators were compiled
+from the July pre-migration dataset exports (Epi-Logos-C-Experiments
+`daa660c`: camelCase keys, `#` coordinates), so they are stale, not the
+map. The owner names the real precursor work: port QL's registry compiler
+and M2/M3 generators to read the map as it is (current coordinates,
+`c_N_*` keys, relations), fed from a graph export or the daily backup.
 
-  So the map cites the pin. How the registry should follow the live
-  authority that C-Experiments declared on 13 July is a separate open task,
-  not settled here. That session measured the pin against the live graph
-  (draft #255, `41ad072`,
-  `docs/kernel-rebuild/BIMBA-LIVE-DIVERGENCE.md`) and ledgered the
-  differences:
-  - Live has no counterpart for decan `planetaryRuler` (114 values) or
-    `degreesRange` (36).
-  - Other values this scene reads are also absent live:
-    `intervalStructure` ×81, `elementalCorrespondence` ×65 and
-    `planetaryMode` ×7.
-  - All 9 straggler edges exist live, and the QL compiler reads none of
-    them (`bimba-live-relation-stragglers-uncompiled`).
+Sources used here:
 
-  Until that task is ruled, the scene's owners must keep reading these
-  values from the pin.
+- **Live map:** Omarchy `bimba-neo4j`. It was read with read-only Cypher,
+  and with one read-only snapshot taken 27 Sep 21:02Z (2,141 :Bimba nodes,
+  13,844 relations). §0.1 records what it holds for this scene.
+- **`daa660c` export:** the appendices in `m123-scene-map/` were derived
+  first from this export. It is the same material in pre-migration form,
+  cited as `#`-coordinates and camelCase keys. Where §0.1 shows a
+  different current form, the map's form governs.
+- **C/Rust/C++ code and the ledger:** `fixtures/kernel/m-ledger-v1.json`
+  (1,915 rows, 588 discrepancies) and the file:line citations are
+  unaffected.
+
+Coordinates are written here in the `#` form. The map's form is
+`M`-prefixed with parenthesised fractions: `#2-5-0/1-3` is
+`M2-5-(0/1)-3`.
+
+### 0.1 This scene's facts in the live map
+
+Relations in the map carry structural keys; few carry a payload beyond
+`c_2_relation_kind`.
+
+**Held, under renamed keys or unchanged relations:**
+
+- M3-5:
+  - 360 degree nodes with `m_3_5_degree`, `_rotational_phase`,
+    `_quadrant`, `_elemental_affinity`, `_yin_yang_balance`;
+  - `FLOWS_CLOCKWISE`, `POLAR_OPPOSITE`, `GOVERNS_DEGREE_ARC`,
+    `ANCHORED_BY` (360 each), `INITIATES_SEASON` (4),
+    `MANIFESTS_AT_DEGREE` (4), `EARLIER_/LATER_HEAVEN_LINK` (4/10);
+  - cardinal `t_3_season_anchor` and `c_3_direction`;
+  - `#3-5` `c_3_lens_system`, `c_1_chamber_structure`,
+    `c_3_double_covering_dynamics`.
+- M3-2: codon charges `c_3_inner_charge_*` and `p_3_sequence`.
+- M2-5:
+  - planet `c_0_modal_signature` (the D…E letters) and `c_2_harmonic_role`;
+  - `#2-5` `c_2_chaldean_order_verified` and `c_2_musical_cosmology`
+    ("Sun(1/8) … Venus(2) … Mars(7)", i.e. digit = scale degree);
+  - `c_5_harmonic_series_resonance` (2:1, 3:2, 4:3, 5:4, 6:5);
+  - `PLANETARY_RESONANCE` (7, same pairs), `HAS_CHAKRAL_ANCHOR`
+    (Neptune → -6, Pluto → -7), `CHAKRAL_VIRTUE_RECEPTION` (7),
+    `GROUNDS_CHAKRAL_PATHWAY`, `FEEDS_EARTH_ELEMENT`, `ASCENDS_TO`
+    (-1 → … → -7);
+  - chakra `c_1_yantra_form` and `l_2_mantra_signature` (each names its
+    element, e.g. "LAM - earth element activation"); Earth
+    `c_5_schumann_resonance`.
+- M2-3, decans: `RULED_BY` of kind "Chaldean Decan Rulership" (36, one
+  per decan), `HARMONICALLY_RESONATES_WITH` "Modal-Harmonic Resonance",
+  `SPANDA_TEMPORAL_RHYTHM`, `QUANTUM_FIELD_OPERATOR` (36 each), and
+  `HAS_ASPECT` (72).
+- M2-4.5, Shem: `m_2_4_zodiacal_influence` (the 5° arcs), 72 names each
+  with one planet relation, and `EXPRESSES_THROUGH` (72).
+- M2-4.3, maqamat: `c_2_tonic_note`, `c_2_dominant_note` and `c_2_ajnas`
+  (the jins and their notes, 72/72); `TONIC_/DOMINANT_PLANETARY_RESONANCE`
+  (62/65) and the chromatic relations (6/14).
+- M1: `#1-5 c_1_winding`, `#1-5-1 c_1_operational_symbolics`,
+  `#1-4.0 c_1_torus_generation_begins`, `#1-3-5 c_2_percentile_identity`,
+  `MANIFESTS_GEOMETRY`, `INHERITS_QUATERNION_FROM`.
+- Nara: `#4.1-1 s_4_queryable_properties`, `#4.0-1`, and `#4.1-4
+  t_4_temporal_factors`.
+
+**Held in another form:**
+
+- The decan ruler is the `RULED_BY` relation. The sign node's
+  `c_1_decanic_structure` names the three faces with their rulers and
+  degrees ("Mars-ruled … (0°-10°), Sun-ruled … (10°-20°) …"). A decan's
+  degree span follows from its coordinate. The decan node itself carries
+  `c_2_date_range`.
+- Sign nodes also carry `c_2_sign_ruler` and
+  `c_2_triplicity_ruler_day/night`. So the C decan table's triplicity
+  reading is a **second reading held in the map** at sign level, not a
+  reading with no source (see D9).
+- The governor prototype is in the governor's `c_1_description`
+  ("Perfect palindromic GGG - Light within darkness"; "… AAA - Pure
+  receptivity"), with `t_3_season` and `p_3_position`.
+
+**Not held in the live map under any key or relation** (full-text search
+of every node and relation property, 27–28 Sep). The scene map used each
+of these, from the export:
+
+- the per-planet just ratios and scale functions: `scalarDegree`,
+  `intervalFromRoot` ("Major Seventh (15:8)"), `scaleFunction`,
+  `planetaryMode`, and the decan `harmonicInterval`;
+- Shem `planetaryColor`, and the other relation payloads: `decanAspect`,
+  `modalContribution`, `timingOptimal`, `codonFamily`, virtue texts;
+- governor `hexagramNumber`/`hexagramName`, and hexagram
+  `associatedCodons` (the codon ↔ hexagram pairing);
+- chakra `elementalCorrespondence`, now only inside the mantra text;
+- maqam `intervalStructure`, now expressed through `c_2_ajnas`.
+
+These are put to the owner as **D0**.
 
 ## 1. The scene as one dataflow
 
@@ -179,17 +329,35 @@ Each decision gives the options with their consequence. **R** is my
 recommendation, where the source leans one way. Defaults you accept
 together unblock Gate 1 and the build.
 
+**D0 — Facts the scene used that the live map does not hold** (§0.1).
+For each, the owner chooses: (a) retired, so the scene does not use it;
+(b) re-authored into the map, which the scene then reads; or (c) used
+provisionally from the `daa660c` export, marked as such, until (a) or (b).
+
+- The planetary just ratios decide how M2 sounds. Without them the map
+  gives only "digit = scale degree" plus a partial harmonic-series list,
+  so the tuning becomes a choice. **R: (b).**
+- Shem `planetaryColor` is the only colour that covers the whole sky.
+  Without it, the map's colour is the yantra words (3/7 chakras).
+  **R: (b).**
+- The codon ↔ hexagram pairing (`associatedCodons`) grounds D2.
+  **R: (b), or (c) until then.**
+- `decanAspect`, `modalContribution`/`timingOptimal`, virtue texts and
+  `codonFamily` are not needed by the scene: the family is in the
+  governor description. **R: (a) for the scene.**
+
 **M3 clock**
 
-- **D1. Per-degree inscription.** The graph fixes the family per quadrant
-  (G, A, C, T from 0°) and nothing finer.
+- **D1. Per-degree inscription.** The map fixes the family per quadrant
+  (G, A, C, T from 0°, in the governors' `c_1_description` with
+  `INITIATES_SEASON`) and nothing finer.
   - A: charge-weighted spans (pp/4). These miss the governor quadrants, and the result depends on the C↔G coin values.
   - B: a uniform 5.625° per codon. This aligns with the governors but gives non-integer spans.
   - **C (R): 6° per non-dual 7-state codon and 5° per dual 8-state codon.** Every family has exactly 10 + 6 (checked against `native_profiles`), so each family closes at 90° on the governor arcs, and 40·6 + 24·5 = 360. The order within a family still needs a choice: prototype XXX first at the arc origin (R), or address order.
   - D: the 384-line inscription (`m3.h:941`), which needs a choice of which 24 lines.
   - E: placement by trigram direction, which contradicts the governor prototypes.
 - **D2. Codon ↔ hexagram pairing.**
-  - **A (R):** the graph pairing (`associatedCodons`) for the inscription, with the C bit address kept as a separate address. `m3-domain-v1` already keeps them apart.
+  - **A (R):** the `associatedCodons` pairing, which is not currently held in the live map (D0), for the inscription, with the C bit address kept as a separate address. `m3-domain-v1` already keeps them apart.
   - B: the C bit identity.
 - **D3. Hexagram numbering in the inscription.** Answered by D2 once it is ruled. This is listed only because the C LUT's `hexagram_id` is neither King Wen nor binary.
 - **D4. Lens partition origin.**
@@ -215,9 +383,16 @@ together unblock Gate 1 and the build.
 
 **M2 sky and sound**
 
-- **D9. Decan ruler.** The graph is Chaldean on every reading; the C table is triplicity, and the spec does not assert it.
-  - **Graph (R).** Regenerate the C table from `.planetaryRuler` (Gate 1 fix).
-  - Cancer decan 3: **Moon (R)**, from five source readings, against `RULED_BY → Saturn`. Correct the graph edge.
+- **D9. Decan ruler.** The map holds two readings. The decan-level
+  `RULED_BY` relation is of kind "Chaldean Decan Rulership", and the
+  sign's `c_1_decanic_structure` agrees. The sign-level
+  `c_2_triplicity_ruler_day/night` is the basis the C decan table resembles.
+  - **`RULED_BY` for the decan ruler (R).** Regenerate the C decan table
+    from it, and keep triplicity as a sign-level reading.
+  - Cancer decan 3 (`M2-3-4-0-2`): `RULED_BY` → Saturn, against
+    `HARMONICALLY_RESONATES_WITH`/`SPANDA`/`QFO`/`RESONATES_WITH` → Moon
+    and the sign's "Moon-ruled deep nurturing (20°-30°)". **R: Moon;
+    correct the `RULED_BY` edge in the map.**
 - **D10. Planet → chakra.** The graph `PLANETARY_RESONANCE` against C `elem_sig`, which your M2′ spec §8.5/§9.5 reproduces and calls canon.
   - **Graph (R).** It is the typed relation, it carries `modalContribution`/`timingOptimal`, and the kernel's own `m2-correspondences-v1.json` already follows it.
   - Alternatively, rule that the spec wins and correct the graph.
@@ -240,10 +415,10 @@ together unblock Gate 1 and the build.
     - **A (R):** a separate bus, with the planetary octave and maqam as condition bindings on distinct modes. The mechanism exists.
     - B: retune the octet to just ratios.
     - C: sound only the ruler's Cousto Hz, which is C-only with no graph source.
-  - A planet's pitch: **`intervalFromRoot` above the Sun tonic (R)**, or the `modalSignature` letter. The letter reading differs for Mercury and Mars.
+  - A planet's pitch: the scale degree from `#2-5 c_2_musical_cosmology`, tuned by **the just ratios once D0 restores them (R)**, or by the `c_0_modal_signature` letter, which is held in the map but differs from the export's ratios for Mercury and Mars.
   - Base frequency: this needs your value. Cousto's Sun 126 Hz is C-only; the alternative is a declared base.
 - **D14. Colour.**
-  - **A (R):** the Shem arc under each planet → its `planetaryColor` literal, through a declared `RenderPalette` for RGB. 18 arcs carry two literals, so pick the first by edge id, or blend.
+  - **A (R, needs D0):** the Shem arc under each planet → its `planetaryColor` literal, through a declared `RenderPalette` for RGB. In the export, 18 arcs carry two literals, so pick the first by edge id, or blend.
   - B: the chakra yantra colour, which covers 3/7.
   - C: an element palette, which is presentation, not source.
 
@@ -286,17 +461,19 @@ together unblock Gate 1 and the build.
 ## 5. Gate 1: graph↔C reconciliation, to record then fix
 
 None of these is in the ledger yet unless stated. Proposed entries in the
-ledger's own JSON shape are in each appendix.
+ledger's own JSON shape are in each appendix, and cite the export. Re-state
+each against the map's current form when recording it, after QL's registry
+and generators are ported to read the map (§8, step 0).
 
 | Id | Disagreement | Count | Who rules |
 |---|---|---|---|
-| g0-m2:decan-ruler | C triplicity vs graph Chaldean | 27/36 | fix (D9) |
-| g0-m2:cancer-3-ruler | property/4 relations Moon vs `RULED_BY` Saturn vs C Jupiter | 1 | graph correction (D9) |
+| g0-m2:decan-ruler | C decan table (triplicity-like) vs map `RULED_BY` Chaldean | 27/36 | D9 |
+| g0-m2:cancer-3-ruler | 4 relations and the sign text say Moon, `RULED_BY` says Saturn, C says Jupiter | 1 | map correction (D9) |
 | g0-m2:planet-chakra | `elem_sig` vs `PLANETARY_RESONANCE` | Sun, Moon, Jupiter, Neptune, Pluto | owner, since the spec calls C canon (D10) |
 | g0-m2:shem-links | synthetic `planet_link`/`decan_link`/`element_id` vs arcs | 63/72, 67/72, 56/72 | owner (D11) |
 | g0-m2:shem-expresses | 26 `EXPRESSES_THROUGH`, 7 `MANIFESTS_THROUGH` | 33 | owner (D11) |
 | g0-m2:maqam-ruler | family constant vs mode tonic/dominant | 43/72 | owner (D12) |
-| g0-m2:straggler-relations | 9 Neptune/Pluto edges not compiled; **already ledgered** as `bimba-live-relation-stragglers-uncompiled` in #255, so do not duplicate. The compiler fix ships with the owner's pin ruling, because it regenerates the registry the same way a pin move does | 9 | fix the compiler |
+| (straggler relations) | moot: the edges are in the map and arrive once QL compiles from it | — | the port |
 | g0-m2:chromatic-paths | 40 chromatic edges unread; supersedes "17 gaps" | 10 of 17 | fix the generator |
 | gate0-m3-clock-inscription-family-order | LUT A,T,C,G from 0° vs graph G,A,C,T | 270/360 | fix after D1 |
 | gate0-m3-codon-hexagram-pairing | GGG↔Li vs GGG=Qian | 3 of 4 prototypes | owner (D2) |
@@ -353,6 +530,7 @@ an independent replay on Omarchy, and the owner's installed listening walk.
 
 ## 8. Order of work once you've ruled
 
+0. Port QL's registry compiler and M2/M3 generators to read the live map (owner direction, #255). Every later step measures against the map, not the export.
 1. QL-A and O:I-A: land the infrastructure, which carries no meaning.
 2. Gate 1: record every §5 entry in the ledger; apply the rulings at their owners with tests (C tables regenerated from graph literals, the registry compiler taught the straggler shape, the chromatic paths, the inscription table); fix the Nara defects.
 3. QL-B: the scene owners. That means clock inscription and placement, the sky → M2-5 routing with colour and sound producers, the M1 body motion and field on two sheets, and Nara reception by route. Every quantity carries its coordinate trace.
@@ -367,6 +545,6 @@ an independent replay on Omarchy, and the owner's installed listening walk.
 4. 31 relation kinds touch `#3-5` (1,619 distinct), not 4.
 5. The apertures are M2-0's 18, per APERTURES §1–2. The "16+1" wording there is superseded.
 6. The graph carries **no** per-degree inscription to reconcile. What is missing is a ruling (D1), not a transcription.
-7. Neptune and Pluto do have relations (stragglers, uncompiled).
+7. Neptune and Pluto do have relations: they are in the map, and QL's stale compile dropped them.
 8. Three of the "C defects" (planet→chakra, the Shem layout, the maqam family ruler) are also in the owner's M2′ spec. They are rulings, not plain fixes.
 9. `ql-sky` is the packaged provider built by the install script on #251, not a crate.
