@@ -140,7 +140,7 @@ fn actual_source_parentage_asymmetry_and_alternate_spellings_survive() {
     assert_eq!(r.manifest().parent_discrepancies.len(), 1);
     assert_eq!(
         r.manifest().relations.iter().filter(|r| r.cross_m).count(),
-        2676
+        1316
     );
     assert_eq!(
         r.manifest()
@@ -148,7 +148,8 @@ fn actual_source_parentage_asymmetry_and_alternate_spellings_survive() {
             .iter()
             .filter(|r| r.from_id.is_none() || r.to_id.is_none())
             .count(),
-        450
+        // Edges to nodes outside the M tree (S/L/C lattices, primes, "#N" meta).
+        975
     );
 }
 
