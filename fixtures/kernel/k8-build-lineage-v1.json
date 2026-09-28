@@ -3,8 +3,8 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
-    "m2": "08807a158ec5452c4b68bb4a9f8d74308ce5b90d0b728435345ca75546a0424c",
-    "m3": "9eb42586f84e53f799a1c66706168dc523ee80f128b4014da91a9eef2ed4c182"
+    "m2": "b76591abd3a26e7fa0f86d040df9b7b2783b88a2121e4c6f4f9a7d9993069ebc",
+    "m3": "d8fcfd49aff62d34041418a07d94c6f70cb6a0cdcc6982b4aa8aa1425c94df5d"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -27,6 +27,20 @@
       "sha256": "9eb42586f84e53f799a1c66706168dc523ee80f128b4014da91a9eef2ed4c182",
       "accepted_at_revision": "eafe8d773c7c3a8d148a167202f5e3943df491f7",
       "reason": "QL builds from the Bimba map (#260): M3 source audit, domain and observation parity read map keys; registry generated from the map. Full M3 acceptance executed on Linux CI run 36421850230 at this head."
+    },
+    {
+      "engine": "m2",
+      "previous_sha256": "08807a158ec5452c4b68bb4a9f8d74308ce5b90d0b728435345ca75546a0424c",
+      "sha256": "b76591abd3a26e7fa0f86d040df9b7b2783b88a2121e4c6f4f9a7d9993069ebc",
+      "accepted_at_revision": "25e873a4a12bf2e98df1022f8ec71533dce07875",
+      "reason": "Reference moved daa660c -> c7872e96 (owner direction 2026-09-28, #135, QL-MEF #257), rebased on the map-built registry (#260): the moved reference files are re-pinned with executed values unchanged (M2 764 retained-C rows; M3 generated data byte-identical, 18704 oracle field comparisons). Fresh complete Linux acceptance at the exact head."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "9eb42586f84e53f799a1c66706168dc523ee80f128b4014da91a9eef2ed4c182",
+      "sha256": "d8fcfd49aff62d34041418a07d94c6f70cb6a0cdcc6982b4aa8aa1425c94df5d",
+      "accepted_at_revision": "25e873a4a12bf2e98df1022f8ec71533dce07875",
+      "reason": "Reference moved daa660c -> c7872e96 (owner direction 2026-09-28, #135, QL-MEF #257), rebased on the map-built registry (#260): the moved reference files are re-pinned with executed values unchanged (M2 764 retained-C rows; M3 generated data byte-identical, 18704 oracle field comparisons). Fresh complete Linux acceptance at the exact head."
     }
   ]
 }
