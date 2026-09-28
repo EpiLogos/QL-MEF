@@ -62,7 +62,7 @@ fn native_spanda_field_matches_the_c_kernel() {
     );
 
     let p = HkbParams::default();
-    let mut counts = [0usize; 4];
+    let mut counts = [0usize; 5];
     for line in String::from_utf8(result.stdout).unwrap().lines() {
         let c: Value = serde_json::from_str(line).unwrap();
         let f = |key: &str| c[key].as_f64().unwrap();
@@ -120,8 +120,18 @@ fn native_spanda_field_matches_the_c_kernel() {
                     "{c}"
                 );
             }
+            "ring" => {
+                counts[4] += 1;
+                let tick = c["tick12"].as_u64().unwrap() as u8;
+                let cycle = c["cycle"].as_u64().unwrap();
+                assert_eq!(
+                    c["codon"].as_u64().unwrap() as u8,
+                    ring_codon_advance(tick, cycle).address(),
+                    "{c}"
+                );
+            }
             other => panic!("unknown C observation {other:?}"),
         }
     }
-    assert_eq!(counts, [97, 48, 12, 1728]);
+    assert_eq!(counts, [97, 48, 12, 1728, 144]);
 }

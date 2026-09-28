@@ -18,7 +18,7 @@
 //! epogdoon (72 → 64), never from the bare `tick12` integer. M3 owns the
 //! codon space; this owns only the advancement clock.
 
-use ql_core::{Codon64, Quat};
+use ql_core::{Codon64, Quat, RING_QUATERNION_LUT};
 use serde::Serialize;
 use std::f64::consts::PI;
 
@@ -161,6 +161,15 @@ pub fn codon_advance(rot: Quat, cycle: u64) -> Codon64 {
         Some(index) if index < PARASHAKTI_TOTAL => Codon64::new(epogdoon(index)),
         _ => Codon64::new(0),
     }
+}
+
+/// The active codon for one M1 generation: the live M1 ring quaternion
+/// (`RING_QUATERNION_LUT`, the C `quat_from_ring_pos`) at this tick, advanced
+/// through [`codon_advance`]. Ticks 0..6 climb the first cover; 6..12 are its
+/// reflected return (arc n ↔ 11 − n), so the tick reaches the codon only
+/// through the signed rotational state.
+pub fn ring_codon_advance(tick12: u8, cycle: u64) -> Codon64 {
+    codon_advance(RING_QUATERNION_LUT[usize::from(tick12 % RING_SIZE)], cycle)
 }
 
 #[cfg(test)]

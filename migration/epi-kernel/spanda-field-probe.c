@@ -39,5 +39,9 @@ int main(void) {
                        (double)q.w, (double)q.x, (double)q.y, (double)q.z, cycle, spanda_codon_advance(q, cycle));
         }
     }
+    for (uint8_t tick = 0; tick < 12; ++tick)
+        for (uint64_t cycle = 0; cycle < 12; ++cycle)
+            printf("{\"kind\":\"ring\",\"tick12\":%u,\"cycle\":%" PRIu64 ",\"codon\":%u}\n",
+                   tick, cycle, spanda_codon_advance(quat_from_ring_pos((QL_Tick)tick), cycle));
     return 0;
 }
