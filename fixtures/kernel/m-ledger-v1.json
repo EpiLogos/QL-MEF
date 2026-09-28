@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "d3fab7b31db774ebcad798b83f3b60c5fb67dd65d1743eb5b49fa21dd7cad7e8",
+  "ledger_revision": "3405aa89edfac8cc3eeec558f18ecb977e1be046a2e01ec34be99247366632f3",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1a1be256d52bc3d6ce938902aedf0de3f16543bf98d59f6ead3a542e3125fbad",
@@ -115073,7 +115073,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
-        "sha256": "1078ff3d3e21b0445ddb733517eca0cc182275f63ee261c7afa4a6445ce6f15a"
+        "sha256": "be66ab258f0b32abe1fdfebb8884c3553e707e8e94888fc9f40f8b931cc17c82"
       },
       "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
       "subjects": [
