@@ -802,6 +802,22 @@
         "crates/ql-mef/src/nara/identity_material.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/spanda_field.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-3-1",
+        "#1-3-2"
+      ],
+      "rationale": "Native Spanda field: the HKB relative phase of the bimba and pratibimba poles (#1-3-1/#1-3-2) and the codon advance from the signed ring state; exact parity with the C kernel T2.11 functions.",
+      "tests": [
+        "crates/ql-mef/tests/spanda_field.rs",
+        "migration/epi-kernel/spanda-field-probe.c"
+      ],
+      "kind": "computational"
     }
   ]
 }
