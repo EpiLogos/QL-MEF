@@ -151,14 +151,9 @@ pub fn card_identity(deck: &DeckDefinition, index: u16) -> Result<CardIdentity, 
     let token_ref = format!("tarot:{}:{index}", deck.deck_ref);
     if (index as usize) < MINOR_ARCANA_COUNT {
         let card = &bridge.minor()[index as usize];
-        // The printed Thoth deck's fourth court is the Knight. `thoth_name`
-        // is the register of the kernel `M3_TAROT_PIP_*` constants, whose pip
-        // 13 is `KING`; the person reads the printed card, and the owner's
-        // recorded Thoth journey names only Knights.
-        let rank = match (deck.register, card.pip().value()) {
-            (TarotRegister::Thoth, 13) => "Knight",
-            (TarotRegister::Thoth, _) => card.pip().thoth_name(),
-            (TarotRegister::Rws, _) => card.pip().rws_name(),
+        let rank = match deck.register {
+            TarotRegister::Thoth => card.pip().thoth_name(),
+            TarotRegister::Rws => card.pip().rws_name(),
         };
         return Ok(CardIdentity {
             deck_index: index,

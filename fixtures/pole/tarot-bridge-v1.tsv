@@ -2,9 +2,9 @@
 meta	contract	ql.pole.tarot-bridge/v1
 meta	branch	M3-4 — Tarot / Phase / Expressional Field; hooks M3-C19 (minor exact cover), M3-C20 (major + 22+2 governance), M3-C21 (narrative transcription — typed surface only)
 meta	kernel	M3_TAROT_CODON_MAP[4][16] vendor/epi-kernel/reference/src/m3.c:302-380 (FR 2.3.19, m3.c:256); M3_MAJOR_ARCANA[22] m3.c:273-296; FR 2.3.16 constants m3.h:610-644; integrals m3.h:596-600
-meta	court-law	yin suits (Cups, Pentacles) dual at Prince(Knight)+King; yang suits (Wands, Swords) dual at Princess(Page)+Queen; every dual pair swaps middle/inner keeping outer = suit nucleotide
+meta	court-law	yin suits (Cups, Pentacles) dual at Prince(Knight)+Knight(King); yang suits (Wands, Swords) dual at Princess(Page)+Queen; every dual pair swaps middle/inner keeping outer = suit nucleotide
 meta	governance	22+2 law (matrix §10, M3-C20): The Fool = start/opening/0, The Universe = stop/completion/1 — two functional readings of the boundary Majors, not two extra physical cards; quaternion ids 78/79 (+z/-z, m3.h:806-835)
-meta	naming	pip 10 Princess(Page), 11 Prince(Knight): Thoth register = M3_TAROT_PIP_*, RWS register = TAROT_RANK_NAMES — one deck, two registers
+meta	naming	pip 10 Princess(Page), 11 Prince(Knight), 13 Knight(King): Thoth register = the printed Thoth deck over the M3_TAROT_PIP_* slots, RWS register = TAROT_RANK_NAMES — one deck, two registers
 meta	coin	pp = canonical coin values A=6 T=9 C=8 G=7 (owner ratification 2026-09-07); suit integral = outer-family pp per quarter; total pp over all 64 codons = 1440 = 4 x 360 (proved in tests/pole_coin_contract.rs)
 suit	0	Cups	A	Water	yin	84
 suit	1	Wands	T	Fire	yang	96
@@ -23,7 +23,7 @@ card	9	0	9	Ten	Ten	ATA	-
 card	10	0	10	Princess	Page	ACA	-
 card	11	0	11	Prince	Knight	ACG	AGC
 card	12	0	12	Queen	Queen	AAC	-
-card	13	0	13	King	King	ACT	ATC
+card	13	0	13	Knight	King	ACT	ATC
 card	14	1	0	Ace	Ace	TTT	-
 card	15	1	1	Two	Two	TTA	-
 card	16	1	2	Three	Three	TTC	-
@@ -37,7 +37,7 @@ card	23	1	9	Ten	Ten	TAT	-
 card	24	1	10	Princess	Page	TAG	TGA
 card	25	1	11	Prince	Knight	TGT	-
 card	26	1	12	Queen	Queen	TCG	TGC
-card	27	1	13	King	King	TTG	-
+card	27	1	13	Knight	King	TTG	-
 card	28	2	0	Ace	Ace	CCC	-
 card	29	2	1	Two	Two	CCG	-
 card	30	2	2	Three	Three	CCT	-
@@ -51,7 +51,7 @@ card	37	2	9	Ten	Ten	CTC	-
 card	38	2	10	Princess	Page	CCA	-
 card	39	2	11	Prince	Knight	CAG	CGA
 card	40	2	12	Queen	Queen	CAC	-
-card	41	2	13	King	King	CAT	CTA
+card	41	2	13	Knight	King	CAT	CTA
 card	42	3	0	Ace	Ace	GGG	-
 card	43	3	1	Two	Two	GGA	-
 card	44	3	2	Three	Three	GGC	-
@@ -65,7 +65,7 @@ card	51	3	9	Ten	Ten	GCG	-
 card	52	3	10	Princess	Page	GCT	GTC
 card	53	3	11	Prince	Knight	GGT	-
 card	54	3	12	Queen	Queen	GAT	GTA
-card	55	3	13	King	King	GTG	-
+card	55	3	13	Knight	King	GTG	-
 major	0	The Fool	1	0
 major	1	The Magician	2	1
 major	2	The High Priestess	3	2
