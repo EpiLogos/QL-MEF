@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "ef9913430151e921f5daf819e8bbf2a6958be0f0f4d0280f2ca81935c73dac0c",
+  "ledger_revision": "c4afc530509ff3ebcfe6465753d459f64aee44643c9905d3345c38111052d0db",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "05c2b8991198379d4359c8654260e878d061cb3df87ca133ef0af493af6928a1",
@@ -113082,7 +113082,7 @@
         "path": "fixtures/kernel/m-tree-v1.json",
         "sha256": "05c2b8991198379d4359c8654260e878d061cb3df87ca133ef0af493af6928a1"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "ql.m-index:M",
         "ql.m-index:M0",
@@ -113109,7 +113109,7 @@
         "path": "fixtures/kernel/census/discovery-c-v1.json",
         "sha256": "d874fd84ea30335e60298418803dcfd817bd9e311a139d5a16459e65dbb735eb"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "census:#1",
         "census:#1-0",
@@ -113243,7 +113243,7 @@
         "path": "fixtures/kernel/census/live-bimba-capture-v1.json",
         "sha256": "030296ea6a5ff2f5240e1051313791f1324649dbb531ac081fe705a922360be9"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "census:#1",
         "census:#1-0",
@@ -114897,7 +114897,7 @@
         "path": "fixtures/kernel/census/discovery-rust-v1.json",
         "sha256": "7bdf28fdabea1b2b282673d2c668286f2e1a46e7bd9034d5bc91abefc9907ffd"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "census:#1",
         "census:#1-1",
@@ -115073,9 +115073,9 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
-        "sha256": "935a3bc40fd725adc4d9b6973e48483128efc23e1842308ca3519f6e25b95d21"
+        "sha256": "b9a07963fa2eb6b681face3751163f147f37579ba895bf700262cabb44ed4713"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k5-m1:ananda",
         "k5-m1:spanda",
@@ -115197,7 +115197,7 @@
         "path": "docs/kernel-rebuild/m1-source-comparison-v1.json",
         "sha256": "618038a9949a3c0f0a18c9fda2923138abce0a32803b6bd4445ea3a48a9467e1"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k5-m1:ananda"
       ],
@@ -115215,9 +115215,9 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-receipt-v1.json",
-        "sha256": "5cdeac3613b1d139c3125f296bf7da81b5b6a3b9a93dc7e1b21120c93940f946"
+        "sha256": "f35a2b9dcb9ecdb9348e1c6bad4017bbd5f3de99e7614383272e1a60947cbb3c"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k5-m1:ananda",
         "k5-m1:spanda",
@@ -115245,7 +115245,7 @@
         "path": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
         "sha256": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k5-m1:ananda",
         "k5-m1:spanda",
@@ -115372,7 +115372,7 @@
         "path": "fixtures/kernel/m2-field-census-summary-v1.json",
         "sha256": "342b32dfb14505cb5da3db50c115e1bd77c1ac56de82926063fb5e2470312833"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k6-m2:table-carrier",
         "k6-m2:table-mef",
@@ -115456,7 +115456,7 @@
         "path": "fixtures/kernel/m2-finite-proof-v1.json",
         "sha256": "b76591abd3a26e7fa0f86d040df9b7b2783b88a2121e4c6f4f9a7d9993069ebc"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k6-m2:table-carrier",
         "k6-m2:table-mef",
@@ -115543,7 +115543,7 @@
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
         "sha256": "d8fcfd49aff62d34041418a07d94c6f70cb6a0cdcc6982b4aa8aa1425c94df5d"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k7-m3:source-amino-or-translation-signal",
         "k7-m3:source-clock-backbone",
@@ -115646,7 +115646,7 @@
         "path": "fixtures/kernel/m3-coverage-v1.json",
         "sha256": "2d9c7a3d8e098dda3444756b8b20cd9243c320c4a84a6f1cc94ac4404112229b"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k7-m3:source-amino-or-translation-signal",
         "k7-m3:source-clock-backbone",
@@ -115746,7 +115746,7 @@
         "path": "c/registry/m-tree-source-v1.json",
         "sha256": "bac52706ede91055bb847e3d841e76291a6b23438d3ea6df10d40332af62ec4e"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "#0-4.4.0/1-4.4/5",
         "#0-4.4.0/1-4.4/5-0",
@@ -115774,7 +115774,7 @@
         "path": "c/src/m_tree_data.inc",
         "sha256": "1d0a1e7b32050a0a6f322024e95316833baee47afb0eab67d3ea8b59351cb6d0"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "#0-4.4.0/1-4.4/5",
         "#0-4.4.0/1-4.4/5-0",
@@ -115803,7 +115803,7 @@
         "path": "vendor/epi-kernel/reference/src/m1.c",
         "sha256": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k5-m1:ananda",
         "k-move-m1:retired-lazy-ananda-core"
@@ -115823,7 +115823,7 @@
         "path": "docs/kernel-rebuild/k-move-reference-receipt-v1.json",
         "sha256": "4bb9ca9d93d6022ac77b28a110ab5d3826532110b09e812bc9aa787b5b3905b7"
       },
-      "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
+      "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
       "subjects": [
         "k-move-m1:retired-lazy-ananda-core",
         "k5-m1:ananda"
