@@ -71,15 +71,16 @@ fn define_value(name: &str) -> u32 {
     .unwrap_or_else(|_| panic!("m3.h define {name} is not numeric: {token}"))
 }
 
-/// The quoted strings of a C `static const char* const NAME[..] = {...}`
-/// initializer in m3.h, located by its declaration anchor.
+/// The quoted strings of a C `const char* const NAME[..] = {...}`
+/// initializer, located by its declaration anchor. The vendor keeps its
+/// lookup tables' initializers in m3.c; m3.h declares them `extern`.
 fn header_string_array(declaration: &str) -> Vec<String> {
-    let at = VENDOR_M3_H
+    let at = VENDOR_M3_C
         .find(declaration)
-        .unwrap_or_else(|| panic!("m3.h is missing {declaration}"));
-    let open = at + VENDOR_M3_H[at..].find("= {").expect("initializer open") + 3;
-    let end = open + VENDOR_M3_H[open..].find("};").expect("array close");
-    VENDOR_M3_H[open..end]
+        .unwrap_or_else(|| panic!("m3.c is missing {declaration}"));
+    let open = at + VENDOR_M3_C[at..].find("= {").expect("initializer open") + 3;
+    let end = open + VENDOR_M3_C[open..].find("};").expect("array close");
+    VENDOR_M3_C[open..end]
         .split(',')
         .filter_map(|piece| {
             let trimmed = piece.trim();
