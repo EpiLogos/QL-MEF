@@ -55,7 +55,9 @@ fn source_reading_retains_full_depth_and_multivalued_genetics() {
     let s = native_m3_source();
     assert_eq!(s.nodes().len(), 996);
     assert_eq!(s.relations().len(), 4952);
-    assert_eq!(s.discrepancies().len(), 307);
+    // 307 until the map took C=8/G=7 (owner ruling, #254): the 112 codon-charge
+    // and 12 pair-descriptor findings resolved when kernel and map agreed.
+    assert_eq!(s.discrepancies().len(), 183);
     let atg = Codon64::from_nucleotides(Nucleotide::A, Nucleotide::T, Nucleotide::G);
     assert_eq!(
         s.genetic(atg)
