@@ -3,6 +3,8 @@ set -euo pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 REFERENCE_ROOT="$REPO_ROOT/vendor/epi-kernel/reference"
+# shellcheck source=scripts/epi-c-reference-lib.sh
+. "$REPO_ROOT/scripts/epi-c-reference-lib.sh"
 OUT_DIR="$REPO_ROOT/target/epi-c-r4"
 CC_BIN=${CC:-cc}
 SOURCE_REVISION=${SOURCE_REVISION:-$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || printf unversioned)}
@@ -19,7 +21,8 @@ mkdir -p "$OUT_DIR"
   "$REPO_ROOT/c/src/primitive.c" \
   "$REPO_ROOT/c/src/holographic.c" \
   "$REPO_ROOT/c/src/kernel.c" \
-  "$REFERENCE_ROOT/src/kernel.c" \
+  "${EPI_C_REFERENCE_SOURCES[@]}" \
+  "${EPI_C_REFERENCE_FLAGS[@]}" \
   -lm \
   -o "$OUT_DIR/r4-parity"
 

@@ -74,7 +74,7 @@ impl<'a> M3Engine<'a> {
         for relation in &registry.manifest().relations {
             if matches!(
                 relation.source_kind.as_str(),
-                "HAS_UPPER_Trigram" | "HAS_LOWER_Trigram"
+                "HAS_UPPER_TRIGRAM" | "HAS_LOWER_TRIGRAM"
             ) {
                 let from = relation.from_id.ok_or("unresolved hexagram source")?;
                 let to = relation.to_id.ok_or("unresolved trigram target")?;
@@ -106,7 +106,7 @@ impl<'a> M3Engine<'a> {
                     .copied()
                     .ok_or("invalid trigram relation".into())
             };
-            let address = (bits("HAS_UPPER_Trigram")? << 3) | bits("HAS_LOWER_Trigram")?;
+            let address = (bits("HAS_UPPER_TRIGRAM")? << 3) | bits("HAS_LOWER_TRIGRAM")?;
             if hexagrams.insert(address, id).is_some() {
                 return Err("duplicate relation-derived hexagram".into());
             }

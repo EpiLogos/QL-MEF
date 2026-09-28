@@ -44,6 +44,7 @@ def schemas():
     def props(name):return defs[name]['properties']
     props('DescriptorReading')['fields']={'type':'object','additionalProperties':{'type':'string','pattern':'^(0|[1-9][0-9]*)$','maxLength':20}}
     props('DescriptorReading')['standing']={'const':'retained-source-reading-not-whole-subsystem-parity'}
+    defs['DescriptorReading']['required'].remove('via')  # only linked readings carry it
     props('M2Request')['schema']={'const':'ql.m2-engine-request/v1'};props('M2Frame')['schema']={'const':'ql.m2-engine/v1'}
     for n in ['M2Request','M2Frame']:props(n)['registry_revision']={'type':'string','pattern':'^[0-9a-f]{64}$'}
     for n in ['M2Request','M2Frame','VimarshaSeed']:props(n)['tick12']['maximum']=11

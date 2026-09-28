@@ -5,14 +5,24 @@ cd "$root"
 out="$root/target/m3-native"
 mkdir -p "$out"
 python3 scripts/generate-m3.py --out "$out/m3_data.inc"
+# The oracle textually includes the reference m3.c/m3_clock_lut.c; the rest of
+# the reference library supplies what those now call (m0_read_cosmic_clock,
+# the quaternion operators in m1.c).
+REPO_ROOT=$root
+# shellcheck source=scripts/epi-c-reference-lib.sh
+. "$root/scripts/epi-c-reference-lib.sh"
+oracle_sources=()
+for source in "${EPI_C_REFERENCE_SOURCES[@]}"; do
+  case "$source" in */src/m3.c|*/src/m3_clock_lut.c) ;; *) oracle_sources+=("$source") ;; esac
+done
 for compiler in cc clang; do
   command -v "$compiler" >/dev/null
   "$compiler" -std=c11 -O1 -Wall -Wextra -Werror -pedantic -Ic/include -I"$out" \
     migration/epi-kernel/k7-m3-probe.c c/src/m3.c c/src/m_tree.c -lm -o "$out/$compiler-probe"
   "$out/$compiler-probe" > "$out/$compiler.jsonl"
   "$compiler" -std=c11 -O1 -ffunction-sections -fdata-sections -Wl,--gc-sections \
-    -Ic/include -I"$out" -Ivendor/epi-kernel/reference/include \
-    migration/epi-kernel/k7-m3-oracle.c c/src/m3.c c/src/m_tree.c -lm -o "$out/$compiler-oracle"
+    "${EPI_C_REFERENCE_FLAGS[@]}" -Ic/include -I"$out" \
+    migration/epi-kernel/k7-m3-oracle.c c/src/m3.c c/src/m_tree.c "${oracle_sources[@]}" -lm -o "$out/$compiler-oracle"
   "$out/$compiler-oracle" | tee "$out/$compiler-oracle.txt"
 done
 cmp "$out/cc.jsonl" "$out/clang.jsonl"

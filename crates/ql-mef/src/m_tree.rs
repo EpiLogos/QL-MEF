@@ -180,6 +180,8 @@ pub struct MRegistryLineage {
 pub struct MRegistry {
     manifest: MTreeManifest,
     by_ref: BTreeMap<String, usize>,
+    /// Exact Bimba map spellings (e.g. `M2-5-(0/1)`) kept as node aliases.
+    by_alias: BTreeMap<String, usize>,
     by_id: BTreeMap<MTreeId, usize>,
     relations_by_id: BTreeMap<MTreeId, usize>,
 }
@@ -226,6 +228,7 @@ impl MRegistry {
         let mut registry = Self {
             manifest,
             by_ref: BTreeMap::new(),
+            by_alias: BTreeMap::new(),
             by_id: BTreeMap::new(),
             relations_by_id: BTreeMap::new(),
         };
@@ -234,6 +237,11 @@ impl MRegistry {
                 || registry.by_id.insert(node.id, i).is_some()
             {
                 return Err("duplicate M node spelling or identity".into());
+            }
+            for alias in &node.aliases {
+                if registry.by_alias.insert(alias.clone(), i).is_some() {
+                    return Err("duplicate M node alias".into());
+                }
             }
         }
         let master = registry
@@ -371,6 +379,9 @@ impl MRegistry {
         self.by_id.get(&id).map(|i| &self.manifest.nodes[*i])
     }
     pub fn resolve(&self, reference: &str) -> Option<&MTreeNode> {
+        if let Some(i) = self.by_alias.get(reference) {
+            return Some(&self.manifest.nodes[*i]);
+        }
         let source = if reference != "M" && reference.starts_with('M') {
             format!("#{}", &reference[1..])
         } else {

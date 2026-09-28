@@ -217,8 +217,8 @@ fn actual_c_and_rust_observations_agree_across_the_field_and_finite_operations()
         ("ground", 1),
         ("record", 764),
         ("binding", 764),
-        ("coordinate", 597),
-        ("relation", 8876),
+        ("coordinate", 598),
+        ("relation", 4454),
         ("axes", 288),
         ("signature", 160),
         ("tattva-step", 72),
@@ -301,7 +301,7 @@ fn carriers_are_distinct_and_three_transforms_are_not_substituted() {
 #[test]
 fn incomplete_or_conflicting_correspondences_remain_visible_in_the_full_field() {
     let c = m2::catalogue();
-    assert_eq!(c.coordinates().len(), 597);
+    assert_eq!(c.coordinates().len(), 598);
     let counts: Vec<_> = c
         .tables()
         .iter()
@@ -422,8 +422,8 @@ fn engine_emits_every_domain_with_event_provenance_and_no_invented_resonator() {
     assert_eq!(frame.schema, m2::ENGINE_CONTRACT);
     assert_eq!(frame.identity, request.stamp.identity);
     assert_eq!(frame.domains.len(), 16);
-    assert_eq!(frame.structural_coordinate_count, 597);
-    assert_eq!(frame.structural_relation_count, 8876);
+    assert_eq!(frame.structural_coordinate_count, 598);
+    assert_eq!(frame.structural_relation_count, 4454);
     assert_eq!(frame.modal.coefficients.len(), 72);
     assert_eq!(frame.modal.form_potential.len(), 64);
     assert_eq!(frame.numerical_ground.field72, 72);
@@ -609,14 +609,93 @@ fn active_vimarsha_is_stamped_and_uses_the_shared_pose_and_distinct_musical_mode
 }
 
 #[test]
-fn decan_elements_follow_the_retained_throughline_not_shared_numeric_ids() {
-    let catalogue = m2::catalogue();
-    for i in 0..73 {
-        let links = m2::linked_readings("decan", i).unwrap();
-        let element = links.iter().find(|r| r.table == "element").unwrap();
-        let source_element = catalogue.table("decan").unwrap().row(i).unwrap()[0];
-        assert_eq!(element.fields["decan_element"], source_element);
-        assert_eq!(element.index, [2, 4, 1, 3, 0][source_element as usize]);
-        assert_eq!(links.len(), if i == 72 { 1 } else { 2 });
+fn decan_elements_follow_the_maps_tattva_counterpart() {
+    // HAS_TATTVA_COUNTERPART: fire decans -> Agni. The retained throughline
+    // sent them to Vayu.
+    for (family, tattva) in [(0, "Agni"), (18, "Prithvi"), (36, "Vayu"), (54, "Jala")] {
+        for i in family..family + 18 {
+            let names = linked_names("decan", i, "element");
+            assert_eq!(names.len(), 1, "decan {i}");
+            assert!(names[0].starts_with(tattva), "decan {i}: {names:?}");
+        }
     }
+}
+
+fn linked_names(table: &str, index: usize, to: &str) -> Vec<String> {
+    linked_via(table, index, to, None)
+}
+
+fn linked_via(table: &str, index: usize, to: &str, via: Option<&str>) -> Vec<String> {
+    m2::linked_readings(table, index)
+        .unwrap()
+        .into_iter()
+        .filter(|r| r.table == to && via.is_none_or(|v| r.via.iter().any(|k| k == v)))
+        .flat_map(|r| r.source_names)
+        .collect()
+}
+
+#[test]
+fn cross_table_links_are_the_maps_typed_relations() {
+    // Decan faces take their decan's Chaldean RULED_BY (the retained C column
+    // held triplicity rulers: Aries decan 3 was Jupiter).
+    for (face, ruler) in [(0, "Mars"), (1, "Mars"), (2, "Sun"), (4, "Venus")] {
+        assert_eq!(
+            linked_via("decan", face, "planet", Some("RULED_BY")),
+            [ruler]
+        );
+    }
+    for face in 0..72 {
+        let rulers = linked_via("decan", face, "planet", Some("RULED_BY"));
+        assert_eq!(rulers.len(), 1, "face {face}");
+    }
+    // Cancer decan 3 is RULED_BY Saturn and RESONATES_WITH the Moon: both are
+    // map relations, and `via` tells them apart.
+    assert_eq!(
+        linked_via("decan", 58, "planet", Some("RULED_BY")),
+        ["Saturn"]
+    );
+    assert_eq!(
+        linked_via("decan", 58, "planet", Some("RESONATES_WITH")),
+        ["Moon"]
+    );
+    assert!(linked_names("decan", 72, "planet").is_empty());
+    // Shem name 0 is ENERGIZED_BY Mars and EXPRESSES_THROUGH Aries decan 1 face 0.
+    assert_eq!(
+        linked_via("shem", 0, "planet", Some("ENERGIZED_BY")),
+        ["Mars"]
+    );
+    let faces: Vec<usize> = m2::linked_readings("shem", 0)
+        .unwrap()
+        .into_iter()
+        .filter(|r| r.table == "decan")
+        .map(|r| r.index)
+        .collect();
+    assert_eq!(faces, [0]);
+    // Maqam 0: tonic Sun, dominant Moon; the tuning ratio stays retained law.
+    assert_eq!(
+        linked_via("maqam", 0, "planet", Some("TONIC_PLANETARY_RESONANCE")),
+        ["Sun"]
+    );
+    assert_eq!(
+        linked_via("maqam", 0, "planet", Some("DOMINANT_PLANETARY_RESONANCE")),
+        ["Moon"]
+    );
+    assert!(
+        m2::linked_readings("maqam", 0)
+            .unwrap()
+            .iter()
+            .any(|r| r.table == "ratio")
+    );
+    // PLANETARY_RESONANCE: Sun -> Sahasrara, Moon -> Ajna, Saturn -> Muladhara.
+    let chakra = |planet: usize| {
+        m2::linked_readings("planet", planet)
+            .unwrap()
+            .into_iter()
+            .filter(|r| r.table == "chakra")
+            .map(|r| r.index)
+            .collect::<Vec<_>>()
+    };
+    assert!(chakra(0).contains(&7));
+    assert!(chakra(1).contains(&6));
+    assert_eq!(chakra(6), [1]);
 }

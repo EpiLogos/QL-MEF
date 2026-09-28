@@ -26,7 +26,7 @@ class M3SourceTests(unittest.TestCase):
 
     def test_hexagram_bindings_reject_independent_relation_mutation(self):
         registry = json.loads((ROOT / M.REGISTRY).read_text())
-        registry['relations'].append({'source_kind':'HAS_UPPER_Trigram',
+        registry['relations'].append({'source_kind':'HAS_UPPER_TRIGRAM',
             'from_ref':'#3-1-2-1', 'to_ref':'#3-1-0'})
         with self.assertRaisesRegex(ValueError,'ambiguous'):
             M.source_groups(registry)

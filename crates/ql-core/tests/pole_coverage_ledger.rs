@@ -66,7 +66,9 @@ fn every_row_names_a_real_vendor_symbol() {
                 "m3_init",
                 "m3_teardown",
                 "m3_cli_dispatch",
-                "is_evolutionary_gap",
+                // Renamed upstream from is_evolutionary_gap: it reports 9:8
+                // round-trip loss, not a "gap".
+                "epogdoon_has_round_trip_loss",
             ];
             for member in members {
                 assert!(
@@ -214,11 +216,15 @@ fn value_dependent_tables_are_marked_regenerated() {
             "{name} is ported"
         );
     }
-    // And the corrected value table itself is pinned by the coin contract.
-    let header = include_str!("../../../vendor/epi-kernel/reference/include/m3.h");
+    // And the corrected value table itself is pinned by the coin contract:
+    // defined in m3.c, its per-nucleotide values fixed in m3.h.
+    let source = include_str!("../../../vendor/epi-kernel/reference/src/m3.c");
     assert!(
-        header.contains("{6, 9, 8, 7}"),
+        source.contains("{6, 9, 8, 7}"),
         "the corrected table stands"
     );
-    assert!(!header.contains("{6, 9, 7, 8}"), "the legacy table is gone");
+    assert!(!source.contains("{6, 9, 7, 8}"), "the legacy table is gone");
+    let header = include_str!("../../../vendor/epi-kernel/reference/include/m3.h");
+    assert!(header.contains("#define M3_ICHING_C_VALUE  8u"));
+    assert!(header.contains("#define M3_ICHING_G_VALUE  7u"));
 }

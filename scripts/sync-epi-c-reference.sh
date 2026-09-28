@@ -21,13 +21,17 @@ if [[ $# -ne 1 ]]; then
 fi
 
 EPI_REPO=$1
-SOURCE_REV=daa660cbc1b8c5da83828698665a753852cb0287
+SOURCE_REV=c7872e96a12e8253de6818876c2a039fd8082e46
 SOURCE_ROOT=Body/S/S0/epi-lib
-INCLUDE_TREE=f2b27d99197ee0f1cb9ed95ef52a5dd61a226e54
-SRC_TREE=a60dcda1427a6ab3cfcd44565a29f988938d0881
-TEST_TREE=9a6ef6505bb4e7622dba0922a07dced9bc49cd79
+INCLUDE_TREE=c99cbd0db1b849b2de2e8fab78ffdceeaa4ad9d4
+SRC_TREE=a73e0cf4c8be8d177863e06f4f1b9f4837e6acf1
+TEST_TREE=8ec258f61ea2dba08c517cd644b65eb75bae18af
+# The library links the prototype's vendored portable BLAKE3 (m4 hashing).
+BLAKE3_ROOT=Body/S/S0/vendor/blake3
+BLAKE3_TREE=f86521cacc437fb15e5fa69e99ed94bc9a38b253
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 REFERENCE_ROOT="$REPO_ROOT/vendor/epi-kernel/reference"
+BLAKE3_VENDOR="$REPO_ROOT/vendor/epi-kernel/blake3"
 
 if ! git -C "$EPI_REPO" cat-file -e "$SOURCE_REV^{commit}" 2>/dev/null; then
   echo "locked Epi revision is not available in $EPI_REPO: $SOURCE_REV" >&2
@@ -37,17 +41,20 @@ fi
 actual_include=$(git -C "$EPI_REPO" rev-parse "$SOURCE_REV:$SOURCE_ROOT/include")
 actual_src=$(git -C "$EPI_REPO" rev-parse "$SOURCE_REV:$SOURCE_ROOT/src")
 actual_test=$(git -C "$EPI_REPO" rev-parse "$SOURCE_REV:$SOURCE_ROOT/test")
+actual_blake3=$(git -C "$EPI_REPO" rev-parse "$SOURCE_REV:$BLAKE3_ROOT")
 
 [[ "$actual_include" == "$INCLUDE_TREE" ]] || { echo "include tree lock mismatch" >&2; exit 66; }
 [[ "$actual_src" == "$SRC_TREE" ]] || { echo "src tree lock mismatch" >&2; exit 66; }
 [[ "$actual_test" == "$TEST_TREE" ]] || { echo "test tree lock mismatch" >&2; exit 66; }
+[[ "$actual_blake3" == "$BLAKE3_TREE" ]] || { echo "blake3 tree lock mismatch" >&2; exit 66; }
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 git -C "$EPI_REPO" archive "$SOURCE_REV" \
   "$SOURCE_ROOT/include" \
-  "$SOURCE_ROOT/src" | tar -x -C "$tmp"
+  "$SOURCE_ROOT/src" \
+  "$BLAKE3_ROOT" | tar -x -C "$tmp"
 
 frozen="$tmp/$SOURCE_ROOT"
 
@@ -70,7 +77,13 @@ apply_corrections() {
     local apply_dir=$1
     while IFS= read -r patch_path; do
         [[ -z "$patch_path" ]] && continue
-        git -C "$REPO_ROOT" apply --directory="$apply_dir" "$patch_path"
+        if [[ "$apply_dir" == "." ]]; then
+            # A "./" prefix is an invalid path to git apply for files the
+            # patch touches that were created by this sync.
+            git -C "$REPO_ROOT" apply "$patch_path"
+        else
+            git -C "$REPO_ROOT" apply --directory="$apply_dir" "$patch_path"
+        fi
     done <<< "$CORRECTION_PATCHES"
 }
 
@@ -92,6 +105,7 @@ if [[ "$MODE" == "check" ]]; then
         diff -ru -- "$frozen/include" "$REFERENCE_ROOT/include"
         diff -ru -- "$frozen/src" "$REFERENCE_ROOT/src"
     fi
+    diff -ru -- "$tmp/$BLAKE3_ROOT" "$BLAKE3_VENDOR"
     echo "Epi C reference matches $SOURCE_REV o ratified corrections"
     echo "historical test tree locked (not bulk-vendored): $TEST_TREE"
     exit 0
@@ -101,6 +115,8 @@ mkdir -p "$REFERENCE_ROOT"
 rm -rf "$REFERENCE_ROOT/include" "$REFERENCE_ROOT/src"
 cp -R "$frozen/include" "$REFERENCE_ROOT/include"
 cp -R "$frozen/src" "$REFERENCE_ROOT/src"
+rm -rf "$BLAKE3_VENDOR"
+cp -R "$tmp/$BLAKE3_ROOT" "$BLAKE3_VENDOR"
 if [[ -n "$CORRECTION_PATCHES" ]]; then
     apply_corrections "."
 fi

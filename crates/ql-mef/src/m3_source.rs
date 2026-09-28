@@ -61,6 +61,9 @@ pub struct MatrixCell {
     pub address: u8,
     pub hexagram_ref: String,
     pub resolves_relation: MTreeId,
+    /// One YIELDS_CODON edge: the map holds the non-dual cell's positive and
+    /// negative readings as a single edge.
+    pub non_dual: bool,
     pub pair_relations: Vec<MTreeId>,
     pub codon_relations: Vec<MTreeId>,
 }
@@ -109,7 +112,7 @@ impl M3Source {
         let cells: Vec<MatrixCell> =
             serde_json::from_value(data["matrix_cells"].clone()).map_err(|e| e.to_string())?;
         if nodes.len() != 996
-            || relations.len() != 4891
+            || relations.len() != 4952
             || backbones.len() != 24
             || cells.len() != 184
         {
@@ -167,7 +170,7 @@ impl M3Source {
         let mut rna = [None; 64];
         for (i, n) in nodes.iter().enumerate() {
             if n.role == "dna-codon" || n.role == "phase-codon" {
-                let seq = n.properties["sequence"]
+                let seq = n.properties["p_3_sequence"]
                     .as_str()
                     .ok_or("source codon missing sequence")?;
                 let index = sequence_index(seq)?;

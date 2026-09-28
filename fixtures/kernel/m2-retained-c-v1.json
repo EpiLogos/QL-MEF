@@ -1,8 +1,8 @@
 {
 "schema":"ql.m2-retained-c/v1",
-"registry_revision":"259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4",
+"registry_revision":"af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
 "standing":"retained-source-reading-not-whole-subsystem-parity",
-"sources":[{"path":"vendor/epi-kernel/reference/include/m2.h","sha256":"0a9b57e7d2500b99031bc65949a5d74debfd948fae1d480174a4585ad2affee5"},{"path":"vendor/epi-kernel/reference/src/m2.c","sha256":"5065e09ff0e7962ca004a45d23085edeaf587628ed7d9fc44ab51ec6f421b1d2"}],
+"sources":[{"path":"vendor/epi-kernel/reference/include/m2.h","sha256":"7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8"},{"path":"vendor/epi-kernel/reference/src/m2.c","sha256":"9b89cefd560e5b3ad9259282b35abb5f0811077a9d4d03cc77675d7f29162002"}],
 "tables":[
 {"name":"carrier","symbol":"M2_ARCHETYPES","scope":"#2-0","columns":["value"],"rows":[
 [0],
