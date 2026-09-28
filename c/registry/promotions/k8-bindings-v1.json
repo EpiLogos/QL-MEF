@@ -3,6 +3,21 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "modules": [
     {
+      "path": "crates/ql-mef/src/continuous/k2.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-1"
+      ],
+      "rationale": "K² played-torus provider: the native M1 torus is the rest body and M2-1 Vimarśā voices supply frequency and nodal mode numbers of its surface modes. It composes supplied events through the accepted owners; scale, damping, strike and gain are declared material policy.",
+      "tests": [
+        "crates/ql-mef/src/continuous/k2.rs",
+        "crates/ql-mef/tests/k2_instrument.rs"
+      ],
+      "kind": "computational"
+    },
+    {
       "path": "c/src/m_tree_live.c",
       "header": "c/include/ql/m_tree_live.h",
       "stratum": "c",
@@ -100,7 +115,7 @@
         "#3-0",
         "#3-5-5/0"
       ],
-      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
+      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1–M3 laws and GPU particle integration remain separate owners.",
       "tests": [
         "cpp/tests/continuous_field.cpp",
         "scripts/test-k8-continuous.py"
@@ -207,7 +222,7 @@
         "#0-4",
         "#0-5"
       ],
-      "rationale": "#94/AW2 QL-owned semantic projection of current Factory V\u0101k execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
+      "rationale": "#94/AW2 QL-owned semantic projection of current Factory Vāk execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
       "tests": [
         "crates/ql-mef/src/vak_performance.rs",
         "crates/ql-mef/tests/k8_vak_performance.rs",
@@ -246,7 +261,7 @@
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL V\u0101k performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
+      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL Vāk performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
       "tests": [
         "crates/ql-mef/src/vak_thought_consumption.rs"
       ],
@@ -800,6 +815,136 @@
       "rationale": "Sealed Nara identity material over explicit native identity fields. Derivative refs invalidate on slot replace; no renderer or agent state becomes identity authority.",
       "tests": [
         "crates/ql-mef/src/nara/identity_material.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/domain_body.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Nara continuation consumes the current registered canonical seven-centre anatomical source properties and Earth grounding relations. Exact pinned record/blob/payload provenance is retained; no geometry, clinical relation or unsupported sense/action edge is inferred.",
+      "tests": [
+        "crates/ql-mef/src/nara/domain_body.rs",
+        "crates/ql-mef/src/nara/domain_operations.rs"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_presence_command.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 supported command path reading the existing native SharedPresenceConsent law for one explicit request; it constructs no personal field, exports no private state, and consent persistence and authenticated participant admission remain host-owned.",
+      "tests": [
+        "crates/ql-cli/src/nara_presence_command.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/current.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4 dated current/transit reception: the qualified sky provider's planetary longitudes lift to the composed transit quaternion and selected identity/transit baseline; absent activity is never fabricated and astronomy ownership stays external.",
+      "tests": [
+        "crates/ql-mef/src/nara/current.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/identity_composition.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4-0-5 explicitly selected draft core composition over supplied intake profiles; the sealed source blob and chosen policy are recorded, and no canonical receiver dynamics or material effect authority is granted.",
+      "tests": [
+        "crates/ql-mef/src/nara/identity_composition.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/m3_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the supported native M3 command path; recorded fixtures are not Factory execution or installed-app evidence.",
+      "tests": [
+        "crates/ql-cli/tests/m3_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_current_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the dated current/transit command reception; synthetic skies are not live provider evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_current_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_dialogue_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the native dialogue command surface; scripted sessions are not live Nara conversation evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_dialogue_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/k2_instrument.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K2 instrument regressions over the accepted played-torus provider; synthetic events are not live transit evidence.",
+      "tests": [
+        "crates/ql-mef/tests/k2_instrument.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/k2_nara_reception.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 regressions proving Nara reception of K2 surface modes over one accepted world event; no duplicate world simulation is introduced.",
+      "tests": [
+        "crates/ql-mef/tests/k2_nara_reception.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/k8_reshape.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K8 regressions for the reshape path over the continuous field contract; fixtures are not live engine evidence.",
+      "tests": [
+        "crates/ql-mef/tests/k8_reshape.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/m2_planet_chakra.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled M2 parity regressions for the direct planet-to-chakra route over the pinned PLANETARY_RESONANCE assertions.",
+      "tests": [
+        "crates/ql-mef/tests/m2_planet_chakra.rs"
       ],
       "kind": "computational"
     }

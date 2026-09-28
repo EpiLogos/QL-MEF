@@ -1,8 +1,6 @@
 //! Local supervised stdio body for the existing coupled instrument. No listener,
 //! shell dispatch, graph lookup or audio callback is introduced here.
-use ql_mef::continuous::host::{
-    FieldHost, HostConfig, HostRequest, MAX_HOST_INPUT, MAX_HOST_OUTPUT,
-};
+use ql_mef::continuous::host::{FieldHost, HostRequest, MAX_HOST_INPUT, MAX_HOST_OUTPUT};
 use serde_json::Value;
 use std::fs::File;
 use std::io::{self, BufRead, Read, Write};
@@ -33,8 +31,7 @@ fn run() -> Result<(), String> {
     if bytes.len() as u64 > MAX_HOST_INPUT {
         return Err("host configuration ceiling exceeded".into());
     }
-    let config: HostConfig = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
-    let mut host = FieldHost::open(Path::new(&args[1]), config, Duration::from_secs(20))?;
+    let mut host = FieldHost::open_config(Path::new(&args[1]), &bytes, Duration::from_secs(20))?;
     let input = io::stdin();
     let mut input = input.lock();
     let output = io::stdout();
