@@ -54,6 +54,8 @@ fn actual_c_source_relation_and_state_match_independent_rust() {
         .current_dir(&root)
         .args([
             "-std=c11",
+            // The reference m1.c uses M_PI, hidden by glibc under strict c11.
+            "-D_DEFAULT_SOURCE",
             "-O1",
             "-Wall",
             "-Wextra",
