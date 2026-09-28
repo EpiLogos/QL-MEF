@@ -63,7 +63,7 @@ int main(void) {
  assert(ql_m3_form(0,0,0,60,0,&f)==QL_M3_INVALID);
  assert(ql_m3_form(0,0,0,0,3,&f)==QL_M3_INVALID);
  assert(ql_m3_form(0,0,0,0,0,NULL)==QL_M3_INVALID);
- assert(!ql_m3_source_node_at(996));assert(!ql_m3_source_relation_at(4891));assert(!ql_m3_matrix_cell_at(184));
+ assert(!ql_m3_source_node_at(996));assert(!ql_m3_source_relation_at(4952));assert(!ql_m3_matrix_cell_at(184));
  assert(!ql_m3_backbone_projection(0));assert(ql_m3_clock_projection(0,NULL)==QL_M3_INVALID);
  return 0;
 }

@@ -29,12 +29,14 @@ class MTreeTests(unittest.TestCase):
 
     def test_source_coverage_and_asymmetry(self):
         m = self.manifest
-        self.assertEqual(len(m["nodes"]), 1876)
-        self.assertEqual(len(m["relations"]), 21083)
-        self.assertEqual(len(m["records"]), 24831)
-        self.assertEqual(len(m["alternate_notation_groups"]), 8)
+        # Counts of the map read the committed extract came from (one record per
+        # node and relation; relation types in the map's own spelling).
+        self.assertEqual(len(m["nodes"]), 1883)
+        self.assertEqual(len(m["relations"]), 10856)
+        self.assertEqual(len(m["records"]), 12738)
+        self.assertEqual(len(m["alternate_notation_groups"]), 0)
         by_ref = {n["source_ref"]: n for n in m["nodes"]}
-        self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 597, 996, 100, 31])
+        self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 598, 996, 106, 31])
         self.assertNotIn("#0-4.0", by_ref)
         self.assertNotIn("#3-5-5", by_ref)
         self.assertEqual(by_ref["#0-4.0/1/2"]["parent_id"], by_ref["#0-4"]["id"])
@@ -42,8 +44,11 @@ class MTreeTests(unittest.TestCase):
         self.assertNotEqual(by_ref["#0-4.0/1/2"]["id"], by_ref["#0-4.0/1-2"]["id"])
         self.assertEqual(by_ref["#2-4"]["source_parent_refs"], ["#2", "#2-4.5"])
         self.assertEqual(len(m["parent_discrepancies"]), 1)
-        self.assertEqual(sum(r["cross_m"] for r in m["relations"]), 2676)
-        self.assertEqual(sum(r["from_id"] is None or r["to_id"] is None for r in m["relations"]), 450)
+        self.assertEqual(sum(r["cross_m"] for r in m["relations"]), 1316)
+        # Edges to nodes outside the M tree (S/L/C lattices, primes, "#N" meta).
+        outside = [r for r in m["relations"] if r["from_id"] is None or r["to_id"] is None]
+        self.assertEqual(len(outside), 975)
+        self.assertTrue(all(r["from_ref"].startswith("bimba:") or r["to_ref"].startswith("bimba:") for r in outside))
 
     def test_deeper_asymmetric_extension_preserves_existing_ids(self):
         source = copy.deepcopy(self.source)

@@ -69,13 +69,13 @@ def source_groups(registry: dict) -> tuple[list[list[str]], list[str]]:
     hexagram = [None] * 64
     halves = {}
     for rel in registry['relations']:
-        if rel['source_kind'] in ('HAS_UPPER_Trigram', 'HAS_LOWER_Trigram'):
+        if rel['source_kind'] in ('HAS_UPPER_TRIGRAM', 'HAS_LOWER_TRIGRAM'):
             halves.setdefault(rel['from_ref'], {}).setdefault(rel['source_kind'], set()).add(rel['to_ref'])
     for ref, parts in halves.items():
         if not ref.startswith('#3-1-'):
             continue
         try:
-            upper, lower = parts['HAS_UPPER_Trigram'], parts['HAS_LOWER_Trigram']
+            upper, lower = parts['HAS_UPPER_TRIGRAM'], parts['HAS_LOWER_TRIGRAM']
             if len(upper) != 1 or len(lower) != 1:
                 raise ValueError('ambiguous trigram composition: ' + ref)
             address = (trigram_bits[next(iter(upper))] << 3) | trigram_bits[next(iter(lower))]

@@ -31,8 +31,8 @@ class AwFieldTests(unittest.TestCase):
     def test_all_deep_property_occurrences_keep_their_original_record_handles(self):
         result = aw0.project()
         rows = [r for r in result['records'] if r['inventory'] == 'property-source-key']
-        self.assertEqual(len(rows), 5686)
-        self.assertEqual(sum(len(r['inputs_and_results']['source_record_indices']) for r in rows), 85474)
+        self.assertEqual(len(rows), 2588)
+        self.assertEqual(sum(len(r['inputs_and_results']['source_record_indices']) for r in rows), 117348)
         manifest = aw0.load('fixtures/kernel/m-tree-v1.json')
         for row in rows:
             for index in row['inputs_and_results']['source_record_indices']:

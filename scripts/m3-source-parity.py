@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Lossless, source-locked M3 binding projection and independent semantic audit.
+"""M3 binding projection over the Bimba map and independent semantic audit.
 
-K7 support for the native engine, not a second M registry or an accepted K4 census.
-The complete payload and every duplicate/qualified edge are retained in generated
-output. The small checked-in fixture locks that output without copying the graph.
-Source assertions and derived addresses never overwrite one another. Findings use
-the existing K3 discrepancy vocabulary and remain OPEN until ledger reconciliation.
+Node properties come from a read-only map read (scripts/bimba_map.py) of the map
+the registry was built from; relations come from the registry. The small
+checked-in fixture locks the output without copying the graph. Map assertions
+and derived addresses never overwrite one another. Findings use the existing K3
+discrepancy vocabulary and remain OPEN until ledger reconciliation.
+
+The map carries no King Wen number, hexagram or trigram binary, pair role
+(upper/lower) or line number on LINE_CHANGE (only its prose): those are not
+read. Trigram bits are the kernel's declared table (as in generate-m3.py); a
+LINE_CHANGE is checked as a single-bit flip, and each hexagram's six changes
+must flip six distinct bits.
 """
 from __future__ import annotations
 
@@ -19,7 +25,10 @@ import sys
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = "Idea/Bimba/Map/datasets/mahamaya-deep/"
+sys.path.insert(0, str(ROOT / "scripts"))
+import bimba_map  # noqa: E402
+# The source trigram ids are NOT their three-bit line patterns (generate-m3.py).
+TRIGRAM_BITS = dict(zip((f"#3-1-{i}" for i in range(8)), (7, 0, 1, 6, 2, 5, 4, 3), strict=True))
 REGISTRY = "fixtures/kernel/m-tree-v1.json"
 LOCK = "fixtures/kernel/m3-source-bindings-v1.json"
 SCHEMA = "ql.m3-source-bindings/v1"
@@ -68,91 +77,75 @@ def role(ref: str, props: dict) -> str:
     for pattern, label in patterns:
         if re.fullmatch(pattern, ref):
             return label
-    if ref.startswith("#3-3-3-") and re.fullmatch(r"[AUCG]{3}", props.get("sequence", "")):
+    if ref.startswith("#3-3-3-") and re.fullmatch(r"[AUCG]{3}", str(props.get("p_3_sequence", ""))):
         return "rna-codon"
-    if ref.startswith("#3-5-5/0-") and "degree" in props:
+    if ref.startswith("#3-5-5/0-") and "m_3_5_degree" in props:
         return "clock-degree"
     if ref.startswith("#3-3-5"):
         return "karyotype"
     return "source-coordinate"  # Retain the whole remaining field, not just numeric roles.
 
 
-def read_source(source_root: Path, repo_root: Path = ROOT) -> tuple[dict, list, list]:
+def read_source(map_path: Path = bimba_map.CACHE, repo_root: Path = ROOT) -> tuple[dict, dict]:
     registry = load_json(repo_root / REGISTRY)
     require(registry["schema"] == "ql.m-tree/v1", "unsupported shared registry")
-    payloads = []
-    for filename in ("nodes-full-detail.json", "relations.json"):
-        relative = DATA + filename
-        expected = next((f for f in registry["files"] if f["path"] == relative), None)
-        require(expected is not None, "source absent from K2 file lock: " + relative)
-        raw = (source_root / relative).read_bytes()
-        require(len(raw) == expected["bytes"], "source byte length drift: " + relative)
-        require(hashlib.sha256(raw).hexdigest() == expected["sha256"], "source SHA-256 drift: " + relative)
-        blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
-        require(blob == expected["git_blob"], "source Git blob drift: " + relative)
-        data = json.loads(raw.decode("utf-8-sig"))
-        require(isinstance(data, list), "expected source record array: " + relative)
-        payloads.append(data)
-    return registry, payloads[0], payloads[1]
+    read = bimba_map.load(map_path)
+    require(read["content_sha256"] == registry["source_revision"],
+            "map read is not the map the registry was built from")
+    return registry, read
 
 
-def project(registry: dict, raw_nodes: list, raw_edges: list) -> dict:
-    """Join full source records onto K2 IDs, checking every record and directed edge."""
+def project(registry: dict, read: dict) -> dict:
+    """Join map properties and registry relations onto K2 IDs for the whole M3 field."""
     require(digest({k: v for k, v in registry.items() if k != "registry_revision"}) == registry["registry_revision"],
             "registry revision/content disagreement")
-    nodes_by_ref = {n["source_ref"]: n for n in registry["nodes"]}
-    require(len(nodes_by_ref) == len(registry["nodes"]), "duplicate registry coordinate")
-    files = {f["path"]: i for i, f in enumerate(registry["files"])}
-    node_file, edge_file = (files[DATA + f] for f in ("nodes-full-detail.json", "relations.json"))
+    by_ql = {bimba_map.ql_spelling(c): c for c in read["nodes"] if bimba_map.is_m_coordinate(c)}
     records = registry["records"]
-    source_nodes = {n["source_ref"]: n for n in registry["nodes"]
-                    if any(records[i]["file"] == node_file for i in n["records"])}
-    source_edges = {records[e["record"]]["record_index"]: e for e in registry["relations"]
-                    if records[e["record"]]["file"] == edge_file}
-    require(len(source_edges) == len(raw_edges), "source relation count drift")
-    require(set(source_edges) == set(range(len(raw_edges))), "source relation index gap")
-    seen = set()
+    field = [n for n in registry["nodes"] if n["root_position"] == 3]
+    require(all(n["source_ref"] in by_ql for n in field), "M3 registry node absent from the map read")
     nodes = []
-    for index, raw in enumerate(raw_nodes):
-        require(set(raw) == {"coordinate", "filteredProps"}, "unclassified source node wrapper")
-        ref = raw["coordinate"]
-        require(ref not in seen, "duplicate source coordinate: " + ref)
-        seen.add(ref)
-        require(ref in source_nodes, "coordinate absent from K2 source: " + ref)
-        node = source_nodes[ref]
-        bindings = [i for i in node["records"] if records[i]["file"] == node_file]
-        require(len(bindings) == 1, "ambiguous node source record: " + ref)
-        record = records[bindings[0]]
-        require(record["record_index"] == index, "node source order drift: " + ref)
-        require(record["payload_sha256"] == digest(raw), "node payload drift: " + ref)
-        props = raw["filteredProps"]
-        require(props.get("bimbaCoordinate", ref) == ref, "source self-coordinate disagreement: " + ref)
-        nodes.append({"id": node["id"], "ref": ref, "record": bindings[0],
-                      "source_record_index": index, "role": role(ref, props),
-                      "parent_id": node["parent_id"], "properties": props})
-    require(seen == set(source_nodes), "source node coverage drift")
-    require(seen == {n["source_ref"] for n in registry["nodes"] if n["root_position"] == 3},
-            "M3 registry field is not exhausted by this source")
+    for node in field:
+        ref = node["source_ref"]
+        props = read["nodes"][by_ql[ref]]["properties"]
+        nodes.append({"id": node["id"], "ref": ref, "record": node["records"][0],
+                      "source_record_index": records[node["records"][0]]["record_index"],
+                      "role": role(ref, props), "parent_id": node["parent_id"], "properties": props})
+    ids = {n["id"] for n in field}
+    map_props = {(a, kind, b): props for a, kind, b, props in read["relations"]}
     edges = []
-    for index, raw in enumerate(raw_edges):
-        require(set(raw) == {"source", "target", "relType", "relProperties"}, "unclassified source relation wrapper")
-        known = source_edges[index]
-        record = records[known["record"]]
-        require((raw["source"], raw["relType"], raw["target"]) ==
-                (known["from_ref"], known["source_kind"], known["to_ref"]),
-                f"relation endpoint/type drift at source record {index}")
-        require(digest(raw["relProperties"]) == record["payload_sha256"],
-                f"relation property drift at source record {index}")
-        edges.append({"id": known["id"], "ref": known["relation_ref"],
-                      "record": known["record"], "source_record_index": index,
-                      "from_ref": raw["source"], "to_ref": raw["target"],
-                      "from_id": known["from_id"], "to_id": known["to_id"],
-                      "kind": raw["relType"], "properties": raw["relProperties"]})
+    for rel in registry["relations"]:
+        if rel["from_id"] not in ids:
+            continue
+        ends = [by_ql.get(r) or r.removeprefix("bimba:") for r in (rel["from_ref"], rel["to_ref"])]
+        key = (ends[0], rel["source_kind"], ends[1])
+        require(key in map_props, "registry relation absent from the map read: " + rel["relation_ref"])
+        edges.append({"id": rel["id"], "ref": rel["relation_ref"], "record": rel["record"],
+                      "source_record_index": records[rel["record"]]["record_index"],
+                      "from_ref": rel["from_ref"], "to_ref": rel["to_ref"],
+                      "from_id": rel["from_id"], "to_id": rel["to_id"],
+                      "kind": rel["source_kind"], "properties": map_props[key]})
     return {"schema": SCHEMA, "registry_revision": registry["registry_revision"],
             "source_revision": registry["source_revision"],
             "source_repository": registry["source_repository"],
-            "files": [registry["files"][i] for i in (node_file, edge_file)],
-            "nodes": nodes, "relations": edges}
+            "files": registry["files"], "nodes": nodes, "relations": edges}
+
+
+def projection_for(map_path: Path = bimba_map.CACHE, repo_root: Path = ROOT) -> dict:
+    """The M3 projection from a read of the registry's map, else the committed one.
+
+    fixtures/kernel/m3-domain-v1.json holds the full projection (map properties and
+    registry relations) as of its registry revision, so CI checks run without a
+    map read; `m3-domain.py --map ... --refresh` is what moves it.
+    """
+    registry = load_json(repo_root / REGISTRY)
+    if map_path.is_file() and bimba_map.load(map_path)["content_sha256"] == registry["source_revision"]:
+        return project(*read_source(map_path, repo_root))
+    domain = load_json(repo_root / "fixtures/kernel/m3-domain-v1.json")
+    require(domain["registry_revision"] == registry["registry_revision"], "committed M3 domain is stale")
+    return {"schema": SCHEMA, "registry_revision": registry["registry_revision"],
+            "source_revision": registry["source_revision"],
+            "source_repository": registry["source_repository"],
+            "files": registry["files"], "nodes": domain["nodes"], "relations": domain["relations"]}
 
 
 class Audit:
@@ -192,53 +185,45 @@ class Audit:
         })
 
     def hexagrams(self) -> list:
-        trigrams = {n["ref"]: int(n["properties"]["binaryRepresentation"], 2)
-                    for n in self.groups["trigram"]}
-        require(len(trigrams) == 8 and set(trigrams.values()) == set(range(8)), "incomplete trigram field")
+        trigrams = {n["ref"]: TRIGRAM_BITS[n["ref"]] for n in self.groups["trigram"]}
+        require(len(trigrams) == 8, "incomplete trigram field")
         result = []
         for node in self.groups["hexagram"]:
-            ref, props = node["ref"], node["properties"]
-            upper, lower = self.one(ref, "HAS_UPPER_Trigram"), self.one(ref, "HAS_LOWER_Trigram")
+            ref = node["ref"]
+            upper, lower = self.one(ref, "HAS_UPPER_TRIGRAM"), self.one(ref, "HAS_LOWER_TRIGRAM")
             require(upper["to_ref"] in trigrams and lower["to_ref"] in trigrams,
                     "hexagram has a non-trigram endpoint: " + ref)
             address = (trigrams[upper["to_ref"]] << 3) | trigrams[lower["to_ref"]]
-            declared = int(props["binaryCode"], 2)
-            row = {"ref": ref, "id": node["id"], "king_wen": props["number"],
-                   "source_binary_code": declared, "trigram_derived_address": address,
-                   "upper_relation": upper["id"], "lower_relation": lower["id"]}
-            if declared != address:
-                self.finding("hexagram-code", ["deep-M3:M3-C05", "deep-M3:M3-C07"], "coordinate", ref,
-                             {"source_binary_code": declared, "trigram_derived_address": address},
-                             "crates/ql-core/src/pole/iching.rs")
-            result.append(row)
+            result.append({"ref": ref, "id": node["id"], "symbol": node["properties"].get("c_1_symbol"),
+                           "trigram_derived_address": address,
+                           "upper_relation": upper["id"], "lower_relation": lower["id"]})
         by_ref = {r["ref"]: r for r in result}
         require(len(result) == 64 and {r["trigram_derived_address"] for r in result} == set(range(64)),
                 "trigram relations do not produce a complete 64-address field")
-        require({r["king_wen"] for r in result} == set(range(1, 65)), "King Wen ordinal coverage drift")
         by_address = {r["trigram_derived_address"]: r["ref"] for r in result}
         for row in result:
             props = self.nodes[row["ref"]]["properties"]
             address = row["trigram_derived_address"]
-            expected_nuclear = {"upperNuclearBinary": format((address >> 2) & 7, "03b"),
-                                "lowerNuclearBinary": format((address >> 1) & 7, "03b"),
-                                "nuclearCoordinate": by_address[(((address >> 2) & 7) << 3) | ((address >> 1) & 7)]}
-            differences = {k: {"source": props.get(k), "native": v} for k, v in expected_nuclear.items() if props.get(k) != v}
-            if differences:
+            nuclear = by_address[(((address >> 2) & 7) << 3) | ((address >> 1) & 7)]
+            if props.get("c_3_nuclear_coordinate") != nuclear:
                 self.finding("nuclear-register", ["deep-M3:M3-C07"], "relation", row["ref"],
-                             {"differences": differences}, "crates/ql-core/src/pole/iching.rs", peer="rust")
-            changes = self.edges(row["ref"], "LINE_CHANGE")
-            require(len(changes) == 6 and {e["properties"].get("line") for e in changes} == set(range(1, 7)),
-                    "incomplete/duplicate six-line relation field: " + row["ref"])
-            for edge in changes:
+                             {"differences": {"c_3_nuclear_coordinate": {"source": props.get("c_3_nuclear_coordinate"),
+                                                                         "native": nuclear}}},
+                             "crates/ql-core/src/pole/iching.rs", peer="rust")
+            bits = []
+            for edge in self.edges(row["ref"], "LINE_CHANGE"):
                 require(edge["to_ref"] in by_ref, "LINE_CHANGE has non-hexagram endpoint")
-                line = edge["properties"]["line"]
-                expected = row["trigram_derived_address"] ^ (1 << (line - 1))
-                actual = by_ref[edge["to_ref"]]["trigram_derived_address"]
-                if actual != expected:
+                flip = address ^ by_ref[edge["to_ref"]]["trigram_derived_address"]
+                single = flip != 0 and flip & (flip - 1) == 0
+                bits.append(flip.bit_length() - 1 if single else None)
+                if not single:
                     self.finding("line-change", ["deep-M3:M3-C06"], "relation", edge["ref"],
-                                 {"source": row["ref"], "line": line, "source_target": edge["to_ref"],
-                                  "source_target_address": actual, "xor_target": by_address[expected],
-                                  "xor_target_address": expected}, "crates/ql-core/src/pole/iching.rs")
+                                 {"source": row["ref"], "source_target": edge["to_ref"],
+                                  "flipped_address_bits": format(flip, "06b")}, "crates/ql-core/src/pole/iching.rs")
+            if sorted(b for b in bits if b is not None) != list(range(6)):
+                self.finding("line-change-field", ["deep-M3:M3-C06"], "relation", row["ref"],
+                             {"single_bit_lines": sorted(b + 1 for b in bits if b is not None),
+                              "expected_lines": list(range(1, 7))}, "crates/ql-core/src/pole/iching.rs")
         return sorted(result, key=lambda row: row["trigram_derived_address"])
 
     def matrices(self, hexagrams: list) -> list:
@@ -248,16 +233,13 @@ class Audit:
             ref = node["ref"]
             resolved = self.one(ref, "RESOLVES_TO")
             require(resolved["to_ref"] in by_ref, "matrix does not resolve a hexagram: " + ref)
-            uses, yields = self.edges(ref, "USES_Pair"), self.edges(ref, "YIELDS_CODON")
-            require({e["properties"].get("type") for e in yields} == {"positive", "negative"}
-                    and len(yields) == 2, "matrix codon valences incomplete: " + ref)
-            roles = {e["properties"].get("role") for e in uses}
-            if roles != {"upper", "lower"}:
-                self.finding("matrix-missing-pair-role", ["deep-M3:M3-C09"], "relation", ref,
-                             {"roles": sorted(roles), "expected_roles": ["lower", "upper"]},
-                             REGISTRY, authority_peer="bimba")
+            uses, yields = self.edges(ref, "USES_PAIR"), self.edges(ref, "YIELDS_CODON")
+            # A non-dual cell yields one codon: the map holds its positive and
+            # negative readings as a single edge (the seed's parallel pair).
+            kinds = sorted(e["properties"].get("c_2_relation_kind") for e in yields)
+            require(kinds in (["negative", "positive"], ["positive"]), "matrix codon valences incomplete: " + ref)
             for edge in uses + yields:
-                want = "dinucleotide" if edge["kind"] == "USES_Pair" else "dna-codon"
+                want = "dinucleotide" if edge["kind"] == "USES_PAIR" else "dna-codon"
                 if edge["to_ref"] is None:
                     self.finding("matrix-unresolved-endpoint", ["deep-M3:M3-C09"], "relation", edge["ref"],
                                  {"source": ref, "kind": edge["kind"], "role": edge["properties"],
@@ -269,6 +251,7 @@ class Audit:
             result.append({"ref": ref, "id": node["id"], "family": int(ref.split("-")[3]),
                            "hexagram_ref": resolved["to_ref"], "resolves_relation": resolved["id"],
                            "address": by_ref[resolved["to_ref"]]["trigram_derived_address"],
+                           "non_dual": len(yields) == 1,
                            "pair_relations": [e["id"] for e in uses],
                            "codon_relations": [e["id"] for e in yields]})
         sizes = Counter(row["family"] for row in result)
@@ -286,9 +269,9 @@ class Audit:
         return sorted(result, key=lambda r: (r["family"], r["address"]))
 
     def genetics(self) -> dict:
-        dna = {n["properties"]["sequence"]: n for n in self.groups["dna-codon"]}
+        dna = {n["properties"]["p_3_sequence"]: n for n in self.groups["dna-codon"]}
         require(len(dna) == 64 and all(re.fullmatch(r"[ATCG]{3}", s) for s in dna), "incomplete DNA codon field")
-        rna = {n["properties"]["sequence"]: n for n in self.groups["rna-codon"]}
+        rna = {n["properties"]["p_3_sequence"]: n for n in self.groups["rna-codon"]}
         require(len(rna) == 37, "RNA field cardinality drift")
         transcription = []
         for sequence, node in sorted(dna.items()):
@@ -306,7 +289,7 @@ class Audit:
         phase = []
         for node in self.groups["phase-codon"]:
             ref, props = node["ref"], node["properties"]
-            sequence = props["sequence"]
+            sequence = props["p_3_sequence"]
             require(sequence in dna, "phase codon sequence absent from DNA field")
             reflection = self.one(ref, "REFLECTS_DNA_FORM")
             require(reflection["to_ref"] == dna[sequence]["ref"], "phase/DNA reflection drift: " + ref)
@@ -318,7 +301,7 @@ class Audit:
             for edge in translations + conditional:
                 require(self.nodes[edge["to_ref"]]["role"] == "amino-or-translation-signal", "wrong translation endpoint")
             phase.append({"ref": ref, "id": node["id"], "sequence": sequence,
-                          "dna_ref": reflection["to_ref"], "state_count": props["stateCount"],
+                          "dna_ref": reflection["to_ref"], "state_count": props["c_3_state_count"],
                           "native_state_count": 8 if len(set(sequence)) == 3 else 7,
                           "tarot_ref": card["to_ref"], "reflection_relation": reflection["id"],
                           "tarot_relation": card["id"],
@@ -338,9 +321,9 @@ class Audit:
         charges = []
         for node in self.groups["dna-codon"] + self.groups["phase-codon"]:
             props = node["properties"]
-            x, y, z = (VALUES[c] for c in props["sequence"])
+            x, y, z = (VALUES[c] for c in props["p_3_sequence"])
             expected = dict(zip(("pp", "nn", "np", "pn"), (x+y+z, x-y-z, x-y+z, x+y-z), strict=True))
-            source = {k: props.get("inner_charge_" + k) for k in expected}
+            source = {k: props.get("c_3_inner_charge_" + k) for k in expected}
             charges.append({"ref": node["ref"], "source": source, "ratified_derivation": expected})
             if source != expected:
                 self.finding("codon-charge", ["deep-M3:M3-C10", "deep-M3:M3-C11"], "operational", node["ref"],
@@ -351,9 +334,9 @@ class Audit:
                         (14,2),(17,-1),(16,0),(15,1),(13,1),(16,-2),(15,-1),(14,0))
         for node in self.groups["dinucleotide"]:
             props = node["properties"]
-            sequence = props["sequence"]
+            sequence = props["p_3_sequence"]
             idx = "ATCG".index(sequence[0])*4 + "ATCG".index(sequence[1])
-            source = [props["sumValue"], props["differenceValue"]]
+            source = [props["c_3_sum_value"], props["c_3_difference_value"]]
             native = list(native_pairs[idx])
             pairs.append({"ref": node["ref"], "sequence": sequence, "source": source, "native": native})
             if source != native:
@@ -369,7 +352,7 @@ class Audit:
 
     def clock(self) -> list:
         degrees = self.groups["clock-degree"]
-        by_degree = {n["properties"]["degree"]: n for n in degrees}
+        by_degree = {n["properties"]["m_3_5_degree"]: n for n in degrees}
         require(len(degrees) == 360 and set(by_degree) == set(range(360)), "incomplete dynamic degree field")
         backbone = {n["ref"]: n for n in self.groups["clock-backbone"]}
         require(len(backbone) == 24, "incomplete independent backbone field")
@@ -426,10 +409,10 @@ class Audit:
                            "transcribed_rna": len(genetics["rna"]),
                            "open_findings": len(self.findings)},
                 "discrepancies": self.findings,
-                "standing": {"source": "exact-locked-record-join", "coordinate": "existing-K2-IDs",
+                "standing": {"source": "bimba-map-read-join", "coordinate": "existing-K2-IDs",
                              "semantic_parity": "explicit-discrepancies-retained",
                              "c_rust_execution": "not-claimed-by-this-source-audit",
-                             "K4_acceptance": "not-claimed", "neo4j_live": "not-observed",
+                             "K4_acceptance": "not-claimed", "neo4j_live": "read-only map read; content hash = registry source_revision",
                              "cpp_embodiment": "not-executed", "experiential": "not-claimed"}}
 
 
@@ -450,14 +433,13 @@ def lock_for(projection: dict, audit: dict, repo_root: Path = ROOT) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", type=Path, required=True,
-                        help="read-only checkout of the K2-locked Epi source revision")
+    parser.add_argument("--map", type=Path, default=bimba_map.CACHE,
+                        help="read of the map the registry was built from (scripts/bimba_map.py read)")
     parser.add_argument("--output", type=Path, default=ROOT / "target/m3-source")
     parser.add_argument("--refresh-lock", action="store_true", help="explicitly record this reviewed source/audit result")
     args = parser.parse_args()
     try:
-        registry, nodes, edges = read_source(args.source_root)
-        projection = project(registry, nodes, edges)
+        projection = projection_for(args.map)
         audit = Audit(projection).run()
         lock = lock_for(projection, audit)
         args.output.mkdir(parents=True, exist_ok=True)

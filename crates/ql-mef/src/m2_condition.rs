@@ -207,7 +207,7 @@ impl CorrespondenceField {
                     return Err("invalid explicit spelled tuning".into());
                 }
             }
-            if rule.claims.len() != 4 {
+            if rule.claims.is_empty() {
                 return Err("missing correspondence property claims".into());
             }
             for claim in &rule.claims {
@@ -220,14 +220,9 @@ impl CorrespondenceField {
                         let file = &manifest.files[record.file];
                         file.path == claim.path
                             && file.sha256 == claim.sha256
-                            && record
-                                .property_keys
-                                .contains(&format!("filteredProps.{}", claim.property))
+                            && record.property_keys.contains(&claim.property)
                             && claim.pointer
-                                == format!(
-                                    "/{}/filteredProps/{}",
-                                    record.record_index, claim.property
-                                )
+                                == format!("/{}/{}", record.record_index, claim.property)
                     })
                 {
                     return Err("invalid source property claim".into());

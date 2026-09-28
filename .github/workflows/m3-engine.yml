@@ -11,18 +11,10 @@ jobs:
   m3-engine:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      M3_SOURCE_ROOT: ${{ github.workspace }}/target/m3-bimba-source
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-          persist-credentials: false
-      - uses: actions/checkout@v4
-        with:
-          repository: EpiLogos/Epi-Logos-C-Experiments
-          ref: daa660cbc1b8c5da83828698665a753852cb0287
-          path: target/m3-bimba-source
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:

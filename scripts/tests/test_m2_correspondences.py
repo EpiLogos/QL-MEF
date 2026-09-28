@@ -21,37 +21,39 @@ ledger = module("m2_ledger", "scripts/m2-ledger.py")
 
 
 class CorrespondenceTests(unittest.TestCase):
-    def test_explicit_note_spelling_and_unsupported_notation(self):
-        self.assertEqual(compiler.spelled_steps("C - D - E - F - G - A - B - C"),
-                         [0, 4, 8, 10, 14, 18, 22, 24])
-        self.assertEqual(compiler.spelled_steps("C - D - E♭+ - F - G - A - B♭ - C"),
-                         [0, 4, 7, 10, 14, 18, 20, 24])
-        for value in ["C - D - E↓ - F - G - A - B - C", "modal variant",
-                      "C - D - E - F - G - A - B - D", "C - D - E - E - G - A - B - C"]:
-            self.assertIsNone(compiler.spelled_steps(value), value)
+    @classmethod
+    def setUpClass(cls):
+        cls.field = compiler.load(ROOT / compiler.OUTPUT)
+        cls.registry = compiler.load(ROOT / "fixtures/kernel/m-tree-v1.json")
 
-    def test_compiled_field_preserves_source_and_separate_readings(self):
-        source = ROOT / "target/m2-bimba-source"
-        if not source.is_dir():
-            self.skipTest("source-byte regeneration is exercised by mandatory M2 acceptance")
-        before = {p: compiler.sha(source / p) for p in [compiler.NODE_PATH]}
-        field = compiler.compile_field(source)
-        self.assertEqual(field, compiler.load(ROOT / compiler.OUTPUT))
+    def test_no_bimba_spelled_tuning_is_claimed_without_a_map_spelling(self):
+        # The map states tonic, dominant and ajnas, not a full scale spelling.
+        for rule in self.field["rules"]:
+            self.assertIsNone(rule["spelled_steps24"])
+            self.assertEqual((rule["interval_literal"], rule["planetary_mode_literal"], rule["element_literal"]), ("", "", ""))
+
+    def test_claims_point_at_properties_the_map_record_holds(self):
+        nodes = {n["source_ref"]: n for n in self.registry["nodes"]}
+        self.assertEqual(len(self.field["rules"]), 127)
+        self.assertEqual(len(self.field["gaps"]), 17)
+        self.assertEqual({r["colour_name"] for r in self.field["rules"]}, {None, "yellow", "silver", "red"})
+        for rule in self.field["rules"]:
+            for claim in rule["claims"]:
+                record = self.registry["records"][nodes[claim["coordinate"]]["records"][0]]
+                self.assertIn(claim["property"], record["property_keys"])
+                self.assertEqual(claim["pointer"], f"/{record['record_index']}/{claim['property']}")
+
+    def test_recomputes_exactly_from_the_registry_map(self):
+        read = compiler.bimba_map.CACHE
+        if not read.is_file() or compiler.bimba_map.load(read)["content_sha256"] != self.registry["source_revision"]:
+            self.skipTest("no read of the registry's map; the committed field is checked above")
+        field = compiler.compile_field(compiler.bimba_map.load(read))
+        self.assertEqual(field, self.field)
         self.assertEqual(compiler.native(field), (ROOT / compiler.NATIVE).read_text())
-        self.assertEqual(len(field["rules"]), 127)
-        self.assertEqual(len(field["gaps"]), 17)
-        self.assertEqual({r["colour_name"] for r in field["rules"]}, {None, "yellow", "silver", "red"})
-        self.assertTrue(all(len(r["claims"]) == 4 for r in field["rules"]))
-        self.assertEqual(before, {p: compiler.sha(source / p) for p in before})
 
-    def test_changed_source_bytes_cannot_be_promoted_by_refresh(self):
-        with tempfile.TemporaryDirectory() as directory:
-            source = Path(directory)
-            path = source / compiler.NODE_PATH
-            path.parent.mkdir(parents=True)
-            path.write_text("[]\n")
-            with self.assertRaisesRegex(ValueError, "pinned Bimba node source"):
-                compiler.compile_field(source)
+    def test_a_read_of_another_map_is_refused(self):
+        with self.assertRaisesRegex(ValueError, "not the map the registry was built from"):
+            compiler.compile_field({"content_sha256": "0" * 64, "nodes": {}, "relations": []})
 
 
 class K6RefreshTests(unittest.TestCase):

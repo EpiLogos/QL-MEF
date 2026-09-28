@@ -216,7 +216,7 @@ fn actual_c_source_relation_and_state_match_independent_rust() {
         .collect();
     assert_eq!(seen_nodes, expected_nodes);
     assert_eq!(seen, expected_relations);
-    assert_eq!(counts, [864, 43, 86, 1072, 1, 2401, 48, 384, 625, 4096, 1]);
+    assert_eq!(counts, [864, 43, 86, 529, 1, 2401, 48, 384, 625, 4096, 1]);
     let result = Command::new("python3")
         .current_dir(&root)
         .args(["scripts/check-m1-literals.py", "--observations"])
@@ -274,7 +274,8 @@ fn every_k4_coordinate_returns_its_own_source_and_computation() {
         "#1-4-0",
         "#1-3-4.0/1/2/3/4",
         "M1'",
-        "M1-3-4.(4.0/1-4.4/5)",
+        // The July seed's spelling; the map's is M1-3-4.(4.0/1-4.4/5).
+        "#1-3-4.4.0-4.4/5",
     ] {
         assert!(coordinate_operation(invalid).is_err());
     }
