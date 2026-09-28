@@ -181,7 +181,7 @@ pub fn constitution() -> Value {
             {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
             {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
             {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
-            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
+            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
             {"position":"#5","name":"Epii","operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
         "source": {
@@ -1084,4 +1084,86 @@ mod tests {
             "{error}"
         );
     }
+}
+
+/// Entropy supplied to a journey act. Raw bytes are consumed and never echoed.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct JourneyEntropyInput {
+    pub hex: String,
+}
+
+fn journey_entropy(entropy: Option<&JourneyEntropyInput>) -> Result<Vec<u8>, String> {
+    let Some(entropy) = entropy else {
+        return Ok(Vec::new());
+    };
+    let hex = entropy.hex.trim();
+    if hex.len() % 2 != 0 || hex.len() > 8192 {
+        return Err("journey entropy must be at most 4096 hex-encoded bytes".into());
+    }
+    (0..hex.len())
+        .step_by(2)
+        .map(|index| u8::from_str_radix(&hex[index..index + 2], 16))
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|_| "journey entropy is not hexadecimal".to_string())
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraJourneyOpenRequest {
+    pub open: crate::nara::domain::OpenJourney,
+    pub entropy: JourneyEntropyInput,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraJourneyApplyRequest {
+    pub journey: crate::nara::domain::OracleJourney,
+    pub act: crate::nara::domain::JourneyAct,
+    pub entropy: Option<JourneyEntropyInput>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct NaraJourneyReadRequest {
+    pub journey: crate::nara::domain::OracleJourney,
+    pub window_unix_ms: Option<[u64; 2]>,
+}
+
+const JOURNEY_STANDING: &str = "QL computes the continuing journey; its Central owner persists the returned state with a revision check";
+
+/// `nara.journey.open` — select a deck for a concern and shuffle it once.
+pub fn nara_journey_open(request: NaraJourneyOpenRequest) -> Result<Value, String> {
+    let bytes = journey_entropy(Some(&request.entropy))?;
+    let journey = crate::nara::domain::OracleJourney::open(request.open, &bytes)?;
+    let reading = journey.reading(None)?;
+    Ok(json!({
+        "schema":"ql.nara-journey-result/v1",
+        "journey":journey,
+        "reading":reading,
+        "standing":JOURNEY_STANDING
+    }))
+}
+
+/// `nara.journey.apply` — one attributed act; a replayed request reconciles.
+pub fn nara_journey_apply(request: NaraJourneyApplyRequest) -> Result<Value, String> {
+    let mut journey = request.journey;
+    journey.validate()?;
+    let bytes = journey_entropy(request.entropy.as_ref())?;
+    let effect = journey.apply(request.act, &bytes)?;
+    let reading = journey.reading(None)?;
+    Ok(json!({
+        "schema":"ql.nara-journey-result/v1",
+        "journey":journey,
+        "effect":effect,
+        "reading":reading,
+        "standing":JOURNEY_STANDING
+    }))
+}
+
+/// `nara.journey.read` — the disclosed reading, or a period review.
+pub fn nara_journey_read(request: NaraJourneyReadRequest) -> Result<Value, String> {
+    request.journey.validate()?;
+    let window = request.window_unix_ms.map(|[from, to]| (from, to));
+    serde_json::to_value(request.journey.reading(window)?).map_err(|error| error.to_string())
 }

@@ -357,13 +357,13 @@ impl OracleCastContext {
     }
 }
 
-struct EntropyCursor<'a> {
+pub(crate) struct EntropyCursor<'a> {
     bytes: &'a [u8],
     offset: usize,
 }
 
 impl<'a> EntropyCursor<'a> {
-    fn new(bytes: &'a [u8]) -> Self {
+    pub(crate) fn new(bytes: &'a [u8]) -> Self {
         Self { bytes, offset: 0 }
     }
 
@@ -377,7 +377,7 @@ impl<'a> EntropyCursor<'a> {
         Ok(value)
     }
 
-    fn unbiased_index(&mut self, upper_exclusive: u16) -> Result<usize, String> {
+    pub(crate) fn unbiased_index(&mut self, upper_exclusive: u16) -> Result<usize, String> {
         if upper_exclusive == 0 || upper_exclusive > 256 {
             return Err("oracle entropy index bound must be within 1..=256".into());
         }
