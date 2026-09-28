@@ -3,6 +3,21 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "modules": [
     {
+      "path": "crates/ql-mef/src/continuous/k2.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-1"
+      ],
+      "rationale": "K² played-torus provider: the native M1 torus is the rest body and M2-1 Vimarśā voices supply frequency and nodal mode numbers of its surface modes. It composes supplied events through the accepted owners; scale, damping, strike and gain are declared material policy.",
+      "tests": [
+        "crates/ql-mef/src/continuous/k2.rs",
+        "crates/ql-mef/tests/k2_instrument.rs"
+      ],
+      "kind": "computational"
+    },
+    {
       "path": "c/src/m_tree_live.c",
       "header": "c/include/ql/m_tree_live.h",
       "stratum": "c",
