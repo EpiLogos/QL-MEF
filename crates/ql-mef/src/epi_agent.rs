@@ -215,6 +215,7 @@ pub fn faculty(position: u8) -> Result<Value, String> {
         "position": format!("#{position}"),
         "constitution": constitution["faculties"][usize::from(position)].clone(),
         "capability_field": capability_document(position),
+        "operation_inputs": operation_inputs(position),
         "instrument_resolution": resolve_instruments(
             constitution["faculties"][usize::from(position)]["optional_instruments"]
                 .as_array()
@@ -1175,4 +1176,155 @@ pub fn nara_lived_context(
 ) -> Result<Value, String> {
     let context = crate::nara::lived_context::compose(request)?;
     serde_json::to_value(context).map_err(|error| error.to_string())
+}
+
+/// Valid example `input` objects for the operations whose inputs are typed
+/// contracts, built from the real request types so they cannot drift. A body
+/// discovering its faculty reads the shape here instead of probing by error.
+pub fn operation_inputs(position: u8) -> Value {
+    if position != 4 {
+        return json!({});
+    }
+    use crate::nara::domain::{
+        ActorKind, DeckDefinition, JourneyAct, JourneyConcern, JourneyRequest, NewReading,
+        OpenJourney, OracleEntropyReceipt, OracleSystem, ProtectedRef, ReadingKind, SpreadKind,
+        TarotRegister,
+    };
+    use crate::nara::{ConsentState, SourceRevision};
+    let source = SourceRevision {
+        source_ref: "central:source:control:root:Control/user/day/2026-09-28/day.md".into(),
+        revision: "central.content-fnv1a64/v1:0:0".into(),
+        standing_ref: "human-day".into(),
+    };
+    let protected = |name: &str| ProtectedRef {
+        ref_id: format!("protected:{name}"),
+        revision: "r1".into(),
+        owner_ref: "central".into(),
+    };
+    let open = OpenJourney {
+        journey_ref: "journey:<concern-slug>".into(),
+        subject_id: "<person-ref>".into(),
+        concern: JourneyConcern {
+            concern_ref: "concern:<slug>".into(),
+            title: "<the concern in the person's words>".into(),
+            basis_sources: vec![source.clone()],
+        },
+        deck: DeckDefinition {
+            deck_ref: "deck:thoth".into(),
+            system: OracleSystem::TarotThoth,
+            register: TarotRegister::Thoth,
+            extra_cards: Vec::new(),
+            source_refs: Vec::new(),
+        },
+        day_ref: "central:day:control:root:2026-09-28".into(),
+        actor_ref: "agent/nara".into(),
+        entropy: OracleEntropyReceipt {
+            entropy_ref: protected("shuffle-entropy"),
+            method_ref: "os-entropy".into(),
+            provider_ref: "provider:os-urandom".into(),
+            observed_at_unix_ms: 0,
+            evidence_refs: vec!["evidence:shuffle".into()],
+        },
+        consent: ConsentState::Granted,
+        opened_at_unix_ms: 0,
+    };
+    let act = |id: &str, request: JourneyRequest| JourneyAct {
+        request_id: id.into(),
+        actor_ref: "agent/nara".into(),
+        at_unix_ms: 0,
+        request,
+    };
+    let draw = act(
+        "draw-1",
+        JourneyRequest::Draw {
+            spread: SpreadKind::Sphere,
+            day_ref: "central:day:control:root:2026-09-28".into(),
+            basis_sources: vec![source.clone()],
+        },
+    );
+    let read = act(
+        "read-1",
+        JourneyRequest::Read {
+            placement_ref: "<placement_ref from the reading>".into(),
+            reading: NewReading {
+                reading_ref: "reading:<slug>".into(),
+                kind: ReadingKind::Original,
+                actor_kind: ActorKind::Agent,
+                text: "<interpretation>".into(),
+                supersedes: None,
+                source_refs: vec![source.source_ref.clone()],
+                occurred_at_unix_ms: 0,
+            },
+        },
+    );
+    let placeholder_journey = "<the journey object returned by nara.journey.open / apply>";
+    json!({
+        "nara.journey.open": {
+            "input": {"open": open, "entropy": {"hex": "<at least 512 bytes of fresh OS entropy, hex-encoded; never echoed>"}},
+            "note": "open.entropy is the provenance receipt; the top-level entropy.hex carries the raw bytes. The result carries `journey` (persist it through Central with a revision check) and `reading` (card names, positions, current readings)."
+        },
+        "nara.journey.apply": {
+            "input": {"journey": placeholder_journey, "act": draw, "entropy": null},
+            "other_act_examples": [read],
+            "act_ops": ["draw","assign-symbol","relate-event","read","set-target-aspect","dispose","track-recognitions","evaluate-aliveness","cast-iching","record-computed-iching","read-iching","close"],
+            "note": "spread kinds: sphere, torus-day, klein-night{day_spread_ref}, lemniscate{within_placement_ref}, single{count}, closing. cast-iching needs entropy.hex (at least 18 bytes for coins). Card names are in the returned `reading`, not in `journey.placements`."
+        },
+        "nara.journey.read": {"input": {"journey": placeholder_journey, "window_unix_ms": null}},
+        "nara.lived-context.compose": {
+            "input": {
+                "subject_ref": "<person-ref>",
+                "concern": {"concern_ref": "concern:<slug>", "title": "<the concern>", "terms": ["<words the person uses>"]},
+                "occasion": null,
+                "documents": ["<central.document-reading/v1 results exactly as central.document.read returned them>"],
+                "entries": [],
+                "journey": null,
+                "budget": {"max_passages": 12, "max_chars": 20000},
+                "disclosed_via_ref": "<consent receipt ref>",
+                "composed_at_unix_ms": 0
+            },
+            "note": "Passages are selected by correction, journey relation/recognition, journey basis, a live card or concern term, or the current Day; a Day passage with none of these is not selected."
+        }
+    })
+}
+
+#[cfg(test)]
+mod operation_input_tests {
+    use super::*;
+
+    #[test]
+    fn disclosed_journey_examples_are_accepted_by_their_operations() {
+        let inputs = operation_inputs(4);
+        let mut open: NaraJourneyOpenRequest =
+            serde_json::from_value(inputs["nara.journey.open"]["input"].clone()).unwrap();
+        open.entropy.hex = "ab".repeat(1024);
+        let opened = nara_journey_open(open).unwrap();
+        for act in std::iter::once(inputs["nara.journey.apply"]["input"]["act"].clone()) {
+            let request = NaraJourneyApplyRequest {
+                journey: serde_json::from_value(opened["journey"].clone()).unwrap(),
+                act: serde_json::from_value(act).unwrap(),
+                entropy: None,
+            };
+            let applied = nara_journey_apply(request).unwrap();
+            assert_eq!(
+                applied["reading"]["spreads"][0]["placements"]
+                    .as_array()
+                    .unwrap()
+                    .len(),
+                2
+            );
+            assert!(applied["reading"]["spreads"][0]["placements"][0]["card"]["name"].is_string());
+        }
+        let read: crate::nara::domain::JourneyAct =
+            serde_json::from_value(inputs["nara.journey.apply"]["other_act_examples"][0].clone())
+                .unwrap();
+        assert_eq!(read.request_id, "read-1");
+        let compose: crate::nara::lived_context::LivedContextRequest = serde_json::from_value({
+            let mut value = inputs["nara.lived-context.compose"]["input"].clone();
+            value["documents"] = json!([]);
+            value
+        })
+        .unwrap();
+        crate::nara::lived_context::compose(compose).unwrap();
+        assert_eq!(operation_inputs(0), json!({}));
+    }
 }
