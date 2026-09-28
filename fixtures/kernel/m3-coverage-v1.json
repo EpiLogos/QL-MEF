@@ -1,7 +1,7 @@
 {
   "schema": "ql.m3-coverage/v1",
-  "registry_revision": "af21480db606a870843bcc1f9bd8de3c4681c8c9d2594f87c16600dd9817695b",
-  "domain_revision": "2499cb2a6e5d9dc3725a337f2e12346f78cf65d7c4d2e9ca69699e40c27f6436",
+  "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
+  "domain_revision": "67ba7a4f1b7edd2ded9e6a029580682a2f63bf14dedd8a09302993c6783877a7",
   "accepted_k4": "5b24b95d17234ab5d23d84e658c0cc06434b41a3",
   "coordinates": [
     {
@@ -13002,7 +13002,7 @@
     "field-M3:M3P-MEASUREMENT-INSPECTOR",
     "field-M3:M3P-WORLD-CLOCK"
   ],
-  "source_discrepancy_templates": 307,
+  "source_discrepancy_templates": 183,
   "contract": "docs/KERNEL-M3-ENGINE-CONTRACT.md",
   "standing": "complete known coordinate/source coverage, scoped finite operations, broad capabilities retain incomplete research/provider/experiential depth"
 }

@@ -13,11 +13,11 @@
     "crates/ql-mef/src/m3_state.rs": "633fe3d656262a242b77910ee283c542fa02d425d54092ba0c5605ebe161c111",
     "crates/ql-mef/examples/m3-state.rs": "a0b14019315b79aee1ae8e792bf2bc7bdb9956835305ff27a2c51137c0b4cdec",
     "crates/ql-mef/tests/m3_engine.rs": "26e8122b1667c1eef1664d397d9a3fc39f037a4a27a1e0f782155088f4276ff6",
-    "crates/ql-mef/tests/m3_domain.rs": "5bd50f0cd6262884e7e8a054174b8bc05fe8af8f225f319ca392784d442e5c5f",
+    "crates/ql-mef/tests/m3_domain.rs": "5a922d8241774900ac000cfcb5699c55df91cda10ecb462391ec8cce79db7669",
     "crates/ql-mef/tests/m3_state.rs": "9a176ab94d15eedff73ae2f13641074c9b7dbe4dede97c00f69c6ddfcf040130",
-    "fixtures/kernel/m3-domain-v1.json": "669b4a13bf4d533a5bc0640a6a4f59031670f38cd99f547f67f8e4148edb9d41",
-    "fixtures/kernel/m3-parent-consumer-v1.json": "f1829cf9610dd280d3b57337e338a8caae7d09f5069be5a170638f79c5284416",
-    "fixtures/kernel/m-tree-v1.json": "1a1be256d52bc3d6ce938902aedf0de3f16543bf98d59f6ead3a542e3125fbad",
+    "fixtures/kernel/m3-domain-v1.json": "49a75a8505a3eb02d6417459b2bc2ada64d438c2c2d1dc44a0e58fc856376784",
+    "fixtures/kernel/m3-parent-consumer-v1.json": "1b0f6ac72a941263b87450d875674ffc24dc880c7cbefb32da3f98adbc9693d4",
+    "fixtures/kernel/m-tree-v1.json": "05c2b8991198379d4359c8654260e878d061cb3df87ca133ef0af493af6928a1",
     "migration/epi-kernel/k7-m3-oracle.c": "7c15f043a917c61508e2d790f3c3b8e1833c402a3ed302d502a45188d656bb38",
     "migration/epi-kernel/k7-m3-probe.c": "d86b8dbca16542cdcd394bc0d37d89a8d26f3220ac4baa0aa1b8891349125bbd",
     "migration/epi-kernel/k7-m3-domain-probe.c": "b436ceaea4ba776683d08c50373205b87156a2802e696c21d51c4722d7451cd0",
@@ -52,9 +52,9 @@
   },
   "outputs": {
     "target/m3-rust/c-rust-parity.jsonl": "440e5cc570eb037b312d858a16719d82f67a6b3786535406b2122922983e6f67",
-    "target/m3-domain/c-rust.jsonl": "0a19e1f2ea891bc594c5ff4b7fb5af573d4630090c61f04a6a96ba7632c0ea8c",
-    "target/m3-parent-consumer/handoff.json": "8a2ba67f4c9c18b37039daf4c7defdd2a1ad6294403e3a0b9a6ff71882f74746",
-    "target/m3-acceptance/replay.json": "bd04dbfa92f848084e198a6f50b3702a64cdc2fe1149478561346d92e6a19cd1"
+    "target/m3-domain/c-rust.jsonl": "5a68cdcb6a1ef37cf1e5bda0a01d434cc81ff4625a03f29bd6213cba6a1dc287",
+    "target/m3-parent-consumer/handoff.json": "c5015f2dca0b10c788d2d804585ab15a189ab4c77cebad8acd3c9743a1623ea1",
+    "target/m3-acceptance/replay.json": "2b16cc2b45555c222c39ceadab202242deb70394d0b6291795bd8c056e3503d2"
   },
   "checks": [
     "18704-retained-native-C-fields-per-compiler",
