@@ -6,7 +6,7 @@ owned by their existing producers. Source-index parity never asserts whole-M3
 readiness. Reviewed discrepancy decisions survive a reproducible refresh.
 """
 from __future__ import annotations
-import argparse,copy,importlib.util,json
+import argparse,copy,importlib.util,json,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('mledger',ROOT/'scripts/m-ledger.py')
@@ -139,10 +139,30 @@ def refresh_proof():
  for p,h in r['inputs'].items():
   if m.lock(ROOT,p)['sha256']!=h:raise ValueError('M3 proof input changed after execution: '+p)
  write(PROOF,{k:v for k,v in r.items() if k!='revision'}|{'schema':'ql.m3-finite-proof/v1','standing':'executed exact input hashes; final CI receipt names the Git head; not whole-source readiness'})
+LINEAGE='fixtures/kernel/k8-build-lineage-v1.json'
+def publish(reason):
+ """A reviewed successor: fresh complete M3 acceptance becomes the accepted proof,
+ recorded in the build lineage with its reason (as scripts/m2-ledger.py publish)."""
+ if not reason.strip():raise ValueError('a successor needs its reason')
+ r=load('target/m3-acceptance/acceptance.json')
+ revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+ if r.get('revision')!=revision:raise ValueError('acceptance is not for this exact head')
+ previous=m.lock(ROOT,PROOF)['sha256']
+ refresh_proof()
+ write(SUMMARY,coverage())
+ lineage=load(LINEAGE)
+ lineage['proofs']['m3']=m.lock(ROOT,PROOF)['sha256']
+ lineage.setdefault('successors',[]).append({'engine':'m3','previous_sha256':previous,
+  'sha256':lineage['proofs']['m3'],'accepted_at_revision':revision,'reason':reason})
+ write(LINEAGE,lineage)
+ print('M3 successor proof published:',lineage['proofs']['m3'])
 def main():
- p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check']);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check','publish'])
+ p.add_argument('--reason',default='');a=p.parse_args()
  if a.command=='refresh':
   raise ValueError('K8 preserves the accepted K7 proof; publish a reviewed successor rather than retargeting it')
+ if a.command=='publish':
+  return publish(a.reason)
  proof=load(PROOF)
  spec=importlib.util.spec_from_file_location('k8_preservation',ROOT/'scripts/k8-preservation.py')
  preservation=importlib.util.module_from_spec(spec);spec.loader.exec_module(preservation)
