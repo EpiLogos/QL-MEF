@@ -164,14 +164,13 @@ def main() -> None:
         x, y = (OLD[c] for c in seq)
         total, diff = int(total), int(diff)
         nx, ny = (NEW[c] for c in seq)
-        # The ruling corrects magnitudes; each recorded difference sign is kept
-        # (AG=GA and TC=CT are class-stable, M3 unresolved item 2), as the
-        # ratified kernel correction M3-COIN-1 keeps them.
-        sign = (diff > 0) - (diff < 0)
-        want = (nx + ny, sign * abs(nx - ny))
+        # differenceValue is x - y, except the class-stable cross-complementary
+        # signs (M3 unresolved item 2): AG carries GA's value and TC carries CT's,
+        # as the ratified kernel correction M3-COIN-1 keeps them.
+        want = (nx + ny, ny - nx if seq in ("AG", "TC") else nx - ny)
         if (total, diff) == want:
             continue  # already corrected
-        if total != x + y or abs(diff) != abs(x - y):
+        if total != x + y or diff != (y - x if seq in ("AG", "TC") else x - y):
             raise SystemExit(f"{coord} {seq}: pair values are not the old-table values")
         lines.append(f"MATCH (n:Bimba {{coordinate:{lit(coord)}}}) WHERE n.c_3_sum_value = {total} AND "
                      f"n.c_3_difference_value = {diff} SET n.c_3_sum_value = {want[0]}, n.c_3_difference_value = {want[1]};")
