@@ -6,12 +6,16 @@ OUT="$ROOT/target/m-tree"
 mkdir -p "$OUT"
 python3 scripts/generate-m-tree.py --check
 FLAGS=(-std=c11 -O1 -Wall -Wextra -Werror -pedantic -Ic/include)
+case "$(uname -s)" in
+  Darwin) asan="detect_leaks=0:halt_on_error=1" ;; # LeakSanitizer is unavailable on macOS.
+  *) asan="detect_leaks=1:halt_on_error=1" ;;
+esac
 SOURCES=(migration/epi-kernel/k2-m-tree-probe.c c/src/m_tree.c)
 "${CC:-cc}" "${FLAGS[@]}" "${SOURCES[@]}" -o "$OUT/probe"
 "$OUT/probe" > "$OUT/native.jsonl" 2> "$OUT/native-checks.txt"
 "${CLANG:-clang}" "${FLAGS[@]}" -g -fno-omit-frame-pointer -fsanitize=address,undefined \
   "${SOURCES[@]}" -o "$OUT/sanitized-probe"
-ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 \
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 \
   "$OUT/sanitized-probe" > "$OUT/sanitized.jsonl" 2> "$OUT/sanitized-checks.txt"
 cmp "$OUT/native.jsonl" "$OUT/sanitized.jsonl"
 python3 -m unittest discover -s scripts/tests -p test_m_tree.py -v > "$OUT/generator-tests.txt" 2>&1

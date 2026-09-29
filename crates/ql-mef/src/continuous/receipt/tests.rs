@@ -337,8 +337,11 @@ mod transport {
                 _ => {},
             }
             let stub = Stub::new(replies, ending);
+            // Match the other transport cases: this deadline includes Python
+            // startup and loading the complete native receipt before the fault.
             let mut session =
-                FieldSession::open(&stub.executable, m2, field, Duration::from_secs(2)).unwrap();
+                FieldSession::open(&stub.executable, m2, field, Duration::from_secs(5))
+                    .unwrap_or_else(|error| panic!("{ending} worker startup failed: {error}"));
             assert!(
                 session
                     .advance(32, false)

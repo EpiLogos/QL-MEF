@@ -9,6 +9,7 @@ mod context_frame;
 mod context_frame_target;
 pub mod continuous;
 mod coordinate;
+pub mod coordinate_expression;
 pub mod cprime_oikonomia;
 pub mod epi_agent;
 mod error;

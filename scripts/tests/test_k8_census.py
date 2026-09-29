@@ -28,7 +28,7 @@ class CurrentInventory(unittest.TestCase):
 
     def test_new_unowned_construct_is_not_inherited_as_an_old_orphan(self):
         discovered = copy.deepcopy(self.discovered)
-        discovered['c'].append({'path': 'c/src/m2.c', 'symbol': 'new_unowned_operation', 'kind': 'function', 'line': 1})
+        discovered['c'].append({'path': 'c/src/m3.c', 'symbol': 'new_unowned_operation', 'kind': 'function', 'line': 1})
         with patch.object(k8.census, 'scan_constructs', return_value=discovered):
             with self.assertRaisesRegex(ValueError, 'no reviewed owner'):
                 k8.project()

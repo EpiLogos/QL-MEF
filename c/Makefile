@@ -89,7 +89,7 @@ package: $(LIB)
 	rm -rf $(BUILD_DIR)/package-root
 	$(MAKE) install DESTDIR=$(abspath $(BUILD_DIR)/package-root) PREFIX=/ql-mef-c SOURCE_REVISION='$(SOURCE_REVISION)'
 	mkdir -p $(DIST_DIR)
-	tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C $(BUILD_DIR)/package-root -cf - ql-mef-c | gzip -n > $(DIST_DIR)/$(PACKAGE_BASENAME)
+	python3 ../scripts/package-native-c.py $(BUILD_DIR)/package-root $(DIST_DIR)/$(PACKAGE_BASENAME)
 	cd $(DIST_DIR) && sha256sum $(PACKAGE_BASENAME) > $(PACKAGE_BASENAME).sha256
 
 clean:

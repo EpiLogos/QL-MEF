@@ -73,6 +73,28 @@ QL_M2_Result ql_m2_scalar_expand(unsigned index, uint8_t *out);
 QL_M2_Result ql_m2_legacy_det(const uint8_t *indices, size_t count, uint64_t *out);
 QL_M2_Result ql_m2_asma_route(unsigned index, uint8_t *out); /* 0 internal, 1 projective */
 QL_M2_Result ql_m2_planet_preempted(unsigned index, uint8_t *out);
+/* Canonical PLANETARY_RESONANCE route over the existing M graph, independent
+ * of the frozen descriptor's elem_sig. Chakra IDs are 1..7; Earth is 0 and
+ * never a receiver. A missing graph route returns QL_M2_UNAVAILABLE.
+ * Duplicate source assertions retain their own relation identities. */
+typedef struct {
+    QL_M_NodeId planet_id, chakra_id;
+    uint8_t chakra_index;
+    size_t relation_count;
+} QL_M2_PlanetChakraRoute;
+QL_M2_Result ql_m2_planet_chakra_route(unsigned planet_index, QL_M2_PlanetChakraRoute *out);
+const QL_M_Relation *ql_m2_planet_chakra_relation(unsigned planet_index, size_t assertion_index);
+/* RULED_BY is resolved from a situated decan's actual graph parent. Retained C
+ * ruling_planet is diagnostic only. planet_index==255 and planet_id==0 mean
+ * no admitted choice; original graph assertions remain available. A pinned
+ * source-property contradiction is retained, not silently won by either side. */
+typedef struct {
+    QL_M_NodeId decan_id, planet_id;
+    uint8_t zodiac_decan_index, planet_index, source_conflict;
+    size_t candidate_count, relation_count, conflict_relation_count;
+} QL_M2_DecanPlanetRoute;
+QL_M2_Result ql_m2_decan_planet_route(double longitude, QL_M2_DecanPlanetRoute *out);
+const QL_M_Relation *ql_m2_decan_planet_relation(double longitude, size_t assertion_index);
 uint8_t ql_m2_digital_root(uint64_t value);
 QL_M2_Result ql_m2_aspect(double a, double b, QL_M2_Aspect *out);
 QL_M2_Result ql_m2_maqam_pitch(unsigned mode, unsigned degree, double root_hz, double *out);

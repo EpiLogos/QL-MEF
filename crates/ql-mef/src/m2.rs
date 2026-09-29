@@ -326,6 +326,192 @@ pub fn causal_resonances(reference: &str) -> Result<Vec<&'static MTreeRelation>,
         .collect())
 }
 
+/// A graph-authored route, separate from the frozen C elemental signature.
+/// Native chakra identity is 1..7; zero-based receiver storage is not its ID.
+#[derive(Debug, Clone, Serialize)]
+pub struct PlanetChakraRoute {
+    pub planet_id: MTreeId,
+    pub planet_coordinate: String,
+    pub chakra_id: MTreeId,
+    pub chakra_coordinate: String,
+    pub chakra_index: u8,
+    pub registry_revision: String,
+    pub source_revision: String,
+    pub relations: Vec<MTreeRelation>,
+}
+
+/// Read PLANETARY_RESONANCE from the same compiled graph as the native C API.
+/// Missing outer-planet routes stay absent; conflicting targets are refused.
+pub fn planet_chakra_route(planet_index: usize) -> Result<Option<PlanetChakraRoute>, String> {
+    let planets = catalogue().table("planet")?;
+    planets.row(planet_index)?;
+    let Some(reference) = planets.binding(planet_index) else {
+        return Ok(None);
+    };
+    let registry = native_m_registry();
+    let planet = registry
+        .resolve(reference)
+        .ok_or("unknown M2 planet coordinate")?;
+    let relations: Vec<_> = registry
+        .relations_for(planet.id)
+        .filter(|r| r.from_id == Some(planet.id) && r.source_kind == "PLANETARY_RESONANCE")
+        .cloned()
+        .collect();
+    let Some(first) = relations.first() else {
+        return Ok(None);
+    };
+    let chakra_id = first
+        .to_id
+        .ok_or("planetary resonance target unavailable")?;
+    if relations.iter().any(|r| r.to_id != Some(chakra_id)) {
+        return Err("conflicting planetary resonance targets".into());
+    }
+    let chakra = registry
+        .node(chakra_id)
+        .ok_or("unknown planetary resonance target")?;
+    let chakras = catalogue().table("chakra")?;
+    let chakra_index = (1..8)
+        .find(|&i| chakras.binding(i) == Some(chakra.source_ref.as_str()))
+        .ok_or("planetary resonance target is not a canonical chakra")?
+        as u8;
+    Ok(Some(PlanetChakraRoute {
+        planet_id: planet.id,
+        planet_coordinate: planet.source_ref.clone(),
+        chakra_id,
+        chakra_coordinate: chakra.source_ref.clone(),
+        chakra_index,
+        registry_revision: registry.manifest().registry_revision.clone(),
+        source_revision: registry.manifest().source_revision.clone(),
+        relations,
+    }))
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct DecanRulerCandidate {
+    pub planet_index: usize,
+    pub planet_id: MTreeId,
+    pub planet_coordinate: String,
+    pub relations: Vec<MTreeRelation>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+/// A typed map relation from the decan to a planet other than its `RULED_BY`
+/// ruler: the map disagrees with itself about the decan's planet.
+pub struct DecanRulerConflict {
+    pub relation_kind: String,
+    pub relation_ref: String,
+    pub planet_index: usize,
+    pub planet_coordinate: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct DecanPlanetRoute {
+    pub decan_coordinate: String,
+    pub decan_id: MTreeId,
+    pub zodiac_decan_index: u8,
+    pub planet_index: Option<usize>,
+    pub status: String,
+    pub graph_candidates: Vec<DecanRulerCandidate>,
+    pub source_conflicts: Vec<DecanRulerConflict>,
+    pub registry_revision: String,
+    pub source_revision: String,
+}
+
+/// Resolve the situated native face's actual parent and its RULED_BY assertions.
+/// The retained C descriptor ruler does not overrule graph-authored routing.
+/// Conflicting source properties remain unresolved, with both assertions kept.
+pub fn decan_planet_route(longitude: f64) -> Result<DecanPlanetRoute, String> {
+    let reading = situated_decan(longitude, false)?;
+    let registry = native_m_registry();
+    let decans = catalogue().table("decan")?;
+    let face_ref = decans
+        .binding(usize::from(reading.index()))
+        .ok_or("unbound native decan face")?;
+    let face = registry
+        .resolve(face_ref)
+        .ok_or("unknown native decan face")?;
+    let decan = registry
+        .parent(face.id)
+        .ok_or("native decan face has no parent")?;
+    let planets = catalogue().table("planet")?;
+    let mut grouped = std::collections::BTreeMap::<usize, Vec<MTreeRelation>>::new();
+    for relation in registry
+        .relations_for(decan.id)
+        .filter(|r| r.from_id == Some(decan.id) && r.source_kind == "RULED_BY")
+    {
+        let target = relation
+            .to_id
+            .and_then(|id| registry.node(id))
+            .ok_or("decan ruler target unavailable")?;
+        let index = (0..10)
+            .find(|&i| planets.binding(i) == Some(target.source_ref.as_str()))
+            .ok_or("decan ruler is not a native planet")?;
+        grouped.entry(index).or_default().push(relation.clone());
+    }
+    let mut candidates = Vec::new();
+    for (index, relations) in grouped {
+        let planet = registry
+            .resolve(planets.binding(index).ok_or("unbound native planet")?)
+            .ok_or("unknown native planet")?;
+        candidates.push(DecanRulerCandidate {
+            planet_index: index,
+            planet_id: planet.id,
+            planet_coordinate: planet.source_ref.clone(),
+            relations,
+        });
+    }
+    // The live map is the authority (#255). Where the decan's other typed
+    // relations to a planet disagree with its RULED_BY ruler (Cancer III:
+    // RULED_BY Saturn, three relations to the Moon), the conflict is held and no
+    // ruler is chosen automatically.
+    let mut source_conflicts = Vec::new();
+    for relation in registry
+        .relations_for(decan.id)
+        .filter(|r| r.from_id == Some(decan.id) && r.source_kind != "RULED_BY")
+    {
+        let Some(target) = relation.to_id.and_then(|id| registry.node(id)) else {
+            continue;
+        };
+        let Some(index) = (0..10).find(|&i| planets.binding(i) == Some(target.source_ref.as_str()))
+        else {
+            continue;
+        };
+        if !candidates.iter().any(|c| c.planet_index == index) {
+            source_conflicts.push(DecanRulerConflict {
+                relation_kind: relation.source_kind.clone(),
+                relation_ref: relation.relation_ref.clone(),
+                planet_index: index,
+                planet_coordinate: target.source_ref.clone(),
+            });
+        }
+    }
+    let planet_index = if candidates.len() == 1 && source_conflicts.is_empty() {
+        Some(candidates[0].planet_index)
+    } else {
+        None
+    };
+    let status = if !source_conflicts.is_empty() {
+        "source-conflict"
+    } else if candidates.is_empty() {
+        "unavailable"
+    } else if candidates.len() > 1 {
+        "ambiguous"
+    } else {
+        "available"
+    };
+    Ok(DecanPlanetRoute {
+        decan_coordinate: decan.source_ref.clone(),
+        decan_id: decan.id,
+        zodiac_decan_index: (longitude / 10.0).floor() as u8,
+        planet_index,
+        status: status.into(),
+        graph_candidates: candidates,
+        source_conflicts,
+        registry_revision: registry.manifest().registry_revision.clone(),
+        source_revision: registry.manifest().source_revision.clone(),
+    })
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Register72 {

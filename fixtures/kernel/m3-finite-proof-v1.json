@@ -2,7 +2,7 @@
   "schema": "ql.m3-finite-proof/v1",
   "result": "passed",
   "inputs": {
-    "c/Makefile": "a1d81f697e6a94eca361ad237ab6404e62f7f7feb7450fc2144ee315b97227ac",
+    "c/Makefile": "3b0910315fa52dd6fff5cb9cdedd4403d9c630fda1f3ea9a770f632dfbb25410",
     "c/include/ql/m3.h": "2a85496981850afffecf97808b98a88fabea87c2d50b716a3d132906dfa5348d",
     "c/include/ql/m3_domain.h": "7eeb291824dd89ebebc397799207a0a50e560dfe454466f923a9e3283061d465",
     "c/src/m3.c": "635fa8c8f6c18c21a8aa29491774c04efd45592a303bfec56027956e279fb6a2",
@@ -10,7 +10,7 @@
     "crates/ql-core/src/m3_clock.rs": "7bdd0e147e2221ec37ef9788cf8823b775289e74e095fce1048980456c48b4a7",
     "crates/ql-mef/src/m3_engine.rs": "5eb86f06f97143d086eaa3c2448f81b8da78c9e9ab25f4a7ca2c10eb2a617b9f",
     "crates/ql-mef/src/m3_source.rs": "80ec36ee6f5d8e6d1b13478b0d5db206ff52ffe79f17035057a8b08585c60951",
-    "crates/ql-mef/src/m3_state.rs": "aaec4b3a0a9d29ff7df657abc4ce43821b90ef7bdd5e153af0b4168303cf6bf5",
+    "crates/ql-mef/src/m3_state.rs": "375e767692b56788e67a4888c597f02e9b9a11677b4da3a8382d3cc3c2b85cd9",
     "crates/ql-mef/examples/m3-state.rs": "a0b14019315b79aee1ae8e792bf2bc7bdb9956835305ff27a2c51137c0b4cdec",
     "crates/ql-mef/tests/m3_engine.rs": "26e8122b1667c1eef1664d397d9a3fc39f037a4a27a1e0f782155088f4276ff6",
     "crates/ql-mef/tests/m3_domain.rs": "5a922d8241774900ac000cfcb5699c55df91cda10ecb462391ec8cce79db7669",
@@ -39,7 +39,7 @@
     "crates/ql-core/src/pole/basis.rs": "5f5b20ec9b0e2ca02cf9668aca34b9da1b4c112033e2f141469e1b7164f77dbd",
     "crates/ql-core/src/pole/codon.rs": "4fcedb4594ec17dc9097b3ec28ff4535437dcd8b56a9c71cc6330e4e22250cd3",
     "crates/ql-core/src/pole/coin.rs": "7a3049e5c64fd09fa2222b0197dbbf4fef739fa9f54e7de469a8a06da7f57bd4",
-    "crates/ql-core/src/pole/fold.rs": "31cdc9fb6e74eb9c93e04c90f6be4a3ca9118ceef0842d3cc3ecef87256b590d",
+    "crates/ql-core/src/pole/fold.rs": "0a1630d6efb7a95757e4c973d5c425c8b9d1b1486ec61078b1c16d2dee0e1001",
     "crates/ql-core/src/pole/iching.rs": "e1c080c0e62359127483164adb793ce314d4a605a1e91c30e1b797ca4633bf90",
     "crates/ql-core/src/pole/inverse.rs": "aabad531e690b23b42ac76e87d5ba3d175f87faff7c4da75d29eec03af325a33",
     "crates/ql-core/src/pole/mod.rs": "cbee8932e8f4bb67e0bf551e6d756481996e29b592e336c14f866fc8bd350e5c",
@@ -53,8 +53,8 @@
   "outputs": {
     "target/m3-rust/c-rust-parity.jsonl": "440e5cc570eb037b312d858a16719d82f67a6b3786535406b2122922983e6f67",
     "target/m3-domain/c-rust.jsonl": "170d41be763be454efe02fefbf062b1b63ace120608eecb19b9ea6420cdaceed",
-    "target/m3-parent-consumer/handoff.json": "70826ae23a23fc29c4856defdf41cc897c7894dca9ae552c2c540868ae5ca874",
-    "target/m3-acceptance/replay.json": "56ecd953ff5358e6fd98ea9461d6c9d23091126f1858db3f27fd6c9f106f71e6"
+    "target/m3-parent-consumer/handoff.json": "938520034f378e74e89312cbb5ef4567cab0c1240e12b0274c08bb7b8ae64c46",
+    "target/m3-acceptance/replay.json": "1bd052ec3934e2205ea4e706d688520822ae4025268e379e50a8772c229255f6"
   },
   "checks": [
     "18704-retained-native-C-fields-per-compiler",
