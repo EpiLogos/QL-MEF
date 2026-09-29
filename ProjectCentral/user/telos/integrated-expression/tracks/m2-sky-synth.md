@@ -17,3 +17,9 @@ Work:
 Depends: map-and-kernel, m1-body (carrier). Done-when: moving one planet's
 longitude changes exactly the predicted modulation, filter and pitch targets,
 checked in C++ state readback and PCM.
+
+State (29 Sep):
+- The sky bus is on main (#270). Observed planets voice modes at M1's root times their map just ratio.
+- `fixtures/kernel/m2-sky-v1.json` carries M2-5's map values.
+- `ql scene compose` gives one integrated event from a dated sky.
+- Still open: maqam and hour ruler selection from the map relations, and tattva → material.
