@@ -986,6 +986,22 @@
         "crates/ql-cli/tests/scene_native.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/scene_field.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-5",
+        "#2-1"
+      ],
+      "rationale": "The integrated scene played on the M1 torus: each map-tuned planet of the dated sky is a surface mode at its ecliptic degree (theta = lambda), sounded through the coupled sky bus, with the M2 Vimarsha Chladni skin; host operations re-read the event per determinant.",
+      "tests": [
+        "crates/ql-mef/tests/scene_instrument.rs",
+        "crates/ql-mef/tests/scene_nara_reception.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
