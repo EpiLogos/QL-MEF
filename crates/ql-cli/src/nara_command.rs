@@ -427,6 +427,22 @@ fn calculate_provider(
     serde_json::from_slice(&output).map_err(error)
 }
 
+/// The accepted sky snapshot itself, from the same embedded provider Nara uses.
+pub(crate) fn sky_snapshot(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
+    let natal_script = resources()?;
+    let script = natal_script
+        .parent()
+        .and_then(|p| p.parent())
+        .ok_or_else(|| error("invalid sky resource layout"))?
+        .join("sky/kerykeion_snapshot.py");
+    let args: &[&str] = if existing_snapshot {
+        &["-", "--validate-snapshot"]
+    } else {
+        &["-"]
+    };
+    calculate_provider(request, script, args)
+}
+
 fn transit(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
     let natal_script = resources()?;
     let script = natal_script
