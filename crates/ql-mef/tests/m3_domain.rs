@@ -54,8 +54,10 @@ fn form_values(kind: &str, index: usize, extra: usize, f: &FoldState) -> Value {
 fn source_reading_retains_full_depth_and_multivalued_genetics() {
     let s = native_m3_source();
     assert_eq!(s.nodes().len(), 996);
-    assert_eq!(s.relations().len(), 4891);
-    assert_eq!(s.discrepancies().len(), 563);
+    assert_eq!(s.relations().len(), 4952);
+    // 307 until the map took C=8/G=7 (owner ruling, #254): the 112 codon-charge
+    // and 12 pair-descriptor findings resolved when kernel and map agreed.
+    assert_eq!(s.discrepancies().len(), 183);
     let atg = Codon64::from_nucleotides(Nucleotide::A, Nucleotide::T, Nucleotide::G);
     assert_eq!(
         s.genetic(atg)
@@ -71,10 +73,11 @@ fn source_reading_retains_full_depth_and_multivalued_genetics() {
             .count(),
         37
     );
+    // The map resolves every matrix pair edge (the July seed held 114 without a target).
     assert!(
-        s.relations()
+        !s.relations()
             .iter()
-            .any(|r| r.kind == "USES_Pair" && r.to_id.is_none())
+            .any(|r| r.kind == "USES_PAIR" && r.to_id.is_none())
     );
 }
 #[test]
@@ -183,11 +186,13 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
                 json!([
                     k,
                     index,
+                    // The C ABI writes a gap as the zero id and 255.
                     p.id,
-                    p.codon_id,
-                    p.hexagram_id,
-                    p.codon_address,
-                    p.hexagram_address,
+                    p.codon_id.map_or(json!("0000000000000000"), |i| json!(i)),
+                    p.hexagram_id
+                        .map_or(json!("0000000000000000"), |i| json!(i)),
+                    p.codon_address.unwrap_or(255),
+                    p.hexagram_address.unwrap_or(255),
                     p.source_record
                 ])
             }
@@ -212,7 +217,7 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
     }
     assert_eq!(counts.get("active"), Some(&512));
     assert_eq!(counts.get("source-node"), Some(&996));
-    assert_eq!(counts.get("source-edge"), Some(&4891));
+    assert_eq!(counts.get("source-edge"), Some(&4952));
     assert_eq!(counts.get("cell"), Some(&184));
     assert_eq!(counts.get("projection"), Some(&1441));
     assert_eq!(counts.get("form"), Some(&(472 * 16)));

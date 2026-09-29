@@ -3,21 +3,6 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "modules": [
     {
-      "path": "crates/ql-mef/src/continuous/k2.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#1-5-1",
-        "#2-1"
-      ],
-      "rationale": "K² played-torus provider: the native M1 torus is the rest body and M2-1 Vimarśā voices supply frequency and nodal mode numbers of its surface modes. It composes supplied events through the accepted owners; scale, damping, strike and gain are declared material policy.",
-      "tests": [
-        "crates/ql-mef/src/continuous/k2.rs",
-        "crates/ql-mef/tests/k2_instrument.rs"
-      ],
-      "kind": "computational"
-    },
-    {
       "path": "c/src/m_tree_live.c",
       "header": "c/include/ql/m_tree_live.h",
       "stratum": "c",
@@ -115,7 +100,7 @@
         "#3-0",
         "#3-5-5/0"
       ],
-      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1–M3 laws and GPU particle integration remain separate owners.",
+      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
       "tests": [
         "cpp/tests/continuous_field.cpp",
         "scripts/test-k8-continuous.py"
@@ -222,7 +207,7 @@
         "#0-4",
         "#0-5"
       ],
-      "rationale": "#94/AW2 QL-owned semantic projection of current Factory Vāk execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
+      "rationale": "#94/AW2 QL-owned semantic projection of current Factory V\u0101k execution snapshots into ql.vak-performance-event/v1. It preserves Factory Run/attempt/Return actuality, authored chain receiving context and the QL profile/source basis without creating a scheduler, attempt store, authority system, pitch table or second execution owner.",
       "tests": [
         "crates/ql-mef/src/vak_performance.rs",
         "crates/ql-mef/tests/k8_vak_performance.rs",
@@ -261,7 +246,7 @@
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL Vāk performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
+      "rationale": "#94/AW3 source-qualified interpretation of immutable Factory RunThought consumption against the twelve T/T-prime meanings, Central-owned NOW/source material and optional accepted QL V\u0101k performance evidence. It stores no thought/session state, grants no authority, owns no M coordinate and emits only a Recognition candidate for the native AIKit registration/reuse owner.",
       "tests": [
         "crates/ql-mef/src/vak_thought_consumption.rs"
       ],
@@ -815,6 +800,67 @@
       "rationale": "Sealed Nara identity material over explicit native identity fields. Derivative refs invalidate on slot replace; no renderer or agent state becomes identity authority.",
       "tests": [
         "crates/ql-mef/src/nara/identity_material.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/spanda_field.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-3-1",
+        "#1-3-2"
+      ],
+      "rationale": "Native Spanda field: the HKB relative phase of the bimba and pratibimba poles (#1-3-1/#1-3-2) and the codon advance from the signed ring state; exact parity with the C kernel T2.11 functions.",
+      "tests": [
+        "crates/ql-mef/tests/spanda_field.rs",
+        "migration/epi-kernel/spanda-field-probe.c"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m3_inscription.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-3",
+        "#3-4",
+        "#3-5-5/0"
+      ],
+      "rationale": "M3-5 inscription seed read through the map's relations: lambda -> decan (lens 9) -> EXPRESSES_AS_TAROT_PIP -> #3-4.0 reflection -> REFLECTS_DNA_FORM codon; wheel degree from the winter-solstice anchor -> ANCHORED_BY governor -> season palindrome. The live pose composes through quat_active_state.",
+      "tests": [
+        "crates/ql-mef/tests/m3_inscription.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/scene_sky.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-5",
+        "#2-3",
+        "#3-5-5/0"
+      ],
+      "rationale": "The accepted dated sky placed on the M3-5 clock: each body is its #2-5 coordinate by map name at theta = lambda, with the inscription seed at that degree, its PLANETARY_RESONANCE chakra and its decan's RULED_BY rulers; Earth #2-5-0/1-0 is the observer; bodies the map does not hold stay unmapped.",
+      "tests": [
+        "crates/ql-mef/tests/scene_sky.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/k2.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-1"
+      ],
+      "rationale": "K\u00b2 played-torus provider: the native M1 torus is the rest body and M2-1 Vimar\u015b\u0101 voices supply frequency and nodal mode numbers of its surface modes. It composes supplied events through the accepted owners; scale, damping, strike and gain are declared material policy.",
+      "tests": [
+        "crates/ql-mef/src/continuous/k2.rs",
+        "crates/ql-mef/tests/k2_instrument.rs"
       ],
       "kind": "computational"
     },

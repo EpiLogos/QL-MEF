@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = "docs/kernel-rebuild/m1-engine-acceptance-v1.json"
 CURRENT = "docs/kernel-rebuild/m1-engine-revalidation-v1.json"
-REGISTRY_REVISION = "259a2f496c5f3a76d31e5c480dc9afdb45ad1282a7034cc28c528c39a71442e4"
+REGISTRY_REVISION = "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77"
 
 
 def verify(root: Path = ROOT) -> dict[str, int]:
@@ -74,7 +74,9 @@ def verify(root: Path = ROOT) -> dict[str, int]:
     aliases = [d for d in ledger["discrepancies"] if d["id"].startswith("k4-live-spelling-composite-m1")]
     assert aliases and all(d["state"] == "rejected" for d in aliases)
     witness_symbols = {i["symbol"] for i in impls.values() if i["id"].startswith("k5-m1:source-witness:")}
-    assert {"M1_Root", "Quaternion", "_ananda_core", "_ananda_initialized", "quat_slerp", "get_quint_diff", "M1_M0_CROSSLINK"} <= witness_symbols
+    # _ananda_core/_ananda_initialized retired upstream (10.T10.10; ledger
+    # k-move-m1:retired-lazy-ananda-core); the 12×12 tables are their successors.
+    assert {"M1_Root", "Quaternion", "m1_ananda_get", "m1_ananda_dr_get", "quat_slerp", "get_quint_diff", "M1_M0_CROSSLINK"} <= witness_symbols
     assert "all" not in witness_symbols and "diff" not in witness_symbols
     return {"coordinates": len(m1), "source_capabilities": len(caps), "input_locks": len(paths), "retained_source_constructs": len(witness_symbols)}
 

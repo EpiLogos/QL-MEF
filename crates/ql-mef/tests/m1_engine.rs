@@ -23,6 +23,8 @@ fn actual_native_c_matches_rust_and_retained_c_return() {
         .current_dir(&root)
         .args([
             "-std=c11",
+            // The reference m1.c uses M_PI, hidden by glibc under strict c11.
+            "-D_DEFAULT_SOURCE",
             "-O1",
             "-Wall",
             "-Wextra",

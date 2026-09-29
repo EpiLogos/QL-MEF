@@ -45,28 +45,28 @@
  * this table in the same commit.
  * =================================================================== */
 
-static const uint8_t NUCLEOTIDE_ICHING_VALUE[4] = {6, 9, 8, 7};
+#define M3_ICHING_A_VALUE  6u
+#define M3_ICHING_T_VALUE  9u
+#define M3_ICHING_C_VALUE  8u
+#define M3_ICHING_G_VALUE  7u
+
+extern const uint8_t NUCLEOTIDE_ICHING_VALUE[4];
 
 _Static_assert(
-    6 + 9 + 8 + 7 == 30,
+    M3_ICHING_A_VALUE + M3_ICHING_T_VALUE +
+    M3_ICHING_C_VALUE + M3_ICHING_G_VALUE == 30,
     "NUCLEOTIDE_ICHING_VALUE must sum to 30 (6+9+8+7)"
 );
-_Static_assert(NUCLEOTIDE_ICHING_VALUE[0] + NUCLEOTIDE_ICHING_VALUE[1] == 15,
+_Static_assert(M3_ICHING_A_VALUE + M3_ICHING_T_VALUE == 15,
     "Complementary pair A+T must sum to 15");
-_Static_assert(NUCLEOTIDE_ICHING_VALUE[2] + NUCLEOTIDE_ICHING_VALUE[3] == 15,
+_Static_assert(M3_ICHING_C_VALUE + M3_ICHING_G_VALUE == 15,
     "Complementary pair C+G must sum to 15");
 
 /* O(1) accessor — single array index, no branch */
-static inline uint8_t get_iching_value(uint8_t nuc2bit) {
-    return NUCLEOTIDE_ICHING_VALUE[nuc2bit & 0x03];
-}
+uint8_t get_iching_value(uint8_t nuc2bit);
 
 /* Codon I-Ching sum: outer + middle + inner nucleotide values */
-static inline uint8_t get_codon_iching_sum(uint8_t codon6bit) {
-    return NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03]
-         + NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03]
-         + NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
-}
+uint8_t get_codon_iching_sum(uint8_t codon6bit);
 
 
 /* ===================================================================
@@ -91,30 +91,21 @@ static inline uint8_t get_codon_iching_sum(uint8_t codon6bit) {
 #define GET_MOBILITY(nuc)  (((nuc) >> 1) & 0x01)
 
 /* FR 2.3.1b: Base-pairing = XOR 0x01 (flips Polarity, preserves Mobility) */
-static inline uint8_t get_base_pair(uint8_t nuc) {
-    return nuc ^ 0x01;
-}
+uint8_t get_base_pair(uint8_t nuc);
 
 /* FR 2.3.1c: Codon encoding — 3 nucleotides × 2 bits = 6-bit address (0-63) */
-static inline uint8_t encode_codon(uint8_t n1, uint8_t n2, uint8_t n3) {
-    return (uint8_t)((n1 << 4) | (n2 << 2) | n3);
-}
+uint8_t encode_codon(uint8_t n1, uint8_t n2, uint8_t n3);
 
 /* Codon decomposition */
-static inline uint8_t codon_outer(uint8_t c)  { return (c >> 4) & 0x03; }
-static inline uint8_t codon_middle(uint8_t c) { return (c >> 2) & 0x03; }
-static inline uint8_t codon_inner(uint8_t c)  { return c & 0x03; }
+uint8_t codon_outer(uint8_t c);
+uint8_t codon_middle(uint8_t c);
+uint8_t codon_inner(uint8_t c);
 
 /* FR 2.3.1d: DNA/RNA phase — single bit flips entire Polarity table */
-static inline uint8_t get_polarity_phased(uint8_t nuc, bool is_rna) {
-    return GET_POLARITY(nuc) ^ (uint8_t)is_rna;
-}
+uint8_t get_polarity_phased(uint8_t nuc, bool is_rna);
 
 /* Nucleotide name for CLI output */
-static inline char nuc_to_char(uint8_t nuc) {
-    static const char NUC_CHARS[4] = {'A', 'T', 'C', 'G'};
-    return NUC_CHARS[nuc & 0x03];
-}
+char nuc_to_char(uint8_t nuc);
 
 
 /* ===================================================================
@@ -124,24 +115,18 @@ static inline char nuc_to_char(uint8_t nuc) {
  * =================================================================== */
 
 /* LINE_CHANGE: flip line n (0-5) of hexagram h — 384 edges in XOR */
-static inline uint8_t m3_line_change(uint8_t hex, uint8_t line) {
-    return hex ^ (1u << line);
-}
+uint8_t m3_line_change(uint8_t hex, uint8_t line);
 
 /* Trigram decomposition — built into 6-bit address */
-static inline uint8_t upper_trigram(uint8_t hex_id) { return (hex_id >> 3) & 0x07; }
-static inline uint8_t lower_trigram(uint8_t hex_id) { return hex_id & 0x07; }
-static inline uint8_t compose_hexagram(uint8_t upper, uint8_t lower) {
-    return (uint8_t)((upper << 3) | lower);
-}
+uint8_t upper_trigram(uint8_t hex_id);
+uint8_t lower_trigram(uint8_t hex_id);
+uint8_t compose_hexagram(uint8_t upper, uint8_t lower);
 
 /* Complementarity: all 6 lines inverted */
-static inline uint8_t m3_complement(uint8_t hex_id) { return hex_id ^ 0x3F; }
+uint8_t m3_complement(uint8_t hex_id);
 
 /* Integral Symmetry on full 64-bit field (all codons simultaneously, O(1)) */
-static inline uint64_t integral_symmetry_field(uint64_t m3_word) {
-    return __builtin_bswap64(m3_word);
-}
+uint64_t integral_symmetry_field(uint64_t m3_word);
 
 
 /* ===================================================================
@@ -171,18 +156,16 @@ typedef enum {
 
 extern const uint8_t M3_MATRIX_PAIR[M3_MATRIX_COUNT][4];
 
-static const Quaternion M3_MATRIX_QUATERNION_AXIS[M3_MATRIX_COUNT] = {
-    [M3_MATRIX_COMPLEMENTARY]  = { .w = 0.0f, .x = 1.0f, .y = 0.0f, .z = 0.0f },
-    [M3_MATRIX_MOVING_RESTING] = { .w = 0.0f, .x = 0.0f, .y = 1.0f, .z = 0.0f },
-    [M3_MATRIX_SAME_QUALITY]   = { .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 1.0f },
-};
+extern const Quaternion M3_MATRIX_QUATERNION_AXIS[M3_MATRIX_COUNT];
 
 
 /* ===================================================================
  * FR 2.3.3: Rotational_State — Dynamic 8-Fold Computation
  *
  * Computed from M3_PAIR_MATRIX in O(1). No pre-stored tables.
- * 0xFF = evolutionary gap → STATUS_PROVISIONAL.
+ * 0xFF = unresolved resonance target → STATUS_PROVISIONAL.
+ * This codon-indexed partial operator is independent of the total 72→64
+ * epogdoon compression.
  * =================================================================== */
 
 typedef struct {
@@ -192,29 +175,15 @@ typedef struct {
 
 #define M3_RESONANCE_GAP  0xFF
 
-/* STATUS_PROVISIONAL: system has reached an evolutionary gap */
+/* STATUS_PROVISIONAL: the selected resonance target is unresolved */
 #define STATUS_PROVISIONAL_BIT  (1u << 4)
 
-static inline Rotational_State compute_rotational_state(uint8_t p1_idx, uint8_t p2_idx) {
-    return (Rotational_State){
-        .total_sum_value = (int8_t)(M3_PAIR_MATRIX[p1_idx].sum_value + M3_PAIR_MATRIX[p2_idx].sum_value),
-        .total_difference_value =
-            (int8_t)(M3_PAIR_MATRIX[p1_idx].difference_value + M3_PAIR_MATRIX[p2_idx].difference_value)
-    };
-}
+Rotational_State compute_rotational_state(uint8_t p1_idx, uint8_t p2_idx);
 
-/* Safe version: handles evolutionary gap (0xFF sentinel) */
-static inline bool compute_rotational_state_safe(
+/* Safe version: handles an unresolved resonance target (0xFF sentinel) */
+bool compute_rotational_state_safe(
     uint8_t p1_idx, uint8_t p2_idx,
-    Rotational_State* out, uint32_t* coord_flags)
-{
-    if (p2_idx == M3_RESONANCE_GAP) {
-        *coord_flags |= STATUS_PROVISIONAL_BIT;
-        return false;
-    }
-    *out = compute_rotational_state(p1_idx, p2_idx);
-    return true;
-}
+    Rotational_State* out, uint32_t* coord_flags);
 
 typedef struct {
     Quaternion q;
@@ -222,46 +191,13 @@ typedef struct {
     uint8_t    codon_id;
 } M3_Codon_Quaternion;
 
-static inline Quaternion m3_quat_from_codon(uint8_t codon_id) {
-    uint8_t n1 = (codon_id >> 4) & 0x03;
-    uint8_t n2 = (codon_id >> 2) & 0x03;
-    uint8_t n3 = codon_id & 0x03;
-    uint8_t v1 = NUCLEOTIDE_ICHING_VALUE[n1];
-    uint8_t v2 = NUCLEOTIDE_ICHING_VALUE[n2];
-    uint8_t v3 = NUCLEOTIDE_ICHING_VALUE[n3];
-    uint8_t sum = (uint8_t)(v1 + v2 + v3);
-    int8_t diff = (int8_t)v1 - (int8_t)v3;
-    return (Quaternion){
-        .w = (float)sum,
-        .x = (float)diff,
-        .y = 0.0f,
-        .z = (float)(sum % 6u)
-    };
-}
+/* Ring-position shortcut: embeds the codon id as a 64-step angular position.
+ * Use for torus/ring placement only; it is NOT the elemental bioquaternion. */
+Quaternion m3_quat_from_codon(uint8_t codon_id);
 
-static inline Quaternion m3_quat_codon_state(uint8_t codon_id, uint8_t state) {
-    Quaternion base = m3_quat_from_codon(codon_id);
-    if ((state & 0x07u) == 0u) {
-        return base;
-    }
-    float angle = (float)(state & 0x07u) * 0.7853981633974483f;
-    Quaternion rot = {
-        .w = cosf(angle * 0.5f),
-        .x = sinf(angle * 0.5f),
-        .y = 0.0f,
-        .z = 0.0f
-    };
-    return quat_mul(rot, base);
-}
+Quaternion m3_quat_codon_state(uint8_t codon_id, uint8_t state);
 
-static inline uint8_t m3_quat_active_state(Quaternion env, uint8_t codon_id) {
-    Quaternion composed = quat_mul(env, m3_quat_from_codon(codon_id));
-    float angle = atan2f(composed.x, composed.w);
-    if (angle < 0.0f) {
-        angle += 6.2831853071795865f;
-    }
-    return (uint8_t)(angle / 0.7853981633974483f) & 0x07u;
-}
+uint8_t m3_quat_active_state(Quaternion env, uint8_t codon_id);
 
 
 /* ===================================================================
@@ -312,7 +248,7 @@ typedef enum {
     SUIT_SWORDS    = 3  /* G family — Yang/Resting — Air  */
 } Tarot_Suit;
 
-static const char* const SUIT_NAMES[4] = {"Cups", "Wands", "Pentacles", "Swords"};
+extern const char* const SUIT_NAMES[4];
 
 typedef struct {
     uint8_t    card_id;        /* 0-55 (Minor Arcana ID) */
@@ -336,9 +272,7 @@ typedef struct {
  * =================================================================== */
 
 /* m0.h is now always included — Unified_Clock_State and m0_read_cosmic_clock() available */
-static inline Unified_Clock_State read_cosmic_clock(uint16_t d) {
-    return m0_read_cosmic_clock(d);
-}
+Unified_Clock_State read_cosmic_clock(uint16_t d);
 
 
 /* ===================================================================
@@ -349,23 +283,17 @@ static inline Unified_Clock_State read_cosmic_clock(uint16_t d) {
  * =================================================================== */
 
 /* ASCENDING: M3 → M2 (rotational sumValue → Parashakti frequency index) */
-static inline uint8_t get_parashakti_frequency(Rotational_State m3_state,
-                                                bool is_shadow_phase) {
-    uint8_t base_frequency = (uint8_t)m3_state.total_sum_value;
-    return is_shadow_phase ? (uint8_t)(base_frequency + 36u) : base_frequency;
-}
+uint8_t get_parashakti_frequency(Rotational_State m3_state,
+                                                bool is_shadow_phase);
 
 /* DESCENDING: M2 → M3 (epogdoon 9:8 compression) */
-static inline uint8_t apply_epogdoon_compression(uint8_t m2_idx_0_to_71) {
-    return (uint8_t)((m2_idx_0_to_71 * 8u) / 9u);
-}
+uint8_t apply_epogdoon_compression(uint8_t m2_idx_0_to_71);
 
-/* EVOLUTIONARY GAP DETECTION */
-static inline bool is_evolutionary_gap(uint8_t m2_vibration_index) {
-    uint8_t compressed = apply_epogdoon_compression(m2_vibration_index);
-    uint8_t expanded   = (uint8_t)((compressed * 9u) / 8u);
-    return (expanded != m2_vibration_index);
-}
+/* 9:8 ROUND-TRIP LOSS DETECTION
+ * True when expand(compress(address72)) does not return to address72.
+ * This reports 64 non-exact round trips; it is distinct from the eight
+ * compression collision pairs and the denominator block size nine. */
+bool epogdoon_has_round_trip_loss(uint8_t m2_vibration_index);
 
 
 /* ===================================================================
@@ -375,16 +303,12 @@ static inline bool is_evolutionary_gap(uint8_t m2_vibration_index) {
  * stays in the shadow layer.
  * =================================================================== */
 
-static inline uint16_t polar_opposite_su2(uint16_t current_720_degree) {
-    uint16_t layer_offset = (current_720_degree >= 360u) ? 360u : 0u;
-    uint16_t base_degree  = current_720_degree % 360u;
-    return layer_offset + (uint16_t)((base_degree + 180u) % 360u);
-}
+uint16_t polar_opposite_su2(uint16_t current_720_degree);
 
 /* Simple wheel operations (single 360° layer) */
-static inline uint16_t flow_clockwise(uint16_t d)         { return (d + 1u) % 360u; }
-static inline uint16_t polar_opposite_simple(uint16_t d)   { return (d + 180u) % 360u; }
-static inline uint8_t  m3_quadrant(uint16_t d)             { return (uint8_t)(d / 90u); }
+uint16_t flow_clockwise(uint16_t d);
+uint16_t polar_opposite_simple(uint16_t d);
+uint8_t  m3_quadrant(uint16_t d);
 
 
 /* ===================================================================
@@ -393,15 +317,8 @@ static inline uint8_t  m3_quadrant(uint16_t d)             { return (uint8_t)(d 
 
 extern const uint8_t M3_RES_MATRIX[64];
 
-static inline uint8_t m3_resonance_lookup(uint8_t codon_id,
-                                           uint32_t* coord_flags) {
-    uint8_t result = M3_RES_MATRIX[codon_id];
-    if (result == M3_RESONANCE_GAP) {
-        *coord_flags |= STATUS_PROVISIONAL_BIT;
-        return M3_RESONANCE_GAP;
-    }
-    return result;
-}
+uint8_t m3_resonance_lookup(uint8_t codon_id,
+                                           uint32_t* coord_flags);
 
 
 /* ===================================================================
@@ -411,6 +328,62 @@ static inline uint8_t m3_resonance_lookup(uint8_t codon_id,
 extern const uint8_t M3_COMP_MATRIX[64];
 extern const uint8_t M3_MOVE_MATRIX[64];
 extern const uint8_t M3_CODON_TO_AA[64];
+
+/* STOP-codon sentinel as it actually appears in M3_CODON_TO_AA.
+ * The amino-acid index 10 marks the three STOP codons (TAA/TAG/TGA).
+ * (The header comment on M3_CODON_TO_AA historically said "0xFF = STOP";
+ * the live table encodes STOP as amino-acid index 10, so callers must
+ * compare against this constant, not 0xFF.) */
+#define M3_STOP_CODON_AA  10u
+
+typedef enum {
+    M3_TRANSCRIPT_CLASS_SHARED = 0,
+    M3_TRANSCRIPT_CLASS_TRANSCRIBABLE = 1
+} M3_TranscriptClass;
+
+typedef enum {
+    M3_GOVERNANCE_ROLE_NONE = 0,
+    M3_GOVERNANCE_ROLE_START = 1,
+    M3_GOVERNANCE_ROLE_STOP = 2
+} M3_GovernanceRole;
+
+#define M3_CODON_ATG_AUG_VALUE  0x07u
+#define M3_STOP_CODON_TAA_VALUE 0x10u
+#define M3_STOP_CODON_TAG_VALUE 0x13u
+#define M3_STOP_CODON_TGA_VALUE 0x1Cu
+
+_Static_assert(M3_CODON_ATG_AUG_VALUE == 0x07u,
+    "M3_CODON_ATG_AUG must match portal-core transcription.rs START_CODON");
+_Static_assert(M3_STOP_CODON_TAA_VALUE == 0x10u &&
+               M3_STOP_CODON_TAG_VALUE == 0x13u &&
+               M3_STOP_CODON_TGA_VALUE == 0x1Cu,
+    "M3_STOP_CODONS must match portal-core transcription.rs STOP_CODONS");
+_Static_assert(M3_CODON_ATG_AUG_VALUE ==
+               ((M3_NUC_A << 4) | (M3_NUC_T << 2) | M3_NUC_G),
+    "M3_CODON_ATG_AUG must encode ATG/AUG");
+_Static_assert(M3_STOP_CODON_TAA_VALUE ==
+               ((M3_NUC_T << 4) | (M3_NUC_A << 2) | M3_NUC_A),
+    "M3_STOP_CODONS[0] must encode TAA");
+_Static_assert(M3_STOP_CODON_TAG_VALUE ==
+               ((M3_NUC_T << 4) | (M3_NUC_A << 2) | M3_NUC_G),
+    "M3_STOP_CODONS[1] must encode TAG");
+_Static_assert(M3_STOP_CODON_TGA_VALUE ==
+               ((M3_NUC_T << 4) | (M3_NUC_G << 2) | M3_NUC_A),
+    "M3_STOP_CODONS[2] must encode TGA");
+
+extern const uint8_t M3_CODON_ATG_AUG;
+extern const uint8_t M3_STOP_CODONS[3];
+
+uint8_t m3_codon_t_count(uint8_t codon6bit);
+
+M3_TranscriptClass m3_codon_transcript_class(uint8_t codon6bit);
+
+M3_GovernanceRole m3_codon_governance_role(uint8_t codon6bit);
+
+uint8_t m3_codon_t_count_ffi(uint8_t codon6bit);
+M3_TranscriptClass m3_codon_transcript_class_ffi(uint8_t codon6bit);
+M3_GovernanceRole m3_codon_governance_role_ffi(uint8_t codon6bit);
+int m3_verify_transcript_surface(void);
 
 typedef struct {
     /* Non-dual foundation */
@@ -463,9 +436,7 @@ typedef struct {
 } M3_Ring_Buffer;
 
 /* Full rotation requires 720° */
-static inline bool identity_returned(const M3_Wheel_State* ws) {
-    return ws->current_degree >= 720u;
-}
+bool identity_returned(const M3_Wheel_State* ws);
 
 
 /* ===================================================================
@@ -483,35 +454,16 @@ typedef struct {
 } M3_CodonEvaluation;
 
 /* Evaluate codon from the dataset-native inner charge identities. */
-static inline M3_CodonEvaluation evaluate_codon(uint8_t codon6bit) {
-    uint8_t X = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03];
-    uint8_t Y = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03];
-    uint8_t Z = NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
-    M3_CodonEvaluation ev;
-    ev.pp = (int8_t)(X + Y + Z);
-    ev.mm = (int8_t)(X - Y - Z);
-    ev.mp = (int8_t)(X - Y + Z);
-    ev.pm = (int8_t)(X + Y - Z);
-    return ev;
-}
+M3_CodonEvaluation evaluate_codon(uint8_t codon6bit);
 
-static inline Quaternion m3_eval_to_quat(M3_CodonEvaluation eval) {
-    return (Quaternion){
-        .w = (float)eval.pp,
-        .x = (float)eval.mm,
-        .y = (float)eval.mp,
-        .z = (float)eval.pm
-    };
-}
+/* Canonical elemental bioquaternion path:
+ *   m3_compute_charges/evaluate_codon -> m3_eval_to_quat
+ *   { w=pp->Earth, x=nn/mm->Fire, y=np/mp->Water, z=pn/pm->Air }.
+ * Renderers must use this path for elemental quaternion reads; do not use
+ * m3_quat_from_codon except for the ring-position shortcut declared above. */
+Quaternion m3_eval_to_quat(M3_CodonEvaluation eval);
 
-static inline M3_CodonEvaluation m3_quat_to_eval(Quaternion q) {
-    return (M3_CodonEvaluation){
-        .pp = (int8_t)q.w,
-        .mm = (int8_t)q.x,
-        .mp = (int8_t)q.y,
-        .pm = (int8_t)q.z
-    };
-}
+M3_CodonEvaluation m3_quat_to_eval(Quaternion q);
 
 
 /* ===================================================================
@@ -557,31 +509,15 @@ typedef struct {
     uint8_t paired_codon;  /* paired codon reflection, or 0xFF */
 } M3_Rotational_Profile;
 
-static inline uint8_t m3_encode_pair(uint8_t n1, uint8_t n2) {
-    return (uint8_t)((n1 << 2) | n2);
-}
+uint8_t m3_encode_pair(uint8_t n1, uint8_t n2);
 
-static inline uint8_t m3_pair_first(uint8_t pair_idx) {
-    return (pair_idx >> 2) & 0x03;
-}
+uint8_t m3_pair_first(uint8_t pair_idx);
 
-static inline uint8_t m3_pair_second(uint8_t pair_idx) {
-    return pair_idx & 0x03;
-}
+uint8_t m3_pair_second(uint8_t pair_idx);
 
-static inline uint8_t compose_rotational_state(uint8_t xy, uint8_t za, int positive) {
-    uint8_t X = (xy >> 2) & 0x03;
-    uint8_t y = (xy)      & 0x03;
-    uint8_t Z = (za >> 2) & 0x03;
-    uint8_t a = (za)      & 0x03;
-    return positive
-        ? (uint8_t)((X << 4) | (y << 2) | a)
-        : (uint8_t)((X << 4) | (Z << 2) | a);
-}
+uint8_t compose_rotational_state(uint8_t xy, uint8_t za, int positive);
 
-static inline int is_nondual_composition(uint8_t xy, uint8_t za) {
-    return ((xy) & 0x03) == ((za >> 2) & 0x03);
-}
+int is_nondual_composition(uint8_t xy, uint8_t za);
 
 extern const M3_Rotational_Profile M3_ROTATIONAL_PROFILE[64];
 
@@ -632,10 +568,7 @@ typedef struct {
 
 extern const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16];
 
-static const char* const TAROT_RANK_NAMES[14] = {
-    "Ace", "Two", "Three", "Four", "Five", "Six", "Seven",
-    "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"
-};
+extern const char* const TAROT_RANK_NAMES[14];
 
 #define M3_MINOR_ARCANA_COUNT         56u
 #define M3_MAJOR_ARCANA_COUNT         22u
@@ -664,6 +597,12 @@ typedef struct {
  * 22 Major Arcana cards mapped to autosomal chromosome pairs,
  * 2 transcendent operators beyond the 22-fold autosomal cycle. */
 
+/* Compile-time mask values as integer constant expressions (usable in
+ * _Static_assert); the extern const symbols below carry the identical values
+ * into runtime / FFI / tests. Mirrors the M3_CODON_*_VALUE idiom above. */
+#define M3_RNA_FUNCTIONAL_MASK_VALUE 0x22F222F2FFFF22F2ULL
+#define M3_RNA_DARK_MASK_VALUE       0xDD0DDD0D0000DD0DULL
+
 extern const uint64_t M3_RNA_FUNCTIONAL_MASK;
 extern const uint64_t M3_RNA_DARK_MASK;
 
@@ -675,9 +614,7 @@ extern const uint64_t M3_RNA_DARK_MASK;
  * Zero net directional deviation. Bipolar valence.
  * =================================================================== */
 
-static inline int is_nondual_codon(uint8_t codon6bit) {
-    return ((codon6bit >> 4) & 0x03) == (codon6bit & 0x03);
-}
+int is_nondual_codon(uint8_t codon6bit);
 
 #define M3_NONDUAL_CODON_FLAG   0x40
 
@@ -726,26 +663,14 @@ typedef struct {
 } Codon_Classification;
 
 /* Algorithmic classifier — O(1), no lookup, pure arithmetic */
-static inline Codon_Class m3_classify_codon(uint8_t codon6bit) {
-    uint8_t n1 = (codon6bit >> 4) & 0x03;
-    uint8_t n2 = (codon6bit >> 2) & 0x03;
-    uint8_t n3 = codon6bit & 0x03;
-    if (n1 == n3) {
-        return (n1 == n2) ? CODON_PERFECT_PALINDROMIC
-                          : CODON_IMPERFECT_PALINDROMIC;
-    }
-    return (n1 == n2 || n2 == n3) ? CODON_NON_PALINDROMIC_NONDUAL
-                                  : CODON_DUAL;
-}
+Codon_Class m3_classify_codon(uint8_t codon6bit);
 
-static inline bool codon_is_dual(Codon_Class c)               { return c == CODON_DUAL; }
-static inline bool codon_is_non_dual(Codon_Class c)            { return c != CODON_DUAL; }
-static inline bool codon_is_palindromic(Codon_Class c)         { return c <= CODON_IMPERFECT_PALINDROMIC; }
-static inline bool codon_is_perfect_palindrome(Codon_Class c)  { return c == CODON_PERFECT_PALINDROMIC; }
+bool codon_is_dual(Codon_Class c);
+bool codon_is_non_dual(Codon_Class c);
+bool codon_is_palindromic(Codon_Class c);
+bool codon_is_perfect_palindrome(Codon_Class c);
 
-static inline uint8_t m3_codon_rotation_count(uint8_t codon6bit) {
-    return m3_classify_codon(codon6bit) == CODON_DUAL ? 8u : 7u;
-}
+uint8_t m3_codon_rotation_count(uint8_t codon6bit);
 
 /* Master LUT — initialized by m3_init_codon_class_lut(). Read-only after init. */
 extern Codon_Classification M3_CODON_CLASS[64];
@@ -760,19 +685,15 @@ void m3_init_codon_class_lut(void);
  * No lookup table needed — pure arithmetic.
  * =================================================================== */
 
-static inline void m3_compute_charges(
+void m3_compute_charges(
     uint8_t codon6bit,
-    int8_t *pp_out, int8_t *nn_out, int8_t *np_out, int8_t *pn_out)
-{
-    uint8_t X = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 4) & 0x03];
-    uint8_t Y = NUCLEOTIDE_ICHING_VALUE[(codon6bit >> 2) & 0x03];
-    uint8_t Z = NUCLEOTIDE_ICHING_VALUE[(codon6bit)      & 0x03];
+    int8_t *pp_out, int8_t *nn_out, int8_t *np_out, int8_t *pn_out);
 
-    *pp_out = (int8_t)(X + Y + Z);
-    *nn_out = (int8_t)(X - Y - Z);
-    *np_out = (int8_t)(X - Y + Z);
-    *pn_out = (int8_t)(X + Y - Z);
-}
+/* FFI-exportable non-inline wrapper for Rust / foreign callers.
+   Definition in m3.c. */
+void m3_compute_charges_ffi(
+    uint8_t codon6bit,
+    int8_t *pp_out, int8_t *nn_out, int8_t *np_out, int8_t *pn_out);
 
 /* Compile-time verification: TTT 4X invariant (pp+nn+np+pn = 4*outer) */
 _Static_assert((9+9+9) + (9-9-9) + (9-9+9) + (9+9-9) == 4*9,
@@ -781,11 +702,7 @@ _Static_assert((9+9+9) + (9-9-9) + (9-9+9) + (9+9-9) == 4*9,
 #define M3_EULER_PRIME_41  41u
 #define M3_EULER_PRIME_43  43u
 
-static inline int m3_is_prime_attractor(uint8_t codon_a, uint8_t codon_b) {
-    uint16_t total = (uint16_t)get_codon_iching_sum(codon_a)
-                   + (uint16_t)get_codon_iching_sum(codon_b);
-    return total == M3_EULER_PRIME_41 || total == M3_EULER_PRIME_43;
-}
+int m3_is_prime_attractor(uint8_t codon_a, uint8_t codon_b);
 
 
 /* ===================================================================
@@ -794,79 +711,24 @@ static inline int m3_is_prime_attractor(uint8_t codon_a, uint8_t codon_b) {
  * containsT = true → RNA-capable (T→U substitution possible).
  * =================================================================== */
 
-static inline int m3_codon_is_rna_capable(uint8_t codon6bit) {
-    return ((codon6bit >> 4) & 0x03) == M3_NUC_T ||
-           ((codon6bit >> 2) & 0x03) == M3_NUC_T ||
-           ((codon6bit)      & 0x03) == M3_NUC_T;
-}
+int m3_codon_is_rna_capable(uint8_t codon6bit);
 
-static inline Quaternion m3_element_to_quat(Elemental_Signature sig) {
-    return quat_from_ring_pos((QL_Tick)ELEM_SIG_GET_ELEMENT(sig));
-}
+Quaternion m3_element_to_quat(Elemental_Signature sig);
 
-static inline Quaternion m3_tarot_rotation(uint8_t card_id) {
-    if (card_id < M3_MINOR_ARCANA_COUNT) {
-        uint8_t suit = (uint8_t)(card_id / 14u);
-        uint8_t rank = (uint8_t)(card_id % 14u);
-        const M3_TarotCodonEntry* entry = &M3_TAROT_CODON_MAP[suit][rank];
-        Quaternion primary = quat_normalize(m3_quat_from_codon(entry->codon_a));
-        if (entry->codon_b != M3_TAROT_SINGLE_CODON) {
-            Quaternion secondary = quat_normalize(m3_quat_from_codon(entry->codon_b));
-            return quat_slerp(primary, secondary, 0.5f);
-        }
-        return primary;
-    }
+Quaternion m3_tarot_rotation(uint8_t card_id);
 
-    if (card_id < (M3_MINOR_ARCANA_COUNT + M3_MAJOR_ARCANA_COUNT)) {
-        uint8_t major_idx = (uint8_t)(card_id - M3_MINOR_ARCANA_COUNT);
-        float angle = ((float)major_idx / (float)M3_MAJOR_ARCANA_COUNT) * 6.2831853071795865f;
-        return (Quaternion){
-            .w = cosf(angle * 0.5f),
-            .x = 0.0f,
-            .y = sinf(angle * 0.5f),
-            .z = 0.0f
-        };
-    }
-
-    return (card_id == (M3_TAROT_QUATERNION_COUNT - 2u))
-        ? (Quaternion){ .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 1.0f }
-        : (Quaternion){ .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = -1.0f };
-}
-
-static inline uint8_t m3_tarot_translate(
+uint8_t m3_tarot_translate(
     uint8_t card_id,
     uint8_t source_pos,
-    int codon_to_hexagram)
-{
-    Quaternion q = quat_normalize(m3_tarot_rotation(card_id));
-    if (!codon_to_hexagram) {
-        q = quat_conj(q);
-    }
-    Quaternion pos_q = quat_normalize(m3_quat_from_codon(source_pos));
-    Quaternion result = quat_mul(q, quat_mul(pos_q, quat_conj(q)));
-    float angle = atan2f(result.x, result.w);
-    if (angle < 0.0f) {
-        angle += 6.2831853071795865f;
-    }
-    return (uint8_t)(((angle / 6.2831853071795865f) * 64.0f)) % 64u;
-}
+    int codon_to_hexagram);
 
 
 /* ===================================================================
  * FR 2.3.17: NON-DUAL GUARD — Evaluation with flag
  * =================================================================== */
 
-static inline M3_CodonEvaluation m3_evaluate_with_nondual_guard(
-    uint8_t codon6bit, uint8_t *flags_out)
-{
-    M3_CodonEvaluation ev = evaluate_codon(codon6bit);
-    if (is_nondual_codon(codon6bit)) {
-        if (flags_out) *flags_out |= M3_NONDUAL_CODON_FLAG;
-        ev.mp = 0;
-        ev.pm = 0;
-    }
-    return ev;
-}
+M3_CodonEvaluation m3_evaluate_with_nondual_guard(
+    uint8_t codon6bit, uint8_t *flags_out);
 
 typedef struct {
     uint64_t   active_mask;
@@ -915,6 +777,16 @@ size_t m3_generate_rotational_states(
 
 const M3_Rotational_Profile* m3_get_rotational_profile(uint8_t codon6bit);
 
+/* Transcribe a 6-bit codon to its Major Arcana card index.
+ *
+ * Composition: codon -> M3_CODON_TO_AA[codon] (amino-acid index) ->
+ * reverse-lookup against M3_MAJOR_ARCANA[].amino_acid_index. Used by the
+ * M5 Mobius return to transcribe each codon in a session's M3 trace.
+ *
+ * Returns the card index (0-21) on a match, or 0xFF for STOP codons and
+ * any amino-acid index with no Major Arcana assignment. */
+uint8_t  m3_major_arcana_from_codon(uint8_t codon);
+
 /* Boot-time verification of .rodata integrity */
 bool     m3_verify(void);
 
@@ -940,6 +812,40 @@ bool     m3_verify(void);
 /* Structural law: 360 dynamic degrees + 24 palindromic backbone = 64×6 LINE_CHANGES */
 _Static_assert(360 + 24 == 64 * 6,
     "Clock topology: 360 degree nodes + 24 backbone = 384 = 64 hexagrams x 6 lines");
+_Static_assert(64 * 6 - 24 == 360,
+    "Clock topology: 64 hexagrams x 6 lines - 24 backbone = 360 degree nodes");
+_Static_assert(60 * 6 == 360,
+    "Fibonacci ground period × 6°/step = full clock");
+
+typedef struct {
+    uint16_t degree;
+    uint8_t  backbone_index;
+    uint8_t  hour_of_day;
+    uint8_t  zodiac_sign;
+    uint8_t  is_cusp;
+    uint8_t  amino_acid_idx;
+    uint8_t  is_palindromic;
+    uint8_t  _pad[4];
+} Clock_Backbone_Node;
+
+_Static_assert(sizeof(Clock_Backbone_Node) == 12,
+    "Clock_Backbone_Node must be exactly 12 bytes");
+_Static_assert(24 % 12 == 0, "24 backbone nodes must evenly contain 12 zodiac nodes");
+_Static_assert(12 % 4 == 0, "12 zodiac nodes must evenly contain 4 cardinal nodes");
+_Static_assert(360 % 24 == 0, "360 degree nodes must evenly span 24 backbone intervals");
+
+#ifdef M3_BUILDING_SOURCE
+extern Clock_Backbone_Node CLOCK_BACKBONE[24];
+#else
+extern const Clock_Backbone_Node CLOCK_BACKBONE[24];
+#endif
+void m3_build_backbone(void);
+
+/* Fibonacci ground digit cycle (Track 35 §1.2, consumed by Tranche 5.24):
+ * the Pisano period of Fibonacci mod 10 is exactly 60 — one full clock of
+ * 6° steps (60 × 6 == 360, asserted above). pisano_digit_lut[n] = F(n) % 10;
+ * the cycle closes: F(60) ≡ 0, F(61) ≡ 1 (mod 10). */
+extern const uint8_t pisano_digit_lut[60];
 
 typedef struct {
     /* Identity */

@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-: "${M3_SOURCE_ROOT:?M3_SOURCE_ROOT must point to the read-only pinned Bimba source}"
+# With target/bimba-map/map.json (scripts/bimba_map.py read) the M3 field is
+# recomputed from the map; otherwise from the committed m3-domain projection.
 mkdir -p target/m3-acceptance
-python3 scripts/m3-source-parity.py --source-root "$M3_SOURCE_ROOT"
-python3 scripts/m3-domain.py --source-root "$M3_SOURCE_ROOT"
+python3 scripts/m3-source-parity.py
+if [[ -f target/bimba-map/map.json ]]; then python3 scripts/m3-domain.py --map target/bimba-map/map.json; fi
+python3 scripts/m3-domain.py
 python3 -m unittest discover -s scripts/tests -p 'test_m3*.py' -v 2>&1 | tee target/m3-acceptance/python.log
 bash scripts/test-m3-engine.sh 2>&1 | tee target/m3-acceptance/native.log
 cargo test -p ql-mef --test m3_engine --test m3_domain --test m3_state --locked 2>&1 | tee target/m3-acceptance/rust.log
 producer=$(git rev-parse HEAD)
 printf '%s\n' "$producer" > target/m3-acceptance/producer.txt
-python3 scripts/m3-observation-parity.py --source-root "$M3_SOURCE_ROOT" \
+python3 scripts/m3-observation-parity.py \
  --input target/m3-rust/c-rust-parity.jsonl --producer-revision-file target/m3-acceptance/producer.txt \
  --expected-revision "$producer" --output target/m3-acceptance/source-observation.json
 python3 scripts/m3-domain.py --c-output target/m3-domain/m3_domain_data.inc

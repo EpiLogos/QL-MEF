@@ -11,6 +11,9 @@ fn request() -> Value {
         "../../../fixtures/kernel/m2-condition-request-v1.json"
     ))
     .unwrap();
+    // These handoffs exercise the source-spelled tuning, which the map (no scale
+    // spelling) leaves unavailable on every path.
+    v["condition"]["tuning"] = json!("bimba_spelled24_tet");
     let stamp = v["stamp"].clone();
     v["condition"]["palette"] = json!({
         "stamp": stamp, "policy_ref": "fixture:explicit-linear-palette",

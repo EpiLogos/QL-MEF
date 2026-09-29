@@ -47,6 +47,7 @@ use transcription::{
 
 const M2_C: &str = include_str!("../../../vendor/epi-kernel/reference/src/m2.c");
 const M3_C: &str = include_str!("../../../vendor/epi-kernel/reference/src/m3.c");
+const M3_H: &str = include_str!("../../../vendor/epi-kernel/reference/include/m3.h");
 
 /// Strip `/* … */` comments so the independent parsers see only code.
 fn c_code(source: &str) -> String {
@@ -348,17 +349,16 @@ fn amino_record_is_the_kernel_simplified_record() {
 
 #[test]
 fn rna_masks_are_the_vendor_values() {
-    // First textual occurrence of each name is its definition (m3.c:133,
-    // m3.c:134); the kernel's later uses are asserts and calls.
+    // The values are the header macros m3.c assigns to the masks.
     assert_eq!(
-        parse_hex_value(&c_code(M3_C), "M3_RNA_FUNCTIONAL_MASK"),
+        parse_hex_value(&c_code(M3_H), "M3_RNA_FUNCTIONAL_MASK_VALUE"),
         M3_RNA_FUNCTIONAL_MASK,
-        "m3.c:133"
+        "m3.h M3_RNA_FUNCTIONAL_MASK_VALUE"
     );
     assert_eq!(
-        parse_hex_value(&c_code(M3_C), "M3_RNA_DARK_MASK"),
+        parse_hex_value(&c_code(M3_H), "M3_RNA_DARK_MASK_VALUE"),
         M3_RNA_DARK_MASK,
-        "m3.c:134"
+        "m3.h M3_RNA_DARK_MASK_VALUE"
     );
 }
 

@@ -188,7 +188,8 @@ fn one_event_joins_music_colour_element_drive_world_and_m3() {
             .as_array()
             .unwrap()
             .len(),
-        2
+        // The map holds each edge once; the July seed exported it twice.
+        1
     );
     fs::create_dir_all(root().join("target/m2-receipt")).unwrap();
     fs::write(
@@ -217,15 +218,25 @@ fn conjugate_and_tuning_changes_keep_the_same_source_path_but_update_music() {
         direct["condition"]["source_path"],
         prime["condition"]["source_path"]
     );
-    v["condition"]["tuning"] = json!("retained24_tet");
-    let retained = execute(v);
+    // The map states no full maqam scale spelling, so the Bimba-spelled tuning
+    // has no pitches to give: same source path, music explicitly unavailable.
+    v["condition"]["tuning"] = json!("bimba_spelled24_tet");
+    let spelled = execute(v);
     assert_eq!(
         prime["condition"]["source_path"],
-        retained["condition"]["source_path"]
+        spelled["condition"]["source_path"]
     );
-    assert_ne!(
-        prime["condition"]["musical"]["pitches_hz"],
-        retained["condition"]["musical"]["pitches_hz"]
+    assert_eq!(
+        prime["condition"]["musical"]["pitches_hz"]
+            .as_array()
+            .unwrap()
+            .len(),
+        8
+    );
+    assert!(
+        spelled["condition"]["musical"]["pitches_hz"]
+            .as_array()
+            .is_none_or(|p| p.is_empty())
     );
 }
 #[test]
@@ -239,7 +250,12 @@ fn unavailable_mappings_colour_palette_and_provider_do_not_get_invented() {
     let absent = execute(v);
     assert!(absent["condition"]["source_path"].is_null());
     assert!(absent["condition"]["colour"]["source_name"].is_null());
-    assert_eq!(absent["condition"]["musical"]["pitches_hz"], json!([]));
+    // No source path: only the kernel's retained tuning can sound, never a
+    // source-claimed one.
+    v = request();
+    v["condition"]["maqam_index"] = json!(4);
+    v["condition"]["tuning"] = json!("bimba_spelled24_tet");
+    assert_eq!(execute(v)["condition"]["musical"]["pitches_hz"], json!([]));
     let mut v = request();
     v["condition"]["maqam_index"] = json!(0);
     let sun = execute(v);

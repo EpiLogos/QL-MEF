@@ -6,7 +6,7 @@ A retained table is structural-index-only, not computational readiness. Finite
 operations are separately assessed, while broad source capabilities stay partial.
 """
 from __future__ import annotations
-import argparse, copy, hashlib, importlib.util, json
+import argparse, copy, hashlib, importlib.util, json, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('mledger',ROOT/'scripts/m-ledger.py')
@@ -166,10 +166,34 @@ def proof_refresh():
         'inputs':receipt['inputs'],'finite_observation':parity,'vimarsha_observation':vim,'condition_observation':condition,'checks':receipt['checks'],
         'not_claimed':receipt['not_claimed']+['whole-source capability completion from descriptor lookup']})
 
+LINEAGE='fixtures/kernel/k8-build-lineage-v1.json'
+
+def publish(reason):
+    """A reviewed successor: fresh complete acceptance becomes the accepted proof.
+
+    The previous proof hash and the reason stay in the build lineage, so the
+    change is recorded, never a silent retarget. Run scripts/test-m2-engine.sh first.
+    """
+    if not reason.strip():raise ValueError('a successor needs its reason')
+    receipt=load('target/m2-receipt/acceptance.json')
+    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    if receipt.get('revision')!=revision:raise ValueError('acceptance is not for this exact head')
+    previous=lock(PROOF)['sha256']
+    proof_refresh()
+    lineage=load(LINEAGE)
+    lineage['proofs']['m2']=lock(PROOF)['sha256']
+    lineage.setdefault('successors',[]).append({'engine':'m2','previous_sha256':previous,
+        'sha256':lineage['proofs']['m2'],'accepted_at_revision':revision,'reason':reason})
+    write(LINEAGE,lineage)
+    print('M2 successor proof published:',lineage['proofs']['m2'])
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('command',choices=['refresh','check','publish'])
+    p.add_argument('--reason',default='');a=p.parse_args()
     if a.command=='refresh':
         raise ValueError('K8 preserves the accepted K6 proof; publish a reviewed successor rather than retargeting it')
+    if a.command=='publish':
+        return publish(a.reason)
     proof=load(PROOF)
     spec=importlib.util.spec_from_file_location('k8_preservation',ROOT/'scripts/k8-preservation.py')
     preservation=importlib.util.module_from_spec(spec);spec.loader.exec_module(preservation)

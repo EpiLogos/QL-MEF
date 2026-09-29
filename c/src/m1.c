@@ -78,7 +78,7 @@ int ql_m1_valid_fold(uint32_t fold) {
 int ql_m1_spanda(uint32_t stage, uint32_t substage, QL_M1_Spanda *out) {
     static const char *const refs[6] = {
         "#1-3-4.0000", "#1-3-4.0/1", "#1-3-4.0/1/2", "#1-3-4.0/1/2/3",
-        "#1-3-4.4.0-4.4/5", "#1-3-4.5/0"
+        "#1-3-4.4.0/1-4.4/5", "#1-3-4.5/0"
     };
     static const uint32_t folds[6] = {4,6,8,10,12,0};
     static const float weave[6] = {0.0f,1.0f,1.0f,1.5f,4.0f,5.0f};

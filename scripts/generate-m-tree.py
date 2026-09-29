@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""K2: freeze the accepted Bimba compiler output and generate one native M registry.
+"""Generate the native M registry from the Bimba map.
 
-No network, readiness inference, or M computation. C tables and the Rust/tooling
-manifest are projections of the same source snapshot, not separately authored trees.
+The map (the owner's Neo4j graph) is the authority. `--from-map` turns a
+read-only map read (scripts/bimba_map.py) into the committed source snapshot
+c/registry/m-tree-source-v1.json; every other run, including CI, regenerates
+the registry, C tables and Rust manifest from that snapshot with no network.
+The snapshot is the M-tree extract of the map: coordinates, names, relations,
+and per-record property keys with payload hashes, not the property values.
 """
 from __future__ import annotations
 
@@ -59,52 +63,71 @@ def render(value: dict) -> str:
     return "{\n" + ",\n".join(parts) + "\n}\n"
 
 
-def import_compilation(compiled: Path, root: Path) -> dict:
-    inventory = read(compiled / "source-inventory.json")
-    lock = read(root / "data/epi-bimba-map/source-lock.json")
-    require(inventory["revision"] == lock["revision"], "source revision drift")
-    require(inventory["repository"] == lock["repository"], "source repository drift")
-    require(inventory["dataset_tree"] == lock["dataset_tree"], "dataset tree drift")
-    require(not inventory["json_failures"] and not inventory["coordinate_parse_failures"],
-            "unclassified source loss")
-    files = sorted(inventory["files"], key=lambda f: f["path"])
-    by_file = {f["path"]: i for i, f in enumerate(files)}
-    for expected in lock["required_sources"]:
-        require(files[by_file[expected["path"]]]["git_blob"] == expected["git_blob"],
-                "required source blob drift: " + expected["path"])
+def from_map(value: dict, root: Path) -> dict:
+    """The M-tree extract of one map read, in the source-snapshot shape.
+
+    Coordinates are the map's M0..M5 nodes in QL's # notation (M -> #, context
+    frame brackets dropped); the exact map spelling is kept as an alias. Names
+    are c_1_name. HAS_INTERNAL_COMPONENT gives the source parent assertions.
+    Relations are every map relation touching an M-tree node; an endpoint outside
+    the M tree is spelled "bimba:<map coordinate>".
+    """
+    sys.path.insert(0, str(root / "scripts"))
+    import bimba_map
+    spell = {c: bimba_map.ql_spelling(c) for c in value["nodes"] if bimba_map.is_m_coordinate(c)}
+    require(len(set(spell.values())) == len(spell), "map coordinates collide in # notation")
+    content = {"nodes": value["nodes"], "relations": value["relations"]}
+    body = canonical(content)
+    require(hashlib.sha256(body).hexdigest() == value["content_sha256"], "map read content hash")
+    git_blob = hashlib.sha1(b"blob %d\0" % len(body) + body).hexdigest()
+    receipt = {k: value[k] for k in ("endpoint", "read_at", "bookmarks", "content_sha256")}
+    files = [{"path": "bimba-map:" + value["endpoint"], "git_blob": git_blob,
+              "sha256": value["content_sha256"], "bytes": len(body), "record_class": "bimba-map-read"}]
     records = []
 
-    def record(r: dict) -> int:
-        file_index = by_file[r["source_path"]]
-        f = files[file_index]
-        require(f["git_blob"] == r["source_git_blob"] and f["sha256"] == r["source_sha256"],
-                "record/file provenance mismatch")
-        index = len(records)
-        records.append({"file": file_index, "record_index": r["record_index"],
-                        "payload_sha256": r["payload_sha256"],
-                        "property_keys": r["property_keys"]})
-        return index
+    def record(index: int, payload: dict) -> int:
+        records.append({"file": 0, "record_index": index, "payload_sha256": digest(payload),
+                        "property_keys": sorted(payload)})
+        return len(records) - 1
 
+    parents: dict[str, set[str]] = {}
+    for a, kind, b, _ in value["relations"]:
+        if kind == "HAS_INTERNAL_COMPONENT" and a in spell and b in spell:
+            parents.setdefault(spell[b], set()).add(spell[a])
     nodes = []
-    for n in sorted(read(compiled / "coordinates.json"), key=lambda n: n["source_ref"]):
-        nodes.append({"source_ref": n["source_ref"], "names": n["names"],
-                      "aliases": n["aliases"], "source_parent_refs": n["source_parent_refs"],
-                      "lexical_parent_source_ref": n["lexical_parent_source_ref"],
-                      "records": [record(r) for r in n["records"]]})
+    for index, (coordinate, node) in enumerate(sorted(value["nodes"].items())):
+        if coordinate not in spell:
+            continue
+        ref, props = spell[coordinate], node["properties"]
+        lexical = re.fullmatch(r"(#[0-5](?:[-./][0-9]+)*)[-./][0-9]+", ref)
+        name = props.get("c_1_name")
+        nodes.append({"source_ref": ref,
+                      "names": [name.strip()] if isinstance(name, str) and name.strip() else [],
+                      "aliases": [coordinate] if "(" in coordinate else [],
+                      "source_parent_refs": sorted(parents.get(ref, ())),
+                      "lexical_parent_source_ref": lexical.group(1) if lexical else "#",
+                      "records": [record(index, props)]})
     relations = []
-    for r in sorted(read(compiled / "relations.json"), key=lambda r: r["relation_ref"]):
-        relations.append({"relation_ref": r["relation_ref"], "source_kind": r["source_kind"],
-                          "from_ref": r["from_ref"], "to_ref": r["to_ref"],
-                          "orientation": r["orientation"], "cross_m": r["cross_m"],
-                          "record": record(r)})
-    return {"schema": SOURCE_SCHEMA, "repository": lock["repository"],
-            "revision": lock["revision"], "dataset_tree": lock["dataset_tree"],
-            "source_lock_sha256": hashlib.sha256((root / "data/epi-bimba-map/source-lock.json").read_bytes()).hexdigest(),
-            "compiler_sha256": {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in
-                                ("scripts/compile-epi-bimba-map.py", "scripts/compile-epi-bimba-map-live.py")},
-            "files": files, "records": records, "nodes": nodes, "relations": relations,
-            "alternate_notation_groups": read(compiled / "alternate-notation-groups.json"),
-            "meta_source_records": read(compiled / "meta-source-records.json")}
+    for index, (a, kind, b, props) in enumerate(value["relations"]):
+        if a not in spell and b not in spell:
+            continue
+        # Endpoints outside the M tree (S/L/C lattices, primes, the map's own
+        # "#0".."#5" meta nodes) keep their map spelling under "bimba:", so they
+        # can never be read as QL's #N coordinates.
+        from_ref, to_ref = spell.get(a, "bimba:" + a), spell.get(b, "bimba:" + b)
+        relations.append({"relation_ref": "bimba:relation:" + digest([a, kind, b])[:24],
+                          "source_kind": kind, "from_ref": from_ref, "to_ref": to_ref,
+                          "orientation": "directed",
+                          "cross_m": a in spell and b in spell and from_ref[1] != to_ref[1],
+                          "record": record(len(value["nodes"]) + index, props)})
+    return {"schema": SOURCE_SCHEMA, "repository": "bimba-map",
+            "revision": value["content_sha256"], "dataset_tree": ",".join(value["bookmarks"]),
+            "source_lock_sha256": digest(receipt),
+            "compiler_sha256": {p: hashlib.sha256((root / p).read_bytes()).hexdigest()
+                                for p in ("scripts/bimba_map.py", "scripts/generate-m-tree.py")},
+            "files": files, "records": records, "nodes": nodes,
+            "relations": sorted(relations, key=lambda r: r["relation_ref"]),
+            "alternate_notation_groups": [], "meta_source_records": []}
 
 
 def prefix_of(parent: str, child: str) -> bool:
@@ -282,13 +305,14 @@ def outputs(root: Path, source: dict) -> dict[Path, str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
-    parser.add_argument("--import-compilation", type=Path)
+    parser.add_argument("--from-map", type=Path, nargs="?", const=ROOT / "target/bimba-map/map.json",
+                        help="rebuild the source snapshot from a map read (default target/bimba-map/map.json)")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     try:
-        source = import_compilation(args.import_compilation, args.root) if args.import_compilation else read(args.root / SNAPSHOT)
+        source = from_map(read(args.from_map), args.root) if args.from_map else read(args.root / SNAPSHOT)
         generated = outputs(args.root, source)
-        if args.import_compilation:
+        if args.from_map:
             generated[args.root / SNAPSHOT] = render(source)
         if args.check:
             drift = [str(p.relative_to(args.root)) for p, text in generated.items()

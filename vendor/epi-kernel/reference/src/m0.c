@@ -8,9 +8,14 @@
  */
 
 #include "m0.h"
+#include "m2.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+const Quaternion PURNATA_QUATERNION_SEED = {
+    .w = 0.0f, .x = 0.0f, .y = 0.0f, .z = 0.0f
+};
 
 /* =============================================================================
  * FR 2.0.0: VIMARSA OPERATOR TABLE — 7 entries
@@ -85,6 +90,84 @@ const Virtue_Entry VIRTUE_LUT[9] = {
       .symbol = "5R = @ = (##)" },
 };
 
+Unified_Clock_State m0_read_cosmic_clock(uint16_t degree_0_to_719) {
+    Unified_Clock_State s;
+    s.is_implicate_phase = hopf_fiber(degree_0_to_719);
+    uint16_t base = hopf_project(degree_0_to_719);
+    s.tick12 = hopf_tick12(degree_0_to_719);
+    uint8_t base_decan = (uint8_t)(base / 10u);
+    s.m2_decan_phase = s.is_implicate_phase ? (uint8_t)(base_decan + 36u) : base_decan;
+    s.m3_hexagram_id = (uint8_t)((base * 64u) / FULL_CYCLE_DEG);
+    return s;
+}
+
+Unified_Logos_State m0_compute_logos_state(uint8_t tick_0_to_11) {
+    Unified_Logos_State s;
+    s.pipeline_tick = tick_0_to_11;
+    s.is_implicate  = (tick_0_to_11 >= 6u);
+    s.current_stage = (LogosStage)(s.is_implicate
+                          ? (11u - tick_0_to_11)
+                          : tick_0_to_11);
+    s.active_divine_act = (Divine_Act)s.current_stage;
+    s.active_r_factor   = (uint8_t)s.current_stage;
+    return s;
+}
+
+M0_VerifierVerdict m0_check_tune_structural_invariant_compliance(
+    const M0_TuneProposal* proposal
+) {
+    M0_VerifierVerdict verdict;
+    memset(&verdict, 0, sizeof(verdict));
+
+    if (proposal == NULL) {
+        verdict.violation = 1;
+        strncpy(verdict.violation_name, "null-proposal", sizeof(verdict.violation_name) - 1u);
+        return verdict;
+    }
+
+    if (proposal->target_structural_invariant != 0) {
+        verdict.violation = 1;
+        strncpy(
+            verdict.violation_name,
+            "structural-invariant-violation",
+            sizeof(verdict.violation_name) - 1u
+        );
+    }
+
+    return verdict;
+}
+
+M0_VerifierVerdict m0_check_slot_privacy_boundary_compliance(
+    const M0_TuneProposal* proposal
+) {
+    M0_VerifierVerdict verdict;
+    memset(&verdict, 0, sizeof(verdict));
+
+    if (proposal == NULL) {
+        verdict.violation = 1;
+        strncpy(verdict.violation_name, "null-proposal", sizeof(verdict.violation_name) - 1u);
+        return verdict;
+    }
+
+    if (
+        strcmp(proposal->dispatch_purpose, "tuning-calibration") == 0
+        && strcmp(proposal->tuning_target_knob_privacy_class, "local-only") == 0
+        && (
+            strcmp(proposal->actual_resolved_slot_state, "local-default") != 0
+            || proposal->evidence_window_pasu_count > 1u
+        )
+    ) {
+        verdict.violation = 1;
+        strncpy(
+            verdict.violation_name,
+            "privacy-boundary-violation",
+            sizeof(verdict.violation_name) - 1u
+        );
+    }
+
+    return verdict;
+}
+
 /* =============================================================================
  * FR 2.0.3-H: ZODIACAL LUT — 12 entries (sub-table of Archetype 5 = Vak)
  * ============================================================================= */
@@ -155,10 +238,13 @@ const DivineAct_Entry DIVINE_ACT_LUT[7] = {
  *
  * Every entry has a Compiled_Formulation with source string.
  *
- * Sub-table assignments (test-authoritative):
- *   [7]  = number 5 (Vak/Sacred Speech)   -> ZODIACAL (12 entries)
- *   [9]  = number 7 (Dynamic Harmony)     -> MONOPOLY (7 entries)
- *   [11] = number 9 (Divine Action)       -> DIVINE   (7 entries)
+ * Sub-table assignments (canonical, fixed 2026-03-07, verified 2026-06-10):
+ *   [5]  = number 3 (Vak/Cit — Sacred Speech)     -> ZODIACAL (12 entries)
+ *   [7]  = number 5 (Dynamic Harmony / Mono-Poly)  -> MONOPOLY  (7 entries)
+ *   [9]  = number 7 (Divine Action / Ananda-Tandava) -> DIVINE_ACT (7 entries)
+ *   [11] = number 9 (Paramesvara / Wholeness)      -> VIRTUE     (9 entries)
+ *
+ * Fix doc: Body/S/S0/epi-lib/docs/m0-archetype-lut-ordering-fix.md
  * ============================================================================= */
 
 /* ARCHETYPE_LUT — 12-fold number language.
@@ -327,6 +413,95 @@ const Archetype_Entry ARCHETYPE_LUT[ARCHETYPE_LUT_SIZE] = {
     },
 };
 
+/* Canonical graph identities for the same twelve compiled slots. This is the
+ * machine-readable M0 authority consumed by S2 residual-set projections. */
+const char* const ARCHETYPE_COORDINATE_LUT[ARCHETYPE_LUT_SIZE] = {
+    "M0-3-(0/1)",
+    "M0-3-4",
+    "M0-3-2",
+    "M0-3-3",
+    "M0-3-5",
+    "M0-3-6",
+    "M0-3-7",
+    "M0-3-8",
+    "M0-3-9",
+    "M0-3-10",
+    "M0-3-11",
+    "M0-2-9",
+};
+
+const Archetype_Entry* m0_resolve_archetypal_number(uint8_t number) {
+    if (number > 9u) return NULL;
+    return &ARCHETYPE_LUT[number + 2u];
+}
+
+/* Session-close contemplation questions keyed by archetype index. */
+const char* const CONTEMPLATION_PROMPT_LUT[12] = {
+    "", /* CONTEMPLATION_PROMPT_LUT[0] */
+    "", /* CONTEMPLATION_PROMPT_LUT[1] */
+    "", /* CONTEMPLATION_PROMPT_LUT[2] */
+    "Did your speech articulate identity or just signal? Where did naming become performance?", /* CONTEMPLATION_PROMPT_LUT[3] */
+    "", /* CONTEMPLATION_PROMPT_LUT[4] */
+    "Did unity-multiplicity hold or did one side eat the other? Where was the mercurial crossroads refused?", /* CONTEMPLATION_PROMPT_LUT[5] */
+    "", /* CONTEMPLATION_PROMPT_LUT[6] */
+    "Did the four causes integrate or did one dominate? Which act was missing?", /* CONTEMPLATION_PROMPT_LUT[7] */
+    "", /* CONTEMPLATION_PROMPT_LUT[8] */
+    "Did the cycle complete in wholeness or close prematurely? Which virtue went unwitnessed?", /* CONTEMPLATION_PROMPT_LUT[9] */
+    "", /* CONTEMPLATION_PROMPT_LUT[10] */
+    "", /* CONTEMPLATION_PROMPT_LUT[11] */
+};
+
+/* =============================================================================
+ * M0/M2 PARITY BRIDGES - three minimal LUT lifts, not the full Anuttara lift.
+ * ============================================================================= */
+
+/* (a) One entry per zodiacal sign, zodiac order. `vak_symbol`/`resonance`/
+ * `successor` mirror ZODIACAL_LUT (the M0 side); `decan_planets` and
+ * `first_decan_idx_72` mirror the sign's three light-face decans in
+ * M2_DECAN_DESC (the M2 side). element = classical block (0 Fire / 1 Earth /
+ * 2 Air / 3 Water), so first_decan_idx_72 == element*18 + sign_in_element*6. */
+const M0_M2_Zodiacal_Bridge_Entry M0_M2_ZODIACAL_BRIDGE[12] = {
+    { "!",      0u,  1u,  0u, ZOD_MODE_CARDINAL, 0u,  { PLANET_MARS,    PLANET_SUN,     PLANET_JUPITER }, 0u  }, /* Aries    */
+    { "?",      1u,  2u,  1u, ZOD_MODE_FIXED,    1u,  { PLANET_VENUS,   PLANET_MERCURY, PLANET_SATURN  }, 18u }, /* Taurus   */
+    { "!-",     2u,  3u,  2u, ZOD_MODE_MUTABLE,  2u,  { PLANET_MERCURY, PLANET_VENUS,   PLANET_SATURN  }, 36u }, /* Gemini   */
+    { "-?",     3u,  4u,  3u, ZOD_MODE_CARDINAL, 3u,  { PLANET_MOON,    PLANET_MARS,    PLANET_JUPITER }, 54u }, /* Cancer   */
+    { "!?",     4u,  5u,  0u, ZOD_MODE_FIXED,    4u,  { PLANET_SUN,     PLANET_JUPITER, PLANET_MARS    }, 6u  }, /* Leo      */
+    { "?-",     5u,  6u,  1u, ZOD_MODE_MUTABLE,  5u,  { PLANET_MERCURY, PLANET_SATURN,  PLANET_VENUS   }, 24u }, /* Virgo    */
+    { "-!",     6u,  7u,  2u, ZOD_MODE_CARDINAL, 6u,  { PLANET_VENUS,   PLANET_SATURN,  PLANET_MERCURY }, 42u }, /* Libra    */
+    { "?!",     7u,  8u,  3u, ZOD_MODE_FIXED,    7u,  { PLANET_MARS,    PLANET_JUPITER, PLANET_MOON    }, 60u }, /* Scorpio  */
+    { "-!/!-",  8u,  9u,  0u, ZOD_MODE_MUTABLE,  8u,  { PLANET_JUPITER, PLANET_MARS,    PLANET_SUN     }, 12u }, /* Sagitt.  */
+    { "-?/?-",  9u,  10u, 1u, ZOD_MODE_CARDINAL, 9u,  { PLANET_SATURN,  PLANET_VENUS,   PLANET_MERCURY }, 30u }, /* Capric.  */
+    { "!?/?!",  10u, 11u, 2u, ZOD_MODE_FIXED,    10u, { PLANET_SATURN,  PLANET_MERCURY, PLANET_VENUS   }, 48u }, /* Aquarius */
+    { "?!/!?",  11u, 0u,  3u, ZOD_MODE_MUTABLE,  11u, { PLANET_JUPITER, PLANET_MOON,    PLANET_MARS    }, 66u }, /* Pisces   */
+};
+
+/* (b) Jung-Pauli psychoid correspondence: archetypal numbers 1..7 to the
+ * classical planetary sequence; [6] is the L0' lens parent as 7th-Boundary.
+ * Uranus/Neptune/Pluto stay reserved for the M2-5 transpersonal extension. */
+const Psychoid_Planetary_Entry PSYCHOID_PLANETARY_CORRESPONDENCE[7] = {
+    { 0u, 1u, PLANET_SUN     },  /* L0'-0  Number 1, Unity-Monad          */
+    { 1u, 2u, PLANET_MOON    },  /* L0'-1  Number 2, Polarity-Dyad        */
+    { 2u, 3u, PLANET_MERCURY },  /* L0'-2  Number 3, Mediator-Triad       */
+    { 3u, 4u, PLANET_VENUS   },  /* L0'-3  Number 4, Quaternio-Tetrad     */
+    { 4u, 5u, PLANET_MARS    },  /* L0'-4  Number 5, Transcendence-Pentad */
+    { 5u, 6u, PLANET_JUPITER },  /* L0'-5  Number 6, Perfect-Hexad        */
+    { 6u, 7u, PLANET_SATURN  },  /* L0' parent — 7th-Boundary, the lens   */
+};
+
+/* (c) L2' Alchemical-Elemental -> M2 tattvic. Aether (prima materia) and
+ * Salt (ultima materia — the fixed body of the Three Principles) both
+ * route to Akasha at opposite cycle points: the Möbius return of the
+ * elemental cycle, parallel to QL 5->0. Naming canon per 05.16: Salt,
+ * not Mineral. */
+const Alchemical_Tattvic_Entry ALCHEMICAL_TO_TATTVIC[6] = {
+    { M_ELEM_AETHER, ELEMENT_ID_AKASHA  },
+    { M_ELEM_EARTH,  ELEMENT_ID_PRITHVI },
+    { M_ELEM_WATER,  ELEMENT_ID_APAS    },
+    { M_ELEM_AIR,    ELEMENT_ID_VAYU    },
+    { M_ELEM_FIRE,   ELEMENT_ID_AGNI    },
+    { M_ELEM_SALT,   ELEMENT_ID_AKASHA  },
+};
+
 /* =============================================================================
  * FR 2.0.4: QL META-LOGIC STACK — 5 frames
  * ============================================================================= */
@@ -360,16 +535,133 @@ const QL_Frame QL_STACK[5] = {
 };
 
 /* =============================================================================
- * FR 2.0.4-H: NARA BRIDGE — 5 entries
+ * FR 2.0.4-H: NARA BRIDGE — 6 entries (Tranche 01.T1.16)
+ *
+ * The 6-fold kinship-grammar as kernel LUT:
+ *   [0] ##       — kinship ground, MATRIX, polarity BOTH  (0/1)
+ *   [1] Daughter — SUBDOMINANT,       polarity YIN   (1/1-)
+ *   [2] Father   — DOMINANT,          polarity YANG  (2-/2)
+ *   [3] Son      — SUBDOMINANT,       polarity YANG  (3/3-)
+ *   [4] Mother   — INTEGRATIVE,       polarity YIN   (4./4)
+ *   [5] Tao      — DOMINANT,          polarity BOTH  (5-/5)  synthesis pole
+ *
+ * Dominant poles = parents (Father, Mother); subdominant = children (Son, Daughter);
+ * Tao = synthesis; ## = kinship ground.
+ * Chirality is read off the coordinate, never additive.
+ * gender = polarity, generation = dominance.
  * ============================================================================= */
 
-const Nara_Entry NARA_MSHARP_LUT[5] = {
-    { .frame_position = 0, .polarity = NARA_POLARITY_BOTH, .dominant_val = 0, .archetype_role = 0 },
-    { .frame_position = 1, .polarity = NARA_POLARITY_YIN,  .dominant_val = 1, .archetype_role = 1 },
-    { .frame_position = 2, .polarity = NARA_POLARITY_YANG, .dominant_val = 2, .archetype_role = 2 },
-    { .frame_position = 3, .polarity = NARA_POLARITY_YANG, .dominant_val = 3, .archetype_role = 3 },
-    { .frame_position = 4, .polarity = NARA_POLARITY_YIN,  .dominant_val = 4, .archetype_role = 4 },
+const Nara_Entry NARA_MSHARP_LUT[6] = {
+    /* [0] ## — kinship ground (0/1), MATRIX */
+    { .frame_position = 0, .polarity = NARA_POLARITY_BOTH,
+      .dominant_val = 0, .archetype_role = 0,
+      .dominance_mode = NARA_DOM_MATRIX, .coordinate = "0/1" },
+    /* [1] Daughter (1/1-), SUBDOMINANT */
+    { .frame_position = 1, .polarity = NARA_POLARITY_YIN,
+      .dominant_val = 1, .archetype_role = 1,
+      .dominance_mode = NARA_DOM_SUBDOMINANT, .coordinate = "1/1-" },
+    /* [2] Father (2-/2), DOMINANT */
+    { .frame_position = 2, .polarity = NARA_POLARITY_YANG,
+      .dominant_val = 2, .archetype_role = 2,
+      .dominance_mode = NARA_DOM_DOMINANT, .coordinate = "2-/2" },
+    /* [3] Son (3/3-), SUBDOMINANT */
+    { .frame_position = 3, .polarity = NARA_POLARITY_YANG,
+      .dominant_val = 3, .archetype_role = 3,
+      .dominance_mode = NARA_DOM_SUBDOMINANT, .coordinate = "3/3-" },
+    /* [4] Mother (4./4), INTEGRATIVE */
+    { .frame_position = 4, .polarity = NARA_POLARITY_YIN,
+      .dominant_val = 4, .archetype_role = 4,
+      .dominance_mode = NARA_DOM_INTEGRATIVE, .coordinate = "4./4" },
+    /* [5] Tao (5-/5), DOMINANT — synthesis pole, polarity BOTH */
+    { .frame_position = 5, .polarity = NARA_POLARITY_BOTH,
+      .dominant_val = 5, .archetype_role = 5,
+      .dominance_mode = NARA_DOM_DOMINANT, .coordinate = "5-/5" },
 };
+
+_Static_assert(sizeof(NARA_MSHARP_LUT) / sizeof(NARA_MSHARP_LUT[0]) == 6u,
+    "NARA_MSHARP_LUT must have exactly 6 entries");
+
+
+/* =============================================================================
+ * VII-B. MSHARP_PERSON_LUT — the M# person-grammar (6-fold)
+ *
+ * Person-grammar: I, You, You-and-I, They, We, We-I.
+ * Position 0 (I) shares (0/1) binary with #'s ##.
+ * Position 5 (We-I) ≡ #'s Tao (synthesis pole).
+ * ============================================================================= */
+
+const Msharp_Person_Entry MSHARP_PERSON_LUT[6] = {
+    /* [0] I — first-person singular, ground identity, shares ##'s (0/1) */
+    { .position = 0, .polarity = NARA_POLARITY_BOTH,
+      .dominance_mode = NARA_DOM_MATRIX,
+      .name = "I", .coordinate = "0/1",
+      .description = "First-person singular — ground identity; the (0/1) binary shared with #'s ##" },
+    /* [1] You — second-person singular, one external relation */
+    { .position = 1, .polarity = NARA_POLARITY_YANG,
+      .dominance_mode = NARA_DOM_SUBDOMINANT,
+      .name = "You", .coordinate = "1+1=2",
+      .description = "Second-person singular — one relation across the I/Thou boundary; yields 2" },
+    /* [2] You-and-I — dyadic relational field */
+    { .position = 2, .polarity = NARA_POLARITY_YIN,
+      .dominance_mode = NARA_DOM_DOMINANT,
+      .name = "You-and-I", .coordinate = "0-3",
+      .description = "Dyadic person — the relational field spanning I (0) through You (3)" },
+    /* [3] They — third-person, the external manifold */
+    { .position = 3, .polarity = NARA_POLARITY_YANG,
+      .dominance_mode = NARA_DOM_SUBDOMINANT,
+      .name = "They", .coordinate = "1+2=3",
+      .description = "Third-person plural — the external manifold; I+You yields the third" },
+    /* [4] We — first-person plural, collective ground */
+    { .position = 4, .polarity = NARA_POLARITY_BOTH,
+      .dominance_mode = NARA_DOM_INTEGRATIVE,
+      .name = "We", .coordinate = "4+0",
+      .description = "First-person plural — collective ground; the tetrad (4) unified with zero" },
+    /* [5] We-I — synthesis, ≡ #'s Tao */
+    { .position = 5, .polarity = NARA_POLARITY_BOTH,
+      .dominance_mode = NARA_DOM_DOMINANT,
+      .name = "We-I", .coordinate = "0/1/4/5",
+      .description = "Synthesis pole — the I/We unity, structurally identical to #'s Tao (5-/5)" },
+};
+
+_Static_assert(sizeof(MSHARP_PERSON_LUT) / sizeof(MSHARP_PERSON_LUT[0]) == 6u,
+    "MSHARP_PERSON_LUT must have exactly 6 entries");
+
+
+/* =============================================================================
+ * VII-C. NARA_TO_TRIGRAM — # 6-fold ↔ M3_TRIGRAM_LUT[8] bridge
+ *
+ * Father  ↔ Qian(111)   trigram 0
+ * Mother  ↔ Kun(000)    trigram 1
+ * Sons    → {Zhen(001), Kan(010), Gen(100)}  trigrams 2,4,6
+ * Daughters → {Xun(110), Li(101), Dui(011)}  trigrams 3,5,7
+ * ## and Tao carry 0xFF = no trigram seed.
+ * ============================================================================= */
+
+#include "m3.h"
+
+const Nara_Trigram_Bridge NARA_TO_TRIGRAM[6] = {
+    /* [0] ## — kinship ground, no trigram */
+    { .nara_position = 0, .trigram_seed = 0xFFu, .trigram_count = 0,
+      .trigram_ids = { 0xFFu, 0xFFu, 0xFFu } },
+    /* [1] Daughter → Xun(110), Li(101), Dui(011) — 3 daughters */
+    { .nara_position = 1, .trigram_seed = 3u, .trigram_count = 3,
+      .trigram_ids = { 3u, 5u, 7u } },
+    /* [2] Father → Qian(111) — single trigram */
+    { .nara_position = 2, .trigram_seed = 0u, .trigram_count = 1,
+      .trigram_ids = { 0u, 0xFFu, 0xFFu } },
+    /* [3] Son → Zhen(001), Kan(010), Gen(100) — 3 sons */
+    { .nara_position = 3, .trigram_seed = 2u, .trigram_count = 3,
+      .trigram_ids = { 2u, 4u, 6u } },
+    /* [4] Mother → Kun(000) — single trigram */
+    { .nara_position = 4, .trigram_seed = 1u, .trigram_count = 1,
+      .trigram_ids = { 1u, 0xFFu, 0xFFu } },
+    /* [5] Tao — synthesis pole, no trigram */
+    { .nara_position = 5, .trigram_seed = 0xFFu, .trigram_count = 0,
+      .trigram_ids = { 0xFFu, 0xFFu, 0xFFu } },
+};
+
+_Static_assert(sizeof(NARA_TO_TRIGRAM) / sizeof(NARA_TO_TRIGRAM[0]) == 6u,
+    "NARA_TO_TRIGRAM must have exactly 6 entries");
 
 /* =============================================================================
  * MIRROR CHILDREN — Frame () and Operator - (#0-3-0/1-0, #0-3-0/1-1)
@@ -490,6 +782,92 @@ const Shakti_Entry SHAKTI_TABLE[SHAKTI_TABLE_SIZE] = {
 const R_Factor_Route R_FACTOR_ROUTE_TABLE[R_FACTOR_ROUTE_COUNT] = {
     ROUTE_O_SHARP, ROUTE_X_SHARP, ROUTE_N_SHARP, ROUTE_M_SHARP,
     ROUTE_NARA, ROUTE_SIVA, ROUTE_SHAKTI
+};
+
+/* DR-R0 (resolved 2026-06-12): pin the R-factor distribution to the
+ * anuttara-language-map base-rows so the upper-triad confinement cannot
+ * silently drift back to the old full-sweep words. Archetype-7 law. */
+
+/* R0 (Creation) confined to the upper triad O#/X#/N# at positions 1/2/3 ... */
+_Static_assert(GET_R_POS(ROUTE_O_SHARP, 0) == 1u, "R0 sits at O# position 1");
+_Static_assert(GET_R_POS(ROUTE_X_SHARP, 0) == 2u, "R0 sits at X# position 2");
+_Static_assert(GET_R_POS(ROUTE_N_SHARP, 0) == 3u, "R0 sits at N# position 3");
+/* ... and absent (7) from Spanda down: creation does not act below N#. */
+_Static_assert(GET_R_POS(ROUTE_M_SHARP, 0) == 7u, "R0 absent from M# (creation stops at Spanda)");
+_Static_assert(GET_R_POS(ROUTE_NARA,    0) == 7u, "R0 absent from Nara");
+_Static_assert(GET_R_POS(ROUTE_SIVA,    0) == 7u, "R0 absent from Siva");
+_Static_assert(GET_R_POS(ROUTE_SHAKTI,  0) == 7u, "R0 absent from Shakti");
+
+/* Per-fret complementarity Rx + R(5-x) = 5 where both present: the two
+ * full-spine double-courses (R1/R4 sustenance-grace, R2/R3 dissolution-veiling). */
+#define R0_RFACTOR_COMPL_R1R4(route) \
+    _Static_assert(GET_R_POS(route, 1) + GET_R_POS(route, 4) == 5u, "R1 + R4 = 5 (" #route ")")
+#define R0_RFACTOR_COMPL_R2R3(route) \
+    _Static_assert(GET_R_POS(route, 2) + GET_R_POS(route, 3) == 5u, "R2 + R3 = 5 (" #route ")")
+R0_RFACTOR_COMPL_R1R4(ROUTE_O_SHARP);  /* R2/R3 absent at O# */
+R0_RFACTOR_COMPL_R1R4(ROUTE_X_SHARP);  R0_RFACTOR_COMPL_R2R3(ROUTE_X_SHARP);
+R0_RFACTOR_COMPL_R1R4(ROUTE_N_SHARP);  R0_RFACTOR_COMPL_R2R3(ROUTE_N_SHARP);
+R0_RFACTOR_COMPL_R1R4(ROUTE_M_SHARP);  R0_RFACTOR_COMPL_R2R3(ROUTE_M_SHARP);
+R0_RFACTOR_COMPL_R1R4(ROUTE_NARA);     R0_RFACTOR_COMPL_R2R3(ROUTE_NARA);
+R0_RFACTOR_COMPL_R1R4(ROUTE_SIVA);     R0_RFACTOR_COMPL_R2R3(ROUTE_SIVA);
+R0_RFACTOR_COMPL_R2R3(ROUTE_SHAKTI);   /* the (@#) turn: R2@5 + R3@0 = 5 */
+#undef R0_RFACTOR_COMPL_R1R4
+#undef R0_RFACTOR_COMPL_R2R3
+
+/* =============================================================================
+ * IX-B: ARCHETYPE-7 R-FACTOR THEORY IN FULL (Tranche 01.T1.12)
+ *
+ * The principle triad, the 7×6 distribution matrix, and the base→M column
+ * map. The act-factors themselves are already carried by DIVINE_ACT_LUT
+ * (R# parent + R0..R5); these tables land the triad and the distribution.
+ * ============================================================================= */
+
+/* Tier 1 — the principle triad (verbatim c_1_symbol identity chains,
+ * anuttara-language-map rows M0-2-9-0/1/2). */
+const R_Triad_Entry R_TRIAD_TABLE[R_TRIAD_COUNT] = {
+    { .principle = R_TRIAD_TRUTH, .symbol = R_TRIAD_TRUTH_SYMBOL, .name = "Truth",
+      .identity = "## = @ = (0/1)-(00)-00" },                 /* matrix on matrix; structure's lineage to void */
+    { .principle = R_TRIAD_LIGHT, .symbol = R_TRIAD_LIGHT_SYMBOL, .name = "Light",
+      .identity = "#R = @ = (7-8-9-(0/1)/O#-X#-N#)" },        /* Openness/Creativity; the 7-8-9 spine */
+    { .principle = R_TRIAD_LIFE,  .symbol = R_TRIAD_LIFE_SYMBOL,  .name = "Life",
+      .identity = "R# = parent of the acts @ M0-3-10-(0/1) = @5 (Sakti Techne)" }, /* Freedom/Svatantrya */
+};
+
+/* Tier 2 — distribution matrix [base][R0..R5] → fret position, 7 = absent.
+ * Decoded from R_FACTOR_ROUTE_TABLE (R0..R4) + R5 positionless throughout.
+ *
+ *   Base          R0  R1  R2  R3  R4  R5
+ *   O# Paramasiva  1   0   —   —   5   —
+ *   X# Parasakti   2   1   0   5   4   —
+ *   N# Spanda      3   2   1   4   3   —
+ *   M# Mahamaya    —   3   2   3   2   —
+ *   #  Nara        —   4   3   2   1   —
+ *   Siva           —   5   4   1   0   —
+ *   Sakti          —   —   5   0   —   —          (— = R5_POSITIONLESS = 7) */
+const uint8_t R_FACTOR_DISTRIBUTION[R_FACTOR_BASE_COUNT][R_FACTOR_COUNT] = {
+    /* O# */ { 1, 0, 7, 7, 5, R5_POSITIONLESS },
+    /* X# */ { 2, 1, 0, 5, 4, R5_POSITIONLESS },
+    /* N# */ { 3, 2, 1, 4, 3, R5_POSITIONLESS },
+    /* M# */ { 7, 3, 2, 3, 2, R5_POSITIONLESS },
+    /* #  */ { 7, 4, 3, 2, 1, R5_POSITIONLESS },
+    /* Si */ { 7, 5, 4, 1, 0, R5_POSITIONLESS },
+    /* Sk */ { 7, 7, 5, 0, 7, R5_POSITIONLESS },
+};
+
+/* The R0..R4 columns of R_FACTOR_DISTRIBUTION are the route words read the
+ * other way; pin them so the matrix cannot drift from R_FACTOR_ROUTE_TABLE. */
+_Static_assert(GET_R_POS(ROUTE_O_SHARP, 0) == 1u, "matrix O#/R0 == route O#/R0");
+_Static_assert(GET_R_POS(ROUTE_SHAKTI, 3) == 0u, "matrix Sakti/R3 == route Shakti/R3 (the (@#) turn)");
+
+/* Macro M-branch each base pre-threads (aligned to M0_CROSS_BRANCH weaving). */
+const uint8_t R_BASE_M_COLUMN[R_FACTOR_BASE_COUNT] = {
+    1u, /* O#    → M1 Paramasiva  */
+    2u, /* X#    → M2 Parasakti   */
+    3u, /* N#    → M3 Mahamaya     */
+    4u, /* M#    → M4 Nara         */
+    4u, /* Nara  → M4 Nara         */
+    5u, /* Siva  → M5 Epii         */
+    5u, /* Sakti → M5 Epii         */
 };
 
 /* =============================================================================

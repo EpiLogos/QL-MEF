@@ -18,7 +18,6 @@ use serde_json::{Value, json};
 
 const SUBJECT: &str = "#1-2";
 const DATASET_SOURCE: &str = "Idea/Bimba/Map/datasets/low-detail/nodes_hash.json";
-const SOURCE_REVISION: &str = "daa660cbc1b8c5da83828698665a753852cb0287";
 const MATRIX_MEMBERS: [(&str, u8); 6] = [
     ("#1-2-0", 0),
     ("#1-2-1", 1),
@@ -175,7 +174,8 @@ fn bimba_identity_survives_from_registry_through_m_prime_instrument_to_aletheia_
         child_refs, matrix_refs,
         "Matrix 0-5 are the real children in order"
     );
-    assert_eq!(registry["source_revision"], SOURCE_REVISION);
+    // The registry is generated from the Bimba map; its revision is the map read.
+    assert_eq!(registry["source_repository"], "bimba-map");
 
     // M′ instrument: the production Technē source discloses the ground and
     // the bounded whole with byte-exact refs.
@@ -204,7 +204,11 @@ fn bimba_identity_survives_from_registry_through_m_prime_instrument_to_aletheia_
     // returns through the CS walk with form/passage/Z surviving.
     let result = ql_cli::vak_composition::execute_request(&composition_request()).unwrap();
     assert_eq!(result["contract"], "ql.vak-composition/v1");
-    assert_eq!(result["sourceRevision"], SOURCE_REVISION);
+    // VAK composition still reads the July language map (data/epi-bimba-map).
+    assert_eq!(
+        result["sourceRevision"],
+        "daa660cbc1b8c5da83828698665a753852cb0287"
+    );
     let results = result["results"].as_array().unwrap();
     let whole_view = &results[0]["result"];
     assert_eq!(whole_view["binding"]["subjectRef"], SUBJECT);

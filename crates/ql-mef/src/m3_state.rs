@@ -65,6 +65,13 @@ pub enum M3Operation {
     AdvanceClock {
         steps: u64,
     },
+    /// One M1 generation advances the form: the live M1 ring quaternion at
+    /// `tick12`, with the cycle's lens and the epogdoon, selects the codon
+    /// (`spanda_field::ring_codon_advance`). The bare tick never selects it.
+    SpandaAdvance {
+        tick12: u8,
+        cycle: u64,
+    },
     Transcribe {
         rna: bool,
     },
@@ -275,6 +282,13 @@ impl M3State {
                     exact(total)?;
                     next.clock = M3Clock::at_steps(total);
                     next.replace_form(next.fold.codon());
+                }
+                M3Operation::SpandaAdvance { tick12, cycle } => {
+                    if tick12 >= 12 {
+                        return Err("Spanda tick outside 0..12".into());
+                    }
+                    exact(cycle)?;
+                    next.replace_form(crate::spanda_field::ring_codon_advance(tick12, cycle));
                 }
                 M3Operation::Transcribe { rna } => next.rna = rna,
                 M3Operation::CastCreases {

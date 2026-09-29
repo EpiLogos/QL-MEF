@@ -3,15 +3,25 @@
   "status": "reference-frozen-with-ratified-corrections",
   "source": {
     "repository": "EpiLogos/Epi-Logos-C-Experiments",
-    "revision": "daa660cbc1b8c5da83828698665a753852cb0287",
+    "revision": "c7872e96a12e8253de6818876c2a039fd8082e46",
     "root": "Body/S/S0/epi-lib",
     "trees": {
-      "include": "f2b27d99197ee0f1cb9ed95ef52a5dd61a226e54",
-      "src": "a60dcda1427a6ab3cfcd44565a29f988938d0881",
-      "test": "9a6ef6505bb4e7622dba0922a07dced9bc49cd79"
+      "include": "c99cbd0db1b849b2de2e8fab78ffdceeaa4ad9d4",
+      "src": "a73e0cf4c8be8d177863e06f4f1b9f4837e6acf1",
+      "test": "8ec258f61ea2dba08c517cd644b65eb75bae18af",
+      "blake3": "f86521cacc437fb15e5fa69e99ed94bc9a38b253"
     },
     "standing": "historical-last-prototype",
-    "note": "Epi-Logos-C-Experiments is the historical last prototype of this work, not a living upstream. QL-MEF owns the vendored reference in corrected form (ratified_corrections); the prototype is mined for knowledge and parity evidence, not synchronized as authority and not fed corrections."
+    "note": "Epi-Logos-C-Experiments is the historical last prototype of this work. QL-MEF owns the vendored reference in corrected form (ratified_corrections). On 2026-09-28 the owner directed the reference forward to the prototype's main (QL-MEF #135, scene session): QL's reference and registry were compiled from the July daa660c cut and missed the later epi-lib canon (T2.11 Spanda dual oscillator, 12x12 Vortex Modulae core, m0 calculus, m_canonical, pisano LUT, backbone degree fix). Further moves remain explicit source-lock transitions.",
+    "transitions": [
+      {
+        "from": "daa660cbc1b8c5da83828698665a753852cb0287",
+        "to": "c7872e96a12e8253de6818876c2a039fd8082e46",
+        "on": "2026-09-28",
+        "authority": "owner direction in QL-MEF #135 session: port QL to the live Bimba map and the current kernel"
+      }
+    ],
+    "blake3_root": "Body/S/S0/vendor/blake3"
   },
   "target": {
     "repository": "EpiLogos/QL-MEF",
@@ -43,12 +53,16 @@
   "reference_inventory": {
     "include": [
       {
+        "path": "anuttara_language.h",
+        "blob": "870370aebf96dbb2c63e4544a87945b35d3828df"
+      },
+      {
         "path": "arena.h",
         "blob": "8e5ef4e7db8f4d203befb35d52b259ace7797d4b"
       },
       {
         "path": "engine.h",
-        "blob": "bccc79a71958e383303e49ccc40add3fbf9d3fdf"
+        "blob": "a7563ae267a82ab30441c9cacf8e65a2678a01ec"
       },
       {
         "path": "kernel.h",
@@ -56,27 +70,39 @@
       },
       {
         "path": "m0.h",
-        "blob": "ae62bd6e8c587fbb94d44eb6e258a5f070eb0236"
+        "blob": "75dad08639d7903b826a151bfecfa715f221d755"
+      },
+      {
+        "path": "m0_calculus.h",
+        "blob": "cad8f7fa972bbf0e871cae263634ac871d08f51c"
+      },
+      {
+        "path": "m0_verifier.h",
+        "blob": "5b2ed8b74c62fb511bf89f4bbdfb8ac261b1162e"
       },
       {
         "path": "m1.h",
-        "blob": "abd66e40d8f010c22ccb2cfef17c1c68d6f6286e"
+        "blob": "f05a5daafb84b0fa2f0cf68f3d28c4cf2ac1835e"
       },
       {
         "path": "m2.h",
-        "blob": "3b450b4fd057c2562f0946821c6c9c04f87743b1"
+        "blob": "05698bf83d1f34092f0d4979cd90495471fb3148"
       },
       {
         "path": "m3.h",
-        "blob": "5cfc92a22dd06f41e35855808450a1e3f9659229"
+        "blob": "28054e4209fc4a3c7b17c564aa29b86c6f248ee2"
       },
       {
         "path": "m4.h",
-        "blob": "1a4d896ced9b6963541dcf9bf6dc14e0602519c0"
+        "blob": "f9c83e97d6a94869fd3fa347dc33dedce1f97081"
       },
       {
         "path": "m5.h",
-        "blob": "99d557632a2951f0caef16e8e7a4aeb2889f872d"
+        "blob": "f631ca201c4f7fa996af8d28e14799dada1efc2c"
+      },
+      {
+        "path": "m_canonical.h",
+        "blob": "f577f047f829563f79f3f754e3a7d346332028f5"
       },
       {
         "path": "ontology.h",
@@ -84,7 +110,7 @@
       },
       {
         "path": "pointer_web.h",
-        "blob": "4136f90e1a1c0ee35c079978d0ea9b1b844bc87c"
+        "blob": "36fc3316381e0f4c1b904271b5dc33b0f54433bb"
       },
       {
         "path": "psychoid_numbers.h",
@@ -97,12 +123,20 @@
     ],
     "src": [
       {
+        "path": "anuttara_language.c",
+        "blob": "8ea98a790a3237df5d222e0b6c81caa762a8e31a"
+      },
+      {
+        "path": "anuttara_language_registry.inc",
+        "blob": "2c2d9b8582c60d1b44b92e326197d20d07ea7a82"
+      },
+      {
         "path": "arena.c",
         "blob": "fb350c0f973375e80f8ee46d0f17658195f9de53"
       },
       {
         "path": "engine.c",
-        "blob": "dc636fd3d7638e418311359c7134d8aac2786f2a"
+        "blob": "877405703530ac45b74fc8cc2979c779188aa471"
       },
       {
         "path": "families.c",
@@ -110,23 +144,39 @@
       },
       {
         "path": "kernel.c",
-        "blob": "028c7a919249a3a549d5b0ba1b3d9a67d4efa791"
+        "blob": "fefd1bb6b1d8f2df455cfafbee679985d783f7c9"
+      },
+      {
+        "path": "lib.rs",
+        "blob": "9f1aad9336cdf31b0b94593028bd02d012745a6f"
       },
       {
         "path": "m0.c",
-        "blob": "4c6cc55df340014ae412cd218bdb520ec1e8aafa"
+        "blob": "4ef76edab7f028d073d1e51cae95b6fc24484f52"
+      },
+      {
+        "path": "m0_anuttara_lint.c",
+        "blob": "f6a69c9f19c59efa7e53cdddf029407c1a5dfa31"
+      },
+      {
+        "path": "m0_calculus.c",
+        "blob": "571864f193309605ce8af991925289126705dd33"
+      },
+      {
+        "path": "m0_verifier.c",
+        "blob": "a3358b68ec433f01ef17b4a767f7108d669f9470"
       },
       {
         "path": "m1.c",
-        "blob": "d7a86a16113bc13b156a79cafeeb6303c3e5a790"
+        "blob": "efae97605cbf5c64f99676bbaee9d4f5754b5f47"
       },
       {
         "path": "m2.c",
-        "blob": "911b8ce9cdb922d12422de91949d2a64c8ad7ace"
+        "blob": "79a25d51474f5d2dba72502468e6b58ea9156539"
       },
       {
         "path": "m3.c",
-        "blob": "d7f2c2e7001be3883efc43fc2c6a9983a1dfe6c1"
+        "blob": "5dd2b33fa33371c3468c47f87e95361e50c422a4"
       },
       {
         "path": "m3_clock_lut.c",
@@ -134,11 +184,11 @@
       },
       {
         "path": "m4.c",
-        "blob": "a96d62285b3a66b71df64f752ee4aa6802edfe87"
+        "blob": "847eaa926cdca58a92925e907a72716a6b6479fe"
       },
       {
         "path": "m5.c",
-        "blob": "fe730882814a4c99c87115a97d64f5bd8dd62617"
+        "blob": "ce6edd7707c7b59d0479210ea1416dbd21f3cb50"
       },
       {
         "path": "main.c",
@@ -146,7 +196,7 @@
       },
       {
         "path": "pointer_web.c",
-        "blob": "3eeae6f9c8cc65c5a610df1a49143b3c65bdd320"
+        "blob": "5fd07e663c734f55a81cdbc9ef4313843def7123"
       },
       {
         "path": "psychoid_numbers.c",
@@ -165,14 +215,25 @@
       "authority": "owner ratification of the parity-consistent nucleotide coin table (recorded in PR #105 analysis, PR #111 execution)",
       "patch": "vendor/epi-kernel/corrections/M3-COIN-1.patch",
       "files": [
+        "include/m0_calculus.h",
         "include/m3.h",
+        "src/lib.rs",
+        "src/m0_calculus.c",
         "src/m3.c"
       ],
       "content_sha256": {
-        "include/m3.h": "9980503a3e0d53852b9c187ea8c4154a0960836e90dab2625467d1067c428678",
-        "src/m3.c": "7d5841d963596b2c8ae5923493489e4bd12d2af2210fb88a1ca39ab61c4a905b"
+        "include/m0_calculus.h": "8da5564ea3dedc05016ae1b9b6912db4c90a9f44349bb7e36d8ff2cc23bf8e58",
+        "include/m3.h": "f036b5ada8b1232c355a1268bf84fa5effba02aafca850707560cd4c1d39937c",
+        "src/lib.rs": "2265e2db36d0e2f9454945c23faddf67da66cafcbc761ad9eab10fe7d5e27306",
+        "src/m0_calculus.c": "16cae7cf05d66d1a42b1d445bdb92f3c7194d950ca109b1e1320e629b49314d8",
+        "src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1"
       },
-      "rationale": "NUCLEOTIDE_ICHING_VALUE corrected from parity-violating {6,9,7,8} to parity-consistent {6,9,8,7} (odd=yang, even=yin per m4_cast_iching; C=Earth/yin/Pentacles carries young yin 8, G=Air/yang/Swords carries young yang 7). M3_PAIR_MATRIX, per-suit integral constants (Pentacles 92, Swords 88; total 360 unchanged) and Tarot charge annotations regenerated with the table. m3_verify() passes."
+      "rationale": "NUCLEOTIDE_ICHING_VALUE corrected from parity-violating {6,9,7,8} to parity-consistent {6,9,8,7} (odd=yang, even=yin per m4_cast_iching; C=Earth/yin/Pentacles carries young yin 8, G=Air/yang/Swords carries young yang 7). M3_PAIR_MATRIX, per-suit integral constants (Pentacles 92, Swords 88; total 360 unchanged) and Tarot charge annotations regenerated with the table. m3_verify() passes.",
+      "rebased": {
+        "on": "2026-09-28",
+        "onto": "c7872e96a12e8253de6818876c2a039fd8082e46",
+        "note": "Same ratified table carried onto the moved reference; also applied to the m0 coin-method derivation (m0_calculus.c/.h, lib.rs test) that now checks itself against NUCLEOTIDE_ICHING_VALUE. Not a new ruling."
+      }
     }
   ]
 }

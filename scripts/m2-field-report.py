@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""M2-only census from the unchanged K2 registry and hash-locked deep source.
+"""M2-only census from the registry and a read of the Bimba map it was built from.
 
 This is an evidence projection, NOT a replacement tree or a readiness oracle.
-Every coordinate remains referenced even without a numerical descriptor. Rich
-source payloads stay at their exact pinned file/pointer; no embeddings are ported.
+Every coordinate remains referenced even without a numerical descriptor. `check`
+recomputes when a read of the registry's map is present (scripts/bimba_map.py
+read), and otherwise verifies the committed summary against the registry.
 """
 import argparse
 import collections
@@ -14,25 +15,24 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'fixtures/kernel/m2-field-census-summary-v1.json'
-PREFIX = 'Idea/Bimba/Map/datasets/parashakti-deep/'
+import sys
+sys.path.insert(0, str(ROOT / 'scripts'))
+import bimba_map
 
 def load(path): return json.loads(path.read_text(encoding='utf-8-sig'), strict=False)
 def sha(data): return hashlib.sha256(data).hexdigest()
 def stable(data): return json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
 
-def report(source):
+def report(read):
     registry = load(ROOT / 'fixtures/kernel/m-tree-v1.json')
     catalogue = load(ROOT / 'fixtures/kernel/m2-retained-c-v1.json')
-    locks = [f for f in registry['files'] if f['path'].startswith(PREFIX)]
-    if len(locks) != 3: raise ValueError('expected the three K2-pinned deep source files')
-    documents = {}
-    for lock in locks:
-        path = source / lock['path']; raw = path.read_bytes()
-        if sha(raw) != lock['sha256']: raise ValueError('not the pinned K2 source: ' + lock['path'])
-        documents[path.name] = load(path)
+    if read['content_sha256'] != registry['source_revision']:
+        raise ValueError('map read is not the map the registry was built from')
+    locks = registry['files']
     nodes = {n['source_ref']: n for n in registry['nodes'] if n['root_position'] == 2}
     by_id = {n['id']: n for n in nodes.values()}
-    source_nodes = {n['coordinate']: (i, n['filteredProps']) for i,n in enumerate(documents['nodes-full-detail.json'])}
+    by_ql = {bimba_map.ql_spelling(c): v['properties'] for c, v in read['nodes'].items() if bimba_map.is_m_coordinate(c)}
+    source_nodes = {ref: (registry['records'][n['records'][0]]['record_index'], by_ql[ref]) for ref, n in nodes.items()}
     tables = {t['name']: t for t in catalogue['tables']}
     associations = collections.defaultdict(list)
     for table in catalogue['tables']:
@@ -43,18 +43,17 @@ def report(source):
         raw = source_nodes.get(ref)
         holdings.append({'coordinate':ref,'registry_node_id':node['id'],
             'source_record_indices':node['records'],'source_names':node['names'],
-            'deep_source_pointer':('/'+str(raw[0])+'/filteredProps') if raw else None,
-            'deep_payload_sha256':sha(stable(raw[1])) if raw else None,
-            'deep_property_keys':sorted(raw[1]) if raw else [],
+            'map_record_index':raw[0],
+            'map_payload_sha256':sha(stable(raw[1])),
+            'map_property_keys':sorted(raw[1]),
             'retained_record_associations':associations[ref],
             'disposition':'retained-descriptor-associated; semantic-equality-unproven' if associations[ref] else 'source-retained; no-leaf-computation-asserted'})
-    if len(holdings) != 597: raise ValueError('M2 source field changed; reconcile instead of truncating')
     relations = [r for r in registry['relations'] if r['from_id'] in by_id or r['to_id'] in by_id]
     asma = []; t = tables['asma']
     for i,(row,ref) in enumerate(zip(t['rows'],t['bindings'])):
         if not ref or ref not in source_nodes: continue
         props = source_nodes[ref][1]
-        for column,key in [('abjad_value','abjadValue'),('digital_root','digitalRoot')]:
+        for column,key in [('abjad_value','m_2_4_abjad_value'),('digital_root','m_2_4_digital_root')]:
             retained = row[t['columns'].index(column)]
             if key in props and props[key] != retained:
                 asma.append({'record':i,'coordinate':ref,'field':key,'retained_c':retained,'bimba':props[key]})
@@ -63,11 +62,12 @@ def report(source):
         if i<99 and r[4] != (0 if r[6]==0 else 1+(r[6]-1)%9)]
     music = []
     for i,(row,ref) in enumerate(zip(tables['maqam']['rows'],tables['maqam']['bindings'])):
-        props = source_nodes[ref][1]; literal = props.get('intervalStructure')
-        # No accidental/tuning normalization is performed here. A literal
-        # Bimba declaration and a C 24-TET pattern are independent assertions.
-        music.append({'record':i,'coordinate':ref,'name':props.get('name'),
-            'bimba_interval_structure':literal,'retained_c_quartertone_steps':row[2:9],
+        props = source_nodes[ref][1]
+        # The map states ajnas, tonic and dominant, not a full scale spelling.
+        # A map statement and a C 24-TET pattern are independent assertions.
+        music.append({'record':i,'coordinate':ref,'name':props.get('c_1_name'),
+            'bimba_ajnas':props.get('c_2_ajnas'),'bimba_tonic_note':props.get('c_2_tonic_note'),
+            'bimba_dominant_note':props.get('c_2_dominant_note'),'retained_c_quartertone_steps':row[2:9],
             'standing':'paired-source-assertions; not-interval-parity'})
     unknown = {name:[i for i,r in enumerate(tables[name]['bindings']) if r is None]
         for name in ['tattva','planet','station','asma','mantra']}
@@ -78,11 +78,8 @@ def report(source):
     return {'schema':'ql.m2-field-census/v1','standing':'scoped-K6-source-observation-on-accepted-K4-census',
         'registry_revision':registry['registry_revision'],'source_repository':registry['source_repository'],
         'source_revision':registry['source_revision'],'source_locks':locks,
-        'source_parse_policy':'K2 retained UTF-8 BOM/control-character JSON; strict=False; unchanged source bytes',
+        'source_parse_policy':'read-only Bimba map read; content hash = registry source_revision',
         'counts':{'coordinates':len(holdings),'incident_relations':len(relations),
-            'deep_node_records':len(documents['nodes-full-detail.json']),
-            'deep_planet_records':len(documents['parashakti-planets.json']),
-            'deep_relation_records':len(documents['relations.json']),
             'retained_c_records':sum(len(t['rows']) for t in catalogue['tables'])},
         'incident_relation_kinds':dict(sorted(collections.Counter(r['source_kind'] for r in relations).items())),
         'incident_relations_sha256':sha(stable(relations)),
@@ -106,8 +103,17 @@ def encode(value):
     return text
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['refresh','check']);p.add_argument('--source-root',type=Path,required=True)
-    args=p.parse_args();value=report(args.source_root);full=encode(value)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['refresh','check'])
+    p.add_argument('--map',type=Path,default=bimba_map.CACHE,help='read of the map the registry was built from')
+    args=p.parse_args()
+    registry=load(ROOT/'fixtures/kernel/m-tree-v1.json')
+    fresh=args.map.is_file() and bimba_map.load(args.map)['content_sha256']==registry['source_revision']
+    if not fresh:
+        if args.action=='refresh':raise SystemExit('refresh needs a read of the map the registry was built from')
+        summary=load(OUT)
+        if summary['registry_revision']!=registry['registry_revision']:raise SystemExit('stale M2 field census: registry revision')
+        print('M2 field census: committed summary against registry (no map read)');return
+    value=report(bimba_map.load(args.map));full=encode(value)
     receipt=ROOT/'target/m2-receipt';receipt.mkdir(parents=True,exist_ok=True)
     (receipt/'m2-field-census-v1.json').write_text(full)
     summary={k:v for k,v in value.items() if k not in ('coordinates','maqam_paired_readings','incident_relation_kinds','asma_paired_value_differences','asma_arithmetic_differences')}

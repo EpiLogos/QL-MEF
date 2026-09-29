@@ -131,8 +131,14 @@ Kernel_Energy kernel_energy_evaluate(
         energy.lens_energy = sum / (float)KERNEL_RESONANCE_DIM;
     }
 
+    /* Canonical 4:5:6 law (epi-logos-kernel-spec.md §3):
+       E_total = (4·E4 + 5·E5 + 6·E6)/15. The C engine has no personal E4
+       channel (that is the Rust/Nara seat), so E4 = 0 here; lens_energy is
+       the E5 harmonic seat and r_energy the E6 verifier seat.
+       bimba_pratibimba_energy stays diagnostic-only and is NOT summed into
+       the total — matching the Rust `canonical_total_energy`. */
     energy.total_energy =
-        energy.bimba_pratibimba_energy + energy.lens_energy + energy.r_energy;
+        ((5.0f * energy.lens_energy) + (6.0f * energy.r_energy)) / 15.0f;
     return energy;
 }
 
