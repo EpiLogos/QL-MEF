@@ -75,9 +75,16 @@ fn actual_c_and_rust_source_routes_preserve_graph_assertions() {
                         .to_string()
                 );
                 if planet == 11 {
-                    assert_eq!(route.source_conflicts[0].property_value, "Moon");
+                    // RULED_BY Saturn; RESONATES_WITH, SPANDA_TEMPORAL_RHYTHM and
+                    // HARMONICALLY_RESONATES_WITH all reach the Moon.
                     assert_eq!(route.graph_candidates[0].planet_index, 6);
-                    assert_eq!(route.source_conflicts[0].registry_record_index, 683);
+                    assert_eq!(route.source_conflicts.len(), 3);
+                    assert!(
+                        route
+                            .source_conflicts
+                            .iter()
+                            .all(|c| c.planet_index == 1 && c.planet_coordinate == "#2-5-4")
+                    );
                 }
             } else {
                 let assertion = route

@@ -4,7 +4,6 @@
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
 pub mod host;
-pub mod k2;
 pub mod personal;
 mod receipt;
 
@@ -72,10 +71,6 @@ pub struct FieldInput {
     pub units: FieldUnits,
     pub audio_gains: Vec<f64>,
     pub samples: Vec<FieldSample>,
-    /// Names the supplied shape basis; absent means the M2 geometry_ref. Omitted
-    /// when absent so legacy serialized inputs and their replay stay unchanged.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub shape_ref: Option<String>,
 }
 
 struct Exchange {
@@ -281,37 +276,6 @@ impl FieldSession {
         )?;
         self.current = m2;
         Ok(receipt)
-    }
-    /// Explicit nodal re-reading (`shapes[sample][mode]`, in sample order): the
-    /// same samples and modal voices receive a new shape basis. Resident state,
-    /// clock and cursor continue; the control generation increments. A malformed
-    /// basis is refused here without transport; the worker re-validates it.
-    pub fn replace_shapes(&mut self, shape_ref: &str, shapes: Vec<Vec<[f64; 3]>>) -> Result<Value> {
-        let samples = self.receipt["targets"].as_array().map_or(0, Vec::len);
-        let modes = self.receipt["amplitudes_metres"]
-            .as_array()
-            .map_or(0, Vec::len);
-        if shape_ref.is_empty()
-            || shape_ref.len() > 2048
-            || shape_ref.chars().any(|c| c < ' ' || c == '\u{7f}')
-        {
-            return Err("invalid shape basis reference".into());
-        }
-        if shapes.len() != samples
-            || shapes.iter().any(|sample| {
-                sample.len() != modes
-                    || sample
-                        .iter()
-                        .flatten()
-                        .any(|x| !x.is_finite() || x.abs() > 1e6)
-            })
-        {
-            return Err("shape replacement must keep the sample/mode basis with finite bounded coefficients".into());
-        }
-        self.operation(
-            "replace-shapes",
-            json!({"shape_ref":shape_ref, "shapes":shapes}),
-        )
     }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))

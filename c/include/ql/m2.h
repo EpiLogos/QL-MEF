@@ -91,7 +91,7 @@ const QL_M_Relation *ql_m2_planet_chakra_relation(unsigned planet_index, size_t 
 typedef struct {
     QL_M_NodeId decan_id, planet_id;
     uint8_t zodiac_decan_index, planet_index, source_conflict;
-    size_t candidate_count, relation_count, property_record;
+    size_t candidate_count, relation_count, conflict_relation_count;
 } QL_M2_DecanPlanetRoute;
 QL_M2_Result ql_m2_decan_planet_route(double longitude, QL_M2_DecanPlanetRoute *out);
 const QL_M_Relation *ql_m2_decan_planet_relation(double longitude, size_t assertion_index);

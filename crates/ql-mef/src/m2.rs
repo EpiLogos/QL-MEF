@@ -395,15 +395,13 @@ pub struct DecanRulerCandidate {
 }
 
 #[derive(Debug, Clone, Serialize)]
+/// A typed map relation from the decan to a planet other than its `RULED_BY`
+/// ruler: the map disagrees with itself about the decan's planet.
 pub struct DecanRulerConflict {
-    pub registry_record_index: usize,
-    pub record_index: usize,
-    pub property: String,
-    pub property_value: String,
-    pub property_planet_index: usize,
-    pub source_path: String,
-    pub source_git_blob: String,
-    pub payload_sha256: String,
+    pub relation_kind: String,
+    pub relation_ref: String,
+    pub planet_index: usize,
+    pub planet_coordinate: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -462,43 +460,28 @@ pub fn decan_planet_route(longitude: f64) -> Result<DecanPlanetRoute, String> {
             relations,
         });
     }
+    // The live map is the authority (#255). Where the decan's other typed
+    // relations to a planet disagree with its RULED_BY ruler (Cancer III:
+    // RULED_BY Saturn, three relations to the Moon), the conflict is held and no
+    // ruler is chosen automatically.
     let mut source_conflicts = Vec::new();
-    // Exact original record190 in the pinned deep Parashakti source says Moon;
-    // the two typed Cancer3 RULED_BY assertions say Saturn. Verify the complete
-    // payload before using this recovered property fact (same pin as native C).
-    if decan.source_ref == "#2-3-4-0-2" {
-        let manifest = registry.manifest();
-        let (record_index, record, file) = decan
-            .records
-            .iter()
-            .find_map(|&index| {
-                let record = manifest.records.get(index)?;
-                let file = manifest.files.get(record.file)?;
-                (record.record_index == 190
-                    && file.path
-                        == "Idea/Bimba/Map/datasets/parashakti-deep/nodes-full-detail.json")
-                    .then_some((index, record, file))
-            })
-            .ok_or("decan property source unavailable; source conflict cannot be admitted")?;
-        if record.record_index != 190
-            || record.payload_sha256
-                != "c3313c0597e191566c74541acac4384046860d8f92ef9cbf8cbfcc2744a5be1b"
-            || file.git_blob != "cad8b916589e5175d66272e15f5afaf935e21584"
-        {
-            return Err(
-                "decan ruler property source changed; re-read the source before admission".into(),
-            );
-        }
-        if candidates.len() != 1 || candidates[0].planet_index != 1 {
+    for relation in registry
+        .relations_for(decan.id)
+        .filter(|r| r.from_id == Some(decan.id) && r.source_kind != "RULED_BY")
+    {
+        let Some(target) = relation.to_id.and_then(|id| registry.node(id)) else {
+            continue;
+        };
+        let Some(index) = (0..10).find(|&i| planets.binding(i) == Some(target.source_ref.as_str()))
+        else {
+            continue;
+        };
+        if !candidates.iter().any(|c| c.planet_index == index) {
             source_conflicts.push(DecanRulerConflict {
-                registry_record_index: record_index,
-                record_index: record.record_index,
-                property: "filteredProps.planetaryRuler".into(),
-                property_value: "Moon".into(),
-                property_planet_index: 1,
-                source_path: file.path.clone(),
-                source_git_blob: file.git_blob.clone(),
-                payload_sha256: record.payload_sha256.clone(),
+                relation_kind: relation.source_kind.clone(),
+                relation_ref: relation.relation_ref.clone(),
+                planet_index: index,
+                planet_coordinate: target.source_ref.clone(),
             });
         }
     }

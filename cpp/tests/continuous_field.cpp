@@ -3,7 +3,6 @@
 #include <cassert>
 #include <iostream>
 #include <numeric>
-#include <vector>
 
 using ql::Complex;
 ql::ContinuationInput input(unsigned rate = 48000) {
@@ -98,67 +97,8 @@ int main() {
     invalid = in; invalid.modes[0].source_coordinate = "#3";
     rejected = false; try { ql::ContinuousField no(invalid); } catch (const std::invalid_argument &) { rejected = true; }
     assert(rejected);
-    // Explicit shape replacement: nodal lines redistribute over the same samples
-    // and modal voices. Resident z, clock and PCM continue; only targets move.
-    auto voiced = in; voiced.modes[1].amplitude_metres = {0.004, 0.002};
-    ql::ContinuousField shaped(voiced), control(voiced);
-    advance(shaped, 4096, 512); advance(control, 4096, 512);
-    const auto generation = shaped.receipt().generation;
-    const Complex z0 = shaped.amplitude(0), z1 = shaped.amplitude(1);
-    const auto held = shaped.receipt().clock;
-    const auto *stable = shaped.samples().data();
-    std::array<float, 9> prior{}, after{}, again{};
-    assert(shaped.write_targets(prior.data(), prior.size()));
-    const std::vector<std::vector<ql::Vec3>> nodal{{{0, 0, 1}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 1}}, {{1, 0, 0}, {0, 0, 0}}};
-    shaped.replace_shapes(generation, nodal);
-    assert(shaped.receipt().generation == generation + 1);
-    assert(shaped.amplitude(0) == z0 && shaped.amplitude(1) == z1); // bit-identical resident state
-    assert(shaped.receipt().samples_elapsed == control.receipt().samples_elapsed);
-    assert(shaped.receipt().clock.inscription.turns == held.inscription.turns &&
-           shaped.receipt().clock.inscription.half_degrees == held.inscription.half_degrees &&
-           shaped.receipt().clock.lensing.half_degrees == held.lensing.half_degrees &&
-           shaped.receipt().clock.generation == held.generation);
-    assert(shaped.samples().data() == stable && shaped.samples().size() == voiced.samples.size());
-    for (std::size_t i = 0; i < voiced.samples.size(); ++i) {
-        const auto &s = shaped.samples()[i], &o = voiced.samples[i];
-        assert(s.identity == o.identity && s.constituent == o.constituent && s.attachment == o.attachment &&
-               s.rest_metres == o.rest_metres && s.mode_shapes == nodal[i]);
-    }
-    assert(shaped.write_targets(after.data(), after.size()));
-    // Fixed sample at the origin: the former sum of both voices now reads z0 alone.
-    assert(prior[2] == static_cast<float>(z0.real() + z1.real()));
-    assert(after[0] == 0 && after[1] == 0 && after[2] == static_cast<float>(z0.real()));
-    assert(prior != after);
-    // Stale, structural, nonfinite and excessive bases are refused with nothing changed.
-    auto refused = [&](std::uint64_t expected, const std::vector<std::vector<ql::Vec3>> &shapes) {
-        bool no = false;
-        try { shaped.replace_shapes(expected, shapes); } catch (const std::invalid_argument &) { no = true; }
-        assert(no && shaped.receipt().generation == generation + 1);
-        assert(shaped.amplitude(0) == z0 && shaped.amplitude(1) == z1);
-        assert(shaped.write_targets(again.data(), again.size()) && again == after);
-        for (std::size_t i = 0; i < nodal.size(); ++i) assert(shaped.samples()[i].mode_shapes == nodal[i]);
-    };
-    refused(generation, nodal);
-    auto invalid_shapes = nodal; invalid_shapes.pop_back(); refused(generation + 1, invalid_shapes);
-    invalid_shapes = nodal; invalid_shapes.push_back(nodal[0]); refused(generation + 1, invalid_shapes);
-    invalid_shapes = nodal; invalid_shapes[1].pop_back(); refused(generation + 1, invalid_shapes);
-    invalid_shapes = nodal; invalid_shapes[2].push_back({0, 0, 0}); refused(generation + 1, invalid_shapes);
-    invalid_shapes = nodal; invalid_shapes[2][0][1] = std::nan(""); refused(generation + 1, invalid_shapes);
-    invalid_shapes = nodal; invalid_shapes[2][1][2] = 2e6; refused(generation + 1, invalid_shapes);
-    // Reshaping never touches PCM: the next block equals the no-reshape control.
-    std::array<float, 8192> reshaped_audio{}, control_audio{};
-    assert(shaped.render_audio(reshaped_audio.data(), 2048) && control.render_audio(control_audio.data(), 2048));
-    assert(reshaped_audio == control_audio);
-    assert(std::any_of(control_audio.begin(), control_audio.begin() + 2048, [](float x) { return x != 0; }));
-    assert(shaped.amplitude(0) == control.amplitude(0) && shaped.amplitude(1) == control.amplitude(1));
-    assert(shaped.receipt().clock.inscription.half_degrees == control.receipt().clock.inscription.half_degrees);
-    // A consumer left on the old basis sees different targets from the same state.
-    std::array<float, 9> old_basis{}, new_basis{};
-    assert(control.write_targets(old_basis.data(), old_basis.size()) && shaped.write_targets(new_basis.data(), new_basis.size()));
-    assert(old_basis != new_basis && control.receipt().generation == generation);
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
-                 "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
-                 "\"shape_replacement_keeps_state_and_pcm\":true}\n";
+                 "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true}\n";
 }

@@ -272,8 +272,10 @@ mod tests {
                 assert_eq!(p["faces"][face]["native_decan_index"], native.index());
                 assert_eq!(p["native_element_id"], row[0]);
                 assert_eq!(p["retained_c_ruler_planet_id"], row[4]);
+                // The map's HAS_TATTVA_COUNTERPART reaches the same element row.
                 let linked = m2::linked_readings("decan", usize::from(native.index())).unwrap();
-                assert_eq!(linked[0].index, row[0] as usize);
+                let element = linked.iter().find(|l| l.table == "element").unwrap();
+                assert_eq!(element.index, row[0] as usize);
             }
             let graph = m2::decan_planet_route(longitude).unwrap();
             if let Some(planet) = graph.planet_index {

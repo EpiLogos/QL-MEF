@@ -376,12 +376,20 @@ mod tests {
             .map(|position| format!("#{position}"))
             .collect::<Vec<_>>();
         let nara = registry.resolve("#4").unwrap();
-        assert_eq!(nara.children.len(), 6);
-        references.extend(
-            nara.children
-                .iter()
-                .map(|id| registry.node(*id).unwrap().source_ref.clone()),
+        // The nesting threshold: after a position 4 the separator is "." (Lived
+        // Topology §IV), so Nara's six branches are 4.0..4.5. The map also holds
+        // non-canonical dash twins 4-0..4-5; they are not branches.
+        let branches: Vec<String> = nara
+            .children
+            .iter()
+            .map(|id| registry.node(*id).unwrap().source_ref.clone())
+            .filter(|r| r.starts_with("#4."))
+            .collect();
+        assert_eq!(
+            branches,
+            (0..6).map(|i| format!("#4.{i}")).collect::<Vec<_>>()
         );
+        references.extend(branches);
         for reference in references {
             let binding =
                 resolve_coordinate_expression(registry, &reference, MFace::Bimba).unwrap();

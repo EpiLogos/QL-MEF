@@ -850,21 +850,6 @@
       "kind": "computational"
     },
     {
-      "path": "crates/ql-mef/src/continuous/k2.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#1-5-1",
-        "#2-1"
-      ],
-      "rationale": "K\u00b2 played-torus provider: the native M1 torus is the rest body and M2-1 Vimar\u015b\u0101 voices supply frequency and nodal mode numbers of its surface modes. It composes supplied events through the accepted owners; scale, damping, strike and gain are declared material policy.",
-      "tests": [
-        "crates/ql-mef/src/continuous/k2.rs",
-        "crates/ql-mef/tests/k2_instrument.rs"
-      ],
-      "kind": "computational"
-    },
-    {
       "path": "crates/ql-mef/src/nara/domain_body.rs",
       "stratum": "rust",
       "disposition": "coordinate-bound",
@@ -947,39 +932,6 @@
       "rationale": "Controlled K10 CLI regressions for the native dialogue command surface; scripted sessions are not live Nara conversation evidence.",
       "tests": [
         "crates/ql-cli/tests/nara_dialogue_native.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/tests/k2_instrument.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Controlled K2 instrument regressions over the accepted played-torus provider; synthetic events are not live transit evidence.",
-      "tests": [
-        "crates/ql-mef/tests/k2_instrument.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/tests/k2_nara_reception.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Controlled K10 regressions proving Nara reception of K2 surface modes over one accepted world event; no duplicate world simulation is introduced.",
-      "tests": [
-        "crates/ql-mef/tests/k2_nara_reception.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/tests/k8_reshape.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Controlled K8 regressions for the reshape path over the continuous field contract; fixtures are not live engine evidence.",
-      "tests": [
-        "crates/ql-mef/tests/k8_reshape.rs"
       ],
       "kind": "computational"
     },

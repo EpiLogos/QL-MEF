@@ -52,37 +52,37 @@ fn centre_body_from_registry(
         (
             "#2-5-0/1-1",
             "Base of spine, perineum, pelvic floor",
-            "926bcd8e03086c71ce1491f844223526f0e30e27a259773dfe456bf9008a9d70",
+            "6e31a60f44128c8dc68c808e7405958c910edf4205911d8752790d35ebfb0cf9",
         ),
         (
             "#2-5-0/1-2",
             "Lower abdomen, sacral region, reproductive organs",
-            "2cfddedc11e2b04c29861e41eb79885bf847078c5cf228b543143e204b755949",
+            "36e6a50ff940c32a64b6dcfff5d2397aebba057eca5022b0779eac848bfac709",
         ),
         (
             "#2-5-0/1-3",
             "Solar plexus, upper abdomen, digestive system",
-            "3c6daac2035ad3f3362224a9bf03fc67c8c1e6717fa41e84730f9c319c43086c",
+            "5824a1ad80616f35c807d23f48774cebd69004d88202b0f8d41b3ec0d5ac5e59",
         ),
         (
             "#2-5-0/1-4",
             "Heart region, chest center, cardiac plexus",
-            "4fe88347895f5497cf3fb41fddd789ef0e810f52dadc4eca14fff854c06be0a5",
+            "7f6109577f1334a4efb2139479e64ad3c62a554f31476b6752f08ac8e63eb2d5",
         ),
         (
             "#2-5-0/1-5",
             "Throat region, thyroid, vocal apparatus",
-            "62a2402cdac33d8509b74b3bc35c0bcc6e79490df0173650704ea0990a5c3c30",
+            "27a873292d426143dee13767564087f55c57612ba0fcfc48cc0443d39866f0cc",
         ),
         (
             "#2-5-0/1-6",
             "Between eyebrows, pineal gland, third eye region",
-            "47e8a5c76a565f1d901ebb856370197a10c30cb4e0601443152366f18b1aeedf",
+            "77d3b8375dbba56854d6cdda8060f8a24cc67a562baae423c2b4fb787ce1bcb6",
         ),
         (
             "#2-5-0/1-7",
             "Crown of head, fontanelle, cerebral cortex",
-            "5dd856a77cfd4f309c134446a51538eb46f566325f39b81f354b87dfeed22a1c",
+            "9a5c7421100bdff8ab8b53616f17d5e9ab0b3d866c185232d4771c98e85b8bd5",
         ),
     ];
     let (coordinate, anatomy, payload) = zones
@@ -101,15 +101,17 @@ fn centre_body_from_registry(
                 && record
                     .property_keys
                     .iter()
-                    .any(|key| key == "filteredProps.anatomicalLocation")
+                    .any(|key| key == "c_2_anatomical_location")
         })
         .ok_or("canonical anatomical source property changed or unavailable")?;
     let file = manifest
         .files
         .get(record.file)
         .ok_or("body source file unavailable")?;
-    if file.git_blob != "cad8b916589e5175d66272e15f5afaf935e21584" {
-        return Err("canonical anatomical source blob changed".into());
+    // The registry is built from the live Bimba map read (#260): the file is that
+    // read, pinned by its content digest, which is the manifest's source revision.
+    if file.record_class != "bimba-map-read" || file.sha256 != manifest.source_revision {
+        return Err("canonical anatomical source is not the pinned Bimba map read".into());
     }
     let repository = file
         .repository
@@ -117,7 +119,7 @@ fn centre_body_from_registry(
         .unwrap_or(&manifest.source_repository);
     let revision = file.revision.as_ref().unwrap_or(&manifest.source_revision);
     let property_ref = format!(
-        "https://raw.githubusercontent.com/{repository}/{revision}/{}#/{}/filteredProps/anatomicalLocation",
+        "{}@{revision}#/{}/c_2_anatomical_location",
         file.path, record.record_index
     );
     Ok(CentreBodyReading {
@@ -179,7 +181,8 @@ mod tests {
         for ordinal in 0..7 {
             let reading = centre_body(ordinal).unwrap();
             let zone = reading.body_zone;
-            assert_eq!(zone.record_index, 582 + usize::from(ordinal));
+            // Records 870..876 of the live Bimba map read (#260).
+            assert_eq!(zone.record_index, 870 + usize::from(ordinal));
             assert_eq!(zone.source_ref, format!("#2-5-0/1-{}", ordinal + 1));
             let node = registry.resolve(&zone.source_ref).unwrap();
             assert!(node.records.iter().any(|index| {
@@ -188,10 +191,10 @@ mod tests {
                     && record.record_index == zone.record_index
                     && registry.manifest().files[record.file].git_blob == zone.git_blob
             }));
-            assert!(zone.property_ref.ends_with(&format!(
-                "#/{}/filteredProps/anatomicalLocation",
-                zone.record_index
-            )));
+            assert!(
+                zone.property_ref
+                    .ends_with(&format!("#/{}/c_2_anatomical_location", zone.record_index))
+            );
             assert!(refs.insert(zone.property_ref));
             assert!(reading.sense_refs.is_empty());
             assert!(reading.action_refs.is_empty());

@@ -43,32 +43,6 @@ the **resident amplitude**, not the new request's initial amplitude. Explicit
 `replace_state` is different. Mode count, identity or topology changes require a
 new explicitly chosen geometry instance; they cannot silently reseed a live one.
 
-### Explicit shape replacement
-
-The M2 Vimarśā nodal quartet that fixes each mode's shape on the K² torus is
-re-read whenever the M1 tick/lens/mode or M3 pose changes: the source reads it
-as nodal lines redistributing while the same modal voices continue. Rebuilding
-the instance for that would reseed the voices it must keep; silently swapping
-shape functions would hide a change of geometry reading.
-
-So `ContinuousField::replace_shapes(expected, shapes)` is one declared operation.
-It replaces every sample's per-mode shape functions (`shapes[sample][mode]`)
-and keeps sample count, order, identity, constituent, attachment and rest
-positions, mode count/identity/order, resident amplitudes and clock exactly.
-It requires the current control revision and increments it by one, like
-`set_axis`. Every coefficient must be finite with |x| ≤ 1e6, with exactly one
-vector per mode per sample. Validation precedes mutation: a refusal changes
-nothing. Audio is `Σ Re z_j·gain_j` and never reads shapes, so PCM equals the
-unreshaped control bit-for-bit; only `write_targets` moves.
-
-The worker operation is `replace-shapes` with `expected_generation`,
-`expected_samples_elapsed`, a bounded `shape_ref` and the complete `shapes`
-array, under the initial JSON budget. `initialize` accepts an optional
-`field.shape_ref` defaulting to the geometry ref. Every `ql.continuous-field/v1`
-output echoes the active `shape_ref`. The Rust admission accepts a changed
-`shape_ref` only on an acknowledged reshape with unchanged clock, cursor and
-amplitudes.
-
 The field's local control revision, M2's original/current event generation,
 physical sample cursor, native coupled-clock generation and astronomical epoch
 remain separate. An axis operation changes the local control revision, not the
@@ -109,8 +83,8 @@ output is not authenticated merely because it parses or has a known registry.
 The existing Rust M2 request validator/producer remains the proper upstream.
 The library has no JSON dependency; native audio hosts use the typed API directly.
 
-`ql.field-control/v1` operations are `initialize`, `read`, `advance`, `set-axis`,
-`replace-modes` and `replace-shapes`. `initialize` takes the complete native M2 frame and a field
+`ql.field-control/v1` operations are `initialize`, `read`, `advance`, `set-axis`
+and `replace-modes`. `initialize` takes the complete native M2 frame and a field
 input with subject, sample rate, native clock, driver ratio, explicit units,
 audio gains and identified supplied samples/shape functions. M2 must actually
 contain a resonator. A missing resonator is refused rather than filled with a
@@ -143,11 +117,8 @@ instance or supported host recovery. No source or private journal is rewritten.
 `cpp/tests/continuous_field.cpp` executes the actual native clock and tests
 analytic 48/96 kHz agreement, exact equal-mode cancellation, zero-rate limit,
 block-partition invariance, stable samples, repeated views, independent axes,
-mode continuation, mute, input budgets, refusal, original replay and explicit
-shape replacement. Installed headers/archive and a sanitizer build are separately
-executed by CI. `crates/ql-mef/tests/k8_reshape.rs` (ignored unless run with
-`--ignored` and an installed worker via `QL_FIELD_WORKER`) exercises reshape,
-wire refusal and declared strike versus continuation through the real worker.
+mode continuation, mute, input budgets, refusal and original replay. Installed
+headers/archive and a sanitizer build are separately executed by CI.
 
 `scripts/test-k8-continuous.py` calculates a real current sky, runs the full
 accepted native M2, obtains all eight Vimarśā frequencies from its actual output,

@@ -8,12 +8,11 @@
 //! Numerical outputs are compositional readings, not health or clinical claims.
 
 pub mod activity;
-pub mod m3_activity;
+pub mod current;
 mod decanic_identity;
 pub mod dialogue;
 pub mod domain;
 pub mod expression;
-pub mod current;
 pub mod identity_composition;
 pub mod identity_contributions;
 pub mod identity_encoding;
@@ -22,6 +21,7 @@ pub mod intake;
 pub mod intake_composition;
 #[cfg(test)]
 mod intake_tests;
+pub mod m3_activity;
 pub mod multi;
 pub mod replay;
 pub mod voice;

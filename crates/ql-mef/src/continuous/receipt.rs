@@ -156,9 +156,7 @@ impl ReceiptGuard {
                 "geometry_ref":m2["resonator"]["geometry_ref"],
                 "material_ref":m2["resonator"]["material_ref"],
                 "model_ref":m2["resonator"]["material_model_ref"], "sample_rate":field.sample_rate,
-                "standing":"computed-supplied-modal-model-not-empirical-material-validation",
-                // The only retained identity an explicit reshape may move.
-                "shape_ref":field.shape_ref.clone().map_or_else(|| m2["resonator"]["geometry_ref"].clone(), Value::from)}),
+                "standing":"computed-supplied-modal-model-not-empirical-material-validation"}),
             m2_identity: m2["identity"].clone(),
             samples: field
                 .samples
@@ -202,16 +200,9 @@ impl ReceiptGuard {
                 "targets",
                 "presentation_units_per_metre",
                 "m2_identity",
-                "shape_ref",
             ],
         )?;
-        let reshaping = request["operation"] == "replace-shapes";
         for (key, expected) in self.fixed.as_object().ok_or("invalid retained identity")? {
-            let expected = if reshaping && key == "shape_ref" {
-                &request["shape_ref"]
-            } else {
-                expected
-            };
             require(
                 &value[key] == expected,
                 "worker replied for another identity/source/standing",
@@ -309,7 +300,7 @@ impl ReceiptGuard {
             return Ok(());
         };
         let operation = request["operation"].as_str().ok_or("missing operation")?;
-        let changing = replacing || reshaping || operation == "set-axis";
+        let changing = replacing || operation == "set-axis";
         require(
             generation
                 == if changing {
@@ -342,22 +333,6 @@ impl ReceiptGuard {
                         "ordinary operation reset resident state",
                     )?;
                 }
-            }
-            "replace-shapes" => {
-                // Nodal re-reading of the same samples and voices: only the
-                // targets may move. The worker must have received a complete basis.
-                for sample in array(&request["shapes"], self.samples.len())? {
-                    for shape in array(sample, self.modes)? {
-                        for coefficient in array(shape, 3)? {
-                            finite(coefficient, 1e6)?;
-                        }
-                    }
-                }
-                require(
-                    value["clock"] == previous["clock"]
-                        && value["amplitudes_metres"] == previous["amplitudes_metres"],
-                    "shape replacement changed clock or resident state",
-                )?;
             }
             "set-axis" => {
                 let axis = request["axis"]
@@ -404,7 +379,6 @@ impl ReceiptGuard {
 
     pub(super) fn adopted(&mut self, receipt: &Value) {
         self.m2_identity = receipt["m2_identity"].clone();
-        self.fixed["shape_ref"] = receipt["shape_ref"].clone();
     }
 }
 

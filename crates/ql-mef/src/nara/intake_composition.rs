@@ -646,11 +646,11 @@ mod tests {
                 record
                     .property_keys
                     .iter()
-                    .any(|key| key == "filteredProps.anatomicalLocation")
+                    .any(|key| key == "c_2_anatomical_location")
             );
             let property = zone["property_ref"].as_str().unwrap();
             assert!(property.ends_with(&format!(
-                "#/{}/filteredProps/anatomicalLocation",
+                "#/{}/c_2_anatomical_location",
                 record.record_index
             )));
             assert!(properties.insert(property));

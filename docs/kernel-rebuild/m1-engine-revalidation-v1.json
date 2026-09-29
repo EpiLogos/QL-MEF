@@ -2,7 +2,7 @@
   "schema": "ql.m1.kernel-revalidation/v1",
   "historical_acceptance": {
     "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
-    "sha256": "f6761e9d7bc017e2ad61bc7cb231c3ee17c3950e990275c5e5ba0b0772828217"
+    "sha256": "054ca48e6d0352c71723a5e7dfdfb6075ee7db5e72cbafe8ce25031cc663a83f"
   },
   "input_locks": [
     {
@@ -11,7 +11,7 @@
     },
     {
       "path": "c/src/m1.c",
-      "sha256": "46d44b7ee37a5a78999b11e63b2a07dc8c11b375f3fe5d861bc129cb749875ab"
+      "sha256": "01014c73b3b39bf4b6cf0ed12c70ee76d8b478e628d1451b6b3e28c0d5f4685e"
     },
     {
       "path": "c/src/m1_state.c",
@@ -23,19 +23,19 @@
     },
     {
       "path": "crates/ql-mef/src/m1.rs",
-      "sha256": "0ad921c1dc99506beb0830873b06b2abcb16b2c1e67955b0a693a64c500e9fd7"
+      "sha256": "54330879ea6ecbdd250adee62652e665f82f65ad9b6bc140bb77dd4214af908c"
     },
     {
       "path": "crates/ql-mef/src/m1_engine.rs",
-      "sha256": "6720e4f61d3c7a069fbfe6e305e54fed2b177d56e5ec365f8483da0bba0ee886"
+      "sha256": "4e16b7ef57cc787366b95f9cf293738e104c2cc1a21dec17c0e3f557bc153ac3"
     },
     {
       "path": "crates/ql-mef/tests/m1_engine.rs",
-      "sha256": "1443a8657d5369827469456b111fefddcd2f00253d21b48d8917363748922efe"
+      "sha256": "e526e029487bd8dd3cca3befd0ea4ed9fabafef7361ad9a2e1bb5b32bf53a915"
     },
     {
       "path": "crates/ql-mef/tests/m1_state.rs",
-      "sha256": "6836f48a998bec4c04e6f3105765f2156ff58d922828aab412efda7084741e5b"
+      "sha256": "4d180fccf833e036206061f671750723b73bf5489852525af2fd39638baede7f"
     },
     {
       "path": "migration/epi-kernel/m1-state-probe.c",
@@ -63,7 +63,7 @@
     },
     {
       "path": "scripts/test-m1-engine.sh",
-      "sha256": "c1b61bf8fe16b7202fb86d3712e33148fa4dbc69e7ff56814b07670d8a1bbffe"
+      "sha256": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6"
     },
     {
       "path": "fixtures/kernel/m1-source-literals-v1.json",
@@ -79,7 +79,7 @@
     },
     {
       "path": "scripts/check-m1-acceptance.py",
-      "sha256": "1b39eeac02cfadeffdcdd602b1b82bab1f3fb3ee561fe9193792204db5e2cb74"
+      "sha256": "a68489a11178feae84380fccc7024c107d668ab1e570cf5f0109284197bf5c45"
     },
     {
       "path": "scripts/m_census.py",
@@ -95,7 +95,7 @@
     },
     {
       "path": "crates/ql-cli/src/lib.rs",
-      "sha256": "4ca4505b5ee92039fe100f988b48cb614e16c9ea4285c0ab7a741d74559f8045"
+      "sha256": "b85f7549a7ff2333651451300fcf70ccd1e501f835fcdb7e192f319aa075f961"
     },
     {
       "path": "crates/ql-cli/tests/m1_engine_cli.rs",
@@ -156,33 +156,33 @@
     "observations": [
       {
         "local_path": "target/m1-engine/c-rust.jsonl",
-        "sha256": "e7ee82fd94268bc0e6ef397621afb507fcc1f44b5dcc925e5049b0a34e6f1d2e",
-        "retained_path": "target/m1-engine/revalidation/1790536070914369000/m1-engine-c-rust.jsonl",
+        "sha256": "5d78d008e6823a2a383aa5f84f39c36359e6167bcf820a88d05e8bc5e3208857",
+        "retained_path": "target/m1-engine/revalidation/1790676738614514000/m1-engine-c-rust.jsonl",
         "matches_historical_bytes": true
       },
       {
         "local_path": "target/m1-state/c-rust.jsonl",
-        "sha256": "ea834423395b365a32fea5231e4d325a8842b51fd1501232b31eb2d5d6be0096",
-        "retained_path": "target/m1-engine/revalidation/1790536070914369000/m1-state-c-rust.jsonl",
+        "sha256": "f78fd123a51f2f43fbaaab234d212d21d28b0021c9ac17b7f3598214b44d4b8c",
+        "retained_path": "target/m1-engine/revalidation/1790676738614514000/m1-state-c-rust.jsonl",
         "matches_historical_bytes": false
       }
     ],
     "logs": [
       {
-        "local_path": "target/m1-engine/revalidation/1790536070914369000/1.log",
-        "sha256": "8a64e24659056a39629e6e1db71c3270132862c43c0c51216f629f296f30d88c"
+        "local_path": "target/m1-engine/revalidation/1790676738614514000/1.log",
+        "sha256": "709f780c573b78d31cee33482a006a3411ef8e9831ced45673dde392b7cdbb78"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790536070914369000/2.log",
-        "sha256": "d09013e50d417a0e7b1b4e1483cb2a35b05c461eaab91b98db9f5942e819db5c"
+        "local_path": "target/m1-engine/revalidation/1790676738614514000/2.log",
+        "sha256": "20109c674202a638c41908a06ee956ee27e613f9e63e8b56138b3e73fd74fa8e"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790536070914369000/3.log",
-        "sha256": "cfd6ef1885433b8c992774dc9eb20ec78c7bcd3e899d528b81e277170d0ab088"
+        "local_path": "target/m1-engine/revalidation/1790676738614514000/3.log",
+        "sha256": "ebde5ddaabe9c9cb9eadaedd45996b32e866ecc7249a148487085cd508d2a8d7"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790536070914369000/4.log",
-        "sha256": "9087b8cbaed90ca222d3ec90498df2ccae2c572dece7acb468574b33e33500f9"
+        "local_path": "target/m1-engine/revalidation/1790676738614514000/4.log",
+        "sha256": "4ba9a59a20c6baa7a97b068ba8d25bdcf743186a995247f2993b6d04951d7548"
       }
     ]
   }

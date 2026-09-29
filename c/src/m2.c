@@ -162,7 +162,7 @@ static QL_M2_Result decan_source_node(double longitude,const QL_M_Node **out) {
 }
 QL_M2_Result ql_m2_decan_planet_route(double longitude,QL_M2_DecanPlanetRoute *out) {
     const QL_M_Node *decan;
-    QL_M2_DecanPlanetRoute route={0,0,0,255,0,0,0,SIZE_MAX};
+    QL_M2_DecanPlanetRoute route={0,0,0,255,0,0,0,0};
     QL_M2_Result status;
     uint8_t seen[10]={0};
     size_t i,j;
@@ -183,24 +183,20 @@ QL_M2_Result ql_m2_decan_planet_route(double longitude,QL_M2_DecanPlanetRoute *o
         ++route.relation_count;
     }
     if(!route.relation_count) return QL_M2_UNAVAILABLE;
-    /* Actual deep node record190 (registry record683), pinned blob cad8b916,
-     * says filteredProps.planetaryRuler="Moon". Its Cancer3 RULED_BY edges
-     * say Saturn. This literal assertion is guarded by its complete payload
-     * digest; a changed source must be re-read, not inherit this fact blindly. */
-    if(strcmp(decan->source_ref,"#2-3-4-0-2")==0) {
-      for(i=0;i<decan->records_count;++i) {
-            size_t record_index=ql_m_node_record_index(decan->id,i);
-            const QL_M_SourceRecord *record=ql_m_source_record_at(record_index);
-            const QL_M_SourceFile *file=record?ql_m_source_file_at(record->file_index):NULL;
-            if(!record || !file) return QL_M2_UNAVAILABLE;
-            if(record->record_index!=190 || strcmp(file->path,"Idea/Bimba/Map/datasets/parashakti-deep/nodes-full-detail.json")) continue;
-            if(strcmp(record->payload_sha256,"c3313c0597e191566c74541acac4384046860d8f92ef9cbf8cbfcc2744a5be1b") ||
-               strcmp(file->git_blob,"cad8b916589e5175d66272e15f5afaf935e21584")) return QL_M2_UNAVAILABLE;
-            route.property_record=record_index;
-            route.source_conflict=(uint8_t)(route.candidate_count!=1 || !seen[1]);
-      }
-      if(route.property_record==SIZE_MAX) return QL_M2_UNAVAILABLE;
+    /* The live map is the authority (#255). A typed decan relation to a planet
+     * other than its RULED_BY ruler (Cancer III: RULED_BY Saturn, three
+     * relations to the Moon) is a source conflict: it is counted and no ruler
+     * is chosen automatically. */
+    for(i=0;i<ql_m_relation_count();++i) {
+        const QL_M_Relation *r=ql_m_relation_at(i);
+        if(r->from_id!=decan->id || !strcmp(r->source_kind,"RULED_BY")) continue;
+        for(j=0;j<10;++j) {
+            const QL_M2_Record *planet=ql_m2_record(QL_M2_PLANET_TABLE,j);
+            if(planet && planet->coordinate_id==r->to_id) break;
+        }
+        if(j<10 && !seen[j]) ++route.conflict_relation_count;
     }
+    route.source_conflict=(uint8_t)(route.conflict_relation_count>0);
     if(route.candidate_count==1 && !route.source_conflict) {
         for(j=0;j<10;++j) if(seen[j]) {
             route.planet_index=(uint8_t)j;

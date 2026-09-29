@@ -19,8 +19,8 @@ use std::str::FromStr;
 
 pub mod configuration;
 mod epi_agent_command;
-pub mod m_ledger;
 mod m3_command;
+pub mod m_ledger;
 mod nara_command;
 mod shape_command;
 mod techne_command;
@@ -574,17 +574,6 @@ fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
             }
             let input = std::fs::read_to_string(&args[1]).map_err(|e| CliError(e.to_string()))?;
             ql_mef::m1_engine::engine_json(&input).map_err(CliError)
-        }
-        Some("k2-binding") => {
-            if args.len() != 2 {
-                return Err(CliError(
-                    "usage: ql kernel k2-binding <request.json> --json".into(),
-                ));
-            }
-            let input = std::fs::read_to_string(&args[1]).map_err(|e| CliError(e.to_string()))?;
-            let request = serde_json::from_str(&input).map_err(|e| CliError(e.to_string()))?;
-            let binding = ql_mef::continuous::k2::binding(request).map_err(CliError)?;
-            serde_json::to_string(&binding).map_err(CliError::from)
         }
         Some("coverage" | "ledger" | "validate-ledger") => m_ledger::command(args, json),
         Some("capabilities") => {

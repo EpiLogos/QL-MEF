@@ -466,34 +466,13 @@ impl CoupledFieldSession {
     /// remains the last acknowledged one if the native operation is refused or
     /// its transport has unknown standing. No partial M1/M3 publication occurs.
     pub fn replace_field(&mut self, input: CoupledInput) -> Result<Value, String> {
-        self.replace_field_state(input, false)
-    }
-    /// As `replace_field`; `replace_state` is the explicit, declared re-excitation
-    /// ("strike") of every mode from the new M2 resonator's supplied amplitudes.
-    /// False continues from resident state. Never an implicit reseed.
-    pub fn replace_field_state(
-        &mut self,
-        input: CoupledInput,
-        replace_state: bool,
-    ) -> Result<Value, String> {
         let next = input.compose()?;
         if next.m3["subject_ref"] != self.current.m3["subject_ref"] {
             return Err("cannot change subject during continuation".into());
         }
-        self.field
-            .replace_modes(next.m2_input.clone(), replace_state)?;
+        self.field.replace_modes(next.m2_input.clone(), false)?;
         self.current = next;
         Ok(self.last_field().clone())
-    }
-    /// Explicit nodal re-reading of the same samples and modal voices
-    /// (`shapes[sample][mode]`). The whole basis is unchanged; returns the compact
-    /// field acknowledgement like `replace_field`. Audio and resident state continue.
-    pub fn replace_shapes(
-        &mut self,
-        shape_ref: &str,
-        shapes: Vec<Vec<[f64; 3]>>,
-    ) -> Result<Value, String> {
-        self.field.replace_shapes(shape_ref, shapes)
     }
     pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
         self.replace_field(input)?;

@@ -10,11 +10,6 @@ JSON_LIBS := $(shell pkg-config --libs json-c)
 comma := ,
 RPATH_FLAGS :=
 ifeq ($(shell uname -s),Darwin)
-  # Apple clang searches /usr/local/include ahead of every -isystem path, so on a
-  # Mac carrying both Intel and arm64 Homebrew the wrong-architecture json-c
-  # headers win. Take pkg-config's json-c as an ordinary -I (searched first) and
-  # keep its headers out of -Werror as system headers.
-  JSON_CFLAGS := $(shell pkg-config --cflags json-c) --system-header-prefix=json-c/
   RPATH_FLAGS += $(foreach d,$(wildcard /opt/homebrew/opt/llvm/lib/c++ /opt/homebrew/opt/llvm/lib/unwind /opt/homebrew/opt/json-c/lib /usr/local/opt/llvm/lib/c++ /usr/local/opt/json-c/lib),-Wl$(comma)-rpath$(comma)$(d))
 endif
 
