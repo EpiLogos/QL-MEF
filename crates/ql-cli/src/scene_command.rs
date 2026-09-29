@@ -18,10 +18,33 @@ struct SceneRequest {
     tuning: Option<SceneTuning>,
 }
 
+fn read(path: &str) -> Result<Vec<u8>, CliError> {
+    let mut bytes = Vec::new();
+    if path == "-" {
+        std::io::stdin()
+            .read_to_end(&mut bytes)
+            .map_err(|e| CliError(e.to_string()))?;
+    } else {
+        bytes = std::fs::read(path).map_err(|e| CliError(e.to_string()))?;
+    }
+    Ok(bytes)
+}
+
 pub fn command(args: &[String]) -> Result<String, CliError> {
-    let usage = || CliError("usage: ql scene compose <request.json|-> [--json]".into());
-    if args.first().map(String::as_str) != Some("compose") || args.len() < 2 {
+    let usage = || CliError("usage: ql scene <compose|binding> <request.json|-> [--json]".into());
+    if args.len() < 2 {
         return Err(usage());
+    }
+    match args[0].as_str() {
+        "compose" => {}
+        // The continuous-field host binding the O:I Live instrument opens.
+        "binding" => {
+            let request: ql_mef::continuous::scene_field::BindingRequest =
+                serde_json::from_slice(&read(&args[1])?).map_err(|e| CliError(e.to_string()))?;
+            let binding = ql_mef::continuous::scene_field::binding(request).map_err(CliError)?;
+            return serde_json::to_string(&binding).map_err(|e| CliError(e.to_string()));
+        }
+        _ => return Err(usage()),
     }
     let mut bytes = Vec::new();
     if args[1] == "-" {
