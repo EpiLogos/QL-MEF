@@ -61,6 +61,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           cache-on-failure: true
+      # Nara's natal and current-sky tests run the real Kerykeion provider through uv.
+      - uses: astral-sh/setup-uv@v6
       - name: Canonical Rust workspace and native CLI gate
         run: bash scripts/verify core
 

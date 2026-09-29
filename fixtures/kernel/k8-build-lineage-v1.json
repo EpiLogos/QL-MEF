@@ -3,8 +3,8 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
-    "m2": "93734250cb2d39a61b38edc6cb96b1b0daa456a14029e83cd6926db41ecf1a2f",
-    "m3": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47"
+    "m2": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
+    "m3": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -76,6 +76,20 @@
       "sha256": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47",
       "accepted_at_revision": "dc9d7c5299af4ef91808e2f87a66c9d89052458d",
       "reason": "SpandaAdvance: the M3 form advances from the live M1 ring state (spanda_field::ring_codon_advance). Acceptance run 36463716289 at dc9d7c5."
+    },
+    {
+      "engine": "m2",
+      "previous_sha256": "93734250cb2d39a61b38edc6cb96b1b0daa456a14029e83cd6926db41ecf1a2f",
+      "sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
+      "accepted_at_revision": "4b812aebd13424098f19a06b8bec7fb88773b610",
+      "reason": "Nara M4 integration (#268): the planet->chakra and decan->planet graph routes in m2.rs/m2.c and the portable C packaging Makefile. Acceptance run 36556218005 at 4b812ae."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47",
+      "sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19",
+      "accepted_at_revision": "4b812aebd13424098f19a06b8bec7fb88773b610",
+      "reason": "Nara M4 integration (#268): M3 activity, fold presentation helper and the portable C packaging Makefile. Acceptance run 36556221789 at 4b812ae."
     }
   ]
 }
