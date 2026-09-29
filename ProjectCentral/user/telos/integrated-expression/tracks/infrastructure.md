@@ -13,3 +13,11 @@ Done-when:
 - QL-A and O:I-A are merged, and the QL pin in `surfaces.json` has moved in the same O:I PR.
 - `kernel-k8-continuous.yml` and `kernel-m2.yml` were dispatched green.
 - The `k2.rs` semantics were dropped, not carried forward.
+
+State (29 Sep): the host infrastructure landed in #272, and #251 is closed. That covers:
+- the managed install of the companions;
+- worker I/O;
+- replace-shapes and strike;
+- the host operations;
+- the browser adapters.
+The K² semantics are gone, and the scene is the instrument.

@@ -17,3 +17,9 @@ Work:
 Depends: m3-clock, m2-sky-synth. Done-when: two controlled Naras receive an
 identical event and differ exactly on the centres where their natal vectors
 differ.
+
+State (29 Sep):
+- QL: the Nara M4 work landed via #268, with Cancer III's conflict read from the map's relations.
+- O:I: the Nara identity/dialogue/voice work rides #557.
+- Nara receives through the scene owner (the `scene_nara_reception` test).
+- Journeys (#261) are still a separate draft.
