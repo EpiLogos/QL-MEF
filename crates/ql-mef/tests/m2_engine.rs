@@ -609,14 +609,23 @@ fn active_vimarsha_is_stamped_and_uses_the_shared_pose_and_distinct_musical_mode
 }
 
 #[test]
-fn decan_elements_follow_the_retained_throughline_not_shared_numeric_ids() {
+fn decan_elements_follow_native_descriptor_ids_not_throughline_axis_codes() {
     let catalogue = m2::catalogue();
+    // M2_DECAN_DESC stores ELEMENT_ID_AGNI/PRITHVI/VAYU/APAS; the
+    // quintessence descriptor stores ELEMENT_ID_AKASHA. This is distinct
+    // from the carrier's F/E/A/W axis and throughline.decan_element.
+    for (row, element_id) in [(0, 2), (18, 4), (36, 1), (54, 3), (72, 0)] {
+        assert_eq!(
+            catalogue.table("decan").unwrap().row(row).unwrap()[0],
+            element_id
+        );
+    }
     for i in 0..73 {
         let links = m2::linked_readings("decan", i).unwrap();
         let element = links.iter().find(|r| r.table == "element").unwrap();
         let source_element = catalogue.table("decan").unwrap().row(i).unwrap()[0];
-        assert_eq!(element.fields["decan_element"], source_element);
-        assert_eq!(element.index, [2, 4, 1, 3, 0][source_element as usize]);
+        assert_eq!(element.index, source_element as usize);
+        assert_eq!(element.fields["tattva_idx"], 31 + source_element);
         assert_eq!(links.len(), if i == 72 { 1 } else { 2 });
     }
 }

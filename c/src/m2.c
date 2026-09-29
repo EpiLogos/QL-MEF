@@ -104,6 +104,123 @@ QL_M2_Result ql_m2_planet_preempted(unsigned index,uint8_t *out) {
     *out=(uint8_t)(index>=7);return QL_M2_OK;
 }
 uint8_t ql_m2_digital_root(uint64_t n) { return (uint8_t)(n?1+(n-1)%9:0); }
+QL_M2_Result ql_m2_planet_chakra_route(unsigned index,QL_M2_PlanetChakraRoute *out) {
+    const QL_M2_Record *planet;
+    QL_M2_PlanetChakraRoute route={0,0,0,0};
+    size_t i,j;
+    if(!out || index>=10) return QL_M2_INVALID;
+    planet=ql_m2_record(QL_M2_PLANET_TABLE,index);
+    if(!planet || !planet->coordinate_id) return QL_M2_UNAVAILABLE;
+    route.planet_id=planet->coordinate_id;
+    for(i=0;i<ql_m_relation_count();++i) {
+        const QL_M_Relation *r=ql_m_relation_at(i);
+        if(r->from_id!=route.planet_id || strcmp(r->source_kind,"PLANETARY_RESONANCE")) continue;
+        if(!r->to_id || (route.chakra_id && route.chakra_id!=r->to_id)) return QL_M2_INVALID;
+        route.chakra_id=r->to_id;
+        ++route.relation_count;
+    }
+    if(!route.relation_count) return QL_M2_UNAVAILABLE;
+    for(j=1;j<8;++j) {
+        const QL_M2_Record *chakra=ql_m2_record(QL_M2_CHAKRA_TABLE,j);
+        if(chakra && chakra->coordinate_id==route.chakra_id) {
+            route.chakra_index=(uint8_t)j;
+            *out=route;
+            return QL_M2_OK;
+        }
+    }
+    return QL_M2_INVALID;
+}
+const QL_M_Relation *ql_m2_planet_chakra_relation(unsigned index,size_t assertion_index) {
+    QL_M2_PlanetChakraRoute route;
+    size_t i,matched=0;
+    if(ql_m2_planet_chakra_route(index,&route)!=QL_M2_OK) return NULL;
+    for(i=0;i<ql_m_relation_count();++i) {
+        const QL_M_Relation *r=ql_m_relation_at(i);
+        if(r->from_id==route.planet_id && r->to_id==route.chakra_id &&
+           strcmp(r->source_kind,"PLANETARY_RESONANCE")==0) {
+            if(matched++==assertion_index) return r;
+        }
+    }
+    return NULL;
+}
+static QL_M2_Result decan_source_node(double longitude,const QL_M_Node **out) {
+    unsigned sign,decan;
+    uint8_t index;
+    const QL_M2_Record *face;
+    const QL_M_Node *node;
+    if(!isfinite(longitude)) return QL_M2_NONFINITE;
+    if(longitude<0.0 || longitude>=360.0) return QL_M2_BOUNDARY;
+    sign=(unsigned)floor(longitude/30.0);
+    decan=(unsigned)floor(fmod(longitude,30.0)/10.0);
+    if(ql_m2_flatten(QL_M2_DECAN,sign%4,sign/4,decan,0,&index)!=QL_M2_OK) return QL_M2_INVALID;
+    face=ql_m2_record(QL_M2_DECAN_TABLE,index);
+    if(!face || !face->coordinate_id) return QL_M2_UNAVAILABLE;
+    node=ql_m_parent(face->coordinate_id);
+    if(!node) return QL_M2_UNAVAILABLE;
+    *out=node;
+    return QL_M2_OK;
+}
+QL_M2_Result ql_m2_decan_planet_route(double longitude,QL_M2_DecanPlanetRoute *out) {
+    const QL_M_Node *decan;
+    QL_M2_DecanPlanetRoute route={0,0,0,255,0,0,0,SIZE_MAX};
+    QL_M2_Result status;
+    uint8_t seen[10]={0};
+    size_t i,j;
+    if(!out) return QL_M2_INVALID;
+    status=decan_source_node(longitude,&decan);
+    if(status!=QL_M2_OK) return status;
+    route.decan_id=decan->id;
+    route.zodiac_decan_index=(uint8_t)floor(longitude/10.0);
+    for(i=0;i<ql_m_relation_count();++i) {
+        const QL_M_Relation *r=ql_m_relation_at(i);
+        if(r->from_id!=decan->id || strcmp(r->source_kind,"RULED_BY")) continue;
+        for(j=0;j<10;++j) {
+            const QL_M2_Record *planet=ql_m2_record(QL_M2_PLANET_TABLE,j);
+            if(planet && planet->coordinate_id==r->to_id) break;
+        }
+        if(j==10) return QL_M2_INVALID;
+        if(!seen[j]) { seen[j]=1; ++route.candidate_count; }
+        ++route.relation_count;
+    }
+    if(!route.relation_count) return QL_M2_UNAVAILABLE;
+    /* Actual deep node record190 (registry record683), pinned blob cad8b916,
+     * says filteredProps.planetaryRuler="Moon". Its Cancer3 RULED_BY edges
+     * say Saturn. This literal assertion is guarded by its complete payload
+     * digest; a changed source must be re-read, not inherit this fact blindly. */
+    if(strcmp(decan->source_ref,"#2-3-4-0-2")==0) {
+      for(i=0;i<decan->records_count;++i) {
+            size_t record_index=ql_m_node_record_index(decan->id,i);
+            const QL_M_SourceRecord *record=ql_m_source_record_at(record_index);
+            const QL_M_SourceFile *file=record?ql_m_source_file_at(record->file_index):NULL;
+            if(!record || !file) return QL_M2_UNAVAILABLE;
+            if(record->record_index!=190 || strcmp(file->path,"Idea/Bimba/Map/datasets/parashakti-deep/nodes-full-detail.json")) continue;
+            if(strcmp(record->payload_sha256,"c3313c0597e191566c74541acac4384046860d8f92ef9cbf8cbfcc2744a5be1b") ||
+               strcmp(file->git_blob,"cad8b916589e5175d66272e15f5afaf935e21584")) return QL_M2_UNAVAILABLE;
+            route.property_record=record_index;
+            route.source_conflict=(uint8_t)(route.candidate_count!=1 || !seen[1]);
+      }
+      if(route.property_record==SIZE_MAX) return QL_M2_UNAVAILABLE;
+    }
+    if(route.candidate_count==1 && !route.source_conflict) {
+        for(j=0;j<10;++j) if(seen[j]) {
+            route.planet_index=(uint8_t)j;
+            route.planet_id=ql_m2_record(QL_M2_PLANET_TABLE,j)->coordinate_id;
+            break;
+        }
+    }
+    *out=route;
+    return QL_M2_OK;
+}
+const QL_M_Relation *ql_m2_decan_planet_relation(double longitude,size_t assertion_index) {
+    const QL_M_Node *decan;
+    size_t i,matched=0;
+    if(decan_source_node(longitude,&decan)!=QL_M2_OK) return NULL;
+    for(i=0;i<ql_m_relation_count();++i) {
+        const QL_M_Relation *r=ql_m_relation_at(i);
+        if(r->from_id==decan->id && strcmp(r->source_kind,"RULED_BY")==0 && matched++==assertion_index) return r;
+    }
+    return NULL;
+}
 QL_M2_Result ql_m2_aspect(double a,double b,QL_M2_Aspect *out) {
     static const double angle[5]={0,60,90,120,180},orb[5]={10,6,8,8,10};
     QL_M2_Aspect v; unsigned i;

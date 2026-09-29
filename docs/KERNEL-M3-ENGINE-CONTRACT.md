@@ -30,6 +30,7 @@ the adapter to the already-built point-cloud implementation.
 | `ql_mef::m3_engine` | Existing `MRegistry`-backed engine; no parallel coordinate tree |
 | `ql_mef::m3_source` | Lossless source payloads and typed genetic, matrix and backbone readings |
 | `ql_mef::m3_state` | `ql.m3-state-request/v1`, `ql.m3-command/v1`, `ql.m3-state/v1`, `ql.m3-receipt/v1` |
+| `ql kernel m3 <request.json or -> --json` | Supported bounded transport of the same explicit request and ordered commands; complete state and receipts, no authority or activity admission |
 | `cargo run -p ql-mef --example m3-state --locked` | Headless JSON request plus ordered commands on standard input; JSON state and receipts on standard output |
 
 `fixtures/kernel/m3-parent-consumer-v1.json` is a complete headless example:
@@ -199,3 +200,36 @@ arithmetic parity. Authenticated live-provider freshness, physical simulation,
 ORF/protein hypotheses, an unwarranted entity-quaternion→primary-address inverse,
 Clifford/137 research and experienced product acceptance remain at their recorded
 standing rather than being manufactured to fill a display.
+
+### Personal activity reception (explicit selected policy)
+
+The supported `ql kernel m3` transport also accepts optional
+`activity_policy: "historical-personal-frame-sprite-v1"` and
+`activity_start_generation`. The boundary must be an existing native generation;
+its absence with a selected policy means generation zero. Only successful native
+commands at or after that boundary emit activity packets. Reads, rejected commands,
+provisional unchanged receipts and unselected earlier history emit none.
+
+This joins the actual M3 producer to the original public PatternPacket accumulator;
+it does not claim the old full Khora/M1/audio/EBM contemplation-close pipeline.
+The selected personal Vāk frame, Sprite class, thirty-minute Kairos window and
+`0.030 + 0.035 * min(abs(delta), 8)` are disclosed symbolic policy, not canonical
+emotional physics. The source's f32 Vāk serialization, BLAKE3 axis and normalized
+Hamilton accumulator are preserved. Person, event, original identity source and
+revision, ordered native transcription and complete receipt hashes remain in the
+reading. No caller-supplied quaternion enters this route.
+
+`ql nara personal-recompose` replays that native M3 input and composes its selected
+activity with an existing native identity/dated-transit reading. It checks the exact
+identity and transit derivations and retains both unchanged. This pure calculation
+does not grant host authority. O:I admits the result only from its existing native
+Nara context, after comparing the original saved identity, adopted profile, current
+sky event, full captured Expression and previous resident revision. Activity changes
+only the ephemeral personal-current reading; natal identity is not rewritten.
+
+An unselected existing M3 occasion can explicitly select the policy at its current
+generation/revision. This preserves its form, clock and receipts and admits only
+future successful commands. It does not retroactively reinterpret earlier commands
+or reset an already selected accumulator. Native focus-only changes preserve the
+occasion; structural changes, a changed profile or a newly pinned event invalidate
+its resident M3 state. Ordinary reads never advance it.

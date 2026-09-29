@@ -244,6 +244,7 @@ impl SharedPresenceConsent {
                 .iter()
                 .any(|allowed| allowed == target_ref)
             && not_expired
+            && at_unix_ms >= self.granted_at_unix_ms
     }
 }
 

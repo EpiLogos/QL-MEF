@@ -20,6 +20,7 @@ use std::str::FromStr;
 pub mod configuration;
 mod epi_agent_command;
 pub mod m_ledger;
+mod m3_command;
 mod nara_command;
 mod shape_command;
 mod techne_command;
@@ -344,7 +345,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
 fn help() -> String {
     format!(
         "Quaternal Logic {}\n\n\
-Usage:\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate> <profile.json|-> [--json]\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql techne reading <target.json> [--json]\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql vak workflow-types [--check <path>] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n  ql verify [--json]\n\n\
+Usage:\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel m1 <request.json> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql --version\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql matheme derive [--json]\n  ql matheme shadow [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql techne reading <target.json> [--json]\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n  ql vak capabilities [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n  ql vak workflow-types [--check <path>] [--json]\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n  ql verify [--json]\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.\nThe matheme command projects the definitional 0-layer derivation over the holographic kernel contract;\nthe kernel coordinates remain the governing 1.\nCurrent deterministic kernel operators: conjugate-address, complement-address, classify-four-plus-two.\nVāk context readings are source-locked and bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}.\nProvider-backed service operations disclose their current negotiated availability.\nThe configuration surface is disclosure-only: every contributed setting is read-only, and the\nconfig transport refuses mutation with a structured unsupported_setting error.",
         env!("CARGO_PKG_VERSION")
     )
@@ -364,6 +365,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
         matheme_derivation_contract_version: MATHEME_DERIVATION_CONTRACT_VERSION,
         commands: vec![
             "kernel.capabilities",
+            "kernel.m3",
             "kernel.coverage",
             "kernel.ledger",
             "kernel.validate-ledger",
@@ -385,6 +387,15 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "nara.capabilities",
             "nara.inspect",
             "nara.calculate",
+            "nara.coordinate",
+            "nara.context",
+            "nara.delegate",
+            "nara.enrichment",
+            "nara.receive",
+            "nara.transit",
+            "nara.personal-current",
+            "nara.personal-recompose",
+            "nara.presence-consent",
             "service.capabilities",
             "service.negotiate",
             "config.contribute",
@@ -552,6 +563,7 @@ fn ratio_string(ratio: HarmonicRatio) -> String {
 
 fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
     match args.first().map(String::as_str) {
+        Some("m3") => m3_command::command(&args[1..]),
         Some("m1") => {
             if args.len() != 2 {
                 return Err(CliError("usage: ql kernel m1 <request.json> --json".into()));

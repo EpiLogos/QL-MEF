@@ -3,6 +3,10 @@ use crate::CliError;
 use ql_mef::nara::intake::IdentityProfile;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
+#[path = "nara_dialogue_command.rs"]
+mod dialogue;
+#[path = "nara_presence_command.rs"]
+mod presence;
 use std::{
     fs,
     io::{Read, Write},
@@ -341,8 +345,16 @@ fn provider_python(
 
 pub fn calculate(profile: &IdentityProfile) -> Result<Value, CliError> {
     let request = profile.natal_request().map_err(error)?;
-    let bytes = serde_json::to_vec(&request).map_err(error)?;
     let script = resources()?;
+    calculate_provider(&request, script, &[])
+}
+
+fn calculate_provider(
+    request: &Value,
+    script: PathBuf,
+    arguments: &[&str],
+) -> Result<Value, CliError> {
+    let bytes = serde_json::to_vec(request).map_err(error)?;
     let deadline = Instant::now() + Duration::from_secs(45);
     let runtime = provider_python(&script, deadline)?;
     if Instant::now() >= deadline {
@@ -350,9 +362,11 @@ pub fn calculate(profile: &IdentityProfile) -> Result<Value, CliError> {
             "Natal runtime preparation exhausted the calculation deadline",
         ));
     }
+    let mut provider = Command::new(&runtime.executable);
+    provider.arg(script);
+    provider.args(arguments);
     let mut process = ProviderProcess(
-        Command::new(&runtime.executable)
-            .arg(script)
+        provider
             .env_remove("PYTHONHOME")
             .env_remove("PYTHONPATH")
             .stdin(Stdio::piped())
@@ -413,17 +427,65 @@ pub fn calculate(profile: &IdentityProfile) -> Result<Value, CliError> {
     serde_json::from_slice(&output).map_err(error)
 }
 
+fn transit(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
+    let natal_script = resources()?;
+    let script = natal_script
+        .parent()
+        .and_then(|p| p.parent())
+        .ok_or_else(|| error("invalid sky resource layout"))?
+        .join("sky/kerykeion_snapshot.py");
+    let args: &[&str] = if existing_snapshot {
+        &["-", "--validate-snapshot"]
+    } else {
+        &["-"]
+    };
+    let sky = calculate_provider(request, script, args)?;
+    ql_mef::nara::current::transit(Some(&sky)).map_err(error)
+}
+
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PersonalCurrentRequest {
+    schema: String,
+    profile: IdentityProfile,
+    sky_request: Option<Value>,
+    sky_snapshot: Option<Value>,
+    m3_input: Option<Value>,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PersonalRecomposeRequest {
+    schema: String,
+    current: Value,
+    m3_input: Value,
+}
+
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
-        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate"],"profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
+        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
     }
     let [operation, path] = args else {
         return Err(error(
-            "usage: ql nara <inspect|calculate> <profile.json|-> [--json]",
+            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]",
         ));
     };
-    if !["inspect", "calculate"].contains(&operation.as_str()) {
-        return Err(error("unknown Nara identity operation"));
+    if ![
+        "inspect",
+        "calculate",
+        "transit",
+        "personal-current",
+        "personal-recompose",
+        "presence-consent",
+        "coordinate",
+        "context",
+        "delegate",
+        "enrichment",
+        "receive",
+    ]
+    .contains(&operation.as_str())
+    {
+        return Err(error("unknown Nara operation"));
     }
     let mut bytes = Vec::new();
     if path == "-" {
@@ -439,7 +501,72 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             .map_err(error)?;
     }
     if bytes.len() > MAX_INPUT {
-        return Err(error("identity input exceeds 2 MiB"));
+        return Err(error("Nara input exceeds 2 MiB"));
+    }
+    if operation == "presence-consent" {
+        return presence::command(&bytes);
+    }
+    if ["coordinate", "context", "delegate", "enrichment", "receive"].contains(&operation.as_str())
+    {
+        return dialogue::command(operation, &bytes);
+    }
+    if operation == "personal-recompose" {
+        let request: PersonalRecomposeRequest = serde_json::from_slice(&bytes).map_err(error)?;
+        if request.schema != "ql.nara-personal-recompose-request/v1"
+            || request.current["schema"] != "ql.nara-personal-current/v1"
+        {
+            return Err(error("unsupported personal recomposition request"));
+        }
+        let m3: Value = serde_json::from_str(&crate::m3_command::replay(
+            &serde_json::to_string(&request.m3_input).map_err(error)?,
+        )?)
+        .map_err(error)?;
+        let activity = m3
+            .get("activity")
+            .ok_or_else(|| error("Select an explicit native M3 activity policy"))?;
+        let current = ql_mef::nara::current::personal_current_with_activity(
+            &request.current["identity"],
+            &request.current["transit"],
+            Some(activity),
+        )
+        .map_err(error)?;
+        return serde_json::to_string_pretty(&current).map_err(error);
+    }
+    if operation == "transit" {
+        let request: Value = serde_json::from_slice(&bytes).map_err(error)?;
+        return serde_json::to_string_pretty(&transit(&request, false)?).map_err(error);
+    }
+    if operation == "personal-current" {
+        let request: PersonalCurrentRequest = serde_json::from_slice(&bytes).map_err(error)?;
+        if request.schema != "ql.nara-personal-current-request/v1" {
+            return Err(error("unsupported personal current request"));
+        }
+        request.profile.validate().map_err(error)?;
+        let natal = calculate(&request.profile)?;
+        let identity = request.profile.inspect(Some(&natal)).map_err(error)?;
+        let transit = match (&request.sky_request, &request.sky_snapshot) {
+            (Some(sky), None) => transit(sky, false)?,
+            (None, Some(sky)) => transit(sky, true)?,
+            _ => {
+                return Err(error(
+                    "personal current requires exactly one sky_request or sky_snapshot",
+                ));
+            }
+        };
+        let m3 = request
+            .m3_input
+            .as_ref()
+            .map(|input| {
+                let reading =
+                    crate::m3_command::replay(&serde_json::to_string(input).map_err(error)?)?;
+                serde_json::from_str::<Value>(&reading).map_err(error)
+            })
+            .transpose()?;
+        let activity = m3.as_ref().and_then(|reading| reading.get("activity"));
+        let current =
+            ql_mef::nara::current::personal_current_with_activity(&identity, &transit, activity)
+                .map_err(error)?;
+        return serde_json::to_string_pretty(&current).map_err(error);
     }
     let profile: IdentityProfile = serde_json::from_slice(&bytes).map_err(error)?;
     profile.validate().map_err(error)?;

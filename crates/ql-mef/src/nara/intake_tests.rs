@@ -14,6 +14,8 @@ fn profile() -> IdentityProfile {
         person_ref: "central:person:intake-contract-one".into(),
         nara_ref: "ql:nara:intake-contract-one".into(),
         name: "Intake contract person".into(),
+        encoding_policy: None,
+        composition_policy: None,
         birth: BirthData {
             date: Some("1990-06-15".into()),
             time: Some("14:30".into()),

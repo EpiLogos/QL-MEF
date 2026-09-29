@@ -68,6 +68,10 @@ pub struct IdentityProfile {
     pub person_ref: String,
     pub nara_ref: String,
     pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub encoding_policy: Option<super::identity_encoding::EncodingPolicy>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub composition_policy: Option<super::identity_composition::CompositionPolicy>,
     pub birth: BirthData,
     pub jungian: Option<IdentityReport>,
     pub gene_keys: Option<IdentityReport>,
@@ -253,6 +257,9 @@ impl IdentityProfile {
         text(&self.nara_ref, "Nara reference")?;
         text(&self.name, "name")?;
         self.birth.validate()?;
+        if let Some(policy) = &self.encoding_policy {
+            policy.validate()?;
+        }
         for report in [
             &self.jungian,
             &self.gene_keys,
@@ -265,6 +272,7 @@ impl IdentityProfile {
             report.validate()?;
         }
         if let Some(report) = &self.jungian {
+            super::identity_contributions::validate_jungian_scores(&report.data)?;
             let system = report.data["system"]
                 .as_str()
                 .ok_or("Jungian report requires its actual system")?;
@@ -412,7 +420,24 @@ impl IdentityProfile {
     /// Produce the accepted six-office field from actual source material.
     /// Calculated natal output must belong to this exact person and input.
     pub fn inspect(&self, natal: Option<&Value>) -> Result<Value, String> {
+        let initial = super::identity_encoding::EncodingPolicy::default();
+        self.inspect_encoding(
+            natal,
+            self.encoding_policy.as_ref().unwrap_or(&initial),
+            self.encoding_policy.is_some(),
+        )
+    }
+
+    fn inspect_encoding(
+        &self,
+        natal: Option<&Value>,
+        encoding_policy: &super::identity_encoding::EncodingPolicy,
+        selected: bool,
+    ) -> Result<Value, String> {
         let revision = self.revision()?;
+        let mut birthdate_encoding = super::identity_encoding::derive(self, encoding_policy)?;
+        birthdate_encoding["selected"] = json!(selected);
+        let mut derived_identity_contributions = super::identity_contributions::derive(self)?;
         if let Some(natal) = natal {
             require(
                 natal["schema"] == "ql.nara-natal/v1"
@@ -477,7 +502,7 @@ impl IdentityProfile {
                 || (i == 1 && natal.is_some_and(|n| n["chart"].is_object()))
                 || report.is_some();
             let value = if i == 0 {
-                json!({"name":self.name,"birth":self.birth})
+                json!({"name":self.name,"birth":self.birth,"encoding":birthdate_encoding})
             } else if i == 1 {
                 natal.cloned().unwrap_or(Value::Null)
             } else {
@@ -518,23 +543,39 @@ impl IdentityProfile {
             });
             matrix.push(json!({"kind":kind,"coordinate":kind.coordinate(),"available":present,"route":if i==0 {"entered-source"}else if i==1 {"calculation"}else if report.is_some_and(|r|r.route==ReportRoute::SelfReport){"self-report"}else{"import"},"source":present.then_some(source),"method":report.map(|r|r.method.as_str()),"data":value,"absence_reason":if present {Value::Null}else{json!(reason)}}));
         }
+        let natal_composition = natal
+            .filter(|n| n["sky"].is_object())
+            .map(super::intake_composition::natal_composition)
+            .transpose()?;
+        let identity_composition = super::identity_composition::derive(
+            self,
+            &birthdate_encoding,
+            natal_composition.as_ref(),
+        )?;
+        derived_identity_contributions["identity_blend"] = identity_composition.clone();
+        derived_identity_contributions["blend_absence_reason"] =
+            identity_composition["absence_reason"].clone();
+        let identity_quaternion_ref =
+            identity_composition["q_core"]
+                .is_object()
+                .then(|| ProtectedRef {
+                    ref_id: format!("{}#M4-0-5/q_core", self.person_ref),
+                    revision: revision.clone(),
+                    owner_ref: "central".into(),
+                });
         let identity = IdentityField {
             identity_revision: revision.clone(),
             slots,
             identity_hash_ref: None,
-            identity_quaternion_ref: None,
+            identity_quaternion_ref,
             m3_form_address_ref: None,
             derivation_refs: vec![],
         };
         identity.validate()?;
         let material =
             super::identity_material::material(&self.nara_ref, &self.person_ref, &identity)?;
-        let natal_composition = natal
-            .filter(|n| n["sky"].is_object())
-            .map(super::intake_composition::natal_composition)
-            .transpose()?;
         Ok(
-            json!({"schema":"ql.nara-identity-reading/v1","person_ref":self.person_ref,"nara_ref":self.nara_ref,"input_revision":revision,"profile":self,"identity":identity,"material":material,"matrix":matrix,"natal":natal,"natal_composition":natal_composition,"private":true,"public_export":false}),
+            json!({"schema":"ql.nara-identity-reading/v1","person_ref":self.person_ref,"nara_ref":self.nara_ref,"input_revision":revision,"profile":self,"identity":identity,"material":material,"matrix":matrix,"natal":natal,"natal_composition":natal_composition,"birthdate_encoding":birthdate_encoding,"derived_identity_contributions":derived_identity_contributions,"identity_composition":identity_composition,"private":true,"public_export":false}),
         )
     }
 }

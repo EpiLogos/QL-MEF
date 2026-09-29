@@ -377,12 +377,23 @@ def execute_m2(snapshot, m2_request, executable, *, now=None, scope='shared-geoc
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('request', type=Path)
+    parser.add_argument('--validate-snapshot', action='store_true', help='Validate and return an existing exact snapshot without recalculation')
     parser.add_argument('--m2-request', type=Path)
     parser.add_argument('--m2-executable', type=Path)
     args = parser.parse_args()
     try:
-        require(args.request.stat().st_size <= 65536, 'sky request exceeds 64 KiB')
-        result = produce(json.loads(args.request.read_text()))
+        if str(args.request) == '-':
+            source = sys.stdin.buffer.read(65537)
+            require(len(source) <= 65536, 'sky request exceeds 64 KiB')
+        else:
+            require(args.request.stat().st_size <= 65536, 'sky request exceeds 64 KiB')
+            source = args.request.read_bytes()
+        data = json.loads(source)
+        if args.validate_snapshot:
+            result = validate_snapshot(data, require_current=data['request']['mode'] == 'current')
+            require(result['source_binding'] == source_bindings(), 'native source binding is stale')
+        else:
+            result = produce(data)
         if args.m2_request:
             require(args.m2_request.stat().st_size <= 32 * 1024 * 1024, 'M2 request exceeds 32 MiB')
             m2_input = json.loads(args.m2_request.read_text())
