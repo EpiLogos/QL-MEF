@@ -76,7 +76,7 @@ jobs:
             target/k8-continuous/basis.json target/k8-continuous/initial.json target/k8-coupled
       - name: Explicit shape replacement and the scene played on the torus, on the installed worker
         env:
-          QL_FIELD_WORKER: target/k8-cpp/bin/ql-field-worker
+          QL_FIELD_WORKER: ${{ github.workspace }}/target/k8-cpp/bin/ql-field-worker
         run: |
           set -o pipefail
           cargo test --locked -p ql-mef --test k8_reshape -- --ignored 2>&1 | tee target/k8-continuous/reshape.log
