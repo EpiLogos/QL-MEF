@@ -57,6 +57,8 @@ invariants() {
 
   python3 scripts/m-ledger.py check
   python3 scripts/m-ledger.py refresh
+  python3 scripts/coordinate-grammar.py check
+  python3 -m unittest discover -s scripts/tests -p test_m_grammar.py -v
   python3 scripts/k8-census.py --check
   python3 -m unittest discover -s scripts/tests -p test_m_census.py -v
   python3 -m unittest discover -s scripts/tests -p test_m_ledger.py -v

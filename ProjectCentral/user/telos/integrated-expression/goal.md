@@ -16,6 +16,8 @@ Every visible or audible quantity traces to a Bimba coordinate and its C/Rust ow
 
 ## Sources (read these; do not ask the owner for what they already hold)
 
+- **The settled law, in one page.** `skills/ql-law/SKILL.md`: the coordinate grammar (M prefix, the nesting threshold), positions, branch roles, the M3 clock facts and the rulings below, each with its source.
+
 - **The live Bimba map.** Authority, per ruling #255. Read it through `scripts/bimba_map.py` with a READ session.
 - **C kernel.** `vendor/epi-kernel/reference/` at C-Experiments `c7872e96`, and `c/`.
   - The M3 matrices and rotational states: `m3.h`, `m3.c`, `m3_clock_lut.c`.
