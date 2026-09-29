@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "8d3e413b9af9733edc2a5fd9cb0a88f8d819fb28dbe9adcc9de020a4b1da190e",
+  "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1cc9a51733e667e036d6a680c89926e493dad7a483583516c5a5fe0a6a358d44",
@@ -138900,6 +138900,900 @@
         {
           "state": "applied",
           "reference": "docs/kernel-rebuild/m1-engine-acceptance-v1.json"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#1-2-4",
+      "subjects": [
+        "#1-2-4-0"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M1-2-4.0\", \"kind\": \"respell\", \"map\": \"M1-2-4-0\", \"registry\": \"#1-2-4-0\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#1-2-4\", \"respellings\": 1, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 1 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-1-4",
+      "subjects": [
+        "#2-1-4-0",
+        "#2-1-4-1",
+        "#2-1-4-2",
+        "#2-1-4-3",
+        "#2-1-4-4",
+        "#2-1-4-5"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-1-4.0\", \"kind\": \"respell\", \"map\": \"M2-1-4-0\", \"registry\": \"#2-1-4-0\"}, {\"canonical\": \"M2-1-4.1\", \"kind\": \"respell\", \"map\": \"M2-1-4-1\", \"registry\": \"#2-1-4-1\"}, {\"canonical\": \"M2-1-4.2\", \"kind\": \"respell\", \"map\": \"M2-1-4-2\", \"registry\": \"#2-1-4-2\"}, {\"canonical\": \"M2-1-4.3\", \"kind\": \"respell\", \"map\": \"M2-1-4-3\", \"registry\": \"#2-1-4-3\"}, {\"canonical\": \"M2-1-4.4\", \"kind\": \"respell\", \"map\": \"M2-1-4-4\", \"registry\": \"#2-1-4-4\"}, {\"canonical\": \"M2-1-4.5\", \"kind\": \"respell\", \"map\": \"M2-1-4-5\", \"registry\": \"#2-1-4-5\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-1-4\", \"respellings\": 6, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 6 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-2-2-4",
+      "subjects": [
+        "#2-2-2-4-0/1",
+        "#2-2-2-4-2",
+        "#2-2-2-4-3",
+        "#2-2-2-4-4",
+        "#2-2-2-4-5"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-2-2-4.(0/1)\", \"kind\": \"respell\", \"map\": \"M2-2-2-4-(0/1)\", \"registry\": \"#2-2-2-4-0/1\"}, {\"canonical\": \"M2-2-2-4.2\", \"kind\": \"respell\", \"map\": \"M2-2-2-4-2\", \"registry\": \"#2-2-2-4-2\"}, {\"canonical\": \"M2-2-2-4.3\", \"kind\": \"respell\", \"map\": \"M2-2-2-4-3\", \"registry\": \"#2-2-2-4-3\"}, {\"canonical\": \"M2-2-2-4.4\", \"kind\": \"respell\", \"map\": \"M2-2-2-4-4\", \"registry\": \"#2-2-2-4-4\"}, {\"canonical\": \"M2-2-2-4.5\", \"kind\": \"respell\", \"map\": \"M2-2-2-4-5\", \"registry\": \"#2-2-2-4-5\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-2-2-4\", \"respellings\": 5, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 5 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-3-4",
+      "subjects": [
+        "#2-3-4-0",
+        "#2-3-4-0-0",
+        "#2-3-4-0-0-0",
+        "#2-3-4-0-0-1",
+        "#2-3-4-0-1",
+        "#2-3-4-0-1-0",
+        "#2-3-4-0-1-1",
+        "#2-3-4-0-2",
+        "#2-3-4-0-2-0",
+        "#2-3-4-0-2-1",
+        "#2-3-4-1",
+        "#2-3-4-1-0",
+        "#2-3-4-1-0-0",
+        "#2-3-4-1-0-1",
+        "#2-3-4-1-1",
+        "#2-3-4-1-1-0",
+        "#2-3-4-1-1-1",
+        "#2-3-4-1-2",
+        "#2-3-4-1-2-0",
+        "#2-3-4-1-2-1",
+        "#2-3-4-2",
+        "#2-3-4-2-0",
+        "#2-3-4-2-0-0",
+        "#2-3-4-2-0-1",
+        "#2-3-4-2-1",
+        "#2-3-4-2-1-0",
+        "#2-3-4-2-1-1",
+        "#2-3-4-2-2",
+        "#2-3-4-2-2-0",
+        "#2-3-4-2-2-1"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-3-4.0\", \"kind\": \"respell\", \"map\": \"M2-3-4-0\", \"registry\": \"#2-3-4-0\"}, {\"canonical\": \"M2-3-4.0-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-0\", \"registry\": \"#2-3-4-0-0\"}, {\"canonical\": \"M2-3-4.0-0-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-0-0\", \"registry\": \"#2-3-4-0-0-0\"}, {\"canonical\": \"M2-3-4.0-0-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-0-1\", \"registry\": \"#2-3-4-0-0-1\"}, {\"canonical\": \"M2-3-4.0-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-1\", \"registry\": \"#2-3-4-0-1\"}, {\"canonical\": \"M2-3-4.0-1-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-1-0\", \"registry\": \"#2-3-4-0-1-0\"}, {\"canonical\": \"M2-3-4.0-1-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-1-1\", \"registry\": \"#2-3-4-0-1-1\"}, {\"canonical\": \"M2-3-4.0-2\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-2\", \"registry\": \"#2-3-4-0-2\"}, {\"canonical\": \"M2-3-4.0-2-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-2-0\", \"registry\": \"#2-3-4-0-2-0\"}, {\"canonical\": \"M2-3-4.0-2-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-0-2-1\", \"registry\": \"#2-3-4-0-2-1\"}, {\"canonical\": \"M2-3-4.1\", \"kind\": \"respell\", \"map\": \"M2-3-4-1\", \"registry\": \"#2-3-4-1\"}, {\"canonical\": \"M2-3-4.1-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-0\", \"registry\": \"#2-3-4-1-0\"}, {\"canonical\": \"M2-3-4.1-0-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-0-0\", \"registry\": \"#2-3-4-1-0-0\"}, {\"canonical\": \"M2-3-4.1-0-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-0-1\", \"registry\": \"#2-3-4-1-0-1\"}, {\"canonical\": \"M2-3-4.1-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-1\", \"registry\": \"#2-3-4-1-1\"}, {\"canonical\": \"M2-3-4.1-1-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-1-0\", \"registry\": \"#2-3-4-1-1-0\"}, {\"canonical\": \"M2-3-4.1-1-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-1-1\", \"registry\": \"#2-3-4-1-1-1\"}, {\"canonical\": \"M2-3-4.1-2\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-2\", \"registry\": \"#2-3-4-1-2\"}, {\"canonical\": \"M2-3-4.1-2-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-2-0\", \"registry\": \"#2-3-4-1-2-0\"}, {\"canonical\": \"M2-3-4.1-2-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-1-2-1\", \"registry\": \"#2-3-4-1-2-1\"}, {\"canonical\": \"M2-3-4.2\", \"kind\": \"respell\", \"map\": \"M2-3-4-2\", \"registry\": \"#2-3-4-2\"}, {\"canonical\": \"M2-3-4.2-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-0\", \"registry\": \"#2-3-4-2-0\"}, {\"canonical\": \"M2-3-4.2-0-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-0-0\", \"registry\": \"#2-3-4-2-0-0\"}, {\"canonical\": \"M2-3-4.2-0-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-0-1\", \"registry\": \"#2-3-4-2-0-1\"}, {\"canonical\": \"M2-3-4.2-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-1\", \"registry\": \"#2-3-4-2-1\"}, {\"canonical\": \"M2-3-4.2-1-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-1-0\", \"registry\": \"#2-3-4-2-1-0\"}, {\"canonical\": \"M2-3-4.2-1-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-1-1\", \"registry\": \"#2-3-4-2-1-1\"}, {\"canonical\": \"M2-3-4.2-2\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-2\", \"registry\": \"#2-3-4-2-2\"}, {\"canonical\": \"M2-3-4.2-2-0\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-2-0\", \"registry\": \"#2-3-4-2-2-0\"}, {\"canonical\": \"M2-3-4.2-2-1\", \"kind\": \"respell\", \"map\": \"M2-3-4-2-2-1\", \"registry\": \"#2-3-4-2-2-1\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-3-4\", \"respellings\": 30, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 30 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-4.1-0-1-4",
+      "subjects": [
+        "#2-4.1-0-1-4-0/1",
+        "#2-4.1-0-1-4-2",
+        "#2-4.1-0-1-4-3",
+        "#2-4.1-0-1-4-4",
+        "#2-4.1-0-1-4-5"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-4.1-0-1-4.(0/1)\", \"kind\": \"respell\", \"map\": \"M2-4.1-0-1-4-(0/1)\", \"registry\": \"#2-4.1-0-1-4-0/1\"}, {\"canonical\": \"M2-4.1-0-1-4.2\", \"kind\": \"respell\", \"map\": \"M2-4.1-0-1-4-2\", \"registry\": \"#2-4.1-0-1-4-2\"}, {\"canonical\": \"M2-4.1-0-1-4.3\", \"kind\": \"respell\", \"map\": \"M2-4.1-0-1-4-3\", \"registry\": \"#2-4.1-0-1-4-3\"}, {\"canonical\": \"M2-4.1-0-1-4.4\", \"kind\": \"respell\", \"map\": \"M2-4.1-0-1-4-4\", \"registry\": \"#2-4.1-0-1-4-4\"}, {\"canonical\": \"M2-4.1-0-1-4.5\", \"kind\": \"respell\", \"map\": \"M2-4.1-0-1-4-5\", \"registry\": \"#2-4.1-0-1-4-5\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-4.1-0-1-4\", \"respellings\": 5, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 5 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-4.2-4",
+      "subjects": [
+        "#2-4.2-4-0",
+        "#2-4.2-4-1",
+        "#2-4.2-4-2"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-4.2-4.0\", \"kind\": \"respell\", \"map\": \"M2-4.2-4-0\", \"registry\": \"#2-4.2-4-0\"}, {\"canonical\": \"M2-4.2-4.1\", \"kind\": \"respell\", \"map\": \"M2-4.2-4-1\", \"registry\": \"#2-4.2-4-1\"}, {\"canonical\": \"M2-4.2-4.2\", \"kind\": \"respell\", \"map\": \"M2-4.2-4-2\", \"registry\": \"#2-4.2-4-2\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-4.2-4\", \"respellings\": 3, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 3 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-4.3-4",
+      "subjects": [
+        "#2-4.3-4-0/1",
+        "#2-4.3-4-2",
+        "#2-4.3-4-3",
+        "#2-4.3-4-4",
+        "#2-4.3-4-5",
+        "#2-4.3-4-6",
+        "#2-4.3-4-7"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-4.3-4.(0/1)\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-(0/1)\", \"registry\": \"#2-4.3-4-0/1\"}, {\"canonical\": \"M2-4.3-4.2\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-2\", \"registry\": \"#2-4.3-4-2\"}, {\"canonical\": \"M2-4.3-4.3\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-3\", \"registry\": \"#2-4.3-4-3\"}, {\"canonical\": \"M2-4.3-4.4\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-4\", \"registry\": \"#2-4.3-4-4\"}, {\"canonical\": \"M2-4.3-4.5\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-5\", \"registry\": \"#2-4.3-4-5\"}, {\"canonical\": \"M2-4.3-4.6\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-6\", \"registry\": \"#2-4.3-4-6\"}, {\"canonical\": \"M2-4.3-4.7\", \"kind\": \"respell\", \"map\": \"M2-4.3-4-7\", \"registry\": \"#2-4.3-4-7\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-4.3-4\", \"respellings\": 7, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 7 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#2-4.5-4",
+      "subjects": [
+        "#2-4.5-4-0/1",
+        "#2-4.5-4-2",
+        "#2-4.5-4-3",
+        "#2-4.5-4-4",
+        "#2-4.5-4-5",
+        "#2-4.5-4-6",
+        "#2-4.5-4-7",
+        "#2-4.5-4-8",
+        "#2-4.5-4-9"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M2-4.5-4.(0/1)\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-(0/1)\", \"registry\": \"#2-4.5-4-0/1\"}, {\"canonical\": \"M2-4.5-4.2\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-2\", \"registry\": \"#2-4.5-4-2\"}, {\"canonical\": \"M2-4.5-4.3\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-3\", \"registry\": \"#2-4.5-4-3\"}, {\"canonical\": \"M2-4.5-4.4\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-4\", \"registry\": \"#2-4.5-4-4\"}, {\"canonical\": \"M2-4.5-4.5\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-5\", \"registry\": \"#2-4.5-4-5\"}, {\"canonical\": \"M2-4.5-4.6\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-6\", \"registry\": \"#2-4.5-4-6\"}, {\"canonical\": \"M2-4.5-4.7\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-7\", \"registry\": \"#2-4.5-4-7\"}, {\"canonical\": \"M2-4.5-4.8\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-8\", \"registry\": \"#2-4.5-4-8\"}, {\"canonical\": \"M2-4.5-4.9\", \"kind\": \"respell\", \"map\": \"M2-4.5-4-9\", \"registry\": \"#2-4.5-4-9\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#2-4.5-4\", \"respellings\": 9, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 9 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-1-4",
+      "subjects": [
+        "#3-1-4-0",
+        "#3-1-4-1",
+        "#3-1-4-2",
+        "#3-1-4-3",
+        "#3-1-4-4",
+        "#3-1-4-5",
+        "#3-1-4-6",
+        "#3-1-4-7"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-1-4.0\", \"kind\": \"respell\", \"map\": \"M3-1-4-0\", \"registry\": \"#3-1-4-0\"}, {\"canonical\": \"M3-1-4.1\", \"kind\": \"respell\", \"map\": \"M3-1-4-1\", \"registry\": \"#3-1-4-1\"}, {\"canonical\": \"M3-1-4.2\", \"kind\": \"respell\", \"map\": \"M3-1-4-2\", \"registry\": \"#3-1-4-2\"}, {\"canonical\": \"M3-1-4.3\", \"kind\": \"respell\", \"map\": \"M3-1-4-3\", \"registry\": \"#3-1-4-3\"}, {\"canonical\": \"M3-1-4.4\", \"kind\": \"respell\", \"map\": \"M3-1-4-4\", \"registry\": \"#3-1-4-4\"}, {\"canonical\": \"M3-1-4.5\", \"kind\": \"respell\", \"map\": \"M3-1-4-5\", \"registry\": \"#3-1-4-5\"}, {\"canonical\": \"M3-1-4.6\", \"kind\": \"respell\", \"map\": \"M3-1-4-6\", \"registry\": \"#3-1-4-6\"}, {\"canonical\": \"M3-1-4.7\", \"kind\": \"respell\", \"map\": \"M3-1-4-7\", \"registry\": \"#3-1-4-7\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-1-4\", \"respellings\": 8, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 8 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-2-1-4",
+      "subjects": [
+        "#3-2-1-4-1",
+        "#3-2-1-4-2",
+        "#3-2-1-4-3",
+        "#3-2-1-4-4"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-2-1-4.1\", \"kind\": \"respell\", \"map\": \"M3-2-1-4-1\", \"registry\": \"#3-2-1-4-1\"}, {\"canonical\": \"M3-2-1-4.2\", \"kind\": \"respell\", \"map\": \"M3-2-1-4-2\", \"registry\": \"#3-2-1-4-2\"}, {\"canonical\": \"M3-2-1-4.3\", \"kind\": \"respell\", \"map\": \"M3-2-1-4-3\", \"registry\": \"#3-2-1-4-3\"}, {\"canonical\": \"M3-2-1-4.4\", \"kind\": \"respell\", \"map\": \"M3-2-1-4-4\", \"registry\": \"#3-2-1-4-4\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-2-1-4\", \"respellings\": 4, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 4 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-2-2-4",
+      "subjects": [
+        "#3-2-2-4-1",
+        "#3-2-2-4-2",
+        "#3-2-2-4-3",
+        "#3-2-2-4-4"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-2-2-4.1\", \"kind\": \"respell\", \"map\": \"M3-2-2-4-1\", \"registry\": \"#3-2-2-4-1\"}, {\"canonical\": \"M3-2-2-4.2\", \"kind\": \"respell\", \"map\": \"M3-2-2-4-2\", \"registry\": \"#3-2-2-4-2\"}, {\"canonical\": \"M3-2-2-4.3\", \"kind\": \"respell\", \"map\": \"M3-2-2-4-3\", \"registry\": \"#3-2-2-4-3\"}, {\"canonical\": \"M3-2-2-4.4\", \"kind\": \"respell\", \"map\": \"M3-2-2-4-4\", \"registry\": \"#3-2-2-4-4\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-2-2-4\", \"respellings\": 4, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 4 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-2-3-4",
+      "subjects": [
+        "#3-2-3-4-1",
+        "#3-2-3-4-2",
+        "#3-2-3-4-3",
+        "#3-2-3-4-4"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-2-3-4.1\", \"kind\": \"respell\", \"map\": \"M3-2-3-4-1\", \"registry\": \"#3-2-3-4-1\"}, {\"canonical\": \"M3-2-3-4.2\", \"kind\": \"respell\", \"map\": \"M3-2-3-4-2\", \"registry\": \"#3-2-3-4-2\"}, {\"canonical\": \"M3-2-3-4.3\", \"kind\": \"respell\", \"map\": \"M3-2-3-4-3\", \"registry\": \"#3-2-3-4-3\"}, {\"canonical\": \"M3-2-3-4.4\", \"kind\": \"respell\", \"map\": \"M3-2-3-4-4\", \"registry\": \"#3-2-3-4-4\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-2-3-4\", \"respellings\": 4, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 4 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-2-4",
+      "subjects": [
+        "#3-2-4-1",
+        "#3-2-4-1-1",
+        "#3-2-4-1-2",
+        "#3-2-4-1-3",
+        "#3-2-4-1-4",
+        "#3-2-4-2",
+        "#3-2-4-2-1",
+        "#3-2-4-2-2",
+        "#3-2-4-2-3",
+        "#3-2-4-2-4",
+        "#3-2-4-3",
+        "#3-2-4-3-1",
+        "#3-2-4-3-2",
+        "#3-2-4-3-3",
+        "#3-2-4-3-4",
+        "#3-2-4-4",
+        "#3-2-4-4-1",
+        "#3-2-4-4-2",
+        "#3-2-4-4-3",
+        "#3-2-4-4-4"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-2-4.1\", \"kind\": \"respell\", \"map\": \"M3-2-4-1\", \"registry\": \"#3-2-4-1\"}, {\"canonical\": \"M3-2-4.1-1\", \"kind\": \"respell\", \"map\": \"M3-2-4-1-1\", \"registry\": \"#3-2-4-1-1\"}, {\"canonical\": \"M3-2-4.1-2\", \"kind\": \"respell\", \"map\": \"M3-2-4-1-2\", \"registry\": \"#3-2-4-1-2\"}, {\"canonical\": \"M3-2-4.1-3\", \"kind\": \"respell\", \"map\": \"M3-2-4-1-3\", \"registry\": \"#3-2-4-1-3\"}, {\"canonical\": \"M3-2-4.1-4\", \"kind\": \"respell\", \"map\": \"M3-2-4-1-4\", \"registry\": \"#3-2-4-1-4\"}, {\"canonical\": \"M3-2-4.2\", \"kind\": \"respell\", \"map\": \"M3-2-4-2\", \"registry\": \"#3-2-4-2\"}, {\"canonical\": \"M3-2-4.2-1\", \"kind\": \"respell\", \"map\": \"M3-2-4-2-1\", \"registry\": \"#3-2-4-2-1\"}, {\"canonical\": \"M3-2-4.2-2\", \"kind\": \"respell\", \"map\": \"M3-2-4-2-2\", \"registry\": \"#3-2-4-2-2\"}, {\"canonical\": \"M3-2-4.2-3\", \"kind\": \"respell\", \"map\": \"M3-2-4-2-3\", \"registry\": \"#3-2-4-2-3\"}, {\"canonical\": \"M3-2-4.2-4\", \"kind\": \"respell\", \"map\": \"M3-2-4-2-4\", \"registry\": \"#3-2-4-2-4\"}, {\"canonical\": \"M3-2-4.3\", \"kind\": \"respell\", \"map\": \"M3-2-4-3\", \"registry\": \"#3-2-4-3\"}, {\"canonical\": \"M3-2-4.3-1\", \"kind\": \"respell\", \"map\": \"M3-2-4-3-1\", \"registry\": \"#3-2-4-3-1\"}, {\"canonical\": \"M3-2-4.3-2\", \"kind\": \"respell\", \"map\": \"M3-2-4-3-2\", \"registry\": \"#3-2-4-3-2\"}, {\"canonical\": \"M3-2-4.3-3\", \"kind\": \"respell\", \"map\": \"M3-2-4-3-3\", \"registry\": \"#3-2-4-3-3\"}, {\"canonical\": \"M3-2-4.3-4\", \"kind\": \"respell\", \"map\": \"M3-2-4-3-4\", \"registry\": \"#3-2-4-3-4\"}, {\"canonical\": \"M3-2-4.4\", \"kind\": \"respell\", \"map\": \"M3-2-4-4\", \"registry\": \"#3-2-4-4\"}, {\"canonical\": \"M3-2-4.4.1\", \"kind\": \"respell\", \"map\": \"M3-2-4-4-1\", \"registry\": \"#3-2-4-4-1\"}, {\"canonical\": \"M3-2-4.4.2\", \"kind\": \"respell\", \"map\": \"M3-2-4-4-2\", \"registry\": \"#3-2-4-4-2\"}, {\"canonical\": \"M3-2-4.4.3\", \"kind\": \"respell\", \"map\": \"M3-2-4-4-3\", \"registry\": \"#3-2-4-4-3\"}, {\"canonical\": \"M3-2-4.4.4\", \"kind\": \"respell\", \"map\": \"M3-2-4-4-4\", \"registry\": \"#3-2-4-4-4\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-2-4\", \"respellings\": 20, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 20 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-3-3-4",
+      "subjects": [
+        "#3-3-3-4-0/1",
+        "#3-3-3-4-2",
+        "#3-3-3-4-3",
+        "#3-3-3-4-4",
+        "#3-3-3-4-5",
+        "#3-3-3-4-6",
+        "#3-3-3-4-7"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-3-3-4.(0/1)\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-(0/1)\", \"registry\": \"#3-3-3-4-0/1\"}, {\"canonical\": \"M3-3-3-4.2\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-2\", \"registry\": \"#3-3-3-4-2\"}, {\"canonical\": \"M3-3-3-4.3\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-3\", \"registry\": \"#3-3-3-4-3\"}, {\"canonical\": \"M3-3-3-4.4\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-4\", \"registry\": \"#3-3-3-4-4\"}, {\"canonical\": \"M3-3-3-4.5\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-5\", \"registry\": \"#3-3-3-4-5\"}, {\"canonical\": \"M3-3-3-4.6\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-6\", \"registry\": \"#3-3-3-4-6\"}, {\"canonical\": \"M3-3-3-4.7\", \"kind\": \"respell\", \"map\": \"M3-3-3-4-7\", \"registry\": \"#3-3-3-4-7\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-3-3-4\", \"respellings\": 7, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 7 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-3-4",
+      "subjects": [
+        "#3-3-4-0",
+        "#3-3-4-1",
+        "#3-3-4-10",
+        "#3-3-4-11",
+        "#3-3-4-12",
+        "#3-3-4-13",
+        "#3-3-4-14",
+        "#3-3-4-15",
+        "#3-3-4-16",
+        "#3-3-4-17",
+        "#3-3-4-18",
+        "#3-3-4-19",
+        "#3-3-4-2",
+        "#3-3-4-20",
+        "#3-3-4-21",
+        "#3-3-4-22",
+        "#3-3-4-23",
+        "#3-3-4-3",
+        "#3-3-4-4",
+        "#3-3-4-5",
+        "#3-3-4-6",
+        "#3-3-4-7",
+        "#3-3-4-8",
+        "#3-3-4-9"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-3-4.0\", \"kind\": \"respell\", \"map\": \"M3-3-4-0\", \"registry\": \"#3-3-4-0\"}, {\"canonical\": \"M3-3-4.1\", \"kind\": \"respell\", \"map\": \"M3-3-4-1\", \"registry\": \"#3-3-4-1\"}, {\"canonical\": \"M3-3-4.10\", \"kind\": \"respell\", \"map\": \"M3-3-4-10\", \"registry\": \"#3-3-4-10\"}, {\"canonical\": \"M3-3-4.11\", \"kind\": \"respell\", \"map\": \"M3-3-4-11\", \"registry\": \"#3-3-4-11\"}, {\"canonical\": \"M3-3-4.12\", \"kind\": \"respell\", \"map\": \"M3-3-4-12\", \"registry\": \"#3-3-4-12\"}, {\"canonical\": \"M3-3-4.13\", \"kind\": \"respell\", \"map\": \"M3-3-4-13\", \"registry\": \"#3-3-4-13\"}, {\"canonical\": \"M3-3-4.14\", \"kind\": \"respell\", \"map\": \"M3-3-4-14\", \"registry\": \"#3-3-4-14\"}, {\"canonical\": \"M3-3-4.15\", \"kind\": \"respell\", \"map\": \"M3-3-4-15\", \"registry\": \"#3-3-4-15\"}, {\"canonical\": \"M3-3-4.16\", \"kind\": \"respell\", \"map\": \"M3-3-4-16\", \"registry\": \"#3-3-4-16\"}, {\"canonical\": \"M3-3-4.17\", \"kind\": \"respell\", \"map\": \"M3-3-4-17\", \"registry\": \"#3-3-4-17\"}, {\"canonical\": \"M3-3-4.18\", \"kind\": \"respell\", \"map\": \"M3-3-4-18\", \"registry\": \"#3-3-4-18\"}, {\"canonical\": \"M3-3-4.19\", \"kind\": \"respell\", \"map\": \"M3-3-4-19\", \"registry\": \"#3-3-4-19\"}, {\"canonical\": \"M3-3-4.2\", \"kind\": \"respell\", \"map\": \"M3-3-4-2\", \"registry\": \"#3-3-4-2\"}, {\"canonical\": \"M3-3-4.20\", \"kind\": \"respell\", \"map\": \"M3-3-4-20\", \"registry\": \"#3-3-4-20\"}, {\"canonical\": \"M3-3-4.21\", \"kind\": \"respell\", \"map\": \"M3-3-4-21\", \"registry\": \"#3-3-4-21\"}, {\"canonical\": \"M3-3-4.22\", \"kind\": \"respell\", \"map\": \"M3-3-4-22\", \"registry\": \"#3-3-4-22\"}, {\"canonical\": \"M3-3-4.23\", \"kind\": \"respell\", \"map\": \"M3-3-4-23\", \"registry\": \"#3-3-4-23\"}, {\"canonical\": \"M3-3-4.3\", \"kind\": \"respell\", \"map\": \"M3-3-4-3\", \"registry\": \"#3-3-4-3\"}, {\"canonical\": \"M3-3-4.4\", \"kind\": \"respell\", \"map\": \"M3-3-4-4\", \"registry\": \"#3-3-4-4\"}, {\"canonical\": \"M3-3-4.5\", \"kind\": \"respell\", \"map\": \"M3-3-4-5\", \"registry\": \"#3-3-4-5\"}, {\"canonical\": \"M3-3-4.6\", \"kind\": \"respell\", \"map\": \"M3-3-4-6\", \"registry\": \"#3-3-4-6\"}, {\"canonical\": \"M3-3-4.7\", \"kind\": \"respell\", \"map\": \"M3-3-4-7\", \"registry\": \"#3-3-4-7\"}, {\"canonical\": \"M3-3-4.8\", \"kind\": \"respell\", \"map\": \"M3-3-4-8\", \"registry\": \"#3-3-4-8\"}, {\"canonical\": \"M3-3-4.9\", \"kind\": \"respell\", \"map\": \"M3-3-4-9\", \"registry\": \"#3-3-4-9\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-3-4\", \"respellings\": 24, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 24 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-4",
+      "subjects": [
+        "#3-4-1",
+        "#3-4-1-0",
+        "#3-4-1-1",
+        "#3-4-1-10",
+        "#3-4-1-11",
+        "#3-4-1-12",
+        "#3-4-1-13",
+        "#3-4-1-2",
+        "#3-4-1-3",
+        "#3-4-1-4",
+        "#3-4-1-5",
+        "#3-4-1-6",
+        "#3-4-1-7",
+        "#3-4-1-8",
+        "#3-4-1-9",
+        "#3-4-2",
+        "#3-4-2-0",
+        "#3-4-2-1",
+        "#3-4-2-10",
+        "#3-4-2-11",
+        "#3-4-2-12",
+        "#3-4-2-13",
+        "#3-4-2-2",
+        "#3-4-2-3",
+        "#3-4-2-4",
+        "#3-4-2-5",
+        "#3-4-2-6",
+        "#3-4-2-7",
+        "#3-4-2-8",
+        "#3-4-2-9",
+        "#3-4-3",
+        "#3-4-3-0",
+        "#3-4-3-1",
+        "#3-4-3-10",
+        "#3-4-3-11",
+        "#3-4-3-12",
+        "#3-4-3-13",
+        "#3-4-3-2",
+        "#3-4-3-3",
+        "#3-4-3-4",
+        "#3-4-3-5",
+        "#3-4-3-6",
+        "#3-4-3-7",
+        "#3-4-3-8",
+        "#3-4-3-9",
+        "#3-4-4",
+        "#3-4-4-0",
+        "#3-4-4-1",
+        "#3-4-4-10",
+        "#3-4-4-11",
+        "#3-4-4-12",
+        "#3-4-4-13",
+        "#3-4-4-2",
+        "#3-4-4-3",
+        "#3-4-4-4",
+        "#3-4-4-5",
+        "#3-4-4-6",
+        "#3-4-4-7",
+        "#3-4-4-8",
+        "#3-4-4-9",
+        "#3-4-5/0",
+        "#3-4-5/0-0",
+        "#3-4-5/0-1",
+        "#3-4-5/0-10",
+        "#3-4-5/0-11",
+        "#3-4-5/0-12",
+        "#3-4-5/0-13",
+        "#3-4-5/0-14",
+        "#3-4-5/0-15",
+        "#3-4-5/0-16",
+        "#3-4-5/0-17",
+        "#3-4-5/0-18",
+        "#3-4-5/0-19",
+        "#3-4-5/0-2",
+        "#3-4-5/0-20",
+        "#3-4-5/0-21",
+        "#3-4-5/0-3",
+        "#3-4-5/0-4",
+        "#3-4-5/0-5",
+        "#3-4-5/0-6",
+        "#3-4-5/0-7",
+        "#3-4-5/0-8",
+        "#3-4-5/0-9"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-4.1\", \"kind\": \"respell\", \"map\": \"M3-4-1\", \"registry\": \"#3-4-1\"}, {\"canonical\": \"M3-4.1-0\", \"kind\": \"respell\", \"map\": \"M3-4-1-0\", \"registry\": \"#3-4-1-0\"}, {\"canonical\": \"M3-4.1-1\", \"kind\": \"respell\", \"map\": \"M3-4-1-1\", \"registry\": \"#3-4-1-1\"}, {\"canonical\": \"M3-4.1-10\", \"kind\": \"respell\", \"map\": \"M3-4-1-10\", \"registry\": \"#3-4-1-10\"}, {\"canonical\": \"M3-4.1-11\", \"kind\": \"respell\", \"map\": \"M3-4-1-11\", \"registry\": \"#3-4-1-11\"}, {\"canonical\": \"M3-4.1-12\", \"kind\": \"respell\", \"map\": \"M3-4-1-12\", \"registry\": \"#3-4-1-12\"}, {\"canonical\": \"M3-4.1-13\", \"kind\": \"respell\", \"map\": \"M3-4-1-13\", \"registry\": \"#3-4-1-13\"}, {\"canonical\": \"M3-4.1-2\", \"kind\": \"respell\", \"map\": \"M3-4-1-2\", \"registry\": \"#3-4-1-2\"}, {\"canonical\": \"M3-4.1-3\", \"kind\": \"respell\", \"map\": \"M3-4-1-3\", \"registry\": \"#3-4-1-3\"}, {\"canonical\": \"M3-4.1-4\", \"kind\": \"respell\", \"map\": \"M3-4-1-4\", \"registry\": \"#3-4-1-4\"}, {\"canonical\": \"M3-4.1-5\", \"kind\": \"respell\", \"map\": \"M3-4-1-5\", \"registry\": \"#3-4-1-5\"}, {\"canonical\": \"M3-4.1-6\", \"kind\": \"respell\", \"map\": \"M3-4-1-6\", \"registry\": \"#3-4-1-6\"}, {\"canonical\": \"M3-4.1-7\", \"kind\": \"respell\", \"map\": \"M3-4-1-7\", \"registry\": \"#3-4-1-7\"}, {\"canonical\": \"M3-4.1-8\", \"kind\": \"respell\", \"map\": \"M3-4-1-8\", \"registry\": \"#3-4-1-8\"}, {\"canonical\": \"M3-4.1-9\", \"kind\": \"respell\", \"map\": \"M3-4-1-9\", \"registry\": \"#3-4-1-9\"}, {\"canonical\": \"M3-4.2\", \"kind\": \"respell\", \"map\": \"M3-4-2\", \"registry\": \"#3-4-2\"}, {\"canonical\": \"M3-4.2-0\", \"kind\": \"respell\", \"map\": \"M3-4-2-0\", \"registry\": \"#3-4-2-0\"}, {\"canonical\": \"M3-4.2-1\", \"kind\": \"respell\", \"map\": \"M3-4-2-1\", \"registry\": \"#3-4-2-1\"}, {\"canonical\": \"M3-4.2-10\", \"kind\": \"respell\", \"map\": \"M3-4-2-10\", \"registry\": \"#3-4-2-10\"}, {\"canonical\": \"M3-4.2-11\", \"kind\": \"respell\", \"map\": \"M3-4-2-11\", \"registry\": \"#3-4-2-11\"}, {\"canonical\": \"M3-4.2-12\", \"kind\": \"respell\", \"map\": \"M3-4-2-12\", \"registry\": \"#3-4-2-12\"}, {\"canonical\": \"M3-4.2-13\", \"kind\": \"respell\", \"map\": \"M3-4-2-13\", \"registry\": \"#3-4-2-13\"}, {\"canonical\": \"M3-4.2-2\", \"kind\": \"respell\", \"map\": \"M3-4-2-2\", \"registry\": \"#3-4-2-2\"}, {\"canonical\": \"M3-4.2-3\", \"kind\": \"respell\", \"map\": \"M3-4-2-3\", \"registry\": \"#3-4-2-3\"}, {\"canonical\": \"M3-4.2-4\", \"kind\": \"respell\", \"map\": \"M3-4-2-4\", \"registry\": \"#3-4-2-4\"}, {\"canonical\": \"M3-4.2-5\", \"kind\": \"respell\", \"map\": \"M3-4-2-5\", \"registry\": \"#3-4-2-5\"}, {\"canonical\": \"M3-4.2-6\", \"kind\": \"respell\", \"map\": \"M3-4-2-6\", \"registry\": \"#3-4-2-6\"}, {\"canonical\": \"M3-4.2-7\", \"kind\": \"respell\", \"map\": \"M3-4-2-7\", \"registry\": \"#3-4-2-7\"}, {\"canonical\": \"M3-4.2-8\", \"kind\": \"respell\", \"map\": \"M3-4-2-8\", \"registry\": \"#3-4-2-8\"}, {\"canonical\": \"M3-4.2-9\", \"kind\": \"respell\", \"map\": \"M3-4-2-9\", \"registry\": \"#3-4-2-9\"}, {\"canonical\": \"M3-4.3\", \"kind\": \"respell\", \"map\": \"M3-4-3\", \"registry\": \"#3-4-3\"}, {\"canonical\": \"M3-4.3-0\", \"kind\": \"respell\", \"map\": \"M3-4-3-0\", \"registry\": \"#3-4-3-0\"}, {\"canonical\": \"M3-4.3-1\", \"kind\": \"respell\", \"map\": \"M3-4-3-1\", \"registry\": \"#3-4-3-1\"}, {\"canonical\": \"M3-4.3-10\", \"kind\": \"respell\", \"map\": \"M3-4-3-10\", \"registry\": \"#3-4-3-10\"}, {\"canonical\": \"M3-4.3-11\", \"kind\": \"respell\", \"map\": \"M3-4-3-11\", \"registry\": \"#3-4-3-11\"}, {\"canonical\": \"M3-4.3-12\", \"kind\": \"respell\", \"map\": \"M3-4-3-12\", \"registry\": \"#3-4-3-12\"}, {\"canonical\": \"M3-4.3-13\", \"kind\": \"respell\", \"map\": \"M3-4-3-13\", \"registry\": \"#3-4-3-13\"}, {\"canonical\": \"M3-4.3-2\", \"kind\": \"respell\", \"map\": \"M3-4-3-2\", \"registry\": \"#3-4-3-2\"}, {\"canonical\": \"M3-4.3-3\", \"kind\": \"respell\", \"map\": \"M3-4-3-3\", \"registry\": \"#3-4-3-3\"}, {\"canonical\": \"M3-4.3-4\", \"kind\": \"respell\", \"map\": \"M3-4-3-4\", \"registry\": \"#3-4-3-4\"}, {\"canonical\": \"M3-4.3-5\", \"kind\": \"respell\", \"map\": \"M3-4-3-5\", \"registry\": \"#3-4-3-5\"}, {\"canonical\": \"M3-4.3-6\", \"kind\": \"respell\", \"map\": \"M3-4-3-6\", \"registry\": \"#3-4-3-6\"}, {\"canonical\": \"M3-4.3-7\", \"kind\": \"respell\", \"map\": \"M3-4-3-7\", \"registry\": \"#3-4-3-7\"}, {\"canonical\": \"M3-4.3-8\", \"kind\": \"respell\", \"map\": \"M3-4-3-8\", \"registry\": \"#3-4-3-8\"}, {\"canonical\": \"M3-4.3-9\", \"kind\": \"respell\", \"map\": \"M3-4-3-9\", \"registry\": \"#3-4-3-9\"}, {\"canonical\": \"M3-4.4\", \"kind\": \"respell\", \"map\": \"M3-4-4\", \"registry\": \"#3-4-4\"}, {\"canonical\": \"M3-4.4.0\", \"kind\": \"respell\", \"map\": \"M3-4-4-0\", \"registry\": \"#3-4-4-0\"}, {\"canonical\": \"M3-4.4.1\", \"kind\": \"respell\", \"map\": \"M3-4-4-1\", \"registry\": \"#3-4-4-1\"}, {\"canonical\": \"M3-4.4.10\", \"kind\": \"respell\", \"map\": \"M3-4-4-10\", \"registry\": \"#3-4-4-10\"}, {\"canonical\": \"M3-4.4.11\", \"kind\": \"respell\", \"map\": \"M3-4-4-11\", \"registry\": \"#3-4-4-11\"}, {\"canonical\": \"M3-4.4.12\", \"kind\": \"respell\", \"map\": \"M3-4-4-12\", \"registry\": \"#3-4-4-12\"}, {\"canonical\": \"M3-4.4.13\", \"kind\": \"respell\", \"map\": \"M3-4-4-13\", \"registry\": \"#3-4-4-13\"}, {\"canonical\": \"M3-4.4.2\", \"kind\": \"respell\", \"map\": \"M3-4-4-2\", \"registry\": \"#3-4-4-2\"}, {\"canonical\": \"M3-4.4.3\", \"kind\": \"respell\", \"map\": \"M3-4-4-3\", \"registry\": \"#3-4-4-3\"}, {\"canonical\": \"M3-4.4.4\", \"kind\": \"respell\", \"map\": \"M3-4-4-4\", \"registry\": \"#3-4-4-4\"}, {\"canonical\": \"M3-4.4.5\", \"kind\": \"respell\", \"map\": \"M3-4-4-5\", \"registry\": \"#3-4-4-5\"}, {\"canonical\": \"M3-4.4.6\", \"kind\": \"respell\", \"map\": \"M3-4-4-6\", \"registry\": \"#3-4-4-6\"}, {\"canonical\": \"M3-4.4.7\", \"kind\": \"respell\", \"map\": \"M3-4-4-7\", \"registry\": \"#3-4-4-7\"}, {\"canonical\": \"M3-4.4.8\", \"kind\": \"respell\", \"map\": \"M3-4-4-8\", \"registry\": \"#3-4-4-8\"}, {\"canonical\": \"M3-4.4.9\", \"kind\": \"respell\", \"map\": \"M3-4-4-9\", \"registry\": \"#3-4-4-9\"}, {\"canonical\": \"M3-4.(5/0)\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)\", \"registry\": \"#3-4-5/0\"}, {\"canonical\": \"M3-4.(5/0)-0\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-0\", \"registry\": \"#3-4-5/0-0\"}, {\"canonical\": \"M3-4.(5/0)-1\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-1\", \"registry\": \"#3-4-5/0-1\"}, {\"canonical\": \"M3-4.(5/0)-10\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-10\", \"registry\": \"#3-4-5/0-10\"}, {\"canonical\": \"M3-4.(5/0)-11\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-11\", \"registry\": \"#3-4-5/0-11\"}, {\"canonical\": \"M3-4.(5/0)-12\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-12\", \"registry\": \"#3-4-5/0-12\"}, {\"canonical\": \"M3-4.(5/0)-13\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-13\", \"registry\": \"#3-4-5/0-13\"}, {\"canonical\": \"M3-4.(5/0)-14\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-14\", \"registry\": \"#3-4-5/0-14\"}, {\"canonical\": \"M3-4.(5/0)-15\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-15\", \"registry\": \"#3-4-5/0-15\"}, {\"canonical\": \"M3-4.(5/0)-16\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-16\", \"registry\": \"#3-4-5/0-16\"}, {\"canonical\": \"M3-4.(5/0)-17\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-17\", \"registry\": \"#3-4-5/0-17\"}, {\"canonical\": \"M3-4.(5/0)-18\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-18\", \"registry\": \"#3-4-5/0-18\"}, {\"canonical\": \"M3-4.(5/0)-19\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-19\", \"registry\": \"#3-4-5/0-19\"}, {\"canonical\": \"M3-4.(5/0)-2\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-2\", \"registry\": \"#3-4-5/0-2\"}, {\"canonical\": \"M3-4.(5/0)-20\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-20\", \"registry\": \"#3-4-5/0-20\"}, {\"canonical\": \"M3-4.(5/0)-21\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-21\", \"registry\": \"#3-4-5/0-21\"}, {\"canonical\": \"M3-4.(5/0)-3\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-3\", \"registry\": \"#3-4-5/0-3\"}, {\"canonical\": \"M3-4.(5/0)-4\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-4\", \"registry\": \"#3-4-5/0-4\"}, {\"canonical\": \"M3-4.(5/0)-5\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-5\", \"registry\": \"#3-4-5/0-5\"}, {\"canonical\": \"M3-4.(5/0)-6\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-6\", \"registry\": \"#3-4-5/0-6\"}, {\"canonical\": \"M3-4.(5/0)-7\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-7\", \"registry\": \"#3-4-5/0-7\"}, {\"canonical\": \"M3-4.(5/0)-8\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-8\", \"registry\": \"#3-4-5/0-8\"}, {\"canonical\": \"M3-4.(5/0)-9\", \"kind\": \"respell\", \"map\": \"M3-4-(5/0)-9\", \"registry\": \"#3-4-5/0-9\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-4\", \"respellings\": 83, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 83 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-4.0-4",
+      "subjects": [
+        "#3-4.0-4-0",
+        "#3-4.0-4-1",
+        "#3-4.0-4-10",
+        "#3-4.0-4-11",
+        "#3-4.0-4-12",
+        "#3-4.0-4-13",
+        "#3-4.0-4-14",
+        "#3-4.0-4-15",
+        "#3-4.0-4-2",
+        "#3-4.0-4-3",
+        "#3-4.0-4-4",
+        "#3-4.0-4-5",
+        "#3-4.0-4-6",
+        "#3-4.0-4-7",
+        "#3-4.0-4-8",
+        "#3-4.0-4-9"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-4.0-4.0\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-0\", \"registry\": \"#3-4.0-4-0\"}, {\"canonical\": \"M3-4.0-4.1\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-1\", \"registry\": \"#3-4.0-4-1\"}, {\"canonical\": \"M3-4.0-4.10\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-10\", \"registry\": \"#3-4.0-4-10\"}, {\"canonical\": \"M3-4.0-4.11\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-11\", \"registry\": \"#3-4.0-4-11\"}, {\"canonical\": \"M3-4.0-4.12\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-12\", \"registry\": \"#3-4.0-4-12\"}, {\"canonical\": \"M3-4.0-4.13\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-13\", \"registry\": \"#3-4.0-4-13\"}, {\"canonical\": \"M3-4.0-4.14\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-14\", \"registry\": \"#3-4.0-4-14\"}, {\"canonical\": \"M3-4.0-4.15\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-15\", \"registry\": \"#3-4.0-4-15\"}, {\"canonical\": \"M3-4.0-4.2\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-2\", \"registry\": \"#3-4.0-4-2\"}, {\"canonical\": \"M3-4.0-4.3\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-3\", \"registry\": \"#3-4.0-4-3\"}, {\"canonical\": \"M3-4.0-4.4\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-4\", \"registry\": \"#3-4.0-4-4\"}, {\"canonical\": \"M3-4.0-4.5\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-5\", \"registry\": \"#3-4.0-4-5\"}, {\"canonical\": \"M3-4.0-4.6\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-6\", \"registry\": \"#3-4.0-4-6\"}, {\"canonical\": \"M3-4.0-4.7\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-7\", \"registry\": \"#3-4.0-4-7\"}, {\"canonical\": \"M3-4.0-4.8\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-8\", \"registry\": \"#3-4.0-4-8\"}, {\"canonical\": \"M3-4.0-4.9\", \"kind\": \"respell\", \"map\": \"M3-4.0-4-9\", \"registry\": \"#3-4.0-4-9\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-4.0-4\", \"respellings\": 16, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 16 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#3-5-4",
+      "subjects": [
+        "#3-5-4-0",
+        "#3-5-4-1",
+        "#3-5-4-2",
+        "#3-5-4-3",
+        "#3-5-4-4",
+        "#3-5-4-5"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M3-5-4.0\", \"kind\": \"respell\", \"map\": \"M3-5-4-0\", \"registry\": \"#3-5-4-0\"}, {\"canonical\": \"M3-5-4.1\", \"kind\": \"respell\", \"map\": \"M3-5-4-1\", \"registry\": \"#3-5-4-1\"}, {\"canonical\": \"M3-5-4.2\", \"kind\": \"respell\", \"map\": \"M3-5-4-2\", \"registry\": \"#3-5-4-2\"}, {\"canonical\": \"M3-5-4.3\", \"kind\": \"respell\", \"map\": \"M3-5-4-3\", \"registry\": \"#3-5-4-3\"}, {\"canonical\": \"M3-5-4.4\", \"kind\": \"respell\", \"map\": \"M3-5-4-4\", \"registry\": \"#3-5-4-4\"}, {\"canonical\": \"M3-5-4.5\", \"kind\": \"respell\", \"map\": \"M3-5-4-5\", \"registry\": \"#3-5-4-5\"}], \"duplicates\": 0, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#3-5-4\", \"respellings\": 6, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 6 coordinate(s) respelled to the dotted form. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        }
+      ]
+    },
+    {
+      "id": "k2-grammar-nesting-threshold:#4",
+      "subjects": [
+        "#4-0",
+        "#4-1",
+        "#4-2",
+        "#4-3",
+        "#4-4",
+        "#4-5"
+      ],
+      "axis": "coordinate",
+      "from_peer": "bimba",
+      "to_peer": "c",
+      "state": "proposed",
+      "detail": "{\"code\": \"nesting-threshold\", \"coordinates\": [{\"canonical\": \"M4.0\", \"kind\": \"duplicate\", \"map\": \"M4-0\", \"registry\": \"#4-0\"}, {\"canonical\": \"M4.1\", \"kind\": \"duplicate\", \"map\": \"M4-1\", \"registry\": \"#4-1\"}, {\"canonical\": \"M4.2\", \"kind\": \"duplicate\", \"map\": \"M4-2\", \"registry\": \"#4-2\"}, {\"canonical\": \"M4.3\", \"kind\": \"duplicate\", \"map\": \"M4-3\", \"registry\": \"#4-3\"}, {\"canonical\": \"M4.4\", \"kind\": \"duplicate\", \"map\": \"M4-4\", \"registry\": \"#4-4\"}, {\"canonical\": \"M4.5\", \"kind\": \"duplicate\", \"map\": \"M4-5\", \"registry\": \"#4-5\"}], \"duplicates\": 6, \"law\": \"after a position-4 segment the separator is '.'\", \"parent\": \"#4\", \"respellings\": 0, \"source\": \"Epi-Logos-C-Experiments Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md §IV\"}",
+      "current_authority": {
+        "peer": "bimba",
+        "reference": "docs/kernel-rebuild/BIMBA-MAP-SOURCE.md",
+        "reason": "The map is authority (ruling D10); the registry keeps the map's spelling until the owner applies the map correction."
+      },
+      "proposal": {
+        "target_peer": "bimba",
+        "change": "Correct the map: 0 coordinate(s) respelled to the dotted form, 6 dash-spelled duplicate(s) of an existing dotted node removed. Prior spelling kept on the node as c_2_prior_coordinate; relation coordinate properties follow.",
+        "evidence": [
+          "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
+        ]
+      },
+      "decision": null,
+      "promotion": null,
+      "history": [
+        {
+          "state": "open",
+          "reference": "skills/ql-law/SKILL.md"
+        },
+        {
+          "state": "proposed",
+          "reference": "migration/bimba-map/2026-09-29-nesting-threshold.cypher"
         }
       ]
     }
