@@ -45,7 +45,7 @@
     },
     {
       "path": "scripts/test-m1-engine.sh",
-      "sha256": "af69f8d15024d396ee4ecf24dc2f15eec5a6a413830dd4e74781d0f3797e8c81"
+      "sha256": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6"
     }
   ],
   "executed": {

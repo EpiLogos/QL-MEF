@@ -404,7 +404,7 @@
     },
     {
       "path": "scripts/test-m1-engine.sh",
-      "sha256": "af69f8d15024d396ee4ecf24dc2f15eec5a6a413830dd4e74781d0f3797e8c81"
+      "sha256": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6"
     },
     {
       "path": "fixtures/kernel/m1-source-literals-v1.json",
@@ -420,7 +420,7 @@
     },
     {
       "path": "scripts/check-m1-acceptance.py",
-      "sha256": "0185d96f900b88184db7a083cd8d0e0534fb2d964b4d7fc8480d9e1daf6f02ad"
+      "sha256": "a68489a11178feae84380fccc7024c107d668ab1e570cf5f0109284197bf5c45"
     },
     {
       "path": "scripts/m_census.py",
@@ -436,7 +436,7 @@
     },
     {
       "path": "crates/ql-cli/src/lib.rs",
-      "sha256": "d807c5ee5a6f67a253854357a4fc11f0f50eda969353476e6cf011469513383a"
+      "sha256": "cdab0755dee0d637fe6d680f094946bf797e1d70118a46ac84701a2fab6c622c"
     },
     {
       "path": "crates/ql-cli/tests/m1_engine_cli.rs",

@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = "docs/kernel-rebuild/m1-engine-acceptance-v1.json"
+CURRENT = "docs/kernel-rebuild/m1-engine-revalidation-v1.json"
 REGISTRY_REVISION = "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77"
 
 
@@ -20,19 +21,29 @@ def verify(root: Path = ROOT) -> dict[str, int]:
         return json.loads((root / path).read_text())
 
     receipt = load(RECEIPT)
+    current = load(CURRENT)
+    assert current["schema"] == "ql.m1.kernel-revalidation/v1"
+    assert current["historical_acceptance"] == {
+        "path": RECEIPT,
+        "sha256": hashlib.sha256((root / RECEIPT).read_bytes()).hexdigest(),
+    }, "current execution does not bind the unchanged historical acceptance"
     registry = load("fixtures/kernel/m-tree-v1.json")
     ledger = load("fixtures/kernel/m-ledger-v1.json")
     assert receipt["registry_revision"] == registry["registry_revision"] == REGISTRY_REVISION
     assert receipt["k4_revision"] == "5b24b95d17234ab5d23d84e658c0cc06434b41a3"
     assert receipt["source_return_revision"] == "bb47ab9730f0ddadd4891666fb6f3e0a6d457330"
     paths: set[str] = set()
-    for lock in receipt["input_locks"]:
+    for lock in current["input_locks"]:
         path = lock["path"]
         assert path not in paths, f"duplicate input lock: {path}"
         paths.add(path)
         assert not Path(path).is_absolute() and ".." not in Path(path).parts
         assert hashlib.sha256((root / path).read_bytes()).hexdigest() == lock["sha256"], f"stale executed input: {path}"
     assert {"c/src/m1.c", "c/src/m1_state.c", "crates/ql-mef/src/m1.rs", "crates/ql-mef/src/m1_engine.rs", "migration/epi-kernel/m1-state-probe.c", "scripts/m_census.py"} <= paths
+    assert {lock["path"] for lock in receipt["input_locks"]} <= paths, "current execution omitted historical inputs"
+    assert "scripts/refresh-m1-acceptance.py" in paths
+    assert len(current["revalidation"]["commands"]) == len(current["revalidation"]["logs"]) == 4
+    assert {item["local_path"] for item in current["revalidation"]["observations"]} == {item["local_path"] for item in receipt["observations"]}
     rows = {r["id"]: r for r in ledger["rows"]}
     impls = {i["id"]: i for i in ledger["implementations"]}
     m1 = [n for n in registry["nodes"] if n["root_position"] == 1]

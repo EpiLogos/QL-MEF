@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "bec98d6d7f7fb5596442821717edb3e20e414dcb5be5502b08dc221196286633",
+  "ledger_revision": "b6ab00695e5da7ae7760806c943a89d0f9b1fcbeb54343910028e4baeb76cadb",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "1cc9a51733e667e036d6a680c89926e493dad7a483583516c5a5fe0a6a358d44",
@@ -115073,7 +115073,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
-        "sha256": "2f626900c8e463d274c1f0bf6aa2a49aa62d50194b9a921fec21bef94bffabaa"
+        "sha256": "f70f2bbd5f18a332291558344f7c865fdc845172e2b2e14805516198d0d6046e"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
@@ -115215,7 +115215,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "docs/kernel-rebuild/m1-engine-receipt-v1.json",
-        "sha256": "7ce5c46d975056ff915ef3b92b3a7647cf947ab3e0f198b8f76286085c343c41"
+        "sha256": "cb526dc4d958ece04b13aba1f93a15b32861a27f5f6146b97bd1a190d1526c14"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
@@ -115454,7 +115454,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m2-finite-proof-v1.json",
-        "sha256": "93734250cb2d39a61b38edc6cb96b1b0daa456a14029e83cd6926db41ecf1a2f"
+        "sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [
@@ -115541,7 +115541,7 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
-        "sha256": "756bf4294eff5dceb20dc12a02f12cf2e06bd232a06ee3e8cc86e57f32f52e47"
+        "sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
       },
       "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
       "subjects": [

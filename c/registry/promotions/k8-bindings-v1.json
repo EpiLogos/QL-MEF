@@ -863,6 +863,103 @@
         "crates/ql-mef/tests/scene_sky.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/domain_body.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Nara continuation consumes the current registered canonical seven-centre anatomical source properties and Earth grounding relations. Exact pinned record/blob/payload provenance is retained; no geometry, clinical relation or unsupported sense/action edge is inferred.",
+      "tests": [
+        "crates/ql-mef/src/nara/domain_body.rs",
+        "crates/ql-mef/src/nara/domain_operations.rs"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_presence_command.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 supported command path reading the existing native SharedPresenceConsent law for one explicit request; it constructs no personal field, exports no private state, and consent persistence and authenticated participant admission remain host-owned.",
+      "tests": [
+        "crates/ql-cli/src/nara_presence_command.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/current.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4 dated current/transit reception: the qualified sky provider's planetary longitudes lift to the composed transit quaternion and selected identity/transit baseline; absent activity is never fabricated and astronomy ownership stays external.",
+      "tests": [
+        "crates/ql-mef/src/nara/current.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/identity_composition.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4-0-5 explicitly selected draft core composition over supplied intake profiles; the sealed source blob and chosen policy are recorded, and no canonical receiver dynamics or material effect authority is granted.",
+      "tests": [
+        "crates/ql-mef/src/nara/identity_composition.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/m3_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the supported native M3 command path; recorded fixtures are not Factory execution or installed-app evidence.",
+      "tests": [
+        "crates/ql-cli/tests/m3_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_current_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the dated current/transit command reception; synthetic skies are not live provider evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_current_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_dialogue_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the native dialogue command surface; scripted sessions are not live Nara conversation evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_dialogue_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/m2_planet_chakra.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled M2 parity regressions for the direct planet-to-chakra route over the pinned PLANETARY_RESONANCE assertions.",
+      "tests": [
+        "crates/ql-mef/tests/m2_planet_chakra.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }
