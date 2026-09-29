@@ -2,6 +2,7 @@
 //! receive this same producer in kernel-k8-continuous, not a fake worker here.
 use ql_mef::continuous::coupled::{
     ConditionFrequencyBinding, CoupledInput, FrequencyBinding, HarmonicSource, REQUEST, REQUEST_V2,
+    SKY_ROOT_HZ, SkyFrequencyBinding,
 };
 use ql_mef::m1_engine::{EngineConfig, M1Engine};
 use ql_mef::m2_condition::{
@@ -42,6 +43,7 @@ fn input() -> CoupledInput {
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
         frequency_bindings: vec![],
         condition_frequency_bindings: vec![],
+        sky_frequency_bindings: vec![],
         source_receipts: vec![json!({"standing":"controlled fixture, not a live provider"})],
     }
 }
@@ -397,4 +399,45 @@ fn dual_bus_validation_has_no_aliases_fallback_or_legacy_reinterpretation() {
         serde_json::to_value(&basis).unwrap(),
         serde_json::to_value(legacy.compose().unwrap()).unwrap()
     );
+}
+
+/// M2-5 is the sky: a planet observed in the event's sky voices a mode at M1's
+/// root times its just ratio from the map; an unobserved planet is refused.
+#[test]
+fn the_sky_bus_voices_observed_planets_at_their_map_just_ratio() {
+    let mut request = musical_input();
+    request.frequency_bindings.clear();
+    request.condition_frequency_bindings.clear();
+    request.sky_frequency_bindings = vec![
+        SkyFrequencyBinding {
+            mode_ref: "controlled:musical-mode/0".into(),
+            planet_ref: "#2-5-0/1".into(), // Sun, 1:1
+        },
+        SkyFrequencyBinding {
+            mode_ref: "controlled:musical-mode/1".into(),
+            planet_ref: "#2-5-4".into(), // Moon, 4:3
+        },
+    ];
+    let basis = request.compose().unwrap();
+    let modes = &basis.m2_input.resonator.as_ref().unwrap().modes;
+    let ratio = basis.derivation["sky_tuning"]["m1_harmonic_ratio"].clone();
+    let m1 = ratio[0].as_f64().unwrap() / ratio[1].as_f64().unwrap();
+    assert_eq!(modes[0].frequency_hz, SKY_ROOT_HZ * m1);
+    assert_eq!(modes[1].frequency_hz, SKY_ROOT_HZ * m1 * 4.0 / 3.0);
+    assert_eq!(modes[2].frequency_hz, 137.0, "unbound mode was rewritten");
+    let voices = basis.derivation["sky_voices"].as_array().unwrap();
+    assert_eq!(voices.len(), 2);
+    assert_eq!(voices[1]["just_ratio"], json!([4, 3]));
+    assert_eq!(voices[1]["longitude_degrees"], json!(90.1));
+
+    // Venus is not in this event's sky: a disconnected voice is refused.
+    request.sky_frequency_bindings[1].planet_ref = "#2-5-2".into();
+    assert!(request.compose().unwrap_err().contains("does not observe"));
+    // A binding on its own bus cannot also take a mode another bus holds.
+    request.sky_frequency_bindings[1].planet_ref = "#2-5-4".into();
+    request.frequency_bindings = vec![FrequencyBinding {
+        mode_ref: "controlled:musical-mode/0".into(),
+        octet_index: 0,
+    }];
+    assert!(request.compose().unwrap_err().contains("duplicate"));
 }

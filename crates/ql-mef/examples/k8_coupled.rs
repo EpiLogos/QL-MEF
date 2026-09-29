@@ -138,6 +138,7 @@ fn run() -> Result<(), String> {
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
         frequency_bindings: bindings,
         condition_frequency_bindings: condition_bindings,
+        sky_frequency_bindings: vec![],
         source_receipts: vec![event["sky"].clone()],
     };
     let original = serde_json::to_value(&input).unwrap();

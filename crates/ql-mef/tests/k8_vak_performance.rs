@@ -67,6 +67,7 @@ fn input() -> CoupledInput {
             octet_index: 0,
         }],
         condition_frequency_bindings: vec![],
+        sky_frequency_bindings: vec![],
         source_receipts: vec![json!({"standing":"controlled non-performance source receipt"})],
     }
 }
