@@ -95,7 +95,7 @@
     },
     {
       "path": "crates/ql-cli/src/lib.rs",
-      "sha256": "9cbe659d777e3bc642f9b0fffea267c750be9a5b55ab44c8e3cb2b56b75164eb"
+      "sha256": "0361f00f88e0b720d1691c15d3934ab5365bcac091d8f3771b50edfb4871780c"
     },
     {
       "path": "crates/ql-cli/tests/m1_engine_cli.rs",
@@ -157,32 +157,32 @@
       {
         "local_path": "target/m1-engine/c-rust.jsonl",
         "sha256": "5d78d008e6823a2a383aa5f84f39c36359e6167bcf820a88d05e8bc5e3208857",
-        "retained_path": "target/m1-engine/revalidation/1790710116880665000/m1-engine-c-rust.jsonl",
+        "retained_path": "target/m1-engine/revalidation/1790716211101343000/m1-engine-c-rust.jsonl",
         "matches_historical_bytes": true
       },
       {
         "local_path": "target/m1-state/c-rust.jsonl",
         "sha256": "f78fd123a51f2f43fbaaab234d212d21d28b0021c9ac17b7f3598214b44d4b8c",
-        "retained_path": "target/m1-engine/revalidation/1790710116880665000/m1-state-c-rust.jsonl",
+        "retained_path": "target/m1-engine/revalidation/1790716211101343000/m1-state-c-rust.jsonl",
         "matches_historical_bytes": false
       }
     ],
     "logs": [
       {
-        "local_path": "target/m1-engine/revalidation/1790710116880665000/1.log",
-        "sha256": "b7c3fa536bbc691a8684b4ee76f5eaba85c985265fdbc2aa9694145452f40223"
+        "local_path": "target/m1-engine/revalidation/1790716211101343000/1.log",
+        "sha256": "809e625b7e1b14db4a8514035664595751cea6839abb15f55a1224d72f55578c"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790710116880665000/2.log",
-        "sha256": "96744534e7d8c4e78e3b86f790241bba9eda7836b44d0f38c8abe21159813e8f"
+        "local_path": "target/m1-engine/revalidation/1790716211101343000/2.log",
+        "sha256": "0f6e4d4c734b0e1d4ad4c879d770756f3ef84ff1656608d61a7a31229aad8dcd"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790710116880665000/3.log",
-        "sha256": "c7a806ab5c1a82bef50682f2b7326965a98ab81dd3fccc14d892cf6f3125ed02"
+        "local_path": "target/m1-engine/revalidation/1790716211101343000/3.log",
+        "sha256": "a51c1b8571dec63f5f464e9a91ee576132f21478c3f665426dd6a3fbda2e4767"
       },
       {
-        "local_path": "target/m1-engine/revalidation/1790710116880665000/4.log",
-        "sha256": "9eaec8e6c8582878fb739a187cb2f9b481e1dadf3ee977853321c43996030a32"
+        "local_path": "target/m1-engine/revalidation/1790716211101343000/4.log",
+        "sha256": "3aa15c4f4631dfe6fb615638c40bcdb6739ab37dcd9168e3a0a1bf5b19d43c61"
       }
     ]
   }
