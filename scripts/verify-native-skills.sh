@@ -37,7 +37,8 @@ team_methods="vak-evaluate anima-orchestration day-night-pass klein-mode ourobor
   relational-graph-traverse wikilink-resonance-scan cross-source-dissonance-detect gnosis-retrieve thought-distil
   anansi aletheia-stack-traverse aletheia-module-audit aletheia-improvement-propose aletheia-self-extend
   aletheia-plugin-integrate aletheia-ql-gate aletheia-m-gate aletheia-s-gate aletheia-m-prime-gate
-  aletheia-rupa-gate aletheia-collab-gate"
+  aletheia-rupa-gate aletheia-collab-gate anima-expressive-composition aletheia-expressive-return
+  chronos-act-continuity"
 for folder in $team_references $team_methods; do
   skill="skills/$folder/SKILL.md"
   test -f "$skill"
