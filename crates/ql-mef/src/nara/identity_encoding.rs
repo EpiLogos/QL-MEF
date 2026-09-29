@@ -577,6 +577,8 @@ pub fn derive(profile: &IdentityProfile, policy: &EncodingPolicy) -> Result<Valu
         let mut cells = Vec::new();
         if let Some(role_policy) = policy.roles.get(&role) {
             let contribution = refract_datum(n, role_policy, policy)?;
+            // (lens, position) indexes five parallel 12x6 grids at once.
+            #[allow(clippy::needless_range_loop)]
             for l in 0..12 {
                 for p in 0..6 {
                     aggregate.full_pass[l][p] += contribution.full_pass[l][p];
@@ -737,8 +739,10 @@ mod tests {
         );
         let before = input.inspect(None).unwrap();
         assert_eq!(before["birthdate_encoding"]["selected"], false);
-        let mut selected = EncodingPolicy::default();
-        selected.anchor_factor = 2.;
+        let selected = EncodingPolicy {
+            anchor_factor: 2.,
+            ..EncodingPolicy::default()
+        };
         input.encoding_policy = Some(selected);
         let roundtrip: IdentityProfile =
             serde_json::from_value(serde_json::to_value(&input).unwrap()).unwrap();

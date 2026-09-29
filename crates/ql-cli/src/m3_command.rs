@@ -41,7 +41,7 @@ pub(crate) fn command(args: &[String]) -> Result<String, CliError> {
 }
 
 pub(crate) fn replay(input: &str) -> Result<String, CliError> {
-    let input: Input = serde_json::from_str(&input).map_err(CliError::from)?;
+    let input: Input = serde_json::from_str(input).map_err(CliError::from)?;
     if input.commands.len() > 256 {
         return Err(CliError("M3 replay exceeds 256 commands".into()));
     }

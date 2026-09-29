@@ -165,7 +165,7 @@
   "generator": "scripts/m3-source-parity.py",
   "native_authority_lock": {
     "crates/ql-core/src/pole/codon.rs": "4fcedb4594ec17dc9097b3ec28ff4535437dcd8b56a9c71cc6330e4e22250cd3",
-    "crates/ql-core/src/pole/fold.rs": "31cdc9fb6e74eb9c93e04c90f6be4a3ca9118ceef0842d3cc3ecef87256b590d",
+    "crates/ql-core/src/pole/fold.rs": "0a1630d6efb7a95757e4c973d5c425c8b9d1b1486ec61078b1c16d2dee0e1001",
     "crates/ql-core/src/pole/iching.rs": "e1c080c0e62359127483164adb793ce314d4a605a1e91c30e1b797ca4633bf90",
     "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14",
     "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
