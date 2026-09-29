@@ -24,6 +24,7 @@ pub mod m1_engine;
 pub mod m2;
 pub mod m2_condition;
 pub mod m2_engine;
+pub mod m2_sky;
 pub mod m2_vimarsha;
 pub mod m3_engine;
 pub mod m3_inscription;

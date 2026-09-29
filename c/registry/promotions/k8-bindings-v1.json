@@ -945,6 +945,20 @@
         "crates/ql-mef/tests/m2_planet_chakra.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m2_sky.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2-5"
+      ],
+      "rationale": "M2-5 sky projection reader: planets, Sun, Earth and chakras with their live-map property values at registry identities; the planetary just octave is the map's m_2_5_interval_from_root.",
+      "tests": [
+        "crates/ql-mef/src/m2_sky.rs",
+        "crates/ql-mef/tests/k8_coupled.rs"
+      ],
+      "kind": "structural-index"
     }
   ]
 }

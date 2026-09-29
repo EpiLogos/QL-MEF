@@ -48,6 +48,7 @@ fn world_input(subject: &str) -> CoupledInput {
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
         frequency_bindings: vec![],
         condition_frequency_bindings: vec![],
+        sky_frequency_bindings: vec![],
         source_receipts: vec![json!({
             "standing":"controlled dated source occasion shared by two Nara fixtures",
             "observed_at":"2026-09-13T20:00:00Z"
