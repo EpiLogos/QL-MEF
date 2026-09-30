@@ -31,3 +31,7 @@ Form: implementation | addendum | owner-issue | no-change
 Owner: <repo or source>  Evidence: <refs>  Gate: <gate skill>  Reversible: yes|no
 Filed: <issue/PR/source-return ref> | held in NOW (<return id>)
 ```
+
+## Verify
+
+Re-read the filed proposal at its owner — `gh issue view <n>` or `gh pr view <n>` on the owning repository, or the NOW return by its id — and confirm it carries the evidence refs, owner, gate and reversibility from the output block; an implementation proposal also names the tests that would prove it. Nothing permanent was applied by this Method.

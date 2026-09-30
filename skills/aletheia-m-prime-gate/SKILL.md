@@ -29,3 +29,7 @@ The source's Electron OmniPanel method-name checks (`sessions.list`, `config.loa
 GATE 4 (M′): <artifact ref> -> <result>
 Reading: 3:3 Expression | 4:2 Technē (M<i>′)  Actions: <refs>  State read: <refs>
 ```
+
+## Verify
+
+The verdict is verified against the instrument itself: `ql techne reading <target.json> --json` returns the reading the artifact claims (3:3 or 4:2), and every state claim cites the instrument's published disclosure or Action ref listed in the result block. A claim with no published source behind it is `hold`.

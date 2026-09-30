@@ -1,6 +1,6 @@
 ---
 name: aletheia-m-gate
-description: "METHOD: Gate 2 of Aletheia's six — check an artifact's MEF and philosophical alignment: M-branch references and sub-branch notation, the MEF identities (M0 Anuttara … M5 Epii), lens use, and whether its metaphysical claims stay coherent with the authored ground and keep their standing. Returns aligned, annotated, hold or redirect. Use before an artifact that makes M-family or MEF claims is returned or promoted."
+description: "METHOD: Gate 2 of Aletheia's six — check an artifact's MEF and philosophical alignment: M-branch references and sub-branch notation, the MEF identities (M0 Anuttara … M5 Epii), lens use, and whether its metaphysical claims stay coherent with the authored ground and keep their standing. Returns aligned, annotated, hold or redirect. Use when an artifact that makes M-family or MEF claims is about to be returned or promoted."
 ---
 
 # Aletheia M gate (Gate 2)
@@ -27,3 +27,7 @@ description: "METHOD: Gate 2 of Aletheia's six — check an artifact's MEF and p
 GATE 2 (M): <artifact ref> -> <result>
 Checks: notation … lenses … coherence … standing …   Ground read: <refs>
 ```
+
+## Verify
+
+Each check's verdict rests on ground actually read or a command actually run, listed under `Ground read:`. Re-running `ql mef lenses --json` and `ql epi-agent constitution --json` must reproduce the lens names and M identities the verdict relied on; a check with no ground read behind it is not `aligned`.

@@ -1,6 +1,6 @@
 ---
 name: ql-evidence-report
-description: Produce a pithy, source-backed QL/Epi agent report when an actual result, difference, blocker or human decision needs to be returned. Link the relevant T/T′ reading to real outputs and human correction; preserve open questions and consumption without proliferating commentary files.
+description: Produce a pithy, source-backed QL/Epi agent report when an actual result, difference, blocker or human decision needs to be returned. Link the relevant T/T′ reading to real outputs and human correction; preserve open questions and consumption without proliferating commentary files. Use when a result, blocker or decision must be returned to the person.
 ---
 
 # Return what matters

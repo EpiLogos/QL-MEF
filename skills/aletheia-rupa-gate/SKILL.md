@@ -1,6 +1,6 @@
 ---
 name: aletheia-rupa-gate
-description: "METHOD: Gate 5 of Aletheia's six — check CT3 archetypal coherence of Rupa: whether an injected or proposed form (an agent's Rupa, a pattern reading, an Expression's organising image, an oracle, tarot or decan reference) preserves the attractor basin it claims, carries the right thought meaning, and does not reify the pattern into identity. Returns aligned, annotated, hold or redirect."
+description: "METHOD: Gate 5 of Aletheia's six — check CT3 archetypal coherence of Rupa: whether an injected or proposed form (an agent's Rupa, a pattern reading, an Expression's organising image, an oracle, tarot or decan reference) preserves the attractor basin it claims, carries the right thought meaning, and does not reify the pattern into identity. Returns aligned, annotated, hold or redirect. Use when an artifact injects or proposes such a form."
 ---
 
 # Aletheia Rupa gate (Gate 5)
@@ -27,3 +27,7 @@ description: "METHOD: Gate 5 of Aletheia's six — check CT3 archetypal coherenc
 GATE 5 (Rupa): <artifact ref> -> <result>
 Basin: … Meaning: T3|T3-prime … Domain: … Reification: none|<where>
 ```
+
+## Verify
+
+Verify against sources, not impression: the basin comparison names the source pattern and where it was read; the `T3` or `T3-prime` thought is present in the active NOW (`central.now.thoughts.read`); and a re-read of the artifact's text finds no identity, destiny or diagnosis assertion. Anything unverified is `hold`.

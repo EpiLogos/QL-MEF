@@ -39,3 +39,7 @@ Limits: depth <n>, nodes <n>, providers unavailable: <which>
 ```
 
 Read-only. Graph writes are `skill/ql/bimba-cypher` under explicit authority.
+
+## Verify
+
+Re-run the walk (`aikit --json knowledge relations '<address>' --depth 2`, `ql vak context <vak-ref> 2 --json`) and confirm every reported partner appears with the edge ref it is cited by; a partner with no edge in the returned graph is removed.

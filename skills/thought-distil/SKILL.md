@@ -37,6 +37,10 @@ ctrl --json action run central.now.learnings.distill '{"now_ref":"<ref>","slug":
 
 `crystallised → epii` (with envelope and refs) · `deferred` (rehear incomplete; what is missing) · `unavailable` (a native door refused; the exact refusal). Never a promotion decision.
 
+## Verify
+
+Read the learning back (`central.now.learnings.read`) and confirm its `source_fixtures` name `T1` and `T4` thoughts that `central.now.thoughts.read` actually returns for the clearing. When `logos.return` was invoked, `ql epi-agent faculty '#5' --json` confirms the faculty and the envelope ref is kept with the learning.
+
 ## Limits
 
 Never write `wiki.json`; never mark anything recognised; never promote human ground. Root-register learnings stay in the root NOW's learnings until the root wiki owner's procedure takes them up.

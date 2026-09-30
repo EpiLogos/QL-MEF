@@ -1,6 +1,6 @@
 ---
 name: anima-orchestration
-description: "METHOD: Turn an evaluated Vāk block into an actual dispatch — which member takes each act, in which thread form, through which native route (a Claude Code subagent, a background task, a Factory workflow unit, or a Communique to another Position) — including Night′ Moirai routing and the Möbius return. Use after vak-evaluate whenever Anima composes work across its members or calls on the Aletheia team."
+description: "METHOD: Turn an evaluated Vāk block into an actual dispatch — which member takes each act, in which thread form, through which native route (a Claude Code subagent, a background task, a Factory workflow unit, or a Communique to another Position) — including Night′ Moirai routing and the Möbius return. Use when Anima, after vak-evaluate, composes work across its members or calls on the Aletheia team."
 ---
 
 # Anima orchestration

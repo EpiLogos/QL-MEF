@@ -9,7 +9,7 @@ description: "METHOD: Exercise a prepared QL-MEF experience through the real per
 
 - Native source owner: EpiLogos/QL-MEF; AIKit owns Method/Skill discovery and projection.
 - Canonical scenario source: `docs/kernel-rebuild/UX-SPINE-RECONCILIATION.md` §6.
-- Host spine: O:I `docs/cradle/04-VERIFICATION.md` §2/§8 and `03-UX-STATES.md` A–K/L.
+- Host spine: in the O:I repository (not this one), `Work/O-I/docs/cradle/04-VERIFICATION.md` §2/§8 and `Work/O-I/docs/cradle/03-UX-STATES.md` A–K/L.
 - This procedure prepares and records tests. It supplies no new domain Action.
 
 ## When

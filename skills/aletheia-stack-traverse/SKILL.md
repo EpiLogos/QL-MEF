@@ -1,6 +1,6 @@
 ---
 name: aletheia-stack-traverse
-description: "METHOD: Walk the actual stack a subject depends on — the six native products at S0–S5 (Central, Actuation, AIKit, Software Factory, Workcell, QL-MEF), the S′ organ that composes them, and the contracts and live code between — comparing intended role, current state and missing seams, and return a layer-by-layer health report with evidence. Use before an audit, a gate, a placement or an improvement proposal, and whenever a claim about what runs needs checking."
+description: "METHOD: Walk the actual stack a subject depends on — the six native products at S0–S5 (Central, Actuation, AIKit, Software Factory, Workcell, QL-MEF), the S′ organ that composes them, and the contracts and live code between — comparing intended role, current state and missing seams, and return a layer-by-layer health report with evidence. Use when an audit, a gate, a placement or an improvement proposal needs the stack's actual state, and whenever a claim about what runs needs checking."
 ---
 
 # Aletheia stack traverse
@@ -31,6 +31,10 @@ S<n> <product> @<revision>: intended … | current … | seam … | evidence <re
 S′ <organ>: composes … | gap …
 Verdict: healthy | drift | gap | unverified   (per layer)
 ```
+
+## Verify
+
+Every layer verdict is backed by a command actually executed in this session (`<product> capabilities --json`, `system --json`, `aikit knowledge code context <symbol>`) and re-running it reproduces the report's current-state column; a layer that was only read is marked `unverified`.
 
 ## Limits
 
