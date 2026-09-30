@@ -32,7 +32,7 @@ class MLedgerTests(unittest.TestCase):
         cls.native = cls.world / "native.jsonl"
         with cls.native.open("w") as out:
             result = subprocess.run([str(probe)], stdout=out, stderr=subprocess.PIPE, check=True, text=True)
-        if "71280 checks passed" not in result.stderr:
+        if "71460 checks passed" not in result.stderr:  # 71280 + 5 per decan -> pip-card edge (36)
             raise AssertionError(result.stderr)
         cls.lines = cls.native.read_text().splitlines()
 

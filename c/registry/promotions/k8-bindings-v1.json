@@ -802,6 +802,206 @@
         "crates/ql-mef/src/nara/identity_material.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/spanda_field.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-3-1",
+        "#1-3-2"
+      ],
+      "rationale": "Native Spanda field: the HKB relative phase of the bimba and pratibimba poles (#1-3-1/#1-3-2) and the codon advance from the signed ring state; exact parity with the C kernel T2.11 functions.",
+      "tests": [
+        "crates/ql-mef/tests/spanda_field.rs",
+        "migration/epi-kernel/spanda-field-probe.c"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m3_inscription.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-3",
+        "#3-4",
+        "#3-5-5/0"
+      ],
+      "rationale": "M3-5 inscription seed read through the map's relations: lambda -> decan (lens 9) -> EXPRESSES_AS_TAROT_PIP -> #3-4.0 reflection -> REFLECTS_DNA_FORM codon; wheel degree from the winter-solstice anchor -> ANCHORED_BY governor -> season palindrome. The live pose composes through quat_active_state.",
+      "tests": [
+        "crates/ql-mef/tests/m3_inscription.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/scene_sky.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-5",
+        "#2-3",
+        "#3-5-5/0"
+      ],
+      "rationale": "The accepted dated sky placed on the M3-5 clock: each body is its #2-5 coordinate by map name at theta = lambda, with the inscription seed at that degree, its PLANETARY_RESONANCE chakra and its decan's RULED_BY rulers; Earth #2-5-0/1-0 is the observer; bodies the map does not hold stay unmapped.",
+      "tests": [
+        "crates/ql-mef/tests/scene_sky.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/domain_body.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "Nara continuation consumes the current registered canonical seven-centre anatomical source properties and Earth grounding relations. Exact pinned record/blob/payload provenance is retained; no geometry, clinical relation or unsupported sense/action edge is inferred.",
+      "tests": [
+        "crates/ql-mef/src/nara/domain_body.rs",
+        "crates/ql-mef/src/nara/domain_operations.rs"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-cli/src/nara_presence_command.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 supported command path reading the existing native SharedPresenceConsent law for one explicit request; it constructs no personal field, exports no private state, and consent persistence and authenticated participant admission remain host-owned.",
+      "tests": [
+        "crates/ql-cli/src/nara_presence_command.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/current.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4 dated current/transit reception: the qualified sky provider's planetary longitudes lift to the composed transit quaternion and selected identity/transit baseline; absent activity is never fabricated and astronomy ownership stays external.",
+      "tests": [
+        "crates/ql-mef/src/nara/current.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara/identity_composition.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#4"
+      ],
+      "rationale": "K10 M4-0-5 explicitly selected draft core composition over supplied intake profiles; the sealed source blob and chosen policy are recorded, and no canonical receiver dynamics or material effect authority is granted.",
+      "tests": [
+        "crates/ql-mef/src/nara/identity_composition.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/m3_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the supported native M3 command path; recorded fixtures are not Factory execution or installed-app evidence.",
+      "tests": [
+        "crates/ql-cli/tests/m3_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_current_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the dated current/transit command reception; synthetic skies are not live provider evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_current_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/tests/nara_dialogue_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled K10 CLI regressions for the native dialogue command surface; scripted sessions are not live Nara conversation evidence.",
+      "tests": [
+        "crates/ql-cli/tests/nara_dialogue_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/tests/m2_planet_chakra.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Controlled M2 parity regressions for the direct planet-to-chakra route over the pinned PLANETARY_RESONANCE assertions.",
+      "tests": [
+        "crates/ql-mef/tests/m2_planet_chakra.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m2_sky.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2-5"
+      ],
+      "rationale": "M2-5 sky projection reader: planets, Sun, Earth and chakras with their live-map property values at registry identities; the planetary just octave is the map's m_2_5_interval_from_root.",
+      "tests": [
+        "crates/ql-mef/src/m2_sky.rs",
+        "crates/ql-mef/tests/k8_coupled.rs"
+      ],
+      "kind": "structural-index"
+    },
+    {
+      "path": "crates/ql-mef/src/scene.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-5",
+        "#3-5-5/0",
+        "#1-3"
+      ],
+      "rationale": "One integrated M1-M2-M3 event: the dated sky placed on the clock, planets voiced at M1's root times their map just ratio, the form advanced by M1's ring state, the Nara centres receiving their resonant planets.",
+      "tests": [
+        "crates/ql-mef/src/scene.rs",
+        "crates/ql-cli/tests/scene_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-cli/src/scene_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "CLI transport for ql scene compose over the embedded sky provider; no owned coordinate.",
+      "tests": [
+        "crates/ql-cli/tests/scene_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/scene_field.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-5",
+        "#2-1"
+      ],
+      "rationale": "The integrated scene played on the M1 torus: each map-tuned planet of the dated sky is a surface mode at its ecliptic degree (theta = lambda), sounded through the coupled sky bus, with the M2 Vimarsha Chladni skin; host operations re-read the event per determinant.",
+      "tests": [
+        "crates/ql-mef/tests/scene_instrument.rs",
+        "crates/ql-mef/tests/scene_nara_reception.rs"
+      ],
+      "kind": "computational"
     }
   ]
 }

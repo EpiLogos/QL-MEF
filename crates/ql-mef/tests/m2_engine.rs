@@ -218,7 +218,7 @@ fn actual_c_and_rust_observations_agree_across_the_field_and_finite_operations()
         ("record", 764),
         ("binding", 764),
         ("coordinate", 598),
-        ("relation", 4454),
+        ("relation", 4490),
         ("axes", 288),
         ("signature", 160),
         ("tattva-step", 72),
@@ -423,7 +423,8 @@ fn engine_emits_every_domain_with_event_provenance_and_no_invented_resonator() {
     assert_eq!(frame.identity, request.stamp.identity);
     assert_eq!(frame.domains.len(), 16);
     assert_eq!(frame.structural_coordinate_count, 598);
-    assert_eq!(frame.structural_relation_count, 4454);
+    // 4454 until the 36 decan -> tarot pip-card edges (owner-approved, 28 Sep).
+    assert_eq!(frame.structural_relation_count, 4490);
     assert_eq!(frame.modal.coefficients.len(), 72);
     assert_eq!(frame.modal.form_potential.len(), 64);
     assert_eq!(frame.numerical_ground.field72, 72);

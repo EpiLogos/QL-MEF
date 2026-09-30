@@ -45,7 +45,11 @@ static void preservation(void) {
         const QL_M_SourceOrigin *origin=ql_m_live_source_origin_at(i);
         assert(origin);
         same(origin->repository, i<ql_m_source_file_count()?ql_m_source_repository():"EpiLogos/QL-MEF");
-        assert(strlen(origin->revision)==40);
+        /* A git origin is pinned by its 40-hex commit; the Bimba map read by its
+         * 64-hex content digest (scripts/bimba_map.py). */
+        size_t n=strlen(origin->revision);
+        assert(n==(strcmp(origin->repository,"bimba-map")?40u:64u));
+        for (size_t k=0;k<n;++k) assert(strchr("0123456789abcdef",origin->revision[k]));
     }
     assert(!ql_m_live_source_origin_at(ql_m_live_source_file_count()));
     assert(!ql_m_live_node_at(ql_m_live_node_count()));

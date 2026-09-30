@@ -596,7 +596,11 @@ pub fn nara_personal_receive(request: NaraPersonalReceiveRequest) -> Result<Valu
             "m3_source_ref":state.event.m3_source_ref
         },
         "composition_order":["identity","transit","activity"],
-        "standing":"native subject-local Nara reception over an accepted coupled M1/M2/M3 world basis",
+        "standing":"controlled caller-supplied receiver arithmetic over an accepted world-event carrier; not canonical chakra receiving semantics",
+        "receiver_input_policy":"caller-supplied-m1-m2-m3-values-weights-orientations-and-gains",
+        "canonical_receiver_semantics":false,
+        "commissioned_personal_expression_acceptance":false,
+        "standing_source":"https://github.com/EpiLogos/QL-MEF/issues/201#issuecomment-5859688868",
         "inferred_physiology":false,
         "identity_mutation":false,
         "effect_authority_granted":false

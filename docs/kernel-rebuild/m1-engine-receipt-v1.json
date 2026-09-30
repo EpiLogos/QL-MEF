@@ -3,7 +3,7 @@
   "status": "bounded-local-execution-not-K4-or-whole-M1-acceptance",
   "base_revision": "e753efc91f62b5b2af09e0a852c5063e366eccbe",
   "source_return_revision": "bb47ab9730f0ddadd4891666fb6f3e0a6d457330",
-  "registry_revision": "f26c607ea12cb14e2a7b905f63ad9ac99e3ceb1cb7722f71e498ea3b97f09df4",
+  "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
   "subjects": [
     "k5-m1:ananda",
     "k5-m1:spanda",

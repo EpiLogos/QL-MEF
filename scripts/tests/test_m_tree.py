@@ -32,8 +32,8 @@ class MTreeTests(unittest.TestCase):
         # Counts of the map read the committed extract came from (one record per
         # node and relation; relation types in the map's own spelling).
         self.assertEqual(len(m["nodes"]), 1883)
-        self.assertEqual(len(m["relations"]), 10856)
-        self.assertEqual(len(m["records"]), 12738)
+        self.assertEqual(len(m["relations"]), 10892)
+        self.assertEqual(len(m["records"]), 12774)
         self.assertEqual(len(m["alternate_notation_groups"]), 0)
         by_ref = {n["source_ref"]: n for n in m["nodes"]}
         self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 598, 996, 106, 31])
@@ -44,7 +44,7 @@ class MTreeTests(unittest.TestCase):
         self.assertNotEqual(by_ref["#0-4.0/1/2"]["id"], by_ref["#0-4.0/1-2"]["id"])
         self.assertEqual(by_ref["#2-4"]["source_parent_refs"], ["#2", "#2-4.5"])
         self.assertEqual(len(m["parent_discrepancies"]), 1)
-        self.assertEqual(sum(r["cross_m"] for r in m["relations"]), 1316)
+        self.assertEqual(sum(r["cross_m"] for r in m["relations"]), 1352)
         # Edges to nodes outside the M tree (S/L/C lattices, primes, "#N" meta).
         outside = [r for r in m["relations"] if r["from_id"] is None or r["to_id"] is None]
         self.assertEqual(len(outside), 975)

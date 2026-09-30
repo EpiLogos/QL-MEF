@@ -171,6 +171,55 @@ pub struct AdmittedOccasion {
     pub admitted_via_ref: String,
 }
 
+/// A native-produced personal field reading, explicitly disclosed to this
+/// dialogue. This is not a Central Day/NOW occasion and carries no raw field
+/// state into shared coordinate-space projections.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PersonalCurrentContext {
+    pub reading_ref: String,
+    pub reading_revision: String,
+    pub event_ref: String,
+    pub identity_source_ref: String,
+    pub identity_revision: String,
+}
+
+impl PersonalCurrentContext {
+    fn validate(&self, disclosed: &[DisclosedRef]) -> Result<(), String> {
+        for (value, label) in [
+            (&self.reading_ref, "personal current reading reference"),
+            (&self.reading_revision, "personal current reading revision"),
+            (&self.event_ref, "personal current sky event reference"),
+            (
+                &self.identity_source_ref,
+                "personal current identity source",
+            ),
+            (
+                &self.identity_revision,
+                "personal current identity revision",
+            ),
+        ] {
+            text(value, label)?;
+        }
+        if !self.reading_ref.starts_with("personal:nara-current:") {
+            return Err("personal current reading must use its protected native reference".into());
+        }
+        for (reference, revision) in [
+            (&self.reading_ref, &self.reading_revision),
+            (&self.identity_source_ref, &self.identity_revision),
+        ] {
+            if !disclosed.iter().any(|entry| {
+                &entry.ref_id == reference
+                    && &entry.revision == revision
+                    && entry.disclosure == DisclosureKind::PersonalConsent
+            }) {
+                return Err("personal current requires exact identity and reading disclosure through personal consent".into());
+            }
+        }
+        Ok(())
+    }
+}
+
 impl AdmittedOccasion {
     pub fn validate(&self) -> Result<(), String> {
         text(&self.day_ref, "Central Day reference")?;
@@ -484,6 +533,8 @@ pub struct NaraDialogueContext {
     pub pinned_refs: Vec<String>,
     /// The current occasion, where admitted.
     pub occasion: Option<AdmittedOccasion>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub personal_current: Option<PersonalCurrentContext>,
     /// Sources/readings actually disclosed to Nara.
     pub disclosed: Vec<DisclosedRef>,
     /// Pleroma-resolved actions actually available here (refs only).
@@ -537,6 +588,9 @@ impl NaraDialogueContext {
         refs(&self.pinned_refs, "pinned reference", MAX_PINNED_REFS)?;
         if let Some(occasion) = &self.occasion {
             occasion.validate()?;
+        }
+        if let Some(current) = &self.personal_current {
+            current.validate(&self.disclosed)?;
         }
         if self.disclosed.len() > MAX_DISCLOSED_REFS {
             return Err("too many disclosed references".into());
@@ -1387,8 +1441,44 @@ mod tests {
             }),
             shared_field: None,
             shared_reading: None,
+            personal_current: None,
             expressive_act: None,
         }
+    }
+
+    #[test]
+    fn personal_current_requires_exact_protected_disclosures_without_inventing_day_now() {
+        let mut value = context();
+        let current = PersonalCurrentContext {
+            reading_ref: "personal:nara-current:validated-native-content".into(),
+            reading_revision: "sha256:reading".into(),
+            event_ref: "ql:sky:dated-event".into(),
+            identity_source_ref:
+                "central:source:control:root:Control/self/nara/identities/one.json".into(),
+            identity_revision: "source-r1".into(),
+        };
+        value.occasion = None;
+        value.personal_current = Some(current.clone());
+        assert!(value.validate().is_err());
+        for (reference, revision) in [
+            (&current.reading_ref, &current.reading_revision),
+            (&current.identity_source_ref, &current.identity_revision),
+        ] {
+            value.disclosed.push(DisclosedRef {
+                ref_id: reference.clone(),
+                revision: revision.clone(),
+                standing: EvidenceStanding::Derived,
+                disclosure: DisclosureKind::PersonalConsent,
+                disclosed_via_ref: value.context_ref.clone(),
+            });
+        }
+        value.validate().unwrap();
+        assert!(value.occasion.is_none());
+        value.personal_current.as_mut().unwrap().identity_revision = "source-r2".into();
+        assert!(value.validate().is_err());
+        value.personal_current = Some(current);
+        value.disclosed.last_mut().unwrap().disclosure = DisclosureKind::SharedProjection;
+        assert!(value.validate().is_err());
     }
 
     #[test]

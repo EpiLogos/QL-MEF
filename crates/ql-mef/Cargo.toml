@@ -9,6 +9,7 @@ ql-core = { path = "../ql-core" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }
 sha2 = "0.10"
+blake3 = "1"
 
 [lints]
 workspace = true

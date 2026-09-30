@@ -193,6 +193,20 @@ impl FoldGeometry {
         }
     }
 
+    /// Normalized presentation of the source's two directed pair relations.
+    /// X→Y and Y→Z each have unit length; Y is the origin. Positive pair
+    /// angles turn counterclockwise in XY. Scale/plane are display convention,
+    /// not cloth kinematics, crease dihedral angles, or rotational pose.
+    pub fn normalized_hinge_points(&self) -> [[f64; 3]; 3] {
+        let xy = (f64::from(self.pair_angle_xy().0) / 10.).to_radians();
+        let yz = (f64::from(self.pair_angle_yz().0) / 10.).to_radians();
+        [
+            [-xy.cos(), -xy.sin(), 0.],
+            [0., 0., 0.],
+            [yz.cos(), yz.sin(), 0.],
+        ]
+    }
+
     /// Orientation quantum of the outer pair: 22.5°·p(X,Y).
     pub const fn pair_angle_xy(&self) -> AngleDeg10 {
         AngleDeg10(self.pair_xy.orientation_quantum_deg10())

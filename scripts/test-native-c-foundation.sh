@@ -10,6 +10,10 @@ mkdir -p "$OUT"
 cd "$ROOT"
 SOURCES=(c/src/primitive.c c/src/holographic.c c/src/kernel.c)
 FLAGS=(-std=c11 -Wall -Wextra -Werror -pedantic -Ic/include)
+case "$(uname -s)" in
+  Darwin) asan="detect_leaks=0:halt_on_error=1" ;; # LeakSanitizer is unavailable on macOS.
+  *) asan="detect_leaks=1:halt_on_error=1" ;;
+esac
 {
   uname -sm
   "$CC_BIN" --version
@@ -20,10 +24,10 @@ FLAGS=(-std=c11 -Wall -Wextra -Werror -pedantic -Ic/include)
 "$OUT/native-edges" | tee "$OUT/native-edges.txt"
 "$CLANG_BIN" "${FLAGS[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
   migration/epi-kernel/k1-native-edges.c "${SOURCES[@]}" -lm -o "$OUT/sanitized-edges"
-ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 "$OUT/sanitized-edges" | tee "$OUT/sanitized-edges.txt"
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 "$OUT/sanitized-edges" | tee "$OUT/sanitized-edges.txt"
 "$CLANG_BIN" "${FLAGS[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
   migration/epi-kernel/k1-foundation-probe.c "${SOURCES[@]}" -lm -o "$OUT/sanitized-probe"
-ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 "$OUT/sanitized-probe" > "$OUT/clang-parity.tsv"
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 "$OUT/sanitized-probe" > "$OUT/clang-parity.tsv"
 
 # Reuse one build directory across revision changes: never clean between these
 # two invocations. This reproduced a stale compiled revision in recovered #76.

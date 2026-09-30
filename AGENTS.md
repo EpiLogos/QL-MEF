@@ -19,6 +19,12 @@ layer is "old code":
   same structure. **C++** (`cpp/`) — the continuous modal/audio owner.
   **O:I** — presentation of the same event.
 
+**Settled law: `skills/ql-law/SKILL.md`.** One line per law, each with its
+source: coordinate grammar (the `M` prefix, and the nesting threshold: after a
+4 the separator is `.`, so `M4.0`, never `M4-0`), positions, branch roles, the
+M3 clock facts and the owner's final rulings. If a question is answered there,
+it is settled. Cite it; do not re-derive it or ask the owner.
+
 Before designing, derive the work from coordinates. When an engine function takes
 a "supplied input" (a maqam index, a clock step, a centre weight), that is where
 structure is meant to flow in: trace it through the graph's typed relations
@@ -35,6 +41,12 @@ Two corrections that previous sessions got wrong:
   backbone); sixteen static aperture lenses (plus the Fibonacci 60×6° ground and
   the 16+1 fold aperture) are readings of the same inscription. The 30°×12 zodiac
   is one lens. See `docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md` §11.
+
+**Open work and its sources:** `ProjectCentral/user/telos/`. The M1–M2–M3
+Expression scene is `telos/integrated-expression/goal.md`. It holds the
+sources, the owner's final rulings, and the tracks in order. Anything those
+sources hold is derived from them, not asked of the owner. One session
+integrates that goal at a time; others send it questions rather than the owner.
 
 Begin with `docs/KERNEL-REBUILD-WAYFINDER.md` and the actual assigned issue.
 Read current issue coordination before choosing files. K8.0 is the shared-core

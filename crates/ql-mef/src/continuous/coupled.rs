@@ -44,6 +44,21 @@ pub struct ConditionFrequencyBinding {
     pub pitch_index: u8,
 }
 
+/// A planet of the dated sky voiced on a material mode (M2-5 is the sky). The
+/// planet must be observed in the event's own sky; it sounds at M1's root times
+/// its just ratio from the map (`m_2_5_interval_from_root`), the tuning target
+/// the owner ruled for the M2 synth (#254 D13).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SkyFrequencyBinding {
+    pub mode_ref: String,
+    pub planet_ref: String,
+}
+
+/// The octet's C-rooted C3 (130.81279 Hz), before any interval offset: the
+/// root M1's harmonic ratio scales.
+pub const SKY_ROOT_HZ: f64 = 130.812_79;
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(tag = "selection", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum HarmonicSource {
@@ -65,6 +80,9 @@ pub struct CoupledInput {
     /// retains its original serialized input and derivation, not an upgrade.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub condition_frequency_bindings: Vec<ConditionFrequencyBinding>,
+    /// The sky bus. Empty is omitted, so earlier inputs replay unchanged.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sky_frequency_bindings: Vec<SkyFrequencyBinding>,
     /// Complete host-admitted receipts. V3 consumes QL's accepted
     /// `ql.vak-performance-event/v1`, which itself retains the Factory owner
     /// snapshot. Retention is not authentication or permission to disclose.
@@ -164,6 +182,7 @@ impl CoupledInput {
                 .frequency_bindings
                 .len()
                 .saturating_add(self.condition_frequency_bindings.len())
+                .saturating_add(self.sky_frequency_bindings.len())
                 > 4096
             || self.source_receipts.len() > 64
             || serde_json::to_vec(self).map_err(|e| e.to_string())?.len() > super::MAX_MESSAGE
@@ -333,6 +352,41 @@ impl CoupledInput {
                 .ok_or("condition frequency binding does not name an existing material mode")?;
             mode.frequency_hz = frequency;
         }
+        let mut sky_voices = Vec::new();
+        if !self.sky_frequency_bindings.is_empty() {
+            let planets = crate::m2::catalogue().table("planet")?;
+            for binding in &self.sky_frequency_bindings {
+                let observed = request.world_observations.iter().find(|o| {
+                    planets.binding(usize::from(o.planet_id)) == Some(binding.planet_ref.as_str())
+                });
+                let observation = observed
+                    .ok_or("sky binding names a planet the event's sky does not observe")?;
+                let ratio = crate::m2_sky::just_ratio(&binding.planet_ref)
+                    .ok_or("the map states no just ratio for this planet")?;
+                let frequency = SKY_ROOT_HZ * f64::from(ratio16[0]) / f64::from(ratio16[1])
+                    * f64::from(ratio[0])
+                    / f64::from(ratio[1]);
+                if !seen.insert(&binding.mode_ref) {
+                    return Err(
+                        "duplicate material-mode frequency binding across musical buses".into(),
+                    );
+                }
+                let mode = request
+                    .resonator
+                    .as_mut()
+                    .ok_or("sky frequency binding has no supplied resonator")?
+                    .modes
+                    .iter_mut()
+                    .find(|m| m.mode_ref == binding.mode_ref)
+                    .ok_or("sky frequency binding does not name an existing material mode")?;
+                mode.frequency_hz = frequency;
+                sky_voices.push(json!({
+                    "mode_ref":binding.mode_ref, "planet_ref":binding.planet_ref,
+                    "longitude_degrees":observation.longitude_degrees,
+                    "just_ratio":ratio, "frequency_hz":frequency
+                }));
+            }
+        }
         let frame = request.execute()?;
         let mut derivation = json!({
             "harmonic_ratio":ratio, "mef_sublens":sublens.to_string(),
@@ -350,6 +404,15 @@ impl CoupledInput {
                 "condition":"m2.condition.musical.pitches_hz",
                 "condition_provenance":"m2.condition.source_path, source_revision, correspondence_ref and musical.tuning",
                 "policy":"disjoint explicit mode bindings; unbound modes retain supplied frequencies; no missing-path or tuning fallback"
+            });
+        }
+        if !sky_voices.is_empty() {
+            derivation["sky_voices"] = json!(sky_voices);
+            derivation["sky_tuning"] = json!({
+                "root_hz":SKY_ROOT_HZ, "m1_harmonic_ratio":ratio16,
+                "just_ratio_source":"M2-5 m_2_5_interval_from_root, fixtures/kernel/m2-sky-v1.json",
+                "sky_revision":crate::m2_sky::sky().map_content_sha256,
+                "standing":"owner-ruled tuning target (#254 D13); root and scaling are tunable (D30)"
             });
         }
         if let Some(performance) = performance {
@@ -466,13 +529,34 @@ impl CoupledFieldSession {
     /// remains the last acknowledged one if the native operation is refused or
     /// its transport has unknown standing. No partial M1/M3 publication occurs.
     pub fn replace_field(&mut self, input: CoupledInput) -> Result<Value, String> {
+        self.replace_field_state(input, false)
+    }
+    /// As `replace_field`; `replace_state` is the explicit, declared re-excitation
+    /// ("strike") of every mode from the new M2 resonator's supplied amplitudes.
+    /// False continues from resident state. Never an implicit reseed.
+    pub fn replace_field_state(
+        &mut self,
+        input: CoupledInput,
+        replace_state: bool,
+    ) -> Result<Value, String> {
         let next = input.compose()?;
         if next.m3["subject_ref"] != self.current.m3["subject_ref"] {
             return Err("cannot change subject during continuation".into());
         }
-        self.field.replace_modes(next.m2_input.clone(), false)?;
+        self.field
+            .replace_modes(next.m2_input.clone(), replace_state)?;
         self.current = next;
         Ok(self.last_field().clone())
+    }
+    /// Explicit nodal re-reading of the same samples and modal voices
+    /// (`shapes[sample][mode]`). The whole basis is unchanged; returns the compact
+    /// field acknowledgement like `replace_field`. Audio and resident state continue.
+    pub fn replace_shapes(
+        &mut self,
+        shape_ref: &str,
+        shapes: Vec<Vec<[f64; 3]>>,
+    ) -> Result<Value, String> {
+        self.field.replace_shapes(shape_ref, shapes)
     }
     pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
         self.replace_field(input)?;
