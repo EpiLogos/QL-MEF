@@ -63,5 +63,26 @@ done
 grep -q 'never bypassed' skills/aletheia-collab-gate/SKILL.md
 echo "Anima/Aletheia team Skills: structural contract OK"
 
+# Nara's oracle Methods (#258): each carries its protocol and routes readings
+# through the native continuing journey, never a hand-written artifact.
+for pair in "quaternal-tarot:quaternal_tarot_protocol.md" "quaternal-i-ching:quaternal_i_ching_protocol.md"; do
+  folder="${pair%%:*}"
+  skill="skills/$folder/SKILL.md"
+  test -f "$skill"
+  test -f "skills/$folder/resources/methods/${pair##*:}"
+  grep -qx "name: $folder" "$skill"
+  grep -q '^description: "METHOD: ' "$skill"
+  grep -q '^## Contract metadata' "$skill"
+  grep -q 'Source:' "$skill"
+  grep -q '^## Verify' "$skill"
+  grep -q 'nara.journey.apply' "$skill"
+  grep -q 'Never edit journey state by hand' "$skill"
+  if grep -q 'Pratibimba/Nara' "$skill"; then
+    echo "$folder still teaches the retired vault artifact path" >&2
+    exit 1
+  fi
+done
+echo "Nara oracle Methods: structural contract OK"
+
 # All domain practices and exact Method descriptions participate in UX coverage.
 python3 scripts/check-ux-spine.py
