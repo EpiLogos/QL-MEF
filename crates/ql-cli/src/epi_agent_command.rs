@@ -3,6 +3,7 @@
 use crate::CliError;
 use ql_mef::epi_agent::{
     self, EPI_AGENT_INVOCATION_VERSION, LogosReturnRequest, NaraElementalRequest,
+    NaraJourneyApplyRequest, NaraJourneyOpenRequest, NaraJourneyReadRequest,
     NaraPersonalReceiveRequest, RepresentationBindingRequest, TdaRequest,
 };
 use serde_json::{Value, json};
@@ -85,6 +86,10 @@ fn invoke(path: &str) -> R<Value> {
             "nara.activity.validate",
             "nara.elemental-map",
             "nara.personal-receive",
+            "nara.journey.open",
+            "nara.journey.apply",
+            "nara.journey.read",
+            "nara.lived-context.compose",
         ][..],
         5 => &["logos.return"][..],
         _ => unreachable!(),
@@ -136,6 +141,26 @@ fn invoke(path: &str) -> R<Value> {
             let request: NaraPersonalReceiveRequest =
                 serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::nara_personal_receive(request).map_err(error)?
+        }
+        "nara.journey.open" => {
+            let request: NaraJourneyOpenRequest =
+                serde_json::from_value(input.clone()).map_err(error)?;
+            epi_agent::nara_journey_open(request).map_err(error)?
+        }
+        "nara.journey.apply" => {
+            let request: NaraJourneyApplyRequest =
+                serde_json::from_value(input.clone()).map_err(error)?;
+            epi_agent::nara_journey_apply(request).map_err(error)?
+        }
+        "nara.journey.read" => {
+            let request: NaraJourneyReadRequest =
+                serde_json::from_value(input.clone()).map_err(error)?;
+            epi_agent::nara_journey_read(request).map_err(error)?
+        }
+        "nara.lived-context.compose" => {
+            let request: ql_mef::nara::lived_context::LivedContextRequest =
+                serde_json::from_value(input.clone()).map_err(error)?;
+            epi_agent::nara_lived_context(request).map_err(error)?
         }
         "logos.return" => {
             let request: LogosReturnRequest =
