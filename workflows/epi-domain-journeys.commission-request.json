@@ -1,0 +1,74 @@
+{
+  "contract": "factory.commission-request/v1",
+  "requestRef": "commission-request:ql-mef-258-epi-domain-journeys-2026-09-28",
+  "projectKey": "central-project:project%3Aquaternal-logic",
+  "purpose": "Develop the six-domain Epi-Logos team with Nara knowing the person through continuing Day/Flow, one continuing Tarot/I-Ching journey expressed natively, Epii teaching through M5 holography, and Anima/Aletheia performing their functions; first delivery is the connected Day/Flow journey episode of the programme (QL-MEF #258, PR #259 \u00a74.2).",
+  "frontier": "Commissioned 2026-09-28. EA2 journey core and EA1 lived-context composer implemented at source level in QL-MEF PR #261 (nara.journey.*, nara.lived-context.compose; 16 deterministic tests). O:I consumption, Central persistence, Expression rendering, domain identities, native Bimba, M5 bindings, team work and installed replay remain.",
+  "runDestination": "ql-mef-258/epi-domain-journeys-2026-09-28",
+  "writeOwner": "factory",
+  "commissionedAt": "2026-09-28T15:30:00Z",
+  "participantRequirements": [
+    {
+      "ref": "agent/factory-guardian",
+      "description": "Factory Guardian coordinator: conducts the packets and carries the Return through Factory custody",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/profiles/profile-cf2d2255e74c3265.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent/ql-guardian",
+      "description": "EA0/EA2/EA4 primary: QL-MEF Guardian (M5 Epii conjugate) \u2014 domain identities, journey modality, M5 holography and praxis",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/profiles/profile-f055e2d301a1ba0a.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent/central-guardian",
+      "description": "EA0 co-owner (M0 Anuttara conjugate) and independent verifier of the first episode",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/profiles/profile-817cc242bba75284.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent/oi-field-guardian",
+      "description": "EA1/EA3 primary: O:I field Guardian \u2014 Nara dialogue context and native journey Expression",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/profiles/profile-8deb95305135f506.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent/aikit-guardian",
+      "description": "EA1/EA4 co-owner (M2 Parashakti conjugate): prepared-context carriage and native practice packaging",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/profiles/profile-63189569d5a357d5.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent-set/anima",
+      "description": "EA5: Anima team composes the act and participation",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/agent-sets/agent-set-babd02cd4bee09c3.json",
+      "sourceRevision": "r1"
+    },
+    {
+      "ref": "agent-set/aletheia",
+      "description": "EA5: Aletheia team receives, interrogates and returns",
+      "sourceOwner": "central",
+      "sourceRef": "central:source:control:root:Control/agents/agent-sets/agent-set-7d0ac0282c5612f8.json",
+      "sourceRevision": "r1"
+    }
+  ],
+  "rootAct": {
+    "actRef": "act:ql-mef-258-epi-domain-journeys-commission-2026-09-28",
+    "agentRef": "agent/factory-guardian",
+    "purpose": "Factory Guardian commissions the #258 programme packets EA0-EA5 and the first-episode verification from the owner's commission and the published programme",
+    "scopeRefs": [
+      "project:quaternal-logic",
+      "project:O-I",
+      "project:ai-kit",
+      "project:Central",
+      "control:root"
+    ],
+    "standing": "commissioned-not-executed"
+  }
+}

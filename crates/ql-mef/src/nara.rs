@@ -21,6 +21,7 @@ pub mod intake;
 pub mod intake_composition;
 #[cfg(test)]
 mod intake_tests;
+pub mod lived_context;
 pub mod m3_activity;
 pub mod multi;
 pub mod replay;
