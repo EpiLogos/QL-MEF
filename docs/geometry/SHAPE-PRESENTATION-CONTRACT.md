@@ -44,3 +44,23 @@ provenance and distinguish that pin from a live owner read. Tests in
 `shape_presentation.rs` and `shape_command.rs` exercise actual core geometry,
 local constraint checks and CLI dispatch; they are not native application or
 human-use evidence.
+
+
+## Native M3 hinge presentation
+
+`M3State::snapshot().form.hinge_geometry` exposes
+`ql.m3-hinge-presentation/v1`, embedding
+`normalized-directed-unit-pair-hinge/v1`. `FoldGeometry` owns the source pair
+angles: θXY = 22.5° × pairXY and θYZ = 22.5° × pairYZ, with Y as the shared
+hinge (the original integrated physical-pole object §5.4).
+
+The explicit display convention places Y at the origin, X at the negative
+unit vector of θXY, and Z at the positive unit vector of θYZ, in the XY plane.
+The directed X→Y and Y→Z segments therefore preserve both native angles and
+unit lengths. Point identities, native nucleotide values, pair indices and
+source angles travel with the geometry. Scale, plane and zero direction are
+presentation choices. This is neither a cloth/kinematic solution nor a mapping
+from pose ordinals to rotation; crease dihedral telemetry remains separate.
+
+The executable-native M3 regression checks all 64 forms against their exact
+pair angles and tests the public CLI's complete geometry reading.

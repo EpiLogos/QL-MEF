@@ -67,8 +67,11 @@ std::vector<ql::Mode> modes(J *m2, J *gains) {
     return result;
 }
 std::uint64_t m2_generation(J *m2) { return exact_number(get(get(m2, "identity"), "profile_generation")); }
-ql::ContinuationInput initialize(J *m2, J *field) {
-    keys(field, {"subject_ref", "sample_rate", "clock", "driver_numerator", "driver_denominator", "units", "audio_gains", "samples"});
+// Optional shape_ref names the supplied shape basis; legacy input defaults to geometry_ref.
+ql::ContinuationInput initialize(J *m2, J *field, std::string &shape_ref) {
+    const bool named = json_object_object_get_ex(field, "shape_ref", nullptr);
+    if (named) keys(field, {"subject_ref", "sample_rate", "clock", "driver_numerator", "driver_denominator", "units", "audio_gains", "samples", "shape_ref"});
+    else keys(field, {"subject_ref", "sample_rate", "clock", "driver_numerator", "driver_denominator", "units", "audio_gains", "samples"});
     J *units = get(field, "units"); keys(units, {"amplitude", "excitation", "shape", "position", "audio"});
     for (const auto &entry : {std::pair{"amplitude", "m"}, {"excitation", "m/s"}, {"shape", "dimensionless"}, {"position", "m"}, {"audio", "linear"}})
         ql::require(text(get(units, entry.first)) == entry.second, "unsupported or missing modal units");
@@ -89,7 +92,19 @@ ql::ContinuationInput initialize(J *m2, J *field) {
         for (std::size_t j = 0; j < input.modes.size(); ++j) sample.mode_shapes.push_back(vec(at(shapes, j)));
         input.samples.push_back(std::move(sample));
     }
+    shape_ref = named ? text(get(field, "shape_ref")) : input.geometry_ref; ql::reference(shape_ref);
     return input;
+}
+// Complete per-sample, per-mode basis in sample order; the JSON budget is the initial one.
+std::vector<std::vector<ql::Vec3>> shapes(J *items, std::size_t samples, std::size_t modes) {
+    ql::require(count(items, 65536) == samples && samples <= 262144 / modes, "shape replacement must keep the sample basis");
+    std::vector<std::vector<ql::Vec3>> result(samples);
+    for (std::size_t i = 0; i < samples; ++i) {
+        auto sample = at(items, i); ql::require(count(sample, 4096) == modes, "sample modal basis mismatch");
+        result[i].reserve(modes);
+        for (std::size_t j = 0; j < modes; ++j) result[i].push_back(vec(at(sample, j)));
+    }
+    return result;
 }
 J *response(const ql::ContinuousField &field, const std::vector<float> &audio, bool targets, double scale) {
     auto r = field.receipt(); auto o = json_object_new_object();
@@ -119,8 +134,13 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
     put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale)); return o;
 }
 int main() {
+    // Buffered, unsynchronised streams: a multi-megabyte control line must not
+    // take a stdio lock per character. Framing and budgets are unchanged.
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     std::unique_ptr<ql::ContinuousField> field;
     Json basis = own(nullptr), gains = own(nullptr);
+    std::string shape_ref;
     std::string line;
     while (true) {
         line.clear(); char c;
@@ -142,8 +162,10 @@ int main() {
             if (op == "initialize") {
                 keys(request.get(), {"schema", "operation", "m2", "field"}); ql::require(!field, "field already initialized");
                 auto m2 = get(request.get(), "m2"), f = get(request.get(), "field");
-                auto next = std::make_unique<ql::ContinuousField>(initialize(m2, f));
-                gains = own(json_object_get(get(f, "audio_gains"))); basis = own(json_object_get(m2)); field = std::move(next); committed = true;
+                std::string next_ref;
+                auto next = std::make_unique<ql::ContinuousField>(initialize(m2, f, next_ref));
+                gains = own(json_object_get(get(f, "audio_gains"))); basis = own(json_object_get(m2)); field = std::move(next);
+                shape_ref.swap(next_ref); committed = true;
             } else {
                 ql::require(bool(field), "field is not initialized");
                 if (op != "read") {
@@ -171,10 +193,16 @@ int main() {
                         text(get(r, "material_model_ref")) == field->source().model_ref, "changed identity/material or unrelated M2 generation");
                     field->replace_modes(field->receipt().generation, modes(m2, gains.get()), boolean(get(request.get(), "replace_state")));
                     basis = own(json_object_get(m2)); committed = true;
+                } else if (op == "replace-shapes") {
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "shape_ref", "shapes"});
+                    auto next_ref = text(get(request.get(), "shape_ref")); ql::reference(next_ref);
+                    auto next = shapes(get(request.get(), "shapes"), field->samples().size(), field->source().modes.size());
+                    field->replace_shapes(field->receipt().generation, next); shape_ref.swap(next_ref); committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));
             put(output.get(), "m2_identity", json_object_get(get(basis.get(), "identity")));
+            string(output.get(), "shape_ref", shape_ref);
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
         } catch (const std::exception &error) {
             auto output = own(json_object_new_object()); string(output.get(), "schema", "ql.field-error/v1"); string(output.get(), "error", error.what());

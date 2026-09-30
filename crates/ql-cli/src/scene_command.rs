@@ -1,0 +1,79 @@
+//! `ql scene compose`: one integrated M1–M2–M3 event from a dated sky.
+
+use crate::CliError;
+use crate::nara_command::sky_snapshot;
+use ql_mef::scene::{SceneTuning, compose};
+use serde_json::Value;
+use std::io::Read;
+
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SceneRequest {
+    schema: String,
+    sky_request: Option<Value>,
+    sky_snapshot: Option<Value>,
+    tick12: u8,
+    cycle: u64,
+    #[serde(default)]
+    tuning: Option<SceneTuning>,
+}
+
+fn read(path: &str) -> Result<Vec<u8>, CliError> {
+    let mut bytes = Vec::new();
+    if path == "-" {
+        std::io::stdin()
+            .read_to_end(&mut bytes)
+            .map_err(|e| CliError(e.to_string()))?;
+    } else {
+        bytes = std::fs::read(path).map_err(|e| CliError(e.to_string()))?;
+    }
+    Ok(bytes)
+}
+
+pub fn command(args: &[String]) -> Result<String, CliError> {
+    let usage = || CliError("usage: ql scene <compose|binding> <request.json|-> [--json]".into());
+    if args.len() < 2 {
+        return Err(usage());
+    }
+    match args[0].as_str() {
+        "compose" => {}
+        // The continuous-field host binding the O:I Live instrument opens.
+        "binding" => {
+            let request: ql_mef::continuous::scene_field::BindingRequest =
+                serde_json::from_slice(&read(&args[1])?).map_err(|e| CliError(e.to_string()))?;
+            let binding = ql_mef::continuous::scene_field::binding(request).map_err(CliError)?;
+            return serde_json::to_string(&binding).map_err(|e| CliError(e.to_string()));
+        }
+        _ => return Err(usage()),
+    }
+    let mut bytes = Vec::new();
+    if args[1] == "-" {
+        std::io::stdin()
+            .read_to_end(&mut bytes)
+            .map_err(|e| CliError(e.to_string()))?;
+    } else {
+        bytes = std::fs::read(&args[1]).map_err(|e| CliError(e.to_string()))?;
+    }
+    let request: SceneRequest =
+        serde_json::from_slice(&bytes).map_err(|e| CliError(e.to_string()))?;
+    if request.schema != "ql.scene-request/v1" {
+        return Err(CliError("unsupported scene request".into()));
+    }
+    let sky = match (&request.sky_request, &request.sky_snapshot) {
+        (Some(sky), None) => sky_snapshot(sky, false)?,
+        (None, Some(sky)) => sky_snapshot(sky, true)?,
+        _ => {
+            return Err(CliError(
+                "a scene requires exactly one sky_request or sky_snapshot".into(),
+            ));
+        }
+    };
+    let scene = compose(
+        &sky,
+        request.tick12,
+        request.cycle,
+        request.tuning.unwrap_or_default(),
+    )
+    .map_err(CliError)?;
+    serde_json::to_string_pretty(&scene).map_err(|e| CliError(e.to_string()))
+}

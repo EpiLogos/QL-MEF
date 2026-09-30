@@ -30,6 +30,11 @@ QL binding). Factory's own test suite checks copies of these three files
 (`factory/tests/fixtures/ql-vak-workflows/`); keep them identical when either
 side changes.
 
+The Expression units carry the Expression-medium Methods: Eros, Mythos and Anima
+`skill/ql/anima-expressive-composition`, Psyche `skill/ql/chronos-act-continuity`,
+Aletheia `skill/ql/aletheia-expressive-return` (with Chronos for the timeline).
+The source revision is `expression-development-v2` since that change.
+
 ## Standing of the references
 
 - Participants (`agent-set/anima`, `agent-set/aletheia`, `agent/anima-*`,

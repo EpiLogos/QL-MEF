@@ -13,6 +13,9 @@ use crate::nara::{ConsentState, PersonalFieldState, SourceRevision};
 
 use super::*;
 
+#[path = "domain_body.rs"]
+pub mod body;
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct EmbodiedContinuationInput {
@@ -83,6 +86,7 @@ impl EmbodiedField {
             if !seen.insert(receiver.ordinal) {
                 return Err("accepted Personal state contains duplicate centre ordinals".into());
             }
+            let body = body::centre_body(receiver.ordinal)?;
             centres.push(CentreEmbodiment {
                 ordinal: receiver.ordinal,
                 label: receiver.label.clone(),
@@ -96,15 +100,17 @@ impl EmbodiedField {
                 phase_radians: None,
                 modes: Vec::new(),
                 couplings: Vec::new(),
-                body_zone_refs: Vec::new(),
-                sense_refs: Vec::new(),
-                action_refs: Vec::new(),
+                body_zone_refs: vec![body.body_zone.property_ref],
+                sense_refs: body.sense_refs,
+                action_refs: body.action_refs,
                 feedback_refs: Vec::new(),
                 standing: EvidenceStanding::Derived,
             });
         }
         centres.sort_by_key(|centre| centre.ordinal);
 
+        let mut earth_relation_refs = vec![personal.event.event_ref.clone()];
+        earth_relation_refs.extend(body::earth_grounding_refs()?);
         let field = Self {
             reception_generation: personal.reception_generation,
             elemental_efwa: input.elemental_efwa,
@@ -116,7 +122,7 @@ impl EmbodiedField {
                 frame_ref: personal.earth_body.frame_ref.clone(),
                 amplitude: None,
                 phase_radians: None,
-                relation_refs: vec![personal.event.event_ref.clone()],
+                relation_refs: earth_relation_refs,
                 standing: EvidenceStanding::Derived,
             },
             nadi_refs: input.nadi_refs,
@@ -632,6 +638,18 @@ mod tests {
         assert_eq!(field.centres[6].amplitude, Some(6.5));
         assert_eq!(field.centres[6].world_inputs.m2.basis_ref, "basis:m2");
         assert_eq!(field.earth_body.frame_ref, "earth-fixed");
+        for centre in &field.centres {
+            let body = body::centre_body(centre.ordinal).unwrap();
+            assert_eq!(centre.body_zone_refs, vec![body.body_zone.property_ref]);
+            assert!(centre.sense_refs.is_empty());
+            assert!(centre.action_refs.is_empty());
+            assert!(centre.modes.is_empty());
+            assert!(centre.couplings.is_empty());
+        }
+        for reference in body::earth_grounding_refs().unwrap() {
+            assert!(field.earth_body.relation_refs.contains(&reference));
+        }
+        assert!(field.earth_body.amplitude.is_none());
     }
 
     #[test]

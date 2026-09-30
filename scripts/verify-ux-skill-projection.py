@@ -11,7 +11,8 @@ TEAM_METHODS = {'vak-evaluate','anima-orchestration','day-night-pass','klein-mod
                 'relational-graph-traverse','wikilink-resonance-scan','cross-source-dissonance-detect','gnosis-retrieve',
                 'thought-distil','anansi','aletheia-stack-traverse','aletheia-module-audit','aletheia-improvement-propose',
                 'aletheia-self-extend','aletheia-plugin-integrate','aletheia-ql-gate','aletheia-m-gate','aletheia-s-gate',
-                'aletheia-m-prime-gate','aletheia-rupa-gate','aletheia-collab-gate'}
+                'aletheia-m-prime-gate','aletheia-rupa-gate','aletheia-collab-gate',
+                'anima-expressive-composition','aletheia-expressive-return','chronos-act-continuity'}
 METHODS |= TEAM_METHODS
 def sha(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
 def main() -> int:

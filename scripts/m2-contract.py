@@ -19,6 +19,11 @@ def schemas():
         for name,body in re.findall(r'pub struct (\w+) \{\n(.*?)^\}',text,re.S|re.M):
             fields=re.findall(r'^\s*pub (\w+): ([^\n]+),$',body,re.M)
             structs[name]=fields
+    # Graph-route readings (Nara's planet->chakra and decan->planet routes) carry
+    # the registry's own relation record; take its actual definition, not a copy.
+    text=(ROOT/'crates/ql-mef/src/m_tree.rs').read_text()
+    for name,body in re.findall(r'pub struct (MTreeRelation) \{\n(.*?)^\}',text,re.S|re.M):
+        structs[name]=re.findall(r'^\s*pub (\w+): ([^\n]+),$',body,re.M)
     def shape(typ):
         typ=typ.strip().replace('m2::','').replace('crate::m2_vimarsha::','').replace('crate::m2_condition::','')
         if typ.startswith('Option<'):return {'anyOf':[shape(typ[7:-1]),{'type':'null'}]}

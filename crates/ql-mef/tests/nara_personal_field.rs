@@ -2,6 +2,13 @@
 //! Naras receive the same dated M1/M2 source occasion through their own stable
 //! M3 subject bindings. Reception uses the accepted coupled basis; it does not
 //! infer identity or centre mappings from particle/presentation state.
+//!
+//! Standing correction (#201, issuecomment-5859688868): the supplied receiver
+//! weights, orientations, gains and event values below are controlled inputs
+//! for lifecycle/currentness/isolation regression. They are not authored
+//! chakra laws, sourced personal constitutions, or acceptance of the current
+//! personal Expression commission. Preserve this bounded carrier regression;
+//! actual identity and graph-routed reception require their own native proof.
 use ql_mef::continuous::coupled::{CoupledInput, HarmonicSource, REQUEST};
 use ql_mef::m1_engine::EngineConfig;
 use ql_mef::m2_engine::M2Request;
@@ -41,6 +48,7 @@ fn world_input(subject: &str) -> CoupledInput {
         harmonic_source: HarmonicSource::CanonicalBasis { index: 3 },
         frequency_bindings: vec![],
         condition_frequency_bindings: vec![],
+        sky_frequency_bindings: vec![],
         source_receipts: vec![json!({
             "standing":"controlled dated source occasion shared by two Nara fixtures",
             "observed_at":"2026-09-13T20:00:00Z"
