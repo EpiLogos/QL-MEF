@@ -40,3 +40,7 @@ Proposal: <PR/issue ref or draft>  Gate: aletheia-collab-gate (pending)  Rollbac
 ```
 
 Both modes end at the collaboration gate. Nothing here is applied, merged or promoted by the Method itself.
+
+## Verify
+
+A proposal is verified complete when the filed PR or issue (`gh pr view <n>` or `gh issue view <n>` on the owner) carries the owner, layer, validation check, rollback and the pending `aletheia-collab-gate`, and nothing has been merged, released or promoted by this Method.

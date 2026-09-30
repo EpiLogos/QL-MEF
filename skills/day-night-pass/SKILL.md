@@ -73,6 +73,10 @@ When the formal passage must be proven, run it through the engine — `cs-select
 MOBIUS_RETURN: <P5′ insight> | <P0′ questions>
 ```
 
+## Verify
+
+The pass is verified by its record: `ctrl --json action run central.now.thoughts.read '{"now_ref":"<ref>","include_content":true}'` shows one thought for each Night′ position answered (`T0`–`T5`), attributed to the member who produced it, and no crystallisation was recorded over unresolved P2′ challenges. When the passage was proven formally, `ql vak compose` accepted the `cs-select` and `cs-hop` steps rather than refusing them.
+
 ## Authority and limits
 
 The pass records and interrogates; it promotes nothing. Durable learning leaves NOW only through `skill/ql/thought-distil` and the promotion door. Closing the civil day is Central's `central.day.lifecycle`, which needs the owner's native token; a member does not close the day.

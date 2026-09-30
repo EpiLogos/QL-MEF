@@ -54,6 +54,10 @@ plus, when composed, the engine's `results` for the named steps.
 - CPF authorised-undertaking → `skill/ql/anima-orchestration` with the block.
 - CS with both directions → `skill/ql/day-night-pass` after the forward pass.
 
+## Verify
+
+A composed block is verified by the engine: `ql vak compose request.json --json` returns results for every step without refusal, and the VAK line matches those results. A silent, uncomposed evaluation is a reading and is stated as one.
+
 ## Authority and limits
 
 Evaluation assigns coordinates; it grants no Action, Factory, Actuation or Workcell authority. A composed block is a formal reading, not permission to perform it. Do not claim a frame, thread form or passage the engine refused.

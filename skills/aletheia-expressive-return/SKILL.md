@@ -9,8 +9,8 @@ description: "METHOD: Carry the knowledge and Return side of an Expression act �
 
 - Semantic ref: `ql:skill:aletheia-expressive-return` (`skill/ql/aletheia-expressive-return`)
 - Native owners: the O:I desktop kernel through `oi desktop expression [SOCKET] REQUEST_JSON` (world requests carry `"schema":"oi.expression-world/v1"`: `act_inspect`, `act_text`, `act_operate`, `act_continue`, `act_complete`, `material_list`; ordinary Expression requests: `open_file`, `fork`, `edit` with `reuse_set`, `save_as`, `save`); Technè instruments through `ql techne reading <target.json> --json` and the instrument's published Actions; knowledge through `aikit --json knowledge search|resolve|read`; the Return door through `ctrl --json action run projectcentral.now.return` (Project register) or the root NOW Actions; the material register through `central.files.*` at `Work/O-I/desktop/cradle/material/expressive-material/<kind>/<slug>.expression.json`.
-- Contract: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1, §4, §5.
-- Source: O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §5 (repertoire association, timeline), §6, §7 (Aletheia row), §9 items 6 and 8. New practice for the S5′ Aletheia organ; the gate vocabulary is `skill/ql/aletheia-m-prime-gate` and `skill/ql/aletheia-rupa-gate`.
+- Contract: O:I `Work/O-I/docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1, §4, §5.
+- Source: O:I `Work/O-I/docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §5 (repertoire association, timeline), §6, §7 (Aletheia row), §9 items 6 and 8. New practice for the S5′ Aletheia organ; the gate vocabulary is `skill/ql/aletheia-m-prime-gate` and `skill/ql/aletheia-rupa-gate`.
 - Used by: `agent/aletheia` (owner: Return and curation), `agent/aletheia-moirai` (distils the explanatory content), `agent/aletheia-agora` (fuses plural readings of a performance), `agent/aletheia-zeithoven` (hands a successful form forward as repertoire). Anima's side of the act is `skill/ql/anima-expressive-composition`; reading and replaying passages is `skill/ql/chronos-act-continuity`.
 
 ## Inputs
@@ -88,6 +88,10 @@ Evaluation: M′ <aligned|annotated|hold|redirect>  Rupa <…>  <one line>
 Return: <return_ref>   Completed: yes | continued (reason)
 Curated: <file_ref@revision kind associations variation_of> | none (why)
 ```
+
+## Verify
+
+After `act_complete`, `act_inspect` shows the `return` passage carrying the `return_ref`; the NOW return is readable through `projectcentral.now.inspect`; and every curated form appears in `material_list` with its associations and `variation_of` revision.
 
 ## Authority and limits
 

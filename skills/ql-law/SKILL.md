@@ -1,6 +1,6 @@
 ---
 name: ql-law
-description: The settled law of QL-MEF in one page — coordinate grammar (M prefix, the nesting threshold, context frames), position semantics, branch roles, the M3 clock facts and the owner's final rulings — each with its source. Use before spelling, parsing or generating any M coordinate, before treating a structural or numerical question as open, and before asking the owner anything about M1–M5. If the answer is here, it is settled; cite the source instead of re-deriving or asking.
+description: The settled law of QL-MEF in one page — coordinate grammar (M prefix, the nesting threshold, context frames), position semantics, branch roles, the M3 clock facts and the owner's final rulings — each with its source. Use when about to spell, parse or generate any M coordinate, before treating a structural or numerical question as open, and before asking the owner anything about M1–M5. If the answer is here, it is settled; cite the source instead of re-deriving or asking.
 ---
 
 # QL law
@@ -12,23 +12,23 @@ description: The settled law of QL-MEF in one page — coordinate grammar (M pre
 - Verification: the nesting threshold is enforced by `scripts/coordinate-grammar.py check` (run by `scripts/verify invariants`); the rest is cited, not re-proved here
 - Risk class: structural (no authority, no mutation, no gate)
 
-Each line is one settled law and where it is written. **CE** = Epi-Logos-C-Experiments (`~/Documents/epi/Epi-Logos-C-Experiments`), **Deep** = CE `Idea/Bimba/Map/datasets/`, **Seeds** = CE `Idea/Bimba/Seeds/M/`. Unprefixed paths are in this repo. When a source here conflicts with a later ruling, the later ruling is listed and the older text is named under *Superseded*.
+Each line is one settled law and where it is written. **CE** = Epi-Logos-C-Experiments (`~/Documents/epi/Epi-Logos-C-Experiments`), **Deep** = CE `Idea/Bimba/Map/datasets/`, **Seeds** = CE `Idea/Bimba/Seeds/M/`; CE, Deep and Seeds paths below are written from the CE root and are not in this repo. Unprefixed paths are in this repo. When a source here conflicts with a later ruling, the later ruling is listed and the older text is named under *Superseded*.
 
 ## Authority
 
 - The live Bimba map (Neo4j) is the authority; where a spec or table disagrees, the map wins. — #254 ruling D10 (comment 5872629938); #255; `docs/kernel-rebuild/BIMBA-MAP-SOURCE.md`
-- The `datasets/*-deep` essays and correspondence tables are a seed archive: read them to derive or recover, never at runtime. — CE `Idea/Bimba/Map/datasets/AGENTS.md`; `ProjectCentral/user/telos/integrated-expression/goal.md`
+- The Deep essays and correspondence tables (the CE `Idea/Bimba/Map/datasets/*-deep` folders) are a seed archive: read them to derive or recover, never at runtime. — CE `Idea/Bimba/Map/datasets/AGENTS.md`; `ProjectCentral/user/telos/integrated-expression/goal.md`
 - The owner is not a source for anything these sources hold; derive it. — `goal.md`; `AGENTS.md` "Read this first"
 
 ## Coordinate grammar
 
 - The prefix is `M` (`M2-4.3`). `#` is the legacy spelling of the same coordinate. Bare `#` alone is the root / kernel taproot, not a prefix. — Seeds `M-M-prime-coordinate-mapping-inaugural.md` §0; CE `Idea/Bimba/Map/AGENTS.md` "Ownership". The registry still stores `#`: `docs/kernel-rebuild/M-SPELLING-MIGRATION.md`
-- **Nesting threshold:** after a position-4 segment the separator is `.`, never `-`: `M4.0`, `M3-4.0-1`, `M2-4.3`, `M1-4.5-0`, `M4.4.4.4`. No other position takes a dot. — Deep `paramasiva-deep/Quaternal_Logic_Lived_Topology.md` §IV ("The dot after 4 is constitutional law"); CE `Idea/Bimba/Map/M1/M1-4/M1-4.md` `q_1_fractal_coordinate_system`, `q_3_nested_quaternity_with_dot`. Enforced: `scripts/coordinate-grammar.py`; open map defects are the `k2-grammar-nesting-threshold:*` ledger records
-- Three operators: hyphen `-` = structural link, dot `.` = flowering (after 4 only), slash `/` = reflective identity (Möbius equivalence, not a connection). — Deep `paramasiva-deep/Quaternal_Logic_Geometric_Epistemology_v2.md` "Fractal Architecture"; M1-4.md
+- **Nesting threshold:** after a position-4 segment the separator is `.`, never `-`: `M4.0`, `M3-4.0-1`, `M2-4.3`, `M1-4.5-0`, `M4.4.4.4`. No other position takes a dot. — CE `Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Lived_Topology.md` §IV ("The dot after 4 is constitutional law"); CE `Idea/Bimba/Map/M1/M1-4/M1-4.md` `q_1_fractal_coordinate_system`, `q_3_nested_quaternity_with_dot`. Enforced: `scripts/coordinate-grammar.py`; open map defects are the `k2-grammar-nesting-threshold:*` ledger records
+- Three operators: hyphen `-` = structural link, dot `.` = flowering (after 4 only), slash `/` = reflective identity (Möbius equivalence, not a connection). — CE `Idea/Bimba/Map/datasets/paramasiva-deep/Quaternal_Logic_Geometric_Epistemology_v2.md` "Fractal Architecture"; M1-4.md
 - Context frames are written in parentheses (`M2-5-(0/1)-1`, `M3-4-(5/0)`), and a position-4 frame keeps its `4.` outside them (`M0-4.(5/0)`, `M0-4.(4.0/1-4.4/5)`). The registry drops the brackets (`#2-5-0/1-1`) and keeps the map spelling as the alias. — CE `Idea/Bimba/Map/AGENTS.md`; Seeds `Legacy/plans/2026-06-02-m-prime-cycle-3-design-reconciliation/45-bimba-map-indexing-and-dox-okf-unification.md` "Coordinate algebra"; `scripts/bimba_map.py` `ql_spelling`
 - `0/1` is the non-dual anchor; `5/0` is the Möbius twist, in which synthesis sediments into the next ground. — Lived Topology §III, §V
 - In file and wikilink names, `/` is written `∕` (U+2215). Frontmatter keeps `/`. — CE `Idea/Bimba/Map/AGENTS.md`
-- A prime (`M3′`) is the Pratibimba, the functional coded surface of the same coordinate. The address is conserved and the phase flips, so `C3′` never resolves as `C3`. — Seeds `M-SYSTEM-INDEX.md`; `plans/2026-07-03-cycle-3-recapture-register.md` (DR-FLIP-1)
+- A prime (`M3′`) is the Pratibimba, the functional coded surface of the same coordinate. The address is conserved and the phase flips, so `C3′` never resolves as `C3`. — Seeds `M-SYSTEM-INDEX.md`; CE `Idea/Bimba/Seeds/M/plans/2026-07-03-cycle-3-recapture-register.md` (DR-FLIP-1)
 
 ## Positions
 
@@ -50,7 +50,7 @@ Each line is one settled law and where it is written. **CE** = Epi-Logos-C-Exper
 
 - 384 = 360 + 24 = 64 × 6. The clock has 360 degree nodes plus 24 palindromic backbone nodes at `degree % 15 == 0`, and 384 is also the count of one-line changes. — Seeds `M3'/M3'-SPEC.md` §8.6 (`_Static_assert(360 + 24 == 64 * 6)`)
 - 16+2 = the 18-lens canon: 16 static divisor lenses, plus the Fibonacci/Pisano ground (60 × 6° = 360, LCM(6,5,12) = 60), plus the Anuttara void ring. — owner ruling 2026-09-07: `crates/ql-mef/src/pole_state.rs` `APERTURE_CLOCK_CANON_VERSION`; `c/src/m3_domain.c`; ledger `k7-m3:difference-aperture-source`
-- The zodiac is lens 9: `divisions[9]` = 30° × 12, counted from λ 0° = Aries. — `c/src/m3_domain.c`; `crates/ql-mef/src/m3_inscription.rs`; Deep `mahamaya-deep/pleroma-30-syzygy-lens6-integration.md` §0
+- The zodiac is lens 9: `divisions[9]` = 30° × 12, counted from λ 0° = Aries. — `c/src/m3_domain.c`; `crates/ql-mef/src/m3_inscription.rs`; CE `Idea/Bimba/Map/datasets/mahamaya-deep/pleroma-30-syzygy-lens6-integration.md` §0
 - The M2 MEF lenses (12) and the M3 clock lenses are separate namespaces and never merge. — M3′-SPEC §8.15
 - 472 rotational poses = 40 non-dual × 7 + 24 dual × 8, generated from pair composition rather than letter cycling. — M3′-SPEC §7, §8.5; matrix `M3-C13`
 - Three matrices = the quaternion axes: complementary → i, moving/resting → j, same-quality → k. — matrix §6; M3′-SPEC §8.2–§8.3
@@ -71,6 +71,6 @@ Source: QL-MEF #254 comment 5872629938.
 ## Superseded (do not cite as current)
 
 - `16+1` lenses (M3′-SPEC §8.0/§8.15, 2026-07-15): superseded by the 18-lens ruling of 2026-09-07.
-- `C = 7 / G = 8` (M3′-SPEC §8.1, and the upstream map before `migration/bimba-map/2026-09-28-*`): superseded by M3-COIN-1.
+- `C = 7 / G = 8` (M3′-SPEC §8.1, and the upstream map before the 28 Sep 2026 coin migrations `migration/bimba-map/2026-09-28-d0-reauthor-and-coin.cypher` and `migration/bimba-map/2026-09-28-coin-prose.cypher`): superseded by M3-COIN-1.
 - `M4-4-4-4` / `M4-0…M4-5` spellings (Seeds `M4'/M4'-SPEC.md` §7.1, inaugural): superseded by the nesting threshold (`M4.4.4.4`, `M4.0…M4.5`).
 - The M2′ spec's planet tables, where they disagree with the map (D10).

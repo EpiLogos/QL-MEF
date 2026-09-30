@@ -10,8 +10,8 @@ description: "METHOD: Choose, adapt and perform the Expression material for an a
 - Semantic ref: `ql:skill:anima-expressive-composition` (`skill/ql/anima-expressive-composition`)
 - Native owner of every operation: the O:I desktop kernel, through the existing `oi desktop expression [SOCKET] REQUEST_JSON` seam. A body whose `schema` is `oi.expression-world/v1` is an Expression-world request (`act_*`, `material_list`); a body without it is an ordinary Expression request (`open_file`, `fork`, `edit`, `save_as`, `save`, `inspect`). Discovery of the implemented operations: `oi desktop expression capabilities` and `oi desktop expression '{"schema":"oi.expression-world/v1","operation":"capabilities"}'`.
 - Material register: `Work/O-I/desktop/cradle/material/expressive-material/<kind>/<slug>.expression.json` (O:I `MATERIAL_REGISTER`). `material_list` answers `{materials, folders, unreadable, truncated}`; `folders[kind]` is the owner-disclosed `parent` for `save_as` into the register.
-- Contract: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 (reuse block), §3 (bindings), §4 (act and operations). The kernel types in `desktop/cradle/kernel/src/expression_world.rs` are the contract of record; requests refuse unknown fields.
-- Source: O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §1, §4, §6, §7 (Anima row), §9 items 3, 4 and 7. No C-Experiments skill body preceded this one; it is new practice for the S4′ Anima organ.
+- Contract: O:I `Work/O-I/docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §1 (reuse block), §3 (bindings), §4 (act and operations). The kernel types in O:I `Work/O-I/desktop/cradle/kernel/src/expression_world.rs` are the contract of record; requests refuse unknown fields.
+- Source: O:I `Work/O-I/docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §1, §4, §6, §7 (Anima row), §9 items 3, 4 and 7. No C-Experiments skill body preceded this one; it is new practice for the S4′ Anima organ.
 - Used by: `agent/anima` (owner, CF5 conduct), `agent/anima-eros` (CF3 exchange with the Expression powers), `agent/anima-mythos` (CF4 organising image); dispatch per `skill/ql/anima-orchestration`. Continuation and replay are `skill/ql/chronos-act-continuity`; Return and curation are `skill/ql/aletheia-expressive-return`.
 
 ## The law of reuse
@@ -46,18 +46,18 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"material_
 oi desktop expression '{"schema":"oi.expression-world/v1","operation":"material_list","kind":"scene"}'
 ```
 
-Each entry is `{file_ref, revision, title, kind, roles, states, gestures, associations}`. Resolution order (contract §5): an explicitly named form → the workflow-associated Expression → task-type/SkillSet/skill-associated material → any material of the right kind whose `roles` fit. The curated starter set in the register:
+Each entry is `{file_ref, revision, title, kind, roles, states, gestures, associations}`. Resolution order (contract §5): an explicitly named form → the workflow-associated Expression → task-type/SkillSet/skill-associated material → any material of the right kind whose `roles` fit. The curated starter set in the register, named by kind folder and file:
 
-| Register path | Use |
+| Register kind: file | Use |
 |---|---|
-| `character/anima.expression.json`, `character/aletheia.expression.json` | team characters: states `idle`, `working`, `speaking`; gesture `invoke-skill` |
-| `scene/arrival.expression.json` | an agent enters and takes its active state |
-| `scene/work-passage.expression.json` | work moves an object from A to B |
-| `gesture/skill-invocation.expression.json` | a skill is invoked while the Scene continues |
-| `scene/handoff.expression.json` | roles `sender`, `recipient`, `artifact`, `caption` |
-| `scene/review.expression.json`, `scene/completion.expression.json` | review outcome; completion with result objects |
-| `scene/explanation.expression.json` | roles `lead`, `goal`, `caption`, `progressText` |
-| `expression/expression-development.expression.json` | workflow Expression for `expression-development`; playback arrival → work-passage → skill-invocation → handoff → review → completion |
+| character: `anima.expression.json`, `aletheia.expression.json` | team characters: states `idle`, `working`, `speaking`; gesture `invoke-skill` |
+| scene: `arrival.expression.json` | an agent enters and takes its active state |
+| scene: `work-passage.expression.json` | work moves an object from A to B |
+| gesture: `skill-invocation.expression.json` | a skill is invoked while the Scene continues |
+| scene: `handoff.expression.json` | roles `sender`, `recipient`, `artifact`, `caption` |
+| scene: `review.expression.json`, `completion.expression.json` | review outcome; completion with result objects |
+| scene: `explanation.expression.json` | roles `lead`, `goal`, `caption`, `progressText` |
+| expression: `expression-development.expression.json` | workflow Expression for `expression-development`; playback arrival → work-passage → skill-invocation → handoff → review → completion |
 
 ## 3. Bind and perform
 
@@ -122,6 +122,10 @@ Chosen: <file_ref>@<revision> <scene_ref|state>  Rejected: <file_ref: reason …
 Created: none | <file_ref>@<revision> variation_of <file_ref>@<revision>  Associations: <…>
 Passages: <index kind …>  Gestures: <role gesture occurrence …>
 ```
+
+## Verify
+
+After a save, `material_list` must return the new or adapted form with its `reuse` block and associations (step 5). Each operation is checked against `oi desktop expression capabilities`; the act's passages are read back with `act_inspect`, and performed presentation is verified by observing the running desktop.
 
 ## Authority and limits
 
