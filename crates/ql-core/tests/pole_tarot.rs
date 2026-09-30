@@ -475,6 +475,10 @@ fn naming_duality_is_one_deck_two_registers() {
                 assert_eq!(pip.thoth_name(), "Prince");
                 assert_eq!(pip.rws_name(), "Knight");
             }
+            13 => {
+                assert_eq!(pip.thoth_name(), "Knight");
+                assert_eq!(pip.rws_name(), "King");
+            }
             _ => assert_eq!(pip.thoth_name(), pip.rws_name()),
         }
     }
