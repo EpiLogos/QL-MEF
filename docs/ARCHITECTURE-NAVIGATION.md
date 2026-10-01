@@ -2,7 +2,7 @@
 role: architecture
 standing: agent-inference
 scope: QL-MEF native operations and composed O:I consumer boundaries
-updated: 2026-09-30
+updated: 2026-10-01
 ---
 # QL-MEF architecture navigation
 
@@ -24,7 +24,7 @@ baseline, current implementation and observed result keep their own standing.
 | Concern | Public operation / entry | Native source | Boundary and lifecycle |
 | --- | --- | --- | --- |
 | Formal/native operations | Native QL CLI/operator and context-frame operations | `crates/ql-mef/src/lib.rs`; `scene.rs` | Formal operation, declared source, scene state and O:I rendering are distinct. |
-| Coordinate-bound world / Personal Pratibimba | Read the ongoing Epi fidelity audit and its recovery/source map | `docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md` (active audit lane) | The audit owns numerical/domain mappings. Shared locus, private person, actual occasion and Expression instance remain distinct; do not substitute a generic profile page. |
+| Coordinate-bound world / Personal Pratibimba | Read the [ongoing fidelity programme](https://github.com/EpiLogos/QL-MEF/issues/258) and its current source/recovery return | The programme's named active audit cut, qualified below | The audit owns numerical/domain mappings. Shared locus, private person, actual occasion and Expression instance remain distinct; do not substitute a generic profile page. |
 | Consumer / evidence | Native scene-world material and source basis → O:I Expression | O:I `desktop/cradle/kernel/src/expression_world.rs`; current domain audit | Source coverage, finite computational proof, retained save/readback and installed lived encounter are different acceptance cuts. |
 
 ## Diagram and consumer relation
@@ -43,6 +43,15 @@ Existing capability records link this companion through the optional
 capability IDs, coordinate placements, implementation status or source authority.
 
 ## Verification and open joins
+
+The audit document is still unpublished at this navigation cut. Its owner is
+working on `map/m3-5-clock-inscription`; the audit is absent from this PR and
+the inspected `74dc6dc` baseline. Begin at QL-MEF #258 and use the owner's
+latest source/candidate return rather than assuming a repository-local file
+exists. The consumed audit bytes have SHA-256
+`8daa594183b0875da3755f01c33301e14fb751c5dce5d17c42e1b7dc35fae430`.
+Replace the active-source locator with its published revision when that owner
+lands the audit. This disclosure is separate from the O:I diagram dependency.
 
 The ongoing fidelity audit distinguishes a coordinate-bound world and Personal
 Pratibimba from a generic profile. Its latest return reports published native
