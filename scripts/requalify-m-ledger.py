@@ -47,6 +47,98 @@ def git_bytes(commit: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=ROOT)
 
 
+def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> None:
+    """Retain the qualified original while admitting a published history alias.
+
+    This checks source lineage only. It does not requalify current numerical
+    inputs, publish a new finite proof, or confer numerical readiness.
+    """
+    def checked_path(value: str) -> Path:
+        candidate = Path(value)
+        if candidate.is_absolute() or ".." in candidate.parts:
+            raise ValueError("unsafe historical proof path: " + value)
+        return root / candidate
+
+    def git_source(ref: str) -> bytes:
+        match = re.fullmatch(r"git:([0-9a-f]{40}):(.+)", ref)
+        if not match:
+            raise ValueError("unqualified historical proof Git source")
+        checked_path(match[2])
+        return subprocess.check_output(["git", "show", f"{match[1]}:{match[2]}"], cwd=root)
+
+    original = subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=root)
+    if sha(original) != digest:
+        raise ValueError("historical numerical proof was restamped: " + path)
+    active = checked_path(path).read_bytes()
+    if active == original:
+        return
+    if path != "fixtures/kernel/m3-finite-proof-v1.json":
+        raise ValueError("unqualified historical proof alias: " + path)
+
+    record = json.loads(checked_path("fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
+    if record["schema"] != "ql.published-journey-source-integration/v1":
+        raise ValueError("unqualified historical proof integration record")
+    source = record["current_source"]
+    registry = json.loads(checked_path("fixtures/kernel/m-tree-v1.json").read_text())
+    coordinates = json.loads(checked_path("fixtures/kernel/k8-structure-receipt-v1.json").read_text())
+    structure_spec = importlib.util.spec_from_file_location("historical_alias_current_structure", checked_path("scripts/k8-structure.py"))
+    structure = importlib.util.module_from_spec(structure_spec)
+    structure_spec.loader.exec_module(structure)
+    projected, _ = structure.project(root)
+    ledger_bytes = checked_path(source["ledger"]["path"]).read_bytes()
+    ledger = json.loads(ledger_bytes)
+    if (source["source_revision"] != registry["source_revision"]
+            or source["numerical_registry_revision"] != registry["registry_revision"]
+            or source["coordinate_registry_revision"] != coordinates["registry_revision"]
+            or source["coordinate_registry_revision"] != projected["registry_revision"]
+            or source["ledger"]["path"] != "fixtures/kernel/m-ledger-v1.json"
+            or source["ledger"]["sha256"] != sha(ledger_bytes)
+            or source["ledger"]["revision"] != ledger["ledger_revision"]):
+        raise ValueError("historical integration record has stale current source standing")
+
+    history = record["native_history"]
+    retained = history["original"]
+    if (retained["sha256"] != digest
+            or checked_path(retained["path"]).read_bytes() != original
+            or git_source(retained["original_git_ref"]) != original):
+        raise ValueError("retained historical numerical original changed")
+    successor = history["successor"]
+    expected_ref = f"git:{record['parents']['incoming']}:{path}"
+    if (successor["path"] != path or successor["git_ref"] != expected_ref
+            or successor["sha256"] != sha(active)
+            or git_source(expected_ref) != active):
+        raise ValueError("active historical successor differs from published Git source")
+
+    lock = history["native_lineage"]
+    lineage_bytes = checked_path(lock["path"]).read_bytes()
+    if (lock["path"] != "fixtures/kernel/k8-build-lineage-v1.json"
+            or sha(lineage_bytes) != lock["sha256"]
+            or git_source(f"git:{record['parents']['incoming']}:{lock['path']}") != lineage_bytes):
+        raise ValueError("native historical lineage missing or forged")
+    lineage = json.loads(lineage_bytes)
+    pointer = re.fullmatch(r"/successors/(\d+)", lock["pointer"])
+    if not pointer or int(pointer[1]) >= len(lineage["successors"]):
+        raise ValueError("unqualified native historical lineage pointer")
+    entry = lineage["successors"][int(pointer[1])]
+    if (lineage["schema"] != "ql.k8-build-lineage/v1"
+            or lineage["proofs"]["m3"] != sha(active)
+            or entry["engine"] != "m3" or entry["previous_sha256"] != digest
+            or entry["sha256"] != sha(active)
+            or entry["accepted_at_revision"] != history["published_ci"]["revision"]):
+        raise ValueError("native historical successor is not qualified by its original")
+
+    before, after = json.loads(original), json.loads(active)
+    changed_input = "crates/ql-core/src/pole/tarot.rs"
+    if history["only_proof_input_change"] != "/inputs/" + changed_input:
+        raise ValueError("unqualified historical successor input change")
+    restored = copy.deepcopy(after)
+    restored["inputs"][changed_input] = before["inputs"][changed_input]
+    if restored != before or after["inputs"][changed_input] == before["inputs"][changed_input]:
+        raise ValueError("historical successor changes more than its naming input")
+    if sha(checked_path(changed_input).read_bytes()) != after["inputs"][changed_input]:
+        raise ValueError("published historical naming input differs from current source")
+
+
 def history(commit: str) -> tuple[dict, dict]:
     commit = subprocess.check_output(["git", "rev-parse", f"{commit}^{{commit}}"], cwd=ROOT, text=True).strip()
     raw = git_bytes(commit, m.LEDGER.as_posix())
@@ -208,8 +300,7 @@ def check() -> None:
         if m.lock(ROOT, lock["path"]) != lock:
             raise ValueError("requalification replay changed: " + lock["path"])
     for path, digest in receipt["historical_numerical_proofs_unchanged"].items():
-        if m.lock(ROOT, path)["sha256"] != digest:
-            raise ValueError("publish and record a full numerical successor: " + path)
+        verify_historical_proof(ROOT, path, digest, receipt["historical"]["git_commit"])
     history(receipt["historical"]["git_commit"])
     m.verify(ROOT, ledger)
     print("Current source requalification, preserved historical proofs and131 decisions verified")

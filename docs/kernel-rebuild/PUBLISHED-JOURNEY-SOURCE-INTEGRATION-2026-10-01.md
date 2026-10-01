@@ -20,6 +20,12 @@ An actual separate-process CLI replay discovered faculty 4, opened a controlled 
 
 The compact native Tarot skill now says two-card Sphere, matching its complete original protocol and native spread owner. Native file/metadata checks do not prove AIKit repointing, freshbody skill use or semantic reading quality.
 
+## Executed historical alias repair
+
+The first clean full gate at merge `2662350` failed in the current M1 qualification checker: it required the active M3 filename to retain original d0ff bytes even though the original is preserved separately and active de46 has an explicit published native lineage. The native source-requalification owner now verifies both actual Git objects, the retained original, published successor/lineage, actual current source/structural projection and exactly one printed naming-source input change. The historical same-registry acceptance path is unchanged. This admits history succession without accepting changed current numerical inputs.
+
+All eight source-alias cases and seven current source/readiness/log refusals passed, followed by 31 bounded Rust tests. The existing qualification receipt, all 24 current locks and ledger 0d85 remain byte-identical. The subsequent clean full gate must still establish the complete product contract; current M3 numerical publication remains separate.
+
 ## Exact remaining receiving work
 
 EA2 persists exact returned native journey state through Central revision-CAS under person/concern/deck ownership, including concurrent first-open and apply. CLI serialization/reopen does not prove that receiving store.

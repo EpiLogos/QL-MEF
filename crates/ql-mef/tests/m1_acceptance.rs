@@ -89,3 +89,27 @@ fn native_bindings_and_readiness_remain_qualified_by_their_actual_source() {
         String::from_utf8_lossy(&check.stderr)
     );
 }
+
+#[test]
+fn published_history_alias_cannot_replace_original_qualification() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let check = Command::new("python3")
+        .args([
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests",
+            "-p",
+            "test_historical_proof_alias.py",
+            "-v",
+        ])
+        .current_dir(root)
+        .output()
+        .unwrap();
+    assert!(
+        check.status.success(),
+        "{}",
+        String::from_utf8_lossy(&check.stderr)
+    );
+}

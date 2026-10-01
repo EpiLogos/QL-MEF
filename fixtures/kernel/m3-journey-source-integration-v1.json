@@ -194,5 +194,89 @@
     "managed installed/GPU/audio/restart whole acceptance",
     "owner H recognition"
   ],
-  "source_programme": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md"
+  "source_programme": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md",
+  "historical_alias_admission": {
+    "owner": "scripts/requalify-m-ledger.py::verify_historical_proof",
+    "consumer": "scripts/check-m1-acceptance.py::verify_requalified",
+    "first_canonical_failure": {
+      "schema": "ql.published-journey-integration-canonical-gate/v1",
+      "revision": "2662350364f850ffaec10f8ef359288ed7f04924",
+      "command": [
+        "bash",
+        "scripts/verify",
+        "full"
+      ],
+      "exit": 101,
+      "elapsed_seconds": 248.6594808101654,
+      "user_cpu_seconds": 219.623468,
+      "system_cpu_seconds": 26.233222,
+      "log": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/canonical-full.log",
+      "log_sha256": "355e140c94ce80930b3d9d5a9fde8066e4a3042116f0d73e6ff19d09312520da",
+      "test_result_lines": 54,
+      "after_git_status": ""
+    },
+    "repair": "Historical85db-qualified original retained separately; activepublished74dc successor admitted only through original/published Git bytes, exact native lineage, unchanged outputs/checks, one naming-source input delta, and actual current source/structural projection.",
+    "scope": "Source-history filename succession only; current numerical exact-input guard and unassessed ledger readiness retained.",
+    "source_lock_count": 24,
+    "ledger_and_qualification_receipt_unchanged": true,
+    "native_source_gate": {
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "ql-mef",
+        "--test",
+        "m1_acceptance",
+        "--test",
+        "m_ledger",
+        "--locked"
+      ],
+      "cwd": "/Users/admin/Central/worktrees/env-2/ql-mef",
+      "head": "2662350364f850ffaec10f8ef359288ed7f04924",
+      "git_status": " M crates/ql-mef/tests/m1_acceptance.rs\n M scripts/check-m1-acceptance.py\n M scripts/requalify-m-ledger.py\n?? scripts/tests/test_historical_proof_alias.py\n",
+      "qualification": {
+        "CC": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/cc-current-sdk",
+        "CXX": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/cxx-current-sdk",
+        "CARGO_BUILD_JOBS": "1",
+        "QL_FIELD_WORKER": "/Users/admin/Central/worktrees/env-2/ql-mef/cpp/build/ql-field-worker"
+      },
+      "exit": 0,
+      "elapsed_seconds": 23.795285708270967,
+      "user_cpu_seconds": 37.952448000000004,
+      "system_cpu_seconds": 2.235773,
+      "log_path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/historical-alias-native-gate.log",
+      "log_sha256": "77b3f9da598a9516e41d0e1ce0455beaf012969af4e1509e9c7657a0b67faafd",
+      "result_lines": 2
+    },
+    "actual_alias_tests": 8,
+    "actual_current_source_readiness_refusals": 7,
+    "refusal_receipts": [
+      {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/history-alias-repair/historical-alias-executed-receipt.json",
+        "sha256": "70040f5c03609295e72526504873d2061d3b0ba88cd83c549f5b8fe44ba75a5d"
+      },
+      {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/history-alias-repair/pure-python-refusal-receipt.json",
+        "sha256": "ce941bd6e68513afc3cce12aa41fbbeb98e0513c8082f1267080a1c6d145ae7c"
+      }
+    ],
+    "implementation_locks": [
+      {
+        "path": "scripts/requalify-m-ledger.py",
+        "sha256": "e1aed25554980abc2840c23dc0ca32fa1100686323e0e358d0182559169576d1"
+      },
+      {
+        "path": "scripts/check-m1-acceptance.py",
+        "sha256": "3e2196d6e437932c29a978f82688c73d80902ad1494c983551fc4dc15738130d"
+      },
+      {
+        "path": "scripts/tests/test_historical_proof_alias.py",
+        "sha256": "9a60f8bc2e4a94cda8559692e883c0940efc7b2934eea5fc29244cccfc7439fa"
+      },
+      {
+        "path": "crates/ql-mef/tests/m1_acceptance.rs",
+        "sha256": "0d52d4bd944c9f7a8acedb961944a76e0d8233313de8fbfc8dee24b902d0305d"
+      }
+    ]
+  }
 }

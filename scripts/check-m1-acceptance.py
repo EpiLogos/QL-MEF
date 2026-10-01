@@ -168,9 +168,7 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
     assert len(passed_tests) == len(set(passed_tests)) == 23, "native replay test inventory differs"
     assert re.findall(r"^test result: ok\. (\d+) passed; 0 failed;", replay, re.MULTILINE) == ["2", "8", "8", "5"]
     for path, digest in qualification["historical_numerical_proofs_unchanged"].items():
-        assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest
-        original = subprocess.check_output(["git", "show", historical["git_commit"] + ":" + path], cwd=root)
-        assert hashlib.sha256(original).hexdigest() == digest, "historical numerical proof was restamped"
+        module.verify_historical_proof(root, path, digest, historical["git_commit"])
     rows = {r["id"]: r for r in ledger["rows"]}
     impls = {i["id"]: i for i in ledger["implementations"]}
     m1 = [n for n in registry["nodes"] if n["root_position"] == 1]
