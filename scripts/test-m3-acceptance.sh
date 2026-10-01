@@ -4,6 +4,10 @@ cd "$(dirname "$0")/.."
 # With target/bimba-map/map.json (scripts/bimba_map.py read) the M3 field is
 # recomputed from the map; otherwise from the committed m3-domain projection.
 mkdir -p target/m3-acceptance
+case "$(uname -s)" in
+ Darwin) asan="detect_leaks=0:halt_on_error=1" ;;
+ *)      asan="detect_leaks=1:halt_on_error=1" ;;
+esac
 python3 scripts/m3-source-parity.py
 if [[ -f target/bimba-map/map.json ]]; then python3 scripts/m3-domain.py --map target/bimba-map/map.json; fi
 python3 scripts/m3-domain.py
@@ -27,7 +31,7 @@ cmp target/m3-domain/cc.jsonl target/m3-domain/c-rust.jsonl
 clang -std=c11 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
  -Ic/include -Itarget/m3-domain migration/epi-kernel/k7-m3-domain-probe.c \
  c/src/m3.c c/src/m3_domain.c c/src/m_tree.c -lm -o target/m3-domain/sanitized
-ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 target/m3-domain/sanitized > target/m3-domain/sanitized.jsonl
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 target/m3-domain/sanitized > target/m3-domain/sanitized.jsonl
 cmp target/m3-domain/cc.jsonl target/m3-domain/sanitized.jsonl
 cargo run -q -p ql-mef --example m3-state --locked < fixtures/kernel/m3-parent-consumer-current-v1.json > target/m3-acceptance/replay.json
 python3 scripts/m3-receipt.py

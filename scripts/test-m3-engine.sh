@@ -15,12 +15,16 @@ oracle_sources=()
 for source in "${EPI_C_REFERENCE_SOURCES[@]}"; do
   case "$source" in */src/m3.c|*/src/m3_clock_lut.c) ;; *) oracle_sources+=("$source") ;; esac
 done
+case "$(uname -s)" in
+  Darwin) gc=(-Wl,-dead_strip); asan="detect_leaks=0:halt_on_error=1" ;;
+  *)      gc=(-Wl,--gc-sections); asan="detect_leaks=1:halt_on_error=1" ;;
+esac
 for compiler in cc clang; do
   command -v "$compiler" >/dev/null
   "$compiler" -std=c11 -O1 -Wall -Wextra -Werror -pedantic -Ic/include -I"$out" \
     migration/epi-kernel/k7-m3-probe.c c/src/m3.c c/src/m_tree.c -lm -o "$out/$compiler-probe"
   "$out/$compiler-probe" > "$out/$compiler.jsonl"
-  "$compiler" -std=c11 -O1 -ffunction-sections -fdata-sections -Wl,--gc-sections \
+  "$compiler" -std=c11 -O1 -ffunction-sections -fdata-sections "${gc[@]}" \
     "${EPI_C_REFERENCE_FLAGS[@]}" -Ic/include -I"$out" \
     migration/epi-kernel/k7-m3-oracle.c c/src/m3.c c/src/m_tree.c "${oracle_sources[@]}" -lm -o "$out/$compiler-oracle"
   "$out/$compiler-oracle" | tee "$out/$compiler-oracle.txt"
@@ -29,7 +33,7 @@ cmp "$out/cc.jsonl" "$out/clang.jsonl"
 clang -std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -Ic/include -I"$out" \
   -fsanitize=address,undefined -fno-omit-frame-pointer \
   migration/epi-kernel/k7-m3-probe.c c/src/m3.c c/src/m_tree.c -lm -o "$out/sanitized"
-ASAN_OPTIONS=detect_leaks=1 "$out/sanitized" > "$out/sanitized.jsonl"
+ASAN_OPTIONS="$asan" UBSAN_OPTIONS=halt_on_error=1 "$out/sanitized" > "$out/sanitized.jsonl"
 cmp "$out/cc.jsonl" "$out/sanitized.jsonl"
 make -C c BUILD_DIR="$out/build" install DESTDIR="$out/install" PREFIX=/ql-mef-c
 cat > "$out/client.cpp" <<'CPP'

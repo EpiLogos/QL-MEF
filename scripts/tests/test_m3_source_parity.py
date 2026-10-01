@@ -1,14 +1,14 @@
-"""K7 locked-source and semantic mutation regressions; no live graph claims.
+"""Current M3 source fidelity against the admitted complete Bimba read.
 
-M3_SOURCE_ROOT is a read-only checkout of the K2-pinned source repository. The
-M3 workflow always supplies it; generic offline discovery reports an explicit
-skip rather than inventing that external source or a passing source observation.
+Expectations enumerate original coordinates, UUIDs, full properties and typed
+qualified edges directly from bimba-content-v1, independently of the numerical
+projection. No external checkout, skipped obsolete API or live graph claim.
 """
 import copy
 import hashlib
 import importlib.util
 import json
-import os
+from collections import Counter
 from pathlib import Path
 import re
 import tempfile
@@ -31,120 +31,170 @@ ledger = module("m3_shared_ledger", ROOT / "scripts/m-ledger.py")
 class M3SourceParityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        source = os.environ.get("M3_SOURCE_ROOT")
-        if not source:
-            raise unittest.SkipTest("M3_SOURCE_ROOT not supplied; source observation not performed")
-        cls.source = Path(source)
-        cls.registry, cls.raw_nodes, cls.raw_edges = m3.read_source(cls.source)
-        cls.projection = m3.project(cls.registry, cls.raw_nodes, cls.raw_edges)
+        cls.original = json.loads((ROOT / "fixtures/kernel/bimba-content-v1.json").read_text())
+        cls.registry = json.loads((ROOT / m3.REGISTRY).read_text())
+        cls.content = cls.original["content"]
+        cls.raw_nodes = {key: value for key, value in cls.content["nodes"].items()
+                         if re.fullmatch(r"M3(?:-.*)?", key)}
+        cls.raw_edges = [edge for edge in cls.content["relations"] if edge[0] in cls.raw_nodes]
+        cls.read = {"schema": "ql.bimba-map-read/v1",
+                    "content_sha256": cls.original["source_revision"], **cls.content}
+        cls.projection = m3.project(cls.registry, cls.read)
         cls.audit = m3.Audit(cls.projection).run()
         cls.lock = m3.load_json(ROOT / m3.LOCK)
+
+    @staticmethod
+    def native_ref(coordinate):
+        # Native registry spelling contract, independently of the projector:
+        # numeric M coordinates retain fractions/dots, dropping only brackets.
+        if re.fullmatch(r"M[0-5](?:[-./()0-9]*[0-9)])?", coordinate):
+            return "#" + coordinate[1:].replace("(", "").replace(")", "")
+        return "bimba:" + coordinate
 
     def changed(self):
         return copy.deepcopy(self.projection)
 
-    def test_exact_source_lock_and_deterministic_full_projection(self):
+    def assert_original_correspondence(self, projection):
+        expected = {self.native_ref(ref): value["properties"] for ref, value in self.raw_nodes.items()}
+        self.assertEqual(len(projection["nodes"]), len(expected), "required source node absent or duplicated")
+        self.assertEqual({node["ref"] for node in projection["nodes"]}, set(expected))
+        for node in projection["nodes"]:
+            self.assertEqual(node["properties"], expected[node["ref"]], "full property/UUID payload changed")
+            ident = hashlib.sha256(("ql.m-node/v1\0" + node["ref"]).encode()).hexdigest()[:16]
+            self.assertEqual(node["id"], ident, "exact native coordinate identity changed")
+        wanted = Counter(json.dumps([self.native_ref(a), kind, self.native_ref(b), properties],
+                                   sort_keys=True, ensure_ascii=False) for a, kind, b, properties in self.raw_edges)
+        observed = Counter(json.dumps([edge["from_ref"], edge["kind"], edge["to_ref"], edge["properties"]],
+                                     sort_keys=True, ensure_ascii=False) for edge in projection["relations"])
+        self.assertEqual(observed, wanted, "full typed edge direction/qualification/multiplicity changed")
+
+    def test_exact_original_hash_full_field_and_m3_source_lock(self):
+        self.assertEqual(self.original["source_revision"], self.registry["source_revision"])
+        encoded = json.dumps(self.content, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual(hashlib.sha256(encoded).hexdigest(), self.original["source_revision"])
+        self.assertEqual((len(self.content["nodes"]), len(self.content["relations"])), (2141, 11810))
+        self.assertEqual((len(self.raw_nodes), len(self.raw_edges)), (996, 4952))
         self.assertEqual(m3.lock_for(self.projection, self.audit), self.lock)
-        self.assertEqual(m3.project(self.registry, self.raw_nodes, self.raw_edges), self.projection)
+        self.assertEqual(m3.project(self.registry, self.read), self.projection)
+        self.assert_original_correspondence(self.projection)
         repeated = m3.Audit(self.projection)
         self.assertEqual(repeated.run(), repeated.run())
-        self.assertEqual(len(self.projection["nodes"]), 996)
-        self.assertEqual(len(self.projection["relations"]), 4891)
 
-    def test_lossless_node_and_qualified_duplicate_relation_roundtrip(self):
-        nodes = [{"coordinate": n["ref"], "filteredProps": n["properties"]} for n in self.projection["nodes"]]
-        edges = [{"source": e["from_ref"], "target": e["to_ref"], "relType": e["kind"],
-                  "relProperties": e["properties"]} for e in self.projection["relations"]]
-        self.assertEqual(nodes, self.raw_nodes)
-        self.assertEqual(edges, self.raw_edges)
-        self.assertTrue(any(e["target"] is None for e in edges))
-        signatures = [m3.digest(e) for e in edges]
-        self.assertLess(len(set(signatures)), len(signatures), "source duplicate edges were lost")
-
-    def test_exact_shared_id_scheme_and_compound_coordinates(self):
-        for node in self.projection["nodes"]:
-            expected = hashlib.sha256(("ql.m-node/v1\0" + node["ref"]).encode()).hexdigest()[:16]
-            self.assertEqual(node["id"], expected)
+    def test_full_uuid_properties_and_qualified_relations_match_originals(self):
+        self.assertTrue(all(value["properties"].get("c_2_uuid") for value in self.raw_nodes.values()))
+        self.assert_original_correspondence(self.projection)
         for edge in self.projection["relations"]:
             expected = hashlib.sha256(("ql.m-relation/v1\0" + edge["ref"]).encode()).hexdigest()[:16]
             self.assertEqual(edge["id"], expected)
-        refs = {n["ref"] for n in self.projection["nodes"]}
+        refs = {node["ref"] for node in self.projection["nodes"]}
         self.assertIn("#3-5-5/0-0/360", refs)
         self.assertIn("#3-3-3-0/1-0", refs)
         self.assertIn("#3-4.0-1-0", refs)
         self.assertNotIn("#3-5-5-0-0-360", refs)
         self.assertNotIn("#3-4-0-1-0", refs)
 
+    def test_original_cross_branch_inputs_remain_directional_and_qualified(self):
+        required = {
+            ("M3-0", "INHERITS_QUATERNION_FROM", "M1-5"),
+            ("M3-0", "RECEIVES_VIBRATIONAL_MATRIX_FROM", "M2"),
+            ("M3-0", "TRANSFORMS_72_TO_64_VIA", "M2-5"),
+            ("M3", "PROVIDES_SYMBOLS_TO", "M4.2-0"),
+            ("M3-1", "OPERATES_THROUGH", "M4.4.3-5-0"),
+            ("M3-5", "INTEGRATES_WITH", "M4.0"),
+        }
+        self.assertLessEqual(required, {(a, kind, b) for a, kind, b, _ in self.raw_edges})
+        self.assert_original_correspondence(self.projection)
+        for a, kind, b in required:
+            changed = self.changed()
+            index = next(i for i, edge in enumerate(changed["relations"])
+                         if (edge["from_ref"], edge["kind"], edge["to_ref"])
+                         == (self.native_ref(a), kind, self.native_ref(b)))
+            changed["relations"].pop(index)
+            with self.subTest(subject=(a, kind, b)), self.assertRaisesRegex(AssertionError, "typed edge"):
+                self.assert_original_correspondence(changed)
+
     def test_registry_identity_tampering_is_not_source_parity(self):
         changed = copy.deepcopy(self.registry)
         changed["nodes"][0]["id"] = "0000000000000001"
         with self.assertRaisesRegex(ValueError, "registry revision/content disagreement"):
-            m3.project(changed, self.raw_nodes, self.raw_edges)
+            m3.project(changed, self.read)
 
-    def test_missing_or_duplicate_node_cannot_pass_a_source_join(self):
-        for changed in (self.raw_nodes[:-1], self.raw_nodes + [self.raw_nodes[0]]):
-            with self.subTest(count=len(changed)), self.assertRaises(ValueError):
-                m3.project(self.registry, changed, self.raw_edges)
+    def test_missing_duplicate_or_wrong_coordinate_source_node_is_detected(self):
+        for mutation in (lambda nodes: nodes.pop(), lambda nodes: nodes.append(copy.deepcopy(nodes[0])),
+                         lambda nodes: nodes[0].update(ref="#4.4.4.4")):
+            changed = self.changed()
+            mutation(changed["nodes"])
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                self.assert_original_correspondence(changed)
 
-    def test_mutated_source_property_and_unclassified_wrapper_fail(self):
-        changed = copy.deepcopy(self.raw_nodes)
-        changed[0]["filteredProps"]["name"] = "unreviewed replacement"
-        with self.assertRaisesRegex(ValueError, "node payload drift"):
-            m3.project(self.registry, changed, self.raw_edges)
-        changed = copy.deepcopy(self.raw_nodes)
-        changed[0]["new_metadata"] = "must not silently disappear"
-        with self.assertRaisesRegex(ValueError, "unclassified source node wrapper"):
-            m3.project(self.registry, changed, self.raw_edges)
+    def test_full_property_and_uuid_removal_is_detected_with_metadata_retained(self):
+        for key in ("c_2_uuid", "c_3_integral_pp"):
+            changed = self.changed()
+            node = next(node for node in changed["nodes"] if node["ref"] == "#3-2-1")
+            node["properties"].pop(key)
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, "payload changed"):
+                self.assert_original_correspondence(changed)
 
-    def test_missing_retargeted_or_mutated_relation_fails(self):
-        with self.assertRaisesRegex(ValueError, "relation count drift"):
-            m3.project(self.registry, self.raw_nodes, self.raw_edges[:-1])
-        for field, value in (("target", "#3"), ("relProperties", {"forged": True})):
-            changed = copy.deepcopy(self.raw_edges)
-            changed[0][field] = value
-            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "relation .*drift"):
-                m3.project(self.registry, self.raw_nodes, changed)
+    def test_edge_removal_wrong_direction_and_qualification_are_detected(self):
+        for mutation in (lambda edges: edges.pop(),
+                         lambda edges: edges[0].update(to_ref=edges[0]["from_ref"]),
+                         lambda edges: edges[0]["properties"].update(c_2_relation_type="wrong qualification")):
+            changed = self.changed()
+            mutation(changed["relations"])
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(AssertionError, "typed edge"):
+                self.assert_original_correspondence(changed)
 
-    def test_file_bytes_are_locked_not_just_selected_fields(self):
+    def test_actual_map_reader_refuses_changed_original_even_with_restamped_hash(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            relative = m3.DATA + "nodes-full-detail.json"
-            path = root / relative
-            path.parent.mkdir(parents=True)
-            raw = (self.source / relative).read_bytes()
-            path.write_bytes(raw.replace(b"Mahamaya", b"Mahamayb", 1))
-            with self.assertRaisesRegex(ValueError, "source SHA-256 drift"):
-                m3.read_source(root)
+            path = Path(tmp) / "map.json"
+            path.write_text(json.dumps(self.read, ensure_ascii=False))
+            registry, read = m3.read_source(path)
+            self.assertEqual(registry, self.registry)
+            self.assertEqual(read, self.read)
+            changed = copy.deepcopy(self.read)
+            changed["nodes"]["M3-2-1"]["properties"]["c_3_integral_pp"] = -1
+            path.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(SystemExit, "content hash"):
+                m3.read_source(path)
+            content = {key: changed[key] for key in ("nodes", "relations")}
+            changed["content_sha256"] = hashlib.sha256(m3.canonical(content)).hexdigest()
+            path.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError, "map the registry was built from"):
+                m3.read_source(path)
 
-    def test_hexagram_composition_keeps_both_source_and_derived_codes(self):
+    def test_hexagram_addresses_and_source_line_edges_remain_distinct_from_native_law(self):
         rows = self.audit["details"]["hexagrams"]
         self.assertEqual({r["trigram_derived_address"] for r in rows}, set(range(64)))
-        self.assertEqual(len({r["source_binary_code"] for r in rows}), 61)
-        wrong = {r["ref"] for r in rows if r["source_binary_code"] != r["trigram_derived_address"]}
-        self.assertEqual(wrong, {"#3-1-5-7", "#3-1-6-5", "#3-1-7-2"})
-        self.assertEqual(self.lock["finding_counts"]["line-change"], 258)
+        # Current source has no asserted binary; preserve exact trigram-derived
+        # addresses rather than inventing the removed historical field.
+        self.assertTrue(all("source_binary_code" not in row for row in rows))
+        self.assertEqual(self.lock["finding_counts"]["line-change"], 75)
         self.assertEqual(self.lock["finding_counts"]["nuclear-register"], 60)
-        self.assertEqual(sum(e["kind"] == "LINE_CHANGE" for e in self.projection["relations"]), 384)
+        source_lines = sum(kind == "LINE_CHANGE" for _, kind, _, _ in self.raw_edges)
+        self.assertEqual(source_lines, 383)  # Native XOR law has 384 transitions; source is retained.
+        self.assertEqual(sum(e["kind"] == "LINE_CHANGE" for e in self.projection["relations"]), source_lines)
 
     def test_deleted_trigram_or_duplicate_line_relation_fails(self):
         for kind in ("HAS_UPPER_TRIGRAM", "LINE_CHANGE"):
             changed = self.changed()
             index = next(i for i, e in enumerate(changed["relations"]) if e["kind"] == kind)
             changed["relations"].pop(index)
-            with self.subTest(kind=kind), self.assertRaises(ValueError):
-                m3.Audit(changed).run()
+            with self.subTest(kind=kind), self.assertRaisesRegex(AssertionError, "typed edge"):
+                self.assert_original_correspondence(changed)
 
-    def test_matrix_field_retains_nulls_missing_roles_and_distinct_admissibility(self):
+    def test_matrix_field_retains_original_qualified_cardinality_and_distinct_admissibility(self):
         rows = self.audit["details"]["matrices"]
         self.assertEqual([sum(r["family"] == f for r in rows) for f in range(3)], [64, 64, 56])
-        self.assertEqual(self.lock["finding_counts"]["matrix-unresolved-endpoint"], 114)
-        self.assertEqual(self.lock["finding_counts"]["matrix-missing-pair-role"], 1)
+        self.assertNotIn("matrix-unresolved-endpoint", self.lock["finding_counts"])
+        self.assertNotIn("matrix-missing-pair-role", self.lock["finding_counts"])
         self.assertEqual(self.lock["finding_counts"]["resonance-admissibility"], 1)
         self.assertEqual(sorted(set(range(64)) - {r["address"] for r in rows if r["family"] == 2}),
                          [6, 14, 22, 30, 38, 46, 54, 62])
         cell = next(r for r in rows if r["ref"] == "#3-3-2-2-24")
         self.assertEqual(len(cell["pair_relations"]), 1)
-        self.assertEqual(sum(len(r["codon_relations"]) for r in rows), 368)
+        source_yields = sum(kind == "YIELDS_CODON" and a.startswith("M3-3-2-")
+                            for a, kind, _, _ in self.raw_edges)
+        self.assertEqual(sum(len(r["codon_relations"]) for r in rows), source_yields)
 
     def test_transcription_is_37_exact_t_to_u_with_27_shared_forms(self):
         rows = self.audit["details"]["genetics"]["rna"]
@@ -184,8 +234,10 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(sum(len(r["court_relations"]) for r in rows), 16)
         associations = self.audit["details"]["genetics"]["major_associations"]
         fool = next(r for r in associations if r["ref"] == "#3-4-5/0-0")
-        self.assertEqual(len(fool["relations"]["PROVIDES_VESSEL_FOR"]), 4)
-        self.assertEqual(len(fool["relations"]["ARCHETYPAL_CASCADE"]), 6)
+        self.assertEqual(len(fool["relations"]["PROVIDES_VESSEL_FOR"]), 3)
+        source_cascade = sum(kind == "ARCHETYPAL_CASCADE" and self.native_ref(a) == fool["ref"]
+                             for a, kind, _, _ in self.raw_edges)
+        self.assertEqual(len(fool["relations"]["ARCHETYPAL_CASCADE"]), source_cascade)
 
     def test_native_pair_reference_matches_actual_retained_c_table(self):
         text = (ROOT / "vendor/epi-kernel/reference/src/m3.c").read_text()
@@ -196,8 +248,8 @@ class M3SourceParityTests(unittest.TestCase):
             sequence = row["sequence"]
             index = "ATCG".index(sequence[0])*4 + "ATCG".index(sequence[1])
             self.assertEqual(row["native"], table[index])
-        self.assertEqual(self.lock["finding_counts"]["pair-descriptor"], 12)
-        self.assertEqual(self.lock["finding_counts"]["codon-charge"], 112)
+        self.assertNotIn("pair-descriptor", self.lock["finding_counts"])
+        self.assertNotIn("codon-charge", self.lock["finding_counts"])
 
     def test_full_clock_backbone_inverse_flow_and_opposition(self):
         rows = self.audit["details"]["clock"]
@@ -254,13 +306,11 @@ class M3SourceParityTests(unittest.TestCase):
     def test_no_execution_acceptance_or_live_graph_claim_can_hide_in_source_success(self):
         self.assertEqual(self.audit["standing"]["c_rust_execution"], "not-claimed-by-this-source-audit")
         self.assertEqual(self.audit["standing"]["K4_acceptance"], "not-claimed")
-        self.assertEqual(self.audit["standing"]["neo4j_live"], "not-observed")
+        self.assertEqual(self.audit["standing"]["neo4j_live"], "read-only map read; content hash = registry source_revision")
         self.assertEqual(self.audit["standing"]["cpp_embodiment"], "not-executed")
         self.assertEqual(self.audit["standing"]["experiential"], "not-claimed")
-        self.assertEqual(len(self.audit["discrepancies"]), 563)
+        self.assertEqual(len(self.audit["discrepancies"]), 183)
 
 
 if __name__ == "__main__":
-    if not os.environ.get("M3_SOURCE_ROOT"):
-        raise SystemExit("M3_SOURCE_ROOT is required for the explicit source-parity test run")
     unittest.main()
