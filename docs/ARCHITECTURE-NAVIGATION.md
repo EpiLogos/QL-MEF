@@ -43,6 +43,10 @@ acceptance; proposed joins remain explicitly proposed.
 Existing capability records link this companion through the optional
 `extensions.documentation` protocol. These links change discoverability, not
 capability IDs, coordinate placements, implementation status or source authority.
+The formal CLI and context-frame records link their local operation account;
+the shared Expression diagram is a suite context, not a diagram of those
+operations, so those two records assert no `described-by` relation to its
+retained-Expression node.
 
 ## Verification and open joins
 
