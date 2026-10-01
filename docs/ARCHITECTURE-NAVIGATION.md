@@ -23,7 +23,9 @@ baseline, current implementation and observed result keep their own standing.
 
 | Concern | Public operation / entry | Native source | Boundary and lifecycle |
 | --- | --- | --- | --- |
-| Formal/native operations | Native QL CLI/operator and context-frame operations | `crates/ql-mef/src/lib.rs`; `scene.rs` | Formal operation, declared source, scene state and O:I rendering are distinct. |
+| Formal operation discovery | `ql capabilities --json`; `ql kernel capabilities --json` | `crates/ql-cli/src/lib.rs`; `crates/ql-mef/src/lib.rs` | CLI dispatch and formal kernel exports are distinct from scene state or O:I rendering. Availability of a provider-backed reading must be negotiated separately. |
+| Context-frame registry | `ql context-frame list --json`; ContextFrameId | `crates/ql-cli/src/lib.rs`; `crates/ql-mef/src/context_frame.rs` | Registry reading selects a defined formal cut; it does not change the originating subject or adopt the personal-world mappings. CLI tests exercise execute_cli and the real front-door binary. |
+| Scene material | Native scene-world construction / instrument state | `crates/ql-mef/src/scene.rs`; `crates/ql-mef/tests/scene_instrument.rs` | Native structural/computational state, retained Expression state and installed lived encounter keep separate proof. |
 | Coordinate-bound world / Personal Pratibimba | Read the [ongoing fidelity programme](https://github.com/EpiLogos/QL-MEF/issues/258) and its current source/recovery return | The programme's named active audit cut, qualified below | The audit owns numerical/domain mappings. Shared locus, private person, actual occasion and Expression instance remain distinct; do not substitute a generic profile page. |
 | Consumer / evidence | Native scene-world material and source basis → O:I Expression | O:I `desktop/cradle/kernel/src/expression_world.rs`; current domain audit | Source coverage, finite computational proof, retained save/readback and installed lived encounter are different acceptance cuts. |
 
