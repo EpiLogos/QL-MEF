@@ -479,9 +479,26 @@ mod tests {
         let partition = &reading["presentation_partition"];
         let total = partition["denominator"]["weighted_total"].as_f64().unwrap();
         assert!((total - (35999.0 + 56724.0 + 23668.8)).abs() < 1e-8);
-        assert_eq!(partition["unrouted"]["planet_ids"], json!([7, 8, 9]));
-        // These three neutral outer placements remain in the original total.
-        assert_eq!(partition["unrouted"]["weighted_power"], 77.0);
+        assert_eq!(partition["unrouted"]["planet_ids"], json!([7]));
+        // Uranus has no accepted graph recipient and retains its own mass42.
+        // Qualified Neptune21→Ajna and Pluto14→crown still share this denominator.
+        assert_eq!(partition["unrouted"]["weighted_power"], 42.0);
+        for (id, ordinal, weight) in [(8, 5, 21.0), (9, 6, 14.0)] {
+            assert_eq!(
+                reading["planetary_contributions"][id]["receiving_centre_ordinal"],
+                ordinal
+            );
+            assert_eq!(
+                reading["planetary_contributions"][id]["weighted_contribution"],
+                weight
+            );
+            assert!(
+                partition["centres"][ordinal]["raw_efwa"][3]
+                    .as_f64()
+                    .unwrap()
+                    >= weight
+            );
+        }
         assert_eq!(partition["unresolved"]["weighted_power"], 0.0);
         let mut mass = partition["unrouted"]["mass_share_l1"].as_f64().unwrap();
         let mut reconstructed = [0.0; 4];
@@ -555,8 +572,8 @@ mod tests {
             vec![4],
             vec![3],
             vec![2],
-            vec![1],
-            vec![0],
+            vec![1, 8],
+            vec![0, 9],
         ];
         for (ordinal, planets) in expected.into_iter().enumerate() {
             let centre = &reading["centre_evidence"][ordinal];
@@ -582,8 +599,30 @@ mod tests {
             reading["planetary_contributions"][0]["receiving_centre_ordinal"],
             6
         );
+        assert!(reading["planetary_contributions"][7]["receiving_centre_ordinal"].is_null());
+        assert!(reading["planetary_contributions"][7]["planetary_chakra_route"].is_null());
+        for (id, planet_ref, centre_ref, ordinal) in [
+            (8, "#2-5-8", "#2-5-0/1-6", 5),
+            (9, "#2-5-9", "#2-5-0/1-7", 6),
+        ] {
+            let contribution = &reading["planetary_contributions"][id];
+            assert_eq!(contribution["receiving_centre_ordinal"], ordinal);
+            let route = &contribution["planetary_chakra_route"];
+            assert_eq!(route["planet_coordinate"], planet_ref);
+            assert_eq!(route["chakra_coordinate"], centre_ref);
+            let relations = route["relations"].as_array().unwrap();
+            assert!(!relations.is_empty());
+            // #254 D10 admitted this qualified source edge, not direct resonance.
+            assert!(
+                relations
+                    .iter()
+                    .all(|r| r["source_kind"] == "HAS_CHAKRAL_ANCHOR"
+                        && r["from_ref"] == planet_ref
+                        && r["to_ref"] == centre_ref
+                        && r["orientation"] == "directed")
+            );
+        }
         for id in 7..10 {
-            assert!(reading["planetary_contributions"][id]["receiving_centre_ordinal"].is_null());
             assert!(
                 reading["planetary_contributions"][id]["weighted_contribution"]
                     .as_f64()
@@ -741,8 +780,8 @@ mod tests {
     #[test]
     fn every_planet_correction_follows_its_graph_route_without_erasing_global_evidence() {
         let before = natal_composition(&controlled_input([15.0; 10])).unwrap();
-        // Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn; outer planets have
-        // global natal evidence but no asserted canonical centre correspondence.
+        // Exact 907c native routes: the seven direct correspondences plus
+        // qualified Neptune→Ajna and Pluto→crown. Uranus stays unrouted.
         let expected = [
             Some(6),
             Some(5),
@@ -752,8 +791,8 @@ mod tests {
             Some(1),
             Some(0),
             None,
-            None,
-            None,
+            Some(5),
+            Some(6),
         ];
         for (planet, target) in expected.into_iter().enumerate() {
             let mut input = controlled_input([15.0; 10]);
@@ -772,7 +811,14 @@ mod tests {
                     route["chakra_coordinate"],
                     format!("#2-5-0/1-{}", ordinal + 1)
                 );
-                assert!(!route["relations"].as_array().unwrap().is_empty());
+                let relations = route["relations"].as_array().unwrap();
+                assert!(!relations.is_empty());
+                let kind = if planet >= 8 {
+                    "HAS_CHAKRAL_ANCHOR"
+                } else {
+                    "PLANETARY_RESONANCE"
+                };
+                assert!(relations.iter().all(|r| r["source_kind"] == kind));
             }
         }
     }

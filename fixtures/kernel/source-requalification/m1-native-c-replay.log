@@ -1,0 +1,17 @@
+M1 probe: 20736 source/C/Rust-comparable cells; checked Spanda, formal, topology and rejection boundaries
+M1 source comparison: 1352 equal literal readings, 376 retained differences; no normalisation
+M1: 864 source cells / 1728 literal tokens exactly compiled
+M1 state: 864 source cells; 43 coordinates; 529 incident relations; 2401 rotors; 48 carriers; 384 clock advances; 625 torus positions; 4096 independent state pairs
+Actual C literal-source parity: 1728 exact raw/DR strings
+test -f ../fixtures/kernel/holographic-kernel-contract-v1.tsv
+mkdir -p /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/lib /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c
+cp include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h include/ql/m_tree_live.h include/ql/coupled_clock.h include/ql/m2_aperture.h include/ql/m1.h include/ql/m2.h include/ql/m3.h include/ql/m3_domain.h /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql/
+cp build/libql-mef-c.a /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/lib/libql-mef-c.a
+cp ../fixtures/kernel/m-tree-v1.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v1.json
+cp build/live/m-tree-v2.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v2.json
+cp build/live/k8-structure-receipt-v1.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/k8-structure-receipt-v1.json
+cp ../fixtures/kernel/holographic-kernel-contract-v1.tsv /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv
+printf '%s\n' '0.1.0' > /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/api-version.txt
+printf '%s\n' '1.1.0' > /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/kernel-contract-version.txt
+cp build/source-revision.txt /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/source-revision.txt
+M1 native sanitizers and installed C++ consumer passed (not C++ instrument parity).

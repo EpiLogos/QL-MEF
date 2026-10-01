@@ -10,9 +10,9 @@ PATHS=[
  'c/Makefile','c/include/ql/m3.h','c/include/ql/m3_domain.h','c/src/m3.c','c/src/m3_domain.c',
  'crates/ql-core/src/m3_clock.rs','crates/ql-mef/src/m3_engine.rs','crates/ql-mef/src/m3_source.rs','crates/ql-mef/src/m3_state.rs',
  'crates/ql-mef/examples/m3-state.rs','crates/ql-mef/tests/m3_engine.rs','crates/ql-mef/tests/m3_domain.rs','crates/ql-mef/tests/m3_state.rs',
- 'fixtures/kernel/m3-domain-v1.json','fixtures/kernel/m3-parent-consumer-v1.json','fixtures/kernel/m-tree-v1.json',
+ 'fixtures/kernel/m3-domain-v1.json','fixtures/kernel/m3-parent-consumer-v1.json','fixtures/kernel/m3-parent-consumer-current-v1.json','fixtures/kernel/m3-parent-consumer-current-v1.basis.json','fixtures/kernel/m-tree-v1.json',
  'migration/epi-kernel/k7-m3-oracle.c','migration/epi-kernel/k7-m3-probe.c','migration/epi-kernel/k7-m3-domain-probe.c',
- 'scripts/generate-m3.py','scripts/m3-domain.py','scripts/test-m3-engine.sh','scripts/test-m3-acceptance.sh','scripts/m3-receipt.py',
+ 'scripts/generate-m3.py','scripts/m3-domain.py','scripts/refresh-m3-parent-consumer.py','scripts/test-m3-engine.sh','scripts/test-m3-acceptance.sh','scripts/m3-receipt.py',
  'scripts/m3-source-parity.py','scripts/m3-observation-parity.py','scripts/tests/test_m3_engine.py','scripts/tests/test_m3_domain.py',
  'vendor/epi-kernel/reference/src/m3.c','vendor/epi-kernel/reference/src/m3_clock_lut.c','vendor/epi-kernel/reference/include/m3.h',
 ]

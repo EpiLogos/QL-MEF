@@ -75,16 +75,10 @@ fn actual_c_and_rust_source_routes_preserve_graph_assertions() {
                         .to_string()
                 );
                 if planet == 11 {
-                    // RULED_BY Saturn; RESONATES_WITH, SPANDA_TEMPORAL_RHYTHM and
-                    // HARMONICALLY_RESONATES_WITH all reach the Moon.
-                    assert_eq!(route.graph_candidates[0].planet_index, 6);
-                    assert_eq!(route.source_conflicts.len(), 3);
-                    assert!(
-                        route
-                            .source_conflicts
-                            .iter()
-                            .all(|c| c.planet_index == 1 && c.planet_coordinate == "#2-5-4")
-                    );
+                    // Owner #254 D9 corrected RULED_BY to Moon. The independent
+                    // expected planet is native ID1, not a producer-derived table.
+                    assert_eq!(route.graph_candidates[0].planet_index, 1);
+                    assert!(route.source_conflicts.is_empty());
                 }
             } else {
                 let assertion = route
@@ -112,7 +106,21 @@ fn actual_c_and_rust_source_routes_preserve_graph_assertions() {
                 assert_eq!(fields[3], format!("{:016x}", route.chakra_id.as_u64()));
                 assert_eq!(fields[4], route.chakra_index.to_string());
                 assert_eq!(fields[5], route.relations.len().to_string());
-                assert_eq!(route.chakra_coordinate, format!("#2-5-0/1-{}", 7 - planet));
+                let centre = match planet {
+                    0..=6 => 7 - planet,
+                    8 => 6,
+                    9 => 7,
+                    _ => panic!("Uranus has no authored route"),
+                };
+                assert_eq!(route.chakra_coordinate, format!("#2-5-0/1-{centre}"));
+                if planet >= 8 {
+                    assert!(
+                        route
+                            .relations
+                            .iter()
+                            .all(|r| r.source_kind == "HAS_CHAKRAL_ANCHOR")
+                    );
+                }
             }
             "assertion" => {
                 let route = route.unwrap();
@@ -129,7 +137,8 @@ fn actual_c_and_rust_source_routes_preserve_graph_assertions() {
     assert_eq!(planets, (0..10).collect());
     assert_eq!(
         assertions.len(),
-        (0..7)
+        (0..10)
+            .filter(|&i| i != 7)
             .map(|i| m2::planet_chakra_route(i).unwrap().unwrap().relations.len())
             .sum::<usize>()
     );

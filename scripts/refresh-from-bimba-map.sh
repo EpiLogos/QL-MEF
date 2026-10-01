@@ -19,6 +19,7 @@ fi
 test -f target/bimba-map/map.json || { echo "no map read: pass --endpoint URL or set QL_BIMBA_MAP" >&2; exit 64; }
 
 python3 scripts/generate-m-tree.py --from-map
+python3 scripts/bimba-content.py
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -36,5 +37,6 @@ python3 scripts/m2-correspondences.py refresh
 python3 scripts/m2-field-report.py refresh
 python3 scripts/m3-source-parity.py --refresh-lock > /dev/null
 python3 scripts/m3-domain.py --map target/bimba-map/map.json --refresh
+python3 scripts/refresh-m3-parent-consumer.py
 python3 scripts/m2-sky.py --map target/bimba-map/map.json --refresh
 echo "refreshed from the Bimba map; review with: git diff --stat"

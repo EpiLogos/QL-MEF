@@ -114,7 +114,8 @@ QL_M2_Result ql_m2_planet_chakra_route(unsigned index,QL_M2_PlanetChakraRoute *o
     route.planet_id=planet->coordinate_id;
     for(i=0;i<ql_m_relation_count();++i) {
         const QL_M_Relation *r=ql_m_relation_at(i);
-        if(r->from_id!=route.planet_id || strcmp(r->source_kind,"PLANETARY_RESONANCE")) continue;
+        if(r->from_id!=route.planet_id ||
+           (strcmp(r->source_kind,"PLANETARY_RESONANCE") && strcmp(r->source_kind,"HAS_CHAKRAL_ANCHOR"))) continue;
         if(!r->to_id || (route.chakra_id && route.chakra_id!=r->to_id)) return QL_M2_INVALID;
         route.chakra_id=r->to_id;
         ++route.relation_count;
@@ -137,7 +138,7 @@ const QL_M_Relation *ql_m2_planet_chakra_relation(unsigned index,size_t assertio
     for(i=0;i<ql_m_relation_count();++i) {
         const QL_M_Relation *r=ql_m_relation_at(i);
         if(r->from_id==route.planet_id && r->to_id==route.chakra_id &&
-           strcmp(r->source_kind,"PLANETARY_RESONANCE")==0) {
+           (!strcmp(r->source_kind,"PLANETARY_RESONANCE") || !strcmp(r->source_kind,"HAS_CHAKRAL_ANCHOR"))) {
             if(matched++==assertion_index) return r;
         }
     }

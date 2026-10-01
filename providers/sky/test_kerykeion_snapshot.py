@@ -140,6 +140,26 @@ class SkyTests(unittest.TestCase):
             self.assertEqual(json.dumps(replay, sort_keys=True), original)
         self.assertEqual(json.dumps(self.saved, sort_keys=True), original)
 
+    def test_actual_javascript_round_trip_preserves_the_admitted_occasion(self):
+        # Exercise the production JSON Number transport, not a hand-edited
+        # stand-in. The provider emits an integral Julian-day float while
+        # JavaScript serializes it as an integer. The reference must survive.
+        original = json.dumps(self.saved, sort_keys=True)
+        transport = subprocess.run(
+            ['node', '-e', 'process.stdout.write(JSON.stringify(JSON.parse(require("fs").readFileSync(0,"utf8"))))'],
+            input=original, text=True, capture_output=True, check=True)
+        received = json.loads(transport.stdout)
+        self.assertIs(type(received['julian_day_ut_argument']), int)
+        replay = sky.validate_snapshot(received)
+        self.assertEqual(replay['snapshot_ref'], self.saved['snapshot_ref'])
+        self.assertEqual(replay['bodies'], self.saved['bodies'])
+        self.assertEqual(json.dumps(self.saved, sort_keys=True), original)
+        # The admission repair must reject a changed determinant even after
+        # the same transport; it restores a type, never a lost quantity.
+        received['bodies'][0]['longitude_degrees'] += 0.001
+        with self.assertRaisesRegex(sky.SkyError, 'digest'):
+            sky.validate_snapshot(received)
+
     def test_provider_failure_missing_body_and_unknown_version(self):
         from kerykeion import AstrologicalSubjectFactory
         with patch.object(AstrologicalSubjectFactory, 'from_birth_data', side_effect=RuntimeError('lost')):

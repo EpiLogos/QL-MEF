@@ -649,11 +649,11 @@ fn cross_table_links_are_the_maps_typed_relations() {
         let rulers = linked_via("decan", face, "planet", Some("RULED_BY"));
         assert_eq!(rulers.len(), 1, "face {face}");
     }
-    // Cancer decan 3 is RULED_BY Saturn and RESONATES_WITH the Moon: both are
-    // map relations, and `via` tells them apart.
+    // #254 D9's accepted correction makes both qualified routes reach Moon;
+    // `via` still retains their distinct meanings.
     assert_eq!(
         linked_via("decan", 58, "planet", Some("RULED_BY")),
-        ["Saturn"]
+        ["Moon"]
     );
     assert_eq!(
         linked_via("decan", 58, "planet", Some("RESONATES_WITH")),

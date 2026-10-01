@@ -1,13 +1,590 @@
 {
-  "schema_version":"epi-m-capability-domain/0.2","status":"active-research-matrix","date":"2026-09-03","m":"M5","m_name":"Epii","m_prime":"M5′ Epii reflexive developmental / review instrument",
-  "epii_on_x":{"ref":"EPII_ON_M5_EPII","name":"Epii-on-Epii","source":"m5-prime-epii-on-epii-self-referential-capacity.md","blob":"5350bd9f30db611d93352d21891698a39e6c9c8a","standing":"CURRENT-DOMAIN-SPEC / RESEARCH-PROPOSITION","developmental_law":"Recursive synthetic-telic development of pedagogy, review, canon and autoresearch; CPT/RAG may support voice/reach but never auto-promote."},
-  "return":{"target_ground":"Epii canon / the target source reached by Möbius Return","recognition_owner":"human Recognition plus the canonical owner of the target ground; Factory evidence/review does not itself confer authority","proposal_is_not_promotion":true},
-  "capabilities":[
-    {"capability_ref":"M5P-LIBRARY","m":"M5","for_what":"Bimba pedagogy, Gnosis/RAG and knowledge retrieval across distinct namespaces","m_prime_operation":"Use M5′ as a provenance-bearing pedagogical/knowledge instrument across distinct namespaces while keeping retrieval, reading and canon standing separate.","s_prime":["S1′ Hen","S2′ Pleroma","S5′ Aletheia"],"native_owners":["AIKit","QL-MEF","Central"],"evidence_refs":["AIKIT_SEMANTIC_WIKI_158"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"},
-    {"capability_ref":"M5P-CANON","m":"M5","for_what":"Philosophy/canon authoring and review with safe mutation","m_prime_operation":"Operate M5′ canon/philosophy work as reviewable authored/proposed difference with explicit mutation authority, evidence and Recognition.","s_prime":["S1′ Hen","S4′ Anima","S5′ Aletheia"],"native_owners":["Central","AIKit","Factory","QL-MEF"],"evidence_refs":["AIKIT_SEMANTIC_WIKI_158","FACTORY_JOURNEY_176"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"},
-    {"capability_ref":"M5P-BACKEND-STUDIO","m":"M5","for_what":"Inspect and operate Epi backend through governed tasks/tests/evidence","m_prime_operation":"Use M5′ backend development as a governed Agency→Journey/Run→material execution→evidence loop whose returned changes remain candidates until recognised.","s_prime":["S2′ Pleroma","S4′ Anima","S5′ Aletheia"],"native_owners":["AIKit","Actuation","Factory","Workcell","QL-MEF"],"evidence_refs":["FACTORY_JOURNEY_176","OI_WORLD_RECOGNITION_185","WORKCELL_MATERIAL_BODY"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"},
-    {"capability_ref":"M5P-REFLECTED-APP","m":"M5","for_what":"Reflected application/workspace surface for M-prime capabilities","m_prime_operation":"Compose M5′ as an inhabited application/workspace in which source, instruments, time, Agency and material surfaces retain their native refs and ownership.","s_prime":["S0′ Khora","S2′ Pleroma","S3′ Chronos","S4′ Anima"],"native_owners":["AIKit","O:I SharedField","QL-MEF","Workcell"],"evidence_refs":["OI_WORLD_RECOGNITION_185","OI_SHAREDFIELD_SPACETIMEDB"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"},
-    {"capability_ref":"M5P-CONTROL-ROOM","m":"M5","for_what":"Governed Agent execution, capability selection, evidence and review handoff","m_prime_operation":"Compose M5′ control-room activity from native capabilities, Agency and Journey/Run evidence, routing returned difference to explicit review/Recognition.","s_prime":["S2′ Pleroma","S4′ Anima","S5′ Aletheia"],"native_owners":["Actuation","AIKit","Factory","QL-MEF"],"evidence_refs":["FACTORY_JOURNEY_176","OI_WORLD_RECOGNITION_185"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"},
-    {"capability_ref":"M5P-ATELIER","m":"M5","for_what":"Logos/etymological archaeology, source-following, crystallisation and return","m_prime_operation":"Operate M5′ etymological/source archaeology through QL-shaped knowledge, bounded research praxis and governed crystallisation back to exact sources.","s_prime":["S1′ Hen","S2′ Pleroma","S4′ Anima","S5′ Aletheia"],"native_owners":["AIKit","Factory","QL-MEF","Central"],"evidence_refs":["AIKIT_SEMANTIC_WIKI_158","FACTORY_JOURNEY_176"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M5_EPII","return_profile":"M5"}
-  ]
+  "schema_version": "epi-m-capability-domain/0.2",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "m": "M5",
+  "m_name": "Epii",
+  "m_prime": "M5′ Epii reflexive developmental / review instrument",
+  "epii_on_x": {
+    "ref": "EPII_ON_M5_EPII",
+    "name": "Epii-on-Epii",
+    "source": "m5-prime-epii-on-epii-self-referential-capacity.md",
+    "blob": "5350bd9f30db611d93352d21891698a39e6c9c8a",
+    "standing": "CURRENT-DOMAIN-SPEC / RESEARCH-PROPOSITION",
+    "developmental_law": "Recursive synthetic-telic development of pedagogy, review, canon and autoresearch; CPT/RAG may support voice/reach but never auto-promote."
+  },
+  "return": {
+    "target_ground": "Epii canon / the target source reached by Möbius Return",
+    "recognition_owner": "human Recognition plus the canonical owner of the target ground; Factory evidence/review does not itself confer authority",
+    "proposal_is_not_promotion": true
+  },
+  "capabilities": [
+    {
+      "capability_ref": "M5P-LIBRARY",
+      "m": "M5",
+      "for_what": "Bimba pedagogy, Gnosis/RAG and knowledge retrieval across distinct namespaces",
+      "m_prime_operation": "Use M5′ as a provenance-bearing pedagogical/knowledge instrument across distinct namespaces while keeping retrieval, reading and canon standing separate.",
+      "s_prime": [
+        "S1′ Hen",
+        "S2′ Pleroma",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "AIKit",
+        "QL-MEF",
+        "Central"
+      ],
+      "evidence_refs": [
+        "AIKIT_SEMANTIC_WIKI_158"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX10",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "companion-install-repair.json",
+              "desktop-install-after.json"
+            ],
+            "reading": "Preserved installed entrance failures; repaired exact-cut companions and desktop then replayed. Subsequent host/renderer repairs active Mac owners.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M5P-CANON",
+      "m": "M5",
+      "for_what": "Philosophy/canon authoring and review with safe mutation",
+      "m_prime_operation": "Operate M5′ canon/philosophy work as reviewable authored/proposed difference with explicit mutation authority, evidence and Recognition.",
+      "s_prime": [
+        "S1′ Hen",
+        "S4′ Anima",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "Central",
+        "AIKit",
+        "Factory",
+        "QL-MEF"
+      ],
+      "evidence_refs": [
+        "AIKIT_SEMANTIC_WIKI_158",
+        "FACTORY_JOURNEY_176"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX10",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "companion-install-repair.json",
+              "desktop-install-after.json"
+            ],
+            "reading": "Preserved installed entrance failures; repaired exact-cut companions and desktop then replayed. Subsequent host/renderer repairs active Mac owners.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M5P-BACKEND-STUDIO",
+      "m": "M5",
+      "for_what": "Inspect and operate Epi backend through governed tasks/tests/evidence",
+      "m_prime_operation": "Use M5′ backend development as a governed Agency→Journey/Run→material execution→evidence loop whose returned changes remain candidates until recognised.",
+      "s_prime": [
+        "S2′ Pleroma",
+        "S4′ Anima",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "AIKit",
+        "Actuation",
+        "Factory",
+        "Workcell",
+        "QL-MEF"
+      ],
+      "evidence_refs": [
+        "FACTORY_JOURNEY_176",
+        "OI_WORLD_RECOGNITION_185",
+        "WORKCELL_MATERIAL_BODY"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX10",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "companion-install-repair.json",
+              "desktop-install-after.json"
+            ],
+            "reading": "Preserved installed entrance failures; repaired exact-cut companions and desktop then replayed. Subsequent host/renderer repairs active Mac owners.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M5P-REFLECTED-APP",
+      "m": "M5",
+      "for_what": "Reflected application/workspace surface for M-prime capabilities",
+      "m_prime_operation": "Compose M5′ as an inhabited application/workspace in which source, instruments, time, Agency and material surfaces retain their native refs and ownership.",
+      "s_prime": [
+        "S0′ Khora",
+        "S2′ Pleroma",
+        "S3′ Chronos",
+        "S4′ Anima"
+      ],
+      "native_owners": [
+        "AIKit",
+        "O:I SharedField",
+        "QL-MEF",
+        "Workcell"
+      ],
+      "evidence_refs": [
+        "OI_WORLD_RECOGNITION_185",
+        "OI_SHAREDFIELD_SPACETIMEDB"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX03",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "16-lens-L0-action-ax.txt",
+              "17-step-action-ax.txt",
+              "69-world-clock-running.png"
+            ],
+            "reading": "MEF lens, CF, M1 tick exercised; cadence requested1Hz attained~.19Hz. M3 aperture not exercised.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX11",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "59-live-reopen-ack-timeout.png",
+              "74-disconnected-consumer-return.png",
+              "79-keyboard-focused-resize-after.png",
+              "147-native-r2-recovery-inspect.json",
+              "148-attached-file-save-destination-disabled.png",
+              "151-owner-register-save-before.png",
+              "152-native-file-save-inspect.json",
+              "154-native-file-after-restart.png",
+              "155-native-saved-file-reopened.png",
+              "155-native-file-reopen-comparison.json"
+            ],
+            "reading": "Mode roundtrip retains browser scene before restart; saved identity payload retained but selection released; inactive consumer return disabled Resume; focused keyboard resize passes. Real native file save at declared material register independently acknowledged; graph unsaved label stale. Actual restart still yields empty native graph and fallback scene; file durable but automatic reopening failed. Explicit real file reopening restores exact native document and file revision; dynamic state not restored, automatic reopen remains failed.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M5P-CONTROL-ROOM",
+      "m": "M5",
+      "for_what": "Governed Agent execution, capability selection, evidence and review handoff",
+      "m_prime_operation": "Compose M5′ control-room activity from native capabilities, Agency and Journey/Run evidence, routing returned difference to explicit review/Recognition.",
+      "s_prime": [
+        "S2′ Pleroma",
+        "S4′ Anima",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "Actuation",
+        "AIKit",
+        "Factory",
+        "QL-MEF"
+      ],
+      "evidence_refs": [
+        "FACTORY_JOURNEY_176",
+        "OI_WORLD_RECOGNITION_185"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX09",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "55-day-reread-after.png",
+              "57-epi-card-flow-schema-refusal.png",
+              "110-native-save-after.png",
+              "111-native-expression-inspect.json",
+              "117-native-task-file-refusal.png",
+              "124-B-use-resets-occasion.png",
+              "129-window-small-identity-occasion.png",
+              "130-small-window-field.png",
+              "131-window-restored.png",
+              "132-native-image-capture-after.png",
+              "133-native-commit-before-restart.png",
+              "135-native-commit-after-restart.png",
+              "135-native-expression-list-after-restart.json",
+              "136-identity-selection-after-restart.png",
+              "137-controlled-B-reopened-after-restart.png",
+              "147-native-r2-recovery-inspect.json",
+              "148-attached-file-save-destination-disabled.png",
+              "151-owner-register-save-before.png",
+              "152-native-file-save-inspect.json",
+              "154-native-file-after-restart.png",
+              "155-native-saved-file-reopened.png",
+              "155-native-file-reopen-comparison.json"
+            ],
+            "reading": "Current Day legitimately blank, stale carrier refuses; older Flow schema failure/specimen insufficient for current lived concern. Native commit r2 verified; file null/saved_revision null. Native task file save refused protected ground. Save/use identity resets held occasion. Outer window resize retained B and held occasion; field rendered at 1566×1119. Native capture acknowledged pixels but saved artifact was not independently found; export remains unverified. Later restart loses committed-but-unsaved native r2 document; socket list empty, canvas retains missing ref/falls back to browser Day. Saved identities persist but selection resets; labelled Toolbelt AX returns after restart. Real native file save at declared material register independently acknowledged; graph unsaved label stale. Actual restart still yields empty native graph and fallback scene; file durable but automatic reopening failed. Explicit real file reopening restores exact native document and file revision; dynamic state not restored, automatic reopen remains failed.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX10",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "companion-install-repair.json",
+              "desktop-install-after.json"
+            ],
+            "reading": "Preserved installed entrance failures; repaired exact-cut companions and desktop then replayed. Subsequent host/renderer repairs active Mac owners.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M5P-ATELIER",
+      "m": "M5",
+      "for_what": "Logos/etymological archaeology, source-following, crystallisation and return",
+      "m_prime_operation": "Operate M5′ etymological/source archaeology through QL-shaped knowledge, bounded research praxis and governed crystallisation back to exact sources.",
+      "s_prime": [
+        "S1′ Hen",
+        "S2′ Pleroma",
+        "S4′ Anima",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "AIKit",
+        "Factory",
+        "QL-MEF",
+        "Central"
+      ],
+      "evidence_refs": [
+        "AIKIT_SEMANTIC_WIKI_158",
+        "FACTORY_JOURNEY_176"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M5_EPII",
+      "return_profile": "M5",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX04",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "19-RNA-action-ax.txt",
+              "reference-inspect-after-step.json",
+              "123-A-same-occasion-refusal.png",
+              "126-B-same-occasion-refusal.png"
+            ],
+            "reading": "DNA/RNA presentation and native codon/tick components exercised; full language/physical form unaccepted. Both selected controlled identities refuse dated 2026-09-30T11:44:49UTC in same Expression; native independent two-Nara test passes but UI acceptance stays open.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX08",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "51-personality-correction-reopened.png",
+              "89-personality-r2-source-after-restart.png",
+              "139-gene-keys-attribution-refusal.png",
+              "141-gene-keys-native-refusal-viewport.png",
+              "144-gene-keys-save-acknowledged.png",
+              "145-full-matrix-with-import.png",
+              "146-gene-keys-matrix-source-and-correction.png",
+              "156-controlled-B-gene-keys-reopened.png",
+              "157-reopened-gene-keys-source-correction.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Controlled identity self-report correction INTJ→INTP and source-r2 persists after restart; later Nara learning use unaccepted. Controlled Gene Keys report import, native invalid-line refusal and explicit correction saved; unknown data field and source method retained. Constitution and later reopened use remain open. Actual restarted saved-profile reopening verifies corrected Gene Keys line2, unknown field and source method retention. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX10",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "companion-install-repair.json",
+              "desktop-install-after.json"
+            ],
+            "reading": "Preserved installed entrance failures; repaired exact-cut companions and desktop then replayed. Subsequent host/renderer repairs active Mac owners.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    }
+  ],
+  "whole_experience_audit": {
+    "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+    "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+    "coverage": "docs/kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json",
+    "standing": "complete source/requirement account; whole-experience recovery in progress; installed first-delivery proofs pending",
+    "human_assessment": null
+  }
 }

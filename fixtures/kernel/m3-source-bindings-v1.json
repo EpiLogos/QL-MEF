@@ -1,5 +1,5 @@
 {
-  "audit_sha256": "971ad0eac0881f3184cf69aa6adf913252694c4d3b891d5919e3c1772f39e1bf",
+  "audit_sha256": "74af3522fc29fd68e0f28ad03dce678fd47d34bfae863b18d47d145371100781",
   "counts": {
     "native_orientation_states": 472,
     "nodes": 996,
@@ -171,20 +171,20 @@
     "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
     "vendor/epi-kernel/reference/src/m3_clock_lut.c": "e4aab6c7394cb45528dead0ad63f12965a25b6d10987e190a02ce8f85caf92e1"
   },
-  "projection_sha256": "29180cf446eb6497d28db2b07233709751d8475db0a2452ecf6925e39f4b5701",
-  "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+  "projection_sha256": "08f20113674669c254480ff80aaae44ea0594181b10bcb1925191707647cf70f",
+  "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
   "schema": "ql.m3-source-bindings-lock/v1",
   "source_files": [
     {
       "bytes": 39532050,
-      "git_blob": "8c6925d41b9b14ce8df6961a1706f67e23159a1e",
+      "git_blob": "b7adfad708eb433fabab9cffeaad31e58b4846f6",
       "path": "bimba-map:http://100.92.62.101:7474",
       "record_class": "bimba-map-read",
-      "sha256": "c9d67075d7c25cb9038d5cfb9761f1237b38c433d65203e197d1cebcb07ab31d"
+      "sha256": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"
     }
   ],
   "source_repository": "bimba-map",
-  "source_revision": "c9d67075d7c25cb9038d5cfb9761f1237b38c433d65203e197d1cebcb07ab31d",
+  "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
   "standing": {
     "K4_acceptance": "not-claimed",
     "c_rust_execution": "not-claimed-by-this-source-audit",

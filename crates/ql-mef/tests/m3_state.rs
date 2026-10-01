@@ -3,7 +3,7 @@ use serde_json::{Value, json};
 use std::{path::Path, process::Command};
 fn fixture() -> Value {
     serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+        "../../../fixtures/kernel/m3-parent-consumer-current-v1.json"
     ))
     .unwrap()
 }
@@ -13,6 +13,47 @@ fn setup() -> (M3State, Vec<M3Command>) {
         M3State::new(serde_json::from_value(f["request"].clone()).unwrap()).unwrap(),
         serde_json::from_value(f["commands"].clone()).unwrap(),
     )
+}
+#[test]
+fn historical_basis_is_refused_without_rewriting_its_accepted_request() {
+    let historical: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+    ))
+    .unwrap();
+    let current = fixture();
+    let basis: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m3-parent-consumer-current-v1.basis.json"
+    ))
+    .unwrap();
+    let native = ql_mef::m_tree::native_m_registry().manifest();
+    assert_ne!(
+        current["request"]["registry_revision"],
+        historical["request"]["registry_revision"]
+    );
+    assert_eq!(
+        current["request"]["registry_revision"],
+        native.registry_revision
+    );
+    assert_eq!(
+        basis["current_source"]["source_revision"],
+        native.source_revision
+    );
+    assert_eq!(
+        basis["current_source"]["registry_revision"],
+        native.registry_revision
+    );
+    let mut restored = current.clone();
+    restored["request"]["registry_revision"] = historical["request"]["registry_revision"].clone();
+    // Determinants, commands, identity and original occurrence/receipt times
+    // remain the accepted controlled input; only admission is requalified.
+    assert_eq!(restored, historical);
+    let request: M3Request = serde_json::from_value(historical["request"].clone()).unwrap();
+    let error = match M3State::new(request) {
+        Ok(_) => panic!("historical source basis was silently admitted"),
+        Err(error) => error,
+    };
+    assert_eq!(error, "M3 contract or registry mismatch");
+    assert!(M3State::new(serde_json::from_value(current["request"].clone()).unwrap()).is_ok());
 }
 #[test]
 fn all_three_consumers_share_one_event_generation_clock_and_source_return() {

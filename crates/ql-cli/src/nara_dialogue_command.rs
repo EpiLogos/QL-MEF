@@ -29,6 +29,29 @@ struct CoordinateRequest {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+struct ContentRequest {
+    coordinate_ref: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct InventoryRequest {
+    offset: usize,
+    limit: usize,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CoordinateBundleRequest {
+    coordinate_refs: Vec<String>,
+    #[serde(default)]
+    face: Option<RootedFace>,
+    #[serde(default)]
+    inventory: Option<InventoryRequest>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct DelegationRequest {
     context: NaraDialogueContext,
     delegation_ref: String,
@@ -123,6 +146,56 @@ fn resolve(context: &mut NaraDialogueContext, verify: bool) -> Result<RootedMWor
 
 pub(super) fn command(operation: &str, bytes: &[u8]) -> Result<String, CliError> {
     let result = match operation {
+        "coordinate-bundle" => {
+            let request: CoordinateBundleRequest = serde_json::from_slice(bytes).map_err(error)?;
+            if request.coordinate_refs.is_empty()
+                || request.coordinate_refs.len() > 64
+                || request
+                    .coordinate_refs
+                    .iter()
+                    .any(|r| r.is_empty() || r.len() > 4096)
+            {
+                return Err(error(
+                    "A coordinate bundle requires 1..64 bounded source references",
+                ));
+            }
+            let content = ql_mef::bimba_content::native_bimba_content().map_err(error)?;
+            let face = match request.face {
+                Some(RootedFace::Pratibimba) => MFace::Pratibimba,
+                _ => MFace::Bimba,
+            };
+            let items = request
+                .coordinate_refs
+                .iter()
+                .map(|reference| {
+                    let binding =
+                        resolve_coordinate_expression(native_current_m_registry(), reference, face)
+                            .map_err(error)?;
+                    let source = content.coordinate(reference).map_err(error)?;
+                    Ok(json!({"binding":binding,"source_content":source}))
+                })
+                .collect::<Result<Vec<_>, CliError>>()?;
+            let inventory = request
+                .inventory
+                .map(|page| content.inventory(page.offset, page.limit))
+                .transpose()
+                .map_err(error)?;
+            json!({"schema":"ql.coordinate-content-bundle/v1","items":items,"inventory":inventory})
+        }
+        "coordinate-content" => {
+            let request: ContentRequest = serde_json::from_slice(bytes).map_err(error)?;
+            ql_mef::bimba_content::native_bimba_content()
+                .map_err(error)?
+                .coordinate(&request.coordinate_ref)
+                .map_err(error)?
+        }
+        "source-inventory" => {
+            let request: InventoryRequest = serde_json::from_slice(bytes).map_err(error)?;
+            ql_mef::bimba_content::native_bimba_content()
+                .map_err(error)?
+                .inventory(request.offset, request.limit)
+                .map_err(error)?
+        }
         "coordinate" => {
             let request: CoordinateRequest = serde_json::from_slice(bytes).map_err(error)?;
             let face = match request.face {

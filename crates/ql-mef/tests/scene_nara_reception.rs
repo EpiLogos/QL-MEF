@@ -6,9 +6,7 @@
 use std::path::PathBuf;
 use std::time::Duration;
 
-use ql_mef::continuous::scene_field::{
-    self as scene, BindingRequest, SceneConfig, SceneInstrument,
-};
+use ql_mef::continuous::scene_field::{SceneConfig, SceneInstrument};
 use ql_mef::nara::{
     BioQuaternion, ConsentState, EarthBodyConstitution, EventBasisRefs, LifecycleState,
     PersonalConstitution, PersonalEventInput, PersonalLayer, ReceiverConstitution,
@@ -73,17 +71,19 @@ fn constitution(subject: &str, scale: f64) -> PersonalConstitution {
 }
 
 fn open(subject: &str, scale: f64) -> SceneInstrument {
-    let request: BindingRequest = serde_json::from_value(json!({
-        "schema": scene::BINDING_REQUEST, "instance_ref": format!("test:{subject}"), "texture": [32, 32],
-        "sky": serde_json::from_str::<serde_json::Value>(include_str!("../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json")).unwrap(),
-        "units_per_metre": 1.0,
-        "geometry": {"longitude_samples": 16, "latitude_samples": 8, "metres_per_unit": 1.0, "attachment": 1}
-    }))
+    let sky: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
+    ))
     .unwrap();
+    let request: ql_mef::scene::WorldRequest = serde_json::from_value(json!({
+        "schema": ql_mef::scene::WORLD_REQUEST, "instance_ref": format!("test:{subject}"),
+        "event_ref":sky["snapshot_ref"], "subject_ref":subject,
+        "texture": [32, 32], "sky":sky, "units_per_metre": 1.0,
+        "geometry": {"longitude_samples": 16, "latitude_samples": 8, "metres_per_unit": 1.0, "attachment": 1}
+    })).unwrap();
     let mut config: SceneConfig =
-        serde_json::from_value(scene::binding(request).unwrap()["host"].clone()).unwrap();
-    config.basis.m3.subject_ref = subject.into();
-    config.field.subject_ref = subject.into();
+        serde_json::from_value(ql_mef::scene::world(request).unwrap()["binding"]["host"].clone())
+            .unwrap();
     config.reception = Some(constitution(subject, scale));
     let worker = PathBuf::from(std::env::var("QL_FIELD_WORKER").expect("QL_FIELD_WORKER"));
     SceneInstrument::open(&worker, config, Duration::from_secs(20)).unwrap()

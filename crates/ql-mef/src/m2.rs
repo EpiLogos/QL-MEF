@@ -340,8 +340,10 @@ pub struct PlanetChakraRoute {
     pub relations: Vec<MTreeRelation>,
 }
 
-/// Read PLANETARY_RESONANCE from the same compiled graph as the native C API.
-/// Missing outer-planet routes stay absent; conflicting targets are refused.
+/// Read the accepted typed reception routes from the compiled graph. The owner
+/// ratified Neptune/Pluto's HAS_CHAKRAL_ANCHOR in #254 D10; its qualification
+/// remains distinct from PLANETARY_RESONANCE. A genuinely absent route (Uranus)
+/// stays absent, and conflicting targets are refused.
 pub fn planet_chakra_route(planet_index: usize) -> Result<Option<PlanetChakraRoute>, String> {
     let planets = catalogue().table("planet")?;
     planets.row(planet_index)?;
@@ -354,7 +356,13 @@ pub fn planet_chakra_route(planet_index: usize) -> Result<Option<PlanetChakraRou
         .ok_or("unknown M2 planet coordinate")?;
     let relations: Vec<_> = registry
         .relations_for(planet.id)
-        .filter(|r| r.from_id == Some(planet.id) && r.source_kind == "PLANETARY_RESONANCE")
+        .filter(|r| {
+            r.from_id == Some(planet.id)
+                && matches!(
+                    r.source_kind.as_str(),
+                    "PLANETARY_RESONANCE" | "HAS_CHAKRAL_ANCHOR"
+                )
+        })
         .cloned()
         .collect();
     let Some(first) = relations.first() else {

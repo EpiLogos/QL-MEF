@@ -183,7 +183,7 @@ pub(super) fn derive(
             "source_revision": "a735f072c9ed88b6b467a8c4e3a66441fe2a4c83",
             "path": "docs/kernel-rebuild/m123-scene-map/m2-sky.md",
             "section": "4 D1 and D5",
-            "detail": "The retained C triplicity rulers disagree with pinned graph Chaldean rulers on 27 of 36 decans and are diagnostic only. Resolved graph rulers select recipients. Cancer decan 3 preserves Moon property versus Saturn RULED_BY as unresolved and contributes no automatic centre assignment."
+            "detail": "Retained C triplicity rulers are diagnostic; the current graph Chaldean ruler and accepted typed reception route select recipients. Owner #254 D9 corrected Cancer decan 3 RULED_BY to Moon. Any conflict still present in another qualified source route remains explicit and contributes no automatic centre assignment."
         },
         "basis_order": ELEMENTS, "weighting_policy": weighting_policy,
         "weighting_source": "same per-placement keplerian weight multiplied by dignity as natal_composition; reused before normalization",
@@ -308,7 +308,7 @@ mod tests {
     }
 
     #[test]
-    fn graph_ruler_wins_over_c_and_internal_graph_conflict_has_no_automatic_recipient() {
+    fn graph_ruler_wins_over_c_and_accepted_cancer_correction_receives_moon() {
         let aries_three = natal(25.0);
         let contribution = &aries_three["decanic_channel"]["planetary_contributions"][0];
         assert_eq!(contribution["decan_ruler"], "Venus");
@@ -319,19 +319,35 @@ mod tests {
         let cancer_three = natal(115.0);
         let channel = &cancer_three["decanic_channel"];
         let contribution = &channel["planetary_contributions"][0];
-        assert_eq!(channel["status"], "partial");
-        assert!(contribution["decan_ruler"].is_null());
-        assert!(contribution["receiving_centre_ordinal"].is_null());
-        assert_eq!(channel["unresolved_planet_ids"], json!([0]));
+        // The independent live 907c source has Cancer III RULED_BY Moon
+        // (#254 D9), agreeing with its other qualified Moon correspondences.
+        assert_eq!(channel["status"], "available");
+        assert_eq!(contribution["decan_ruler"], "Moon");
+        assert_eq!(contribution["decan_ruler_planet_id"], 1);
+        assert_eq!(contribution["receiving_centre_ordinal"], 5);
+        assert_eq!(channel["unresolved_planet_ids"], json!([]));
+        let graph = &contribution["graph_decan_route"];
+        assert_eq!(graph["decan_coordinate"], "#2-3-4-0-2");
+        assert_eq!(graph["status"], "available");
+        assert_eq!(graph["source_conflicts"], json!([]));
+        assert_eq!(graph["graph_candidates"].as_array().unwrap().len(), 1);
+        let ruler = &graph["graph_candidates"][0];
+        assert_eq!(ruler["planet_coordinate"], "#2-5-4");
+        assert!(ruler["relations"].as_array().unwrap().iter().any(|r| {
+            r["source_kind"] == "RULED_BY"
+                && r["from_ref"] == "#2-3-4-0-2"
+                && r["to_ref"] == "#2-5-4"
+                && r["orientation"] == "directed"
+        }));
         assert!(
-            !contribution["graph_decan_route"]["source_conflicts"]
+            channel["centre_evidence"][5]["natal_planet_ids"]
                 .as_array()
                 .unwrap()
-                .is_empty()
+                .contains(&json!(0))
         );
-        for centre in channel["centre_evidence"].as_array().unwrap() {
+        for ordinal in [0, 1, 2, 3, 4, 6] {
             assert!(
-                !centre["natal_planet_ids"]
+                !channel["centre_evidence"][ordinal]["natal_planet_ids"]
                     .as_array()
                     .unwrap()
                     .contains(&json!(0))
@@ -396,26 +412,45 @@ mod tests {
             };
             assert!((delta - expected).abs() < 1e-12);
         }
-        let conflicted = natal(115.0);
-        let partition = &conflicted["decanic_channel"]["presentation_partition"];
-        assert_eq!(partition["unresolved"]["planet_ids"], json!([0]));
+        let resolved = natal(115.0);
+        let partition = &resolved["decanic_channel"]["presentation_partition"];
+        assert_eq!(partition["unresolved"]["planet_ids"], json!([]));
+        assert_eq!(partition["unresolved"]["weighted_power"], 0.0);
+        assert_eq!(partition["unresolved"]["mass_share_l1"], 0.0);
         assert_eq!(
             partition["denominator"],
-            conflicted["presentation_partition"]["denominator"]
+            resolved["presentation_partition"]["denominator"]
         );
-        let residual = partition["unresolved"]["mass_share_l1"].as_f64().unwrap();
-        let expected = conflicted["planetary_contributions"][0]["weighted_contribution"]
-            .as_f64()
-            .unwrap()
-            / partition["denominator"]["weighted_total"].as_f64().unwrap();
-        assert!((residual - expected).abs() < 1e-12);
+        // Independently known Water face and accepted Moon→Ajna recipient:
+        // a single weight2 placement has full mass there and nowhere else.
+        let single = derive(
+            &[NatalPlacement {
+                planet_id: 0,
+                longitude_degrees: 115.0,
+                weighted_contribution: 2.0,
+            }],
+            "source:accepted-cancer-III",
+            "weighting",
+        )
+        .unwrap();
+        assert_eq!(single["raw_efwa"], json!([0.0, 0.0, 2.0, 0.0]));
+        let exact = &single["presentation_partition"];
+        assert_eq!(exact["denominator"]["weighted_total"], 2.0);
+        for ordinal in 0..7 {
+            assert_eq!(
+                exact["centres"][ordinal]["mass_share_l1"],
+                if ordinal == 5 { json!(1.0) } else { json!(0.0) }
+            );
+        }
+        assert_eq!(exact["unrouted"]["weighted_power"], 0.0);
+        assert_eq!(exact["unresolved"]["weighted_power"], 0.0);
         let sum: f64 = partition["centres"]
             .as_array()
             .unwrap()
             .iter()
             .map(|centre| centre["mass_share_l1"].as_f64().unwrap())
             .sum();
-        assert!((sum + residual - 1.0).abs() < 1e-12);
+        assert!((sum - 1.0).abs() < 1e-12);
         assert_eq!(partition["unrouted"]["weighted_power"], 0.0);
     }
 }

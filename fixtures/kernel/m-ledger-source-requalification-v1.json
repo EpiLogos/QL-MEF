@@ -1,0 +1,263 @@
+{
+  "schema": "ql.m-ledger-source-requalification/v1",
+  "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+  "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+  "ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+  "historical": {
+    "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
+    "ledger_sha256": "55e13ec985f0141172fd7dc41f7e3badffa21e09cb267a6750484fbea0701128",
+    "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m-ledger-v1.json",
+    "git_commit": "85db896e21177b8b128d4baf31a1fc4300dd3871",
+    "evidence": [
+      {
+        "id": "k2-index-declaration",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m-tree-v1.json",
+          "sha256": "1cc9a51733e667e036d6a680c89926e493dad7a483583516c5a5fe0a6a358d44"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m-tree-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k4-c-discovery",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/census/discovery-c-v1.json",
+          "sha256": "d874fd84ea30335e60298418803dcfd817bd9e311a139d5a16459e65dbb735eb"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/census/discovery-c-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k4-live-capture",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/census/live-bimba-capture-v1.json",
+          "sha256": "030296ea6a5ff2f5240e1051313791f1324649dbb531ac081fe705a922360be9"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/census/live-bimba-capture-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k4-rust-discovery",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/census/discovery-rust-v1.json",
+          "sha256": "7bdf28fdabea1b2b282673d2c668286f2e1a46e7bd9034d5bc91abefc9907ffd"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/census/discovery-rust-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k5-m1:accepted-execution",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "docs/kernel-rebuild/m1-engine-acceptance-v1.json",
+          "sha256": "054ca48e6d0352c71723a5e7dfdfb6075ee7db5e72cbafe8ce25031cc663a83f"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:docs/kernel-rebuild/m1-engine-acceptance-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k5-m1:literal-observation",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "docs/kernel-rebuild/m1-source-comparison-v1.json",
+          "sha256": "618038a9949a3c0f0a18c9fda2923138abce0a32803b6bd4445ea3a48a9467e1"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:docs/kernel-rebuild/m1-source-comparison-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k5-m1:local-execution",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "docs/kernel-rebuild/m1-engine-receipt-v1.json",
+          "sha256": "7ce5c46d975056ff915ef3b92b3a7647cf947ab3e0f198b8f76286085c343c41"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:docs/kernel-rebuild/m1-engine-receipt-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k5-m1:reviewed-dispositions",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
+          "sha256": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:docs/KERNEL-M1-ENGINE-CONTRACT.md",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k6-m2:census",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m2-field-census-summary-v1.json",
+          "sha256": "776d9b9544d0153339a41b88e376a4ed21dbd82954f3faec874c9d38707a3e62"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m2-field-census-summary-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k6-m2:finite-proof",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m2-finite-proof-v1.json",
+          "sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m2-finite-proof-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k7-m3:proof",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m3-finite-proof-v1.json",
+          "sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m3-finite-proof-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k7-m3:coverage",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m3-coverage-v1.json",
+          "sha256": "be360e3c5417d13b58915a2be072950ebf3b23a5eb735e77b61507ad434af3f0"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m3-coverage-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "bimba-map:registry-source",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "c/registry/m-tree-source-v1.json",
+          "sha256": "fadbb6e678e26d960a78a24cefbfd641742d5ddc08bfb0a1510c563512d4354b"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:c/registry/m-tree-source-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "bimba-map:native-registry",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "c/src/m_tree_data.inc",
+          "sha256": "8b8529aadae811101d100be5ca8ac4eb862c72d36576b4b785c6c42324b0f70f"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:c/src/m_tree_data.inc",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k-move:reference-m1-12x12-ananda",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "vendor/epi-kernel/reference/src/m1.c",
+          "sha256": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:vendor/epi-kernel/reference/src/m1.c",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "k-move:reference-execution",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "docs/kernel-rebuild/k-move-reference-receipt-v1.json",
+          "sha256": "4bb9ca9d93d6022ac77b28a110ab5d3826532110b09e812bc9aa787b5b3905b7"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:docs/kernel-rebuild/k-move-reference-receipt-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      },
+      {
+        "id": "coin-1:map-corrected-audit",
+        "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+        "artifact": {
+          "path": "fixtures/kernel/m3-domain-v1.json",
+          "sha256": "b1708d5a4d4dd8545ffcaf52cbdac9b2809d84efec12b8d114db508a11bef8de"
+        },
+        "git_ref": "git:85db896e21177b8b128d4baf31a1fc4300dd3871:fixtures/kernel/m3-domain-v1.json",
+        "standing": "historical evidence; not requalified or claimed as current"
+      }
+    ]
+  },
+  "current_input_locks": {
+    "fixtures/kernel/m-tree-v1.json": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc",
+    "c/registry/m-tree-source-v1.json": "d062dd0606670b422c9c5ef570ebe18c704578998c7ebf488e285a196c1c7bba",
+    "c/src/m_tree_data.inc": "60deb4765488d6c9b5ccebd7609fda7d2a16ad511325075ccbfa2ffaf59be5a8",
+    "crates/ql-mef/src/m_tree.rs": "c1b65a51bf675656f9b38a3fd66fa685b3fd9a20a696b765ac1aeee5960fb09a",
+    "crates/ql-mef/tests/native_m_tree.rs": "23426d43b774f43a816924752a9a13005152f7f2c9067c3fa9cc3fcbb2bcf98b",
+    "c/src/m_tree.c": "51cdf88f9869134dccf9accd5579904efe72846786e416bb194d0ec9dbdab1bc",
+    "c/src/m1.c": "01014c73b3b39bf4b6cf0ed12c70ee76d8b478e628d1451b6b3e28c0d5f4685e",
+    "c/src/m1_state.c": "a7d949e543e52b4e2a7191eb662a0b1af3a793138946c661f8e7a4076955754e",
+    "crates/ql-mef/src/m1.rs": "54330879ea6ecbdd250adee62652e665f82f65ad9b6bc140bb77dd4214af908c",
+    "crates/ql-mef/src/m1_engine.rs": "4e16b7ef57cc787366b95f9cf293738e104c2cc1a21dec17c0e3f557bc153ac3",
+    "crates/ql-mef/tests/m1_engine.rs": "e526e029487bd8dd3cca3befd0ea4ed9fabafef7361ad9a2e1bb5b32bf53a915",
+    "crates/ql-mef/tests/m1_state.rs": "4d180fccf833e036206061f671750723b73bf5489852525af2fd39638baede7f",
+    "migration/epi-kernel/m1-engine-probe.c": "8155422678e070ec42cc6ccc80e5f717772d35b122e807e8be4581564413e08f",
+    "migration/epi-kernel/m1-state-probe.c": "e11b03bdbcc7503adfd8b5464c3f00412edb4a6bdc61c5cc644749bf4b5ff2bc",
+    "vendor/epi-kernel/reference/src/m1.c": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a",
+    "vendor/epi-kernel/reference/src/psychoid_numbers.c": "2b76962ea9e9ef3a35f94d1c687e6cd8d7dd06edef112f0fd5108545d8d01230",
+    "docs/KERNEL-M1-ENGINE-CONTRACT.md": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848",
+    "migration/epi-kernel/source-lock.json": "2dcb8f5f7136c3320cd0644484788550d15354addde523488849253a3b6b2ea2",
+    "scripts/check-m1-source.py": "c13605795ba15b3230518f31bfb5baf0b09867235239acc2d8f77fa43c2cfcdb",
+    "scripts/check-m1-literals.py": "bfa9a11b752e37fd84b278d7444cef55ef3f2ba050e409f99f4374e65520a91d",
+    "scripts/test-m1-engine.sh": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6",
+    "scripts/m3-source-parity.py": "6a7e1f1f6c14e2d8e7416fb2cebda07e49d20bc2ce43763eff9c5226683ef82f",
+    "fixtures/kernel/m3-source-bindings-v1.json": "01d2f9fedae20434d61e18698979ca134baf9143e65a6ec56707c4a5002bb546",
+    "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14"
+  },
+  "replays": [
+    {
+      "path": "fixtures/kernel/source-requalification/m1-native-c-replay.log",
+      "sha256": "7eb55863aecc81078dcab1091f64cefa0045553042c021f495eec2abbc2d5ee8"
+    },
+    {
+      "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
+      "sha256": "775eee4615d5547661266a6b94668e99a13884b90d0ced9c9d93da15adea9bbb"
+    },
+    {
+      "path": "fixtures/kernel/source-requalification/m3-source-audit.json",
+      "sha256": "977c60ad135e1beda7f4e69c196a29414efb54fecdcd0b5df8eaacefb7ce0a5b"
+    }
+  ],
+  "evidence_mapping": {
+    "coin-1:map-corrected-audit": "source-requalification:coin-current-source",
+    "k5-m1:reviewed-dispositions": "source-requalification:m1-current-source",
+    "k5-m1:accepted-execution": "source-requalification:m1-current-native",
+    "bimba-map:registry-source": "source-requalification:current-registry",
+    "bimba-map:native-registry": "source-requalification:current-tree-native",
+    "k-move:reference-m1-12x12-ananda": "source-requalification:m1-current-reference",
+    "k-move:reference-execution": "source-requalification:m1-current-native"
+  },
+  "preserved_applied_decisions": 131,
+  "historical_numerical_proofs_unchanged": {
+    "fixtures/kernel/m2-finite-proof-v1.json": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
+    "fixtures/kernel/m3-finite-proof-v1.json": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
+  },
+  "standing": "current source/application revalidation; old numerical readiness/parity unassessed until full successor execution",
+  "not_claimed": [
+    "current whole M1/M2/M3 numerical readiness from this bootstrap",
+    "installed visual/audio acceptance"
+  ],
+  "matrix_source_reconciliation": {
+    "prior_ledger_revision": "5ca3e5570e43afbbf8abbe405dfbbfc213cd05012bd4e9bced9a40da3ff7f74b",
+    "current_ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+    "reason": "Existing185capability records and human assessments unchanged; added exact whole-experience evidence and owner-installed failure bindings under the current commission",
+    "evidence": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+    "changed_fields": [
+      "ledger_revision",
+      "matrices"
+    ],
+    "preserved": [
+      "rows",
+      "assessments",
+      "implementations",
+      "evidence",
+      "discrepancies",
+      "registry",
+      "historical_numerical_proofs_unchanged"
+    ],
+    "standing": "matrix source-lock refresh only; no new numerical or installed acceptance"
+  }
+}

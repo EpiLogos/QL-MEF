@@ -479,11 +479,11 @@ struct PersonalRecomposeRequest {
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
-        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
+        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
     }
     let [operation, path] = args else {
         return Err(error(
-            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]",
+            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]",
         ));
     };
     if ![
@@ -494,6 +494,9 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         "personal-recompose",
         "presence-consent",
         "coordinate",
+        "coordinate-content",
+        "coordinate-bundle",
+        "source-inventory",
         "context",
         "delegate",
         "enrichment",
@@ -522,7 +525,17 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     if operation == "presence-consent" {
         return presence::command(&bytes);
     }
-    if ["coordinate", "context", "delegate", "enrichment", "receive"].contains(&operation.as_str())
+    if [
+        "coordinate",
+        "coordinate-content",
+        "coordinate-bundle",
+        "source-inventory",
+        "context",
+        "delegate",
+        "enrichment",
+        "receive",
+    ]
+    .contains(&operation.as_str())
     {
         return dialogue::command(operation, &bytes);
     }

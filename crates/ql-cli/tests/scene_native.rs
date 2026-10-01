@@ -6,7 +6,7 @@ use std::process::{Command, Stdio};
 #[test]
 fn a_dated_sky_composes_through_the_installed_command() {
     let sky: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
     ))
     .unwrap();
     let request = json!({"schema":"ql.scene-request/v1","sky_snapshot":sky,"tick12":3,"cycle":7});
@@ -33,6 +33,21 @@ fn a_dated_sky_composes_through_the_installed_command() {
     assert_eq!(scene["schema"], "ql.scene/v1");
     assert_eq!(scene["bodies"].as_array().unwrap().len(), 10);
     assert_eq!(scene["centres"].as_array().unwrap().len(), 7);
+    // The historic installed-source snapshot stays historic. It must refuse
+    // after the accepted map correction rather than be stamped current.
+    let historic = include_bytes!("../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json");
+    let mut old = Command::new(env!("CARGO_BIN_EXE_ql"))
+        .args(["scene", "compose", "-", "--json"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let old_sky: Value = serde_json::from_slice(historic).unwrap();
+    old.stdin.take().unwrap().write_all(&serde_json::to_vec(&json!({"schema":"ql.scene-request/v1","sky_snapshot":old_sky,"tick12":3,"cycle":7})).unwrap()).unwrap();
+    let stale = old.wait_with_output().unwrap();
+    assert!(!stale.status.success());
+    assert!(String::from_utf8_lossy(&stale.stderr).contains("native source binding is stale"));
     let refused = Command::new(env!("CARGO_BIN_EXE_ql"))
         .args(["scene", "compose", "/nonexistent.json"])
         .output()

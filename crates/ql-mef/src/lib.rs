@@ -5,6 +5,7 @@
 pub mod anima_expression_profile;
 pub mod aw1_self_reference;
 pub mod aw1_world;
+pub mod bimba_content;
 mod context_frame;
 mod context_frame_target;
 pub mod continuous;

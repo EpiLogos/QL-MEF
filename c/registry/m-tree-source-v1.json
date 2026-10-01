@@ -1,12 +1,12 @@
 {
   "schema": "ql.m-tree-source/v1",
   "repository": "bimba-map",
-  "revision": "c9d67075d7c25cb9038d5cfb9761f1237b38c433d65203e197d1cebcb07ab31d",
-  "dataset_tree": "FB:kcwQmaxjOZ6CT7+cxvaAEzWE/MlV6pA=",
-  "source_lock_sha256": "bb766824f85b021b10db897cbb77042237679eba77528b920a11855979caf6da",
+  "revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+  "dataset_tree": "FB:kcwQmaxjOZ6CT7+cxvaAEzWE/MlV7JA=",
+  "source_lock_sha256": "51fdfd860fe3c1a45a9f06fcfa3ac830fe28d1f93be20617c4e0b7c0561092ab",
   "compiler_sha256": {"scripts/bimba_map.py":"eca19180e69928084dd7bc77d5d580696e3f71f434458d65da5f3b5774dbb22b","scripts/generate-m-tree.py":"2a1047516cf75325df57f38ea18e641b0764de9311e877f7980d308a5c34fcd2"},
   "files": [
-    {"bytes":39532050,"git_blob":"8c6925d41b9b14ce8df6961a1706f67e23159a1e","path":"bimba-map:http://100.92.62.101:7474","record_class":"bimba-map-read","sha256":"c9d67075d7c25cb9038d5cfb9761f1237b38c433d65203e197d1cebcb07ab31d"}
+    {"bytes":39532050,"git_blob":"b7adfad708eb433fabab9cffeaad31e58b4846f6","path":"bimba-map:http://100.92.62.101:7474","record_class":"bimba-map-read","sha256":"907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"}
   ],
   "records": [
     {"file":0,"payload_sha256":"4a021c3c56008465cec817ff6b17e40004cd5507cdc1b2befb71f3fdb6084974","property_keys":["c_0_architectural_function","c_0_essence","c_0_operational_essence","c_1_consciousness_structure","c_1_description","c_1_internal_structure","c_1_key_principles","c_1_name","c_1_primary_designation","c_1_structure","c_2_id","c_2_notion_page_id","c_2_uuid","c_3_context_frame","c_3_dataset_branch","c_3_dataset_branch_label","c_3_practical_applications","c_3_related_coordinates","c_3_source_dataset","c_3_updated_at","c_4_access_level","c_4_family","c_4_flags","c_4_inversion_state","c_4_layer","c_4_ql_category","c_4_ql_operator_types","c_4_ql_position","c_4_subsystem","c_4_topo_mode","c_4_weave_state","c_5_resonances","coordinate","q_0_absolute_ground","q_0_implicate_ground","q_1_para_vak_silence","q_1_vak_alphabet_reportable_surface","q_1_void_pole_origin","q_2_grounds_and_conditions","q_2_zero_zero_operation","q_3_eight_fold_void_structure","q_3_void_loop_of_the_torus","q_4_foundation_for_all","q_4_the_from_where","q_5_completion_always_present","q_5_receiving_face_of_the_mobius"],"record_index":133},
@@ -4799,7 +4799,7 @@
     {"file":0,"payload_sha256":"34c6c86c57e779b3895108e1ae56a0a109892aece60e7f85373a6ddfdc6f156e","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5773},
     {"file":0,"payload_sha256":"ef344e7d4587669aa71de8310ec7e136bb99eed3e7ea09f7373e57d5bd8102e4","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5774},
     {"file":0,"payload_sha256":"0120fa446c5e3fdfd279a7cfd6ed01867a23a6ae0b9d969b5c79ba185e37bc17","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5775},
-    {"file":0,"payload_sha256":"9e35547939b6a0d7d0d17a5b70964f5ed8a58a54a042a840eb751215cca97ad6","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5776},
+    {"file":0,"payload_sha256":"7c723eaf0af8fcb928c00d77a44256e212fe164156268d8d41d73cd1bfce1e99","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5776},
     {"file":0,"payload_sha256":"35c39866982182e6b031f9f1ea53c3d80ed973717a27e2bf0645b582fd2e078a","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5777},
     {"file":0,"payload_sha256":"263010b83f18acf0bfacb30cb0d1afc4b1033632d04df7295828351610a58732","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5778},
     {"file":0,"payload_sha256":"2f8f6f28b0b6997a55263e3afbbd6d193ab60ba225528afe8ce68a68f0b829eb","property_keys":["c_0_source_coordinate","c_0_target_coordinate","c_1_relation_family","c_2_relation_kind","c_2_relation_type","c_3_created_at","c_3_dataset_branch"],"record_index":5779},
@@ -18170,6 +18170,7 @@
     {"cross_m":false,"from_ref":"#2-4.0-0/1-1-11","orientation":"directed","record":5242,"relation_ref":"bimba:relation:528f7d99376765d17536374e","source_kind":"TRUTH_SYNTHESIS_OF_APPEARANCES","to_ref":"#2-4.0-0/1-2-5"},
     {"cross_m":false,"from_ref":"#2-2-2-4-3","orientation":"directed","record":4134,"relation_ref":"bimba:relation:529094308d3efabf93c239e3","source_kind":"CONDENSATION","to_ref":"#2-2-2-5-3"},
     {"cross_m":false,"from_ref":"#2-4.5-7-6","orientation":"directed","record":7114,"relation_ref":"bimba:relation:5290ae73563371e6cb777153","source_kind":"EXPANDED_BY","to_ref":"#2-5-6"},
+    {"cross_m":false,"from_ref":"#2-3-4-0-2","orientation":"directed","record":4790,"relation_ref":"bimba:relation:529213d88f64e1c0e5bef18e","source_kind":"RULED_BY","to_ref":"#2-5-4"},
     {"cross_m":false,"from_ref":"#2-4.0-0/1-0-0","orientation":"directed","record":4948,"relation_ref":"bimba:relation:5293b4ab2dc3f7518f286686","source_kind":"FINITE_MANIFESTATION_OF_INFINITE","to_ref":"#2-4.0-0/1"},
     {"cross_m":false,"from_ref":"#3-3-2-1-39","orientation":"directed","record":8946,"relation_ref":"bimba:relation:52977f75291f79626baacc34","source_kind":"YIELDS_CODON","to_ref":"#3-2-1-3-3"},
     {"cross_m":true,"from_ref":"#2-2-0-3","orientation":"directed","record":3978,"relation_ref":"bimba:relation:52979a412bbffe1d54ac395b","source_kind":"EXPRESSES_POLE","to_ref":"#1-3-1"},
@@ -20594,7 +20595,6 @@
     {"cross_m":false,"from_ref":"#3-2-1","orientation":"directed","record":7947,"relation_ref":"bimba:relation:8be33bda3119a52c80d4ab72","source_kind":"INTEGRAL_SYMMETRY","to_ref":"#3-2-1-3-2"},
     {"cross_m":false,"from_ref":"#3-1-5-5","orientation":"directed","record":7772,"relation_ref":"bimba:relation:8be51cac14e0c7b0a28c7dc8","source_kind":"LINE_CHANGE","to_ref":"#3-1-2-5"},
     {"cross_m":false,"from_ref":"#2-4.3","orientation":"directed","record":5986,"relation_ref":"bimba:relation:8be57455f92fdd0a5f352fac","source_kind":"HAS_INTERNAL_COMPONENT","to_ref":"#2-4.3-0"},
-    {"cross_m":false,"from_ref":"#2-3-4-0-2","orientation":"directed","record":4790,"relation_ref":"bimba:relation:8be62b1f9555af61659b0786","source_kind":"RULED_BY","to_ref":"#2-5-5"},
     {"cross_m":false,"from_ref":"#2-3-3-0-0","orientation":"directed","record":4604,"relation_ref":"bimba:relation:8be6b5616fcf6b57c96fec7b","source_kind":"HAS_ASPECT","to_ref":"#2-3-3-0-0-0"},
     {"cross_m":false,"from_ref":"#2-1-2","orientation":"directed","record":3587,"relation_ref":"bimba:relation:8bed8eae2e32bd64bf1d0728","source_kind":"CAUSAL_RESONANCE","to_ref":"#2-1-4-2"},
     {"cross_m":false,"from_ref":"#2-3-1-0-0","orientation":"directed","record":4277,"relation_ref":"bimba:relation:8bf59dff80fb39695a0323ee","source_kind":"HAS_ASPECT","to_ref":"#2-3-1-0-0-1"},

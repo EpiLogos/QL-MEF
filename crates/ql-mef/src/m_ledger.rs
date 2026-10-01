@@ -1140,6 +1140,13 @@ fn transition(from: &str, to: &str) -> bool {
     )
 }
 
+/// The embedded ledger and native registry are immutable for this binary.
+/// Cache their deterministic structural validation, including an invalid
+/// embedded source's refusal. Callers still receive independent owned ledgers;
+/// arbitrary input and caller mutations retain `from_json`/`validate` checks.
 pub fn native_m_ledger() -> Result<MLedger, String> {
-    MLedger::from_json(NATIVE_M_LEDGER, native_m_registry())
+    static LEDGER: std::sync::OnceLock<Result<MLedger, String>> = std::sync::OnceLock::new();
+    LEDGER
+        .get_or_init(|| MLedger::from_json(NATIVE_M_LEDGER, native_m_registry()))
+        .clone()
 }

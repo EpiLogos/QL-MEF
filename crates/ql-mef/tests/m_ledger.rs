@@ -675,6 +675,8 @@ fn later_strata_do_not_gain_parity_from_an_unrelated_native_comparison() {
 #[test]
 fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabilities() {
     let l = ledger();
+    let historical_registry = native_m_registry().manifest().registry_revision
+        == "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77";
     let tables: Vec<_> = l
         .rows
         .iter()
@@ -685,8 +687,35 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
         for peer in ["c", "rust"] {
             assert_eq!(
                 l.assessments[&r.assessment].readiness[peer].status,
-                "structural-index-only"
+                if historical_registry {
+                    "structural-index-only"
+                } else {
+                    "unassessed"
+                }
             );
+            assert!(
+                r.bindings
+                    .iter()
+                    .any(|id| l
+                        .implementations
+                        .iter()
+                        .any(|implementation| implementation.id == *id
+                            && implementation.stratum == peer
+                            && implementation.kind == "structural-index"))
+            );
+            if !historical_registry {
+                assert!(
+                    l.assessments[&r.assessment].readiness[peer]
+                        .evidence
+                        .is_empty()
+                );
+                assert!(
+                    l.assessments[&r.assessment]
+                        .parity
+                        .values()
+                        .all(Vec::is_empty)
+                );
+            }
         }
     }
     let source: Vec<_> = l
@@ -715,8 +744,35 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
         for peer in ["c", "rust"] {
             assert_eq!(
                 l.assessments[&r.assessment].readiness[peer].status,
-                "verified"
+                if historical_registry {
+                    "verified"
+                } else {
+                    "unassessed"
+                }
             );
+            assert!(
+                r.bindings
+                    .iter()
+                    .any(|id| l
+                        .implementations
+                        .iter()
+                        .any(|implementation| implementation.id == *id
+                            && implementation.stratum == peer
+                            && implementation.kind == "computational"))
+            );
+            if !historical_registry {
+                assert!(
+                    l.assessments[&r.assessment].readiness[peer]
+                        .evidence
+                        .is_empty()
+                );
+                assert!(
+                    l.assessments[&r.assessment]
+                        .parity
+                        .values()
+                        .all(Vec::is_empty)
+                );
+            }
         }
     }
     assert!(
@@ -729,6 +785,8 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
 #[test]
 fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumers() {
     let l = ledger();
+    let historical_registry = native_m_registry().manifest().registry_revision
+        == "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77";
     assert_eq!(
         l.rows
             .iter()
@@ -753,17 +811,60 @@ fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumer
         .unwrap();
     assert_eq!(
         l.assessments[&index.assessment].readiness["c"].status,
-        "structural-index-only"
+        if historical_registry {
+            "structural-index-only"
+        } else {
+            "unassessed"
+        }
     );
     let form = l.rows.iter().find(|r| r.id == "k7-m3:form").unwrap();
     assert_eq!(
         l.assessments[&form.assessment].readiness["c"].status,
-        "verified"
+        if historical_registry {
+            "verified"
+        } else {
+            "unassessed"
+        }
     );
     assert_eq!(
         l.assessments[&form.assessment].readiness["rust"].status,
-        "verified"
+        if historical_registry {
+            "verified"
+        } else {
+            "unassessed"
+        }
     );
+    for (row, kind) in [(index, "structural-index"), (form, "computational")] {
+        for peer in ["c", "rust"] {
+            assert!(
+                row.bindings
+                    .iter()
+                    .any(|id| l
+                        .implementations
+                        .iter()
+                        .any(|implementation| implementation.id == *id
+                            && implementation.stratum == peer
+                            && implementation.kind == kind))
+            );
+            if !historical_registry {
+                assert_eq!(
+                    l.assessments[&row.assessment].readiness[peer].status,
+                    "unassessed"
+                );
+                assert!(
+                    l.assessments[&row.assessment].readiness[peer]
+                        .evidence
+                        .is_empty()
+                );
+                assert!(
+                    l.assessments[&row.assessment]
+                        .parity
+                        .values()
+                        .all(Vec::is_empty)
+                );
+            }
+        }
+    }
     assert_eq!(
         l.assessments[&form.assessment].readiness["cpp"].status,
         "unassessed"

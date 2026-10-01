@@ -31,12 +31,20 @@ fn read(path: &str) -> Result<Vec<u8>, CliError> {
 }
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
-    let usage = || CliError("usage: ql scene <compose|binding> <request.json|-> [--json]".into());
+    let usage =
+        || CliError("usage: ql scene <compose|binding|world> <request.json|-> [--json]".into());
     if args.len() < 2 {
         return Err(usage());
     }
     match args[0].as_str() {
         "compose" => {}
+        "world" => {
+            let mut request: ql_mef::scene::WorldRequest =
+                serde_json::from_slice(&read(&args[1])?).map_err(|e| CliError(e.to_string()))?;
+            request.sky = sky_snapshot(&request.sky, true)?;
+            let world = ql_mef::scene::world(request).map_err(CliError)?;
+            return serde_json::to_string(&world).map_err(|e| CliError(e.to_string()));
+        }
         // The continuous-field host binding the O:I Live instrument opens.
         "binding" => {
             let request: ql_mef::continuous::scene_field::BindingRequest =

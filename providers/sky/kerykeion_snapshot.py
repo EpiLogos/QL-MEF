@@ -46,6 +46,37 @@ def digest(value):
                                     allow_nan=False).encode()).hexdigest()
 
 
+def provider_quantity_payload(value):
+    """Recover the producer's float spelling after a JSON Number round trip.
+
+    These quantities are emitted as floats by Swiss Ephemeris, including an
+    integral Julian day (2461312.0). JavaScript emits that same Number as
+    2461312. The immutable reference still signs the producer's payload; only
+    these schema-defined quantity types are restored on a private hash copy.
+    Identity integers, timestamps, flags, the supplied request and provenance
+    remain exactly as received. No quantity or reference is recalculated.
+    """
+    result = copy.deepcopy(value)
+    def quantity(record, key):
+        if key in record and type(record[key]) in (int, float):
+            record[key] = float(record[key])
+    quantity(result, 'julian_day_ut_argument')
+    quantity(result, 'ayanamsha_degrees')
+    for body in result.get('bodies', []):
+        if isinstance(body, dict):
+            for key in ('longitude_degrees', 'latitude_degrees', 'distance_au',
+                        'longitude_speed_degrees_per_day',
+                        'latitude_speed_degrees_per_day', 'radial_speed_au_per_day'):
+                quantity(body, key)
+    provider = result.get('provider', {})
+    if isinstance(provider, dict):
+        for used_file in provider.get('used_data_files', []):
+            if isinstance(used_file, dict):
+                quantity(used_file, 'jd_start')
+                quantity(used_file, 'jd_end')
+    return result
+
+
 def file_digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -251,7 +282,9 @@ def validate_snapshot(value, *, now=None, require_current=False):
         'bodies', 'snapshot_ref'} and value.get('schema') == SCHEMA, 'unsupported snapshot')
     original = copy.deepcopy(value)
     reference = original.pop('snapshot_ref', None)
-    require(reference == 'sha256:' + digest(original), 'snapshot digest mismatch')
+    require(reference in ('sha256:' + digest(original),
+                          'sha256:' + digest(provider_quantity_payload(original))),
+            'snapshot digest mismatch')
     time = request(value['request'])
     require(value['epoch_utc'] == iso(time) and value['epoch_unix_ms'] == int(time.timestamp()) * 1000,
             'snapshot epoch mismatch')

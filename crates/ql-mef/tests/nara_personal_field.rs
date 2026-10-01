@@ -31,7 +31,7 @@ fn world_input(subject: &str) -> CoupledInput {
     ))
     .unwrap();
     let m3_fixture: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+        "../../../fixtures/kernel/m3-parent-consumer-current-v1.json"
     ))
     .unwrap();
     let mut m3: M3Request = serde_json::from_value(m3_fixture["request"].clone()).unwrap();

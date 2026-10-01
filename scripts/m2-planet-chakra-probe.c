@@ -7,7 +7,7 @@
 #include <string.h>
 
 int main(void) {
-    static const uint8_t expected[7]={7,6,5,4,3,2,1};
+    static const uint8_t expected[10]={7,6,5,4,3,2,1,0,6,7};
     unsigned i;
     QL_M2_PlanetChakraRoute unchanged={123,456,99,789},route;
     route=unchanged;
@@ -19,7 +19,7 @@ int main(void) {
         QL_M2_Result status;
         route=unchanged;
         status=ql_m2_planet_chakra_route(i,&route);
-        if(i>=7) {
+        if(i==7) {
             assert(status==QL_M2_UNAVAILABLE);
             assert(route.planet_id==123 && route.chakra_id==456 && route.chakra_index==99 && route.relation_count==789);
             assert(ql_m2_planet_chakra_relation(i,0)==NULL);
@@ -32,7 +32,7 @@ int main(void) {
         for(j=0;j<route.relation_count;++j) {
             const QL_M_Relation *r=ql_m2_planet_chakra_relation(i,j);
             assert(r && r->from_id==route.planet_id && r->to_id==route.chakra_id);
-            assert(strcmp(r->source_kind,"PLANETARY_RESONANCE")==0);
+            assert(strcmp(r->source_kind,i>=8 ? "HAS_CHAKRAL_ANCHOR" : "PLANETARY_RESONANCE")==0);
             assert(ql_m_relation_by_id(r->id)==r);
             printf("assertion\t%u\t%zu\t%016" PRIx64 "\t%s\t%u\n",i,j,r->id,r->relation_ref,r->record);
         }
@@ -51,11 +51,8 @@ int main(void) {
             size_t j;
             assert(ql_m2_decan_planet_route(longitude,&decan)==QL_M2_OK);
             assert(decan.zodiac_decan_index==i && decan.candidate_count==1 && decan.relation_count>0);
-            if(i==11) {
-                assert(decan.source_conflict && decan.planet_index==255 && decan.planet_id==0 && decan.conflict_relation_count==3);
-            } else {
-                assert(!decan.source_conflict && !decan.conflict_relation_count && decan.planet_index<7 && decan.planet_id!=0);
-            }
+            assert(!decan.source_conflict && !decan.conflict_relation_count && decan.planet_index<7 && decan.planet_id!=0);
+            if(i==11) assert(decan.planet_index==1); /* QL#254 accepted D9: Cancer3 RULED_BY Moon. */
             if(i==2) assert(decan.planet_index==3); /* Actual Aries3 RULED_BY Venus, not retained C Jupiter. */
             printf("decan\t%u\t%016" PRIx64 "\t%u\t%u\t%zu\t%zu\n",i,decan.decan_id,decan.planet_index,decan.source_conflict,decan.candidate_count,decan.relation_count);
             for(j=0;j<decan.relation_count;++j) {
