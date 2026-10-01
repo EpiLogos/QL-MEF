@@ -5,6 +5,34 @@ architecture §§2–3 and the accepted M2 producer. This is an implemented prov
 boundary, not completion of Personal reception, continuous materialisation or
 all K8.0–K8.3 acceptance.
 
+### Sun descriptor and retained source qualification
+
+The astronomical provider emits `sun_role=solar-parent`. This descriptive role
+has no authority to exclude the Sun's reception: owner #254 D10 makes the live
+`PLANETARY_RESONANCE` relation authoritative, currently Sun `#2-5-0/1` →
+Sahasrāra `#2-5-0/1-7`. The native M2 route resolves that directed source relation.
+Ten astronomical bodies, nine material voices and seven receiving centres remain
+separate counts; no operator, ratio or numerical law changes with this repair.
+
+The previous qualified provider e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81
+emitted the false descriptor `parent-not-chakra-mapped`. An exact saved occasion
+from that provider can retain its immutable snapshot only through
+`retained-occasion`, with numerical registry82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2,
+native header7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8,
+all other source fields unchanged, complete digest/body/time guards, and the
+current native Sun→7 relation enforced. The separate
+`ql.sky-source-binding-qualification/v1` records the original false descriptor
+as historical provenance and the current native relation; it never rewrites the
+snapshot or attests fresh current sky. Fresh requested admission and M2 attachment
+still demand the current complete source binding exactly.
+
+Activity recomposition preserves an exact previously acknowledged e6d admission
+and adds its separate current qualification; it does not claim a renewed sky.
+The native host still fences that exact retained snapshot to the actual saved
+world/person/private occasion. A digest is not origin authentication for arbitrary
+re-signed astronomical quantities. Other providers, old2264 registries, wrong
+native source keys, body identity and digest mutations remain refused.
+
 ## Input and actual calculation
 
 `providers/sky/kerykeion_snapshot.py` accepts `ql.sky-request/v1` and produces

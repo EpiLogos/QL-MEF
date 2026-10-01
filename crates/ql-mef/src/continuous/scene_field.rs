@@ -407,7 +407,7 @@ pub fn complete(
 
 pub const BINDING_REQUEST: &str = "ql.scene-binding-request/v1";
 pub const BINDING: &str = "oi.native-expression-binding/v1";
-const DEFAULT_EVENT: &str = include_str!("../../../../fixtures/kernel/scene-default-event-v1.json");
+const DEFAULT_EVENT: &str = include_str!("../../../../fixtures/kernel/scene-default-event-v2.json");
 
 /// What a consumer asks for: an event (or QL's default starting event), an
 /// optional dated sky, and the retained renderer's particle texture.
@@ -1025,7 +1025,7 @@ mod scene_tests {
     #[test]
     fn a_historical_sky_replaces_the_receipt_and_preserves_epoch_vs_acquisition() {
         let sky: Value = serde_json::from_str(include_str!(
-            "../../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
         ))
         .unwrap();
         let mut event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
@@ -1068,7 +1068,7 @@ mod scene_tests {
     #[test]
     fn historical_embedded_event_is_refused_against_the_current_source_sky() {
         let sky: Value = serde_json::from_str(include_str!(
-            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
         ))
         .unwrap();
         let result = binding(BindingRequest {
@@ -1076,7 +1076,14 @@ mod scene_tests {
             instance_ref: "test:scene".into(),
             texture: [8, 8],
             units_per_metre: 1.0,
-            event: None,
+            // The preserved original stale fixture remains a real negative;
+            // the current embedded successor is no longer the stale subject.
+            event: Some(
+                serde_json::from_str(include_str!(
+                    "../../../../fixtures/kernel/scene-default-event-v1.json"
+                ))
+                .unwrap(),
+            ),
             sky: Some(sky),
             field: None,
             geometry: None,
@@ -1084,5 +1091,45 @@ mod scene_tests {
             reception: None,
         });
         assert!(result.unwrap_err().contains("registry revision differ"));
+    }
+    #[test]
+    fn default_without_new_acquisition_still_contains_the_exact_dated_scene() {
+        let event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
+        let sky = event
+            .source_receipts
+            .iter()
+            .find(|r| r["schema"] == "ql.sky-snapshot/v1")
+            .unwrap();
+        assert_eq!(sky["source_binding"]["sun_role"], "solar-parent");
+        assert_eq!(sky["epoch_utc"], "2026-09-15T13:46:21Z");
+        assert_eq!(event.m1.tick12, 7);
+        assert_eq!(event.m1.cycle, "1");
+        assert_eq!(event.m3.address, 7);
+        assert_eq!(event.m3.pose, 6);
+        assert_eq!(event.m3.aperture, 2);
+        assert_eq!(event.m3.clock_steps, 359);
+        let reading = binding(BindingRequest {
+            schema: BINDING_REQUEST.into(),
+            instance_ref: "test:qualified-default".into(),
+            texture: [8, 8],
+            units_per_metre: 120.0,
+            event: None,
+            sky: None,
+            field: None,
+            geometry: None,
+            material: None,
+            reception: None,
+        })
+        .unwrap();
+        assert_eq!(reading["scene"]["bodies"].as_array().unwrap().len(), 10);
+        assert_eq!(
+            reading["native_basis"]["derivation"]["sky_voices"]
+                .as_array()
+                .unwrap()
+                .len(),
+            9
+        );
+        assert_eq!(reading["scene"]["snapshot_ref"], sky["snapshot_ref"]);
+        assert_eq!(reading["host"]["basis"], json!(event));
     }
 }

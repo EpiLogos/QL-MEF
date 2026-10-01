@@ -46,6 +46,63 @@ class SkyTests(unittest.TestCase):
         self.assertTrue(all(len(s['provider'][k]) == 64 for k in
                             ('engine_sha256', 'factory_sha256', 'adapter_sha256')))
 
+    def test_sun_descriptor_and_exact_known_legacy_retention(self):
+        self.assertEqual(self.saved['source_binding']['sun_role'], 'solar-parent')
+        fixture = sky.ROOT / 'fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json'
+        original = json.loads(fixture.read_text())
+        before = json.dumps(original, sort_keys=True)
+        self.assertEqual(original['provider']['adapter_sha256'], sky.LEGACY_SUN_ADAPTER_SHA256)
+        self.assertEqual(original['source_binding']['sun_role'], 'parent-not-chakra-mapped')
+        # The original artifact's physical sky, source qualifiers and digest are
+        # retained exactly. A separate receipt tells the truth about the label.
+        replay = sky.validate_retained_snapshot(original)
+        self.assertEqual(json.dumps(replay, sort_keys=True), before)
+        qualification = sky.source_binding_qualification(original, retained=True)
+        self.assertTrue(qualification['legacy_descriptor_admitted'])
+        self.assertEqual(qualification['current_sun_role'], 'solar-parent')
+        self.assertFalse(qualification['fresh_current_attested'])
+        with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+            sky.source_binding_qualification(original, retained=False)
+        refused = subprocess.run([sys.executable, str(Path(sky.__file__)), '-',
+                                  '--validate-snapshot'], input=json.dumps(original),
+                                 text=True, capture_output=True)
+        self.assertEqual(refused.returncode, 2)
+        self.assertIn('native source binding is stale', refused.stderr)
+
+    def test_known_legacy_sun_descriptor_is_not_a_general_source_exception(self):
+        fixture = sky.ROOT / 'fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json'
+        original = json.loads(fixture.read_text())
+        mutations = [
+            ('provider', 'adapter_sha256', '0' * 64),
+            ('source_binding', 'registry_revision', '0' * 64),
+            ('source_binding', 'header_sha256', '0' * 64),
+            ('source_binding', 'sun_role', 'wrong-Sun-route'),
+            ('source_binding', 'non_sun_operators', 10),
+            ('source_binding', 'receiving_chakras', 8),
+        ]
+        for group, key, value in mutations:
+            with self.subTest(group=group, key=key):
+                changed = copy.deepcopy(original)
+                changed[group][key] = value
+                with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+                    sky.validate_retained_snapshot(signed(changed))
+        changed = copy.deepcopy(original)
+        changed['source_binding']['unexpected'] = True
+        with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+            sky.validate_retained_snapshot(signed(changed))
+        changed = copy.deepcopy(original)
+        changed['source_binding']['earth_body']['source_ref'] = '#2-5-0/1-7'
+        with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+            sky.validate_retained_snapshot(signed(changed))
+        changed = copy.deepcopy(original)
+        changed['bodies'][0]['native_planet_id'] = 1
+        with self.assertRaisesRegex(sky.SkyError, 'planet array identity mismatch'):
+            sky.validate_retained_snapshot(signed(changed))
+        changed = copy.deepcopy(original)
+        changed['bodies'][0]['longitude_degrees'] += 1
+        with self.assertRaisesRegex(sky.SkyError, 'snapshot digest mismatch'):
+            sky.validate_retained_snapshot(changed)
+
     def test_real_host_current_not_fixture(self):
         now = datetime.now(timezone.utc).replace(microsecond=0)
         s = sky.produce(query(epoch=sky.iso(now), mode='current'))

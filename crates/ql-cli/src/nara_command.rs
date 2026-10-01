@@ -437,13 +437,101 @@ pub(crate) enum SnapshotPurpose {
     RetainedOccasion,
 }
 
+// Exact previous native provider descriptors remain historical provenance.
+// This is not a general Sun-key exception and does not authorize fresh sky.
+const LEGACY_SUN_ADAPTER: &str = "e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81";
+const LEGACY_SUN_REGISTRY: &str =
+    "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2";
+const LEGACY_SUN_HEADER: &str = "7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8";
+
+fn source_binding_qualification(sky: &Value, retained: bool) -> Result<Value, CliError> {
+    let legacy = sky["source_binding"]["sun_role"] == "parent-not-chakra-mapped";
+    if legacy {
+        if !retained
+            || sky["provider"]["adapter_sha256"] != LEGACY_SUN_ADAPTER
+            || sky["source_binding"]["registry_revision"] != LEGACY_SUN_REGISTRY
+            || sky["source_binding"]["header_sha256"] != LEGACY_SUN_HEADER
+        {
+            return Err(error("unqualified legacy Sun descriptor"));
+        }
+    } else if sky["source_binding"]["sun_role"] != "solar-parent" {
+        return Err(error("unknown Sun source descriptor"));
+    }
+    // #254 D10: actual directed PLANETARY_RESONANCE is authority. Do not
+    // infer reception from the descriptive provider string or a C bitmask.
+    let route = ql_mef::m2::planet_chakra_route(0)
+        .map_err(error)?
+        .ok_or_else(|| error("current Sun planetary resonance is absent"))?;
+    if route.planet_coordinate != "#2-5-0/1"
+        || route.chakra_coordinate != "#2-5-0/1-7"
+        || route.chakra_index != 7
+        || sky["source_binding"]["registry_revision"] != route.registry_revision
+        || !route.relations.iter().any(|relation| {
+            relation.source_kind == "PLANETARY_RESONANCE"
+                && relation.from_id == Some(route.planet_id)
+                && relation.to_id == Some(route.chakra_id)
+        })
+    {
+        return Err(error(
+            "Sun descriptor is not grounded in the accepted native Bimba route",
+        ));
+    }
+    Ok(json!({"schema":"ql.sky-source-binding-qualification/v1",
+        "snapshot_ref":sky["snapshot_ref"],"legacy_descriptor_admitted":legacy,
+        "original_sun_role":sky["source_binding"]["sun_role"],"current_sun_role":"solar-parent",
+        "provider_adapter_sha256":sky["provider"]["adapter_sha256"],
+        "native_sun_route":route,
+        "fresh_current_attested":false,
+        "standing":if legacy {"known legacy descriptor retained as historical provenance; current native Bimba relation governs reception"}
+            else {"current provider descriptor and native Bimba reception kept distinct"}}))
+}
+
+fn acknowledged_sky_admission(admission: &Value, sky: &Value) -> Result<Value, CliError> {
+    let purpose: SnapshotPurpose =
+        serde_json::from_value(admission["purpose"].clone()).map_err(error)?;
+    // Activity operates the already-held occasion. Validate its exact immutable
+    // source without recalculation or a renewed current freshness attestation.
+    let validated = sky_snapshot(sky, true, SnapshotPurpose::RetainedOccasion)?;
+    if validated != *sky {
+        return Err(error("acknowledged sky changed during retained validation"));
+    }
+    let qualification = source_binding_qualification(sky, true)?;
+    let current = purpose.admission_value(sky, qualification.clone());
+    if *admission == current {
+        return Ok(qualification);
+    }
+    if qualification["legacy_descriptor_admitted"] == true {
+        let mut original = current;
+        original
+            .as_object_mut()
+            .unwrap()
+            .remove("source_binding_qualification");
+        original["validator_source"]["revision"] = json!(format!("sha256:{LEGACY_SUN_ADAPTER}"));
+        if *admission == original {
+            // Keep the original acknowledged receipt, including its original
+            // requested mode; the separate qualifier is explicitly not fresh.
+            return Ok(qualification);
+        }
+    }
+    Err(error(
+        "personal recomposition sky admission differs from its exact source",
+    ))
+}
+
 impl SnapshotPurpose {
-    pub(crate) fn admission(self, sky: &Value) -> Value {
+    pub(crate) fn admission(self, sky: &Value) -> Result<Value, CliError> {
+        let qualification =
+            source_binding_qualification(sky, matches!(self, Self::RetainedOccasion))?;
+        Ok(self.admission_value(sky, qualification))
+    }
+
+    fn admission_value(self, sky: &Value, qualification: Value) -> Value {
         let fresh = matches!(self, Self::Requested) && sky["request"]["mode"] == "current";
         json!({"schema":"ql.sky-admission/v1", "purpose":self,
         "snapshot_ref":sky["snapshot_ref"], "original_mode":sky["request"]["mode"],
         "epoch_utc":sky["epoch_utc"], "receipt_utc":sky["receipt_utc"],
         "fresh_current_attested":fresh,
+        "source_binding_qualification":qualification,
         "validation":"immutable-snapshot-and-current-native-source",
         "validator_source":{"source_ref":"providers/sky/kerykeion_snapshot.py",
             "revision":format!("sha256:{:x}", Sha256::digest(include_bytes!("../../../providers/sky/kerykeion_snapshot.py")))},
@@ -482,7 +570,9 @@ pub(crate) fn sky_snapshot(
     } else {
         &["-"]
     };
-    calculate_provider(request, script, args)
+    let sky = calculate_provider(request, script, args)?;
+    source_binding_qualification(&sky, matches!(purpose, SnapshotPurpose::RetainedOccasion))?;
+    Ok(sky)
 }
 
 fn transit(
@@ -491,7 +581,7 @@ fn transit(
     purpose: SnapshotPurpose,
 ) -> Result<(Value, Value), CliError> {
     let sky = sky_snapshot(request, existing_snapshot, purpose)?;
-    let admission = purpose.admission(&sky);
+    let admission = purpose.admission(&sky)?;
     Ok((
         ql_mef::nara::current::transit(Some(&sky)).map_err(error)?,
         admission,
@@ -601,13 +691,9 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         )
         .map_err(error)?;
         if let Some(admission) = request.current.get("sky_admission") {
-            let purpose: SnapshotPurpose =
-                serde_json::from_value(admission["purpose"].clone()).map_err(error)?;
-            if *admission != purpose.admission(&request.current["transit"]["sky"]) {
-                return Err(error(
-                    "personal recomposition sky admission differs from its exact source",
-                ));
-            }
+            let qualification =
+                acknowledged_sky_admission(admission, &request.current["transit"]["sky"])?;
+            current["sky_source_binding_qualification"] = qualification;
             // Activity changes neither the original dated event nor its
             // acknowledged admission. This does not attest freshness again.
             current["sky_admission"] = admission.clone();
@@ -663,4 +749,71 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     };
     let reading = profile.inspect(natal.as_ref()).map_err(error)?;
     serde_json::to_string_pretty(&reading).map_err(error)
+}
+
+#[cfg(test)]
+mod sky_source_tests {
+    use super::*;
+
+    fn known_legacy_sky() -> Value {
+        serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json"
+        ))
+        .unwrap()
+    }
+
+    #[test]
+    fn retained_legacy_descriptor_has_a_separate_actual_native_sun_route() {
+        let sky = known_legacy_sky();
+        let before = sky.clone();
+        let qualification = source_binding_qualification(&sky, true).unwrap();
+        assert_eq!(sky, before);
+        assert_eq!(qualification["legacy_descriptor_admitted"], true);
+        assert_eq!(qualification["fresh_current_attested"], false);
+        assert_eq!(
+            qualification["native_sun_route"]["planet_coordinate"],
+            "#2-5-0/1"
+        );
+        assert_eq!(
+            qualification["native_sun_route"]["chakra_coordinate"],
+            "#2-5-0/1-7"
+        );
+        assert_eq!(qualification["native_sun_route"]["chakra_index"], 7);
+        assert_eq!(
+            qualification["native_sun_route"]["source_revision"],
+            "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"
+        );
+        assert!(
+            qualification["native_sun_route"]["relations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["source_kind"] == "PLANETARY_RESONANCE"
+                    && r["relation_ref"] == "bimba:relation:710326725339389fb6905570")
+        );
+        assert!(source_binding_qualification(&sky, false).is_err());
+    }
+
+    #[test]
+    fn known_provider_qualification_is_not_a_general_legacy_or_wrong_sun_exception() {
+        for (group, key, value) in [
+            ("provider", "adapter_sha256", json!("0".repeat(64))),
+            ("source_binding", "registry_revision", json!("0".repeat(64))),
+            ("source_binding", "header_sha256", json!("0".repeat(64))),
+            ("source_binding", "sun_role", json!("Sun-to-wrong-centre")),
+        ] {
+            let mut sky = known_legacy_sky();
+            sky[group][key] = value;
+            assert!(source_binding_qualification(&sky, true).is_err());
+        }
+        // This unit tests the native route after provider admission, not a
+        // replacement for complete provider digest/field validation.
+        let sky: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
+        ))
+        .unwrap();
+        let q = source_binding_qualification(&sky, false).unwrap();
+        assert_eq!(q["legacy_descriptor_admitted"], false);
+        assert_eq!(q["native_sun_route"]["chakra_index"], 7);
+    }
 }

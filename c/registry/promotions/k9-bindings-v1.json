@@ -333,10 +333,11 @@
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "QL-MEF #201 identity intake transport over the existing M4 identity producer and real Kerykeion/M2 sky provider. It bounds process input/output and timeout, materialises embedded provider resources, and discloses configured or managed provider readiness. It owns no identity calculation policy, native profile persistence, event, receiver dynamics, or full personal Expression.",
+      "rationale": "QL-MEF #201 identity intake transport over the existing M4 identity producer and real Kerykeion/M2 sky provider. It bounds process input/output and timeout, materialises embedded provider resources, and discloses configured or managed provider readiness. It owns no identity calculation policy, native profile persistence, event, receiver dynamics, or full personal Expression. Exact known historical sky descriptors are admitted only for retained occasions with separate source qualification and the current native Sun-to-Sahasrara route; fresh requested source guards remain strict.",
       "tests": [
         "crates/ql-mef/src/nara/intake_tests.rs",
-        "providers/nara/test_natal.py"
+        "providers/nara/test_natal.py",
+        "crates/ql-cli/tests/scene_native.rs"
       ],
       "kind": "computational"
     },
@@ -556,6 +557,18 @@
       "rationale": "QL-MEF #258 EA1 lived Day/Flow context for one Nara concern: selects source-exact, attributed, correction-aware passages from Central document readings and the continuing journey for the dialogue context's occasion and disclosed refs. It reads host-supplied material only and never writes to the person's source or takes Central ownership.",
       "tests": [
         "crates/ql-mef/tests/nara_lived_context.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "providers/sky/kerykeion_snapshot.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Actual Kerykeion/Swiss ten-body dated-sky adapter and source/digest/currentness admission. The current source emits solar-parent metadata; exact known historical e6d/82cd/7df descriptors can be retained unchanged with a separate nonfresh qualification. Native PLANETARY_RESONANCE owns Sun-to-Sahasrara reception; this transport declaration invents no planet, centre, tuning, numerical readiness or personal-current authority.",
+      "tests": [
+        "providers/sky/test_kerykeion_snapshot.py",
+        "crates/ql-cli/tests/scene_native.rs"
       ],
       "kind": "computational"
     }

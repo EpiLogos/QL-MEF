@@ -161,7 +161,7 @@ def source_bindings():
             'header': str(header.relative_to(ROOT)), 'header_sha256': file_digest(header),
             'native_table': table['symbol'], 'scope': table['scope'],
             'standing': 'retained-symbolic-model-not-astronomical-measurement',
-            'sun_role': 'parent-not-chakra-mapped', 'non_sun_operators': 9,
+            'sun_role': 'solar-parent', 'non_sun_operators': 9,
             'earth_body': {'source_ref': '#2-5-0/1-0', 'role': 'grounding-anchor',
                            'outside_planet_array': True, 'is_eighth_chakra': False},
             'receiving_chakras': 7, 'epogdoon': [9, 8],
@@ -350,6 +350,46 @@ def validate_snapshot(value, *, now=None, require_current=False):
     return value
 
 
+# This is a known previous native provider descriptor, not a general Sun-key
+# exception. #254 D10 gives PLANETARY_RESONANCE authority; the QL native owner
+# separately enforces the current Sun -> Sahasrara route and emits its reading.
+LEGACY_SUN_ADAPTER_SHA256 = 'e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81'
+LEGACY_SUN_REGISTRY_REVISION = '82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2'
+LEGACY_SUN_HEADER_SHA256 = '7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8'
+
+
+def source_binding_qualification(value, *, retained=False):
+    """Describe accepted metadata without changing the immutable snapshot.
+
+    This helper is not astronomical origin authentication. The native host
+    fences a retained snapshot to the actual saved world/private occasion;
+    structural/digest validation alone cannot authenticate arbitrary re-signed
+    astronomical quantities. Current source and body/digest guards remain.
+    """
+    expected = source_bindings()
+    actual = value['source_binding']
+    current = actual == expected
+    if not current:
+        legacy = dict(expected, sun_role='parent-not-chakra-mapped')
+        require(retained and actual == legacy
+                and actual['registry_revision'] == LEGACY_SUN_REGISTRY_REVISION
+                and actual['header_sha256'] == LEGACY_SUN_HEADER_SHA256
+                and value['provider']['adapter_sha256'] == LEGACY_SUN_ADAPTER_SHA256,
+                'native source binding is stale')
+    return {'schema': 'ql.sky-source-binding-qualification/v1',
+            'snapshot_ref': value['snapshot_ref'],
+            'legacy_descriptor_admitted': not current,
+            'original_sun_role': actual['sun_role'],
+            'current_sun_role': expected['sun_role'],
+            'provider_adapter_sha256': value['provider']['adapter_sha256'],
+            'registry_revision': actual['registry_revision'],
+            'header_sha256': actual['header_sha256'],
+            'standing': ('known legacy descriptor retained as historical provenance; '
+                         'native Bimba relations determine current reception') if not current else
+                        'current native source descriptor',
+            'fresh_current_attested': False}
+
+
 def validate_retained_snapshot(value, *, now=None):
     """Reopen an exact dated occasion without claiming fresh sky now.
 
@@ -358,7 +398,11 @@ def validate_retained_snapshot(value, *, now=None):
     Future selected historical ephemerides keep their existing dated standing.
     """
     validate_snapshot(value)
-    require(value['source_binding'] == source_bindings(), 'native source binding is stale')
+    # Only this explicit retained path admits the exact previous provider's
+    # false descriptive Sun label. The numerical/native source binding and
+    # complete immutable snapshot remain unchanged. Fresh request and M2
+    # attachment paths continue to demand the current source binding exactly.
+    source_binding_qualification(value, retained=True)
     if value['request']['mode'] == 'current':
         receipt = datetime.fromisoformat(value['receipt_utc'].replace('Z', '+00:00'))
         validate_snapshot(value, now=receipt, require_current=True)

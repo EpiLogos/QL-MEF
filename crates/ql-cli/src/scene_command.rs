@@ -56,7 +56,7 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             let mut request: ql_mef::scene::WorldRequest =
                 serde_json::from_value(input).map_err(|e| CliError(e.to_string()))?;
             request.sky = sky_snapshot(&request.sky, true, purpose)?;
-            let admission = purpose.admission(&request.sky);
+            let admission = purpose.admission(&request.sky)?;
             let mut world = ql_mef::scene::world(request).map_err(CliError)?;
             world["sky_admission"] = admission;
             return serde_json::to_string(&world).map_err(|e| CliError(e.to_string()));
@@ -99,6 +99,6 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         request.tuning.unwrap_or_default(),
     )
     .map_err(CliError)?;
-    scene["sky_admission"] = request.snapshot_purpose.admission(&sky);
+    scene["sky_admission"] = request.snapshot_purpose.admission(&sky)?;
     serde_json::to_string_pretty(&scene).map_err(|e| CliError(e.to_string()))
 }
