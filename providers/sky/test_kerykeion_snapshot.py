@@ -102,6 +102,58 @@ class SkyTests(unittest.TestCase):
         with self.assertRaises(sky.SkyError):
             sky.validate_snapshot(self.saved, now=NOW, require_current=True)
 
+    def test_retained_current_origin_preserves_original_without_ephemeris_or_live_claim(self):
+        original = sky.produce(query(mode='current'), now=NOW)
+        before = json.dumps(original, sort_keys=True)
+        later = NOW + timedelta(seconds=61)
+        with self.assertRaisesRegex(sky.SkyError, 'not fresh current sky'):
+            sky.validate_snapshot(original, now=later, require_current=True)
+        with patch('kerykeion.AstrologicalSubjectFactory.from_birth_data',
+                   side_effect=AssertionError('retained validation must not recalculate sky')):
+            retained = sky.validate_retained_snapshot(original, now=later)
+        self.assertEqual(json.dumps(retained, sort_keys=True), before)
+        self.assertEqual(retained['request']['mode'], 'current')
+
+    def test_retained_validation_keeps_source_digest_capture_freshness_and_future_guards(self):
+        original = sky.produce(query(mode='current'), now=NOW)
+        later = NOW + timedelta(days=1)
+        changed = copy.deepcopy(original)
+        changed['bodies'][0]['longitude_degrees'] += 1
+        with self.assertRaisesRegex(sky.SkyError, 'snapshot digest mismatch'):
+            sky.validate_retained_snapshot(changed, now=later)
+        changed = copy.deepcopy(original)
+        changed['source_binding']['registry_revision'] = '0' * 64
+        with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+            sky.validate_retained_snapshot(signed(changed), now=later)
+        changed = copy.deepcopy(original)
+        changed['receipt_utc'] = sky.iso(NOW + timedelta(seconds=61))
+        changed['receipt_unix_ms'] = int((NOW + timedelta(seconds=61)).timestamp() * 1000)
+        with self.assertRaisesRegex(sky.SkyError, 'not fresh current sky'):
+            sky.validate_retained_snapshot(signed(changed), now=later)
+        with self.assertRaisesRegex(sky.SkyError, 'receipt is in the future'):
+            sky.validate_retained_snapshot(original, now=NOW - timedelta(seconds=1))
+        historical = sky.produce(query(epoch='2027-01-01T00:00:00Z'), now=NOW)
+        self.assertEqual(sky.validate_retained_snapshot(historical, now=NOW), historical)
+        with self.assertRaises(sky.SkyError):
+            sky.validate_snapshot(historical, now=NOW, require_current=True)
+
+    def test_retained_cli_is_explicit_and_never_authorizes_new_request_or_m2_attachment(self):
+        original = sky.produce(query(mode='current'), now=NOW)
+        command = [sys.executable, str(Path(sky.__file__)), '-', '--validate-retained-snapshot']
+        positive = subprocess.run(command, input=json.dumps(original), text=True, capture_output=True)
+        self.assertEqual(positive.returncode, 0, positive.stderr)
+        self.assertEqual(json.loads(positive.stdout), original)
+        default = subprocess.run(command[:-1] + ['--validate-snapshot'],
+                                 input=json.dumps(original), text=True, capture_output=True)
+        self.assertNotEqual(default.returncode, 0)
+        self.assertIn('not fresh current sky', default.stderr)
+        for args, value in [(command, query()),
+                            (command + ['--validate-snapshot'], original),
+                            (command + ['--m2-request', 'unused.json'], original)]:
+            refused = subprocess.run(args, input=json.dumps(value), text=True, capture_output=True)
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertFalse(refused.stdout)
+
     def test_backend_is_returned_not_requested_and_required_files(self):
         self.assertTrue(all(b['backend'] in ('moshier', 'swiss-files') for b in self.saved['bodies']))
         if any(b['backend'] == 'moshier' for b in self.saved['bodies']):

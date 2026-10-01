@@ -427,15 +427,57 @@ fn calculate_provider(
     serde_json::from_slice(&output).map_err(error)
 }
 
-/// The accepted sky snapshot itself, from the same embedded provider Nara uses.
-pub(crate) fn sky_snapshot(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
+/// How an existing snapshot is received, separately from its immutable request.
+/// Requested preserves current/historical policy; retained is a dated replay.
+#[derive(Clone, Copy, Debug, Default, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub(crate) enum SnapshotPurpose {
+    #[default]
+    Requested,
+    RetainedOccasion,
+}
+
+impl SnapshotPurpose {
+    pub(crate) fn admission(self, sky: &Value) -> Value {
+        let fresh = matches!(self, Self::Requested) && sky["request"]["mode"] == "current";
+        json!({"schema":"ql.sky-admission/v1", "purpose":self,
+        "snapshot_ref":sky["snapshot_ref"], "original_mode":sky["request"]["mode"],
+        "epoch_utc":sky["epoch_utc"], "receipt_utc":sky["receipt_utc"],
+        "fresh_current_attested":fresh,
+        "validation":"immutable-snapshot-and-current-native-source",
+        "validator_source":{"source_ref":"providers/sky/kerykeion_snapshot.py",
+            "revision":format!("sha256:{:x}", Sha256::digest(include_bytes!("../../../providers/sky/kerykeion_snapshot.py")))},
+        "standing":if matches!(self, Self::RetainedOccasion) {
+            "retained dated occasion; no fresh-current attestation"
+        } else if fresh {
+            "current requested epoch validated within its freshness budget"
+        } else {
+            "selected historical epoch; no fresh-current attestation"
+        }})
+    }
+}
+
+/// The accepted sky itself, from the same embedded provider Nara uses. Purpose
+/// is an admission instruction, never a change to that sky's signed request.
+pub(crate) fn sky_snapshot(
+    request: &Value,
+    existing_snapshot: bool,
+    purpose: SnapshotPurpose,
+) -> Result<Value, CliError> {
+    if matches!(purpose, SnapshotPurpose::RetainedOccasion) && !existing_snapshot {
+        return Err(error(
+            "retained-occasion requires an existing exact sky snapshot",
+        ));
+    }
     let natal_script = resources()?;
     let script = natal_script
         .parent()
         .and_then(|p| p.parent())
         .ok_or_else(|| error("invalid sky resource layout"))?
         .join("sky/kerykeion_snapshot.py");
-    let args: &[&str] = if existing_snapshot {
+    let args: &[&str] = if matches!(purpose, SnapshotPurpose::RetainedOccasion) {
+        &["-", "--validate-retained-snapshot"]
+    } else if existing_snapshot {
         &["-", "--validate-snapshot"]
     } else {
         &["-"]
@@ -443,20 +485,17 @@ pub(crate) fn sky_snapshot(request: &Value, existing_snapshot: bool) -> Result<V
     calculate_provider(request, script, args)
 }
 
-fn transit(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
-    let natal_script = resources()?;
-    let script = natal_script
-        .parent()
-        .and_then(|p| p.parent())
-        .ok_or_else(|| error("invalid sky resource layout"))?
-        .join("sky/kerykeion_snapshot.py");
-    let args: &[&str] = if existing_snapshot {
-        &["-", "--validate-snapshot"]
-    } else {
-        &["-"]
-    };
-    let sky = calculate_provider(request, script, args)?;
-    ql_mef::nara::current::transit(Some(&sky)).map_err(error)
+fn transit(
+    request: &Value,
+    existing_snapshot: bool,
+    purpose: SnapshotPurpose,
+) -> Result<(Value, Value), CliError> {
+    let sky = sky_snapshot(request, existing_snapshot, purpose)?;
+    let admission = purpose.admission(&sky);
+    Ok((
+        ql_mef::nara::current::transit(Some(&sky)).map_err(error)?,
+        admission,
+    ))
 }
 
 #[derive(serde::Deserialize)]
@@ -467,6 +506,8 @@ struct PersonalCurrentRequest {
     sky_request: Option<Value>,
     sky_snapshot: Option<Value>,
     m3_input: Option<Value>,
+    #[serde(default)]
+    snapshot_purpose: SnapshotPurpose,
 }
 
 #[derive(serde::Deserialize)]
@@ -479,7 +520,7 @@ struct PersonalRecomposeRequest {
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
-        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
+        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","sky_snapshot_purposes":["requested","retained-occasion"],"sky_admission_schema":"ql.sky-admission/v1","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
     }
     let [operation, path] = args else {
         return Err(error(
@@ -553,17 +594,32 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         let activity = m3
             .get("activity")
             .ok_or_else(|| error("Select an explicit native M3 activity policy"))?;
-        let current = ql_mef::nara::current::personal_current_with_activity(
+        let mut current = ql_mef::nara::current::personal_current_with_activity(
             &request.current["identity"],
             &request.current["transit"],
             Some(activity),
         )
         .map_err(error)?;
+        if let Some(admission) = request.current.get("sky_admission") {
+            let purpose: SnapshotPurpose =
+                serde_json::from_value(admission["purpose"].clone()).map_err(error)?;
+            if *admission != purpose.admission(&request.current["transit"]["sky"]) {
+                return Err(error(
+                    "personal recomposition sky admission differs from its exact source",
+                ));
+            }
+            // Activity changes neither the original dated event nor its
+            // acknowledged admission. This does not attest freshness again.
+            current["sky_admission"] = admission.clone();
+        }
         return serde_json::to_string_pretty(&current).map_err(error);
     }
     if operation == "transit" {
         let request: Value = serde_json::from_slice(&bytes).map_err(error)?;
-        return serde_json::to_string_pretty(&transit(&request, false)?).map_err(error);
+        return serde_json::to_string_pretty(
+            &transit(&request, false, SnapshotPurpose::Requested)?.0,
+        )
+        .map_err(error);
     }
     if operation == "personal-current" {
         let request: PersonalCurrentRequest = serde_json::from_slice(&bytes).map_err(error)?;
@@ -571,17 +627,17 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             return Err(error("unsupported personal current request"));
         }
         request.profile.validate().map_err(error)?;
-        let natal = calculate(&request.profile)?;
-        let identity = request.profile.inspect(Some(&natal)).map_err(error)?;
-        let transit = match (&request.sky_request, &request.sky_snapshot) {
-            (Some(sky), None) => transit(sky, false)?,
-            (None, Some(sky)) => transit(sky, true)?,
+        let (transit, admission) = match (&request.sky_request, &request.sky_snapshot) {
+            (Some(sky), None) => transit(sky, false, request.snapshot_purpose)?,
+            (None, Some(sky)) => transit(sky, true, request.snapshot_purpose)?,
             _ => {
                 return Err(error(
                     "personal current requires exactly one sky_request or sky_snapshot",
                 ));
             }
         };
+        let natal = calculate(&request.profile)?;
+        let identity = request.profile.inspect(Some(&natal)).map_err(error)?;
         let m3 = request
             .m3_input
             .as_ref()
@@ -592,9 +648,10 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             })
             .transpose()?;
         let activity = m3.as_ref().and_then(|reading| reading.get("activity"));
-        let current =
+        let mut current =
             ql_mef::nara::current::personal_current_with_activity(&identity, &transit, activity)
                 .map_err(error)?;
+        current["sky_admission"] = admission;
         return serde_json::to_string_pretty(&current).map_err(error);
     }
     let profile: IdentityProfile = serde_json::from_slice(&bytes).map_err(error)?;

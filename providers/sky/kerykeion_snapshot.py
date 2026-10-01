@@ -350,6 +350,23 @@ def validate_snapshot(value, *, now=None, require_current=False):
     return value
 
 
+def validate_retained_snapshot(value, *, now=None):
+    """Reopen an exact dated occasion without claiming fresh sky now.
+
+    A current-origin snapshot must have been fresh at its recorded receipt;
+    retaining it does not change its request, epoch, source or content hash.
+    Future selected historical ephemerides keep their existing dated standing.
+    """
+    validate_snapshot(value)
+    require(value['source_binding'] == source_bindings(), 'native source binding is stale')
+    if value['request']['mode'] == 'current':
+        receipt = datetime.fromisoformat(value['receipt_utc'].replace('Z', '+00:00'))
+        validate_snapshot(value, now=receipt, require_current=True)
+        require(receipt <= (now or datetime.now(timezone.utc)),
+                'retained current snapshot receipt is in the future')
+    return value
+
+
 def attach_m2(snapshot, m2_request, *, now=None, scope='shared-geocentric'):
     """Add native observations without rewriting excitation, modes or producer standing.
 
@@ -410,7 +427,9 @@ def execute_m2(snapshot, m2_request, executable, *, now=None, scope='shared-geoc
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('request', type=Path)
-    parser.add_argument('--validate-snapshot', action='store_true', help='Validate and return an existing exact snapshot without recalculation')
+    validation = parser.add_mutually_exclusive_group()
+    validation.add_argument('--validate-snapshot', action='store_true', help='Validate an exact snapshot under its original requested freshness policy')
+    validation.add_argument('--validate-retained-snapshot', action='store_true', help='Validate an exact retained occasion without attesting fresh current sky')
     parser.add_argument('--m2-request', type=Path)
     parser.add_argument('--m2-executable', type=Path)
     args = parser.parse_args()
@@ -422,7 +441,11 @@ def main():
             require(args.request.stat().st_size <= 65536, 'sky request exceeds 64 KiB')
             source = args.request.read_bytes()
         data = json.loads(source)
-        if args.validate_snapshot:
+        if args.validate_retained_snapshot:
+            require(args.m2_request is None and args.m2_executable is None,
+                    'retained validation does not authorize fresh M2 attachment')
+            result = validate_retained_snapshot(data)
+        elif args.validate_snapshot:
             result = validate_snapshot(data, require_current=data['request']['mode'] == 'current')
             require(result['source_binding'] == source_bindings(), 'native source binding is stale')
         else:

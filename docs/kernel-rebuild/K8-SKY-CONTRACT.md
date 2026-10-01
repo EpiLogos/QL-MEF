@@ -30,6 +30,39 @@ A later current consumer checks age again. `historical` means a selected dated
 calculation, including a future selected ephemeris; it cannot be presented as
 fresh current sky. Fixtures and extrapolation never receive a current label.
 
+### Retained occasion admission
+
+The original request mode describes how the snapshot was produced. Reopening
+that exact occasion later does not change its mode, epoch, receipt, bodies or
+SHA-256. `snapshot_purpose` is a separate native boundary instruction on
+`ql scene compose`, `ql scene world` and `ql nara personal-current`:
+
+- `requested` (default) keeps the existing requested freshness policy. A
+  current-origin snapshot must still pass the age check at this consumer;
+  explicitly selected historical ephemerides retain their dated standing.
+- `retained-occasion` requires an existing exact snapshot. The provider's
+  explicit `--validate-retained-snapshot` operation validates its complete
+  immutable content and current native source binding without calculating a
+  new sky. A current-origin snapshot must have been fresh at its original
+  receipt, and that receipt cannot be in the future. An explicitly historical
+  future ephemeris remains a selected dated calculation.
+
+Retained purpose is refused with a new `sky_request` or fresh M2 attachment.
+It does not authenticate arbitrary provider bytes or grant personal access.
+The native host still fences the saved Expression, person, identity/profile
+revision, event and snapshot. It must distinguish the saved occasion from fresh
+sky now; an aged original cannot regain a fresh-current label by changing mode.
+
+The returned scene/world or protected personal reading carries a separate
+`sky_admission` with schema `ql.sky-admission/v1`: `purpose`, `snapshot_ref`,
+`original_mode`, `epoch_utc`, `receipt_utc`, `standing`,
+`fresh_current_attested`, `validation` and exact `validator_source`. Retained
+admission always sets `fresh_current_attested=false`. Successful requested
+current admission attests freshness only at that validation; historical
+admission does not. Activity recomposition preserves the acknowledged receipt
+and never attests freshness again. This receipt does not change any M1–M4
+computation, snapshot provenance or canonical source/readiness standing.
+
 Supported perspectives are apparent geocentric, true geocentric and topocentric.
 Tropical has no ayanamsha; the implemented sidereal policy is explicitly Lahiri.
 Houses are not emitted. Kerykeion's auxiliary Whole-Sign houses are discarded,
