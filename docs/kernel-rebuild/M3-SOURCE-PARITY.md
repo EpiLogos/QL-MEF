@@ -4,7 +4,29 @@ K7 / #131 support contract. The native engine and its C/Rust execution evidence
 remain separate from this independent source observation. This is not an accepted
 K4 census, a second M registry, a live Neo4j observation, or a C++ embodiment test.
 
-## What is actually joined
+## Current source comparison — 1 October 2026
+
+The current lock `fixtures/kernel/m3-source-bindings-v1.json` observes Bimba
+source revision `907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288`:
+996 M3 nodes and 4,952 incident qualified relations. A fresh live READ on
+1 October 2026 returned that same full-world revision (2,141 nodes; 11,810
+relations). This qualifies source custody, not receiving or installed parity.
+
+The current comparison retains **183 unresolved findings**: 75 line-change
+targets, 45 incomplete or non-distinct six-line fields, 60 nuclear-register
+disagreements, and one each for clock-placeholder, orientation-count and
+resonance-admissibility. Its **383 source LINE_CHANGE edges** are distinct from
+the native 384 XOR transitions and from 322 source YIELDS_CODON edges. A native
+finite proof does not supply a missing source edge or resolve these disagreements.
+Do not rewrite Bimba to make this comparator green.
+
+See `EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md` and the existing recovery map for
+the current source-to-Expression obligations. The independent original-source
+challenge on 1 October confirmed this distinction. The following K2 observation
+is retained as dated predecessor evidence; its 563-record counts and pinned CE
+source are not the current lock.
+
+## Historical K2 join at daa660c
 
 `scripts/m3-source-parity.py` reads the full M3 node and relation payloads from the
 K2-pinned Epi source revision `daa660cbc1b8c5da83828698665a753852cb0287` and joins them
@@ -77,9 +99,9 @@ not the backbone coordinate. The 720-degree operational double-cover and its pos
 must be executed by the native engine; this source join does not infer them from
 passing 360-degree topology checks.
 
-## Explicit differences in the locked source
+## Historical differences in the daa660c lock
 
-The audit currently emits **563 open records**, not 563 newly authorised source
+That predecessor audit emitted **563 open records**, not 563 newly authorised source
 corrections. A passing audit means every recorded difference is still visible and
 matches the reviewed lock; it does not mean that all source/native semantics agree.
 

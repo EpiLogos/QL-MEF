@@ -44,7 +44,7 @@ fn source(sections: &[&str]) -> Value {
 fn jungian(profile: &IdentityProfile) -> Result<Value, String> {
     let Some(report) = &profile.jungian else {
         return Ok(
-            json!({"coordinate":"M4-0-2","status":"unavailable","absence_reason":"No Jungian assessment or self-report supplied","original_report":null}),
+            json!({"coordinate":"M4.0-2","status":"unavailable","absence_reason":"No Jungian assessment or self-report supplied","original_report":null}),
         );
     };
     validate_jungian_scores(&report.data)?;
@@ -70,7 +70,7 @@ fn jungian(profile: &IdentityProfile) -> Result<Value, String> {
         })
         .cloned()
         .collect();
-    let mut result = json!({"coordinate":"M4-0-2","status":"unavailable","source":source(&["13-17"]),"original_report":report,
+    let mut result = json!({"coordinate":"M4.0-2","status":"unavailable","source":source(&["13-17"]),"original_report":report,
         "score_basis":basis,"missing_functions":missing,"unprojected_score_keys":unprojected,
         "basis":["earth","fire","water","air"],"raw_efwa":null,"balance_efwa":null,"quaternion":null,
         "caps":{"aether_gate":null,"mineral_cap":null},
@@ -140,9 +140,9 @@ pub fn derive(profile: &IdentityProfile) -> Result<Value, String> {
         let spheres: Vec<_> = report.data["spheres"].as_array().expect("validated Gene Keys spheres").iter().map(|sphere| {
             json!({"name":sphere["name"],"key":numeric_trace(sphere["key"].as_u64().expect("validated key")),"line_projection":line_projection(sphere["line"].as_u64().expect("validated line"))})
         }).collect();
-        json!({"coordinate":"M4-0-3","status":"trace-only","source":source(&["23.1-23.4"]),"original_report":report,"spheres":spheres,"quaternion":null,"absence_reason":"No selected key/sphere weighting and lens-affinity policy; source residues and provisional line projections retained"})
+        json!({"coordinate":"M4.0-3","status":"trace-only","source":source(&["23.1-23.4"]),"original_report":report,"spheres":spheres,"quaternion":null,"absence_reason":"No selected key/sphere weighting and lens-affinity policy; source residues and provisional line projections retained"})
     } else {
-        json!({"coordinate":"M4-0-3","status":"unavailable","original_report":null,"quaternion":null,"absence_reason":"No attributable Gene Keys import supplied"})
+        json!({"coordinate":"M4.0-3","status":"unavailable","original_report":null,"quaternion":null,"absence_reason":"No attributable Gene Keys import supplied"})
     };
     let human_design = if let Some(report) = &profile.human_design {
         let mut gates = Vec::new();
@@ -157,9 +157,9 @@ pub fn derive(profile: &IdentityProfile) -> Result<Value, String> {
                 gates.push(json!({"side":side,"gate":numeric_trace(gate.as_u64().expect("validated gate")),"line_projection":null,"line_absence_reason":"Imported gate identifier has no line; no line inferred"}));
             }
         }
-        json!({"coordinate":"M4-0-4","status":"trace-only","source":source(&["32.3-32.5"]),"original_report":report,"gates":gates,"defined_centres":report.data["defined_centres"],"channels":report.data["channels"],"quaternion":null,"absence_reason":"No selected gate/centre weighting and lens-affinity policy; nine BodyGraph centres and Personality/Design remain their own source structures"})
+        json!({"coordinate":"M4.0-4","status":"trace-only","source":source(&["32.3-32.5"]),"original_report":report,"gates":gates,"defined_centres":report.data["defined_centres"],"channels":report.data["channels"],"quaternion":null,"absence_reason":"No selected gate/centre weighting and lens-affinity policy; nine BodyGraph centres and Personality/Design remain their own source structures"})
     } else {
-        json!({"coordinate":"M4-0-4","status":"unavailable","original_report":null,"quaternion":null,"absence_reason":"No attributable Human Design BodyGraph import supplied"})
+        json!({"coordinate":"M4.0-4","status":"unavailable","original_report":null,"quaternion":null,"absence_reason":"No attributable Human Design BodyGraph import supplied"})
     };
     Ok(
         json!({"schema":"ql.nara-derived-identity-contributions/v1","jungian":jungian(profile)?,"gene_keys":gene_keys,"human_design":human_design,"identity_blend":null,"blend_absence_reason":"Constituent derivations do not select identity blend weights"}),
@@ -177,6 +177,49 @@ mod tests {
 
     fn report(data: Value) -> super::super::intake::IdentityReport {
         serde_json::from_value(json!({"source":{"source_ref":"protected:reported-assessment","revision":"assessment-revision-one","standing_ref":"reported"},"method":"Actual supplied function-strength measurements on one declared scale","route":"import","data":data})).unwrap()
+    }
+
+    #[test]
+    fn contribution_readings_resolve_the_actual_identity_sources() {
+        let mut p = profile();
+        let absent = derive(&p).unwrap();
+        p.jungian = Some(report(json!({"system":"jungian","type":"INTJ"})));
+        p.gene_keys = Some(report(
+            json!({"spheres":[{"name":"Life's Work","key":23,"line":4}]}),
+        ));
+        p.human_design = Some(report(
+            json!({"type":"Projector","strategy":"Invitation","authority":"Splenic","profile":"1/3","definition":"Single","personality_gates":[62],"design_gates":[62],"defined_centres":["ajna","throat"],"channels":[]}),
+        ));
+        let reported = p.inspect(None).unwrap();
+        let content = crate::bimba_content::native_bimba_content().unwrap();
+        for reading in [&absent, &reported["derived_identity_contributions"]] {
+            for (key, coordinate, uuid) in [
+                ("jungian", "M4.0-2", "2f56644a-8604-53d7-bddc-db1742b86690"),
+                (
+                    "gene_keys",
+                    "M4.0-3",
+                    "8d4929ae-cb95-5d82-8268-dd2890db107a",
+                ),
+                (
+                    "human_design",
+                    "M4.0-4",
+                    "22022c33-b8b6-5ccd-96e0-031840ea9df5",
+                ),
+            ] {
+                let source = content
+                    .coordinate(reading[key]["coordinate"].as_str().unwrap())
+                    .unwrap();
+                assert_eq!(source["identity"]["coordinate"], coordinate);
+                assert_eq!(source["identity"]["uuid"], uuid);
+                assert_eq!(source["identity"]["properties"]["coordinate"], coordinate);
+                assert!(!source["relations"].as_array().unwrap().is_empty());
+                assert!(
+                    content
+                        .coordinate(&coordinate.replacen("M4.", "M4-", 1))
+                        .is_err()
+                );
+            }
+        }
     }
 
     #[test]
