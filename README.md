@@ -1,5 +1,10 @@
 # Quaternal Logic / MEF
 
+[Architecture navigation](docs/ARCHITECTURE-NAVIGATION.md) connects formal/native
+operations to their scene/source consumer and the ongoing Epi fidelity audit.
+It does not settle numerical/domain mappings or promote a generic profile
+reading over the coordinate-bound world and Personal Pratibimba.
+
 Quaternal Logic is the **formal and experimental field in which the wider Epi-Logos programme attempts to make archetypal and relational form technically answerable**.
 
 This repository is the implementation home for the standalone executable QL/MEF product: deterministic structures where they are sufficiently specified, the twelve-lens MEF manifold, provider/service contracts, provenance-bearing readings, and the experimental promotion path by which deeper formal claims can become software operations.
