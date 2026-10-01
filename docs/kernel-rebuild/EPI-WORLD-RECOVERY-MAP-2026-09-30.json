@@ -247,8 +247,8 @@
     {
       "repository": "EpiLogos/QL-MEF",
       "path": "docs/KERNEL-REBUILD-WAYFINDER.md",
-      "captured_file_sha256": "660f56866217e32d15257b6da39426998d66d66122c0ddcee497f9715bf0b3ee",
-      "bytes": 64463,
+      "captured_file_sha256": "79bf471603b01180ebb668eabe10c34d1c7915377dff3838211f783eb89b0a61",
+      "bytes": 64562,
       "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
       "standing": "Source at its own stated scope; current working-file hash is separate from checkout HEAD, installed and adoption evidence.",
       "capture_history": [
@@ -256,10 +256,15 @@
           "sha256": "640a7454a162130527a596b53d10cb357861122f2c2916466f95f079ba3b786b",
           "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
           "superseded_capture_at": "2026-10-01T16:22:32.789718+00:00"
+        },
+        {
+          "sha256": "660f56866217e32d15257b6da39426998d66d66122c0ddcee497f9715bf0b3ee",
+          "source_read_basis_revision": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
+          "superseded_capture_at": "2026-10-01T17:38:31.166080+00:00"
         }
       ],
-      "observed_checkout_head": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
-      "capture_scope": "Current working source at fresh execution; checkout e0 base is not attribution of dirty successor contents."
+      "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+      "capture_scope": "Publication prose successor working bytes; native code remains exact176 cut."
     },
     {
       "repository": "EpiLogos/QL-MEF",
@@ -298,8 +303,8 @@
     {
       "repository": "EpiLogos/QL-MEF",
       "path": "docs/integrations/epi-logos/TA-ONTA-EXPRESSION-SDK-WAYFINDER.md",
-      "captured_file_sha256": "e66ed5fe032537a3214a7b3345ed793a605144002acd05a3c8f9aa1896ba718d",
-      "bytes": 47272,
+      "captured_file_sha256": "ca12b737528070b290617891cc11dc9fe06fe6ec424bb44f49401497f8f51a68",
+      "bytes": 47371,
       "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
       "standing": "Source at its own stated scope; current working-file hash is separate from checkout HEAD, installed and adoption evidence.",
       "capture_history": [
@@ -307,16 +312,21 @@
           "sha256": "4c6fe0756e00e20e2b808fc238f4656cde7174c281e69180d7cb053719529ff9",
           "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
           "superseded_capture_at": "2026-10-01T16:22:32.789718+00:00"
+        },
+        {
+          "sha256": "e66ed5fe032537a3214a7b3345ed793a605144002acd05a3c8f9aa1896ba718d",
+          "source_read_basis_revision": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
+          "superseded_capture_at": "2026-10-01T17:38:31.166080+00:00"
         }
       ],
-      "observed_checkout_head": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
-      "capture_scope": "Current working source at fresh execution; checkout e0 base is not attribution of dirty successor contents."
+      "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+      "capture_scope": "Publication prose successor working bytes; native code remains exact176 cut."
     },
     {
       "repository": "EpiLogos/QL-MEF",
       "path": "docs/integrations/epi-logos/EPI-CAPABILITY-MATRIX-FIELD-INDEX.md",
-      "captured_file_sha256": "62fd6923704b5df504f1f41aa02c561d9e8fee439a696c7c3323a468cb45b19b",
-      "bytes": 34752,
+      "captured_file_sha256": "f0f19fdba966f36e0a8e46318433fdf77c87988a21e6a5e7471ec6dc3cbd2e16",
+      "bytes": 34851,
       "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
       "standing": "Source at its own stated scope; current working-file hash is separate from checkout HEAD, installed and adoption evidence.",
       "capture_history": [
@@ -324,16 +334,21 @@
           "sha256": "757cf426a2af7dea45c9d31d9e18c035c015a36d5bb3a5e5d125b469252e5f47",
           "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
           "superseded_capture_at": "2026-10-01T16:22:32.789718+00:00"
+        },
+        {
+          "sha256": "62fd6923704b5df504f1f41aa02c561d9e8fee439a696c7c3323a468cb45b19b",
+          "source_read_basis_revision": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
+          "superseded_capture_at": "2026-10-01T17:38:31.166080+00:00"
         }
       ],
-      "observed_checkout_head": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
-      "capture_scope": "Current working source at fresh execution; checkout e0 base is not attribution of dirty successor contents."
+      "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+      "capture_scope": "Publication prose successor working bytes; native code remains exact176 cut."
     },
     {
       "repository": "EpiLogos/QL-MEF",
       "path": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md",
-      "captured_file_sha256": "681529b4b15e0eefe4923e3842fbddf5d987c72b72c5a8bec9bae9533ea773ba",
-      "bytes": 73098,
+      "captured_file_sha256": "4bee18c0171f45f2e577b78997217fd08b7baa44883c6bdccc570a9096a0bf1c",
+      "bytes": 73197,
       "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
       "standing": "Source at its own stated scope; current working-file hash is separate from checkout HEAD, installed and adoption evidence.",
       "capture_history": [
@@ -341,10 +356,15 @@
           "sha256": "d7a0914c588f038433f567b645eeda67631abdf5b3f9b815d367c9af1e213c6f",
           "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
           "superseded_capture_at": "2026-10-01T16:22:32.789718+00:00"
+        },
+        {
+          "sha256": "681529b4b15e0eefe4923e3842fbddf5d987c72b72c5a8bec9bae9533ea773ba",
+          "source_read_basis_revision": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
+          "superseded_capture_at": "2026-10-01T17:38:31.166080+00:00"
         }
       ],
-      "observed_checkout_head": "e0e9ca472e7a2a26ec7bad3b62fa3ebd836261c9",
-      "capture_scope": "Current working source at fresh execution; checkout e0 base is not attribution of dirty successor contents."
+      "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+      "capture_scope": "Publication prose successor working bytes; native code remains exact176 cut."
     },
     {
       "repository": "EpiLogos/O-I",
@@ -21164,6 +21184,24 @@
       "standing": "executed-bounded-source-verification",
       "establishes": "Native K0 ground verifier passed29 inputs,535 source files,6 matrix families,30 carriers,28 C sources,2 ratified corrections and31 Bimba source pins at historical ledger scope.",
       "does_not_establish": "Not current live907c source agreement, successor implementation or runtime/installed acceptance."
+    },
+    {
+      "id": "FRESH-QL176-MANAGED-CUT",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/ql176-managed-cut-independent-qualification.json",
+      "sha256": "e1e3ad598083bcc72b018bf1ee37dad4ab3c18f5496ef4e076d5fe9ad81d7023",
+      "bytes": 8693,
+      "standing": "executed-bounded-evidence",
+      "establishes": "Independently verified allfive actual managed176 executables and32 exact committed source-manifest hashes.",
+      "does_not_establish": "No joined frontend/material/GPU/installed encounter or Human Recognition."
+    },
+    {
+      "id": "FRESH-HYDRATION-CAPACITY-SOURCE-REVIEW",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/actual-hydration-and-capacity-review.md",
+      "sha256": "4950c6f082609418eb6316979ba29c912edfb53e8a67c09c24c30d167a6c1070",
+      "bytes": 7444,
+      "standing": "executed-bounded-evidence",
+      "establishes": "Independent review matches applied3 frontend hashes and release/edit/current/frame/destroy safeguards; truthful64/64 engine versus32page/2048semantic/8MiBexpanded/4MiBportable distinctions.",
+      "does_not_establish": "Source-only qualification: no rendered/causal/installed acceptance."
     }
   ],
   "candidate_source_capture": [
@@ -25993,6 +26031,11 @@
       "repair": "Six emitted available/unavailable bindings use exact M4.0-2/-3/-4 instead of nonexistent M4-0 children.",
       "verification": "FRESH-IDENTITY-BINDING-GREEN",
       "scope": "Binding repair; draft40/60, trace-only GK/HD and unavailable activity unchanged; successor scene/installed test pending."
+    },
+    "ql_native_source_cut": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+    "ql_source_publication": {
+      "pull_request": "https://github.com/EpiLogos/QL-MEF/pull/278",
+      "standing": "open/unmerged; later publication-only documentation does not reattribute the176-built binaries"
     }
   },
   "fresh_branch_reconciliation": {
