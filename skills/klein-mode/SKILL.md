@@ -1,6 +1,6 @@
 ---
 name: klein-mode
-description: "METHOD: Run a Day pass and then a Night′ pass over that same execution, so the work reviews itself on one surface — which skills and commands fired, which routes were chosen, where coordination worked or wasted effort — and return structured refinement telemetry rather than narrative. Use after a significant orchestration run, when tuning skill or route selection from live results, or before the next cycle needs refinement data."
+description: "METHOD: Run a Day pass and then a Night′ pass over that same execution, so the work reviews itself on one surface — which skills and commands fired, which routes were chosen, where coordination worked or wasted effort — and return structured refinement telemetry rather than narrative. Use when a significant orchestration run has finished, when tuning skill or route selection from live results, or before the next cycle needs refinement data."
 ---
 
 # Klein mode
@@ -54,6 +54,10 @@ ctrl --json action run projectcentral.now.return '{"project":"<Name>","actor":"a
   }
 }
 ```
+
+## Verify
+
+The telemetry is verified against its trace: each skill, command and route listed in `day_pass` appears in the session record or in `factory workflow inspect <state> <run-ref>`, and the NOW note is readable afterwards with `ctrl --json action run projectcentral.now.inspect '{"project":"<Name>"}'`. A rating with no evidence behind it is removed, not softened.
 
 ## Limits
 

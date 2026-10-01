@@ -1,6 +1,6 @@
 ---
 name: aletheia-plugin-integrate
-description: "METHOD: The integration membrane for a new capability, plugin, provider, skill pack or external surface entering the stack — first gather what already exists, then scope the candidate's owner and S-layer home, judge redundancy, gate coverage and architectural fit, and route any permanent adoption through the collaboration gate. Use before installing, vendoring or wiring anything new into the suite."
+description: "METHOD: The integration membrane for a new capability, plugin, provider, skill pack or external surface entering the stack — first gather what already exists, then scope the candidate's owner and S-layer home, judge redundancy, gate coverage and architectural fit, and route any permanent adoption through the collaboration gate. Use when anything new is about to be installed, vendored or wired into the suite."
 ---
 
 # Aletheia plugin integrate
@@ -29,3 +29,7 @@ Existing native coverage: <refs or none>
 Home: S<n> <owner> / <organ>   Fit: redundant | complementary | conflicting
 Gate: <gate>   Recommendation: adopt via <owner path> | reference only | decline
 ```
+
+## Verify
+
+Re-run the gathering (`aikit --json knowledge resolve "<capability>"`, `aikit capabilities`, each product's `capabilities --json`) and confirm the recorded existing coverage matches what the surfaces disclose. An `adopt` recommendation is verified only when `aletheia-collab-gate` has recorded the person's yes.

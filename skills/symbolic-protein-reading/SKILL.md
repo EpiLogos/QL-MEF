@@ -9,8 +9,8 @@ description: "METHOD: Mythos's in-session reading of the M4 symbolic-protein cod
 
 - Semantic ref: `ql:skill:symbolic-protein-reading` (`skill/ql/symbolic-protein-reading`)
 - Native owner of the reading law: `EpiLogos/QL-MEF` (M4 Nara domain; weather from the M1/M2/M3 kernel and the K8 sky boundary `providers/sky/kerykeion_snapshot.py`, contract `docs/kernel-rebuild/K8-SKY-CONTRACT.md`).
-- **Native reader: to build.** The source's `modules/symbolic-protein-reader.ts` has no current native counterpart; see `docs/integrations/epi-logos/ANIMA-ALETHEIA-TEAMS.md` (tool crosswalk) for its specification. Until it lands, this Method stops at the gap.
-- Source: `Body/S/S4/ta-onta/S4-4p-anima/S4'/skills/symbolic-protein-reading/SKILL.md`, HEAD blob `de90247808e439b542c713a245dd52ed54a0a69f` (not in the AW0 pin set), with `voice-templates/default.md`; owner per `S4-4p-anima/CONTRACT.md`: Mythos.
+- **Native reader: to build.** The source's `Body/S/S4/ta-onta/S4-4p-anima/modules/symbolic-protein-reader.ts` (in Epi-Logos-C-Experiments) has no current native counterpart; see `docs/integrations/epi-logos/ANIMA-ALETHEIA-TEAMS.md` (tool crosswalk) for its specification. Until it lands, this Method stops at the gap.
+- Source: `Body/S/S4/ta-onta/S4-4p-anima/S4'/skills/symbolic-protein-reading/SKILL.md`, HEAD blob `de90247808e439b542c713a245dd52ed54a0a69f` (not in the AW0 pin set), with `Body/S/S4/ta-onta/S4-4p-anima/S4'/skills/symbolic-protein-reading/voice-templates/default.md`; owner per `S4-4p-anima/CONTRACT.md`: Mythos.
 - Used by: `agent/anima-mythos` (owner). Frame: CF4 `(0/1/2/3)`, CT3, CP 4.3, CFP0 (CFP3 only when several pattern readers are explicitly fused).
 
 ## Inputs (governed only)
@@ -43,6 +43,10 @@ interface MythosArchetypeReading {
   provenance: { session_ref: string; chain_position_ref: string; weather_snapshot_ref: string; kairos_pulse_ref: string };
 }
 ```
+
+## Verify
+
+A reading is verified only when all four provenance refs resolve (session, chain-position bookmark, weather snapshot, kairos pulse) and the `T3` thought is readable in the active NOW (`central.now.thoughts.read`). Without a governed chain projection, the only verified result is the named `unavailable` gap.
 
 ## Limits
 

@@ -1,0 +1,198 @@
+{
+  "schema": "ql.published-journey-source-integration/v1",
+  "standing": "Integrated native journey/lived-context source and actual bounded owner replay; no current numerical readiness, installed receiving or H promotion",
+  "parents": {
+    "current": "6294a74257d74c4bbd0e1f60da17b561f573040f",
+    "incoming": "74dc6dc066fb5d9854657305045e3a786956b11a"
+  },
+  "current_source": {
+    "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+    "numerical_registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+    "coordinate_registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+    "ledger": {
+      "path": "fixtures/kernel/m-ledger-v1.json",
+      "sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+      "revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+      "standing": "byte-identical current131 decisions and unassessed broad readiness retained"
+    }
+  },
+  "native_history": {
+    "original": {
+      "path": "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json",
+      "sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19",
+      "original_git_ref": "git:212a4d355fad45f2d7216377c1730caf6c959f54:fixtures/kernel/m3-finite-proof-v1.json"
+    },
+    "successor": {
+      "path": "fixtures/kernel/m3-finite-proof-v1.json",
+      "sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
+      "git_ref": "git:74dc6dc066fb5d9854657305045e3a786956b11a:fixtures/kernel/m3-finite-proof-v1.json"
+    },
+    "native_lineage": {
+      "path": "fixtures/kernel/k8-build-lineage-v1.json",
+      "sha256": "e65bd0417b4d888d8fa8fd13f28297416a090ba9b96812fb2c503db2a4c9c85b",
+      "pointer": "/successors/11"
+    },
+    "only_proof_input_change": "/inputs/crates/ql-core/src/pole/tarot.rs",
+    "outputs_and_checks": "byte-equivalent unchanged values",
+    "published_ci": {
+      "url": "https://github.com/EpiLogos/QL-MEF/actions/runs/36741745238",
+      "revision": "1d82187645e8c5a80987e4e2f4a43675a5a8492f",
+      "overall_conclusion": "failure",
+      "native_acceptance_step": "success",
+      "historical_exact_input_guard_step": "failure",
+      "source_tree_step": "success",
+      "standing": "Scoped historical native execution; not successful full gate or current907c proof"
+    }
+  },
+  "union": {
+    "k9_modules": 38,
+    "native_census": {
+      "schema": "ql.k8-current-inventory-receipt/v1",
+      "inventory_sha256": "b44c17be2975f32a75741405627cb24fd9f953d2402d78d002e5567e8b191d26",
+      "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+      "inherited_ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+      "inherited_ledger_sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+      "constructs": 2864,
+      "inherited_unresolved": 893,
+      "reviewed_K8_constructs": 1231,
+      "linked_K8_public_exports": 75,
+      "reviewed_K8_cpp_modules": 2,
+      "reviewed_K8_javascript_modules": 4,
+      "reviewed_K8_python_modules": 2,
+      "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate"
+    },
+    "current_D9_rationale_retained": "crates/ql-mef/src/nara/decanic_identity.rs",
+    "sphere": "Two cards, matching native Sphere and original full protocol"
+  },
+  "controlled_M3": {
+    "request_path": "fixtures/kernel/m3-parent-consumer-current-v1.json",
+    "request_sha256": "e636d1d23682cb3ad60059ed3a9e10f8e0c355ccd7300e3430b404a855963114",
+    "basis_path": "fixtures/kernel/m3-parent-consumer-current-v1.basis.json",
+    "basis_sha256": "d0eec4b35d4cb3e931c788052bd626fec9078bdf699e64e4e2c9cd7a57120943",
+    "changed_paths": [
+      "/historical/finite_proof_sha256"
+    ],
+    "all_determinants_commands_event_times_unchanged": true,
+    "qualification_discriminators_passed": 5
+  },
+  "executed": {
+    "component_receipts": [
+      {
+        "name": "integrated-native-skills",
+        "argv": [
+          "bash",
+          "scripts/verify-native-skills.sh"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 0.3804759979248047,
+        "user_cpu_seconds": 0.14890299999999998,
+        "system_cpu_seconds": 0.198565,
+        "log_sha256": "e1bbefe487a5fca91a9c2478a488d1226fdfcccac36d2d44ef125015c9748c32"
+      },
+      {
+        "name": "integrated-native-parents-and-journey",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "ql-mef",
+          "--test",
+          "k8_coupled",
+          "--test",
+          "k8_vak_performance",
+          "--test",
+          "k8_reshape",
+          "--test",
+          "m3_state",
+          "--test",
+          "nara_personal_field",
+          "--test",
+          "nara_oracle_journey",
+          "--test",
+          "nara_lived_context",
+          "--test",
+          "native_m_ledger_cache",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 62.89423394203186,
+        "user_cpu_seconds": 49.609113,
+        "system_cpu_seconds": 3.408874,
+        "log_sha256": "8cdc64a15670f0b9c34922b413de215a378fb13aeecfd8308d83e715524df362"
+      },
+      {
+        "name": "integrated-faculty-lib",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "ql-mef",
+          "--lib",
+          "epi_agent::tests",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 18.41409921646118,
+        "user_cpu_seconds": 19.178025000000005,
+        "system_cpu_seconds": 2.784951,
+        "log_sha256": "1ee40bf49bed2c92cdcf9fdc2016bda33fcaca54c32f00373c6693c742265bde"
+      },
+      {
+        "name": "integrated-cli-build",
+        "argv": [
+          "cargo",
+          "build",
+          "-p",
+          "ql-cli",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 4.735285043716431,
+        "user_cpu_seconds": 1.3108560000000011,
+        "system_cpu_seconds": 0.2718379999999998,
+        "log_sha256": "582363ad843151bda6402b5e46a76672649896f9d637621b5034fd84ba8d8ff0"
+      }
+    ],
+    "actual_native_reshape": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "ql-mef",
+        "--test",
+        "k8_reshape",
+        "--locked",
+        "--",
+        "--ignored"
+      ],
+      "exit": 0,
+      "seconds": 0.941957950592041,
+      "worker": "/Users/admin/Central/worktrees/env-2/ql-mef/cpp/build/ql-field-worker",
+      "worker_sha256": "9025cb00e26b6d29885a431da02dc76b2e45a99b3c4af320dc499ab8862c6dc7",
+      "log_sha256": "c35ee8c63266c2dd579a4fa85a7ddbffc5eecd5788dfa4436324a2cb200c0b78"
+    },
+    "cli_replay": {
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/actual-cli-journey/native-cli-replay-receipt.json",
+      "sha256": "f9be1681728055a46d701080a61ad477ab7b74342787bde2eab56fb2ba065c5b",
+      "operation_count": 10,
+      "basis": "actual separate-process CLI, native returned state and typed agent-authored controlled source; not Central canonical document/persistence or owner private speech"
+    },
+    "source_admission_gap": {
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/actual-cli-journey/cross-person-gap-receipt.json",
+      "sha256": "156fa04c1dd62ef8c8320fe41a8f207acc19168d86f447bf99d90796dd3c1e83",
+      "standing": "Actual wrong-person journey accepted; expected host refusal remains unimplemented EA1/EA2 proof"
+    }
+  },
+  "not_claimed": [
+    "new numerical successor acceptance/readiness",
+    "complete canonical full gate before clean integration commit",
+    "Central revision-CAS journey persistence",
+    "operative AIKit skill repoint or freshbody loaded source",
+    "Nara model passage-dependent use",
+    "actual journey Expression card/hexagram/deck-art receiver",
+    "native same-event M3 activity contribution",
+    "managed installed/GPU/audio/restart whole acceptance",
+    "owner H recognition"
+  ],
+  "source_programme": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md"
+}

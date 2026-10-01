@@ -1,6 +1,6 @@
 ---
 name: aletheia-s-gate
-description: "METHOD: Gate 3 of Aletheia's six — check S/S′ stack coherence: every runtime, storage, workflow, harness or surface claim lands on the product that actually owns it (S0 Central, S1 Actuation, S2 AIKit, S3 Software Factory, S4 Workcell, S5 QL-MEF), uses a real installed command or Action rather than a hypothetical seam, and adds no second registry or store. Returns aligned, annotated, hold or redirect."
+description: "METHOD: Gate 3 of Aletheia's six — check S/S′ stack coherence: every runtime, storage, workflow, harness or surface claim lands on the product that actually owns it (S0 Central, S1 Actuation, S2 AIKit, S3 Software Factory, S4 Workcell, S5 QL-MEF), uses a real installed command or Action rather than a hypothetical seam, and adds no second registry or store. Returns aligned, annotated, hold or redirect. Use when an artifact claims where something runs, is stored or is owned."
 ---
 
 # Aletheia S gate (Gate 3)
@@ -29,3 +29,7 @@ The source's older S-stack (terminal, Obsidian vault, Neo4j, a gateway on port 1
 GATE 3 (S): <artifact ref> -> <result>
 Placement: … Surfaces checked: <commands> … Duplicates: none|<which> … Doors: …
 ```
+
+## Verify
+
+Each entry under `Surfaces checked` is verified by the owning binary's own disclosure — `ql capabilities --json`, `factory capabilities --json`, `actuation capabilities --json`, `ctrl --json action list` — actually containing the command or Action. A surface found only in documents is reported as a claim that outran its implementation, never `aligned`.

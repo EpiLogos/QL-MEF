@@ -9,8 +9,8 @@ description: "METHOD: Relate an Expression act to its occasion, order, completio
 
 - Semantic ref: `ql:skill:chronos-act-continuity` (`skill/ql/chronos-act-continuity`)
 - Native owners: the O:I desktop kernel through `oi desktop expression [SOCKET] REQUEST_JSON` (world requests with `"schema":"oi.expression-world/v1"`: `act_list`, `act_inspect`, `act_seek`, `act_open`, `act_select`, `act_text`, `act_continue`, `act_complete`, and the existing `act_checkpoint`/`act_restore`); acts persist under `$OI_HOME/desktop/expression-acts/` and survive restart. Time and continuation state: Central `central.day.read`, `central.now.list`, `central.now.read`, `projectcentral.now.inspect`, `central.time.policy`; scheduled re-entry: `aikit routine list|show|create` (a created Routine stays Draft until the owner enables it).
-- Contract: O:I `docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §4 (act, `sequence`, `continuations`, `position`).
-- Source: O:I `docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §5 (timeline and playback), §6, §7 (Chronos row and source mechanics), §9 item 10. Behavioural provenance in `EpiLogos/Epi-Logos-C-Experiments` at `c7872e96`: `Body/S/S4/ta-onta/S4-3p-chronos/modules/parent-slice-bifurcation.ts` (blob `481441b9`), `temporal-control-plane.ts` (blob `d62113dd`), `temporal-frame.ts` (blob `e800c1ab`). Those modules are provenance for the meanings below, not code to port; the current suite implements the time.
+- Contract: O:I `Work/O-I/docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md` §4 (act, `sequence`, `continuations`, `position`).
+- Source: O:I `Work/O-I/docs/cradle/handovers/factory-expressions-2026-09-26/EXPRESSION-DEVELOPMENT-SPEC.md` §5 (timeline and playback), §6, §7 (Chronos row and source mechanics), §9 item 10. Behavioural provenance in `EpiLogos/Epi-Logos-C-Experiments` at `c7872e96`: `Body/S/S4/ta-onta/S4-3p-chronos/modules/parent-slice-bifurcation.ts` (blob `481441b9`), `temporal-control-plane.ts` (blob `d62113dd`), `temporal-frame.ts` (blob `e800c1ab`). Those modules are provenance for the meanings below, not code to port; the current suite implements the time.
 - Used by: `agent/anima-psyche` (continuity of the act across occasions), `agent/aletheia-janus` (the before/after threshold, session and day seams), `agent/anima-sophia` (the returning passage that closes a pass). Composition of new passages is `skill/ql/anima-expressive-composition`; Return is `skill/ql/aletheia-expressive-return`.
 
 ## Inputs
@@ -39,7 +39,7 @@ oi desktop expression '{"schema":"oi.expression-world/v1","operation":"act_seek"
 Playback is the Expression's Scene sequence, performed through with its recorded bindings and text — nothing else:
 
 - a **completed act**: `act_seek` each passage index in order, from 0 to the last;
-- a **saved Expression** (for example `expression/expression-development.expression.json`, playback arrival → work-passage → skill-invocation → handoff → review → completion): read its `reuse.playback` from `material_list`, open an act on the target Expression, and `act_select` each `scene_ref` in `playback` order with the bindings recorded in the Run's act (or the cast now present when there is no recorded act).
+- a **saved Expression** (for example the register's expression-kind `expression-development.expression.json`, playback arrival → work-passage → skill-invocation → handoff → review → completion): read its `reuse.playback` from `material_list`, open an act on the target Expression, and `act_select` each `scene_ref` in `playback` order with the bindings recorded in the Run's act (or the cast now present when there is no recorded act).
 
 Keep each passage's authored `duration`, `transition`, easing, morph, camera and sound; do not re-time them in the Method.
 
@@ -76,6 +76,10 @@ CHRONOS-CONTINUITY: <act_ref> phase=<running|held|completed|cancelled> position=
 Occasion: day=<day> now=<clearing ref>  Direction: outward|returning
 Action: read | seek <n> | playback <file_ref@revision> | fold (return_ref) | continue (same lead) | re-enter (changed: …)
 ```
+
+## Verify
+
+After each operation, `act_inspect` shows the expected `position`, `phase` and new passage — a `return` passage after a fold, the unchanged lead after a continuation. A playback is verified when the performed `scene_ref` order equals the saved `reuse.playback`.
 
 ## Authority and limits
 

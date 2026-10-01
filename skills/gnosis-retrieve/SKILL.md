@@ -37,6 +37,10 @@ ctrl --json action run projectcentral.wiki.read '{"project":"<Name>"}'
 
 `grounded` (every claim cited) · `partial` (name the unbacked parts) · `empty` (nothing in this scope). Never `grounded` without provenance.
 
+## Verify
+
+Every claim handed on is re-openable: `aikit --json knowledge read '<address>'` (or the wiki node, or the path at its revision) returns the text it rests on. For a `partial` or `empty` result, `aikit knowledge status` confirms which providers were unavailable.
+
 ## Limits
 
 Read-only. Wikis are agent-maintained knowledge, not source; never edit `wiki.json`. New knowledge travels back through `skill/ql/thought-distil` and NOW promotion.

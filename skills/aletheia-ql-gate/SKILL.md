@@ -1,6 +1,6 @@
 ---
 name: aletheia-ql-gate
-description: "METHOD: Gate 1 of Aletheia's six — check the Quaternal and Vāk coordinate integrity of a produced artifact: coordinate notation and family placement, context-frame codes, Vāk refs that actually resolve, QL shape laws, and provenance on every coordinate reference. Returns aligned, annotated, hold or redirect. Use before an artifact that names coordinates is returned, promoted or composed further."
+description: "METHOD: Gate 1 of Aletheia's six — check the Quaternal and Vāk coordinate integrity of a produced artifact: coordinate notation and family placement, context-frame codes, Vāk refs that actually resolve, QL shape laws, and provenance on every coordinate reference. Returns aligned, annotated, hold or redirect. Use when an artifact that names coordinates is about to be returned, promoted or composed further."
 ---
 
 # Aletheia QL gate (Gate 1)
@@ -35,3 +35,7 @@ GATE 1 (QL): <artifact ref>  -> aligned|annotated|hold|redirect
 Checks: notation … resolution … shape … provenance … c-prime …
 Evidence: <commands run and results>
 ```
+
+## Verify
+
+The result is verified by its Evidence line: every check names the command run and its output — `ql vak locate <vak-ref> --json` resolving each Vāk ref, `ql kernel apply conjugate-address <ql-address>` succeeding for each address, `aikit wiki-shape validate <wiki-file>` for constellations. Re-running them must give the same answer; a check with no command behind it is not `aligned`.

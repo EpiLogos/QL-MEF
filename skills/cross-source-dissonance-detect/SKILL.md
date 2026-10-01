@@ -1,6 +1,6 @@
 ---
 name: cross-source-dissonance-detect
-description: "METHOD: Flag contradictions and tensions across the sources tied to one coordinate or subject — where two sources, a document and the code, or a claim and its evidence disagree — with both sides quoted, their standing, and which one currently governs. Use before operating on a subject whose sources may have drifted, and whenever a relational scour returns dissonance."
+description: "METHOD: Flag contradictions and tensions across the sources tied to one coordinate or subject — where two sources, a document and the code, or a claim and its evidence disagree — with both sides quoted, their standing, and which one currently governs. Use when the sources of a subject may have drifted, before operating on it, and whenever a relational scour returns dissonance."
 ---
 
 # Cross-source dissonance detect
@@ -29,3 +29,7 @@ Governs: A|B|undecided — because …   Route: owner <repo> | open question
 ```
 
 Read-only.
+
+## Verify
+
+Re-read both quoted passages at their cited refs and revisions: the dissonance stands only if both quotes are exact and genuinely incompatible. The governing side's standing is confirmed from its source — authored ground, a contract, or a command actually run for an implementation fact.

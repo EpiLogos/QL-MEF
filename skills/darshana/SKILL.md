@@ -1,6 +1,6 @@
 ---
 name: darshana
-description: The structural gaze — scout a large Markdown source's topology (frontmatter, header tree, P0–P5 and P0′–P5′ markers, dialogue turns), read one section by header or QL marker, or list its wikilinks, without loading the whole file into context. Use before retrieving, citing or placing a long document, and for surgical section reads during a task.
+description: The structural gaze — scout a large Markdown source's topology (frontmatter, header tree, P0–P5 and P0′–P5′ markers, dialogue turns), read one section by header or QL marker, or list its wikilinks, without loading the whole file into context. Use when a long document is about to be retrieved, cited or placed, and for surgical section reads during a task.
 ---
 
 # Darshana — the structural gaze
@@ -8,7 +8,7 @@ description: The structural gaze — scout a large Markdown source's topology (f
 ## Contract metadata
 
 - Semantic ref: `ql:skill:darshana` (`skill/ql/darshana`)
-- Executable: `scripts/darshana.py` in this skill (Python 3 standard library, read-only). Carried verbatim from the source (`darshana.py`, blob `f8e10acd705bf1597b7ce2e2671d25c13196653d`, identical in the Anima and Aletheia copies).
+- Executable: `skills/darshana/scripts/darshana.py` (the `scripts/` folder of this skill) (Python 3 standard library, read-only). Carried verbatim from the source (`darshana.py`, blob `f8e10acd705bf1597b7ce2e2671d25c13196653d`, identical in the Anima and Aletheia copies).
 - Source: `Body/S/S4/ta-onta/S4-4p-anima/S4'/skills/darshana/SKILL.md`, blob `682995f568a4b131f87ec3bf0ca76d922ff94ec1` (pinned and HEAD agree). Aletheia uses the same gaze under the name `skill/ql/repl`.
 - Used by: `agent/anima-nous`, `agent/anima-mythos` (affinity), `agent/anima`, and through `repl` `agent/aletheia-anansi` and `agent/aletheia`.
 - Risk class: read-only.
@@ -40,6 +40,10 @@ python3 scripts/darshana.py threads "/abs/path/file.md"
 ## QL detection
 
 `P0`–`P5` and `P0′`–`P5′` (written `P0'`) in frontmatter values, headers, and list lines of the form `- P2: …` or `(#3) …`.
+
+## Verify
+
+A reading is verified against the file: the `scout` header tree matches the document's Markdown headers, and every `read` result is cited with its section and line. `scripts/verify-native-skills.sh` checks that the bundled `skills/darshana/scripts/darshana.py` is present and executable.
 
 ## Limits
 

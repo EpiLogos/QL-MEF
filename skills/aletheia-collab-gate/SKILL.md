@@ -1,6 +1,6 @@
 ---
 name: aletheia-collab-gate
-description: "METHOD: Gate 6, the human-in-loop safety boundary — halt before any permanent or paradigmatic change to the system's own learning or ground (canonical promotion, a new agent, profile or agent set, a change to Aletheia's own gates or routing, a canonical coordinate change, a day close that needs the owner), present it plainly with what changes and whether it can be undone, and proceed only on the person's explicit yes. Returns aligned, hold or redirect."
+description: "METHOD: Gate 6, the human-in-loop safety boundary — halt before any permanent or paradigmatic change to the system's own learning or ground (canonical promotion, a new agent, profile or agent set, a change to Aletheia's own gates or routing, a canonical coordinate change, a day close that needs the owner), present it plainly with what changes and whether it can be undone, and proceed only on the person's explicit yes. Returns aligned, hold or redirect. Use when any such permanent or paradigmatic change is about to be made."
 ---
 
 # Aletheia collaboration gate (Gate 6)
@@ -36,3 +36,7 @@ It does **not** fire for reversible work inside a request the person has already
 `aligned` (approved, recorded) · `hold` (waiting or declined) · `redirect` (belongs to a different owner's decision; name it).
 
 The person retains the final say on all system learning; the gate guarantees the system evolves with its human partner, not ahead of them.
+
+## Verify
+
+The gate is verified by its record, not by its own report: the NOW return written in step 4 or 5 exists and quotes the person's own words with the artifact ref (read it back with `ctrl --json action run projectcentral.now.inspect '{"project":"<Name>"}'`), and the change reached the owner's native door only after that record. A `yes` that cannot be quoted from the conversation is `hold`.

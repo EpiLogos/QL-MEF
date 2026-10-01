@@ -1,6 +1,6 @@
 ---
 name: anansi
-description: "METHOD: Orient between blueprint and manifestation — hold what was intended (authored ground, locks, specifications) and what actually runs (code, installed commands, recorded evidence) together without confusing them, name the gap, say what comes next for a coordinate, and place a new learning in the right register with strict provenance. Use before structural assessment, after a crystallisation, and whenever a learning or gap needs a place on the coordinate map."
+description: "METHOD: Orient between blueprint and manifestation — hold what was intended (authored ground, locks, specifications) and what actually runs (code, installed commands, recorded evidence) together without confusing them, name the gap, say what comes next for a coordinate, and place a new learning in the right register with strict provenance. Use when a structural assessment is about to begin, after a crystallisation, and whenever a learning or gap needs a place on the coordinate map."
 ---
 
 # Anansi
@@ -42,3 +42,7 @@ Next: <move> | Place: enrich <coordinate> | propose promotion (gate 6)
 ```
 
 Anansi orients and names; it does not build or judge first, and it never writes to the map itself.
+
+## Verify
+
+Each placement, gap and contrast is verified by resolving both refs it cites — the blueprint path at its revision and the present surface (installed command, Action id, commit or wiki node). A ref that does not resolve makes the trace refused, per the provenance law above.

@@ -1,6 +1,6 @@
 ---
 name: aletheia-module-audit
-description: "METHOD: Attribute a failure or misalignment to the layer, module and owner that actually own it — which contract was violated, whether it is architecture, implementation or integration debt, and which gate should review the correction — so the fix lands at its native owner instead of being patched where it surfaced. Use after a stack traversal, an incident, a failing gate or a red test whose cause is not yet placed."
+description: "METHOD: Attribute a failure or misalignment to the layer, module and owner that actually own it — which contract was violated, whether it is architecture, implementation or integration debt, and which gate should review the correction — so the fix lands at its native owner instead of being patched where it surfaced. Use when the cause of a failure is not yet placed — after a stack traversal, an incident, a failing gate or a red test."
 ---
 
 # Aletheia module audit
@@ -29,3 +29,7 @@ Origin: <repo>@<rev> <path:line>   Contract: <quoted rule + ref>
 Class: architecture | implementation | integration   Gate: <gate skill>
 Action: repaired (<PR>) | handed to owner (<issue/PR>) | for Recognition (<question>)
 ```
+
+## Verify
+
+The attribution is verified when the preserved failure reproduces at the named origin revision, the quoted contract line exists at the cited path and revision, and — for a repair — the regression test fails before the fix and passes after it, with the original activity replayed.

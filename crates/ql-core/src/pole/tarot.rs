@@ -313,8 +313,8 @@ impl TarotPip {
         self.0 >= 10
     }
 
-    /// The Thoth register name — the register of the `M3_TAROT_PIP_*`
-    /// constants the vendor LUT is written in.
+    /// The Thoth register name — the printed Thoth deck's names over the
+    /// `M3_TAROT_PIP_*` slots the vendor LUT is written in.
     pub const fn thoth_name(self) -> &'static str {
         match self.0 {
             0 => "Ace",
@@ -330,7 +330,9 @@ impl TarotPip {
             10 => "Princess",
             11 => "Prince",
             12 => "Queen",
-            _ => "King",
+            // The printed Thoth court is the Knight; the kernel constant
+            // `M3_TAROT_PIP_KING` names the same slot in the RWS register.
+            _ => "Knight",
         }
     }
 

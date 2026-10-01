@@ -47,7 +47,7 @@
     "crates/ql-core/src/pole/pose.rs": "bd3c24d9ffe5608f0b69d6604bb3e91e1635cd8f866ca0da528ceae2da4397ba",
     "crates/ql-core/src/pole/quaternion.rs": "d0edf8e6a1d43f33e6d3fe5934da9d9d0a640382dc37e34d378fc23d14c7b370",
     "crates/ql-core/src/pole/rotational.rs": "ae1f3eb3fe406bf42ed87feb57d281bde94e91f863a52568e79ab29e8c914142",
-    "crates/ql-core/src/pole/tarot.rs": "75d2fa201ec807679191fe0fd6c04d2c5d43ed67d03df5a27313cf826021cce7",
+    "crates/ql-core/src/pole/tarot.rs": "5205fbd9aabfceed3831ecd3070acd6c301a89e7bd4a6d17a477f3f49d437e06",
     "crates/ql-core/src/pole/transcription.rs": "157a2e2f0429f872689fa88483fb4d5ad549554888a03d3b27117cd8dce79385"
   },
   "outputs": {
