@@ -1,15 +1,15 @@
 {
-  "schema": "ql.k8-current-inventory-receipt/v1",
-  "inventory_sha256": "267f1f8d2a8472aa92956c92a4a0bf87e39ee266d966ff34c6ebeb6a66343a1a",
-  "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+  "constructs": 2870,
   "inherited_ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
   "inherited_ledger_sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
-  "constructs": 2870,
   "inherited_unresolved": 893,
-  "reviewed_K8_constructs": 1237,
+  "inventory_sha256": "2866ca647eb142fa66cea06108920a45ce1cec657472d223645dc3040e3cb4df",
   "linked_K8_public_exports": 75,
+  "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+  "reviewed_K8_constructs": 1237,
   "reviewed_K8_cpp_modules": 2,
   "reviewed_K8_javascript_modules": 4,
   "reviewed_K8_python_modules": 3,
+  "schema": "ql.k8-current-inventory-receipt/v1",
   "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate"
 }
