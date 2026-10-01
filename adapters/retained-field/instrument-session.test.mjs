@@ -58,8 +58,9 @@ function setup(options = {}) {
         current.audio = Array(request.command.frames).fill(0.125);
         current.targets[0].position[0] = Number(current.samples_elapsed) / 48000;
       } else if (['m1-advance', 'replace-event'].includes(request.command.operation)) {
-        // Strike and reshape each commit one generation on the scene owner.
-        current.generation = String(BigInt(current.generation) + (port.eventStep ?? 2n));
+        // Controlled protocol cases; actual scene-owner evidence is separate.
+        current.generation = String(BigInt(current.generation) +
+          (port.eventStep ?? (request.command.operation === 'm1-advance' ? 3n : 2n)));
         current.targets[0].position[1] += 0.5;
       } else if (request.command.operation === 'set-axis') {
         current.generation = String(BigInt(current.generation) + 1n);
@@ -265,22 +266,33 @@ test('a scene determinant event re-reads the basis through the same serial owner
   const end = session.reading.audio.target_context_seconds;
   await session.operate({ operation: 'm1-advance', ticks: 1 });
   assert.equal(calls.at(-1).command.operation, 'm1-advance');
-  assert.equal(session.reading.acknowledged.generation, '3');
+  assert.equal(session.reading.acknowledged.generation, '4');
   // The acknowledgement carried the new influence: no second exchange needed.
-  assert.equal(session.lastInfluence.generation, '3');
+  assert.equal(session.lastInfluence.generation, '4');
   // Re-read targets wait behind already scheduled sound, then present.
   context.currentTime = end; session.present();
   assert.equal(field.last.targets[0].position[1], 0.5);
   const influence = await session.influence();
   assert.equal(influence.schema, 'ql.expression-influence/v1');
-  assert.equal(session.reading.acknowledged.generation, '3', 'influence is a read');
+  assert.equal(session.reading.acknowledged.generation, '4', 'influence is a read');
 });
 
-test('an event that commits no generation, or more than strike and reshape, is transport uncertainty', async () => {
-  for (const step of [0n, 3n]) {
-    const { session, port } = setup();
-    port.eventStep = step;
-    await assert.rejects(session.operate({ operation: 'replace-event', event: {}, strike: true }),
-      /host operation and native cursor disagree/);
+test('each scene operation retains its own exact native commit range', async () => {
+  for (const [operation, accepted, refused] of [
+    ['m1-advance', [2n, 3n], [0n, 1n, 4n]],
+    ['replace-event', [1n, 2n], [0n, 3n]],
+  ]) {
+    for (const step of accepted) {
+      const { session, port } = setup(); port.eventStep = step;
+      await session.operate({ operation, ticks: 1, event: {}, strike: true });
+      assert.equal(session.reading.acknowledged.generation, String(1n + step));
+      session.dispose();
+    }
+    for (const step of refused) {
+      const { session, port } = setup(); port.eventStep = step;
+      await assert.rejects(session.operate({ operation, ticks: 1, event: {}, strike: true }),
+        /host operation and native cursor disagree/);
+      assert.equal(port.closed, true); session.dispose();
+    }
   }
 });
