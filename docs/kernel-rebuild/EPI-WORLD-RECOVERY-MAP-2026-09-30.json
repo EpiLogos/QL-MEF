@@ -16928,7 +16928,9 @@
         "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
         "FRESH-CURRENT-SOURCE-MANIFEST",
         "FRESH-LIVE-BIMBA-READ",
-        "FRESH-ALL-FIVE-SOURCE-QUALIFICATION"
+        "FRESH-ALL-FIVE-SOURCE-QUALIFICATION",
+        "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW",
+        "FRESH-RETAINED-OCCASION-INDEPENDENT-EXPECTATION"
       ],
       "remaining_source_to_experience_account": {
         "standing": "unfinished branch-semantic/experience audit, not discharged by source inventory",
@@ -17150,7 +17152,10 @@
         "ORDINARY24-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY26-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE",
-        "ORDINARY28-INDEPENDENT-QUALIFIED-WORKER-BOUNDARY"
+        "ORDINARY28-INDEPENDENT-QUALIFIED-WORKER-BOUNDARY",
+        "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+        "FRESH-WHOLE04-FAILURE",
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
       ],
       "profile_lifecycle_obligation": {
         "actual": "Actual19 opening has61 source-scoped definitions; incoming authoredv3cohort is separately immutable. Former global64 catalog failsat21; native4096refs/16MiB aggregate now passes15 tests with122 exactv2/v3 definitions. Singleparent/currentkey replacement semantics remain; fullordinarycatalogreplay pending.",
@@ -17472,7 +17477,10 @@
         "FRESH-M4-COMPANION-CHALLENGE",
         "FRESH-NATIVE-RECOVERY-CODEC-SOURCE-CHALLENGE",
         "FRESH-M4-INDEPENDENT-NATIVE-ADMISSION-REPLAY",
-        "FRESH-NARA-NATIVE-CENTRAL-RACE"
+        "FRESH-NARA-NATIVE-CENTRAL-RACE",
+        "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+        "FRESH-WHOLE04-FAILURE",
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
       ]
     },
     {
@@ -17661,8 +17669,20 @@
           "M1-5",
           "M5-3"
         ],
-        "standing": "Source/static receiving reviewed; actual operation/material/consumer and installed proof required."
-      }
+        "standing": "Independently source-reviewed specific entrance/capability operation/form/owner/first-break dispositions; actual material/operation/consumer and installed acceptance remain open.",
+        "detailed_companion": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+        "detailed_disposition": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.json",
+        "experience_evidence_ids": [
+          "FRESH-M123-EXPERIENCE-COMPANION",
+          "FRESH-M123-SUBJECT-DISPOSITION",
+          "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+        ]
+      },
+      "execution_evidence_ids": [
+        "FRESH-M123-EXPERIENCE-COMPANION",
+        "FRESH-M123-SUBJECT-DISPOSITION",
+        "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+      ]
     },
     {
       "id": "A2",
@@ -17731,8 +17751,20 @@
           "M2-5",
           "M5-3"
         ],
-        "standing": "Source/static receiving reviewed; actual operation/material/consumer and installed proof required."
-      }
+        "standing": "Independently source-reviewed specific entrance/capability operation/form/owner/first-break dispositions; actual material/operation/consumer and installed acceptance remain open.",
+        "detailed_companion": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+        "detailed_disposition": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.json",
+        "experience_evidence_ids": [
+          "FRESH-M123-EXPERIENCE-COMPANION",
+          "FRESH-M123-SUBJECT-DISPOSITION",
+          "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+        ]
+      },
+      "execution_evidence_ids": [
+        "FRESH-M123-EXPERIENCE-COMPANION",
+        "FRESH-M123-SUBJECT-DISPOSITION",
+        "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+      ]
     },
     {
       "id": "A3",
@@ -17803,7 +17835,10 @@
         "PUBLISHED-M3-1D82187-ACTUAL-CI-LOGS",
         "CURRENT-M3-NATIVE-SOURCE-B5",
         "CURRENT-M3-HISTORICAL-GUARD-REFUSAL-B5",
-        "PUBLISHED-JOURNEY-ACTUAL-NATIVE-CLI"
+        "PUBLISHED-JOURNEY-ACTUAL-NATIVE-CLI",
+        "FRESH-M123-EXPERIENCE-COMPANION",
+        "FRESH-M123-SUBJECT-DISPOSITION",
+        "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
       ],
       "source_specific_branch_review": {
         "coverage_carrier": "docs/kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json#/branch_entrances",
@@ -17818,7 +17853,14 @@
           "M3-5",
           "M5-3"
         ],
-        "standing": "Source/static receiving reviewed; actual operation/material/consumer and installed proof required."
+        "standing": "Independently source-reviewed specific entrance/capability operation/form/owner/first-break dispositions; actual material/operation/consumer and installed acceptance remain open.",
+        "detailed_companion": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+        "detailed_disposition": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.json",
+        "experience_evidence_ids": [
+          "FRESH-M123-EXPERIENCE-COMPANION",
+          "FRESH-M123-SUBJECT-DISPOSITION",
+          "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+        ]
       }
     },
     {
@@ -18125,7 +18167,12 @@
           "M5-5"
         ],
         "standing": "Source/static receiving reviewed; actual operation/material/consumer and installed proof required."
-      }
+      },
+      "execution_evidence_ids": [
+        "FRESH-M123-EXPERIENCE-COMPANION",
+        "FRESH-M123-SUBJECT-DISPOSITION",
+        "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW"
+      ]
     }
   ],
   "independent_acceptance": {
@@ -21283,6 +21330,76 @@
       "establishes": "Controlled native empty-root concurrent source-horizon Actions reproduce exact ENOENT; serial before/after succeed, no private sources copied.",
       "does_not_establish": "UI242 particular invocation trace or installed repair; source and actual writer custody still need convergence.",
       "repository": null
+    },
+    {
+      "id": "FRESH-M123-EXPERIENCE-COMPANION",
+      "path": "/Users/admin/Central/worktrees/env-2/ql-mef/docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+      "sha256": "2d1ab5aee9989bd5818f6e043f71651ddfec7e5dff35c9894d54036b6432de81",
+      "bytes": 29682,
+      "standing": "observed-evidence",
+      "establishes": "Current original-source reconciliation for18 M1–M3 entrances; 103 capability records and44 distinct purposeful operation/form groups; implemented/omitted/unconnected/superseded work and numerical seams distinguished.",
+      "does_not_establish": "No runtime, installed, numerical parity or H acceptance",
+      "repository": "EpiLogos/QL-MEF"
+    },
+    {
+      "id": "FRESH-M123-SUBJECT-DISPOSITION",
+      "path": "/Users/admin/Central/worktrees/env-2/ql-mef/docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.json",
+      "sha256": "17f10c6941460132b1fce53798180fb7f11b5f57f32e997dbbfce2052b8e5e71",
+      "bytes": 315611,
+      "standing": "observed-evidence",
+      "establishes": "All18 exact entrance/UUID/source/relations and all103 current capability pointers retain specific meaning, forms, native owner/receiving path, first break, disposition and source custody.",
+      "does_not_establish": "Does not accept any of185 existing runtime rows or replace complete source/14packet/26subpacket programme",
+      "repository": "EpiLogos/QL-MEF"
+    },
+    {
+      "id": "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/independent-m123-experience-source-review.md",
+      "sha256": "0ad82e285a4bfea27d48b557f4e1403e305e36291615b5cdcab648db5b85f935",
+      "bytes": 6679,
+      "standing": "observed-evidence",
+      "establishes": "Independent original-source challenge verifies18 entrances,103 records,44 groups and63 source custody hashes; canonical hyphens and unresolved DET/admissibility/84-to472 mapping corrected.",
+      "does_not_establish": "Source-only review; no GPU, installed, numerical mapping or H acceptance",
+      "repository": null
+    },
+    {
+      "id": "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/independent-native-profile-adoption-03-review.md",
+      "sha256": "0269fe3787ea3d0a347bd58e27eb1e45a76eadc0bbd9fa348ee4aaa7d4035b5b",
+      "bytes": 6963,
+      "standing": "observed-evidence",
+      "establishes": "Independent raw27native-operation review: production coordinate adoption working127→128focus→129adopt; exact personal locus/current person/occasion,32/9/7body material/assets/relations preserved against working127; same-file save129/readback/currentPin95. Original durable126 and unsaved127 changes preserved distinctly.",
+      "does_not_establish": "No Atlas computer-use, full lifecycle, same-nine-driver causal/GPU or installed acceptance",
+      "repository": null
+    },
+    {
+      "id": "FRESH-RETAINED-OCCASION-INDEPENDENT-EXPECTATION",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/personal-proof/whole04-independent-source-review/whole04-source-qualified-expectation.json",
+      "sha256": "b14a8ce5a81d9d802ad717cc6b2d7e59e94501d5e97844bbda73fa820ecb1a15",
+      "bytes": 21734,
+      "standing": "observed-evidence",
+      "establishes": "Current/original all-five binary/source qualification; exact16field world contract/14semantic fields and both62001buffers; source-derived historical Sun qualification and retained occasion admission under managedQL70.",
+      "does_not_establish": "Source-derived verifier expectation and retained-output comparison; successor native encounter execution remains required",
+      "repository": null
+    },
+    {
+      "id": "FRESH-WHOLE04-FAILURE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/whole-replay-04/runtime-e254-29d5296a-ql70-reviewed-profile/receipt.json",
+      "sha256": "8767330b82fac9007ef6b3c7835c12d77d10125e3d927900ca1a591b2684ec39",
+      "bytes": 85424,
+      "standing": "observed-evidence",
+      "establishes": "Actual ordinary stored personal→cosmic navigation,32 resident bodies/fullsource/same person and occasion reaches13checks; stops at comparison of historical versus current field-owner source hashes.",
+      "does_not_establish": "Not whole acceptance; reset/departure/9driverconsumer/lifecycle/freshagent/installed remain unexecuted in this successor",
+      "repository": null
+    },
+    {
+      "id": "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/personal-proof/native-continuity-tests-green.json",
+      "sha256": "22541fd213d37224b8caf0477f28aadde1f67b3efb9d5b44df14188855ae2d1e",
+      "bytes": 3144,
+      "standing": "observed-evidence",
+      "establishes": "Exact failed11.8MiB complete checkpoint lossless roundtrip; Recovery/regression, file and real32/9/7material/full2141source/61profile roundtrips; actual ordinary Kernel→qualifiedQL prepare/open worker→release.",
+      "does_not_establish": "Native owner/codec/worker tests; no software/hardware GPU, full ordinary lifecycle or installed-world proof",
+      "repository": null
     }
   ],
   "candidate_source_capture": [
@@ -21363,13 +21480,13 @@
     "native_admission": "Dated8006 qualified6→closed3 native open remains bounded positive.32 actual native correction/reset/save progresses;33 genuine rest GPU equality passes but cursormax2 rejects correctnative+3. Canonicala0ca M1[2,3]/replace-event[1,2] and exactvendor/a668 bundle join;34 accepts firsttick but wholeFAILED37 at heldClockA rendered consumer.18controlled and21real native cases remain separate; no whole/installed or broad numerical promotion. Committed68dallfivebuild0/current2870census4/defaultguard2 qualifiesa separate candidate. Actual35 still7dd/16f; StageDfirstTwrapperfailedKeyError texture beforeops, correctedold24/genericdefaultnativeworker replaypending. No installed/native-currentcut inference. Later bounded positives: compiled68d omitted-event default33 and original24 native replay/independent READ-review14 pass with source-qualified Sun7 and no sky/person/occasion remint. Closed3 extraction does not establish actual O:I projection invocation. q_activity/q_composed remain unavailable; app/managed/H and numerical readiness stay pending.",
     "rendering": "Actual33 all32 resident positions equal decoded authored targets at rest (112000total/84000formation points,10980torus for4096 fullnative samples; six source masks) with0steps.32 original84,000 stale resident positions/maxgap1255.54 failure repaired at app-owned production zero-time allocation admission.34 genuinefirstnative tick has correctsource30° butClockA resident1281 points move0 whiletargetgap275.000015; CPU target update is insufficient. Actual live GPU body effect/invariance/consumer-cut/managedinstalled remains pending. IndependentselectiveGPUprimitive21+21/6guardsperowner nowpasses, but genuine35FAIL37 native60°/residentmovement0/gap201.313995 beforephysics. Rootappacknowledged-state qualification/needsFrame consumerstillunproven; no globalreseed or QL/nativeclockchange implied. Actual36 now passes held ClockA resident effect before simulation (gap0, displacement275.000015), plus velocity/unselected/connection/seed/time/steps invariance. Next static/dynamic-aperture verifier assertion fails41; source review and verifier-only fix prepared, whole37 pending. Original ASCII Factory carrier separately still fails original/same-body reception, not repaired by glyph/fresh-mount variation.",
     "audio": "Native cosmic PCM/sourceinterval evidence retained.Mac direct9driver personal projection/bank is not personal audio or physical-output/listening proof; multivoice sound packet remains.",
-    "save_restart": "Actual17 raw native file3,959,733/document3,19 guarded same-file3,963,073/document5 andpre-bridge guarded3,963,075/document15 readbacks pass. Actual native file-only lossless codec full Document equality3,959,733→2,591,260 passes; actual encoded native Central same-file Save/inspect/fenced Open/fullDocument equality and six fault×three-operation refusals pass. Ordinary Save&next/reset/restart/Library and joined UI lifecycle remain pending. Cold-kernel/test receipts assumptions are harness limitations, not product lifecycle proof. Actual32 knownsame-v3 nativeparameter/current/reset4→12 correction and same-file save execute; actual saved/current fault native4-case guard/restore proof passes.34 coldNativeDoc59 exactsamefile/source/person/occasion opens and protected pin/save acknowledgesDocument60. This bounded cold continuation is not completed Save&next/reset/Library/fullrestart/installed lifecycle;31 openDraft41/fileprecondition excluded. Actualpre35Doc72 fullsamefiletyped equality andheldleaseclose/ownedbridge coldreplacement retained;35opening73 samefile/person/occasion/knowncurrent admitted. This remainsboundedcoldcontinuation, not fullSaveNext/reset/Library/restartacceptance. Actual pre36Doc85 same-file typed equality/guarded save and held lease close now retained; it does not close complete Save&next/reset/Library/restart gates. Actual pre37Doc98 full typed same-file equality/guarded save/held lease close retained; no complete Save&next/reset/Library/restart promotion.",
+    "save_restart": "Native complete checkpoint/storage and real original32/9/7file roundtrip pass on5c1c/29d. Actual production profile review/adoption saves current129 and re-pins same person/current input/occasion; preserves working127, original durable126 remains a distinct before-file. Full cold Library/Save&next/restore/recompose/restart and installed proof remain open.",
     "managed_install": "Actualpeer171 mixedcut22:48UTC: runningdesktop786a(oldembeddedfrontend), managedOIccd5/af9 andQL74dc/3b21;allfiveinventoriedQLexecutablespresent. Runtime907c/candidatebundledfrontend/world acceptance unproven. Managedrepair/world beforeafter independentproofstillpending.",
     "whole_branch_recovery": "42entrances/2141exactsources/185sourceobligations retained; A0–A5 acceptance outstanding",
     "H": "notdone/person-owned",
     "personal_receiving": "Actual28 preceding checks retain one protected PersonalCurrent/person/instance/native sky occasion;9 personal bodies and7 exact centres,9 qualified planetary drivers/frequencies/weighted shares including unallocated Uranus denominator, real locus pointer/full-source UUID/Source Return and branch entry pass. This establishes admitted projection/source binding, not measured modal/body consequence, two-person live differential, decanic-channel waves or physical sound.",
     "M3_acceptance": "Current native M3 source/observer command atcleanb5 passes50Python/no skippedclasses plus actualRust/C/ASanUBSan/C++consumer. Exactoriginal source996/4952/383 and183 discrepancy standing retained. Historicald0ff/activepublishedde46 remain separatelyqualified; actual strictpreservationguard refuses nativeacceptancescopechanged. Current numerical proof-successor admission/publication remains R0-M3-NUMERICAL-SUCCESSOR; no broadready/parity promotion.",
-    "fresh_native_agent": "Actual19 six bounded native selected-source/turn-shaping cases remain source-basis proof. Actual28 adds real rendered ring/member pointer/Source Return, keyboard unvoiced Uranus and exact personal locus source/Return. No fresh provider Nara/Epii response recovering basis or managed installed selected-context answer yet.",
+    "fresh_native_agent": "Actuation106/QL70 frozen native body/faculties/source-state and exact23typed personal neighborhood qualified. Neighborhood omitsUUID/full64properties/qualifierprops; existing fullnativecoordinate/envelope owner is required. New managed Prime-QL body, exact O-I context, fresh selected-basis meaningful answer and installed receiving remain unexecuted.",
     "numerical_gate": "Actual fullcanonical at8912 passes123 testresultlines; complete targetedcurrentM3 atb5 passes. Sourcechecker43M1/26caps/24locks/23native replay/131decisions and integratedcensus2864/1231reviewed/893unresolved/75exports pass. Ledger0d85 and sourcequalification remain byte-identical/unassessed. Exacthead current M1 numerical successor and qualified current M3 finiteproof publication are distinct open packets. Later source-only16f inventory updates actual census to2865/1232reviewed/893unresolved/75exports (f0e85667) with unchanged131 decisions/ledger source locks; b5 counts stay dated. No new full canonical/numerical gate is inferred from scoped repair checks.",
     "baseline_vs_candidate": {
       "reported_baseline": "At audit start the Atlas manufactured profiles with empty material/formation/scene seeds; semantic adoption was mistaken for multi-coordinate composition, and original composed forms were missing or disconnected from ordinary producer/loading/receiving paths. Those source/runtime findings explain the reported control/metadata-first encounter.",
@@ -21381,7 +21498,7 @@
       "ordinary31_34": "Corrective-candidate receiving gaps:31 excluded known openDraft41 vsolderfile precondition;32 targets updated but zero-time GPU resident positions stale afteractualmaterialcorrection;33 rest receiving fixed then legitimateM1threecommit cursor refused;34 cursor fixed thenactualheldClockA resident consumer remains unchanged. These are preserved new integration failures, separate from baseline emptyAtlas construction/loading and independent recognition failures."
     },
     "journey": "Published74dc nativeowner integrated at2663/currentcleanb5. Actual12journey/5livedcontext/9faculty +skillchecks and10separate nativeCLIoperations execute. Actualcrossperson requestB/journeyA accepted: native request/journey coherence and protectedhost authority/concern/occasion admission remainEA1/EA2. Centralrevision-CAS/persistence, actualselecteddeck material and sameoccasionM3/personalreceiving remainEA1-EA3, notinstalledacceptance.",
-    "current_human_return": "Incomplete whole-system audit and first installed delivery; complete source inventory is not complete Bimba-to-Expression parity.",
+    "current_human_return": "Current audit checkpoint carries18/103/44 source-specific M123 dispositions, reviewed native profile/save129, historical versus current source qualification and unaccepted whole04/installed successor. Complete14/26scope and185runtime-unaccepted obligations retained.",
     "first_installed_delivery_complete": false,
     "whole_Bimba_expression_parity_established": false
   },
@@ -24032,7 +24149,10 @@
         "NATIVE-FILE-CODEC-ACTUAL17-FULL-ROUNDTRIP",
         "NATIVE-FILE-CODEC-CONTRACT-RECEIVING-REVIEW",
         "PREBRIDGE-CURRENT15-GUARDED-FILE-PRESERVATION",
-        "PREBRIDGE-CURRENT15-GUARDED-FILE-ISSUED"
+        "PREBRIDGE-CURRENT15-GUARDED-FILE-ISSUED",
+        "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+        "FRESH-WHOLE04-FAILURE",
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
       ],
       "shared_owner_convergence": {
         "commit": "6e45046befa9b645cc41acf27e44a6a67027a8a9",
@@ -25030,7 +25150,7 @@
       "id": "R2-WORLD-RECOGNITION",
       "parent_packet": "R2",
       "title": "Recognisable Earth, clocks and source registers in the composed world",
-      "standing": "Camera parity corrected and frozen: actual nativeDocument/loader/exact appcamera controlled reference all32/9/7 visible at both viewports, original wrongcamera all32 offscreen negative. Actual fresh24 ordinary clear bodies and degree pointer pass;28 all six pointer/full-member Source/Return and personal source Return pass. Reference cannot substitute for independent mature whole/managed recognition or live effects.",
+      "standing": "Actual production native coordinate adoption/focus/CAS/save129 and currentPin95 reviewed independently; all working127 material/subjects/instance/history retained. Atlas CUA/cold Library/reopen/restart and installed recognition remain open. Durable126 differs from already-unsaved127 and is not silently relabelled.",
       "dependencies": [
         "R2-FILE-CODEC",
         "R3-PAUSED-SCENE-ADMISSION",
@@ -25105,7 +25225,10 @@
         "ORDINARY25-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY26-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY27-INVALID-BUILD-PRECONDITION",
-        "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE"
+        "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE",
+        "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+        "FRESH-WHOLE04-FAILURE",
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
       ],
       "completion_rule": "Existing parent programme, source coordinates and semantic/numerical owners are unchanged. Finish source→native repair→real test→original ordinary replay→managed installed proof. No H or broad readiness promotion from this subdivision."
     },
@@ -25184,7 +25307,10 @@
         "ORDINARY25-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY26-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY27-INVALID-BUILD-PRECONDITION",
-        "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE"
+        "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE",
+        "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+        "FRESH-WHOLE04-FAILURE",
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
       ],
       "completion_rule": "Existing parent programme, source coordinates and semantic/numerical owners are unchanged. Finish source→native repair→real test→original ordinary replay→managed installed proof. No H or broad readiness promotion from this subdivision."
     },
@@ -25270,7 +25396,11 @@
         "Cosmic→personal→branch/source→personal then restart reopens exact sameperson/instance/scene/selection/occasion, showsSavedoccasion/datedepoch, preserves selecteddeck and guardedfile, and doesnot silently makeitcurrent.",
         "Run actualordinary22/23 and managedjoined all5cut before expressive/causal/lifecycle acceptance. Sourceguard/19test counting is insufficient."
       ],
-      "completion_rule": "No original re-tagging, no fresh-current guard weakening, no readiness/H promotion. Full parent packet still requires original ordinary encounter and independent managed replay."
+      "completion_rule": "No original re-tagging, no fresh-current guard weakening, no readiness/H promotion. Full parent packet still requires original ordinary encounter and independent managed replay.",
+      "execution_evidence_ids": [
+        "FRESH-RETAINED-OCCASION-INDEPENDENT-EXPECTATION",
+        "FRESH-WHOLE04-FAILURE"
+      ]
     },
     {
       "id": "R3-QUALIFIED-WORKER-ADMISSION",
@@ -26087,7 +26217,7 @@
     "R5-WORLD-SELECTION"
   ],
   "fresh_execution": {
-    "updated_at": "2026-10-01T20:48:53.392561+00:00",
+    "updated_at": "2026-10-01T22:44:39.861690+00:00",
     "prior_recovery_map_sha256": "ae5f7f2618f86ba11671ee4449c8b9481ecc8f31b23795614a8d5ec5f2536fd0",
     "responsible_lead": "codex:01a0f80e-7662-75f1-bd26-5522aa6217b3",
     "source_challenge": "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
@@ -26113,10 +26243,11 @@
       "verification": "FRESH-IDENTITY-BINDING-GREEN",
       "scope": "Binding repair; draft40/60, trace-only GK/HD and unavailable activity unchanged; successor scene/installed test pending."
     },
-    "ql_native_source_cut": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+    "ql_native_source_cut": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
     "ql_source_publication": {
       "pull_request": "https://github.com/EpiLogos/QL-MEF/pull/278",
-      "standing": "open/unmerged; later publication-only documentation does not reattribute the176-built binaries"
+      "last_published_source_cut": "4066f4c8487a543914c5beba5db47e59bbd6a4c1",
+      "standing": "open; documentation/test successor does not reattribute numerical all-five binaries from70ce"
     },
     "native_continuity_successor": {
       "prior_map_sha256": "1e560e16ea9ae5aa29972343e2d669928905ec6904c05a7ff25b2314e90603c3",
@@ -26201,6 +26332,22 @@
           "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
         }
       ]
+    },
+    "reviewed_adoption_and_retained_occasion": {
+      "prior_map_sha256": "2b940c73ef193ae1e69bf80a948a1e05deee4147febf21be2bbccddff9788c24",
+      "oi_published_cut": "29d5296ae47474757977761d3993f70eaccb630b",
+      "oi_pr": "https://github.com/EpiLogos/O-I/pull/573",
+      "native_owner_cut": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+      "controlled_material_original_producer": "16f193162700655c9b616edce60704f051f5431e",
+      "profile_adoption": "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
+      "whole_successor": "FRESH-WHOLE04-FAILURE",
+      "source_expectation": "FRESH-RETAINED-OCCASION-INDEPENDENT-EXPECTATION",
+      "central_horizon_candidate": "6bcfc1661cd0eccec1a4a691503ea401d411023a",
+      "central_pr": "https://github.com/EpiLogos/Central/pull/255",
+      "central_standing": "Native14-test/64concurrent-ack retention owner report; exact2file candidate published. Managed installation and original installedNara242 replay pending. Foreign activeWiki build failure remains separate.",
+      "resource_standing": "Reported desktop memory crash interrupts native29d package build; lightweight source publication continues. Heavy jobs are serialized pending bounded resource coordinator release. Pre-crash780GB cause remains unestablished; no new programme/release permission ceremony.",
+      "technical_acceptance": "First integrated installed delivery and complete parity unaccepted",
+      "H": "person-owned, unaccepted"
     }
   },
   "fresh_branch_reconciliation": {
@@ -26323,6 +26470,22 @@
       "Fail source/instance mutation of unrelated entities on focus change.",
       "Fail continuing symbolic journey without visible cards/hexagrams/glyphs/text and retained original/later/correction material."
     ],
-    "current_matrix_revision_qualification": "All185 prior capability payloads are unchanged except added experience_verification. Ten current files also carry whole_experience_audit; allhashes differ from prior register. Current file hashes are not committed candidate SHAs."
+    "current_matrix_revision_qualification": "All185 prior capability payloads are unchanged except added experience_verification. Ten current files also carry whole_experience_audit; allhashes differ from prior register. Current file hashes are not committed candidate SHAs.",
+    "m123_specific_experience": {
+      "companion": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+      "companion_sha256": "2d1ab5aee9989bd5818f6e043f71651ddfec7e5dff35c9894d54036b6432de81",
+      "disposition": "docs/kernel-rebuild/EPI-WORLD-M123-EXPERIENCE-RECONCILIATION-2026-10-01.json",
+      "disposition_sha256": "17f10c6941460132b1fce53798180fb7f11b5f57f32e997dbbfce2052b8e5e71",
+      "independent_review": "FRESH-M123-INDEPENDENT-ORIGINAL-REVIEW",
+      "entrances": 18,
+      "capability_records": 103,
+      "purposeful_operation_groups": 44,
+      "source_custody_records": 63,
+      "runtime_standing": "All185 existing runtime standings retained unaccepted",
+      "unresolved_numerical_meanings": [
+        "M3-C16:8DETtargetcollisions/9source-nonclosing indices versus8resonance gaps require source-backed equivalence",
+        "M3P-ROTATION:canonical12x7=84to472semantic mapping unestablished; settled40x7+24x8count remains distinct"
+      ]
+    }
   }
 }
