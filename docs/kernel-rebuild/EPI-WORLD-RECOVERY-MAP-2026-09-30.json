@@ -17369,7 +17369,7 @@
         "O:I production launch/Library/save and selected-context owner; existing Nara/Epii owner"
       ],
       "scope": "production encounter/lifecycle",
-      "standing": "Actual28 preceding37 checks include six rendered register pointers/all member Source/Return, keyboard unvoiced Uranus, Personal Pratibimba exact native pointer/source/Return and branch entry.24/25/26 cancellation/availability failures and27 invalid build precondition retained. Fresh answer, full same-world lifecycle/consumer proof/installed Return remain open.",
+      "standing": "Actual28 preceding37 checks include six rendered register pointers/all member Source/Return, keyboard unvoiced Uranus, Personal Pratibimba exact native pointer/source/Return and branch entry.24/25/26 cancellation/availability failures and27 invalid build precondition retained. Fresh answer, full same-world lifecycle/consumer proof/installed Return remain open. Fresh first full production e254 frontend/4eb kernel/70ce native companions stopped after5 checks at real Recovery8MiB refusal. Native lossless checkpoint repair passes exact failed operation and existing native suites; cold Library e254 source repair is committed but not yet receiving-qualified. Necessary Central concurrent horizon defect reproduced; ordinary Nara entry still needs actual native trace and repaired installed replay. Fresh defaultPrime-QL owner assembly106/native faculties70 qualified separately; new body/model/selected world encounter remains open.",
       "files": [
         {
           "repository": "O-I",
@@ -17390,6 +17390,18 @@
         {
           "repository": "O-I",
           "path": "desktop/cradle/src/nara/coordinateExpression.ts"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_recovery.rs"
+        },
+        {
+          "repository": "Central",
+          "path": "ctrl/src/source_horizon.rs"
+        },
+        {
+          "repository": "Actuation",
+          "path": "experiments/ql-runtime/native-owner-instrument/src/main.rs"
         }
       ],
       "native_operations": [
@@ -17454,7 +17466,13 @@
         "ORDINARY24-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY26-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE",
-        "ORDINARY28-INDEPENDENT-QUALIFIED-WORKER-BOUNDARY"
+        "ORDINARY28-INDEPENDENT-QUALIFIED-WORKER-BOUNDARY",
+        "FRESH-NATIVE-CONTINUITY-TESTS",
+        "FRESH-M4-COMPANION",
+        "FRESH-M4-COMPANION-CHALLENGE",
+        "FRESH-NATIVE-RECOVERY-CODEC-SOURCE-CHALLENGE",
+        "FRESH-M4-INDEPENDENT-NATIVE-ADMISSION-REPLAY",
+        "FRESH-NARA-NATIVE-CENTRAL-RACE"
       ]
     },
     {
@@ -17889,7 +17907,10 @@
         "PUBLISHED-M3-1D82187-ACTUAL-CI-JOBS",
         "PUBLISHED-M3-1D82187-ACTUAL-CI-LOGS",
         "PUBLISHED-JOURNEY-ACTUAL-NATIVE-CLI",
-        "PUBLISHED-JOURNEY-ACTUAL-CROSS-PERSON-GAP"
+        "PUBLISHED-JOURNEY-ACTUAL-CROSS-PERSON-GAP",
+        "FRESH-M4-COMPANION",
+        "FRESH-M4-COMPANION-CHALLENGE",
+        "FRESH-M4-INDEPENDENT-NATIVE-ADMISSION-REPLAY"
       ],
       "source_specific_branch_review": {
         "coverage_carrier": "docs/kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json#/branch_entrances",
@@ -17932,7 +17953,7 @@
           "Native selected deck/portion/ordered draw and explicit RWS/Thoth card identity; preserve one shuffle and draw continuation, chosen extra bounds and original cast versus computed/changed hexagram material.",
           "Cards, hexagrams, glyphs, authored text and exact relational material must become native scene bodies; applicable same M3 current state is consumed, not stored only or replaced by independent scene state.",
           "Native oracle_journey state persists through Central source revision/CAS. Reconcile same journey ID with different entropy to its first accepted effect; no secret/private payload placed in Expression material.",
-          "Fence person, concern and occasion/currentness in native/host receiving. Published lived-context compose currently accepts supplied foreign-person journey while output retains requested person; reject this source join.",
+          "Fence person, concern and occasion/currentness in native/host receiving. Preserve the original managed176 foreign-person/concern admission failures. Native70ce now refuses both before composition/admission; nine actual native tests and independent16-check same-case CLI replay pass. Authenticated host disclosure, exact source/receipt admission, Central CAS, visible scene/journey continuation and installed receiving remain open.",
           "Retain original, later and corrected material plus correction provenance in the same personal world; Integration returns reviewed learning into later encounter.",
           "Identity retains all six constituents, natal/transit/activity meanings, stable identity address versus current quaternion, birth/profile correction and subject-safe save/reopen.",
           "Embodiment retains canonical seven centres/Earth ground, source anatomy/mantra/yantra, applicable materia/practice/timing and actual feedback/body receiving.",
@@ -21202,6 +21223,66 @@
       "standing": "executed-bounded-evidence",
       "establishes": "Independent review matches applied3 frontend hashes and release/edit/current/frame/destroy safeguards; truthful64/64 engine versus32page/2048semantic/8MiBexpanded/4MiBportable distinctions.",
       "does_not_establish": "Source-only qualification: no rendered/causal/installed acceptance."
+    },
+    {
+      "id": "FRESH-NATIVE-CONTINUITY-TESTS",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/personal-proof/native-continuity-tests-green.json",
+      "sha256": "22541fd213d37224b8caf0477f28aadde1f67b3efb9d5b44df14188855ae2d1e",
+      "bytes": 3144,
+      "standing": "observed-evidence",
+      "establishes": "Real refused11.8MiB checkpoint losslessly stores/reopens all material/file basis/pending work; nine recovery regressions, four native file regressions and retained32/9/7-body file roundtrip; ordinary native Compose real worker passes.",
+      "does_not_establish": "Full production successor, cold Library, installed saved world, personal GPU, fresh model answer, sound or H.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-M4-COMPANION",
+      "path": "/Users/admin/Central/worktrees/env-2/ql-mef/docs/kernel-rebuild/EPI-WORLD-M4-EXPERIENCE-RECONCILIATION-2026-10-01.md",
+      "sha256": "b211c266cec81e9dab676ce4785dc21d8db52d295e5a6a4d6db0696ab4ef3245",
+      "bytes": 41615,
+      "standing": "observed-evidence",
+      "establishes": "Subject-specific authored M4 forms and native/host receiving disposition through existing R4/R5/A4; exact source originals and all37 source hashes reviewed.",
+      "does_not_establish": "Runtime or installed acceptance for106 M4 subjects or185 capabilities.",
+      "repository": "QL-MEF"
+    },
+    {
+      "id": "FRESH-M4-COMPANION-CHALLENGE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/independent-m4-companion-challenge.md",
+      "sha256": "00163f1f3e63a1bdf2b7c83c97c060d5d07ff7358e070e4eafb3fefb997c03de",
+      "bytes": 10199,
+      "standing": "observed-evidence",
+      "establishes": "Independent bounded original-law/source challenge, semantic corrections retained.",
+      "does_not_establish": "Whole semantic/computational/experience parity.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-NATIVE-RECOVERY-CODEC-SOURCE-CHALLENGE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/personal-proof/independent-recovery-codec-final-addendum.md",
+      "sha256": "bbeb28ead3867377600ab7685cbdb1748d2a779a65007128cf21d79cc7cbd200",
+      "bytes": 5395,
+      "standing": "observed-evidence",
+      "establishes": "Independent exact native storage source challenge and precise aggregate/component size distinction.",
+      "does_not_establish": "Native runtime or installed proof by review alone.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-M4-INDEPENDENT-NATIVE-ADMISSION-REPLAY",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/m4-journey-admission-repair-2026-10-01/independent-root-native-replay/receipt.json",
+      "sha256": "5ed4a860a78ec599d1da038611e211ad44454dcc8b6a3db130227614750958e4",
+      "bytes": 9551,
+      "standing": "observed-evidence",
+      "establishes": "Independent actual native70ce16-check original foreign-person/concern successor with matching positive and cross-Day semantics.",
+      "does_not_establish": "Authenticated host disclosure, Central persistence or visible journey reception.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-NARA-NATIVE-CENTRAL-RACE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/personal-proof/nara-owner-race/source-owned-repair-plan.md",
+      "sha256": "dd2c9b5ec9875e3180a85d039efea7b195dee49ff9bd50b3fb067edb9980c7dd",
+      "bytes": 7871,
+      "standing": "observed-evidence",
+      "establishes": "Controlled native empty-root concurrent source-horizon Actions reproduce exact ENOENT; serial before/after succeed, no private sources copied.",
+      "does_not_establish": "UI242 particular invocation trace or installed repair; source and actual writer custody still need convergence.",
+      "repository": null
     }
   ],
   "candidate_source_capture": [
@@ -26006,7 +26087,7 @@
     "R5-WORLD-SELECTION"
   ],
   "fresh_execution": {
-    "updated_at": "2026-10-01T17:12:29.031915+00:00",
+    "updated_at": "2026-10-01T20:48:53.392561+00:00",
     "prior_recovery_map_sha256": "ae5f7f2618f86ba11671ee4449c8b9481ecc8f31b23795614a8d5ec5f2536fd0",
     "responsible_lead": "codex:01a0f80e-7662-75f1-bd26-5522aa6217b3",
     "source_challenge": "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
@@ -26036,6 +26117,90 @@
     "ql_source_publication": {
       "pull_request": "https://github.com/EpiLogos/QL-MEF/pull/278",
       "standing": "open/unmerged; later publication-only documentation does not reattribute the176-built binaries"
+    },
+    "native_continuity_successor": {
+      "prior_map_sha256": "1e560e16ea9ae5aa29972343e2d669928905ec6904c05a7ff25b2314e90603c3",
+      "oi_storage_commit": "5c1c9e4347fe731c903fb54dc37e1a83bf96854c",
+      "ql_native_owner_cut": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+      "actuation_assembly_cut": "106dcff82e204aa3ef1a11f48459226d4a557247",
+      "retained_original_failure": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/whole-replay-01/runtime-e254-ql70/receipt.json",
+      "proof": "Native storage and source/worker tests, not whole replay or installed personal delivery",
+      "installed_process_qualification": "Installer201-232 used old786a image despite4eb disk bundle; rejected as4eb acceptance. Actual freshPID99643 imageD95B matches installed4eb171fd bundle. Studio opening/Step/lens/Strike/native opening reset pass withQL70; actual Nara Central refusal, departure and integrated personal receiving remain open.",
+      "H": "unaccepted",
+      "installed_control_receipts": [
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/237-new-normal-app-native-process-sample.txt",
+          "sha256": "1eb3c667988a4689d5f9bba08a9f6330a8736be39d89dfc44673548f808bba01",
+          "bytes": 288495,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/238-actual-running-4eb-desktop-qualification.json",
+          "sha256": "2c636f5ce783a2585953e1f85675d8789dcc802bc52a83bb979b377feb134698",
+          "bytes": 792,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/249-qualified-open-live-settled.png",
+          "sha256": "4c87e7938a18d51a93a5df52a36f54b3439368b9317ab5ef5db944bfafb8e32d",
+          "bytes": 260993,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/249-qualified-open-live-settled.txt",
+          "sha256": "8d86abfe56f90e8139cd946e0fe85b202204e07a65c626accf995c61977640c6",
+          "bytes": 12079,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/252-qualified-step-after-resume.txt",
+          "sha256": "57fd34ad710355f4c5693e0030728e4b14289884d7388fb31bb6242257e1bf30",
+          "bytes": 981,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/252-qualified-step-after-resume.png",
+          "sha256": "4c87e7938a18d51a93a5df52a36f54b3439368b9317ab5ef5db944bfafb8e32d",
+          "bytes": 260993,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/253-qualified-lens-L0-action.png",
+          "sha256": "b1e878c84aab208ced8ea2c2671c54a2d65fde5bdddd06eedfe93a0e6cd8cf99",
+          "bytes": 261511,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/253-qualified-lens-L0-action.txt",
+          "sha256": "16679214a1148d9ef8b7f43ad0d60a7862e03c11100edac30bbdaf698345286e",
+          "bytes": 1062,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/263-qualified-strike-contiguous.png",
+          "sha256": "26ee605d574627fd48b574d6464e1913a8905cc128ef6b1aa39a621fb39eeb24",
+          "bytes": 162900,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/263-qualified-strike-contiguous.txt",
+          "sha256": "b131ac05db99ff535323daf96c89a26f741be10a7c3f9c6226aad0fbbbdb087d",
+          "bytes": 634,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/265-qualified-reset-opening-action.png",
+          "sha256": "e9c26dc0688764da86d843190d3d332911b458157c38e4e523fa6b90a05b7b37",
+          "bytes": 154568,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        },
+        {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/265-qualified-reset-opening-action.txt",
+          "sha256": "08f3253b16af6b425c08eca8b1dfeb7e0f71c1af5115d4789984068417873c8c",
+          "bytes": 18031,
+          "standing": "Actual loaded image/PID or CUA native control readback; not joined candidate personal GPU/scene acceptance"
+        }
+      ]
     }
   },
   "fresh_branch_reconciliation": {
@@ -26071,7 +26236,7 @@
         "Native selected deck/portion/ordered draw and explicit RWS/Thoth card identity; preserve one shuffle and draw continuation, chosen extra bounds and original cast versus computed/changed hexagram material.",
         "Cards, hexagrams, glyphs, authored text and exact relational material must become native scene bodies; applicable same M3 current state is consumed, not stored only or replaced by independent scene state.",
         "Native oracle_journey state persists through Central source revision/CAS. Reconcile same journey ID with different entropy to its first accepted effect; no secret/private payload placed in Expression material.",
-        "Fence person, concern and occasion/currentness in native/host receiving. Published lived-context compose currently accepts supplied foreign-person journey while output retains requested person; reject this source join.",
+        "Fence person, concern and occasion/currentness in native/host receiving. Preserve the original managed176 foreign-person/concern admission failures. Native70ce now refuses both before composition/admission; nine actual native tests and independent16-check same-case CLI replay pass. Authenticated host disclosure, exact source/receipt admission, Central CAS, visible scene/journey continuation and installed receiving remain open.",
         "Retain original, later and corrected material plus correction provenance in the same personal world; Integration returns reviewed learning into later encounter.",
         "Identity retains all six constituents, natal/transit/activity meanings, stable identity address versus current quaternion, birth/profile correction and subject-safe save/reopen.",
         "Embodiment retains canonical seven centres/Earth ground, source anatomy/mantra/yantra, applicable materia/practice/timing and actual feedback/body receiving.",
@@ -26141,7 +26306,7 @@
       },
       {
         "trigger": "Native lived history/journey compose",
-        "gap": "A store/CAS/native source green does not prove current scene consumer; foreign-person journey join remains a published native admission gap.",
+        "gap": "A store/CAS/native source green does not prove current scene consumer; original managed176 foreign-person journey admission failure is preserved; native70ce now repairs person and concern admission, while authenticated host disclosure, exact source/receipt admission, Central CAS and visible current scene/journey receiving remain open.",
         "files": [
           "/Users/admin/Central/worktrees/env-2/ql-mef/crates/ql-mef/src/nara/domain/oracle_journey.rs",
           "/Users/admin/Central/worktrees/env-2/ql-mef/crates/ql-mef/src/nara/lived_context.rs",
