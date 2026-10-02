@@ -182,6 +182,70 @@ class M3SourceParityTests(unittest.TestCase):
             with self.subTest(kind=kind), self.assertRaisesRegex(AssertionError, "typed edge"):
                 self.assert_original_correspondence(changed)
 
+    @staticmethod
+    def qualification_findings(audit):
+        return {detail["reference"]: detail for finding in audit["discrepancies"]
+                if (detail := json.loads(finding["detail"]))["code"] == "line-change-qualification"}
+
+    def test_real_single_bit_edge_must_change_its_source_named_line(self):
+        # Original relation says Second Yang -> Yin. Qian below Zhen is
+        # [Yang,Yang,Yang,Yang,Yin,Yin]; Tai changes its FOURTH line.
+        # This expectation comes from the original prose/roles, not native IDs.
+        edge = next(e for e in self.projection["relations"] if e["kind"] == "LINE_CHANGE"
+                    and e["from_ref"] == "#3-1-0-2" and e["to_ref"] == "#3-1-0-1")
+        self.assertTrue(edge["properties"]["c_1_relation_description"].startswith(
+            "Second line changes from Yang to Yin"))
+        finding = self.qualification_findings(self.audit)[edge["ref"]]
+        self.assertEqual(finding["declared"], {"line": 2, "from": "Yang", "to": "Yin"})
+        self.assertEqual(finding["actual_changed_lines"], [4])
+        self.assertEqual(finding["line_flip_target_ref"], "#3-1-5-2")
+        self.assertEqual(finding["errors"], ["named-line-target", "target-polarity"])
+
+    def test_changed_ordinal_is_detected_with_actual_target_and_geometry_retained(self):
+        changed = self.changed()
+        edge = next(e for e in changed["relations"] if e["kind"] == "LINE_CHANGE"
+                    and e["from_ref"] == "#3-1-0-0" and e["to_ref"] == "#3-1-3-0")
+        self.assertNotIn(edge["ref"], self.qualification_findings(self.audit))
+        edge["properties"]["c_1_relation_description"] = edge["properties"]["c_1_relation_description"].replace(
+            "First line", "Second line", 1)
+        audit = m3.Audit(changed).run()
+        self.assertEqual(audit["details"], self.audit["details"], "numerical/projection fields changed")
+        finding = self.qualification_findings(audit)[edge["ref"]]
+        self.assertEqual(finding["actual_changed_lines"], [1])
+        self.assertEqual(finding["declared"]["line"], 2)
+        self.assertEqual(finding["errors"], ["named-line-target", "target-polarity"])
+
+    def test_changed_polarity_is_detected_with_named_line_and_target_retained(self):
+        changed = self.changed()
+        edge = next(e for e in changed["relations"] if e["kind"] == "LINE_CHANGE"
+                    and e["from_ref"] == "#3-1-0-0" and e["to_ref"] == "#3-1-3-0")
+        edge["properties"]["c_1_relation_description"] = edge["properties"]["c_1_relation_description"].replace(
+            "from Yang to Yin", "from Yin to Yang", 1)
+        audit = m3.Audit(changed).run()
+        self.assertEqual(audit["details"], self.audit["details"])
+        finding = self.qualification_findings(audit)[edge["ref"]]
+        self.assertEqual(finding["actual_changed_lines"], [1])
+        self.assertEqual(finding["declared"]["line"], 1)
+        self.assertEqual(finding["errors"], ["source-polarity", "target-polarity"])
+
+    def test_unreadable_qualification_cannot_default_to_a_valid_line(self):
+        changed = self.changed()
+        edge = next(e for e in changed["relations"] if e["kind"] == "LINE_CHANGE"
+                    and e["from_ref"] == "#3-1-0-0" and e["to_ref"] == "#3-1-3-0")
+        prose = "The selected line changes; its ordinal and polarity are unavailable."
+        edge["properties"]["c_1_relation_description"] = prose
+        finding = self.qualification_findings(m3.Audit(changed).run())[edge["ref"]]
+        self.assertEqual(finding["qualification"], prose)
+        self.assertIsNone(finding["declared"])
+        self.assertEqual(finding["errors"], ["unreadable-qualification"])
+
+    def test_unreadable_trigram_basis_cannot_fall_back_to_native_address_table(self):
+        changed = self.changed()
+        trigram = next(n for n in changed["nodes"] if n["ref"] == "#3-1-0")
+        trigram["properties"]["c_1_lines_description"] = "The source line pattern is unavailable."
+        with self.assertRaisesRegex(ValueError, "unreadable source trigram line description"):
+            m3.Audit(changed).run()
+
     def test_matrix_field_retains_original_qualified_cardinality_and_distinct_admissibility(self):
         rows = self.audit["details"]["matrices"]
         self.assertEqual([sum(r["family"] == f for r in rows) for f in range(3)], [64, 64, 56])
@@ -279,8 +343,8 @@ class M3SourceParityTests(unittest.TestCase):
     def test_all_findings_fit_existing_ledger_without_readiness_promotion(self):
         original = ledger.read(ROOT / ledger.LEDGER)
         updated = copy.deepcopy(original)
-        # K7 has now admitted these findings. Re-running the source audit must
-        # retain a reviewed lifecycle, not append duplicate IDs or overwrite it.
+        # Retain any already admitted lifecycle; newly discovered source
+        # conflicts fit that same ledger without mutating it or promoting rows.
         existing = {d["id"]: d for d in updated["discrepancies"]}
         for finding in self.audit["discrepancies"]:
             if finding["id"] in existing:
@@ -309,7 +373,14 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(self.audit["standing"]["neo4j_live"], "read-only map read; content hash = registry source_revision")
         self.assertEqual(self.audit["standing"]["cpp_embodiment"], "not-executed")
         self.assertEqual(self.audit["standing"]["experiential"], "not-claimed")
-        self.assertEqual(len(self.audit["discrepancies"]), 183)
+        self.assertEqual(self.lock["finding_counts"], {
+            "legacy-clock-placeholder": 1, "line-change": 75, "line-change-field": 45,
+            "line-change-qualification": 305, "nuclear-register": 60,
+            "orientation-count": 1, "resonance-admissibility": 1,
+        })
+        # 305 qualified-edge conflicts overlap the original structural findings;
+        # 488 is a comparison-record count, not 488 unique Bimba defects.
+        self.assertEqual(len(self.audit["discrepancies"]), 488)
 
 
 if __name__ == "__main__":

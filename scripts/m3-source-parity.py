@@ -7,11 +7,12 @@ checked-in fixture locks the output without copying the graph. Map assertions
 and derived addresses never overwrite one another. Findings use the existing K3
 discrepancy vocabulary and remain OPEN until ledger reconciliation.
 
-The map carries no King Wen number, hexagram or trigram binary, pair role
-(upper/lower) or line number on LINE_CHANGE (only its prose): those are not
-read. Trigram bits are the kernel's declared table (as in generate-m3.py); a
-LINE_CHANGE is checked as a single-bit flip, and each hexagram's six changes
-must flip six distinct bits.
+The current map carries no asserted hexagram/trigram binary. Native addresses
+retain the kernel's declared trigram table (as in generate-m3.py). Separately,
+literal trigram line descriptions and directed upper/lower relations supply a
+source-derived bottom-to-top line pattern. LINE_CHANGE must agree with its
+prose's named line and Yin/Yang polarity as well as the single-bit native law.
+Missing source warrant cannot silently fall back to a native address.
 """
 from __future__ import annotations
 
@@ -57,6 +58,23 @@ def load_json(path: Path) -> Any:
 
 def render(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+
+
+def source_trigram_lines(ref: str, description: Any) -> tuple[int, ...]:
+    """Decode the source's physical line description without native IDs/bits."""
+    require(isinstance(description, str), "unreadable source trigram line description: " + ref)
+    text = " ".join(description.split()).casefold()
+    if text == "three solid yang lines":
+        return (1, 1, 1)
+    if text == "three broken yin lines":
+        return (0, 0, 0)
+    match = re.fullmatch(r"(yin|yang) line (below|between|above) two (yin|yang) lines", text)
+    require(match is not None and match[1] != match[3],
+            "unreadable source trigram line description: " + ref)
+    single, position, pair = match.groups()
+    lines = [int(pair == "yang")] * 3
+    lines[("below", "between", "above").index(position)] = int(single == "yang")
+    return tuple(lines)
 
 
 def role(ref: str, props: dict) -> str:
@@ -187,6 +205,9 @@ class Audit:
     def hexagrams(self) -> list:
         trigrams = {n["ref"]: TRIGRAM_BITS[n["ref"]] for n in self.groups["trigram"]}
         require(len(trigrams) == 8, "incomplete trigram field")
+        source_trigrams = {n["ref"]: source_trigram_lines(n["ref"], n["properties"].get("c_1_lines_description"))
+                           for n in self.groups["trigram"]}
+        source_lines = {}
         result = []
         for node in self.groups["hexagram"]:
             ref = node["ref"]
@@ -194,12 +215,15 @@ class Audit:
             require(upper["to_ref"] in trigrams and lower["to_ref"] in trigrams,
                     "hexagram has a non-trigram endpoint: " + ref)
             address = (trigrams[upper["to_ref"]] << 3) | trigrams[lower["to_ref"]]
+            source_lines[ref] = source_trigrams[lower["to_ref"]] + source_trigrams[upper["to_ref"]]
             result.append({"ref": ref, "id": node["id"], "symbol": node["properties"].get("c_1_symbol"),
                            "trigram_derived_address": address,
                            "upper_relation": upper["id"], "lower_relation": lower["id"]})
         by_ref = {r["ref"]: r for r in result}
         require(len(result) == 64 and {r["trigram_derived_address"] for r in result} == set(range(64)),
                 "trigram relations do not produce a complete 64-address field")
+        by_source_lines = {lines: ref for ref, lines in source_lines.items()}
+        require(len(by_source_lines) == 64, "source line descriptions do not produce a complete 64-pattern field")
         by_address = {r["trigram_derived_address"]: r["ref"] for r in result}
         for row in result:
             props = self.nodes[row["ref"]]["properties"]
@@ -220,11 +244,43 @@ class Audit:
                     self.finding("line-change", ["deep-M3:M3-C06"], "relation", edge["ref"],
                                  {"source": row["ref"], "source_target": edge["to_ref"],
                                   "flipped_address_bits": format(flip, "06b")}, "crates/ql-core/src/pole/iching.rs")
+                self.line_change_qualification(edge, source_lines, by_source_lines)
             if sorted(b for b in bits if b is not None) != list(range(6)):
                 self.finding("line-change-field", ["deep-M3:M3-C06"], "relation", row["ref"],
                              {"single_bit_lines": sorted(b + 1 for b in bits if b is not None),
                               "expected_lines": list(range(1, 7))}, "crates/ql-core/src/pole/iching.rs")
         return sorted(result, key=lambda row: row["trigram_derived_address"])
+
+    def line_change_qualification(self, edge: dict, source_lines: dict, by_source_lines: dict) -> None:
+        """Retain disagreements between a directed edge and its full qualifier."""
+        source, target = source_lines[edge["from_ref"]], source_lines[edge["to_ref"]]
+        changed = [i + 1 for i, (a, b) in enumerate(zip(source, target, strict=True)) if a != b]
+        qualification = edge["properties"].get("c_1_relation_description")
+        match = re.match(r"(First|Second|Third|Fourth|Fifth|Sixth) line changes from (Yin|Yang) to (Yin|Yang)\b",
+                         qualification, re.IGNORECASE) if isinstance(qualification, str) else None
+        declared, expected_ref, errors = None, None, []
+        if match is None:
+            errors.append("unreadable-qualification")
+        else:
+            ordinal, before, after = (value.casefold() for value in match.groups())
+            line = ("first", "second", "third", "fourth", "fifth", "sixth").index(ordinal) + 1
+            declared = {"line": line, "from": before.capitalize(), "to": after.capitalize()}
+            expected = list(source)
+            expected[line - 1] ^= 1
+            expected_ref = by_source_lines[tuple(expected)]
+            if changed != [line]:
+                errors.append("named-line-target")
+            if source[line - 1] != int(before == "yang"):
+                errors.append("source-polarity")
+            if target[line - 1] != int(after == "yang"):
+                errors.append("target-polarity")
+        if errors:
+            self.finding("line-change-qualification", ["deep-M3:M3-C06"], "relation", edge["ref"],
+                         {"source": edge["from_ref"], "source_target": edge["to_ref"],
+                          "qualification": qualification, "declared": declared,
+                          "actual_changed_lines": changed, "line_flip_target_ref": expected_ref,
+                          "source_lines": list(source), "target_lines": list(target), "errors": errors},
+                         REGISTRY, peer="rust", authority_peer="bimba")
 
     def matrices(self, hexagrams: list) -> list:
         by_ref = {r["ref"]: r for r in hexagrams}
