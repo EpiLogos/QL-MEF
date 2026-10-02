@@ -11,6 +11,7 @@ use crate::music_determination::{
     vimarsha_targets,
 };
 use crate::physical_body::{BodyPreparationRequest, PreparedSourceBody, prepare_source_body};
+use crate::source_form_body::{SourceGeometryRecipe, admit_source_form_metric};
 use crate::{MFace, MusicalBasis};
 use serde::Serialize;
 use serde_json::{Value, json};
@@ -82,6 +83,10 @@ pub struct PreparedPerformanceBinding {
     native_basis: CoupledBasis,
     relation_plan: M2RelationPlan,
     policy_receipts: Value,
+    /// Present only after regenerating the complete metric geometry through
+    /// the actual native M3 owner. A provider's constituent label cannot set it.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    source_form_recipe: Option<SourceGeometryRecipe>,
     #[serde(skip)]
     targets: VimarshaTargets,
 }
@@ -103,6 +108,24 @@ impl PreparedPerformanceBinding {
     }
     pub fn targets(&self) -> &VimarshaTargets {
         &self.targets
+    }
+    pub fn source_form_recipe(&self) -> Option<&SourceGeometryRecipe> {
+        self.source_form_recipe.as_ref()
+    }
+    /// Control-owner source admission. The exact post-command native state
+    /// and metric recipe must still describe this immutable prepared binding.
+    /// Reading-only edits use the existing P update policy before re-admission;
+    /// this check neither advances nor resets the resident physical body.
+    pub fn validate_source_form_consumer(&self, state: &M3State) -> Result<(), String> {
+        let recipe = self
+            .source_form_recipe
+            .as_ref()
+            .ok_or("performance has provider metric standing, not native source-form admission")?;
+        if state.snapshot() != self.native_basis.m3 {
+            return Err("source-form performance disconnected from actual post-command M3".into());
+        }
+        admit_source_form_metric(state, recipe, &self.physical_body.request().geometry)?;
+        self.validate_native_consumers(&self.native_basis, &self.physical_body)
     }
     /// Replays actual producers rather than trusting labels in a receipt.
     /// This is a control-owner check, never an audio callback operation.
@@ -144,6 +167,24 @@ fn bounded_ref(value: &str) -> Result<(), String> {
 fn same_value<T: Serialize, U: Serialize>(a: &T, b: &U) -> Result<bool, String> {
     Ok(serde_json::to_value(a).map_err(|e| e.to_string())?
         == serde_json::to_value(b).map_err(|e| e.to_string())?)
+}
+/// Prepare the playable source-form instrument through the same native audio
+/// producer. This stronger admission retains P's declared mechanical recipe
+/// and regenerates all positions, connectivity and constraints after every
+/// actual M3 command; a supplied metric with matching labels is insufficient.
+pub fn prepare_source_form_performance(
+    input: PerformancePreparationInput,
+    recipe: SourceGeometryRecipe,
+) -> Result<PreparedPerformanceBinding, String> {
+    let mut state = M3State::new(input.coupled.m3.clone())?;
+    for command in &input.coupled.m3_commands {
+        state.apply(command.clone())?;
+    }
+    admit_source_form_metric(&state, &recipe, &input.physical.geometry)?;
+    let mut prepared = prepare_native_performance(input)?;
+    prepared.source_form_recipe = Some(recipe);
+    prepared.validate_source_form_consumer(&state)?;
+    Ok(prepared)
 }
 pub fn prepare_native_performance(
     input: PerformancePreparationInput,
@@ -348,6 +389,7 @@ pub fn prepare_native_performance(
         native_basis: joined,
         relation_plan: relation.plan,
         policy_receipts,
+        source_form_recipe: None,
         targets,
     };
     out.validate_native_consumers(out.native_basis(), out.physical_body())?;

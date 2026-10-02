@@ -600,7 +600,8 @@
       ],
       "rationale": "QL #281: #286 six-family M2 route plan over the admitted Bimba projection and existing Coupled producer. Actual MEF inner-octet/boundary roles, Vimarsha and unequal situated-solar provenance remain inspectable. Incomplete authentic maqam intervals, contradictions and missing source are explicit; no live Bimba mutation or replacement registry is granted.",
       "tests": [
-        "crates/ql-mef/tests/m2_relation_plan.rs"
+        "crates/ql-mef/tests/m2_relation_plan.rs",
+        "crates/ql-mef/tests/independent_relation_admission.rs"
       ],
       "kind": "computational"
     },
@@ -642,9 +643,11 @@
         "#2-1",
         "#3"
       ],
-      "rationale": "QL #281: #287 native producer joining M1 carrier, actual M2 reading and independently qualified M3 body. The complete Coupled relation basis and genuine body mode are validated before preparing C++ musical bindings. The audio renderer and sample/device clock remain existing native owners.",
+      "rationale": "QL #281: #287 native producer joining M1 carrier, actual M2 reading and independently qualified M3 body. The complete Coupled relation basis and genuine body mode are validated before preparing C++ musical bindings. The audio renderer and sample/device clock remain existing native owners. Native source-form admission separately regenerates the full metric topology/constraints from current post-command M3 and a retained mechanical recipe; generic metric providers cannot claim that admission.",
       "tests": [
-        "crates/ql-mef/tests/performance_audio.rs"
+        "crates/ql-mef/tests/performance_audio.rs",
+        "crates/ql-mef/tests/independent_performance_admission.rs",
+        "crates/ql-mef/tests/independent_source_form_admission.rs"
       ],
       "kind": "computational"
     },
