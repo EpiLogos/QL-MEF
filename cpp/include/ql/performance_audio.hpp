@@ -13,6 +13,7 @@
 #include <limits>
 #include <memory>
 #include <ql/m_tree_live.h>
+#include <ql/performance_route_programs.hpp>
 #include <ql/physical_snapshot.hpp>
 #include <stdexcept>
 #include <string>
@@ -105,6 +106,15 @@ struct PhysicalPort {
   // Acquired/released on the control thread only. Device output requires
   // resident ownership so even a refused OS stop cannot free callback data.
   std::shared_ptr<void> custody{};
+  void *routes_owner = nullptr;
+  const ql::PhysicalForceRoutePortManifest *route_manifest = nullptr;
+  std::shared_ptr<void> routes_custody{};
+  bool (*advance_routes)(void *, const ql::PhysicalScalarForceBlock &,
+                         const ql::PhysicalRouteForceBlock *, std::size_t,
+                         float *, std::size_t, std::uint64_t,
+                         std::uint64_t) noexcept = nullptr;
+  bool (*observe_routes)(const void *,
+                         ql::PhysicalForceRouteReceipt &) noexcept = nullptr;
 };
 enum class Kind : std::uint8_t {
   NoteOn,
@@ -195,7 +205,7 @@ struct Readback {
                 dropped_captures = 0, clipping_samples = 0,
                 force_limited_samples = 0;
   std::uint32_t active_voices = 0, active_touches = 0;
-  double peak = 0, rms = 0;
+  double peak = 0, rms = 0, scalar_force_budget_newtons = 0;
   std::uint64_t force_zero_samples = 0, emergency_requested = 0,
                 emergency_observed = 0, emergency_applied_sample = 0;
   std::uint32_t active_tails = 0;
@@ -203,6 +213,8 @@ struct Readback {
   Parameters source{}, effective{};
   std::array<VoiceReadback, max_voices> voices{};
   RecordingStatus recording{};
+  ql::PhysicalForceRouteReceipt physical_routes{};
+  bool has_route_programs = false, routes_suspended = false;
   bool sustain = false, available = false;
 };
 struct NativeGestureApplication {
@@ -232,6 +244,10 @@ struct Capture {
   std::uint32_t frames = 0;
   std::array<double, max_frames> force_newtons{};
   std::array<float, max_frames> pickup_linear{}, output_linear{};
+  std::size_t route_count = 0;
+  std::array<std::array<double, max_frames>,
+             ql::physical_max_personal_force_routes>
+      route_force_newtons{};
 };
 template <class T, std::size_t N> class Spsc {
   static_assert(N > 1 && std::is_trivially_copyable_v<T>);
@@ -366,6 +382,8 @@ public:
     std::array<PendingRelease, 64> pending_releases{};
     typename Spsc<NativeGestureApplication, 256>::State applications{};
     RecordingStatus recording{};
+    bool has_route_programs = false;
+    NativeRouteProgramSet route_programs{};
     Parameters source{}, effective{};
     std::uint64_t cursor = 0, accepted_sequence = 0, accepted_sample = 0,
                   applied_sequence = 0, applied_application_ordinal = 0,
@@ -404,6 +422,10 @@ private:
   std::size_t source_schedule_size_ = 1;
   unsigned rate_;
   PhysicalPort body_{};
+  bool has_route_programs_ = false;
+  NativeRouteProgramSet route_programs_{};
+  std::array<double, ql::physical_max_personal_force_routes> route_step_sine_{},
+      route_step_cosine_{};
   std::array<Voice, max_voices> voices_{};
   std::array<Touch, max_touches> touches_{};
   std::array<Tail, max_tails> tails_{};
@@ -474,6 +496,133 @@ private:
   std::uint64_t emergency_observed_ = 0, emergency_applied_sample_ = 0,
                 force_zero_samples_ = 0;
   bool sustain_ = false;
+  static bool
+  same_route_handle(const ql::PhysicalForceRouteProgramHandle &a,
+                    const ql::PhysicalForceRouteProgramHandle &b) noexcept {
+    return a.driver_ref == b.driver_ref && a.target_ref == b.target_ref &&
+           a.program_ref == b.program_ref &&
+           a.planet_coordinate == b.planet_coordinate &&
+           a.chakra_coordinate == b.chakra_coordinate &&
+           a.projection_ref == b.projection_ref &&
+           a.calibration_ref == b.calibration_ref &&
+           a.calibration_revision == b.calibration_revision &&
+           a.calibration_source_ref == b.calibration_source_ref &&
+           a.calibration_standing == b.calibration_standing &&
+           a.route_index == b.route_index &&
+           a.preparation_seal == b.preparation_seal &&
+           a.program_seal == b.program_seal &&
+           a.planet_node_id == b.planet_node_id &&
+           a.chakra_node_id == b.chakra_node_id &&
+           a.native_planet_index == b.native_planet_index &&
+           a.centre_ordinal == b.centre_ordinal &&
+           a.share_numerator == b.share_numerator &&
+           a.share_denominator == b.share_denominator &&
+           a.source_hertz == b.source_hertz &&
+           a.original_denominator_share == b.original_denominator_share &&
+           a.peak_force_newtons == b.peak_force_newtons;
+  }
+  // Reserve every source's independently calibrated peak at gain one. The
+  // original N denominator/shares and waveforms are never renormalized to
+  // make room for a note. A's scalar note limiter owns only the remainder.
+  static double
+  route_scalar_budget(const ql::PhysicalForceRoutePortManifest &m) noexcept {
+    if (m.route_count > ql::physical_max_personal_force_routes ||
+        !scalar(m.max_force_newtons, 1e-12, 1e9))
+      return 0;
+    double reserved = 0;
+    for (std::size_t i = 0; i < m.route_count; ++i) {
+      if (!scalar(m.programs[i].peak_force_newtons, 0, m.max_force_newtons))
+        return 0;
+      reserved += m.programs[i].peak_force_newtons;
+    }
+    // P adds up to ten absolute terms in double precision. Keep a small
+    // explicit numerical margin instead of relying on cancellation.
+    const double margin =
+        m.max_force_newtons * (64 * std::numeric_limits<double>::epsilon());
+    const double remaining = m.max_force_newtons - reserved - margin;
+    return std::isfinite(remaining) && remaining > 0 ? remaining : 0;
+  }
+  bool valid_route_programs(const NativeRouteProgramSet &set) const noexcept {
+    if (!body_.route_manifest || !body_.routes_owner || !body_.routes_custody ||
+        !body_.advance_routes || !body_.observe_routes || set.version != 1 ||
+        set.program_count > ql::physical_max_personal_force_routes ||
+        set.program_count != body_.route_manifest->route_count ||
+        !set.scalar_note_enabled || set.scalar_note_gain != 1 ||
+        route_scalar_budget(set.manifest) <= 0)
+      return false;
+    const auto &a = set.manifest, &b = *body_.route_manifest;
+    if (a.version != b.version || a.sample_rate != rate_ ||
+        a.sample_rate != b.sample_rate || a.route_count != b.route_count ||
+        a.source_basis_seal != b.source_basis_seal ||
+        a.body_revision != b.body_revision ||
+        a.admitted_cursor != b.admitted_cursor ||
+        a.m1_revision != b.m1_revision || a.m2_generation != b.m2_generation ||
+        a.m3_generation != b.m3_generation ||
+        a.m3_input_generation != b.m3_input_generation ||
+        a.earth_frame_node_id != b.earth_frame_node_id ||
+        a.event_ref != b.event_ref || a.subject_ref != b.subject_ref ||
+        a.registry_revision != b.registry_revision ||
+        a.source_revision != b.source_revision ||
+        a.definition_ref != b.definition_ref ||
+        a.source_instance_ref != b.source_instance_ref ||
+        a.determination_ref != b.determination_ref ||
+        a.preparation_ref != b.preparation_ref || a.state_ref != b.state_ref ||
+        a.eigenbasis_identity != b.eigenbasis_identity ||
+        a.m1_coordinate != b.m1_coordinate ||
+        a.m2_writer_coordinate != b.m2_writer_coordinate ||
+        a.native_basis_sha256 != b.native_basis_sha256 ||
+        a.m3_state_sha256 != b.m3_state_sha256 ||
+        a.m1_pratibimba != b.m1_pratibimba ||
+        a.m2_pratibimba != b.m2_pratibimba || a.tick12 != b.tick12 ||
+        a.degree720 != b.degree720 || a.temporal_phase != b.temporal_phase ||
+        a.scalar_note_enabled != b.scalar_note_enabled ||
+        a.scalar_note_gain != b.scalar_note_gain ||
+        a.legacy_native_scalar_enabled || a.legacy_native_scalar_gain != 0 ||
+        a.max_force_newtons != b.max_force_newtons ||
+        a.event_ref != determination_.identity.event ||
+        a.subject_ref != determination_.identity.subject ||
+        a.m1_revision != determination_.identity.m1_revision ||
+        a.m2_generation != determination_.identity.m2_generation ||
+        a.body_revision != determination_.body_revision ||
+        a.m1_coordinate != determination_.m1_coordinate ||
+        a.m1_pratibimba != (determination_.m1_face == 1) ||
+        a.m2_writer_coordinate != determination_.m2_writer ||
+        a.m2_pratibimba != (determination_.m2_face == 1) ||
+        a.tick12 != determination_.tick12 ||
+        a.degree720 != determination_.degree720 ||
+        a.temporal_phase != determination_.tick12 / 6 ||
+        a.determination_ref != determination_.native_receipt_ref ||
+        !ql_m_live_accepts_base(determination_.registry_revision.data()) ||
+        std::strcmp(a.registry_revision.data(),
+                    ql_m_live_registry_revision()) != 0 ||
+        std::strcmp(a.source_revision.data(), ql_m_live_source_revision()) !=
+            0 ||
+        a.preparation_ref != body_.preparation || a.state_ref != body_.state)
+      return false;
+    for (std::size_t i = 0; i < set.program_count; ++i) {
+      const auto &p = set.programs[i];
+      if (!same_route_handle(a.programs[i], b.programs[i]) ||
+          !same_route_handle(p.handle, b.programs[i]) ||
+          p.handle.route_index != i || !valid_ref(p.phase_source_ref) ||
+          p.phase_source_ref != a.m1_coordinate ||
+          p.waveform != NativeRouteWaveform::Sinusoid ||
+          !scalar(p.target_gain, 0, 1) || !scalar(p.effective_gain, 0, 1) ||
+          !scalar(p.sine, -1, 1) || !scalar(p.cosine, -1, 1) ||
+          std::abs(p.sine * p.sine + p.cosine * p.cosine - 1) > 1e-10 ||
+          !scalar(p.handle.source_hertz, 1, .45 * rate_) ||
+          !scalar(p.handle.peak_force_newtons, 0, body_.max_force_newtons))
+        return false;
+    }
+    return true;
+  }
+  void prepare_route_steps() noexcept {
+    for (std::size_t i = 0; i < route_programs_.program_count; ++i) {
+      const double step =
+          tau * route_programs_.programs[i].handle.source_hertz / rate_;
+      route_step_sine_[i] = std::sin(step);
+      route_step_cosine_[i] = std::cos(step);
+    }
+  }
   static bool scalar(double x, double lo, double hi) noexcept {
     return std::isfinite(x) && x >= lo && x <= hi;
   }
@@ -942,6 +1091,13 @@ public:
     published_horizon_.store(cursor_);
     source_schedule_[0] = ScheduledDetermination{determination_, cursor_};
   }
+  // Native control descriptor; immutable port preparation determines the
+  // scalar note's available Newton scale, rather than a UI-computed range.
+  double force_parameter_maximum() const noexcept {
+    return body_.route_manifest
+               ? std::min(100.0, route_scalar_budget(*body_.route_manifest))
+               : 100.0;
+  }
   friend class NativeOutputClock;
 
 private:
@@ -1017,6 +1173,15 @@ private:
         (op.kind == Kind::Parameter &&
          !valid_parameter(op.parameter, op.value, rate_)))
       return Result::Invalid;
+    if (op.kind == Kind::Parameter && op.parameter == Parameter::ForceNewtons &&
+        has_route_programs_ &&
+        op.value > route_scalar_budget(route_programs_.manifest))
+      return Result::Invalid;
+    // A source turn while N9 is installed requires the paired native
+    // after-basis/routes transaction. Never carry an old N programme witness
+    // into a new source simply because the numerical body pointer is equal.
+    if (op.kind == Kind::Determination && has_route_programs_)
+      return Result::Unavailable;
     if (op.kind == Kind::Determination &&
         (!valid_determination(op.determination) ||
          !same_lineage(op.determination.identity, producer_identity_) ||
@@ -1069,6 +1234,48 @@ public:
   }
   std::uint64_t last_admitted_sample() const noexcept {
     return last_admission_sample_;
+  }
+  bool install_routes_port(PhysicalPort port, const NativeRouteProgramSet &set,
+                           const StoppedCustody &guard,
+                           std::uint64_t expected_cursor) noexcept {
+    if (guard.owner_ != this || activity_.load() != 2 ||
+        device_running_.load() || cursor_ != expected_cursor ||
+        port.owner != body_.owner ||
+        port.custody.get() != body_.custody.get() ||
+        port.advance != body_.advance || port.observe != body_.observe ||
+        port.cursor != body_.cursor || port.revision != body_.revision ||
+        port.event != body_.event || port.subject != body_.subject ||
+        port.preparation != body_.preparation || port.state != body_.state ||
+        port.sample_rate != rate_ ||
+        port.max_force_newtons != body_.max_force_newtons ||
+        set.manifest.admitted_cursor != expected_cursor)
+      return false;
+    // Stopped exclusive control custody: no physical, musical or queue state
+    // mutates during candidate qualification. Retired numerical-route handles
+    // remain retained by previous until this acknowledged control call returns.
+    PhysicalPort previous = body_;
+    body_ = std::move(port);
+    if (!valid_route_programs(set)) {
+      body_ = std::move(previous);
+      return false;
+    }
+    route_programs_ = set;
+    has_route_programs_ = true;
+    prepare_route_steps();
+    return true;
+  }
+  bool install_route_programs(const NativeRouteProgramSet &set,
+                              const StoppedCustody &guard,
+                              std::uint64_t expected_cursor) noexcept {
+    if (guard.owner_ != this || activity_.load() != 2 ||
+        device_running_.load() || cursor_ != expected_cursor ||
+        set.manifest.admitted_cursor != expected_cursor ||
+        !valid_route_programs(set))
+      return false;
+    route_programs_ = set;
+    has_route_programs_ = true;
+    prepare_route_steps();
+    return true;
   }
   bool device_callbacks_running() const noexcept {
     return device_running_.load(std::memory_order_acquire);
@@ -1168,6 +1375,8 @@ public:
   bool commit_stopped_physical_revision(const Determination &after,
                                         const PhysicalPort &port,
                                         const StoppedCustody &guard) noexcept {
+    if (has_route_programs_ || body_.route_manifest)
+      return false; // Requires the prepared combined body/receiver/routes seam.
     if (!preflight_stopped_physical_revision(after, port, guard) ||
         port.revision(port.owner) != after.body_revision ||
         port.cursor(port.owner) != cursor_)
@@ -1206,6 +1415,8 @@ public:
     cp.pending_releases = pending_releases_;
     gesture_applications_.write_checkpoint(cp.applications);
     cp.recording = recording_status();
+    cp.has_route_programs = has_route_programs_;
+    cp.route_programs = route_programs_;
     cp.source = source_;
     cp.effective = effective_;
     cp.cursor = cursor_;
@@ -1244,6 +1455,8 @@ public:
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
         cp.version != 2 || cp.sample_rate != rate_ ||
+        cp.has_route_programs != bool(body_.route_manifest) ||
+        (cp.has_route_programs && !valid_route_programs(cp.route_programs)) ||
         !valid_determination(cp.determination) ||
         !valid_determination(cp.producer_determination) ||
         !same_lineage(cp.determination.identity, determination_.identity) ||
@@ -1536,6 +1749,9 @@ public:
     pending_releases_ = cp.pending_releases;
     source_ = cp.source;
     effective_ = cp.effective;
+    has_route_programs_ = cp.has_route_programs;
+    route_programs_ = cp.route_programs;
+    prepare_route_steps();
     cursor_ = cp.cursor;
     accepted_sequence_ = cp.accepted_sequence;
     accepted_sample_ = cp.accepted_sample;
@@ -1679,6 +1895,8 @@ public:
           fault_.store(true, std::memory_order_release);
           return false;
         }
+        if (has_route_programs_)
+          route_programs_.owner_suspended = true;
         emergency_observed_ =
             emergency_requested_.load(std::memory_order_acquire);
         emergency_applied_sample_ = cursor_ + i;
@@ -1788,19 +2006,64 @@ public:
       // Fixed headroom bound, independent of current polyphony. Newton
       // scale is declared material policy and visible in readback.
       force *= effective_.force_newtons / double(max_voices + max_tails);
-      if (std::abs(force) > body_.max_force_newtons)
+      const double scalar_budget =
+          has_route_programs_ ? route_scalar_budget(route_programs_.manifest)
+                              : body_.max_force_newtons;
+      if (std::abs(force) > scalar_budget)
         ++force_limited_;
-      force =
-          std::clamp(force, -body_.max_force_newtons, body_.max_force_newtons);
+      force = std::clamp(force, -scalar_budget, scalar_budget);
       capture.force_newtons[i] = force;
+      if (has_route_programs_) {
+        capture.route_count = route_programs_.program_count;
+        for (std::size_t route = 0; route < capture.route_count; ++route) {
+          auto &p = route_programs_.programs[route];
+          p.effective_gain += (p.target_gain - p.effective_gain) * smoothing;
+          capture.route_force_newtons[route][i] =
+              p.enabled && !route_programs_.owner_suspended
+                  ? p.handle.peak_force_newtons * p.sine * p.effective_gain
+                  : 0;
+          const double sine = p.sine * route_step_cosine_[route] +
+                              p.cosine * route_step_sine_[route];
+          const double cosine = p.cosine * route_step_cosine_[route] -
+                                p.sine * route_step_sine_[route];
+          p.sine = sine;
+          p.cosine = cosine;
+          if ((cursor_ + i + 1) % 1024 == 0) {
+            const double norm = std::hypot(p.sine, p.cosine);
+            p.sine /= norm;
+            p.cosine /= norm;
+          }
+        }
+      }
       body_gain[i] = effective_.master_linear * effective_.body_linear;
       monitor_gain[i] = effective_.master_linear * effective_.monitor_linear;
       force_scale[i] = effective_.force_newtons;
     }
     capture.end_identity = determination_.identity;
-    if (!body_.advance(body_.owner, capture.force_newtons.data(),
-                       capture.pickup_linear.data(), frames,
-                       determination_.body_revision, cursor_)) {
+    bool physical_committed = false;
+    if (has_route_programs_) {
+      std::array<ql::PhysicalRouteForceBlock,
+                 ql::physical_max_personal_force_routes>
+          blocks{};
+      for (std::size_t i = 0; i < capture.route_count; ++i)
+        blocks[i] = {i, route_programs_.programs[i].handle.preparation_seal,
+                     capture.route_force_newtons[i].data(), 1,
+                     route_programs_.programs[i].enabled &&
+                         !route_programs_.owner_suspended};
+      const ql::PhysicalScalarForceBlock scalar{
+          capture.force_newtons.data(), route_programs_.scalar_note_gain,
+          route_programs_.scalar_note_enabled};
+      physical_committed = body_.advance_routes(
+          body_.routes_owner, scalar, blocks.data(), capture.route_count,
+          capture.pickup_linear.data(), frames, determination_.body_revision,
+          cursor_);
+    } else if (!body_.route_manifest) {
+      physical_committed =
+          body_.advance(body_.owner, capture.force_newtons.data(),
+                        capture.pickup_linear.data(), frames,
+                        determination_.body_revision, cursor_);
+    }
+    if (!physical_committed) {
       if (block_application_count_)
         recording_failed(RecordingFailure::PhysicalCommitFailure,
                          block_applications_[0].sequence, cursor_);
@@ -1830,6 +2093,18 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
+    ql::PhysicalForceRouteReceipt physical_routes{};
+    if (has_route_programs_ &&
+        (!body_.observe_routes(body_.routes_owner, physical_routes) ||
+         physical_routes.start_sample != capture.start_sample ||
+         physical_routes.end_sample != cursor_ ||
+         physical_routes.source_basis_seal !=
+             route_programs_.manifest.source_basis_seal ||
+         physical_routes.route_count != route_programs_.program_count)) {
+      clear();
+      fault_.store(true, std::memory_order_release);
+      return false;
+    }
     double peak = 0, power = 0;
     for (std::size_t i = 0; i < frames; ++i) {
       const double monitor =
@@ -1852,11 +2127,13 @@ public:
     // This proof describes the actual committed force submitted to P. It is
     // neither silence at the output gain nor a zero displacement requirement:
     // the sole physical body may keep ringing after excitation is released.
-    for (std::size_t i = 0; i < frames; ++i)
+    for (std::size_t i = 0; i < frames; ++i) {
+      bool zero = capture.force_newtons[i] == 0;
+      for (std::size_t route = 0; route < capture.route_count; ++route)
+        zero = zero && capture.route_force_newtons[route][i] == 0;
       force_zero_samples_ =
-          capture.force_newtons[i] == 0
-              ? std::min(cursor_, force_zero_samples_ + std::uint64_t(1))
-              : 0;
+          zero ? std::min(cursor_, force_zero_samples_ + std::uint64_t(1)) : 0;
+    }
     for (std::size_t j = 0; j < block_application_count_; ++j) {
       auto &a = block_applications_[j];
       a.committed_cursor = cursor_;
@@ -1906,6 +2183,13 @@ public:
     receipt.identity = determination_.identity;
     receipt.determination = determination_;
     receipt.physical = physical;
+    receipt.scalar_force_budget_newtons =
+        has_route_programs_ ? route_scalar_budget(route_programs_.manifest)
+                            : body_.max_force_newtons;
+    receipt.has_route_programs = has_route_programs_;
+    receipt.routes_suspended =
+        has_route_programs_ && route_programs_.owner_suspended;
+    receipt.physical_routes = physical_routes;
     receipt.samples_elapsed = cursor_;
     receipt.body_revision = determination_.body_revision;
     receipt.last_sequence = applied_sequence_;

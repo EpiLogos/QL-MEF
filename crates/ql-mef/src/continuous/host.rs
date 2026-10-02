@@ -1,6 +1,7 @@
 //! Bounded local control of the existing coupled owner. Pipe access is supplied
 //! by the native host; a subject/reference is not a grant of authority.
 use super::coupled::{CoupledFieldSession, CoupledInput};
+use super::performance::{PerformanceCommand, PerformanceConfig, PerformanceOwner};
 use super::scene_field::{self, SceneConfig, SceneInstrument};
 use super::{FieldInput, LiftInput};
 use serde::{Deserialize, Serialize};
@@ -24,6 +25,12 @@ pub struct HostConfig {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "operation", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum HostOperation {
+    PerformancePrepare {
+        config: Box<PerformanceConfig>,
+    },
+    PerformanceExchange {
+        command: Box<PerformanceCommand>,
+    },
     Read {},
     Inspect {},
     Advance {
@@ -109,6 +116,7 @@ pub struct FieldHost {
     instance_ref: String,
     session: Owner,
     last_request: u64,
+    performance: Option<PerformanceOwner>,
 }
 impl FieldHost {
     pub fn open(worker: &Path, config: HostConfig, timeout: Duration) -> Result<Self, String> {
@@ -127,6 +135,7 @@ impl FieldHost {
                 timeout,
             )?)),
             last_request: 0,
+            performance: None,
         })
     }
 
@@ -140,6 +149,7 @@ impl FieldHost {
             instance_ref: instrument.instance_ref().to_owned(),
             session: Owner::Scene(Box::new(instrument)),
             last_request: 0,
+            performance: None,
         })
     }
 
@@ -197,8 +207,11 @@ impl FieldHost {
         self.last_request = sequence;
         exact_cursor(&request.expected_generation)?;
         exact_cursor(&request.expected_samples_elapsed)?;
-        if field["generation"] != request.expected_generation
-            || field["samples_elapsed"] != request.expected_samples_elapsed
+        let performance_exchange =
+            matches!(request.command, HostOperation::PerformanceExchange { .. });
+        if !performance_exchange
+            && (field["generation"] != request.expected_generation
+                || field["samples_elapsed"] != request.expected_samples_elapsed)
         {
             return Err("host request is based on a stale native cursor".into());
         }
@@ -217,9 +230,69 @@ impl FieldHost {
             };
             return self.response(Some(&request.request_id), status, Some(&error));
         }
+        if matches!(
+            &request.command,
+            HostOperation::PerformancePrepare { .. } | HostOperation::PerformanceExchange { .. }
+        ) {
+            let current = self.session.session().current_basis().clone();
+            let result = match request.command {
+                HostOperation::PerformancePrepare { config } => {
+                    if self.performance.is_some() {
+                        Err("retained native performance already owns this work".into())
+                    } else {
+                        PerformanceOwner::prepare(&current, &self.instance_ref, *config).and_then(
+                            |mut performance| {
+                                let reply =
+                                    performance.activate(&current, self.session.session_mut())?;
+                                self.performance = Some(performance);
+                                Ok(reply)
+                            },
+                        )
+                    }
+                }
+                HostOperation::PerformanceExchange { command } => match self.performance.as_mut() {
+                    Some(performance) => {
+                        performance.execute(&current, self.session.session_mut(), *command)
+                    }
+                    None => Err("retained native performance has not been prepared".into()),
+                },
+                _ => unreachable!(),
+            };
+            return match result {
+                Ok(performance) => {
+                    let mut response = self.response(Some(&request.request_id), "ok", None);
+                    response["performance"] = performance;
+                    response
+                }
+                Err(error) => self.response(
+                    Some(&request.request_id),
+                    if self.available() {
+                        "refused"
+                    } else {
+                        "unavailable"
+                    },
+                    Some(&error),
+                ),
+            };
+        }
+        if self.performance.is_some()
+            && !matches!(
+                request.command,
+                HostOperation::Inspect {}
+                    | HostOperation::Influence {}
+                    | HostOperation::Personal {}
+            )
+        {
+            return self.response(Some(&request.request_id),"refused",Some("retained A/P owns native time/body; prepared source/material transaction required"));
+        }
         if matches!(&request.command, HostOperation::Inspect { .. }) {
             let mut response = self.response(Some(&request.request_id), "ok", None);
             let session = self.session.session();
+            if let Some(performance) = &self.performance {
+                response["performance_reading"] =
+                    performance.reading().cloned().unwrap_or(Value::Null);
+                response["performance_sources"] = performance.source_assets().clone();
+            }
             response["sources"] = json!({"original":session.original_basis(),
                 "current":session.current_basis(), "original_field":session.original_field()});
             if let Owner::Scene(instrument) = &self.session {
@@ -314,7 +387,9 @@ impl FieldHost {
                 _,
             ) => Err("determinant operations belong to a provider-composed scene owner".into()),
             (
-                HostOperation::Inspect {}
+                HostOperation::PerformancePrepare { .. }
+                | HostOperation::PerformanceExchange { .. }
+                | HostOperation::Inspect {}
                 | HostOperation::Influence {}
                 | HostOperation::ReceivePersonal { .. }
                 | HostOperation::Personal {},

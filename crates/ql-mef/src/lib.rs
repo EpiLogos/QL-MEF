@@ -2,6 +2,9 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+#[cfg(test)]
+extern crate self as ql_mef;
+
 pub mod agent_event;
 pub mod anima_expression_profile;
 pub mod aw1_self_reference;
@@ -47,6 +50,7 @@ pub mod nara;
 pub mod performance_audio;
 pub mod performance_management;
 pub mod performance_receiving_admission;
+pub mod performance_source_keys;
 pub mod physical_body;
 mod pole_state;
 pub mod procedural_composition;

@@ -91,6 +91,35 @@ pub struct PreparedPerformanceBinding {
     targets: VimarshaTargets,
 }
 impl PreparedPerformanceBinding {
+    /// Only the privately native-produced B/K source owner reaches this factory.
+    /// Replays full current consumer/source closure; no JSON or label can select
+    /// a new pitch policy. Musical bus and genuine physical preparation persist.
+    pub(crate) fn admit_source_key_targets(
+        &self,
+        source: &crate::performance_source_keys::PreparedSourcePerformance,
+        touches: &[KeyTouch],
+    ) -> Result<Self, String> {
+        if serde_json::to_value(self).map_err(|e| e.to_string())?
+            != serde_json::to_value(source.base()).map_err(|e| e.to_string())?
+        {
+            return Err("source-key binding uses a different native preparation".into());
+        }
+        source.validate_current(self, source.targets().collection())?;
+        let actual = source.packet_for_touches(touches)?;
+        let mut next = self.clone();
+        next.determination = actual["determination"].clone();
+        next.notes = actual["notes"]
+            .as_array()
+            .ok_or("source notes absent")?
+            .clone();
+        next.policy_receipts["original_tuning"] = self.policy_receipts["tuning"].clone();
+        next.policy_receipts["tuning"] =
+            serde_json::to_value(&source.targets().reduction().provenance)
+                .map_err(|e| e.to_string())?;
+        next.policy_receipts["source_keys"] = actual["source_key_admission"].clone();
+        next.validate_native_consumers(&next.native_basis, &next.physical_body)?;
+        Ok(next)
+    }
     pub fn determination(&self) -> &Value {
         &self.determination
     }

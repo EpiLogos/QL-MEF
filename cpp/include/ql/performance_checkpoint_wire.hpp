@@ -531,7 +531,24 @@ inline RecordingStatus read_recording(J *in) {
           decimal(field(in, "first_failed_sequence")),
           decimal(field(in, "first_failed_sample"))};
 }
-// Complete optional pair preserves original v1 scored checkpoint compatibility.
+// Original committed v2 had no route state. A complete route pair is the
+// additive v2 encoding; neither a partial pair nor unknown state is admitted.
+// Engine restore still requires exact port presence, so an N9 owner cannot
+// restore a legacy scalar record or a record whose route pair was stripped.
+enum class AudioCheckpointEncoding { OriginalV2Scalar, V2WithRoutePrograms };
+inline AudioCheckpointEncoding audio_checkpoint_encoding(J *in) {
+  require(in && json_object_is_type(in, json_type_object),
+          "audio checkpoint object required");
+  J *value = nullptr;
+  const bool flag_present =
+      json_object_object_get_ex(in, "has_route_programs", &value);
+  const bool state_present =
+      json_object_object_get_ex(in, "route_programs", &value);
+  require(flag_present == state_present,
+          "partial native route checkpoint extension");
+  return flag_present ? AudioCheckpointEncoding::V2WithRoutePrograms
+                      : AudioCheckpointEncoding::OriginalV2Scalar;
+}
 inline void audio_keys(J *in, std::initializer_list<const char *> names) {
   require(in && json_object_is_type(in, json_type_object),
           "audio checkpoint object required");
@@ -540,12 +557,17 @@ inline void audio_keys(J *in, std::initializer_list<const char *> names) {
   require(apps == bool(json_object_object_get_ex(in, "recording", &v)),
           "partial recording checkpoint extension");
   const bool proof = json_object_object_get_ex(in, "release_proof", &v);
-  require(json_object_object_length(in) ==
-              int(names.size()) + (apps ? 2 : 0) + (proof ? 1 : 0),
+  const bool routes = audio_checkpoint_encoding(in) ==
+                      AudioCheckpointEncoding::V2WithRoutePrograms;
+  require(json_object_object_length(in) == int(names.size()) + (apps ? 2 : 0) +
+                                               (proof ? 1 : 0) +
+                                               (routes ? 2 : 0),
           "audio checkpoint fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
-    require((proof && std::strcmp(key, "release_proof") == 0) ||
+    require((routes && (std::strcmp(key, "has_route_programs") == 0 ||
+                        std::strcmp(key, "route_programs") == 0)) ||
+                (proof && std::strcmp(key, "release_proof") == 0) ||
                 (apps && (std::strcmp(key, "applications") == 0 ||
                           std::strcmp(key, "recording") == 0)) ||
                 std::any_of(
@@ -578,9 +600,367 @@ inline void read_queue(J *in, typename Spsc<T, N>::State &out, Reader reader) {
     out.storage[i % N] =
         reader(json_object_array_get_idx(entries, i - out.read));
 }
+inline Json route_handle(const ql::PhysicalForceRouteProgramHandle &v) {
+  auto out = object();
+  ref(out.get(), "driver_ref", v.driver_ref);
+  ref(out.get(), "target_ref", v.target_ref);
+  ref(out.get(), "program_ref", v.program_ref);
+  ref(out.get(), "planet_coordinate", v.planet_coordinate);
+  ref(out.get(), "chakra_coordinate", v.chakra_coordinate);
+  ref(out.get(), "projection_ref", v.projection_ref);
+  ref(out.get(), "calibration_ref", v.calibration_ref);
+  ref(out.get(), "calibration_revision", v.calibration_revision);
+  ref(out.get(), "calibration_source_ref", v.calibration_source_ref);
+  ref(out.get(), "calibration_standing", v.calibration_standing);
+  u64(out.get(), "route_index", v.route_index);
+  u64(out.get(), "preparation_seal", v.preparation_seal);
+  u64(out.get(), "program_seal", v.program_seal);
+  u64(out.get(), "planet_node_id", v.planet_node_id);
+  u64(out.get(), "chakra_node_id", v.chakra_node_id);
+  u64(out.get(), "native_planet_index", v.native_planet_index);
+  u64(out.get(), "centre_ordinal", v.centre_ordinal);
+  u64(out.get(), "share_numerator", v.share_numerator);
+  u64(out.get(), "share_denominator", v.share_denominator);
+  real(out.get(), "source_hertz", v.source_hertz);
+  real(out.get(), "original_denominator_share", v.original_denominator_share);
+  real(out.get(), "peak_force_newtons", v.peak_force_newtons);
+  return out;
+}
+inline ql::PhysicalForceRouteProgramHandle read_route_handle(J *in) {
+  keys(in, {"driver_ref",
+            "target_ref",
+            "program_ref",
+            "planet_coordinate",
+            "chakra_coordinate",
+            "projection_ref",
+            "calibration_ref",
+            "calibration_revision",
+            "calibration_source_ref",
+            "calibration_standing",
+            "route_index",
+            "preparation_seal",
+            "program_seal",
+            "planet_node_id",
+            "chakra_node_id",
+            "native_planet_index",
+            "centre_ordinal",
+            "share_numerator",
+            "share_denominator",
+            "source_hertz",
+            "original_denominator_share",
+            "peak_force_newtons"});
+  ql::PhysicalForceRouteProgramHandle v{};
+  v.driver_ref = packet::ref(in, "driver_ref");
+  v.target_ref = packet::ref(in, "target_ref");
+  v.program_ref = packet::ref(in, "program_ref");
+  v.planet_coordinate = packet::ref(in, "planet_coordinate");
+  v.chakra_coordinate = packet::ref(in, "chakra_coordinate");
+  v.projection_ref = packet::ref(in, "projection_ref");
+  v.calibration_ref = packet::ref(in, "calibration_ref");
+  v.calibration_revision = packet::ref(in, "calibration_revision");
+  v.calibration_source_ref = packet::ref(in, "calibration_source_ref");
+  v.calibration_standing = packet::ref(in, "calibration_standing");
+  const auto route_index = decimal(field(in, "route_index"));
+  require(route_index <= std::numeric_limits<decltype(v.route_index)>::max(),
+          "route integer width exceeded");
+  v.route_index = decltype(v.route_index)(route_index);
+  const auto preparation_seal = decimal(field(in, "preparation_seal"));
+  require(preparation_seal <=
+              std::numeric_limits<decltype(v.preparation_seal)>::max(),
+          "route integer width exceeded");
+  v.preparation_seal = decltype(v.preparation_seal)(preparation_seal);
+  const auto program_seal = decimal(field(in, "program_seal"));
+  require(program_seal <= std::numeric_limits<decltype(v.program_seal)>::max(),
+          "route integer width exceeded");
+  v.program_seal = decltype(v.program_seal)(program_seal);
+  const auto planet_node_id = decimal(field(in, "planet_node_id"));
+  require(planet_node_id <=
+              std::numeric_limits<decltype(v.planet_node_id)>::max(),
+          "route integer width exceeded");
+  v.planet_node_id = decltype(v.planet_node_id)(planet_node_id);
+  const auto chakra_node_id = decimal(field(in, "chakra_node_id"));
+  require(chakra_node_id <=
+              std::numeric_limits<decltype(v.chakra_node_id)>::max(),
+          "route integer width exceeded");
+  v.chakra_node_id = decltype(v.chakra_node_id)(chakra_node_id);
+  const auto native_planet_index = decimal(field(in, "native_planet_index"));
+  require(native_planet_index <=
+              std::numeric_limits<decltype(v.native_planet_index)>::max(),
+          "route integer width exceeded");
+  v.native_planet_index = decltype(v.native_planet_index)(native_planet_index);
+  const auto centre_ordinal = decimal(field(in, "centre_ordinal"));
+  require(centre_ordinal <=
+              std::numeric_limits<decltype(v.centre_ordinal)>::max(),
+          "route integer width exceeded");
+  v.centre_ordinal = decltype(v.centre_ordinal)(centre_ordinal);
+  const auto share_numerator = decimal(field(in, "share_numerator"));
+  require(share_numerator <=
+              std::numeric_limits<decltype(v.share_numerator)>::max(),
+          "route integer width exceeded");
+  v.share_numerator = decltype(v.share_numerator)(share_numerator);
+  const auto share_denominator = decimal(field(in, "share_denominator"));
+  require(share_denominator <=
+              std::numeric_limits<decltype(v.share_denominator)>::max(),
+          "route integer width exceeded");
+  v.share_denominator = decltype(v.share_denominator)(share_denominator);
+  v.source_hertz = number(field(in, "source_hertz"));
+  v.original_denominator_share =
+      number(field(in, "original_denominator_share"));
+  v.peak_force_newtons = number(field(in, "peak_force_newtons"));
+  return v;
+}
+inline Json route_manifest(const ql::PhysicalForceRoutePortManifest &v) {
+  auto out = object();
+  ref(out.get(), "event_ref", v.event_ref);
+  ref(out.get(), "subject_ref", v.subject_ref);
+  ref(out.get(), "registry_revision", v.registry_revision);
+  ref(out.get(), "source_revision", v.source_revision);
+  ref(out.get(), "definition_ref", v.definition_ref);
+  ref(out.get(), "source_instance_ref", v.source_instance_ref);
+  ref(out.get(), "determination_ref", v.determination_ref);
+  ref(out.get(), "preparation_ref", v.preparation_ref);
+  ref(out.get(), "state_ref", v.state_ref);
+  ref(out.get(), "eigenbasis_identity", v.eigenbasis_identity);
+  ref(out.get(), "m1_coordinate", v.m1_coordinate);
+  ref(out.get(), "m2_writer_coordinate", v.m2_writer_coordinate);
+  ref(out.get(), "native_basis_sha256", v.native_basis_sha256);
+  ref(out.get(), "m3_state_sha256", v.m3_state_sha256);
+  u64(out.get(), "version", v.version);
+  u64(out.get(), "sample_rate", v.sample_rate);
+  u64(out.get(), "route_count", v.route_count);
+  u64(out.get(), "source_basis_seal", v.source_basis_seal);
+  u64(out.get(), "body_revision", v.body_revision);
+  u64(out.get(), "admitted_cursor", v.admitted_cursor);
+  u64(out.get(), "m1_revision", v.m1_revision);
+  u64(out.get(), "m2_generation", v.m2_generation);
+  u64(out.get(), "m3_generation", v.m3_generation);
+  u64(out.get(), "m3_input_generation", v.m3_input_generation);
+  u64(out.get(), "earth_frame_node_id", v.earth_frame_node_id);
+  u64(out.get(), "tick12", v.tick12);
+  u64(out.get(), "degree720", v.degree720);
+  u64(out.get(), "temporal_phase", v.temporal_phase);
+  real(out.get(), "scalar_note_gain", v.scalar_note_gain);
+  real(out.get(), "legacy_native_scalar_gain", v.legacy_native_scalar_gain);
+  real(out.get(), "max_force_newtons", v.max_force_newtons);
+  flag(out.get(), "m1_pratibimba", v.m1_pratibimba);
+  flag(out.get(), "m2_pratibimba", v.m2_pratibimba);
+  flag(out.get(), "scalar_note_enabled", v.scalar_note_enabled);
+  flag(out.get(), "legacy_native_scalar_enabled",
+       v.legacy_native_scalar_enabled);
+  require(v.route_count <= ql::physical_max_personal_force_routes,
+          "route manifest bound exceeded");
+  auto programs = array();
+  for (std::size_t i = 0; i < v.route_count; ++i)
+    append(programs.get(), route_handle(v.programs[i]).release());
+  put(out.get(), "programs", programs.release());
+  return out;
+}
+inline ql::PhysicalForceRoutePortManifest read_route_manifest(J *in) {
+  keys(in, {"event_ref",
+            "subject_ref",
+            "registry_revision",
+            "source_revision",
+            "definition_ref",
+            "source_instance_ref",
+            "determination_ref",
+            "preparation_ref",
+            "state_ref",
+            "eigenbasis_identity",
+            "m1_coordinate",
+            "m2_writer_coordinate",
+            "native_basis_sha256",
+            "m3_state_sha256",
+            "version",
+            "sample_rate",
+            "route_count",
+            "source_basis_seal",
+            "body_revision",
+            "admitted_cursor",
+            "m1_revision",
+            "m2_generation",
+            "m3_generation",
+            "m3_input_generation",
+            "earth_frame_node_id",
+            "tick12",
+            "degree720",
+            "temporal_phase",
+            "scalar_note_gain",
+            "legacy_native_scalar_gain",
+            "max_force_newtons",
+            "m1_pratibimba",
+            "m2_pratibimba",
+            "scalar_note_enabled",
+            "legacy_native_scalar_enabled",
+            "programs"});
+  ql::PhysicalForceRoutePortManifest v{};
+  v.event_ref = packet::ref(in, "event_ref");
+  v.subject_ref = packet::ref(in, "subject_ref");
+  v.registry_revision = packet::ref(in, "registry_revision");
+  v.source_revision = packet::ref(in, "source_revision");
+  v.definition_ref = packet::ref(in, "definition_ref");
+  v.source_instance_ref = packet::ref(in, "source_instance_ref");
+  v.determination_ref = packet::ref(in, "determination_ref");
+  v.preparation_ref = packet::ref(in, "preparation_ref");
+  v.state_ref = packet::ref(in, "state_ref");
+  v.eigenbasis_identity = packet::ref(in, "eigenbasis_identity");
+  v.m1_coordinate = packet::ref(in, "m1_coordinate");
+  v.m2_writer_coordinate = packet::ref(in, "m2_writer_coordinate");
+  v.native_basis_sha256 = packet::ref(in, "native_basis_sha256");
+  v.m3_state_sha256 = packet::ref(in, "m3_state_sha256");
+  const auto version = decimal(field(in, "version"));
+  require(version <= std::numeric_limits<decltype(v.version)>::max(),
+          "route integer width exceeded");
+  v.version = decltype(v.version)(version);
+  const auto sample_rate = decimal(field(in, "sample_rate"));
+  require(sample_rate <= std::numeric_limits<decltype(v.sample_rate)>::max(),
+          "route integer width exceeded");
+  v.sample_rate = decltype(v.sample_rate)(sample_rate);
+  const auto route_count = decimal(field(in, "route_count"));
+  require(route_count <= std::numeric_limits<decltype(v.route_count)>::max(),
+          "route integer width exceeded");
+  v.route_count = decltype(v.route_count)(route_count);
+  const auto source_basis_seal = decimal(field(in, "source_basis_seal"));
+  require(source_basis_seal <=
+              std::numeric_limits<decltype(v.source_basis_seal)>::max(),
+          "route integer width exceeded");
+  v.source_basis_seal = decltype(v.source_basis_seal)(source_basis_seal);
+  const auto body_revision = decimal(field(in, "body_revision"));
+  require(body_revision <=
+              std::numeric_limits<decltype(v.body_revision)>::max(),
+          "route integer width exceeded");
+  v.body_revision = decltype(v.body_revision)(body_revision);
+  const auto admitted_cursor = decimal(field(in, "admitted_cursor"));
+  require(admitted_cursor <=
+              std::numeric_limits<decltype(v.admitted_cursor)>::max(),
+          "route integer width exceeded");
+  v.admitted_cursor = decltype(v.admitted_cursor)(admitted_cursor);
+  const auto m1_revision = decimal(field(in, "m1_revision"));
+  require(m1_revision <= std::numeric_limits<decltype(v.m1_revision)>::max(),
+          "route integer width exceeded");
+  v.m1_revision = decltype(v.m1_revision)(m1_revision);
+  const auto m2_generation = decimal(field(in, "m2_generation"));
+  require(m2_generation <=
+              std::numeric_limits<decltype(v.m2_generation)>::max(),
+          "route integer width exceeded");
+  v.m2_generation = decltype(v.m2_generation)(m2_generation);
+  const auto m3_generation = decimal(field(in, "m3_generation"));
+  require(m3_generation <=
+              std::numeric_limits<decltype(v.m3_generation)>::max(),
+          "route integer width exceeded");
+  v.m3_generation = decltype(v.m3_generation)(m3_generation);
+  const auto m3_input_generation = decimal(field(in, "m3_input_generation"));
+  require(m3_input_generation <=
+              std::numeric_limits<decltype(v.m3_input_generation)>::max(),
+          "route integer width exceeded");
+  v.m3_input_generation = decltype(v.m3_input_generation)(m3_input_generation);
+  const auto earth_frame_node_id = decimal(field(in, "earth_frame_node_id"));
+  require(earth_frame_node_id <=
+              std::numeric_limits<decltype(v.earth_frame_node_id)>::max(),
+          "route integer width exceeded");
+  v.earth_frame_node_id = decltype(v.earth_frame_node_id)(earth_frame_node_id);
+  const auto tick12 = decimal(field(in, "tick12"));
+  require(tick12 <= std::numeric_limits<decltype(v.tick12)>::max(),
+          "route integer width exceeded");
+  v.tick12 = decltype(v.tick12)(tick12);
+  const auto degree720 = decimal(field(in, "degree720"));
+  require(degree720 <= std::numeric_limits<decltype(v.degree720)>::max(),
+          "route integer width exceeded");
+  v.degree720 = decltype(v.degree720)(degree720);
+  const auto temporal_phase = decimal(field(in, "temporal_phase"));
+  require(temporal_phase <=
+              std::numeric_limits<decltype(v.temporal_phase)>::max(),
+          "route integer width exceeded");
+  v.temporal_phase = decltype(v.temporal_phase)(temporal_phase);
+  v.scalar_note_gain = number(field(in, "scalar_note_gain"));
+  v.legacy_native_scalar_gain = number(field(in, "legacy_native_scalar_gain"));
+  v.max_force_newtons = number(field(in, "max_force_newtons"));
+  v.m1_pratibimba = boolean(field(in, "m1_pratibimba"));
+  v.m2_pratibimba = boolean(field(in, "m2_pratibimba"));
+  v.scalar_note_enabled = boolean(field(in, "scalar_note_enabled"));
+  v.legacy_native_scalar_enabled =
+      boolean(field(in, "legacy_native_scalar_enabled"));
+  require(v.route_count <= ql::physical_max_personal_force_routes,
+          "route manifest bound exceeded");
+  auto programs = field(in, "programs");
+  packet::array(programs, v.route_count);
+  for (std::size_t i = 0; i < v.route_count; ++i)
+    v.programs[i] = read_route_handle(json_object_array_get_idx(programs, i));
+  return v;
+}
+inline Json route_programs(const NativeRouteProgramSet &v) {
+  auto out = object();
+  text(out.get(), "schema", NativeRouteProgramSet::schema);
+  u64(out.get(), "version", v.version);
+  flag(out.get(), "owner_suspended", v.owner_suspended);
+  flag(out.get(), "scalar_note_enabled", v.scalar_note_enabled);
+  real(out.get(), "scalar_note_gain", v.scalar_note_gain);
+  put(out.get(), "manifest", route_manifest(v.manifest).release());
+  require(v.program_count <= ql::physical_max_personal_force_routes,
+          "route program bound exceeded");
+  auto programs = array();
+  for (std::size_t i = 0; i < v.program_count; ++i) {
+    const auto &p = v.programs[i];
+    auto entry = object();
+    put(entry.get(), "handle", route_handle(p.handle).release());
+    ref(entry.get(), "phase_source_ref", p.phase_source_ref);
+    u64(entry.get(), "waveform", unsigned(p.waveform));
+    flag(entry.get(), "enabled", p.enabled);
+    real(entry.get(), "target_gain", p.target_gain);
+    real(entry.get(), "effective_gain", p.effective_gain);
+    real(entry.get(), "sine", p.sine);
+    real(entry.get(), "cosine", p.cosine);
+    append(programs.get(), entry.release());
+  }
+  put(out.get(), "programs", programs.release());
+  return out;
+}
+inline NativeRouteProgramSet read_route_programs(J *in) {
+  keys(in, {"schema", "version", "owner_suspended", "scalar_note_enabled",
+            "scalar_note_gain", "manifest", "programs"});
+  require(packet::string(field(in, "schema")) ==
+                  NativeRouteProgramSet::schema &&
+              decimal(field(in, "version")) == 1,
+          "route programme contract differs");
+  NativeRouteProgramSet v{};
+  v.owner_suspended = boolean(field(in, "owner_suspended"));
+  v.scalar_note_enabled = boolean(field(in, "scalar_note_enabled"));
+  v.scalar_note_gain = number(field(in, "scalar_note_gain"));
+  v.manifest = read_route_manifest(field(in, "manifest"));
+  auto programs = field(in, "programs");
+  require(json_object_is_type(programs, json_type_array),
+          "route programs required");
+  v.program_count = json_object_array_length(programs);
+  require(v.program_count <= ql::physical_max_personal_force_routes &&
+              v.program_count == v.manifest.route_count,
+          "route count differs");
+  for (std::size_t i = 0; i < v.program_count; ++i) {
+    auto p = json_object_array_get_idx(programs, i);
+    keys(p, {"handle", "phase_source_ref", "waveform", "enabled", "target_gain",
+             "effective_gain", "sine", "cosine"});
+    auto &out = v.programs[i];
+    out.handle = read_route_handle(field(p, "handle"));
+    out.phase_source_ref = packet::ref(p, "phase_source_ref");
+    require(decimal(field(p, "waveform")) == 0, "unknown route waveform");
+    out.waveform = NativeRouteWaveform::Sinusoid;
+    out.enabled = boolean(field(p, "enabled"));
+    out.target_gain = number(field(p, "target_gain"));
+    out.effective_gain = number(field(p, "effective_gain"));
+    out.sine = number(field(p, "sine"));
+    out.cosine = number(field(p, "cosine"));
+  }
+  return v;
+}
+
 inline Json audio_wire(const Engine::Checkpoint &cp) {
   auto out = object();
   text(out.get(), "schema", Engine::Checkpoint::schema);
+  flag(out.get(), "has_route_programs", cp.has_route_programs);
+  if (cp.has_route_programs)
+    put(out.get(), "route_programs",
+        route_programs(cp.route_programs).release());
+  else
+    require(json_object_object_add(out.get(), "route_programs", nullptr) == 0,
+            "null route programs allocation failed");
   put(out.get(), "version", json_object_new_uint64(cp.version));
   text(out.get(), "model_revision", contract);
   put(out.get(), "sample_rate", json_object_new_uint64(cp.sample_rate));
@@ -758,6 +1138,20 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
               integer(field(in, "version")) == 2 &&
               packet::string(field(in, "model_revision")) == contract,
           "unsupported performance checkpoint model");
+  cp.has_route_programs = false;
+  cp.route_programs = {};
+  if (audio_checkpoint_encoding(in) ==
+      AudioCheckpointEncoding::V2WithRoutePrograms) {
+    cp.has_route_programs = boolean(field(in, "has_route_programs"));
+    J *routes = nullptr;
+    require(json_object_object_get_ex(in, "route_programs", &routes),
+            "route programs field missing");
+    if (cp.has_route_programs)
+      cp.route_programs = read_route_programs(routes);
+    else
+      require(!routes || json_object_is_type(routes, json_type_null),
+              "inactive routes contain programme state");
+  }
   const auto rate = integer(field(in, "sample_rate"));
   require(rate >= 8000 && rate <= 192000,
           "checkpoint sample rate outside budget");

@@ -32,6 +32,19 @@ pub fn resolve_performance_touch(
     {
         return Err("resolved note outside native admitted audio band".into());
     }
+    encode_performance_note(binding, &note, touch)
+}
+/// Shared native note serializer for full and source-sparse consumers.
+/// Callers qualify the immutable native target and its audio band first.
+pub(crate) fn encode_performance_note(
+    binding: &PreparedPerformanceBinding,
+    note: &crate::music_determination::NoteTarget,
+    touch: KeyTouch,
+) -> Result<Value, String> {
+    bounded(&touch.touch_ref)?;
+    if touch.member == 0 || touch.touch == 0 {
+        return Err("nonzero native member/touch required".into());
+    }
     let config: EngineConfig = serde_json::from_value(binding.native_basis().m1["config"].clone())
         .map_err(|e| e.to_string())?;
     let carrier = carrier(
@@ -55,7 +68,7 @@ pub fn resolve_performance_touch(
         .unwrap_or_else(|| ("0".into(), "0".into()));
     Ok(
         json!({"identity":d["identity"],"source_coordinate":note.source_coordinate.source_ref,
-      "source_face":d["m1_face"],"tuning_ref":d["tuning_ref"],"member":touch.member.to_string(),
+      "source_face":d["m1_face"],"tuning_ref":note.tuning_provenance.policy_ref,"member":touch.member.to_string(),
       "touch":touch.touch.to_string(),"touch_ref":touch.touch_ref,"key":touch.key,"position":touch.key/2,
       "coordinate_face":touch.key%2,"register_octave":touch.register,"pitch_class":note.pitch_class,
       "fundamental_hz":note.fundamental.hertz(),"hertz":note.hertz,"ratio_numerator":n,"ratio_denominator":q,
@@ -89,17 +102,68 @@ pub fn native_janko_catalog(
         return Err("bounded Janko catalog/register/transpose required".into());
     }
     binding.validate_native_consumers(binding.native_basis(), binding.physical_body())?;
-    let mut inverse = [None; 12];
-    for key in 0..12u8 {
+    let mut cells = Vec::with_capacity(usize::from(columns) * 6);
+    for address in native_janko_addresses(binding, columns, base_register, transpose)? {
+        let row = address.row;
+        let column = address.column;
+        let register = i16::from(address.register_octave);
+        let key = address.key;
         let t = binding
             .targets()
+            .key_target(key, register as i8, "native:catalog/lookup")?;
+        if t.hertz < 0.001
+            || t.hertz >= f64::from(binding.physical_body().request().sample_rate) * 0.45
+        {
+            return Err("keyboard outside admitted native audio band".into());
+        }
+        let ratio=t.exact_ratio.map(|r|json!({"numerator":r.numerator().to_string(),"denominator":r.denominator().to_string()}));
+        cells.push(NativeKeyboardCell {
+            row,
+            column,
+            register_octave: register as i8,
+            key,
+            pitch_class: t.pitch_class,
+            label: format!("{} / {}", t.source_coordinate.source_ref, register),
+            hertz: t.hertz,
+            coordinate: t.source_coordinate.source_ref,
+            face: u8::from(t.source_coordinate.face == crate::MFace::Pratibimba),
+            ratio,
+        });
+    }
+    Ok(cells)
+}
+
+/// Source-neutral native physical addresses. Numerical pitch availability is
+/// qualified separately by the selected full or sparse native source owner.
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct NativeJankoAddress {
+    pub row: u8,
+    pub column: u8,
+    pub register_octave: i8,
+    pub key: u8,
+    pub pitch_class: u8,
+}
+pub fn native_janko_addresses(
+    binding: &PreparedPerformanceBinding,
+    columns: u8,
+    base_register: i8,
+    transpose: u8,
+) -> Result<Vec<NativeJankoAddress>, String> {
+    if !(6..=32).contains(&columns) || transpose > 11 || !(-16..=15).contains(&base_register) {
+        return Err("bounded Janko catalog/register/transpose required".into());
+    }
+    binding.validate_native_consumers(binding.native_basis(), binding.physical_body())?;
+    let mut inverse = [None; 12];
+    for key in 0..12u8 {
+        let target = binding
+            .targets()
             .key_target(key, 0, "native:catalog/lookup")?;
-        let slot = usize::from(t.pitch_class);
+        let slot = usize::from(target.pitch_class);
         if slot >= 12 || inverse[slot].replace(key).is_some() {
             return Err("native K pitch-class substrate is not a bijection".into());
         }
     }
-    let mut cells = Vec::with_capacity(usize::from(columns) * 6);
+    let mut addresses = Vec::with_capacity(usize::from(columns) * 6);
     for row in 0..6u8 {
         for column in 0..columns {
             let semitone = i16::from(transpose) + i16::from(row % 2) + 2 * i16::from(column);
@@ -109,28 +173,14 @@ pub fn native_janko_catalog(
                 return Err("native keyboard register overflow".into());
             }
             let key = inverse[usize::from(pitch)].ok_or("native key lookup absent")?;
-            let t = binding
-                .targets()
-                .key_target(key, register as i8, "native:catalog/lookup")?;
-            if t.hertz < 0.001
-                || t.hertz >= f64::from(binding.physical_body().request().sample_rate) * 0.45
-            {
-                return Err("keyboard outside admitted native audio band".into());
-            }
-            let ratio=t.exact_ratio.map(|r|json!({"numerator":r.numerator().to_string(),"denominator":r.denominator().to_string()}));
-            cells.push(NativeKeyboardCell {
+            addresses.push(NativeJankoAddress {
                 row,
                 column,
                 register_octave: register as i8,
                 key,
-                pitch_class: t.pitch_class,
-                label: format!("{} / {}", t.source_coordinate.source_ref, register),
-                hertz: t.hertz,
-                coordinate: t.source_coordinate.source_ref,
-                face: u8::from(t.source_coordinate.face == crate::MFace::Pratibimba),
-                ratio,
+                pitch_class: pitch,
             });
         }
     }
-    Ok(cells)
+    Ok(addresses)
 }

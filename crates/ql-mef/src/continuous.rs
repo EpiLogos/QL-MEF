@@ -4,6 +4,7 @@
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
 pub mod host;
+pub mod performance;
 pub mod personal;
 mod receipt;
 pub mod scene_field;
@@ -141,6 +142,9 @@ impl Worker {
         format!("worker unavailable; operation standing unknown: {reason}")
     }
     fn exchange(&mut self, value: &Value) -> Result<Value> {
+        self.exchange_contract(value, FIELD_CONTRACT)
+    }
+    fn exchange_contract(&mut self, value: &Value, contract: &str) -> Result<Value> {
         if self.poisoned {
             return Err("worker unavailable; retained basis is unchanged".into());
         }
@@ -179,7 +183,7 @@ impl Worker {
             }
             return Err(value.to_string());
         }
-        if value["schema"] != FIELD_CONTRACT {
+        if value["schema"] != contract {
             return Err(self.invalidate("unrecognised worker response"));
         }
         Ok(value)
@@ -243,6 +247,16 @@ impl FieldSession {
     }
     pub fn available(&self) -> bool {
         !self.worker.poisoned
+    }
+    pub(crate) fn performance_exchange(&mut self, request: &Value) -> Result<Value> {
+        if request["schema"] != performance::CONTROL {
+            return Err("unknown native performance request contract".into());
+        }
+        self.worker
+            .exchange_contract(request, "ql.performance-worker-reply/v1")
+    }
+    pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
+        self.worker.invalidate(reason)
     }
     fn operation(&mut self, operation: &str, extra: Value) -> Result<Value> {
         let mut request = json!({"schema":"ql.field-control/v1", "operation":operation,

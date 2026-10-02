@@ -20,6 +20,13 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
   QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
 done
 
+# Exact original SourceForm, source-key and resident reply production owners.
+TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
+mkdir -p "$TASK_SOURCE_OUTPUT"
+cargo run --quiet -p ql-mef --locked --example retained-source-performance-fixture > "$TASK_SOURCE_OUTPUT/native-source.json"
+"$TASK_OUTPUT/native/performance_source_packet-test" "$TASK_SOURCE_OUTPUT/native-source.json"
+QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored
+
 # Keep the real Rust producer and the C++ consumer in one executed passage.
 # These are finite component fixtures; they are not installed host authority.
 TASK_PROCEDURAL_OUTPUT="$TASK_OUTPUT/procedural-stage"

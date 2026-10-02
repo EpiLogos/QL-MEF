@@ -20,6 +20,13 @@ struct KeyboardCell {
   std::uint8_t row = 0, column = 0;
   NoteTarget native_target{};
   std::string label;
+  bool available = true, address_admitted = false;
+  std::uint8_t address_key = 0, address_pitch_class = 0;
+  std::int8_t address_register = 0;
+  bool has_source_degree = false;
+  std::uint16_t source_degree = 0;
+  Ref reduction_policy{}, source_collection{}, source_receipt{};
+  std::string unavailable_reason;
 };
 struct ManagementPulse {
   bool has_readback = false;
@@ -116,6 +123,13 @@ class PerformanceManagement {
     next.source = cp->source;
     next.effective = cp->effective;
     next.sustain = cp->sustain;
+    next.scalar_force_budget_newtons =
+        cp->has_route_programs
+            ? native_.engine->force_parameter_maximum()
+            : native_.body->preparation().input().max_force_newtons;
+    next.has_route_programs = cp->has_route_programs;
+    next.routes_suspended =
+        cp->has_route_programs && cp->route_programs.owner_suspended;
     next.clipping_samples = cp->clipping;
     next.recording = cp->recording;
     next.force_zero_samples = cp->force_zero_samples;
@@ -172,6 +186,18 @@ public:
       throw std::logic_error("no qualified native snapshot");
     return latest_;
   }
+  std::uint64_t last_native_touch() const noexcept {
+    return bindings_.last_touch_token();
+  }
+  std::uint64_t last_native_member() const noexcept {
+    return bindings_.last_member_token();
+  }
+  static double read_parameter(const Parameters &p, Parameter id) {
+    return parameter_value(p, id);
+  }
+  double baseline_parameter(Parameter id) const {
+    return parameter_value(baseline_, id);
+  }
   const std::vector<KeyboardCell> &catalog() const noexcept { return catalog_; }
 
   // Every cell is resolved by native K's catalog helper. No chromatic/fifths
@@ -181,40 +207,85 @@ public:
       throw std::invalid_argument("bounded native keyboard catalog required");
     std::array<bool, 192> occupied{};
     std::set<std::uint8_t> rows;
-    std::map<std::pair<unsigned, int>, std::pair<NoteTarget, unsigned>> pitches;
+    std::map<std::pair<unsigned, int>,
+             std::pair<const KeyboardCell *, unsigned>>
+        addresses;
     const auto source = native_.engine->source_for_native_admission();
-    for (const auto &cell : cells) {
-      const auto &n = cell.native_target;
+    for (auto &cell : cells) {
       if (cell.row >= 6 || cell.column >= 32 ||
           occupied[cell.row * 32 + cell.column] || cell.label.empty() ||
-          cell.label.size() > 128 || !(n.identity == source.identity) ||
-          !native_.engine->validate_note_target_for_native_admission(n))
-        throw std::invalid_argument(
-            "native catalog source/cell is disconnected");
+          cell.label.size() > 128)
+        throw std::invalid_argument("native physical address is malformed");
+      if (cell.available) {
+        const auto &n = cell.native_target;
+        if (!(n.identity == source.identity) ||
+            !native_.engine->validate_note_target_for_native_admission(n) ||
+            !cell.unavailable_reason.empty())
+          throw std::invalid_argument(
+              "available native source key is disconnected");
+        if (cell.address_admitted &&
+            (cell.address_key != n.key ||
+             cell.address_pitch_class != n.pitch_class ||
+             cell.address_register != n.register_octave))
+          throw std::invalid_argument(
+              "physical source address differs from native target");
+        cell.address_key = n.key;
+        cell.address_pitch_class = n.pitch_class;
+        cell.address_register = n.register_octave;
+      } else {
+        // An unavailable key retains only its physical native address and
+        // source reason. It has no numerical or fabricated NoteTarget payload.
+        const auto &n = cell.native_target;
+        if (!cell.address_admitted || cell.address_key >= 12 ||
+            cell.address_pitch_class >= 12 || cell.address_register < -16 ||
+            cell.address_register > 16 || cell.unavailable_reason.empty() ||
+            cell.unavailable_reason.size() > 2048 || n.member || n.touch ||
+            n.hertz || n.fundamental_hz || n.source_coordinate[0] ||
+            n.identity.event[0] || !valid_ref(cell.reduction_policy) ||
+            !valid_ref(cell.source_collection) ||
+            !valid_ref(cell.source_receipt))
+          throw std::invalid_argument(
+              "unavailable native key contains a playable target or lacks "
+              "source standing");
+      }
       occupied[cell.row * 32 + cell.column] = true;
       rows.insert(cell.row);
-      auto key =
-          std::make_pair(unsigned(n.pitch_class), int(n.register_octave));
-      auto old = pitches.find(key);
-      if (old == pitches.end())
-        pitches.emplace(key, std::make_pair(n, 1));
+      auto key = std::make_pair(unsigned(cell.address_key),
+                                int(cell.address_register));
+      auto old = addresses.find(key);
+      if (old == addresses.end())
+        addresses.emplace(key, std::make_pair(&cell, 1));
       else {
-        const auto &a = old->second.first;
-        if (a.key != n.key || a.hertz != n.hertz ||
-            a.source_coordinate != n.source_coordinate ||
-            a.source_face != n.source_face ||
-            a.ratio_numerator != n.ratio_numerator ||
-            a.ratio_denominator != n.ratio_denominator ||
-            a.exact_ratio != n.exact_ratio)
+        const auto &a = *old->second.first;
+        if (a.available != cell.available ||
+            a.address_pitch_class != cell.address_pitch_class ||
+            a.has_source_degree != cell.has_source_degree ||
+            a.source_degree != cell.source_degree ||
+            a.reduction_policy != cell.reduction_policy ||
+            a.source_collection != cell.source_collection ||
+            a.source_receipt != cell.source_receipt ||
+            a.unavailable_reason != cell.unavailable_reason)
           throw std::invalid_argument(
-              "repeated physical keys differ in native tuning");
+              "physical source key copies differ in availability/provenance");
+        if (cell.available) {
+          const auto &left = a.native_target, &right = cell.native_target;
+          if (left.hertz != right.hertz ||
+              left.source_coordinate != right.source_coordinate ||
+              left.source_face != right.source_face ||
+              left.tuning_ref != right.tuning_ref ||
+              left.ratio_numerator != right.ratio_numerator ||
+              left.ratio_denominator != right.ratio_denominator ||
+              left.exact_ratio != right.exact_ratio)
+            throw std::invalid_argument(
+                "repeated physical keys differ in native source tuning");
+        }
         ++old->second.second;
       }
     }
-    if (rows.size() != 6 || pitches.size() < 12 ||
-        std::any_of(pitches.begin(), pitches.end(),
+    if (rows.size() != 6 || addresses.size() < 12 ||
+        std::any_of(addresses.begin(), addresses.end(),
                     [](const auto &p) { return p.second.second != 3; }))
-      throw std::invalid_argument("six-row Janko copies incomplete");
+      throw std::invalid_argument("six-row Janko physical copies incomplete");
     catalog_ = std::move(cells);
     catalog_identity_ = source.identity;
   }
@@ -241,6 +312,8 @@ public:
         std::find_if(catalog_.begin(), catalog_.end(), [&](const auto &c) {
           return c.row == row && c.column == column;
         });
+    if (cell != catalog_.end() && !cell->available)
+      return {Result::Unavailable, {}, cell->unavailable_reason};
     if (cell == catalog_.end() || cell->native_target.key != resolved.key ||
         cell->native_target.register_octave != resolved.register_octave ||
         cell->native_target.hertz != resolved.hertz ||
@@ -374,11 +447,16 @@ public:
     release_pending_ = true;
     panic_applied_ = false;
     release_proof_cursor_ = 0;
-    if (admitted.result != Result::Accepted)
-      release_request_ = native_.engine->request_panic();
-    else {
-      release_request_ = 0;
-      release_sequence_ = admitted.clock.sequence;
+    // Public all-output Panic requires zero actual Newton force on every
+    // native route. The queued performed Panic remains a real application for
+    // C, while this independent emergency fence suspends N programmes and
+    // releases authentic M1 touches/tails under the same callback ownership.
+    release_request_ = native_.engine->request_panic();
+    release_sequence_ = 0;
+    if (!release_request_) {
+      control_recording_failed_ = true;
+      return {Result::Exhausted, admitted.clock,
+              "native all-route release token exhausted; owner held"};
     }
     return admitted;
   }
@@ -583,6 +661,24 @@ public:
     // the paired wrapper. A source_touch_ref is never substituted for UI input.
     capture_stopped_reading(guard);
     return true;
+  }
+  ManagementAdmission
+  admit_distinct_receiving(PhysicalPort qualified_port,
+                           const NativeRouteProgramSet &programs,
+                           std::uint64_t native_admitted_cursor) {
+    auto guard = native_.engine->acquire_stopped_custody();
+    if (!guard)
+      return {Result::Unavailable,
+              {},
+              "native route admission requires acknowledged callback custody"};
+    if (!native_.engine->install_routes_port(
+            std::move(qualified_port), programs, guard, native_admitted_cursor))
+      return {
+          Result::Stale,
+          {},
+          "native N9 source/program/projection/body admission disconnected"};
+    capture_stopped_reading(guard);
+    return {Result::Accepted, {}, std::string{}};
   }
   ManagementAdmission admit_distinct_receiving() const {
     return {Result::Unavailable,

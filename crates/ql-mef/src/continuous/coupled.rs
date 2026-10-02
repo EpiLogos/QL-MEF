@@ -491,6 +491,12 @@ impl CoupledFieldSession {
     pub fn current_basis(&self) -> &CoupledBasis {
         &self.current
     }
+    pub(crate) fn performance_exchange(&mut self, request: &Value) -> Result<Value, String> {
+        self.field.performance_exchange(request)
+    }
+    pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
+        self.field.performance_invalidate(reason)
+    }
     pub fn available(&self) -> bool {
         self.field.available()
     }

@@ -1,6 +1,7 @@
 // Bounded newline-JSON management worker over the real C/C++ owner. JSON work
 // stays outside render_audio. Native audio hosts call the typed library directly.
 #include <ql/continuous_field.hpp>
+#include <ql/performance_management_wire.hpp>
 #include <json-c/json.h>
 #include <charconv>
 #include <iostream>
@@ -139,6 +140,7 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::unique_ptr<ql::ContinuousField> field;
+    ql::performance::management_transport::Control performance;
     Json basis = own(nullptr), gains = own(nullptr);
     std::string shape_ref;
     std::string line;
@@ -157,7 +159,17 @@ int main() {
             ql::require(json_tokener_get_error(tok.get()) == json_tokener_success &&
                 json_tokener_get_parse_end(tok.get()) == line.size(), "invalid complete JSON message");
             auto op = text(get(request.get(), "operation"));
-            ql::require(text(get(request.get(), "schema")) == "ql.field-control/v1", "unknown field control contract");
+            const auto schema = text(get(request.get(), "schema"));
+            if (schema == "ql.performance-control/v1") {
+                // One retained native control owner. Callback execution never
+                // reads JSON; management prepares immutable bounded operations.
+                committed = true;
+                auto output = performance.execute(request.get());
+                std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
+                continue;
+            }
+            ql::require(schema == "ql.field-control/v1", "unknown field control contract");
+            ql::require(!performance.active() || op == "read", "retained performance owns native time/body; prepared determinant transaction required");
             std::vector<float> audio;
             if (op == "initialize") {
                 keys(request.get(), {"schema", "operation", "m2", "field"}); ql::require(!field, "field already initialized");
@@ -205,6 +217,7 @@ int main() {
             string(output.get(), "shape_ref", shape_ref);
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
         } catch (const std::exception &error) {
+            if (committed && performance.active()) performance.hold();
             auto output = own(json_object_new_object()); string(output.get(), "schema", "ql.field-error/v1"); string(output.get(), "error", error.what());
             put(output.get(), "state_committed", json_object_new_boolean(committed));
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
