@@ -33,6 +33,173 @@ fn same_reference(actual: &Value, expected: &Value) -> bool {
         && actual["revision"] == expected["revision"]
         && actual["availability"] == "available"
 }
+/// Public receipt ownership consumes only the EXISTING provider's closed
+/// emitted sky source model (kerykeion_snapshot.py::validate_snapshot), not any
+/// extra original payload retained by a permissive world/transit projection.
+/// Unknown source remains unclassified; its bytes are never removed or made
+/// public. This is disclosure classification, not ephemeris/digest/freshness
+/// qualification; the actual native provider/Act retains those checks.
+fn public_sky_source_shape(sky: &Value) -> Result<(), String> {
+    fn closed<'a>(
+        v: &'a Value,
+        fields: &[&str],
+    ) -> Result<&'a serde_json::Map<String, Value>, String> {
+        let object = v
+            .as_object()
+            .ok_or("public sky source record is not an object")?;
+        if object.len() != fields.len() || object.keys().any(|k| !fields.contains(&k.as_str())) {
+            return Err("unclassified original source in native sky receipt".into());
+        }
+        Ok(object)
+    }
+    fn leaves(object: &serde_json::Map<String, Value>, structured: &[&str]) -> Result<(), String> {
+        for (key, value) in object {
+            if structured.contains(&key.as_str()) {
+                continue;
+            }
+            if value.is_object()
+                || value
+                    .as_array()
+                    .is_some_and(|a| a.iter().any(|v| v.is_object() || v.is_array()))
+            {
+                return Err("unclassified nested original source in native sky receipt".into());
+            }
+        }
+        Ok(())
+    }
+    let top = closed(
+        sky,
+        &[
+            "schema",
+            "request",
+            "epoch_utc",
+            "epoch_unix_ms",
+            "receipt_utc",
+            "receipt_clock",
+            "receipt_unix_ms",
+            "julian_day_ut_argument",
+            "time_scale_policy",
+            "reference_frame",
+            "ayanamsha_degrees",
+            "house_policy",
+            "scope",
+            "standing",
+            "provider",
+            "source_binding",
+            "bodies",
+            "snapshot_ref",
+        ],
+    )?;
+    leaves(top, &["request", "provider", "source_binding", "bodies"])?;
+    let request = closed(
+        &sky["request"],
+        &[
+            "schema",
+            "epoch",
+            "timezone",
+            "mode",
+            "perspective",
+            "zodiac",
+            "ayanamsha",
+            "observer",
+            "max_age_seconds",
+            "backend_policy",
+        ],
+    )?;
+    leaves(request, &[])?;
+    // The provider's public world constructor has no original private observer.
+    // This native source branch is explicit; a caller's World label is not used.
+    if sky["scope"] != "shared-geocentric"
+        || !sky["request"]["observer"].is_null()
+        || sky["request"]["perspective"] == "Topocentric"
+    {
+        return Err("private observer sky requires the original protected receiving owner".into());
+    }
+    let provider = closed(
+        &sky["provider"],
+        &[
+            "name",
+            "version",
+            "wrapper",
+            "wrapper_version",
+            "engine_version",
+            "engine_sha256",
+            "factory_sha256",
+            "adapter_sha256",
+            "requested_flags",
+            "python_version",
+            "pytz_version",
+            "network",
+            "used_data_files",
+            "adapter_epoch_range_utc",
+        ],
+    )?;
+    leaves(provider, &["used_data_files"])?;
+    for file in sky["provider"]["used_data_files"]
+        .as_array()
+        .ok_or("native sky data files absent")?
+    {
+        leaves(
+            closed(file, &["name", "sha256", "jd_start", "jd_end", "de_number"])?,
+            &[],
+        )?;
+    }
+    let source = closed(
+        &sky["source_binding"],
+        &[
+            "registry_revision",
+            "header",
+            "header_sha256",
+            "native_table",
+            "scope",
+            "standing",
+            "sun_role",
+            "non_sun_operators",
+            "earth_body",
+            "receiving_chakras",
+            "epogdoon",
+            "transpersonal_native_ids",
+            "transpersonal_meaning",
+        ],
+    )?;
+    leaves(source, &["earth_body"])?;
+    leaves(
+        closed(
+            &sky["source_binding"]["earth_body"],
+            &[
+                "source_ref",
+                "role",
+                "outside_planet_array",
+                "is_eighth_chakra",
+            ],
+        )?,
+        &[],
+    )?;
+    for body in sky["bodies"].as_array().ok_or("native sky bodies absent")? {
+        leaves(
+            closed(
+                body,
+                &[
+                    "body",
+                    "native_planet_id",
+                    "swiss_body_id",
+                    "longitude_degrees",
+                    "latitude_degrees",
+                    "distance_au",
+                    "longitude_speed_degrees_per_day",
+                    "latitude_speed_degrees_per_day",
+                    "radial_speed_au_per_day",
+                    "retrograde",
+                    "backend",
+                    "returned_flags",
+                    "data_files",
+                ],
+            )?,
+            &[],
+        )?;
+    }
+    Ok(())
+}
 /// Privately produced public receipt ownership, never a caller list of flags.
 /// Reference has no opaque receipts. World replays the EXISTING scene::world
 /// constructor and owns only its exact source-generated sky receipt.
@@ -71,6 +238,7 @@ impl NativePublicSourceOwnership {
     /// freshness: those retain their existing CLI/provider admission standing.
     /// A retained personal occurrence must use the protected receiving branch.
     pub fn world_source(request: WorldRequest) -> Result<Self, String> {
+        public_sky_source_shape(&request.sky)?;
         let produced = world(request)?;
         let original = produced["event"].clone();
         let receipts = original["source_receipts"]
