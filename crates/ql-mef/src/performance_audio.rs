@@ -330,7 +330,7 @@ pub fn prepare_native_performance(
         "tick12":targets.determination.identity().tick12(),"degree720":targets.determination.identity().degree720(),
         "basis":match targets.determination.basis(){MusicalBasis::Chromatic=>0,MusicalBasis::Fifths=>1},
         "lens12":targets.determination.lens().slot(),"context_frame":config.context_frame,
-        "audio_octet_hz":vimarsha.reading.audio_octet_hz,
+        "audio_octet_hz":joined.m2["vimarsha"]["reading"]["audio_octet_hz"],
         "nodal_quartet":vimarsha.reading.nodal_quartet.map(|n|json!({"position":n.ql_position,
             "face":u8::from(n.helix==crate::m2_vimarsha::VimarshaHelix::Pratibimba),"m":n.m,"n":n.n})),
         "body_preparation_ref":body.request().preparation_ref,"body_state_ref":body.request().state_ref,
