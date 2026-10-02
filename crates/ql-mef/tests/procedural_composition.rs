@@ -1089,6 +1089,19 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         presentation: outside.generated_basis.clone(),
     }];
     assert!(
+        outside.native_changes[0]
+            .validate()
+            .unwrap_err()
+            .contains("addressed native scene presentation")
+    );
+    let mut foreign_presentation = outside.generated_basis.clone();
+    foreign_presentation["scene"]["id"] = json!("expression:acceptance:scene:foreign");
+    outside.native_changes = vec![NativeChange::SceneMaterialSet {
+        scene_ref: "expression:acceptance:scene:foreign".into(),
+        presentation: foreign_presentation,
+    }];
+    outside.native_changes[0].validate().unwrap();
+    assert!(
         compile(outside, vec![output])
             .unwrap_err()
             .contains("membership")
