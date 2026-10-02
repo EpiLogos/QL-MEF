@@ -958,6 +958,36 @@
       "tests": [
         "crates/ql-mef/tests/m2_tuning_sources.rs"
       ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_routes_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Control-thread consumer of independently replayed original native N receiving operation into actual immutable P force routes; complete source/generation/typed-relation/calibration/program/cursor qualification and checkpoint witness. Equality grants no consent and no second body, clock or store is created.",
+      "tests": [
+        "cpp/tests/physical_force_routes_wire.cpp",
+        "crates/ql-mef/tests/physical_force_routes_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/physical-force-routes-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#2-5",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Real native N/A/P producer and independent recompilation for the paired native force consumer, including separately prepared material and calibrated after routes. Controlled angular inputs carry no astronomy or installed context verdict.",
+      "tests": [
+        "crates/ql-mef/tests/physical_force_routes_native_wire.rs",
+        "cpp/tests/physical_force_routes_wire.cpp"
+      ]
     }
   ]
 }
