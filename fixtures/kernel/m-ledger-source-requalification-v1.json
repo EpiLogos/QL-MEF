@@ -2,7 +2,7 @@
   "schema": "ql.m-ledger-source-requalification/v1",
   "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
   "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
-  "ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+  "ledger_revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
   "historical": {
     "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
     "ledger_sha256": "55e13ec985f0141172fd7dc41f7e3badffa21e09cb267a6750484fbea0701128",
@@ -259,5 +259,169 @@
       "historical_numerical_proofs_unchanged"
     ],
     "standing": "matrix source-lock refresh only; no new numerical or installed acceptance"
-  }
+  },
+  "matrix_source_reconciliations": [
+    {
+      "schema": "ql.matrix-source-reconciliation/v1",
+      "previous_git_commit": "ab0524d2e7941cd144bf84ca8f3052776969acf7",
+      "reviewed_source_commit": "2f4849c19624c47cc337b4fc378302ffd378a80b",
+      "previous_ledger": {
+        "path": "fixtures/kernel/m-ledger-v1.json",
+        "sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+        "revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c"
+      },
+      "current_ledger": {
+        "path": "fixtures/kernel/m-ledger-v1.json",
+        "sha256": "cea0ff2565dca9dff0c439614c431ebe0cd3b0814b923d2766fad685010fbfef",
+        "revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6"
+      },
+      "imported_binding_corrections": [
+        {
+          "id": "deep-M4:M4-C05",
+          "before": "M4.0.0",
+          "after": "M4.0-0"
+        },
+        {
+          "id": "deep-M4:M4-C06",
+          "before": "M4.0.1",
+          "after": "M4.0-1"
+        },
+        {
+          "id": "deep-M4:M4-C07",
+          "before": "M4.0.2",
+          "after": "M4.0-2"
+        },
+        {
+          "id": "deep-M4:M4-C08",
+          "before": "M4.0.3",
+          "after": "M4.0-3"
+        },
+        {
+          "id": "deep-M4:M4-C09",
+          "before": "M4.0.4",
+          "after": "M4.0-4"
+        },
+        {
+          "id": "deep-M4:M4-C10",
+          "before": "M4.0.5",
+          "after": "M4.0-5"
+        },
+        {
+          "id": "deep-M4:M4-C12",
+          "before": "M4.1.0",
+          "after": "M4.1-0"
+        },
+        {
+          "id": "deep-M4:M4-C13",
+          "before": "M4.1.1",
+          "after": "M4.1-1"
+        },
+        {
+          "id": "deep-M4:M4-C14",
+          "before": "M4.1.2",
+          "after": "M4.1-2"
+        },
+        {
+          "id": "deep-M4:M4-C15",
+          "before": "M4.1.3",
+          "after": "M4.1-3"
+        },
+        {
+          "id": "deep-M4:M4-C16",
+          "before": "M4.1.4",
+          "after": "M4.1-4"
+        },
+        {
+          "id": "deep-M4:M4-C17",
+          "before": "M4.1.5",
+          "after": "M4.1-5"
+        },
+        {
+          "id": "deep-M4:M4-C18",
+          "before": "M4.2.0",
+          "after": "M4.2-0"
+        },
+        {
+          "id": "deep-M4:M4-C19",
+          "before": "M4.2.1",
+          "after": "M4.2-1"
+        },
+        {
+          "id": "deep-M4:M4-C20",
+          "before": "M4.2.2",
+          "after": "M4.2-2"
+        },
+        {
+          "id": "deep-M4:M4-C21",
+          "before": "M4.2.3",
+          "after": "M4.2-3"
+        },
+        {
+          "id": "deep-M4:M4-C22",
+          "before": "M4.2.4",
+          "after": "M4.2-4"
+        },
+        {
+          "id": "deep-M4:M4-C23",
+          "before": "M4.2.5",
+          "after": "M4.2-5"
+        },
+        {
+          "id": "deep-M4:M4-C25",
+          "before": "M4.3.0",
+          "after": "M4.3-0"
+        },
+        {
+          "id": "deep-M4:M4-C26",
+          "before": "M4.3.1",
+          "after": "M4.3-1"
+        },
+        {
+          "id": "deep-M4:M4-C27",
+          "before": "M4.3.2",
+          "after": "M4.3-2"
+        },
+        {
+          "id": "deep-M4:M4-C28",
+          "before": "M4.3.3",
+          "after": "M4.3-3"
+        },
+        {
+          "id": "deep-M4:M4-C29",
+          "before": "M4.3.4",
+          "after": "M4.3-4"
+        },
+        {
+          "id": "deep-M4:M4-C31",
+          "before": "M4.3.5",
+          "after": "M4.3-5"
+        }
+      ],
+      "matrix_source_locks": [
+        {
+          "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+          "before": "a3218a324382eaa924e35f9372fc0fdf2fc23ae5b25f0567ac04aeb6611ef840",
+          "after": "45b3a0152a9f5165376ee3a7d1cdeb45d13c15f556e1b85b502c299a2f3b0325"
+        },
+        {
+          "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+          "before": "6738fa80ec422f60546a18ead99107d4e95fce8238db29f8efcaffad618afaf8",
+          "after": "a24098d211e1a8b30972bb7796073852bdf922de76a05341eb17b7c6230721ba"
+        }
+      ],
+      "preserved": [
+        "row identity/order",
+        "assessments",
+        "implementations",
+        "evidence",
+        "discrepancies",
+        "numerical registry",
+        "all24 numerical source locks",
+        "all3 retained dated replay artifacts",
+        "historical finite proof and lineage bytes"
+      ],
+      "standing": "Matrix source bindings and current metadata only; no new numerical execution, receiving/profile, installed or H acceptance",
+      "independent_source_review_sha256": "dc12dcd5fa86647d979b14612e2bb5201e53c9621d61993266101fe7599422c7"
+    }
+  ]
 }
