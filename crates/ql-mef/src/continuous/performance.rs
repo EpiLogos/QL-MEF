@@ -638,6 +638,30 @@ impl PerformanceOwner {
     pub fn native_catalog(&self) -> &[Value] {
         &self.cells
     }
+    pub fn source_context_basis<'a>(
+        &'a self,
+        current: &'a CoupledBasis,
+    ) -> Result<crate::performance_source_context::NativeSourceContextBasis<'a>, String> {
+        self.validate_current(current)?;
+        Ok(
+            crate::performance_source_context::NativeSourceContextBasis::from_retained_owner(
+                current,
+                self.binding(),
+            ),
+        )
+    }
+    /// Actual receiving/context owner supplies its private native witness under
+    /// the existing lease. JSON evidence never constructs this admission.
+    pub fn admit_source_context(
+        &mut self,
+        current: &CoupledBasis,
+        context: &crate::performance_source_context::NativePerformanceSourceContext,
+    ) -> Result<(), String> {
+        self.validate_current(current)?;
+        context.validate_binding(current, self.binding())?;
+        self.source_assets["source_context"] = context.snapshot()?;
+        Ok(())
+    }
     pub fn source_assets(&self) -> &Value {
         &self.source_assets
     }

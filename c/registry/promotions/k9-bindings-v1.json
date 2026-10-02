@@ -14,7 +14,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1\u2013M3 continuous field, #134 Nara and QL/Factory V\u0101k performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
+      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1–M3 continuous field, #134 Nara and QL/Factory Vāk performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
       "tests": [
         "crates/ql-mef/src/focused_instrument.rs",
         "crates/ql-mef/src/focused_instrument_aw1.rs"
@@ -59,7 +59,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and V\u0101k semantics remain in their existing owners.",
+      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
       "tests": [
         "crates/ql-mef/src/bin/ql-focused-host.rs",
         "crates/ql-mef/src/focused_instrument.rs"
@@ -134,7 +134,7 @@
         "#0-4",
         "#0-5"
       ],
-      "rationale": "QL #207 extends the existing V\u0101k/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or V\u0101k schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+      "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
       "tests": [
         "crates/ql-mef/tests/compressed_geometry_vak.rs",
         "crates/ql-mef/tests/vak_composition.rs"
@@ -153,7 +153,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "L5 Techn\u0113 contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation \u2014 native owners keep their refs and authority. M\u2032 instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
+      "rationale": "L5 Technē contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation — native owners keep their refs and authority. M′ instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
       "tests": [
         "crates/ql-adapters/tests/techne_contract.rs",
         "fixtures/techne/tb0-connective-base-v1.json"
@@ -172,7 +172,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Production Techn\u0113 read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store \u2014 the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
+      "rationale": "Production Technē read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store — the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
       "tests": [
         "crates/ql-adapters/tests/techne_contract.rs",
         "crates/ql-wiki/tests/wiki_refraction.rs"
@@ -191,7 +191,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language \u2014 ql-core types in, JSON disclosures out; no store, no mutation.",
+      "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language — ql-core types in, JSON disclosures out; no store, no mutation.",
       "tests": [
         "crates/ql-cli/tests/vak_composition.rs"
       ],
@@ -209,7 +209,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "JSON command adapter for the production Techn\u0113 reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser \u2014 a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
+      "rationale": "JSON command adapter for the production Technē reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser — a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
       "tests": [
         "crates/ql-cli/tests/techne_reading.rs"
       ],
@@ -223,7 +223,7 @@
         "#3",
         "#4"
       ],
-      "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented \u2014 provider selection stays outside the semantic contract.",
+      "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented — provider selection stays outside the semantic contract.",
       "tests": [
         "crates/ql-mef/tests/nara_dialogue_conformance.rs"
       ],
@@ -267,7 +267,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0\u2013#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
+      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
       "tests": [
         "crates/ql-mef/src/epi_agent.rs"
       ],
@@ -285,7 +285,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0\u2013#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
+      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0–#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
       "tests": [
         "crates/ql-cli/src/epi_agent_command.rs",
         "crates/ql-mef/src/epi_agent.rs"
@@ -1328,6 +1328,191 @@
       "tests": [
         "cpp/tests/audio_device_platform.cpp",
         "cpp/tests/performance_managed_application_order_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained native worker source/currentness owner prepares full original SourceForm, sparse native keys and genuine M1/M2/P binding. It admits private native context witnesses and exact resident replies; UI packets create no body, pitch, clock or receiving authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "crates/ql-mef/tests/performance_source_context.rs",
+        "crates/ql-mef/src/continuous/performance_reply_tests.rs",
+        "cpp/tests/performance_source_reply_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_reply_tests.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual Rust-to-C++ resident reply regressions compare five independently valid source preparations/bodies and detect substitution before resident mutation; execution remains separate.",
+      "tests": [
+        "cpp/tests/performance_source_reply_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_source_keys.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 private source-key policy preserves native sparse collection order and explicitly unavailable keys; original K resolves carriers without synthesizing chromatic closure or physical body modes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "crates/ql-mef/tests/source_key_determination.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_source_context.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 typed original-input and receiving-definition witnesses independently replay exact native World or original Personal/Shared occasion and consent. Every opaque receipt retains private custody; serialized evidence confers no disclosure, playback or provider freshness authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_context.rs",
+        "crates/ql-mef/tests/independent_return_context_admission.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-source-performance-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual retained owner executable emits full canonical source/config/preparation, genuine available pitches and explicit native Reference World context for actual paired consumers; no installed/device or human acceptance claim.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "cpp/tests/performance_source_packet.cpp",
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "crates/ql-mef/tests/performance_source_context.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-performance-context-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual native Return producer supplies three distinct valid controlled protected occasions to detect leaks in existing native Expression/Act/file custody. Controlled inputs confer no real-person consent or astronomy claim.",
+      "tests": [
+        "crates/ql-mef/tests/independent_return_context_admission.rs",
+        "crates/ql-mef/tests/performance_source_context.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Actual retained worker readback/control projects same native catalog, physical positions, actual-rate parameter bounds and full stopped checkpoint. JSON stays outside callback and never replaces source admission.",
+      "tests": [
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "cpp/tests/performance_management_packet.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_source_packet.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Independent full native source/currentness admission before existing packet decoding; wrong prime, stale source, other valid preparation/body and disconnected force refuse genuine operation.",
+      "tests": [
+        "cpp/tests/performance_source_packet.cpp",
+        "cpp/tests/performance_source_reply_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_physical_routes.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Private native M1/M2/body port qualifies genuine same-body nine receiving forces against full native basis/current registry and original preparation, with no frequency-as-mode substitution.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_route_programs.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Nine genuine receiving force laws feed sole numerical body under its sample cursor and bounded force budget; seven centres retain distinct calibrated metric maps including Earth.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "cpp/tests/performance_route_resources.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_route_port.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 borrowed fixed spatial/Newton projection on original prepared body, retaining q/v and sole callback cursor without a second dynamics owner or callback source JSON.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "cpp/tests/physical_force_routes.cpp"
       ]
     }
   ]

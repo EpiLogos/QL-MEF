@@ -50,6 +50,7 @@ pub mod nara;
 pub mod performance_audio;
 pub mod performance_management;
 pub mod performance_receiving_admission;
+pub mod performance_source_context;
 pub mod performance_source_keys;
 pub mod physical_body;
 mod pole_state;
