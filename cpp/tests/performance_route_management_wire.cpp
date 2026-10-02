@@ -145,6 +145,8 @@ static Joined prepare(J *fixture, bool world = false, int enabled_route = -1,
       .003; // admitted bounded linear release,144 samples
   native.engine = std::make_shared<Engine>(
       native.determination, immutable.input().sample_rate, joined, parameters);
+  // This real callback trial requires the original PCM/force capture queue.
+  native.engine->enable_capture(true);
   NativeRouteProgramSet programmes;
   programmes.manifest = binding->manifest();
   programmes.program_count = programmes.manifest.route_count;
