@@ -1,5 +1,28 @@
 # QL-MEF agent entry
 
+## Ta-Onta procedural stage — 2 October 2026
+
+For Paśu/entity-to-form, procedural Expression composition, global/granular
+state, canonical Bimba places or M3 glyph/material folds, execute #296 through:
+`docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-WAYFINDER.md`,
+`docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-CONTRACTS.md` and
+`docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-DISPATCH.md`.
+
+The existing Expressions application is the live stage. Subjects manifest as
+forms, forces, sequences, scenes and whole Expressions. Preserve subject,
+exact locus/prime/depth and occurrence; operate actual authored, procedural
+and effective state through the existing native owners. Generated passages,
+canonical places, human overrides and M3 glyph folds remain one continuing,
+editable composition. The three documents specify concrete contracts and
+seven curated native-owner packets, including independent live acceptance.
+
+This work proceeds alongside #281 and extends the current Ta-Onta SDK/Atlas.
+Pair state/control with #287, glyph/body with #288, context with #289, Studio
+with #290 and retention with #292. Preserve active #281/#291 and native/host
+writer claims; publish paired interfaces and integrate shared files through
+their existing writer. Complete source delivery and actual consumer effects
+are required; provide the owner a running, saved procedural stage.
+
 ## M′ physical music delivery — 2 October 2026
 
 For M1′/M2′ professional audio, Jankó, synth/modulation/cymatics, M3 sounding
