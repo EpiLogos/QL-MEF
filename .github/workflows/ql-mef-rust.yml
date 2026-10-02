@@ -84,6 +84,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           cache-on-failure: true
+      - name: Install native field transport development dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjson-c-dev pkg-config
       - name: Native C/C++ parity, packaging and installed-consumer floor
         run: bash scripts/verify native
 

@@ -859,14 +859,15 @@ impl M2RelationPlanContext {
                 require_ref("context reference", reference)?;
             }
         }
-        for value in [
+        for reference in [
             &self.musical.maqam_ref,
             &self.musical.tuning_ref,
             &self.musical.phrase_or_modulation_ref,
-        ] {
-            if let Some(reference) = value {
-                require_ref("musical route", reference)?;
-            }
+        ]
+        .into_iter()
+        .flatten()
+        {
+            require_ref("musical route", reference)?;
         }
         if let Some(provider) = &self.situated_provider {
             for reference in [

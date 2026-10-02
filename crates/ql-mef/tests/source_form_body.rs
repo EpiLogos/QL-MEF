@@ -304,12 +304,14 @@ fn aperture_clock_and_rna_readings_do_not_rewrite_geometry_or_the_resident_body(
         let update = prepare_source_form_update(
             &body,
             &source,
-            source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
-            recipe.clone(),
-            controls(&source, 2),
-            1,
-            512,
-            FormTransitionPolicy::ProjectCorrespondingNodes,
+            SourceFormUpdateRequest {
+                coordinate: source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
+                recipe: recipe.clone(),
+                controls: controls(&source, 2),
+                expected_body_revision: 1,
+                expected_sample: 512,
+                policy: FormTransitionPolicy::ProjectCorrespondingNodes,
+            },
         )
         .unwrap();
         match update {
@@ -347,12 +349,14 @@ fn source_form_transition_keeps_exact_material_node_correspondence_and_declares_
     let update = prepare_source_form_update(
         &body,
         &source,
-        source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
-        recipe.clone(),
-        controls(&source, 2),
-        1,
-        256,
-        FormTransitionPolicy::ProjectCorrespondingNodes,
+        SourceFormUpdateRequest {
+            coordinate: source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
+            recipe: recipe.clone(),
+            controls: controls(&source, 2),
+            expected_body_revision: 1,
+            expected_sample: 256,
+            policy: FormTransitionPolicy::ProjectCorrespondingNodes,
+        },
     )
     .unwrap();
     match update {
@@ -392,12 +396,14 @@ fn source_form_transition_keeps_exact_material_node_correspondence_and_declares_
         prepare_source_form_update(
             &body,
             &source,
-            source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
-            recipe.clone(),
-            controls(&source, 2),
-            0,
-            256,
-            FormTransitionPolicy::ProjectCorrespondingNodes
+            SourceFormUpdateRequest {
+                coordinate: source_form_coordinate(&source, MFace::Pratibimba).unwrap(),
+                recipe: recipe.clone(),
+                controls: controls(&source, 2),
+                expected_body_revision: 0,
+                expected_sample: 256,
+                policy: FormTransitionPolicy::ProjectCorrespondingNodes,
+            }
         )
         .is_err()
     );

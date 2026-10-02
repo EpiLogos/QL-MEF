@@ -488,11 +488,13 @@ fn real_joined_nodal_quartet_becomes_explicit_constraints_without_extra_voices()
         &body,
         &state,
         &basis,
-        maps.clone(),
-        1,
-        512,
-        2,
-        "controlled:boundary2".into(),
+        NodalBoundaryUpdateRequest {
+            mappings: maps.clone(),
+            expected_body_revision: 1,
+            expected_sample: 512,
+            next_body_revision: 2,
+            next_preparation_ref: "controlled:boundary2".into(),
+        },
     )
     .unwrap();
     assert_eq!(update.source_reading.nodal_quartet.len(), 4);
@@ -513,19 +515,53 @@ fn real_joined_nodal_quartet_becomes_explicit_constraints_without_extra_voices()
     let mut conflict = maps.clone();
     conflict[3].fixed_axes = [false, true, true];
     assert!(
-        prepare_nodal_boundaries(&body, &state, &basis, conflict, 1, 512, 2, "prep".into())
-            .is_err()
+        prepare_nodal_boundaries(
+            &body,
+            &state,
+            &basis,
+            NodalBoundaryUpdateRequest {
+                mappings: conflict,
+                expected_body_revision: 1,
+                expected_sample: 512,
+                next_body_revision: 2,
+                next_preparation_ref: "prep".into(),
+            },
+        )
+        .is_err()
     );
     let mut unknown = maps.clone();
     unknown[3].node_identities = vec![999];
     assert!(
-        prepare_nodal_boundaries(&body, &state, &basis, unknown, 1, 512, 2, "prep".into()).is_err()
+        prepare_nodal_boundaries(
+            &body,
+            &state,
+            &basis,
+            NodalBoundaryUpdateRequest {
+                mappings: unknown,
+                expected_body_revision: 1,
+                expected_sample: 512,
+                next_body_revision: 2,
+                next_preparation_ref: "prep".into(),
+            },
+        )
+        .is_err()
     );
     let mut duplicate = maps;
     duplicate[3].quartet_index = 0;
     assert!(
-        prepare_nodal_boundaries(&body, &state, &basis, duplicate, 1, 512, 2, "prep".into())
-            .is_err()
+        prepare_nodal_boundaries(
+            &body,
+            &state,
+            &basis,
+            NodalBoundaryUpdateRequest {
+                mappings: duplicate,
+                expected_body_revision: 1,
+                expected_sample: 512,
+                next_body_revision: 2,
+                next_preparation_ref: "prep".into(),
+            },
+        )
+        .is_err()
     );
     let mut disconnected = basis.clone();
     disconnected.m2["vimarsha"]["reading"]["nodal_quartet"][0]["m"] = json!(99);
@@ -535,7 +571,18 @@ fn real_joined_nodal_quartet_becomes_explicit_constraints_without_extra_voices()
         fixed_axes: [true, true, true],
     });
     assert!(
-        prepare_nodal_boundaries(&body, &state, &disconnected, maps, 1, 512, 2, "prep".into())
-            .is_err()
+        prepare_nodal_boundaries(
+            &body,
+            &state,
+            &disconnected,
+            NodalBoundaryUpdateRequest {
+                mappings: maps,
+                expected_body_revision: 1,
+                expected_sample: 512,
+                next_body_revision: 2,
+                next_preparation_ref: "prep".into(),
+            },
+        )
+        .is_err()
     );
 }

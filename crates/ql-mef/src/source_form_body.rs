@@ -313,19 +313,33 @@ pub enum SourceFormUpdate {
     Physical {
         recipe: SourceGeometryRecipe,
         source_reading: Value,
-        transition: PreparedFormTransition,
+        transition: Box<PreparedFormTransition>,
     },
+}
+/// A typed control-thread request; native coordinate admission remains in the
+/// source owner, and a serialized envelope never grants source authority.
+#[derive(Debug, Clone)]
+pub struct SourceFormUpdateRequest {
+    pub coordinate: MCoordinate,
+    pub recipe: SourceGeometryRecipe,
+    pub controls: SourceBodyControls,
+    pub expected_body_revision: u64,
+    pub expected_sample: u64,
+    pub policy: FormTransitionPolicy,
 }
 pub fn prepare_source_form_update(
     current: &PreparedSourceFormBody,
     state: &M3State,
-    coordinate: MCoordinate,
-    recipe: SourceGeometryRecipe,
-    controls: SourceBodyControls,
-    expected_body_revision: u64,
-    expected_sample: u64,
-    policy: FormTransitionPolicy,
+    update: SourceFormUpdateRequest,
 ) -> Result<SourceFormUpdate, String> {
+    let SourceFormUpdateRequest {
+        coordinate,
+        recipe,
+        controls,
+        expected_body_revision,
+        expected_sample,
+        policy,
+    } = update;
     if expected_body_revision != current.body.request().body_revision
         || controls.expected_m3_generation != state.generation()
         || state.generation() < current.body.source_generation()
@@ -371,7 +385,7 @@ pub fn prepare_source_form_update(
     Ok(SourceFormUpdate::Physical {
         recipe,
         source_reading: state.snapshot(),
-        transition,
+        transition: Box::new(transition),
     })
 }
 /// Explicit source coordinate selection with separately preserved face. This

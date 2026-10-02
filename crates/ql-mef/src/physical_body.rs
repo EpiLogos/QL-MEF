@@ -553,16 +553,28 @@ pub struct PreparedNodalBoundaryUpdate {
 /// Nodal m/n values retain their source standing; they never become Hertz or
 /// an invented mesh coordinate. A provider binds each boundary to exact node
 /// IDs and physical axes, after which the native body applies constraints.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NodalBoundaryUpdateRequest {
+    pub mappings: [NodalBoundaryMapping; 4],
+    pub expected_body_revision: u64,
+    pub expected_sample: u64,
+    pub next_body_revision: u64,
+    pub next_preparation_ref: String,
+}
 pub fn prepare_nodal_boundaries(
     current: &PreparedSourceBody,
     state: &M3State,
     basis: &crate::continuous::coupled::CoupledBasis,
-    mappings: [NodalBoundaryMapping; 4],
-    expected_body_revision: u64,
-    expected_sample: u64,
-    next_body_revision: u64,
-    next_preparation_ref: String,
+    update: NodalBoundaryUpdateRequest,
 ) -> Result<PreparedNodalBoundaryUpdate, String> {
+    let NodalBoundaryUpdateRequest {
+        mappings,
+        expected_body_revision,
+        expected_sample,
+        next_body_revision,
+        next_preparation_ref,
+    } = update;
     let replay = basis.input.compose()?;
     if replay.m1 != basis.m1
         || replay.m2 != basis.m2

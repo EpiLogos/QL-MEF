@@ -571,6 +571,183 @@
         "crates/ql-cli/tests/scene_native.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/music_determination.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1"
+      ],
+      "rationale": "QL #281: #285 native M1 musical carrier and exact descendant/lens/CF rational determination. Coupled-source validation retains the existing Ananda carrier and M2 target, including source-defined branches and comma witnesses; no oscillator clock, coordinate registry or physical eigenfrequency is invented.",
+      "tests": [
+        "crates/ql-mef/tests/music_determination.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m2_relation_plan.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-0",
+        "#2-1",
+        "#2-2",
+        "#2-3",
+        "#2-4",
+        "#2-5"
+      ],
+      "rationale": "QL #281: #286 six-family M2 route plan over the admitted Bimba projection and existing Coupled producer. Actual MEF inner-octet/boundary roles, Vimarsha and unequal situated-solar provenance remain inspectable. Incomplete authentic maqam intervals, contradictions and missing source are explicit; no live Bimba mutation or replacement registry is granted.",
+      "tests": [
+        "crates/ql-mef/tests/m2_relation_plan.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/physical_body.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: #288 explicit metric material and genuine physical-body preparation with source-bound M3 identity/generation, declared physical units, mass/stiffness/tension and boundaries. M2 nodal descriptors retain source standing and physical interpretation is declared. Native Rust prepares the bounded model for C++; excitation Hertz is distinct from physical eigenfrequency.",
+      "tests": [
+        "crates/ql-mef/tests/physical_body.rs",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/source_form_body.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#3-2"
+      ],
+      "rationale": "QL #281: #288 actual native M3 three-site/form/pose producer to an explicitly declared elastic-frame/tension-network physical preparation. All source form, line-change and pose identities remain distinct; reading-only apertures preserve geometry. A glyph label does not claim a shell/cloth solver.",
+      "tests": [
+        "crates/ql-mef/tests/source_form_body.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/performance_audio.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: #287 native producer joining M1 carrier, actual M2 reading and independently qualified M3 body. The complete Coupled relation basis and genuine body mode are validated before preparing C++ musical bindings. The audio renderer and sample/device clock remain existing native owners.",
+      "tests": [
+        "crates/ql-mef/tests/performance_audio.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_body.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Genuine mass/stiffness body with analytic per-sample state and pickup. Preparation occurs off callback; the same q/v supplies audible and visible displacement. Complete checkpoint restore is source/eigenbasis/currentness/cursor qualified.",
+      "tests": [
+        "cpp/tests/physical_body.cpp",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_audio.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_physical.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Bridge from admitted musical excitation to the existing genuine physical runtime. Body identity and sample-rate compatibility are independently validated; supplied modal frequencies are not rewritten into physical cause.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_body_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded JSON transport for complete Rust-prepared body identity, coordinate face, modal matrices and physical units. The current native C registry validates exact preparation; transport creates no coordinate owner.",
+      "tests": [
+        "cpp/tests/physical_body_wire.cpp",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_checkpoint_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded complete physical checkpoint JSON with source/eigenbasis/q-v/cursor and physical units for stopped/acknowledged custody. No score store, clock or source authority is created.",
+      "tests": [
+        "cpp/tests/physical_body_wire.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_packet.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded JSON admission of the real Rust musical producer and independently admitted current M1/body identities for C++ consumption. Transport creates no musical law, registry or device clock.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/audio_device_macos.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Native AUHAL device boundary for explicit requested device/rate/quantum, readback, callback ownership and stopped acknowledgement. No implicit resampler; source declaration is distinct from actual hardware/capture verification.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/src/audio_device_macos.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: #287 AUHAL implementation preserving actual callback custody and failed-stop ownership. Device effects require actual compilation/installed verification; source inventory alone grants no device result.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
     }
   ]
 }
