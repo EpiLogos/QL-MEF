@@ -145,6 +145,15 @@ fn preparation() -> PerformancePreparationInput {
         relation_context: context,
         source_face: MFace::Pratibimba,
         physical_face: MFace::Pratibimba,
+        excitation: ExcitationPolicy {
+            policy_ref: "proposal:D30/native-root-and-octet/v1".into(),
+            standing: "agent-proposed-implementation-policy".into(),
+            scaling: OctetScaling::NoteRelativeToReference,
+            reference_hertz: 220.0,
+            root_linear: 0.5,
+            octet_linear: 0.5,
+            weights: [0.125; 8],
+        },
         relation: RelationSelection {
             family: RelationFamily::C,
             pair_index: 1,
@@ -372,4 +381,69 @@ fn retuning_body_modes_cross_event_wrong_rast_and_stale_physical_sources_refuse(
     let mut detached = preparation();
     detached.physical.geometry.nodes[0].constituent = "#3-0".into();
     assert!(prepare_native_performance(detached).is_err());
+}
+#[test]
+fn actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy() {
+    let mut input = preparation();
+    input.fundamental_scaling = FundamentalScaling::AbsoluteReference;
+    let baseline = prepare_native_performance(input).unwrap();
+    let mut input = preparation();
+    input.fundamental_scaling = FundamentalScaling::AbsoluteReference;
+    input.coupled.harmonic_source = HarmonicSource::CanonicalBasis { index: 0 };
+    let changed = prepare_native_performance(input).unwrap();
+    assert_ne!(
+        baseline.determination()["audio_octet_hz"],
+        changed.determination()["audio_octet_hz"]
+    );
+    assert_eq!(
+        baseline.determination()["nodal_quartet"],
+        changed.determination()["nodal_quartet"]
+    );
+    assert_eq!(
+        baseline.determination()["excitation"],
+        changed.determination()["excitation"]
+    );
+    assert_eq!(
+        serde_json::to_value(baseline.physical_body()).unwrap(),
+        serde_json::to_value(changed.physical_body()).unwrap()
+    );
+    for (a, b) in baseline.notes().iter().zip(changed.notes()) {
+        assert_eq!(a, b); // K root/reference/touch/source/phase all fixed.
+    }
+    // Explicit opt-in finite native producer fixture for the paired C++ trial.
+    // The caller owns destination custody. This is test evidence, not a store.
+    if let Some(destination) = std::env::var_os("QL_PERFORMANCE_PACKET_OUTPUT") {
+        let destination = std::path::PathBuf::from(destination);
+        assert!(
+            destination.is_dir(),
+            "caller must admit an existing output directory"
+        );
+        for (name, binding) in [("baseline", &baseline), ("changed", &changed)] {
+            std::fs::write(
+                destination.join(format!("{name}.packet.json")),
+                serde_json::to_vec(binding).unwrap(),
+            )
+            .unwrap();
+            std::fs::write(
+                destination.join(format!("{name}.basis.json")),
+                serde_json::to_vec(binding.native_basis()).unwrap(),
+            )
+            .unwrap();
+        }
+    }
+}
+#[test]
+fn d30_excitation_policy_refuses_invalid_units_weights_and_unbounded_gains() {
+    let mut input = preparation();
+    input.excitation.reference_hertz = f64::NAN;
+    assert!(prepare_native_performance(input).is_err());
+    let mut input = preparation();
+    input.excitation.octet_linear = 0.75;
+    assert!(prepare_native_performance(input).is_err());
+    let mut input = preparation();
+    input.excitation.weights[0] = 0.5;
+    assert!(prepare_native_performance(input).is_err());
+    let mut input = preparation();
+    input.excitation.policy_ref.clear();
+    assert!(prepare_native_performance(input).is_err());
 }

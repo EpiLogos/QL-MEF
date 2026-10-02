@@ -60,6 +60,38 @@ fn full_native_source_and_exact_rast_properties_survive_the_producer() {
     let prepared = M2RelationPlan::compile(&request(), context(), source).unwrap();
     assert_eq!(prepared.plan.schema, M2_RELATION_PLAN_SCHEMA);
     assert_eq!(prepared.plan.owner, M2_RELATION_PLAN_OWNER);
+    for (table, index) in [("mantra", 50), ("planet", 7)] {
+        let receipt = prepared
+            .plan
+            .source_receipts
+            .retained_descriptors
+            .iter()
+            .find(|d| d.table == table && d.index == index)
+            .unwrap();
+        assert!(receipt.exact_coordinate.is_none());
+        assert_eq!(
+            receipt.structural_scope,
+            m2::catalogue().table(table).unwrap().scope()
+        );
+        assert_eq!(receipt.retained_sources, m2::catalogue().sources());
+        assert_eq!(
+            receipt.retained_values_sha256,
+            digest(
+                &serde_json::to_string(m2::catalogue().table(table).unwrap().row(index).unwrap())
+                    .unwrap()
+            )
+        );
+        assert_eq!(
+            prepared
+                .frame
+                .selected_descriptors
+                .iter()
+                .find(|d| d.table == table && d.index == index)
+                .unwrap()
+                .exact_coordinate,
+            None
+        );
+    }
     assert_eq!(
         prepared
             .frame
@@ -404,6 +436,19 @@ fn exact_lost_edge_invalidates_consuming_plan_while_unrelated_source_change_does
         .to_owned();
     let independent = refreshed(source_json(), Some(&unrelated), None);
     plan.source_receipts.validate_against(&independent).unwrap();
+    let mut tampered = plan.source_receipts.clone();
+    tampered
+        .retained_descriptors
+        .iter_mut()
+        .find(|d| d.table == "planet" && d.index == 7)
+        .unwrap()
+        .exact_coordinate = Some("#2-5-0/1".into());
+    assert!(
+        tampered
+            .validate_against(source_field())
+            .unwrap_err()
+            .contains("retained descriptor")
+    );
 }
 
 #[test]

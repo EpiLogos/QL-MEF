@@ -19,3 +19,10 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
   [[ -x "$binary" ]] || { printf 'Missing paired native producer binary: %s\n' "$binary" >&2; exit 1; }
   QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
 done
+
+# Keep the real Rust producer and the C++ consumer in one executed passage.
+# These are finite component fixtures; they are not installed host authority.
+TASK_PACKET_OUTPUT="$TASK_OUTPUT/performance-packets"
+mkdir -p "$TASK_PACKET_OUTPUT"
+QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact
+"$TASK_OUTPUT/native/native_performance_packet-test" "$TASK_PACKET_OUTPUT"

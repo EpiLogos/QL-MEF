@@ -748,6 +748,81 @@
         "cpp/tests/performance_audio.cpp"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_contact.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "rationale": "QL #281: Explicit metric gravity/contact preparation consumed as dated Newton force on the same body. Particle/collider/route/dedup/event/source/face/eigenbasis/policy and physical units are preserved. Immutable preparation plus native-admitted cursor avoids live-body control reads; deterministic analytic policy is explicit, no second clock or solver.",
+      "tests": [
+        "cpp/tests/physical_contact.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_receiving.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281: Declared point-source receiving transport of the actual same-body pickup, inverse-distance gain/directivity/fractional propagation delay with retained history and exact checkpoint. Receiver/source metric motion is distinct from camera presentation; this is not a radiation-pressure solver or new private receiver definition.",
+      "tests": [
+        "cpp/tests/physical_receiving.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_snapshot.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded trivially-copyable observation published by the audio callback after the sole physical advance or under stopped/acknowledged custody. Complete source/face/preparation/state/cursor and actual local-metre node positions cross the existing readback queue; the UI does not read mutable q/v or integrate another body.",
+      "tests": [
+        "cpp/tests/physical_snapshot.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_transition.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Off-thread source/material/form preparation and exact-sample callback commit on the same ringing body. Precomputed exact-node mass projection, explicit reset policy, reported external work and deferred retired-allocation custody prevent silent reset or callback allocation/free. Stale source/body/face/eigenbasis/cursor and bounds refuse atomically.",
+      "tests": [
+        "cpp/tests/physical_transition.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_checkpoint.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Existing native audio/physical owners checkpoint and restore together under actual stopped exclusive custody. The production heap factory avoids multi-MiB stack temporaries; both complete pending performance state and actual P q/v validate before either commits. No second score/file store.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_checkpoint_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Complete bounded versioned JSON transport of paired native A/P continuation, including source schedule, queued events, oscillator/envelope/touch/sustain/steal tails, physical eigenbasis/q-v/units/cursor. Transport creates no clock/store/authority and corrupt/source-disconnected payloads refuse before resident mutation.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
     }
   ]
 }

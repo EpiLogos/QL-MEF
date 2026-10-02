@@ -88,6 +88,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjson-c-dev pkg-config
       - name: Native C/C++ parity, packaging and installed-consumer floor
         run: bash scripts/verify native
+      - name: Retain physical-musical component evidence from the actual source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: physical-musical-components-${{ github.sha }}
+          path: target/physical-musical/
+          if-no-files-found: ignore
+          retention-days: 14
 
   invariants:
     name: repository-invariants

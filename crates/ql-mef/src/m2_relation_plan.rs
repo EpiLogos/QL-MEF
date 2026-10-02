@@ -373,6 +373,41 @@ pub struct M2RelationSetReceipt {
     pub kind: String,
     pub relations: Vec<M2SourceRelation>,
 }
+/// A retained descriptor is not always bound to a native descendant. Preserve
+/// the real row, source locks and explicit None without inventing a coordinate.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct M2DescriptorReceipt {
+    pub table: String,
+    pub index: usize,
+    pub source_symbol: String,
+    pub structural_scope: String,
+    pub coordinate_binding_basis: String,
+    pub exact_coordinate: Option<String>,
+    pub retained_values_sha256: String,
+    pub retained_sources: Vec<m2::SourceLock>,
+}
+impl M2DescriptorReceipt {
+    fn current(table: &str, index: usize) -> Result<Self, String> {
+        let catalogue = m2::catalogue();
+        let descriptor = catalogue.table(table)?;
+        let row = descriptor.row(index)?;
+        Ok(Self {
+            table: table.into(),
+            index,
+            source_symbol: descriptor.source_symbol().into(),
+            structural_scope: descriptor.scope().into(),
+            coordinate_binding_basis: m2::binding_basis(table).into(),
+            exact_coordinate: descriptor.binding(index).map(str::to_owned),
+            retained_values_sha256: hash_bytes(
+                serde_json::to_string(row)
+                    .map_err(|e| e.to_string())?
+                    .as_bytes(),
+            ),
+            retained_sources: catalogue.sources().to_vec(),
+        })
+    }
+}
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct M2SourceReceipts {
@@ -383,6 +418,7 @@ pub struct M2SourceReceipts {
     pub operations: Vec<M2PrimeOperation>,
     pub properties: Vec<M2PropertyReceipt>,
     pub relation_sets: Vec<M2RelationSetReceipt>,
+    pub retained_descriptors: Vec<M2DescriptorReceipt>,
 }
 impl M2SourceReceipts {
     fn new(field: &M2SourceField) -> Self {
@@ -424,6 +460,36 @@ impl M2SourceReceipts {
         {
             self.retain_property(field, coordinate, key)?;
         }
+        Ok(())
+    }
+    fn retain_descriptor(
+        &mut self,
+        field: &M2SourceField,
+        selection: &crate::m2_engine::Selection,
+        phase: M2MefPhase,
+    ) -> Result<(), String> {
+        if self
+            .retained_descriptors
+            .iter()
+            .any(|d| d.table == selection.table && d.index == selection.index)
+        {
+            return Ok(());
+        }
+        if self.retained_descriptors.len() >= MAX_ROUTES {
+            return Err("retained descriptor receipt budget exceeded".into());
+        }
+        let receipt = M2DescriptorReceipt::current(&selection.table, selection.index)?;
+        // The table scope is a real source operation. An unbound retained row
+        // carries that scope plus None; the scope never impersonates its child.
+        self.retain_node(
+            field,
+            receipt
+                .exact_coordinate
+                .as_deref()
+                .unwrap_or(&receipt.structural_scope),
+            phase,
+        )?;
+        self.retained_descriptors.push(receipt);
         Ok(())
     }
     fn retain_property(
@@ -488,6 +554,7 @@ impl M2SourceReceipts {
     /// relation sets govern the selected plan's continued validity.
     pub fn validate_against(&self, field: &M2SourceField) -> Result<(), String> {
         if self.operations.len() > MAX_PLAN_NODES
+            || self.retained_descriptors.len() > MAX_ROUTES
             || self.properties.len() > MAX_PLAN_CLAIMS
             || self
                 .relation_sets
@@ -497,6 +564,14 @@ impl M2SourceReceipts {
                 > MAX_PLAN_RELATIONS
         {
             return Err("unbounded plan receipts".into());
+        }
+        let mut descriptors = BTreeSet::new();
+        for receipt in &self.retained_descriptors {
+            if !descriptors.insert((&receipt.table, receipt.index))
+                || receipt != &M2DescriptorReceipt::current(&receipt.table, receipt.index)?
+            {
+                return Err("consumed retained descriptor row/binding/source changed".into());
+            }
         }
         for op in &self.operations {
             if field.node(&op.source_coordinate).map(|n| n.id) != Some(op.native_id)
@@ -650,7 +725,8 @@ fn planetary_hour(
     }
     let mut planets = Vec::new();
     for name in &order {
-        let matches: Vec<_> = (1..8)
+        let table = m2::catalogue().table("planet")?;
+        let matches: Vec<_> = (0..table.rows().len())
             .filter_map(|i| {
                 let coordinate = m2::catalogue().table("planet").ok()?.binding(i)?.to_owned();
                 (field
@@ -1092,13 +1168,26 @@ impl M2RelationPlan {
             }
             receipts.retain_node(field, "#2-5", phase)?;
             receipts.retain_node(field, "#2-5-0/1-0", phase)?;
-            for index in 1..8usize {
-                let coordinate = m2::catalogue()
-                    .table("planet")?
-                    .binding(index)
-                    .ok_or("unbound classical planet")?;
-                receipts.retain_node(field, coordinate, phase)?;
-                receipts.retain_edges(field, coordinate, "PLANETARY_RESONANCE")?;
+            let cycle = field
+                .property("#2-5", "c_2_chaldean_order_verified")
+                .and_then(Value::as_str)
+                .ok_or("source Chaldean order unavailable")?;
+            let planet_table = m2::catalogue().table("planet")?;
+            for name in cycle.split('→').map(str::trim) {
+                let matches: Vec<_> = (0..planet_table.rows().len())
+                    .filter_map(|index| planet_table.binding(index))
+                    .filter(|coordinate| {
+                        field
+                            .property(coordinate, "c_1_name")
+                            .and_then(Value::as_str)
+                            == Some(name)
+                    })
+                    .collect();
+                if matches.len() != 1 {
+                    return Err("Chaldean planet source identity unavailable".into());
+                }
+                receipts.retain_node(field, matches[0], phase)?;
+                receipts.retain_edges(field, matches[0], "PLANETARY_RESONANCE")?;
             }
         }
         for coordinate in [
@@ -1111,11 +1200,7 @@ impl M2RelationPlan {
             receipts.retain_node(field, coordinate, phase)?;
         }
         for selection in &request.selections {
-            let coordinate = m2::catalogue()
-                .table(&selection.table)?
-                .binding(selection.index)
-                .ok_or("selected descriptor has no native descendant")?;
-            receipts.retain_node(field, coordinate, phase)?;
+            receipts.retain_descriptor(field, selection, phase)?;
         }
         for coordinate in &context.source_coordinates {
             receipts.retain_node(field, coordinate, phase)?;
@@ -1182,6 +1267,9 @@ impl M2RelationPlan {
             if !found {
                 return Err("name/mantra route has no existing native descriptor consumer".into());
             }
+        }
+        for selection in &prepared.selections {
+            receipts.retain_descriptor(field, selection, phase)?;
         }
         apply_material(&mut prepared, &context.material_writes)?;
         let frame = prepared.execute()?;

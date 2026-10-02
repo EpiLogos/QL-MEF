@@ -19,6 +19,24 @@ use std::collections::BTreeSet;
 pub const PREPARATION: &str = "ql.performance-preparation/v1";
 pub const CALLBACK: &str = "ql.performance-audio/v1";
 pub const MAX_TOUCHES: usize = 96;
+#[derive(Debug, Clone, Copy)]
+pub enum OctetScaling {
+    /// Each voice uses M2 bus Hz times its K target / declared reference Hz.
+    NoteRelativeToReference,
+    /// Each voice uses the exact actual M2 bus Hz without transposition.
+    AbsoluteBus,
+}
+#[derive(Debug, Clone)]
+pub struct ExcitationPolicy {
+    pub policy_ref: String,
+    /// Explicit D30 implementation standing, not an authored twelve-to-eight map.
+    pub standing: String,
+    pub scaling: OctetScaling,
+    pub reference_hertz: f64,
+    pub root_linear: f64,
+    pub octet_linear: f64,
+    pub weights: [f64; 8],
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FundamentalScaling {
     /// A declared reference root, with no implicit harmonic multiplication.
@@ -39,6 +57,7 @@ pub struct PerformancePreparationInput {
     pub relation_context: M2RelationPlanContext,
     pub source_face: MFace,
     pub physical_face: MFace,
+    pub excitation: ExcitationPolicy,
     pub relation: RelationSelection,
     pub fundamental: Fundamental,
     pub fundamental_scaling: FundamentalScaling,
@@ -131,6 +150,24 @@ pub fn prepare_native_performance(
 ) -> Result<PreparedPerformanceBinding, String> {
     bounded_ref(&input.instance_ref)?;
     bounded_ref(&input.receipt_ref)?;
+    bounded_ref(&input.excitation.policy_ref)?;
+    bounded_ref(&input.excitation.standing)?;
+    let p = &input.excitation;
+    if !p.reference_hertz.is_finite()
+        || p.reference_hertz < 0.001
+        || p.reference_hertz > f64::from(input.physical.sample_rate) * 0.45
+        || !p.root_linear.is_finite()
+        || !p.octet_linear.is_finite()
+        || p.root_linear < 0.0
+        || p.octet_linear < 0.0
+        || p.root_linear + p.octet_linear > 1.0
+        || p.weights
+            .iter()
+            .any(|w| !w.is_finite() || *w < 0.0 || *w > 1.0)
+        || (p.weights.iter().sum::<f64>() - 1.0).abs() > 1e-12
+    {
+        return Err("invalid declared D30 excitation policy".into());
+    }
     if input.touches.is_empty() || input.touches.len() > MAX_TOUCHES {
         return Err("performance touch preparation budget exceeded".into());
     }
@@ -256,7 +293,11 @@ pub fn prepare_native_performance(
         "nodal_quartet":vimarsha.reading.nodal_quartet.map(|n|json!({"position":n.ql_position,
             "face":u8::from(n.helix==crate::m2_vimarsha::VimarshaHelix::Pratibimba),"m":n.m,"n":n.n})),
         "body_preparation_ref":body.request().preparation_ref,"body_state_ref":body.request().state_ref,
-        "body_revision":body.request().body_revision.to_string(),"tuning_available":true});
+        "body_revision":body.request().body_revision.to_string(),"tuning_available":true,
+        "excitation":{"policy_ref":input.excitation.policy_ref,"standing":input.excitation.standing,
+            "scaling":match input.excitation.scaling{OctetScaling::NoteRelativeToReference=>0,OctetScaling::AbsoluteBus=>1},
+            "reference_hertz":input.excitation.reference_hertz,"root_linear":input.excitation.root_linear,
+            "octet_linear":input.excitation.octet_linear,"weights":input.excitation.weights}});
     let mut notes = Vec::with_capacity(input.touches.len());
     let mut tokens = BTreeSet::new();
     let mut members = std::collections::BTreeMap::new();
@@ -294,6 +335,8 @@ pub fn prepare_native_performance(
         "excitation_phase_source":match input.source_face{MFace::Bimba=>"m1.carrier.quadrature",MFace::Pratibimba=>"m1.carrier.opposite_quadrature"},
         "audio_octet_source":"actual-m2.vimarsha.reading.audio_octet_hz","nodal_source":"actual-m2.vimarsha.reading.nodal_quartet",
         "key_targets_source":"native-K.key_target; same M1 excitation; distinct from audio_octet indexing",
+        "excitation_policy":packet["excitation"],"excitation_units":"Hz; dimensionless gains; resulting scalar force Newtons",
+        "octet_band_policy":"suppress components below 0.001 Hz or above 0.45 sample rate; retain bounded phase and report suppression",
         "physical_spectrum":"prepared metric mass/stiffness; never retuned to played note",
         "material_interpretation":"explicit P material provider; legacy modal writes require a separate physical interpretation"});
     let out = PreparedPerformanceBinding {
