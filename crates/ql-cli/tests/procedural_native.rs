@@ -264,7 +264,7 @@ fn retained_retry_cannot_change_original_selector_or_write_another_existing_targ
         m_tree::native_current_m_registry(),
         &p,
         "expression:acceptance",
-        &[a.clone()],
+        std::slice::from_ref(&a),
         None,
     )
     .unwrap();

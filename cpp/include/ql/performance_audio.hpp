@@ -1281,7 +1281,6 @@ public:
   bool device_callbacks_running() const noexcept {
     return device_running_.load(std::memory_order_acquire);
   }
-  std::uint32_t sample_rate() const noexcept { return rate_; }
   double parameter_smoothing_time_constant_samples() const noexcept {
     return parameter_smoothing_seconds * rate_;
   }
