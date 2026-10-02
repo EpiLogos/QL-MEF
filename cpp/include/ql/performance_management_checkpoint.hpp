@@ -60,6 +60,12 @@ public:
         return &input;
     return nullptr;
   }
+  std::uint64_t last_touch_token() const noexcept {
+    return state_.last_touch_token;
+  }
+  std::uint64_t last_member_token() const noexcept {
+    return state_.last_member_token;
+  }
   auto &inputs() noexcept { return state_.inputs; }
   const auto &inputs() const noexcept { return state_.inputs; }
   bool bind(const Ref &input_ref, const NoteTarget &target,

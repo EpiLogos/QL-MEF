@@ -30,6 +30,36 @@ int main() {
       management_transport::Control owner;
       auto reply = owner.execute(json_object_array_get_idx(cases, i));
       assert(packet::boolean(packet::field(reply.get(), "accepted")));
+      auto reading = packet::field(reply.get(), "reading");
+      const auto rate = packet::integer(
+          packet::field(packet::field(reading, "physical"), "sample_rate"));
+      auto descriptors = packet::field(reading, "parameters");
+      packet::array(descriptors, 7);
+      bool cutoff = false;
+      for (std::size_t j = 0; j < 7; ++j) {
+        auto descriptor = json_object_array_get_idx(descriptors, j);
+        assert(checkpoint_transport::decimal(packet::field(
+                   descriptor, "sample_rate")) == std::uint64_t(rate));
+        assert(packet::number(packet::field(descriptor, "smoothing_seconds")) ==
+               parameter_smoothing_seconds);
+        const auto time_samples = packet::number(
+            packet::field(descriptor, "smoothing_time_constant_samples"));
+        assert(time_samples == parameter_smoothing_seconds * rate);
+        assert(checkpoint_transport::decimal(
+                   packet::field(descriptor, "smoothing_samples")) ==
+               std::uint64_t(std::ceil(time_samples)));
+        assert(packet::number(
+                   packet::field(descriptor, "smoothing_coefficient")) ==
+               -std::expm1(-1.0 / time_samples));
+        if (packet::string(packet::field(descriptor, "target_ref")) ==
+            "ql:performance/parameter/cutoff-hertz") {
+          cutoff = true;
+          assert(packet::number(packet::field(descriptor, "maximum")) ==
+                 .45 * rate);
+        }
+      }
+      assert(cutoff);
+
       // This is the production worker management implementation and actual
       // stopped P/Engine snapshot, with no fabricated body/output receipt.
       checkpoint_transport::append(replies.get(), reply.release());

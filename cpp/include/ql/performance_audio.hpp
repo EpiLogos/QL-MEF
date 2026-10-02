@@ -25,6 +25,7 @@ inline constexpr std::size_t max_frames = 512, max_voices = 24,
                              max_touches = 96, max_tails = 16,
                              queue_capacity = 256, capture_capacity = 16;
 inline constexpr double tau = 6.283185307179586476925286766559;
+inline constexpr double parameter_smoothing_seconds = 0.005;
 using Ref = std::array<char, 256>;
 inline Ref reference(const char *value) {
   if (!value || !*value || std::strlen(value) >= 256)
@@ -1280,6 +1281,14 @@ public:
   bool device_callbacks_running() const noexcept {
     return device_running_.load(std::memory_order_acquire);
   }
+  std::uint32_t sample_rate() const noexcept { return rate_; }
+  double parameter_smoothing_time_constant_samples() const noexcept {
+    return parameter_smoothing_seconds * rate_;
+  }
+  double parameter_smoothing_coefficient() const noexcept {
+    return -std::expm1(-1.0 / parameter_smoothing_time_constant_samples());
+  }
+
   // Out-of-band panic cancels previously queued attacks while preserving
   // prepared source changes and physical tails. A subsequent human attack
   // gets a higher sequence and can play normally.
@@ -1864,7 +1873,7 @@ public:
     capture.body_revision = determination_.body_revision;
     capture.frames = std::uint32_t(frames);
     std::array<double, max_frames> body_gain{}, monitor_gain{}, force_scale{};
-    const double smoothing = -std::expm1(-1.0 / (0.005 * rate_));
+    const double smoothing = parameter_smoothing_coefficient();
     const bool releases_admitted = releases_.drain_snapshot(
         [&](const ReleaseOperation &arriving) noexcept {
           auto slot =

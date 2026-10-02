@@ -30,9 +30,7 @@ inline Json physical(const ql::PhysicalSnapshot &p) {
     wire::append(ids.get(), json_object_new_string(
                                 std::to_string(p.node_identity[i]).c_str()));
     auto xyz = wire::array();
-    for (double v :
-         {p.visible_positions_metres[i].x, p.visible_positions_metres[i].y,
-          p.visible_positions_metres[i].z})
+    for (double v : p.visible_positions_metres[i])
       wire::append(xyz.get(), json_object_new_double(v));
     wire::append(positions.get(), xyz.release());
   }
@@ -206,7 +204,7 @@ inline Json parameters(const PerformanceManagement &owner, const Readback &r) {
       {Parameter::ReleaseSeconds, "release-seconds", "Release", "excitation",
        "s", 0.001, 30},
       {Parameter::CutoffHertz, "cutoff-hertz", "Excitation low pass",
-       "excitation", "Hz", 1, 21600},
+       "excitation", "Hz", 1, .45 * owner.native().engine->sample_rate()},
       {Parameter::MasterLinear, "master-linear", "Master gain", "mixer",
        "linear", 0, 1},
       {Parameter::BodyLinear, "body-linear", "Body pickup gain", "mixer",
@@ -232,7 +230,18 @@ inline Json parameters(const PerformanceManagement &owner, const Readback &r) {
     wire::real(p.get(), "baseline", owner.baseline_parameter(d.id));
     wire::real(p.get(), "effective",
                PerformanceManagement::read_parameter(r.effective, d.id));
-    wire::u64(p.get(), "smoothing_samples", 240);
+    const auto &engine = *owner.native().engine;
+    wire::u64(p.get(), "sample_rate", engine.sample_rate());
+    wire::u64(p.get(), "smoothing_samples",
+              std::uint64_t(std::ceil(
+                  engine.parameter_smoothing_time_constant_samples())));
+    wire::real(p.get(), "smoothing_seconds", parameter_smoothing_seconds);
+    wire::real(p.get(), "smoothing_time_constant_samples",
+               engine.parameter_smoothing_time_constant_samples());
+    wire::real(p.get(), "smoothing_coefficient",
+               engine.parameter_smoothing_coefficient());
+    wire::text(p.get(), "smoothing_algorithm",
+               "one-pole-exponential-every-native-sample");
     null(p.get(), "route_ref");
     auto caps = wire::array();
     for (const char *cap : {"set", "clear"})
@@ -620,7 +629,7 @@ public:
         const Ref original_input =
             (!input_ref || json_object_is_type(input_ref, json_type_null))
                 ? Ref{}
-                : reference(packet::string(input_ref));
+                : reference(packet::string(input_ref).c_str());
         const auto r = owner_->enqueue_score_input(operation, original_input);
         accepted = r == Result::Accepted;
         reason = result(r);
