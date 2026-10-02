@@ -199,8 +199,10 @@ fn native_rational_path_does_not_temper_or_fold_twelve_fifths() {
 }
 #[test]
 fn actual_diatonic_target_operator_stays_separate_from_octet_and_return() {
+    let mut external = provenance();
+    external.standing = TuningStanding::External;
     let policy = TuningPolicy::EqualTemperament12 {
-        provenance: provenance(),
+        provenance: external,
     };
     let mut targets =
         vimarsha_targets(determination(MusicalBasis::Chromatic), root(), policy).unwrap();

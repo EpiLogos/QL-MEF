@@ -15,6 +15,7 @@
 #include <ql/m_tree_live.h>
 #include <ql/physical_snapshot.hpp>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 
 namespace ql::performance {
@@ -173,6 +174,17 @@ struct VoiceReadback {
   std::array<double, 8> octet_effective_hertz{}, octet_target_hertz{};
   std::uint8_t suppressed_octet_components = 0;
 };
+enum class RecordingFailure : std::uint8_t {
+  None,
+  ApplicationQueueOverflow,
+  PhysicalCommitFailure,
+  ApplicationScratchOverflow
+};
+struct RecordingStatus {
+  RecordingFailure failure = RecordingFailure::None;
+  std::uint64_t dropped_applications = 0, first_failed_sequence = 0,
+                first_failed_sample = 0;
+};
 struct Readback {
   Identity identity{};
   Determination determination{};
@@ -183,18 +195,34 @@ struct Readback {
                 clipping_samples = 0, force_limited_samples = 0;
   std::uint32_t active_voices = 0, active_touches = 0;
   double peak = 0, rms = 0;
+  std::uint64_t force_zero_samples = 0, emergency_requested = 0,
+                emergency_observed = 0, emergency_applied_sample = 0;
+  std::uint32_t active_tails = 0;
+  std::array<std::uint64_t, max_touches> held_touch_tokens{};
   Parameters source{}, effective{};
   std::array<VoiceReadback, max_voices> voices{};
+  RecordingStatus recording{};
   bool sustain = false, available = false;
 };
 struct NativeGestureApplication {
   Identity identity{};
   NativeClockMetadata clock{};
+  NoteTarget note{};
+  Determination determined_source{};
+  bool has_determination = false;
+  Ref preparation_ref{}, state_ref{}, physical_event{}, physical_subject{},
+      physical_source_coordinate{}, physical_source_revision{}, eigenbasis{};
+  std::uint64_t physical_source_generation = 0;
+  std::uint32_t physical_sample_rate = 0;
+  bool physical_pratibimba = false;
   std::uint64_t sequence = 0, admitted_sample = 0, applied_sample = 0,
-                touch = 0;
+                committed_cursor = 0, body_revision = 0, touch = 0;
   Kind kind = Kind::NoteOn;
-  bool applied = false;
+  Parameter parameter = Parameter::MasterLinear;
+  double value = 0, pitch_hz = 0;
+  bool has_note = false, applied = false, late_admitted = false;
 };
+
 struct Capture {
   Identity identity{}, end_identity{};
   std::uint64_t start_sample = 0, body_revision = 0;
@@ -298,6 +326,7 @@ public:
     double velocity = 0, pressure = 1;
     Ref source_touch_ref{};
     Identity source_identity{};
+    NoteTarget original_note{};
   };
   struct Tail {
     Voice voice{};
@@ -332,11 +361,15 @@ public:
     std::size_t heap_size = 0;
     typename Spsc<ReleaseOperation, 64>::State releases{};
     std::array<PendingRelease, 64> pending_releases{};
+    typename Spsc<NativeGestureApplication, 256>::State applications{};
+    RecordingStatus recording{};
     Parameters source{}, effective{};
     std::uint64_t cursor = 0, accepted_sequence = 0, accepted_sample = 0,
                   applied_sequence = 0, refused = 0, late = 0, stolen = 0,
                   dropped_readbacks = 0, dropped_captures = 0, clipping = 0,
-                  force_limited = 0, overflow_count = 0, panic_fence = 0;
+                  force_limited = 0, overflow_count = 0, panic_fence = 0,
+                  force_zero_samples = 0, emergency_requested = 0,
+                  emergency_observed = 0, emergency_applied_sample = 0;
     bool emergency = false, capture = false, fault = false, sustain = false;
   };
   class StoppedCustody {
@@ -379,6 +412,47 @@ private:
   Spsc<Readback, 64> readbacks_{};
   Spsc<Capture, capture_capacity> captures_{};
   Spsc<NativeGestureApplication, 256> gesture_applications_{};
+  // Fixed heap-owned scratch: receipts become public only after P/output
+  // commit.
+  std::array<NativeGestureApplication, queue_capacity + 64>
+      block_applications_{};
+  std::size_t block_application_count_ = 0;
+  std::atomic<std::uint64_t> dropped_applications_{0},
+      recording_failure_sequence_{0}, recording_failure_sample_{0};
+  std::atomic<std::uint8_t> recording_failure_{0};
+  void recording_failed(RecordingFailure reason, std::uint64_t sequence,
+                        std::uint64_t sample) noexcept {
+    if (!recording_failure_.load(std::memory_order_relaxed)) {
+      recording_failure_sequence_.store(sequence, std::memory_order_relaxed);
+      recording_failure_sample_.store(sample, std::memory_order_relaxed);
+      recording_failure_.store(std::uint8_t(reason), std::memory_order_release);
+    }
+  }
+  bool stage_application(const NativeGestureApplication &value) noexcept {
+    if (block_application_count_ == block_applications_.size()) {
+      recording_failed(RecordingFailure::ApplicationScratchOverflow,
+                       value.sequence, value.applied_sample);
+      dropped_applications_.fetch_add(1, std::memory_order_relaxed);
+      return false;
+    }
+    block_applications_[block_application_count_++] = value;
+    return true;
+  }
+  bool held_note(std::uint64_t token, NoteTarget &out) const noexcept {
+    for (const auto &t : touches_)
+      if (t.token == token) {
+        for (const auto &v : voices_)
+          if (v.active && v.note.member == t.member) {
+            out = t.original_note.member ? t.original_note : v.note;
+            out.touch = token;
+            out.touch_ref = t.source_touch_ref;
+            out.identity = t.source_identity;
+            return true;
+          }
+      }
+    return false;
+  }
+
   Parameters source_{}, effective_{};
   std::uint64_t cursor_ = 0, accepted_sequence_ = 0, accepted_sample_ = 0,
                 last_admission_sample_ = 0, applied_sequence_ = 0, refused_ = 0,
@@ -391,6 +465,9 @@ private:
   // custody; a requested stop is insufficient until the OS has acknowledged it.
   std::atomic<std::uint32_t> activity_{0};
   std::atomic<bool> device_running_{false};
+  std::atomic<std::uint64_t> emergency_requested_{0};
+  std::uint64_t emergency_observed_ = 0, emergency_applied_sample_ = 0,
+                force_zero_samples_ = 0;
   bool sustain_ = false;
   static bool scalar(double x, double lo, double hi) noexcept {
     return std::isfinite(x) && x >= lo && x <= hi;
@@ -619,7 +696,7 @@ private:
     voice = {};
     ++stolen_;
   }
-  void apply(const Operation &op) noexcept {
+  bool apply(const Operation &op) noexcept {
     // Maximum acknowledged sequence; release admission can overtake a
     // future automation sequence without moving that automation's sample.
     applied_sequence_ = std::max(applied_sequence_, op.sequence);
@@ -656,9 +733,11 @@ private:
           break;
         }
       break;
-    case Kind::Expression:
+    case Kind::Expression: {
+      bool matched = false;
       for (auto &t : touches_)
         if (t.token == op.touch) {
+          matched = true;
           t.pressure = op.value;
           for (auto &v : voices_)
             if (v.active && v.note.member == t.member) {
@@ -669,20 +748,25 @@ private:
               }
             }
         }
+      if (!matched) {
+        ++refused_;
+        return false;
+      }
       break;
+    }
     case Kind::NoteOn: {
       if (op.sequence <= panic_fence_.load(std::memory_order_relaxed))
-        return;
+        return false;
       for (const auto &t : touches_)
         if (t.token == op.note.touch) {
           ++refused_;
-          return;
+          return false;
         }
       auto touch = std::find_if(touches_.begin(), touches_.end(),
                                 [](const Touch &t) { return !t.token; });
       if (touch == touches_.end()) {
         ++refused_;
-        return;
+        return false;
       }
       auto voice =
           std::find_if(voices_.begin(), voices_.end(), [&](const Voice &v) {
@@ -722,19 +806,20 @@ private:
                  voice->note.register_octave != op.note.register_octave ||
                  std::abs(voice->target_frequency - op.note.hertz) > 1e-10) {
         ++refused_;
-        return;
+        return false;
       }
-      *touch = Touch{op.note.touch,     op.note.member,  op.value, 1,
-                     op.note.touch_ref, op.note.identity};
+      *touch = Touch{op.note.touch,     op.note.member,   op.value, 1,
+                     op.note.touch_ref, op.note.identity, op.note};
       refresh(*voice);
       break;
     }
     }
+    return true;
   }
-  void apply_release(const ReleaseOperation &op) noexcept {
+  bool apply_release(const ReleaseOperation &op) noexcept {
     if (!same_lineage(op.identity, determination_.identity)) {
       ++refused_;
-      return;
+      return false;
     }
     applied_sequence_ = std::max(applied_sequence_, op.sequence);
     if (op.kind == Kind::Panic) {
@@ -760,6 +845,7 @@ private:
           break;
         }
     }
+    return true;
   }
   double octet_target(const Voice &v, std::size_t j) const noexcept {
     const auto &policy = determination_.excitation;
@@ -985,9 +1071,14 @@ public:
   // Out-of-band panic cancels previously queued attacks while preserving
   // prepared source changes and physical tails. A subsequent human attack
   // gets a higher sequence and can play normally.
-  void request_panic() noexcept {
+  std::uint64_t request_panic() noexcept {
     fence_attacks(published_sequence_.load(std::memory_order_acquire));
+    auto previous = emergency_requested_.load(std::memory_order_relaxed);
+    if (previous == std::numeric_limits<std::uint64_t>::max())
+      return 0; // Explicit owner refusal: no wrapped release acknowledgement.
+    emergency_requested_.store(previous + 1, std::memory_order_release);
     emergency_.store(true, std::memory_order_release);
+    return previous + 1;
   }
   void enable_capture(bool enabled) noexcept {
     capture_.store(enabled, std::memory_order_release);
@@ -1007,6 +1098,10 @@ public:
   bool validate_note_target(const NoteTarget &note) const noexcept {
     return valid_note(
         note, source_at(published_cursor_.load(std::memory_order_acquire)));
+  }
+  bool validate_note_target_for_native_admission(
+      const NoteTarget &note) const noexcept {
+    return valid_note(note, source_for_native_admission());
   }
   bool has_physical_custody() const noexcept { return bool(body_.custody); }
   bool owns_physical_owner(const void *owner) const noexcept {
@@ -1041,6 +1136,45 @@ public:
     }
     return StoppedCustody(this);
   }
+  // Native stopped/acknowledged owner can preflight an actual P transaction.
+  // Pending future source generations require a separately prepared combined
+  // transaction; this finite seam refuses rather than deleting their schedule.
+  bool preflight_stopped_physical_revision(
+      const Determination &after, const PhysicalPort &port,
+      const StoppedCustody &guard) const noexcept {
+    return guard.owner_ == this && activity_.load() == 2 &&
+           !device_running_.load() && source_schedule_size_ == 1 &&
+           valid_determination(after) &&
+           same_lineage(after.identity, determination_.identity) &&
+           after.identity.m1_revision >= determination_.identity.m1_revision &&
+           after.identity.m2_generation >=
+               determination_.identity.m2_generation &&
+           port.owner == body_.owner && port.custody == body_.custody &&
+           port.advance == body_.advance && port.observe == body_.observe &&
+           port.revision == body_.revision && port.cursor == body_.cursor &&
+           port.sample_rate == rate_ && port.event == after.identity.event &&
+           port.subject == after.identity.subject &&
+           valid_ref(port.preparation) && port.state == body_.state &&
+           after.body_state_ref == port.state &&
+           after.body_preparation_ref == port.preparation &&
+           after.body_revision > determination_.body_revision &&
+           scalar(port.max_force_newtons, 1e-12, 1e9);
+  }
+  bool commit_stopped_physical_revision(const Determination &after,
+                                        const PhysicalPort &port,
+                                        const StoppedCustody &guard) noexcept {
+    if (!preflight_stopped_physical_revision(after, port, guard) ||
+        port.revision(port.owner) != after.body_revision ||
+        port.cursor(port.owner) != cursor_)
+      return false;
+    body_ = port;
+    determination_ = producer_determination_ = after;
+    producer_identity_ = after.identity;
+    source_schedule_[0] = ScheduledDetermination{after, cursor_};
+    // Existing oscillator phase, touch lifetimes, queues and P q/v are
+    // retained.
+    return true;
+  }
   // Destination is host heap custody. Never put several MiB of fixed queue
   // state on a callback or ordinary native control thread's stack.
   void write_checkpoint(Checkpoint &cp, const StoppedCustody &guard) const {
@@ -1065,6 +1199,8 @@ public:
     cp.heap_size = heap_size_;
     releases_.write_checkpoint(cp.releases);
     cp.pending_releases = pending_releases_;
+    gesture_applications_.write_checkpoint(cp.applications);
+    cp.recording = recording_status();
     cp.source = source_;
     cp.effective = effective_;
     cp.cursor = cursor_;
@@ -1080,6 +1216,11 @@ public:
     cp.force_limited = force_limited_;
     cp.overflow_count = overflow_count_.load();
     cp.panic_fence = panic_fence_.load();
+    cp.force_zero_samples = force_zero_samples_;
+    cp.emergency_requested =
+        emergency_requested_.load(std::memory_order_acquire);
+    cp.emergency_observed = emergency_observed_;
+    cp.emergency_applied_sample = emergency_applied_sample_;
     cp.emergency = emergency_.load();
     cp.capture = capture_.load();
     cp.fault = fault_.load();
@@ -1114,8 +1255,20 @@ public:
         cp.heap_size > queue_capacity ||
         !Spsc<Operation, queue_capacity>::valid_state(cp.operations) ||
         !Spsc<ReleaseOperation, 64>::valid_state(cp.releases) ||
+        !Spsc<NativeGestureApplication, 256>::valid_state(cp.applications) ||
+        unsigned(cp.recording.failure) >
+            unsigned(RecordingFailure::ApplicationScratchOverflow) ||
+        (cp.recording.failure == RecordingFailure::None &&
+         (cp.recording.dropped_applications ||
+          cp.recording.first_failed_sequence ||
+          cp.recording.first_failed_sample)) ||
+        cp.recording.first_failed_sequence > cp.accepted_sequence ||
         cp.applied_sequence > cp.accepted_sequence ||
         cp.panic_fence > cp.accepted_sequence ||
+        cp.force_zero_samples > cp.cursor ||
+        cp.emergency_observed > cp.emergency_requested ||
+        cp.emergency_applied_sample > cp.cursor ||
+        (!cp.emergency_observed && cp.emergency_applied_sample) ||
         cp.determination.identity.m2_generation >
             cp.producer_identity.m2_generation ||
         cp.determination.identity.m1_revision >
@@ -1198,7 +1351,13 @@ public:
         const auto &t = cp.touches[i];
         if (!t.member || !valid_ref(t.source_touch_ref) ||
             !valid_origin(t.source_identity) || !scalar(t.velocity, 0, 1) ||
-            !scalar(t.pressure, 0, 1))
+            !scalar(t.pressure, 0, 1) ||
+            (t.original_note.member &&
+             (!valid_saved_note(t.original_note) ||
+              t.original_note.member != t.member ||
+              t.original_note.touch != t.token ||
+              t.original_note.touch_ref != t.source_touch_ref ||
+              !(t.original_note.identity == t.source_identity))))
           return false;
         bool found = false;
         for (const auto &v : cp.voices)
@@ -1297,6 +1456,43 @@ public:
     for (const auto &p : cp.pending_releases)
       if (p.active && !valid_release(p.operation))
         return false;
+    for (auto i = cp.applications.read; i < cp.applications.write; ++i) {
+      const auto &a = cp.applications.storage[i % 256];
+      if (!valid_origin(a.identity) || !a.sequence ||
+          a.sequence > cp.accepted_sequence ||
+          a.applied_sample < a.admitted_sample ||
+          a.committed_cursor > cp.cursor ||
+          a.committed_cursor <= a.applied_sample || !a.body_revision ||
+          a.body_revision > cp.determination.body_revision ||
+          !valid_ref(a.preparation_ref) ||
+          a.state_ref != cp.determination.body_state_ref ||
+          a.physical_event != a.identity.event ||
+          a.physical_subject != a.identity.subject ||
+          !valid_ref(a.physical_source_coordinate) ||
+          !valid_ref(a.physical_source_revision) || !valid_ref(a.eigenbasis) ||
+          !ql_m_live_resolve(a.physical_source_coordinate.data()) ||
+          ql_m_live_resolve(a.physical_source_coordinate.data())
+                  ->root_position != 3 ||
+          a.physical_sample_rate != rate_ || !a.physical_pratibimba ||
+          !valid_native_clock(a.clock) ||
+          unsigned(a.kind) > unsigned(Kind::Determination) ||
+          unsigned(a.parameter) > unsigned(Parameter::MonitorLinear) ||
+          !std::isfinite(a.value) || !std::isfinite(a.pitch_hz) ||
+          a.has_determination != (a.kind == Kind::Determination) ||
+          (a.has_determination &&
+           (!valid_determination(a.determined_source) ||
+            !valid_origin(a.determined_source.identity) ||
+            a.determined_source.identity.m2_generation <=
+                a.identity.m2_generation ||
+            a.determined_source.body_revision != a.body_revision ||
+            a.determined_source.body_preparation_ref != a.preparation_ref ||
+            a.determined_source.body_state_ref != a.state_ref)) ||
+          (a.has_note &&
+           (!valid_saved_note(a.note) || a.note.touch != a.touch ||
+            !same_lineage(a.note.identity, a.identity) ||
+            (a.kind == Kind::NoteOn && !(a.note.identity == a.identity)))))
+        return false;
+    }
     return true;
   }
   bool restore_checkpoint(const Checkpoint &cp, const StoppedCustody &guard,
@@ -1333,6 +1529,11 @@ public:
     force_limited_ = cp.force_limited;
     overflow_count_.store(cp.overflow_count);
     panic_fence_.store(cp.panic_fence);
+    force_zero_samples_ = cp.force_zero_samples;
+    emergency_requested_.store(cp.emergency_requested,
+                               std::memory_order_release);
+    emergency_observed_ = cp.emergency_observed;
+    emergency_applied_sample_ = cp.emergency_applied_sample;
     emergency_.store(cp.emergency);
     capture_.store(cp.capture);
     fault_.store(cp.fault);
@@ -1344,11 +1545,37 @@ public:
     // messages are not replayed as if they described the restored state.
     readbacks_.clear_stopped();
     captures_.clear_stopped();
-    gesture_applications_.clear_stopped();
+    gesture_applications_.restore_checkpoint(cp.applications);
+    dropped_applications_.store(cp.recording.dropped_applications,
+                                std::memory_order_relaxed);
+    recording_failure_sequence_.store(cp.recording.first_failed_sequence,
+                                      std::memory_order_relaxed);
+    recording_failure_sample_.store(cp.recording.first_failed_sample,
+                                    std::memory_order_relaxed);
+    recording_failure_.store(std::uint8_t(cp.recording.failure),
+                             std::memory_order_release);
+    block_application_count_ = 0;
     return true;
   }
   bool available() const noexcept {
     return !fault_.load(std::memory_order_acquire);
+  }
+  std::uint64_t accepted_sequence() const noexcept {
+    return published_sequence_.load(std::memory_order_acquire);
+  }
+  RecordingStatus recording_status() const noexcept {
+    RecordingStatus out{};
+    out.failure =
+        RecordingFailure(recording_failure_.load(std::memory_order_acquire));
+    out.dropped_applications =
+        dropped_applications_.load(std::memory_order_relaxed);
+    if (out.failure != RecordingFailure::None) {
+      out.first_failed_sequence =
+          recording_failure_sequence_.load(std::memory_order_relaxed);
+      out.first_failed_sample =
+          recording_failure_sample_.load(std::memory_order_relaxed);
+    }
+    return out;
   }
   bool pop_readback(Readback &out) noexcept { return readbacks_.take(out); }
   bool pop_capture(Capture &out) noexcept { return captures_.take(out); }
@@ -1367,9 +1594,16 @@ public:
     if (!activity_.compare_exchange_strong(idle, 1, std::memory_order_acq_rel))
       return false;
     struct RenderCustody {
-      std::atomic<std::uint32_t> &activity;
-      ~RenderCustody() { activity.store(0, std::memory_order_release); }
-    } rendering{activity_};
+      Engine &engine;
+      ~RenderCustody() {
+        if (engine.block_application_count_)
+          engine.recording_failed(RecordingFailure::PhysicalCommitFailure,
+                                  engine.block_applications_[0].sequence,
+                                  engine.cursor_);
+        engine.activity_.store(0, std::memory_order_release);
+      }
+    } rendering{*this};
+    block_application_count_ = 0;
     if (fault_.load(std::memory_order_relaxed) || start_sample != cursor_ ||
         cursor_ > std::numeric_limits<std::uint64_t>::max() - frames)
       return false;
@@ -1379,6 +1613,7 @@ public:
       return false;
     }
     published_horizon_.store(cursor_ + frames, std::memory_order_release);
+    block_application_count_ = 0;
     Capture capture{};
     capture.identity = determination_.identity;
     capture.start_sample = cursor_;
@@ -1416,6 +1651,9 @@ public:
           fault_.store(true, std::memory_order_release);
           return false;
         }
+        emergency_observed_ =
+            emergency_requested_.load(std::memory_order_acquire);
+        emergency_applied_sample_ = cursor_ + i;
         touches_.fill({});
         sustain_ = false;
         for (auto &v : voices_)
@@ -1445,13 +1683,22 @@ public:
           if (due->operation.late_admitted ||
               due->operation.sample < cursor_ + i)
             ++late_;
-          apply_release(due->operation);
-          if (due->operation.native_clock.epoch &&
-              !gesture_applications_.push(NativeGestureApplication{
-                  due->operation.identity, due->operation.native_clock,
-                  due->operation.sequence, due->operation.sample, cursor_ + i,
-                  due->operation.touch, due->operation.kind, true}))
-            ++dropped_readbacks_;
+          NativeGestureApplication application{};
+          application.identity = due->operation.identity;
+          application.clock = due->operation.native_clock;
+          application.sequence = due->operation.sequence;
+          application.admitted_sample = due->operation.sample;
+          application.applied_sample = cursor_ + i;
+          application.touch = due->operation.touch;
+          application.kind = due->operation.kind;
+          application.late_admitted = due->operation.late_admitted;
+          application.has_note = held_note(application.touch, application.note);
+          application.applied = apply_release(due->operation);
+          if (!stage_application(application)) {
+            clear();
+            fault_.store(true, std::memory_order_release);
+            return false;
+          }
           due->active = false;
         } else {
           if (op->late_admitted || op->sample < cursor_ + i)
@@ -1460,17 +1707,39 @@ public:
               op->identity == determination_.identity &&
               (op->sample == cursor_ + i || op->native_clock.epoch ||
                op->kind == Kind::Determination || op->kind == Kind::Parameter);
+          NativeGestureApplication application{};
+          application.identity = op->identity;
+          application.clock = op->native_clock;
+          application.sequence = op->sequence;
+          application.admitted_sample = op->sample;
+          application.applied_sample = cursor_ + i;
+          application.touch =
+              op->kind == Kind::NoteOn ? op->note.touch : op->touch;
+          application.kind = op->kind;
+          application.parameter = op->parameter;
+          if (op->kind == Kind::Determination) {
+            application.determined_source = op->determination;
+            application.has_determination = true;
+          }
+          application.value = op->value;
+          application.pitch_hz = op->pitch_hz;
+          application.late_admitted = op->late_admitted;
+          if (op->kind == Kind::NoteOn ||
+              (op->kind == Kind::Expression && op->pitch_hz > 0)) {
+            application.note = op->note;
+            application.has_note = true;
+          } else
+            application.has_note =
+                held_note(application.touch, application.note);
           if (apply_now)
-            apply(*op);
+            application.applied = apply(*op);
           else
             ++refused_;
-          if (op->native_clock.epoch &&
-              !gesture_applications_.push(NativeGestureApplication{
-                  op->identity, op->native_clock, op->sequence, op->sample,
-                  cursor_ + i,
-                  op->kind == Kind::NoteOn ? op->note.touch : op->touch,
-                  op->kind, apply_now}))
-            ++dropped_readbacks_;
+          if (!stage_application(application)) {
+            clear();
+            fault_.store(true, std::memory_order_release);
+            return false;
+          }
           consume_operation();
         }
       }
@@ -1504,6 +1773,9 @@ public:
     if (!body_.advance(body_.owner, capture.force_newtons.data(),
                        capture.pickup_linear.data(), frames,
                        determination_.body_revision, cursor_)) {
+      if (block_application_count_)
+        recording_failed(RecordingFailure::PhysicalCommitFailure,
+                         block_applications_[0].sequence, cursor_);
       clear();
       fault_.store(true, std::memory_order_release);
       return false;
@@ -1549,6 +1821,54 @@ public:
       peak = std::max(peak, std::abs(double(output[i])));
       power += double(output[i]) * output[i];
     }
+    // This proof describes the actual committed force submitted to P. It is
+    // neither silence at the output gain nor a zero displacement requirement:
+    // the sole physical body may keep ringing after excitation is released.
+    for (std::size_t i = 0; i < frames; ++i)
+      force_zero_samples_ =
+          capture.force_newtons[i] == 0
+              ? std::min(cursor_, force_zero_samples_ + std::uint64_t(1))
+              : 0;
+    for (std::size_t j = 0; j < block_application_count_; ++j) {
+      auto &a = block_applications_[j];
+      a.committed_cursor = cursor_;
+      a.body_revision = determination_.body_revision;
+      a.preparation_ref = body_.preparation;
+      a.state_ref = body_.state;
+      // Original callback-stamped manifest is retained through later
+      // body/source transitions. Current preparation is never substituted on
+      // restore.
+      auto fixed_ref = [](const auto &source, Ref &target) noexcept {
+        const auto length = std::char_traits<char>::length(source.data());
+        if (length >= target.size())
+          return false;
+        std::copy_n(source.data(), length + 1, target.data());
+        return valid_ref(target);
+      };
+      if (!fixed_ref(physical.event_ref, a.physical_event) ||
+          !fixed_ref(physical.subject_ref, a.physical_subject) ||
+          !fixed_ref(physical.source_coordinate,
+                     a.physical_source_coordinate) ||
+          !fixed_ref(physical.source_revision, a.physical_source_revision) ||
+          !fixed_ref(physical.eigenbasis_identity, a.eigenbasis)) {
+        recording_failed(RecordingFailure::PhysicalCommitFailure, a.sequence,
+                         a.applied_sample);
+        clear();
+        fault_.store(true, std::memory_order_release);
+        block_application_count_ = 0;
+        std::fill_n(output, frames, 0);
+        return false;
+      }
+      a.physical_source_generation = physical.source_generation;
+      a.physical_sample_rate = physical.sample_rate;
+      a.physical_pratibimba = physical.pratibimba;
+      if (!gesture_applications_.push(a)) {
+        recording_failed(RecordingFailure::ApplicationQueueOverflow, a.sequence,
+                         a.applied_sample);
+        dropped_applications_.fetch_add(1, std::memory_order_relaxed);
+      }
+    }
+    block_application_count_ = 0;
     Readback receipt{};
     receipt.identity = determination_.identity;
     receipt.determination = determination_;
@@ -1564,6 +1884,13 @@ public:
     receipt.dropped_captures = dropped_captures_;
     receipt.clipping_samples = clipping_;
     receipt.force_limited_samples = force_limited_;
+    receipt.force_zero_samples = force_zero_samples_;
+    receipt.emergency_requested =
+        emergency_requested_.load(std::memory_order_acquire);
+    receipt.emergency_observed = emergency_observed_;
+    receipt.emergency_applied_sample = emergency_applied_sample_;
+    for (const auto &tail : tails_)
+      receipt.active_tails += tail.left != 0;
     for (const auto &v : voices_)
       if (v.active) {
         auto &observed = receipt.voices[receipt.active_voices++];
@@ -1583,14 +1910,17 @@ public:
         for (const auto &t : touches_)
           observed.held_touches += t.token && t.member == v.note.member;
       }
-    for (const auto &t : touches_)
-      receipt.active_touches += bool(t.token);
+    for (std::size_t i = 0; i < touches_.size(); ++i) {
+      receipt.active_touches += bool(touches_[i].token);
+      receipt.held_touch_tokens[i] = touches_[i].token;
+    }
     receipt.peak = peak;
     receipt.rms = std::sqrt(power / frames);
     receipt.source = source_;
     receipt.effective = effective_;
     receipt.sustain = sustain_;
     receipt.available = available();
+    receipt.recording = recording_status();
     if (!readbacks_.push(receipt))
       ++dropped_readbacks_;
     if (capture_.load(std::memory_order_relaxed) && !captures_.push(capture))

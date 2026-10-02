@@ -675,9 +675,10 @@
         "#2-1",
         "#3"
       ],
-      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance.",
+      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance. Callback-committed original full native event/source/body manifests and persistent recording failure retain real effects, unread history and exact reopen. Release proof observes actual zero submitted force after emergency acknowledgement, independent of mute and P ringdown.",
       "tests": [
-        "cpp/tests/performance_audio.cpp"
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/performance_management_packet.cpp"
       ],
       "kind": "computational"
     },
@@ -987,6 +988,58 @@
       "tests": [
         "crates/ql-mef/tests/physical_force_routes_native_wire.rs",
         "cpp/tests/physical_force_routes_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Serial existing native A/P/device management with current K-resolved Janko catalog, input lifetimes, bounded pulse/receipts and existing C history ports. No private store/undo, new oscillator, clock or context authority.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management_checkpoint.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Complete versioned wrapper of the existing native audio/physical pair and exact original UI input bindings, pending releases, histories and actual excitation-release proof; authentic stopped custody preflights both owners and no second timeline/store is created.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_offline.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded contiguous <=512 frame render consumes the actual stopped A/P Engine callback and requires same-cursor physical snapshot/Capture equality. Existing C/Act owner admits source/checkpoint/prefix authority; neither labels nor controlled output imply installed export acceptance.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_management.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Current immutable native M1/K/M2/P binding resolves exact independent touch and six-row, two-family, three-copy Janko catalog; no alternate pitch theory or body advance. Sparse source collections require explicit subsequent K availability, not inferred twelve-pitch closure.",
+      "tests": [
+        "crates/ql-mef/tests/performance_management.rs"
       ]
     }
   ]

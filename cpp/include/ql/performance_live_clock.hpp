@@ -118,7 +118,7 @@ public:
       return receipt;
     if (operation.kind != Kind::NoteOn && operation.kind != Kind::NoteOff &&
         operation.kind != Kind::Expression && operation.kind != Kind::Sustain &&
-        operation.kind != Kind::Panic)
+        operation.kind != Kind::Panic && operation.kind != Kind::Parameter)
       return receipt;
     const bool forward = trigger.host_ticks >= a.host;
     const auto ticks =

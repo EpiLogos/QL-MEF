@@ -346,6 +346,207 @@ inline ReleaseOperation read_release(J *in) {
       decimal(field(in, "touch")),    boolean(field(in, "late_admitted")),
       read_native_clock(in)};
 }
+inline const char *operation_name(Kind kind) {
+  switch (kind) {
+  case Kind::NoteOn:
+    return "note_on";
+  case Kind::NoteOff:
+    return "note_off";
+  case Kind::Sustain:
+    return "sustain";
+  case Kind::Expression:
+    return "expression";
+  case Kind::Panic:
+    return "panic";
+  case Kind::Parameter:
+    return "parameter";
+  case Kind::Determination:
+    return "determination";
+  }
+  throw std::invalid_argument("unknown applied operation");
+}
+inline Json application(const NativeGestureApplication &a) {
+  auto out = object();
+  text(out.get(), "schema", "ql.performance-applied-event/v1");
+  text(out.get(), "operation", operation_name(a.kind));
+  put(out.get(), "kind", json_object_new_int(unsigned(a.kind)));
+  text(out.get(), "status", a.applied ? "applied" : "refused");
+  flag(out.get(), "applied", a.applied);
+  put(out.get(), "identity", identity(a.identity).release());
+  put(out.get(), "native_clock", native_clock(a.clock).release());
+  for (const auto &e : {std::pair{"sequence", a.sequence},
+                        {"admitted_sample", a.admitted_sample},
+                        {"applied_sample", a.applied_sample},
+                        {"committed_cursor", a.committed_cursor},
+                        {"body_revision", a.body_revision},
+                        {"touch", a.touch}})
+    u64(out.get(), e.first, e.second);
+  ref(out.get(), "preparation_ref", a.preparation_ref);
+  ref(out.get(), "state_ref", a.state_ref);
+  put(out.get(), "parameter", json_object_new_int(unsigned(a.parameter)));
+  real(out.get(), "value", a.value);
+  real(out.get(), "pitch_hz", a.pitch_hz);
+  flag(out.get(), "has_determination", a.has_determination);
+  if (a.has_determination)
+    put(out.get(), "determination",
+        determination(a.determined_source).release());
+  else
+    require(json_object_object_add(out.get(), "determination", nullptr) == 0,
+            "null determination allocation failed");
+  flag(out.get(), "has_note", a.has_note);
+  if (a.has_note)
+    put(out.get(), "note", note(a.note).release());
+  else
+    require(json_object_object_add(out.get(), "note", nullptr) == 0,
+            "null note field allocation failed");
+  flag(out.get(), "late_admitted", a.late_admitted);
+  auto manifest = object();
+  ref(manifest.get(), "event_ref", a.physical_event);
+  ref(manifest.get(), "subject_ref", a.physical_subject);
+  ref(manifest.get(), "source_coordinate", a.physical_source_coordinate);
+  ref(manifest.get(), "source_revision", a.physical_source_revision);
+  ref(manifest.get(), "eigenbasis_identity", a.eigenbasis);
+  u64(manifest.get(), "source_generation", a.physical_source_generation);
+  put(manifest.get(), "sample_rate",
+      json_object_new_uint64(a.physical_sample_rate));
+  flag(manifest.get(), "pratibimba", a.physical_pratibimba);
+  put(out.get(), "physical_manifest", manifest.release());
+  return out;
+}
+inline NativeGestureApplication read_application(J *in) {
+  keys(in, {"schema",
+            "operation",
+            "kind",
+            "status",
+            "applied",
+            "identity",
+            "native_clock",
+            "sequence",
+            "admitted_sample",
+            "applied_sample",
+            "committed_cursor",
+            "body_revision",
+            "touch",
+            "preparation_ref",
+            "state_ref",
+            "parameter",
+            "value",
+            "pitch_hz",
+            "has_note",
+            "note",
+            "has_determination",
+            "determination",
+            "late_admitted",
+            "physical_manifest"});
+  require(packet::string(field(in, "schema")) ==
+              "ql.performance-applied-event/v1",
+          "applied-event schema differs");
+  NativeGestureApplication out{};
+  out.kind = Kind(byte(field(in, "kind")));
+  out.applied = boolean(field(in, "applied"));
+  require(packet::string(field(in, "operation")) == operation_name(out.kind) &&
+              packet::string(field(in, "status")) ==
+                  (out.applied ? "applied" : "refused"),
+          "applied-event discriminator differs");
+  out.identity = packet::identity(field(in, "identity"));
+  out.clock = read_native_clock(in);
+  out.sequence = decimal(field(in, "sequence"));
+  out.admitted_sample = decimal(field(in, "admitted_sample"));
+  out.applied_sample = decimal(field(in, "applied_sample"));
+  out.committed_cursor = decimal(field(in, "committed_cursor"));
+  out.body_revision = decimal(field(in, "body_revision"));
+  out.touch = decimal(field(in, "touch"));
+  out.preparation_ref = packet::ref(in, "preparation_ref");
+  out.state_ref = packet::ref(in, "state_ref");
+  out.parameter = Parameter(byte(field(in, "parameter")));
+  out.value = number(field(in, "value"));
+  out.pitch_hz = number(field(in, "pitch_hz"));
+  out.has_note = boolean(field(in, "has_note"));
+  out.has_determination = boolean(field(in, "has_determination"));
+  J *d = nullptr;
+  require(json_object_object_get_ex(in, "determination", &d) &&
+              out.has_determination == (out.kind == Kind::Determination),
+          "applied determination discriminator differs");
+  if (out.has_determination)
+    out.determined_source = packet::determination(d);
+  else
+    require(d == nullptr || json_object_is_type(d, json_type_null),
+            "unexpected determination payload");
+  out.late_admitted = boolean(field(in, "late_admitted"));
+  auto manifest = field(in, "physical_manifest");
+  keys(manifest, {"event_ref", "subject_ref", "source_coordinate",
+                  "source_revision", "eigenbasis_identity", "source_generation",
+                  "sample_rate", "pratibimba"});
+  out.physical_event = packet::ref(manifest, "event_ref");
+  out.physical_subject = packet::ref(manifest, "subject_ref");
+  out.physical_source_coordinate = packet::ref(manifest, "source_coordinate");
+  out.physical_source_revision = packet::ref(manifest, "source_revision");
+  out.eigenbasis = packet::ref(manifest, "eigenbasis_identity");
+  out.physical_source_generation =
+      decimal(field(manifest, "source_generation"));
+  auto rate = packet::integer(field(manifest, "sample_rate"));
+  require(rate >= 8000 && rate <= 192000, "historical physical rate differs");
+  out.physical_sample_rate = std::uint32_t(rate);
+  out.physical_pratibimba = boolean(field(manifest, "pratibimba"));
+  require(out.physical_event == out.identity.event &&
+              out.physical_subject == out.identity.subject &&
+              out.physical_pratibimba,
+          "original applied physical/event/face identity differs");
+  J *n = nullptr;
+  require(json_object_object_get_ex(in, "note", &n),
+          "applied note field missing");
+  if (out.has_note)
+    out.note = packet::note(n);
+  else
+    require(n == nullptr || json_object_is_type(n, json_type_null),
+            "unqualified applied note payload");
+  require(unsigned(out.parameter) <= unsigned(Parameter::MonitorLinear) &&
+              out.sequence && out.committed_cursor > out.applied_sample &&
+              out.applied_sample >= out.admitted_sample,
+          "applied-event time/parameter bounds differ");
+  return out;
+}
+inline Json recording(const RecordingStatus &status) {
+  auto out = object();
+  put(out.get(), "failure", json_object_new_int(unsigned(status.failure)));
+  u64(out.get(), "dropped_applications", status.dropped_applications);
+  u64(out.get(), "first_failed_sequence", status.first_failed_sequence);
+  u64(out.get(), "first_failed_sample", status.first_failed_sample);
+  return out;
+}
+inline RecordingStatus read_recording(J *in) {
+  keys(in, {"failure", "dropped_applications", "first_failed_sequence",
+            "first_failed_sample"});
+  auto failure = byte(field(in, "failure"));
+  require(failure <= unsigned(RecordingFailure::ApplicationScratchOverflow),
+          "unknown recording failure");
+  return {RecordingFailure(failure), decimal(field(in, "dropped_applications")),
+          decimal(field(in, "first_failed_sequence")),
+          decimal(field(in, "first_failed_sample"))};
+}
+// Complete optional pair preserves original v1 scored checkpoint compatibility.
+inline void audio_keys(J *in, std::initializer_list<const char *> names) {
+  require(in && json_object_is_type(in, json_type_object),
+          "audio checkpoint object required");
+  J *v = nullptr;
+  const bool apps = json_object_object_get_ex(in, "applications", &v);
+  require(apps == bool(json_object_object_get_ex(in, "recording", &v)),
+          "partial recording checkpoint extension");
+  const bool proof = json_object_object_get_ex(in, "release_proof", &v);
+  require(json_object_object_length(in) ==
+              int(names.size()) + (apps ? 2 : 0) + (proof ? 1 : 0),
+          "audio checkpoint fields missing/unknown");
+  json_object_object_foreach(in, key, value) {
+    (void)value;
+    require((proof && std::strcmp(key, "release_proof") == 0) ||
+                (apps && (std::strcmp(key, "applications") == 0 ||
+                          std::strcmp(key, "recording") == 0)) ||
+                std::any_of(
+                    names.begin(), names.end(),
+                    [&](const char *n) { return std::strcmp(key, n) == 0; }),
+            "unknown audio checkpoint field");
+  }
+}
 template <class T, std::size_t N, class Writer>
 inline Json queue(const typename Spsc<T, N>::State &state, Writer writer) {
   require(Spsc<T, N>::valid_state(state), "checkpoint queue bounds differ");
@@ -413,6 +614,8 @@ inline Json audio_wire(const Engine::Checkpoint &cp) {
       ref(entry.get(), "source_touch_ref", t.source_touch_ref);
       put(entry.get(), "source_identity",
           identity(t.source_identity).release());
+      if (t.original_note.member)
+        put(entry.get(), "original_note", note(t.original_note).release());
       append(touches.get(), entry.release());
     }
   put(out.get(), "touches", touches.release());
@@ -457,6 +660,16 @@ inline Json audio_wire(const Engine::Checkpoint &cp) {
       append(pending_release.get(), entry.release());
     }
   put(out.get(), "pending_releases", pending_release.release());
+  put(out.get(), "applications",
+      queue<NativeGestureApplication, 256>(cp.applications, application)
+          .release());
+  put(out.get(), "recording", recording(cp.recording).release());
+  auto proof = object();
+  u64(proof.get(), "force_zero_samples", cp.force_zero_samples);
+  u64(proof.get(), "emergency_requested", cp.emergency_requested);
+  u64(proof.get(), "emergency_observed", cp.emergency_observed);
+  u64(proof.get(), "emergency_applied_sample", cp.emergency_applied_sample);
+  put(out.get(), "release_proof", proof.release());
   put(out.get(), "source_parameters", parameters(cp.source).release());
   put(out.get(), "effective_parameters", parameters(cp.effective).release());
   for (const auto &e : {std::pair{"cursor", cp.cursor},
@@ -496,41 +709,41 @@ inline void read_slots(J *in, std::size_t limit, Reader reader) {
   }
 }
 inline void read_audio(J *in, Engine::Checkpoint &cp) {
-  keys(in, {"schema",
-            "version",
-            "model_revision",
-            "sample_rate",
-            "determination",
-            "producer_determination",
-            "producer_identity",
-            "source_schedule",
-            "voices",
-            "touches",
-            "tails",
-            "operations",
-            "releases",
-            "pending_operations",
-            "operation_heap",
-            "pending_releases",
-            "source_parameters",
-            "effective_parameters",
-            "cursor",
-            "accepted_sequence",
-            "accepted_sample",
-            "applied_sequence",
-            "refused",
-            "late",
-            "stolen",
-            "dropped_readbacks",
-            "dropped_captures",
-            "clipping",
-            "force_limited",
-            "overflow_count",
-            "panic_fence",
-            "emergency",
-            "capture",
-            "fault",
-            "sustain"});
+  audio_keys(in, {"schema",
+                  "version",
+                  "model_revision",
+                  "sample_rate",
+                  "determination",
+                  "producer_determination",
+                  "producer_identity",
+                  "source_schedule",
+                  "voices",
+                  "touches",
+                  "tails",
+                  "operations",
+                  "releases",
+                  "pending_operations",
+                  "operation_heap",
+                  "pending_releases",
+                  "source_parameters",
+                  "effective_parameters",
+                  "cursor",
+                  "accepted_sequence",
+                  "accepted_sample",
+                  "applied_sequence",
+                  "refused",
+                  "late",
+                  "stolen",
+                  "dropped_readbacks",
+                  "dropped_captures",
+                  "clipping",
+                  "force_limited",
+                  "overflow_count",
+                  "panic_fence",
+                  "emergency",
+                  "capture",
+                  "fault",
+                  "sustain"});
   require(packet::string(field(in, "schema")) == Engine::Checkpoint::schema &&
               integer(field(in, "version")) == 1 &&
               packet::string(field(in, "model_revision")) == contract,
@@ -561,14 +774,22 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
     cp.voices[slot] = read_voice(field(entry, "voice"));
   });
   read_slots(field(in, "touches"), max_touches, [&](auto slot, J *entry) {
-    keys(entry, {"slot", "token", "member", "velocity", "pressure",
-                 "source_touch_ref", "source_identity"});
+    J *original = nullptr;
+    const bool has_original =
+        json_object_object_get_ex(entry, "original_note", &original);
+    if (has_original)
+      keys(entry, {"slot", "token", "member", "velocity", "pressure",
+                   "source_touch_ref", "source_identity", "original_note"});
+    else
+      keys(entry, {"slot", "token", "member", "velocity", "pressure",
+                   "source_touch_ref", "source_identity"});
     cp.touches[slot] = {decimal(field(entry, "token")),
                         decimal(field(entry, "member")),
                         number(field(entry, "velocity")),
                         number(field(entry, "pressure")),
                         packet::ref(entry, "source_touch_ref"),
-                        packet::identity(field(entry, "source_identity"))};
+                        packet::identity(field(entry, "source_identity")),
+                        has_original ? packet::note(original) : NoteTarget{}};
     require(cp.touches[slot].token != 0, "empty serialized touch");
   });
   read_slots(field(in, "tails"), max_tails, [&](auto slot, J *entry) {
@@ -607,6 +828,27 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
     keys(entry, {"slot", "release"});
     cp.pending_releases[slot] = {true, read_release(field(entry, "release"))};
   });
+  J *apps = nullptr;
+  if (json_object_object_get_ex(in, "applications", &apps)) {
+    read_queue<NativeGestureApplication, 256>(apps, cp.applications,
+                                              read_application);
+    cp.recording = read_recording(field(in, "recording"));
+  } else {
+    cp.applications = {};
+    cp.recording = {};
+  }
+  J *proof = nullptr;
+  cp.force_zero_samples = cp.emergency_requested = cp.emergency_observed =
+      cp.emergency_applied_sample = 0;
+  if (json_object_object_get_ex(in, "release_proof", &proof)) {
+    keys(proof, {"force_zero_samples", "emergency_requested",
+                 "emergency_observed", "emergency_applied_sample"});
+    cp.force_zero_samples = decimal(field(proof, "force_zero_samples"));
+    cp.emergency_requested = decimal(field(proof, "emergency_requested"));
+    cp.emergency_observed = decimal(field(proof, "emergency_observed"));
+    cp.emergency_applied_sample =
+        decimal(field(proof, "emergency_applied_sample"));
+  }
   cp.source = read_parameters(field(in, "source_parameters"));
   cp.effective = read_parameters(field(in, "effective_parameters"));
   for (const auto &e : {std::pair{"cursor", &cp.cursor},

@@ -42,6 +42,7 @@ pub mod music_determination;
 pub mod musical_performance_return;
 pub mod nara;
 pub mod performance_audio;
+pub mod performance_management;
 pub mod physical_body;
 mod pole_state;
 pub mod property;
