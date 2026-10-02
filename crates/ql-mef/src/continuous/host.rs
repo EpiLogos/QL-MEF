@@ -37,6 +37,10 @@ pub enum HostOperation {
     Replace {
         basis: Box<CoupledInput>,
     },
+    /// scene only: D30 material policy; resident amplitudes and clocks continue.
+    SetDamping {
+        per_second: f64,
+    },
     /// scene only: M1's own advance action, then the whole event is re-read.
     M1Advance {
         ticks: u64,
@@ -268,7 +272,9 @@ impl FieldHost {
         // consumer needs no second exchange while its audio waits.
         let determinant = matches!(
             &request.command,
-            HostOperation::M1Advance { .. } | HostOperation::ReplaceEvent { .. }
+            HostOperation::M1Advance { .. }
+                | HostOperation::ReplaceEvent { .. }
+                | HostOperation::SetDamping { .. }
         );
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
@@ -289,6 +295,9 @@ impl FieldHost {
             (HostOperation::Replace { basis }, Owner::Supplied(session)) => {
                 session.replace_field(*basis)
             }
+            (HostOperation::SetDamping { per_second }, Owner::Scene(instrument)) => {
+                instrument.set_damping(per_second)
+            }
             (HostOperation::M1Advance { ticks }, Owner::Scene(instrument)) => {
                 instrument.m1_advance(ticks)
             }
@@ -298,9 +307,12 @@ impl FieldHost {
             (HostOperation::Replace { .. }, Owner::Scene(_)) => {
                 Err("a scene owner composes its own voices; use replace-event".into())
             }
-            (HostOperation::M1Advance { .. } | HostOperation::ReplaceEvent { .. }, _) => {
-                Err("determinant operations belong to a provider-composed scene owner".into())
-            }
+            (
+                HostOperation::M1Advance { .. }
+                | HostOperation::ReplaceEvent { .. }
+                | HostOperation::SetDamping { .. },
+                _,
+            ) => Err("determinant operations belong to a provider-composed scene owner".into()),
             (
                 HostOperation::Inspect {}
                 | HostOperation::Influence {}

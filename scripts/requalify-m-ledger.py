@@ -287,6 +287,54 @@ def apply(args) -> None:
                       "registry_revision": registry["registry_revision"], "preserved_applied_decisions": len(applied)}))
 
 
+def verify_source_comparator_reconciliation(root: Path, receipt: dict) -> None:
+    """Admit an executed source-comparator successor without restamping old replays."""
+    retained = m.read(root / "fixtures/kernel/source-requalification/m3-source-audit.json")
+    lock = m.read(root / "fixtures/kernel/m3-source-bindings-v1.json")
+    if m.digest(m.canonical(retained)) == lock["audit_sha256"]:
+        return
+    record = receipt.get("source_comparator_reconciliation")
+    if not isinstance(record, dict) or record.get("schema") != "ql.source-comparator-reconciliation/v1":
+        raise ValueError("Changed source comparator requires its own executed audit reconciliation")
+    prior = json.loads(subprocess.check_output(["git", "show", record["prior_receipt_git_commit"] + ":" + str(RECEIPT)], cwd=root))
+    restored = copy.deepcopy(receipt)
+    restored.pop("source_comparator_reconciliation")
+    inputs = record["inputs"]
+    if {row["path"] for row in inputs} != {"scripts/m3-source-parity.py", "fixtures/kernel/m3-source-bindings-v1.json"} or len(inputs) != 2:
+        raise ValueError("Comparator reconciliation exceeded its two source inputs")
+    for row in inputs:
+        path = row["path"]
+        old = subprocess.check_output(["git", "show", record["prior_input_git_commit"] + ":" + path], cwd=root)
+        if sha(old) != row["before_sha256"] or prior["current_input_locks"][path] != row["before_sha256"]:
+            raise ValueError("Comparator reconciliation lost its prior source input: " + path)
+        if sha((root / path).read_bytes()) != row["after_sha256"] or receipt["current_input_locks"][path] != row["after_sha256"]:
+            raise ValueError("Comparator reconciliation is stale: " + path)
+        restored["current_input_locks"][path] = row["before_sha256"]
+    if restored != prior:
+        raise ValueError("Comparator reconciliation rewrote retained native/decision/proof qualification")
+    for key in ("current_audit", "actual_source_tests"):
+        if m.lock(root, record[key]["path"]) != {k:record[key][k] for k in ("path", "sha256")}:
+            raise ValueError("Comparator execution artifact changed: " + key)
+    current = m.read(root / record["current_audit"]["path"])
+    if m.digest(m.canonical(current)) != lock["audit_sha256"] or current["projection_sha256"] != retained["projection_sha256"] \
+            or current["source_revision"] != retained["source_revision"] or current["registry_revision"] != retained["registry_revision"] \
+            or current["details"]["genetics"] != retained["details"]["genetics"]:
+        raise ValueError("Comparator audit changed original source/native coin basis or differs from its current lock")
+    old_ids = {row["id"] for row in retained["discrepancies"]}
+    preserved = [row for row in current["discrepancies"] if row["id"] in old_ids]
+    additional = [row for row in current["discrepancies"] if row["id"] not in old_ids]
+    if preserved != retained["discrepancies"] or len(preserved) != record["preserved_legacy_findings"] or len(additional) != record["additional_open_qualified_edge_records"]:
+        raise ValueError("Comparator audit changed or omitted retained source findings")
+    if any(row["state"] != "open" or row["decision"] is not None or row["proposal"] is not None \
+           or json.loads(row["detail"])["code"] != "line-change-qualification" for row in additional):
+        raise ValueError("Comparator audit silently decided a new source discrepancy")
+    if m.lock(root, record["actual_source_tests"]["source"]["path"]) != record["actual_source_tests"]["source"]:
+        raise ValueError("Comparator test source changed after the recorded source suite")
+    log = (root / record["actual_source_tests"]["path"]).read_text()
+    if not re.search(r"Ran " + str(record["actual_source_tests"]["tests"]) + r" tests in [0-9.]+s\s+OK\s*$", log):
+        raise ValueError("Comparator tests did not actually pass the recorded full source suite")
+
+
 def check() -> None:
     receipt = m.read(ROOT / RECEIPT)
     ledger = m.read(ROOT / m.LEDGER)
@@ -302,6 +350,7 @@ def check() -> None:
     for path, digest in receipt["historical_numerical_proofs_unchanged"].items():
         verify_historical_proof(ROOT, path, digest, receipt["historical"]["git_commit"])
     history(receipt["historical"]["git_commit"])
+    verify_source_comparator_reconciliation(ROOT, receipt)
     m.verify(ROOT, ledger)
     print("Current source requalification, preserved historical proofs and131 decisions verified")
 

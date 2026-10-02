@@ -802,6 +802,29 @@ impl SceneInstrument {
         Ok(field)
     }
 
+    /// D30 declared material policy, changed on the SAME resident nine voices.
+    /// The worker acknowledges a modes continuation before either source or
+    /// policy commits. No strike, shape replacement or clock operation occurs.
+    pub fn set_damping(&mut self, per_second: f64) -> Result<Value, String> {
+        if !per_second.is_finite() || !(0.0..=1e6).contains(&per_second) {
+            return Err("scene damping must be finite and in 0..1000000 per second".into());
+        }
+        let mut material = self.material.clone();
+        material.damping_per_second = per_second;
+        let event = next_generation(
+            &self.event(),
+            self.event.m2.stamp.identity.profile_generation,
+        )?;
+        let (input, basis) = complete(&event, &material, self.fibre())?;
+        if ShapeBasis::from_basis(&basis)? != self.shape {
+            return Err("a damping edit cannot change the scene shape or voices".into());
+        }
+        let field = self.session.replace_field_state(input.clone(), false)?;
+        self.event = input;
+        self.material = material;
+        Ok(field)
+    }
+
     /// M1's own advance action, then the whole event is re-read.
     pub fn m1_advance(&mut self, ticks: u64) -> Result<Value, String> {
         if ticks == 0 || ticks > 1_000_000 {
@@ -902,7 +925,7 @@ impl SceneInstrument {
                 {"determinant":"material policy",
                  "through":"damping, strike, gain, metres_per_unit",
                  "effect":"decay, loudness and visible amplitude",
-                 "units":"1/s, m, 1/m, m", "range":"declared", "timing":"per instance",
+                 "units":"1/s, m, 1/m, m", "range":"declared", "timing":"per instance; explicit damping edit continues resident modes",
                  "consumer":"K8 modal owner",
                  "warrant":"declared policy — not source"}
             ],

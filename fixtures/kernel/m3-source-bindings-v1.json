@@ -1,9 +1,9 @@
 {
-  "audit_sha256": "74af3522fc29fd68e0f28ad03dce678fd47d34bfae863b18d47d145371100781",
+  "audit_sha256": "7a35180f9573d6050a0837e2f6fd7fe9cc82c31533aa66ab7bbf8db98a126e86",
   "counts": {
     "native_orientation_states": 472,
     "nodes": 996,
-    "open_findings": 183,
+    "open_findings": 488,
     "relation_kinds": {
       "ADJACENT_TO": 2,
       "ALIGNS_WITH_COMPASS": 4,
@@ -158,6 +158,7 @@
     "legacy-clock-placeholder": 1,
     "line-change": 75,
     "line-change-field": 45,
+    "line-change-qualification": 305,
     "nuclear-register": 60,
     "orientation-count": 1,
     "resonance-admissibility": 1
