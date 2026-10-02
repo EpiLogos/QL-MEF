@@ -943,6 +943,21 @@
         "cpp/tests/physical_force_routes.cpp",
         "cpp/tests/physical_body.cpp"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/m2_tuning_sources.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-4",
+        "#2-1",
+        "#2-5"
+      ],
+      "kind": "computational",
+      "rationale": "Native source collections retain real127 correspondence paths with explicit authentic pitch absence,17 missing typed paths, retained C quarter-tone approximations and complete row locks, actual unfolded planetary intervals including Pluto9:4 and Sun dual literal, native architectural diatonic targets and unfolded rational generators. Complete native replay comparison rejects altered receipts/relations/degrees/standing. Sparse K key reduction and A octave/component mapping remain explicit downstream operations; no twelve-pitch or eight-bus closure, unknown pitch or Earth/Uranus tone is manufactured.",
+      "tests": [
+        "crates/ql-mef/tests/m2_tuning_sources.rs"
+      ]
     }
   ]
 }
