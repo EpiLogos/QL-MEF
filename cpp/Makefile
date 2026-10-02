@@ -30,6 +30,7 @@ INSTALLED_SOURCES := $(filter %_installed.cpp,$(TEST_SOURCES))
 UNIT_SOURCES := $(filter-out tests/continuous_field.cpp $(TRANSPORT_SOURCES) $(INSTALLED_SOURCES),$(TEST_SOURCES))
 UNIT_TESTS := $(patsubst tests/%.cpp,$(BUILD_DIR)/%-test,$(UNIT_SOURCES))
 TRANSPORT_TESTS := $(patsubst tests/%.cpp,$(BUILD_DIR)/%-test,$(TRANSPORT_SOURCES))
+ALLOCATION_HOOKS := test_support/allocation_hooks.cpp test_support/allocation_hooks.hpp
 MAC_DEVICE_OBJECT :=
 ifeq ($(shell uname -s),Darwin)
   MAC_DEVICE_OBJECT := $(BUILD_DIR)/audio-device-macos.o
@@ -44,8 +45,8 @@ $(BUILD_DIR)/ql-field-worker: src/field_worker.cpp include/ql/continuous_field.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
-$(BUILD_DIR)/%-test: tests/%.cpp $(HEADERS) $(LIB) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
+$(BUILD_DIR)/%-test: tests/%.cpp $(HEADERS) $(ALLOCATION_HOOKS) $(LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< test_support/allocation_hooks.cpp $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/audio-device-macos.o: src/audio_device_macos.cpp $(HEADERS) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 test: all

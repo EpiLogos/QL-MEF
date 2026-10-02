@@ -197,10 +197,13 @@ public:
   std::uint64_t transaction() const noexcept { return transaction_; }
   std::uint64_t sample() const noexcept { return sample_; }
   bool committed() const noexcept { return committed_; }
-  // Audio owner only, at the exact native scheduled boundary. This modifies
-  // candidate scratch on refusal, but resident body/output stay atomic.
-  bool apply(PhysicalBody &body,
-             PhysicalLiveTransitionReceipt &output) noexcept {
+  // Only before commit: immutable after basis for paired receiving preflight.
+  const PreparedPhysicalBody &pending_after_preparation() const noexcept {
+    return candidate_.prepared_;
+  }
+  // Callback-owned no-resident-mutation preflight. Candidate scratch is owned
+  // by this prepared transaction, never by the live body or UI.
+  bool preflight(const PhysicalBody &body) noexcept {
     if (committed_ || body.samples_elapsed() != sample_ ||
         body.body_revision() != before_.body_revision ||
         body.prepared_.eigenbasis_identity_ != before_basis_ ||
@@ -231,6 +234,17 @@ public:
       return false;
     candidate_.elapsed_ = sample_;
     candidate_.last_ = pickup;
+    return true;
+  }
+  // Preflight and commit occur under uninterrupted sole callback custody.
+  // With resident/prepared bytes unchanged after a successful preflight this
+  // commit cannot fail: only deterministic bounded checks and swaps remain.
+  bool apply(PhysicalBody &body,
+             PhysicalLiveTransitionReceipt &output) noexcept {
+    if (!preflight(body))
+      return false;
+    const double before_energy = body.mechanical_energy_joules(),
+                 after_energy = candidate_.mechanical_energy_joules();
     const PhysicalLiveTransitionReceipt result{transaction_,
                                                before_.body_revision,
                                                after_.body_revision,

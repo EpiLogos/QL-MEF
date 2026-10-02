@@ -1,6 +1,7 @@
 // Controlled inputs exercise actual excitation -> actual P integration.
 // They are not authenticated M2 production inputs. The Rust consumer fixture
 // separately joins native M1/K/M2/B outputs before creating these packets.
+#include "../test_support/allocation_hooks.hpp"
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -13,15 +14,15 @@ static std::atomic<std::uint64_t> callback_allocations{0};
 void *operator new(std::size_t size) {
   if (count_allocations.load(std::memory_order_relaxed))
     callback_allocations.fetch_add(1);
-  if (void *p = std::malloc(size ? size : 1))
+  if (void *p = ql_test_allocate(size))
     return p;
   throw std::bad_alloc();
 }
 void *operator new[](std::size_t size) { return ::operator new(size); }
-void operator delete(void *p) noexcept { std::free(p); }
-void operator delete[](void *p) noexcept { std::free(p); }
-void operator delete(void *p, std::size_t) noexcept { std::free(p); }
-void operator delete[](void *p, std::size_t) noexcept { std::free(p); }
+void operator delete(void *p) noexcept { ql_test_release(p); }
+void operator delete[](void *p) noexcept { ql_test_release(p); }
+void operator delete(void *p, std::size_t) noexcept { ql_test_release(p); }
+void operator delete[](void *p, std::size_t) noexcept { ql_test_release(p); }
 using namespace ql::performance;
 static void near(double a, double b, double tolerance = 1e-10) {
   assert(std::isfinite(a) && std::abs(a - b) <= tolerance);
@@ -789,6 +790,12 @@ static void relative_octet_band_limits_preserve_exact_checkpoint() {
   }
 }
 int main() {
+  count_allocations.store(true);
+  void *probe = ::operator new(32);
+  count_allocations.store(false);
+  ::operator delete(probe);
+  assert(callback_allocations.load() == 1);
+  callback_allocations.store(0);
   std::cout << "native_fixed_sizes_bytes Engine=" << sizeof(Engine)
             << " Operation=" << sizeof(Operation)
             << " Readback=" << sizeof(Readback)

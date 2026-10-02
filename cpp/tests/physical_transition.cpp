@@ -1,6 +1,7 @@
 // Real sole-body numerical transactions, with independently calculated response
 // and complete native allocation/free counters around callback-owned
 // operations.
+#include "../test_support/allocation_hooks.hpp"
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -13,7 +14,7 @@ static std::size_t allocations = 0, releases = 0;
 void *operator new(std::size_t n) {
   if (callback_probe)
     ++allocations;
-  if (void *p = std::malloc(n ? n : 1))
+  if (void *p = ql_test_allocate(n))
     return p;
   throw std::bad_alloc();
 }
@@ -21,7 +22,7 @@ void *operator new[](std::size_t n) { return ::operator new(n); }
 void operator delete(void *p) noexcept {
   if (p && callback_probe)
     ++releases;
-  std::free(p);
+  ql_test_release(p);
 }
 void operator delete[](void *p) noexcept { ::operator delete(p); }
 void operator delete(void *p, std::size_t) noexcept { ::operator delete(p); }
@@ -29,8 +30,7 @@ void operator delete[](void *p, std::size_t) noexcept { ::operator delete(p); }
 void *operator new(std::size_t n, std::align_val_t a) {
   if (callback_probe)
     ++allocations;
-  void *p = nullptr;
-  if (posix_memalign(&p, static_cast<std::size_t>(a), n ? n : 1) == 0)
+  if (void *p = ql_test_allocate_aligned(n, static_cast<std::size_t>(a)))
     return p;
   throw std::bad_alloc();
 }
@@ -166,6 +166,7 @@ static void material_ringing_work_and_allocation_custody() {
   PhysicalLiveTransitionReceipt receipt{};
   PhysicalSnapshot visible{};
   callback_probe = true;
+  assert(prepared.preflight(body));
   assert(prepared.apply(body, receipt));
   assert(write_physical_snapshot(body, visible, 2, 123));
   callback_probe = false;
@@ -414,6 +415,12 @@ static void seek_reopen_preserves_pending_transition_and_future_pcm() {
          another.state_ref() == in.state_ref);
 }
 int main() {
+  callback_probe = true;
+  void *probe = ::operator new(32);
+  ::operator delete(probe);
+  callback_probe = false;
+  assert(allocations == 1 && releases == 1);
+  allocations = releases = 0;
   material_ringing_work_and_allocation_custody();
   changed_mass_geometry_and_boundary_project_actual_state();
   stale_disconnected_bounds_and_reset_are_explicit();

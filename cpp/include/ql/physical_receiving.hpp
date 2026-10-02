@@ -20,6 +20,7 @@ struct SpatialReceivingInput {
   unsigned transition_samples = 128;
 };
 class PreparedSpatialReceiving {
+  friend class PreparedReceivingTransition;
   SpatialReceivingInput input_;
   std::string body_preparation_ref_, body_state_ref_, eigenbasis_identity_,
       event_ref_, subject_ref_, identity_;
@@ -181,6 +182,7 @@ struct SpatialReceivingCheckpoint {
   std::vector<float> history_linear;
 };
 class SpatialReceiving {
+  friend class PreparedReceivingTransition;
   PreparedSpatialReceiving prepared_;
   std::array<float, receiving_history_samples> history_{};
   std::uint64_t elapsed_ = 0;

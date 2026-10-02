@@ -39,6 +39,7 @@ mod matheme;
 mod music;
 mod music_completion;
 pub mod music_determination;
+pub mod musical_performance_return;
 pub mod nara;
 pub mod performance_audio;
 pub mod physical_body;
