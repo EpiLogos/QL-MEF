@@ -1,7 +1,7 @@
 //! Additive management of the existing retained worker. Only native source
 //! producers construct callback packets. The UI supplies gestures/magnitudes,
 //! never a NoteTarget, physical authority, queue ordinal or sample clock.
-use super::coupled::{CoupledBasis, CoupledFieldSession, CoupledInput};
+use super::coupled::{CoupledBasis, CoupledFieldSession};
 use crate::MFace;
 use crate::m2_relation_plan::M2RelationPlanContext;
 use crate::m2_tuning_sources::retained_condition_collection;

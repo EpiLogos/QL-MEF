@@ -187,14 +187,15 @@ fn first_connected_batch_creates_real_scenes_constituents_force_and_sequence() {
             overlays: vec![],
         };
         let regeneration = regenerate(
-            &[old.clone()],
-            &[current.clone()],
+            std::slice::from_ref(&old),
+            std::slice::from_ref(&current),
             &[next],
             RemovalPolicy::RetireUneditedDetachEdited,
         )
         .unwrap();
         let native_regeneration =
-            regeneration_native_changes(&regeneration, &[old.clone()], &[current]).unwrap();
+            regeneration_native_changes(&regeneration, std::slice::from_ref(&old), &[current])
+                .unwrap();
         std::fs::write(path, serde_json::to_vec_pretty(&json!({"schema":"ql.procedural-stage-fixture/v1", "procedure":procedure,
             "prepared":prepared,"contributions":contributions,"create":{"operation":"create","expression_ref":"expression:acceptance",
             "title":"Ta-Onta Procedural Stage Acceptance","actor":"agent:anima"},
@@ -386,8 +387,8 @@ fn three_way_diff_preserves_human_force_override_and_accepts_new_generated_seque
         overlays: vec![],
     };
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
     )
@@ -432,7 +433,7 @@ fn explicit_persistent_overlay_survives_reordering_regeneration_and_serializatio
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        &[old.clone()],
+        std::slice::from_ref(&old),
         &[current],
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
@@ -473,9 +474,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
-        &[next.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+        std::slice::from_ref(&next),
         RemovalPolicy::RetireUneditedDetachEdited,
     )
     .unwrap();
@@ -494,9 +495,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
     positional.overlays[0].pointer = "/scene/entities/0/force/strength".into();
     assert!(
         regenerate(
-            &[old.clone()],
+            std::slice::from_ref(&old),
             &[positional],
-            &[next.clone()],
+            std::slice::from_ref(&next),
             RemovalPolicy::RetireUneditedDetachEdited
         )
         .unwrap_err()
@@ -606,7 +607,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let frozen = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[a.clone()],
+        std::slice::from_ref(&a),
         MembershipMode::Frozen,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -626,7 +627,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
         resolve_membership(
             &Selector::All,
             "expression:acceptance",
-            &[a.clone()],
+            std::slice::from_ref(&a),
             MembershipMode::Frozen,
             Some(&frozen),
             MembershipChangePolicy::AdmitAndRecord
@@ -637,7 +638,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let sustained = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[a.clone()],
+        std::slice::from_ref(&a),
         MembershipMode::Sustained,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -646,7 +647,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let updated = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[b.clone()],
+        std::slice::from_ref(&b),
         MembershipMode::Sustained,
         Some(&sustained),
         MembershipChangePolicy::AdmitAndRecord,
@@ -769,7 +770,7 @@ fn source_qualified_conditions_are_resolved_before_frozen_native_scope() {
             registry,
             &p,
             "expression:acceptance",
-            &[related.clone()],
+            std::slice::from_ref(&related),
             None
         )
         .unwrap()
@@ -791,9 +792,14 @@ fn existing_force_write_must_match_actual_resolved_entity_and_writer_scope() {
     let registry = m_tree::native_current_m_registry();
     let p = procedure();
     let a = reading("a", 9);
-    let selected =
-        resolve_procedure_membership(registry, &p, "expression:acceptance", &[a.clone()], None)
-            .unwrap();
+    let selected = resolve_procedure_membership(
+        registry,
+        &p,
+        "expression:acceptance",
+        std::slice::from_ref(&a),
+        None,
+    )
+    .unwrap();
     let mut c = contribution(&p, "existing-force");
     let mut owned = a.address.clone();
     owned.component = "property".into();
@@ -914,14 +920,18 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
     next.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
         json!(true);
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
-        &[next.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+        std::slice::from_ref(&next),
         p.removal_policy,
     )
     .unwrap();
-    next.native_changes =
-        regeneration_native_changes(&delta, &[old.clone()], &[current.clone()]).unwrap();
+    next.native_changes = regeneration_native_changes(
+        &delta,
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+    )
+    .unwrap();
     // This is pure producer input validation. Only native S can attest the
     // opaque typed journal digest and actual consumer observations at apply.
     let envelope = json!({"operation_ref":"operation:original","expression_ref":"expression:acceptance","expected_revision":1,
@@ -958,8 +968,8 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
             membership(),
             vec![generated],
             BTreeSet::from(["scene".into()]),
-            &[old.clone()],
-            &[current.clone()],
+            std::slice::from_ref(&old),
+            std::slice::from_ref(&current),
             readings,
         )
     };
@@ -1022,16 +1032,16 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         revised.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
             json!(true);
         let delta = regenerate(
-            &[previous_generation.clone()],
-            &[current_generation.clone()],
-            &[revised.clone()],
+            std::slice::from_ref(&previous_generation),
+            std::slice::from_ref(&current_generation),
+            std::slice::from_ref(&revised),
             p.removal_policy,
         )
         .unwrap();
         revised.native_changes = regeneration_native_changes(
             &delta,
-            &[previous_generation.clone()],
-            &[current_generation.clone()],
+            std::slice::from_ref(&previous_generation),
+            std::slice::from_ref(&current_generation),
         )
         .unwrap();
         let mut reading = output.clone();
