@@ -13,7 +13,6 @@ using packet::integer;
 using packet::number;
 using ql::physical_wire::keys;
 using ql::physical_wire::own;
-using ql::physical_wire::require;
 inline Json object() {
   auto value = own(json_object_new_object());
   require(bool(value), "checkpoint object allocation failed");
