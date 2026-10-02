@@ -1,5 +1,31 @@
 # QL-MEF agent entry
 
+## M′ physical music delivery — 2 October 2026
+
+For M1′/M2′ professional audio, Jankó, synth/modulation/cymatics, M3 sounding
+forms or their M4/Expressions embodiment, execute #281 through
+`docs/M-PRIME-PHYSICAL-MUSIC-WAYFINDER.md`, its curated
+`docs/M-PRIME-PHYSICAL-MUSIC-WORK-PACKETS.md` and
+`docs/M-PRIME-PHYSICAL-MUSIC-RESEARCH-ACCEPTANCE.md`.
+
+This is the complete instrument inside the existing Expressions application,
+not another renderer, kernel programme, private pitch engine or narrowed
+Canvas/Timeline demo. Preserve full prime-bearing descendants and the current
+QL law/owner rulings: M1 supplies the oscillator carrier; M2 MEF/Vimarśā reads
+and shapes it, including the shared 8+4 bus. M3 form/sequence and M4 situated
+receiving participate in the same causal physical-musical construction.
+Sound, physical state, professional interaction, recorded work and live
+owner-visible delivery are all required. The existing integrated-expression
+session remains the integration owner; claim disjoint packets rather than
+starting a competing shared-core/host writer.
+
+The reference research packet includes primary Sound Particles, Tech Audio
+Shrapnel, Physical Audio Tetrad and Anukari routes and concrete experiments.
+Deliver each subagent's full relevant source, current contracts and detecting
+failure cases through ordinary context tools. Source publication does not
+certify a running feature or supply human acceptance. The standing programmes
+and source/UX ratification distinctions below remain unchanged.
+
 **UX/practice amendments: publication authorised; H ratification pending (Satya).** The new UX source minute, crosswalk, trace and practice guidance are available for review and provisional use against the already-approved source. Merge and passing checks do not ratify them. Existing architecture, native authority and source standings remain unchanged. See `docs/kernel-rebuild/ux-publication-standing.json`.
 
 ## Read this first: one system, not a stack of engines
