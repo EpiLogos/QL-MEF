@@ -919,7 +919,7 @@ fn constellation_shape_and_compression_use_native_structural_members() {
     let shape = ql_core::QlShape::Constellation(ql_core::ConstellationGrain::ThreeFold123);
     assert_eq!(
         value(&result.determination["derived"], "shape"),
-        shape.shape_ref()
+        &json!(shape.shape_ref())
     );
     assert_eq!(
         value(&result.determination["derived"], "shape-fold-count"),
@@ -977,7 +977,7 @@ fn anonymous_native_constellation_retains_grain_without_an_invented_shape_ref() 
         .unwrap();
         assert_eq!(
             value(&result.determination["derived"], "constellation-grain"),
-            json!({"kind":native.grain().as_str(),"direct":native.members.len(),"conjugate":0})
+            &json!({"kind":native.grain().as_str(),"direct":native.members.len(),"conjugate":0})
         );
         assert!(
             project_event(request(
