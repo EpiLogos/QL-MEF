@@ -14,8 +14,10 @@ struct Scope {
   std::string performance_digest;
 };
 inline bool digest_valid(const std::string &digest) noexcept {
-  return digest.size() == 64 &&
-         std::all_of(digest.begin(), digest.end(), [](char c) {
+  // The existing native C Performance owner uses this exact qualified
+  // content identity; removing its prefix changes the retained source ref.
+  return digest.size() == 71 && digest.compare(0, 7, "sha256:") == 0 &&
+         std::all_of(digest.begin() + 7, digest.end(), [](char c) {
            return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
          });
 }

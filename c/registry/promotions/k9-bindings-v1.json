@@ -1087,6 +1087,23 @@
       "tests": [
         "cpp/tests/performance_management_artifacts_packet.cpp"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_score.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Source-qualified musical inscription consumes actual immutable M1/K/M2/post-command M3/physical/native Return and original occasion. Explicit sparse/architectural target selection, actual carrier phase and source replay bind pitches; references the same existing Expression event-page addresses with separate musical edition generation, no alternate score store, clock, codon classifier or fabricated played receipt. Normal C/Act/host consumer joins and live proof remain required.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs"
+      ]
     }
   ]
 }
