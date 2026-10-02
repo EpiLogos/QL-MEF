@@ -855,7 +855,8 @@
       "rationale": "QL #281: Binds the actual admitted M1/M2/K/P performance to independently replayed native M3 score/commands and exact original M4 occasion. Source/body/event generations and optional neutral World receiving survive return to the existing native Expression owner; no second store, classifier or receiving authority. Current reinscription returns a new admitted native score/body revision while preserving original occasion and prior edition bytes; command receipts alone cannot relabel the saved score.",
       "tests": [
         "crates/ql-mef/tests/musical_performance_return.rs",
-        "crates/ql-mef/tests/musical_performance_reinscription.rs"
+        "crates/ql-mef/tests/musical_performance_reinscription.rs",
+        "crates/ql-mef/tests/independent_return_context_admission.rs"
       ],
       "kind": "computational"
     },
@@ -1074,6 +1075,17 @@
       "rationale": "Actual native M1/M2/M3 plus B source preparation emits all twelve address availability receipts and separately explicit source octet for real A/P consumption. The original full-twelve reference remains separately named; no constructed oscillator, body or device verdict.",
       "tests": [
         "crates/ql-mef/tests/source_key_determination.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_offline_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Control-thread JSON transport of the existing stopped A/P renderer; requires exact finite committed Capture/PCM and same cursor/source, emitting no PCM on refusal. Native C/Act owner independently admits the original performance scope; serialized digest and fixture headers grant no authority.",
+      "tests": [
+        "cpp/tests/performance_management_artifacts_packet.cpp"
       ]
     }
   ]

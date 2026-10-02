@@ -300,6 +300,19 @@ fn ordinary_public_world_has_no_personal_occasion_or_modulation() {
     assert!(d.centres().is_empty());
     let op = d.native_operation(43199999).unwrap();
     assert_eq!(op.native_sample, "43199999");
+    assert_eq!(
+        op.body_revision,
+        Some(p.physical_body().request().body_revision.to_string())
+    );
+    assert_eq!(
+        op.preparation.as_ref().unwrap().reference,
+        p.physical_body().request().preparation_ref
+    );
+    assert_eq!(
+        op.state.as_ref().unwrap().reference,
+        p.physical_body().request().state_ref
+    );
+    assert!(op.calibration.is_none());
     op.validate_single_projection_port().unwrap();
     let i = identity(&p, [0.; 10]);
     assert!(

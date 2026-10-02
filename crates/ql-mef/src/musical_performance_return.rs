@@ -73,13 +73,22 @@ impl ReturnContext {
         if !["world", "personal", "shared"].contains(&self.kind.as_str()) {
             return Err("unknown native return context kind".into());
         }
-        if self.kind == "personal"
-            && (!self.private || self.protected_state.is_none() || occasion.is_none())
-        {
-            return Err("personal return needs its protected native occasion".into());
-        }
-        if self.kind == "shared" && (self.consent.is_none() || occasion.is_none()) {
-            return Err("shared return needs its native consent and occasion".into());
+        if self.kind == "world" {
+            if self.private
+                || self.protected_state.is_some()
+                || self.consent.is_some()
+                || self.source_occasion.is_some()
+                || occasion.is_some()
+            {
+                return Err("ordinary public World cannot carry protected personal return".into());
+            }
+        } else {
+            if !self.private || self.protected_state.is_none() || occasion.is_none() {
+                return Err("personal/shared return needs its protected native occasion".into());
+            }
+            if self.kind == "shared" && self.consent.is_none() {
+                return Err("shared return needs its native consent and occasion".into());
+            }
         }
         if let Some(o) = occasion {
             if let Some(p) = &self.protected_state {

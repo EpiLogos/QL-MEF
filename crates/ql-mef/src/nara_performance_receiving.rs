@@ -314,6 +314,11 @@ pub struct ReceivingDefinition {
     drivers: Vec<SourceDriver>,
     centres: Vec<CentreBinding>,
     calibration: Option<ReceivingCalibration>,
+    /// Common body custody applies to neutral World as well as calibrated
+    /// personal routes. M3 source generations alone do not identify material.
+    body_revision: String,
+    preparation: Reference,
+    state: Reference,
     prepared_binding_digest: String,
     source_instance: String,
     native_node_ids: Vec<String>,
@@ -423,9 +428,9 @@ impl ReceivingDefinition {
                 native_generations: self.native_generations.clone(),
                 source_policy: None,
                 source_instance: self.source_instance.clone(),
-                body_revision: None,
-                preparation: None,
-                state: None,
+                body_revision: Some(self.body_revision.clone()),
+                preparation: Some(self.preparation.clone()),
+                state: Some(self.state.clone()),
                 calibration: None,
                 sources: vec![],
                 projections: vec![],
@@ -612,6 +617,15 @@ fn prepare_against_registry(
         drivers: vec![],
         centres: vec![],
         calibration: input.calibration.cloned(),
+        body_revision: body.request().body_revision.to_string(),
+        preparation: Reference {
+            reference: body.request().preparation_ref.clone(),
+            revision: body.request().body_revision.to_string(),
+        },
+        state: Reference {
+            reference: body.request().state_ref.clone(),
+            revision: body.request().body_revision.to_string(),
+        },
         prepared_binding_digest: digest(prepared)?,
         content_digest: String::new(),
         source_instance: prepared.determination()["identity"]["instance"]

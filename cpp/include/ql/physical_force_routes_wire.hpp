@@ -58,6 +58,18 @@ inline PreparedNativePhysicalForceRoutes read_prepared_physical_force_routes(
   const auto source_count = count(sources, physical_max_personal_force_routes);
   require(native_program_refs.size() == source_count,
           "each independent source requires its own native program identity");
+  // Neutral World still belongs to the actual prepared material/body. Source
+  // generations can remain unchanged across a physical material revision.
+  require(checkpoint_decimal(field(candidate_operation, "body_revision")) == immutable_body.input().body_revision,
+          "receiving body revision stale");
+  for (const auto &binding : {std::pair{"preparation", &immutable_body.input().preparation_ref},
+                              {"state", &immutable_body.input().state_ref}}) {
+    auto reference = field(candidate_operation, binding.first);
+    keys(reference, {"reference", "revision"});
+    require(text(field(reference, "reference")) == *binding.second &&
+                checkpoint_decimal(field(reference, "revision")) == immutable_body.input().body_revision,
+            "receiving preparation/state disconnected");
+  }
   auto context = field(candidate_operation, "context");
   const auto kind = text(field(context, "kind"));
   if (kind == "world") {
@@ -70,16 +82,6 @@ inline PreparedNativePhysicalForceRoutes read_prepared_physical_force_routes(
   require((kind == "personal" || kind == "shared") && source_count == 9 &&
               count(projections, 7) == 7,
           "personal receiving requires nine original drivers and seven calibrated maps");
-  require(checkpoint_decimal(field(candidate_operation, "body_revision")) == immutable_body.input().body_revision,
-          "receiving body revision stale");
-  for (const auto &binding : {std::pair{"preparation", &immutable_body.input().preparation_ref},
-                              {"state", &immutable_body.input().state_ref}}) {
-    auto reference = field(candidate_operation, binding.first);
-    keys(reference, {"reference", "revision"});
-    require(text(field(reference, "reference")) == *binding.second &&
-                checkpoint_decimal(field(reference, "revision")) == immutable_body.input().body_revision,
-            "receiving preparation/state disconnected");
-  }
   std::string calibration_ref, calibration_revision, calibration_source, calibration_standing;
   auto calibration = field(candidate_operation, "calibration");
   provenance(calibration, calibration_ref, calibration_revision, calibration_source, calibration_standing);
