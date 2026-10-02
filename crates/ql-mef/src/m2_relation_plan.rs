@@ -1031,6 +1031,9 @@ pub struct M2RelationPlan {
     pub at_unix_ms: u64,
     pub input_basis_sha256: String,
     pub source_receipts: M2SourceReceipts,
+    /// Original native selection/routes. Replay recomputes the producer; public
+    /// receipts and mutable execution fields cannot authorize a different plan.
+    source_context: M2RelationPlanContext,
 }
 #[derive(Debug)]
 pub struct PreparedM2Relation {
@@ -1064,6 +1067,7 @@ impl M2RelationPlan {
         field: &M2SourceField,
     ) -> Result<PreparedM2Relation, String> {
         context.validate()?;
+        let source_context = context.clone();
         if request.registry_revision != field.registry_revision
             || request.registry_revision != native_m_registry().manifest().registry_revision
         {
@@ -1378,6 +1382,7 @@ impl M2RelationPlan {
                     .as_bytes(),
             ),
             source_receipts: receipts,
+            source_context,
         };
         plan.source_receipts.validate_against(field)?;
         Ok(PreparedM2Relation {
@@ -1407,6 +1412,16 @@ impl M2RelationPlan {
             return Err("stale, cross-event or unsupported relation plan".into());
         }
         self.source_receipts.validate_against(field)?;
+        // Reproduce every consumed operation, face, descriptor and typed edge
+        // from the retained producer context on this binary's qualified native
+        // source. The refreshed field above checks only consumed dependencies,
+        // so unrelated new READ content does not rewrite an original plan.
+        let expected = Self::compile(request, self.source_context.clone(), source_field())?;
+        if serde_json::to_value(&expected.plan).map_err(|error| error.to_string())?
+            != serde_json::to_value(self).map_err(|error| error.to_string())?
+        {
+            return Err("retained relation plan differs from exact native source replay".into());
+        }
         if let Some(hour) = &self.situated.planetary_hour {
             if !(hour.begins_unix_ms..hour.ends_unix_ms).contains(&request.at_unix_ms) {
                 return Err("planetary hour expired".into());

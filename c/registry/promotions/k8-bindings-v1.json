@@ -471,10 +471,12 @@
         "#3",
         "#4"
       ],
-      "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced.",
+      "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced. Independent native M2/M3 source and post-command generations join through exact event, subject and recomputed producer outputs while preserving original occasion v1 bytes; additive witness records actual score/basis digests.",
       "tests": [
         "crates/ql-mef/src/nara.rs",
-        "crates/ql-mef/tests/nara_personal_field.rs"
+        "crates/ql-mef/tests/nara_personal_field.rs",
+        "crates/ql-mef/tests/nara_event_generations.rs",
+        "crates/ql-mef/tests/musical_performance_return.rs"
       ],
       "kind": "computational"
     },
