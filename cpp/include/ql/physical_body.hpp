@@ -490,6 +490,7 @@ public:
 
 class PhysicalBody {
   friend class PreparedPhysicalTransition;
+  friend class PreparedPhysicalForceRoutes;
   PreparedPhysicalBody prepared_;
   std::vector<double> q_, v_, scratch_q_, scratch_v_;
   std::array<float, physical_max_frames> scratch_audio_{};
@@ -509,6 +510,39 @@ class PhysicalBody {
     }
     return std::isfinite(envelope) && std::isfinite(energy) &&
            envelope <= prepared_.input_.max_displacement_metres;
+  }
+
+  // Both scalar and distributed-route inputs use this one causal numerical
+  // owner. Caller validates buffers, force bounds, basis and cursor first.
+  template <class Projection>
+  bool advance_projected_force_block(Projection projected_force,
+                                     float *pickup_linear,
+                                     std::size_t frames) noexcept {
+    std::copy(q_.begin(), q_.end(), scratch_q_.begin());
+    std::copy(v_.begin(), v_.end(), scratch_v_.begin());
+    for (std::size_t i = 0; i < frames; ++i) {
+      double pickup = 0;
+      for (std::size_t m = 0; m < q_.size(); ++m) {
+        const auto &a = prepared_.step_[m];
+        const double force = projected_force(m, i, prepared_.excitation_[m]);
+        if (!std::isfinite(force))
+          return false;
+        const double q = scratch_q_[m], v = scratch_v_[m];
+        scratch_q_[m] = a.a11 * q + a.a12 * v + a.bq * force;
+        scratch_v_[m] = a.a21 * q + a.a22 * v + a.bv * force;
+        pickup += scratch_q_[m] * prepared_.pickup_[m];
+      }
+      if (!admissible(scratch_q_, scratch_v_) || !std::isfinite(pickup) ||
+          std::abs(pickup) > std::numeric_limits<float>::max())
+        return false;
+      scratch_audio_[i] = static_cast<float>(pickup);
+    }
+    q_.swap(scratch_q_);
+    v_.swap(scratch_v_);
+    elapsed_ += frames;
+    last_ = scratch_audio_[frames - 1];
+    std::copy_n(scratch_audio_.begin(), frames, pickup_linear);
+    return true;
   }
 
 public:
@@ -543,29 +577,10 @@ public:
       if (!std::isfinite(force_newtons[i]) ||
           std::abs(force_newtons[i]) > prepared_.input_.max_force_newtons)
         return false;
-    std::copy(q_.begin(), q_.end(), scratch_q_.begin());
-    std::copy(v_.begin(), v_.end(), scratch_v_.begin());
-    for (std::size_t i = 0; i < frames; ++i) {
-      double pickup = 0;
-      for (std::size_t m = 0; m < q_.size(); ++m) {
-        const auto &a = prepared_.step_[m];
-        const double force = force_newtons[i] * prepared_.excitation_[m];
-        const double q = scratch_q_[m], v = scratch_v_[m];
-        scratch_q_[m] = a.a11 * q + a.a12 * v + a.bq * force;
-        scratch_v_[m] = a.a21 * q + a.a22 * v + a.bv * force;
-        pickup += scratch_q_[m] * prepared_.pickup_[m];
-      }
-      if (!admissible(scratch_q_, scratch_v_) || !std::isfinite(pickup) ||
-          std::abs(pickup) > std::numeric_limits<float>::max())
-        return false;
-      scratch_audio_[i] = static_cast<float>(pickup);
-    }
-    q_.swap(scratch_q_);
-    v_.swap(scratch_v_);
-    elapsed_ += frames;
-    last_ = scratch_audio_[frames - 1];
-    std::copy_n(scratch_audio_.begin(), frames, pickup_linear);
-    return true;
+    return advance_projected_force_block(
+        [&](std::size_t, std::size_t sample, double excitation) noexcept {
+          return force_newtons[sample] * excitation;
+        }, pickup_linear, frames);
   }
   bool apply_impulse_newton_seconds(double impulse, std::uint64_t revision,
                                     std::uint64_t sample) noexcept {

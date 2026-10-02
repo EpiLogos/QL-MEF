@@ -851,9 +851,10 @@
         "#3",
         "#4"
       ],
-      "rationale": "QL #281: Binds the actual admitted M1/M2/K/P performance to independently replayed native M3 score/commands and exact original M4 occasion. Source/body/event generations and optional neutral World receiving survive return to the existing native Expression owner; no second store, classifier or receiving authority.",
+      "rationale": "QL #281: Binds the actual admitted M1/M2/K/P performance to independently replayed native M3 score/commands and exact original M4 occasion. Source/body/event generations and optional neutral World receiving survive return to the existing native Expression owner; no second store, classifier or receiving authority. Current reinscription returns a new admitted native score/body revision while preserving original occasion and prior edition bytes; command receipts alone cannot relabel the saved score.",
       "tests": [
-        "crates/ql-mef/tests/musical_performance_return.rs"
+        "crates/ql-mef/tests/musical_performance_return.rs",
+        "crates/ql-mef/tests/musical_performance_reinscription.rs"
       ],
       "kind": "computational"
     },
@@ -898,6 +899,50 @@
         "cpp/tests/performance_audio.cpp"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara_performance_receiving.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#2-5",
+        "#2-5-0/1-0",
+        "#3",
+        "#4.0",
+        "#4.1",
+        "#4.2",
+        "#4.3",
+        "#4.4",
+        "#4.4.4.4",
+        "#4.5"
+      ],
+      "kind": "computational",
+      "rationale": "Native immutable receiving source preparation replays current identity/natal/current and original occasion, preserves ten-contributor denominator and nine independent driver identities/seven calibrated projections/distinct Earth, verifies all six M4 branches and exact typed ancestry/routes. It supplies a source-qualified bounded A/P operation without granting host consent, private disclosure or numerical consumer standing; scalar ports refuse personal multiprojection.",
+      "tests": [
+        "crates/ql-mef/tests/nara_performance_receiving.rs",
+        "crates/ql-mef/tests/nara_event_generations.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_routes.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#2-5",
+        "#2-5-0/1-0",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Immutable actual native planet/chakra/typed-relation source admission and explicit calibrated independent Newton projections for at most nine source programs. Distinct Earth observer identity and original ten-contributor shares survive. All forces advance the existing physical body q/v, pickup, visible snapshot and cursor once; scalar M1 is explicitly enabled or off. The serial A/N owner retains original definition/currentness/consent authority; this module creates no oscillator, clock, store or anatomy-derived metric.",
+      "tests": [
+        "cpp/tests/physical_force_routes.cpp",
+        "cpp/tests/physical_body.cpp"
+      ]
     }
   ]
 }

@@ -140,6 +140,51 @@ impl MusicalPerformanceReturn {
     pub fn reinscribe(&self, command: M3Command) -> Result<M3Receipt, String> {
         self.replay_score()?.apply(command)
     }
+    /// Retain a real source-defined M3 reinscription as a new native Return.
+    /// The caller must first prepare its actual after-state A/B/K/P binding.
+    /// Returning only a command receipt would leave the saved score stale.
+    /// Source events and the original occasion survive in the prior edition.
+    pub fn reinscribe_retained(
+        &self,
+        command: M3Command,
+        current_prepared: &PreparedPerformanceBinding,
+    ) -> Result<(Self, M3Receipt), String> {
+        let mut state = self.replay_score()?;
+        let receipt = state.apply(command.clone())?;
+        if receipt.status != "applied" {
+            return Err(
+                "unavailable source operation cannot become a performed score revision".into(),
+            );
+        }
+        let basis = current_prepared.native_basis();
+        let mut commands = self.m3_commands.clone();
+        commands.push(command);
+        if serde_json::to_value(&basis.input.m3).map_err(|e| e.to_string())?
+            != serde_json::to_value(&self.m3_request).map_err(|e| e.to_string())?
+            || serde_json::to_value(&basis.input.m3_commands).map_err(|e| e.to_string())?
+                != serde_json::to_value(&commands).map_err(|e| e.to_string())?
+            || basis.m3 != state.snapshot()
+            || basis.m1 != self.m1
+        {
+            return Err(
+                "reinscription disconnected from original sources or actual current preparation"
+                    .into(),
+            );
+        }
+        let seed = self.seed.parse::<u64>().map_err(|e| e.to_string())?;
+        let next = bind_performance_return(
+            current_prepared,
+            self.m4_episode.clone(),
+            self.context.clone(),
+            seed,
+        )?;
+        if next.replay_score()?.snapshot() != state.snapshot()
+            || next.original_occasion() != self.original_occasion()
+        {
+            return Err("retained reinscription lost current score or original occasion".into());
+        }
+        Ok((next, receipt))
+    }
     pub fn original_occasion(&self) -> Option<&NaraOccasion> {
         self.m4_episode.as_ref()
     }
