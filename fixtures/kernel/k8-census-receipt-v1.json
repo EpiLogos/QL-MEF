@@ -1,15 +1,15 @@
 {
   "schema": "ql.k8-current-inventory-receipt/v1",
-  "inventory_sha256": "447af01495d2186de1552d214525a5c1dff3339d9149a2e791e835d2b6df22b6",
-  "registry_revision": "0cfcbc210fa92fab76aa5400b773bde8feb052ed2999d47791c2f4ad5d421f47",
-  "inherited_ledger_revision": "fa243a3c2e813183ba7d11107ac82d09b1460022123e8c47e5641b8c9f96dd66",
-  "inherited_ledger_sha256": "6461507166bf35007bfb2dee050ff2ee5f0b26c9efe26d21ea87931a3af85af3",
-  "constructs": 2844,
+  "inventory_sha256": "5f61ebc341824b9c195f40bccc553772f785c45922b847c8771c0b8b089ebd3c",
+  "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+  "inherited_ledger_revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
+  "inherited_ledger_sha256": "cea0ff2565dca9dff0c439614c431ebe0cd3b0814b923d2766fad685010fbfef",
+  "constructs": 2870,
   "inherited_unresolved": 893,
-  "reviewed_K8_constructs": 1211,
+  "reviewed_K8_constructs": 1237,
   "linked_K8_public_exports": 75,
   "reviewed_K8_cpp_modules": 2,
   "reviewed_K8_javascript_modules": 4,
-  "reviewed_K8_python_modules": 2,
+  "reviewed_K8_python_modules": 3,
   "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate"
 }

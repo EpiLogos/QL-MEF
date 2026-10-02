@@ -9,6 +9,19 @@ full per-field derivations, with every property literal and file:line, are in
 `infra-split.md`). This file is their summary, the joined dataflow, and the
 decisions only the owner can make.
 
+**Current reading, reconciled 1 October 2026.** The owner corrections below,
+the live Bimba source and the geometric successor in the deep M3 matrix §11
+govern where the original Gate 0 account differs. The early “Clock A =
+ecliptic / Clock B = Spanda” terminology is predecessor terminology. Current
+operations distinguish celestial longitude (θ = λ for placement), the M1
+tick/Spanda phase (one tick = 30°), the M3 inscription circle and the selected
+aperture/lens circle. The later joined dataflow and current inscription ×
+lensing T² account do not collapse those state domains. Return, save and
+restart must restore the applicable independent clock as well as the event.
+The five appendices retain their daa660c/4669d8d research basis; their exact
+properties are historical source evidence where the live map has succeeded it.
+No old “Gate 0” wording creates a new implementation or installation hold.
+
 ## Owner corrections, 28 September 2026 (supersede the sections below where they differ)
 
 The owner reviewed this map and corrected it on five points. Each is now

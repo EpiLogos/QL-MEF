@@ -407,7 +407,7 @@ pub fn complete(
 
 pub const BINDING_REQUEST: &str = "ql.scene-binding-request/v1";
 pub const BINDING: &str = "oi.native-expression-binding/v1";
-const DEFAULT_EVENT: &str = include_str!("../../../../fixtures/kernel/scene-default-event-v1.json");
+const DEFAULT_EVENT: &str = include_str!("../../../../fixtures/kernel/scene-default-event-v2.json");
 
 /// What a consumer asks for: an event (or QL's default starting event), an
 /// optional dated sky, and the retained renderer's particle texture.
@@ -454,8 +454,9 @@ pub fn default_material() -> SceneMaterial {
     }
 }
 
-/// Inscription carries the body at one degree per second (M3's one-degree step
-/// at the 1 Hz world clock); lensing keeps its native 9:8 relation.
+/// Authored fine-motion driver: one degree per second with a 9:8 phase relation.
+/// This transition/display rate is distinct from the admitted M1 action's
+/// source-defined thirty-degree tick; world() initializes the source inscription.
 pub fn default_field(subject_ref: &str) -> SceneField {
     SceneField {
         subject_ref: subject_ref.into(),
@@ -481,8 +482,9 @@ pub fn default_field(subject_ref: &str) -> SceneField {
 }
 
 /// Attaches an accepted sky snapshot as M2 world observations, exactly as the
-/// K8 sky provider's own `attach_m2` does. Occurrence follows the receipt.
-fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), String> {
+/// K8 sky provider's own `attach_m2` does. Occurrence retains the observation
+/// epoch; acquisition/receipt remains a distinct time and exact source receipt.
+pub(crate) fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), String> {
     if sky["schema"] != "ql.sky-snapshot/v1" {
         return Err("sky must be an accepted ql.sky-snapshot/v1".into());
     }
@@ -493,6 +495,10 @@ fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), String> {
         .as_u64()
         .filter(|v| *v <= 9_007_199_254_740_991)
         .ok_or("sky receipt time missing")?;
+    let occurrence = sky["epoch_unix_ms"]
+        .as_u64()
+        .filter(|v| *v <= 9_007_199_254_740_991)
+        .ok_or("sky epoch exceeds the native unsigned occurrence range")?;
     let snapshot_ref = sky["snapshot_ref"]
         .as_str()
         .ok_or("sky snapshot_ref missing")?;
@@ -516,9 +522,63 @@ fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), String> {
         })
         .collect::<Result<_, String>>()?;
     event.m2.at_unix_ms = received;
-    event.m3.occurrence_unix_ms = received;
+    event.m3.occurrence_unix_ms = occurrence;
     event.m3.receipt_unix_ms = received;
+    // Retain the actual receipt that supplied these observations. Keeping an
+    // unrelated embedded sky receipt makes two dated fields appear joined.
+    event
+        .source_receipts
+        .retain(|receipt| receipt["schema"] != "ql.sky-snapshot/v1");
+    event.source_receipts.push(sky.clone());
     Ok(())
+}
+
+/// Current geometric successor T² plus its distinct source clocks. The
+/// continuous lift is display/transition state; aperture index changes only
+/// through an admitted M3 operation. None is a renderer-local clock.
+pub fn native_readback(basis: &CoupledBasis, field_clock: &Value, instance_ref: &str) -> Value {
+    let mut form_process =
+        crate::scene::current_form(basis, instance_ref).unwrap_or_else(|error| {
+            json!({"process_subject_ref":format!("ql:scene-form:{instance_ref}"),
+            "canonical_subject_ref":basis.m3["form"]["codon"]["ref"],
+            "current_reading":{"ref":basis.m3["form"]["codon"]["ref"],"availability":"unavailable"},
+            "source_error":error})
+        });
+    form_process["instance_ref"] = json!(instance_ref);
+    // A native worker's clock also discloses source loci and double-cover
+    // readings. Keep those verbatim separately; the continuation input is the
+    // exact accepted ClockInput shape, containing no derived renderer fields.
+    let input_clock = json!({
+        "inscription":{"turns":field_clock["inscription"]["turns"],"half_degrees":field_clock["inscription"]["half_degrees"]},
+        "lensing":{"turns":field_clock["lensing"]["turns"],"half_degrees":field_clock["lensing"]["half_degrees"]},
+        "grid_origins":field_clock["grid_origins"],"rate_numerators":field_clock["rate_numerators"],
+        "rate_denominator":field_clock["rate_denominator"],"rate_remainders":field_clock["rate_remainders"],
+        "generation":field_clock["generation"]});
+    let continuation_start = match basis.input.harmonic_source {
+        super::coupled::HarmonicSource::CanonicalBasis { index } => json!({
+            "tick12":basis.input.m1.tick12,"cycle":basis.input.m1.cycle.parse::<u64>().ok(),
+            "aperture":basis.m3["aperture"]["index"],"harmonic_basis_index":index,
+            "maqam_index":basis.input.m2.condition.as_ref().map(|c|c.maqam_index),
+            "lens12":basis.input.m1.lens12,"context_frame":basis.input.m1.context_frame,
+            "m3_address":basis.m3["form"]["address"],"m3_pose":basis.m3["form"]["pose"],
+            "m3_clock_steps":basis.m3["clock"]["steps"],"matrix_axis":basis.m3["form"]["matrix_axis"],
+            "rna":basis.m3["transcription"]["rna"],"continuous_clock":input_clock}),
+        super::coupled::HarmonicSource::SelectedSourceRow => json!({"availability":"unavailable",
+            "reason":"opening world recipe does not represent a selected-source-row harmonic; retain the complete native event instead"}),
+    };
+    json!({"schema":"ql.scene-source-reading/v1",
+        "event_ref":basis.input.m1.event_ref, "subject_ref":basis.input.m3.subject_ref,
+        "profile_generation":basis.input.m2.stamp.identity.profile_generation,
+        "m1_revision":basis.m1["config"]["revision"], "m3_generation":basis.m3["identity"]["profile_generation"],
+        "m1_clock":basis.m1["clock"], "m1_carrier":basis.m1["carrier"],
+        "m3_clock":basis.m3["clock"], "form":basis.m3["form"],
+        "selected_aperture":basis.m3["aperture"], "continuous_clock":input_clock,
+        "continuous_clock_native":field_clock,
+        "form_process":form_process,"continuation_start":continuation_start,
+        "clock_semantics":{"source":"docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md#11-m3-5--the-clock-as-totalised-symbolic-cosmic-form",
+            "geometric_successor":"inscription-circle × lens-circle",
+            "selected_aperture":"action-only; continuous lensing is transition/display",
+            "m1_advance":"native M1 ring and M3 inscription advance30 degrees/tick; aperture and sky are invariant"}})
 }
 
 /// A complete `oi.native-expression-binding/v1`: the scene host configuration and
@@ -558,13 +618,25 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
     };
     config.validate()?;
     // Compose once here so an unusable event is refused before any owner opens.
-    complete(&config.basis, &config.material, MaterialFibre::Earth)?;
+    let (_, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth)?;
+    let sky = config
+        .basis
+        .source_receipts
+        .iter()
+        .find(|r| r["schema"] == "ql.sky-snapshot/v1");
+    let scene = sky
+        .map(|snapshot| crate::scene::from_basis(snapshot, &basis))
+        .transpose()?;
+    let reading = native_readback(&basis, &json!(config.field.clock), &config.instance_ref);
     let samples =
         u64::from(config.geometry.longitude_samples) * u64::from(config.geometry.latitude_samples);
     let slots: Vec<u64> = (0..particles).map(|p| p % samples).collect();
     Ok(json!({
         "schema": BINDING,
         "host": config,
+        "scene": scene,
+        "native_readback": reading,
+        "native_basis": basis,
         "presentation": {"units_per_metre": request.units_per_metre, "slots_a": slots, "slots_b": slots},
     }))
 }
@@ -749,7 +821,26 @@ impl SceneInstrument {
         let cycle: u64 = event.m1.cycle.parse().map_err(|_| "invalid M1 cycle")?;
         let tick = u8::try_from(event.m1.tick12 % 12).map_err(|_| "invalid M1 tick")?;
         event.m3.address = crate::spanda_field::ring_codon_advance(tick, cycle).address();
-        self.replace(&event, self.material.strike_on_event)
+        // D5: no separate stale inscription trajectory. M3's existing clock
+        // owner preserves the unwrapped double cover while advancing30° per
+        // admitted M1 tick. Aperture, observer/sky and harmonic selection stay.
+        let degrees = ticks.checked_mul(30).ok_or("M1 clock advance overflow")?;
+        event.m3.clock_steps = ql_core::m3_clock::M3Clock::at_steps(event.m3.clock_steps)
+            .advance(degrees)
+            .filter(|clock| clock.steps() <= crate::m2_engine::MAX_EXACT_JSON_INTEGER)
+            .ok_or("M3 inscription advance exceeds exact native range")?
+            .steps();
+        self.replace(&event, self.material.strike_on_event)?;
+        // The receiving continuous inscription follows the actual native M3
+        // clock at this admitted determinant. Fine motion between events is
+        // still the separately declared time driver; lens phase is invariant.
+        self.session.set_axis_field(
+            0,
+            LiftInput {
+                turns: (event.m3.clock_steps / 360).to_string(),
+                half_degrees: ((event.m3.clock_steps % 360) * 2) as u16,
+            },
+        )
     }
 
     pub fn set_axis(&mut self, axis: u8, phase: LiftInput) -> Result<Value, String> {
@@ -769,13 +860,14 @@ impl SceneInstrument {
             "generation": field["generation"],
             "samples_elapsed": field["samples_elapsed"],
             "m1_revision": m1["config"]["revision"],
-            "m3_generation": basis.m3["generation"],
+            "m3_generation": basis.m3["identity"]["profile_generation"],
             "shape_ref": self.shape.shape_ref,
             "address72": self.shape.address72,
             "voices": self.shape.voices,
             "geometry": self.geometry,
             "material": self.material,
             "material_standing": MATERIAL_STANDING,
+            "native_readback": native_readback(basis, &field["clock"], &self.instance_ref),
             "effects": [
                 {"determinant":"the dated sky (ql-sky snapshot → M2 world observations)",
                  "through":"coupled sky bus: M2-5 m_2_5_interval_from_root × M1 root",
@@ -931,30 +1023,113 @@ mod scene_tests {
     }
 
     #[test]
-    fn the_default_event_binds_every_tuned_planet_through_the_sky_bus() {
+    fn a_historical_sky_replaces_the_receipt_and_preserves_epoch_vs_acquisition() {
         let sky: Value = serde_json::from_str(include_str!(
-            "../../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
         ))
         .unwrap();
-        let bound = binding(BindingRequest {
+        let mut event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
+        let old = event
+            .source_receipts
+            .iter()
+            .find(|r| r["schema"] == "ql.sky-snapshot/v1")
+            .unwrap()
+            .clone();
+        assert_ne!(old["snapshot_ref"], sky["snapshot_ref"]);
+        assert_ne!(sky["epoch_unix_ms"], sky["receipt_unix_ms"]);
+        let preserved =
+            json!({"schema":"controlled:other-source/v1","ref":"test:qualified-other-source"});
+        event.source_receipts.push(preserved.clone());
+        attach_sky(&mut event, &sky).unwrap();
+        let receipts: Vec<_> = event
+            .source_receipts
+            .iter()
+            .filter(|r| r["schema"] == "ql.sky-snapshot/v1")
+            .collect();
+        assert_eq!(receipts, vec![&sky]);
+        assert!(event.source_receipts.contains(&preserved));
+        assert_eq!(
+            event.m3.occurrence_unix_ms,
+            sky["epoch_unix_ms"].as_u64().unwrap()
+        );
+        assert_eq!(
+            event.m3.receipt_unix_ms,
+            sky["receipt_unix_ms"].as_u64().unwrap()
+        );
+        assert!(
+            event
+                .m2
+                .world_observations
+                .iter()
+                .all(|o| o.provider_ref == sky["snapshot_ref"].as_str().unwrap())
+        );
+    }
+
+    #[test]
+    fn historical_embedded_event_is_refused_against_the_current_source_sky() {
+        let sky: Value = serde_json::from_str(include_str!(
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
+        ))
+        .unwrap();
+        let result = binding(BindingRequest {
             schema: BINDING_REQUEST.into(),
             instance_ref: "test:scene".into(),
             texture: [8, 8],
             units_per_metre: 1.0,
-            event: None,
+            // The preserved original stale fixture remains a real negative;
+            // the current embedded successor is no longer the stale subject.
+            event: Some(
+                serde_json::from_str(include_str!(
+                    "../../../../fixtures/kernel/scene-default-event-v1.json"
+                ))
+                .unwrap(),
+            ),
             sky: Some(sky),
+            field: None,
+            geometry: None,
+            material: None,
+            reception: None,
+        });
+        assert!(result.unwrap_err().contains("registry revision differ"));
+    }
+    #[test]
+    fn default_without_new_acquisition_still_contains_the_exact_dated_scene() {
+        let event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
+        let sky = event
+            .source_receipts
+            .iter()
+            .find(|r| r["schema"] == "ql.sky-snapshot/v1")
+            .unwrap();
+        assert_eq!(sky["source_binding"]["sun_role"], "solar-parent");
+        assert_eq!(sky["epoch_utc"], "2026-09-15T13:46:21Z");
+        assert_eq!(event.m1.tick12, 7);
+        assert_eq!(event.m1.cycle, "1");
+        assert_eq!(event.m3.address, 7);
+        assert_eq!(event.m3.pose, 6);
+        assert_eq!(event.m3.aperture, 2);
+        assert_eq!(event.m3.clock_steps, 359);
+        let reading = binding(BindingRequest {
+            schema: BINDING_REQUEST.into(),
+            instance_ref: "test:qualified-default".into(),
+            texture: [8, 8],
+            units_per_metre: 120.0,
+            event: None,
+            sky: None,
             field: None,
             geometry: None,
             material: None,
             reception: None,
         })
         .unwrap();
-        let config: SceneConfig = serde_json::from_value(bound["host"].clone()).unwrap();
-        let (_, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth).unwrap();
-        let shape = ShapeBasis::from_basis(&basis).unwrap();
-        let moon = &shape.voices[3];
-        assert_eq!(moon.planet_ref, "#2-5-4");
-        assert!((moon.frequency_hz / shape.voices[0].frequency_hz - 4.0 / 3.0).abs() < 1e-12);
-        assert!((moon.longitude_radians.to_degrees() - 28.44).abs() < 0.01);
+        assert_eq!(reading["scene"]["bodies"].as_array().unwrap().len(), 10);
+        assert_eq!(
+            reading["native_basis"]["derivation"]["sky_voices"]
+                .as_array()
+                .unwrap()
+                .len(),
+            9
+        );
+        assert_eq!(reading["scene"]["snapshot_ref"], sky["snapshot_ref"]);
+        assert_eq!(reading["host"]["basis"], json!(event));
     }
 }

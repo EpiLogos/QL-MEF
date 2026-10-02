@@ -4,9 +4,11 @@ use std::collections::BTreeSet;
 use std::process::Command;
 
 #[test]
-fn reviewed_coordinates_are_executable_and_wider_provider_gaps_remain_explicit() {
+fn native_bindings_and_readiness_remain_qualified_by_their_actual_source() {
     let ledger = native_m_ledger().unwrap();
     let registry = native_m_registry();
+    let historical_registry = registry.manifest().registry_revision
+        == "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77";
     assert!(
         ledger
             .validate(registry)
@@ -24,7 +26,7 @@ fn reviewed_coordinates_are_executable_and_wider_provider_gaps_remain_explicit()
                 .is_empty()
         );
         // Whole source/instrument ambitions still block blanket experiential
-        // completion. That must not erase the verified coordinate operations.
+        // completion. Those limits do not erase the retained native bindings.
         assert!(!coverage.blocking_rows.is_empty());
     }
     let expected: BTreeSet<_> = registry
@@ -40,16 +42,68 @@ fn reviewed_coordinates_are_executable_and_wider_provider_gaps_remain_explicit()
         .filter(|r| expected.contains(&r.id))
         .map(|r| {
             let p = &ledger.assessments[&r.assessment];
-            assert_eq!(p.readiness["c"].status, "verified");
-            assert_eq!(p.readiness["rust"].status, "verified");
+            for peer in ["c", "rust"] {
+                let claim = &p.readiness[peer];
+                assert_eq!(
+                    claim.status,
+                    if historical_registry {
+                        "verified"
+                    } else {
+                        "unassessed"
+                    }
+                );
+                if !historical_registry {
+                    assert_eq!(claim.warrant, "unassessed");
+                    assert!(claim.evidence.is_empty());
+                    assert!(
+                        r.bindings
+                            .iter()
+                            .any(|id| ledger.implementations.iter().any(|implementation| {
+                                implementation.id == *id
+                                    && implementation.stratum == peer
+                                    && implementation.kind == "computational"
+                            }))
+                    );
+                }
+            }
+            if !historical_registry {
+                assert!(p.parity.values().all(Vec::is_empty));
+            }
             assert!(p.parity["experiential"].is_empty());
             r.id.clone()
         })
         .collect();
     assert_eq!(actual, expected);
+    // The checker preserves historical acceptance separately and checks exact
+    // current tree/source/native replay locks. A produced coverage report or
+    // retained computational binding does not promote a new source's readiness.
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let check = Command::new("python3")
         .arg("scripts/check-m1-acceptance.py")
+        .current_dir(root)
+        .output()
+        .unwrap();
+    assert!(
+        check.status.success(),
+        "{}",
+        String::from_utf8_lossy(&check.stderr)
+    );
+}
+
+#[test]
+fn published_history_alias_cannot_replace_original_qualification() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let check = Command::new("python3")
+        .args([
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts/tests",
+            "-p",
+            "test_historical_proof_alias.py",
+            "-v",
+        ])
         .current_dir(root)
         .output()
         .unwrap();

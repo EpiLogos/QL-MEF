@@ -33,12 +33,25 @@ the adapter to the already-built point-cloud implementation.
 | `ql kernel m3 <request.json or -> --json` | Supported bounded transport of the same explicit request and ordered commands; complete state and receipts, no authority or activity admission |
 | `cargo run -p ql-mef --example m3-state --locked` | Headless JSON request plus ordered commands on standard input; JSON state and receipts on standard output |
 
-`fixtures/kernel/m3-parent-consumer-v1.json` is a complete headless example:
+`fixtures/kernel/m3-parent-consumer-current-v1.json` is the current controlled
+headless example, qualified against the exact native registry and M3 source:
 
 ```sh
 cargo run -q -p ql-mef --example m3-state --locked \
-  < fixtures/kernel/m3-parent-consumer-v1.json
+  < fixtures/kernel/m3-parent-consumer-current-v1.json
 ```
+
+Its `.basis.json` companion retains the current source/registry/input locks.
+After the existing source/domain refresh, run
+`python3 scripts/refresh-m3-parent-consumer.py`; `--check` verifies without
+writing. This changes only the separate request's registry admission and
+preserves every controlled determinant, event, time and command. The existing
+map refresh calls this qualification in dependency order.
+
+`m3-parent-consumer-v1.json` and its accepted `m3-finite-proof-v1.json` input
+hash remain historical and unchanged. The historical request is an actual
+source-refusal negative under a later registry; it is not retagged as current
+acceptance. Fresh native tests and receipts prove their own current source cut.
 
 This is a producer integration example, not a remote privileged service. The
 native Action owner authorises the caller and discloses bounded inputs before

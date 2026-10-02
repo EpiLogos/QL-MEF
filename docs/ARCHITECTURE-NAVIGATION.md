@@ -50,14 +50,17 @@ retained-Expression node.
 
 ## Verification and open joins
 
-The audit document is still unpublished at this navigation cut. Its owner is
-working on `map/m3-5-clock-inscription`; the audit is absent from this PR and
-the inspected `74dc6dc` baseline. Begin at QL-MEF #258 and use the owner's
-latest source/candidate return rather than assuming a repository-local file
-exists. The consumed audit bytes have SHA-256
+The audit is now repository-local and published in [QL-MEF PR 278](https://github.com/EpiLogos/QL-MEF/pull/278),
+with committed/main-converged native source cut `176f83f398c0aed4620a0fcc66e59c7fc6dd322e`.
+Begin with the current human Return in [the fidelity audit](kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md),
+then its [complete coordinate coverage](kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json)
+and [ordered recovery map](kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json).
+The PR is open, not merged; publication and installed whole acceptance are separate.
+At this navigation document's original `74dc6dc` observation the audit was
+unpublished/absent and its consumed bytes were
 `8daa594183b0875da3755f01c33301e14fb751c5dce5d17c42e1b7dc35fae430`.
-Replace the active-source locator with its published revision when that owner
-lands the audit. This disclosure is separate from the O:I diagram dependency.
+That is retained history, not the current locator. This disclosure is separate
+from the O:I diagram dependency.
 
 The ongoing fidelity audit distinguishes a coordinate-bound world and Personal
 Pratibimba from a generic profile. Its latest return reports published native

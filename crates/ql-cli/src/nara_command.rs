@@ -427,36 +427,165 @@ fn calculate_provider(
     serde_json::from_slice(&output).map_err(error)
 }
 
-/// The accepted sky snapshot itself, from the same embedded provider Nara uses.
-pub(crate) fn sky_snapshot(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
-    let natal_script = resources()?;
-    let script = natal_script
-        .parent()
-        .and_then(|p| p.parent())
-        .ok_or_else(|| error("invalid sky resource layout"))?
-        .join("sky/kerykeion_snapshot.py");
-    let args: &[&str] = if existing_snapshot {
-        &["-", "--validate-snapshot"]
-    } else {
-        &["-"]
-    };
-    calculate_provider(request, script, args)
+/// How an existing snapshot is received, separately from its immutable request.
+/// Requested preserves current/historical policy; retained is a dated replay.
+#[derive(Clone, Copy, Debug, Default, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub(crate) enum SnapshotPurpose {
+    #[default]
+    Requested,
+    RetainedOccasion,
 }
 
-fn transit(request: &Value, existing_snapshot: bool) -> Result<Value, CliError> {
+// Exact previous native provider descriptors remain historical provenance.
+// This is not a general Sun-key exception and does not authorize fresh sky.
+const LEGACY_SUN_ADAPTER: &str = "e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81";
+const LEGACY_SUN_REGISTRY: &str =
+    "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2";
+const LEGACY_SUN_HEADER: &str = "7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8";
+
+fn source_binding_qualification(sky: &Value, retained: bool) -> Result<Value, CliError> {
+    let legacy = sky["source_binding"]["sun_role"] == "parent-not-chakra-mapped";
+    if legacy {
+        if !retained
+            || sky["provider"]["adapter_sha256"] != LEGACY_SUN_ADAPTER
+            || sky["source_binding"]["registry_revision"] != LEGACY_SUN_REGISTRY
+            || sky["source_binding"]["header_sha256"] != LEGACY_SUN_HEADER
+        {
+            return Err(error("unqualified legacy Sun descriptor"));
+        }
+    } else if sky["source_binding"]["sun_role"] != "solar-parent" {
+        return Err(error("unknown Sun source descriptor"));
+    }
+    // #254 D10: actual directed PLANETARY_RESONANCE is authority. Do not
+    // infer reception from the descriptive provider string or a C bitmask.
+    let route = ql_mef::m2::planet_chakra_route(0)
+        .map_err(error)?
+        .ok_or_else(|| error("current Sun planetary resonance is absent"))?;
+    if route.planet_coordinate != "#2-5-0/1"
+        || route.chakra_coordinate != "#2-5-0/1-7"
+        || route.chakra_index != 7
+        || sky["source_binding"]["registry_revision"] != route.registry_revision
+        || !route.relations.iter().any(|relation| {
+            relation.source_kind == "PLANETARY_RESONANCE"
+                && relation.from_id == Some(route.planet_id)
+                && relation.to_id == Some(route.chakra_id)
+        })
+    {
+        return Err(error(
+            "Sun descriptor is not grounded in the accepted native Bimba route",
+        ));
+    }
+    Ok(json!({"schema":"ql.sky-source-binding-qualification/v1",
+        "snapshot_ref":sky["snapshot_ref"],"legacy_descriptor_admitted":legacy,
+        "original_sun_role":sky["source_binding"]["sun_role"],"current_sun_role":"solar-parent",
+        "provider_adapter_sha256":sky["provider"]["adapter_sha256"],
+        "native_sun_route":route,
+        "fresh_current_attested":false,
+        "standing":if legacy {"known legacy descriptor retained as historical provenance; current native Bimba relation governs reception"}
+            else {"current provider descriptor and native Bimba reception kept distinct"}}))
+}
+
+fn acknowledged_sky_admission(admission: &Value, sky: &Value) -> Result<Value, CliError> {
+    let purpose: SnapshotPurpose =
+        serde_json::from_value(admission["purpose"].clone()).map_err(error)?;
+    // Activity operates the already-held occasion. Validate its exact immutable
+    // source without recalculation or a renewed current freshness attestation.
+    let validated = sky_snapshot(sky, true, SnapshotPurpose::RetainedOccasion)?;
+    if validated != *sky {
+        return Err(error("acknowledged sky changed during retained validation"));
+    }
+    let qualification = source_binding_qualification(sky, true)?;
+    let current = purpose.admission_value(sky, qualification.clone());
+    if *admission == current {
+        return Ok(qualification);
+    }
+    if qualification["legacy_descriptor_admitted"] == true {
+        let mut original = current;
+        original
+            .as_object_mut()
+            .unwrap()
+            .remove("source_binding_qualification");
+        original["validator_source"]["revision"] = json!(format!("sha256:{LEGACY_SUN_ADAPTER}"));
+        if *admission == original {
+            // Keep the original acknowledged receipt, including its original
+            // requested mode; the separate qualifier is explicitly not fresh.
+            return Ok(qualification);
+        }
+    }
+    Err(error(
+        "personal recomposition sky admission differs from its exact source",
+    ))
+}
+
+impl SnapshotPurpose {
+    pub(crate) fn admission(self, sky: &Value) -> Result<Value, CliError> {
+        let qualification =
+            source_binding_qualification(sky, matches!(self, Self::RetainedOccasion))?;
+        Ok(self.admission_value(sky, qualification))
+    }
+
+    fn admission_value(self, sky: &Value, qualification: Value) -> Value {
+        let fresh = matches!(self, Self::Requested) && sky["request"]["mode"] == "current";
+        json!({"schema":"ql.sky-admission/v1", "purpose":self,
+        "snapshot_ref":sky["snapshot_ref"], "original_mode":sky["request"]["mode"],
+        "epoch_utc":sky["epoch_utc"], "receipt_utc":sky["receipt_utc"],
+        "fresh_current_attested":fresh,
+        "source_binding_qualification":qualification,
+        "validation":"immutable-snapshot-and-current-native-source",
+        "validator_source":{"source_ref":"providers/sky/kerykeion_snapshot.py",
+            "revision":format!("sha256:{:x}", Sha256::digest(include_bytes!("../../../providers/sky/kerykeion_snapshot.py")))},
+        "standing":if matches!(self, Self::RetainedOccasion) {
+            "retained dated occasion; no fresh-current attestation"
+        } else if fresh {
+            "current requested epoch validated within its freshness budget"
+        } else {
+            "selected historical epoch; no fresh-current attestation"
+        }})
+    }
+}
+
+/// The accepted sky itself, from the same embedded provider Nara uses. Purpose
+/// is an admission instruction, never a change to that sky's signed request.
+pub(crate) fn sky_snapshot(
+    request: &Value,
+    existing_snapshot: bool,
+    purpose: SnapshotPurpose,
+) -> Result<Value, CliError> {
+    if matches!(purpose, SnapshotPurpose::RetainedOccasion) && !existing_snapshot {
+        return Err(error(
+            "retained-occasion requires an existing exact sky snapshot",
+        ));
+    }
     let natal_script = resources()?;
     let script = natal_script
         .parent()
         .and_then(|p| p.parent())
         .ok_or_else(|| error("invalid sky resource layout"))?
         .join("sky/kerykeion_snapshot.py");
-    let args: &[&str] = if existing_snapshot {
+    let args: &[&str] = if matches!(purpose, SnapshotPurpose::RetainedOccasion) {
+        &["-", "--validate-retained-snapshot"]
+    } else if existing_snapshot {
         &["-", "--validate-snapshot"]
     } else {
         &["-"]
     };
     let sky = calculate_provider(request, script, args)?;
-    ql_mef::nara::current::transit(Some(&sky)).map_err(error)
+    source_binding_qualification(&sky, matches!(purpose, SnapshotPurpose::RetainedOccasion))?;
+    Ok(sky)
+}
+
+fn transit(
+    request: &Value,
+    existing_snapshot: bool,
+    purpose: SnapshotPurpose,
+) -> Result<(Value, Value), CliError> {
+    let sky = sky_snapshot(request, existing_snapshot, purpose)?;
+    let admission = purpose.admission(&sky)?;
+    Ok((
+        ql_mef::nara::current::transit(Some(&sky)).map_err(error)?,
+        admission,
+    ))
 }
 
 #[derive(serde::Deserialize)]
@@ -467,6 +596,8 @@ struct PersonalCurrentRequest {
     sky_request: Option<Value>,
     sky_snapshot: Option<Value>,
     m3_input: Option<Value>,
+    #[serde(default)]
+    snapshot_purpose: SnapshotPurpose,
 }
 
 #[derive(serde::Deserialize)]
@@ -479,11 +610,11 @@ struct PersonalRecomposeRequest {
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
-        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
+        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","sky_snapshot_purposes":["requested","retained-occasion"],"sky_admission_schema":"ql.sky-admission/v1","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
     }
     let [operation, path] = args else {
         return Err(error(
-            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]",
+            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]",
         ));
     };
     if ![
@@ -494,6 +625,9 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         "personal-recompose",
         "presence-consent",
         "coordinate",
+        "coordinate-content",
+        "coordinate-bundle",
+        "source-inventory",
         "context",
         "delegate",
         "enrichment",
@@ -522,7 +656,17 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     if operation == "presence-consent" {
         return presence::command(&bytes);
     }
-    if ["coordinate", "context", "delegate", "enrichment", "receive"].contains(&operation.as_str())
+    if [
+        "coordinate",
+        "coordinate-content",
+        "coordinate-bundle",
+        "source-inventory",
+        "context",
+        "delegate",
+        "enrichment",
+        "receive",
+    ]
+    .contains(&operation.as_str())
     {
         return dialogue::command(operation, &bytes);
     }
@@ -540,17 +684,28 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
         let activity = m3
             .get("activity")
             .ok_or_else(|| error("Select an explicit native M3 activity policy"))?;
-        let current = ql_mef::nara::current::personal_current_with_activity(
+        let mut current = ql_mef::nara::current::personal_current_with_activity(
             &request.current["identity"],
             &request.current["transit"],
             Some(activity),
         )
         .map_err(error)?;
+        if let Some(admission) = request.current.get("sky_admission") {
+            let qualification =
+                acknowledged_sky_admission(admission, &request.current["transit"]["sky"])?;
+            current["sky_source_binding_qualification"] = qualification;
+            // Activity changes neither the original dated event nor its
+            // acknowledged admission. This does not attest freshness again.
+            current["sky_admission"] = admission.clone();
+        }
         return serde_json::to_string_pretty(&current).map_err(error);
     }
     if operation == "transit" {
         let request: Value = serde_json::from_slice(&bytes).map_err(error)?;
-        return serde_json::to_string_pretty(&transit(&request, false)?).map_err(error);
+        return serde_json::to_string_pretty(
+            &transit(&request, false, SnapshotPurpose::Requested)?.0,
+        )
+        .map_err(error);
     }
     if operation == "personal-current" {
         let request: PersonalCurrentRequest = serde_json::from_slice(&bytes).map_err(error)?;
@@ -558,17 +713,17 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             return Err(error("unsupported personal current request"));
         }
         request.profile.validate().map_err(error)?;
-        let natal = calculate(&request.profile)?;
-        let identity = request.profile.inspect(Some(&natal)).map_err(error)?;
-        let transit = match (&request.sky_request, &request.sky_snapshot) {
-            (Some(sky), None) => transit(sky, false)?,
-            (None, Some(sky)) => transit(sky, true)?,
+        let (transit, admission) = match (&request.sky_request, &request.sky_snapshot) {
+            (Some(sky), None) => transit(sky, false, request.snapshot_purpose)?,
+            (None, Some(sky)) => transit(sky, true, request.snapshot_purpose)?,
             _ => {
                 return Err(error(
                     "personal current requires exactly one sky_request or sky_snapshot",
                 ));
             }
         };
+        let natal = calculate(&request.profile)?;
+        let identity = request.profile.inspect(Some(&natal)).map_err(error)?;
         let m3 = request
             .m3_input
             .as_ref()
@@ -579,9 +734,10 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             })
             .transpose()?;
         let activity = m3.as_ref().and_then(|reading| reading.get("activity"));
-        let current =
+        let mut current =
             ql_mef::nara::current::personal_current_with_activity(&identity, &transit, activity)
                 .map_err(error)?;
+        current["sky_admission"] = admission;
         return serde_json::to_string_pretty(&current).map_err(error);
     }
     let profile: IdentityProfile = serde_json::from_slice(&bytes).map_err(error)?;
@@ -593,4 +749,71 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     };
     let reading = profile.inspect(natal.as_ref()).map_err(error)?;
     serde_json::to_string_pretty(&reading).map_err(error)
+}
+
+#[cfg(test)]
+mod sky_source_tests {
+    use super::*;
+
+    fn known_legacy_sky() -> Value {
+        serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json"
+        ))
+        .unwrap()
+    }
+
+    #[test]
+    fn retained_legacy_descriptor_has_a_separate_actual_native_sun_route() {
+        let sky = known_legacy_sky();
+        let before = sky.clone();
+        let qualification = source_binding_qualification(&sky, true).unwrap();
+        assert_eq!(sky, before);
+        assert_eq!(qualification["legacy_descriptor_admitted"], true);
+        assert_eq!(qualification["fresh_current_attested"], false);
+        assert_eq!(
+            qualification["native_sun_route"]["planet_coordinate"],
+            "#2-5-0/1"
+        );
+        assert_eq!(
+            qualification["native_sun_route"]["chakra_coordinate"],
+            "#2-5-0/1-7"
+        );
+        assert_eq!(qualification["native_sun_route"]["chakra_index"], 7);
+        assert_eq!(
+            qualification["native_sun_route"]["source_revision"],
+            "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"
+        );
+        assert!(
+            qualification["native_sun_route"]["relations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["source_kind"] == "PLANETARY_RESONANCE"
+                    && r["relation_ref"] == "bimba:relation:710326725339389fb6905570")
+        );
+        assert!(source_binding_qualification(&sky, false).is_err());
+    }
+
+    #[test]
+    fn known_provider_qualification_is_not_a_general_legacy_or_wrong_sun_exception() {
+        for (group, key, value) in [
+            ("provider", "adapter_sha256", json!("0".repeat(64))),
+            ("source_binding", "registry_revision", json!("0".repeat(64))),
+            ("source_binding", "header_sha256", json!("0".repeat(64))),
+            ("source_binding", "sun_role", json!("Sun-to-wrong-centre")),
+        ] {
+            let mut sky = known_legacy_sky();
+            sky[group][key] = value;
+            assert!(source_binding_qualification(&sky, true).is_err());
+        }
+        // This unit tests the native route after provider admission, not a
+        // replacement for complete provider digest/field validation.
+        let sky: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
+        ))
+        .unwrap();
+        let q = source_binding_qualification(&sky, false).unwrap();
+        assert_eq!(q["legacy_descriptor_admitted"], false);
+        assert_eq!(q["native_sun_route"]["chakra_index"], 7);
+    }
 }

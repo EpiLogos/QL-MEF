@@ -5,6 +5,34 @@ architecture §§2–3 and the accepted M2 producer. This is an implemented prov
 boundary, not completion of Personal reception, continuous materialisation or
 all K8.0–K8.3 acceptance.
 
+### Sun descriptor and retained source qualification
+
+The astronomical provider emits `sun_role=solar-parent`. This descriptive role
+has no authority to exclude the Sun's reception: owner #254 D10 makes the live
+`PLANETARY_RESONANCE` relation authoritative, currently Sun `#2-5-0/1` →
+Sahasrāra `#2-5-0/1-7`. The native M2 route resolves that directed source relation.
+Ten astronomical bodies, nine material voices and seven receiving centres remain
+separate counts; no operator, ratio or numerical law changes with this repair.
+
+The previous qualified provider e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81
+emitted the false descriptor `parent-not-chakra-mapped`. An exact saved occasion
+from that provider can retain its immutable snapshot only through
+`retained-occasion`, with numerical registry82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2,
+native header7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8,
+all other source fields unchanged, complete digest/body/time guards, and the
+current native Sun→7 relation enforced. The separate
+`ql.sky-source-binding-qualification/v1` records the original false descriptor
+as historical provenance and the current native relation; it never rewrites the
+snapshot or attests fresh current sky. Fresh requested admission and M2 attachment
+still demand the current complete source binding exactly.
+
+Activity recomposition preserves an exact previously acknowledged e6d admission
+and adds its separate current qualification; it does not claim a renewed sky.
+The native host still fences that exact retained snapshot to the actual saved
+world/person/private occasion. A digest is not origin authentication for arbitrary
+re-signed astronomical quantities. Other providers, old2264 registries, wrong
+native source keys, body identity and digest mutations remain refused.
+
 ## Input and actual calculation
 
 `providers/sky/kerykeion_snapshot.py` accepts `ql.sky-request/v1` and produces
@@ -29,6 +57,39 @@ separate. A pre-1970 epoch remains signed, not wrapped into an unsigned timestam
 A later current consumer checks age again. `historical` means a selected dated
 calculation, including a future selected ephemeris; it cannot be presented as
 fresh current sky. Fixtures and extrapolation never receive a current label.
+
+### Retained occasion admission
+
+The original request mode describes how the snapshot was produced. Reopening
+that exact occasion later does not change its mode, epoch, receipt, bodies or
+SHA-256. `snapshot_purpose` is a separate native boundary instruction on
+`ql scene compose`, `ql scene world` and `ql nara personal-current`:
+
+- `requested` (default) keeps the existing requested freshness policy. A
+  current-origin snapshot must still pass the age check at this consumer;
+  explicitly selected historical ephemerides retain their dated standing.
+- `retained-occasion` requires an existing exact snapshot. The provider's
+  explicit `--validate-retained-snapshot` operation validates its complete
+  immutable content and current native source binding without calculating a
+  new sky. A current-origin snapshot must have been fresh at its original
+  receipt, and that receipt cannot be in the future. An explicitly historical
+  future ephemeris remains a selected dated calculation.
+
+Retained purpose is refused with a new `sky_request` or fresh M2 attachment.
+It does not authenticate arbitrary provider bytes or grant personal access.
+The native host still fences the saved Expression, person, identity/profile
+revision, event and snapshot. It must distinguish the saved occasion from fresh
+sky now; an aged original cannot regain a fresh-current label by changing mode.
+
+The returned scene/world or protected personal reading carries a separate
+`sky_admission` with schema `ql.sky-admission/v1`: `purpose`, `snapshot_ref`,
+`original_mode`, `epoch_utc`, `receipt_utc`, `standing`,
+`fresh_current_attested`, `validation` and exact `validator_source`. Retained
+admission always sets `fresh_current_attested=false`. Successful requested
+current admission attests freshness only at that validation; historical
+admission does not. Activity recomposition preserves the acknowledged receipt
+and never attests freshness again. This receipt does not change any M1–M4
+computation, snapshot provenance or canonical source/readiness standing.
 
 Supported perspectives are apparent geocentric, true geocentric and topocentric.
 Tropical has no ayanamsha; the implemented sidereal policy is explicitly Lahiri.

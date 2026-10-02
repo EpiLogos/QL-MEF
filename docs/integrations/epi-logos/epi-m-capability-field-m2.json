@@ -1,13 +1,535 @@
 {
-  "schema_version":"epi-m-capability-domain/0.2","status":"active-research-matrix","date":"2026-09-03","m":"M2","m_name":"Paraśakti","m_prime":"M2′ correspondential / cymatic instrument",
-  "epii_on_x":{"ref":"EPII_ON_M2_PARASAKTI","name":"Epii-on-Paraśakti","source":"m5-prime-epii-on-parashakti-graph-relational-ml.md","blob":"530c3a15dd27945545328a9d015f18ea038265f9","standing":"CURRENT-DOMAIN-SPEC / RESEARCH-PROPOSITION","developmental_law":"Graph-relational ML over derived representation geometry; embeddings remain rebuildable and non-canonical."},
-  "return":{"target_ground":"Paraśakti canonical correspondential source","recognition_owner":"QL-MEF/Epi correspondential source authority; learned geometry and fitness evidence remain derived until recognised","proposal_is_not_promotion":true},
-  "capabilities":[
-    {"capability_ref":"M2P-PROFILE-SOURCE","m":"M2","for_what":"Validate and serve 72-space addresses and correspondential descriptors","m_prime_operation":"Address the M2′ 72-space from canonical profile sources with explicit provenance and derived/canonical standing.","s_prime":["S0′ Khora","S1′ Hen","S2′ Pleroma"],"native_owners":["QL-MEF","AIKit"],"evidence_refs":["QLMEF_CURRENT_KERNEL"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"},
-    {"capability_ref":"M2P-VIMARSHA-AUDIO","m":"M2","for_what":"Read Prakāśa profile through Vimarśa/MEF and produce shared 8+4 audio bus","m_prime_operation":"Play the M2′ Vimarśa/cymatic reading as a time-qualified, materialised audio/instrument state while retaining its source profile.","s_prime":["S2′ Pleroma","S3′ Chronos","S4′ Anima"],"native_owners":["QL-MEF","AIKit","Workcell"],"evidence_refs":["QLMEF_CURRENT_KERNEL","WORKCELL_MATERIAL_BODY"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"},
-    {"capability_ref":"M2P-ELEMENTAL-MEDIUM","m":"M2","for_what":"Resolve tattva/element/chakra/media response with provenance","m_prime_operation":"Resolve an M2′ elemental/tattvic/chakral medium as a provenance-bearing correspondence under the active lens and temporal conditions.","s_prime":["S1′ Hen","S2′ Pleroma","S3′ Chronos"],"native_owners":["QL-MEF","AIKit"],"evidence_refs":["QLMEF_CURRENT_KERNEL"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"},
-    {"capability_ref":"M2P-DECANIC-FACE","m":"M2","for_what":"Resolve decan/zodiac/planet/body-zone light-shadow face","m_prime_operation":"Expose an M2′ decanic/planetary face as a time-qualified reading whose light/shadow relation remains attributable and revisable.","s_prime":["S1′ Hen","S3′ Chronos","S5′ Aletheia"],"native_owners":["QL-MEF","AIKit"],"evidence_refs":["QLMEF_CURRENT_KERNEL"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"},
-    {"capability_ref":"M2P-SONIC-ARENA","m":"M2","for_what":"Make sacred-sonic/maqam/mantra/planetary systems playable","m_prime_operation":"Compose M2′ sonic/correspondential systems into a playable arena under current Agency, instrument and material conditions.","s_prime":["S2′ Pleroma","S4′ Anima","S3′ Chronos"],"native_owners":["AIKit","QL-MEF","Workcell"],"evidence_refs":["QLMEF_CURRENT_KERNEL","WORKCELL_MATERIAL_BODY"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"},
-    {"capability_ref":"M2P-DET-GATE","m":"M2","for_what":"Project 72-space evidence into M3-ready 64-address evidence","m_prime_operation":"Perform and inspect the M2′→M3 transduction as an attributable derived projection whose evidence can be reviewed before downstream use.","s_prime":["S2′ Pleroma","S4′ Anima","S5′ Aletheia"],"native_owners":["QL-MEF","AIKit","Factory"],"evidence_refs":["QLMEF_CURRENT_KERNEL","FACTORY_JOURNEY_176"],"m_standing":"CURRENT-DOMAIN-SPEC","epi_composition_standing":"DERIVED-CURRENT-ARCHITECTURE","epii_on_x_ref":"EPII_ON_M2_PARASAKTI","return_profile":"M2"}
-  ]
+  "schema_version": "epi-m-capability-domain/0.2",
+  "status": "active-research-matrix",
+  "date": "2026-09-03",
+  "m": "M2",
+  "m_name": "Paraśakti",
+  "m_prime": "M2′ correspondential / cymatic instrument",
+  "epii_on_x": {
+    "ref": "EPII_ON_M2_PARASAKTI",
+    "name": "Epii-on-Paraśakti",
+    "source": "m5-prime-epii-on-parashakti-graph-relational-ml.md",
+    "blob": "530c3a15dd27945545328a9d015f18ea038265f9",
+    "standing": "CURRENT-DOMAIN-SPEC / RESEARCH-PROPOSITION",
+    "developmental_law": "Graph-relational ML over derived representation geometry; embeddings remain rebuildable and non-canonical."
+  },
+  "return": {
+    "target_ground": "Paraśakti canonical correspondential source",
+    "recognition_owner": "QL-MEF/Epi correspondential source authority; learned geometry and fitness evidence remain derived until recognised",
+    "proposal_is_not_promotion": true
+  },
+  "capabilities": [
+    {
+      "capability_ref": "M2P-PROFILE-SOURCE",
+      "m": "M2",
+      "for_what": "Validate and serve 72-space addresses and correspondential descriptors",
+      "m_prime_operation": "Address the M2′ 72-space from canonical profile sources with explicit provenance and derived/canonical standing.",
+      "s_prime": [
+        "S0′ Khora",
+        "S1′ Hen",
+        "S2′ Pleroma"
+      ],
+      "native_owners": [
+        "QL-MEF",
+        "AIKit"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX02",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "62-live-opening-after-restart.png",
+              "104-saved-current-sky-action.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Live geocentric default sky exercised; observer/place entrance absent. Selected saved B and current-sky action refuses no unambiguous adopted profile. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M2P-VIMARSHA-AUDIO",
+      "m": "M2",
+      "for_what": "Read Prakāśa profile through Vimarśa/MEF and produce shared 8+4 audio bus",
+      "m_prime_operation": "Play the M2′ Vimarśa/cymatic reading as a time-qualified, materialised audio/instrument state while retaining its source profile.",
+      "s_prime": [
+        "S2′ Pleroma",
+        "S3′ Chronos",
+        "S4′ Anima"
+      ],
+      "native_owners": [
+        "QL-MEF",
+        "AIKit",
+        "Workcell"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL",
+        "WORKCELL_MATERIAL_BODY"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX02",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "62-live-opening-after-restart.png",
+              "104-saved-current-sky-action.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Live geocentric default sky exercised; observer/place entrance absent. Selected saved B and current-sky action refuses no unambiguous adopted profile. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX04",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "19-RNA-action-ax.txt",
+              "reference-inspect-after-step.json",
+              "123-A-same-occasion-refusal.png",
+              "126-B-same-occasion-refusal.png"
+            ],
+            "reading": "DNA/RNA presentation and native codon/tick components exercised; full language/physical form unaccepted. Both selected controlled identities refuse dated 2026-09-30T11:44:49UTC in same Expression; native independent two-Nara test passes but UI acceptance stays open.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M2P-ELEMENTAL-MEDIUM",
+      "m": "M2",
+      "for_what": "Resolve tattva/element/chakra/media response with provenance",
+      "m_prime_operation": "Resolve an M2′ elemental/tattvic/chakral medium as a provenance-bearing correspondence under the active lens and temporal conditions.",
+      "s_prime": [
+        "S1′ Hen",
+        "S2′ Pleroma",
+        "S3′ Chronos"
+      ],
+      "native_owners": [
+        "QL-MEF",
+        "AIKit"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX02",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "62-live-opening-after-restart.png",
+              "104-saved-current-sky-action.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Live geocentric default sky exercised; observer/place entrance absent. Selected saved B and current-sky action refuses no unambiguous adopted profile. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX07",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "89-personality-r2-source-after-restart.png",
+              "100-current-native-composition-replay.png",
+              "139-gene-keys-attribution-refusal.png",
+              "141-gene-keys-native-refusal-viewport.png",
+              "144-gene-keys-save-acknowledged.png",
+              "145-full-matrix-with-import.png",
+              "146-gene-keys-matrix-source-and-correction.png",
+              "156-controlled-B-gene-keys-reopened.png",
+              "157-reopened-gene-keys-source-correction.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Two controlled intakes/natal and full matrix inspection; correction persisted. Constitution/subject/current-scene dialogue blocked. Controlled Gene Keys report import, native invalid-line refusal and explicit correction saved; unknown data field and source method retained. Constitution and later reopened use remain open. Actual restarted saved-profile reopening verifies corrected Gene Keys line2, unknown field and source method retention. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M2P-DECANIC-FACE",
+      "m": "M2",
+      "for_what": "Resolve decan/zodiac/planet/body-zone light-shadow face",
+      "m_prime_operation": "Expose an M2′ decanic/planetary face as a time-qualified reading whose light/shadow relation remains attributable and revisable.",
+      "s_prime": [
+        "S1′ Hen",
+        "S3′ Chronos",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "QL-MEF",
+        "AIKit"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX02",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "62-live-opening-after-restart.png",
+              "104-saved-current-sky-action.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Live geocentric default sky exercised; observer/place entrance absent. Selected saved B and current-sky action refuses no unambiguous adopted profile. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX07",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "89-personality-r2-source-after-restart.png",
+              "100-current-native-composition-replay.png",
+              "139-gene-keys-attribution-refusal.png",
+              "141-gene-keys-native-refusal-viewport.png",
+              "144-gene-keys-save-acknowledged.png",
+              "145-full-matrix-with-import.png",
+              "146-gene-keys-matrix-source-and-correction.png",
+              "156-controlled-B-gene-keys-reopened.png",
+              "157-reopened-gene-keys-source-correction.png",
+              "160-human-design-required-definition-refusal.png",
+              "161-human-design-channel-refusal.png",
+              "162-human-design-corrected-save.png",
+              "163-human-design-nine-centre-matrix.png",
+              "166-quintessence-corrected-save.png",
+              "167-full-controlled-identity-matrix.ax.txt",
+              "169-full-matrix-seven-centre-refusal.png",
+              "170-full-matrix-reopened.ax.txt"
+            ],
+            "reading": "Two controlled intakes/natal and full matrix inspection; correction persisted. Constitution/subject/current-scene dialogue blocked. Controlled Gene Keys report import, native invalid-line refusal and explicit correction saved; unknown data field and source method retained. Constitution and later reopened use remain open. Actual restarted saved-profile reopening verifies corrected Gene Keys line2, unknown field and source method retention. Full imported Human Design and authored quintessence offices exercised, native refusals corrected, saved A-to-B reopening retains reports and explicit unknown. Nine-centre report remains distinct; absent seven native body readings and adopted-profile ambiguity prevent live constitution.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M2P-SONIC-ARENA",
+      "m": "M2",
+      "for_what": "Make sacred-sonic/maqam/mantra/planetary systems playable",
+      "m_prime_operation": "Compose M2′ sonic/correspondential systems into a playable arena under current Agency, instrument and material conditions.",
+      "s_prime": [
+        "S2′ Pleroma",
+        "S4′ Anima",
+        "S3′ Chronos"
+      ],
+      "native_owners": [
+        "AIKit",
+        "QL-MEF",
+        "Workcell"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL",
+        "WORKCELL_MATERIAL_BODY"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX04",
+            "component_standing": "exercised",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "19-RNA-action-ax.txt",
+              "reference-inspect-after-step.json",
+              "123-A-same-occasion-refusal.png",
+              "126-B-same-occasion-refusal.png"
+            ],
+            "reading": "DNA/RNA presentation and native codon/tick components exercised; full language/physical form unaccepted. Both selected controlled identities refuse dated 2026-09-30T11:44:49UTC in same Expression; native independent two-Nara test passes but UI acceptance stays open.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX06",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "42-voice-entrance-refusal.png"
+            ],
+            "reading": "No admitted Prime provider; supported voice refuses dialogue prerequisite; Epii performance/depth unaccepted.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    },
+    {
+      "capability_ref": "M2P-DET-GATE",
+      "m": "M2",
+      "for_what": "Project 72-space evidence into M3-ready 64-address evidence",
+      "m_prime_operation": "Perform and inspect the M2′→M3 transduction as an attributable derived projection whose evidence can be reviewed before downstream use.",
+      "s_prime": [
+        "S2′ Pleroma",
+        "S4′ Anima",
+        "S5′ Aletheia"
+      ],
+      "native_owners": [
+        "QL-MEF",
+        "AIKit",
+        "Factory"
+      ],
+      "evidence_refs": [
+        "QLMEF_CURRENT_KERNEL",
+        "FACTORY_JOURNEY_176"
+      ],
+      "m_standing": "CURRENT-DOMAIN-SPEC",
+      "epi_composition_standing": "DERIVED-CURRENT-ARCHITECTURE",
+      "epii_on_x_ref": "EPII_ON_M2_PARASAKTI",
+      "return_profile": "M2",
+      "experience_verification": {
+        "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+        "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+        "test_families": [
+          "SEM-ALL-SOURCES",
+          "EXP-REQUIRED-WORLD",
+          "LIFE-PERSIST-RETURN"
+        ],
+        "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
+        "installed_observations": [
+          {
+            "story": "UX03",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "16-lens-L0-action-ax.txt",
+              "17-step-action-ax.txt",
+              "69-world-clock-running.png"
+            ],
+            "reading": "MEF lens, CF, M1 tick exercised; cadence requested1Hz attained~.19Hz. M3 aperture not exercised.",
+            "artifact_directory": "T/evidence"
+          },
+          {
+            "story": "UX05",
+            "component_standing": "failed",
+            "whole_story_status": "open",
+            "installed_cuts": {
+              "oi": "9d79df213d97fe4a318432326f46b904ad8de802",
+              "ql": "212a4d355fad45f2d7216377c1730caf6c959f54"
+            },
+            "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+            "evidence": [
+              "83-object-semantic-source.png",
+              "99-atlas-source-inspect.png"
+            ],
+            "reading": "Selected ordinary object lacks source binding. Manual rooted-M Atlas native source lineage reads; source values explicitly not loaded. Not an object source roundtrip.",
+            "artifact_directory": "T/evidence"
+          }
+        ],
+        "human_assessment": null
+      }
+    }
+  ],
+  "whole_experience_audit": {
+    "audit": "docs/kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md",
+    "recovery_map": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json",
+    "coverage": "docs/kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json",
+    "standing": "complete source/requirement account; whole-experience recovery in progress; installed first-delivery proofs pending",
+    "human_assessment": null
+  }
 }

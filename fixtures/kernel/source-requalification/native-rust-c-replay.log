@@ -1,0 +1,56 @@
+    Blocking waiting for file lock on build directory
+   Compiling ql-mef v0.1.0 (/Users/admin/Central/worktrees/env-2/ql-mef/crates/ql-mef)
+cargo(92100) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+cargo(92104) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+cargo(92105) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+cargo(92107) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+cargo(92109) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+cargo(92110) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27m 29s
+     Running tests/bimba_content.rs (target/debug/deps/bimba_content-f694e8c5e4f38e36)
+
+running 2 tests
+test a_changed_payload_cannot_keep_the_original_source_revision ... ok
+test native_source_preserves_personal_identity_and_directional_qualified_relations ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.77s
+
+     Running tests/m1_engine.rs (target/debug/deps/m1_engine-d2a635fdab4be69b)
+
+running 8 tests
+test phase_fiber_spinor_and_legacy_ring_are_separate ... ok
+test boundaries_are_checked_not_truncated_or_silently_wrapped ... ok
+test three_registers_and_quintessence_contributors_remain_distinct ... ok
+test reversed_d2_keeps_expansion_on_the_observed_endpoint ... ok
+test retained_ratios_join_current_matheme_without_a_new_music_grammar ... ok
+test json_boundary_keeps_full_precision_and_rejects_malformed_requests ... ok
+test every_actual_walk_retains_all_families_direction_and_completion ... ok
+test actual_native_c_matches_rust_and_retained_c_return ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.24s
+
+     Running tests/m1_state.rs (target/debug/deps/m1_state-9cac54c44044221a)
+
+running 8 tests
+test literal_and_numeric_registers_survive_as_distinct_exact_values ... ok
+test clock_carrier_and_opposition_keep_four_phase_fibre_combinations ... ok
+test json_transport_round_trips_and_rejects_invented_identity_or_authority ... ok
+test state_changes_are_atomic_revision_checked_and_event_preserving ... ok
+test finite_state_field_retains_independent_words_and_existing_sixfold_order ... ok
+test every_k4_coordinate_returns_its_own_source_and_computation ... ok
+test each_configured_basis_lens_and_context_frame_uses_the_existing_tonal_derivation ... ok
+test actual_c_source_relation_and_state_match_independent_rust ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.54s
+
+     Running tests/native_m_tree.rs (target/debug/deps/native_m_tree-2d5363435cd22b3e)
+
+running 5 tests
+test actual_source_parentage_asymmetry_and_alternate_spellings_survive ... ok
+test compatibility_projection_preserves_records_relations_and_reflection ... ok
+test missing_implementation_cannot_erase_or_invent_source_existence ... ok
+test malformed_registry_and_id_boundaries_fail_closed ... ok
+test actual_c_descriptors_equal_every_rust_manifest_record ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.32s
+

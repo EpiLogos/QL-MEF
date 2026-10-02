@@ -5,9 +5,7 @@
 use std::path::PathBuf;
 use std::time::Duration;
 
-use ql_mef::continuous::scene_field::{
-    self as scene, BindingRequest, PLANETS, SceneConfig, SceneInstrument,
-};
+use ql_mef::continuous::scene_field::{PLANETS, SceneConfig, SceneInstrument};
 use serde_json::{Value, json};
 
 fn worker() -> PathBuf {
@@ -16,19 +14,20 @@ fn worker() -> PathBuf {
 
 fn sky() -> Value {
     serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
     ))
     .unwrap()
 }
 
 fn config() -> SceneConfig {
-    let request: BindingRequest = serde_json::from_value(json!({
-        "schema": scene::BINDING_REQUEST, "instance_ref": "test:scene", "texture": [64, 64],
-        "units_per_metre": 1.0, "sky": sky(),
+    let sky = sky();
+    let request: ql_mef::scene::WorldRequest = serde_json::from_value(json!({
+        "schema": ql_mef::scene::WORLD_REQUEST, "instance_ref": "test:scene",
+        "event_ref":sky["snapshot_ref"],"subject_ref":"person:controlled-scene-instrument",
+        "texture": [64, 64], "units_per_metre": 1.0, "sky": sky,
         "geometry": {"longitude_samples": 32, "latitude_samples": 16, "metres_per_unit": 1.0, "attachment": 1}
-    }))
-    .unwrap();
-    let binding = scene::binding(request).unwrap();
+    })).unwrap();
+    let binding = ql_mef::scene::world(request).unwrap()["binding"].clone();
     assert_eq!(
         binding["presentation"]["slots_a"].as_array().unwrap().len(),
         4096
@@ -96,19 +95,117 @@ fn the_sky_sounds_at_its_just_octave_on_the_torus() {
     let mut instrument = open();
     let shape = instrument.shape().clone();
     assert_eq!(shape.voices.len(), PLANETS.len());
-    let field = instrument.session_mut().advance_field(8192, false).unwrap();
-    let pcm = audio(&field);
+    // One worker block is only 0.171 s: at a 130.8 Hz root the previous
+    // off-scale probe (root × 1.03) lay inside that block's 5.86 Hz spectral
+    // resolution. Receive a full second of actual continued PCM so the
+    // independently chosen off-scale frequency can discriminate a voice.
+    let mut pcm = Vec::new();
+    for _ in 0..6 {
+        let field = instrument.session_mut().advance_field(8192, false).unwrap();
+        pcm.extend(audio(&field));
+    }
     // Every planet's voice carries energy; an off-scale pitch between voices does not.
     let root = shape.voices[0].frequency_hz;
+    let powers: Vec<_> = shape
+        .voices
+        .iter()
+        .map(|voice| {
+            json!({
+                "planet_ref": voice.planet_ref, "frequency_hz": voice.frequency_hz,
+                "power": power(&pcm, voice.frequency_hz),
+                "ratio_to_off_scale": power(&pcm, voice.frequency_hz) / power(&pcm, root * 1.03)
+            })
+        })
+        .collect();
+    if let Ok(directory) = std::env::var("QL_SCENE_WORLD_RECEIPT_DIR") {
+        let path = std::path::Path::new(&directory);
+        std::fs::create_dir_all(path).unwrap();
+        std::fs::write(
+            path.join("sky-pcm.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema":"ql.scene-audio-causal-proof/v1", "worker_path":worker(),
+                "sample_rate":48_000,"frames":pcm.len(),"actual_pcm":pcm,
+                "off_scale_frequency_hz":root * 1.03,"powers":powers,
+                "native_influence":instrument.influence(),
+                "environment":"actual native worker PCM; hardware audio not asserted"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
     for voice in &shape.voices {
         assert!(
             power(&pcm, voice.frequency_hz) > 10.0 * power(&pcm, root * 1.03),
-            "{} is not sounding",
-            voice.planet_ref
+            "{} is not sounding; powers={powers:?}",
+            voice.planet_ref,
         );
     }
     // The Moon sits a just fourth above the Sun.
     assert!((shape.voices[3].frequency_hz / root - 4.0 / 3.0).abs() < 1e-12);
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_disconnected_sun_audio_consumer_is_detected_with_source_and_body_retained() {
+    use ql_mef::continuous::coupled::CoupledFieldSession;
+    let mut control = open();
+    let basis = control.session_mut().current_basis().input.clone();
+    let mut field = control.session_mut().original_field().clone();
+    // Disconnect one actual receiving contribution, leaving the admitted
+    // source, all nine modal voices and the same surface sampling intact.
+    // This is an existing native audio gain, not a synthetic waveform.
+    field.audio_gains[0] = 0.0;
+    let mut disconnected =
+        CoupledFieldSession::open(&worker(), basis, field, Duration::from_secs(20)).unwrap();
+    assert_eq!(
+        control.session_mut().current_basis().m2,
+        disconnected.current_basis().m2
+    );
+    let mut reference_pcm = Vec::new();
+    let mut disconnected_pcm = Vec::new();
+    for _ in 0..6 {
+        let reference = control.session_mut().advance_field(8192, false).unwrap();
+        let varied = disconnected.advance_field(8192, false).unwrap();
+        assert_eq!(reference["targets"], varied["targets"]);
+        reference_pcm.extend(audio(&reference));
+        disconnected_pcm.extend(audio(&varied));
+    }
+    let root = control.shape().voices[0].frequency_hz;
+    let sun_ratio = power(&disconnected_pcm, root) / power(&reference_pcm, root);
+    assert!(
+        sun_ratio < 0.01,
+        "lost Sun consumer was not detected: {sun_ratio}"
+    );
+    let off_scale = power(&disconnected_pcm, root * 1.03);
+    assert!(
+        power(&disconnected_pcm, root) < 10.0 * off_scale,
+        "the positive nine-voice acceptance would falsely pass a disconnected Sun"
+    );
+    for voice in &control.shape().voices[1..] {
+        let ratio = power(&disconnected_pcm, voice.frequency_hz)
+            / power(&reference_pcm, voice.frequency_hz);
+        assert!(
+            (ratio - 1.0).abs() < 0.05,
+            "unrelated {} voice changed: {ratio}",
+            voice.planet_ref
+        );
+    }
+    if let Ok(directory) = std::env::var("QL_SCENE_WORLD_RECEIPT_DIR") {
+        let path = std::path::Path::new(&directory);
+        std::fs::create_dir_all(path).unwrap();
+        std::fs::write(
+            path.join("disconnected-sun-audio-consumer.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema":"ql.scene-native-consumer-negative/v1","worker_path":worker(),
+                "source_and_nine_modal_voices_retained":true,"actual_body_targets_invariant":true,
+                "disconnected_input":"field.audio_gains[0]=0","sun_power_ratio":sun_ratio,
+                "reference_pcm":reference_pcm,"disconnected_pcm":disconnected_pcm,
+                "positive_nine_voice_acceptance_rejects_disconnected_output":true
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
 }
 
 #[test]

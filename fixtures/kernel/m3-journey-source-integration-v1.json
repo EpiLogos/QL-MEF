@@ -1,0 +1,461 @@
+{
+  "schema": "ql.published-journey-source-integration/v1",
+  "standing": "Integrated native journey/lived-context source and actual bounded owner replay; no current numerical readiness, installed receiving or H promotion",
+  "parents": {
+    "current": "6294a74257d74c4bbd0e1f60da17b561f573040f",
+    "incoming": "74dc6dc066fb5d9854657305045e3a786956b11a"
+  },
+  "current_source": {
+    "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+    "numerical_registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+    "coordinate_registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+    "ledger": {
+      "path": "fixtures/kernel/m-ledger-v1.json",
+      "sha256": "cea0ff2565dca9dff0c439614c431ebe0cd3b0814b923d2766fad685010fbfef",
+      "revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
+      "standing": "byte-identical current131 decisions and unassessed broad readiness retained"
+    }
+  },
+  "native_history": {
+    "original": {
+      "path": "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json",
+      "sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19",
+      "original_git_ref": "git:212a4d355fad45f2d7216377c1730caf6c959f54:fixtures/kernel/m3-finite-proof-v1.json"
+    },
+    "successor": {
+      "path": "fixtures/kernel/m3-finite-proof-v1.json",
+      "sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
+      "git_ref": "git:74dc6dc066fb5d9854657305045e3a786956b11a:fixtures/kernel/m3-finite-proof-v1.json"
+    },
+    "native_lineage": {
+      "path": "fixtures/kernel/k8-build-lineage-v1.json",
+      "sha256": "e65bd0417b4d888d8fa8fd13f28297416a090ba9b96812fb2c503db2a4c9c85b",
+      "pointer": "/successors/11"
+    },
+    "only_proof_input_change": "/inputs/crates/ql-core/src/pole/tarot.rs",
+    "outputs_and_checks": "byte-equivalent unchanged values",
+    "published_ci": {
+      "url": "https://github.com/EpiLogos/QL-MEF/actions/runs/36741745238",
+      "revision": "1d82187645e8c5a80987e4e2f4a43675a5a8492f",
+      "overall_conclusion": "failure",
+      "native_acceptance_step": "success",
+      "historical_exact_input_guard_step": "failure",
+      "source_tree_step": "success",
+      "standing": "Scoped historical native execution; not successful full gate or current907c proof"
+    }
+  },
+  "union": {
+    "k9_modules": 38,
+    "native_census": {
+      "schema": "ql.k8-current-inventory-receipt/v1",
+      "inventory_sha256": "b44c17be2975f32a75741405627cb24fd9f953d2402d78d002e5567e8b191d26",
+      "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+      "inherited_ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+      "inherited_ledger_sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+      "constructs": 2864,
+      "inherited_unresolved": 893,
+      "reviewed_K8_constructs": 1231,
+      "linked_K8_public_exports": 75,
+      "reviewed_K8_cpp_modules": 2,
+      "reviewed_K8_javascript_modules": 4,
+      "reviewed_K8_python_modules": 2,
+      "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate"
+    },
+    "current_D9_rationale_retained": "crates/ql-mef/src/nara/decanic_identity.rs",
+    "sphere": "Two cards, matching native Sphere and original full protocol"
+  },
+  "controlled_M3": {
+    "request_path": "fixtures/kernel/m3-parent-consumer-current-v1.json",
+    "request_sha256": "e636d1d23682cb3ad60059ed3a9e10f8e0c355ccd7300e3430b404a855963114",
+    "basis_path": "fixtures/kernel/m3-parent-consumer-current-v1.basis.json",
+    "basis_sha256": "d0eec4b35d4cb3e931c788052bd626fec9078bdf699e64e4e2c9cd7a57120943",
+    "changed_paths": [
+      "/historical/finite_proof_sha256"
+    ],
+    "all_determinants_commands_event_times_unchanged": true,
+    "qualification_discriminators_passed": 5
+  },
+  "executed": {
+    "component_receipts": [
+      {
+        "name": "integrated-native-skills",
+        "argv": [
+          "bash",
+          "scripts/verify-native-skills.sh"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 0.3804759979248047,
+        "user_cpu_seconds": 0.14890299999999998,
+        "system_cpu_seconds": 0.198565,
+        "log_sha256": "e1bbefe487a5fca91a9c2478a488d1226fdfcccac36d2d44ef125015c9748c32"
+      },
+      {
+        "name": "integrated-native-parents-and-journey",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "ql-mef",
+          "--test",
+          "k8_coupled",
+          "--test",
+          "k8_vak_performance",
+          "--test",
+          "k8_reshape",
+          "--test",
+          "m3_state",
+          "--test",
+          "nara_personal_field",
+          "--test",
+          "nara_oracle_journey",
+          "--test",
+          "nara_lived_context",
+          "--test",
+          "native_m_ledger_cache",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 62.89423394203186,
+        "user_cpu_seconds": 49.609113,
+        "system_cpu_seconds": 3.408874,
+        "log_sha256": "8cdc64a15670f0b9c34922b413de215a378fb13aeecfd8308d83e715524df362"
+      },
+      {
+        "name": "integrated-faculty-lib",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "ql-mef",
+          "--lib",
+          "epi_agent::tests",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 18.41409921646118,
+        "user_cpu_seconds": 19.178025000000005,
+        "system_cpu_seconds": 2.784951,
+        "log_sha256": "1ee40bf49bed2c92cdcf9fdc2016bda33fcaca54c32f00373c6693c742265bde"
+      },
+      {
+        "name": "integrated-cli-build",
+        "argv": [
+          "cargo",
+          "build",
+          "-p",
+          "ql-cli",
+          "--locked"
+        ],
+        "exit": 0,
+        "elapsed_seconds": 4.735285043716431,
+        "user_cpu_seconds": 1.3108560000000011,
+        "system_cpu_seconds": 0.2718379999999998,
+        "log_sha256": "582363ad843151bda6402b5e46a76672649896f9d637621b5034fd84ba8d8ff0"
+      }
+    ],
+    "actual_native_reshape": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "ql-mef",
+        "--test",
+        "k8_reshape",
+        "--locked",
+        "--",
+        "--ignored"
+      ],
+      "exit": 0,
+      "seconds": 0.941957950592041,
+      "worker": "/Users/admin/Central/worktrees/env-2/ql-mef/cpp/build/ql-field-worker",
+      "worker_sha256": "9025cb00e26b6d29885a431da02dc76b2e45a99b3c4af320dc499ab8862c6dc7",
+      "log_sha256": "c35ee8c63266c2dd579a4fa85a7ddbffc5eecd5788dfa4436324a2cb200c0b78"
+    },
+    "cli_replay": {
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/actual-cli-journey/native-cli-replay-receipt.json",
+      "sha256": "f9be1681728055a46d701080a61ad477ab7b74342787bde2eab56fb2ba065c5b",
+      "operation_count": 10,
+      "basis": "actual separate-process CLI, native returned state and typed agent-authored controlled source; not Central canonical document/persistence or owner private speech"
+    },
+    "source_admission_gap": {
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/actual-cli-journey/cross-person-gap-receipt.json",
+      "sha256": "156fa04c1dd62ef8c8320fe41a8f207acc19168d86f447bf99d90796dd3c1e83",
+      "standing": "Actual wrong-person journey accepted; expected host refusal remains unimplemented EA1/EA2 proof"
+    }
+  },
+  "not_claimed": [
+    "new numerical successor acceptance/readiness",
+    "complete canonical full gate before clean integration commit",
+    "Central revision-CAS journey persistence",
+    "operative AIKit skill repoint or freshbody loaded source",
+    "Nara model passage-dependent use",
+    "actual journey Expression card/hexagram/deck-art receiver",
+    "native same-event M3 activity contribution",
+    "managed installed/GPU/audio/restart whole acceptance",
+    "owner H recognition"
+  ],
+  "source_programme": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md",
+  "historical_alias_admission": {
+    "owner": "scripts/requalify-m-ledger.py::verify_historical_proof",
+    "consumer": "scripts/check-m1-acceptance.py::verify_requalified",
+    "first_canonical_failure": {
+      "schema": "ql.published-journey-integration-canonical-gate/v1",
+      "revision": "2662350364f850ffaec10f8ef359288ed7f04924",
+      "command": [
+        "bash",
+        "scripts/verify",
+        "full"
+      ],
+      "exit": 101,
+      "elapsed_seconds": 248.6594808101654,
+      "user_cpu_seconds": 219.623468,
+      "system_cpu_seconds": 26.233222,
+      "log": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/canonical-full.log",
+      "log_sha256": "355e140c94ce80930b3d9d5a9fde8066e4a3042116f0d73e6ff19d09312520da",
+      "test_result_lines": 54,
+      "after_git_status": ""
+    },
+    "repair": "Historical85db-qualified original retained separately; activepublished74dc successor admitted only through original/published Git bytes, exact native lineage, unchanged outputs/checks, one naming-source input delta, and actual current source/structural projection.",
+    "scope": "Source-history filename succession only; current numerical exact-input guard and unassessed ledger readiness retained.",
+    "source_lock_count": 24,
+    "ledger_and_qualification_receipt_unchanged": true,
+    "native_source_gate": {
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "ql-mef",
+        "--test",
+        "m1_acceptance",
+        "--test",
+        "m_ledger",
+        "--locked"
+      ],
+      "cwd": "/Users/admin/Central/worktrees/env-2/ql-mef",
+      "head": "2662350364f850ffaec10f8ef359288ed7f04924",
+      "git_status": " M crates/ql-mef/tests/m1_acceptance.rs\n M scripts/check-m1-acceptance.py\n M scripts/requalify-m-ledger.py\n?? scripts/tests/test_historical_proof_alias.py\n",
+      "qualification": {
+        "CC": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/cc-current-sdk",
+        "CXX": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/cxx-current-sdk",
+        "CARGO_BUILD_JOBS": "1",
+        "QL_FIELD_WORKER": "/Users/admin/Central/worktrees/env-2/ql-mef/cpp/build/ql-field-worker"
+      },
+      "exit": 0,
+      "elapsed_seconds": 23.795285708270967,
+      "user_cpu_seconds": 37.952448000000004,
+      "system_cpu_seconds": 2.235773,
+      "log_path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/historical-alias-native-gate.log",
+      "log_sha256": "77b3f9da598a9516e41d0e1ce0455beaf012969af4e1509e9c7657a0b67faafd",
+      "result_lines": 2
+    },
+    "actual_alias_tests": 8,
+    "actual_current_source_readiness_refusals": 7,
+    "refusal_receipts": [
+      {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/history-alias-repair/historical-alias-executed-receipt.json",
+        "sha256": "70040f5c03609295e72526504873d2061d3b0ba88cd83c549f5b8fe44ba75a5d"
+      },
+      {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/independent-review/published-journey-integration/history-alias-repair/pure-python-refusal-receipt.json",
+        "sha256": "ce941bd6e68513afc3cce12aa41fbbeb98e0513c8082f1267080a1c6d145ae7c"
+      }
+    ],
+    "implementation_locks": [
+      {
+        "path": "scripts/requalify-m-ledger.py",
+        "sha256": "e1aed25554980abc2840c23dc0ca32fa1100686323e0e358d0182559169576d1"
+      },
+      {
+        "path": "scripts/check-m1-acceptance.py",
+        "sha256": "3e2196d6e437932c29a978f82688c73d80902ad1494c983551fc4dc15738130d"
+      },
+      {
+        "path": "scripts/tests/test_historical_proof_alias.py",
+        "sha256": "9a60f8bc2e4a94cda8559692e883c0940efc7b2934eea5fc29244cccfc7439fa"
+      },
+      {
+        "path": "crates/ql-mef/tests/m1_acceptance.rs",
+        "sha256": "0d52d4bd944c9f7a8acedb961944a76e0d8233313de8fbfc8dee24b902d0305d"
+      }
+    ]
+  },
+  "current_source_history": [
+    {
+      "source": {
+        "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+        "numerical_registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+        "coordinate_registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
+        "ledger": {
+          "path": "fixtures/kernel/m-ledger-v1.json",
+          "sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+          "revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+          "standing": "byte-identical current131 decisions and unassessed broad readiness retained"
+        }
+      },
+      "git_ref": "git:ab0524d2e7941cd144bf84ca8f3052776969acf7:fixtures/kernel/m3-journey-source-integration-v1.json",
+      "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
+    }
+  ],
+  "matrix_source_reconciliation": {
+    "schema": "ql.matrix-source-reconciliation/v1",
+    "previous_git_commit": "ab0524d2e7941cd144bf84ca8f3052776969acf7",
+    "reviewed_source_commit": "2f4849c19624c47cc337b4fc378302ffd378a80b",
+    "previous_ledger": {
+      "path": "fixtures/kernel/m-ledger-v1.json",
+      "sha256": "a67cde574443e3f7acf61be9eab2354c321a979fdb26417f276ce1cd7b71ab58",
+      "revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c"
+    },
+    "current_ledger": {
+      "path": "fixtures/kernel/m-ledger-v1.json",
+      "sha256": "cea0ff2565dca9dff0c439614c431ebe0cd3b0814b923d2766fad685010fbfef",
+      "revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6"
+    },
+    "imported_binding_corrections": [
+      {
+        "id": "deep-M4:M4-C05",
+        "before": "M4.0.0",
+        "after": "M4.0-0"
+      },
+      {
+        "id": "deep-M4:M4-C06",
+        "before": "M4.0.1",
+        "after": "M4.0-1"
+      },
+      {
+        "id": "deep-M4:M4-C07",
+        "before": "M4.0.2",
+        "after": "M4.0-2"
+      },
+      {
+        "id": "deep-M4:M4-C08",
+        "before": "M4.0.3",
+        "after": "M4.0-3"
+      },
+      {
+        "id": "deep-M4:M4-C09",
+        "before": "M4.0.4",
+        "after": "M4.0-4"
+      },
+      {
+        "id": "deep-M4:M4-C10",
+        "before": "M4.0.5",
+        "after": "M4.0-5"
+      },
+      {
+        "id": "deep-M4:M4-C12",
+        "before": "M4.1.0",
+        "after": "M4.1-0"
+      },
+      {
+        "id": "deep-M4:M4-C13",
+        "before": "M4.1.1",
+        "after": "M4.1-1"
+      },
+      {
+        "id": "deep-M4:M4-C14",
+        "before": "M4.1.2",
+        "after": "M4.1-2"
+      },
+      {
+        "id": "deep-M4:M4-C15",
+        "before": "M4.1.3",
+        "after": "M4.1-3"
+      },
+      {
+        "id": "deep-M4:M4-C16",
+        "before": "M4.1.4",
+        "after": "M4.1-4"
+      },
+      {
+        "id": "deep-M4:M4-C17",
+        "before": "M4.1.5",
+        "after": "M4.1-5"
+      },
+      {
+        "id": "deep-M4:M4-C18",
+        "before": "M4.2.0",
+        "after": "M4.2-0"
+      },
+      {
+        "id": "deep-M4:M4-C19",
+        "before": "M4.2.1",
+        "after": "M4.2-1"
+      },
+      {
+        "id": "deep-M4:M4-C20",
+        "before": "M4.2.2",
+        "after": "M4.2-2"
+      },
+      {
+        "id": "deep-M4:M4-C21",
+        "before": "M4.2.3",
+        "after": "M4.2-3"
+      },
+      {
+        "id": "deep-M4:M4-C22",
+        "before": "M4.2.4",
+        "after": "M4.2-4"
+      },
+      {
+        "id": "deep-M4:M4-C23",
+        "before": "M4.2.5",
+        "after": "M4.2-5"
+      },
+      {
+        "id": "deep-M4:M4-C25",
+        "before": "M4.3.0",
+        "after": "M4.3-0"
+      },
+      {
+        "id": "deep-M4:M4-C26",
+        "before": "M4.3.1",
+        "after": "M4.3-1"
+      },
+      {
+        "id": "deep-M4:M4-C27",
+        "before": "M4.3.2",
+        "after": "M4.3-2"
+      },
+      {
+        "id": "deep-M4:M4-C28",
+        "before": "M4.3.3",
+        "after": "M4.3-3"
+      },
+      {
+        "id": "deep-M4:M4-C29",
+        "before": "M4.3.4",
+        "after": "M4.3-4"
+      },
+      {
+        "id": "deep-M4:M4-C31",
+        "before": "M4.3.5",
+        "after": "M4.3-5"
+      }
+    ],
+    "matrix_source_locks": [
+      {
+        "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+        "before": "a3218a324382eaa924e35f9372fc0fdf2fc23ae5b25f0567ac04aeb6611ef840",
+        "after": "45b3a0152a9f5165376ee3a7d1cdeb45d13c15f556e1b85b502c299a2f3b0325"
+      },
+      {
+        "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
+        "before": "6738fa80ec422f60546a18ead99107d4e95fce8238db29f8efcaffad618afaf8",
+        "after": "a24098d211e1a8b30972bb7796073852bdf922de76a05341eb17b7c6230721ba"
+      }
+    ],
+    "preserved": [
+      "row identity/order",
+      "assessments",
+      "implementations",
+      "evidence",
+      "discrepancies",
+      "numerical registry",
+      "all24 numerical source locks",
+      "all3 retained dated replay artifacts",
+      "historical finite proof and lineage bytes"
+    ],
+    "standing": "Matrix source bindings and current metadata only; no new numerical execution, receiving/profile, installed or H acceptance",
+    "independent_source_review_sha256": "dc12dcd5fa86647d979b14612e2bb5201e53c9621d61993266101fe7599422c7"
+  }
+}

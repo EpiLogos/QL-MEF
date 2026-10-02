@@ -54,6 +54,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # The native acceptance gate verifies retained proofs against their
+          # original Git objects and the explicitly qualified successor cut.
+          fetch-depth: 0
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -98,6 +101,14 @@ jobs:
           python-version: '3.12'
       - name: Source, registry, census, skill and CI-topology locks
         run: bash scripts/verify invariants
+      - name: Retain the actual current source inventory for reconciliation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-source-inventory-${{ github.sha }}
+          path: target/m-ledger/current/
+          if-no-files-found: ignore
+          retention-days: 14
 
   ql-mef-rust:
     name: ql-mef-rust

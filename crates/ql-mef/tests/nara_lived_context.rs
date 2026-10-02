@@ -65,6 +65,15 @@ fn occasion() -> AdmittedOccasion {
 }
 
 fn journey_recognising(source_ref: &str, revision: &str, entry: &str) -> OracleJourney {
+    journey_recognising_for("controlled:person-a", source_ref, revision, entry)
+}
+
+fn journey_recognising_for(
+    subject_ref: &str,
+    source_ref: &str,
+    revision: &str,
+    entry: &str,
+) -> OracleJourney {
     let source = |path: &str, rev: &str| SourceRevision {
         source_ref: path.into(),
         revision: rev.into(),
@@ -77,8 +86,8 @@ fn journey_recognising(source_ref: &str, revision: &str, entry: &str) -> OracleJ
     };
     let mut journey = OracleJourney::open(
         OpenJourney {
-            journey_ref: "journey:controlled-move".into(),
-            subject_id: "controlled:person-a".into(),
+            journey_ref: format!("journey:{subject_ref}/move"),
+            subject_id: subject_ref.into(),
             concern: JourneyConcern {
                 concern_ref: "concern:the-move".into(),
                 title: "The move".into(),
@@ -199,6 +208,125 @@ fn earlier_day(revision: &str, decisive: &str) -> serde_json::Value {
 }
 
 #[test]
+fn another_persons_journey_cannot_enter_the_lived_context() {
+    let journey = journey_recognising(EARLIER_DAY, "rev-a", "e1");
+    let mut input = request(
+        vec![earlier_day(
+            "rev-a",
+            "The earlier experience belongs to person A.",
+        )],
+        Vec::new(),
+        Some(journey),
+    );
+    input.subject_ref = "controlled:person-b".into();
+    let error = compose(input).unwrap_err();
+    assert_eq!(
+        error,
+        "oracle journey belongs to a different lived-context subject"
+    );
+}
+
+#[test]
+fn a_different_concerns_journey_cannot_enter_the_lived_context() {
+    let mut input = request(
+        vec![earlier_day(
+            "rev-a",
+            "The original concern has an earlier basis.",
+        )],
+        Vec::new(),
+        Some(journey_recognising(EARLIER_DAY, "rev-a", "e1")),
+    );
+    input.concern.concern_ref = "concern:a-different-concern".into();
+    let error = compose(input).unwrap_err();
+    assert_eq!(
+        error,
+        "oracle journey belongs to a different lived-context concern"
+    );
+}
+
+#[test]
+fn two_persons_at_one_occasion_keep_their_own_journey_bindings() {
+    let input_a = request(
+        Vec::new(),
+        Vec::new(),
+        Some(journey_recognising(EARLIER_DAY, "rev-a", "e1")),
+    );
+    let mut input_b = request(
+        Vec::new(),
+        Vec::new(),
+        Some(journey_recognising_for(
+            "controlled:person-b",
+            EARLIER_DAY,
+            "rev-a",
+            "e1",
+        )),
+    );
+    input_b.subject_ref = "controlled:person-b".into();
+    input_b.disclosed_via_ref = "consent:controlled-b/lived-context".into();
+    input_b.occasion.as_mut().unwrap().admitted_via_ref =
+        "consent:controlled-b/lived-context".into();
+    let context_a = compose(input_a).unwrap();
+    let context_b = compose(input_b).unwrap();
+    assert_eq!(
+        context_a.occasion.as_ref().unwrap().day_ref,
+        context_b.occasion.as_ref().unwrap().day_ref
+    );
+    assert_eq!(
+        context_a.occasion.as_ref().unwrap().now_ref,
+        context_b.occasion.as_ref().unwrap().now_ref
+    );
+    assert_eq!(context_a.subject_ref, "controlled:person-a");
+    assert_eq!(context_b.subject_ref, "controlled:person-b");
+    assert_ne!(context_a.context_revision, context_b.context_revision);
+    assert_ne!(
+        context_a.journey.as_ref().unwrap().journey_ref,
+        context_b.journey.as_ref().unwrap().journey_ref
+    );
+    assert_eq!(
+        context_a.journey.as_ref().unwrap().deck_ref,
+        context_b.journey.as_ref().unwrap().deck_ref
+    );
+    assert!(
+        context_b
+            .disclosed
+            .iter()
+            .all(|entry| { entry.disclosed_via_ref == "consent:controlled-b/lived-context" })
+    );
+}
+
+#[test]
+fn a_later_day_keeps_the_same_journey_and_original_card_basis() {
+    let journey = journey_recognising(EARLIER_DAY, "rev-a", "e1");
+    let mut input = request(
+        vec![earlier_day(
+            "rev-a",
+            "The original experience remains relevant.",
+        )],
+        Vec::new(),
+        Some(journey.clone()),
+    );
+    let earlier = compose(input.clone()).unwrap();
+    input.occasion.as_mut().unwrap().day_ref = "central:day:controlled:2026-09-04".into();
+    input.occasion.as_mut().unwrap().day_revision = "day-rev-4".into();
+    input.composed_at_unix_ms += DAY;
+    let context = compose(input).unwrap();
+    let continued = context.journey.as_ref().unwrap();
+    assert_eq!(continued.journey_ref, journey.journey_ref);
+    assert_eq!(continued.journey_revision, journey.revision);
+    assert_eq!(continued.deck_ref, journey.deck.deck_ref);
+    assert_eq!(continued.dealt, journey.dealt);
+    assert_eq!(continued.day_refs, journey.day_refs);
+    assert_eq!(continued.live_placements.len(), journey.placements.len());
+    assert_eq!(context.journey, earlier.journey);
+    assert!(context.passages.iter().any(|passage| {
+        passage
+            .reasons
+            .iter()
+            .any(|reason| matches!(reason, SelectionReason::RecognisesPlacement { .. }))
+    }));
+}
+
+#[test]
 fn decisive_earlier_passage_reaches_the_context_through_the_journey() {
     let decisive = "My sister will only sign the papers if I stay until spring.";
     let context = compose(request(
@@ -251,26 +379,30 @@ fn decisive_earlier_passage_reaches_the_context_through_the_journey() {
 
 #[test]
 fn changing_or_removing_the_source_changes_the_supported_reading() {
-    let decisive = "My sister will only sign the papers if I stay until spring.";
+    let decisive = "The move depends on my sister signing the papers if I stay until spring.";
     let original = compose(request(
         vec![earlier_day("rev-a", decisive)],
         Vec::new(),
         Some(journey_recognising(EARLIER_DAY, "rev-a", "e1")),
     ))
     .unwrap();
-    // The person rewrote the passage: the relation was to the old revision.
+    // Only the source revision changes. The passage remains relevant to the
+    // concern, but the old recognition must not support its new revision.
     let edited = compose(request(
-        vec![earlier_day("rev-b", "My sister has already signed.")],
+        vec![earlier_day("rev-b", decisive)],
         Vec::new(),
         Some(journey_recognising(EARLIER_DAY, "rev-a", "e1")),
     ))
     .unwrap();
-    assert!(
-        !edited
-            .passages
-            .iter()
-            .any(|passage| passage.text == decisive)
-    );
+    let current = edited
+        .passages
+        .iter()
+        .find(|passage| passage.text == decisive)
+        .expect("the current passage remains relevant through the concern");
+    assert_eq!(current.revision, "rev-b");
+    assert!(current.reasons.contains(&SelectionReason::ConcernTerm {
+        term: "move".into()
+    }));
     assert!(!edited.passages.iter().any(|passage| {
         passage
             .reasons
@@ -278,6 +410,7 @@ fn changing_or_removing_the_source_changes_the_supported_reading() {
             .any(|reason| matches!(reason, SelectionReason::RecognisesPlacement { .. }))
     }));
     assert_ne!(edited.context_revision, original.context_revision);
+    assert_eq!(edited.journey, original.journey);
 
     let removed = compose(request(
         Vec::new(),
@@ -287,6 +420,7 @@ fn changing_or_removing_the_source_changes_the_supported_reading() {
     .unwrap();
     assert!(removed.passages.is_empty());
     assert_ne!(removed.context_revision, original.context_revision);
+    assert_eq!(removed.journey, original.journey);
 }
 
 #[test]

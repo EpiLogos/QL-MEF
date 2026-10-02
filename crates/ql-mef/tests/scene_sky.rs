@@ -50,6 +50,16 @@ fn every_body_sits_on_the_clock_through_the_map() {
         Some("#2-5-0/1-6")
     );
     assert_eq!(by("Sun").resonant_chakra_ref.as_deref(), Some("#2-5-0/1-7"));
+    // Accepted D10 anchors are qualified source routes, not legacy C indices.
+    assert_eq!(
+        by("Neptune").resonant_chakra_ref.as_deref(),
+        Some("#2-5-0/1-6")
+    );
+    assert_eq!(
+        by("Pluto").resonant_chakra_ref.as_deref(),
+        Some("#2-5-0/1-7")
+    );
+    assert_eq!(by("Uranus").resonant_chakra_ref, None);
     // The Sun at 185.4° stands in Libra 1, under an autumn governor.
     assert_eq!(by("Sun").seed.decan_name, "Libra Decan 1");
     assert_eq!(by("Sun").seed.governor_season, "Autumn");

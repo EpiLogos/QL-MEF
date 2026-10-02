@@ -24,7 +24,7 @@ fn input() -> CoupledInput {
     ))
     .unwrap();
     let m3_fixture: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+        "../../../fixtures/kernel/m3-parent-consumer-current-v1.json"
     ))
     .unwrap();
     let mut m3: M3Request = serde_json::from_value(m3_fixture["request"].clone()).unwrap();
@@ -46,6 +46,24 @@ fn input() -> CoupledInput {
         sky_frequency_bindings: vec![],
         source_receipts: vec![json!({"standing":"controlled fixture, not a live provider"})],
     }
+}
+
+#[test]
+fn historical_m3_basis_is_refused_by_the_actual_native_join() {
+    let historical: Value = serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/m3-parent-consumer-v1.json"
+    ))
+    .unwrap();
+    let mut request = input();
+    assert!(request.compose().is_ok());
+    request.m3.registry_revision = historical["request"]["registry_revision"]
+        .as_str()
+        .unwrap()
+        .into();
+    assert_eq!(
+        request.compose().unwrap_err(),
+        "M3 contract or registry mismatch"
+    );
 }
 
 #[test]

@@ -148,6 +148,7 @@ fn actual_native_m3_activity_recomposes_same_identity_and_event_without_touching
             "q_identity",
             "q_identity_transit",
             "snapshot_ref",
+            "sky_admission",
         ] {
             assert_eq!(output[field], current[field]);
         }

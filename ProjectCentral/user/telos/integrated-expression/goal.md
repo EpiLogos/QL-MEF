@@ -42,7 +42,7 @@ Every visible or audible quantity traces to a Bimba coordinate and its C/Rust ow
 ## Done when
 
 - The installed O:I Live instrument plays the scene from a dated sky, a place and an M1 tick.
-- Varying one determinant (time, place, lens, cast) changes exactly what the sources predict. A lens changes no inscription, sky or sound.
+- Varying one determinant (time, place, lens, cast) changes exactly what the sources predict. Selecting an M3 aperture, with the event and sounding determinants fixed, preserves inscription, sky and sound. M2 MEF/Vimarśā and synth controls retain their own source-defined modulation and receiving effects; that aperture invariant does not apply to every operation called a lens.
 - A disconnected consumer fails.
 - Omarchy replays the same event independently.
 - The owner has done the listening walk.

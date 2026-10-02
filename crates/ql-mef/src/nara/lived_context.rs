@@ -464,6 +464,18 @@ pub fn compose(request: LivedContextRequest) -> Result<LivedContext, String> {
     if let Some(occasion) = &request.occasion {
         occasion.validate()?;
     }
+    let journey = request.journey.as_ref();
+    if let Some(journey) = journey {
+        journey.validate()?;
+        // A continuing journey can span Days, but it cannot silently change
+        // whose experience or which concern this context is being composed for.
+        if journey.subject_id != request.subject_ref {
+            return Err("oracle journey belongs to a different lived-context subject".into());
+        }
+        if journey.concern.concern_ref != request.concern.concern_ref {
+            return Err("oracle journey belongs to a different lived-context concern".into());
+        }
+    }
     let mut candidates = Vec::new();
     for document in &request.documents {
         candidates.extend(entries_from_central_document(document)?);
@@ -491,10 +503,6 @@ pub fn compose(request: LivedContextRequest) -> Result<LivedContext, String> {
         }
     }
 
-    let journey = request.journey.as_ref();
-    if let Some(journey) = journey {
-        journey.validate()?;
-    }
     let live_cards: Vec<String> = match journey {
         Some(journey) => journey
             .placements

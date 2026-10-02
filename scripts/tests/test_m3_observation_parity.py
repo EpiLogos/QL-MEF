@@ -1,7 +1,9 @@
 """Independent native/source observation validation and mutation regressions.
 
-The positive fixtures are explicitly synthetic, not native execution receipts.
-Real producer output is checked by the CLI with exact producer-revision binding.
+The positive stream comes from an actual compiled native C probe. Source
+expectations use the admitted original Bimba read, with its full correspondence
+proved separately. Mutations affect actual native observations, not self-made
+positive rows. Compiler/native execution does not imply installed experience.
 """
 import copy
 import importlib.util
@@ -21,22 +23,35 @@ _spec.loader.exec_module(observer)
 class M3ObservationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        root = os.environ.get("M3_SOURCE_ROOT")
-        if not root:
-            raise unittest.SkipTest("M3_SOURCE_ROOT absent; independent source observation tests not run")
-        registry, nodes, edges = observer.source.read_source(Path(root))
-        cls.projection = observer.source.project(registry, nodes, edges)
+        original = json.loads((ROOT / "fixtures/kernel/bimba-content-v1.json").read_text())
+        registry = json.loads((ROOT / observer.source.REGISTRY).read_text())
+        read = {"content_sha256": original["source_revision"], **original["content"]}
+        cls.projection = observer.source.project(registry, read)
         cls.audit = observer.source.Audit(cls.projection).run()
-        cls.synthetic = observer.expected_rows(cls.projection, cls.audit)
+        cls.temp = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.temp.cleanup)
+        output = Path(cls.temp.name)
+        subprocess.run(["python3", str(ROOT / "scripts/generate-m3.py"),
+                        "--out", str(output / "m3_data.inc")], cwd=ROOT,
+                       check=True, capture_output=True, text=True)
+        subprocess.run([os.environ.get("CC", "cc"), "-std=c11", "-O1", "-Wall", "-Wextra",
+                        "-Werror", "-pedantic", "-I" + str(ROOT / "c/include"), "-I" + str(output),
+                        str(ROOT / "migration/epi-kernel/k7-m3-probe.c"),
+                        str(ROOT / "c/src/m3.c"), str(ROOT / "c/src/m_tree.c"),
+                        "-lm", "-o", str(output / "probe")], cwd=ROOT,
+                       check=True, capture_output=True, text=True)
+        observed = subprocess.run([str(output / "probe")], cwd=ROOT,
+                                  check=True, capture_output=True, text=True)
+        cls.native = [json.loads(line) for line in observed.stdout.splitlines()]
 
     def rows(self):
-        return copy.deepcopy(self.synthetic)
+        return copy.deepcopy(self.native)
 
     def check(self, rows):
         return observer.check(self.projection, self.audit, rows)
 
-    def test_synthetic_valid_stream_is_complete_but_not_an_execution_receipt(self):
-        result = self.check(self.synthetic)
+    def test_actual_native_stream_is_complete_but_not_a_whole_experience_receipt(self):
+        result = self.check(self.native)
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["checked"], {"coordinate_bindings": 623, "transcriptions": 128, "clock_frames": 1441})
         self.assertEqual(result["differences"], [])
@@ -47,7 +62,7 @@ class M3ObservationTests(unittest.TestCase):
 
     def test_shared_upper_lower_transposition_cannot_pass(self):
         rows = self.rows()
-        expected = {r[2]: r for r in self.synthetic if r[:2] == ["node", 5]}
+        expected = {r[2]: r for r in self.native if r[:2] == ["node", 5]}
         for row in rows:
             if row[:2] == ["node", 5]:
                 address = row[2]
@@ -87,7 +102,7 @@ class M3ObservationTests(unittest.TestCase):
 
     def test_clock_boundary_omission_cannot_pass_two_cover_evidence(self):
         for step in [0, 359, 360, 719, 720, 1079, 1080, 1439, 1440]:
-            rows = [r for r in self.synthetic if r[:2] != ["clock", step]]
+            rows = [r for r in self.native if r[:2] != ["clock", step]]
             with self.subTest(step=step), self.assertRaisesRegex(ValueError, "missing native observations"):
                 self.check(rows)
 
@@ -139,7 +154,8 @@ class M3ObservationTests(unittest.TestCase):
         result = self.check(rows)
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["standing"]["other_native_operations"], "not-recertified-by-this-check")
-        self.assertEqual(result["input_categories"]["quaternion"], 1)
+        original_count = sum(row[0] == "quaternion" for row in self.native)
+        self.assertEqual(result["input_categories"]["quaternion"], original_count + 1)
 
     def test_non_finite_or_malformed_json_cannot_be_native_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -156,7 +172,7 @@ class M3ObservationTests(unittest.TestCase):
             revision.write_text("a" * 40)
             result = subprocess.run([
                 "python3", str(ROOT / "scripts/m3-observation-parity.py"),
-                "--source-root", str(root / "absent-source"), "--input", str(root / "absent-input"),
+                "--map", str(root / "absent-source"), "--input", str(root / "absent-input"),
                 "--producer-revision-file", str(revision), "--expected-revision", "b" * 40,
             ], capture_output=True, text=True, check=False)
             self.assertNotEqual(result.returncode, 0)
@@ -165,6 +181,4 @@ class M3ObservationTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    if not os.environ.get("M3_SOURCE_ROOT"):
-        raise SystemExit("M3_SOURCE_ROOT is required for the explicit observation test run")
     unittest.main()

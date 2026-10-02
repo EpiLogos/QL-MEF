@@ -1,7 +1,7 @@
 {
  "schema": "ql.m2-sky/v1",
- "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
- "map_content_sha256": "c9d67075d7c25cb9038d5cfb9761f1237b38c433d65203e197d1cebcb07ab31d",
+ "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+ "map_content_sha256": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
  "standing": "projection of the live Bimba map read at the registry identities; just_ratio is parsed from m_2_5_interval_from_root, which is retained",
  "nodes": [
   {

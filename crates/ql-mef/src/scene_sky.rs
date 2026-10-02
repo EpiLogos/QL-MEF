@@ -25,7 +25,7 @@ pub struct PlacedBody {
     pub speed_deg_per_day: f64,
     pub retrograde: bool,
     pub seed: InscriptionSeed,
-    /// `PLANETARY_RESONANCE` target: the chakra centre under the Sun.
+    /// Accepted `PLANETARY_RESONANCE` or qualified `HAS_CHAKRAL_ANCHOR` target.
     pub resonant_chakra_ref: Option<String>,
     /// The ruler(s) of the decan it stands in (`RULED_BY`).
     pub decan_rulers: Vec<String>,
@@ -87,11 +87,16 @@ pub fn place(snapshot: &Value) -> Result<SkyPlacement, String> {
         let planet_ref = planet
             .and_then(|id| registry.node(id))
             .map(|n| n.source_ref.clone());
-        let resonant_chakra_ref = planet.and_then(|id| {
-            targets(registry, id, "PLANETARY_RESONANCE")
-                .into_iter()
-                .next()
-        });
+        let resonant_chakra_ref = match planet_ref.as_deref() {
+            Some(reference) => {
+                let table = crate::m2::catalogue().table("planet")?;
+                let index = (0..10)
+                    .find(|&i| table.binding(i) == Some(reference))
+                    .ok_or("placed planet has no native catalogue identity")?;
+                crate::m2::planet_chakra_route(index)?.map(|route| route.chakra_coordinate)
+            }
+            None => None,
+        };
         let decan_id = registry
             .resolve(&seed.decan_ref)
             .ok_or("decan not in registry")?

@@ -24,7 +24,7 @@ The square is the router. This skill refers back to Square C, not to sibling ski
 
 ## Scales of Reading
 
-**Sphere** — Single card. Compass orientation: what quality of energy characterises the moment? Quick bearing.
+**Sphere** — Two cards. Compass orientation: what quality of energy characterises the moment? Quick bearing.
 
 **Torus** — Six-card Day spread. One card per P-position (P0–P5). Full six-fold QL reading in its explicate form. The core reading.
 

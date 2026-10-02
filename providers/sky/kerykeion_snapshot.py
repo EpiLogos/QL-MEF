@@ -46,6 +46,37 @@ def digest(value):
                                     allow_nan=False).encode()).hexdigest()
 
 
+def provider_quantity_payload(value):
+    """Recover the producer's float spelling after a JSON Number round trip.
+
+    These quantities are emitted as floats by Swiss Ephemeris, including an
+    integral Julian day (2461312.0). JavaScript emits that same Number as
+    2461312. The immutable reference still signs the producer's payload; only
+    these schema-defined quantity types are restored on a private hash copy.
+    Identity integers, timestamps, flags, the supplied request and provenance
+    remain exactly as received. No quantity or reference is recalculated.
+    """
+    result = copy.deepcopy(value)
+    def quantity(record, key):
+        if key in record and type(record[key]) in (int, float):
+            record[key] = float(record[key])
+    quantity(result, 'julian_day_ut_argument')
+    quantity(result, 'ayanamsha_degrees')
+    for body in result.get('bodies', []):
+        if isinstance(body, dict):
+            for key in ('longitude_degrees', 'latitude_degrees', 'distance_au',
+                        'longitude_speed_degrees_per_day',
+                        'latitude_speed_degrees_per_day', 'radial_speed_au_per_day'):
+                quantity(body, key)
+    provider = result.get('provider', {})
+    if isinstance(provider, dict):
+        for used_file in provider.get('used_data_files', []):
+            if isinstance(used_file, dict):
+                quantity(used_file, 'jd_start')
+                quantity(used_file, 'jd_end')
+    return result
+
+
 def file_digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -130,7 +161,7 @@ def source_bindings():
             'header': str(header.relative_to(ROOT)), 'header_sha256': file_digest(header),
             'native_table': table['symbol'], 'scope': table['scope'],
             'standing': 'retained-symbolic-model-not-astronomical-measurement',
-            'sun_role': 'parent-not-chakra-mapped', 'non_sun_operators': 9,
+            'sun_role': 'solar-parent', 'non_sun_operators': 9,
             'earth_body': {'source_ref': '#2-5-0/1-0', 'role': 'grounding-anchor',
                            'outside_planet_array': True, 'is_eighth_chakra': False},
             'receiving_chakras': 7, 'epogdoon': [9, 8],
@@ -251,7 +282,9 @@ def validate_snapshot(value, *, now=None, require_current=False):
         'bodies', 'snapshot_ref'} and value.get('schema') == SCHEMA, 'unsupported snapshot')
     original = copy.deepcopy(value)
     reference = original.pop('snapshot_ref', None)
-    require(reference == 'sha256:' + digest(original), 'snapshot digest mismatch')
+    require(reference in ('sha256:' + digest(original),
+                          'sha256:' + digest(provider_quantity_payload(original))),
+            'snapshot digest mismatch')
     time = request(value['request'])
     require(value['epoch_utc'] == iso(time) and value['epoch_unix_ms'] == int(time.timestamp()) * 1000,
             'snapshot epoch mismatch')
@@ -317,6 +350,67 @@ def validate_snapshot(value, *, now=None, require_current=False):
     return value
 
 
+# This is a known previous native provider descriptor, not a general Sun-key
+# exception. #254 D10 gives PLANETARY_RESONANCE authority; the QL native owner
+# separately enforces the current Sun -> Sahasrara route and emits its reading.
+LEGACY_SUN_ADAPTER_SHA256 = 'e6d96d2ab5e4c539004ce84d7c7956404faea9752ce602bebc170441b457ab81'
+LEGACY_SUN_REGISTRY_REVISION = '82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2'
+LEGACY_SUN_HEADER_SHA256 = '7dfcd2906afb4415151d059d2259aa2252dfe74fa74a64a6b843ae5b385ab4c8'
+
+
+def source_binding_qualification(value, *, retained=False):
+    """Describe accepted metadata without changing the immutable snapshot.
+
+    This helper is not astronomical origin authentication. The native host
+    fences a retained snapshot to the actual saved world/private occasion;
+    structural/digest validation alone cannot authenticate arbitrary re-signed
+    astronomical quantities. Current source and body/digest guards remain.
+    """
+    expected = source_bindings()
+    actual = value['source_binding']
+    current = actual == expected
+    if not current:
+        legacy = dict(expected, sun_role='parent-not-chakra-mapped')
+        require(retained and actual == legacy
+                and actual['registry_revision'] == LEGACY_SUN_REGISTRY_REVISION
+                and actual['header_sha256'] == LEGACY_SUN_HEADER_SHA256
+                and value['provider']['adapter_sha256'] == LEGACY_SUN_ADAPTER_SHA256,
+                'native source binding is stale')
+    return {'schema': 'ql.sky-source-binding-qualification/v1',
+            'snapshot_ref': value['snapshot_ref'],
+            'legacy_descriptor_admitted': not current,
+            'original_sun_role': actual['sun_role'],
+            'current_sun_role': expected['sun_role'],
+            'provider_adapter_sha256': value['provider']['adapter_sha256'],
+            'registry_revision': actual['registry_revision'],
+            'header_sha256': actual['header_sha256'],
+            'standing': ('known legacy descriptor retained as historical provenance; '
+                         'native Bimba relations determine current reception') if not current else
+                        'current native source descriptor',
+            'fresh_current_attested': False}
+
+
+def validate_retained_snapshot(value, *, now=None):
+    """Reopen an exact dated occasion without claiming fresh sky now.
+
+    A current-origin snapshot must have been fresh at its recorded receipt;
+    retaining it does not change its request, epoch, source or content hash.
+    Future selected historical ephemerides keep their existing dated standing.
+    """
+    validate_snapshot(value)
+    # Only this explicit retained path admits the exact previous provider's
+    # false descriptive Sun label. The numerical/native source binding and
+    # complete immutable snapshot remain unchanged. Fresh request and M2
+    # attachment paths continue to demand the current source binding exactly.
+    source_binding_qualification(value, retained=True)
+    if value['request']['mode'] == 'current':
+        receipt = datetime.fromisoformat(value['receipt_utc'].replace('Z', '+00:00'))
+        validate_snapshot(value, now=receipt, require_current=True)
+        require(receipt <= (now or datetime.now(timezone.utc)),
+                'retained current snapshot receipt is in the future')
+    return value
+
+
 def attach_m2(snapshot, m2_request, *, now=None, scope='shared-geocentric'):
     """Add native observations without rewriting excitation, modes or producer standing.
 
@@ -377,7 +471,9 @@ def execute_m2(snapshot, m2_request, executable, *, now=None, scope='shared-geoc
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('request', type=Path)
-    parser.add_argument('--validate-snapshot', action='store_true', help='Validate and return an existing exact snapshot without recalculation')
+    validation = parser.add_mutually_exclusive_group()
+    validation.add_argument('--validate-snapshot', action='store_true', help='Validate an exact snapshot under its original requested freshness policy')
+    validation.add_argument('--validate-retained-snapshot', action='store_true', help='Validate an exact retained occasion without attesting fresh current sky')
     parser.add_argument('--m2-request', type=Path)
     parser.add_argument('--m2-executable', type=Path)
     args = parser.parse_args()
@@ -389,7 +485,11 @@ def main():
             require(args.request.stat().st_size <= 65536, 'sky request exceeds 64 KiB')
             source = args.request.read_bytes()
         data = json.loads(source)
-        if args.validate_snapshot:
+        if args.validate_retained_snapshot:
+            require(args.m2_request is None and args.m2_executable is None,
+                    'retained validation does not authorize fresh M2 attachment')
+            result = validate_retained_snapshot(data)
+        elif args.validate_snapshot:
             result = validate_snapshot(data, require_current=data['request']['mode'] == 'current')
             require(result['source_binding'] == source_bindings(), 'native source binding is stale')
         else:

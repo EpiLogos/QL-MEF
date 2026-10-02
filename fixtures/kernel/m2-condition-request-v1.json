@@ -1,6 +1,6 @@
 {
   "schema": "ql.m2-engine-request/v1",
-  "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
+  "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
   "stamp": {
     "identity": {
       "event_ref": "fixture:m2-event",
