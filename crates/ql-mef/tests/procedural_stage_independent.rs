@@ -236,7 +236,7 @@ fn a07_reordered_generated_material_preserves_human_edit_on_the_same_id() {
         overlays: vec![],
     };
     let delta = regenerate(
-        &[old.clone()],
+        std::slice::from_ref(&old),
         &[current],
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
