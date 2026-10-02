@@ -367,8 +367,8 @@
     {
       "repository": "EpiLogos/QL-MEF",
       "path": "docs/integrations/epi-logos/EPI-LOGOS-AGENT-DEVELOPMENT-PROGRAMME.md",
-      "captured_file_sha256": "c41015bbb21001bd7e05ef6dee1f6f139e7f0cbba30e3f76e79fb5887ac813db",
-      "bytes": 79537,
+      "captured_file_sha256": "b080c37e326bd1c00b2307df851bd5ff97f54e133a0f888157381e2ce46fb4df",
+      "bytes": 83846,
       "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
       "standing": "Source at its own stated scope; current working-file hash is separate from checkout HEAD, installed and adoption evidence.",
       "capture_history": [
@@ -386,10 +386,26 @@
           "sha256": "4bee18c0171f45f2e577b78997217fd08b7baa44883c6bdccc570a9096a0bf1c",
           "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
           "superseded_capture_at": "2026-10-02T00:23:52.565741+00:00"
+        },
+        {
+          "sha256": "c41015bbb21001bd7e05ef6dee1f6f139e7f0cbba30e3f76e79fb5887ac813db",
+          "bytes": 79537,
+          "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
+          "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
+          "superseded_capture_at": "2026-10-02T04:27:51Z",
+          "capture_scope": "Current reviewed source successor working bytes; original source revision/capture history retained. Current compiled/installed receiving requires exact successor qualification."
+        },
+        {
+          "sha256": "a2250c22a46f6955893839658a70a2221e68411ff240928d73563f3e8c5d82bc",
+          "bytes": 83780,
+          "observed_checkout_head": "ec33764868b22e98cd6ebff8f6565097f67bdb03",
+          "source_read_basis_revision": "212a4d355fad45f2d7216377c1730caf6c959f54",
+          "superseded_capture_at": "2026-10-02T04:27:51Z",
+          "capture_scope": "Current working receiving-programme successor bytes captured before publication; original source_read_basis_revision and all prior capture hashes retained. Exact source/hosted gates have their own evidence; whole/installed/H remain unaccepted."
         }
       ],
-      "observed_checkout_head": "176f83f398c0aed4620a0fcc66e59c7fc6dd322e",
-      "capture_scope": "Current reviewed source successor working bytes; original source revision/capture history retained. Current compiled/installed receiving requires exact successor qualification."
+      "observed_checkout_head": "ec33764868b22e98cd6ebff8f6565097f67bdb03",
+      "capture_scope": "Current working receiving-programme successor bytes captured before publication; original source_read_basis_revision and all prior capture hashes retained. Exact source/hosted gates have their own evidence; whole/installed/H remain unaccepted."
     },
     {
       "repository": "EpiLogos/O-I",
@@ -20017,7 +20033,7 @@
         "O:I Expression profile/material/Scene owner; QL exact source owner"
       ],
       "scope": "first coherent native composition",
-      "standing": "Actual native material/storage/camera producer proof plus fresh24 visible saved/current opening and same-instance28 source/personal progression executed. Native live receiving, full lifecycle, independent mature recognition and installed delivery remain pending;27 availability replay invalid.",
+      "standing": "Actual native material/storage/camera producer proof plus fresh24 visible saved/current opening and same-instance28 source/personal progression executed. Native live receiving, full lifecycle, independent mature recognition and installed delivery remain pending;27 availability replay invalid. Current2Oct04:15 actual full-world native Act5tests/lint and mounted27f real native replay/owner State browser gate pass. Complete producer/custody and presentation reopening fail; ordinary/whole/installed/H remain open.",
       "files": [
         {
           "repository": "O-I",
@@ -20034,6 +20050,26 @@
         {
           "repository": "O-I",
           "path": "desktop/cradle/kernel/src/expression_scene.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_act_storage.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_act_store.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_world.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/tests/expression_act_world.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md"
         }
       ],
       "native_operations": [
@@ -20121,7 +20157,10 @@
         "ORDINARY28-INDEPENDENT-QUALIFIED-WORKER-BOUNDARY",
         "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
         "FRESH-WHOLE04-FAILURE",
-        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS",
+        "FRESH-ACT-STORAGE-V4-INDEPENDENT",
+        "FRESH-ACT-STORAGE-ACTUAL-HOSTED",
+        "FRESH-ACT-STORAGE-HOSTED-TREE"
       ],
       "profile_lifecycle_obligation": {
         "actual": "Actual19 opening has61 source-scoped definitions; incoming authoredv3cohort is separately immutable. Former global64 catalog failsat21; native4096refs/16MiB aggregate now passes15 tests with122 exactv2/v3 definitions. Singleparent/currentkey replacement semantics remain; fullordinarycatalogreplay pending.",
@@ -20340,7 +20379,7 @@
         "O:I production launch/Library/save and selected-context owner; existing Nara/Epii owner"
       ],
       "scope": "production encounter/lifecycle",
-      "standing": "Actual28 preceding37 checks include six rendered register pointers/all member Source/Return, keyboard unvoiced Uranus, Personal Pratibimba exact native pointer/source/Return and branch entry.24/25/26 cancellation/availability failures and27 invalid build precondition retained. Fresh answer, full same-world lifecycle/consumer proof/installed Return remain open. Fresh first full production e254 frontend/4eb kernel/70ce native companions stopped after5 checks at real Recovery8MiB refusal. Native lossless checkpoint repair passes exact failed operation and existing native suites; cold Library e254 source repair is committed but not yet receiving-qualified. Necessary Central concurrent horizon defect reproduced; ordinary Nara entry still needs actual native trace and repaired installed replay. Fresh defaultPrime-QL owner assembly106/native faculties70 qualified separately; new body/model/selected world encounter remains open.",
+      "standing": "Actual28 preceding37 checks include six rendered register pointers/all member Source/Return, keyboard unvoiced Uranus, Personal Pratibimba exact native pointer/source/Return and branch entry.24/25/26 cancellation/availability failures and27 invalid build precondition retained. Fresh answer, full same-world lifecycle/consumer proof/installed Return remain open. Fresh first full production e254 frontend/4eb kernel/70ce native companions stopped after5 checks at real Recovery8MiB refusal. Native lossless checkpoint repair passes exact failed operation and existing native suites; cold Library e254 source repair is committed but not yet receiving-qualified. Necessary Central concurrent horizon defect reproduced; ordinary Nara entry still needs actual native trace and repaired installed replay. Fresh defaultPrime-QL owner assembly106/native faculties70 qualified separately; new body/model/selected world encounter remains open. Current2Oct04:15 actual full-world native Act5tests/lint and mounted27f real native replay/owner State browser gate pass. Complete producer/custody and presentation reopening fail; ordinary/whole/installed/H remain open.",
       "files": [
         {
           "repository": "O-I",
@@ -20446,7 +20485,9 @@
         "FRESH-NARA-NATIVE-CENTRAL-RACE",
         "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
         "FRESH-WHOLE04-FAILURE",
-        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS",
+        "FRESH-REAL-NATIVE-BROWSER-REPLAY",
+        "FRESH-REAL-NATIVE-BROWSER-TREE"
       ]
     },
     {
@@ -20480,7 +20521,7 @@
         "existing Mac managed-install owner; lead integration owner; independent Omarchy replay/reviewer"
       ],
       "scope": "first delivery integration gate",
-      "standing": "Pending managed installed before/after and independent semantic/expressive/causal proof.Physical audio, decanic-channel waves and fresh native Nara/Epii basis recovery remain unproven; source/native/ordinary failure receipts never promote H. Actualmanaged171mixedcut/all5QLexecutablespresentretained;oldrunningdesktopisnotcandidateinstalledacceptance. R6andHremainpending.",
+      "standing": "Pending managed installed before/after and independent semantic/expressive/causal proof.Physical audio, decanic-channel waves and fresh native Nara/Epii basis recovery remain unproven; source/native/ordinary failure receipts never promote H. Actualmanaged171mixedcut/all5QLexecutablespresentretained;oldrunningdesktopisnotcandidateinstalledacceptance. R6andHremainpending. Latestactualphysicalboundary: no reboot/~3.65GBfile-event service; local slot unreleased. Source/hosted proofs separate; exact successor all-five/body/provider/desktop/bundle/material cuts and original whole replay still required. No new release-permission ceremony.",
       "files": [
         {
           "repository": "O-I",
@@ -20512,7 +20553,8 @@
         "ORDINARY-WORLD-RUN-9-FAILURE",
         "MANAGED171-MIXED-INSTALLED-CUT",
         "MANAGED171-SUITE-STATUS",
-        "MANAGED171-QL-EXECUTABLE-INVENTORY"
+        "MANAGED171-QL-EXECUTABLE-INVENTORY",
+        "FRESH-OWNED-REMOTE-COMPILER-CLEANUP"
       ]
     },
     {
@@ -21091,7 +21133,7 @@
         "lead whole-system integration owner; existing documentation/matrix and ticket owners"
       ],
       "scope": "programme recovery/accountability",
-      "standing": "Whole source and specific185-capability disposition amend existingprogramme; source/docs published through PR573/278/127/255. Independent installed delivery and final source/ticket/curated Return remain open.",
+      "standing": "Whole source and specific185-capability disposition amend existingprogramme; source/docs published through PR573/278/127/255. Independent installed delivery and final source/ticket/curated Return remain open. Current native Act/fullDocument/browser and retained producer/reopening failures amend existing programme/map/audit. PR278 mergedEc;185runtime/H remain unaccepted; complete A0–A5 retained.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -24452,6 +24494,76 @@
       "establishes": "Independent full-value source/UUID/parent and1949row preservation comparison; native compiled receiving unexecuted.",
       "does_not_establish": "Source binding/ledger inclusion only; no current native source census/full compiled cut, scene or installed acceptance.",
       "repository": null
+    },
+    {
+      "id": "FRESH-ACT-STORAGE-V4-INDEPENDENT",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/act-codec-frozen-review-04.json",
+      "sha256": "2621350e4257f6f7401149b387e782aa8df11fbfad18e887e4f4514a41e1bd0e",
+      "bytes": 7569,
+      "standing": "observed-evidence",
+      "establishes": "Exact6-file source/API review qualifies bounded lossless/capacity/currentness successor.",
+      "does_not_establish": "Not executed native/UI/process/installed/H.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-ACT-STORAGE-ACTUAL-HOSTED",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5b2-remote-verification/receipt.json",
+      "sha256": "e3df8d016619ddbba4e5fd25793d05739fb79638e23f19e270634710d4858727",
+      "bytes": 3383,
+      "standing": "observed-evidence",
+      "establishes": "Actual5full-world native tests, private legacy-default unit and all-target lint pass.",
+      "does_not_establish": "Not ordinary Library/Act UI, actual world process restart, GPU/DSP, model/body, installed/H.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-ACT-STORAGE-HOSTED-TREE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5b2-remote-verification/head-vs-actual-hosted-checkout.json",
+      "sha256": "465682148256eecb8d4dae66eec131951f9fe232a19a56ae8cce2f52ba68f193",
+      "bytes": 837,
+      "standing": "observed-evidence",
+      "establishes": "Actual candidate5b2/checkout03bd comparison ahead1/behind0/files[], exacttree.",
+      "does_not_establish": "Not Mac executable/bundle/input/scene qualification.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-REAL-NATIVE-BROWSER-REPLAY",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-27f-remote-verification/canvas-receipt.json",
+      "sha256": "d38c12db2c0331c897880e32582c8667131ff3f60ab6eea355c5e45f5255d826",
+      "bytes": 1826,
+      "standing": "observed-evidence",
+      "establishes": "Actual27f browser native receipt reaches mounted KernelProvider and same owner State reread;36checks keep separate scopes.",
+      "does_not_establish": "Not mounted File/Material recovery, whole lifecycle, personalGPU/DSP, fresh model/body, installed/H.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-REAL-NATIVE-BROWSER-TREE",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-27f-remote-verification/head-vs-actual-hosted-checkout.json",
+      "sha256": "03fa932e93854227df374f5489ad918a3aa52fc909a7f9914085891a9aa173d3",
+      "bytes": 837,
+      "standing": "observed-evidence",
+      "establishes": "Actual27f/3348merge tree compare ahead1/behind0/files[].",
+      "does_not_establish": "Not installed cut or complete desktop green.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-LIFECYCLE-CONJUNCTION-INDEPENDENT",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5ff-remote-verification/lifecycle-conjunction-proposal/independent-lifecycle-conjunction-review.json",
+      "sha256": "771f2ba21ffe7f469fb6ea5eeaaf0f9feec56f84e15e903b7673d76e8a39d4eb",
+      "bytes": 8798,
+      "standing": "observed-evidence",
+      "establishes": "Exact source/log/artifact review qualifies direct-reentry/held-admission discriminator; originalBooleanfalse only.",
+      "does_not_establish": "No successor execution; handle equality is not GPU position/velocity value readback; no whole/installed/H.",
+      "repository": null
+    },
+    {
+      "id": "FRESH-OWNED-REMOTE-COMPILER-CLEANUP",
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/remote-module-generation/compiler-cleanup.json",
+      "sha256": "3577150e86b463c88ee94b83765594d44549e7211e1f562d8962669b859854ee",
+      "bytes": 255,
+      "standing": "observed-evidence",
+      "establishes": "Actual owned prefix cleanup after inactive unit/MainPID0; source/output retained.",
+      "does_not_establish": "No Mac slot release, installed/GPU/world/H.",
+      "repository": null
     }
   ],
   "candidate_source_capture": [
@@ -27109,7 +27221,7 @@
       "id": "R2-PERSISTENCE",
       "parent_packet": "R2",
       "title": "Portable native world material and acknowledged continuation lifecycle",
-      "standing": "Dated actual17/19 rawfile/knownfile/nativecurrent repairs retained; actualCentral losslesscodec10 positive/faultcases and six faultfiles×inspect/open/save atomicrefusals execute.32 samefile capacity/current/reset correction and34 exactcoldfile NativeDoc59→protectedpin/save60 progress. Ordinary Save&next/Restore/reset/recompose/Library/fullrestart/currentselection/deck/nativecontinuation acceptance remains pending; fileproof cannot substitute for fullworldlifecycle.",
+      "standing": "Dated actual17/19 rawfile/knownfile/nativecurrent repairs retained; actualCentral losslesscodec10 positive/faultcases and six faultfiles×inspect/open/save atomicrefusals execute.32 samefile capacity/current/reset correction and34 exactcoldfile NativeDoc59→protectedpin/save60 progress. Ordinary Save&next/Restore/reset/recompose/Library/fullrestart/currentselection/deck/nativecontinuation acceptance remains pending; fileproof cannot substitute for fullworldlifecycle. Current5b2 actual complete131-document native5testsPASS plus legacy-default unit/lint: private lossless storage, full edition history, bounded aggregate pending-archive accounting and honest stored-successor/archive currentness. Ordinary world UI/Library/process restart pending.",
       "dependencies": [
         "R0",
         "R1"
@@ -27142,6 +27254,26 @@
         {
           "repository": "O-I",
           "path": "desktop/cradle/tests/epi-world-production-native.mjs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_act_storage.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_act_store.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/src/expression_world.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/kernel/tests/expression_act_world.rs"
+        },
+        {
+          "repository": "O-I",
+          "path": "docs/contracts/EXPRESSION-ACT-MATERIAL-V1.md"
         }
       ],
       "existing_programme": [
@@ -27172,7 +27304,8 @@
         "Advance current native tick/form/aperture, close/restart, recompose through actual owner continuation_start: same source-predicted state; do not fall back to opening recipe or demand stale opening buffer digest invariance.",
         "Actual prepare/compose operation acknowledgement meets300s quiet frontend bound with120s native scene-world construction bound, errors are attributable, no automatic retry/second owner; live realtime operations retain15s bound.",
         "Required body removal and disconnected runtime receiver fail even if compact record/profile exists.",
-        "Raw ql.scene-world/v1 is actually admitted before explicit oi.epi-portable-world/v1 codec; constructor/coupled/field exact ReadingRefs retained as role/reading rows. Actual native CAS/reopen/selected context/recompose accepts safe carrier and tampered/missing owner qualification refuses, without loosening reserved-key guard."
+        "Raw ql.scene-world/v1 is actually admitted before explicit oi.epi-portable-world/v1 codec; constructor/coupled/field exact ReadingRefs retained as role/reading rows. Actual native CAS/reopen/selected context/recompose accepts safe carrier and tampered/missing owner qualification refuses, without loosening reserved-key guard.",
+        "Use actual complete131Document/native files for restart/seek/overfull-history; rehashed corrupt and wrong-identity records; low-caller-budget legacy default; all retained bodies including pending archives; other-Kernel stored successor/archive. Refusal must not mutate current body/store or present old resident body current. Native checks do not replace actual UI/process/installed receiving."
       ],
       "completion_rule": "Native/source, actual receiving and installed/human proofs stay separate. Existing parent DAG/capability IDs remain unchanged; this is a claimable work subdivision, not a runtime catalogue.",
       "execution_evidence_ids": [
@@ -27204,7 +27337,10 @@
         "PREBRIDGE-CURRENT15-GUARDED-FILE-ISSUED",
         "FRESH-PROFILE-ADOPTION-INDEPENDENT-REVIEW",
         "FRESH-WHOLE04-FAILURE",
-        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS"
+        "FRESH-NATIVE-CONTINUITY-ACTUAL-REGRESSIONS",
+        "FRESH-ACT-STORAGE-V4-INDEPENDENT",
+        "FRESH-ACT-STORAGE-ACTUAL-HOSTED",
+        "FRESH-ACT-STORAGE-HOSTED-TREE"
       ],
       "shared_owner_convergence": {
         "commit": "6e45046befa9b645cc41acf27e44a6a67027a8a9",
@@ -27291,7 +27427,12 @@
         "standing": "Source-only cross-owner convergence dependency. Root has not integrated this commit; no installed/shared-current convergence acceptance.",
         "affected_packet": "R2-PERSISTENCE",
         "required_join": "Lead integrates through existing shared owner protocol, keeps original root source/native binding repair and file codec guards; replay same actual24 world edition/file/current/selection with no repeated native operation."
-      }
+      },
+      "test_commands": [
+        "cargo test --manifest-path desktop/cradle/kernel/Cargo.toml --locked --test expression_act_world",
+        "cargo clippy --manifest-path desktop/cradle/kernel/Cargo.toml --all-targets -- -D warnings",
+        "node tests/epi-world-production-native.mjs <joined-ordinary-world-config.json>"
+      ]
     },
     {
       "id": "R2-PROFILE-CAPACITY",
@@ -27410,7 +27551,7 @@
       "id": "R4-SOUND",
       "parent_packet": "R4",
       "title": "Source-qualified personal multi-voice audio receiving",
-      "standing": "Receiving source repaired/independently reviewed/committed fb71776d;3actual retained-data semantic tests pass. Real OfflineAudioContext/live bank/ordinary current+departure/installed audio/listening remain unexecuted.",
+      "standing": "Receiving source repaired/independently reviewed/committed fb71776d;3actual retained-data semantic tests pass. Real OfflineAudioContext/live bank/ordinary current+departure/installed audio/listening remain unexecuted. Currentd15 retained-native gate skips only when no actual controlled configuration is supplied; no fabricated input/native DSP acceptance.",
       "dependencies": [
         "R4-DIRECT-WAVES",
         "R2-PERSISTENCE"
@@ -27451,9 +27592,14 @@
         "Admit exact multiple native frequencies at a shared centre through existing audio receiving owner; retain independent source/driver identities and actual weighted shares.",
         "Selecting sound cannot re-enter old rows.length===1 rejection or clear protected field; disabling waves leaves audio meaning/source and disabling audio leaves wave receiving invariant.",
         "Actual audio callback/native readback plus PCM frequency counterfactuals identify every required voice; a voice removed with controls retained fails. State physical device/output and obtain actual listening evidence separately.",
-        "Do not equate native Cousto personal frequencies with cosmic interval bus or assert unsupported inter-driver beats/coupling."
+        "Do not equate native Cousto personal frequencies with cosmic interval bus or assert unsupported inter-driver beats/coupling.",
+        "Explicit configured gate uses newly current-admitted controlled native personal receipt and actual full seven-centre Document; reject stale/foreign/wrong-locus input. Unconfigured skip is not DSP/audio/listening proof."
       ],
-      "completion_rule": "Native/source, actual receiving and installed/human proofs stay separate. Existing parent DAG/capability IDs remain unchanged; this is a claimable work subdivision, not a runtime catalogue."
+      "completion_rule": "Native/source, actual receiving and installed/human proofs stay separate. Existing parent DAG/capability IDs remain unchanged; this is a claimable work subdivision, not a runtime catalogue.",
+      "test_commands": [
+        "OI_NARA_SOUND_PLAN_CONFIG=/absolute/actual-controlled-config.json node --test tests/nara-sound-plan-retained-native.test.mjs",
+        "node tests/epi-world-production-native.mjs <joined-ordinary-world-config.json>"
+      ]
     },
     {
       "id": "R4-DECANIC-WAVES",
@@ -28142,7 +28288,7 @@
       "id": "R3-PAUSED-SCENE-ADMISSION",
       "parent_packet": "R3",
       "title": "Actual source body receiving at rest before play",
-      "standing": "Actual32 initialrest native14FAIL:84,000 formation resident positions stale despite correct targets/reset/CAS. App-owned production initial manualzero allocation adoption now gives actual33 all32 residentpositions==authoredtargets/maxgap0. Late-sourceleaving-rest cancellation source repair is separately bounded. Restpositive doesnotproveheldnativecontroltransform;34failsClockA and liveeffect/consumer-cut/installed remainpending.",
+      "standing": "Actual32 initialrest native14FAIL:84,000 formation resident positions stale despite correct targets/reset/CAS. App-owned production initial manualzero allocation adoption now gives actual33 all32 residentpositions==authoredtargets/maxgap0. Late-sourceleaving-rest cancellation source repair is separately bounded. Restpositive doesnotproveheldnativecontroltransform;34failsClockA and liveeffect/consumer-cut/installed remainpending. Current8291a546 source-qualified/applied/committed discriminator keeps direct release/re-entry strict before distinct held Scene+1initial-rest seed/no time/steps; resizing preserves admitted handles/seeds/clock. Actual successor pending; originalBooleanfalse identifies no operand.",
       "dependencies": [
         "R2-PERSISTENCE",
         "R1"
@@ -28163,6 +28309,10 @@
         {
           "repository": "O-I",
           "path": "desktop/cradle/tests/epi-world-production-native.mjs"
+        },
+        {
+          "repository": "O-I",
+          "path": "desktop/cradle/tests/expression-stage-lifecycle.mjs"
         }
       ],
       "existing_programme": [
@@ -28177,7 +28327,8 @@
         "ORDINARY19-DATED-SOURCE-FREEZE"
       ],
       "test_commands": [
-        "node tests/epi-world-production-native.mjs <joined-ordinary-world-config.json>"
+        "node tests/epi-world-production-native.mjs <joined-ordinary-world-config.json>",
+        "node tests/expression-stage-lifecycle.mjs"
       ],
       "acceptance_proofs": [
         "Enter ordinary world at rest before Inspect/play/reseed; wait for actual decoded images and allocation. All32semantic occurrences and sixsource masks have nonempty real resident partitions, finite target correspondence and acknowledged owner current.",
@@ -28196,7 +28347,8 @@
         "ORDINARY28-BOUNDED-PASSES-WHOLE-FAILURE",
         "ORDINARY32-INITIAL-REST-GPU-CORRESPONDENCE",
         "CURRENT-INITIAL-ALLOCATION-INDEPENDENT-SOURCE",
-        "ORDINARY33-INITIAL-REST-GPU-CORRESPONDENCE"
+        "ORDINARY33-INITIAL-REST-GPU-CORRESPONDENCE",
+        "FRESH-LIFECYCLE-CONJUNCTION-INDEPENDENT"
       ],
       "completion_rule": "Existing parent programme, source coordinates and semantic/numerical owners are unchanged. Finish source→native repair→real test→original ordinary replay→managed installed proof. No H or broad readiness promotion from this subdivision."
     },
@@ -29271,7 +29423,7 @@
     "R5-WORLD-SELECTION"
   ],
   "fresh_execution": {
-    "updated_at": "2026-10-02T00:11:11.729255+00:00",
+    "updated_at": "2026-10-02T04:15:00Z",
     "prior_recovery_map_sha256": "ae5f7f2618f86ba11671ee4449c8b9481ecc8f31b23795614a8d5ec5f2536fd0",
     "responsible_lead": "codex:01a0f80e-7662-75f1-bd26-5522aa6217b3",
     "source_challenge": "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
@@ -29300,8 +29452,8 @@
     "ql_native_source_cut": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
     "ql_source_publication": {
       "pull_request": "https://github.com/EpiLogos/QL-MEF/pull/278",
-      "last_published_source_cut": "ab0524d2e7941cd144bf84ca8f3052776969acf7",
-      "standing": "Open PR278; full remote workflow36943072729 succeeds after real historical Git proof recovery and source-census refresh. Managed all-five70ce remains distinct; deep-matrix ledger successor requires a newly qualified native cut."
+      "last_published_source_cut": "ec33764868b22e98cd6ebff8f6565097f67bdb03",
+      "standing": "MergedEc, tree-equal qualified46ea candidate; all five hosted native jobs pass. O:I current source/client provenance includesEc. Actual Mac managed five companions70ce and Actuation106 body remain dated separate cuts; successor binary/body/provider admission pending."
     },
     "native_continuity_successor": {
       "prior_map_sha256": "1e560e16ea9ae5aa29972343e2d669928905ec6904c05a7ff25b2314e90603c3",
@@ -29408,14 +29560,21 @@
     "current_receiving_repairs": {
       "OI_sound_cut": "fb71776debfa61ea740ca7918a9a81e5a359e842",
       "OI_cold_library_status_cut": "bbf0ac2670b8b57087a1de710183807b6b731872",
-      "QL_source_cut": "ab0524d2e7941cd144bf84ca8f3052776969acf7",
+      "QL_source_cut": "ec33764868b22e98cd6ebff8f6565097f67bdb03",
       "QL_managed_all_five_cut": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
       "Central_horizon_cut": "6bcfc1661cd0eccec1a4a691503ea401d411023a",
       "Actuation_body_cut": "106dcff82e204aa3ef1a11f48459226d4a557247",
-      "sound": "Source-reviewed9voices/7bodies and current-ack release; actual audio consumption/ordinary/installed proof pending.",
+      "sound": "Nine-voice/seven-body source repair retained. Current retained-native gate requires explicit actual current controlled receipt/config; absent configuration skips. No skip or generic CI proves native DSP/audio/listening; actual configured gate pending.",
       "library": "Real durable owner loading repair; qualified empty reading stays partial when other owner unavailable. Existing transport/parser11tests and remote OIdesktop succeed; actual cold file-open/restart pending.",
-      "event": "Native count/bytes and strict generation/cursor/query source successor independently reviewed at a3e75/3d21; meaningful native tests, Tauri/frontend read-model resync and exact remote/installed replay pending. Consumer custody is coordinated by exact thread.",
-      "resource": "Mac local heavy work remains serialized pending coordinator restart/fresh-memory gate. Lightweight source/remote CI continue. No attribution of reported historical780GB/crash."
+      "event": "Actual hosted100s bounded native replay/resync/generation passes; actual27f browser native receipt reaches mounted KernelProvider and same native owner State reread. Other editor/context fixtures stay controlled-protocol checks. Mounted File/Material proposal remains unapplied with actual UI writer; whole/installed resync pending.",
+      "resource": "Latest coordinator snapshot: no reboot, approximately3.65GB file-event service; Mac build/native/provider/browser/GPU/audio/install slot unreleased pending owner restart/fresh-memory gate. Owned remote compiler prefix cleaned after inactive unit/MainPID0, source/output/receipts retained. Hosted/lightweight work continues. Historical780GB/crash cause unestablished.",
+      "OI_committed_integrated_cut": "27f5b530b7e56ece43c2f338c3c907950d289cd0",
+      "OI_native_act_cut": "5b2c5327894edbe904eeed15c52b7da2df25968a",
+      "OI_lifecycle_discriminator_commit": "8291a546aad7c551013b20ce38e53ae0e93d1940",
+      "native_act": "Original5ff full-world records refused; private lossless5b2 source passes5real complete-document native tests plus private legacy-default budget and kernel lint. Full public Document/edition history preserved; physical4MiB/expanded8MiB/aggregate live64MiB serialized bounds are operational, not measured heap/RSS or crash diagnosis. Ordinary Library/Act UI, actual whole process restart and installed proof pending.",
+      "current_input": "Actual5b2 hosted current-input re-admission and production-manager effects pass with nine canonical ordered planet refs. Complete shipped producer and custody join fail. Source-inferred diagnosis: retained provider provenance is treated as active scene owner on generic re-admitted input; actual native influence refusal is recorded. Controller repair and original successor replay pending.",
+      "composition": "Actual27f desktop production presentation fails WebKit reopening pageerror at replay cross-origin poll before later Library/capture/lifecycle gates. No source/content/selection assertion failed. Exact page-epoch/request diagnosis pending; do not filter error or invent CORS repair.",
+      "lifecycle": "8291a546 source-reviewed strict direct re-entry before distinct held Scene zero-delta admission, expected+1seed/no time or steps; then admitted handle/seed/clock resize/continuation. OriginalBooleanfalse has no operand readbacks; seed+1 source prediction, actual successor pending. Handle identity is not GPU value readback."
     },
     "ledger_source_successor": {
       "revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
@@ -29423,7 +29582,34 @@
       "prior_native_ledger": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
       "next_native_cut_pending": true
     },
-    "last_source_map_before_ledger_overlay": "34f1f57b75135a64f3358c3c8556812d60fbea0c3194302cfdfaeeca6cb7c409"
+    "last_source_map_before_ledger_overlay": "34f1f57b75135a64f3358c3c8556812d60fbea0c3194302cfdfaeeca6cb7c409",
+    "prior_receiving_checkpoint_map_sha256": "2ab99aa51facccc8e6673bb1eff56e85c74fb5df6a771ec0a69ef6665b87e72b",
+    "native_act_continuation": {
+      "candidate_source": "5b2c5327894edbe904eeed15c52b7da2df25968a",
+      "actual_checkout": "03bd13d70400b5ff0be492620e0c454f2bbce1f3",
+      "tree_equal": true,
+      "run": 36961502417,
+      "kernel_job": 110695990617,
+      "actual_full_world_tests": 5,
+      "all_passed": true,
+      "seconds": 247.79,
+      "physical_file_bytes": 4194304,
+      "expanded_document_and_act_bytes": 8388608,
+      "aggregate_live_serialized_history_bytes": 67108864,
+      "evidence": "FRESH-ACT-STORAGE-ACTUAL-HOSTED",
+      "remaining": "Ordinary Act/Library UI; complete world reset/departure/actual process restart, personalGPU/DSP, fresh model/body, managed installed A/B/C and H."
+    },
+    "browser_native_replay": {
+      "candidate_source": "27f5b530b7e56ece43c2f338c3c907950d289cd0",
+      "actual_checkout": "3348b0ecfb0838298cd3cb86ef62f8e27fd7b47c",
+      "tree_equal": true,
+      "run": 36962327387,
+      "job": 110698486204,
+      "browser_checks": 36,
+      "actual_native_scope": "Real receipt through mounted KernelProvider plus same owner State reread; other editor/context fixtures keep controlled protocol scope.",
+      "evidence": "FRESH-REAL-NATIVE-BROWSER-REPLAY",
+      "whole_installed_H": false
+    }
   },
   "fresh_branch_reconciliation": {
     "updated_at": "2026-10-02T00:11:11.729255+00:00",
