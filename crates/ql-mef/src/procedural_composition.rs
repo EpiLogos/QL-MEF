@@ -174,12 +174,12 @@ pub fn resolve_membership(
         .filter(|r| !targets.contains_key(*r))
         .cloned()
         .collect::<Vec<_>>();
-    if previous.is_some() && (!joined.is_empty() || !left.is_empty()) {
+    if let Some(previous) = previous.filter(|_| !joined.is_empty() || !left.is_empty()) {
         match policy {
             MembershipChangePolicy::RejectChange => {
                 return Err("sustained selector membership changed".into());
             }
-            MembershipChangePolicy::RetainExisting => return Ok(previous.unwrap().clone()),
+            MembershipChangePolicy::RetainExisting => return Ok(previous.clone()),
             MembershipChangePolicy::AdmitAndRecord => {}
         }
     }
