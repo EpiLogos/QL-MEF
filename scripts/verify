@@ -34,6 +34,9 @@ core() {
   cargo run -q -p ql-cli --locked -- --version
   cargo run -q -p ql-cli --locked -- capabilities --json >/dev/null
   cargo run -q -p ql-cli --locked -- verify --json >/dev/null
+  ensure_python_deps
+  python3 scripts/ql_agent_fixtures.py --ql "${CARGO_TARGET_DIR:-target}/debug/ql" \
+    --output target/agent-decision/native-observation --check-labels
 }
 
 native() {
@@ -48,6 +51,8 @@ native() {
 
 invariants() {
   ensure_python_deps
+  python3 scripts/ql_agent_contracts.py --check-schema
+  python3 -m unittest discover -s scripts/tests -p test_ql_agent_contracts.py -v
   python3 scripts/check-ci-topology.py
   python3 scripts/check-q6-promotion-manifests.py
   python3 scripts/check-capability-matrix-registry.py

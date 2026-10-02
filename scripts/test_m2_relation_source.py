@@ -73,4 +73,3 @@ if __name__ == "__main__":
     REGISTRY = json.loads(args.registry.read_text())
     PROJECTION = args.projection
     unittest.main(argv=["test_m2_relation_source"], verbosity=2)
-

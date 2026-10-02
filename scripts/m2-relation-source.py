@@ -98,4 +98,3 @@ def main():
     print(f"M2 relation source: {len(field['nodes'])} native nodes, {len(field['relations'])} typed edges, {len(field['prime_source_nodes'])} exact prime sources")
 if __name__ == "__main__":
     main()
-
