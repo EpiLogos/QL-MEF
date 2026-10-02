@@ -7,6 +7,7 @@
 #include <iostream>
 #include <new>
 #include <ql/performance_checkpoint_wire.hpp>
+#include <ql/performance_live_clock.hpp>
 #include <thread>
 #include <vector>
 static std::atomic<bool> count_allocations{false};
@@ -789,6 +790,107 @@ static void relative_octet_band_limits_preserve_exact_checkpoint() {
     assert(high.engine->validate_checkpoint(cp->audio, guard, 128));
   }
 }
+static void native_timestamp_mapping_uses_real_engine_and_physical_force() {
+  // Controlled native host-tick inputs qualify the mapping/component only.
+  // This does not start AUHAL or attest a physical note-to-ear measurement.
+  Fixture f;
+  NativeOutputClock clock;
+  assert(clock.configure(48000, 1, 1, 1));
+  assert(f.engine->begin_device_callbacks());
+  const NativeInputStamp stamp{NativeInputOrigin::NativeEvent, 1001000000, 100};
+  assert(clock
+             .enqueue(*f.engine, note_on(f.d, 1, 0, target(f.d)), stamp,
+                      1001000000)
+             .result == Result::Unavailable);
+  assert(clock.publish_callback(1000000000, 0, 128, true));
+  const auto admitted = clock.enqueue(
+      *f.engine, note_on(f.d, 1, 0, target(f.d)), stamp, 1001000000);
+  assert(admitted.result == Result::Accepted &&
+         admitted.accepted_sample == 48 && admitted.epoch == 1 &&
+         admitted.anchor_ordinal == 1 && !admitted.input_transit_unknown);
+  near(admitted.mapping_uncertainty_samples, 1.0048);
+  Capture capture{};
+  count_allocations.store(true);
+  auto reading = render(f, 128, &capture);
+  count_allocations.store(false);
+  assert(reading.active_touches == 1 && reading.samples_elapsed == 128);
+  for (std::size_t i = 0; i < 48; ++i)
+    assert(capture.force_newtons[i] == 0 && capture.pickup_linear[i] == 0);
+  assert(std::any_of(capture.force_newtons.begin() + 49,
+                     capture.force_newtons.begin() + 128,
+                     [](double x) { return x != 0; }));
+  NativeGestureApplication application{};
+  assert(f.engine->pop_gesture_application(application));
+  assert(application.applied && application.sequence == 1 &&
+         application.admitted_sample == 48 &&
+         application.applied_sample == 48 &&
+         application.identity == f.d.identity && application.touch == 1);
+  auto future = operation(f.d, Kind::Parameter, 2, 48000);
+  future.parameter = Parameter::MasterLinear;
+  future.value = 0.1;
+  assert(f.engine->enqueue(future) == Result::Accepted);
+  const NativeInputStamp bridge{NativeInputOrigin::BridgeReceipt, 1002000000,
+                                0};
+  const auto next = clock.enqueue(
+      *f.engine, note_on(f.d, 3, 0, target(f.d, 2, 2)), bridge, 1002000000);
+  assert(next.result == Result::Accepted && next.accepted_sample == 128 &&
+         next.input_transit_unknown);
+  render(f, 128);
+  assert(f.engine->pop_gesture_application(application) &&
+         application.applied_sample == 128 && application.sequence == 3);
+  assert(f.engine->enqueue(note_on(f.d, 4, 0, target(f.d, 3, 3))) ==
+         Result::Late);
+  auto forged = note_on(f.d, 4, 256, target(f.d, 3, 3));
+  forged.native_clock = {1, 1, 1002000000, 1002000000, 1, true};
+  assert(f.engine->enqueue(forged) == Result::Invalid);
+  assert(clock
+             .enqueue(*f.engine, forged,
+                      {NativeInputOrigin::NativeEvent, 1003000001, 0},
+                      1003000000)
+             .result == Result::Unavailable);
+  assert(clock.enqueue(*f.engine, forged, bridge, 1100000000).result ==
+         Result::Unavailable);
+  clock.invalidate();
+  assert(clock.enqueue(*f.engine, forged, bridge, 1003000000).result ==
+         Result::Unavailable);
+  f.engine->end_device_callbacks_after_stop();
+
+  Fixture pending;
+  NativeOutputClock dated;
+  assert(dated.configure(48000, 1, 1, 1));
+  assert(pending.engine->begin_device_callbacks());
+  assert(dated.publish_callback(2000000000, 0, 128, true));
+  assert(
+      dated
+          .enqueue(*pending.engine, note_on(pending.d, 1, 0, target(pending.d)),
+                   {NativeInputOrigin::NativeEvent, 2001000000, 0}, 2001000000)
+          .accepted_sample == 48);
+  render(pending, 16);
+  pending.engine->end_device_callbacks_after_stop();
+  std::unique_ptr<PairedCheckpoint> saved;
+  {
+    auto guard = pending.engine->acquire_stopped_custody();
+    saved = checkpoint_heap(*pending.engine, *pending.body, guard);
+  }
+  auto wire = checkpoint_transport::checkpoint_wire(*saved);
+  auto parsed = checkpoint_transport::read_checkpoint_wire(wire.get());
+  assert(parsed->audio.pending_operations[parsed->audio.operation_heap[0]]
+             .operation.native_clock.trigger_host_ticks == 2001000000);
+  Fixture reopened;
+  {
+    auto guard = reopened.engine->acquire_stopped_custody();
+    assert(restore_checkpoint(*reopened.engine, *reopened.body, *parsed, guard,
+                              0));
+  }
+  Capture left{}, right{};
+  render(pending, 128, &left);
+  render(reopened, 128, &right);
+  assert(left.force_newtons == right.force_newtons &&
+         left.pickup_linear == right.pickup_linear &&
+         left.output_linear == right.output_linear);
+  assert(dated.configure(48000, 2, 1, 1));
+  assert(!dated.configure(48000, 2, 1, 1));
+}
 int main() {
   count_allocations.store(true);
   void *probe = ::operator new(32);
@@ -814,6 +916,7 @@ int main() {
   exact_checkpoint_reopen_pending_events_tails_and_atomic_refusal();
   bounded_spsc_snapshot_survives_concurrent_refill();
   relative_octet_band_limits_preserve_exact_checkpoint();
+  native_timestamp_mapping_uses_real_engine_and_physical_force();
   assert(callback_allocations.load() == 0);
   std::cout << "real native performance/physical tests passed; "
                "callback_Cpp_allocations=0\n";

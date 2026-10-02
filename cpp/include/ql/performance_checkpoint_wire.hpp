@@ -221,6 +221,48 @@ inline Engine::Voice read_voice(J *in) {
   read_doubles(field(in, "octet_weight"), out.octet_weight);
   return out;
 }
+inline Json native_clock(const NativeClockMetadata &clock) {
+  auto out = object();
+  u64(out.get(), "epoch", clock.epoch);
+  u64(out.get(), "anchor_ordinal", clock.anchor_ordinal);
+  u64(out.get(), "trigger_host_ticks", clock.trigger_host_ticks);
+  u64(out.get(), "admitted_host_ticks", clock.admitted_host_ticks);
+  real(out.get(), "mapping_uncertainty_samples",
+       clock.mapping_uncertainty_samples);
+  flag(out.get(), "input_transit_unknown", clock.input_transit_unknown);
+  return out;
+}
+inline NativeClockMetadata read_native_clock(J *in) {
+  J *clock = nullptr;
+  if (!json_object_object_get_ex(in, "native_clock", &clock))
+    return {}; // Original v1 scored checkpoints remain readable.
+  keys(clock,
+       {"epoch", "anchor_ordinal", "trigger_host_ticks", "admitted_host_ticks",
+        "mapping_uncertainty_samples", "input_transit_unknown"});
+  return {decimal(field(clock, "epoch")),
+          decimal(field(clock, "anchor_ordinal")),
+          decimal(field(clock, "trigger_host_ticks")),
+          decimal(field(clock, "admitted_host_ticks")),
+          number(field(clock, "mapping_uncertainty_samples")),
+          boolean(field(clock, "input_transit_unknown"))};
+}
+inline void operation_keys(J *in, std::initializer_list<const char *> allowed) {
+  require(in && json_object_get_type(in) == json_type_object,
+          "checkpoint operation object required");
+  J *clock = nullptr;
+  const bool has_clock = json_object_object_get_ex(in, "native_clock", &clock);
+  require(json_object_object_length(in) == int(allowed.size()) + int(has_clock),
+          "checkpoint operation fields missing/unknown");
+  json_object_object_foreach(in, key, value) {
+    (void)value;
+    require((has_clock && std::strcmp(key, "native_clock") == 0) ||
+                std::any_of(allowed.begin(), allowed.end(),
+                            [&](const char *known) {
+                              return std::strcmp(key, known) == 0;
+                            }),
+            "unknown checkpoint operation field");
+  }
+}
 inline Json operation(const Operation &op) {
   auto out = object();
   put(out.get(), "identity", identity(op.identity).release());
@@ -232,6 +274,7 @@ inline Json operation(const Operation &op) {
   real(out.get(), "pitch_hz", op.pitch_hz);
   put(out.get(), "parameter", json_object_new_int(unsigned(op.parameter)));
   flag(out.get(), "late_admitted", op.late_admitted);
+  put(out.get(), "native_clock", native_clock(op.native_clock).release());
   // Discriminated optional objects have explicit presence flags. This avoids
   // emitting invalid unused source refs or trusting an unparsed shadow value.
   flag(out.get(), "has_note",
@@ -251,17 +294,17 @@ inline Operation read_operation(J *in) {
   if (has_note && has_determination)
     throw std::invalid_argument("operation has incompatible payloads");
   if (has_note)
-    keys(in, {"identity", "kind", "sequence", "sample", "touch", "value",
-              "pitch_hz", "parameter", "late_admitted", "has_note",
-              "has_determination", "note"});
+    operation_keys(in, {"identity", "kind", "sequence", "sample", "touch",
+                        "value", "pitch_hz", "parameter", "late_admitted",
+                        "has_note", "has_determination", "note"});
   else if (has_determination)
-    keys(in, {"identity", "kind", "sequence", "sample", "touch", "value",
-              "pitch_hz", "parameter", "late_admitted", "has_note",
-              "has_determination", "determination"});
+    operation_keys(in, {"identity", "kind", "sequence", "sample", "touch",
+                        "value", "pitch_hz", "parameter", "late_admitted",
+                        "has_note", "has_determination", "determination"});
   else
-    keys(in, {"identity", "kind", "sequence", "sample", "touch", "value",
-              "pitch_hz", "parameter", "late_admitted", "has_note",
-              "has_determination"});
+    operation_keys(in, {"identity", "kind", "sequence", "sample", "touch",
+                        "value", "pitch_hz", "parameter", "late_admitted",
+                        "has_note", "has_determination"});
   Operation out{};
   out.identity = packet::identity(field(in, "identity"));
   out.kind = Kind(byte(field(in, "kind")));
@@ -272,6 +315,7 @@ inline Operation read_operation(J *in) {
   out.pitch_hz = number(field(in, "pitch_hz"));
   out.parameter = Parameter(byte(field(in, "parameter")));
   out.late_admitted = boolean(field(in, "late_admitted"));
+  out.native_clock = read_native_clock(in);
   require(has_note == (out.kind == Kind::NoteOn ||
                        (out.kind == Kind::Expression && out.pitch_hz > 0)) &&
               has_determination == (out.kind == Kind::Determination),
@@ -290,15 +334,17 @@ inline Json release(const ReleaseOperation &op) {
   u64(out.get(), "sample", op.sample);
   u64(out.get(), "touch", op.touch);
   flag(out.get(), "late_admitted", op.late_admitted);
+  put(out.get(), "native_clock", native_clock(op.native_clock).release());
   return out;
 }
 inline ReleaseOperation read_release(J *in) {
-  keys(in,
-       {"identity", "kind", "sequence", "sample", "touch", "late_admitted"});
+  operation_keys(
+      in, {"identity", "kind", "sequence", "sample", "touch", "late_admitted"});
   return {
       Kind(byte(field(in, "kind"))),  packet::identity(field(in, "identity")),
       decimal(field(in, "sequence")), decimal(field(in, "sample")),
-      decimal(field(in, "touch")),    boolean(field(in, "late_admitted"))};
+      decimal(field(in, "touch")),    boolean(field(in, "late_admitted")),
+      read_native_clock(in)};
 }
 template <class T, std::size_t N, class Writer>
 inline Json queue(const typename Spsc<T, N>::State &state, Writer writer) {

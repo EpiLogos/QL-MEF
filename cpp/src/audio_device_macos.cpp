@@ -92,6 +92,8 @@ struct MacAudioDevice::Impl {
   std::atomic<std::uint64_t> callbacks{0}, frames{0}, failures{0},
       discontinuities{0}, overloads{0}, capture_drops{0};
   Spsc<DeviceCapture, 128> captures{};
+  NativeOutputClock clock{};
+  std::uint64_t device_epoch = 0;
   bool have_timestamp = false;
   double next_device_sample = 0;
   static constexpr AudioObjectPropertySelector selectors[4] = {
@@ -124,6 +126,7 @@ struct MacAudioDevice::Impl {
     zero(data);
     if (!data || !self.engine || count == 0 || count > max_frames ||
         self.dirty.load(std::memory_order_acquire)) {
+      self.clock.invalidate();
       if (flags)
         *flags |= kAudioUnitRenderAction_OutputIsSilence;
       self.failures.fetch_add(1, std::memory_order_relaxed);
@@ -146,18 +149,26 @@ struct MacAudioDevice::Impl {
     capture.callback_begin_host_time = mach_absolute_time();
     capture.frames = count;
     capture.native_start_sample = self.engine->samples_elapsed();
+    bool clock_continuous = false;
     if (time) {
       if (time->mFlags & kAudioTimeStampHostTimeValid)
         capture.host_time = time->mHostTime;
       if (time->mFlags & kAudioTimeStampSampleTimeValid) {
         capture.device_sample_time = time->mSampleTime;
-        if (self.have_timestamp &&
-            std::abs(time->mSampleTime - self.next_device_sample) > 0.5)
+        const bool contiguous =
+            !self.have_timestamp ||
+            std::abs(time->mSampleTime - self.next_device_sample) <= 0.5;
+        if (!contiguous)
           self.discontinuities.fetch_add(1, std::memory_order_relaxed);
+        clock_continuous = contiguous &&
+                           (time->mFlags & kAudioTimeStampHostTimeValid) &&
+                           std::isfinite(time->mSampleTime);
         self.have_timestamp = true;
         self.next_device_sample = time->mSampleTime + count;
       }
     }
+    self.clock.publish_callback(capture.host_time, capture.native_start_sample,
+                                count, clock_continuous);
     if (!self.engine->render(capture.output_linear.data(), count,
                              capture.native_start_sample)) {
       self.failures.fetch_add(1, std::memory_order_relaxed);
@@ -462,6 +473,15 @@ bool MacAudioDevice::start() {
   auto &s = *impl_;
   if (!s.unit || s.receipt.state != DeviceState::Prepared || s.dirty.load())
     return s.fail(kAudio_ParamError, "start requires current prepared output");
+  mach_timebase_info_data_t timebase{};
+  if (s.device_epoch == std::numeric_limits<std::uint64_t>::max() ||
+      mach_timebase_info(&timebase) != KERN_SUCCESS ||
+      !s.clock.configure(s.engine ? s.engine->sample_rate() : 0,
+                         s.device_epoch + 1, timebase.numer, timebase.denom))
+    return s.fail(kAudio_ParamError,
+                  "native output clock epoch/timebase unavailable");
+  ++s.device_epoch;
+  s.have_timestamp = false;
   if (!s.engine || !s.engine->begin_device_callbacks())
     return s.fail(kAudio_ParamError, "audio engine custody unavailable");
   const auto status = AudioOutputUnitStart(s.unit);
@@ -469,8 +489,10 @@ bool MacAudioDevice::start() {
     // A failed start does not establish callback quiescence. Release
     // custody only when an actual OS stop acknowledges it; otherwise the
     // resident engine/body/context remain owned for explicit cleanup.
-    if (AudioOutputUnitStop(s.unit) == noErr)
+    if (AudioOutputUnitStop(s.unit) == noErr) {
       s.engine->end_device_callbacks_after_stop();
+      s.clock.invalidate();
+    }
     return s.fail(status, "start AUHAL");
   }
   s.receipt.state = DeviceState::Running;
@@ -485,6 +507,7 @@ bool MacAudioDevice::stop() {
     return s.fail(status, "stop AUHAL");
   if (s.engine)
     s.engine->end_device_callbacks_after_stop();
+  s.clock.invalidate();
   if (s.receipt.state == DeviceState::Running)
     s.receipt.state = DeviceState::Prepared;
   return true;
@@ -537,6 +560,27 @@ DeviceReceipt MacAudioDevice::receipt() const {
 }
 bool MacAudioDevice::pop_capture(DeviceCapture &out) noexcept {
   return impl_->captures.take(out);
+}
+NativeClockAdmission
+MacAudioDevice::enqueue_bridge_gesture(Operation operation) noexcept {
+  auto &s = *impl_;
+  if (!s.engine || s.receipt.state != DeviceState::Running ||
+      s.dirty.load(std::memory_order_acquire))
+    return {};
+  const auto now = mach_absolute_time();
+  return s.clock.enqueue(
+      *s.engine, operation,
+      NativeInputStamp{NativeInputOrigin::BridgeReceipt, now, 0}, now);
+}
+NativeClockAdmission
+MacAudioDevice::enqueue_native_event_gesture(Operation operation,
+                                             NativeInputStamp event) noexcept {
+  auto &s = *impl_;
+  if (!s.engine || s.receipt.state != DeviceState::Running ||
+      s.dirty.load(std::memory_order_acquire) ||
+      event.origin != NativeInputOrigin::NativeEvent)
+    return {};
+  return s.clock.enqueue(*s.engine, operation, event, mach_absolute_time());
 }
 double MacAudioDevice::host_ticks_to_seconds(std::uint64_t ticks) noexcept {
   mach_timebase_info_data_t timebase{};

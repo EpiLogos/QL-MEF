@@ -123,6 +123,13 @@ enum class Parameter : std::uint8_t {
   BodyLinear,
   MonitorLinear
 };
+struct NativeClockMetadata {
+  std::uint64_t epoch = 0, anchor_ordinal = 0, trigger_host_ticks = 0,
+                admitted_host_ticks = 0;
+  double mapping_uncertainty_samples = 0;
+  bool input_transit_unknown = true;
+};
+class NativeOutputClock;
 struct Operation {
   Kind kind = Kind::Panic;
   Identity identity{};
@@ -134,12 +141,14 @@ struct Operation {
   Parameter parameter = Parameter::MasterLinear;
   Determination determination{};
   bool late_admitted = false;
+  NativeClockMetadata native_clock{};
 };
 struct ReleaseOperation {
   Kind kind = Kind::NoteOff;
   Identity identity{};
   std::uint64_t sequence = 0, sample = 0, touch = 0;
   bool late_admitted = false;
+  NativeClockMetadata native_clock{};
 };
 enum class Result : std::uint8_t {
   Accepted,
@@ -177,6 +186,14 @@ struct Readback {
   Parameters source{}, effective{};
   std::array<VoiceReadback, max_voices> voices{};
   bool sustain = false, available = false;
+};
+struct NativeGestureApplication {
+  Identity identity{};
+  NativeClockMetadata clock{};
+  std::uint64_t sequence = 0, admitted_sample = 0, applied_sample = 0,
+                touch = 0;
+  Kind kind = Kind::NoteOn;
+  bool applied = false;
 };
 struct Capture {
   Identity identity{}, end_identity{};
@@ -361,13 +378,14 @@ private:
   std::array<PendingRelease, 64> pending_releases_{};
   Spsc<Readback, 64> readbacks_{};
   Spsc<Capture, capture_capacity> captures_{};
+  Spsc<NativeGestureApplication, 256> gesture_applications_{};
   Parameters source_{}, effective_{};
   std::uint64_t cursor_ = 0, accepted_sequence_ = 0, accepted_sample_ = 0,
-                applied_sequence_ = 0, refused_ = 0, late_ = 0, stolen_ = 0,
-                dropped_readbacks_ = 0, dropped_captures_ = 0, clipping_ = 0,
-                force_limited_ = 0;
+                last_admission_sample_ = 0, applied_sequence_ = 0, refused_ = 0,
+                late_ = 0, stolen_ = 0, dropped_readbacks_ = 0,
+                dropped_captures_ = 0, clipping_ = 0, force_limited_ = 0;
   std::atomic<std::uint64_t> published_cursor_{0}, overflow_count_{0},
-      published_sequence_{0}, panic_fence_{0};
+      published_sequence_{0}, panic_fence_{0}, published_horizon_{0};
   std::atomic<bool> emergency_{false}, capture_{false}, fault_{false};
   // Lock-free render/custody exclusion. Device start/stop marks actual callback
   // custody; a requested stop is insufficient until the OS has acknowledged it.
@@ -380,6 +398,14 @@ private:
   static bool same_lineage(const Identity &a, const Identity &b) noexcept {
     return a.instance == b.instance && a.event == b.event &&
            a.subject == b.subject;
+  }
+  static bool valid_native_clock(const NativeClockMetadata &c) noexcept {
+    if (!c.epoch)
+      return !c.anchor_ordinal && !c.trigger_host_ticks &&
+             !c.admitted_host_ticks && c.mapping_uncertainty_samples == 0;
+    return c.anchor_ordinal && c.trigger_host_ticks &&
+           c.admitted_host_ticks >= c.trigger_host_ticks &&
+           scalar(c.mapping_uncertainty_samples, 1, 1440);
   }
   bool valid_determination(const Determination &d) const noexcept {
     if (!valid_ref(d.identity.instance) || !valid_ref(d.identity.event) ||
@@ -822,12 +848,32 @@ public:
     cursor_ = body_.cursor(body_.owner);
     accepted_sample_ = cursor_;
     published_cursor_.store(cursor_);
+    published_horizon_.store(cursor_);
     source_schedule_[0] = ScheduledDetermination{determination_, cursor_};
   }
+  friend class NativeOutputClock;
+
+private:
+  Result enqueue_native_admitted(Operation op) noexcept {
+    op.sample = std::max(op.sample, admission_horizon());
+    return enqueue_impl(op, true);
+  }
+
+public:
   // Single control owner only. Failed admission consumes no source sequence.
   // A full queue additionally requests safe all-notes-off out of band, so a
   // lost NoteOff can never leave a permanently sounding excitation.
   Result enqueue(const Operation &op) noexcept {
+    if (op.native_clock.epoch || op.native_clock.anchor_ordinal ||
+        op.native_clock.trigger_host_ticks ||
+        op.native_clock.admitted_host_ticks ||
+        op.native_clock.mapping_uncertainty_samples)
+      return Result::Invalid;
+    return enqueue_impl(op, false);
+  }
+
+private:
+  Result enqueue_impl(const Operation &op, bool native_gesture) noexcept {
     if (activity_.load(std::memory_order_acquire) == 2)
       return Result::Unavailable;
     if (fault_.load(std::memory_order_acquire))
@@ -836,11 +882,14 @@ public:
     retire_source_schedule(cursor);
     if (accepted_sequence_ == std::numeric_limits<std::uint64_t>::max())
       return Result::Exhausted;
-    if (unsigned(op.kind) > unsigned(Kind::Determination))
+    if (unsigned(op.kind) > unsigned(Kind::Determination) ||
+        !valid_native_clock(op.native_clock) ||
+        (native_gesture && !op.native_clock.epoch))
       return Result::Invalid;
     if (op.sequence != accepted_sequence_ + 1)
       return Result::Order;
     const bool late = op.sample < cursor;
+    const auto horizon = published_horizon_.load(std::memory_order_acquire);
     const bool critical = op.kind == Kind::NoteOff || op.kind == Kind::Panic ||
                           (op.kind == Kind::Sustain && op.value == 0);
     const auto &source = source_at(std::max(op.sample, cursor));
@@ -851,7 +900,7 @@ public:
         return Result::Stale;
     } else if (!(op.identity == source.identity))
       return Result::Stale;
-    if (late && !critical)
+    if ((late || op.sample < horizon) && !critical && !native_gesture)
       return Result::Late;
     const auto limit = cursor > std::numeric_limits<std::uint64_t>::max() -
                                     std::uint64_t(rate_) * 2
@@ -900,7 +949,8 @@ public:
     const bool queued =
         separate_release
             ? releases_.push(ReleaseOperation{op.kind, op.identity, op.sequence,
-                                              admitted.sample, op.touch, late})
+                                              admitted.sample, op.touch, late,
+                                              admitted.native_clock})
             : operations_.push(admitted);
     if (!queued) {
       overflow_count_.fetch_add(1);
@@ -908,6 +958,7 @@ public:
       return Result::Overflow;
     }
     accepted_sequence_ = op.sequence;
+    last_admission_sample_ = admitted.sample;
     if (!separate_release)
       accepted_sample_ = admitted.sample;
     published_sequence_.store(accepted_sequence_, std::memory_order_release);
@@ -918,6 +969,18 @@ public:
           ScheduledDetermination{op.determination, op.sample};
     }
     return Result::Accepted;
+  }
+
+public:
+  std::uint64_t admission_horizon() const noexcept {
+    return std::max(published_cursor_.load(std::memory_order_acquire),
+                    published_horizon_.load(std::memory_order_acquire));
+  }
+  std::uint64_t last_admitted_sample() const noexcept {
+    return last_admission_sample_;
+  }
+  bool device_callbacks_running() const noexcept {
+    return device_running_.load(std::memory_order_acquire);
   }
   // Out-of-band panic cancels previously queued attacks while preserving
   // prepared source changes and physical tails. A subsequent human attack
@@ -937,6 +1000,9 @@ public:
   // sample, including a determination already due at a block boundary.
   const Determination &current_source() const noexcept {
     return source_at(published_cursor_.load(std::memory_order_acquire));
+  }
+  const Determination &source_for_native_admission() const noexcept {
+    return source_at(admission_horizon());
   }
   bool validate_note_target(const NoteTarget &note) const noexcept {
     return valid_note(
@@ -1179,7 +1245,11 @@ public:
     };
     auto valid_operation = [&](const Operation &op) {
       if (unsigned(op.kind) > unsigned(Kind::Determination) ||
-          !ordinal(op.sequence) || !valid_origin(op.identity))
+          !ordinal(op.sequence) || !valid_origin(op.identity) ||
+          !valid_native_clock(op.native_clock) ||
+          (op.native_clock.epoch && op.kind != Kind::NoteOn &&
+           op.kind != Kind::NoteOff && op.kind != Kind::Expression &&
+           op.kind != Kind::Sustain && op.kind != Kind::Panic))
         return false;
       switch (op.kind) {
       case Kind::NoteOn:
@@ -1211,6 +1281,7 @@ public:
     };
     auto valid_release = [&](const ReleaseOperation &op) {
       return ordinal(op.sequence) && valid_origin(op.identity) &&
+             valid_native_clock(op.native_clock) &&
              (op.kind == Kind::Panic || op.kind == Kind::Sustain ||
               (op.kind == Kind::NoteOff && op.touch));
     };
@@ -1268,10 +1339,12 @@ public:
     sustain_ = cp.sustain;
     published_cursor_.store(cursor_, std::memory_order_release);
     published_sequence_.store(accepted_sequence_, std::memory_order_release);
+    published_horizon_.store(cursor_, std::memory_order_release);
     // Observer delivery is deliberately fresh; saved future meter/capture
     // messages are not replayed as if they described the restored state.
     readbacks_.clear_stopped();
     captures_.clear_stopped();
+    gesture_applications_.clear_stopped();
     return true;
   }
   bool available() const noexcept {
@@ -1279,6 +1352,9 @@ public:
   }
   bool pop_readback(Readback &out) noexcept { return readbacks_.take(out); }
   bool pop_capture(Capture &out) noexcept { return captures_.take(out); }
+  bool pop_gesture_application(NativeGestureApplication &out) noexcept {
+    return gesture_applications_.take(out);
+  }
   // Callback only; input cursor must be the actual body's sample cursor.
   // A detached/refused body emits silence, latches unavailable, and needs an
   // explicit stopped-owner recovery. It never advances a parallel clock.
@@ -1302,6 +1378,7 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
+    published_horizon_.store(cursor_ + frames, std::memory_order_release);
     Capture capture{};
     capture.identity = determination_.identity;
     capture.start_sample = cursor_;
@@ -1369,14 +1446,31 @@ public:
               due->operation.sample < cursor_ + i)
             ++late_;
           apply_release(due->operation);
+          if (due->operation.native_clock.epoch &&
+              !gesture_applications_.push(NativeGestureApplication{
+                  due->operation.identity, due->operation.native_clock,
+                  due->operation.sequence, due->operation.sample, cursor_ + i,
+                  due->operation.touch, due->operation.kind, true}))
+            ++dropped_readbacks_;
           due->active = false;
         } else {
           if (op->late_admitted || op->sample < cursor_ + i)
             ++late_;
-          if (op->identity == determination_.identity)
+          const bool apply_now =
+              op->identity == determination_.identity &&
+              (op->sample == cursor_ + i || op->native_clock.epoch ||
+               op->kind == Kind::Determination || op->kind == Kind::Parameter);
+          if (apply_now)
             apply(*op);
           else
             ++refused_;
+          if (op->native_clock.epoch &&
+              !gesture_applications_.push(NativeGestureApplication{
+                  op->identity, op->native_clock, op->sequence, op->sample,
+                  cursor_ + i,
+                  op->kind == Kind::NoteOn ? op->note.touch : op->touch,
+                  op->kind, apply_now}))
+            ++dropped_readbacks_;
           consume_operation();
         }
       }

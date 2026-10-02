@@ -2,6 +2,7 @@
 #define QL_AUDIO_DEVICE_MACOS_HPP
 #include <memory>
 #include <ql/performance_audio.hpp>
+#include <ql/performance_live_clock.hpp>
 #include <string>
 #include <vector>
 namespace ql::performance {
@@ -64,6 +65,13 @@ public:
   bool recover(std::shared_ptr<Engine> engine);
   DeviceReceipt receipt() const;
   bool pop_capture(DeviceCapture &out) noexcept;
+  // Serial native bridge receipt: the browser supplies neither sample time
+  // nor host ticks. Earlier physical-input transit remains unmeasured.
+  NativeClockAdmission enqueue_bridge_gesture(Operation operation) noexcept;
+  // Only a trusted native input adapter may supply a genuine OS event stamp.
+  NativeClockAdmission
+  enqueue_native_event_gesture(Operation operation,
+                               NativeInputStamp event) noexcept;
   static double host_ticks_to_seconds(std::uint64_t ticks) noexcept;
 };
 } // namespace ql::performance

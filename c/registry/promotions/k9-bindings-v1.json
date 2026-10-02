@@ -881,6 +881,20 @@
         "scripts/test-physical-musical.sh"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_live_clock.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "rationale": "QL #287 actual AUHAL timestamp/native Engine cursor mapping for bounded real gesture admission and applied-sample readback. This module publishes the existing native clock; it supplies no browser clock or parallel oscillator, and does not infer device latency from its controlled timestamp test.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
     }
   ]
 }
