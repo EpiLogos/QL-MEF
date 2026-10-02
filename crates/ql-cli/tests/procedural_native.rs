@@ -519,8 +519,8 @@ fn actual_native_scene_and_prior_commands_remain_discoverable() {
 fn retained_native_output_input_does_not_expand_original_empty_selector() {
     let p = procedure();
     let first = result("prepare", Some(&prepare()));
-    assert_eq!(first["membership"]["targets"],json!({}));
-    assert_eq!(first["membership"]["addresses"],json!({}));
+    assert_eq!(first["membership"]["targets"], json!({}));
+    assert_eq!(first["membership"]["addresses"], json!({}));
     let old: GeneratedContribution =
         serde_json::from_value(first["contributions"][0].clone()).unwrap();
     let mut actual = old.generated_basis.clone();
@@ -563,10 +563,7 @@ fn retained_native_output_input_does_not_expand_original_empty_selector() {
         "current_readings":[],"previous_membership":first["membership"],"previous":[old],"current":[current],"next":[next],
         "output_readings":[output],"required_consumers":["scene","nativeBody","audio"]});
     let prepared = result("regenerate", Some(&input));
-    assert_eq!(
-        prepared["prepared"]["membership"],
-        first["membership"]
-    );
+    assert_eq!(prepared["prepared"]["membership"], first["membership"]);
     assert_eq!(
         prepared["prepared"]["output_readings"],
         input["output_readings"]
