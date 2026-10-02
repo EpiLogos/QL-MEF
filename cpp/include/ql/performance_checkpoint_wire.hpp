@@ -251,11 +251,16 @@ inline void operation_keys(J *in, std::initializer_list<const char *> allowed) {
           "checkpoint operation object required");
   J *clock = nullptr;
   const bool has_clock = json_object_object_get_ex(in, "native_clock", &clock);
-  require(json_object_object_length(in) == int(allowed.size()) + int(has_clock),
+  J *requested = nullptr;
+  const bool has_requested =
+      json_object_object_get_ex(in, "requested_sample", &requested);
+  require(json_object_object_length(in) ==
+              int(allowed.size()) + int(has_clock) + int(has_requested),
           "checkpoint operation fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
     require((has_clock && std::strcmp(key, "native_clock") == 0) ||
+                (has_requested && std::strcmp(key, "requested_sample") == 0) ||
                 std::any_of(allowed.begin(), allowed.end(),
                             [&](const char *known) {
                               return std::strcmp(key, known) == 0;
@@ -269,6 +274,8 @@ inline Json operation(const Operation &op) {
   put(out.get(), "kind", json_object_new_int(unsigned(op.kind)));
   u64(out.get(), "sequence", op.sequence);
   u64(out.get(), "sample", op.sample);
+  if (op.has_requested_sample)
+    u64(out.get(), "requested_sample", op.requested_sample);
   u64(out.get(), "touch", op.touch);
   real(out.get(), "value", op.value);
   real(out.get(), "pitch_hz", op.pitch_hz);
@@ -310,6 +317,11 @@ inline Operation read_operation(J *in) {
   out.kind = Kind(byte(field(in, "kind")));
   out.sequence = decimal(field(in, "sequence"));
   out.sample = decimal(field(in, "sample"));
+  J *requested = nullptr;
+  out.has_requested_sample =
+      json_object_object_get_ex(in, "requested_sample", &requested);
+  if (out.has_requested_sample)
+    out.requested_sample = decimal(requested);
   out.touch = decimal(field(in, "touch"));
   out.value = number(field(in, "value"));
   out.pitch_hz = number(field(in, "pitch_hz"));
@@ -332,6 +344,8 @@ inline Json release(const ReleaseOperation &op) {
   put(out.get(), "kind", json_object_new_int(unsigned(op.kind)));
   u64(out.get(), "sequence", op.sequence);
   u64(out.get(), "sample", op.sample);
+  if (op.has_requested_sample)
+    u64(out.get(), "requested_sample", op.requested_sample);
   u64(out.get(), "touch", op.touch);
   flag(out.get(), "late_admitted", op.late_admitted);
   put(out.get(), "native_clock", native_clock(op.native_clock).release());
@@ -340,11 +354,17 @@ inline Json release(const ReleaseOperation &op) {
 inline ReleaseOperation read_release(J *in) {
   operation_keys(
       in, {"identity", "kind", "sequence", "sample", "touch", "late_admitted"});
-  return {
+  ReleaseOperation out{
       Kind(byte(field(in, "kind"))),  packet::identity(field(in, "identity")),
       decimal(field(in, "sequence")), decimal(field(in, "sample")),
       decimal(field(in, "touch")),    boolean(field(in, "late_admitted")),
       read_native_clock(in)};
+  J *requested = nullptr;
+  out.has_requested_sample =
+      json_object_object_get_ex(in, "requested_sample", &requested);
+  if (out.has_requested_sample)
+    out.requested_sample = decimal(requested);
+  return out;
 }
 inline const char *operation_name(Kind kind) {
   switch (kind) {
@@ -368,6 +388,8 @@ inline const char *operation_name(Kind kind) {
 inline Json application(const NativeGestureApplication &a) {
   auto out = object();
   text(out.get(), "schema", "ql.performance-applied-event/v2");
+  if (a.has_requested_sample)
+    u64(out.get(), "requested_sample", a.requested_sample);
   text(out.get(), "operation", operation_name(a.kind));
   put(out.get(), "kind", json_object_new_int(unsigned(a.kind)));
   text(out.get(), "status", a.applied ? "applied" : "refused");
@@ -415,32 +437,51 @@ inline Json application(const NativeGestureApplication &a) {
   put(out.get(), "physical_manifest", manifest.release());
   return out;
 }
+inline void
+requested_application_keys(J *in, std::initializer_list<const char *> allowed) {
+  require(in && json_object_get_type(in) == json_type_object,
+          "applied event object required");
+  J *requested = nullptr;
+  const bool present =
+      json_object_object_get_ex(in, "requested_sample", &requested);
+  require(json_object_object_length(in) == int(allowed.size()) + int(present),
+          "applied event fields missing/unknown");
+  json_object_object_foreach(in, key, value) {
+    (void)value;
+    require((present && std::strcmp(key, "requested_sample") == 0) ||
+                std::any_of(allowed.begin(), allowed.end(),
+                            [&](const char *known) {
+                              return std::strcmp(key, known) == 0;
+                            }),
+            "unknown applied event field");
+  }
+}
 inline NativeGestureApplication read_application(J *in) {
-  keys(in, {"schema",
-            "operation",
-            "kind",
-            "status",
-            "applied",
-            "identity",
-            "native_clock",
-            "applied_application_ordinal",
-            "sequence",
-            "admitted_sample",
-            "applied_sample",
-            "committed_cursor",
-            "body_revision",
-            "touch",
-            "preparation_ref",
-            "state_ref",
-            "parameter",
-            "value",
-            "pitch_hz",
-            "has_note",
-            "note",
-            "has_determination",
-            "determination",
-            "late_admitted",
-            "physical_manifest"});
+  requested_application_keys(in, {"schema",
+                                  "operation",
+                                  "kind",
+                                  "status",
+                                  "applied",
+                                  "identity",
+                                  "native_clock",
+                                  "applied_application_ordinal",
+                                  "sequence",
+                                  "admitted_sample",
+                                  "applied_sample",
+                                  "committed_cursor",
+                                  "body_revision",
+                                  "touch",
+                                  "preparation_ref",
+                                  "state_ref",
+                                  "parameter",
+                                  "value",
+                                  "pitch_hz",
+                                  "has_note",
+                                  "note",
+                                  "has_determination",
+                                  "determination",
+                                  "late_admitted",
+                                  "physical_manifest"});
   require(packet::string(field(in, "schema")) ==
               "ql.performance-applied-event/v2",
           "applied-event schema differs");
@@ -459,6 +500,11 @@ inline NativeGestureApplication read_application(J *in) {
           "zero committed application ordinal");
   out.sequence = decimal(field(in, "sequence"));
   out.admitted_sample = decimal(field(in, "admitted_sample"));
+  J *requested = nullptr;
+  out.has_requested_sample =
+      json_object_object_get_ex(in, "requested_sample", &requested);
+  if (out.has_requested_sample)
+    out.requested_sample = decimal(requested);
   out.applied_sample = decimal(field(in, "applied_sample"));
   out.committed_cursor = decimal(field(in, "committed_cursor"));
   out.body_revision = decimal(field(in, "body_revision"));
@@ -509,7 +555,11 @@ inline NativeGestureApplication read_application(J *in) {
             "unqualified applied note payload");
   require(unsigned(out.parameter) <= unsigned(Parameter::MonitorLinear) &&
               out.sequence && out.committed_cursor > out.applied_sample &&
-              out.applied_sample >= out.admitted_sample,
+              out.applied_sample >= out.admitted_sample &&
+              (!out.has_requested_sample ||
+               (out.requested_sample <= out.admitted_sample &&
+                (out.requested_sample == out.admitted_sample ||
+                 out.late_admitted))),
           "applied-event time/parameter bounds differ");
   return out;
 }

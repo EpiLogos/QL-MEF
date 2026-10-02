@@ -676,10 +676,11 @@
         "#2-1",
         "#3"
       ],
-      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance. Callback-committed original full native event/source/body manifests and persistent recording failure retain real effects, unread history and exact reopen. Release proof observes actual zero submitted force after emergency acknowledgement, independent of mute and P ringdown.",
+      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance. Callback-committed original full native event/source/body manifests and persistent recording failure retain real effects, unread history and exact reopen. Release proof observes actual zero submitted force after emergency acknowledgement, independent of mute and P ringdown. Original request time is stamped only by native admission; injected caller provenance is refused and original old checkpoint formats remain importable with unavailable requested time.",
       "tests": [
         "cpp/tests/performance_audio.cpp",
-        "cpp/tests/performance_management_packet.cpp"
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/performance_requested_timing_packet.cpp"
       ],
       "kind": "computational"
     },
@@ -824,9 +825,10 @@
       "stratum": "cpp",
       "disposition": "infrastructural",
       "coordinates": [],
-      "rationale": "QL #281: Complete bounded versioned JSON transport of paired native A/P continuation, including source schedule, queued events, oscillator/envelope/touch/sustain/steal tails, physical eigenbasis/q-v/units/cursor. Transport creates no clock/store/authority and corrupt/source-disconnected payloads refuse before resident mutation.",
+      "rationale": "QL #281: Complete bounded versioned JSON transport of paired native A/P continuation, including source schedule, queued events, oscillator/envelope/touch/sustain/steal tails, physical eigenbasis/q-v/units/cursor. Transport creates no clock/store/authority and corrupt/source-disconnected payloads refuse before resident mutation. Optional native-owned original requested sample is retained separately from resolved admission and actual application, while absent historic v1/v2 provenance stays absent and audible continuation remains exact.",
       "tests": [
-        "cpp/tests/performance_audio.cpp"
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/performance_requested_timing_packet.cpp"
       ],
       "kind": "computational"
     },

@@ -155,6 +155,10 @@ struct Operation {
   Determination determination{};
   bool late_admitted = false;
   NativeClockMetadata native_clock{};
+  // Native admission alone stamps the original requested sample. sample remains
+  // the resolved queue deadline. Missing legacy provenance is never inferred.
+  std::uint64_t requested_sample = 0;
+  bool has_requested_sample = false;
 };
 struct ReleaseOperation {
   Kind kind = Kind::NoteOff;
@@ -162,6 +166,8 @@ struct ReleaseOperation {
   std::uint64_t sequence = 0, sample = 0, touch = 0;
   bool late_admitted = false;
   NativeClockMetadata native_clock{};
+  std::uint64_t requested_sample = 0;
+  bool has_requested_sample = false;
 };
 enum class Result : std::uint8_t {
   Accepted,
@@ -234,6 +240,8 @@ struct NativeGestureApplication {
   // Admission ID is independent of callback application order.
   std::uint64_t sequence = 0, admitted_sample = 0, applied_sample = 0,
                 committed_cursor = 0, body_revision = 0, touch = 0;
+  std::uint64_t requested_sample = 0;
+  bool has_requested_sample = false;
   Kind kind = Kind::NoteOn;
   Parameter parameter = Parameter::MasterLinear;
   double value = 0, pitch_hz = 0;
@@ -669,6 +677,12 @@ private:
   static bool same_lineage(const Identity &a, const Identity &b) noexcept {
     return a.instance == b.instance && a.event == b.event &&
            a.subject == b.subject;
+  }
+  static bool valid_requested_timing(bool present, std::uint64_t requested,
+                                     std::uint64_t admitted,
+                                     bool late) noexcept {
+    return present ? requested <= admitted && (requested == admitted || late)
+                   : requested == 0;
   }
   static bool valid_native_clock(const NativeClockMetadata &c) noexcept {
     if (!c.epoch)
@@ -1142,6 +1156,8 @@ public:
 
 private:
   Result enqueue_native_admitted(Operation op) noexcept {
+    op.requested_sample = op.sample;
+    op.has_requested_sample = true;
     op.sample = std::max(op.sample, admission_horizon());
     return enqueue_impl(op, true);
   }
@@ -1151,7 +1167,8 @@ public:
   // A full queue additionally requests safe all-notes-off out of band, so a
   // lost NoteOff can never leave a permanently sounding excitation.
   Result enqueue(const Operation &op) noexcept {
-    if (op.native_clock.epoch || op.native_clock.anchor_ordinal ||
+    if (op.has_requested_sample || op.requested_sample ||
+        op.native_clock.epoch || op.native_clock.anchor_ordinal ||
         op.native_clock.trigger_host_ticks ||
         op.native_clock.admitted_host_ticks ||
         op.native_clock.mapping_uncertainty_samples)
@@ -1196,9 +1213,14 @@ private:
     if (op.sample > limit)
       return Result::Late;
     Operation admitted = op;
-    admitted.late_admitted = late;
+    admitted.requested_sample =
+        native_gesture ? op.requested_sample : op.sample;
+    admitted.has_requested_sample = true;
+    admitted.late_admitted =
+        late || admitted.requested_sample < admitted.sample;
     if (late)
       admitted.sample = cursor;
+    admitted.late_admitted = admitted.requested_sample < admitted.sample;
     const bool separate_release = critical;
     if ((op.kind == Kind::NoteOn &&
          (!valid_note(op.note, source) || !scalar(op.value, 0, 1))) ||
@@ -1244,9 +1266,10 @@ private:
     }
     const bool queued =
         separate_release
-            ? releases_.push(ReleaseOperation{op.kind, op.identity, op.sequence,
-                                              admitted.sample, op.touch, late,
-                                              admitted.native_clock})
+            ? releases_.push(ReleaseOperation{
+                  op.kind, op.identity, op.sequence, admitted.sample, op.touch,
+                  admitted.late_admitted, admitted.native_clock,
+                  admitted.requested_sample, true})
             : operations_.push(admitted);
     if (!queued) {
       overflow_count_.fetch_add(1);
@@ -1803,6 +1826,8 @@ public:
       if (unsigned(op.kind) > unsigned(Kind::Determination) ||
           !ordinal(op.sequence) || !valid_origin(op.identity) ||
           !valid_native_clock(op.native_clock) ||
+          !valid_requested_timing(op.has_requested_sample, op.requested_sample,
+                                  op.sample, op.late_admitted) ||
           (op.native_clock.epoch && op.kind != Kind::NoteOn &&
            op.kind != Kind::NoteOff && op.kind != Kind::Expression &&
            op.kind != Kind::Sustain && op.kind != Kind::Panic))
@@ -1838,6 +1863,9 @@ public:
     auto valid_release = [&](const ReleaseOperation &op) {
       return ordinal(op.sequence) && valid_origin(op.identity) &&
              valid_native_clock(op.native_clock) &&
+             valid_requested_timing(op.has_requested_sample,
+                                    op.requested_sample, op.sample,
+                                    op.late_admitted) &&
              (op.kind == Kind::Panic || op.kind == Kind::Sustain ||
               (op.kind == Kind::NoteOff && op.touch));
     };
@@ -1867,6 +1895,8 @@ public:
           !valid_origin(a.identity) || !a.sequence ||
           a.sequence > cp.accepted_sequence ||
           a.applied_sample < a.admitted_sample ||
+          !valid_requested_timing(a.has_requested_sample, a.requested_sample,
+                                  a.admitted_sample, a.late_admitted) ||
           a.committed_cursor > cp.cursor ||
           a.committed_cursor <= a.applied_sample || !a.body_revision ||
           a.body_revision > cp.determination.body_revision ||
@@ -2111,6 +2141,9 @@ public:
           application.clock = due->operation.native_clock;
           application.sequence = due->operation.sequence;
           application.admitted_sample = due->operation.sample;
+          application.requested_sample = due->operation.requested_sample;
+          application.has_requested_sample =
+              due->operation.has_requested_sample;
           application.applied_sample = cursor_ + i;
           application.touch = due->operation.touch;
           application.kind = due->operation.kind;
@@ -2135,6 +2168,8 @@ public:
           application.clock = op->native_clock;
           application.sequence = op->sequence;
           application.admitted_sample = op->sample;
+          application.requested_sample = op->requested_sample;
+          application.has_requested_sample = op->has_requested_sample;
           application.applied_sample = cursor_ + i;
           application.touch =
               op->kind == Kind::NoteOn ? op->note.touch : op->touch;
