@@ -550,7 +550,7 @@ static void allroute_management_hold(J *fixture) {
   assert(before->reading.physical_routes.route_count == 9);
   assert(before->applications.size() == 1 && before->applications[0].applied);
   Capture capture;
-  assert(owner->pop_capture(capture));
+  assert(owner->pop_audio_capture(capture));
   bool any_native = false;
   for (std::size_t route = 0; route < 9; ++route)
     for (std::size_t i = 0; i < 128; ++i)
@@ -568,7 +568,7 @@ static void allroute_management_hold(J *fixture) {
     callback_probe = false;
     assert(ok && allocations == 0 && releases == 0);
     pulse = owner->pulse();
-    assert(owner->pop_capture(capture));
+    assert(owner->pop_audio_capture(capture));
     assert(pulse->reading.routes_suspended &&
            pulse->reading.has_route_programs);
     assert(pulse->reading.physical.samples_elapsed ==
@@ -799,14 +799,14 @@ static void accepted_future_attack_after_hold(J *fixture) {
                         h.native_sequence == 2 && h.input_ref == future_input;
   assert(future_admission);
   Capture capture;
-  assert(owner->pop_capture(capture));
+  assert(owner->pop_audio_capture(capture));
   const auto token = owner->hold();
   assert(token);
   std::unique_ptr<ManagementPulse> pulse;
   for (unsigned block = 0; block < 4; ++block) {
     assert(owner->offline_advance(pcm.data(), pcm.size(), 128 + block * 128));
     pulse = owner->pulse();
-    assert(owner->pop_capture(capture));
+    assert(owner->pop_audio_capture(capture));
     assert(pulse->release_zero_proven == (block == 3));
     for (std::size_t i = 0; i < pcm.size(); ++i) {
       assert(capture.force_newtons[i] == 0);
@@ -858,13 +858,13 @@ static void accepted_future_attack_after_hold(J *fixture) {
       original_journal_refusal |= h.native_sequence == 2 &&
                                   h.change == InputBindingChange::Refused &&
                                   h.input_ref == future_input;
-    assert(owner->pop_capture(capture));
+    assert(owner->pop_audio_capture(capture));
     for (std::size_t i = 0; i < pcm.size(); ++i) {
       assert(capture.force_newtons[i] == 0);
       for (std::size_t route = 0; route < 9; ++route)
         assert(capture.route_force_newtons[route][i] == 0);
     }
-    assert(reopened->pop_capture(capture));
+    assert(reopened->pop_audio_capture(capture));
   }
   assert(explicit_refusal && original_journal_refusal);
   auto final_checkpoint = owner->stopped_checkpoint();
