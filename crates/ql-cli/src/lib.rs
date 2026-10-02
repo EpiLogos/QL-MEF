@@ -23,6 +23,7 @@ mod epi_agent_command;
 mod m3_command;
 pub mod m_ledger;
 mod nara_command;
+mod procedural_command;
 mod scene_command;
 mod shape_command;
 mod techne_command;
@@ -352,7 +353,7 @@ fn help() -> String {
 Agent event reading (supplied events; deterministic completion before optional decisions):\n  ql agent-event project <request.json|-> [--json]\n  ql agent-event frame <request.json|-> [--json]\n  ql agent-event harmonic <request.json|-> [--json]\n  ql agent-event validate <request.json|-> [--json]\n\n\
 Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
 Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n\n\
-Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n                                    the continuous-field host binding the Live instrument opens\n\n\
+Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n                                    the continuous-field host binding the Live instrument opens\n  ql scene world <request.json|-> [--json]\n  ql scene procedural discover [--json]\n  ql scene procedural <manifest|prepare|regenerate|atlas|rule> <request.json|-> [--json]\n                                    source-qualified native plans and Edit batches; existing owners apply and attest effects\n\n\
 Nara personal field (contextual):\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]\n\n\
 Specialised constitution and invocation (contextual; not the generic Agent creator):\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n\n\
 Service negotiation (operator negotiation, contextual supplied operations):\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n                                    provider-backed operations disclose their current negotiated availability\n\n\
@@ -391,6 +392,15 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.workflow-types",
             "techne.reading",
             "shape.presentation",
+            "scene.compose",
+            "scene.binding",
+            "scene.world",
+            "scene.procedural.discover",
+            "scene.procedural.manifest",
+            "scene.procedural.prepare",
+            "scene.procedural.regenerate",
+            "scene.procedural.atlas",
+            "scene.procedural.rule",
             "epi-agent.constitution",
             "epi-agent.faculty",
             "epi-agent.invoke",

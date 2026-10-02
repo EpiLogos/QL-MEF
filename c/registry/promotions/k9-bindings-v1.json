@@ -14,7 +14,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1–M3 continuous field, #134 Nara and QL/Factory Vāk performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
+      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1\u2013M3 continuous field, #134 Nara and QL/Factory V\u0101k performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
       "tests": [
         "crates/ql-mef/src/focused_instrument.rs",
         "crates/ql-mef/src/focused_instrument_aw1.rs"
@@ -59,7 +59,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
+      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and V\u0101k semantics remain in their existing owners.",
       "tests": [
         "crates/ql-mef/src/bin/ql-focused-host.rs",
         "crates/ql-mef/src/focused_instrument.rs"
@@ -134,7 +134,7 @@
         "#0-4",
         "#0-5"
       ],
-      "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+      "rationale": "QL #207 extends the existing V\u0101k/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or V\u0101k schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
       "tests": [
         "crates/ql-mef/tests/compressed_geometry_vak.rs",
         "crates/ql-mef/tests/vak_composition.rs"
@@ -153,7 +153,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "L5 Technē contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation — native owners keep their refs and authority. M′ instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
+      "rationale": "L5 Techn\u0113 contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation \u2014 native owners keep their refs and authority. M\u2032 instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
       "tests": [
         "crates/ql-adapters/tests/techne_contract.rs",
         "fixtures/techne/tb0-connective-base-v1.json"
@@ -172,7 +172,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Production Technē read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store — the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
+      "rationale": "Production Techn\u0113 read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store \u2014 the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
       "tests": [
         "crates/ql-adapters/tests/techne_contract.rs",
         "crates/ql-wiki/tests/wiki_refraction.rs"
@@ -191,7 +191,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language — ql-core types in, JSON disclosures out; no store, no mutation.",
+      "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language \u2014 ql-core types in, JSON disclosures out; no store, no mutation.",
       "tests": [
         "crates/ql-cli/tests/vak_composition.rs"
       ],
@@ -209,7 +209,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "JSON command adapter for the production Technē reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser — a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
+      "rationale": "JSON command adapter for the production Techn\u0113 reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser \u2014 a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
       "tests": [
         "crates/ql-cli/tests/techne_reading.rs"
       ],
@@ -223,7 +223,7 @@
         "#3",
         "#4"
       ],
-      "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented — provider selection stays outside the semantic contract.",
+      "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented \u2014 provider selection stays outside the semantic contract.",
       "tests": [
         "crates/ql-mef/tests/nara_dialogue_conformance.rs"
       ],
@@ -267,7 +267,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
+      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0\u2013#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
       "tests": [
         "crates/ql-mef/src/epi_agent.rs"
       ],
@@ -285,7 +285,7 @@
         "#4",
         "#5"
       ],
-      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0–#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
+      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0\u2013#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
       "tests": [
         "crates/ql-cli/src/epi_agent_command.rs",
         "crates/ql-mef/src/epi_agent.rs"
@@ -1266,6 +1266,68 @@
       "tests": [
         "crates/ql-mef/tests/performance_receiving_admission.rs",
         "cpp/tests/performance_receiving_admission.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_manifestation.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native exact source-registry principal/contributor/locus and Atlas occurrence plans; source and prime faces are preserved. Existing Expressions owner admits native changes and observations. Names and transported plans grant no native consumer authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_manifestation.rs",
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_composition.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native Expression recipe/Edit compiler, bounded procedure execution and source-qualified checkpoint, stable ownership and retained output regeneration. Original source/selector and human overrides survive; existing native owner independently attests journal/current CAS and actual scene/body/audio application. No second scene clock, body, store or simulated ACK.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs",
+        "crates/ql-mef/tests/procedural_stage_independent.rs",
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/src/procedural_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native command parsing and transport to the same registered manifestation/composition source functions. It returns source-qualified plans/Edit batches and checkpoints; native application and live observations remain with the existing Expressions owner.",
+      "tests": [
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "cpp/src/audio_device_unavailable.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual unsupported-platform native device boundary: refuses playback, clock and capture while permitting real stopped/offline Engine and recording management. Darwin links the actual CoreAudio-AUHAL provider; no simulated output, timestamp, callback or latency is emitted.",
+      "tests": [
+        "cpp/tests/audio_device_platform.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp"
       ]
     }
   ]

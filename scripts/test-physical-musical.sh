@@ -22,6 +22,9 @@ done
 
 # Keep the real Rust producer and the C++ consumer in one executed passage.
 # These are finite component fixtures; they are not installed host authority.
+TASK_PROCEDURAL_OUTPUT="$TASK_OUTPUT/procedural-stage"
+mkdir -p "$TASK_PROCEDURAL_OUTPUT"
+TA_ONTA_FIXTURE_OUTPUT="$TASK_PROCEDURAL_OUTPUT/native-producer.json" cargo test -p ql-mef --locked --test procedural_manifestation --test procedural_composition --test procedural_stage_independent
 TASK_PACKET_OUTPUT="$TASK_OUTPUT/performance-packets"
 mkdir -p "$TASK_PACKET_OUTPUT"
 QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact

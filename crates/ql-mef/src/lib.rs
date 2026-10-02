@@ -49,6 +49,8 @@ pub mod performance_management;
 pub mod performance_receiving_admission;
 pub mod physical_body;
 mod pole_state;
+pub mod procedural_composition;
+pub mod procedural_manifestation;
 pub mod property;
 mod provenance;
 pub mod qv;

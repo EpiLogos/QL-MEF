@@ -1,0 +1,206 @@
+{
+  "schema": "oi.journey-scene/v1",
+  "scene": {
+    "id": "expression:source:scene:material",
+    "name": "Source-qualified passage",
+    "character": "native controlled material",
+    "duration": 42,
+    "transition": 3,
+    "view": {
+      "mode": "3d",
+      "yaw": 0.0,
+      "pitch": 0.0,
+      "zoom": 1.0,
+      "panX": 0.0,
+      "panY": 0.0
+    },
+    "field": {
+      "background": "#111111",
+      "palette": [
+        "#d4cfbf",
+        "#9a92af"
+      ],
+      "material": "ink",
+      "params": {
+        "speed": 0.75
+      }
+    },
+    "engine": {
+      "morphEnabled": true,
+      "resonanceEnabled": true,
+      "trajectory": "toroidalHopf",
+      "driveShape": "sine",
+      "autoOscillate": true,
+      "relationalEnabled": false,
+      "relationalMode": "orbital",
+      "pointerMode": "repel",
+      "colorMode": "linearGradient",
+      "colorEnabled": true,
+      "mediumPlane": "vertical",
+      "autoSweep": false,
+      "sweepDirection": "ascent"
+    },
+    "morph": {
+      "thetaRate": 0.4,
+      "phiRate": 0.2,
+      "thetaOffset": 0,
+      "phiOffset": 0,
+      "law": "theta",
+      "depth": 1,
+      "dwell": 0
+    },
+    "composition": {
+      "layout": "free",
+      "plane": "XY",
+      "focus": "parallel",
+      "focusDuration": 8,
+      "carryTint": true,
+      "carryStation": true,
+      "frequencyDriver": "manual"
+    },
+    "entities": [
+      {
+        "id": "source-form",
+        "kind": "formation",
+        "name": "Source form",
+        "enabled": true,
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "size": {
+          "x": 0.65,
+          "y": 0.86
+        },
+        "rotation": 0,
+        "scale": 1.0,
+        "share": 1.0,
+        "shape": "text",
+        "text": "ATG",
+        "tint": "#d4cfbf",
+        "tintWeight": 1,
+        "locked": false,
+        "station": null,
+        "source": {
+          "kind": "ascii",
+          "ascii": {
+            "text": "ATG",
+            "fontFamily": "system-ui",
+            "fontSize": 64,
+            "invert": false
+          }
+        },
+        "layers": [
+          {
+            "id": "retained-layer",
+            "text": "ATG",
+            "z": 0.02,
+            "scale": 0.9,
+            "source": {
+              "kind": "ascii",
+              "ascii": {
+                "text": "ATG",
+                "fontFamily": "system-ui",
+                "fontSize": 64,
+                "invert": false
+              }
+            }
+          }
+        ],
+        "force": {
+          "kind": "attract",
+          "strength": 0.25,
+          "radius": 0.3,
+          "spin": 0
+        },
+        "sequence": {
+          "enabled": true,
+          "clock": "seconds",
+          "sourcesVersion": 1,
+          "hold": 2,
+          "transition": 1,
+          "easing": "smoothstep",
+          "order": "loop",
+          "jitter": 0,
+          "impulse": 0,
+          "phaseOffset": 0,
+          "rateMul": 1,
+          "steps": [
+            {
+              "id": "source-1",
+              "text": "ATG",
+              "shape": "text",
+              "hold": 2,
+              "transition": 1,
+              "position": null,
+              "source": {
+                "kind": "ascii",
+                "ascii": {
+                  "text": "ATG",
+                  "fontFamily": "system-ui",
+                  "fontSize": 64,
+                  "invert": false
+                }
+              }
+            },
+            {
+              "id": "source-2",
+              "text": "TGA",
+              "shape": "text",
+              "hold": 2,
+              "transition": 1,
+              "position": null,
+              "source": {
+                "kind": "ascii",
+                "ascii": {
+                  "text": "TGA",
+                  "fontFamily": "system-ui",
+                  "fontSize": 64,
+                  "invert": false
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "source-force",
+        "kind": "pin",
+        "name": "Source force",
+        "enabled": true,
+        "position": {
+          "x": 0.125,
+          "y": 0,
+          "z": 0
+        },
+        "size": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "rotation": 0,
+        "scale": 1,
+        "share": 0,
+        "shape": "square",
+        "text": "",
+        "tint": "#9a92af",
+        "tintWeight": 1,
+        "locked": false,
+        "station": null,
+        "force": {
+          "kind": "vortex",
+          "strength": 0.125,
+          "radius": 0.5,
+          "spin": 0.2
+        },
+        "sequence": {
+          "enabled": false,
+          "clock": "seconds",
+          "steps": []
+        }
+      }
+    ],
+    "text": [],
+    "automation": []
+  }
+}
