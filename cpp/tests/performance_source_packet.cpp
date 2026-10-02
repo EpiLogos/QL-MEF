@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
       assert(reading.physical.node_identity[i] == before.node_identity[i]);
       const auto a = before.visible_positions_metres[i],
                  b = reading.physical.visible_positions_metres[i];
-      moved = moved || a.x != b.x || a.y != b.y || a.z != b.z;
+      moved = moved || a != b;
     }
     assert(moved);
     assert(reading.physical.mechanical_energy_joules > 0);
