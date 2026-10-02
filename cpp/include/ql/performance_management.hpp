@@ -271,6 +271,55 @@ public:
       }
     return admitted;
   }
+  // Exact authored-score samples are a separate native C admission. This
+  // method never dates live gestures or fabricates an AudioUnit epoch. The
+  // existing native score/source owner supplies qualified NoteTargets; no UI
+  // endpoint accepts an Operation/NoteTarget packet from this seam.
+  Result enqueue_score_input(Operation op, Ref original_input = {}) {
+    if (control_recording_failed_ || release_pending_)
+      return Result::Unavailable;
+    if (op.sequence != next_sequence())
+      return Result::Order;
+    Input *held = valid_ref(original_input) ? input(original_input) : nullptr;
+    const bool touch_operation = op.kind == Kind::NoteOn ||
+                                 op.kind == Kind::NoteOff ||
+                                 op.kind == Kind::Expression;
+    if (touch_operation) {
+      if (!valid_ref(original_input) || !bindings_.can_record())
+        return Result::Invalid;
+      if (op.kind == Kind::NoteOn) {
+        if (held || !op.note.touch || !op.note.member ||
+            std::none_of(inputs_.begin(), inputs_.end(),
+                         [](const auto &i) { return !i.active; }))
+          return Result::Exhausted;
+        for (const auto &i : inputs_)
+          if (i.active && i.target.touch == op.note.touch)
+            return Result::Invalid;
+        auto checkpoint = std::make_unique<NativeInputBindings::State>();
+        bindings_.write_checkpoint(*checkpoint);
+        if (op.note.touch <= checkpoint->last_touch_token)
+          return Result::Invalid;
+      } else if (!held || held->release_pending ||
+                 held->target.touch != op.touch ||
+                 (op.kind == Kind::NoteOff &&
+                  !(op.identity == held->target.identity)))
+        return Result::Stale;
+    } else if (original_input != Ref{})
+      return Result::Invalid;
+    const auto result = native_.engine->enqueue(op);
+    if (result != Result::Accepted)
+      return result;
+    bool recorded = true;
+    if (op.kind == Kind::NoteOn)
+      recorded = bindings_.bind(original_input, op.note, op.sequence);
+    else if (op.kind == Kind::NoteOff)
+      recorded = bindings_.release_admitted(original_input, op.sequence);
+    if (!recorded) {
+      hold();
+      return Result::Unavailable;
+    }
+    return result;
+  }
   ManagementAdmission release(Ref input_ref) {
     auto *held = input(input_ref);
     if (!held || held->release_pending)

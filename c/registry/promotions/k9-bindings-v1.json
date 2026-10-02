@@ -647,7 +647,8 @@
       "tests": [
         "crates/ql-mef/tests/performance_audio.rs",
         "crates/ql-mef/tests/independent_performance_admission.rs",
-        "crates/ql-mef/tests/independent_source_form_admission.rs"
+        "crates/ql-mef/tests/independent_source_form_admission.rs",
+        "crates/ql-mef/tests/independent_octet_admission.rs"
       ],
       "kind": "computational"
     },
@@ -727,7 +728,8 @@
       "coordinates": [],
       "rationale": "QL #281: Bounded JSON admission of the real Rust musical producer and independently admitted current M1/body identities for C++ consumption. Transport creates no musical law, registry or device clock.",
       "tests": [
-        "cpp/tests/performance_audio.cpp"
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/independent_clock_admission_packet.cpp"
       ],
       "kind": "computational"
     },
@@ -1003,7 +1005,8 @@
       "kind": "computational",
       "rationale": "Serial existing native A/P/device management with current K-resolved Janko catalog, input lifetimes, bounded pulse/receipts and existing C history ports. No private store/undo, new oscillator, clock or context authority.",
       "tests": [
-        "cpp/tests/performance_management_packet.cpp"
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp"
       ]
     },
     {
@@ -1214,6 +1217,55 @@
         "crates/ql-mef/tests/k8_vak_performance.rs",
         "crates/ql-mef/tests/performance_audio.rs",
         "cpp/tests/native_performance_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/m3_material_fold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#3-2"
+      ],
+      "kind": "computational",
+      "rationale": "Joined #281/#296 actual post-command M3 material preparation retains exact source coordinate/face, three signed sites, ranked pose and full symbolic/clock snapshot. Explicit four-strip material construction remains distinct from the actual twelve-node mechanical source-frame topology; body material uses admitted native geometry and explicit nodal partition weights, bounded metric depth and retained sample/layer identity. No sampler, q/v solver, clock or native consumer ACK is invented.",
+      "tests": [
+        "crates/ql-mef/tests/m3_material_fold.rs",
+        "cpp/tests/material_fold_body.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_receiving_admission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Native serial-owner admission replays the original private N definition/context/registry against the actual immutable prepared M1/M2/M3/body and full current native basis. Serialize-only custody preserves the full source and distinct native generations; same-generation valid branch/clock/M3-pose substitutions refuse. It grants no consent or lease and creates no numerical body or receiving engine.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_admission.rs",
+        "cpp/tests/performance_receiving_admission.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_admission.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native control owner compares complete independently current receiving bundle to separately retained resident native basis/determination before the existing physical-force decoder. Private typed source custody retains full native basis and requires exact current comparison before any P route port construction/swap; every changed full M3 snapshot requires fresh native source replay. Callback does not parse JSON or construct a second body.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_admission.rs",
+        "cpp/tests/performance_receiving_admission.cpp"
       ]
     }
   ]

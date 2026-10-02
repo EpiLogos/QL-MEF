@@ -259,6 +259,14 @@ inline NativePerformance prepare_performance_packet(
                      packet::string(packet::field(
                          packet::field(raw, "determination"), "m1_coordinate")))
     throw std::invalid_argument("M1 exact selected source branch disconnected");
+  auto *clock = packet::field(m1, "clock");
+  if (packet::integer(packet::field(clock, "tick12")) !=
+          out.determination.tick12 ||
+      packet::integer(packet::field(clock, "degree720")) !=
+          out.determination.degree720 ||
+      packet::integer(packet::field(clock, "phase")) !=
+          out.determination.tick12 / 6)
+    throw std::invalid_argument("M1 actual native source clock disconnected");
   auto *m2 = packet::field(actual_native_basis, "m2");
   auto *m2identity = packet::field(m2, "identity");
   if (packet::integer(packet::field(m2identity, "profile_generation")) !=

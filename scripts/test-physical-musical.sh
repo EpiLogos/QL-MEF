@@ -29,6 +29,17 @@ QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked
 "$TASK_OUTPUT/native/independent_clock_admission_packet-test" "$TASK_PACKET_OUTPUT"
 "$TASK_OUTPUT/native/performance_management_packet-test" "$TASK_PACKET_OUTPUT"
 "$TASK_OUTPUT/native/performance_application_order_packet-test" "$TASK_PACKET_OUTPUT"
+v_order_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_MANAGED_ORDER_OUTPUT="$TASK_OUTPUT/managed-application-order-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_order_nonce"
+"$TASK_OUTPUT/native/performance_managed_application_order_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_MANAGED_ORDER_OUTPUT"
+QL_NATIVE_RECEIVING_ADMISSION_TEST="$TASK_OUTPUT/native/performance_receiving_admission-test" cargo test -p ql-mef --locked --test performance_receiving_admission -- --ignored
+
+# Actual post-command SourceForm material and its genuine mechanical body:
+# the same q/v emits both copied visible positions and native PCM.
+TASK_MATERIAL_OUTPUT="$TASK_OUTPUT/material-fold"
+mkdir -p "$TASK_MATERIAL_OUTPUT"
+QL_MATERIAL_FOLD_FIXTURE="$TASK_MATERIAL_OUTPUT/native-fold.json" cargo test -p ql-mef --locked --test m3_material_fold
+"$TASK_OUTPUT/native/material_fold_body-test" "$TASK_MATERIAL_OUTPUT/native-fold.json" "$TASK_MATERIAL_OUTPUT/physical-observed.json" "$TASK_MATERIAL_OUTPUT/captured-native.wav"
 # Preserve the actual original pre-material source and applied input journal
 # for the existing C Scene/Act gate. Its optional offline fingerprint belongs
 # to that native owner and is supplied by the ordinary C fixture gate.

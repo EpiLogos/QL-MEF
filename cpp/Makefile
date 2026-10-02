@@ -24,6 +24,7 @@ TEST_SOURCES := $(wildcard tests/*.cpp)
 # Stdin transport probes are exercised by their actual Rust producers below
 # the native verification command; every other native suite runs directly.
 TRANSPORT_SOURCES := $(filter %_wire.cpp %_packet.cpp,$(TEST_SOURCES))
+TRANSPORT_SOURCES += tests/material_fold_body.cpp tests/performance_receiving_admission.cpp
 # Installed probes need the installation/qualification supplied by their
 # existing owner campaigns; discovering a source does not invent those inputs.
 INSTALLED_SOURCES := $(filter %_installed.cpp,$(TEST_SOURCES))
