@@ -131,6 +131,15 @@ def project():
             public.append({'stratum': 'c', 'path': path, 'symbol': symbol,
                            'disposition': owner['disposition'], 'kind': owner['kind'], 'coordinates': owner['coordinates'],
                            'tests': owner['tests'], 'standing': 'linked-public-export-not-runtime-parity'})
+    # Capture every explicitly reviewed Rust module's original bytes, including
+    # methods nested inside impl and declared infrastructure tests omitted by
+    # the historical column-zero construct scan. This adds no invented
+    # constructs, runtime verdicts or retrospective K4 ledger bindings.
+    rust_modules = []
+    for path, owner in modules.items():
+        if owner['stratum'] == 'rust':
+            sources[path] = sha((ROOT / path).read_bytes())
+            rust_modules.append(dict(owner, sha256=sources[path], standing='declared-current-module-not-runtime-parity'))
     # C++ is a new stratum here, not an invented historical K4 assessment.
     # Capture complete declared modules and hashes; their installed/sanitizer
     # execution is separate CI evidence, not inferred from these source records.
@@ -158,7 +167,7 @@ def project():
               'inherited_ledger_sha256': sha((ROOT / 'fixtures/kernel/m-ledger-v1.json').read_bytes()),
               'inherited_assessments_sha256': sha(canonical(ledger['assessments'])),
               'dispositions_sha256': sha(canonical(spec)),
-              'sources': sources, 'constructs': records, 'native_exports': public, 'cpp_modules': cpp_modules, 'javascript_modules': javascript_modules, 'python_modules': python_modules,
+              'sources': sources, 'constructs': records, 'native_exports': public, 'rust_modules': rust_modules, 'cpp_modules': cpp_modules, 'javascript_modules': javascript_modules, 'python_modules': python_modules,
               'standing': 'current source and linked inventory; no inherited proof retargeted; runtime parity is separate'}
     return result
 
@@ -173,6 +182,7 @@ def summary(inventory):
             'inherited_unresolved': sum(c['standing'] == 'inherited-unresolved' for c in inventory['constructs']),
             'reviewed_K8_constructs': sum(c['standing'] == 'reviewed-K8-binding' for c in inventory['constructs']),
             'linked_K8_public_exports': len(inventory['native_exports']),
+            'reviewed_K8_rust_modules': len(inventory['rust_modules']),
             'reviewed_K8_cpp_modules': len(inventory['cpp_modules']),
             'reviewed_K8_javascript_modules': len(inventory['javascript_modules']),
             'reviewed_K8_python_modules': len(inventory['python_modules']),

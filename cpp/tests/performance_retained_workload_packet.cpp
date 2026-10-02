@@ -133,6 +133,14 @@ int main(int argc, char **argv) {
     checkpoint_transport::u64(manifest.get(), "voice_count", 24);
     checkpoint_transport::u64(manifest.get(), "application_count", 45000);
     checkpoint_transport::u64(manifest.get(), "edition_count", 180);
+    checkpoint_transport::u64(manifest.get(), "admission_lookahead_samples",
+                              2 * rate);
+    checkpoint_transport::u64(manifest.get(),
+                              "automation_first_sample_in_interval", 90000);
+    checkpoint_transport::u64(manifest.get(),
+                              "automation_last_sample_in_interval", 94700);
+    checkpoint_transport::u64(manifest.get(),
+                              "release_first_sample_in_interval", 40000);
     auto parts = checkpoint_transport::array();
     for (std::uint64_t block = 0; block < 180; ++block) {
       const auto base = block * interval;
@@ -140,8 +148,15 @@ int main(int argc, char **argv) {
       std::array<NoteTarget, 24> targets{};
       auto enqueue = [&](Operation event, Ref input = Ref{}) {
         event.sequence = ++sequence;
-        if (owner->enqueue_score_input(event, input) != Result::Accepted)
-          throw std::runtime_error("actual native workload admission refused");
+        const auto result = owner->enqueue_score_input(event, input);
+        if (result != Result::Accepted)
+          throw std::runtime_error(
+              "actual native workload admission refused: result=" +
+              std::to_string(static_cast<unsigned>(result)) +
+              " sequence=" + std::to_string(event.sequence) +
+              " kind=" + std::to_string(static_cast<unsigned>(event.kind)) +
+              " sample=" + std::to_string(event.sample) + " cursor=" +
+              std::to_string(owner->native().engine->samples_elapsed()));
       };
       for (std::size_t voice = 0; voice < 24; ++voice) {
         targets[voice] = target;
@@ -175,10 +190,15 @@ int main(int argc, char **argv) {
         cutoff.value = 1000 + i * 100;
         enqueue(cutoff);
       }
+      // The native queue admits only two seconds beyond its current cursor.
+      // This explicit workload recipe places all 48 controls inside that
+      // lookahead; the five-second P advance/checkpoint interval stays intact.
       // Accepted BEFORE later-ID critical releases but callback-applied AFTER.
+      constexpr std::uint64_t automation_from = 90000;
+      static_assert(automation_from + 47 * 100 < 2 * rate);
       for (std::uint64_t i = 0; i < 48; ++i) {
         auto automation =
-            op(source, Kind::Parameter, 0, base + 180000 + i * 100);
+            op(source, Kind::Parameter, 0, base + automation_from + i * 100);
         automation.parameter = Parameter::MasterLinear;
         automation.value = .4 + (i % 3) * .1;
         enqueue(automation);
@@ -190,6 +210,7 @@ int main(int argc, char **argv) {
       }
       std::vector<NativeGestureApplication> applications;
       std::vector<InputBindingRecord> journal;
+      std::uint32_t maximum_active_voices = 0;
       while (owner->native().engine->samples_elapsed() < base + interval) {
         const auto cursor = owner->native().engine->samples_elapsed();
         const auto frames =
@@ -202,11 +223,16 @@ int main(int argc, char **argv) {
             pulse->recording.dropped_applications != 0 ||
             !owner->recording_available())
           throw std::runtime_error("actual native workload recording loss");
+        maximum_active_voices =
+            std::max(maximum_active_voices, pulse->reading.active_voices);
         append_pulse(*pulse, applications, journal);
       }
+      if (maximum_active_voices != 24)
+        throw std::runtime_error("native workload did not render 24 voices");
       if (applications.size() != 250)
         throw std::runtime_error("native workload application count differs");
       bool overtook = false;
+      std::uint64_t automation_applied = 0, releases_applied = 0;
       for (std::size_t i = 0; i < applications.size(); ++i) {
         const auto &a = applications[i];
         if (!a.applied || a.applied_application_ordinal != ++committed ||
@@ -214,9 +240,27 @@ int main(int argc, char **argv) {
             a.committed_cursor > base + interval)
           throw std::runtime_error(
               "native workload application/body/cursor differs");
+        if (a.late_admitted || a.admitted_sample != a.applied_sample)
+          throw std::runtime_error("native workload silently redated an event");
+        if (a.kind == Kind::Parameter &&
+            a.parameter == Parameter::MasterLinear) {
+          if (a.applied_sample !=
+              base + automation_from + automation_applied * 100)
+            throw std::runtime_error(
+                "native workload automation timing differs");
+          ++automation_applied;
+        }
+        if (a.kind == Kind::NoteOff) {
+          if (a.applied_sample != base + 40000 + releases_applied)
+            throw std::runtime_error("native workload release timing differs");
+          ++releases_applied;
+        }
         if (i && a.sequence < applications[i - 1].sequence)
           overtook = true;
       }
+      if (automation_applied != 48 || releases_applied != 24)
+        throw std::runtime_error(
+            "native workload control/release count differs");
       if (!overtook)
         throw std::runtime_error(
             "native workload did not exercise critical overtaking");
