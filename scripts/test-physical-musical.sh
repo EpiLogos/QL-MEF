@@ -26,6 +26,7 @@ TASK_PACKET_OUTPUT="$TASK_OUTPUT/performance-packets"
 mkdir -p "$TASK_PACKET_OUTPUT"
 QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact
 "$TASK_OUTPUT/native/native_performance_packet-test" "$TASK_PACKET_OUTPUT"
+"$TASK_OUTPUT/native/independent_clock_admission_packet-test" "$TASK_PACKET_OUTPUT"
 "$TASK_OUTPUT/native/performance_management_packet-test" "$TASK_PACKET_OUTPUT"
 "$TASK_OUTPUT/native/performance_application_order_packet-test" "$TASK_PACKET_OUTPUT"
 # Preserve the actual original pre-material source and applied input journal
