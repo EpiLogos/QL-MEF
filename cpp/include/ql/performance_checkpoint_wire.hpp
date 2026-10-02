@@ -367,19 +367,21 @@ inline const char *operation_name(Kind kind) {
 }
 inline Json application(const NativeGestureApplication &a) {
   auto out = object();
-  text(out.get(), "schema", "ql.performance-applied-event/v1");
+  text(out.get(), "schema", "ql.performance-applied-event/v2");
   text(out.get(), "operation", operation_name(a.kind));
   put(out.get(), "kind", json_object_new_int(unsigned(a.kind)));
   text(out.get(), "status", a.applied ? "applied" : "refused");
   flag(out.get(), "applied", a.applied);
   put(out.get(), "identity", identity(a.identity).release());
   put(out.get(), "native_clock", native_clock(a.clock).release());
-  for (const auto &e : {std::pair{"sequence", a.sequence},
-                        {"admitted_sample", a.admitted_sample},
-                        {"applied_sample", a.applied_sample},
-                        {"committed_cursor", a.committed_cursor},
-                        {"body_revision", a.body_revision},
-                        {"touch", a.touch}})
+  for (const auto &e :
+       {std::pair{"applied_application_ordinal", a.applied_application_ordinal},
+        {"sequence", a.sequence},
+        {"admitted_sample", a.admitted_sample},
+        {"applied_sample", a.applied_sample},
+        {"committed_cursor", a.committed_cursor},
+        {"body_revision", a.body_revision},
+        {"touch", a.touch}})
     u64(out.get(), e.first, e.second);
   ref(out.get(), "preparation_ref", a.preparation_ref);
   ref(out.get(), "state_ref", a.state_ref);
@@ -421,6 +423,7 @@ inline NativeGestureApplication read_application(J *in) {
             "applied",
             "identity",
             "native_clock",
+            "applied_application_ordinal",
             "sequence",
             "admitted_sample",
             "applied_sample",
@@ -439,7 +442,7 @@ inline NativeGestureApplication read_application(J *in) {
             "late_admitted",
             "physical_manifest"});
   require(packet::string(field(in, "schema")) ==
-              "ql.performance-applied-event/v1",
+              "ql.performance-applied-event/v2",
           "applied-event schema differs");
   NativeGestureApplication out{};
   out.kind = Kind(byte(field(in, "kind")));
@@ -450,6 +453,10 @@ inline NativeGestureApplication read_application(J *in) {
           "applied-event discriminator differs");
   out.identity = packet::identity(field(in, "identity"));
   out.clock = read_native_clock(in);
+  out.applied_application_ordinal =
+      decimal(field(in, "applied_application_ordinal"));
+  require(out.applied_application_ordinal != 0,
+          "zero committed application ordinal");
   out.sequence = decimal(field(in, "sequence"));
   out.admitted_sample = decimal(field(in, "admitted_sample"));
   out.applied_sample = decimal(field(in, "applied_sample"));
@@ -672,19 +679,21 @@ inline Json audio_wire(const Engine::Checkpoint &cp) {
   put(out.get(), "release_proof", proof.release());
   put(out.get(), "source_parameters", parameters(cp.source).release());
   put(out.get(), "effective_parameters", parameters(cp.effective).release());
-  for (const auto &e : {std::pair{"cursor", cp.cursor},
-                        {"accepted_sequence", cp.accepted_sequence},
-                        {"accepted_sample", cp.accepted_sample},
-                        {"applied_sequence", cp.applied_sequence},
-                        {"refused", cp.refused},
-                        {"late", cp.late},
-                        {"stolen", cp.stolen},
-                        {"dropped_readbacks", cp.dropped_readbacks},
-                        {"dropped_captures", cp.dropped_captures},
-                        {"clipping", cp.clipping},
-                        {"force_limited", cp.force_limited},
-                        {"overflow_count", cp.overflow_count},
-                        {"panic_fence", cp.panic_fence}})
+  for (const auto &e :
+       {std::pair{"cursor", cp.cursor},
+        {"accepted_sequence", cp.accepted_sequence},
+        {"accepted_sample", cp.accepted_sample},
+        {"applied_sequence", cp.applied_sequence},
+        {"applied_application_ordinal", cp.applied_application_ordinal},
+        {"refused", cp.refused},
+        {"late", cp.late},
+        {"stolen", cp.stolen},
+        {"dropped_readbacks", cp.dropped_readbacks},
+        {"dropped_captures", cp.dropped_captures},
+        {"clipping", cp.clipping},
+        {"force_limited", cp.force_limited},
+        {"overflow_count", cp.overflow_count},
+        {"panic_fence", cp.panic_fence}})
     u64(out.get(), e.first, e.second);
   flag(out.get(), "emergency", cp.emergency);
   flag(out.get(), "capture", cp.capture);
@@ -731,6 +740,7 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
                   "accepted_sequence",
                   "accepted_sample",
                   "applied_sequence",
+                  "applied_application_ordinal",
                   "refused",
                   "late",
                   "stolen",
@@ -745,7 +755,7 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
                   "fault",
                   "sustain"});
   require(packet::string(field(in, "schema")) == Engine::Checkpoint::schema &&
-              integer(field(in, "version")) == 1 &&
+              integer(field(in, "version")) == 2 &&
               packet::string(field(in, "model_revision")) == contract,
           "unsupported performance checkpoint model");
   const auto rate = integer(field(in, "sample_rate"));
@@ -851,19 +861,21 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
   }
   cp.source = read_parameters(field(in, "source_parameters"));
   cp.effective = read_parameters(field(in, "effective_parameters"));
-  for (const auto &e : {std::pair{"cursor", &cp.cursor},
-                        {"accepted_sequence", &cp.accepted_sequence},
-                        {"accepted_sample", &cp.accepted_sample},
-                        {"applied_sequence", &cp.applied_sequence},
-                        {"refused", &cp.refused},
-                        {"late", &cp.late},
-                        {"stolen", &cp.stolen},
-                        {"dropped_readbacks", &cp.dropped_readbacks},
-                        {"dropped_captures", &cp.dropped_captures},
-                        {"clipping", &cp.clipping},
-                        {"force_limited", &cp.force_limited},
-                        {"overflow_count", &cp.overflow_count},
-                        {"panic_fence", &cp.panic_fence}})
+  for (const auto &e :
+       {std::pair{"cursor", &cp.cursor},
+        {"accepted_sequence", &cp.accepted_sequence},
+        {"accepted_sample", &cp.accepted_sample},
+        {"applied_sequence", &cp.applied_sequence},
+        {"applied_application_ordinal", &cp.applied_application_ordinal},
+        {"refused", &cp.refused},
+        {"late", &cp.late},
+        {"stolen", &cp.stolen},
+        {"dropped_readbacks", &cp.dropped_readbacks},
+        {"dropped_captures", &cp.dropped_captures},
+        {"clipping", &cp.clipping},
+        {"force_limited", &cp.force_limited},
+        {"overflow_count", &cp.overflow_count},
+        {"panic_fence", &cp.panic_fence}})
     *e.second = decimal(field(in, e.first));
   cp.emergency = boolean(field(in, "emergency"));
   cp.capture = boolean(field(in, "capture"));

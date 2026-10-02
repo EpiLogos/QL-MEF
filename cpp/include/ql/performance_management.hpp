@@ -112,6 +112,7 @@ class PerformanceManagement {
     next.samples_elapsed = cp->cursor;
     next.body_revision = cp->determination.body_revision;
     next.last_sequence = cp->applied_sequence;
+    next.last_applied_application_ordinal = cp->applied_application_ordinal;
     next.source = cp->source;
     next.effective = cp->effective;
     next.sustain = cp->sustain;
@@ -415,8 +416,10 @@ public:
       has_latest_ = true;
     }
     NativeGestureApplication applied{};
-    for (unsigned i = 0;
-         i < 256 && native_.engine->pop_gesture_application(applied); ++i) {
+    for (unsigned i = 0; i < 256 && has_latest_ &&
+                         native_.engine->pop_gesture_application_up_to(
+                             applied, latest_.last_applied_application_ordinal);
+         ++i) {
       out->applications.push_back(applied);
       if (!bindings_.application(applied))
         hold();

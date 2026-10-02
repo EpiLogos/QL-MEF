@@ -190,9 +190,10 @@ struct Readback {
   Determination determination{};
   ql::PhysicalSnapshot physical{};
   std::uint64_t samples_elapsed = 0, body_revision = 0, last_sequence = 0,
-                refused = 0, late = 0, overflows = 0, stolen = 0,
-                dropped_readbacks = 0, dropped_captures = 0,
-                clipping_samples = 0, force_limited_samples = 0;
+                last_applied_application_ordinal = 0, refused = 0, late = 0,
+                overflows = 0, stolen = 0, dropped_readbacks = 0,
+                dropped_captures = 0, clipping_samples = 0,
+                force_limited_samples = 0;
   std::uint32_t active_voices = 0, active_touches = 0;
   double peak = 0, rms = 0;
   std::uint64_t force_zero_samples = 0, emergency_requested = 0,
@@ -215,6 +216,8 @@ struct NativeGestureApplication {
   std::uint64_t physical_source_generation = 0;
   std::uint32_t physical_sample_rate = 0;
   bool physical_pratibimba = false;
+  std::uint64_t applied_application_ordinal = 0;
+  // Admission ID is independent of callback application order.
   std::uint64_t sequence = 0, admitted_sample = 0, applied_sample = 0,
                 committed_cursor = 0, body_revision = 0, touch = 0;
   Kind kind = Kind::NoteOn;
@@ -345,8 +348,8 @@ public:
     ReleaseOperation operation{};
   };
   struct Checkpoint {
-    static constexpr const char *schema = "ql.performance-checkpoint/v1";
-    std::uint32_t version = 1;
+    static constexpr const char *schema = "ql.performance-checkpoint/v2";
+    std::uint32_t version = 2;
     unsigned sample_rate = 0;
     Determination determination{}, producer_determination{};
     Identity producer_identity{};
@@ -365,11 +368,12 @@ public:
     RecordingStatus recording{};
     Parameters source{}, effective{};
     std::uint64_t cursor = 0, accepted_sequence = 0, accepted_sample = 0,
-                  applied_sequence = 0, refused = 0, late = 0, stolen = 0,
-                  dropped_readbacks = 0, dropped_captures = 0, clipping = 0,
-                  force_limited = 0, overflow_count = 0, panic_fence = 0,
-                  force_zero_samples = 0, emergency_requested = 0,
-                  emergency_observed = 0, emergency_applied_sample = 0;
+                  applied_sequence = 0, applied_application_ordinal = 0,
+                  refused = 0, late = 0, stolen = 0, dropped_readbacks = 0,
+                  dropped_captures = 0, clipping = 0, force_limited = 0,
+                  overflow_count = 0, panic_fence = 0, force_zero_samples = 0,
+                  emergency_requested = 0, emergency_observed = 0,
+                  emergency_applied_sample = 0;
     bool emergency = false, capture = false, fault = false, sustain = false;
   };
   class StoppedCustody {
@@ -455,9 +459,10 @@ private:
 
   Parameters source_{}, effective_{};
   std::uint64_t cursor_ = 0, accepted_sequence_ = 0, accepted_sample_ = 0,
-                last_admission_sample_ = 0, applied_sequence_ = 0, refused_ = 0,
-                late_ = 0, stolen_ = 0, dropped_readbacks_ = 0,
-                dropped_captures_ = 0, clipping_ = 0, force_limited_ = 0;
+                last_admission_sample_ = 0, applied_sequence_ = 0,
+                applied_application_ordinal_ = 0, refused_ = 0, late_ = 0,
+                stolen_ = 0, dropped_readbacks_ = 0, dropped_captures_ = 0,
+                clipping_ = 0, force_limited_ = 0;
   std::atomic<std::uint64_t> published_cursor_{0}, overflow_count_{0},
       published_sequence_{0}, panic_fence_{0}, published_horizon_{0};
   std::atomic<bool> emergency_{false}, capture_{false}, fault_{false};
@@ -1183,7 +1188,7 @@ public:
         body_.revision(body_.owner) != determination_.body_revision)
       throw std::logic_error(
           "exclusive paired audio/body checkpoint custody required");
-    cp.version = 1;
+    cp.version = 2;
     cp.sample_rate = rate_;
     cp.determination = determination_;
     cp.producer_determination = producer_determination_;
@@ -1207,6 +1212,7 @@ public:
     cp.accepted_sequence = accepted_sequence_;
     cp.accepted_sample = accepted_sample_;
     cp.applied_sequence = applied_sequence_;
+    cp.applied_application_ordinal = applied_application_ordinal_;
     cp.refused = refused_;
     cp.late = late_;
     cp.stolen = stolen_;
@@ -1237,7 +1243,7 @@ public:
                            std::uint64_t expected_cursor) const noexcept {
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
-        cp.version != 1 || cp.sample_rate != rate_ ||
+        cp.version != 2 || cp.sample_rate != rate_ ||
         !valid_determination(cp.determination) ||
         !valid_determination(cp.producer_determination) ||
         !same_lineage(cp.determination.identity, determination_.identity) ||
@@ -1264,6 +1270,10 @@ public:
           cp.recording.first_failed_sample)) ||
         cp.recording.first_failed_sequence > cp.accepted_sequence ||
         cp.applied_sequence > cp.accepted_sequence ||
+        cp.applied_application_ordinal > cp.accepted_sequence ||
+        cp.applications.write > cp.applied_application_ordinal ||
+        (cp.recording.failure == RecordingFailure::None &&
+         cp.applications.write != cp.applied_application_ordinal) ||
         cp.panic_fence > cp.accepted_sequence ||
         cp.force_zero_samples > cp.cursor ||
         cp.emergency_observed > cp.emergency_requested ||
@@ -1456,9 +1466,18 @@ public:
     for (const auto &p : cp.pending_releases)
       if (p.active && !valid_release(p.operation))
         return false;
+    if (ordinals_size > cp.accepted_sequence - cp.applied_application_ordinal)
+      return false;
+    std::uint64_t previous_application_ordinal = 0;
     for (auto i = cp.applications.read; i < cp.applications.write; ++i) {
       const auto &a = cp.applications.storage[i % 256];
-      if (!valid_origin(a.identity) || !a.sequence ||
+      if (!a.applied_application_ordinal ||
+          a.applied_application_ordinal > cp.applied_application_ordinal ||
+          (previous_application_ordinal &&
+           a.applied_application_ordinal <= previous_application_ordinal) ||
+          (cp.recording.failure == RecordingFailure::None &&
+           a.applied_application_ordinal != i + 1) ||
+          !valid_origin(a.identity) || !a.sequence ||
           a.sequence > cp.accepted_sequence ||
           a.applied_sample < a.admitted_sample ||
           a.committed_cursor > cp.cursor ||
@@ -1492,6 +1511,7 @@ public:
             !same_lineage(a.note.identity, a.identity) ||
             (a.kind == Kind::NoteOn && !(a.note.identity == a.identity)))))
         return false;
+      previous_application_ordinal = a.applied_application_ordinal;
     }
     return true;
   }
@@ -1520,6 +1540,7 @@ public:
     accepted_sequence_ = cp.accepted_sequence;
     accepted_sample_ = cp.accepted_sample;
     applied_sequence_ = cp.applied_sequence;
+    applied_application_ordinal_ = cp.applied_application_ordinal;
     refused_ = cp.refused;
     late_ = cp.late;
     stolen_ = cp.stolen;
@@ -1580,6 +1601,13 @@ public:
   bool pop_readback(Readback &out) noexcept { return readbacks_.take(out); }
   bool pop_capture(Capture &out) noexcept { return captures_.take(out); }
   bool pop_gesture_application(NativeGestureApplication &out) noexcept {
+    return gesture_applications_.take(out);
+  }
+  bool pop_gesture_application_up_to(NativeGestureApplication &out,
+                                     std::uint64_t committed_ordinal) noexcept {
+    const auto *next = gesture_applications_.peek();
+    if (!next || next->applied_application_ordinal > committed_ordinal)
+      return false;
     return gesture_applications_.take(out);
   }
   // Callback only; input cursor must be the actual body's sample cursor.
@@ -1862,6 +1890,11 @@ public:
       a.physical_source_generation = physical.source_generation;
       a.physical_sample_rate = physical.sample_rate;
       a.physical_pratibimba = physical.pratibimba;
+      // P and final output have committed. Even an explicitly refused operation
+      // now has a committed history fact. Failed publication consumes its
+      // ordinal and records loss, so C can detect both interior and trailing
+      // missing facts.
+      a.applied_application_ordinal = ++applied_application_ordinal_;
       if (!gesture_applications_.push(a)) {
         recording_failed(RecordingFailure::ApplicationQueueOverflow, a.sequence,
                          a.applied_sample);
@@ -1876,6 +1909,7 @@ public:
     receipt.samples_elapsed = cursor_;
     receipt.body_revision = determination_.body_revision;
     receipt.last_sequence = applied_sequence_;
+    receipt.last_applied_application_ordinal = applied_application_ordinal_;
     receipt.refused = refused_;
     receipt.late = late_;
     receipt.overflows = overflow_count_.load();

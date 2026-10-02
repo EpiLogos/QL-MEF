@@ -245,6 +245,11 @@ pub fn compile_score(
             source.prepared.native_basis(),
             source.prepared.physical_body(),
         )?;
+        if u64::from(source.prepared.physical_body().request().sample_rate) != rate {
+            return Err(
+                "native score sample clock differs from actual prepared physical body".into(),
+            );
+        }
         let actual = source.original_return.expression_basis()?;
         if actual["audio_determination"] != *source.prepared.determination()
             || actual["m1"] != source.prepared.native_basis().m1

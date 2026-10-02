@@ -41,8 +41,20 @@ pub struct VimarshaReading {
     pub source_ref: String,
     pub source_coordinate: String,
     pub seed: VimarshaSeed,
+    #[serde(serialize_with = "serialize_audio_octet")]
     pub audio_octet_hz: [f32; 8],
     pub nodal_quartet: [NodalConstraint; 4],
+}
+
+/// The retained owner computes binary32 frequencies. Their JSON readout must
+/// carry those exact values when consumed as binary64 by a coupled resonator.
+/// A shortest binary32 decimal would round to a different binary64 frequency
+/// with serde_json's arbitrary-precision Number representation.
+fn serialize_audio_octet<S: serde::Serializer>(
+    values: &[f32; 8],
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    values.map(f64::from).serialize(serializer)
 }
 const INTERVALS: [u8; 7] = [0, 2, 4, 5, 7, 9, 11];
 const OFFSETS: [u8; 8] = [2, 4, 6, 8, 3, 5, 7, 9];
@@ -122,4 +134,52 @@ pub fn read_from_pose(
         codon: pose.codon().address(),
         rotation: pose.slot(),
     })
+}
+
+#[cfg(test)]
+mod serialization_tests {
+    use super::*;
+
+    #[test]
+    fn native_octet_json_preserves_exact_coupled_frequencies_and_binary32_replay() {
+        for tick12 in 0..12 {
+            for lens in 0..12 {
+                for musical_mode in 0..7 {
+                    for (codon, rotation) in [(0, 0), (63, 7)] {
+                        let reading = read_seed(VimarshaSeed {
+                            tick12,
+                            lens,
+                            musical_mode,
+                            harmonic_ratio: [3, 2],
+                            codon,
+                            rotation,
+                        })
+                        .unwrap();
+                        let value = serde_json::to_value(&reading).unwrap();
+                        let bytes = serde_json::to_vec(&reading).unwrap();
+                        let wire: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+                        let replay: VimarshaReading = serde_json::from_slice(&bytes).unwrap();
+                        for (slot, native) in reading.audio_octet_hz.iter().enumerate() {
+                            let expected = f64::from(*native);
+                            assert_eq!(
+                                value["audio_octet_hz"][slot].as_f64().unwrap().to_bits(),
+                                expected.to_bits(),
+                                "native coupled Value frequency changed"
+                            );
+                            assert_eq!(
+                                wire["audio_octet_hz"][slot].as_f64().unwrap().to_bits(),
+                                expected.to_bits(),
+                                "native coupled wire frequency changed"
+                            );
+                            assert_eq!(
+                                replay.audio_octet_hz[slot].to_bits(),
+                                native.to_bits(),
+                                "binary32 owner replay changed"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
