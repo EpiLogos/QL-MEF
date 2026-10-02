@@ -280,3 +280,200 @@ fn a_supplied_resonator_or_binding_is_refused() {
     }];
     assert!(foreign.validate().is_err());
 }
+
+/// Real worker regression: D30 continues all nine resident amplitudes. This is
+/// deliberately configured/ignored until a real worker is supplied; a normal
+/// ignored-suite green supplies no native damping acceptance.
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn scene_damping_is_acknowledged_without_a_strike_shape_or_clock_reset() {
+    // WorldRequest creates M2 and M3 stamps from one EventIdentity. Predict
+    // its lawful successor before opening either native worker; this metadata
+    // continuation does not turn M3's clock or change its symbolic form.
+    let constructor = config();
+    assert_eq!(
+        constructor.basis.m3.stamp.identity,
+        constructor.basis.m2.stamp.identity
+    );
+    assert!(constructor.basis.m3_commands.is_empty());
+    let expected_profile_generation = constructor
+        .basis
+        .m2
+        .stamp
+        .identity
+        .profile_generation
+        .checked_add(1)
+        .unwrap();
+    let mut low =
+        SceneInstrument::open(&worker(), constructor.clone(), Duration::from_secs(20)).unwrap();
+    let mut high =
+        SceneInstrument::open(&worker(), constructor.clone(), Duration::from_secs(20)).unwrap();
+    let seed_low = low.session_mut().advance_field(256, false).unwrap();
+    let seed_high = high.session_mut().advance_field(256, false).unwrap();
+    assert_eq!(seed_low, seed_high);
+    let shape = low.shape().clone();
+    let before = low.influence();
+    let a = low.set_damping(0.0).unwrap();
+    let b = high.set_damping(2.0).unwrap();
+    assert_eq!(
+        a, b,
+        "policy admission preserves the exact resident field state"
+    );
+    assert_eq!(a["amplitudes_metres"], seed_low["amplitudes_metres"]);
+    assert_eq!(a["targets"], seed_low["targets"]);
+    assert_eq!(a["clock"], seed_low["clock"]);
+    assert_eq!(a["samples_elapsed"], seed_low["samples_elapsed"]);
+    assert!(audio(&a).is_empty());
+    assert_eq!(
+        a["generation"].as_str().unwrap().parse::<u64>().unwrap(),
+        seed_low["generation"]
+            .as_str()
+            .unwrap()
+            .parse::<u64>()
+            .unwrap()
+            + 1
+    );
+    assert_eq!(low.shape(), &shape);
+    assert_eq!(high.shape(), &shape);
+    for instrument in [&low, &high] {
+        let after = instrument.influence();
+        assert_eq!(after["m3_generation"], expected_profile_generation);
+        assert_eq!(
+            after["native_readback"]["profile_generation"],
+            expected_profile_generation
+        );
+        assert_eq!(
+            after["native_readback"]["m3_generation"],
+            expected_profile_generation
+        );
+        assert_eq!(after["m1_revision"], constructor.basis.m1.revision);
+        for key in [
+            "event_ref",
+            "subject_ref",
+            "m1_revision",
+            "shape_ref",
+            "address72",
+            "voices",
+            "geometry",
+            "material_standing",
+        ] {
+            assert_eq!(
+                after[key], before[key],
+                "only declared damping changes: {key}"
+            );
+        }
+        for key in [
+            "m1_clock",
+            "m1_carrier",
+            "m3_clock",
+            "selected_aperture",
+            "form",
+            "continuous_clock",
+            "continuation_start",
+        ] {
+            assert_eq!(
+                after["native_readback"][key], before["native_readback"][key],
+                "clock/form invariant: {key}"
+            );
+        }
+    }
+    assert_eq!(low.influence()["material"]["damping_per_second"], 0.0);
+    assert_eq!(high.influence()["material"]["damping_per_second"], 2.0);
+    let fa = low.session_mut().advance_field(4096, false).unwrap();
+    let fb = high.session_mut().advance_field(4096, false).unwrap();
+    let decay = (-2.0 * 4096.0 / 48_000.0_f64).exp();
+    // One complex multiply per sample, two source-qualified exponential/step
+    // evaluations. Bound grows with the actual operation count, not a relaxed
+    // semantic expectation. Native exact zero elapsed checks above stay exact.
+    let roundoff = 64.0 * 4096.0 * f64::EPSILON;
+    assert_eq!(fa["amplitudes_metres"].as_array().unwrap().len(), 9);
+    for (x, y) in fa["amplitudes_metres"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(fb["amplitudes_metres"].as_array().unwrap())
+    {
+        let ax = x[0].as_f64().unwrap().hypot(x[1].as_f64().unwrap());
+        let ay = y[0].as_f64().unwrap().hypot(y[1].as_f64().unwrap());
+        assert!(ax > 0.0 && ay > 0.0);
+        assert!(
+            (ay / ax - decay).abs() <= roundoff,
+            "nine-mode damping prediction: {ax} {ay} {decay}"
+        );
+    }
+    assert_eq!(fa["clock"], fb["clock"]);
+    assert_eq!(fa["samples_elapsed"], fb["samples_elapsed"]);
+    assert_ne!(
+        fa["targets"], fb["targets"],
+        "the native receiving body changes"
+    );
+    assert_ne!(fa["audio"], fb["audio"], "the native PCM changes");
+    let current = high.session().last_field().clone();
+    let influence = high.influence();
+    for invalid in [-1.0, 1_000_001.0, f64::NAN, f64::INFINITY] {
+        assert!(high.set_damping(invalid).is_err());
+        assert_eq!(high.session().last_field(), &current);
+        assert_eq!(high.influence(), influence);
+    }
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn scene_damping_host_requires_exact_scope_cursor_and_complete_ack() {
+    use ql_mef::continuous::host::{FieldHost, HOST_REQUEST, HostRequest};
+    let config = config();
+    let instance = config.instance_ref.clone();
+    let mut host = FieldHost::open_scene(&worker(), config, Duration::from_secs(20)).unwrap();
+    let initial = host.ready()["field"].clone();
+    let request = |id: &str, generation: &Value, person: &Value, value: f64| -> HostRequest {
+        serde_json::from_value(json!({"schema":HOST_REQUEST,"instance_ref":instance,
+            "event_ref":initial["event_ref"],"subject_ref":person,"request_id":id,
+            "expected_generation":generation,"expected_samples_elapsed":initial["samples_elapsed"],
+            "command":{"operation":"set-damping","per_second":value}}))
+        .unwrap()
+    };
+    let foreign = host.execute(request(
+        "1",
+        &initial["generation"],
+        &json!("person:foreign"),
+        2.0,
+    ));
+    assert_eq!(foreign["status"], "refused");
+    assert_eq!(foreign["field"], initial);
+    let admitted = host.execute(request(
+        "1",
+        &initial["generation"],
+        &initial["subject_ref"],
+        2.0,
+    ));
+    assert_eq!(admitted["status"], "ok");
+    assert_eq!(admitted["influence"]["material"]["damping_per_second"], 2.0);
+    assert_eq!(
+        admitted["influence"]["generation"],
+        admitted["field"]["generation"]
+    );
+    assert_eq!(
+        admitted["field"]["amplitudes_metres"],
+        initial["amplitudes_metres"]
+    );
+    let stale = host.execute(request(
+        "2",
+        &initial["generation"],
+        &initial["subject_ref"],
+        0.0,
+    ));
+    assert_eq!(stale["status"], "refused");
+    assert_eq!(stale["field"], admitted["field"]);
+    let invalid = host.execute(request(
+        "3",
+        &admitted["field"]["generation"],
+        &initial["subject_ref"],
+        -1.0,
+    ));
+    assert_eq!(invalid["status"], "refused");
+    assert_eq!(invalid["field"], admitted["field"]);
+    assert!(serde_json::from_value::<HostRequest>(json!({"schema":HOST_REQUEST,"instance_ref":instance,
+        "event_ref":initial["event_ref"],"subject_ref":initial["subject_ref"],"request_id":"4",
+        "expected_generation":admitted["field"]["generation"],"expected_samples_elapsed":initial["samples_elapsed"],
+        "command":{"operation":"set-damping","per_second":2.0,"strike":true}})).is_err());
+}

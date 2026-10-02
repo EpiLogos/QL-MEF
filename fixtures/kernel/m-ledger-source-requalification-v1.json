@@ -426,7 +426,7 @@
   ],
   "source_comparator_reconciliation": {
     "schema": "ql.source-comparator-reconciliation/v1",
-    "prior_receipt_git_commit": "173df794ab80848151180740817d0f7f6e699a95",
+    "prior_receipt_git_commit": "61344c687be668c9446d73c720866c966e676ccd",
     "prior_input_git_commit": "61344c687be668c9446d73c720866c966e676ccd",
     "inputs": [
       {
