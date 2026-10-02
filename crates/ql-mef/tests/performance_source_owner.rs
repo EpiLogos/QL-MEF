@@ -84,11 +84,11 @@ fn actual_seven_source_keys_are_sparse_targets_without_rewriting_m2_or_geometry(
             } else {
                 assert!(cell["native_target"].is_null());
                 assert!(cell["source_degree"].is_null());
-                assert!(cell["reason"].as_str().unwrap().len() > 0);
+                assert!(!cell["reason"].as_str().unwrap().is_empty());
                 assert!(cell.get("hertz").is_none());
             }
-            assert!(cell["source_collection"].as_str().unwrap().len() > 0);
-            assert!(cell["source_receipt"].as_str().unwrap().len() > 0);
+            assert!(!cell["source_collection"].as_str().unwrap().is_empty());
+            assert!(!cell["source_receipt"].as_str().unwrap().is_empty());
         }
     }
 }
