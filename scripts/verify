@@ -42,6 +42,7 @@ native() {
   bash scripts/test-native-c-foundation.sh
   bash scripts/test-native-m-tree.sh
   bash scripts/test-m1-engine.sh
+  bash scripts/test-physical-musical.sh
   git diff --exit-code
 }
 
