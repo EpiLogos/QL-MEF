@@ -146,36 +146,36 @@ The source-backed first recursive layer is:
 
 ```text
 M4.0
-├─ M4.0.0 Birthdate Encoding
-├─ M4.0.1 Astrological Chart
-├─ M4.0.2 Jungian Assessment
-├─ M4.0.3 Gene Keys Profile
-├─ M4.0.4 Human Design Profile
-└─ M4.0.5 Archetypal Quintessence
+├─ M4.0-0 Birthdate Encoding
+├─ M4.0-1 Astrological Chart
+├─ M4.0-2 Jungian Assessment
+├─ M4.0-3 Gene Keys Profile
+├─ M4.0-4 Human Design Profile
+└─ M4.0-5 Archetypal Quintessence
 
 M4.1
-├─ M4.1.0 Elemental Ground
-├─ M4.1.1 Energy-Body Architecture
-├─ M4.1.2 Materia & Reagents
-├─ M4.1.3 Operations & Techne
-├─ M4.1.4 Temporal Astrological Intelligence
-└─ M4.1.5 Safety & Feedback
+├─ M4.1-0 Elemental Ground
+├─ M4.1-1 Energy-Body Architecture
+├─ M4.1-2 Materia & Reagents
+├─ M4.1-3 Operations & Techne
+├─ M4.1-4 Temporal Astrological Intelligence
+└─ M4.1-5 Safety & Feedback
 
 M4.2
-├─ M4.2.0 Common Substrate (Symbol Ontology)
-├─ M4.2.1 Tarot Engines (Multi-Traditional)
-├─ M4.2.2 I-Ching Integration (Oracular)
-├─ M4.2.3 Casting & Randomness (Sacred Portal)
-├─ M4.2.4 Interpretation Layer (Commentary)
-└─ M4.2.5 Divinatory Hygiene & Pedagogy
+├─ M4.2-0 Common Substrate (Symbol Ontology)
+├─ M4.2-1 Tarot Engines (Multi-Traditional)
+├─ M4.2-2 I-Ching Integration (Oracular)
+├─ M4.2-3 Casting & Randomness (Sacred Portal)
+├─ M4.2-4 Interpretation Layer (Commentary)
+└─ M4.2-5 Divinatory Hygiene & Pedagogy
 
 M4.3
-├─ M4.3.0 Cycle Engine
-├─ M4.3.1 Operational Grammar (Alchemy)
-├─ M4.3.2 Dialogical & Inquiry Containers
-├─ M4.3.3 Control/Chaos & Safety
-├─ M4.3.4 Protocol Library (Storey Packets)
-└─ M4.3.5 Telemetry & Phase History
+├─ M4.3-0 Cycle Engine
+├─ M4.3-1 Operational Grammar (Alchemy)
+├─ M4.3-2 Dialogical & Inquiry Containers
+├─ M4.3-3 Control/Chaos & Safety
+├─ M4.3-4 Protocol Library (Storey Packets)
+└─ M4.3-5 Telemetry & Phase History
 
 M4.4
 ├─ M4.4.0 Gebser
@@ -334,12 +334,12 @@ The canonical six identity positions are:
 
 | Coordinate | Canonical name | Recovered capability |
 |---|---|---|
-| `M4.0.0` | Birthdate Encoding | Name/date derivation, numeric light, mod-6/conjugate position, mod-12/MEF refraction, preserved compound/evidence trails. |
-| `M4.0.1` | Astrological Chart | Natal celestial configuration, planetary/decanic/zodiacal placement, birth-time/location anchoring in the cosmic field. |
-| `M4.0.2` | Jungian Assessment | Psychological functions and attitudes, compensatory polarity and elemental/nucleotide refraction. |
-| `M4.0.3` | Gene Keys Profile | Personal activation across the 64-address I-Ching/Mahāmāyā field and its contemplative/evolutionary interpretation. |
-| `M4.0.4` | Human Design Profile | BodyGraph centres/gates/channels/authority and Personality/Design polarity as an additional personal evidence system. |
-| `M4.0.5` | Archetypal Quintessence | Integration of the five source systems into a traceable personal synthesis without destroying their separate evidence paths. |
+| `M4.0-0` | Birthdate Encoding | Name/date derivation, numeric light, mod-6/conjugate position, mod-12/MEF refraction, preserved compound/evidence trails. |
+| `M4.0-1` | Astrological Chart | Natal celestial configuration, planetary/decanic/zodiacal placement, birth-time/location anchoring in the cosmic field. |
+| `M4.0-2` | Jungian Assessment | Psychological functions and attitudes, compensatory polarity and elemental/nucleotide refraction. |
+| `M4.0-3` | Gene Keys Profile | Personal activation across the 64-address I-Ching/Mahāmāyā field and its contemplative/evolutionary interpretation. |
+| `M4.0-4` | Human Design Profile | BodyGraph centres/gates/channels/authority and Personality/Design polarity as an additional personal evidence system. |
+| `M4.0-5` | Archetypal Quintessence | Integration of the five source systems into a traceable personal synthesis without destroying their separate evidence paths. |
 
 ### Identity is a field before it is a compression
 
@@ -385,7 +385,7 @@ Alternate orderings introduced in secondary agent work are implementation/source
 
 This basis is now explicitly continuous with the M2/M3 physical-pole carrier. Earth/Fire/Water/Air do not acquire new meanings at M4: they are the same material qualities carried through Paraśakti's resonant fibres and Mahāmāyā's nucleotide/form families, now composed as the situated individual's quaternionic condition.
 
-### M4.0.0 and MEF
+### M4.0-0 and MEF
 
 The Birthdate Encoding work makes an important general identity law explicit:
 
@@ -397,7 +397,7 @@ raw name/date material
 → full 12×6 MEF refraction
 → L2′ elemental extraction
 → layer contribution
-→ M4.0.5 integration
+→ M4.0-5 integration
 ```
 
 MEF is not decorative commentary after a result. It is the refraction system by which the identity datum becomes intelligible across different forms of analysis.
@@ -410,12 +410,12 @@ The canonical sixfold is:
 
 | Coordinate | Canonical name | Capability |
 |---|---|---|
-| `M4.1.0` | Elemental Ground | Personal and current elemental condition/balance. |
-| `M4.1.1` | Energy-Body Architecture | Chakras, nāḍīs, sushumnā and subtle-body topology/flow. |
-| `M4.1.2` | Materia & Reagents | Correspondential materia, plants/minerals/substances and their elemental/planetary/body signatures. |
-| `M4.1.3` | Operations & Techne | Alchemical, ritual and transformational operations applied within context. |
-| `M4.1.4` | Temporal Astrological Intelligence | Current/natal planetary, decanic and kairotic timing of embodied state and operation. |
-| `M4.1.5` | Safety & Feedback | Contraindication, intensity, consent, response and adjustment. |
+| `M4.1-0` | Elemental Ground | Personal and current elemental condition/balance. |
+| `M4.1-1` | Energy-Body Architecture | Chakras, nāḍīs, sushumnā and subtle-body topology/flow. |
+| `M4.1-2` | Materia & Reagents | Correspondential materia, plants/minerals/substances and their elemental/planetary/body signatures. |
+| `M4.1-3` | Operations & Techne | Alchemical, ritual and transformational operations applied within context. |
+| `M4.1-4` | Temporal Astrological Intelligence | Current/natal planetary, decanic and kairotic timing of embodied state and operation. |
+| `M4.1-5` | Safety & Feedback | Contraindication, intensity, consent, response and adjustment. |
 
 ### Body ↔ process relation
 
@@ -455,12 +455,12 @@ The canonical sixfold is:
 
 | Coordinate | Canonical name | Capability |
 |---|---|---|
-| `M4.2.0` | Common Substrate (Symbol Ontology) | Common canonical symbol relations allowing different oracle systems to feed medicine, transformation and context. |
-| `M4.2.1` | Tarot Engines (Multi-Traditional) | Tarot decks/traditions, spreads, draws, mappings, orientations and developmental sequences. |
-| `M4.2.2` | I-Ching Integration (Oracular) | Hexagram casting, changing lines, resulting form and transformation history tied to M3 authority. |
-| `M4.2.3` | Casting & Randomness (Sacred Portal) | The explicit consultation/casting act and its entropy/selection provenance. |
-| `M4.2.4` | Interpretation Layer (Commentary) | Multi-layered interpretation of computed/cast structure in the current Nara context. |
-| `M4.2.5` | Divinatory Hygiene & Pedagogy | Bias reflection, process transparency, skill, education and disciplined use of oracle material. |
+| `M4.2-0` | Common Substrate (Symbol Ontology) | Common canonical symbol relations allowing different oracle systems to feed medicine, transformation and context. |
+| `M4.2-1` | Tarot Engines (Multi-Traditional) | Tarot decks/traditions, spreads, draws, mappings, orientations and developmental sequences. |
+| `M4.2-2` | I-Ching Integration (Oracular) | Hexagram casting, changing lines, resulting form and transformation history tied to M3 authority. |
+| `M4.2-3` | Casting & Randomness (Sacred Portal) | The explicit consultation/casting act and its entropy/selection provenance. |
+| `M4.2-4` | Interpretation Layer (Commentary) | Multi-layered interpretation of computed/cast structure in the current Nara context. |
+| `M4.2-5` | Divinatory Hygiene & Pedagogy | Bias reflection, process transparency, skill, education and disciplined use of oracle material. |
 
 ### Oracle as portal for the full 1-2-3
 
@@ -513,12 +513,12 @@ The canonical sixfold is:
 
 | Coordinate | Canonical name | Capability |
 |---|---|---|
-| `M4.3.0` | Cycle Engine | Locates activity within an ordered transformation cycle. |
-| `M4.3.1` | Operational Grammar (Alchemy) | Names and enacts transformation operations. |
-| `M4.3.2` | Dialogical & Inquiry Containers | Holds Bohmian/dialogical/inquiry processes as transformation vessels rather than oracles. |
-| `M4.3.3` | Control/Chaos & Safety | Regulates perturbation, intensity, risk and poison/cure relation. |
-| `M4.3.4` | Protocol Library (Storey Packets) | Reusable transformation sequences situated by storey/decan/timing/context. |
-| `M4.3.5` | Telemetry & Phase History | Records the developing phase history of a transformation for later context/recognition. |
+| `M4.3-0` | Cycle Engine | Locates activity within an ordered transformation cycle. |
+| `M4.3-1` | Operational Grammar (Alchemy) | Names and enacts transformation operations. |
+| `M4.3-2` | Dialogical & Inquiry Containers | Holds Bohmian/dialogical/inquiry processes as transformation vessels rather than oracles. |
+| `M4.3-3` | Control/Chaos & Safety | Regulates perturbation, intensity, risk and poison/cure relation. |
+| `M4.3-4` | Protocol Library (Storey Packets) | Reusable transformation sequences situated by storey/decan/timing/context. |
+| `M4.3-5` | Telemetry & Phase History | Records the developing phase history of a transformation for later context/recognition. |
 
 ### 12 × 3 × 24 structure
 
@@ -997,33 +997,33 @@ MEF lens
 | `M4-C02` | Objective internality / subjective-immediacy relation | M4.4.4 | pre-categorical ground + differentiated lived world | preserves distinction between immediacy and formal internal articulation | reason about lived structure without reducing the subject to its model | current authored Mark-reading from canonical phenomenological ground |
 | `M4-C03` | Cosmic 1/2/3 personal nesting | M4 / M4.4.4.4 | M1 topology + M2 vibration/Tattva + M3 transcription | composes cosmic structure as personal Pratibimba | see universal architecture as personally instantiated | foundational/current ratified |
 | `M4-C04` | Identity Matrix integration | M4.0 | five identity evidence systems | traceable identity synthesis field | explore how multiple systems determine one personal form | foundational canonical |
-| `M4-C05` | Birthdate Encoding | M4.0.0 | name/date material | numeric light → QL/MEF/lens/element evidence | inspect exact derivation rather than receive a root-number label | foundational + current deep spec |
-| `M4-C06` | Astrological Chart | M4.0.1 | birth time/location + celestial field | natal planetary/decanic/zodiacal configuration | locate personal constitution in cosmic clock/Paraśakti field | foundational canonical |
-| `M4-C07` | Jungian Assessment | M4.0.2 | psychological functions/attitudes | elemental/nucleotide + compensatory evidence | inspect typological constitution without reducing it to a type string | foundational canonical |
-| `M4-C08` | Gene Keys Profile | M4.0.3 | 64-address personal activations | contemplative/evolutionary 64-code evidence | explore personal activations continuous with M3/I-Ching | foundational canonical |
-| `M4-C09` | Human Design Profile | M4.0.4 | BodyGraph configuration | centres/gates/channels/authority evidence | explore additional embodied identity determination | foundational canonical |
-| `M4-C10` | Archetypal Quintessence | M4.0.5 | M4.0.0–4 evidence | integrates without erasing provenance/tension | inspect synthesis and its source field | foundational canonical; exact compression law requires harmonisation |
+| `M4-C05` | Birthdate Encoding | M4.0-0 | name/date material | numeric light → QL/MEF/lens/element evidence | inspect exact derivation rather than receive a root-number label | foundational + current deep spec |
+| `M4-C06` | Astrological Chart | M4.0-1 | birth time/location + celestial field | natal planetary/decanic/zodiacal configuration | locate personal constitution in cosmic clock/Paraśakti field | foundational canonical |
+| `M4-C07` | Jungian Assessment | M4.0-2 | psychological functions/attitudes | elemental/nucleotide + compensatory evidence | inspect typological constitution without reducing it to a type string | foundational canonical |
+| `M4-C08` | Gene Keys Profile | M4.0-3 | 64-address personal activations | contemplative/evolutionary 64-code evidence | explore personal activations continuous with M3/I-Ching | foundational canonical |
+| `M4-C09` | Human Design Profile | M4.0-4 | BodyGraph configuration | centres/gates/channels/authority evidence | explore additional embodied identity determination | foundational canonical |
+| `M4-C10` | Archetypal Quintessence | M4.0-5 | M4.0-0–4 evidence | integrates without erasing provenance/tension | inspect synthesis and its source field | foundational canonical; exact compression law requires harmonisation |
 | `M4-C11` | Canonical elemental throughline | M4.0/M4.1 | A/T/U/C/G + Tarot + Jung + elements | fixed correspondential bridge | move consistently across genetics, psyche, oracle and body | current ratified canonical |
-| `M4-C12` | Elemental Ground | M4.1.0 | identity + current condition | personal/current elemental balance | inspect elemental constitution/current state | foundational canonical |
-| `M4-C13` | Energy-Body Architecture | M4.1.1 | subtle-body/Tattva/body evidence | chakra/nāḍī/sushumnā field | orient within a living subtle-body topology | foundational canonical |
-| `M4-C14` | Materia & Reagents | M4.1.2 | elemental/planetary/body signatures | correspondential materia field | relate substances/materials to the current psychoid/medicinal situation | foundational canonical |
-| `M4-C15` | Operations & Techne | M4.1.3 | condition + materia + transformation aim | alchemical/ritual operations | enact bounded transformation rather than merely interpret | foundational canonical |
-| `M4-C16` | Temporal Astrological Intelligence | M4.1.4 | current/natal planetary + decanic/Kairotic state | timing condition for medicine/oracle/transformation/lens | know when/how a condition is situated in cosmic time | foundational canonical |
-| `M4-C17` | Safety & Feedback | M4.1.5 | operation + intensity + response | contraindication/adjustment feedback | stop, adjust, learn and preserve agency | foundational canonical |
-| `M4-C18` | Common Symbol Substrate | M4.2.0 | Tarot/I-Ching/other oracle symbols | canonical cross-tradition symbol relations | move oracle output into medicine/transformation/context without losing source | foundational canonical |
-| `M4-C19` | Tarot Engines | M4.2.1 | deck/tradition/spread + M3 mapping | draw/orientation/sequence/narrative | track archetypal form and developmental trajectory | foundational + M3 ratified relation |
-| `M4-C20` | I-Ching Integration | M4.2.2 | cast + M3 hexagram/change grammar | primary/changing/result transformation | track change as a formal trajectory | foundational + M3 ratified relation |
-| `M4-C21` | Casting & Randomness (Sacred Portal) | M4.2.3 | user consultation + entropy | opens a situated oracle event | deliberately invoke the oracle rather than passively receive it | foundational canonical |
-| `M4-C22` | Interpretation Layer | M4.2.4 | oracle computation + identity/body/context | situated commentary/synthesis | understand how the reading pertains here | foundational canonical |
-| `M4-C23` | Divinatory Hygiene & Pedagogy | M4.2.5 | oracle method + interpretation | transparency/bias/skill/reflection | learn to use oracle material with discernment | foundational canonical |
+| `M4-C12` | Elemental Ground | M4.1-0 | identity + current condition | personal/current elemental balance | inspect elemental constitution/current state | foundational canonical |
+| `M4-C13` | Energy-Body Architecture | M4.1-1 | subtle-body/Tattva/body evidence | chakra/nāḍī/sushumnā field | orient within a living subtle-body topology | foundational canonical |
+| `M4-C14` | Materia & Reagents | M4.1-2 | elemental/planetary/body signatures | correspondential materia field | relate substances/materials to the current psychoid/medicinal situation | foundational canonical |
+| `M4-C15` | Operations & Techne | M4.1-3 | condition + materia + transformation aim | alchemical/ritual operations | enact bounded transformation rather than merely interpret | foundational canonical |
+| `M4-C16` | Temporal Astrological Intelligence | M4.1-4 | current/natal planetary + decanic/Kairotic state | timing condition for medicine/oracle/transformation/lens | know when/how a condition is situated in cosmic time | foundational canonical |
+| `M4-C17` | Safety & Feedback | M4.1-5 | operation + intensity + response | contraindication/adjustment feedback | stop, adjust, learn and preserve agency | foundational canonical |
+| `M4-C18` | Common Symbol Substrate | M4.2-0 | Tarot/I-Ching/other oracle symbols | canonical cross-tradition symbol relations | move oracle output into medicine/transformation/context without losing source | foundational canonical |
+| `M4-C19` | Tarot Engines | M4.2-1 | deck/tradition/spread + M3 mapping | draw/orientation/sequence/narrative | track archetypal form and developmental trajectory | foundational + M3 ratified relation |
+| `M4-C20` | I-Ching Integration | M4.2-2 | cast + M3 hexagram/change grammar | primary/changing/result transformation | track change as a formal trajectory | foundational + M3 ratified relation |
+| `M4-C21` | Casting & Randomness (Sacred Portal) | M4.2-3 | user consultation + entropy | opens a situated oracle event | deliberately invoke the oracle rather than passively receive it | foundational canonical |
+| `M4-C22` | Interpretation Layer | M4.2-4 | oracle computation + identity/body/context | situated commentary/synthesis | understand how the reading pertains here | foundational canonical |
+| `M4-C23` | Divinatory Hygiene & Pedagogy | M4.2-5 | oracle method + interpretation | transparency/bias/skill/reflection | learn to use oracle material with discernment | foundational canonical |
 | `M4-C24` | Oracle invocation of full cosmic 1/2/3 | M4.2 | M1 + M2 + M3 + Nara occasion | invokes integrated cosmic instrument in local context | call the complete cosmic field into a personal question/event/session | current human-ratified relation generated from existing clock/oracle architecture |
-| `M4-C25` | Cycle Engine | M4.3.0 | activity + transformation context | ordered cycle position/state | know where a process is in its transformation | foundational canonical |
-| `M4-C26` | Operational Grammar (Alchemy) | M4.3.1 | process material | sevenfold alchemical operation family | enact transformation in named operations | foundational; exact historical verb normalisation open |
-| `M4-C27` | Dialogical & Inquiry Containers | M4.3.2 | lived/question material | transformation vessel/container | undertake dialogue/inquiry without confusing it with oracle casting | foundational canonical |
-| `M4-C28` | Control/Chaos & Safety | M4.3.3 | intensity + perturbation + context | bounds transformation dynamics | work at appropriate intensity and preserve feedback | foundational canonical |
-| `M4-C29` | Protocol Library (Storey Packets) | M4.3.4 | 12 storeys × 3 decans + timing/context | 36 contextualised transformation positions | enter reusable but situated transformation protocols | foundational canonical |
+| `M4-C25` | Cycle Engine | M4.3-0 | activity + transformation context | ordered cycle position/state | know where a process is in its transformation | foundational canonical |
+| `M4-C26` | Operational Grammar (Alchemy) | M4.3-1 | process material | sevenfold alchemical operation family | enact transformation in named operations | foundational; exact historical verb normalisation open |
+| `M4-C27` | Dialogical & Inquiry Containers | M4.3-2 | lived/question material | transformation vessel/container | undertake dialogue/inquiry without confusing it with oracle casting | foundational canonical |
+| `M4-C28` | Control/Chaos & Safety | M4.3-3 | intensity + perturbation + context | bounds transformation dynamics | work at appropriate intensity and preserve feedback | foundational canonical |
+| `M4-C29` | Protocol Library (Storey Packets) | M4.3-4 | 12 storeys × 3 decans + timing/context | 36 contextualised transformation positions | enter reusable but situated transformation protocols | foundational canonical |
 | `M4-C30` | 24-stroke doubled transformation traversal | M4.3 | 12-storey field + conjugate phase | doubled process traversal | read transformation through the same doubled mod-6 geometry | foundational architecture |
-| `M4-C31` | Telemetry & Phase History | M4.3.5 | operations + outcomes + episodes | append/retain transformation trajectory | review how change actually unfolded over time | foundational canonical |
+| `M4-C31` | Telemetry & Phase History | M4.3-5 | operations + outcomes + episodes | append/retain transformation trajectory | review how change actually unfolded over time | foundational canonical |
 | `M4-C32` | Context & Lenses conduit | M4.4 | lived evidence + wider M field | contextual/refraction routing | inspect the same experience through different legitimate lenses | foundational canonical; major cross-M conduit |
 | `M4-C33` | Gebser lens | M4.4.0 | lived event/world | structures/mutations-of-consciousness reading | interpret developmental consciousness structure | foundational canonical |
 | `M4-C34` | Ontological lens | M4.4.1 | lived event/world | mode/kind-of-being reading | inspect what kind of world/being is disclosed | foundational canonical |

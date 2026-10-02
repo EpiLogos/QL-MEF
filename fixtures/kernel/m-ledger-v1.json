@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "0d85f80b36b039e03d3b9defeb408e8ba1076c4d68ed0b70a17f96db7161f58c",
+  "ledger_revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc",
@@ -44,11 +44,11 @@
       "id": "deep-M4",
       "data": {
         "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
-        "sha256": "a3218a324382eaa924e35f9372fc0fdf2fc23ae5b25f0567ac04aeb6611ef840"
+        "sha256": "45b3a0152a9f5165376ee3a7d1cdeb45d13c15f556e1b85b502c299a2f3b0325"
       },
       "rationale": {
         "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
-        "sha256": "6738fa80ec422f60546a18ead99107d4e95fce8238db29f8efcaffad618afaf8"
+        "sha256": "a24098d211e1a8b30972bb7796073852bdf922de76a05341eb17b7c6230721ba"
       }
     },
     {
@@ -12122,7 +12122,7 @@
       "role": "Birthdate Encoding",
       "scope": "M4",
       "coordinates": [
-        "M4.0.0"
+        "M4.0-0"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12140,7 +12140,7 @@
       "role": "Astrological Chart",
       "scope": "M4",
       "coordinates": [
-        "M4.0.1"
+        "M4.0-1"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12158,7 +12158,7 @@
       "role": "Jungian Assessment",
       "scope": "M4",
       "coordinates": [
-        "M4.0.2"
+        "M4.0-2"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12176,7 +12176,7 @@
       "role": "Gene Keys Profile",
       "scope": "M4",
       "coordinates": [
-        "M4.0.3"
+        "M4.0-3"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12194,7 +12194,7 @@
       "role": "Human Design Profile",
       "scope": "M4",
       "coordinates": [
-        "M4.0.4"
+        "M4.0-4"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12212,7 +12212,7 @@
       "role": "Archetypal Quintessence",
       "scope": "M4",
       "coordinates": [
-        "M4.0.5"
+        "M4.0-5"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12249,7 +12249,7 @@
       "role": "Elemental Ground",
       "scope": "M4",
       "coordinates": [
-        "M4.1.0"
+        "M4.1-0"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12267,7 +12267,7 @@
       "role": "Energy-Body Architecture",
       "scope": "M4",
       "coordinates": [
-        "M4.1.1"
+        "M4.1-1"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12285,7 +12285,7 @@
       "role": "Materia & Reagents",
       "scope": "M4",
       "coordinates": [
-        "M4.1.2"
+        "M4.1-2"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12303,7 +12303,7 @@
       "role": "Operations & Techne",
       "scope": "M4",
       "coordinates": [
-        "M4.1.3"
+        "M4.1-3"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12321,7 +12321,7 @@
       "role": "Temporal Astrological Intelligence",
       "scope": "M4",
       "coordinates": [
-        "M4.1.4"
+        "M4.1-4"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12339,7 +12339,7 @@
       "role": "Safety & Feedback",
       "scope": "M4",
       "coordinates": [
-        "M4.1.5"
+        "M4.1-5"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12357,7 +12357,7 @@
       "role": "Common Symbol Substrate",
       "scope": "M4",
       "coordinates": [
-        "M4.2.0"
+        "M4.2-0"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12375,7 +12375,7 @@
       "role": "Tarot Engines",
       "scope": "M4",
       "coordinates": [
-        "M4.2.1"
+        "M4.2-1"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12393,7 +12393,7 @@
       "role": "I-Ching Integration",
       "scope": "M4",
       "coordinates": [
-        "M4.2.2"
+        "M4.2-2"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12411,7 +12411,7 @@
       "role": "Casting & Randomness (Sacred Portal)",
       "scope": "M4",
       "coordinates": [
-        "M4.2.3"
+        "M4.2-3"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12429,7 +12429,7 @@
       "role": "Interpretation Layer",
       "scope": "M4",
       "coordinates": [
-        "M4.2.4"
+        "M4.2-4"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12447,7 +12447,7 @@
       "role": "Divinatory Hygiene & Pedagogy",
       "scope": "M4",
       "coordinates": [
-        "M4.2.5"
+        "M4.2-5"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12483,7 +12483,7 @@
       "role": "Cycle Engine",
       "scope": "M4",
       "coordinates": [
-        "M4.3.0"
+        "M4.3-0"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12501,7 +12501,7 @@
       "role": "Operational Grammar (Alchemy)",
       "scope": "M4",
       "coordinates": [
-        "M4.3.1"
+        "M4.3-1"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12519,7 +12519,7 @@
       "role": "Dialogical & Inquiry Containers",
       "scope": "M4",
       "coordinates": [
-        "M4.3.2"
+        "M4.3-2"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12537,7 +12537,7 @@
       "role": "Control/Chaos & Safety",
       "scope": "M4",
       "coordinates": [
-        "M4.3.3"
+        "M4.3-3"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12555,7 +12555,7 @@
       "role": "Protocol Library (Storey Packets)",
       "scope": "M4",
       "coordinates": [
-        "M4.3.4"
+        "M4.3-4"
       ],
       "source": {
         "matrix": "deep-M4",
@@ -12591,7 +12591,7 @@
       "role": "Telemetry & Phase History",
       "scope": "M4",
       "coordinates": [
-        "M4.3.5"
+        "M4.3-5"
       ],
       "source": {
         "matrix": "deep-M4",
