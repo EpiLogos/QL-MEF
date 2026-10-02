@@ -33,8 +33,8 @@ fn identity(p: &PreparedPerformanceBinding, degrees: [f64; 10]) -> Value {
     let natal = json!({"schema":"ql.nara-natal/v1", "request":profile.natal_request().unwrap(),
         "status":"partial", "reason":"controlled-angular-input; astronomical-provider-unqualified", "chart":null,
         "sky":{"schema":"ql.sky-snapshot/v1","snapshot_ref":"reference:controlled-natal-input",
-            "bodies":["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].iter().enumerate().map(|(i,name)|
-                json!({"native_planet_id":i,"body":name,"longitude_degrees":degrees[i]})).collect::<Vec<_>>()}});
+            "bodies":(["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].iter().enumerate().map(|(i,name)|
+                json!({"native_planet_id":i,"body":name,"longitude_degrees":degrees[i]})).collect::<Vec<_>>())}});
     profile.inspect(Some(&natal)).unwrap()
 }
 fn occasion(p: &PreparedPerformanceBinding, i: &Value) -> NaraOccasion {
