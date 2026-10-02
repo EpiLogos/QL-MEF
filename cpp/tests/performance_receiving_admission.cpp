@@ -39,6 +39,25 @@ int main() {
   assert(admitted.matches_current(resident.determination,
                                   field(baseline, "native_basis")) &&
          admitted.routes()->routes.route_count() == 0);
+  const auto original_determination =
+      checkpoint_transport::determination(resident.determination);
+  for (const char *stale_field : {"registry_revision", "source_revision"}) {
+    auto stale = parse_native(
+        json_object_to_json_string_ext(baseline, JSON_C_TO_STRING_PLAIN));
+    auto *definition = field(stale.get(), "receiving_definition");
+    assert(json_object_object_add(
+               definition, stale_field,
+               json_object_new_string("stale:actual-source")) == 0);
+    refused([&] {
+      read_native_receiving_admission(stale.get(), stale.get(), resident,
+                                      field(baseline, "native_basis"),
+                                      resident.body->preparation(), {}, 0);
+    });
+  }
+  const auto retained_determination =
+      checkpoint_transport::determination(resident.determination);
+  assert(json_object_equal(original_determination.get(),
+                           retained_determination.get()));
   auto *alternatives = field(root.get(), "alternatives");
   assert(count(alternatives, 3) == 3);
   for (std::size_t i = 0; i < 3; ++i) {

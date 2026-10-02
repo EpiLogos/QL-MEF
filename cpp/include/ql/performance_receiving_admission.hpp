@@ -86,6 +86,17 @@ inline AdmittedNativeReceivingSource read_native_receiving_admission(
           "producer");
   auto *operation = field(candidate, "operation");
   auto *definition = field(candidate, "receiving_definition");
+  // MEF retains its accepted request/base revision in the audio
+  // determination. N's independently replayed definition names the current
+  // source registry. Both witnesses must remain distinct and qualified.
+  require(ql_m_live_accepts_base(d.registry_revision.data()) &&
+              text(field(definition, "registry_revision")) ==
+                  ql_m_live_registry_revision() &&
+              text(field(definition, "source_revision")) ==
+                  ql_m_live_source_revision() &&
+              text(field(definition, "source_revision")) ==
+                  d.source_revision.data(),
+          "receiving definition actual current registry/source is stale");
   require(json_object_equal(field(candidate, "native_generations"),
                             field(operation, "native_generations")) &&
               json_object_equal(field(definition, "native_generations"),
@@ -96,8 +107,8 @@ inline AdmittedNativeReceivingSource read_native_receiving_admission(
   PhysicalForceSourceBasis admitted;
   admitted.event_ref = d.identity.event.data();
   admitted.subject_ref = d.identity.subject.data();
-  admitted.registry_revision = d.registry_revision.data();
-  admitted.source_revision = d.source_revision.data();
+  admitted.registry_revision = text(field(definition, "registry_revision"));
+  admitted.source_revision = text(field(definition, "source_revision"));
   admitted.definition_ref = text(field(operation, "definition_digest"));
   admitted.source_instance_ref = text(field(operation, "source_instance"));
   admitted.determination_ref = d.native_receipt_ref.data();
