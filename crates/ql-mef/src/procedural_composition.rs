@@ -2432,7 +2432,7 @@ pub fn cprime_dependencies(
                     actual_return_refs
                         .get(slot)
                         .cloned()
-                        .ok_or("fusion recipe requires all actual contributor Returns")
+                        .ok_or_else(|| "fusion recipe requires all actual contributor Returns".to_owned())
                 })
                 .collect::<Result<Vec<_>>>()?,
             ThreadForm::Sustained if procedure.membership_mode != MembershipMode::Sustained => {
