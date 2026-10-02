@@ -152,9 +152,34 @@ fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Va
             )
         })
         .collect();
+    let world_preparation = || ReceivingPreparation {
+        prepared: p,
+        context: ReceivingContext {
+            kind: ContextKind::World,
+            context: reference("reference:force-routes/world-context"),
+            receiver: reference("reference:force-routes/world-receiver"),
+            protected_state: None,
+            consent: None,
+            original_occasion: None,
+            private: false,
+        },
+        identity: None,
+        current: None,
+        original_occasion: None,
+        calibration: None,
+    };
+    let world_definition = prepare_native_receiving(world_preparation())?;
+    world_definition.validate_sources(world_preparation())?;
+    let world_operation = world_definition.native_operation(native_cursor)?;
+    let world_current_operation =
+        prepare_native_receiving(world_preparation())?.native_operation(native_cursor)?;
+    let mut world_source_basis = source_basis.clone();
+    world_source_basis["definition_ref"] = json!(world_definition.content_digest());
+    world_source_basis["source_instance_ref"] = json!(world_operation.source_instance);
     let out: Value = json!({"preparation":p.physical_body(),"current_m3":p.native_basis().m3,
         "operation":operation,"current_operation":current_operation,"source_basis":source_basis,
-        "program_refs":program_refs});
+        "program_refs":program_refs,"world_operation":world_operation,
+        "world_current_operation":world_current_operation,"world_source_basis":world_source_basis});
     Ok(out)
 }
 

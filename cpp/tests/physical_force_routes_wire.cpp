@@ -61,7 +61,8 @@ int main() {
   assert(json_tokener_get_error(tok.get()) == json_tokener_success &&
          json_tokener_get_parse_end(tok.get()) == line.size());
   keys(input.get(), {"preparation", "current_m3", "operation", "current_operation",
-                     "source_basis", "program_refs", "after_material"});
+                     "source_basis", "program_refs", "world_operation",
+                     "world_current_operation", "world_source_basis", "after_material"});
   auto operation = field(input.get(), "operation");
   auto current = field(input.get(), "current_operation");
   const auto basis = source_basis(field(input.get(), "source_basis"));
@@ -70,6 +71,11 @@ int main() {
                                                             field(input.get(), "current_m3"), true));
   auto joined = read_prepared_physical_force_routes(operation, current, basis, prepared, program_refs, 0);
   assert(joined.routes.route_count() == 9 && joined.routes.preflight(prepared, basis, 0));
+  const auto world_basis = source_basis(field(input.get(), "world_source_basis"));
+  auto world_routes = read_prepared_physical_force_routes(
+      field(input.get(), "world_operation"), field(input.get(), "world_current_operation"),
+      world_basis, prepared, {}, 0);
+  assert(world_routes.routes.route_count() == 0 && world_routes.routes.preflight(prepared, world_basis, 0));
   const auto reject_mutation = [&](auto mutate, bool both = false) {
     auto changed = copy(operation);
     mutate(changed.get());
@@ -153,9 +159,26 @@ int main() {
   // Actual Rust producer prepares a changed material and separately recompiles
   // N's full original definition/calibration against the after preparation.
   auto after = field(input.get(), "after_material");
-  keys(after, {"preparation", "current_m3", "operation", "current_operation", "source_basis", "program_refs"});
+  keys(after, {"preparation", "current_m3", "operation", "current_operation", "source_basis", "program_refs",
+               "world_operation", "world_current_operation", "world_source_basis"});
   PreparedPhysicalBody after_preparation(read_prepared_physical_body(field(after, "preparation"),
                                                                     field(after, "current_m3"), true));
+  const auto after_world_basis = source_basis(field(after, "world_source_basis"));
+  auto after_world_routes = read_prepared_physical_force_routes(
+      field(after, "world_operation"), field(after, "world_current_operation"),
+      after_world_basis, after_preparation, {}, 512);
+  assert(after_world_routes.routes.route_count() == 0 &&
+         after_world_routes.routes.preflight(after_preparation, after_world_basis, 512));
+  // A real independent World operation for the original material is still
+  // source-current at the M3 generation. It must not acquire the after body.
+  assert(prepared.input().body_revision != after_preparation.input().body_revision);
+  assert(world_basis.m3_generation == after_world_basis.m3_generation);
+  std::cerr << "checking genuine native World against a changed material body\n";
+  refused([&] {
+    read_prepared_physical_force_routes(
+        field(input.get(), "world_operation"), field(input.get(), "world_current_operation"),
+        world_basis, after_preparation, {}, 0);
+  });
   const auto after_basis = source_basis(field(after, "source_basis"));
   const auto after_refs = programs(field(after, "program_refs"));
   auto after_routes = read_prepared_physical_force_routes(field(after, "operation"), field(after, "current_operation"),
