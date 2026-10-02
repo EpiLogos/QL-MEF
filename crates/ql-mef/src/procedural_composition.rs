@@ -2429,10 +2429,9 @@ pub fn cprime_dependencies(
             ThreadForm::Fusion if index + 1 == slots.len() && slots.len() > 1 => slots[..index]
                 .iter()
                 .map(|slot| {
-                    actual_return_refs
-                        .get(slot)
-                        .cloned()
-                        .ok_or_else(|| "fusion recipe requires all actual contributor Returns".to_owned())
+                    actual_return_refs.get(slot).cloned().ok_or_else(|| {
+                        "fusion recipe requires all actual contributor Returns".to_owned()
+                    })
                 })
                 .collect::<Result<Vec<_>>>()?,
             ThreadForm::Sustained if procedure.membership_mode != MembershipMode::Sustained => {
