@@ -17,6 +17,7 @@ use std::fmt::{self, Display};
 use std::process::ExitCode;
 use std::str::FromStr;
 
+mod agent_event_command;
 pub mod configuration;
 mod epi_agent_command;
 mod m3_command;
@@ -326,6 +327,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
         Some("techne") => plain(techne_command::command(&args[1..], json)),
         Some("shape") => plain(shape_command::command(&args[1..], json)),
         Some("epi-agent") => plain(epi_agent_command::command(&args[1..], json)),
+        Some("agent-event") => plain(agent_event_command::command(&args[1..])),
         Some("nara") => plain(nara_command::command(&args[1..])),
         Some("scene") => plain(scene_command::command(&args[1..])),
         Some("service") => plain(service_command(&args[1..], json)),
@@ -347,6 +349,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
 fn help() -> String {
     format!(
         "Quaternal Logic {} — the semantic kernel: derivation, coverage, and the\nregistry/lens/frame reads built on it. Domain distinctions are preserved;\nthe groups below say who each is for.\n\n\
+Agent event reading (supplied events; deterministic completion before optional decisions):\n  ql agent-event project <request.json|-> [--json]\n  ql agent-event frame <request.json|-> [--json]\n  ql agent-event harmonic <request.json|-> [--json]\n  ql agent-event validate <request.json|-> [--json]\n\n\
 Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
 Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n\n\
 Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n                                    the continuous-field host binding the Live instrument opens\n\n\
@@ -391,6 +394,10 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "epi-agent.constitution",
             "epi-agent.faculty",
             "epi-agent.invoke",
+            "agent-event.project",
+            "agent-event.frame",
+            "agent-event.harmonic",
+            "agent-event.validate",
             "nara.capabilities",
             "nara.inspect",
             "nara.calculate",

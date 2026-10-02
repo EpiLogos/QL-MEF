@@ -77,23 +77,7 @@ fn invoke(path: &str) -> R<Value> {
         .ok_or_else(|| error("epi-agent invocation requires operation"))?;
     let input = input(&request)?;
 
-    let expected = match position {
-        0 => &["anuttara.read", "ananda.m1-2"][..],
-        1 => &["tda.vietoris-rips"][..],
-        2 => &["bimba.neighborhood"][..],
-        3 => &["representation.bind"][..],
-        4 => &[
-            "nara.activity.validate",
-            "nara.elemental-map",
-            "nara.personal-receive",
-            "nara.journey.open",
-            "nara.journey.apply",
-            "nara.journey.read",
-            "nara.lived-context.compose",
-        ][..],
-        5 => &["logos.return"][..],
-        _ => unreachable!(),
-    };
+    let expected = epi_agent::native_operations(position).map_err(error)?;
     if !expected.contains(&operation) {
         return Err(error(format!(
             "operation {operation} is not admitted for faculty #{position}"

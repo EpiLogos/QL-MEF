@@ -177,12 +177,12 @@ pub fn constitution() -> Value {
             ]
         },
         "faculties": [
-            {"position":"#0","name":"Anuttara","operations":["anuttara.read","ananda.m1-2"],"source_owner":"QL-MEF","optional_instruments":["jev","ebm"]},
-            {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
-            {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
-            {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
-            {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read","nara.lived-context.compose"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
-            {"position":"#5","name":"Epii","operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
+            {"position":"#0","name":native_faculties()[0].1,"operations":["anuttara.read","ananda.m1-2"],"source_owner":"QL-MEF","optional_instruments":["jev","ebm"]},
+            {"position":"#1","name":native_faculties()[1].1,"operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
+            {"position":"#2","name":native_faculties()[2].1,"operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
+            {"position":"#3","name":native_faculties()[3].1,"operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
+            {"position":"#4","name":native_faculties()[4].1,"operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read","nara.lived-context.compose"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
+            {"position":"#5","name":native_faculties()[5].1,"operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
         "source": {
             "repository": manifest.source_repository,
@@ -203,6 +203,39 @@ pub fn constitution() -> Value {
             "canonical_mutation": false
         }
     })
+}
+
+/// Exact callable operations admitted by the native Epi faculty dispatcher.
+/// Descriptive instruments in the constitution are not automatically callable.
+pub fn native_faculties() -> &'static [(u8, &'static str); 6] {
+    &[
+        (0, "Anuttara"),
+        (1, "Paramaśiva"),
+        (2, "Paraśakti"),
+        (3, "Mahāmāyā"),
+        (4, "Nara"),
+        (5, "Epii"),
+    ]
+}
+
+pub fn native_operations(position: u8) -> Result<&'static [&'static str], String> {
+    match position {
+        0 => Ok(&["anuttara.read", "ananda.m1-2"]),
+        1 => Ok(&["tda.vietoris-rips"]),
+        2 => Ok(&["bimba.neighborhood"]),
+        3 => Ok(&["representation.bind"]),
+        4 => Ok(&[
+            "nara.activity.validate",
+            "nara.elemental-map",
+            "nara.personal-receive",
+            "nara.journey.open",
+            "nara.journey.apply",
+            "nara.journey.read",
+            "nara.lived-context.compose",
+        ]),
+        5 => Ok(&["logos.return"]),
+        _ => Err("Epi faculty position must be 0..5".into()),
+    }
 }
 
 pub fn faculty(position: u8) -> Result<Value, String> {

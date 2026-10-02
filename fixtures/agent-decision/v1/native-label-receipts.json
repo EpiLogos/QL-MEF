@@ -1,0 +1,154 @@
+{
+  "context_frames": {
+    "argv": [
+      "ql",
+      "context-frame",
+      "list",
+      "--json"
+    ],
+    "data": {
+      "frames": [
+        {
+          "code": "CF1",
+          "expression": "(00/00)",
+          "name": "Fourfold-Zero / undifferentiated-ground"
+        },
+        {
+          "code": "CF2",
+          "expression": "(0/1)",
+          "name": "Non-Dual Anchor / standing-identity"
+        },
+        {
+          "code": "CF3",
+          "expression": "(0/1/2)",
+          "name": "Dual-Non-Dual / triadic-circulation"
+        },
+        {
+          "code": "CF4",
+          "expression": "(0/1/2/3)",
+          "name": "Trinitarian / tetradic-prehensive-closure"
+        },
+        {
+          "code": "CF5",
+          "expression": "(4.0/1-4.4/5)",
+          "name": "Fractal-Doubling Executive"
+        },
+        {
+          "code": "CF6",
+          "expression": "(4.5/0)",
+          "name": ".5 Bridge"
+        },
+        {
+          "code": "CF7",
+          "expression": "(5/0)",
+          "name": "Total Synthesis / Mobius cyclic-closure-and-reopening"
+        }
+      ],
+      "grammarVersion": "1.0.0"
+    },
+    "elapsed_seconds": 0.04374425020068884,
+    "stdout_digest": "sha256:4ffae34c2c58aab813788955c392b00738d64f71cf2cf68e740b0c7989eae6cc"
+  },
+  "lenses": {
+    "argv": [
+      "ql",
+      "mef",
+      "lenses",
+      "--json"
+    ],
+    "data": {
+      "lenses": [
+        {
+          "code": "L0",
+          "face": "day",
+          "lensRef": "mef:lens:L0@1",
+          "name": "Quaternal",
+          "square": "articulation"
+        },
+        {
+          "code": "L0'",
+          "face": "night",
+          "lensRef": "mef:lens:L0'@1",
+          "name": "Archetypal-Numerical",
+          "square": "articulation"
+        },
+        {
+          "code": "L1",
+          "face": "day",
+          "lensRef": "mef:lens:L1@1",
+          "name": "Causal",
+          "square": "encounter"
+        },
+        {
+          "code": "L1'",
+          "face": "night",
+          "lensRef": "mef:lens:L1'@1",
+          "name": "Phenomenal",
+          "square": "encounter"
+        },
+        {
+          "code": "L2",
+          "face": "day",
+          "lensRef": "mef:lens:L2@1",
+          "name": "Logical",
+          "square": "becoming"
+        },
+        {
+          "code": "L2'",
+          "face": "night",
+          "lensRef": "mef:lens:L2'@1",
+          "name": "Alchemical-Elemental",
+          "square": "becoming"
+        },
+        {
+          "code": "L3",
+          "face": "day",
+          "lensRef": "mef:lens:L3@1",
+          "name": "Processual",
+          "square": "becoming"
+        },
+        {
+          "code": "L3'",
+          "face": "night",
+          "lensRef": "mef:lens:L3'@1",
+          "name": "Chronological",
+          "square": "becoming"
+        },
+        {
+          "code": "L4",
+          "face": "day",
+          "lensRef": "mef:lens:L4@1",
+          "name": "Phenomenological",
+          "square": "encounter"
+        },
+        {
+          "code": "L4'",
+          "face": "night",
+          "lensRef": "mef:lens:L4'@1",
+          "name": "Scientific",
+          "square": "encounter"
+        },
+        {
+          "code": "L5",
+          "face": "day",
+          "lensRef": "mef:lens:L5@1",
+          "name": "Para Vāk",
+          "square": "articulation"
+        },
+        {
+          "code": "L5'",
+          "face": "night",
+          "lensRef": "mef:lens:L5'@1",
+          "name": "Divine Logos",
+          "square": "articulation"
+        }
+      ],
+      "registryRevision": 1,
+      "registryVersion": "1.0.0-q2"
+    },
+    "elapsed_seconds": 0.02424908336251974,
+    "stdout_digest": "sha256:332ff7373cc16fc0cc26c033dde315c807b878a03ce368b3c82375c65707a78f"
+  },
+  "schema": "ql.agent-label-owner-observation/v1",
+  "standing": "Retained actual QD0 native label observation; not a current source-build or installed parity claim"
+}

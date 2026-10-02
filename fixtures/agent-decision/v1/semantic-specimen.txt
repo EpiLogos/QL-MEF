@@ -1,0 +1,1 @@
+A procedure fails although its inputs look unchanged. Which reading would help investigate it?diff --git a/fixtures/agent-decision/v1/unavailable-determination-v1.json b/fixtures/agent-decision/v1/unavailable-determination-v1.json

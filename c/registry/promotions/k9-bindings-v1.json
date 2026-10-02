@@ -1104,6 +1104,100 @@
       "tests": [
         "crates/ql-mef/tests/musical_performance_score.rs"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/agent_event.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native event projection consumes actual QL structural, MEF, harmonic and callable faculty owners. Exact source/material/generation and compiled owner bytes bind independent observed/derived/learned/validated/unresolved standing; missing formal inputs and impossible prime faces are refused, not filled. No provider runtime, score store, numerical body or clock is introduced.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/agent_event/admission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native owner recomputes the actual candidate field and full source/kernel basis before optional semantic proposals become operative. Exact Unicode source spans, candidate cardinality, connected faculty/operation constraints and same native harmonic completion retain impossible/stale responses without repairing or relabelling them as observation. No provider invocation or executable authority is inferred.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/src/agent_event_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Public CLI JSON transport invokes the same native event projector/admitter. Actual process tests exercise supplied source, wrong face and stale response; this transport supplies no independent semantics, model, body or scheduler.",
+      "tests": [
+        "crates/ql-cli/tests/agent_event_native.rs"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_contracts.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Schema and provenance boundary checks distinguish original observations, native derivations and exact attributable proposals/refusals. Python supplies no QL or musical arithmetic and cannot grant native admission.",
+      "tests": [
+        "scripts/tests/test_ql_agent_contracts.py"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_fixtures.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded observation calls the actual fresh native CLI lens/context owners and records exact executable/content hashes. Portable wire specimens remain declared fixtures; they are not classifier or body acceptance.",
+      "tests": [
+        "scripts/tests/test_ql_agent_contracts.py",
+        "scripts/verify"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_evaluation.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Explicit frozen evaluation invokes the actual native CLI and optional caller-selected provider process with an evidence allow-list. Exact family split, input/source/binary digest, failure record and measured available metrics are retained; no training, provider election, body acceptance or absent metric is invented.",
+      "tests": [
+        "scripts/tests/test_ql_agent_evaluation.py"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/coordinate.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2"
+      ],
+      "kind": "computational",
+      "rationale": "MEF absolute-to-local inversion uses the existing modulo-six rotation owner and preserves actual lens face/unit. The native all-lens/all-position regression proves the inverse round trip; no new coordinate registry, harmonic owner or semantic inference.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
     }
   ]
 }
