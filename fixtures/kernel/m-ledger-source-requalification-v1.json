@@ -203,8 +203,8 @@
     "scripts/check-m1-source.py": "c13605795ba15b3230518f31bfb5baf0b09867235239acc2d8f77fa43c2cfcdb",
     "scripts/check-m1-literals.py": "bfa9a11b752e37fd84b278d7444cef55ef3f2ba050e409f99f4374e65520a91d",
     "scripts/test-m1-engine.sh": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6",
-    "scripts/m3-source-parity.py": "6a7e1f1f6c14e2d8e7416fb2cebda07e49d20bc2ce43763eff9c5226683ef82f",
-    "fixtures/kernel/m3-source-bindings-v1.json": "01d2f9fedae20434d61e18698979ca134baf9143e65a6ec56707c4a5002bb546",
+    "scripts/m3-source-parity.py": "475c2f33dfd7584401692c93d6046b5d214c79cdee7229d5efcc180f7e76b0b8",
+    "fixtures/kernel/m3-source-bindings-v1.json": "4d5cff40c525e24dd8945bfc8f08c50367e37a24c5a1cd318247489f37ad7bdf",
     "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14"
   },
   "replays": [
@@ -423,5 +423,39 @@
       "standing": "Matrix source bindings and current metadata only; no new numerical execution, receiving/profile, installed or H acceptance",
       "independent_source_review_sha256": "dc12dcd5fa86647d979b14612e2bb5201e53c9621d61993266101fe7599422c7"
     }
-  ]
+  ],
+  "source_comparator_reconciliation": {
+    "schema": "ql.source-comparator-reconciliation/v1",
+    "prior_receipt_git_commit": "173df794ab80848151180740817d0f7f6e699a95",
+    "prior_input_git_commit": "61344c687be668c9446d73c720866c966e676ccd",
+    "inputs": [
+      {
+        "path": "scripts/m3-source-parity.py",
+        "before_sha256": "6a7e1f1f6c14e2d8e7416fb2cebda07e49d20bc2ce43763eff9c5226683ef82f",
+        "after_sha256": "475c2f33dfd7584401692c93d6046b5d214c79cdee7229d5efcc180f7e76b0b8"
+      },
+      {
+        "path": "fixtures/kernel/m3-source-bindings-v1.json",
+        "before_sha256": "01d2f9fedae20434d61e18698979ca134baf9143e65a6ec56707c4a5002bb546",
+        "after_sha256": "4d5cff40c525e24dd8945bfc8f08c50367e37a24c5a1cd318247489f37ad7bdf"
+      }
+    ],
+    "current_audit": {
+      "path": "fixtures/kernel/source-requalification/m3-qualified-line-source-audit-2026-10-02.json",
+      "sha256": "8f0da2eadace05d2e56c9c2f987c6801b46ac612cc115d366d38cf7cf0436eb2"
+    },
+    "actual_source_tests": {
+      "path": "fixtures/kernel/source-requalification/m3-qualified-line-source-tests-2026-10-02.log",
+      "sha256": "daf8b88dfaa97ef2a88ec3caf903dce1e5f7b16d572e214cb371a73a410d0879",
+      "tests": 25,
+      "command": "python3 -m unittest discover -s scripts/tests -p test_m3_source_parity.py -v",
+      "source": {
+        "path": "scripts/tests/test_m3_source_parity.py",
+        "sha256": "a02190f57a6851ace5e38a5bec2617fa20bd59e52e704d492b0414049324c5bd"
+      }
+    },
+    "preserved_legacy_findings": 183,
+    "additional_open_qualified_edge_records": 305,
+    "standing": "Current comparator/source execution only; retained dated native replays and historical finite proofs are unchanged; no new numerical readiness, source decision or installed acceptance"
+  }
 }

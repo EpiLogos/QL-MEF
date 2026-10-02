@@ -146,6 +146,7 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
     for path, digest in locks.items():
         assert not Path(path).is_absolute() and ".." not in Path(path).parts
         assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest, "stale current source input: " + path
+    module.verify_source_comparator_reconciliation(root, qualification)
     replay_paths = {
         "fixtures/kernel/source-requalification/m1-native-c-replay.log",
         "fixtures/kernel/source-requalification/native-rust-c-replay.log",
