@@ -44,9 +44,6 @@ static Operation op(const Determination &d, Kind kind, std::uint64_t id,
   out.sample = sample;
   return out;
 }
-static bool render(Engine &engine, float *output, std::size_t frames) {
-  return engine.render(output, frames, engine.samples_elapsed());
-}
 static NativePerformance native(const std::string &dir) {
   auto basis = parse(file(dir + "/baseline.basis.json"));
   return prepare_performance_packet(file(dir + "/baseline.packet.json"),

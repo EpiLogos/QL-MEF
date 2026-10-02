@@ -96,10 +96,9 @@ fn all_384_line_changes_keep_symbolic_result_and_material_determinants_together(
             assert_eq!(p.native_state["form"]["address"], address ^ (1 << line));
             assert_eq!(p.native_state, receipt.after);
             assert_ne!(p.source_generation, old.source_generation);
-            assert_ne!(
-                p.crease_angles_rad == old.crease_angles_rad
-                    && p.site_velocities_deg10 == old.site_velocities_deg10,
-                true
+            assert!(
+                p.crease_angles_rad != old.crease_angles_rad
+                    || p.site_velocities_deg10 != old.site_velocities_deg10
             );
         }
     }
