@@ -1,5 +1,6 @@
 #ifndef QL_PERFORMANCE_CHECKPOINT_HPP
 #define QL_PERFORMANCE_CHECKPOINT_HPP
+#include <exception>
 #include <ql/performance_physical.hpp>
 namespace ql::performance {
 struct PairedCheckpoint {

@@ -1,6 +1,6 @@
-//! Actual native M1 -> joined M2/B -> K per-key targets -> P body preparation.
-//! Metric material/tuning below have explicit Reference standing; they are not
-//! authentic maqam pitches, a mocked engine or measured physical construction.
+// Actual native M1 -> joined M2/B -> K per-key targets -> P body preparation.
+// Metric material/tuning below have explicit Reference standing; they are not
+// authentic maqam pitches, a mocked engine or measured physical construction.
 use ql_core::{ConjugationDegree, RelationFamily};
 use ql_mef::MFace;
 use ql_mef::continuous::coupled::{CoupledInput, HarmonicSource, REQUEST};
@@ -14,7 +14,7 @@ use ql_mef::music_determination::{
 };
 use ql_mef::performance_audio::*;
 use ql_mef::physical_body::*;
-use serde_json::{Value, json};
+use serde_json::Value;
 fn tuning_provenance() -> TuningProvenance {
     TuningProvenance {
         policy_ref: "reference:explicit-rational-tuning".into(),

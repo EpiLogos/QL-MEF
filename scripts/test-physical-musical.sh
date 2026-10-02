@@ -32,3 +32,19 @@ QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked
 # the actual C++ owner and independently replayed before it is emitted.
 cargo run --quiet -p ql-mef --locked --example retained-performance-fixture > "$TASK_OUTPUT/retained-performance-fixture.json"
 "$TASK_OUTPUT/native/retained_performance_checkpoint_wire-test" "$TASK_OUTPUT/retained-performance-fixture.json" > "$TASK_OUTPUT/retained-performance-checkpoint-fixture.json"
+
+# Independent V/#293 trials use the same compiled native producer. Copy the
+# unchanged verifier into its bounded evidence directory before invocation.
+cargo build -p ql-mef --locked --example m2_engine
+TASK_INDEPENDENT="$TASK_OUTPUT/independent"
+mkdir -p "$TASK_INDEPENDENT"
+cp scripts/test-m2-producer-negatives.py "$TASK_INDEPENDENT/driver.py"
+v_candidate_revision=$(git rev-parse HEAD)
+v_source_revision=$(python3 -c 'import json; print(json.load(open("fixtures/kernel/m2-correspondences-v1.json"))["source_revision"])')
+v_trial_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+python3 "$TASK_INDEPENDENT/driver.py" \
+  --producer target/debug/examples/m2_engine \
+  --fixture fixtures/kernel/m2-condition-request-v1.json \
+  --output "$TASK_INDEPENDENT/run-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_trial_nonce" \
+  --candidate-revision "$v_candidate_revision" \
+  --source-revision "$v_source_revision"

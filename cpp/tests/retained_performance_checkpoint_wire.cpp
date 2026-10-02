@@ -153,8 +153,9 @@ int main(int argc, char **argv) {
     json_object_object_add(output.get(), "native_physical_after_exact_replay",
                            after.release());
     auto *queued = json_object_new_array();
-    for (const auto entry : {std::pair{parameter_sequence, std::uint64_t(1150)},
-                             std::pair{pedal_sequence, std::uint64_t(1500)}}) {
+    for (const auto &entry :
+         {std::pair{parameter_sequence, std::uint64_t(1150)},
+          std::pair{pedal_sequence, std::uint64_t(1500)}}) {
       auto *receipt = json_object_new_object();
       json_object_object_add(
           receipt, "native_sequence",

@@ -853,6 +853,34 @@
         "crates/ql-mef/tests/musical_performance_return.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-performance-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281 actual producer passage into native retained performance: prepares existing M1/M2/K/P owners and native M3 score return, preserving exact source generations and explicit neutral World receiving. This executable emits real producer material for paired C++ and existing Expression/Act tests; it grants no installed receiving authority.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_return.rs",
+        "cpp/tests/retained_performance_checkpoint_wire.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "scripts/test-m2-producer-negatives.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #293 independent actual native M2 JSON-producer trial driver. It invokes the compiled production example, retains actual inputs/results/hashes and checks exact source edges plus refusal boundaries; it implements no alternate determination, body, audio or project store.",
+      "tests": [
+        "scripts/test-physical-musical.sh"
+      ],
+      "kind": "computational"
     }
   ]
 }
