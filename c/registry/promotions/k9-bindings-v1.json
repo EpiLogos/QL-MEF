@@ -1041,6 +1041,40 @@
       "tests": [
         "crates/ql-mef/tests/performance_management.rs"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/source_key_determination.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#2-5",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Native explicit source-degree/key and separate complete octet reduction over current B source collection and complete original M2 relation-plan replay/coupled consumer. Seven available/five unassigned/no numerical sentinel,127 authentic absences/17 missing paths, original unfolded planetary/rational intervals and independent generations remain distinct; no inferred twelve/eight closure, body/clock/store or authority from serialized receipts.",
+      "tests": [
+        "crates/ql-mef/tests/source_key_determination.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/source-key-determination-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#2-5",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Actual native M1/M2/M3 plus B source preparation emits all twelve address availability receipts and separately explicit source octet for real A/P consumption. The original full-twelve reference remains separately named; no constructed oscillator, body or device verdict.",
+      "tests": [
+        "crates/ql-mef/tests/source_key_determination.rs"
+      ]
     }
   ]
 }

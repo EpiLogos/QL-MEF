@@ -55,6 +55,7 @@ mod ruling;
 pub mod scene;
 pub mod scene_sky;
 pub mod source_form_body;
+pub mod source_key_determination;
 pub mod spanda_field;
 mod sublens;
 mod templateure;
