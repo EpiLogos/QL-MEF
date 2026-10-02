@@ -509,7 +509,7 @@ static void callback_refusal_is_atomic_and_allocation_free() {
   assert(stale.samples_elapsed() == 0 && stale.mechanical_energy_joules() == 0);
   check();
   auto tiny = two_axes();
-  tiny.max_displacement_metres = 1e-15;
+  tiny.max_displacement_metres = 1e-12;
   PreparedPhysicalBody tiny_preparation(tiny);
   PreparedPhysicalForceRoutes bounded(tiny_preparation, source(tiny_preparation),
                                       native_routes(tiny_preparation), 0);
