@@ -206,13 +206,37 @@ fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Va
         native_cursor,
     )?
     .snapshot()?;
+    // Complete physical catalog comes from the actual current native K owner.
+    // Each repeated address is resolved independently through that SAME basis.
+    let mut native_catalog = Vec::new();
+    for cell in ql_mef::performance_management::native_janko_catalog(p, 6, 0, 0)? {
+        let note = ql_mef::performance_management::resolve_performance_touch(
+            p,
+            ql_mef::performance_audio::KeyTouch {
+                key: cell.key,
+                register: cell.register_octave,
+                member: u64::from(cell.row) * 6 + u64::from(cell.column) + 1,
+                touch: u64::from(cell.row) * 6 + u64::from(cell.column) + 1,
+                touch_ref: format!(
+                    "native:retained-revision/catalog/{}/{}",
+                    cell.row, cell.column
+                ),
+            },
+        )?;
+        native_catalog.push(json!({"row":cell.row,"column":cell.column,
+            "key":cell.key,"pitch_class":cell.pitch_class,"register_octave":cell.register_octave,
+            "label":cell.label,"available":true,"source_degree":null,"reason":null,
+            "reduction_policy":p.targets().tuning_policy.provenance().policy_ref,
+            "source_collection":"ql:canonical-twelve-key-field",
+            "source_receipt":p.determination()["native_receipt_ref"],"native_target":note}));
+    }
     let out: Value = json!({"preparation":p.physical_body(),"current_m3":p.native_basis().m3,
         "operation":operation,"current_operation":current_operation,"source_basis":source_basis,
         "program_refs":program_refs,"world_operation":world_operation,
         "world_current_operation":world_current_operation,"world_source_basis":world_source_basis,
         "native_admission":native_admission,"current_native_admission":current_native_admission,
         "world_native_admission":world_native_admission,"world_current_native_admission":world_current_native_admission,
-        "performance_preparation":p});
+        "performance_preparation":p,"native_catalog":native_catalog});
     Ok(out)
 }
 

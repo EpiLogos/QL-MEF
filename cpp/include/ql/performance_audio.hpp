@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <exception>
 #include <limits>
 #include <memory>
 #include <ql/m_tree_live.h>
@@ -414,6 +415,37 @@ public:
     explicit operator bool() const noexcept { return owner_ != nullptr; }
   };
 
+  // Host heap custody, prepared only under the exact stopped callback guard.
+  // No public fields/JSON constructor can change a validated candidate. The
+  // consumed token retains the retired port until the control owner records
+  // the successful combined transaction and releases its acknowledgement.
+  class PreparedCombinedRevision {
+    friend class Engine;
+    Engine *owner_ = nullptr;
+    Determination before_{}, after_{};
+    PhysicalPort candidate_port_{};
+    NativeRouteProgramSet continuation_{};
+    std::array<double, ql::physical_max_personal_force_routes> step_sine_{},
+        step_cosine_{};
+    std::uint64_t cursor_ = 0, accepted_sequence_ = 0, applied_ordinal_ = 0,
+                  emergency_requested_ = 0, control_revision_ = 0;
+    bool ready_ = false;
+
+  public:
+    PreparedCombinedRevision() = default;
+    PreparedCombinedRevision(const PreparedCombinedRevision &) = delete;
+    PreparedCombinedRevision &
+    operator=(const PreparedCombinedRevision &) = delete;
+    PreparedCombinedRevision(PreparedCombinedRevision &&) = delete;
+    PreparedCombinedRevision &operator=(PreparedCombinedRevision &&) = delete;
+    bool ready() const noexcept { return ready_; }
+    const Determination &after_determination() const noexcept { return after_; }
+    const NativeRouteProgramSet &after_programs() const noexcept {
+      return continuation_;
+    }
+    std::uint64_t sample() const noexcept { return cursor_; }
+  };
+
 private:
   Determination determination_{};
   // Owned only by the serial producer; callback never touches this copy.
@@ -423,6 +455,7 @@ private:
   std::size_t source_schedule_size_ = 1;
   unsigned rate_;
   PhysicalPort body_{};
+  std::uint64_t combined_control_revision_ = 0;
   bool has_route_programs_ = false;
   NativeRouteProgramSet route_programs_{};
   std::array<double, ql::physical_max_personal_force_routes> route_step_sine_{},
@@ -543,15 +576,17 @@ private:
     const double remaining = m.max_force_newtons - reserved - margin;
     return std::isfinite(remaining) && remaining > 0 ? remaining : 0;
   }
-  bool valid_route_programs(const NativeRouteProgramSet &set) const noexcept {
-    if (!body_.route_manifest || !body_.routes_owner || !body_.routes_custody ||
-        !body_.advance_routes || !body_.observe_routes || set.version != 1 ||
+  bool valid_route_programs(const NativeRouteProgramSet &set,
+                            const PhysicalPort &port,
+                            const Determination &determination) const noexcept {
+    if (!port.route_manifest || !port.routes_owner || !port.routes_custody ||
+        !port.advance_routes || !port.observe_routes || set.version != 1 ||
         set.program_count > ql::physical_max_personal_force_routes ||
-        set.program_count != body_.route_manifest->route_count ||
+        set.program_count != port.route_manifest->route_count ||
         !set.scalar_note_enabled || set.scalar_note_gain != 1 ||
         route_scalar_budget(set.manifest) <= 0)
       return false;
-    const auto &a = set.manifest, &b = *body_.route_manifest;
+    const auto &a = set.manifest, &b = *port.route_manifest;
     if (a.version != b.version || a.sample_rate != rate_ ||
         a.sample_rate != b.sample_rate || a.route_count != b.route_count ||
         a.source_basis_seal != b.source_basis_seal ||
@@ -580,25 +615,26 @@ private:
         a.scalar_note_gain != b.scalar_note_gain ||
         a.legacy_native_scalar_enabled || a.legacy_native_scalar_gain != 0 ||
         a.max_force_newtons != b.max_force_newtons ||
-        a.event_ref != determination_.identity.event ||
-        a.subject_ref != determination_.identity.subject ||
-        a.m1_revision != determination_.identity.m1_revision ||
-        a.m2_generation != determination_.identity.m2_generation ||
-        a.body_revision != determination_.body_revision ||
-        a.m1_coordinate != determination_.m1_coordinate ||
-        a.m1_pratibimba != (determination_.m1_face == 1) ||
-        a.m2_writer_coordinate != determination_.m2_writer ||
-        a.m2_pratibimba != (determination_.m2_face == 1) ||
-        a.tick12 != determination_.tick12 ||
-        a.degree720 != determination_.degree720 ||
-        a.temporal_phase != determination_.tick12 / 6 ||
-        a.determination_ref != determination_.native_receipt_ref ||
-        !ql_m_live_accepts_base(determination_.registry_revision.data()) ||
+        a.max_force_newtons != port.max_force_newtons ||
+        a.event_ref != determination.identity.event ||
+        a.subject_ref != determination.identity.subject ||
+        a.m1_revision != determination.identity.m1_revision ||
+        a.m2_generation != determination.identity.m2_generation ||
+        a.body_revision != determination.body_revision ||
+        a.m1_coordinate != determination.m1_coordinate ||
+        a.m1_pratibimba != (determination.m1_face == 1) ||
+        a.m2_writer_coordinate != determination.m2_writer ||
+        a.m2_pratibimba != (determination.m2_face == 1) ||
+        a.tick12 != determination.tick12 ||
+        a.degree720 != determination.degree720 ||
+        a.temporal_phase != determination.tick12 / 6 ||
+        a.determination_ref != determination.native_receipt_ref ||
+        !ql_m_live_accepts_base(determination.registry_revision.data()) ||
         std::strcmp(a.registry_revision.data(),
                     ql_m_live_registry_revision()) != 0 ||
         std::strcmp(a.source_revision.data(), ql_m_live_source_revision()) !=
             0 ||
-        a.preparation_ref != body_.preparation || a.state_ref != body_.state)
+        a.preparation_ref != port.preparation || a.state_ref != port.state)
       return false;
     for (std::size_t i = 0; i < set.program_count; ++i) {
       const auto &p = set.programs[i];
@@ -611,10 +647,13 @@ private:
           !scalar(p.sine, -1, 1) || !scalar(p.cosine, -1, 1) ||
           std::abs(p.sine * p.sine + p.cosine * p.cosine - 1) > 1e-10 ||
           !scalar(p.handle.source_hertz, 1, .45 * rate_) ||
-          !scalar(p.handle.peak_force_newtons, 0, body_.max_force_newtons))
+          !scalar(p.handle.peak_force_newtons, 0, port.max_force_newtons))
         return false;
     }
     return true;
+  }
+  bool valid_route_programs(const NativeRouteProgramSet &set) const noexcept {
+    return valid_route_programs(set, body_, determination_);
   }
   void prepare_route_steps() noexcept {
     for (std::size_t i = 0; i < route_programs_.program_count; ++i) {
@@ -1249,20 +1288,20 @@ public:
         port.preparation != body_.preparation || port.state != body_.state ||
         port.sample_rate != rate_ ||
         port.max_force_newtons != body_.max_force_newtons ||
+        combined_control_revision_ ==
+            std::numeric_limits<std::uint64_t>::max() ||
         set.manifest.admitted_cursor != expected_cursor)
       return false;
     // Stopped exclusive control custody: no physical, musical or queue state
     // mutates during candidate qualification. Retired numerical-route handles
     // remain retained by previous until this acknowledged control call returns.
-    PhysicalPort previous = body_;
-    body_ = std::move(port);
-    if (!valid_route_programs(set)) {
-      body_ = std::move(previous);
+    if (!valid_route_programs(set, port, determination_))
       return false;
-    }
+    body_ = std::move(port);
     route_programs_ = set;
     has_route_programs_ = true;
     prepare_route_steps();
+    ++combined_control_revision_;
     return true;
   }
   bool install_route_programs(const NativeRouteProgramSet &set,
@@ -1271,11 +1310,14 @@ public:
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
         set.manifest.admitted_cursor != expected_cursor ||
+        combined_control_revision_ ==
+            std::numeric_limits<std::uint64_t>::max() ||
         !valid_route_programs(set))
       return false;
     route_programs_ = set;
     has_route_programs_ = true;
     prepare_route_steps();
+    ++combined_control_revision_;
     return true;
   }
   bool device_callbacks_running() const noexcept {
@@ -1314,6 +1356,12 @@ public:
   }
   const Determination &source_for_native_admission() const noexcept {
     return source_at(admission_horizon());
+  }
+  // Numerical preflight of separately source-admitted AFTER catalog entries.
+  // Does not change currentness, source authority, body or a playing target.
+  bool validate_candidate_note_target(
+      const NoteTarget &note, const Determination &candidate) const noexcept {
+    return valid_determination(candidate) && valid_note(note, candidate);
   }
   bool validate_note_target(const NoteTarget &note) const noexcept {
     return valid_note(
@@ -1379,6 +1427,124 @@ public:
            after.body_preparation_ref == port.preparation &&
            after.body_revision > determination_.body_revision &&
            scalar(port.max_force_newtons, 1e-12, 1e9);
+  }
+  // Candidate-only, BEFORE the sole P projection changes its body. Fresh
+  // full native source/occasion/catalog custody is supplied by the existing
+  // serial owner and P typed port constructor; numerical equality is not an
+  // authority grant. All programmes retain exact independent native IDs.
+  bool preflight_stopped_combined_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed, const StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out) noexcept {
+    if (out.ready_ || out.owner_ || !has_route_programs_ ||
+        cursor_ != expected_cursor ||
+        combined_control_revision_ ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        !preflight_stopped_physical_revision(after, port, guard) ||
+        body_.revision(body_.owner) != determination_.body_revision ||
+        body_.cursor(body_.owner) != cursor_ ||
+        after_seed.manifest.admitted_cursor != expected_cursor ||
+        !valid_route_programs(after_seed, port, after) ||
+        route_programs_.program_count != after_seed.program_count)
+      return false;
+    // Match by the original native driver/node identity, never array slot or
+    // a centre average. Geometry/projection/calibration/programme handles may
+    // lawfully change after the current native source is recompiled.
+    NativeRouteProgramSet continuation = after_seed;
+    std::array<bool, ql::physical_max_personal_force_routes> used{};
+    for (std::size_t i = 0; i < continuation.program_count; ++i) {
+      auto &next = continuation.programs[i];
+      const NativeRouteProgram *prior = nullptr;
+      for (std::size_t j = 0; j < route_programs_.program_count; ++j) {
+        const auto &old = route_programs_.programs[j];
+        if (old.handle.driver_ref == next.handle.driver_ref &&
+            old.handle.planet_node_id == next.handle.planet_node_id &&
+            old.handle.native_planet_index == next.handle.native_planet_index &&
+            old.handle.chakra_node_id == next.handle.chakra_node_id &&
+            old.handle.centre_ordinal == next.handle.centre_ordinal) {
+          if (prior || used[j])
+            return false;
+          prior = &old;
+          used[j] = true;
+        }
+      }
+      if (!prior || prior->waveform != next.waveform)
+        return false;
+      next.enabled = prior->enabled;
+      next.target_gain = prior->target_gain;
+      next.effective_gain = prior->effective_gain;
+      next.sine = prior->sine;
+      next.cosine = prior->cosine;
+    }
+    continuation.owner_suspended = route_programs_.owner_suspended;
+    if (!valid_route_programs(continuation, port, after))
+      return false;
+    out.before_ = determination_;
+    out.after_ = after;
+    out.candidate_port_ = port;
+    out.continuation_ = continuation;
+    for (std::size_t i = 0; i < continuation.program_count; ++i) {
+      const double angle =
+          tau * continuation.programs[i].handle.source_hertz / rate_;
+      out.step_sine_[i] = std::sin(angle);
+      out.step_cosine_[i] = std::cos(angle);
+    }
+    out.cursor_ = cursor_;
+    out.accepted_sequence_ = accepted_sequence_;
+    out.applied_ordinal_ = applied_application_ordinal_;
+    out.emergency_requested_ = emergency_requested_.load();
+    out.control_revision_ = combined_control_revision_;
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  // The combined native owner calls this immediately BEFORE P preflight/apply
+  // in the same uninterrupted guard. It never interprets an AFTER body label
+  // as actual state. Future source schedules remain explicitly refused.
+  bool combined_revision_current(const PreparedCombinedRevision &candidate,
+                                 const StoppedCustody &guard) const noexcept {
+    return candidate.ready_ && candidate.owner_ == this &&
+           guard.owner_ == this && activity_.load() == 2 &&
+           !device_running_.load() && cursor_ == candidate.cursor_ &&
+           accepted_sequence_ == candidate.accepted_sequence_ &&
+           applied_application_ordinal_ == candidate.applied_ordinal_ &&
+           emergency_requested_.load() == candidate.emergency_requested_ &&
+           combined_control_revision_ == candidate.control_revision_ &&
+           determination_.identity == candidate.before_.identity &&
+           determination_.body_revision == candidate.before_.body_revision &&
+           determination_.body_preparation_ref ==
+               candidate.before_.body_preparation_ref &&
+           source_schedule_size_ == 1 &&
+           body_.owner == candidate.candidate_port_.owner &&
+           body_.state == candidate.candidate_port_.state;
+  }
+  // Nofail half of the native owner's atomic P+Engine transaction. P and any
+  // receiver preflights MUST all succeed before its actual q/v projection.
+  // This call follows that successful projection under the SAME guard and
+  // serial control custody. Misuse is a native programming fault, never a
+  // partial-success receipt. No callback allocation, synthesis or clock here.
+  void commit_stopped_combined_revision(PreparedCombinedRevision &candidate,
+                                        const StoppedCustody &guard) noexcept {
+    if (!combined_revision_current(candidate, guard) ||
+        candidate.candidate_port_.revision(candidate.candidate_port_.owner) !=
+            candidate.after_.body_revision ||
+        candidate.candidate_port_.cursor(candidate.candidate_port_.owner) !=
+            cursor_)
+      std::terminate();
+    std::swap(body_,
+              candidate.candidate_port_); // token retains retired route custody
+    route_programs_ = candidate.continuation_;
+    route_step_sine_ = candidate.step_sine_;
+    route_step_cosine_ = candidate.step_cosine_;
+    determination_ = producer_determination_ = candidate.after_;
+    producer_identity_ = candidate.after_.identity;
+    source_schedule_[0] = ScheduledDetermination{candidate.after_, cursor_};
+    ++combined_control_revision_;
+    candidate.ready_ = false;
+    // Voice/touch/phase/tail/sustain/queued operation/release/panic fences and
+    // original application/journal identities stay intact. A future old-basis
+    // attack is retained and gets its actual explicit applied/refused receipt;
+    // source identity is never rewritten to make it current.
   }
   bool commit_stopped_physical_revision(const Determination &after,
                                         const PhysicalPort &port,
@@ -1738,6 +1904,8 @@ public:
   }
   bool restore_checkpoint(const Checkpoint &cp, const StoppedCustody &guard,
                           std::uint64_t expected_cursor) noexcept {
+    if (combined_control_revision_ == std::numeric_limits<std::uint64_t>::max())
+      return false;
     if (!validate_checkpoint(cp, guard, expected_cursor) ||
         body_.cursor(body_.owner) != cp.cursor)
       return false;
@@ -1760,6 +1928,7 @@ public:
     has_route_programs_ = cp.has_route_programs;
     route_programs_ = cp.route_programs;
     prepare_route_steps();
+    ++combined_control_revision_;
     cursor_ = cp.cursor;
     accepted_sequence_ = cp.accepted_sequence;
     accepted_sample_ = cp.accepted_sample;

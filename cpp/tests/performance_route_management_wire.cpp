@@ -1,12 +1,17 @@
 // Actual Rust N receiving/replay and M1/M2/K/P admission enter the retained A
 // callback through the one resident P numerical owner. No substitute dynamics.
 #include "../test_support/allocation_hooks.hpp"
+#include "../test_support/native_fixture_carrier.hpp"
+
+#include "../test_support/independent_genuine_carrier_scalar_cases.hpp"
 #include <cassert>
 #include <iostream>
 #include <new>
 #include <ql/performance_checkpoint_wire.hpp>
 #include <ql/performance_management.hpp>
+#include <ql/performance_management_wire.hpp>
 #include <ql/performance_packet.hpp>
+#include <ql/performance_physical_revision.hpp>
 #include <ql/performance_physical_routes.hpp>
 #include <ql/performance_route_programs.hpp>
 #include <ql/physical_transition.hpp>
@@ -516,6 +521,195 @@ static void qualification_and_atomic_refusal(J *fixture) {
         after_preparation, {}, 0);
   });
 }
+static std::vector<KeyboardCell> native_catalog(J *fixture) {
+  auto *cells = packet::field(fixture, "native_catalog");
+  std::vector<KeyboardCell> out;
+  for (std::size_t i = 0; i < json_object_array_length(cells); ++i)
+    out.push_back(
+        management_transport::read_key(json_object_array_get_idx(cells, i)));
+  return out;
+}
+struct RevisionSource {
+  NativePerformance prepared;
+  std::shared_ptr<const AdmittedNativeReceivingSource> admitted;
+  std::shared_ptr<PhysicalRoutesPortBinding> binding;
+  NativeRouteProgramSet seed{};
+};
+static RevisionSource revision_source(J *fixture,
+                                      std::shared_ptr<PhysicalBody> resident) {
+  auto *packet =
+      ql::performance::packet::field(fixture, "performance_preparation");
+  auto *basis = ql::performance::packet::field(packet, "native_basis");
+  auto prepared = prepare_performance_packet(
+      json_object_to_json_string_ext(packet, JSON_C_TO_STRING_PLAIN), basis,
+      true, true);
+  const auto &after = prepared.body->preparation();
+  auto admitted = std::make_shared<const AdmittedNativeReceivingSource>(
+      read_native_receiving_admission(
+          ql::performance::packet::field(fixture, "native_admission"),
+          ql::performance::packet::field(fixture, "current_native_admission"),
+          prepared, basis, after,
+          program_refs(ql::performance::packet::field(fixture, "program_refs")),
+          512));
+  if (!resident)
+    resident = prepared.body;
+  auto binding = std::make_shared<PhysicalRoutesPortBinding>(
+      resident, admitted, after, prepared.determination, basis, true, 512);
+  NativeRouteProgramSet seed;
+  seed.manifest = binding->manifest();
+  seed.program_count = seed.manifest.route_count;
+  for (std::size_t i = 0; i < seed.program_count; ++i) {
+    seed.programs[i].handle = seed.manifest.programs[i];
+    seed.programs[i].phase_source_ref = prepared.determination.m1_coordinate;
+    seed.programs[i].sine = prepared.notes.front().phase_sin;
+    seed.programs[i].cosine = prepared.notes.front().phase_cos;
+  }
+  return {std::move(prepared), std::move(admitted), std::move(binding), seed};
+}
+static void retained_material_revision(J *fixture) {
+  auto joined = prepare(fixture);
+  auto owner = std::make_unique<PerformanceManagement>(
+      joined.native,
+      reference("expression:native-nine/retained-material-manager"));
+  owner->admit_catalog(native_catalog(fixture));
+  owner->native().engine->enable_capture(true);
+  for (std::uint64_t i = 0; i < 2; ++i) {
+    auto op = operation(owner->native().determination, Kind::NoteOn, i + 1, 0);
+    op.note = owner->native().notes.at(i);
+    op.value = .75;
+    assert(owner->enqueue_score_input(
+               op, reference(i ? "native-score:material/touch2"
+                               : "native-score:material/touch1")) ==
+           Result::Accepted);
+  }
+  auto future =
+      operation(owner->native().determination, Kind::Parameter, 3, 600);
+  future.parameter = Parameter::MasterLinear;
+  future.value = .25;
+  assert(owner->enqueue_score_input(future) == Result::Accepted);
+  auto release =
+      operation(owner->native().determination, Kind::NoteOff, 4, 900);
+  release.touch = owner->native().notes.front().touch;
+  assert(owner->enqueue_score_input(
+             release, reference("native-score:material/touch1")) ==
+         Result::Accepted);
+  std::array<float, 128> pcm{};
+  Capture capture;
+  for (unsigned block = 0; block < 4; ++block) {
+    assert(owner->offline_advance(pcm.data(), pcm.size(), block * 128));
+    owner->pulse();
+    assert(owner->pop_audio_capture(capture));
+  }
+  const auto before = owner->stopped_checkpoint();
+  assert(before->native_pair.audio.cursor == 512);
+  const auto before_wire =
+      management_checkpoint_transport::checkpoint_wire(*before);
+  const auto before_state = owner->native().body->checkpoint();
+  const auto original_owner = owner->native().body.get();
+  const auto before_preparation = owner->native().body->preparation();
+  auto *after_fixture = packet::field(fixture, "after_material");
+  auto source = revision_source(after_fixture, owner->native().body);
+  auto physical = std::make_unique<PreparedPhysicalTransition>(
+      before_preparation, source.prepared.body->preparation(), 1, 512,
+      PhysicalLiveUpdateKind::Material,
+      PhysicalFormTransition::ProjectCorrespondingNodes,
+      "native-score:material/actual-fourfold-stiffness-edit");
+  PhysicalLiveTransitionReceipt receipt;
+  std::unique_ptr<PreparedRetainedBodyRevision> transaction;
+  {
+    auto guard = owner->native().engine->acquire_stopped_custody();
+    transaction = std::make_unique<PreparedRetainedBodyRevision>(
+        *owner, std::move(physical), source.admitted,
+        source.prepared.determination,
+        packet::field(packet::field(after_fixture, "performance_preparation"),
+                      "native_basis"),
+        source.seed, source.prepared.notes, native_catalog(after_fixture),
+        guard);
+    assert(transaction->current(guard));
+    callback_probe = true;
+    const bool committed = transaction->commit(guard, receipt);
+    callback_probe = false;
+    assert(committed && allocations == 0 && releases == 0);
+    owner->refresh_stopped_reading(guard);
+  }
+  assert(transaction->committed() && receipt.transaction == 1 &&
+         receipt.before_revision == 1 && receipt.after_revision == 2 &&
+         receipt.samples_elapsed == 512 &&
+         std::isfinite(receipt.external_work_joules));
+  assert(owner->native().body.get() == original_owner &&
+         owner->native().engine->owns_physical_owner(original_owner));
+  const auto after = owner->stopped_checkpoint();
+  assert(after->native_pair.physical.samples_elapsed == 512 &&
+         after->native_pair.audio.cursor == 512 &&
+         after->native_pair.audio.determination.body_revision == 2);
+  const auto after_wire =
+      management_checkpoint_transport::checkpoint_wire(*after);
+  for (const char *field : {"inputs", "input_history", "transport_epoch"})
+    assert(json_object_equal(packet::field(before_wire.get(), field),
+                             packet::field(after_wire.get(), field)));
+  auto *before_audio =
+      packet::field(packet::field(before_wire.get(), "native_pair"), "audio");
+  auto *after_audio =
+      packet::field(packet::field(after_wire.get(), "native_pair"), "audio");
+  for (const char *field : {"voices", "touches", "tails", "operations",
+                            "pending_operations", "applications"})
+    assert(json_object_equal(packet::field(before_audio, field),
+                             packet::field(after_audio, field)));
+  assert(after->native_pair.physical.displacement_modal_metres ==
+             before_state.displacement_modal_metres &&
+         after->native_pair.physical.velocity_modal_metres_per_second ==
+             before_state.velocity_modal_metres_per_second);
+  for (std::size_t i = 0; i < 9; ++i) {
+    const auto &a = before->native_pair.audio.route_programs.programs[i];
+    const auto &b = after->native_pair.audio.route_programs.programs[i];
+    assert(a.sine == b.sine && a.cosine == b.cosine &&
+           a.target_gain == b.target_gain &&
+           a.effective_gain == b.effective_gain && a.enabled == b.enabled &&
+           a.handle.driver_ref == b.handle.driver_ref &&
+           a.handle.source_hertz == b.handle.source_hertz);
+    assert(a.handle.preparation_seal != b.handle.preparation_seal);
+  }
+  // Reopen the exact revised preparation plus original full native Manager
+  // checkpoint, never replay through an obsolete body or guessed oscillator.
+  auto reopened_source = revision_source(after_fixture, {});
+  auto reopened_native = std::move(reopened_source.prepared);
+  auto port = physical_routes_port(physical_port(reopened_native.body),
+                                   reopened_source.binding);
+  reopened_native.engine =
+      std::make_shared<Engine>(reopened_native.determination, 48000, port);
+  auto reopened = std::make_unique<PerformanceManagement>(reopened_native,
+                                                          owner->session_ref());
+  const auto serialized =
+      management_checkpoint_transport::checkpoint_wire(*after);
+  const auto restored =
+      management_checkpoint_transport::read_checkpoint_wire(serialized.get());
+  TransportAcknowledgement acknowledgement;
+  assert(reopened->stopped_restore(
+      *restored, 0, reference("native-score:material/reopen-transaction"),
+      reference("native-score:material/original-complete-checkpoint"),
+      acknowledgement));
+  assert(acknowledgement.target_sample == 512);
+  for (unsigned block = 0; block < 8; ++block) {
+    std::array<float, 128> resumed{};
+    const auto start = 512 + block * 128;
+    assert(owner->offline_advance(pcm.data(), pcm.size(), start));
+    assert(reopened->offline_advance(resumed.data(), resumed.size(), start));
+    const auto current = owner->pulse(), returned = reopened->pulse();
+    assert(pcm == resumed &&
+           current->reading.physical.visible_positions_metres ==
+               returned->reading.physical.visible_positions_metres);
+    Capture original, replay;
+    assert(owner->pop_audio_capture(original) &&
+           reopened->pop_audio_capture(replay));
+    assert(original.force_newtons == replay.force_newtons &&
+           original.route_force_newtons == replay.route_force_newtons);
+  }
+  assert(owner->native().body->checkpoint().displacement_modal_metres ==
+         reopened->native().body->checkpoint().displacement_modal_metres);
+  std::cout
+      << "actual native N9+M1 held touches+future parameter/release -> same P "
+         "material projection+phase/history -> exact1024 reopen passed\n";
+}
 static void neutral_world(J *fixture) {
   auto quiet = prepare(fixture, true), keyed = prepare(fixture, true);
   note(keyed);
@@ -872,6 +1066,46 @@ static void accepted_future_attack_after_hold(J *fixture) {
     assert(!input.active || input.input_ref != future_input);
   assert(final_checkpoint->native_pair.audio.applied_application_ordinal == 2);
 }
+static void genuine_carrier_detecting_trials(J *carrier) {
+  const std::string bytes =
+      json_object_to_json_string_ext(carrier, JSON_C_TO_STRING_PLAIN);
+  auto copy = [&] { return ql_test_native_carrier::parse(bytes); };
+  auto missing = copy();
+  auto *parts = packet::field(missing.get(), "parts");
+  assert(json_object_array_length(parts) > 1);
+  assert(json_object_array_del_idx(parts, json_object_array_length(parts) - 1,
+                                   1) == 0);
+  refused([&] { ql_test_native_carrier::decode(missing.get()); });
+  auto corrupt = copy();
+  auto *part =
+      json_object_array_get_idx(packet::field(corrupt.get(), "parts"), 0);
+  json_object_object_add(part, "fingerprint",
+                         json_object_new_string("fnv1a64:0000000000000000"));
+  refused([&] { ql_test_native_carrier::decode(corrupt.get()); });
+  auto unknown = copy();
+  json_object_object_add(unknown.get(), "unexpected",
+                         json_object_new_boolean(true));
+  refused([&] { ql_test_native_carrier::decode(unknown.get()); });
+  auto duplicate = copy();
+  parts = packet::field(duplicate.get(), "parts");
+  json_object_array_add(parts,
+                        json_object_get(json_object_array_get_idx(parts, 0)));
+  refused([&] { ql_test_native_carrier::decode(duplicate.get()); });
+  auto restored = ql_test_native_carrier::decode(carrier);
+  auto *original = packet::field(
+      packet::field(restored.get(), "native_admission"), "native_basis");
+  auto *current =
+      packet::field(packet::field(restored.get(), "current_native_admission"),
+                    "native_basis");
+  const std::string current_bytes =
+      json_object_to_json_string_ext(current, JSON_C_TO_STRING_PLAIN);
+  json_object_object_add(original, "independent_mutation",
+                         json_object_new_boolean(true));
+  assert(current_bytes ==
+         json_object_to_json_string_ext(current, JSON_C_TO_STRING_PLAIN));
+  assert(original != current);
+}
+#include "../test_support/independent_retained_body_revision_cases.hpp"
 int main() {
   std::string bytes;
   std::getline(std::cin, bytes);
@@ -884,19 +1118,25 @@ int main() {
       json_tokener_parse_ex(token.get(), bytes.data(), int(bytes.size())));
   assert(json_tokener_get_error(token.get()) == json_tokener_success &&
          json_tokener_get_parse_end(token.get()) == bytes.size());
-  ql::physical_wire::keys(
-      fixture.get(),
-      {"preparation", "current_m3", "operation", "current_operation",
-       "source_basis", "program_refs", "world_operation",
-       "world_current_operation", "world_source_basis", "after_material",
-       "performance_preparation", "native_admission",
-       "current_native_admission", "world_native_admission",
-       "world_current_native_admission", "after_pose", "overload"});
+  ql_test_independent_carrier::genuine_scalar_roundtrip(fixture.get());
+  genuine_carrier_detecting_trials(fixture.get());
+  fixture = ql_test_native_carrier::decode(fixture.get());
+  ql::physical_wire::keys(fixture.get(),
+                          {"preparation", "current_m3", "operation",
+                           "current_operation", "source_basis", "program_refs",
+                           "world_operation", "world_current_operation",
+                           "world_source_basis", "after_material",
+                           "performance_preparation", "native_admission",
+                           "current_native_admission", "world_native_admission",
+                           "world_current_native_admission", "after_pose",
+                           "overload", "native_catalog"});
   source_and_independent_routes(fixture.get());
   genuine_note_release_panic(fixture.get());
   checkpoint_and_partitions(fixture.get());
   qualification_and_atomic_refusal(fixture.get());
   neutral_world(fixture.get());
+  independent_retained_body_revision_cases(fixture.get());
+  retained_material_revision(fixture.get());
   allroute_management_hold(fixture.get());
   committed_v2_scalar_import(fixture.get());
   accepted_future_attack_after_hold(fixture.get());

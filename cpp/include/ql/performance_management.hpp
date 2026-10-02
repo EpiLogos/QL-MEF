@@ -58,6 +58,7 @@ class PerformanceManagement {
                 release_proof_cursor_ = 0;
   std::vector<KeyboardCell> catalog_;
   Identity catalog_identity_{};
+  std::uint64_t catalog_revision_ = 0;
   Readback latest_{};
   bool has_latest_ = false;
   Parameters baseline_{};
@@ -202,7 +203,9 @@ public:
 
   // Every cell is resolved by native K's catalog helper. No chromatic/fifths
   // table is reproduced here. Three physical copies must agree exactly.
-  void admit_catalog(std::vector<KeyboardCell> cells) {
+private:
+  void validate_catalog(std::vector<KeyboardCell> &cells,
+                        const Determination &source) const {
     if (cells.empty() || cells.size() > 192)
       throw std::invalid_argument("bounded native keyboard catalog required");
     std::array<bool, 192> occupied{};
@@ -210,7 +213,6 @@ public:
     std::map<std::pair<unsigned, int>,
              std::pair<const KeyboardCell *, unsigned>>
         addresses;
-    const auto source = native_.engine->source_for_native_admission();
     for (auto &cell : cells) {
       if (cell.row >= 6 || cell.column >= 32 ||
           occupied[cell.row * 32 + cell.column] || cell.label.empty() ||
@@ -219,7 +221,7 @@ public:
       if (cell.available) {
         const auto &n = cell.native_target;
         if (!(n.identity == source.identity) ||
-            !native_.engine->validate_note_target_for_native_admission(n) ||
+            !native_.engine->validate_candidate_note_target(n, source) ||
             !cell.unavailable_reason.empty())
           throw std::invalid_argument(
               "available native source key is disconnected");
@@ -286,8 +288,102 @@ public:
         std::any_of(addresses.begin(), addresses.end(),
                     [](const auto &p) { return p.second.second != 3; }))
       throw std::invalid_argument("six-row Janko physical copies incomplete");
+  }
+
+public:
+  void admit_catalog(std::vector<KeyboardCell> cells) {
+    const auto source = native_.engine->source_for_native_admission();
+    validate_catalog(cells, source);
+    if (catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
+      throw std::overflow_error("native catalog revision exhausted");
     catalog_ = std::move(cells);
     catalog_identity_ = source.identity;
+    ++catalog_revision_;
+  }
+  // Heap-held control proposal, never a second history/store or callback clock.
+  class PreparedCombinedRevision {
+    friend class PerformanceManagement;
+    PerformanceManagement *owner_ = nullptr;
+    std::unique_ptr<Engine::PreparedCombinedRevision> engine_;
+    std::vector<KeyboardCell> catalog_;
+    std::vector<NoteTarget> notes_;
+    Identity before_catalog_{};
+    std::uint64_t before_catalog_revision_ = 0;
+    std::uint64_t transport_epoch_ = 0;
+    bool ready_ = false;
+
+  public:
+    PreparedCombinedRevision() = default;
+    PreparedCombinedRevision(const PreparedCombinedRevision &) = delete;
+    PreparedCombinedRevision &
+    operator=(const PreparedCombinedRevision &) = delete;
+    bool ready() const noexcept { return ready_; }
+    const Engine::PreparedCombinedRevision &engine_candidate() const {
+      return *engine_;
+    }
+  };
+  // The existing native owner supplies the independently prepared source/body,
+  // catalogue and full receiving source. All control allocation/validation is
+  // completed BEFORE P or Engine mutates; unknown JSON cannot mint this token.
+  bool preflight_stopped_combined_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed, std::vector<NoteTarget> notes,
+      std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out) {
+    if (out.owner_ || out.ready_ || notes.empty() || notes.size() > 192 ||
+        release_pending_ || control_recording_failed_ ||
+        catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
+      return false;
+    for (const auto &note : notes)
+      if (!native_.engine->validate_candidate_note_target(note, after))
+        return false;
+    validate_catalog(cells, after);
+    auto candidate = std::make_unique<Engine::PreparedCombinedRevision>();
+    if (!native_.engine->preflight_stopped_combined_revision(
+            after, port, after_seed, guard, expected_cursor, *candidate))
+      return false;
+    out.engine_ = std::move(candidate);
+    out.catalog_ = std::move(cells);
+    out.notes_ = std::move(notes);
+    out.before_catalog_ = catalog_identity_;
+    out.before_catalog_revision_ = catalog_revision_;
+    out.transport_epoch_ = transport_epoch_;
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  bool combined_revision_current(
+      const PreparedCombinedRevision &candidate,
+      const Engine::StoppedCustody &guard) const noexcept {
+    return candidate.ready_ && candidate.owner_ == this && candidate.engine_ &&
+           transport_epoch_ == candidate.transport_epoch_ &&
+           catalog_identity_ == candidate.before_catalog_ &&
+           catalog_revision_ == candidate.before_catalog_revision_ &&
+           catalog_revision_ != std::numeric_limits<std::uint64_t>::max() &&
+           !release_pending_ && !control_recording_failed_ &&
+           native_.engine->combined_revision_current(*candidate.engine_, guard);
+  }
+  // Called only after all P/body/receiver/private source preflights and P's
+  // actual projection have succeeded under this same serial stopped custody.
+  // Retired vectors and route allocations remain in candidate until the owner
+  // records the genuine transaction acknowledgement. Input bindings/history,
+  // touch/member high waters, device owner and transport epoch remain intact.
+  void commit_stopped_combined_revision(
+      PreparedCombinedRevision &candidate,
+      const Engine::StoppedCustody &guard) noexcept {
+    if (!combined_revision_current(candidate, guard))
+      std::terminate();
+    native_.engine->commit_stopped_combined_revision(*candidate.engine_, guard);
+    native_.determination = candidate.engine_->after_determination();
+    std::swap(native_.notes, candidate.notes_);
+    std::swap(catalog_, candidate.catalog_);
+    catalog_identity_ = native_.determination.identity;
+    ++catalog_revision_; // nonoverflow was preflighted before any P mutation
+    has_latest_ = false; // copy actual AFTER snapshot under this same guard
+    candidate.ready_ = false;
+  }
+  void refresh_stopped_reading(const Engine::StoppedCustody &guard) {
+    capture_stopped_reading(guard);
   }
   // The Rust host resolves this exact independent KeyTouch against its current
   // immutable binding, and passes both selected cell and returned NoteTarget.
@@ -631,7 +727,8 @@ public:
     if (!valid_ref(transaction) || !valid_ref(checkpoint_ref) ||
         saved.session != session_ || !saved.transport_epoch ||
         !valid_management_checkpoint(saved) ||
-        transport_epoch_ == std::numeric_limits<std::uint64_t>::max())
+        transport_epoch_ == std::numeric_limits<std::uint64_t>::max() ||
+        catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
       return false;
     auto guard = native_.engine->acquire_stopped_custody();
     if (!guard)
@@ -657,6 +754,7 @@ public:
            checkpoint_ref};
     ++transport_epoch_;
     catalog_.clear();
+    ++catalog_revision_;
     // Exact original input_ref and resolved native target are restored from
     // the paired wrapper. A source_touch_ref is never substituted for UI input.
     capture_stopped_reading(guard);
