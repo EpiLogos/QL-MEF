@@ -79,6 +79,53 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX01",
+        "acceptance_ids": [
+          "B01",
+          "B02"
+        ],
+        "practices": [
+          "XP01",
+          "XP03"
+        ],
+        "host_states": [
+          "A2",
+          "A3",
+          "D-create",
+          "E0",
+          "F-disclosed"
+        ],
+        "capability_refs": [
+          "M0P-LANGUAGE"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "239-qualified-running-4eb-normal-desktop-start.jpeg",
+          "248-qualified-open-live-action.png",
+          "249-qualified-open-live-settled.txt",
+          "242-qualified-4eb-ordinary-enter-world-action.ax.txt",
+          "354-current-native-installed-status.json"
+        ],
+        "reading": "Ordinary entrance and nine voices operated on qualified4eb; Nara refused missing Central Action/catalogue. No qualified successor installed.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -166,6 +213,60 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX02",
+        "acceptance_ids": [
+          "A04",
+          "A05",
+          "A07"
+        ],
+        "practices": [
+          "XP01",
+          "XP05"
+        ],
+        "host_states": [
+          "B1",
+          "F-disclosed",
+          "H-implicit"
+        ],
+        "capability_refs": [
+          "M0P-TIME-COMMUNITY",
+          "M1P-HARMONIC-ENGINE",
+          "M1P-SPANDA",
+          "M2P-PROFILE-SOURCE",
+          "M2P-VIMARSHA-AUDIO",
+          "M2P-ELEMENTAL-MEDIUM",
+          "M2P-DECANIC-FACE",
+          "M3P-CLOCK",
+          "M3P-WORLD-CLOCK",
+          "M4P-IDENTITY",
+          "M4P-ACTIVITY"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "249-qualified-open-live-settled.txt",
+          "253-qualified-lens-L0-action.txt",
+          "61-identities-retained-selection-reset.png"
+        ],
+        "reading": "Dated sky has nine voices; undefined sky label and missing observer/place entrance remain original failures. Same-occasion two-identity current reception remains open; event and natal are distinct.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -252,6 +353,67 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX03",
+        "acceptance_ids": [
+          "A02",
+          "A03",
+          "A10"
+        ],
+        "practices": [
+          "XP03",
+          "XP04",
+          "XP05"
+        ],
+        "host_states": [
+          "B1",
+          "B3",
+          "F-aperture",
+          "J-summoned"
+        ],
+        "capability_refs": [
+          "M0P-QL-STRUCTURE",
+          "M1P-CANONICAL-SOURCE",
+          "M1P-INSTANCE",
+          "M1P-HARMONIC-ENGINE",
+          "M1P-SPANDA",
+          "M1P-QL-FLOWERING",
+          "M1P-TOPOLOGY",
+          "M2P-DET-GATE",
+          "M3P-CLOCK",
+          "M3P-TRANSDUCTION",
+          "M3P-SYMBOLIC-CODEC",
+          "M3P-ROTATION",
+          "M4P-ORACLE",
+          "M5P-REFLECTED-APP"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "252-qualified-step-after-resume.png",
+          "253-qualified-lens-L0-action.txt",
+          "261-qualified-strike-current-control.txt",
+          "263-qualified-strike-contiguous.png",
+          "270-qualified-gain-keyboard.png"
+        ],
+        "reading": "Qualified4eb Step/MEF lens/strike/presentation-gain effects witnessed. M3 reading-lens invariance is separate from M2 modulation. Exact5c source has two independent circles and resident damping controls, no installed replay. Strike amplitude/native output-gain policy still lacks demonstrated ordinary tunability.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -430,6 +592,70 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX05",
+        "acceptance_ids": [
+          "A01",
+          "A11",
+          "B02",
+          "B03"
+        ],
+        "practices": [
+          "XP02",
+          "XP10",
+          "XP11"
+        ],
+        "host_states": [
+          "B1",
+          "B2",
+          "B4",
+          "B5",
+          "F-aperture",
+          "F-surface",
+          "K-proposed"
+        ],
+        "capability_refs": [
+          "M0P-LANGUAGE",
+          "M0P-QL-STRUCTURE",
+          "M0P-RELATIONS",
+          "M0P-PERSONAL-ROUTE",
+          "M0P-PEDAGOGY-ROUTE",
+          "M1P-CANONICAL-SOURCE",
+          "M2P-PROFILE-SOURCE",
+          "M2P-DECANIC-FACE",
+          "M2P-DET-GATE",
+          "M3P-TRANSDUCTION",
+          "M3P-MEASUREMENT-INSPECTOR",
+          "M5P-LIBRARY",
+          "M5P-CANON",
+          "M5P-REFLECTED-APP",
+          "M5P-ATELIER"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "291-qualified-atlas-return-before.png",
+          "292-qualified-atlas-return-action.txt",
+          "293-qualified-manual-atlas-roundtrip.json"
+        ],
+        "reading": "Manual Atlas roundtrip retained Expression49392b77/Mainr1/tick7/lensL5/gen9/gain2/scale120. This is not selected-object Bimba/source explanation.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -519,6 +745,66 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX06",
+        "acceptance_ids": [
+          "A14",
+          "B04",
+          "B06",
+          "B07"
+        ],
+        "practices": [
+          "XP03",
+          "XP04",
+          "XP06"
+        ],
+        "host_states": [
+          "D-working",
+          "E2",
+          "E3",
+          "E5",
+          "E7",
+          "F-disclosed",
+          "K-refused"
+        ],
+        "capability_refs": [
+          "M0P-RELATIONS",
+          "M0P-PEDAGOGY-ROUTE",
+          "M1P-QL-FLOWERING",
+          "M2P-VIMARSHA-AUDIO",
+          "M2P-SONIC-ARENA",
+          "M3P-MEASUREMENT-INSPECTOR",
+          "M5P-LIBRARY",
+          "M5P-BACKEND-STUDIO",
+          "M5P-REFLECTED-APP",
+          "M5P-CONTROL-ROOM"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "242-qualified-4eb-ordinary-enter-world-action.ax.txt",
+          "354-current-native-installed-status.json",
+          "343-local-speech-native-cleanup.json",
+          "344-preserved-local-speech-profile/README.md"
+        ],
+        "reading": "Exact-subject Nara/Epii fresh answer, voice and interruption remain open. Idle speech services safely stopped; restart profiles preserved. No captured audio, listening or provider answer accepted.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -626,6 +912,67 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX07",
+        "acceptance_ids": [
+          "A12",
+          "A13",
+          "A18",
+          "B10"
+        ],
+        "practices": [
+          "XP02",
+          "XP07",
+          "XP08"
+        ],
+        "host_states": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "E3",
+          "K-proposed",
+          "K-refused"
+        ],
+        "capability_refs": [
+          "M0P-PERSONAL-ROUTE",
+          "M2P-ELEMENTAL-MEDIUM",
+          "M2P-DECANIC-FACE",
+          "M3P-SYMBOLIC-CODEC",
+          "M4P-IDENTITY",
+          "M4P-DAY-EPISODE",
+          "M4P-ORACLE",
+          "M4P-ACTIVITY",
+          "M4P-EPISODIC",
+          "M4P-PROMOTION-SEAM"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "29-birthplace-source-refusal.png",
+          "50-personality-correction-before.png",
+          "51-personality-correction-reopened.png",
+          "61-identities-retained-selection-reset.png"
+        ],
+        "reading": "Controlled full-matrix personality correction saved/reopened on predecessor. Current seven-centre constitution, same-occasion A/B and genuine Day/Flow correction/later use remain open. Blank/specimen Day is not lived context.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -719,6 +1066,56 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX08",
+        "acceptance_ids": [
+          "B08",
+          "B10"
+        ],
+        "practices": [
+          "XP06",
+          "XP08",
+          "XP10"
+        ],
+        "host_states": [
+          "C4",
+          "C5",
+          "D-returned",
+          "E4",
+          "F-surface",
+          "K-proposed"
+        ],
+        "capability_refs": [
+          "M4P-DAY-EPISODE",
+          "M4P-ACTIVITY",
+          "M4P-EPISODIC",
+          "M4P-PROMOTION-SEAM",
+          "M5P-ATELIER"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "51-personality-correction-reopened.png",
+          "353-native-memory-practice-receipt.json"
+        ],
+        "reading": "Controlled correction reopened; native memory/custody learning recorded353. Neither closes later use of a current Day/Flow correction or human Recognition.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
@@ -995,6 +1392,69 @@
         "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
         "source_binding_sha256": "6c5e0a154c8525e765a699d5f1f19ee43faea90791340db6a44c331cc7ff8207",
         "artifact_directory": "T/evidence"
+      },
+      "execution_observation_20261002": {
+        "story": "UX11",
+        "acceptance_ids": [
+          "A15",
+          "A16",
+          "B12"
+        ],
+        "practices": [
+          "XP01",
+          "XP06",
+          "XP10",
+          "XP12"
+        ],
+        "host_states": [
+          "B4",
+          "B5",
+          "E5",
+          "E6",
+          "E8",
+          "E.G",
+          "H-failed",
+          "J-focused-work",
+          "J-detached"
+        ],
+        "capability_refs": [
+          "M0P-TIME-COMMUNITY",
+          "M1P-INSTANCE",
+          "M3P-CLOCK",
+          "M3P-WORLD-CLOCK",
+          "M4P-DAY-EPISODE",
+          "M4P-EPISODIC",
+          "M5P-REFLECTED-APP"
+        ],
+        "component_standing": "partial-executed-with-original-failures",
+        "whole_story_status": "open",
+        "evidence": [
+          "52-before-techne-switch.png",
+          "53-techne-switch-after.png",
+          "54-keyboard-resize.png",
+          "59-live-reopen-ack-timeout.png",
+          "61-identities-retained-selection-reset.png",
+          "266-qualified-techne-keyboard-departure.png",
+          "269-qualified-techne-visible-pointer.txt",
+          "345-after-speech-stop-native-preflight.json"
+        ],
+        "reading": "Predecessor switch retained scene once; later restart/lifecycle/keyboard/resize failures preserved. Actual app remains4eb/stopped. Guard preparation is not new loaded-image or UI acceptance.",
+        "human_assessment": null,
+        "installed_cuts": {
+          "oi": "4eb4b152f3b19182662b80f5c2170483c4dd46d2",
+          "ql": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
+          "aikit": "8c6c48f03996807723336b963a5a6014da38ea5b"
+        },
+        "evidence_root": "central:now:control:root:36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53",
+        "artifact_directory": "T/evidence",
+        "source_basis": {
+          "map": "central.content-fnv1a64/v1:52667:fbc8aadaf4ff10cc",
+          "ux": "central.content-fnv1a64/v1:45905:7f668f3ba44582b2",
+          "owner_ruling": "EpiLogos/QL-MEF#254 comment5872629938"
+        },
+        "candidate_qualification": "5c82 real native329 passed/0 failed/67 ignored (Technè job110885986314); text/producer/custody and later concealed-host gates failed; no whole/managed Mac/installed acceptance",
+        "observation_delta_sha256": "84d521d187084c802470a774fa56a5eebdbf426b43e7e8c3fffa6256143b82f1",
+        "current_status_scope": "354 records current managed products; it does not join predecessor visual receipts, later native jobs and installed execution into one causal environment."
       }
     },
     {
