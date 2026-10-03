@@ -1,11 +1,13 @@
 #ifndef QL_PHYSICAL_BODY_HPP
 #define QL_PHYSICAL_BODY_HPP
+#include <ql/native_resident_lifetime.hpp>
 // Physical preparation is a control-thread operation. This is an additive
 // continuation of the existing native field owner, not a symbolic registry,
 // clock, renderer or independently integrated visible body.
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
+#include <memory>
 #include <numeric>
 #include <ql/continuous_field.hpp>
 
@@ -489,6 +491,7 @@ public:
 };
 
 class PhysicalBody {
+  NativeResidentLifetime resident_lifetime_{};
   friend class PreparedPhysicalTransition;
   friend class PreparedPhysicalForceRoutes;
   PreparedPhysicalBody prepared_;
@@ -499,6 +502,20 @@ class PhysicalBody {
   // Same stopped/callback custody as q/v. Diagnostic only: never serialized
   // as numerical state, and fixed literals require no callback allocation.
   const char *advance_refusal_ = nullptr;
+  // Both explicit stopped numerical replacement methods keep THIS resident
+  // body lifetime. Their transient candidate is a separate construction;
+  // adopting only its numerical state cannot replace this registration.
+  void adopt_candidate_state(PhysicalBody &&candidate) noexcept {
+    prepared_ = std::move(candidate.prepared_);
+    q_ = std::move(candidate.q_);
+    v_ = std::move(candidate.v_);
+    scratch_q_ = std::move(candidate.scratch_q_);
+    scratch_v_ = std::move(candidate.scratch_v_);
+    scratch_audio_ = candidate.scratch_audio_;
+    elapsed_ = candidate.elapsed_;
+    last_ = candidate.last_;
+    advance_refusal_ = candidate.advance_refusal_;
+  }
   bool admissible(const std::vector<double> &q,
                   const std::vector<double> &v) const noexcept {
     // Triangle bound guarantees every nodal displacement is inside the
@@ -565,6 +582,30 @@ public:
     v_ = q_;
     scratch_q_ = q_;
     scratch_v_ = q_;
+  }
+  // Actual stopped/acknowledged owner only. This creates a bounded numerical
+  // validation candidate with its OWN temporary constructor lifetime. Neither
+  // copying a registration token nor replacing the resident lifetime is legal.
+  std::unique_ptr<PhysicalBody> copy_stopped_numerical_candidate() const {
+    auto candidate = std::make_unique<PhysicalBody>(prepared_);
+    candidate->q_ = q_;
+    candidate->v_ = v_;
+    candidate->scratch_q_ = scratch_q_;
+    candidate->scratch_v_ = scratch_v_;
+    candidate->scratch_audio_ = scratch_audio_;
+    candidate->elapsed_ = elapsed_;
+    candidate->last_ = last_;
+    candidate->advance_refusal_ = advance_refusal_;
+    return candidate;
+  }
+  // Same uninterrupted exclusive custody AFTER complete paired source/q-v/
+  // queue validation. This publishes only numerical state, preserving THIS
+  // actual resident registration. It is no source, consent or IPC admission.
+  void adopt_stopped_numerical_candidate(PhysicalBody &&candidate) noexcept {
+    adopt_candidate_state(std::move(candidate));
+  }
+  const NativeResidentToken &resident_token() const noexcept {
+    return resident_lifetime_.token();
   }
   const PreparedPhysicalBody &preparation() const noexcept { return prepared_; }
   const char *advance_refusal_reason() const noexcept {
@@ -802,7 +843,7 @@ public:
     candidate.last_ = 0;
     for (std::size_t m = 0; m < candidate.q_.size(); ++m)
       candidate.last_ += candidate.q_[m] * candidate.prepared_.pickup_[m];
-    *this = std::move(candidate);
+    adopt_candidate_state(std::move(candidate));
     return true;
   }
   // An actual M3 form operation can replace geometry. This is explicit
@@ -867,7 +908,7 @@ public:
     const PhysicalFormTransitionReceipt result{
         revision,    candidate.body_revision(), elapsed_, policy, energy,
         next_energy, next_energy - energy};
-    *this = std::move(candidate);
+    adopt_candidate_state(std::move(candidate));
     receipt = result;
     return true;
   }

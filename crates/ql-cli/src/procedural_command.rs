@@ -10,11 +10,21 @@ use ql_mef::procedural_composition::{
     compile_native_batch, compile_native_regeneration_batch, instantiate_scene, regenerate,
     regeneration_native_changes, resolve_procedure_membership,
 };
+use ql_mef::procedural_conduct::{
+    LibraryBuild, NativeRecipeProgram, library_build, library_discover, program_contributions,
+    program_materialization,
+};
+use ql_mef::procedural_control::{NativeControlInput, prepare_native_control};
+use ql_mef::procedural_effective::apply_retained_force_interventions;
+use ql_mef::procedural_intervention::{
+    InterventionPreflight, ManualEdit, extract_manual_interventions, intervention_batch,
+};
 use ql_mef::procedural_manifestation::{
     ATLAS_TRANSITION_CONTRACT, MANIFESTATION_CONTRACT, ManifestationRequest, NativeSubject,
     PlaceOccurrence, SourceBasis, fingerprint, manifestation_inventory, native_procedural_bindings,
     prepare_atlas_transition, resolve_manifestation,
 };
+use ql_mef::procedural_retention::{NativeMaterialization, materialize_retention};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -23,6 +33,15 @@ use std::io::Read;
 pub const PROCEDURAL_REQUEST: &str = "ql.scene-procedural-request/v1";
 pub const PROCEDURAL_RESPONSE: &str = "ql.scene-procedural-response/v1";
 const MAX_INPUT_BYTES: usize = 1_048_576;
+const MAX_INTERVENTION_INPUT_BYTES: usize = 8 * 1024 * 1024;
+pub const INTERVENTION_BATCH_REQUEST: &str = "ql.procedural-intervention-batch-request/v1";
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct InterventionBatchRequest {
+    schema: String,
+    entries: Vec<InterventionPreflight>,
+}
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -44,6 +63,38 @@ struct SceneOutput {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+struct NativeContext {
+    /// Existing ql.vak-composition/v1 source request; interpreted only by its
+    /// current native owner, never by a second procedural graph/parser.
+    source_composition: Value,
+    currentness: ql_mef::vak_scope_wire::OperativeScopeCurrentnessRequest,
+    thread_plan: ql_mef::vak_profile::ThreadPlan,
+}
+
+fn qualify_context(
+    context: NativeContext,
+    procedure: &Procedure,
+    prepared: &mut ql_mef::procedural_composition::PreparedProcedure,
+) -> Result<(), CliError> {
+    crate::vak_composition::execute_request_with_composition(
+        &context.source_composition,
+        |graph| {
+            prepared
+                .qualify_native_cprime(
+                    native_current_m_registry(),
+                    procedure,
+                    graph,
+                    context.currentness,
+                    context.thread_plan,
+                )
+                .map_err(CliError)
+        },
+    )?;
+    Ok(())
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct PrepareRequest {
     schema: String,
     procedure: Procedure,
@@ -54,6 +105,9 @@ struct PrepareRequest {
     previous_membership: Option<ResolvedMembership>,
     contributions: Vec<GeneratedContribution>,
     scene_outputs: Vec<SceneOutput>,
+    program: Option<NativeRecipeProgram>,
+    materialization: Option<NativeMaterialization>,
+    native_context: Option<NativeContext>,
     required_consumers: BTreeSet<String>,
 }
 
@@ -71,6 +125,8 @@ struct RegenerateRequest {
     current: Vec<CurrentContribution>,
     next: Vec<GeneratedContribution>,
     output_readings: Vec<RetainedOutputReading>,
+    materialization: Option<NativeMaterialization>,
+    native_context: Option<NativeContext>,
     required_consumers: BTreeSet<String>,
 }
 
@@ -124,7 +180,7 @@ struct RuleRequest {
     operation: RuleAction,
 }
 
-fn read(path: &str) -> Result<Vec<u8>, CliError> {
+fn read(path: &str, max_bytes: usize) -> Result<Vec<u8>, CliError> {
     let input: Box<dyn Read> = if path == "-" {
         Box::new(std::io::stdin())
     } else {
@@ -132,13 +188,13 @@ fn read(path: &str) -> Result<Vec<u8>, CliError> {
     };
     let mut bytes = Vec::new();
     input
-        .take((MAX_INPUT_BYTES + 1) as u64)
+        .take((max_bytes + 1) as u64)
         .read_to_end(&mut bytes)
         .map_err(|error| CliError(error.to_string()))?;
-    if bytes.len() > MAX_INPUT_BYTES {
-        return Err(CliError(
-            "procedural request exceeds one MiB admission".into(),
-        ));
+    if bytes.len() > max_bytes {
+        return Err(CliError(format!(
+            "procedural request exceeds {max_bytes} byte admission"
+        )));
     }
     Ok(bytes)
 }
@@ -168,20 +224,21 @@ fn discover() -> Value {
         "discover",
         json!({"contracts":{"request":PROCEDURAL_REQUEST,"response":PROCEDURAL_RESPONSE,
             "manifestation":MANIFESTATION_CONTRACT,"composition":PROCEDURE_CONTRACT,"atlas":ATLAS_TRANSITION_CONTRACT},
-        "route":"ql scene procedural <discover|manifest|prepare|regenerate|atlas|rule> [request.json|-] --json",
+        "route":"ql scene procedural <discover|library|control|interventions|intervention-batch|manifest|prepare|regenerate|atlas|rule> [request.json|-] --json",
         "native_owners":{"source":"ql_mef::m_tree::MRegistry","manifestation":"ql_mef::procedural_manifestation::resolve_manifestation",
             "composition":"ql_mef::procedural_composition::compile_native_batch","rule":"ql_mef::procedural_composition::RuleExecution",
             "application":"O:I expression::Request::Edit","retention":"oi.journey-scene/v1 scene.procedural",
-            "timing":"Procedure.timing.owner_ref; supplied native epoch/cursor","body":"#288 native body owner","audio":"#287 native audio/control owner"},
+            "timing":"full original Procedure TimingBinding; genuine private held native owner factory required for performative conduct","body":"#288 native body owner","audio":"#287 native audio/control owner"},
         "types":{"subject":"NativeSubject (existing flattened SubjectBinding)","locus":"exact native coordinate plus face/profile/source revision",
             "occurrence":"OccurrenceAddress","target_reading":"TargetReading{occurrence_ref,address,subject,revision,tags,properties}",
-            "address":"OwnedAddress{expression_ref,scene_ref,entity_ref,component,constituent_ref,property}",
+            "address":"OwnedAddress{expression_ref,scene_ref,entity_ref,component,constituent_ref,parent_ref,property}",
             "membership":"ResolvedMembership{selector,mode,containing_expression_ref,targets,addresses,joined,left}",
             "retained_output_reading":"RetainedOutputReading; current CAS + original native Operation; re-attested by O:I native owner",
+            "native_context":"NativeContext{source_composition:ql.vak-composition/v1,currentness:ql.operative-scope-currentness/v1,thread_plan:ThreadPlan}; exact actual native graph qualification, not applied conduct",
             "procedure":"Procedure","contribution":"GeneratedContribution","prepared":"PreparedProcedure","checkpoint":"RuleExecution"},
         "components":["expression","scene","field","entity","force","layer","sequence","sequence_link","property","driver"],
-        "native_changes":["scene_create","scene_remove","entity_add","entity_remove","subject_bind","scene_compose","scene_material_set","parameter_set","focus","scene_reorder"],
-        "limits":{"input_bytes":MAX_INPUT_BYTES,"targets":2048,"active_instances":2048,"evaluations_per_interval":4096,
+        "native_changes":["scene_create","scene_remove","entity_add","entity_remove","subject_bind","scene_compose","scene_material_set","parameter_set","focus","relation_focus","scene_reorder"],
+        "limits":{"input_bytes":MAX_INPUT_BYTES,"intervention_input_bytes":MAX_INTERVENTION_INPUT_BYTES,"targets":2048,"active_instances":2048,"evaluations_per_interval":4096,
             "operations_per_interval":4096,"expansion_depth":64,"queue":4096,"conditions":64,"recipe_parameters":256,"retained_intervals":4096},
         "source":{"repository":registry.manifest().source_repository,"revision":registry.manifest().source_revision,
             "dataset_tree":registry.manifest().source_dataset_tree,"snapshot_sha256":registry.manifest().source_snapshot_sha256},
@@ -190,7 +247,7 @@ fn discover() -> Value {
             "rule":"bounded native checkpoint/event admission; state retained at existing owner",
             "arbitrary_inverse":"unavailable until original entity-to-form source determines the operation",
             "consumer_ack":"only actual scene/body/audio owners can attest application"},
-        "source_obligations":manifestation_inventory(registry)}),
+        "library":library_discover(),"long_lived_owner":"same ql.field-host-request/v1 command operation:procedure request:ConductRequest", "source_obligations":manifestation_inventory(registry)}),
     )
 }
 
@@ -233,7 +290,8 @@ fn regenerate_request(input: RegenerateRequest) -> Result<Value, CliError> {
             | NativeChange::SceneCompose { scene_ref, .. }
             | NativeChange::SceneMaterialSet { scene_ref, .. }
             | NativeChange::EntityAdd { scene_ref, .. }
-            | NativeChange::Focus { scene_ref, .. } => scene_ref.clone(),
+            | NativeChange::Focus { scene_ref, .. }
+            | NativeChange::RelationFocus { scene_ref, .. } => scene_ref.clone(),
             NativeChange::EntityRemove { entity_ref }
             | NativeChange::SubjectBind { entity_ref, .. }
             | NativeChange::ParameterSet { entity_ref, .. } => {
@@ -276,7 +334,7 @@ fn regenerate_request(input: RegenerateRequest) -> Result<Value, CliError> {
             "native regeneration changes have no exact owned contribution".into(),
         ));
     }
-    let prepared = if contributions.is_empty() {
+    let mut prepared = if contributions.is_empty() {
         None
     } else {
         Some(
@@ -296,6 +354,21 @@ fn regenerate_request(input: RegenerateRequest) -> Result<Value, CliError> {
             .map_err(CliError)?,
         )
     };
+    if let Some(context) = input.materialization {
+        materialize_retention(
+            prepared
+                .as_mut()
+                .ok_or_else(|| CliError("retention has no native regenerated operation".into()))?,
+            &context,
+        )
+        .map_err(CliError)?;
+    }
+    if let Some(context) = input.native_context {
+        let prepared = prepared.as_mut().ok_or_else(|| {
+            CliError("native C-prime context has no actual operation to qualify".into())
+        })?;
+        qualify_context(context, &input.procedure, prepared)?;
+    }
     Ok(response(
         "regenerate",
         json!({"regeneration":delta,"membership":membership,"prepared":prepared}),
@@ -375,7 +448,7 @@ fn rule_request(input: RuleRequest) -> Result<Value, CliError> {
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
     let usage = || {
-        CliError("usage: ql scene procedural <discover|manifest|prepare|regenerate|atlas|rule> [request.json|-] [--json]".into())
+        CliError("usage: ql scene procedural <discover|library|control|interventions|intervention-batch|manifest|prepare|regenerate|atlas|rule> [request.json|-] [--json]".into())
     };
     let Some(operation) = args.first() else {
         return Err(usage());
@@ -390,12 +463,56 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() != 2 {
         return Err(usage());
     }
-    if !["manifest", "prepare", "regenerate", "atlas", "rule"].contains(&operation.as_str()) {
+    if ![
+        "library",
+        "control",
+        "interventions",
+        "intervention-batch",
+        "manifest",
+        "prepare",
+        "regenerate",
+        "atlas",
+        "rule",
+    ]
+    .contains(&operation.as_str())
+    {
         return Err(usage());
     }
-    let bytes = read(&args[1])?;
+    let max_bytes = if operation == "intervention-batch" {
+        MAX_INTERVENTION_INPUT_BYTES
+    } else {
+        MAX_INPUT_BYTES
+    };
+    let bytes = read(&args[1], max_bytes)?;
     let registry = native_current_m_registry();
     let output = match operation.as_str() {
+        "library" => response(
+            "library",
+            library_build(request::<LibraryBuild>(&bytes)?).map_err(CliError)?,
+        ),
+        "control" => response(
+            "control",
+            prepare_native_control(&request::<NativeControlInput>(&bytes)?).map_err(CliError)?,
+        ),
+        "interventions" => response(
+            "interventions",
+            serde_json::to_value(
+                extract_manual_interventions(&request::<ManualEdit>(&bytes)?).map_err(CliError)?,
+            )
+            .map_err(|e| CliError(e.to_string()))?,
+        ),
+        "intervention-batch" => {
+            let input: InterventionBatchRequest = request(&bytes)?;
+            if input.schema != INTERVENTION_BATCH_REQUEST {
+                return Err(CliError(
+                    "unsupported native intervention batch request".into(),
+                ));
+            }
+            response(
+                "intervention_batch",
+                intervention_batch(&input.entries).map_err(CliError)?,
+            )
+        }
         "manifest" => {
             let input: ManifestRequest = request(&bytes)?;
             schema(&input.schema)?;
@@ -414,6 +531,22 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
                 input.previous_membership.as_ref(),
             )
             .map_err(CliError)?;
+            if let Some(program) = &input.program {
+                if !input.scene_outputs.is_empty() || !input.contributions.is_empty() {
+                    return Err(CliError(
+                        "native program cannot be mixed with caller-generated contributions".into(),
+                    ));
+                }
+                input.contributions = program_contributions(
+                    registry,
+                    &input.procedure,
+                    program,
+                    &input.expression_ref,
+                    &input.current_readings,
+                    &membership,
+                )
+                .map_err(CliError)?;
+            }
             if input.scene_outputs.len() > input.procedure.budgets.max_active_instances {
                 return Err(CliError("scene output budget exceeded".into()));
             }
@@ -436,7 +569,25 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
                     .map_err(CliError)?,
                 );
             }
-            let prepared = compile_native_batch(
+            if input
+                .program
+                .as_ref()
+                .is_some_and(|p| matches!(p, NativeRecipeProgram::ForceParameters { .. }))
+            {
+                let context = input.materialization.as_ref().ok_or_else(|| {
+                    CliError(
+                        "native force preparation requires SAME current retained interventions"
+                            .into(),
+                    )
+                })?;
+                apply_retained_force_interventions(
+                    &mut input.contributions,
+                    &input.current_readings,
+                    context,
+                )
+                .map_err(CliError)?;
+            }
+            let mut prepared = compile_native_batch(
                 registry,
                 &input.procedure,
                 &input.operation_ref,
@@ -447,6 +598,16 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
                 input.required_consumers,
             )
             .map_err(CliError)?;
+            if let Some(context) = input.materialization {
+                materialize_retention(&mut prepared, &context).map_err(CliError)?;
+            } else if let Some(program) = &input.program {
+                let context=program_materialization(program,input.document_revision,0,"held").map_err(CliError)?
+                    .ok_or_else(||CliError("force/Atlas program needs SAME owner current Scene retention materialization".into()))?;
+                materialize_retention(&mut prepared, &context).map_err(CliError)?;
+            }
+            if let Some(context) = input.native_context {
+                qualify_context(context, &input.procedure, &mut prepared)?;
+            }
             response(
                 "prepare",
                 serde_json::to_value(prepared).map_err(|error| CliError(error.to_string()))?,

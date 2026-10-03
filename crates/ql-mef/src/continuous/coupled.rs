@@ -494,6 +494,14 @@ impl CoupledFieldSession {
     pub(crate) fn performance_exchange(&mut self, request: &Value) -> Result<Value, String> {
         self.field.performance_exchange(request)
     }
+    /// Forward the same worker's original parsed reply even on a post-reply
+    /// refusal. A lost transport remains None; this creates no new owner.
+    pub(crate) fn performance_exchange_retained(
+        &mut self,
+        request: &Value,
+    ) -> Result<Value, (String, Option<Value>)> {
+        self.field.performance_exchange_retained(request)
+    }
     pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
         self.field.performance_invalidate(reason)
     }

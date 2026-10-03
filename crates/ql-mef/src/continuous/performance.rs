@@ -182,6 +182,34 @@ pub struct PerformanceOwner {
     source_assets: Value,
     last: Option<Value>,
 }
+/// Complete parsed stopped-owner replies on refusal; never source authority.
+pub(crate) struct NativeStoppedExchangeFailure {
+    pub(crate) reason: String,
+    pub(crate) native_receipts: Vec<Value>,
+}
+impl From<String> for NativeStoppedExchangeFailure {
+    fn from(reason: String) -> Self {
+        Self {
+            reason,
+            native_receipts: Vec::new(),
+        }
+    }
+}
+impl From<&str> for NativeStoppedExchangeFailure {
+    fn from(reason: &str) -> Self {
+        Self::from(reason.to_owned())
+    }
+}
+
+impl From<(String, Option<Value>)> for NativeStoppedExchangeFailure {
+    fn from((reason, native_receipt): (String, Option<Value>)) -> Self {
+        Self {
+            reason,
+            native_receipts: native_receipt.into_iter().collect(),
+        }
+    }
+}
+
 impl PerformanceOwner {
     pub fn prepare(
         current: &CoupledBasis,
@@ -474,6 +502,34 @@ impl PerformanceOwner {
         self.last = Some(receipt.clone());
         Ok(receipt)
     }
+    fn exchange_retaining_parsed_pulse(
+        &mut self,
+        session: &mut CoupledFieldSession,
+        request: Value,
+    ) -> Result<Value, (String, Option<Value>)> {
+        let receipt = session.performance_exchange_retained(&request)?;
+        if let Err(error) = self.validate_reply(&receipt) {
+            return Err((session.performance_invalidate(&error), Some(receipt)));
+        }
+        self.last = Some(receipt.clone());
+        Ok(receipt)
+    }
+
+    fn stopped_exchange_with_receipts(
+        &mut self,
+        session: &mut CoupledFieldSession,
+        request: Value,
+    ) -> Result<Value, NativeStoppedExchangeFailure> {
+        let receipt = session.performance_exchange_retained(&request)?;
+        if let Err(error) = self.validate_reply(&receipt) {
+            return Err(NativeStoppedExchangeFailure {
+                reason: session.performance_invalidate(&error),
+                native_receipts: vec![receipt],
+            });
+        }
+        self.last = Some(receipt.clone());
+        Ok(receipt)
+    }
     /// Crate-private stopped consumer used by the native selected Act export
     /// transaction. No public HostOperation accepts a raw scope/packet here.
     pub(crate) fn owner_stopped_exchange(
@@ -483,7 +539,7 @@ impl PerformanceOwner {
         session: &mut CoupledFieldSession,
         operation: &str,
         operands: &Value,
-    ) -> Result<Value, String> {
+    ) -> Result<Value, NativeStoppedExchangeFailure> {
         self.validate_current(current)?;
         let reading = self
             .reading()
@@ -534,7 +590,7 @@ impl PerformanceOwner {
                 .ok_or("native owner request absent")?
                 .insert(key.clone(), value.clone());
         }
-        let mut reply = self.exchange(session, request)?;
+        let mut reply = self.stopped_exchange_with_receipts(session, request)?;
         if operation == "restore" && reply["accepted"] == true {
             // Manager stopped_restore deliberately retires its catalog. Put
             // back THIS native owner's unchanged actual K/B catalog before
@@ -542,10 +598,14 @@ impl PerformanceOwner {
             let mut catalog = self.raw("catalog")?;
             catalog["cells"] = json!(self.cells);
             catalog["transpose"] = json!(self.config.transpose);
-            let restored = self.exchange(session, catalog)?;
-            if restored["accepted"] != true {
-                return Err("native restored source catalog restitution refused".into());
-            }
+            let restored = self
+                .stopped_exchange_with_receipts(session, catalog)
+                .map_err(|mut failure| {
+                    failure.native_receipts.insert(0, reply.clone());
+                    failure
+                })?;
+            // Return the actual catalog refusal together with the original
+            // restore pulse; the export validator still refuses publication.
             reply["catalog_restoration"] = restored;
         }
         Ok(reply)
@@ -566,9 +626,7 @@ impl PerformanceOwner {
                 None,
             ));
         }
-        let receipt = session
-            .performance_exchange(&request)
-            .map_err(|e| (e, None))?;
+        let receipt = session.performance_exchange_retained(&request)?;
         if let Err(error) = self.validate_reply(&receipt) {
             let reason = session.performance_invalidate(&error);
             return Err((reason, Some(receipt)));
@@ -1180,3 +1238,20 @@ mod reply_tests;
 pub(crate) fn owner_parameter_id(target: &str) -> Result<u8, String> {
     parameter_id(target)
 }
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_timing.rs"]
+mod timing;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(crate) use timing::{
+    NativeTimingMoment, NativeTimingRefusal, PreparedProceduralTiming,
+    PreparedProceduralTimingDescriptor,
+};
+
+#[path = "performance_acoustic.rs"]
+mod acoustic;
+pub(crate) use acoustic::AcousticRefusal;
+pub use acoustic::{
+    AcousticConfiguration, AcousticDirectivity, PreparedAcousticReceiverUpdate,
+    PreparedAcousticReceiving,
+};

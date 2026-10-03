@@ -68,6 +68,11 @@ pub struct NativePageScore {
     pub restored_from_epoch: Option<String>,
     pub restored_applied_high_water: Option<String>,
     pub restored_input_high_water: Option<String>,
+    /// The exact post-pulse stream starts here; saved ordinals above retain
+    /// their original historical meaning. Input feedback is never a new note.
+    pub post_observer_applied_high_water: Option<String>,
+    pub post_observer_input_high_water: Option<String>,
+    pub restored_input_history: Option<Value>,
 }
 #[derive(Clone, Debug, PartialEq, Serialize)]
 pub struct NativeScoreCustody {
@@ -189,6 +194,9 @@ fn page_score(
         restored_from_epoch: None,
         restored_applied_high_water: None,
         restored_input_high_water: None,
+        post_observer_applied_high_water: None,
+        post_observer_input_high_water: None,
+        restored_input_history: None,
     };
     if kind == "terminated" {
         // Original before/after checkpoints, reservations and actual reason
@@ -211,9 +219,15 @@ fn page_score(
         let epoch = counter(&proof["transport_ack"]["epoch"])?;
         let applied = counter(&proof["saved"]["audio"]["applied_application_ordinal"])?;
         let input = counter(&proof["saved"]["management"]["input_history"]["last_ordinal"])?;
+        let post_applied = counter(&proof["after"]["audio"]["applied_application_ordinal"])?;
+        let post_input = counter(&proof["after"]["management"]["input_history"]["last_ordinal"])?;
+        let restored_history = array(&proof["restored_input_history"])?;
         if saved_epoch == 0
             || epoch <= saved_epoch
-            || streams.insert(epoch, (applied, input)).is_some()
+            || post_applied != applied
+            || post_input < input
+            || restored_history.len() > 256
+            || streams.insert(epoch, (post_applied, post_input)).is_some()
         {
             return Err("native continuation stream epoch duplicated or disconnected".into());
         }
@@ -221,6 +235,9 @@ fn page_score(
         out.restored_from_epoch = Some(saved_epoch.to_string());
         out.restored_applied_high_water = Some(applied.to_string());
         out.restored_input_high_water = Some(input.to_string());
+        out.post_observer_applied_high_water = Some(post_applied.to_string());
+        out.post_observer_input_high_water = Some(post_input.to_string());
+        out.restored_input_history = Some(proof["restored_input_history"].clone());
         return Ok(out);
     }
     let batch = &decoded["value"];
@@ -308,6 +325,17 @@ fn page_score(
     Ok(out)
 }
 
+// Only the four explicit native NoteTarget f64 projections use bit equality.
+// Every surrounding source, page, input row, field set and type stays exact.
+fn same_native_f64(left: &Value, right: &Value) -> bool {
+    match (left.as_f64(), right.as_f64()) {
+        (Some(left), Some(right)) if left.is_finite() && right.is_finite() => {
+            left.to_bits() == right.to_bits()
+        }
+        _ => false,
+    }
+}
+
 fn qualify_original_input(
     sources: &[RetainedScoreSource<'_>],
     manifest: &Value,
@@ -345,9 +373,11 @@ fn qualify_original_input(
     if original["input_ref"].as_str().is_none_or(str::is_empty)
         || counter(&original["target"]["touch"])? == 0
         || (kind != 0 && original["target"]["touch"] != app["touch"])
-        || (app["has_note"] == true && app["note"] != original["target"])
     {
         return Err("native score original input/touch differs from its application".into());
+    }
+    if app["has_note"] == true {
+        crate::performance_management::qualify_native_note_wire(&original["target"], &app["note"])?;
     }
     if applied {
         // A held input can still belong to an earlier retained source basis.
@@ -390,12 +420,12 @@ fn qualify_original_input(
                 || pitch["source_coordinate"] != actual["source_coordinate"]
                 || pitch["source_prime"] != json!(actual["source_face"] == 1)
                 || pitch["pitch_class"] != actual["pitch_class"]
-                || pitch["hertz"] != actual["hertz"]
-                || pitch["fundamental_hz"] != actual["fundamental_hz"]
+                || !same_native_f64(&pitch["hertz"], &actual["hertz"])
+                || !same_native_f64(&pitch["fundamental_hz"], &actual["fundamental_hz"])
                 || pitch["tuning_ref"] != actual["tuning_ref"]
                 || pitch["exact_ratio"] != ratio
-                || args[4] != actual["phase_sin"]
-                || args[5] != actual["phase_cos"]
+                || !same_native_f64(&args[4], &actual["phase_sin"])
+                || !same_native_f64(&args[5], &actual["phase_cos"])
             {
                 return Err(
                     "native played note projection detached from its complete original source"

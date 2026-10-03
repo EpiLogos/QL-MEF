@@ -18,6 +18,8 @@ struct NativeReceivingManifest {
       context{}, source_motion{}, receiver_motion{}, policy{},
       policy_revision{}, standing{};
   // Actual first admitted pickup cursor; immutable native instance birth.
+  // A later prepared trajectory may begin after this birth. First installation
+  // and replacement separately validate the actual native history relation.
   // MovingSpatialReceiving history_start_ retains this birth, not the sliding
   // ring retention boundary. Never infer it from current cursor or labels.
   std::uint64_t source_generation = 0, body_revision = 0, origin_sample = 0,
@@ -31,11 +33,13 @@ struct NativeReceivingCheckpoint {
   std::array<float, ql::receiving_history_samples> history_linear{};
 };
 struct NativeReceivingReadback {
+  ql::NativeResidentToken resident{};
   NativeReceivingManifest manifest{};
   std::uint64_t samples_elapsed = 0;
   ql::SpatialMotionPoint end_position{};
 };
 struct ReceivingPort {
+  ql::NativeResidentToken resident{};
   void *owner = nullptr;
   const void *body_owner = nullptr;
   const NativeReceivingManifest *manifest = nullptr;
@@ -49,6 +53,12 @@ struct ReceivingPort {
                   std::uint64_t) noexcept = nullptr;
   bool (*write_checkpoint)(const void *, NativeReceivingCheckpoint &,
                            std::uint64_t) noexcept = nullptr;
+  // CONTROL only: an unattached prepared transport (or actual installed
+  // transport under the exclusive stopped guard) can expose its exact bounded
+  // history before the sole P owner restores to the saved cursor. This never
+  // observes/advances P q/v or grants imported checkpoint/source authority.
+  bool (*write_transport_checkpoint)(const void *, NativeReceivingCheckpoint &,
+                                     std::uint64_t) noexcept = nullptr;
   bool (*validate_checkpoint)(const void *, const NativeReceivingCheckpoint &,
                               std::uint64_t) noexcept = nullptr;
   // Called only after paired P+audio preflight/restore under the same stopped
@@ -77,7 +87,7 @@ inline bool
 valid_receiving_manifest(const NativeReceivingManifest &m) noexcept {
   if (m.version != 1 || m.sample_rate < 8000 || m.sample_rate > 192000 ||
       !m.body_revision || m.end_sample <= m.origin_sample ||
-      m.history_origin_sample < m.origin_sample ||
+      m.history_origin_sample > m.origin_sample ||
       m.history_origin_sample >= m.end_sample ||
       m.end_sample - m.origin_sample > std::uint64_t(m.sample_rate) * 60)
     return false;
@@ -114,6 +124,16 @@ valid_receiving_checkpoint(const NativeReceivingCheckpoint &cp,
     if (!std::isfinite(x))
       return false;
   return true;
+}
+inline bool
+same_receiving_checkpoint(const NativeReceivingCheckpoint &a,
+                          const NativeReceivingCheckpoint &b) noexcept {
+  return a.version == b.version &&
+         same_receiving_manifest(a.manifest, b.manifest) &&
+         a.samples_elapsed == b.samples_elapsed &&
+         a.history_start_sample == b.history_start_sample &&
+         std::memcmp(a.history_linear.data(), b.history_linear.data(),
+                     sizeof(a.history_linear)) == 0;
 }
 static_assert(std::is_trivially_copyable_v<NativeReceivingCheckpoint>);
 static_assert(std::is_trivially_copyable_v<NativeReceivingReadback>);

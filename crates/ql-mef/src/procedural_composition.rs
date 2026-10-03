@@ -95,6 +95,12 @@ pub struct ResolvedMembership {
     pub left: Vec<String>,
 }
 
+/// Stable Source map key for an additional location of ONE native occurrence.
+/// This is never an entity ID/selector alias; the value is the exact native address.
+pub fn native_membership_address_key(address: &OwnedAddress) -> Result<String> {
+    address.validate()?;
+    Ok(format!("source-address:{}", fingerprint(address)?))
+}
 pub fn resolve_membership(
     selector: &Selector,
     expression_ref: &str,
@@ -124,11 +130,12 @@ pub fn resolve_membership(
     let mut seen = BTreeSet::new();
     let mut targets = BTreeMap::new();
     let mut addresses = BTreeMap::new();
+    let mut locations = BTreeMap::<String, BTreeSet<OwnedAddress>>::new();
     for reading in readings {
         nonempty(&reading.occurrence_ref, "target occurrence")?;
         reading.subject.validate()?;
-        if !seen.insert(&reading.occurrence_ref) {
-            return Err("duplicate native occurrence reading".into());
+        if !seen.insert((reading.occurrence_ref.clone(), reading.address.clone())) {
+            return Err("duplicate exact native occurrence/address reading".into());
         }
         reading.address.validate()?;
         if reading.address.expression_ref != expression_ref {
@@ -147,8 +154,39 @@ pub fn resolve_membership(
             }),
         };
         if matched {
-            targets.insert(reading.occurrence_ref.clone(), reading.revision);
-            addresses.insert(reading.occurrence_ref.clone(), reading.address.clone());
+            if targets
+                .insert(reading.occurrence_ref.clone(), reading.revision)
+                .is_some_and(|previous| previous != reading.revision)
+            {
+                return Err("same native occurrence has conflicting revisions".into());
+            }
+            let group = locations.entry(reading.occurrence_ref.clone()).or_default();
+            if !group.is_empty()
+                && (reading.address.component != "entity"
+                    || reading.address.property.is_some()
+                    || reading.address.entity_ref.as_deref()
+                        != Some(reading.occurrence_ref.as_str())
+                    || group.iter().any(|a| {
+                        a.component != "entity"
+                            || a.property.is_some()
+                            || a.entity_ref != reading.address.entity_ref
+                    }))
+            {
+                return Err("only one actual shared Entity occurrence may have multiple native Scene addresses".into());
+            }
+            group.insert(reading.address.clone());
+        }
+    }
+    for (occurrence, locations) in locations {
+        for (index, address) in locations.into_iter().enumerate() {
+            let key = if index == 0 {
+                occurrence.clone()
+            } else {
+                native_membership_address_key(&address)?
+            };
+            if addresses.insert(key, address).is_some() {
+                return Err("native membership address key collision".into());
+            }
         }
     }
     if let Selector::Occurrences { refs } = selector {
@@ -174,7 +212,9 @@ pub fn resolve_membership(
         .filter(|r| !targets.contains_key(*r))
         .cloned()
         .collect::<Vec<_>>();
-    if let Some(previous) = previous.filter(|_| !joined.is_empty() || !left.is_empty()) {
+    if let Some(previous) =
+        previous.filter(|p| !joined.is_empty() || !left.is_empty() || p.addresses != addresses)
+    {
         match policy {
             MembershipChangePolicy::RejectChange => {
                 return Err("sustained selector membership changed".into());
@@ -434,6 +474,15 @@ pub fn resolve_procedure_membership(
     procedure.validate(registry)?;
     let mut accepted = Vec::new();
     for reading in readings {
+        // Current owner input is a source-qualified reading, even for a
+        // frozen selector retry. A stale canonical native source cannot
+        // bypass qualification merely because conditions reject its value.
+        validate_native_subject_basis(registry, &reading.subject)?;
+        for tag in &reading.tags {
+            nonempty(&tag.value, "target tag")?;
+            nonempty(&tag.scope_ref, "target tag scope")?;
+            tag.basis.validate()?;
+        }
         let mut matches = true;
         for condition in &procedure.conditions {
             if !condition.accepts(registry, reading)? {
@@ -473,6 +522,7 @@ const NATIVE_CHANGES: &[&str] = &[
     "parameter_set",
     "focus",
     "scene_reorder",
+    "relation_focus",
 ];
 
 /// No private imperative script: every recipe output is an existing native
@@ -519,6 +569,10 @@ pub enum NativeChange {
     SceneReorder {
         scene_refs: Vec<String>,
     },
+    RelationFocus {
+        scene_ref: String,
+        binding_ref: String,
+    },
 }
 
 impl NativeChange {
@@ -534,12 +588,19 @@ impl NativeChange {
             Self::ParameterSet { .. } => "parameter_set",
             Self::Focus { .. } => "focus",
             Self::SceneReorder { .. } => "scene_reorder",
+            Self::RelationFocus { .. } => "relation_focus",
         }
     }
     pub fn validate(&self) -> Result<()> {
         let wire = serde_json::to_value(self).map_err(|e| e.to_string())?;
         validate_material(&wire, 0)?;
-        for key in ["scene_ref", "entity_ref", "parameter", "title"] {
+        for key in [
+            "scene_ref",
+            "entity_ref",
+            "binding_ref",
+            "parameter",
+            "title",
+        ] {
             if let Some(Value::String(value)) = wire.get(key) {
                 nonempty(value, key)?;
             }
@@ -596,7 +657,23 @@ pub struct OwnedAddress {
     pub entity_ref: Option<String>,
     pub component: String,
     pub constituent_ref: Option<String>,
+    /// Layer only: null is the base; Some is the exact SequenceLink ID.
+    #[serde(
+        default,
+        deserialize_with = "deserialize_parent_presence",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub parent_ref: Option<Option<String>>,
     pub property: Option<String>,
+}
+
+fn deserialize_parent_presence<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<Option<String>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    Option::<String>::deserialize(deserializer).map(Some)
 }
 
 impl OwnedAddress {
@@ -641,11 +718,17 @@ impl OwnedAddress {
         {
             return Err("native address lacks its exact containing occurrence".into());
         }
+        if self.parent_ref.is_some() && self.component != "layer" {
+            return Err("native parent coordinate belongs only to a state layer".into());
+        }
         for value in [&self.constituent_ref, &self.property]
             .into_iter()
             .flatten()
         {
             nonempty(value, "native constituent/property")?;
+        }
+        if let Some(Some(parent)) = &self.parent_ref {
+            nonempty(parent, "native containing state")?;
         }
         if self.property.as_ref().is_some_and(|property| {
             property.split('.').any(|part| {
@@ -683,8 +766,24 @@ impl OwnedAddress {
         if self.component == "entity" && self.entity_ref.is_some() && self.property.is_none() {
             return true;
         }
+        if self.component == "sequence"
+            && self.property.is_none()
+            && (other.component == "sequence_link"
+                || other.component == "layer"
+                    && other.parent_ref.as_ref().is_some_and(Option::is_some))
+        {
+            return true;
+        }
+        if self.component == "sequence_link"
+            && self.property.is_none()
+            && other.component == "layer"
+            && other.parent_ref == Some(self.constituent_ref.clone())
+        {
+            return true;
+        }
         self.component == other.component
             && self.constituent_ref == other.constituent_ref
+            && self.parent_ref == other.parent_ref
             && (self.property.is_none()
                 || self.property == other.property
                 || self.property.as_ref().is_some_and(|property| {
@@ -694,6 +793,47 @@ impl OwnedAddress {
                         .is_some_and(|target| target.starts_with(&format!("{property}.")))
                 }))
     }
+}
+
+/// Same native receiving address map; numerical conversion stays solely in
+/// expression_scene::set_parameter/get_parameter, never this source adapter.
+pub fn native_parameter_path(parameter: &str) -> (&str, &str) {
+    match parameter {
+        "force_strength" => ("force", "strength"),
+        "force_spin" => ("force", "spin"),
+        "force_radius" => ("force", "radius"),
+        "force_mode" => ("force", "kind"),
+        "x" => ("entity", "position.x"),
+        "y" => ("entity", "position.y"),
+        "z" => ("entity", "position.z"),
+        "width" => ("entity", "size.x"),
+        "height" => ("entity", "size.y"),
+        "glyph" => ("entity", "text"),
+        "yantra" => ("entity", "yantraId"),
+        "frequency" => ("entity", "templateFrequency"),
+        "ascii" | "image" => ("entity", "source"),
+        "scale" | "share" | "kind" | "shape" | "rotation" => ("entity", parameter),
+        _ => ("property", parameter),
+    }
+}
+pub fn native_parameter_address(
+    expression_ref: &str,
+    scene_ref: &str,
+    entity_ref: &str,
+    parameter: &str,
+) -> Result<OwnedAddress> {
+    let (component, property) = native_parameter_path(parameter);
+    let address = OwnedAddress {
+        expression_ref: expression_ref.into(),
+        scene_ref: Some(scene_ref.into()),
+        entity_ref: Some(entity_ref.into()),
+        component: component.into(),
+        constituent_ref: None,
+        parent_ref: None,
+        property: Some(property.into()),
+    };
+    address.validate()?;
+    Ok(address)
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -749,6 +889,15 @@ pub fn seeded_index(seed: &str, occurrence: &str, draw: u64, count: usize) -> Re
     Ok((number % count as u64) as usize)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum OverlayOperation {
+    #[default]
+    Set,
+    Delete,
+    Reorder,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AuthoredOverlay {
@@ -759,6 +908,8 @@ pub struct AuthoredOverlay {
     pub value: Value,
     pub actor_ref: String,
     pub persistent: bool,
+    #[serde(default)]
+    pub operation: OverlayOperation,
 }
 
 fn overlay_target<'a>(material: &'a mut Value, pointer: &str) -> Result<&'a mut Value> {
@@ -811,6 +962,121 @@ fn overlay_target<'a>(material: &'a mut Value, pointer: &str) -> Result<&'a mut 
     Ok(target)
 }
 
+/// Persistent edits operate on stable identities. Deletion is idempotent and
+/// remains a tombstone when a later generator reintroduces the same member.
+/// Canonical stable-ID overlay application after native attribution projection.
+pub fn apply_retained_material_overlays(
+    material: &mut Value,
+    contribution_ref: &str,
+    overlays: &[AuthoredOverlay],
+) -> Result<()> {
+    for overlay in overlays {
+        if overlay.contribution_ref != contribution_ref {
+            return Err("retained material overlay targets a different contribution".into());
+        }
+        nonempty(&overlay.actor_ref, "retained material actor")?;
+        validate_material(&overlay.value, 0)?;
+        if overlay.persistent {
+            apply_overlay(material, overlay)?;
+        }
+    }
+    validate_material(material, 0)
+}
+
+fn apply_overlay(material: &mut Value, overlay: &AuthoredOverlay) -> Result<()> {
+    if overlay.operation == OverlayOperation::Set {
+        *overlay_target(material, &overlay.pointer)? = overlay.value.clone();
+        return Ok(());
+    }
+    if overlay.operation == OverlayOperation::Reorder {
+        let wanted = overlay
+            .value
+            .as_array()
+            .ok_or("native reorder needs stable IDs")?;
+        let target = overlay_target(material, &overlay.pointer)?
+            .as_array_mut()
+            .ok_or("native reorder target is not a constituent array")?;
+        let mut by_id = keyed_material(target, &overlay.pointer)?
+            .into_iter()
+            .map(|(id, value)| (id, value.clone()))
+            .collect::<BTreeMap<_, _>>();
+        let original = target
+            .iter()
+            .map(|v| v["id"].as_str().unwrap().to_owned())
+            .collect::<Vec<_>>();
+        let mut order = BTreeSet::new();
+        let mut result = Vec::new();
+        for id in wanted {
+            let id = id.as_str().ok_or("native reorder member is not an ID")?;
+            if !order.insert(id.to_owned()) {
+                return Err("duplicate native reorder member".into());
+            }
+            if let Some(value) = by_id.remove(id) {
+                result.push(value);
+            }
+        }
+        // Newly generated members are retained in their native generated order.
+        for id in original {
+            if let Some(value) = by_id.remove(&id) {
+                result.push(value);
+            }
+        }
+        *target = result;
+        return Ok(());
+    }
+    let (parent, last) = overlay
+        .pointer
+        .rsplit_once('/')
+        .ok_or("native deletion needs a stable target")?;
+    if last.is_empty() {
+        return Err("native deletion cannot erase whole material".into());
+    }
+    let unescape = |s: &str| -> Result<String> {
+        let mut out = String::new();
+        let mut chars = s.chars();
+        while let Some(ch) = chars.next() {
+            if ch == '~' {
+                out.push(match chars.next() {
+                    Some('0') => '~',
+                    Some('1') => '/',
+                    _ => return Err("invalid deletion path escaping".into()),
+                });
+            } else {
+                out.push(ch);
+            }
+        }
+        Ok(out)
+    };
+    let key = unescape(last)?;
+    let parent = match overlay_target(material, parent) {
+        Ok(v) => v,
+        Err(error) if error.contains("disappeared") => return Ok(()),
+        Err(error) => return Err(error),
+    };
+    match parent {
+        Value::Object(object) => {
+            object.remove(&key);
+        }
+        Value::Array(values) => {
+            let id = key
+                .strip_prefix('@')
+                .filter(|v| !v.is_empty())
+                .ok_or("positional authored deletion refused")?;
+            if values
+                .iter()
+                .filter(|v| v["id"].as_str() == Some(id))
+                .count()
+                > 1
+            {
+                return Err("ambiguous authored deletion".into());
+            }
+            values.retain(|v| v["id"].as_str() != Some(id));
+        }
+        _ => return Err("native deletion parent is a scalar".into()),
+    }
+    Ok(())
+}
+
 /// Three-way reconciliation retains human changes and unknown authored keys.
 /// Arrays of constituents are paired by stable `id`, never positional index.
 pub fn reconcile_material(previous: &Value, current: &Value, generated: &Value) -> Result<Value> {
@@ -860,13 +1126,29 @@ fn merge(
             let old_map = keyed_material(old, path)?;
             let current_map = keyed_material(current, path)?;
             let next_map = keyed_material(next, path)?;
-            let mut ids = next
+            let old_common = old
+                .iter()
+                .filter_map(|v| v["id"].as_str())
+                .filter(|id| current_map.contains_key(*id))
+                .collect::<Vec<_>>();
+            let current_common = current
+                .iter()
+                .filter_map(|v| v["id"].as_str())
+                .filter(|id| old_map.contains_key(*id))
+                .collect::<Vec<_>>();
+            let (first, second) = if old_common != current_common {
+                (current, next)
+            } else {
+                (next, current)
+            };
+            let mut ids = first
                 .iter()
                 .map(|v| v["id"].as_str().unwrap().to_owned())
                 .collect::<Vec<_>>();
-            ids.extend(current.iter().filter_map(|v| {
+            let seen = ids.iter().cloned().collect::<BTreeSet<_>>();
+            ids.extend(second.iter().filter_map(|v| {
                 let id = v["id"].as_str().unwrap();
-                (!next_map.contains_key(id)).then(|| id.to_owned())
+                (!seen.contains(id)).then(|| id.to_owned())
             }));
             let mut result = Vec::new();
             for id in ids {
@@ -1245,6 +1527,7 @@ pub fn instantiate_scene(
             entity_ref: None,
             component: "scene".into(),
             constituent_ref: None,
+            parent_ref: None,
             property: None,
         }],
         native_changes,
@@ -1476,7 +1759,7 @@ pub fn regenerate(
                 nonempty(&overlay.actor_ref, "overlay actor")?;
                 validate_material(&overlay.value, 0)?;
                 if overlay.persistent {
-                    *overlay_target(&mut effective, &overlay.pointer)? = overlay.value.clone();
+                    apply_overlay(&mut effective, overlay)?;
                     output.retained_overlays.push(overlay.clone());
                 }
             }
@@ -1587,11 +1870,22 @@ fn validate_output_readings(
     current: &[CurrentContribution],
     readings: &[RetainedOutputReading],
 ) -> Result<BTreeMap<String, Vec<OwnedAddress>>> {
-    if readings.len() > procedure.budgets.max_active_instances {
-        return Err("retained output reading budget exceeded".into());
+    if readings.len() > 2048 {
+        return Err("retained output reading bound exceeded".into());
     }
     let mut result = BTreeMap::new();
+    let mut projections = BTreeMap::<&str, &RetainedOutputReading>::new();
     for reading in readings {
+        if let Some(previous) = projections.get(reading.contribution_ref.as_str()) {
+            if *previous == reading {
+                continue;
+            }
+            return Err("conflicting retained whole-output projections".into());
+        }
+        if projections.len() >= procedure.budgets.max_active_instances {
+            return Err("retained unique output reading budget exceeded".into());
+        }
+        projections.insert(&reading.contribution_ref, reading);
         if reading.schema != RETAINED_OUTPUT_READING
             || reading.native_owner != "oi.expression"
             || reading.expression_ref != expression_ref
@@ -1710,18 +2004,6 @@ fn validate_output_readings(
         let changes = envelope["changes"]
             .as_array()
             .ok_or("retained output operation has no full original changes")?;
-        if !changes.iter().any(|change| {
-            change["change"] == "scene_create" && change["scene_ref"] == reading.occurrence_ref
-        }) || !changes.iter().any(|change| {
-            change["change"] == "scene_material_set"
-                && change["scene_ref"] == reading.occurrence_ref
-                && change["presentation"]["schema"] == "oi.journey-scene/v1"
-                && change["presentation"]["scene"]["id"] == reading.occurrence_ref
-        }) {
-            return Err(
-                "retained output does not match its original applied native scene material".into(),
-            );
-        }
         let sources = envelope["sources"]
             .as_array()
             .ok_or("retained output operation has no original qualified sources")?;
@@ -1731,65 +2013,216 @@ fn validate_output_readings(
                     || s["ref"].as_str().is_none_or(str::is_empty)
                     || s["revision"].as_str().is_none_or(str::is_empty)
             })
+            || !sources
+                .iter()
+                .any(|s| s["ref"] == old.recipe.source_ref && s["revision"] == old.recipe.revision)
+            || !sources.iter().any(|s| {
+                s["ref"] == procedure.profile.source_ref
+                    && s["revision"] == procedure.profile.revision
+            })
         {
-            return Err("retained output creation has unqualified original sources".into());
+            return Err(
+                "retained output original operation lacks its exact recipe/profile source".into(),
+            );
         }
-        // Later generations retain their new recipe basis separately. The
-        // immutable creation receipt proves native identity/initial subject;
-        // the native owner attests latest generated/current material and CAS.
-        if !changes.iter().any(|change| {
-            change["change"] == "subject_bind"
-                && change["binding"]["subject_ref"] == procedure.principal_subject_ref
-                && change["entity_ref"].as_str().is_some_and(|entity| {
-                    changes.iter().any(|created| {
-                        created["change"] == "entity_add"
-                            && created["scene_ref"] == reading.occurrence_ref
-                            && created["entity_ref"] == entity
-                    })
-                })
-        }) {
-            return Err("retained output creation does not bind the native principal".into());
-        }
-        if reading.current_basis["schema"] != "oi.journey-scene/v1"
-            || reading.current_basis["scene"]["id"] != reading.occurrence_ref
-            || reading.owned_addresses.is_empty()
-        {
-            return Err("retained output lacks an actual native scene occurrence".into());
+        if reading.owned_addresses.is_empty() {
+            return Err("retained output lacks its exact native owned targets".into());
         }
         let mut addresses = reading.owned_addresses.clone();
         for address in &addresses {
             address.validate()?;
-            if address.expression_ref != expression_ref
-                || address.scene_ref.as_deref() != Some(reading.occurrence_ref.as_str())
-            {
-                return Err("retained output ownership escapes its actual occurrence".into());
+            if address.expression_ref != expression_ref {
+                return Err("retained output ownership escapes its containing Expression".into());
             }
         }
-        let entities = reading.current_basis["scene"]["entities"]
-            .as_array()
-            .ok_or("retained output lacks its current constituents")?;
-        for entity in entities {
-            let address = OwnedAddress {
-                expression_ref: expression_ref.into(),
-                scene_ref: Some(reading.occurrence_ref.clone()),
-                entity_ref: Some(
-                    entity["id"]
-                        .as_str()
-                        .ok_or("retained native entity lacks identity")?
-                        .into(),
-                ),
-                component: "entity".into(),
-                constituent_ref: None,
-                property: None,
-            };
-            address.validate()?;
-            if reading
-                .owned_addresses
+        if reading.generated_basis["schema"] == "oi.journey-scene/v1" {
+            if !changes
                 .iter()
-                .any(|owned| owned.covers(&address))
+                .any(|c| c["change"] == "scene_create" && c["scene_ref"] == reading.occurrence_ref)
+                || !changes.iter().any(|c| {
+                    c["change"] == "scene_material_set"
+                        && c["scene_ref"] == reading.occurrence_ref
+                        && c["presentation"]["schema"] == "oi.journey-scene/v1"
+                        && c["presentation"]["scene"]["id"] == reading.occurrence_ref
+                })
             {
-                addresses.push(address);
+                return Err(
+                    "created Scene output lacks its original applied Scene construction".into(),
+                );
             }
+            if !changes.iter().any(|c| {
+                c["change"] == "subject_bind"
+                    && c["binding"]["subject_ref"] == procedure.principal_subject_ref
+                    && c["entity_ref"].as_str().is_some_and(|e| {
+                        changes.iter().any(|created| {
+                            created["change"] == "entity_add"
+                                && created["scene_ref"] == reading.occurrence_ref
+                                && created["entity_ref"] == e
+                        })
+                    })
+            }) {
+                return Err("created Scene output does not bind its native principal".into());
+            }
+            if reading.current_basis["schema"] != "oi.journey-scene/v1"
+                || reading.current_basis["scene"]["id"] != reading.occurrence_ref
+                || reading.generated_basis["scene"]["id"] != reading.occurrence_ref
+                || addresses
+                    .iter()
+                    .any(|a| a.scene_ref.as_deref() != Some(reading.occurrence_ref.as_str()))
+            {
+                return Err("created Scene output lacks its actual native occurrence".into());
+            }
+            let entities = reading.current_basis["scene"]["entities"]
+                .as_array()
+                .ok_or("retained Scene lacks its current constituents")?;
+            for entity in entities {
+                let address = OwnedAddress {
+                    expression_ref: expression_ref.into(),
+                    scene_ref: Some(reading.occurrence_ref.clone()),
+                    entity_ref: Some(
+                        entity["id"]
+                            .as_str()
+                            .ok_or("retained constituent lacks its exact native identity")?
+                            .into(),
+                    ),
+                    component: "entity".into(),
+                    constituent_ref: None,
+                    parent_ref: None,
+                    property: None,
+                };
+                address.validate()?;
+                if reading.owned_addresses.iter().any(|a| a.covers(&address)) {
+                    addresses.push(address);
+                }
+            }
+        } else if let Some(parameter) = reading.generated_basis["parameter"].as_str() {
+            nonempty(parameter, "retained native parameter")?;
+            let actual_address: OwnedAddress =
+                serde_json::from_value(reading.current_basis["address"].clone())
+                    .map_err(|e| e.to_string())?;
+            actual_address.validate()?;
+            let entity = actual_address
+                .entity_ref
+                .as_deref()
+                .ok_or("native parameter output has no entity occurrence")?;
+            let scene = actual_address
+                .scene_ref
+                .as_deref()
+                .ok_or("native parameter output has no containing Scene")?;
+            if reading.current_basis["schema"] != "ql.native-parameter-state/v1"
+                || reading.current_basis["parameter"] != parameter
+                || !reading
+                    .current_basis
+                    .as_object()
+                    .is_some_and(|o| o.contains_key("value"))
+                || !reading
+                    .generated_basis
+                    .as_object()
+                    .is_some_and(|o| o.contains_key("value"))
+                || reading.current_basis["target_revision"]
+                    .as_u64()
+                    .is_none_or(|r| r == 0 || r > document_revision)
+                || reading.occurrence_ref != entity
+                || addresses.is_empty()
+                || addresses.first() != Some(&actual_address)
+                || addresses.iter().any(|a| {
+                    a.entity_ref.as_deref() != Some(entity)
+                        || native_parameter_address(
+                            expression_ref,
+                            a.scene_ref.as_deref().unwrap_or(""),
+                            entity,
+                            parameter,
+                        )
+                        .ok()
+                        .as_ref()
+                            != Some(a)
+                })
+                || (addresses.len() > 1 && reading.current_basis["addresses"] != json!(addresses))
+                || native_parameter_address(expression_ref, scene, entity, parameter)?
+                    != actual_address
+                || !changes.iter().any(|c| {
+                    c["change"] == "parameter_set"
+                        && c["entity_ref"] == entity
+                        && c["parameter"] == parameter
+                })
+            {
+                return Err("retained parameter output differs from its original actual native operation/address/state".into());
+            }
+        } else if let Some(flow) = reading.generated_basis["native_flow"].as_array() {
+            if reading.current_basis["schema"] != "ql.native-atlas-state/v1"
+                || reading.current_basis["expression_ref"] != expression_ref
+                || reading.occurrence_ref != expression_ref
+                || !reading.current_basis["focus"].is_object()
+                || flow.is_empty()
+            {
+                return Err(
+                    "retained Atlas output lacks its actual continuing Expression state".into(),
+                );
+            }
+            let scenes = reading.current_basis["scene_order"]
+                .as_array()
+                .ok_or("native Atlas output lacks exact current scene order")?;
+            let mut unique = BTreeSet::new();
+            for scene in scenes {
+                let reference = scene
+                    .as_str()
+                    .ok_or("native Atlas scene ref is not a string")?;
+                if !reference.starts_with(&format!("{expression_ref}:scene:"))
+                    || !unique.insert(reference)
+                {
+                    return Err(
+                        "native Atlas has foreign/duplicate current Scene occurrences".into(),
+                    );
+                }
+            }
+            if !scenes
+                .iter()
+                .any(|s| s == &reading.current_basis["focus"]["scene_ref"])
+                || reading.current_basis["focus"]["entity_ref"]
+                    .as_str()
+                    .is_some_and(|e| !e.starts_with(&format!("{expression_ref}:entity:")))
+            {
+                return Err("native Atlas focus escapes its continuing world".into());
+            }
+            for operation in flow {
+                let change: NativeChange =
+                    serde_json::from_value(operation.clone()).map_err(|e| e.to_string())?;
+                change.validate()?;
+                let target = match change {
+                    NativeChange::Focus { scene_ref, .. }
+                    | NativeChange::RelationFocus { scene_ref, .. } => OwnedAddress {
+                        expression_ref: expression_ref.into(),
+                        scene_ref: Some(scene_ref),
+                        entity_ref: None,
+                        component: "scene".into(),
+                        constituent_ref: None,
+                        parent_ref: None,
+                        property: None,
+                    },
+                    NativeChange::SceneReorder { .. } => OwnedAddress {
+                        expression_ref: expression_ref.into(),
+                        scene_ref: None,
+                        entity_ref: None,
+                        component: "expression".into(),
+                        constituent_ref: None,
+                        parent_ref: None,
+                        property: None,
+                    },
+                    _ => return Err("native Atlas output has a non-flow operation".into()),
+                };
+                target.validate()?;
+                if !addresses.iter().any(|a| a.covers(&target))
+                    || !changes
+                        .iter()
+                        .any(|old| old["change"] == operation["change"])
+                {
+                    return Err("retained Atlas flow kind was not an owned actual original native operation".into());
+                }
+            }
+        } else {
+            return Err(
+                "unknown native procedural output kind; no Scene coercion is available".into(),
+            );
         }
         if result
             .insert(reading.contribution_ref.clone(), addresses)
@@ -1808,6 +2241,10 @@ pub struct PreparedProcedure {
     pub operation_ref: String,
     pub fingerprint: String,
     pub procedure_ref: String,
+    /// Exact definition compiled into this operation, including native source,
+    /// timing, selectors, seed and recipe parameters. Qualification may not
+    /// relabel existing material with a later or otherwise changed definition.
+    pub original_procedure: Procedure,
     pub recipe_revision: String,
     pub source_revision: String,
     pub expected_document_revision: u64,
@@ -1815,10 +2252,58 @@ pub struct PreparedProcedure {
     /// Original membership is unchanged. Native S re-attests these separate
     /// retained output readings against its current Document and journal.
     pub output_readings: Vec<RetainedOutputReading>,
+    /// Source-qualified metadata anchors, not membership or generated ownership.
+    /// Only the source materializer derives these from the sealed original recipe.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub metadata_scope: Vec<OwnedAddress>,
     pub contributions: Vec<GeneratedContribution>,
     pub timing: TimingBinding,
     pub required_consumers: BTreeSet<String>,
     pub native_edit: Value,
+    /// Optional source-owned native qualification. Applied conduct and native
+    /// authority still require the stage/participant owners' actual receipts.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub native_cprime: Option<NativeCPrimePreparation>,
+    /// Source-owned intent for a separately attributed lifecycle operation.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lifecycle_intent: Option<Value>,
+}
+
+impl PreparedProcedure {
+    /// Qualify the already compiled native operations through the actual QL
+    /// graph. Failure preserves this preparation and its original fingerprint.
+    pub fn qualify_native_cprime(
+        &mut self,
+        registry: &MRegistry,
+        procedure: &Procedure,
+        graph: &crate::vak_composition::VakComposition,
+        request: crate::vak_scope_wire::OperativeScopeCurrentnessRequest,
+        plan: crate::vak_profile::ThreadPlan,
+    ) -> Result<()> {
+        if self.original_procedure != *procedure
+            || self.procedure_ref != procedure.procedure_ref
+            || self.recipe_revision != procedure.recipe.revision
+            || self.source_revision != procedure.registry_revision
+            || self.membership.selector != procedure.selector
+            || self.native_edit["actor"] != procedure.composition.actor
+        {
+            return Err(
+                "native C-prime qualification belongs to another prepared operation".into(),
+            );
+        }
+        let mut original = self.clone();
+        original.fingerprint.clear();
+        if fingerprint(&original)? != self.fingerprint {
+            return Err("prepared operation changed after original native compilation".into());
+        }
+        let qualification = prepare_native_cprime(registry, procedure, graph, request, plan)?;
+        let mut candidate = self.clone();
+        candidate.native_cprime = Some(qualification);
+        candidate.fingerprint.clear();
+        candidate.fingerprint = fingerprint(&candidate)?;
+        *self = candidate;
+        Ok(())
+    }
 }
 
 /// Compile the admitted recipe into the *same* native Edit used by humans.
@@ -1846,6 +2331,7 @@ pub fn compile_native_batch(
         required_consumers,
         BTreeMap::new(),
         vec![],
+        false,
     )
 }
 
@@ -1885,6 +2371,7 @@ pub fn compile_native_regeneration_batch(
         required_consumers,
         retained,
         output_readings,
+        false,
     )
 }
 
@@ -1900,6 +2387,7 @@ fn compile_native_batch_inner(
     required_consumers: BTreeSet<String>,
     retained: BTreeMap<String, Vec<OwnedAddress>>,
     output_readings: Vec<RetainedOutputReading>,
+    metadata_only: bool,
 ) -> Result<PreparedProcedure> {
     procedure.validate(registry)?;
     nonempty(operation_ref, "operation ref")?;
@@ -1910,7 +2398,7 @@ fn compile_native_batch_inner(
     {
         return Err("prepared selector scope or membership mode differs".into());
     }
-    if membership.targets.len() != membership.addresses.len()
+    if membership.targets.len() > membership.addresses.len()
         || membership
             .targets
             .keys()
@@ -1918,7 +2406,20 @@ fn compile_native_batch_inner(
     {
         return Err("selector has no exact native address for each retained reading".into());
     }
-    for address in membership.addresses.values() {
+    for (key, address) in &membership.addresses {
+        if !membership.targets.contains_key(key)
+            && (key != &native_membership_address_key(address)?
+                || address.component != "entity"
+                || address.property.is_some()
+                || !address
+                    .entity_ref
+                    .as_ref()
+                    .is_some_and(|entity| membership.targets.contains_key(entity)))
+        {
+            return Err(
+                "secondary membership address is not an exact shared Entity native location".into(),
+            );
+        }
         address.validate()?;
         if address.expression_ref != expression_ref {
             return Err("selected native address escapes containing Expression".into());
@@ -1939,6 +2440,18 @@ fn compile_native_batch_inner(
     let mut created_scenes = BTreeSet::new();
     let mut created_entities = BTreeMap::new();
     for contribution in &contributions {
+        if let Some(reading) = output_readings
+            .iter()
+            .find(|r| r.contribution_ref == contribution.contribution_ref)
+        {
+            if contribution.generated_basis.get("authored_basis")
+                != reading.generated_basis.get("authored_basis")
+            {
+                return Err(
+                    "retained authored native basis cannot change through regeneration".into(),
+                );
+            }
+        }
         let retained_addresses = retained
             .get(&contribution.contribution_ref)
             .map(Vec::as_slice)
@@ -2033,12 +2546,15 @@ fn compile_native_batch_inner(
                     entity_ref,
                     parameter,
                     ..
-                } => (
-                    Some(entity_scene(entity_ref)?),
-                    Some(entity_ref.clone()),
-                    "property",
-                    Some(parameter.clone()),
-                ),
+                } => {
+                    let (component, property) = native_parameter_path(parameter);
+                    (
+                        Some(entity_scene(entity_ref)?),
+                        Some(entity_ref.clone()),
+                        component,
+                        Some(property.into()),
+                    )
+                }
                 NativeChange::Focus {
                     scene_ref,
                     entity_ref,
@@ -2052,14 +2568,67 @@ fn compile_native_batch_inner(
                     },
                     None,
                 ),
+                NativeChange::RelationFocus { scene_ref, .. } => {
+                    (Some(scene_ref.clone()), None, "scene", None)
+                }
                 NativeChange::SceneReorder { .. } => (None, None, "expression", None),
             };
+            // Parameter/binding/removal owns a global native Entity. Every
+            // exact current containing Scene must be admitted independently.
+            if matches!(
+                change,
+                NativeChange::ParameterSet { .. }
+                    | NativeChange::EntityRemove { .. }
+                    | NativeChange::SubjectBind { .. }
+            ) {
+                let entity_ref = entity
+                    .as_deref()
+                    .ok_or("global Entity operation lacks identity")?;
+                if !created_entities.contains_key(entity_ref) {
+                    let locations = membership
+                        .addresses
+                        .values()
+                        .chain(retained_addresses.iter())
+                        .filter(|a| a.entity_ref.as_deref() == Some(entity_ref))
+                        .filter_map(|a| a.scene_ref.clone())
+                        .collect::<BTreeSet<_>>();
+                    if locations.is_empty() {
+                        return Err(
+                            "global Entity write lacks actual native Scene locations".into()
+                        );
+                    }
+                    for location in locations {
+                        let affected = OwnedAddress {
+                            expression_ref: expression_ref.into(),
+                            scene_ref: Some(location),
+                            entity_ref: Some(entity_ref.into()),
+                            component: component.into(),
+                            constituent_ref: None,
+                            parent_ref: None,
+                            property: property.clone(),
+                        };
+                        if !contribution
+                            .owned_addresses
+                            .iter()
+                            .any(|a| a.covers(&affected))
+                            || !membership
+                                .addresses
+                                .values()
+                                .chain(retained_addresses.iter())
+                                .any(|a| a.entity_ref == affected.entity_ref && a.covers(&affected))
+                        {
+                            return Err("global native Entity write omits an affected resolved Scene location".into());
+                        }
+                    }
+                }
+            }
             let target = OwnedAddress {
                 expression_ref: expression_ref.into(),
                 scene_ref: scene.clone(),
                 entity_ref: entity.clone(),
                 component: component.into(),
                 constituent_ref: None,
+                parent_ref: None,
                 property,
             };
             target.validate()?;
@@ -2129,6 +2698,7 @@ fn compile_native_batch_inner(
                         entity_ref: None,
                         component: "scene".into(),
                         constituent_ref: None,
+                        parent_ref: None,
                         property: None,
                     };
                     if (!created_scenes.contains(scene_ref)
@@ -2168,7 +2738,7 @@ fn compile_native_batch_inner(
             changes.push(serde_json::to_value(change).map_err(|e| e.to_string())?);
         }
     }
-    if changes.is_empty() || changes.len() > procedure.budgets.max_operations {
+    if (changes.is_empty() && !metadata_only) || changes.len() > procedure.budgets.max_operations {
         return Err("native operation batch is empty or exceeds its admitted budget".into());
     }
     let native_edit = json!({"operation":"edit","expression_ref":expression_ref,"expected_revision":document_revision,
@@ -2178,15 +2748,19 @@ fn compile_native_batch_inner(
         operation_ref: operation_ref.into(),
         fingerprint: String::new(),
         procedure_ref: procedure.procedure_ref.clone(),
+        original_procedure: procedure.clone(),
         recipe_revision: procedure.recipe.revision.clone(),
         source_revision: procedure.registry_revision.clone(),
         expected_document_revision: document_revision,
         membership,
         output_readings,
+        metadata_scope: vec![],
         contributions,
         timing: procedure.timing.clone(),
         required_consumers,
         native_edit,
+        native_cprime: None,
+        lifecycle_intent: None,
     };
     prepared.fingerprint = fingerprint(&prepared)?;
     Ok(prepared)
@@ -2341,7 +2915,10 @@ impl RuleExecution {
         }
         self.visited.insert(traversal);
         self.operations += generated_operations;
-        if self.visited.len() > procedure.budgets.max_evaluations {
+        // Evaluation/operation budgets are per admitted native interval. The
+        // independent retained cause history spans intervals to detect replayed
+        // non-progress; tying it to one interval incorrectly stops continuation.
+        if self.visited.len() > 4096 {
             return Err(
                 "retained causal progress budget exceeded; checkpoint/restart required".into(),
             );
@@ -2400,6 +2977,163 @@ impl RuleExecution {
     }
 }
 
+/// A native C′ preparation, observed through the existing QL owner. The
+/// native stage still admits effects and attests actual material/body/audio
+/// Return. This record is deliberately not a completed conduct receipt.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NativeCPrimePreparation {
+    pub schema: String,
+    pub procedure_ref: String,
+    pub procedure_revision: String,
+    pub definition: AuthoredCPrime,
+    pub currentness: crate::vak_scope_wire::OperativeScopeCurrentnessResponse,
+    pub thread_plan: crate::vak_profile::ThreadPlan,
+    pub pairs: Vec<crate::vak_profile::PositionPair>,
+    pub walk: Vec<crate::vak_profile::ContentPosition>,
+    pub fingerprint: String,
+}
+
+pub const NATIVE_CPRIME_PREPARATION_CONTRACT: &str = "ql.procedural-cprime-preparation/v1";
+
+/// Compile and reobserve through an ACTUAL native `VakComposition`; no
+/// caller-constructed profile or echoed binding can certify currentness.
+/// Workflow CT/CP/CPF are retained at their native profile altitude. They are
+/// not coerced into FullVāk content fields, coordinates or face operations.
+pub fn prepare_native_cprime(
+    registry: &MRegistry,
+    procedure: &Procedure,
+    graph: &crate::vak_composition::VakComposition,
+    request: crate::vak_scope_wire::OperativeScopeCurrentnessRequest,
+    thread_plan: crate::vak_profile::ThreadPlan,
+) -> Result<NativeCPrimePreparation> {
+    procedure.validate(registry)?;
+    let authored = &procedure.composition;
+    if request.current_whole_ref != authored.whole
+        || request.expected.whole_ref != authored.whole
+        || request.expected.subject_ref != procedure.principal_subject_ref
+        || request.expected.binding_ref != authored.interpretation.reference
+        || request.expected.binding_revision != authored.interpretation.revision
+        || request.expected.profile != authored.profile()
+        || request.expected.frame.context_frame != authored.frame.0.code()
+    {
+        return Err(
+            "native C-prime whole/subject/profile/frame or original interpretation differs".into(),
+        );
+    }
+    let currentness = graph
+        .observe_operative_scope_currentness(request)
+        .map_err(|error| error.to_string())?;
+    let binding = match &currentness.observation {
+        crate::vak_scope::OperativeScopeObservation::Current { binding } => binding,
+        crate::vak_scope::OperativeScopeObservation::Stale { differences, .. } => {
+            return Err(format!(
+                "native C-prime source/context is stale: {}",
+                differences.join(", ")
+            ));
+        }
+        crate::vak_scope::OperativeScopeObservation::Missing { reason, .. } => {
+            return Err(format!(
+                "native C-prime current whole is unavailable: {reason}"
+            ));
+        }
+    };
+    // Recipe and material profile are actual retained source qualifications,
+    // not merely labels on a transported authored C′ object.
+    for basis in [&procedure.recipe, &procedure.profile] {
+        if !binding.sources.iter().any(|source| {
+            source.source_ref == basis.source_ref && source.revision == basis.revision
+        }) {
+            return Err(
+                "native C-prime whole does not carry the actual recipe/profile source".into(),
+            );
+        }
+    }
+    if authored.sources.iter().any(|reference| {
+        !binding
+            .sources
+            .iter()
+            .any(|source| source.source_ref == *reference)
+            && !binding.evidence_refs.contains(reference)
+    }) {
+        return Err("authored C-prime source is absent from the current native whole".into());
+    }
+    let compiled = graph
+        .compile_profile(&authored.whole, authored.profile())
+        .map_err(|error| error.to_string())?;
+    if compiled.subject_ref != procedure.principal_subject_ref
+        || compiled.frame.id != authored.frame.0
+    {
+        return Err("native C-prime compiled frame/subject differs".into());
+    }
+    compiled
+        .validate_plan(&thread_plan)
+        .map_err(|error| error.to_string())?;
+    if thread_plan.legs.len() > procedure.budgets.max_active_instances {
+        return Err("native C-prime legs exceed the admitted active-instance budget".into());
+    }
+    // Generic native topology validates dependencies, not this procedure's
+    // source or target admission. Resolve constituents through the exact
+    // current native whole instead of accepting arbitrary subject strings.
+    let whole = graph
+        .whole(&authored.whole)
+        .map_err(|error| error.to_string())?;
+    let mut admitted_subjects = BTreeSet::from([procedure.principal_subject_ref.as_str()]);
+    admitted_subjects.extend(
+        whole
+            .binding
+            .member_bindings()
+            .iter()
+            .map(|member| member.subject_ref.as_str()),
+    );
+    let admitted_inputs: BTreeSet<&str> = binding
+        .sources
+        .iter()
+        .map(|source| source.source_ref.as_str())
+        .chain(binding.evidence_refs.iter().map(String::as_str))
+        .collect();
+    for leg in &thread_plan.legs {
+        if !admitted_subjects.contains(leg.subject_ref.as_str()) || leg.scope_ref != authored.whole
+        {
+            return Err("native C-prime leg exceeds the current whole's subject/scope".into());
+        }
+        // An identified predecessor result is a planned native dependency,
+        // never a fabricated receipt of actual Return. Actual completion and
+        // application remain at the native undertaking/stage owners.
+        let predecessor_inputs: BTreeSet<&str> = thread_plan
+            .legs
+            .iter()
+            .filter(|candidate| leg.after.contains(&candidate.unit_ref))
+            .map(|candidate| candidate.result_ref.as_str())
+            .collect();
+        if leg.input_refs.is_empty()
+            || leg.input_refs.iter().any(|reference| {
+                !admitted_inputs.contains(reference.as_str())
+                    && !predecessor_inputs.contains(reference.as_str())
+            })
+            || !leg.input_refs.iter().any(|reference| {
+                reference == &procedure.recipe.source_ref
+                    || predecessor_inputs.contains(reference.as_str())
+            })
+        {
+            return Err("native C-prime leg has no admitted recipe/preceding Return input".into());
+        }
+    }
+    let mut prepared = NativeCPrimePreparation {
+        schema: NATIVE_CPRIME_PREPARATION_CONTRACT.into(),
+        procedure_ref: procedure.procedure_ref.clone(),
+        procedure_revision: procedure.revision.clone(),
+        definition: authored.clone(),
+        currentness,
+        thread_plan,
+        pairs: compiled.pairs,
+        walk: compiled.walk,
+        fingerprint: String::new(),
+    };
+    prepared.fingerprint = fingerprint(&prepared)?;
+    Ok(prepared)
+}
+
 /// Use source-native C′ topology for which recipe legs may be prepared
 /// together. Chain/Fusion consume actual predecessor returns at their owner.
 pub fn cprime_dependencies(
@@ -2445,4 +3179,57 @@ pub fn cprime_dependencies(
         result.insert(slot.clone(), prerequisites);
     }
     Ok(result)
+}
+
+/// Internal retained lifecycle phase. No bare zero-change Edit is returned to
+/// callers: retention::prepare_native_retirement materializes exact actual
+/// native Scene metadata and qualifies final immutable intent before exposure.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn compile_retained_metadata_phase(
+    registry: &MRegistry,
+    procedure: &Procedure,
+    operation_ref: &str,
+    expression_ref: &str,
+    document_revision: u64,
+    membership: ResolvedMembership,
+    contributions: Vec<GeneratedContribution>,
+    required_consumers: BTreeSet<String>,
+    previous: &[GeneratedContribution],
+    current: &[CurrentContribution],
+    output_readings: Vec<RetainedOutputReading>,
+) -> Result<PreparedProcedure> {
+    if contributions.is_empty()
+        || contributions.iter().any(|c| !c.native_changes.is_empty())
+        || contributions.iter().any(|c| {
+            !output_readings
+                .iter()
+                .any(|r| r.contribution_ref == c.contribution_ref)
+        })
+    {
+        return Err(
+            "metadata lifecycle phase requires exact retained owned outputs and no material writes"
+                .into(),
+        );
+    }
+    let retained = validate_output_readings(
+        procedure,
+        expression_ref,
+        document_revision,
+        previous,
+        current,
+        &output_readings,
+    )?;
+    compile_native_batch_inner(
+        registry,
+        procedure,
+        operation_ref,
+        expression_ref,
+        document_revision,
+        membership,
+        contributions,
+        required_consumers,
+        retained,
+        output_readings,
+        true,
+    )
 }

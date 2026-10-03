@@ -55,13 +55,14 @@ inline bool restore_checkpoint(Engine &engine, ql::PhysicalBody &body,
       body.samples_elapsed() != expected_cursor ||
       !engine.validate_checkpoint(saved.audio, guard, expected_cursor))
     return false;
-  ql::PhysicalBody candidate(body);
-  if (!candidate.restore_checkpoint(saved.physical, body.body_revision(),
-                                    expected_cursor))
+  auto candidate = body.copy_stopped_numerical_candidate();
+  if (!candidate->restore_checkpoint(saved.physical, body.body_revision(),
+                                     expected_cursor))
     return false;
-  static_assert(std::is_nothrow_move_assignable_v<ql::PhysicalBody>,
-                "paired body commit must be atomic under exclusive custody");
-  body = std::move(candidate);
+  static_assert(
+      noexcept(body.adopt_stopped_numerical_candidate(std::move(*candidate))),
+      "paired numerical publication must not fail");
+  body.adopt_stopped_numerical_candidate(std::move(*candidate));
   // Validation is deterministic and already complete; custody excludes both
   // the producer and callback. This cannot refuse after P's validated commit.
   if (!engine.restore_checkpoint(saved.audio, guard, expected_cursor))

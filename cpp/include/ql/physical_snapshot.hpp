@@ -9,6 +9,7 @@ namespace ql {
 using PhysicalSnapshotRef = std::array<char, 2049>;
 struct PhysicalSnapshot {
   unsigned version = 1;
+  NativeResidentToken resident{};
   PhysicalSnapshotRef event_ref{}, subject_ref{}, preparation_ref{},
       state_ref{}, source_coordinate{}, source_revision{}, geometry_ref{},
       geometry_revision{}, material_ref{}, material_revision{},
@@ -21,6 +22,7 @@ struct PhysicalSnapshot {
   // Local metric geometry; the existing host's admitted transform places it
   // in the scene. Position means rest+displacement, not shader phase/glyph.
   std::array<Vec3, physical_max_nodes> visible_positions_metres{};
+  std::array<Vec3, physical_max_nodes> rest_positions_metres{};
 };
 inline bool write_physical_snapshot(const PhysicalBody &body,
                                     PhysicalSnapshot &output,
@@ -42,6 +44,7 @@ inline bool write_physical_snapshot(const PhysicalBody &body,
     if (!valid(*source))
       return false;
   PhysicalSnapshot candidate;
+  candidate.resident = body.resident_token();
   const auto copy = [](const std::string &source, PhysicalSnapshotRef &target) {
     std::memcpy(target.data(), source.data(), source.size());
     target[source.size()] = '\0';
@@ -63,8 +66,10 @@ inline bool write_physical_snapshot(const PhysicalBody &body,
   candidate.sample_rate = in.sample_rate;
   candidate.node_count = unsigned(in.nodes.size());
   candidate.pratibimba = in.pratibimba;
-  for (std::size_t n = 0; n < in.nodes.size(); ++n)
+  for (std::size_t n = 0; n < in.nodes.size(); ++n) {
     candidate.node_identity[n] = in.nodes[n].identity;
+    candidate.rest_positions_metres[n] = in.nodes[n].rest_metres;
+  }
   if (!body.write_visible_positions(candidate.visible_positions_metres.data(),
                                     in.nodes.size(), expected_body_revision,
                                     end_sample))

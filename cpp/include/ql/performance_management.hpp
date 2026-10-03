@@ -4,6 +4,7 @@
 #include <ql/audio_device_macos.hpp>
 #include <ql/performance_management_checkpoint.hpp>
 #include <ql/performance_offline.hpp>
+#include <ql/performance_resident_registry.hpp>
 #include <set>
 #include <string>
 #include <vector>
@@ -137,6 +138,7 @@ class PerformanceManagement {
       return false;
     const auto *cp = &saved;
     Readback next{};
+    next.audio_resident = native_.engine->resident_token();
     next.identity = cp->determination.identity;
     next.determination = cp->determination;
     next.samples_elapsed = cp->cursor;
@@ -418,6 +420,89 @@ public:
   }
   void refresh_stopped_reading(const Engine::StoppedCustody &guard) {
     capture_stopped_reading(guard);
+  }
+  // Private numerical receiving transaction. The actual current live/Act
+  // source reader qualifies original inputs and context before this seam.
+  // This token fences the SAME owner catalogue, input journal and epoch; a
+  // matching numerical port or JSON packet is never a grant.
+  class PreparedReceivingReplacement {
+    friend class PerformanceManagement;
+    PerformanceManagement *owner_ = nullptr;
+    std::unique_ptr<Engine::PreparedReceivingReplacement> engine_;
+    std::uint64_t catalog_revision_ = 0, epoch_ = 0, input_read_ = 0,
+                  input_write_ = 0, input_ordinal_ = 0, touch_token_ = 0,
+                  member_token_ = 0;
+    Identity catalog_identity_{};
+    bool ready_ = false;
+
+  public:
+    PreparedReceivingReplacement() = default;
+    PreparedReceivingReplacement(const PreparedReceivingReplacement &) = delete;
+    PreparedReceivingReplacement &
+    operator=(const PreparedReceivingReplacement &) = delete;
+    PreparedReceivingReplacement(PreparedReceivingReplacement &&) = delete;
+    PreparedReceivingReplacement &
+    operator=(PreparedReceivingReplacement &&) = delete;
+    bool ready() const noexcept { return ready_; }
+    const NativeReceivingManifest &after_manifest() const noexcept {
+      return engine_->after_manifest();
+    }
+  };
+  bool prepare_stopped_receiving_replacement(
+      const ReceivingPort &candidate, const Engine::StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedReceivingReplacement &out) {
+    if (out.ready_ || out.owner_ || !native_.engine || release_pending_ ||
+        control_recording_failed_ || !native_.engine->available() ||
+        !recording_available() ||
+        !(catalog_identity_ ==
+          native_.engine->source_for_native_admission().identity) ||
+        catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
+      return false;
+    auto engine = std::make_unique<Engine::PreparedReceivingReplacement>();
+    if (!native_.engine->preflight_stopped_receiving_replacement(
+            candidate, guard, expected_cursor, *engine))
+      return false;
+    out.engine_ = std::move(engine);
+    out.catalog_revision_ = catalog_revision_;
+    out.catalog_identity_ = catalog_identity_;
+    out.epoch_ = transport_epoch_;
+    out.input_read_ = bindings_.history_read();
+    out.input_write_ = bindings_.history_write();
+    out.input_ordinal_ = bindings_.history_ordinal();
+    out.touch_token_ = bindings_.last_touch_token();
+    out.member_token_ = bindings_.last_member_token();
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  bool receiving_replacement_current(
+      const PreparedReceivingReplacement &out,
+      const Engine::StoppedCustody &guard) const noexcept {
+    return out.ready_ && out.owner_ == this && out.engine_ &&
+           native_.engine->receiving_replacement_current(*out.engine_, guard) &&
+           !release_pending_ && !control_recording_failed_ &&
+           catalog_revision_ == out.catalog_revision_ &&
+           catalog_revision_ != std::numeric_limits<std::uint64_t>::max() &&
+           transport_epoch_ == out.epoch_ &&
+           catalog_identity_ == out.catalog_identity_ &&
+           bindings_.history_read() == out.input_read_ &&
+           bindings_.history_write() == out.input_write_ &&
+           bindings_.history_ordinal() == out.input_ordinal_ &&
+           bindings_.last_touch_token() == out.touch_token_ &&
+           bindings_.last_member_token() == out.member_token_;
+  }
+  // Nofail numerical swap while the private source reader and this exact
+  // stopped guard remain held. Retired transport is retained by the token.
+  void commit_stopped_receiving_replacement(
+      PreparedReceivingReplacement &out,
+      const Engine::StoppedCustody &guard) noexcept {
+    if (!receiving_replacement_current(out, guard))
+      std::terminate();
+    native_.engine->commit_stopped_receiving_replacement(*out.engine_, guard);
+    ++catalog_revision_;
+    has_latest_ =
+        false; // existing owner copies actual AFTER snapshot before ACK
+    out.ready_ = false;
   }
   // The Rust host resolves this exact independent KeyTouch against its current
   // immutable binding, and passes both selected cell and returned NoteTarget.
@@ -723,6 +808,72 @@ public:
       control_recording_failed_ = true;
     return out;
   }
+  // Existing serial worker owner only. It supplies the SAME actual pulse
+  // returned by pulse(); the qualified private IPC/source reader establishes
+  // origin. This factory is not an IPC/JSON operation or a source grant.
+  bool write_resident_registry(const ManagementPulse &pulse,
+                               NativeResidentRegistry &out) const noexcept {
+    if (!pulse.has_readback)
+      return false;
+    const auto &r = pulse.reading;
+    const auto &p = r.physical;
+    if (r.audio_resident != native_.engine->resident_token() ||
+        p.resident != native_.body->resident_token() ||
+        !r.audio_resident.valid() || !p.resident.valid() ||
+        r.audio_resident == p.resident ||
+        r.has_receiving != native_.engine->has_receiving_port() ||
+        p.node_count > ql::physical_max_nodes ||
+        p.samples_elapsed != r.samples_elapsed ||
+        p.body_revision != r.body_revision ||
+        std::strcmp(p.event_ref.data(), r.identity.event.data()) ||
+        std::strcmp(p.subject_ref.data(), r.identity.subject.data()) ||
+        std::strcmp(p.preparation_ref.data(),
+                    r.determination.body_preparation_ref.data()) ||
+        std::strcmp(p.state_ref.data(), r.determination.body_state_ref.data()))
+      return false;
+    for (unsigned i = 0; i < p.node_count; ++i) {
+      for (unsigned j = 0; j < i; ++j)
+        if (p.node_identity[i] == p.node_identity[j])
+          return false;
+      for (unsigned axis = 0; axis < 3; ++axis)
+        if (!std::isfinite(p.rest_positions_metres[i][axis]) ||
+            !std::isfinite(p.visible_positions_metres[i][axis]))
+          return false;
+    }
+    if (r.has_receiving &&
+        (r.receiving.resident != native_.engine->receiving_resident_token() ||
+         !r.receiving.resident.valid() ||
+         r.receiving.resident == r.audio_resident ||
+         r.receiving.resident == p.resident ||
+         r.receiving.samples_elapsed != r.samples_elapsed ||
+         r.receiving.manifest.body_revision != p.body_revision ||
+         r.receiving.manifest.source_generation != p.source_generation ||
+         std::strcmp(r.receiving.manifest.eigenbasis.data(),
+                     p.eigenbasis_identity.data()) ||
+         std::strcmp(r.receiving.manifest.preparation.data(),
+                     p.preparation_ref.data()) ||
+         std::strcmp(r.receiving.manifest.state.data(), p.state_ref.data())))
+      return false;
+    out.version = 1;
+    out.count = r.has_receiving ? 3 : 2;
+    out.transport_epoch = transport_epoch_;
+    out.boundary = r;
+    out.consumers[0] = {NativeResidentRole::AudioEngine, r.audio_resident,
+                        r.audio_resident.ordinal, r.samples_elapsed,
+                        r.callback_output_committed};
+    out.consumers[1] = {NativeResidentRole::PhysicalBody, p.resident,
+                        p.resident.ordinal, p.samples_elapsed,
+                        r.callback_output_committed};
+    out.consumers[2] =
+        r.has_receiving
+            ? NativeResidentRegistration{NativeResidentRole::AcousticReceiving,
+                                         r.receiving.resident,
+                                         r.receiving.resident.ordinal,
+                                         r.receiving.samples_elapsed,
+                                         r.callback_output_committed}
+            : NativeResidentRegistration{};
+    return true;
+  }
   bool recording_available() const noexcept {
     return !control_recording_failed_ &&
            native_.engine->recording_status().failure == RecordingFailure::None;
@@ -857,7 +1008,8 @@ public:
       const ManagementCheckpoint &saved, const PhysicalPort &fresh_port,
       const NativeRouteProgramSet &fresh_seed, std::vector<NoteTarget> notes,
       std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
-      std::uint64_t expected_cursor, PreparedReceivingRestore &out) {
+      std::uint64_t expected_cursor, PreparedReceivingRestore &out,
+      const ReceivingPort *saved_receiver = nullptr) {
     if (out.owner_ || out.ready_ || saved.session != session_ ||
         !valid_management_checkpoint(saved) || notes.empty() ||
         notes.size() > 192 ||
@@ -881,7 +1033,7 @@ public:
         std::make_unique<Engine::PreparedReceivingRestore>();
     if (!native_.engine->preflight_stopped_receiving_restore(
             saved.native_pair.audio, fresh_port, fresh_seed, guard,
-            expected_cursor, *engine_candidate))
+            expected_cursor, *engine_candidate, saved_receiver))
       return false;
     auto original = std::make_unique<ManagementCheckpoint>(saved);
     out.saved_ = std::move(original);

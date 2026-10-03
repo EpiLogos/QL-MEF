@@ -244,6 +244,7 @@ fn reading(id: &str) -> TargetReading {
             entity_ref: Some(format!("expression:acceptance:entity:{id}")),
             component: "entity".into(),
             constituent_ref: None,
+            parent_ref: None,
             property: None,
         },
         subject: subject(),
@@ -264,7 +265,7 @@ fn retained_retry_cannot_change_original_selector_or_write_another_existing_targ
         m_tree::native_current_m_registry(),
         &p,
         "expression:acceptance",
-        std::slice::from_ref(&a),
+        &[a.clone()],
         None,
     )
     .unwrap();
@@ -579,4 +580,334 @@ fn retained_native_output_input_does_not_expand_original_empty_selector() {
     widened["procedure"]["selector"] =
         json!({"selector":"subject","subject_ref":subject().subject_ref});
     refused("regenerate", &widened, "selector");
+}
+
+fn qualified_prepare() -> Value {
+    use ql_mef::vak_scope::OperativeScopeCorrelation;
+    use ql_mef::vak_scope_wire::{
+        OPERATIVE_CURRENTNESS_CONTRACT, OperativeScopeCurrentnessRequest,
+    };
+    let mut p = procedure();
+    p.composition.sources = vec![p.recipe.source_ref.clone(), p.profile.source_ref.clone()];
+    let mut whole = serde_json::from_str::<Value>(include_str!(
+        "../../../fixtures/kernel/vak-composition-v1.json"
+    ))
+    .unwrap()["steps"][0]
+        .clone();
+    whole["useRef"] = json!("whole:procedural-context-ground");
+    whole["subjectRef"] = json!(p.principal_subject_ref);
+    whole["frame"]["id"] = json!(p.composition.frame.0.code());
+    whole["basis"] = json!({"caller":p.composition.actor,"source":p.recipe.source_ref,
+        "revision":p.recipe.revision,"standing":ql_mef::VakStanding::AuthoredArchitecture.as_schema_str(),"evidence":[p.recipe.source_ref]});
+    let source = json!({"contract":"ql.vak-composition/v1","steps":[whole,
+        {"op":"reframe","from":"whole:procedural-context-ground","into":p.composition.whole,
+            "frame":{"id":p.composition.frame.0.code(),"lens":"L0","basis":"chromatic","face":"direct","positions":"local"},
+            "basis":{"caller":p.composition.actor,"source":p.profile.source_ref,"revision":p.profile.revision,
+                "standing":ql_mef::VakStanding::AuthoredArchitecture.as_schema_str(),"evidence":[p.profile.source_ref]}}]});
+    let correlation = OperativeScopeCorrelation {
+        world_ref: "world:acceptance".into(),
+        world_generation: "generation:1".into(),
+        method_skill_ref: None,
+    };
+    let (_, binding) =
+        ql_cli::vak_composition::execute_request_with_composition(&source, |graph| {
+            Ok(graph.bind_operative_scope(
+                &p.composition.whole,
+                p.composition.profile(),
+                correlation.clone(),
+            ))
+        })
+        .unwrap();
+    let binding = binding.unwrap();
+    p.composition.interpretation.reference = binding.binding_ref.clone();
+    p.composition.interpretation.revision = binding.binding_revision.clone();
+    let currentness = OperativeScopeCurrentnessRequest {
+        contract: OPERATIVE_CURRENTNESS_CONTRACT.into(),
+        expected: binding,
+        current_whole_ref: p.composition.whole.clone(),
+        correlation,
+    };
+    let mut request = prepare();
+    request["procedure"] = serde_json::to_value(&p).unwrap();
+    request["native_context"] = json!({"source_composition":source,"currentness":currentness,
+        "thread_plan":{"legs":(0..3).map(|i|json!({"unit_ref":format!("oi.expression:leg:{i}"),
+            "subject_ref":p.principal_subject_ref,"scope_ref":p.occurrence_ref,"input_refs":[p.recipe.source_ref],
+            "result_ref":format!("oi.expression:result:{i}"),"after":[],"parent":null})).collect::<Vec<_>>(),
+            "aggregation_ref":null,"continuation_ref":null,"stop_condition_ref":null}});
+    request
+}
+
+#[test]
+fn native_process_preparation_reobserves_actual_cprime_graph_and_rejects_echoes() {
+    let input = qualified_prepare();
+    let first = result("prepare", Some(&input));
+    let repeat = result("prepare", Some(&input));
+    assert_eq!(first, repeat);
+    assert_eq!(
+        first["native_cprime"]["schema"],
+        NATIVE_CPRIME_PREPARATION_CONTRACT
+    );
+    assert_eq!(
+        first["native_cprime"]["definition"],
+        input["procedure"]["composition"]
+    );
+    assert_eq!(
+        first["native_cprime"]["currentness"]["observation"]["state"],
+        "current"
+    );
+    assert_eq!(
+        first["native_cprime"]["thread_plan"]["legs"]
+            .as_array()
+            .unwrap()
+            .len(),
+        3
+    );
+    assert_eq!(
+        first["native_edit"]["changes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|change| change["change"] == "scene_create")
+            .count(),
+        3
+    );
+    let mut unqualified = input.clone();
+    unqualified
+        .as_object_mut()
+        .unwrap()
+        .remove("native_context");
+    let base = result("prepare", Some(&unqualified));
+    assert_eq!(base["native_edit"], first["native_edit"]);
+    assert_ne!(base["fingerprint"], first["fingerprint"]);
+    let mut wrong = input.clone();
+    wrong["native_context"]["source_composition"]["steps"][0]["basis"]["revision"] =
+        json!("foreign-source-revision");
+    refused("prepare", &wrong, "stale");
+    let mut wrong = input.clone();
+    wrong["native_context"]["source_composition"]["steps"][0]["subjectRef"] =
+        json!("ql:m-coordinate:bimba:M2");
+    refused("prepare", &wrong, "stale");
+    let mut wrong = input.clone();
+    wrong["native_context"]["source_composition"]["steps"][1]["frame"]["id"] = json!("CF7");
+    refused("prepare", &wrong, "stale");
+    let mut wrong = input.clone();
+    wrong["native_context"]["currentness"]["correlation"]["worldGeneration"] =
+        json!("generation:foreign");
+    refused("prepare", &wrong, "stale");
+    let mut wrong = input.clone();
+    wrong["procedure"]["composition"]["CT"] = json!("CT1");
+    refused("prepare", &wrong, "original interpretation differs");
+    let mut wrong = input.clone();
+    wrong["native_context"]["thread_plan"]["legs"][1]["after"] = json!(["oi.expression:leg:0"]);
+    refused("prepare", &wrong, "independently runnable");
+    let mut wrong = input;
+    wrong["native_context"]["source_composition"]["steps"][0]["op"] = json!("arbitrary_script");
+    refused("prepare", &wrong, "unknown QL composition operation");
+}
+
+#[test]
+fn stateless_intervention_batch_runs_real_native_scene_flow_and_deletion_functions() {
+    use ql_mef::procedural_conduct::{NativeRecipeProgram, NativeSceneSource, SceneRecipe};
+    use ql_mef::procedural_intervention::{FlowManualEdit, InterventionPreflight, ManualEdit};
+    use ql_mef::procedural_retention::*;
+    use std::collections::BTreeSet;
+    let mut p = procedure();
+    let canonical = "expression:acceptance:scene:canonical";
+    let mut source = template();
+    source["scene"]["id"] = json!(canonical);
+    let locus = NativeReading {
+        reference: p.locus_ref.clone(),
+        revision: "current-native-profile".into(),
+        availability: ReadingAvailability::Available,
+    };
+    let program = NativeRecipeProgram::SceneMaterial {
+        outputs: vec![SceneRecipe {
+            output_slot: "passage".into(),
+            scene_ref: "expression:acceptance:scene:generated".into(),
+            sequence_holds: vec![],
+            source: NativeSceneSource {
+                native_owner: "oi.expression".into(),
+                expression_ref: p.occurrence_ref.clone(),
+                scene_ref: canonical.into(),
+                document_revision: 4,
+                source_basis: p.recipe.clone(),
+                material_fingerprint: fingerprint(&source).unwrap(),
+                presentation: source.clone(),
+                principal: subject(),
+                contributors: vec![],
+                locus_ref: p.locus_ref.clone(),
+                locus_revision: locus.revision.clone(),
+            },
+        }],
+    };
+    p.recipe_parameters
+        .insert("native_program".into(), json!(program));
+    let c = instantiate_scene(
+        &p,
+        &p.occurrence_ref,
+        "passage",
+        "expression:acceptance:scene:generated",
+        &[subject()],
+        &source,
+    )
+    .unwrap();
+    let anchor = NativeRetentionScene {
+        scene_ref: canonical.into(),
+        document_revision: 4,
+        current_presentation: Some(source.clone()),
+        existing_retention: Some(
+            json!({"schema":RETENTION_SCHEMA,"bindings":[],"procedures":[],"contributions":[],"controls":[],"operations":[],"scene_flow":[],"time_mappings":[],"source_basis":[]}),
+        ),
+        principal: subject(),
+        contributors: vec![],
+        locus: locus.clone(),
+    };
+    let context = NativeMaterialization {
+        schema: MATERIALIZATION_CONTRACT.into(),
+        document_revision: 4,
+        rule_cursor: 1,
+        state: "held".into(),
+        lifecycles: vec![],
+        scenes: vec![
+            anchor.clone(),
+            NativeRetentionScene {
+                scene_ref: c.occurrence_ref.clone(),
+                document_revision: 4,
+                current_presentation: None,
+                existing_retention: None,
+                principal: subject(),
+                contributors: vec![],
+                locus,
+            },
+        ],
+    };
+    let membership = ResolvedMembership {
+        selector: Selector::All,
+        mode: MembershipMode::Frozen,
+        containing_expression_ref: p.occurrence_ref.clone(),
+        targets: BTreeMap::new(),
+        addresses: BTreeMap::new(),
+        joined: vec![],
+        left: vec![],
+    };
+    let mut prepared = compile_native_batch(
+        m_tree::native_current_m_registry(),
+        &p,
+        "operation:construct-batch-input",
+        &p.occurrence_ref,
+        4,
+        membership,
+        vec![c.clone()],
+        BTreeSet::from(["scene".into()]),
+    )
+    .unwrap();
+    materialize_retention(&mut prepared, &context).unwrap();
+    let anchored =
+        prepared.native_edit["changes"][0]["presentation"]["scene"]["procedural"].clone();
+    let mut anchor = anchor;
+    anchor.existing_retention = Some(anchored.clone());
+    let entity_refs = c.generated_basis["scene"]["entities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|e| {
+            let id = e["id"].as_str().unwrap().to_owned();
+            (id.clone(), id)
+        })
+        .collect::<BTreeMap<_, _>>();
+    let mut after = c.generated_basis.clone();
+    after["scene"]["entities"][0]["force"]["radius"] = json!(0.67);
+    let edit = ManualEdit {
+        expression_ref: p.occurrence_ref.clone(),
+        scene_ref: c.occurrence_ref.clone(),
+        contribution_ref: c.contribution_ref.clone(),
+        owned_addresses: c.owned_addresses.clone(),
+        entity_refs: entity_refs.clone(),
+        before: c.generated_basis.clone(),
+        after,
+        actor_ref: "human:owner".into(),
+        operation_ref: "operation:ordinary-batch".into(),
+        document_revision: 5,
+        retained_overlays: vec![],
+        retained_native_records: vec![],
+    };
+    let whole = OwnedAddress {
+        expression_ref: p.occurrence_ref.clone(),
+        scene_ref: None,
+        entity_ref: None,
+        component: "expression".into(),
+        constituent_ref: None,
+        parent_ref: None,
+        property: None,
+    };
+    let before = json!({"schema":"ql.native-atlas-state/v1","expression_ref":p.occurrence_ref,"focus":{"scene_ref":canonical,"entity_ref":null},"scene_order":[canonical,c.occurrence_ref]});
+    let mut flow_after = before.clone();
+    flow_after["focus"]["scene_ref"] = json!(c.occurrence_ref);
+    let flow = FlowManualEdit {
+        expression_ref: p.occurrence_ref.clone(),
+        contribution_ref: "contribution:whole-native-flow".into(),
+        owned_addresses: vec![whole],
+        before,
+        after: flow_after,
+        actor_ref: edit.actor_ref.clone(),
+        operation_ref: edit.operation_ref.clone(),
+        document_revision: 5,
+        retained_native_records: vec![],
+    };
+    let mut deleted = edit.clone();
+    deleted.after = Value::Null;
+    let deletion = SceneDeletionAnchor {
+        procedure: p.clone(),
+        contribution: serde_json::from_value(anchored["contributions"][0].clone()).unwrap(),
+        anchor,
+        edit: deleted,
+    };
+    let entries = vec![
+        InterventionPreflight::InterventionsOwned {
+            edit: Box::new(edit),
+        },
+        InterventionPreflight::FlowInterventions {
+            edit: Box::new(flow),
+        },
+        InterventionPreflight::SceneDeleteAnchor {
+            input: Box::new(deletion),
+        },
+    ];
+    let payload = json!({"schema":"ql.procedural-intervention-batch-request/v1","entries":entries});
+    let output = native("intervention-batch", Some(&payload));
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let response: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(response["operation"], "intervention_batch");
+    let value = &response["result"];
+    assert_eq!(value["schema"], "ql.procedural-intervention-batch/v1");
+    assert_eq!(value["results"].as_array().unwrap().len(), 3);
+    assert_eq!(value["results"][0]["native_records"][0]["value"], 0.67);
+    assert_eq!(value["results"][1]["native_records"][0]["path"], "/focus");
+    assert_eq!(
+        value["results"][2]["changes"][0]["change"],
+        "scene_material_set"
+    );
+    assert_eq!(value["results"][2]["changes"][1]["change"], "scene_remove");
+    let mut forbidden = payload.clone();
+    forbidden["entries"][1] = json!({"action":"install","definition":{}});
+    refused("intervention-batch", &forbidden, "unknown variant");
+    let mut crossed = payload.clone();
+    crossed["entries"][1]["edit"]["document_revision"] = json!(6);
+    refused("intervention-batch", &crossed, "crosses actual");
+    let mut extra = payload.clone();
+    extra["timing"] = json!({"domain":"invented"});
+    refused("intervention-batch", &extra, "unknown field");
+    let empty = json!({"schema":"ql.procedural-intervention-batch-request/v1","entries":[]});
+    refused("intervention-batch", &empty, "bounds");
+    let mut too_many = payload.clone();
+    too_many["entries"] = json!(
+        (0..65)
+            .map(|_| payload["entries"][0].clone())
+            .collect::<Vec<_>>()
+    );
+    refused("intervention-batch", &too_many, "bounds");
 }

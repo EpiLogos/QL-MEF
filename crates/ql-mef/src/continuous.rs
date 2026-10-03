@@ -6,6 +6,8 @@ pub mod coupled;
 pub mod host;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub mod native_act_channel;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(crate) mod native_act_diagnostics;
 pub mod performance;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub mod performance_act_bridge;
@@ -151,18 +153,32 @@ impl Worker {
         self.exchange_contract(value, FIELD_CONTRACT)
     }
     fn exchange_contract(&mut self, value: &Value, contract: &str) -> Result<Value> {
+        self.exchange_contract_retained(value, contract)
+            .map_err(|(reason, _)| reason)
+    }
+    // The private receiving/export owner keeps the complete actual parsed
+    // reply even when its contract or post-commit standing is refused. An
+    // absent/malformed/oversized transport has no invented JSON receipt.
+    fn exchange_contract_retained(
+        &mut self,
+        value: &Value,
+        contract: &str,
+    ) -> std::result::Result<Value, (String, Option<Value>)> {
         if self.poisoned {
-            return Err("worker unavailable; retained basis is unchanged".into());
+            return Err((
+                "worker unavailable; retained basis is unchanged".into(),
+                None,
+            ));
         }
-        let request = serde_json::to_vec(value).map_err(|e| e.to_string())?;
+        let request = serde_json::to_vec(value).map_err(|e| (e.to_string(), None))?;
         if request.len() > MAX_MESSAGE {
-            return Err("field control exceeds 32 MiB".into());
+            return Err(("field control exceeds 32 MiB".into(), None));
         }
         let (reply, receiver) = mpsc::sync_channel(1);
         let result = self
             .sender
             .as_ref()
-            .ok_or("worker closed")?
+            .ok_or_else(|| ("worker closed".to_owned(), None))?
             .try_send(Exchange { request, reply })
             .map_err(|e| e.to_string())
             .and_then(|()| {
@@ -174,7 +190,7 @@ impl Worker {
         let value = match result {
             Ok(value) => value,
             Err(error) => {
-                return Err(self.invalidate(&format!("transport failed: {error}")));
+                return Err((self.invalidate(&format!("transport failed: {error}")), None));
             }
         };
         if value["schema"] == "ql.field-error/v1" {
@@ -185,12 +201,15 @@ impl Worker {
                 || !value["error"].is_string()
                 || value.as_object().is_none_or(|object| object.len() != 3)
             {
-                return Err(self.invalidate("unqualified or post-commit error acknowledgement"));
+                return Err((
+                    self.invalidate("unqualified or post-commit error acknowledgement"),
+                    Some(value),
+                ));
             }
-            return Err(value.to_string());
+            return Err((value.to_string(), Some(value)));
         }
         if value["schema"] != contract {
-            return Err(self.invalidate("unrecognised worker response"));
+            return Err((self.invalidate("unrecognised worker response"), Some(value)));
         }
         Ok(value)
     }
@@ -260,6 +279,16 @@ impl FieldSession {
         }
         self.worker
             .exchange_contract(request, "ql.performance-worker-reply/v1")
+    }
+    pub(crate) fn performance_exchange_retained(
+        &mut self,
+        request: &Value,
+    ) -> std::result::Result<Value, (String, Option<Value>)> {
+        if request["schema"] != performance::CONTROL {
+            return Err(("unknown native performance request contract".into(), None));
+        }
+        self.worker
+            .exchange_contract_retained(request, "ql.performance-worker-reply/v1")
     }
     pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
         self.worker.invalidate(reason)

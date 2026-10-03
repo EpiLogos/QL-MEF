@@ -1,0 +1,489 @@
+//! Private nonsounding procedure boundary of SAME guarded native field owner.
+//! Its source/Act/lease is qualified by C28's actual closed native channel;
+//! caller timing/clock/source JSON and public FieldHost pipes cannot mint it.
+use super::*;
+use crate::procedural_composition::TimingBinding;
+use crate::procedural_timing::NativeTimingWitness;
+
+pub(crate) const NATIVE_FIELD_TIMING_DOMAIN: &str = "native_field_samples";
+
+/// Not a public codec or alternate clock. The complete read is the guarded
+/// receipt of the existing FieldSession::read, with zero elapsed frames.
+pub(crate) struct PreparedFieldProceduralTiming {
+    position: NativePosition,
+    witness: NativeTimingWitness,
+    native_receipt: Value,
+}
+impl PreparedFieldProceduralTiming {
+    pub(crate) fn position(&self) -> &NativePosition {
+        &self.position
+    }
+    pub(crate) fn witness(&self) -> &NativeTimingWitness {
+        &self.witness
+    }
+    pub(crate) fn native_receipt(&self) -> &Value {
+        &self.native_receipt
+    }
+}
+pub(crate) struct NativeFieldTimingRefusal {
+    reason: String,
+    native_receipt: Option<Value>,
+}
+impl NativeFieldTimingRefusal {
+    pub(crate) fn reason(&self) -> &str {
+        &self.reason
+    }
+    pub(crate) fn native_receipt(&self) -> Option<&Value> {
+        self.native_receipt.as_ref()
+    }
+}
+impl From<String> for NativeFieldTimingRefusal {
+    fn from(reason: String) -> Self {
+        Self {
+            reason,
+            native_receipt: None,
+        }
+    }
+}
+impl From<&str> for NativeFieldTimingRefusal {
+    fn from(reason: &str) -> Self {
+        reason.to_owned().into()
+    }
+}
+impl FieldHost {
+    /// C28's private reader compares this exact actual native tuple with the
+    /// original selected Scene/World source by its existing native producers.
+    /// It is a source observation; serialization cannot construct a C lease.
+    pub(crate) fn native_field_source_tuple(&self) -> Value {
+        let session = self.session.session();
+        json!({"schema":"ql.native-held-field-source/v1","instance_ref":self.instance_ref,
+            "original_basis":session.original_basis(),"current_basis":session.current_basis(),
+            "original_field":session.original_field()})
+    }
+    /// Native retention of the actual held field, before C closes its source
+    /// into the existing selected Scene/Act. Readback summaries are insufficient
+    /// to reconstruct full current owner source generations.
+    pub(crate) fn retained_field_source_artifact(&self) -> Result<Value, String> {
+        if !self.available() || self.performance.is_some() {
+            return Err("actual native field source unavailable or owned by A/P".into());
+        }
+        self.retained_procedural_source_artifact()
+    }
+    /// Complete Coupled source shared by the actual field/performance owners.
+    /// Content restitution grants no FIELD timing or independently live lease.
+    pub(crate) fn retained_procedural_source_artifact(&self) -> Result<Value, String> {
+        if !self.available() {
+            return Err("actual native Coupled source owner unavailable".into());
+        }
+        let session = self.session.session();
+        for basis in [session.original_basis(), session.current_basis()] {
+            let actual = serde_json::to_value(basis).map_err(|e| e.to_string())?;
+            let replay = serde_json::to_value(basis.input.compose()?).map_err(|e| e.to_string())?;
+            if actual != replay {
+                return Err(
+                    "held native field source differs from full native producer replay".into(),
+                );
+            }
+        }
+        Ok(self.native_field_source_tuple())
+    }
+    /// Original authorship descriptor comes from C28's native registration,
+    /// never a UI epoch/default. This observational result is not a live grant.
+    pub(crate) fn native_field_timing_descriptor(
+        &mut self,
+        act_lease: &super::super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<TimingBinding, NativeFieldTimingRefusal> {
+        if !self.available() || self.performance.is_some() {
+            return Err("native nonsounding field descriptor unavailable or A/P-owned".into());
+        }
+        act_lease.validate_field_sources(
+            &self.instance_ref,
+            self.session.session().original_basis(),
+            self.session.session().current_basis(),
+        )?;
+        let receipt = self.session.session_mut().read_field()?;
+        let prepared = (|| -> Result<TimingBinding, String> {
+            let position = NativePosition::from_field(&self.instance_ref, &receipt)?;
+            let binding = act_lease.field_timing_binding(
+                &self.instance_ref,
+                self.session.session().original_field(),
+                position.cursor()?,
+            )?;
+            if binding.domain != NATIVE_FIELD_TIMING_DOMAIN
+                || binding.requested_cursor != position.cursor()?
+            {
+                return Err("native field timing registration has another domain/boundary".into());
+            }
+            act_lease.validate_field_sources(
+                &self.instance_ref,
+                self.session.session().original_basis(),
+                self.session.session().current_basis(),
+            )?;
+            act_lease.validate_field_timing(
+                &self.instance_ref,
+                &binding,
+                self.session.session().original_field(),
+            )?;
+            Ok(binding)
+        })();
+        prepared.map_err(|reason| NativeFieldTimingRefusal {
+            reason,
+            native_receipt: Some(receipt),
+        })
+    }
+    /// No PerformanceOwner is necessary for an ordinary nonsounding material
+    /// procedure. If A/P owns the field, its R boundary is mandatory instead.
+    pub(crate) fn field_procedural_timing_witness(
+        &mut self,
+        original_binding: TimingBinding,
+        act_lease: &super::super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<PreparedFieldProceduralTiming, NativeFieldTimingRefusal> {
+        if !self.available() || self.performance.is_some() {
+            return Err("native field boundary unavailable or retained A/P owns its clock".into());
+        }
+        if original_binding.domain != NATIVE_FIELD_TIMING_DOMAIN {
+            return Err(
+                "field procedure requires its privately registered native field sample domain"
+                    .into(),
+            );
+        }
+        let source = self.native_field_source_tuple();
+        // C28 must compare the exact original binding and full tuple against
+        // current closed-reader/source custody, not merely accept this Value.
+        act_lease.validate_field_sources(
+            &self.instance_ref,
+            self.session.session().original_basis(),
+            self.session.session().current_basis(),
+        )?;
+        act_lease.validate_field_timing(
+            &self.instance_ref,
+            &original_binding,
+            self.session.session().original_field(),
+        )?;
+        let mut before = self.session.session().last_field().clone();
+        // Read returns no PCM; a preceding running Advance legitimately retained
+        // its emitted block. Only that old PCM is excluded from zero-frame read.
+        before["audio"] = json!([]);
+        let receipt = self.session.session_mut().read_field()?;
+        let prepared = (|| -> Result<(NativePosition, NativeTimingWitness), String> {
+            if receipt != before || self.native_field_source_tuple() != source {
+                return Err("native field read changed original/current source or the nonadvancing boundary".into());
+            }
+            let position = NativePosition::from_field(&self.instance_ref, &receipt)?;
+            let cursor = position.cursor()?;
+            act_lease.validate_field_sources(
+                &self.instance_ref,
+                self.session.session().original_basis(),
+                self.session.session().current_basis(),
+            )?;
+            act_lease.validate_field_timing(
+                &self.instance_ref,
+                &original_binding,
+                self.session.session().original_field(),
+            )?;
+            let owner = json!({"schema":"ql.native-field-timing-fact/v1",
+                "binding":original_binding,"native_position":position,
+                "requested_cursor":cursor.to_string(),"admitted_cursor":cursor.to_string(),
+                "applied_cursor":null,"field_clock":receipt["clock"],"native_field_receipt":receipt,
+                "standing":"same guarded native FieldSession read boundary; no material/body/audio application acknowledgement"});
+            let witness = NativeTimingWitness::from_native_owner(
+                original_binding,
+                position.clone(),
+                cursor,
+                cursor,
+                None,
+                owner,
+                json!({"native_act_source_lease":act_lease.evidence(),"actual_field_source":source}),
+            )?;
+            Ok((position, witness))
+        })();
+        match prepared {
+            Ok((position, witness)) => Ok(PreparedFieldProceduralTiming {
+                position,
+                witness,
+                native_receipt: receipt,
+            }),
+            Err(reason) => Err(NativeFieldTimingRefusal {
+                reason,
+                native_receipt: Some(receipt),
+            }),
+        }
+    }
+}
+
+/// C28 calls this while borrowing its genuine closed selected Scene reader.
+/// This validates source content; only C28's private live lease can grant use.
+/// No Scene.performance or audio/music assets are accessed.
+impl FieldHost {
+    /// C28 validate_field_timing invokes this on its actual closed Scene.
+    /// Full native field material/samples/units/initial clock are required;
+    /// a basis-only fallback cannot qualify an imported FieldInput.
+    pub(crate) fn validate_retained_field_input(
+        presentation: &Value,
+        actual_original_field: &FieldInput,
+    ) -> Result<(), String> {
+        Self::validate_retained_field_input_artifact(
+            &presentation["scene"]["epiWorld"]["native_field_source"],
+            actual_original_field,
+        )
+    }
+    pub(crate) fn validate_retained_field_input_artifact(
+        retained: &Value,
+        actual_original_field: &FieldInput,
+    ) -> Result<(), String> {
+        if retained["schema"] != "ql.native-held-field-source/v1"
+            || retained["original_field"]
+                != serde_json::to_value(actual_original_field).map_err(|e| e.to_string())?
+        {
+            return Err("closed native FIELD original sample/material/clock input differs or has not been retained".into());
+        }
+        Ok(())
+    }
+    pub(crate) fn validate_retained_field_sources(
+        presentation: &Value,
+        instance_ref: &str,
+        actual_original: &super::super::coupled::CoupledBasis,
+        actual_current: &super::super::coupled::CoupledBasis,
+    ) -> Result<(), String> {
+        Self::validate_retained_field_sources_with_artifact(
+            presentation,
+            instance_ref,
+            actual_original,
+            actual_current,
+            presentation["scene"]["epiWorld"].get("native_field_source"),
+        )
+    }
+    /// Borrow actual source qualified from all original C parts; no inline
+    /// 65k geometry clone or basis/readback reconstruction is performed.
+    pub(crate) fn validate_retained_field_sources_with_artifact(
+        presentation: &Value,
+        instance_ref: &str,
+        actual_original: &super::super::coupled::CoupledBasis,
+        actual_current: &super::super::coupled::CoupledBasis,
+        retained: Option<&Value>,
+    ) -> Result<(), String> {
+        use sha2::{Digest, Sha256};
+        let record = &presentation["scene"]["epiWorld"];
+        let world = &record["world"];
+        if presentation["schema"] != "oi.journey-scene/v1"
+            || record["schema"] != "oi.epi-world-material/v1"
+            || world["schema"] != "oi.epi-portable-world/v1"
+            || world["instance_ref"] != instance_ref
+            || world["event_ref"] != actual_original.input.m1.event_ref
+            || world["event_ref"] != actual_current.input.m1.event_ref
+            || world["subject_ref"] != actual_original.input.m3.subject_ref
+            || world["subject_ref"] != actual_current.input.m3.subject_ref
+            || world["event"] != world["basis"]["input"]
+        {
+            return Err(
+                "closed native FIELD Scene has a foreign original instance/event/subject/source"
+                    .into(),
+            );
+        }
+        let owners = world["native_owner_sources"]
+            .as_array()
+            .ok_or("native FIELD owner sources absent")?;
+        let expected = [
+            (
+                "constructor",
+                "crates/ql-mef/src/scene.rs",
+                include_str!("../scene.rs"),
+            ),
+            (
+                "coupled",
+                "crates/ql-mef/src/continuous/coupled.rs",
+                include_str!("coupled.rs"),
+            ),
+            (
+                "field",
+                "crates/ql-mef/src/continuous/scene_field.rs",
+                include_str!("scene_field.rs"),
+            ),
+        ];
+        if owners.len() != expected.len() {
+            return Err("closed native FIELD owner-source roles incomplete".into());
+        }
+        for (role, reference, source) in expected {
+            let matches: Vec<_> = owners.iter().filter(|row| row["role"] == role).collect();
+            if matches.len() != 1
+                || matches[0]["reading"]["ref"] != reference
+                || matches[0]["reading"]["revision"]
+                    != format!("sha256:{:x}", Sha256::digest(source.as_bytes()))
+                || matches[0]["reading"]["availability"] != "available"
+            {
+                return Err(
+                    "closed native FIELD source owner/reference/revision is unavailable or changed"
+                        .into(),
+                );
+            }
+        }
+        let original = serde_json::to_value(actual_original).map_err(|e| e.to_string())?;
+        let current = serde_json::to_value(actual_current).map_err(|e| e.to_string())?;
+        if world["basis"] != original {
+            return Err(
+                "canonical original portable world basis differs from actual original FIELD source"
+                    .into(),
+            );
+        }
+        if let Some(retained) = retained {
+            if retained["schema"] != "ql.native-held-field-source/v1"
+                || retained["instance_ref"] != instance_ref
+                || retained["original_basis"] != original
+                || retained["current_basis"] != current
+            {
+                return Err("closed native FIELD source differs from actual full original/current held owners".into());
+            }
+        } else if original != current || world["basis"] != original {
+            return Err("full native FIELD continuation source has not been retained in its canonical Scene".into());
+        }
+        for actual in [actual_original, actual_current] {
+            let produced = actual.input.compose()?;
+            if serde_json::to_value(produced).map_err(|e| e.to_string())?
+                != serde_json::to_value(actual).map_err(|e| e.to_string())?
+            {
+                return Err(
+                    "closed native FIELD source differs from complete producer replay".into(),
+                );
+            }
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sha2::{Digest, Sha256};
+    fn source() -> (super::super::super::coupled::CoupledBasis, Value) {
+        let input: super::super::super::coupled::CoupledInput = serde_json::from_str(include_str!(
+            "../../../../fixtures/kernel/scene-default-event-v2.json"
+        ))
+        .unwrap();
+        let basis = input.compose().unwrap();
+        let owners=[
+            ("constructor","crates/ql-mef/src/scene.rs",include_str!("../scene.rs")),
+            ("coupled","crates/ql-mef/src/continuous/coupled.rs",include_str!("coupled.rs")),
+            ("field","crates/ql-mef/src/continuous/scene_field.rs",include_str!("scene_field.rs")),
+        ].into_iter().map(|(role,reference,source)|json!({"role":role,"reading":{"ref":reference,"revision":format!("sha256:{:x}",Sha256::digest(source.as_bytes())),"availability":"available"}})).collect::<Vec<_>>();
+        let presentation = json!({"schema":"oi.journey-scene/v1","scene":{"epiWorld":{"schema":"oi.epi-world-material/v1","world":{"schema":"oi.epi-portable-world/v1","instance_ref":"native:field-instance","event_ref":basis.input.m1.event_ref,"subject_ref":basis.input.m3.subject_ref,"basis":basis,"event":basis.input,"native_owner_sources":owners}}}});
+        (basis, presentation)
+    }
+    #[test]
+    fn exact_native_field_source_accessor_uses_actual_producer_bases_without_performance_assets() {
+        let (basis, presentation) = source();
+        FieldHost::validate_retained_field_sources(
+            &presentation,
+            "native:field-instance",
+            &basis,
+            &basis,
+        )
+        .unwrap();
+        assert!(
+            presentation["scene"]["epiWorld"]
+                .get("performance")
+                .is_none()
+        );
+        // This pure source-content validator constructs NO native lease/witness.
+    }
+    #[test]
+    fn native_field_source_accessor_refuses_foreign_subject_and_owner_cut() {
+        let (basis, presentation) = source();
+        let paths = [
+            "subject",
+            "owner_ref",
+            "owner_revision",
+            "owner_availability",
+            "event",
+        ];
+        for change in paths {
+            let mut bad = presentation.clone();
+            let world = &mut bad["scene"]["epiWorld"]["world"];
+            match change {
+                "subject" => world["subject_ref"] = json!("foreign:subject"),
+                "owner_ref" => {
+                    world["native_owner_sources"][0]["reading"]["ref"] = json!("foreign:source")
+                }
+                "owner_revision" => {
+                    world["native_owner_sources"][1]["reading"]["revision"] = json!("sha256:stale")
+                }
+                "owner_availability" => {
+                    world["native_owner_sources"][2]["reading"]["availability"] =
+                        json!("unavailable")
+                }
+                "event" => world["event"]["m1"]["revision"] = json!("foreign:revision"),
+                _ => unreachable!(),
+            }
+            assert!(
+                FieldHost::validate_retained_field_sources(
+                    &bad,
+                    "native:field-instance",
+                    &basis,
+                    &basis
+                )
+                .is_err(),
+                "accepted {change}"
+            );
+        }
+    }
+    #[test]
+    fn actual_full_field_continuation_requires_retained_current_source_not_readback_summary() {
+        let (basis, mut presentation) = source();
+        let mut input = basis.input.clone();
+        input.m1.revision = "1".into();
+        let current = input.compose().unwrap();
+        assert!(
+            FieldHost::validate_retained_field_sources(
+                &presentation,
+                "native:field-instance",
+                &basis,
+                &current
+            )
+            .is_err()
+        );
+        presentation["scene"]["epiWorld"]["native_field_source"] = json!({"schema":"ql.native-held-field-source/v1","instance_ref":"native:field-instance","original_basis":basis,"current_basis":current});
+        FieldHost::validate_retained_field_sources(
+            &presentation,
+            "native:field-instance",
+            &basis,
+            &current,
+        )
+        .unwrap();
+        presentation["scene"]["epiWorld"]["native_field_source"]["current_basis"]["m1"] =
+            json!({"summary":"not the full native owner"});
+        assert!(
+            FieldHost::validate_retained_field_sources(
+                &presentation,
+                "native:field-instance",
+                &basis,
+                &current
+            )
+            .is_err()
+        );
+    }
+    #[test]
+    fn contradictory_canonical_world_and_forged_original_field_material_refuse() {
+        let (basis, mut presentation) = source();
+        presentation["scene"]["epiWorld"]["native_field_source"] = json!({"schema":"ql.native-held-field-source/v1","instance_ref":"native:field-instance","original_basis":basis,"current_basis":basis});
+        presentation["scene"]["epiWorld"]["world"]["basis"]["derivation"]["harmonic_ratio"] =
+            json!({"contradiction":"different canonical source"});
+        assert!(
+            FieldHost::validate_retained_field_sources(
+                &presentation,
+                "native:field-instance",
+                &basis,
+                &basis
+            )
+            .is_err()
+        );
+        let (_, mut presentation) = source();
+        let original:FieldInput=serde_json::from_value(json!({"subject_ref":basis.input.m3.subject_ref,"sample_rate":48000,"clock":{"inscription":{"turns":"0","half_degrees":0},"lensing":{"turns":"0","half_degrees":0},"grid_origins":[0,0,0],"rate_numerators":["0","0"],"rate_denominator":1,"rate_remainders":["0","0"],"generation":"0"},"driver_numerator":1,"driver_denominator":1,"units":{"amplitude":"m","excitation":"m/s","shape":"dimensionless","position":"m","audio":"linear"},"audio_gains":[0.0],"samples":[{"identity":7,"constituent":"material:sample","attachment":0,"rest_metres":[0.0,0.0,0.0],"mode_shapes":[[1.0,0.0,0.0]]}]})).unwrap();
+        presentation["scene"]["epiWorld"]["native_field_source"] =
+            json!({"schema":"ql.native-held-field-source/v1","original_field":original});
+        FieldHost::validate_retained_field_input(&presentation, &original).unwrap();
+        presentation["scene"]["epiWorld"]["native_field_source"]["original_field"]["samples"][0]
+            ["identity"] = json!(8);
+        assert!(FieldHost::validate_retained_field_input(&presentation, &original).is_err());
+        // DTO comparison exercises real source validation only; it is neither
+        // a native sampled-field receipt nor a private timing witness positive.
+    }
+}

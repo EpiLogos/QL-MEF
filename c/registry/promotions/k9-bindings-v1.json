@@ -1886,6 +1886,437 @@
         "cpp/tests/receiving_restore_wire.cpp",
         "scripts/test-physical-musical.sh"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs",
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_control.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_intervention.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_intervention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_retention.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_retention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_conduct.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_effective.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_lifecycle.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/procedural_field_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/procedural_source_bootstrap.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/native_act_diagnostics.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Same native performance source and physical body prepare strict authored source/receiver trajectories and acoustic pickup configuration. Actual selected Scene/Act lease replays full original source assets before stopped install/replace/fresh saved restore; the original segment origin/history birth/full ring and native cursor remain distinct. Numerical preparation never creates source or disclosure authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs",
+        "cpp/tests/performance_acoustic_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_acoustic_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Strict numerical adapter and same-owner observed fact custody. Immutable full source/body identity, original transport epoch/sample and history birth are independently fenced. Actual native timing observations and numerical receiving candidates are not source/Act/current-context grants; all post-pulse original history and refusal evidence remains retained.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_timing.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Strict numerical adapter and same-owner observed fact custody. Immutable full source/body identity, original transport epoch/sample and history birth are independently fenced. Actual native timing observations and numerical receiving candidates are not source/Act/current-context grants; all post-pulse original history and refusal evidence remains retained.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/native_resident_lifetime.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_resident_registry.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_resident_registry_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/tests/procedural_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_composition.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_conduct.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_control.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_effective.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_intervention.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_intervention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_retention.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_retention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_lifecycle.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_receiving_port_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_receiving_port_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_receiving_port_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_port_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_acoustic_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_control_restore_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_control_restore_cases.hpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_fresh_restore_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_fresh_restore_cases.hpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/current_performance_receiving_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_resident_registry_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp"
+      ]
     }
   ]
 }

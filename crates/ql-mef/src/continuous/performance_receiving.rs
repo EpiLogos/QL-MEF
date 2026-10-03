@@ -32,6 +32,7 @@ pub struct NativePerformanceReceivingSource {
     calibration: Option<ReceivingCalibration>,
     public: Option<NativePublicSourceOwnership>,
     world_request: Option<WorldRequest>,
+    acoustic: Option<super::performance::AcousticConfiguration>,
 }
 fn receiving_context(context: &ReturnContext) -> Result<ReceivingContext, String> {
     let r = |v: &ReturnReference| Reference {
@@ -81,6 +82,7 @@ impl NativePerformanceReceivingSource {
             calibration: None,
             public: Some(public),
             world_request: Some(request),
+            acoustic: None,
         })
     }
     /// Explicit native Reference source branch for actual library/floor owners.
@@ -104,6 +106,7 @@ impl NativePerformanceReceivingSource {
             calibration: None,
             public: Some(NativePublicSourceOwnership::reference_source(actual)?),
             world_request: None,
+            acoustic: None,
         })
     }
     /// Existing native N owner calls this with its actual original profile,
@@ -176,7 +179,26 @@ impl NativePerformanceReceivingSource {
             calibration: Some(calibration),
             public: None,
             world_request: None,
+            acoustic: None,
         })
+    }
+    /// Closed authored acoustic magnitudes are retained by this original
+    /// native source. No caller receiver/context/profile/consent or clock can
+    /// enter here; those identities remain the actual native ReturnContext.
+    pub fn with_acoustic_configuration(
+        mut self,
+        configuration: super::performance::AcousticConfiguration,
+    ) -> Result<Self, String> {
+        // Performance source currently admits48k. Actual preparation repeats
+        // this policy against its exact native physical rate before install.
+        configuration.validate(48000)?;
+        self.acoustic = Some(configuration);
+        Ok(self)
+    }
+    pub(crate) fn acoustic_configuration(
+        &self,
+    ) -> Option<&super::performance::AcousticConfiguration> {
+        self.acoustic.as_ref()
     }
     fn replay(&self, actual_original: &CoupledBasis) -> Result<CurrentSourceReading, String> {
         let mut public = self.public.clone();
@@ -302,7 +324,11 @@ impl NativePerformanceReceivingSource {
     /// and validate_current again, never deserialize a witness as authority.
     pub fn source_inputs(&self) -> Result<Value, String> {
         let request = self.world_request.as_ref().map(|r| json!({"schema":r.schema,"instance_ref":r.instance_ref,"event_ref":r.event_ref,"subject_ref":r.subject_ref,"sky":r.sky,"texture":r.texture,"units_per_metre":r.units_per_metre,"start":r.start,"geometry":r.geometry,"material":r.material}));
-        let out = json!({"schema":"ql.native-performance-receiving-source-inputs/v1","constructor":if request.is_some(){"native-world"}else if self.profile.is_some(){"native-protected"}else{"explicit-reference-world"},"world_request":request,"identity_profile":self.profile,"natal":self.natal,"sky":self.sky,"original_occasion":self.original_occasion,"calibration":self.calibration,"return_context":self.context});
+        let mut out = json!({"schema":"ql.native-performance-receiving-source-inputs/v1","constructor":if request.is_some(){"native-world"}else if self.profile.is_some(){"native-protected"}else{"explicit-reference-world"},"world_request":request,"identity_profile":self.profile,"natal":self.natal,"sky":self.sky,"original_occasion":self.original_occasion,"calibration":self.calibration,"return_context":self.context});
+        if let Some(acoustic) = &self.acoustic {
+            out["acoustic_receiving"] =
+                serde_json::to_value(acoustic).map_err(|e| e.to_string())?;
+        }
         if serde_json::to_vec(&out).map_err(|e| e.to_string())?.len() > 16 * 1024 * 1024 {
             return Err("native receiving source asset exceeds bound".into());
         }

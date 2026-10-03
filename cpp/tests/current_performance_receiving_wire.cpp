@@ -316,7 +316,294 @@ static Json actual_route_unit_peak(J *source) {
             json_object_get(packet::field(continued_pair, "physical")));
   return receipt;
 }
-
+static Json actual_native_timing(J *world) {
+  auto resident = std::make_unique<Resident>(world);
+  const auto timing = [&](const char *moment, std::uint64_t ordinal) {
+    auto request = resident->command("timing");
+    wire::text(request.get(), "moment", moment);
+    wire::u64(request.get(), "ordinal", ordinal);
+    resident->apply(request.get());
+    return copy(packet::field(packet::field(resident->last.get(), "payload"),
+                              "timing_fact"));
+  };
+  auto initial = timing("boundary", 0);
+  auto *binding = packet::field(initial.get(), "binding");
+  require(
+      packet::string(packet::field(binding, "owner_ref")) ==
+              "native:current-receiving/session" &&
+          packet::string(packet::field(binding, "domain")) ==
+              "native_samples" &&
+          packet::string(packet::field(binding, "epoch_ref")) ==
+              "ql:performance/transport-epoch/1" &&
+          wire::decimal(packet::field(initial.get(), "committed_cursor")) ==
+              0 &&
+          !packet::boolean(packet::field(initial.get(), "queued")),
+      "native time domain inferred epoch/clock or fabricated queue admission");
+  resident->attack();
+  auto queued = timing("score", 1);
+  require(wire::decimal(packet::field(queued.get(), "requested_cursor")) == 0 &&
+              wire::decimal(packet::field(queued.get(), "admitted_cursor")) ==
+                  0 &&
+              packet::boolean(packet::field(queued.get(), "queued")),
+          "actual original NoteOn queue timing was lost");
+  resident->render(128);
+  auto committed = timing("applied", 1);
+  require(
+      wire::decimal(packet::field(committed.get(), "applied_cursor")) == 0 &&
+          wire::decimal(packet::field(committed.get(), "committed_cursor")) ==
+              128,
+      "native applied date retagged to the later copied cursor");
+  auto *packet_value = packet::field(world, "native_preparation");
+  const auto source = packet::identity(
+      packet::field(packet::field(packet_value, "determination"), "identity"));
+  Operation future{};
+  future.kind = Kind::Parameter;
+  future.identity = source;
+  future.sequence = 2;
+  future.sample = 48000;
+  future.parameter = Parameter::MasterLinear;
+  future.value = .8;
+  auto future_request = resident->command("score");
+  wire::put(future_request.get(), "event", wire::operation(future).release());
+  management_transport::null(future_request.get(), "input_ref");
+  resident->apply(future_request.get());
+  auto future_fact = timing("score", 2);
+  require(wire::decimal(packet::field(future_fact.get(), "requested_cursor")) ==
+                  48000 &&
+              wire::decimal(
+                  packet::field(future_fact.get(), "admitted_cursor")) == 48000,
+          "native future reservation was redated to copied cursor");
+  Operation release{};
+  release.kind = Kind::NoteOff;
+  release.identity = source;
+  release.sequence = 3;
+  release.sample = 0;
+  release.touch = packet::note(json_object_array_get_idx(
+                                   packet::field(packet_value, "notes"), 0))
+                      .touch;
+  auto release_request = resident->command("score");
+  wire::put(release_request.get(), "event", wire::operation(release).release());
+  wire::text(release_request.get(), "input_ref", "native:original-janko/input");
+  resident->apply(release_request.get());
+  auto late = timing("score", 3);
+  require(wire::decimal(packet::field(late.get(), "requested_cursor")) == 0 &&
+              wire::decimal(packet::field(late.get(), "admitted_cursor")) ==
+                  128,
+          "timing witness confused original and resolved late release");
+  auto saved = resident->checkpoint();
+  auto restore = resident->command("restore");
+  wire::put(restore.get(), "checkpoint", json_object_get(saved.get()));
+  wire::u64(restore.get(), "expected_cursor", 128);
+  wire::text(restore.get(), "transaction_ref", "native:timing/restore");
+  wire::text(restore.get(), "checkpoint_ref",
+             "native:timing/pending-checkpoint");
+  resident->apply(restore.get());
+  auto restored = timing("boundary", 0);
+  require(packet::string(packet::field(packet::field(restored.get(), "binding"),
+                                       "epoch_ref")) ==
+                  "ql:performance/transport-epoch/2" &&
+              wire::decimal(
+                  packet::field(restored.get(), "committed_cursor")) == 128,
+          "restore timing epoch inferred from unchanged native instance");
+  bool historical_queue_refused = false;
+  try {
+    timing("score", 3);
+  } catch (const std::invalid_argument &) {
+    historical_queue_refused = true;
+  }
+  require(historical_queue_refused,
+          "imported previous-epoch queue fact became a current timing grant");
+  auto historical_refusal_reply = copy(resident->last.get());
+  require(
+      packet::string(packet::field(historical_refusal_reply.get(), "schema")) ==
+              "ql.performance-worker-reply/v1" &&
+          !packet::boolean(
+              packet::field(historical_refusal_reply.get(), "accepted")) &&
+          !packet::string(
+               packet::field(historical_refusal_reply.get(), "reason"))
+               .empty() &&
+          wire::decimal(packet::field(
+              packet::field(historical_refusal_reply.get(), "reading"),
+              "samples_elapsed")) == 128 &&
+          wire::decimal(packet::field(
+              packet::field(historical_refusal_reply.get(), "recording"),
+              "dropped_applications")) == 0,
+      "ordinary timing refusal lost native copied boundary/recording status");
+  packet::array(packet::field(historical_refusal_reply.get(), "applications"),
+                0);
+  packet::array(packet::field(historical_refusal_reply.get(), "input_history"),
+                0);
+  resident->render(128);
+  auto applied = timing("applied", 2);
+  require(wire::decimal(packet::field(applied.get(), "requested_cursor")) ==
+                  0 &&
+              wire::decimal(packet::field(applied.get(), "admitted_cursor")) ==
+                  128 &&
+              wire::decimal(packet::field(applied.get(), "applied_cursor")) ==
+                  128 &&
+              wire::decimal(packet::field(applied.get(), "committed_cursor")) ==
+                  256,
+          "actual restored release timing or application ordinal was lost");
+  bool invented_clock_refused = false;
+  try {
+    timing("clock", 3);
+  } catch (const std::invalid_argument &) {
+    invented_clock_refused = true;
+  }
+  require(invented_clock_refused,
+          "closed native device fabricated an AUHAL timestamp mapping");
+  auto unavailable_clock_reply = copy(resident->last.get());
+  require(!packet::boolean(
+              packet::field(unavailable_clock_reply.get(), "accepted")) &&
+              packet::string(
+                  packet::field(unavailable_clock_reply.get(), "schema")) ==
+                  "ql.performance-worker-reply/v1" &&
+              wire::decimal(packet::field(
+                  packet::field(unavailable_clock_reply.get(), "reading"),
+                  "samples_elapsed")) == 256,
+          "unavailable AUHAL observation replaced complete Management refusal "
+          "reply");
+  packet::field(unavailable_clock_reply.get(), "applications");
+  packet::field(unavailable_clock_reply.get(), "input_history");
+  packet::field(unavailable_clock_reply.get(), "recording");
+  auto receipt = wire::object();
+  for (const char *key : {"original_queue_preserved", "future_queue_preserved",
+                          "late_requested_admitted_applied_preserved",
+                          "old_epoch_refused", "invented_device_clock_refused"})
+    wire::flag(receipt.get(), key, true);
+  wire::put(receipt.get(), "historical_queue_refusal_reply",
+            historical_refusal_reply.release());
+  wire::put(receipt.get(), "unavailable_clock_reply",
+            unavailable_clock_reply.release());
+  wire::text(
+      receipt.get(), "callback_interleaving_gate",
+      "unexecuted: real native device callback between requests must prove "
+      "fresh unread applications/journal survive unavailable timing selector; "
+      "offline Control always pulses, no simulated replacement");
+  wire::u64(receipt.get(), "committed_cursor", 256);
+  wire::text(receipt.get(), "standing",
+             "actual producer-driven native Control/A/P "
+             "facts only; private selected-Act E factory and running AUHAL "
+             "gate remain separate");
+  return receipt;
+}
+static Json actual_restored_unread_timing(J *world) {
+  auto resident = std::make_unique<Resident>(world);
+  auto *p = packet::field(world, "native_preparation");
+  auto *basis = packet::field(world, "native_basis");
+  const bool m1_prime = packet::integer(packet::field(
+                            packet::field(p, "determination"), "m1_face")) == 1;
+  const bool body_prime =
+      packet::string(packet::field(
+          packet::field(packet::field(p, "physical_body"), "source_coordinate"),
+          "face")) == "pratibimba";
+  auto native = prepare_source_performance_packet(
+      json_object_to_json_string_ext(p, JSON_C_TO_STRING_PLAIN), p, basis,
+      m1_prime, body_prime);
+  const auto immutable = native.body->preparation();
+  auto owner = std::make_unique<PerformanceManagement>(
+      std::move(native), reference("native:current-receiving/session"));
+  auto *admission = packet::field(packet::field(world, "current_receiving"),
+                                  "native_admission");
+  auto source = std::make_shared<const AdmittedNativeReceivingSource>(
+      read_native_receiving_admission(admission, admission, owner->native(),
+                                      basis, immutable, {}, 0));
+  auto binding = std::make_shared<PhysicalRoutesPortBinding>(
+      owner->native().body, source, immutable, owner->native().determination,
+      basis, m1_prime, 0);
+  auto programmes = std::make_unique<NativeRouteProgramSet>();
+  programmes->manifest = binding->manifest();
+  programmes->program_count = programmes->manifest.route_count;
+  require(programmes->program_count == 0,
+          "actual unread timing trial requires native neutral World");
+  programmes->scalar_note_enabled = programmes->manifest.scalar_note_enabled;
+  programmes->scalar_note_gain = programmes->manifest.scalar_note_gain;
+  require(owner->admit_distinct_receiving(
+                   physical_routes_port(physical_port(owner->native().body),
+                                        binding),
+                   *programmes, 0)
+                  .result == Result::Accepted,
+          "actual World same-body timing port refused");
+  Operation attack{};
+  attack.kind = Kind::NoteOn;
+  attack.identity = owner->native().determination.identity;
+  attack.note = owner->native().notes.front();
+  attack.value = .7;
+  attack.sequence = 1;
+  attack.sample = 0;
+  const auto input = reference("native:original-janko/input");
+  require(owner->enqueue_score_input(attack, input) == Result::Accepted,
+          "actual unread timing attack admission refused");
+  std::array<float, 128> output{};
+  require(owner->offline_advance(output.data(), 128, 0),
+          "actual unread timing callback refused");
+  // Deliberately no pulse: retain the REAL unread callback application and
+  // admitted original input journal in the actual native stopped checkpoint.
+  auto saved = owner->stopped_checkpoint();
+  require(saved->native_pair.audio.applied_application_ordinal == 1 &&
+              saved->native_pair.audio.applications.write -
+                      saved->native_pair.audio.applications.read ==
+                  1,
+          "actual checkpoint did not retain original unread application");
+  auto checkpoint = management_checkpoint_transport::checkpoint_wire(*saved);
+  auto restore = resident->command("restore");
+  wire::put(restore.get(), "checkpoint", checkpoint.release());
+  wire::u64(restore.get(), "expected_cursor", 0);
+  wire::text(restore.get(), "transaction_ref", "native:timing/unread-restore");
+  wire::text(restore.get(), "checkpoint_ref",
+             "native:timing/unread-checkpoint");
+  resident->apply(restore.get());
+  auto *history = packet::field(resident->last.get(), "applications");
+  packet::array(history, 1);
+  const auto old =
+      wire::read_application(json_object_array_get_idx(history, 0));
+  require(old.applied && old.sequence == 1 &&
+              old.applied_application_ordinal == 1 &&
+              old.requested_sample == 0 && old.applied_sample == 0 &&
+              old.committed_cursor == 128,
+          "restore discarded or redated original historical application");
+  auto query = resident->command("timing");
+  wire::text(query.get(), "moment", "applied");
+  wire::u64(query.get(), "ordinal", 1);
+  bool historical_refused = false;
+  try {
+    resident->apply(query.get());
+  } catch (const std::invalid_argument &) {
+    historical_refused = true;
+  }
+  require(
+      historical_refused,
+      "restored unread historical application minted new-epoch timing witness");
+  Operation release{};
+  release.kind = Kind::NoteOff;
+  release.identity = attack.identity;
+  release.touch = attack.note.touch;
+  release.sequence = 2;
+  release.sample = 128;
+  auto command = resident->command("score");
+  wire::put(command.get(), "event", wire::operation(release).release());
+  wire::ref(command.get(), "input_ref", input);
+  resident->apply(command.get());
+  resident->render(128);
+  query = resident->command("timing");
+  wire::text(query.get(), "moment", "applied");
+  wire::u64(query.get(), "ordinal", 2);
+  resident->apply(query.get());
+  auto *fact = packet::field(packet::field(resident->last.get(), "payload"),
+                             "timing_fact");
+  require(wire::decimal(packet::field(fact, "restored_application_floor")) ==
+                  1 &&
+              wire::decimal(packet::field(fact, "transport_epoch")) == 2 &&
+              wire::decimal(packet::field(fact, "applied_cursor")) == 128 &&
+              wire::decimal(packet::field(fact, "committed_cursor")) == 256,
+          "actual new-epoch release failed original restored high-water fence");
+  auto receipt = wire::object();
+  wire::flag(receipt.get(), "historical_application_retained", true);
+  wire::flag(receipt.get(), "historical_current_witness_refused", true);
+  wire::flag(receipt.get(), "new_application_after_actual_restore_accepted",
+             true);
+  return receipt;
+}
 int main() {
   try {
     std::string bytes;
@@ -384,6 +671,12 @@ int main() {
     wire::text(out.get(), "schema",
                "ql.current-native-receiving-worker-receipt/v1");
     wire::put(out.get(), "contexts", results.release());
+    wire::put(
+        out.get(), "native_timing_facts",
+        actual_native_timing(packet::field(root.get(), "world")).release());
+    wire::put(out.get(), "restored_unread_native_timing",
+              actual_restored_unread_timing(packet::field(root.get(), "world"))
+                  .release());
     std::cout << json_object_to_json_string_ext(out.get(),
                                                 JSON_C_TO_STRING_PLAIN)
               << '\n';

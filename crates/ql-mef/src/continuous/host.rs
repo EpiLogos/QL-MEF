@@ -6,11 +6,19 @@ use super::performance_receiving::NativePerformanceReceivingSource;
 use super::scene_field::{self, SceneConfig, SceneInstrument};
 use super::{FieldInput, LiftInput};
 use crate::musical_performance_return::ReturnContext;
+use crate::procedural_conduct::{ConductHost, ConductRequest, NativePosition};
 use crate::scene::{WorldRequest, world};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::path::Path;
 use std::time::Duration;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "procedural_field_timing.rs"]
+mod procedural_field_timing;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "procedural_source_bootstrap.rs"]
+mod procedural_source_bootstrap;
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 #[path = "receiving_readmission.rs"]
@@ -49,6 +57,9 @@ pub struct WorldHostConfig {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "operation", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum HostOperation {
+    Procedure {
+        request: Box<ConductRequest>,
+    },
     PerformancePrepare {
         config: Box<PerformanceConfig>,
     },
@@ -141,6 +152,7 @@ pub struct FieldHost {
     session: Owner,
     last_request: u64,
     performance: Option<PerformanceOwner>,
+    procedural: ConductHost,
     receiving_source: Option<NativePerformanceReceivingSource>,
 }
 impl FieldHost {
@@ -161,6 +173,7 @@ impl FieldHost {
             )?)),
             last_request: 0,
             performance: None,
+            procedural: ConductHost::default(),
             receiving_source: None,
         })
     }
@@ -176,6 +189,7 @@ impl FieldHost {
             session: Owner::Scene(Box::new(instrument)),
             last_request: 0,
             performance: None,
+            procedural: ConductHost::default(),
             receiving_source: None,
         })
     }
@@ -241,6 +255,170 @@ impl FieldHost {
 
     pub fn available(&self) -> bool {
         self.session.session().available()
+    }
+
+    /// Stages closed authored receiver magnitudes through the SAME existing
+    /// native source and stopped output owner. This publishes complete source
+    /// assets for C retention; it does not grant an Act or install sound.
+    pub(crate) fn stage_performance_acoustic(
+        &mut self,
+        configuration: super::performance::AcousticConfiguration,
+    ) -> Result<Value, super::performance::AcousticRefusal> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?
+            .clone()
+            .with_acoustic_configuration(configuration)?;
+        let pulse = self
+            .performance
+            .as_mut()
+            .ok_or("native acoustic performance not active")?
+            .stage_acoustic_receiving(&current, &source, self.session.session_mut())?;
+        self.receiving_source = Some(source);
+        Ok(pulse)
+    }
+
+    /// Only the closed selected-Act channel supplies this native lease.
+    /// Public Exchange/HostOperation never accepts an acoustic witness Value.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn install_performance_acoustic(
+        &mut self,
+        act_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<Value, super::performance::AcousticRefusal> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?;
+        self.performance
+            .as_mut()
+            .ok_or("native acoustic performance not active")?
+            .install_prepared_acoustic_receiving(
+                &current,
+                source,
+                self.session.session_mut(),
+                act_lease,
+            )
+    }
+
+    /// Numerical/source preparation for the existing current Scene CAS. This
+    /// returns complete candidate assets and never applies a receiver edit.
+    pub(crate) fn prepare_performance_acoustic_update(
+        &self,
+        configuration: super::performance::AcousticConfiguration,
+    ) -> Result<super::performance::PreparedAcousticReceiverUpdate, String> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?
+            .clone()
+            .with_acoustic_configuration(configuration)?;
+        let owner = self
+            .performance
+            .as_ref()
+            .ok_or("native acoustic performance not active")?;
+        owner.prepare_stopped_acoustic_receiver_assets(current, &source)
+    }
+    /// Only a genuinely closed selected current Scene/recorded source lease
+    /// matching the complete authored after-assets can apply this candidate.
+    /// The owner independently checks its original operative state first.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn replace_performance_acoustic(
+        &mut self,
+        candidate: &super::performance::PreparedAcousticReceiverUpdate,
+        source_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<Value, super::performance::AcousticRefusal> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?
+            .clone()
+            .with_acoustic_configuration(candidate.configuration().clone())?;
+        let pulse = self
+            .performance
+            .as_mut()
+            .ok_or("native acoustic performance not active")?
+            .replace_prepared_acoustic_receiving(
+                &current,
+                &source,
+                self.session.session_mut(),
+                candidate,
+                source_lease,
+            )?;
+        self.receiving_source = Some(source);
+        Ok(pulse)
+    }
+
+    /// Descriptor from the current #281 output owner under the SAME privately
+    /// selected C/Act lease. This does not call FIELD's no-performance read or
+    /// replace its fence, last_field or sample/generation domain.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn procedural_timing_descriptor(
+        &mut self,
+        act_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<
+        super::performance::PreparedProceduralTimingDescriptor,
+        super::performance::NativeTimingRefusal,
+    > {
+        if !self.available() {
+            return Err("held native timing owner/lease unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual native timing receiving source not bound")?;
+        self.performance
+            .as_mut()
+            .ok_or("native timing performance not active")?
+            .procedural_timing_descriptor(&current, source, self.session.session_mut(), act_lease)
+    }
+
+    /// Sole private selected-Act owner operation supplies the typed C lease.
+    /// No public HostOperation or Request::Exchange accepts witness JSON.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn procedural_timing_witness(
+        &mut self,
+        original_binding: crate::procedural_composition::TimingBinding,
+        act_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+        moment: super::performance::NativeTimingMoment,
+    ) -> Result<super::performance::PreparedProceduralTiming, super::performance::NativeTimingRefusal>
+    {
+        if !self.available() {
+            return Err("held native timing owner/lease unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual native timing receiving source not bound")?;
+        self.performance
+            .as_mut()
+            .ok_or("native timing performance not active")?
+            .procedural_timing_witness(
+                &current,
+                source,
+                self.session.session_mut(),
+                original_binding,
+                act_lease,
+                moment,
+            )
     }
 
     fn response(&self, request_id: Option<&str>, status: &str, error: Option<&str>) -> Value {
@@ -311,8 +489,8 @@ impl FieldHost {
             || field["event_ref"] != request.event_ref
             || field["subject_ref"] != request.subject_ref
             || !self.available()
-            || self.performance.is_none()
-            || self.receiving_source.is_none()
+            || (!request.is_field() && self.performance.is_none())
+            || (self.performance.is_some() && self.receiving_source.is_none())
         {
             return Err("native selected Act has no exact available original field/performance/receiving owner".into());
         }
@@ -407,7 +585,10 @@ impl FieldHost {
         plan: &super::performance_export::NativeActRenderPlan,
         checkpoints: &mut impl super::performance_export::NativeActCheckpoints,
         consume: impl FnOnce(&mut super::performance_export::NativeActRenderer<'_>) -> Result<T, String>,
-    ) -> Result<super::performance_export::NativeRenderResult<Result<T, String>>, String> {
+    ) -> Result<
+        super::performance_export::NativeRenderResult<Result<T, String>>,
+        super::performance_export::NativeRenderFailure,
+    > {
         let current = self.session.session().current_basis().clone();
         let receiving = self
             .receiving_source
@@ -465,6 +646,229 @@ impl FieldHost {
         Ok(())
     }
 
+    /// C's closed selected-Act operation is the only caller. The typed lease
+    /// and native timing selector never come from HostOperation/browser JSON.
+    /// R supplies the SAME held-owner field/audio factory; the full native pulse
+    /// remains available for original C/S recording, separate from material ACK.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn execute_native_procedure(
+        &mut self,
+        request: HostRequest,
+        act_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+        moment: super::performance::NativeTimingMoment,
+    ) -> Value {
+        if let Err(error) = self.admit(&request) {
+            let status = if self.available() {
+                "refused"
+            } else {
+                "unavailable"
+            };
+            return self.response(Some(&request.request_id), status, Some(&error));
+        }
+        let HostOperation::Procedure {
+            request: procedure_request,
+        } = request.command
+        else {
+            return self.response(
+                Some(&request.request_id),
+                "refused",
+                Some("native selected-Act conduct route requires a procedure command"),
+            );
+        };
+        // A valid same-worker timing exchange can drain real applications
+        // even when its selector or subsequent Source conduct refuses. Keep
+        // that full pulse for the private C/S receiving owner on BOTH paths.
+        let mut timing_pulse = None;
+        let mut field_timing_receipt = None;
+        let result: Result<Value, String> = (|| {
+            if let ConductRequest::SourceBootstrap { input } = &*procedure_request {
+                if !matches!(moment, super::performance::NativeTimingMoment::Boundary) {
+                    return Err(
+                        "native source bootstrap requires SAME native owner Boundary descriptor"
+                            .into(),
+                    );
+                }
+                return match self.bootstrap_procedural_source(input, act_lease) {
+                    Ok(result) => {
+                        field_timing_receipt = result
+                            .get("native_field_receipt")
+                            .filter(|v| !v.is_null())
+                            .cloned();
+                        timing_pulse = result
+                            .get("native_timing_pulse")
+                            .filter(|v| !v.is_null())
+                            .cloned();
+                        Ok(result)
+                    }
+                    Err(refusal) => {
+                        field_timing_receipt = refusal.native_receipt().cloned();
+                        timing_pulse = refusal.native_timing_pulse().cloned();
+                        Err(refusal.reason().to_owned())
+                    }
+                };
+            }
+            if matches!(&*procedure_request, ConductRequest::LifecycleCancel { .. }) {
+                let ConductRequest::LifecycleCancel { input } = *procedure_request else {
+                    unreachable!()
+                };
+                input
+                    .validate_reading(self.procedural.lifecycle_original(&input.procedure_ref)?)?;
+                act_lease.validate_procedural_scene_read(
+                    &self.instance_ref,
+                    &input.scene_read,
+                    &input.contributors,
+                )?;
+                let source_read = input.scene_read.clone();
+                let contributors = input.contributors.clone();
+                let staged = self.procedural.stage_lifecycle_cancel(*input)?;
+                act_lease.validate_procedural_scene_read(
+                    &self.instance_ref,
+                    &source_read,
+                    &contributors,
+                )?;
+                act_lease.validate_field_sources(
+                    &self.instance_ref,
+                    self.session.session().original_basis(),
+                    self.session.session().current_basis(),
+                )?;
+                return self.procedural.commit_lifecycle(staged);
+            }
+            if matches!(&*procedure_request, ConductRequest::Lifecycle { .. }) {
+                let ConductRequest::Lifecycle { input } = *procedure_request else {
+                    unreachable!()
+                };
+                input
+                    .validate_reading(self.procedural.lifecycle_original(&input.procedure_ref)?)?;
+                let subjects = input.selected_contributors()?;
+                act_lease.validate_procedural_scene_read(
+                    &self.instance_ref,
+                    &input.reading.scene_read,
+                    &subjects,
+                )?;
+                let lifecycle_read = input.reading.scene_read.clone();
+                let binding = self
+                    .procedural
+                    .lifecycle_original(&input.procedure_ref)?
+                    .procedure
+                    .timing
+                    .clone();
+                let staged = if binding.domain
+                    == procedural_field_timing::NATIVE_FIELD_TIMING_DOMAIN
+                {
+                    if !matches!(moment, super::performance::NativeTimingMoment::Boundary) {
+                        return Err(
+                            "native field lifecycle has no audio queue/application selector".into(),
+                        );
+                    }
+                    let actual = match self.field_procedural_timing_witness(binding, act_lease) {
+                        Ok(actual) => actual,
+                        Err(refusal) => {
+                            field_timing_receipt = refusal.native_receipt().cloned();
+                            return Err(refusal.reason().to_owned());
+                        }
+                    };
+                    field_timing_receipt = Some(actual.native_receipt().clone());
+                    self.procedural.stage_lifecycle(
+                        *input,
+                        actual.position().clone(),
+                        actual.witness(),
+                    )?
+                } else {
+                    let actual = match self.procedural_timing_witness(binding, act_lease, moment) {
+                        Ok(actual) => actual,
+                        Err(refusal) => {
+                            timing_pulse = refusal.native_pulse().cloned();
+                            return Err(refusal.reason().to_owned());
+                        }
+                    };
+                    timing_pulse = Some(actual.native_pulse().clone());
+                    self.procedural.stage_lifecycle(
+                        *input,
+                        actual.position().clone(),
+                        actual.witness(),
+                    )?
+                };
+                act_lease.validate_procedural_scene_read(
+                    &self.instance_ref,
+                    &lifecycle_read,
+                    &subjects,
+                )?;
+                act_lease.validate_field_sources(
+                    &self.instance_ref,
+                    self.session.session().original_basis(),
+                    self.session.session().current_basis(),
+                )?;
+                return self.procedural.commit_lifecycle(staged);
+            }
+            let binding = self.procedural.request_timing(&procedure_request)?;
+            if let Some(binding) = binding {
+                if binding.domain == procedural_field_timing::NATIVE_FIELD_TIMING_DOMAIN {
+                    if !matches!(moment, super::performance::NativeTimingMoment::Boundary) {
+                        return Err(
+                            "native field timing has no audio queue/clock/application selector"
+                                .into(),
+                        );
+                    }
+                    let actual = match self.field_procedural_timing_witness(binding, act_lease) {
+                        Ok(actual) => actual,
+                        Err(refusal) => {
+                            field_timing_receipt = refusal.native_receipt().cloned();
+                            return Err(refusal.reason().to_owned());
+                        }
+                    };
+                    field_timing_receipt = Some(actual.native_receipt().clone());
+                    return self.procedural.execute(
+                        *procedure_request,
+                        actual.position().clone(),
+                        Some(actual.witness()),
+                    );
+                }
+                let actual = match self.procedural_timing_witness(binding, act_lease, moment) {
+                    Ok(actual) => actual,
+                    Err(refusal) => {
+                        timing_pulse = refusal.native_pulse().cloned();
+                        return Err(refusal.reason().to_owned());
+                    }
+                };
+                timing_pulse = Some(actual.native_pulse().clone());
+                self.procedural.execute(
+                    *procedure_request,
+                    actual.position().clone(),
+                    Some(actual.witness()),
+                )
+            } else {
+                let position = NativePosition::from_field(
+                    &self.instance_ref,
+                    self.session.session().last_field(),
+                )?;
+                self.procedural.execute(*procedure_request, position, None)
+            }
+        })();
+        let mut response = match result {
+            Ok(procedural) => {
+                let mut response = self.response(Some(&request.request_id), "ok", None);
+                response["procedural"] = procedural;
+                response
+            }
+            Err(error) => self.response(
+                Some(&request.request_id),
+                if self.available() {
+                    "refused"
+                } else {
+                    "unavailable"
+                },
+                Some(&error),
+            ),
+        };
+        if let Some(pulse) = timing_pulse {
+            response["native_timing_pulse"] = pulse;
+        }
+        if let Some(receipt) = field_timing_receipt {
+            response["native_field_timing_receipt"] = receipt;
+        }
+        response
+    }
+
     pub fn execute(&mut self, request: HostRequest) -> Value {
         if let Err(error) = self.admit(&request) {
             let status = if self.available() {
@@ -473,6 +877,31 @@ impl FieldHost {
                 "unavailable"
             };
             return self.response(Some(&request.request_id), status, Some(&error));
+        }
+        if matches!(&request.command, HostOperation::Procedure { .. }) {
+            let position =
+                NativePosition::from_field(&self.instance_ref, self.session.session().last_field());
+            let HostOperation::Procedure {
+                request: procedure_request,
+            } = request.command
+            else {
+                unreachable!()
+            };
+            let result = position.and_then(|position| {
+                let binding = self.procedural.request_timing(&procedure_request)?;
+                if binding.is_some() {
+                    return Err("performative conduct requires the private native selected-Act/source lease route".into());
+                }
+                self.procedural.execute(*procedure_request, position, None)
+            });
+            return match result {
+                Ok(procedural) => {
+                    let mut response = self.response(Some(&request.request_id), "ok", None);
+                    response["procedural"] = procedural;
+                    response
+                }
+                Err(error) => self.response(Some(&request.request_id), "refused", Some(&error)),
+            };
         }
         if matches!(
             &request.command,
@@ -638,7 +1067,8 @@ impl FieldHost {
                 _,
             ) => Err("determinant operations belong to a provider-composed scene owner".into()),
             (
-                HostOperation::PerformancePrepare { .. }
+                HostOperation::Procedure { .. }
+                | HostOperation::PerformancePrepare { .. }
                 | HostOperation::PerformanceExchange { .. }
                 | HostOperation::Inspect {}
                 | HostOperation::Influence {}

@@ -222,6 +222,8 @@ struct RecordingStatus {
                 first_failed_sample = 0;
 };
 struct Readback {
+  ql::NativeResidentToken audio_resident{};
+  bool callback_output_committed = false;
   Identity identity{};
   Determination determination{};
   ql::PhysicalSnapshot physical{};
@@ -482,6 +484,35 @@ public:
     std::uint64_t sample() const noexcept { return cursor_; }
   };
 
+  // Prepared numerical replacement under the exact same stopped guard.
+  // Retired resources stay in this noncopyable control-owned token until ACK.
+  // Source/context authority remains the actual private native reader owner.
+  class PreparedReceivingReplacement {
+    friend class Engine;
+    Engine *owner_ = nullptr;
+    ReceivingPort candidate_{};
+    std::unique_ptr<NativeReceivingCheckpoint> before_, after_, current_;
+    Determination determination_{};
+    NativeReceivingManifest after_manifest_{};
+    std::uint64_t cursor_ = 0, sequence_ = 0, ordinal_ = 0, guard_nonce_ = 0,
+                  control_revision_ = 0, emergency_requested_ = 0,
+                  panic_fence_ = 0;
+    bool ready_ = false;
+
+  public:
+    PreparedReceivingReplacement() = default;
+    PreparedReceivingReplacement(const PreparedReceivingReplacement &) = delete;
+    PreparedReceivingReplacement &
+    operator=(const PreparedReceivingReplacement &) = delete;
+    PreparedReceivingReplacement(PreparedReceivingReplacement &&) = delete;
+    PreparedReceivingReplacement &
+    operator=(PreparedReceivingReplacement &&) = delete;
+    bool ready() const noexcept { return ready_; }
+    const NativeReceivingManifest &after_manifest() const noexcept {
+      return after_manifest_;
+    }
+  };
+
   // Private heap candidate for exact saved receiving continuation. Its original
   // saved checkpoint remains unchanged. The operative copy differs only in
   // native route admission handles qualified at the SAVED cursor.
@@ -489,6 +520,10 @@ public:
     friend class Engine;
     Engine *owner_ = nullptr;
     PhysicalPort candidate_port_{};
+    ReceivingPort candidate_receiving_{};
+    std::unique_ptr<NativeReceivingCheckpoint> receiving_before_,
+        receiving_scratch_;
+    bool reattach_receiving_ = false;
     std::unique_ptr<Checkpoint> admitted_;
     Determination before_{};
     std::uint64_t cursor_ = 0, accepted_sequence_ = 0, applied_ordinal_ = 0,
@@ -508,6 +543,7 @@ public:
   };
 
 private:
+  ql::NativeResidentLifetime resident_lifetime_{};
   Determination determination_{};
   // Owned only by the serial producer; callback never touches this copy.
   Determination producer_determination_{};
@@ -1399,7 +1435,9 @@ public:
         receiving_.owner || !complete_receiving_port(port) ||
         combined_control_revision_ ==
             std::numeric_limits<std::uint64_t>::max() ||
-        port.cursor(port.owner) != cursor_)
+        port.cursor(port.owner) != cursor_ ||
+        port.manifest->history_origin_sample != cursor_ ||
+        port.manifest->origin_sample != cursor_)
       return false;
     ql::PhysicalSnapshot physical{};
     if (!body_.observe(body_.owner, physical, determination_.body_revision,
@@ -1413,7 +1451,120 @@ public:
     ++combined_control_revision_;
     return true;
   }
+  // This only changes acoustic receiving. Future source/notes/controls and
+  // existing voices/tails/phase/P qv are preserved. All allocation is control
+  // work before mutation; no preparation/JSON or free runs on the callback.
+  bool preflight_stopped_receiving_replacement(
+      const ReceivingPort &candidate, const StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedReceivingReplacement &out) {
+    if (out.ready_ || out.owner_ || guard.owner_ != this ||
+        activity_.load() != 2 || device_running_.load() ||
+        cursor_ != expected_cursor || !receiving_.owner ||
+        !complete_receiving_port(receiving_) ||
+        !complete_receiving_port(candidate) ||
+        candidate.owner == receiving_.owner ||
+        candidate.cursor(candidate.owner) != cursor_ ||
+        candidate.manifest->origin_sample != cursor_ ||
+        combined_control_revision_ == std::numeric_limits<std::uint64_t>::max())
+      return false;
+    auto before = std::make_unique<NativeReceivingCheckpoint>();
+    auto after = std::make_unique<NativeReceivingCheckpoint>();
+    ql::PhysicalSnapshot physical{};
+    if (!body_.observe(body_.owner, physical, determination_.body_revision,
+                       cursor_) ||
+        !receiving_matches_snapshot(*receiving_.manifest, physical) ||
+        !receiving_matches_snapshot(*candidate.manifest, physical) ||
+        !candidate.preflight(candidate.owner, 1, cursor_) ||
+        !receiving_.write_checkpoint(receiving_.owner, *before, cursor_) ||
+        !candidate.write_checkpoint(candidate.owner, *after, cursor_) ||
+        !valid_receiving_checkpoint(*before, *receiving_.manifest) ||
+        !valid_receiving_checkpoint(*after, *candidate.manifest) ||
+        before->samples_elapsed != after->samples_elapsed ||
+        before->history_start_sample != after->history_start_sample ||
+        before->manifest.context != after->manifest.context ||
+        before->manifest.receiver != after->manifest.receiver ||
+        std::memcmp(before->history_linear.data(), after->history_linear.data(),
+                    sizeof(before->history_linear)) != 0)
+      return false;
+    auto current = std::make_unique<NativeReceivingCheckpoint>();
+    out.before_ = std::move(before);
+    out.after_ = std::move(after);
+    out.current_ = std::move(current);
+    out.after_manifest_ = *candidate.manifest;
+    out.candidate_ = candidate;
+    out.determination_ = determination_;
+    out.cursor_ = cursor_;
+    out.sequence_ = accepted_sequence_;
+    out.ordinal_ = applied_application_ordinal_;
+    out.guard_nonce_ = guard.nonce_;
+    out.control_revision_ = combined_control_revision_;
+    out.emergency_requested_ = emergency_requested_.load();
+    out.panic_fence_ = panic_fence_.load();
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  bool
+  receiving_replacement_current(const PreparedReceivingReplacement &out,
+                                const StoppedCustody &guard) const noexcept {
+    if (!(out.ready_ && out.owner_ == this && out.before_ && out.after_ &&
+          out.current_ && guard.owner_ == this &&
+          guard.nonce_ == out.guard_nonce_ && activity_.load() == 2 &&
+          !device_running_.load() && cursor_ == out.cursor_ &&
+          accepted_sequence_ == out.sequence_ &&
+          applied_application_ordinal_ == out.ordinal_ &&
+          combined_control_revision_ == out.control_revision_ &&
+          emergency_requested_.load() == out.emergency_requested_ &&
+          panic_fence_.load() == out.panic_fence_ &&
+          same_prepared_determination(determination_, out.determination_) &&
+          complete_receiving_port(receiving_) &&
+          complete_receiving_port(out.candidate_) &&
+          same_receiving_manifest(*receiving_.manifest,
+                                  out.before_->manifest) &&
+          receiving_.cursor(receiving_.owner) == cursor_ &&
+          out.candidate_.cursor(out.candidate_.owner) == cursor_ &&
+          body_.cursor(body_.owner) == cursor_ &&
+          body_.revision(body_.owner) == determination_.body_revision))
+      return false;
+    // A valid same-cursor numerical restore can alter either ring without
+    // changing its manifest. Re-read BOTH exact native checkpoints under the
+    // same stopped guard before the swap. Scratch was heap-owned at preflight;
+    // this requalification allocates/frees nothing and grants no source access.
+    const auto exact = [&](const ReceivingPort &port,
+                           const NativeReceivingCheckpoint &expected) noexcept {
+      auto &actual = *out.current_;
+      return port.write_checkpoint(port.owner, actual, cursor_) &&
+             valid_receiving_checkpoint(actual, *port.manifest) &&
+             actual.version == expected.version &&
+             same_receiving_manifest(actual.manifest, expected.manifest) &&
+             actual.samples_elapsed == expected.samples_elapsed &&
+             actual.history_start_sample == expected.history_start_sample &&
+             std::memcmp(actual.history_linear.data(),
+                         expected.history_linear.data(),
+                         sizeof(actual.history_linear)) == 0;
+    };
+    return exact(receiving_, *out.before_) &&
+           exact(out.candidate_, *out.after_);
+  }
+  void
+  commit_stopped_receiving_replacement(PreparedReceivingReplacement &out,
+                                       const StoppedCustody &guard) noexcept {
+    if (!receiving_replacement_current(out, guard))
+      std::terminate();
+    std::swap(receiving_, out.candidate_);
+    receiving_encoding_present_ = true;
+    ++combined_control_revision_;
+    out.ready_ = false;
+  }
+  const ql::NativeResidentToken &resident_token() const noexcept {
+    return resident_lifetime_.token();
+  }
   bool has_receiving_port() const noexcept { return bool(receiving_.owner); }
+  // The serial owner retains this fixed port for its entire callback lifetime.
+  // Replacement occurs only under the existing stopped exclusive guard.
+  const ql::NativeResidentToken &receiving_resident_token() const noexcept {
+    return receiving_.resident;
+  }
   bool write_stopped_receiving_readback(
       NativeReceivingReadback &out, const StoppedCustody &guard,
       std::uint64_t expected_cursor) const noexcept {
@@ -1785,20 +1936,24 @@ public:
   }
 
 private:
-  bool validate_checkpoint_for_port(const Checkpoint &cp,
-                                    const StoppedCustody &guard,
-                                    std::uint64_t expected_cursor,
-                                    const PhysicalPort &port) const noexcept {
+  bool validate_checkpoint_for_port(
+      const Checkpoint &cp, const StoppedCustody &guard,
+      std::uint64_t expected_cursor, const PhysicalPort &port,
+      const ReceivingPort *saved_receiver = nullptr,
+      std::uint64_t saved_receiver_cursor = 0) const noexcept {
+    const auto &receiver = saved_receiver ? *saved_receiver : receiving_;
+    const auto receiver_cursor =
+        saved_receiver ? saved_receiver_cursor : expected_cursor;
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
         cp.version != 2 || cp.sample_rate != rate_ ||
-        cp.has_receiving != bool(receiving_.owner) ||
+        cp.has_receiving != bool(receiver.owner) ||
         (cp.has_receiving && !cp.receiving_encoding_present) ||
         (cp.has_receiving &&
-         (!complete_receiving_port(receiving_) ||
+         (!complete_receiving_port(receiver) ||
           cp.receiving.samples_elapsed != cp.cursor ||
-          !receiving_.validate_checkpoint(receiving_.owner, cp.receiving,
-                                          expected_cursor) ||
+          !receiver.validate_checkpoint(receiver.owner, cp.receiving,
+                                        receiver_cursor) ||
           cp.receiving.manifest.body_revision !=
               cp.determination.body_revision ||
           std::strcmp(cp.receiving.manifest.preparation.data(),
@@ -2209,7 +2364,8 @@ public:
   bool preflight_stopped_receiving_restore(
       const Checkpoint &saved, const PhysicalPort &port,
       const NativeRouteProgramSet &fresh_seed, const StoppedCustody &guard,
-      std::uint64_t expected_cursor, PreparedReceivingRestore &out) {
+      std::uint64_t expected_cursor, PreparedReceivingRestore &out,
+      const ReceivingPort *saved_receiver = nullptr) {
     if (out.owner_ || out.ready_ || guard.owner_ != this ||
         activity_.load() != 2 || device_running_.load() ||
         cursor_ != expected_cursor ||
@@ -2247,8 +2403,44 @@ public:
       programmes.manifest.programs[i].preparation_seal = fresh.preparation_seal;
       programmes.manifest.programs[i].program_seal = fresh.program_seal;
     }
-    if (!validate_checkpoint_for_port(*admitted, guard, expected_cursor, port))
+    std::unique_ptr<NativeReceivingCheckpoint> before_receiving, scratch;
+    if (saved_receiver) {
+      if (!saved.has_receiving || !complete_receiving_port(*saved_receiver) ||
+          !saved_receiver->write_transport_checkpoint ||
+          saved_receiver->body_owner != body_.owner ||
+          saved_receiver->cursor(saved_receiver->owner) != saved.cursor)
+        return false;
+      scratch = std::make_unique<NativeReceivingCheckpoint>();
+      if (!saved_receiver->write_transport_checkpoint(saved_receiver->owner,
+                                                      *scratch, saved.cursor) ||
+          !same_receiving_checkpoint(*scratch, saved.receiving))
+        return false;
+      if (receiving_.owner) {
+        if (!complete_receiving_port(receiving_) ||
+            !receiving_.write_transport_checkpoint)
+          return false;
+        before_receiving = std::make_unique<NativeReceivingCheckpoint>();
+        if (!receiving_.write_transport_checkpoint(
+                receiving_.owner, *before_receiving, cursor_) ||
+            !valid_receiving_checkpoint(*before_receiving,
+                                        *receiving_.manifest))
+          return false;
+      }
+      ql::PhysicalSnapshot snapshot{};
+      if (!body_.observe(body_.owner, snapshot, determination_.body_revision,
+                         cursor_) ||
+          !receiving_matches_snapshot(*saved_receiver->manifest, snapshot))
+        return false;
+    }
+    if (!validate_checkpoint_for_port(*admitted, guard, expected_cursor, port,
+                                      saved_receiver, saved.cursor))
       return false;
+    if (saved_receiver) {
+      out.candidate_receiving_ = *saved_receiver;
+      out.receiving_before_ = std::move(before_receiving);
+      out.receiving_scratch_ = std::move(scratch);
+      out.reattach_receiving_ = true;
+    }
     out.admitted_ = std::move(admitted);
     out.candidate_port_ = port;
     out.before_ = determination_;
@@ -2268,20 +2460,39 @@ public:
   }
   bool receiving_restore_current(const PreparedReceivingRestore &out,
                                  const StoppedCustody &guard) const noexcept {
-    return out.ready_ && out.owner_ == this && out.admitted_ &&
-           guard.owner_ == this && guard.nonce_ == out.guard_nonce_ &&
-           activity_.load() == 2 && !device_running_.load() &&
-           cursor_ == out.cursor_ &&
-           accepted_sequence_ == out.accepted_sequence_ &&
-           applied_application_ordinal_ == out.applied_ordinal_ &&
-           combined_control_revision_ == out.control_revision_ &&
-           emergency_requested_.load() == out.emergency_requested_ &&
-           panic_fence_.load() == out.panic_fence_ &&
-           capture_.load() == out.capture_ &&
-           emergency_.load() == out.emergency_ && fault_.load() == out.fault_ &&
-           same_prepared_determination(determination_, out.before_) &&
-           body_.owner == out.candidate_port_.owner &&
-           body_.custody.get() == out.candidate_port_.custody.get();
+    if (!(out.ready_ && out.owner_ == this && out.admitted_ &&
+          guard.owner_ == this && guard.nonce_ == out.guard_nonce_ &&
+          activity_.load() == 2 && !device_running_.load() &&
+          cursor_ == out.cursor_ &&
+          accepted_sequence_ == out.accepted_sequence_ &&
+          applied_application_ordinal_ == out.applied_ordinal_ &&
+          combined_control_revision_ == out.control_revision_ &&
+          emergency_requested_.load() == out.emergency_requested_ &&
+          panic_fence_.load() == out.panic_fence_ &&
+          capture_.load() == out.capture_ &&
+          emergency_.load() == out.emergency_ && fault_.load() == out.fault_ &&
+          same_prepared_determination(determination_, out.before_) &&
+          body_.owner == out.candidate_port_.owner &&
+          body_.custody.get() == out.candidate_port_.custody.get()))
+      return false;
+    if (!out.reattach_receiving_)
+      return true;
+    if (!complete_receiving_port(out.candidate_receiving_) ||
+        !out.candidate_receiving_.write_transport_checkpoint ||
+        !out.receiving_scratch_ ||
+        bool(receiving_.owner) != bool(out.receiving_before_) ||
+        out.candidate_receiving_.body_owner != body_.owner)
+      return false;
+    auto &scratch = *out.receiving_scratch_;
+    if (!out.candidate_receiving_.write_transport_checkpoint(
+            out.candidate_receiving_.owner, scratch, out.admitted_->cursor) ||
+        !same_receiving_checkpoint(scratch, out.admitted_->receiving))
+      return false;
+    return !out.receiving_before_ ||
+           (receiving_.write_transport_checkpoint &&
+            receiving_.write_transport_checkpoint(receiving_.owner, scratch,
+                                                  cursor_) &&
+            same_receiving_checkpoint(scratch, *out.receiving_before_));
   }
   // Nofail commit AFTER the existing P owner atomically restores the exact
   // saved q/v/cursor under this SAME uninterrupted guard. Retired routes stay
@@ -2295,6 +2506,8 @@ public:
             out.admitted_->determination.body_revision)
       std::terminate();
     std::swap(body_, out.candidate_port_);
+    if (out.reattach_receiving_)
+      std::swap(receiving_, out.candidate_receiving_);
     commit_checkpoint_state(*out.admitted_);
     out.ready_ = false;
   }
@@ -2727,6 +2940,8 @@ public:
     }
     block_application_count_ = 0;
     Readback receipt{};
+    receipt.audio_resident = resident_lifetime_.token();
+    receipt.callback_output_committed = true;
     receipt.identity = determination_.identity;
     receipt.determination = determination_;
     receipt.physical = physical;

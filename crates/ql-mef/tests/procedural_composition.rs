@@ -1,7 +1,8 @@
 //! Procedure compiler tests execute real production functions and native wire.
 //! Installed stage/body/audio application is verified by the paired consumers.
 use ql_mef::{
-    MFace, aw1_world, coordinate_expression, m_tree, m3_state, vak_profile, vak_workflow_types,
+    MFace, aw1_world, coordinate_expression, m_tree, m3_state, vak_composition, vak_profile,
+    vak_scope, vak_scope_wire, vak_workflow_types,
 };
 use std::collections::{BTreeMap, BTreeSet};
 #[path = "../src/procedural_composition.rs"]
@@ -187,15 +188,14 @@ fn first_connected_batch_creates_real_scenes_constituents_force_and_sequence() {
             overlays: vec![],
         };
         let regeneration = regenerate(
-            std::slice::from_ref(&old),
-            std::slice::from_ref(&current),
+            &[old.clone()],
+            &[current.clone()],
             &[next],
             RemovalPolicy::RetireUneditedDetachEdited,
         )
         .unwrap();
         let native_regeneration =
-            regeneration_native_changes(&regeneration, std::slice::from_ref(&old), &[current])
-                .unwrap();
+            regeneration_native_changes(&regeneration, &[old.clone()], &[current]).unwrap();
         std::fs::write(path, serde_json::to_vec_pretty(&json!({"schema":"ql.procedural-stage-fixture/v1", "procedure":procedure,
             "prepared":prepared,"contributions":contributions,"create":{"operation":"create","expression_ref":"expression:acceptance",
             "title":"Ta-Onta Procedural Stage Acceptance","actor":"agent:anima"},
@@ -387,8 +387,8 @@ fn three_way_diff_preserves_human_force_override_and_accepts_new_generated_seque
         overlays: vec![],
     };
     let delta = regenerate(
-        std::slice::from_ref(&old),
-        std::slice::from_ref(&current),
+        &[old.clone()],
+        &[current.clone()],
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
     )
@@ -426,6 +426,7 @@ fn explicit_persistent_overlay_survives_reordering_regeneration_and_serializatio
         value: json!(0.8),
         actor_ref: "human:owner".into(),
         persistent: true,
+        operation: OverlayOperation::Set,
     };
     let current = CurrentContribution {
         contribution_ref: old.contribution_ref.clone(),
@@ -433,7 +434,7 @@ fn explicit_persistent_overlay_survives_reordering_regeneration_and_serializatio
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        std::slice::from_ref(&old),
+        &[old.clone()],
         &[current],
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
@@ -467,6 +468,7 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
         value: json!(0.875),
         actor_ref: "human:owner".into(),
         persistent: true,
+        operation: OverlayOperation::Set,
     };
     let current = CurrentContribution {
         contribution_ref: old.contribution_ref.clone(),
@@ -474,9 +476,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        std::slice::from_ref(&old),
-        std::slice::from_ref(&current),
-        std::slice::from_ref(&next),
+        &[old.clone()],
+        &[current.clone()],
+        &[next.clone()],
         RemovalPolicy::RetireUneditedDetachEdited,
     )
     .unwrap();
@@ -495,9 +497,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
     positional.overlays[0].pointer = "/scene/entities/0/force/strength".into();
     assert!(
         regenerate(
-            std::slice::from_ref(&old),
+            &[old.clone()],
             &[positional],
-            std::slice::from_ref(&next),
+            &[next.clone()],
             RemovalPolicy::RetireUneditedDetachEdited
         )
         .unwrap_err()
@@ -578,6 +580,7 @@ fn reading(reference: &str, revision: u64) -> TargetReading {
             entity_ref: Some(format!("expression:acceptance:entity:{reference}")),
             component: "entity".into(),
             constituent_ref: None,
+            parent_ref: None,
             property: None,
         },
         subject: subject(),
@@ -607,7 +610,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let frozen = resolve_membership(
         &selector,
         "expression:acceptance",
-        std::slice::from_ref(&a),
+        &[a.clone()],
         MembershipMode::Frozen,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -627,7 +630,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
         resolve_membership(
             &Selector::All,
             "expression:acceptance",
-            std::slice::from_ref(&a),
+            &[a.clone()],
             MembershipMode::Frozen,
             Some(&frozen),
             MembershipChangePolicy::AdmitAndRecord
@@ -638,7 +641,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let sustained = resolve_membership(
         &selector,
         "expression:acceptance",
-        std::slice::from_ref(&a),
+        &[a.clone()],
         MembershipMode::Sustained,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -647,7 +650,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let updated = resolve_membership(
         &selector,
         "expression:acceptance",
-        std::slice::from_ref(&b),
+        &[b.clone()],
         MembershipMode::Sustained,
         Some(&sustained),
         MembershipChangePolicy::AdmitAndRecord,
@@ -770,7 +773,7 @@ fn source_qualified_conditions_are_resolved_before_frozen_native_scope() {
             registry,
             &p,
             "expression:acceptance",
-            std::slice::from_ref(&related),
+            &[related.clone()],
             None
         )
         .unwrap()
@@ -792,18 +795,13 @@ fn existing_force_write_must_match_actual_resolved_entity_and_writer_scope() {
     let registry = m_tree::native_current_m_registry();
     let p = procedure();
     let a = reading("a", 9);
-    let selected = resolve_procedure_membership(
-        registry,
-        &p,
-        "expression:acceptance",
-        std::slice::from_ref(&a),
-        None,
-    )
-    .unwrap();
+    let selected =
+        resolve_procedure_membership(registry, &p, "expression:acceptance", &[a.clone()], None)
+            .unwrap();
     let mut c = contribution(&p, "existing-force");
     let mut owned = a.address.clone();
-    owned.component = "property".into();
-    owned.property = Some("force_strength".into());
+    owned.component = "force".into();
+    owned.property = Some("strength".into());
     c.owned_addresses = vec![owned.clone()];
     c.native_changes = vec![NativeChange::ParameterSet {
         entity_ref: a.address.entity_ref.clone().unwrap(),
@@ -851,6 +849,7 @@ fn existing_force_write_must_match_actual_resolved_entity_and_writer_scope() {
         entity_ref: None,
         component: "scene".into(),
         constituent_ref: None,
+        parent_ref: None,
         property: None,
     };
     assert!(broad.covers(&owned));
@@ -880,6 +879,7 @@ fn whole_scene_and_contained_property_writers_require_explicit_native_compositio
         entity_ref: Some(entity.clone()),
         component: "property".into(),
         constituent_ref: None,
+        parent_ref: None,
         property: Some("force_strength".into()),
     }];
     property.native_changes = vec![NativeChange::ParameterSet {
@@ -920,18 +920,14 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
     next.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
         json!(true);
     let delta = regenerate(
-        std::slice::from_ref(&old),
-        std::slice::from_ref(&current),
-        std::slice::from_ref(&next),
+        &[old.clone()],
+        &[current.clone()],
+        &[next.clone()],
         p.removal_policy,
     )
     .unwrap();
-    next.native_changes = regeneration_native_changes(
-        &delta,
-        std::slice::from_ref(&old),
-        std::slice::from_ref(&current),
-    )
-    .unwrap();
+    next.native_changes =
+        regeneration_native_changes(&delta, &[old.clone()], &[current.clone()]).unwrap();
     // This is pure producer input validation. Only native S can attest the
     // opaque typed journal digest and actual consumer observations at apply.
     let envelope = json!({"operation_ref":"operation:original","expression_ref":"expression:acceptance","expected_revision":1,
@@ -968,8 +964,8 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
             membership(),
             vec![generated],
             BTreeSet::from(["scene".into()]),
-            std::slice::from_ref(&old),
-            std::slice::from_ref(&current),
+            &[old.clone()],
+            &[current.clone()],
             readings,
         )
     };
@@ -1032,16 +1028,16 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         revised.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
             json!(true);
         let delta = regenerate(
-            std::slice::from_ref(&previous_generation),
-            std::slice::from_ref(&current_generation),
-            std::slice::from_ref(&revised),
+            &[previous_generation.clone()],
+            &[current_generation.clone()],
+            &[revised.clone()],
             p.removal_policy,
         )
         .unwrap();
         revised.native_changes = regeneration_native_changes(
             &delta,
-            std::slice::from_ref(&previous_generation),
-            std::slice::from_ref(&current_generation),
+            &[previous_generation.clone()],
+            &[current_generation.clone()],
         )
         .unwrap();
         let mut reading = output.clone();
@@ -1092,6 +1088,7 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         entity_ref: None,
         component: "scene".into(),
         constituent_ref: None,
+        parent_ref: None,
         property: None,
     });
     outside.native_changes = vec![NativeChange::SceneMaterialSet {
@@ -1344,4 +1341,830 @@ fn seeded_replay_and_cprime_dependencies_use_actual_native_return_material() {
         cprime_dependencies(&p, &slots, &returns).unwrap()["c"],
         vec!["native:return:a", "native:return:b"]
     );
+}
+
+fn native_cprime_context() -> (
+    Procedure,
+    vak_composition::VakComposition,
+    vak_scope_wire::OperativeScopeCurrentnessRequest,
+    vak_profile::ThreadPlan,
+) {
+    use ql_core::{
+        AnchorReturn, CallerProvenance, GroundKind, QlFace, QlFamily, QlPosition, QlShape,
+        ShapeBinding, StructuralConstellation, StructuralParticipation,
+    };
+    use vak_composition::{ActiveFrame, Basis, PositionBasis, WholeInput};
+    let mut procedure = procedure();
+    procedure.composition.thread = vak_profile::ThreadForm::Single;
+    procedure.composition.sources = vec![
+        procedure.recipe.source_ref.clone(),
+        procedure.profile.source_ref.clone(),
+    ];
+    let frame = ActiveFrame {
+        id: procedure.composition.frame.0,
+        lens: ql_mef::LensId::L0,
+        basis: ql_mef::MusicalBasis::Chromatic,
+        face: QlFace::Direct,
+        positions: PositionBasis::Local,
+    };
+    let basis = |source: &SourceBasis| Basis {
+        provenance: CallerProvenance::new(
+            &procedure.composition.actor,
+            &source.source_ref,
+            ql_mef::VakStanding::AuthoredArchitecture.as_schema_str(),
+        )
+        .unwrap(),
+        revision: source.revision.clone(),
+        evidence: vec![source.source_ref.clone()],
+    };
+    let members: Vec<_> = [QlFace::Direct, QlFace::Conjugate]
+        .into_iter()
+        .flat_map(|face| {
+            (0..6).map(move |position| {
+                StructuralParticipation::new(
+                    format!("source:procedural-member:{position}:{face:?}"),
+                    QlPosition::new(position).unwrap(),
+                    face,
+                )
+                .unwrap()
+            })
+        })
+        .collect();
+    let form = StructuralConstellation::new(
+        "anchor:procedural-context",
+        members.clone(),
+        vec![
+            AnchorReturn::new(
+                "source:procedural-context-result",
+                "anchor:procedural-context",
+                "ground:procedural-context",
+                QlFace::Direct,
+                GroundKind::Own,
+            )
+            .unwrap(),
+        ],
+    )
+    .unwrap();
+    let recipe_basis = basis(&procedure.recipe);
+    let profile_basis = basis(&procedure.profile);
+    let binding = ShapeBinding::new(
+        &procedure.principal_subject_ref,
+        QlShape::Constellation(form.grain()).shape_ref(),
+        "anchor:procedural-context",
+        members
+            .iter()
+            .map(|member| member.subject_ref.clone())
+            .collect(),
+        members,
+        vec![],
+        None,
+        None,
+        vec![],
+        recipe_basis.provenance.clone(),
+    )
+    .unwrap();
+    let mut graph = vak_composition::VakComposition::default();
+    graph
+        .bind_whole(
+            &ql_mef::VakRegistry::from_authoritative_source().unwrap(),
+            WholeInput {
+                use_ref: "whole:procedural-ground".into(),
+                form,
+                binding,
+                category: QlFamily::M,
+                ground_ref: "ground:procedural-context".into(),
+                ground_face: QlFace::Direct,
+                frame,
+                basis: recipe_basis,
+                language: None,
+            },
+        )
+        .unwrap();
+    graph
+        .reframe(
+            "whole:procedural-ground",
+            &procedure.occurrence_ref,
+            frame,
+            profile_basis,
+        )
+        .unwrap();
+    let correlation = vak_scope::OperativeScopeCorrelation {
+        world_ref: "world:acceptance".into(),
+        world_generation: "generation:1".into(),
+        method_skill_ref: None,
+    };
+    let current = graph
+        .bind_operative_scope(
+            &procedure.occurrence_ref,
+            procedure.composition.profile(),
+            correlation.clone(),
+        )
+        .unwrap();
+    procedure.composition.interpretation.reference = current.binding_ref.clone();
+    procedure.composition.interpretation.revision = current.binding_revision.clone();
+    let request = vak_scope_wire::OperativeScopeCurrentnessRequest {
+        contract: vak_scope_wire::OPERATIVE_CURRENTNESS_CONTRACT.into(),
+        expected: current,
+        current_whole_ref: procedure.occurrence_ref.clone(),
+        correlation,
+    };
+    let thread = vak_profile::ThreadPlan {
+        legs: vec![vak_profile::PlannedLeg {
+            unit_ref: "oi.expression:procedure-leg:construct".into(),
+            subject_ref: procedure.principal_subject_ref.clone(),
+            scope_ref: procedure.occurrence_ref.clone(),
+            input_refs: vec![procedure.recipe.source_ref.clone()],
+            result_ref: "oi.expression:procedure-result:construct".into(),
+            after: vec![],
+            parent: None,
+        }],
+        aggregation_ref: None,
+        continuation_ref: None,
+        stop_condition_ref: None,
+    };
+    (procedure, graph, request, thread)
+}
+
+#[test]
+fn actual_native_cprime_profile_scope_and_frame_qualify_the_source_procedure() {
+    let (procedure, graph, request, plan) = native_cprime_context();
+    let prepared = prepare_native_cprime(
+        m_tree::native_current_m_registry(),
+        &procedure,
+        &graph,
+        request,
+        plan.clone(),
+    )
+    .unwrap();
+    assert_eq!(prepared.schema, NATIVE_CPRIME_PREPARATION_CONTRACT);
+    assert_eq!(prepared.definition, procedure.composition);
+    assert_eq!(prepared.thread_plan, plan);
+    assert_eq!(prepared.pairs, procedure.composition.sequence.pairs());
+    assert_eq!(
+        prepared.walk,
+        procedure
+            .composition
+            .sequence
+            .walk(procedure.composition.direction)
+    );
+    let vak_scope::OperativeScopeObservation::Current { binding } =
+        prepared.currentness.observation
+    else {
+        panic!("native current owner observation required")
+    };
+    let native = graph
+        .compile_profile(
+            &procedure.composition.whole,
+            procedure.composition.profile(),
+        )
+        .unwrap();
+    assert_eq!(binding.subject_ref, procedure.principal_subject_ref);
+    assert_eq!(binding.frame.frame_pitch, native.frame_pitch());
+    assert_eq!(
+        binding.frame.context_frame,
+        procedure.composition.frame.0.code()
+    );
+    assert!(
+        binding
+            .sources
+            .iter()
+            .any(|source| source.source_ref == procedure.recipe.source_ref
+                && source.revision == procedure.recipe.revision)
+    );
+    assert!(
+        binding
+            .sources
+            .iter()
+            .any(|source| source.source_ref == procedure.profile.source_ref
+                && source.revision == procedure.profile.revision)
+    );
+}
+
+#[test]
+fn transported_cprime_labels_cannot_replace_actual_native_context_or_thread_conduct() {
+    let (procedure, graph, request, plan) = native_cprime_context();
+    let mut wrong = request.clone();
+    wrong.expected.sources[0].revision.push_str(":foreign");
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &graph,
+            wrong,
+            plan.clone()
+        )
+        .unwrap_err()
+        .contains("stale")
+    );
+    let mut wrong = request.clone();
+    wrong.correlation.world_generation = "generation:other".into();
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &graph,
+            wrong,
+            plan.clone()
+        )
+        .unwrap_err()
+        .contains("stale")
+    );
+    let mut wrong = request.clone();
+    wrong.expected.provider_ref = "provider/client-echo".into();
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &graph,
+            wrong,
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = procedure.clone();
+    wrong.composition.content = vak_profile::ContentType::Definitions;
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &wrong,
+            &graph,
+            request.clone(),
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = procedure.clone();
+    wrong.composition.position = vak_profile::ContentPosition::Ground;
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &wrong,
+            &graph,
+            request.clone(),
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = procedure.clone();
+    wrong.composition.frame = vak_workflow_types::AuthoredFrame(ql_mef::ContextFrameId::Cf7);
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &wrong,
+            &graph,
+            request.clone(),
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = procedure.clone();
+    wrong.composition.sources.push("source:foreign".into());
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &wrong,
+            &graph,
+            request.clone(),
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = procedure.clone();
+    wrong.recipe.revision.push_str(":foreign");
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &wrong,
+            &graph,
+            request.clone(),
+            plan.clone()
+        )
+        .is_err()
+    );
+    let mut wrong = plan.clone();
+    wrong.legs.push(wrong.legs[0].clone());
+    wrong.legs[1].unit_ref.push_str(":other");
+    wrong.legs[1].result_ref.push_str(":other");
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &graph,
+            request.clone(),
+            wrong
+        )
+        .is_err()
+    );
+    assert!(
+        prepare_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &vak_composition::VakComposition::default(),
+            request,
+            plan
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn native_cprime_qualification_changes_actual_prepared_identity_and_preserves_failure() {
+    let (procedure, graph, request, plan) = native_cprime_context();
+    let mut prepared = compile_native_batch(
+        m_tree::native_current_m_registry(),
+        &procedure,
+        "operation:qualified-native-context",
+        "expression:acceptance",
+        1,
+        membership(),
+        vec![contribution(&procedure, "source-context")],
+        BTreeSet::from(["scene".into()]),
+    )
+    .unwrap();
+    let base = prepared.clone();
+    let mut stale = request.clone();
+    stale.expected.sources[0].revision.push_str(":stale");
+    assert!(
+        prepared
+            .qualify_native_cprime(
+                m_tree::native_current_m_registry(),
+                &procedure,
+                &graph,
+                stale,
+                plan.clone()
+            )
+            .is_err()
+    );
+    assert_eq!(prepared, base);
+    prepared
+        .qualify_native_cprime(
+            m_tree::native_current_m_registry(),
+            &procedure,
+            &graph,
+            request,
+            plan,
+        )
+        .unwrap();
+    assert!(prepared.native_cprime.is_some());
+    assert_ne!(prepared.fingerprint, base.fingerprint);
+    assert_eq!(prepared.native_edit, base.native_edit);
+    assert_eq!(prepared.contributions, base.contributions);
+}
+
+#[test]
+fn native_cprime_leg_inputs_and_constituents_remain_in_the_actual_current_whole() {
+    let (procedure, graph, request, plan) = native_cprime_context();
+    let registry = m_tree::native_current_m_registry();
+    let member = &graph
+        .whole(&procedure.composition.whole)
+        .unwrap()
+        .binding
+        .members[0];
+    let mut contributor = plan.clone();
+    contributor.legs[0].subject_ref = member.subject_ref.clone();
+    let prepared = prepare_native_cprime(
+        registry,
+        &procedure,
+        &graph,
+        request.clone(),
+        contributor.clone(),
+    )
+    .unwrap();
+    assert_eq!(prepared.thread_plan, contributor);
+    let mut variants = Vec::new();
+    let mut foreign_subject = plan.clone();
+    foreign_subject.legs[0].subject_ref = "subject:unrelated".into();
+    variants.push(foreign_subject);
+    let mut foreign_scope = plan.clone();
+    foreign_scope.legs[0].scope_ref = "expression:another".into();
+    variants.push(foreign_scope);
+    let mut absent_input = plan.clone();
+    absent_input.legs[0].input_refs = vec!["recipe:unrelated".into()];
+    variants.push(absent_input);
+    let mut absent_recipe = plan.clone();
+    absent_recipe.legs[0].input_refs = vec![procedure.profile.source_ref.clone()];
+    variants.push(absent_recipe);
+    let mut unqualified_input = plan.clone();
+    unqualified_input.legs[0]
+        .input_refs
+        .push("source:unrelated".into());
+    variants.push(unqualified_input);
+    let mut fake_return = plan.clone();
+    fake_return.legs[0].input_refs = vec!["oi.expression:procedure-result:unapplied".into()];
+    variants.push(fake_return);
+    let mut empty = plan;
+    empty.legs[0].input_refs.clear();
+    variants.push(empty);
+    for wrong in variants {
+        assert!(
+            prepare_native_cprime(registry, &procedure, &graph, request.clone(), wrong).is_err()
+        );
+    }
+}
+
+#[test]
+fn native_cprime_chain_uses_the_same_owner_plan_and_named_source_return_dependency() {
+    let (mut procedure, graph, mut request, mut plan) = native_cprime_context();
+    procedure.composition.thread = vak_profile::ThreadForm::Chain;
+    request.expected = graph
+        .bind_operative_scope(
+            &procedure.composition.whole,
+            procedure.composition.profile(),
+            request.correlation.clone(),
+        )
+        .unwrap();
+    procedure.composition.interpretation.reference = request.expected.binding_ref.clone();
+    procedure.composition.interpretation.revision = request.expected.binding_revision.clone();
+    let previous = plan.legs[0].clone();
+    plan.legs.push(vak_profile::PlannedLeg {
+        unit_ref: "oi.expression:procedure-leg:continue".into(),
+        subject_ref: procedure.principal_subject_ref.clone(),
+        scope_ref: procedure.composition.whole.clone(),
+        input_refs: vec![previous.result_ref.clone()],
+        result_ref: "oi.expression:procedure-result:continue".into(),
+        after: vec![previous.unit_ref],
+        parent: None,
+    });
+    let registry = m_tree::native_current_m_registry();
+    assert!(
+        prepare_native_cprime(registry, &procedure, &graph, request.clone(), plan.clone()).is_ok()
+    );
+    let mut unrelated = plan.clone();
+    unrelated.legs[1]
+        .input_refs
+        .push("oi.expression:foreign-return".into());
+    assert!(
+        prepare_native_cprime(registry, &procedure, &graph, request.clone(), unrelated).is_err()
+    );
+    let mut missing_dependency = plan;
+    missing_dependency.legs[1].after.clear();
+    assert!(
+        prepare_native_cprime(registry, &procedure, &graph, request, missing_dependency).is_err()
+    );
+}
+
+#[test]
+fn native_qualification_preserves_the_full_compiled_original_and_detects_changed_material() {
+    let (procedure, graph, request, plan) = native_cprime_context();
+    let registry = m_tree::native_current_m_registry();
+    let prepared = compile_native_batch(
+        registry,
+        &procedure,
+        "operation:qualified-original",
+        "expression:acceptance",
+        1,
+        membership(),
+        vec![contribution(&procedure, "qualified-original")],
+        BTreeSet::from(["scene".into()]),
+    )
+    .unwrap();
+    assert_eq!(prepared.original_procedure, procedure);
+    let wire = serde_json::to_value(&prepared).unwrap();
+    assert_eq!(
+        serde_json::from_value::<PreparedProcedure>(wire).unwrap(),
+        prepared
+    );
+    let mut missing = serde_json::to_value(&prepared).unwrap();
+    missing
+        .as_object_mut()
+        .unwrap()
+        .remove("original_procedure");
+    assert!(serde_json::from_value::<PreparedProcedure>(missing).is_err());
+    let mut variants = Vec::new();
+    let mut revised = procedure.clone();
+    revised.revision.push_str(":changed");
+    variants.push(revised);
+    let mut retimed = procedure.clone();
+    retimed.timing.requested_cursor += 1;
+    variants.push(retimed);
+    let mut reseeded = procedure.clone();
+    reseeded.seed.push_str(":changed");
+    variants.push(reseeded);
+    let mut reparameterized = procedure.clone();
+    reparameterized
+        .recipe_parameters
+        .insert("force".into(), json!(0.7));
+    variants.push(reparameterized);
+    let mut rebound = procedure.clone();
+    rebound.profile.source_ref.push_str(":changed");
+    variants.push(rebound);
+    let mut changed_budget = procedure.clone();
+    changed_budget.budgets.max_operations += 1;
+    variants.push(changed_budget);
+    for changed in variants {
+        let mut candidate = prepared.clone();
+        assert!(
+            candidate
+                .qualify_native_cprime(registry, &changed, &graph, request.clone(), plan.clone())
+                .is_err()
+        );
+        assert_eq!(candidate, prepared);
+    }
+    let mut changed_material = prepared.clone();
+    changed_material.native_edit["expected_revision"] = json!(2);
+    let before = changed_material.clone();
+    assert!(
+        changed_material
+            .qualify_native_cprime(registry, &procedure, &graph, request.clone(), plan.clone())
+            .is_err()
+    );
+    assert_eq!(changed_material, before);
+    let mut changed_definition = prepared.clone();
+    changed_definition
+        .original_procedure
+        .seed
+        .push_str(":changed");
+    let changed_procedure = changed_definition.original_procedure.clone();
+    let before = changed_definition.clone();
+    assert!(
+        changed_definition
+            .qualify_native_cprime(registry, &changed_procedure, &graph, request, plan)
+            .is_err()
+    );
+    assert_eq!(changed_definition, before);
+}
+
+#[test]
+fn procedural_target_readings_require_current_native_basis_on_initial_and_frozen_selection() {
+    let registry = m_tree::native_current_m_registry();
+    let procedure = procedure();
+    let target = reading("occurrence:source-qualified", 1);
+    let original = resolve_procedure_membership(
+        registry,
+        &procedure,
+        "expression:acceptance",
+        &[target.clone()],
+        None,
+    )
+    .unwrap();
+    assert!(original.targets.contains_key(&target.occurrence_ref));
+    let mut variants = Vec::new();
+    let mut foreign_source = target.clone();
+    foreign_source.subject.sources[0].reference = "source:foreign".into();
+    variants.push(foreign_source);
+    let mut stale = target.clone();
+    stale.subject.sources[0].revision.push_str(":stale");
+    variants.push(stale);
+    let mut foreign_owner = target.clone();
+    foreign_owner.subject.native_owner = "owner:unrelated".into();
+    variants.push(foreign_owner);
+    let mut unavailable = target.clone();
+    unavailable.subject.sources[0].availability = ReadingAvailability::Unavailable;
+    variants.push(unavailable);
+    let mut malformed_tag = target.clone();
+    malformed_tag.tags[0].basis.revision.clear();
+    variants.push(malformed_tag);
+    let mut malformed_scope = target;
+    malformed_scope.tags[0].scope_ref.clear();
+    variants.push(malformed_scope);
+    for invalid in variants {
+        assert!(
+            resolve_procedure_membership(
+                registry,
+                &procedure,
+                "expression:acceptance",
+                &[invalid.clone()],
+                None
+            )
+            .is_err()
+        );
+        assert!(
+            resolve_procedure_membership(
+                registry,
+                &procedure,
+                "expression:acceptance",
+                &[invalid],
+                Some(&original)
+            )
+            .is_err()
+        );
+    }
+}
+
+// These cases exercise producer intake/scoped compilation. The supplied full
+// operation is test data, not a consumer receipt. Root independently re-attests
+// its real protected journal/digest/current material before any actual apply.
+fn native_output_reading(
+    p: &Procedure,
+    old: &GeneratedContribution,
+    current: Value,
+) -> RetainedOutputReading {
+    let envelope = json!({"operation_ref":"operation:first-native-output","expression_ref":"expression:acceptance","expected_revision":1,
+        "actor":"agent:anima","scope":{"kind":"expression"},"changes":old.native_changes,
+        "sources":[{"ref":p.profile.source_ref,"revision":p.profile.revision,"availability":"available"},
+            {"ref":old.recipe.source_ref,"revision":old.recipe.revision,"availability":"available"}],"participants":[],"timing":{"kind":"immediate"},"cause_ref":null});
+    RetainedOutputReading {
+        schema: RETAINED_OUTPUT_READING.into(),
+        native_owner: "oi.expression".into(),
+        expression_ref: "expression:acceptance".into(),
+        document_revision: 4,
+        procedure_ref: p.procedure_ref.clone(),
+        source_basis: vec![p.profile.clone(), old.recipe.clone()],
+        contribution_ref: old.contribution_ref.clone(),
+        output_slot: old.output_slot.clone(),
+        subject_refs: old.subjects.clone(),
+        occurrence_ref: old.occurrence_ref.clone(),
+        recipe_revision: old.recipe.revision.clone(),
+        owned_addresses: old.owned_addresses.clone(),
+        generated_basis: old.generated_basis.clone(),
+        current_basis: current,
+        status: "active".into(),
+        applied_operation: json!({"fingerprint":fingerprint(&envelope).unwrap(),"envelope":envelope,
+            "targets":old.owned_addresses,"status":"applied","accepted_revision":2,"applied_revision":3,"observations":[],"failure":null}),
+    }
+}
+fn compile_native_output(
+    p: &Procedure,
+    old: &GeneratedContribution,
+    next: GeneratedContribution,
+    readings: Vec<RetainedOutputReading>,
+) -> Result<PreparedProcedure> {
+    compile_native_regeneration_batch(
+        m_tree::native_current_m_registry(),
+        p,
+        "operation:continued-native-output",
+        "expression:acceptance",
+        4,
+        membership(),
+        vec![next],
+        BTreeSet::from(["scene".into()]),
+        &[old.clone()],
+        &[CurrentContribution {
+            contribution_ref: old.contribution_ref.clone(),
+            material: readings
+                .first()
+                .map(|r| r.current_basis.clone())
+                .unwrap_or(Value::Null),
+            overlays: vec![],
+        }],
+        readings,
+    )
+}
+#[test]
+fn retained_native_force_is_exact_parameter_output_and_never_scene_coerced() {
+    let p = procedure();
+    let mut old = contribution(&p, "force");
+    old.occurrence_ref = "expression:acceptance:entity:existing".into();
+    old.contribution_ref = contribution_identity(
+        &p.procedure_ref,
+        &old.output_slot,
+        &old.subjects,
+        &old.occurrence_ref,
+    )
+    .unwrap();
+    let owned = native_parameter_address(
+        "expression:acceptance",
+        "expression:acceptance:scene:canonical",
+        &old.occurrence_ref,
+        "force_radius",
+    )
+    .unwrap();
+    old.owned_addresses = vec![owned.clone()];
+    old.generated_basis = json!({"parameter":"force_radius","value":200});
+    old.native_changes = vec![NativeChange::ParameterSet {
+        entity_ref: old.occurrence_ref.clone(),
+        parameter: "force_radius".into(),
+        value: json!(200),
+    }];
+    let current = json!({"schema":"ql.native-parameter-state/v1","address":owned,"parameter":"force_radius","value":640,"target_revision":3});
+    let reading = native_output_reading(&p, &old, current);
+    let mut next = old.clone();
+    next.generated_basis["value"] = json!(300);
+    next.native_changes = vec![NativeChange::ParameterSet {
+        entity_ref: old.occurrence_ref.clone(),
+        parameter: "force_radius".into(),
+        value: json!(640),
+    }];
+    let prepared = compile_native_output(&p, &old, next.clone(), vec![reading.clone()]).unwrap();
+    assert_eq!(prepared.membership, membership());
+    assert_eq!(prepared.native_edit["changes"][0]["value"], 640);
+    assert_eq!(prepared.contributions[0].generated_basis["value"], 300);
+    for mutation in 0..5 {
+        let mut wrong = reading.clone();
+        match mutation {
+            0 => wrong.current_basis["parameter"] = json!("force_strength"),
+            1 => wrong.current_basis["target_revision"] = json!(5),
+            2 => {
+                wrong.current_basis["address"]["entity_ref"] =
+                    json!("expression:acceptance:entity:outside")
+            }
+            3 => wrong.applied_operation["envelope"]["changes"] = json!([]),
+            _ => {
+                wrong.applied_operation["envelope"]["sources"][0]["availability"] =
+                    json!("unavailable")
+            }
+        };
+        assert!(compile_native_output(&p, &old, next.clone(), vec![wrong]).is_err());
+    }
+    let mut outside = next;
+    outside.native_changes = vec![NativeChange::ParameterSet {
+        entity_ref: "expression:acceptance:entity:outside".into(),
+        parameter: "force_radius".into(),
+        value: json!(640),
+    }];
+    assert!(compile_native_output(&p, &old, outside, vec![reading]).is_err());
+}
+#[test]
+fn retained_atlas_continues_same_world_with_static_receipt_and_exact_projection_dedup() {
+    let mut p = procedure();
+    p.admitted_changes.insert("scene_reorder".into());
+    let mut old = contribution(&p, "atlas");
+    old.occurrence_ref = "expression:acceptance".into();
+    old.contribution_ref = contribution_identity(
+        &p.procedure_ref,
+        &old.output_slot,
+        &old.subjects,
+        &old.occurrence_ref,
+    )
+    .unwrap();
+    old.owned_addresses = vec![OwnedAddress {
+        expression_ref: "expression:acceptance".into(),
+        scene_ref: None,
+        entity_ref: None,
+        component: "expression".into(),
+        constituent_ref: None,
+        parent_ref: None,
+        property: None,
+    }];
+    old.native_changes = vec![NativeChange::Focus {
+        scene_ref: "expression:acceptance:scene:canonical".into(),
+        entity_ref: None,
+    }];
+    old.generated_basis = json!({"native_flow":old.native_changes});
+    let current = json!({"schema":"ql.native-atlas-state/v1","expression_ref":"expression:acceptance","focus":{"scene_ref":"expression:acceptance:scene:passage","entity_ref":null},"scene_order":["expression:acceptance:scene:canonical","expression:acceptance:scene:passage"]});
+    let reading = native_output_reading(&p, &old, current);
+    let mut next = old.clone();
+    next.native_changes = vec![NativeChange::Focus {
+        scene_ref: "expression:acceptance:scene:passage".into(),
+        entity_ref: None,
+    }];
+    next.generated_basis = json!({"native_flow":next.native_changes});
+    let prepared = compile_native_output(
+        &p,
+        &old,
+        next.clone(),
+        vec![reading.clone(), reading.clone()],
+    )
+    .unwrap();
+    assert_eq!(prepared.membership, membership());
+    assert_eq!(
+        prepared.native_edit["changes"][0]["scene_ref"],
+        "expression:acceptance:scene:passage"
+    );
+    assert_eq!(
+        prepared.output_readings[0].applied_operation,
+        reading.applied_operation
+    );
+    let mut wrong = reading.clone();
+    wrong.current_basis["scene_order"][1] = json!("expression:foreign:scene:passage");
+    assert!(compile_native_output(&p, &old, next.clone(), vec![wrong]).is_err());
+    let mut wrong = reading.clone();
+    wrong.current_basis["focus"]["scene_ref"] = json!("expression:acceptance:scene:absent");
+    assert!(compile_native_output(&p, &old, next.clone(), vec![wrong]).is_err());
+    let mut conflicting = reading.clone();
+    conflicting.current_basis["focus"]["entity_ref"] = json!("expression:acceptance:entity:other");
+    assert!(
+        compile_native_output(&p, &old, next, vec![reading, conflicting])
+            .unwrap_err()
+            .contains("conflicting")
+    );
+}
+
+#[test]
+fn actual_rule_interval_budget_resets_but_prior_cause_nonprogress_is_still_refused() {
+    let mut p = procedure();
+    p.trigger.mode = TriggerMode::Level;
+    p.budgets.max_evaluations = 1;
+    let mut rule = RuleExecution::new(&p, "interval:0").unwrap();
+    for n in 0..40 {
+        if n > 0 {
+            rule.begin_interval(&format!("interval:{n}"), n).unwrap();
+        }
+        let event = RuleEvent {
+            kind: p.trigger.kind,
+            active: true,
+            cause: Cause {
+                event_ref: format!("event:{n}"),
+                progress_revision: format!("progress:{n}"),
+                ancestors: vec![],
+                depth: 0,
+            },
+        };
+        rule.enqueue(&p, event).unwrap();
+        assert!(rule.next(&p, 0).unwrap().is_some());
+    }
+    rule.begin_interval("interval:new", 41).unwrap();
+    let cycle = RuleEvent {
+        kind: p.trigger.kind,
+        active: true,
+        cause: Cause {
+            event_ref: "event:cycle".into(),
+            progress_revision: "progress:0".into(),
+            ancestors: vec![p.procedure_ref.clone()],
+            depth: 1,
+        },
+    };
+    rule.enqueue(&p, cycle).unwrap();
+    assert!(rule.next(&p, 0).is_err());
+    assert!(rule.begin_interval("interval:0", 42).is_err());
 }

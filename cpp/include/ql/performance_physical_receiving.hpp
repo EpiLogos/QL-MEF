@@ -3,6 +3,7 @@
 #include <ql/performance_receiving_port.hpp>
 namespace ql::performance {
 class MovingReceivingPortBinding {
+  ql::NativeResidentLifetime resident_lifetime_{};
   std::shared_ptr<ql::PhysicalBody> body_;
   ql::MovingSpatialReceiving receiving_;
   NativeReceivingManifest manifest_{};
@@ -15,13 +16,13 @@ class MovingReceivingPortBinding {
     return out;
   }
 
-public:
-  // Existing serial owner supplies its immutable qualified preparation and
-  // actual admitted cursor. No control-thread live q/v/cursor read occurs.
+  struct SavedPreparationTag {};
+  // Immutable preparation plus actual admitted saved cursor; no live P query.
   MovingReceivingPortBinding(std::shared_ptr<ql::PhysicalBody> body,
                              const ql::PreparedPhysicalBody &immutable,
                              std::uint64_t admitted_cursor,
-                             ql::PreparedMovingSpatialReceiving prepared)
+                             ql::PreparedMovingSpatialReceiving prepared,
+                             std::uint64_t history_birth, SavedPreparationTag)
       : body_(std::move(body)),
         receiving_(immutable, admitted_cursor, std::move(prepared)) {
     ql::require(bool(body_), "receiving lost resident physical owner");
@@ -47,11 +48,79 @@ public:
     manifest_.body_revision = in.body_revision;
     manifest_.sample_rate = in.sample_rate;
     manifest_.pratibimba = in.pratibimba;
-    manifest_.history_origin_sample = admitted_cursor;
+    manifest_.history_origin_sample = history_birth;
+    receiving_.history_start_ = history_birth;
     manifest_.origin_sample = motion.origin_sample;
     manifest_.end_sample = motion.end_sample;
     ql::require(valid_receiving_manifest(manifest_),
                 "prepared native receiving manifest refused");
+  }
+
+public:
+  // Existing first-install construction keeps its original exact birth.
+  MovingReceivingPortBinding(std::shared_ptr<ql::PhysicalBody> body,
+                             const ql::PreparedPhysicalBody &immutable,
+                             std::uint64_t admitted_cursor,
+                             ql::PreparedMovingSpatialReceiving prepared)
+      : MovingReceivingPortBinding(std::move(body), immutable, admitted_cursor,
+                                   std::move(prepared), admitted_cursor,
+                                   SavedPreparationTag{}) {}
+  // Pure numerical candidate for a fresh resident. The SAME private source
+  // owner independently rebuilds the ORIGINAL saved segment preparation;
+  // segment origin/end and history birth remain exact. No install/publication
+  // happens here, and a matching CP never grants Scene/Act/source authority.
+  static std::shared_ptr<MovingReceivingPortBinding>
+  from_saved_preparation(std::shared_ptr<ql::PhysicalBody> body,
+                         const ql::PreparedPhysicalBody &immutable,
+                         std::uint64_t saved_cursor,
+                         ql::PreparedMovingSpatialReceiving original,
+                         std::uint64_t original_history_birth,
+                         const NativeReceivingCheckpoint &saved) {
+    ql::require(saved.samples_elapsed == saved_cursor &&
+                    saved.history_start_sample == original_history_birth &&
+                    original_history_birth <= original.motion().origin_sample &&
+                    valid_receiving_checkpoint(saved, saved.manifest),
+                "saved receiver candidate has no exact valid original history");
+    auto candidate = std::shared_ptr<MovingReceivingPortBinding>(
+        new MovingReceivingPortBinding(
+            std::move(body), immutable, saved_cursor, std::move(original),
+            original_history_birth, SavedPreparationTag{}));
+    ql::require(same_receiving_manifest(candidate->manifest_, saved.manifest),
+                "saved receiving source/trajectory/body/manifest differs");
+    candidate->receiving_.history_ = saved.history_linear;
+    return candidate;
+  }
+  // Pure control construction from an actual stopped receiver checkpoint.
+  // No equality here grants source/context: Engine/Management recheck this
+  // exact ring against their actual retained owner before the port swap.
+  MovingReceivingPortBinding(std::shared_ptr<ql::PhysicalBody> body,
+                             const ql::PreparedPhysicalBody &immutable,
+                             std::uint64_t admitted_cursor,
+                             ql::PreparedMovingSpatialReceiving prepared,
+                             const NativeReceivingCheckpoint &retained)
+      : MovingReceivingPortBinding(std::move(body), immutable, admitted_cursor,
+                                   std::move(prepared)) {
+    const auto &m = retained.manifest;
+    ql::require(
+        valid_receiving_checkpoint(retained, m) &&
+            retained.samples_elapsed == admitted_cursor &&
+            manifest_.origin_sample == admitted_cursor &&
+            m.event == manifest_.event && m.subject == manifest_.subject &&
+            m.preparation == manifest_.preparation &&
+            m.state == manifest_.state &&
+            m.source_coordinate == manifest_.source_coordinate &&
+            m.source_revision == manifest_.source_revision &&
+            m.eigenbasis == manifest_.eigenbasis &&
+            m.source_generation == manifest_.source_generation &&
+            m.body_revision == manifest_.body_revision &&
+            m.sample_rate == manifest_.sample_rate &&
+            m.pratibimba == manifest_.pratibimba,
+        "receiving continuation lost original same-body native history");
+    manifest_.history_origin_sample = retained.history_start_sample;
+    receiving_.history_start_ = retained.history_start_sample;
+    receiving_.history_ = retained.history_linear;
+    ql::require(valid_receiving_manifest(manifest_),
+                "receiving continuation manifest refused");
   }
   const NativeReceivingManifest &manifest() const noexcept { return manifest_; }
   ReceivingPort
@@ -59,6 +128,7 @@ public:
     ql::require(custody.get() == this,
                 "receiving requires retained exact native numerical owner");
     ReceivingPort out{};
+    out.resident = resident_lifetime_.token();
     out.owner = this;
     out.body_owner = body_.get();
     out.manifest = &manifest_;
@@ -91,6 +161,7 @@ public:
       ql::SpatialMotionPoint point{};
       if (!self.receiving_.preparation().point_at(cursor, point))
         return false;
+      output.resident = self.resident_lifetime_.token();
       output.manifest = self.manifest_;
       output.samples_elapsed = cursor;
       output.end_position = point;
@@ -105,6 +176,20 @@ public:
           self.body_->samples_elapsed() != cursor ||
           !self.receiving_.preparation().matches_preparation(
               self.body_->preparation()))
+        return false;
+      output.version = 1;
+      output.manifest = self.manifest_;
+      output.samples_elapsed = cursor;
+      output.history_start_sample = self.receiving_.history_start_;
+      output.history_linear = self.receiving_.history_;
+      return valid_receiving_checkpoint(output, self.manifest_);
+    };
+    out.write_transport_checkpoint = [](const void *owner,
+                                        NativeReceivingCheckpoint &output,
+                                        std::uint64_t cursor) noexcept {
+      const auto &self =
+          *static_cast<const MovingReceivingPortBinding *>(owner);
+      if (self.receiving_.elapsed_ != cursor)
         return false;
       output.version = 1;
       output.manifest = self.manifest_;

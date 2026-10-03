@@ -270,6 +270,47 @@ fn actual_installed_receiving_changes_final_native_output_and_restores_full_hist
     assert_eq!(measured["exact_restore_frames"], "1024");
     assert_eq!(measured["callback_allocations"], "0");
     assert_eq!(measured["callback_releases"], "0");
+    let replaced = &measured["replacement"];
+    assert_eq!(
+        replaced["schema"],
+        "ql.native-receiving-replacement-component/v1"
+    );
+    assert_eq!(replaced["replacement_sample"], "4096");
+    assert_eq!(replaced["end_cursor"], "13000");
+    let old_rx = &replaced["before_receiving"];
+    let new_rx = &replaced["after_receiving"];
+    assert_eq!(old_rx["samples_elapsed"], "4096");
+    assert_eq!(new_rx["samples_elapsed"], "4096");
+    assert_eq!(old_rx["history_start_sample"], "0");
+    assert_eq!(new_rx["history_start_sample"], "0");
+    assert_eq!(old_rx["history_linear"], new_rx["history_linear"]);
+    assert_eq!(new_rx["manifest"]["origin_sample"], "4096");
+    assert_eq!(new_rx["manifest"]["history_origin_sample"], "0");
+    assert_eq!(replaced["physical_before"], replaced["physical_after"]);
+    let replaced_apps = replaced["applications"].as_array().unwrap();
+    assert_eq!(replaced_apps.len(), 3);
+    for (app, sequence, date) in [
+        (&replaced_apps[0], "1", "0"),
+        (&replaced_apps[1], "2", "9000"),
+        (&replaced_apps[2], "3", "10000"),
+    ] {
+        assert_eq!(app["sequence"], sequence);
+        assert_eq!(app["applied_application_ordinal"], sequence);
+        assert_eq!(app["requested_sample"], date);
+        assert_eq!(app["admitted_sample"], date);
+        assert_eq!(app["applied_sample"], date);
+        assert_eq!(app["applied"], true);
+    }
+    qualify_native_note_wire(
+        &packet["native_preparation"]["notes"][0],
+        &replaced_apps[0]["note"],
+    )
+    .unwrap();
+    assert_eq!(
+        replaced["continued_pcm"].as_array().unwrap().len(),
+        13000 - 4096
+    );
+
     let pickup = measured["pickup"].as_array().unwrap();
     assert_eq!(pickup.len(), 96000);
     assert!(pickup.iter().any(|x| x.as_f64().unwrap() != 0.0));

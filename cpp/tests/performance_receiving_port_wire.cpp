@@ -313,6 +313,298 @@ static void corruption(Session &s) {
   }
   assert(refused);
 }
+static std::vector<KeyboardCell> source_catalog(J *fixture) {
+  auto *rows = packet::field(fixture, "native_catalog");
+  packet::array(rows, 36);
+  std::vector<KeyboardCell> out;
+  for (std::size_t i = 0; i < 36; ++i)
+    out.push_back(
+        management_transport::read_key(json_object_array_get_idx(rows, i)));
+  return out;
+}
+static std::shared_ptr<MovingReceivingPortBinding>
+replacement_port(Session &s, const NativeReceivingCheckpoint &saved,
+                 unsigned changed_identity = 0) {
+  const auto &immutable = s.owner->native().body->preparation();
+  const auto before = receiving(immutable, 0, 0);
+  auto spatial = before.spatial().input();
+  spatial.receiver_position_metres = {21, 0, 0};
+  if (changed_identity == 1)
+    spatial.context_ref = "research:port/other-world";
+  if (changed_identity == 2)
+    spatial.receiver_ref = "research:port/other-receiver";
+  auto motion = before.motion();
+  motion.origin_sample = saved.samples_elapsed;
+  motion.receiver_motion_ref = "research:port/receiver-motion-2";
+  motion.policy_revision = "2";
+  PreparedMovingSpatialReceiving after(immutable, spatial, motion);
+  return std::make_shared<MovingReceivingPortBinding>(
+      s.owner->native().body, immutable, saved.samples_elapsed,
+      std::move(after), saved);
+}
+static Json replacement(J *fixture) {
+  auto s = std::make_unique<Session>(fixture, 0, 0);
+  const auto catalog = source_catalog(fixture);
+  s->owner->admit_catalog(catalog);
+  s->advance(4096, 128);
+  original_input(*s);
+  Operation automation{};
+  automation.kind = Kind::Parameter;
+  automation.identity = s->owner->native().determination.identity;
+  automation.sequence = 2;
+  automation.sample = 9000;
+  automation.parameter = Parameter::MasterLinear;
+  automation.value = .61;
+  assert(s->owner->enqueue_score_input(automation) == Result::Accepted);
+  Operation release{};
+  release.kind = Kind::NoteOff;
+  release.identity = automation.identity;
+  release.sequence = 3;
+  release.sample = 10000;
+  release.touch = s->owner->native().notes.at(0).touch;
+  assert(s->owner->enqueue_score_input(
+             release, reference("research:port/original-input")) ==
+         Result::Accepted);
+  auto before = s->owner->stopped_checkpoint();
+  assert(before->native_pair.audio.cursor == 4096 &&
+         before->native_pair.audio.accepted_sequence == 3 &&
+         before->native_pair.audio.applied_application_ordinal == 1 &&
+         std::count_if(before->native_pair.audio.voices.begin(),
+                       before->native_pair.audio.voices.end(),
+                       [](const auto &v) { return v.active && !v.release; }) ==
+             1);
+  auto candidate = replacement_port(*s, before->native_pair.audio.receiving);
+  // A changed finite sample is structurally valid but cannot replace the
+  // actual native ring. It must refuse BEFORE any owner state mutates.
+  auto corrupt = std::make_unique<NativeReceivingCheckpoint>(
+      before->native_pair.audio.receiving);
+  corrupt->history_linear[17] += .000001f;
+  auto altered = replacement_port(*s, *corrupt);
+  {
+    auto guard = s->owner->native().engine->acquire_stopped_custody();
+    auto token =
+        std::make_unique<PerformanceManagement::PreparedReceivingReplacement>();
+    assert(guard && !s->owner->prepare_stopped_receiving_replacement(
+                        altered->port(altered), guard, 4096, *token));
+  }
+  // Real native validated same-cursor restore after preflight can change a
+  // ring while all manifest/cursor/source/queue/catalogue fields stay exact.
+  // Candidate and resident changes must BOTH invalidate the private token.
+  for (bool mutate_resident : {false, true}) {
+    auto saved_ring = std::make_unique<NativeReceivingCheckpoint>();
+    auto changed_ring = std::make_unique<NativeReceivingCheckpoint>();
+    auto prior_refusal = std::make_unique<Engine::Checkpoint>();
+    auto after_refusal = std::make_unique<Engine::Checkpoint>();
+    {
+      auto guard = s->owner->native().engine->acquire_stopped_custody();
+      auto token = std::make_unique<
+          PerformanceManagement::PreparedReceivingReplacement>();
+      auto candidate_port = candidate->port(candidate);
+      assert(guard && s->owner->prepare_stopped_receiving_replacement(
+                          candidate_port, guard, 4096, *token));
+      auto port = mutate_resident ? s->receiving_owner->port(s->receiving_owner)
+                                  : candidate_port;
+      assert(port.write_checkpoint(port.owner, *saved_ring, 4096));
+      *changed_ring = *saved_ring;
+      changed_ring->history_linear[41] += .000001f;
+      assert(changed_ring->history_linear[41] !=
+                 saved_ring->history_linear[41] &&
+             port.validate_checkpoint(port.owner, *changed_ring, 4096));
+      port.restore_checkpoint(port.owner, *changed_ring);
+      s->owner->native().engine->write_checkpoint(*prior_refusal, guard);
+      const auto old_allocations = allocations, old_releases = releases;
+      callback_probe =
+          true; // numerical current() itself must not allocate/free
+      const auto current =
+          s->owner->receiving_replacement_current(*token, guard);
+      callback_probe = false;
+      assert(!current && allocations == old_allocations &&
+             releases == old_releases);
+      s->owner->native().engine->write_checkpoint(*after_refusal, guard);
+      auto prior = audio_wire(*prior_refusal),
+           after = audio_wire(*after_refusal);
+      assert(json_object_equal(prior.get(), after.get()));
+      // Restore only the actual deliberately changed port through its real
+      // validated native API. No queue/cursor/source/body or journal is
+      // retagged.
+      assert(port.validate_checkpoint(port.owner, *saved_ring, 4096));
+      port.restore_checkpoint(port.owner, *saved_ring);
+    }
+    auto restored = s->owner->stopped_checkpoint();
+    auto original_wire =
+             management_checkpoint_transport::checkpoint_wire(*before),
+         restored_wire =
+             management_checkpoint_transport::checkpoint_wire(*restored);
+    assert(json_object_equal(original_wire.get(), restored_wire.get()));
+  }
+  // Two valid numerical contexts cannot use a geometry-only token to switch
+  // the current receiver or privacy occasion. The combined current receiving
+  // source/N9/context transaction is a different native owner operation.
+  for (unsigned changed_identity : {1u, 2u}) {
+    auto wrong = replacement_port(*s, before->native_pair.audio.receiving,
+                                  changed_identity);
+    auto guard = s->owner->native().engine->acquire_stopped_custody();
+    auto token =
+        std::make_unique<PerformanceManagement::PreparedReceivingReplacement>();
+    assert(guard && !s->owner->prepare_stopped_receiving_replacement(
+                        wrong->port(wrong), guard, 4096, *token));
+  }
+  auto unchanged = s->owner->stopped_checkpoint();
+  auto bw = management_checkpoint_transport::checkpoint_wire(*before),
+       uw = management_checkpoint_transport::checkpoint_wire(*unchanged);
+  assert(json_object_equal(bw.get(), uw.get()));
+  // A lawful same-source catalog write invalidates its private candidate.
+  // Native note values/coordinates/ratios remain unchanged in this case.
+  {
+    auto guard = s->owner->native().engine->acquire_stopped_custody();
+    auto stale =
+        std::make_unique<PerformanceManagement::PreparedReceivingReplacement>();
+    assert(guard && s->owner->prepare_stopped_receiving_replacement(
+                        candidate->port(candidate), guard, 4096, *stale));
+    auto renamed = catalog;
+    renamed.front().label += " current";
+    s->owner->admit_catalog(std::move(renamed));
+    assert(!s->owner->receiving_replacement_current(*stale, guard));
+  }
+  {
+    auto guard = s->owner->native().engine->acquire_stopped_custody();
+    auto ready =
+        std::make_unique<PerformanceManagement::PreparedReceivingReplacement>();
+    assert(guard && s->owner->prepare_stopped_receiving_replacement(
+                        candidate->port(candidate), guard, 4096, *ready));
+    assert(s->owner->receiving_replacement_current(*ready, guard));
+    s->owner->commit_stopped_receiving_replacement(*ready, guard);
+    assert(!ready->ready());
+    s->owner->refresh_stopped_reading(guard);
+  }
+  auto saved = s->owner->stopped_checkpoint();
+  const auto &old_rx = before->native_pair.audio.receiving;
+  const auto &new_rx = saved->native_pair.audio.receiving;
+  assert(new_rx.samples_elapsed == 4096 && new_rx.history_start_sample == 0 &&
+         new_rx.manifest.origin_sample == 4096 &&
+         new_rx.manifest.history_origin_sample == 0 &&
+         std::memcmp(old_rx.history_linear.data(), new_rx.history_linear.data(),
+                     sizeof(old_rx.history_linear)) == 0);
+  auto expected_manifest = old_rx.manifest;
+  expected_manifest.receiving_identity = new_rx.manifest.receiving_identity;
+  expected_manifest.receiver_motion = new_rx.manifest.receiver_motion;
+  expected_manifest.policy_revision = new_rx.manifest.policy_revision;
+  expected_manifest.origin_sample = 4096;
+  assert(same_receiving_manifest(expected_manifest, new_rx.manifest));
+  exact_body(before->native_pair.physical, saved->native_pair.physical);
+  auto original = management_checkpoint_transport::checkpoint_wire(*before),
+       after = management_checkpoint_transport::checkpoint_wire(*saved);
+  // Only the explicitly checked receiving subsystem may differ. All voices,
+  // phases, touches, pending queues/timing/IDs, source and input journal remain
+  // byte-equivalent through the original native checkpoint transport.
+  json_object_object_del(
+      packet::field(packet::field(original.get(), "native_pair"), "audio"),
+      "receiving");
+  json_object_object_del(
+      packet::field(packet::field(after.get(), "native_pair"), "audio"),
+      "receiving");
+  assert(json_object_equal(original.get(), after.get()));
+  const auto first = s->advance(13000, 128);
+  assert(std::any_of(first.received.begin(), first.received.begin() + 512,
+                     [](float value) { return value != 0.f; }));
+  auto stationary = std::make_unique<Session>(fixture, 0, 0);
+  stationary->owner->admit_catalog(catalog);
+  stationary->advance(4096, 128);
+  assert(stationary->owner->enqueue_score_input(automation) ==
+         Result::Accepted);
+  assert(stationary->owner->enqueue_score_input(
+             release, reference("research:port/original-input")) ==
+         Result::Accepted);
+  const auto unmoved = stationary->advance(13000, 128);
+  assert(first.pickup == unmoved.pickup && first.received != unmoved.received &&
+         first.pcm != unmoved.pcm);
+  exact_body(*first.physical, *unmoved.physical);
+  const auto first_journal = s->journal;
+  const auto final = s->owner->stopped_checkpoint();
+  assert(s->applications.size() == 3 && s->applications[1].sequence == 2 &&
+         s->applications[1].applied_application_ordinal == 2 &&
+         s->applications[1].requested_sample == 9000 &&
+         s->applications[1].admitted_sample == 9000 &&
+         s->applications[1].applied_sample == 9000 &&
+         s->applications[2].sequence == 3 &&
+         s->applications[2].applied_application_ordinal == 3 &&
+         s->applications[2].requested_sample == 10000 &&
+         s->applications[2].admitted_sample == 10000 &&
+         s->applications[2].applied_sample == 10000 &&
+         s->applications[2].touch == release.touch);
+  assert(std::count_if(s->journal.begin(), s->journal.end(), [](const auto &h) {
+           return h.change == InputBindingChange::ReleaseAdmitted &&
+                  h.native_sequence == 3 &&
+                  h.input_ref == reference("research:port/original-input");
+         }) == 1);
+  TransportAcknowledgement ack{};
+  assert(s->owner->stopped_restore(
+      *saved, 13000, reference("research:port/replacement-restore"),
+      reference("research:port/replacement-saved-4096"), ack));
+  assert(ack.previous_cursor == 13000 && ack.target_sample == 4096 &&
+         ack.epoch == ack.previous_epoch + 1);
+  const auto repeat = s->advance(13000, 512);
+  assert(first.pickup == repeat.pickup && first.received == repeat.received &&
+         first.pcm == repeat.pcm);
+  exact_body(*first.physical, *repeat.physical);
+  const auto replay_final = s->owner->stopped_checkpoint();
+  auto f = receiving_checkpoint(final->native_pair.audio.receiving),
+       rf = receiving_checkpoint(replay_final->native_pair.audio.receiving);
+  assert(json_object_equal(f.get(), rf.get()));
+  // A queue writer after releasing the original guard also invalidates a
+  // prepared token. A new guard at the same cursor is not the same custody.
+  auto queued = std::make_unique<Session>(fixture, 0, 0);
+  queued->owner->admit_catalog(catalog);
+  queued->advance(4096, 128);
+  auto qcp = queued->owner->stopped_checkpoint();
+  auto qp = replacement_port(*queued, qcp->native_pair.audio.receiving);
+  auto stale =
+      std::make_unique<PerformanceManagement::PreparedReceivingReplacement>();
+  {
+    auto guard = queued->owner->native().engine->acquire_stopped_custody();
+    assert(guard && queued->owner->prepare_stopped_receiving_replacement(
+                        qp->port(qp), guard, 4096, *stale));
+  }
+  assert(queued->owner->enqueue_score_input(automation) == Result::Accepted);
+  {
+    auto guard = queued->owner->native().engine->acquire_stopped_custody();
+    assert(guard &&
+           !queued->owner->receiving_replacement_current(*stale, guard));
+  }
+  auto output = object();
+  text(output.get(), "schema", "ql.native-receiving-replacement-component/v1");
+  text(output.get(), "standing",
+       "stopped numerical same-owner replacement; private live/retained source "
+       "reader is an independent required gate");
+  put(output.get(), "before_receiving", receiving_checkpoint(old_rx).release());
+  put(output.get(), "after_receiving", receiving_checkpoint(new_rx).release());
+  put(output.get(), "final_receiving", f.release());
+  put(output.get(), "physical_before",
+      ql::physical_wire::checkpoint_wire(before->native_pair.physical)
+          .release());
+  put(output.get(), "physical_after",
+      ql::physical_wire::checkpoint_wire(saved->native_pair.physical)
+          .release());
+  auto apps = array(), journal = array();
+  for (std::size_t i = 0; i < 3; ++i)
+    append(apps.get(), application(s->applications[i]).release());
+  for (const auto &h : first_journal)
+    if (h.native_sequence <= 3)
+      append(journal.get(), management_transport::history(h).release());
+  put(output.get(), "applications", apps.release());
+  put(output.get(), "input_history", journal.release());
+  put(output.get(), "continued_pcm", samples(first.pcm).release());
+  put(output.get(), "stationary_pcm", samples(unmoved.pcm).release());
+  put(output.get(), "continued_pickup", samples(first.pickup).release());
+  put(output.get(), "stationary_pickup", samples(unmoved.pickup).release());
+  u64(output.get(), "replacement_sample", 4096);
+  u64(output.get(), "end_cursor", 13000);
+  u64(output.get(), "sizeof_engine_candidate",
+      sizeof(Engine::PreparedReceivingReplacement));
+  u64(output.get(), "sizeof_management_candidate",
+      sizeof(PerformanceManagement::PreparedReceivingReplacement));
+  return output;
+}
 static Json measure(J *fixture) {
   auto receipt = object();
   text(receipt.get(), "schema", "ql.native-receiving-port-receipt/v1");
@@ -464,6 +756,7 @@ static Json measure(J *fixture) {
   }
   assert(!legacy->owner->native().engine->has_receiving_port());
   assert(allocations == 0 && releases == 0);
+  put(receipt.get(), "replacement", replacement(fixture).release());
   put(receipt.get(), "native_note",
       checkpoint_transport::note(selected).release());
   put(receipt.get(), "pickup", samples(common_pickup).release());

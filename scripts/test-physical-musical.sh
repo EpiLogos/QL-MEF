@@ -57,6 +57,11 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     TASK_RESTORE_OUTPUT="$TASK_OUTPUT/receiving-restore-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_restore_nonce"
     run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_RESTORE_EVIDENCE_DIR="$TASK_RESTORE_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
+  elif [[ "$suite" == "performance_acoustic_native_wire" ]]; then
+    v_acoustic_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_ACOUSTIC_OUTPUT="$TASK_OUTPUT/acoustic-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_acoustic_nonce"
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_ACOUSTIC_RECEIVING_EVIDENCE_DIR="$TASK_ACOUSTIC_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "performance_moving_receiving_native_wire" ]]; then
     v_motion_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_MOTION_OUTPUT="$TASK_OUTPUT/moving-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_motion_nonce"

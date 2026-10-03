@@ -1,10 +1,13 @@
 #ifndef QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #define QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
+#include <ql/performance_acoustic_wire.hpp>
 #include <ql/performance_offline_wire.hpp>
 #include <ql/performance_physical_routes.hpp>
 #include <ql/performance_receiving_restore.hpp>
 #include <ql/performance_receiving_wire.hpp>
+#include <ql/performance_resident_registry_wire.hpp>
 #include <ql/performance_source_packet.hpp>
+#include <ql/performance_timing.hpp>
 
 namespace ql::performance::management_transport {
 namespace wire = checkpoint_transport;
@@ -313,6 +316,9 @@ class Control {
   // retained bytes are coherence evidence, never a private Source/Act grant.
   Json prepared_source_ = wire::own(nullptr),
        prepared_basis_ = wire::own(nullptr);
+  // Exact independently decoded numerical producer retained only after its
+  // actual same-owner installation commits. This never grants Scene custody.
+  Json retained_acoustic_ = wire::own(nullptr);
   std::unique_ptr<PerformanceManagement::PreparedReceivingRestore>
       receiving_restore_;
   std::vector<DeviceDescription> devices_;
@@ -320,6 +326,7 @@ class Control {
   unsigned transpose_ = 0;
   bool released_ = false;
   std::size_t admitted_route_count_ = 0;
+  NativePerformanceTimingOwner timing_;
   static const char *result(Result r) {
     switch (r) {
     case Result::Accepted:
@@ -638,6 +645,7 @@ public:
       prepared_source_ = std::move(immutable_source);
       prepared_basis_ = std::move(immutable_basis);
       owner_ = std::move(next);
+      timing_.reset();
       admitted_route_count_ = routes ? programs.program_count : 0;
       standing_ = stamp;
       accepted = true;
@@ -678,6 +686,12 @@ public:
           {"device-recover", {}},
           {"device-close", {}},
           {"score", {"event", "input_ref"}},
+          {"receiving-transport-install",
+           {"prepared_acoustic", "current_acoustic", "expected_sample"}},
+          {"receiving-transport-replace",
+           {"before_acoustic", "prepared_acoustic", "current_acoustic",
+            "expected_sample"}},
+          {"timing", {"moment", "ordinal"}},
           {"checkpoint", {}},
           {"offline-render", {"scope", "frames"}},
           {"restore",
@@ -696,6 +710,13 @@ public:
           "session_ref",     "expected_transport_epoch",
           "expected_source", "expected_body_revision"};
       allowed.insert(selected->second.begin(), selected->second.end());
+      J *original_saved_acoustic = nullptr;
+      const bool has_original_saved_acoustic =
+          op == "restore-current-receiving" &&
+          json_object_object_get_ex(request, "original_saved_acoustic",
+                                    &original_saved_acoustic);
+      if (has_original_saved_acoustic)
+        allowed.insert("original_saved_acoustic");
       require(json_object_object_length(request) == int(allowed.size()),
               "missing or unknown native performance fields");
       json_object_object_foreach(request, name, value) {
@@ -789,6 +810,157 @@ public:
         if (admitted.queue().queued())
           wire::put(payload.get(), "score_admission",
                     score_admission(admitted).release());
+        timing_.score(admitted);
+      } else if (op == "timing") {
+        // Numerical selector only. Actual native facts are retained privately
+        // by this Control; the caller cannot supply a receipt or epoch grant.
+        const auto moment = packet::string(packet::field(request, "moment"));
+        require(moment == "boundary" || moment == "score" ||
+                    moment == "clock" || moment == "applied",
+                "unsupported actual native timing moment");
+        wire::decimal(packet::field(request, "ordinal"));
+        accepted = true;
+      } else if (op == "receiving-transport-install" ||
+                 op == "receiving-transport-replace") {
+        // The private current Scene/Act reader qualifies the complete source
+        // before this numerical worker seam. No packet supplied here mints it.
+        auto &engine = *owner_->native().engine;
+        const auto state = owner_->device_receipt().state;
+        require(state == DeviceState::Closed || state == DeviceState::Prepared,
+                "native acoustic change requires the attached device stopped");
+        auto guard = engine.acquire_stopped_custody();
+        require(bool(guard),
+                "native acoustic exclusive stopped custody absent");
+        const auto cursor =
+            wire::decimal(packet::field(request, "expected_sample"));
+        require(cursor == engine.samples_elapsed() && prepared_source_ &&
+                    owner_->native().body->samples_elapsed() == cursor,
+                "native acoustic change detached from actual P/audio cursor");
+        auto *candidate_packet = packet::field(request, "prepared_acoustic");
+        auto *current_packet = packet::field(request, "current_acoustic");
+        auto *source_body =
+            packet::field(prepared_source_.get(), "physical_body");
+        const auto &immutable = owner_->native().body->preparation();
+        // Full candidate producer text is copied before the first mutation.
+        J *candidate_copy = nullptr;
+        const auto copied =
+            json_object_deep_copy(candidate_packet, &candidate_copy, nullptr);
+        auto next_source = wire::own(candidate_copy);
+        require(copied == 0 && bool(next_source),
+                "native acoustic immutable copy failed");
+        if (op == "receiving-transport-install") {
+          require(!retained_acoustic_,
+                  "native acoustic first installation already retained");
+          auto prepared = acoustic_wire::read_prepared_acoustic(
+              candidate_packet, current_packet, source_body, immutable, cursor);
+          auto numerical = std::make_shared<MovingReceivingPortBinding>(
+              owner_->native().body, immutable, cursor, std::move(prepared));
+          accepted = engine.install_receiving_port(numerical->port(numerical),
+                                                   guard, cursor);
+          if (accepted) {
+            retained_acoustic_ = std::move(next_source);
+            owner_->refresh_stopped_reading(guard);
+          } else {
+            reason = "native receiving first-install preflight refused";
+          }
+        } else {
+          auto *original_packet = packet::field(request, "before_acoustic");
+          require(
+              retained_acoustic_ &&
+                  json_object_equal(original_packet, retained_acoustic_.get()),
+              "native receiver change lost the complete original operative "
+              "producer");
+          auto saved = std::make_unique<Engine::Checkpoint>();
+          engine.write_checkpoint(*saved, guard);
+          require(saved->has_receiving && saved->cursor == cursor &&
+                      valid_receiving_checkpoint(saved->receiving,
+                                                 saved->receiving.manifest),
+                  "native receiver change has no actual full retained ring");
+          const auto original_origin =
+              wire::decimal(packet::field(original_packet, "origin_sample"));
+          const auto original_birth = wire::decimal(
+              packet::field(original_packet, "history_origin_sample"));
+          require(
+              original_birth == saved->receiving.history_start_sample &&
+                  original_birth <= original_origin &&
+                  original_origin <= cursor,
+              "native receiver change reset actual immutable history birth");
+          auto original = acoustic_wire::read_prepared_acoustic(
+              original_packet, retained_acoustic_.get(), source_body, immutable,
+              original_origin,
+              acoustic_wire::AcousticReadKind::RetainedReceiverSegment);
+          auto original_binding = std::make_shared<MovingReceivingPortBinding>(
+              owner_->native().body, immutable, original_origin,
+              std::move(original));
+          auto original_manifest = original_binding->manifest();
+          // A later segment retains the original history birth. The actual
+          // ring independently fences that value above; all remaining fields
+          // come from the full original numerical producer, not caller labels.
+          original_manifest.history_origin_sample = original_birth;
+          require(valid_receiving_manifest(original_manifest) &&
+                      same_receiving_manifest(original_manifest,
+                                              saved->receiving.manifest),
+                  "native original numerical receiver differs from the actual "
+                  "retained port");
+          require(
+              json_object_equal(packet::field(original_packet, "context"),
+                                packet::field(candidate_packet, "context")),
+              "geometry receiver change substituted complete original context");
+          auto *before_config = packet::field(original_packet, "configuration");
+          auto *after_config = packet::field(candidate_packet, "configuration");
+          require(
+              wire::decimal(
+                  packet::field(candidate_packet, "history_origin_sample")) ==
+                      original_birth &&
+                  ql::physical_wire::exact(
+                      packet::field(after_config, "revision")) >
+                      ql::physical_wire::exact(
+                          packet::field(before_config, "revision")),
+              "native receiver change lost birth or original revision order");
+          for (const char *name :
+               {"source_ref", "source_motion_ref", "source_translation_metres",
+                "source_velocity_metres_per_second"})
+            require(
+                json_object_equal(packet::field(before_config, name),
+                                  packet::field(after_config, name)),
+                "native receiver change substituted original emitter history");
+          auto prepared = acoustic_wire::read_prepared_acoustic(
+              candidate_packet, current_packet, source_body, immutable, cursor,
+              acoustic_wire::AcousticReadKind::RetainedReceiverSegment);
+          auto numerical = std::make_shared<MovingReceivingPortBinding>(
+              owner_->native().body, immutable, cursor, std::move(prepared),
+              saved->receiving);
+          auto token = std::make_unique<
+              PerformanceManagement::PreparedReceivingReplacement>();
+          const auto sequence = engine.accepted_sequence(),
+                     epoch = owner_->transport_epoch();
+          accepted = owner_->prepare_stopped_receiving_replacement(
+                         numerical->port(numerical), guard, cursor, *token) &&
+                     owner_->receiving_replacement_current(*token, guard);
+          if (accepted) {
+            // Prepare the complete acknowledgement before swapping the same
+            // stopped port. It describes numerical custody, never authority.
+            auto acknowledgement = wire::object();
+            wire::text(acknowledgement.get(), "schema",
+                       "ql.native-receiving-replacement/v1");
+            wire::u64(acknowledgement.get(), "sample", cursor);
+            wire::u64(acknowledgement.get(), "transport_epoch", epoch);
+            wire::u64(acknowledgement.get(), "accepted_sequence", sequence);
+            wire::put(acknowledgement.get(), "before_manifest",
+                      wire::receiving_manifest(original_manifest).release());
+            wire::put(
+                acknowledgement.get(), "after_manifest",
+                wire::receiving_manifest(token->after_manifest()).release());
+            owner_->commit_stopped_receiving_replacement(*token, guard);
+            retained_acoustic_ = std::move(next_source);
+            owner_->refresh_stopped_reading(guard);
+            wire::put(payload.get(), "receiving_replacement",
+                      acknowledgement.release());
+          } else {
+            reason = "native receiver replacement "
+                     "source/history/queue/catalogue preflight refused";
+          }
+        }
       } else if (op == "checkpoint") {
         auto saved = owner_->stopped_checkpoint();
         wire::put(
@@ -860,6 +1032,38 @@ public:
         auto saved = management_checkpoint_transport::read_checkpoint_wire(
             original_value.get());
         const auto saved_cursor = saved->native_pair.audio.cursor;
+        require(has_original_saved_acoustic ==
+                    saved->native_pair.audio.has_receiving,
+                "saved receiver requires exactly its original source operand");
+        std::shared_ptr<MovingReceivingPortBinding> saved_receiver_owner;
+        ReceivingPort saved_receiver{};
+        wire::Json saved_acoustic_source{nullptr, json_object_put};
+        if (has_original_saved_acoustic) {
+          // The private Rust/Act lease regenerated this ORIGINAL segment.
+          // Numerical decoding grants no current source or protected occasion.
+          const auto original_origin = wire::decimal(
+              packet::field(original_saved_acoustic, "origin_sample"));
+          const auto original_birth = wire::decimal(
+              packet::field(original_saved_acoustic, "history_origin_sample"));
+          auto original_preparation = acoustic_wire::read_prepared_acoustic(
+              original_saved_acoustic, original_saved_acoustic,
+              packet::field(prepared_source_.get(), "physical_body"),
+              owner_->native().body->preparation(), original_origin,
+              acoustic_wire::AcousticReadKind::RetainedReceiverSegment);
+          saved_receiver_owner =
+              MovingReceivingPortBinding::from_saved_preparation(
+                  owner_->native().body, owner_->native().body->preparation(),
+                  saved_cursor, std::move(original_preparation), original_birth,
+                  saved->native_pair.audio.receiving);
+          saved_receiver = saved_receiver_owner->port(saved_receiver_owner);
+          // Retain the complete producer before the first P/A mutation.
+          J *copied = nullptr;
+          const auto copied_ok =
+              json_object_deep_copy(original_saved_acoustic, &copied, nullptr);
+          saved_acoustic_source = wire::own(copied);
+          require(copied_ok == 0 && bool(saved_acoustic_source),
+                  "saved original acoustic producer copy failed");
+        }
         const auto expected_cursor =
             wire::decimal(packet::field(request, "expected_cursor"));
         auto *basis = packet::field(request, "actual_native_basis");
@@ -934,8 +1138,10 @@ public:
             physical_routes_port(physical_port(owner_->native().body), routes),
             *seed, owner_->native().notes, std::move(catalog), expected_cursor,
             packet::ref(request, "transaction_ref"),
-            packet::ref(request, "checkpoint_ref"), next, ack);
+            packet::ref(request, "checkpoint_ref"), next, ack,
+            has_original_saved_acoustic ? &saved_receiver : nullptr);
         if (accepted) {
+          retained_acoustic_ = std::move(saved_acoustic_source);
           auto operative = std::make_unique<ManagementCheckpoint>(
               next->original_checkpoint());
           operative->native_pair.audio =
@@ -946,6 +1152,9 @@ public:
           wire::text(readmission.get(), "schema",
                      "ql.native-receiving-readmission/v1");
           wire::text(readmission.get(), "original_checkpoint_wire", original);
+          if (has_original_saved_acoustic)
+            wire::put(readmission.get(), "original_saved_acoustic",
+                      json_object_get(retained_acoustic_.get()));
           wire::text(readmission.get(), "operative_checkpoint_wire",
                      json_object_to_json_string_ext(operative_wire.get(),
                                                     JSON_C_TO_STRING_PLAIN));
@@ -999,6 +1208,10 @@ public:
         wire::flag(a.get(), "input_transit_unknown",
                    admission.clock.input_transit_unknown);
         wire::put(payload.get(), "admission", a.release());
+        if (accepted)
+          timing_.clock(admission.clock,
+                        owner_->native().engine->source_for_native_admission(),
+                        owner_->transport_epoch());
       }
     }
     if (!accepted && reason.empty())
@@ -1006,6 +1219,23 @@ public:
                    ? "native operation refused"
                    : owner_->device_receipt().error;
     auto pulse = owner_->pulse();
+    timing_.committed(*pulse, owner_->transport_epoch());
+    if (op == "timing") {
+      try {
+        wire::put(payload.get(), "timing_fact",
+                  timing_
+                      .fact(*owner_, *pulse,
+                            packet::string(packet::field(request, "moment")),
+                            wire::decimal(packet::field(request, "ordinal")))
+                      .release());
+      } catch (const std::invalid_argument &refusal) {
+        // This SAME pulse already owns the native applications/input journal.
+        // Ordinary unavailable observation must return them intact below;
+        // throwing here would destroy them before C/S could retain history.
+        accepted = false;
+        reason = refusal.what();
+      }
+    }
     if (readmission) {
       // This checkpoint follows the actual pulse's observer drain. It proves
       // the unchanged operative->after FIFO transition in the original C24D
@@ -1035,6 +1265,15 @@ public:
     wire::put(out.get(), "input_history", journal.release());
     wire::put(out.get(), "recording",
               wire::recording(pulse->recording).release());
+    auto registry = std::make_unique<NativeResidentRegistry>();
+    if (owner_->write_resident_registry(*pulse, *registry))
+      wire::put(out.get(), "resident_consumers",
+                resident_wire::registry(*registry).release());
+    else {
+      null(out.get(), "resident_consumers");
+      wire::text(out.get(), "resident_registry_reason",
+                 "actual native same-pulse registration unavailable");
+    }
     wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
     wire::u64(out.get(), "last_native_member", owner_->last_native_member());
     wire::flag(out.get(), "recording_available", owner_->recording_available());

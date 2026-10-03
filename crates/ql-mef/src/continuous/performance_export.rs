@@ -2,7 +2,7 @@
 //! No imported render scope, oscillator, codec, file store or second clock.
 //! The existing host/Act lease authorizes this operation and file disclosure.
 use super::coupled::{CoupledBasis, CoupledFieldSession};
-use super::performance::PerformanceOwner;
+use super::performance::{NativeStoppedExchangeFailure, PerformanceOwner};
 use super::performance_receiving::NativePerformanceReceivingSource;
 use crate::musical_performance_score::MusicalPerformanceScore;
 use crate::musical_performance_source_score::{
@@ -284,6 +284,144 @@ pub struct NativeRenderResult<T> {
     pub restoration: NativeRenderRestoration,
 }
 
+/// A failed original-state restitution retains complete actual readbacks.
+/// Missing receipts stay absent; no simulated checkpoint or successful restore.
+#[derive(Debug, Serialize)]
+pub(crate) struct NativeRenderFailure {
+    pub(crate) reason: String,
+    #[serde(flatten)]
+    receipt_custody: Box<NativeRenderFailureCustody>,
+}
+#[derive(Debug, Default, Serialize)]
+struct NativeRenderFailureCustody {
+    successful_restoration: Option<NativeRenderRestoration>,
+    activity_error: Option<String>,
+    pub(crate) original_capture_receipt: Option<Value>,
+    pub(crate) saved_native_checkpoint: Option<Value>,
+    pub(crate) last_activity_reply: Option<Value>,
+    pub(crate) before_restoration_receipt: Option<Value>,
+    pub(crate) restoration_reply: Option<Value>,
+    pub(crate) after_restoration_receipt: Option<Value>,
+    pub(crate) failed_native_receipts: Vec<Value>,
+}
+impl NativeRenderRestoration {
+    /// The closed native channel serializes one original receipt at a time.
+    /// Vector indices and every complete checkpoint remain original; no whole
+    /// restoration Value is created to cross the aggregate output limit.
+    pub(crate) fn visit_original_receipts(
+        &self,
+        prefix: &str,
+        emit: &mut impl FnMut(&str, usize, &Value) -> Result<(), String>,
+    ) -> Result<(), String> {
+        for (kind, receipt) in [
+            ("transport_acknowledgement", &self.transport_acknowledgement),
+            ("original_capture_receipt", &self.original_capture_receipt),
+            ("saved_native_checkpoint", &self.saved_native_checkpoint),
+            (
+                "before_restoration_checkpoint",
+                &self.before_restoration_checkpoint,
+            ),
+            (
+                "after_restoration_checkpoint",
+                &self.after_restoration_checkpoint,
+            ),
+        ] {
+            emit(&format!("{prefix}.{kind}"), 0, receipt)?;
+        }
+        for (kind, receipts) in [
+            ("restored_receipts", &self.restored_receipts),
+            ("restored_applications", &self.restored_applications),
+            ("restored_input_history", &self.restored_input_history),
+        ] {
+            let kind = format!("{prefix}.{kind}");
+            for (index, receipt) in receipts.iter().enumerate() {
+                emit(&kind, index, receipt)?;
+            }
+        }
+        Ok(())
+    }
+    pub(crate) fn compact_metadata(&self) -> Value {
+        json!({"schema":"ql.native-render-restoration-metadata/v1",
+            "original_cursor":self.original_cursor,
+            "original_accepted_sequence":self.original_accepted_sequence,
+            "restored_receipts":self.restored_receipts.len().to_string(),
+            "restored_applications":self.restored_applications.len().to_string(),
+            "restored_input_history":self.restored_input_history.len().to_string()})
+    }
+}
+impl NativeRenderFailure {
+    /// Every present original native readback, including failed replies and a
+    /// qualified successful restitution after activity failure, is streamed.
+    pub(crate) fn visit_original_receipts(
+        &self,
+        emit: &mut impl FnMut(&str, usize, &Value) -> Result<(), String>,
+    ) -> Result<(), String> {
+        let custody = &self.receipt_custody;
+        for (kind, receipt) in [
+            (
+                "original_capture_receipt",
+                &custody.original_capture_receipt,
+            ),
+            ("saved_native_checkpoint", &custody.saved_native_checkpoint),
+            ("last_activity_reply", &custody.last_activity_reply),
+            (
+                "before_restoration_receipt",
+                &custody.before_restoration_receipt,
+            ),
+            ("restoration_reply", &custody.restoration_reply),
+            (
+                "after_restoration_receipt",
+                &custody.after_restoration_receipt,
+            ),
+        ] {
+            if let Some(receipt) = receipt {
+                emit(kind, 0, receipt)?;
+            }
+        }
+        for (index, receipt) in custody.failed_native_receipts.iter().enumerate() {
+            emit("failed_native_receipts", index, receipt)?;
+        }
+        if let Some(restoration) = &custody.successful_restoration {
+            restoration.visit_original_receipts("successful_restoration", emit)?;
+        }
+        Ok(())
+    }
+    pub(crate) fn compact_metadata(&self) -> Value {
+        let custody = &self.receipt_custody;
+        json!({"schema":"ql.native-render-failure-metadata/v1",
+            "reason":self.reason,"activity_error":custody.activity_error,
+            "original_capture_receipt":custody.original_capture_receipt.is_some(),
+            "saved_native_checkpoint":custody.saved_native_checkpoint.is_some(),
+            "last_activity_reply":custody.last_activity_reply.is_some(),
+            "before_restoration_receipt":custody.before_restoration_receipt.is_some(),
+            "restoration_reply":custody.restoration_reply.is_some(),
+            "after_restoration_receipt":custody.after_restoration_receipt.is_some(),
+            "failed_native_receipts":custody.failed_native_receipts.len().to_string(),
+            "successful_restoration":custody.successful_restoration.as_ref().map(NativeRenderRestoration::compact_metadata)})
+    }
+}
+
+impl From<String> for NativeRenderFailure {
+    fn from(reason: String) -> Self {
+        Self {
+            reason,
+            receipt_custody: Box::default(),
+        }
+    }
+}
+impl From<&str> for NativeRenderFailure {
+    fn from(reason: &str) -> Self {
+        Self::from(reason.to_owned())
+    }
+}
+impl From<NativeStoppedExchangeFailure> for NativeRenderFailure {
+    fn from(failure: NativeStoppedExchangeFailure) -> Self {
+        let mut captured = Self::from(failure.reason);
+        captured.receipt_custody.failed_native_receipts = failure.native_receipts;
+        captured
+    }
+}
+
 /// Called only by the existing native Act/FieldHost lease, with the privately
 /// compiled same-selection plan. It always attempts original state restitution
 /// after mutation, including writer/render failures. No auto file publication.
@@ -295,7 +433,7 @@ pub(crate) fn with_stopped_render<T>(
     session: &mut CoupledFieldSession,
     checkpoints: &mut impl NativeActCheckpoints,
     consumer: impl FnOnce(&mut NativeActRenderer<'_>) -> Result<T, String>,
-) -> Result<NativeRenderResult<Result<T, String>>, String> {
+) -> Result<NativeRenderResult<Result<T, String>>, NativeRenderFailure> {
     if plan.manifest["performance"]["native_sources"][0]["native_bundle"] != *owner.source_assets()
     {
         return Err("export owner differs from complete selected native source assets".into());
@@ -320,9 +458,18 @@ pub(crate) fn with_stopped_render<T>(
     let prepared = prepare_occurrences(plan, owner)?;
     let before =
         owner.owner_stopped_exchange(current, receiving, session, "checkpoint", &json!({}))?;
-    require_accepted(&before)?;
+    require_accepted(&before).map_err(|reason| {
+        let mut failure = NativeRenderFailure::from(reason);
+        failure.receipt_custody.original_capture_receipt = Some(before.clone());
+        failure
+    })?;
     let saved = before["payload"]["checkpoint"].clone();
-    let original_cursor = count(&saved["native_pair"]["audio"]["cursor"])?;
+    let original_cursor = count(&saved["native_pair"]["audio"]["cursor"]).map_err(|reason| {
+        let mut failure = NativeRenderFailure::from(reason);
+        failure.receipt_custody.original_capture_receipt = Some(before.clone());
+        failure.receipt_custody.saved_native_checkpoint = Some(saved.clone());
+        failure
+    })?;
     let original_checkpoint_ref = format!("native:export/original/{original_cursor}");
     let mut renderer = NativeActRenderer {
         plan,
@@ -335,6 +482,8 @@ pub(crate) fn with_stopped_render<T>(
         restored_occurrences: BTreeSet::new(),
         checkpoint_ref: original_checkpoint_ref.clone(),
         cursor: original_cursor,
+        last_native_reply: None,
+        failed_native_receipts: Vec::new(),
     };
     let activity = (|| {
         if let Some((binding, wire)) = checkpoint {
@@ -392,28 +541,62 @@ pub(crate) fn with_stopped_render<T>(
         }
         Ok(result)
     })();
+    let last_activity_reply = renderer.last_native_reply.clone();
     let before_restore = renderer.exchange("checkpoint", &json!({}));
     let restore = renderer.restore(&saved, &json!(original_checkpoint_ref));
-    let restored = match restore {
-        Ok(ack) => before_restore.and_then(|prior_restore| {
-            renderer.verify_restored(
-                &saved,
-                &prior_restore["payload"]["checkpoint"],
-                &before,
-                ack,
-            )
-        }),
-        Err(error) => Err(error),
+    // One actual after capture is attempted even when the restore/catalog
+    // acknowledgement is refused. It never grants success or retries mutation.
+    let after_restore = renderer.exchange("checkpoint", &json!({}));
+    let restored = match (&before_restore, &restore, &after_restore) {
+        (Ok(prior), Ok(reply), Ok(after)) => renderer.verify_restored(
+            &saved,
+            &prior["payload"]["checkpoint"],
+            &before,
+            reply.clone(),
+            after.clone(),
+        ),
+        _ => Err(format!(
+            "before-capture={:?}; restore={:?}; after-capture={:?}",
+            before_restore.as_ref().err(),
+            restore.as_ref().err(),
+            after_restore.as_ref().err(),
+        )),
     };
     match restored {
-        Ok(restoration) => Ok(NativeRenderResult {
-            result: activity,
-            restoration,
+        Ok(restoration) => match activity {
+            Ok(result) => Ok(NativeRenderResult {
+                result: Ok(result),
+                restoration,
+            }),
+            Err(reason) => Err(NativeRenderFailure {
+                reason: format!(
+                    "native export activity refused; original state restitution verified: {reason}"
+                ),
+                receipt_custody: Box::new(NativeRenderFailureCustody {
+                    activity_error: Some(reason),
+                    successful_restoration: Some(restoration),
+                    last_activity_reply,
+                    failed_native_receipts: renderer.failed_native_receipts,
+                    ..NativeRenderFailureCustody::default()
+                }),
+            }),
+        },
+        Err(error) => Err(NativeRenderFailure {
+            reason: format!(
+                "native export original state restitution failed; no success/publication: {error}"
+            ),
+            receipt_custody: Box::new(NativeRenderFailureCustody {
+                successful_restoration: None,
+                activity_error: activity.err(),
+                original_capture_receipt: Some(before),
+                saved_native_checkpoint: Some(saved),
+                last_activity_reply,
+                before_restoration_receipt: before_restore.ok(),
+                restoration_reply: restore.ok(),
+                after_restoration_receipt: after_restore.ok(),
+                failed_native_receipts: renderer.failed_native_receipts,
+            }),
         }),
-        Err(error) => Err(format!(
-            "native export original state restitution failed; no success/publication: {error}; activity={:?}",
-            activity.err()
-        )),
     }
 }
 fn require_accepted(reply: &Value) -> Result<(), String> {
@@ -436,6 +619,18 @@ fn action_tag(action: &Value) -> Result<(&str, &Value), String> {
     let (tag, args) = obj.iter().next().ok_or("native authored action absent")?;
     Ok((tag, args))
 }
+// Only explicit native NoteTarget f64 projections use finite IEEE754 bits.
+// Surrounding original source, score, sequence, receipt and field types stay
+// exact; this never changes canonical performance text or its native digest.
+fn same_native_f64(left: &Value, right: &Value) -> bool {
+    match (left.as_f64(), right.as_f64()) {
+        (Some(left), Some(right)) if left.is_finite() && right.is_finite() => {
+            left.to_bits() == right.to_bits()
+        }
+        _ => false,
+    }
+}
+
 fn prepare_occurrences(
     plan: &NativeActRenderPlan,
     owner: &PerformanceOwner,
@@ -475,10 +670,11 @@ fn prepare_occurrences(
                     touch,
                     touch_ref: original.1,
                 })?;
-                if note["hertz"] != pitch["hertz"]
+                if !same_native_f64(&note["hertz"], &pitch["hertz"])
+                    || !same_native_f64(&note["fundamental_hz"], &pitch["fundamental_hz"])
                     || note["tuning_ref"] != pitch["tuning_ref"]
-                    || note["phase_sin"] != a[4]
-                    || note["phase_cos"] != a[5]
+                    || !same_native_f64(&note["phase_sin"], &a[4])
+                    || !same_native_f64(&note["phase_cos"], &a[5])
                 {
                     return Err(
                         "native export selected pitch/phase differs from actual source key".into(),
@@ -503,7 +699,7 @@ fn prepare_occurrences(
                 } else {
                     op["kind"] = json!(3);
                     op["value"] = a[1].clone();
-                    if targets[&touch]["hertz"] != a[2] {
+                    if !same_native_f64(&targets[&touch]["hertz"], &a[2]) {
                         return Err("changed expression pitch needs a separately source-qualified native target".into());
                     }
                 }
@@ -602,20 +798,40 @@ pub struct NativeActRenderer<'a> {
     restored_occurrences: BTreeSet<u64>,
     checkpoint_ref: String,
     cursor: u64,
+    last_native_reply: Option<Value>,
+    failed_native_receipts: Vec<Value>,
 }
 impl NativeActRenderer<'_> {
     pub fn scope(&self) -> Value {
         self.plan.scope()
     }
     fn exchange(&mut self, operation: &str, operands: &Value) -> Result<Value, String> {
-        let reply = self.owner.owner_stopped_exchange(
-            self.current,
-            self.receiving,
-            self.session,
-            operation,
-            operands,
-        )?;
-        require_accepted(&reply)?;
+        let reply = self
+            .owner
+            .owner_stopped_exchange(
+                self.current,
+                self.receiving,
+                self.session,
+                operation,
+                operands,
+            )
+            .map_err(|failure| {
+                self.failed_native_receipts.extend(failure.native_receipts);
+                failure.reason
+            })?;
+        self.last_native_reply = Some(reply.clone());
+        if let Err(reason) = require_accepted(&reply) {
+            self.failed_native_receipts.push(reply);
+            return Err(reason);
+        }
+        if operation == "restore" {
+            if let Err(reason) = require_accepted(&reply["catalog_restoration"]) {
+                self.failed_native_receipts.push(reply);
+                return Err(format!(
+                    "native original catalog restitution refused: {reason}"
+                ));
+            }
+        }
         Ok(reply)
     }
     fn restore(&mut self, checkpoint: &Value, checkpoint_ref: &Value) -> Result<Value, String> {
@@ -734,8 +950,8 @@ impl NativeActRenderer<'_> {
         before: &Value,
         original_capture: &Value,
         reply: Value,
+        after: Value,
     ) -> Result<NativeRenderRestoration, String> {
-        let after = self.exchange("checkpoint", &json!({}))?;
         let checkpoint = after["payload"]["checkpoint"].clone();
         if checkpoint["native_pair"]["physical"] != saved["native_pair"]["physical"] {
             return Err("native q/v/body did not restitute exactly".into());

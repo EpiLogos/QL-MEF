@@ -16,7 +16,8 @@ inline bool restore_current_receiving_checkpoint(
     std::vector<KeyboardCell> current_catalog, std::uint64_t expected_cursor,
     Ref transaction, Ref checkpoint_ref,
     std::unique_ptr<PerformanceManagement::PreparedReceivingRestore> &retained,
-    TransportAcknowledgement &ack) {
+    TransportAcknowledgement &ack,
+    const ReceivingPort *saved_receiver = nullptr) {
   if (retained || !valid_ref(transaction) || !valid_ref(checkpoint_ref))
     return false;
   auto &engine = *manager.native().engine;
@@ -29,23 +30,25 @@ inline bool restore_current_receiving_checkpoint(
       std::make_unique<PerformanceManagement::PreparedReceivingRestore>();
   if (!manager.preflight_stopped_receiving_restore(
           saved, fresh_port, fresh_seed, std::move(current_notes),
-          std::move(current_catalog), guard, expected_cursor, *prepared))
+          std::move(current_catalog), guard, expected_cursor, *prepared,
+          saved_receiver))
     return false;
   // Existing P numerical validator runs on a bounded heap copy before ANY
   // resident mutation. The candidate uses the identical prepared eigenbasis
   // and validates complete source, units, finite q/v and pickup consistency.
-  auto physical_candidate = std::make_unique<ql::PhysicalBody>(body);
+  auto physical_candidate = body.copy_stopped_numerical_candidate();
   if (!physical_candidate->restore_checkpoint(prepared->physical_checkpoint(),
                                               body.body_revision(),
                                               expected_cursor) ||
       !manager.receiving_restore_current(*prepared, guard))
     return false;
-  static_assert(std::is_nothrow_move_assignable_v<ql::PhysicalBody>,
-                "stopped paired body publication must not fail");
+  static_assert(noexcept(body.adopt_stopped_numerical_candidate(
+                    std::move(*physical_candidate))),
+                "stopped paired numerical publication must not fail");
   // The uninterrupted stopped guard excludes producer and callback. The
   // native source owner still holds its current Act/receiving lease. All
   // remaining operations are nofail publication of prevalidated state.
-  body = std::move(*physical_candidate);
+  body.adopt_stopped_numerical_candidate(std::move(*physical_candidate));
   manager.commit_stopped_receiving_restore(*prepared, guard, transaction,
                                            checkpoint_ref, ack);
   retained.swap(prepared);

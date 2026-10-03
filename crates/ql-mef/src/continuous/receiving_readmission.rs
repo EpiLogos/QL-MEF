@@ -109,7 +109,14 @@ impl FieldHost {
                 .ok_or("actual retained native reading absent")?;
             decimal(&reading["samples_elapsed"])?;
             decimal(&reading["transport_epoch"])?;
-            let request = json!({"schema":"ql.performance-control/v1",
+            let original_acoustic = owner.prepare_saved_acoustic_receiving(
+                current,
+                source,
+                lease,
+                original_checkpoint_wire,
+                checkpoint_ref,
+            )?;
+            let mut request = json!({"schema":"ql.performance-control/v1",
                 "operation":"restore-current-receiving", "session_ref":reading["session_ref"],
                 "expected_transport_epoch":reading["transport_epoch"],
                 "expected_source":owner.binding().determination()["identity"],
@@ -120,6 +127,9 @@ impl FieldHost {
                 "actual_native_basis":owner.binding().native_basis(),
                 "receiving_admission":admission, "current_receiving_admission":admission,
                 "current_receiving":complete, "native_catalog":owner.native_catalog()});
+            if let Some(original) = original_acoustic.as_ref() {
+                request["original_saved_acoustic"] = original.packet().clone();
+            }
             if serde_json::to_vec(&request)
                 .map_err(|e| e.to_string())?
                 .len() as u64
@@ -133,9 +143,9 @@ impl FieldHost {
             // before the only native exchange. No state is changed by this read.
             prepared.validate_current(source, owner, current, cursor)?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
-            Ok((request, prepared, cursor))
+            Ok((request, prepared, cursor, original_acoustic))
         };
-        let (request, prepared, cursor) =
+        let (request, prepared, cursor, original_acoustic) =
             preflight().map_err(NativeReceivingReadmissionRefusal::before)?;
         let owner = self.performance.as_mut().expect("preflight retained owner");
         let pulse = owner
@@ -166,8 +176,10 @@ impl FieldHost {
             let object = actual
                 .as_object()
                 .ok_or("native receiving readmission evidence absent")?;
-            if object.len() != FIELDS.len()
+            let acoustic_field = original_acoustic.is_some();
+            if object.len() != FIELDS.len() + usize::from(acoustic_field)
                 || FIELDS.iter().any(|name| !object.contains_key(*name))
+                || (acoustic_field && !object.contains_key("original_saved_acoustic"))
                 || actual["schema"] != "ql.native-receiving-readmission/v1"
                 || actual["original_checkpoint_wire"] != original_checkpoint_wire
                 || actual["current_receiving"] != prepared.snapshot()?
@@ -178,6 +190,11 @@ impl FieldHost {
                 || actual["transport_ack"] != pulse["payload"]["transport_ack"]
             {
                 return Err("complete actual receiving readmission/source evidence differs".into());
+            }
+            match original_acoustic.as_ref() {
+                Some(original) if actual["original_saved_acoustic"] == *original.packet() => {}
+                None if !object.contains_key("original_saved_acoustic") => {}
+                _ => return Err("original acoustic producer packet was changed or lost".into()),
             }
             for name in [
                 "operative_checkpoint_wire",
@@ -204,6 +221,18 @@ impl FieldHost {
                 cursor,
             )?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            let original_after = owner.prepare_saved_acoustic_receiving(
+                self.session.session().current_basis(),
+                source,
+                lease,
+                original_checkpoint_wire,
+                checkpoint_ref,
+            )?;
+            if original_after.as_ref().map(|v| v.snapshot())
+                != original_acoustic.as_ref().map(|v| v.snapshot())
+            {
+                return Err("original acoustic source changed after saved continuation".into());
+            }
             lease.validate_selected_checkpoint(
                 &self.instance_ref,
                 checkpoint_ref,
