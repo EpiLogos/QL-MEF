@@ -52,6 +52,12 @@ int main() {
                                         : json_object_array_get_idx(cases, i));
       assert(packet::boolean(packet::field(reply.get(), "accepted")));
       auto reading = packet::field(reply.get(), "reading");
+      auto roles = packet::field(reading, "consumer_roles");
+      assert(packet::string(packet::field(roles, "physical")) ==
+             "canonical-source-form-scalar-excitation");
+      assert(packet::string(
+                 packet::field(roles, "legacy_mode_frequency_remapping")) ==
+             "retired-in-this-explicit-physical-projection");
       const auto rate = packet::integer(
           packet::field(packet::field(reading, "physical"), "sample_rate"));
       auto descriptors = packet::field(reading, "parameters");

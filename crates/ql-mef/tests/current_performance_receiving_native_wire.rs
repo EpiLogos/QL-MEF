@@ -458,6 +458,21 @@ fn actual_existing_field_host_emits_final_activated_source_artifacts() {
         assert_eq!(reply["performance"]["accepted"], true, "{reply}");
         let artifact = host.retained_performance_source_artifact(0).unwrap();
         let assets = &artifact["source_assets"];
+        // The real World/Personal/Shared prepare and catalog exchanges must
+        // retain the explicit source projection, not merely its initial label.
+        assert_eq!(
+            assets["consumer_roles"],
+            artifact["native_reading"]["consumer_roles"]
+        );
+        assert_eq!(
+            assets["consumer_roles"]["physical"],
+            "canonical-source-form-scalar-excitation"
+        );
+        assert_eq!(
+            assets["consumer_roles"]["legacy_mode_frequency_remapping"],
+            "retired-in-this-explicit-physical-projection"
+        );
+        assert!(assets["source_key_preparation"].is_object());
         assert_eq!(
             assets["current_receiving"]["source_inputs"],
             assets["receiving_source_inputs"]

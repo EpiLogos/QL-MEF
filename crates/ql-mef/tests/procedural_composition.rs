@@ -1978,7 +1978,7 @@ fn compile_native_output(
     old: &GeneratedContribution,
     next: GeneratedContribution,
     readings: Vec<RetainedOutputReading>,
-) -> Result<PreparedProcedure> {
+) -> procedural_composition::Result<PreparedProcedure> {
     compile_native_regeneration_batch(
         m_tree::native_current_m_registry(),
         p,

@@ -117,6 +117,32 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
     for (owner, reply) in owners.iter().zip(&replies) {
         owner.validate_reply(reply).unwrap();
     }
+    // Detect lost or contradictory roles using the complete actual
+    // native preparation; no fabricated reply supplies a positive.
+    for reply in &replies {
+        assert_eq!(
+            reply["reading"]["consumer_roles"]["legacy_mode_frequency_remapping"],
+            "retired-in-this-explicit-physical-projection"
+        );
+    }
+    let mut lost_role = replies[0].clone();
+    lost_role["reading"]["consumer_roles"]
+        .as_object_mut()
+        .unwrap()
+        .remove("legacy_mode_frequency_remapping");
+    assert_eq!(
+        resident.validate_reply(&lost_role).unwrap_err(),
+        "native performance source consumer roles disconnected"
+    );
+    let mut wrong_role = replies[0].clone();
+    wrong_role["reading"]["consumer_roles"]["legacy_mode_frequency_remapping"] =
+        json!("operative-frequency-remapping");
+    assert!(resident.validate_reply(&wrong_role).is_err());
+    let mut wrong_projection = replies[0].clone();
+    wrong_projection["reading"]["consumer_roles"]["physical"] =
+        json!("reference-metric-scalar-excitation");
+    assert!(resident.validate_reply(&wrong_projection).is_err());
+    resident.validate_reply(&replies[0]).unwrap();
     resident.last = Some(replies[0].clone());
     for reply in &replies[1..] {
         assert!(resident.validate_reply(reply).is_err());

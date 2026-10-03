@@ -99,7 +99,7 @@ class NativePerformanceTimingOwner {
                "ql:performance/transport-epoch/" +
                    std::to_string(owner.transport_epoch()));
     wire::u64(domain.get(), "requested_cursor", engine.admission_horizon());
-    wire::put(domain.get(), "time_mapping_ref", json_object_new_null());
+    wire::put_null(domain.get(), "time_mapping_ref");
     wire::put(out.get(), "binding", domain.release());
     wire::text(out.get(), "moment", moment);
     wire::u64(out.get(), "transport_epoch", owner.transport_epoch());
@@ -125,7 +125,7 @@ class NativePerformanceTimingOwner {
                   "boundary does not accept a guessed queue ordinal");
       wire::u64(out.get(), "requested_cursor", reading.samples_elapsed);
       wire::u64(out.get(), "admitted_cursor", engine.admission_horizon());
-      wire::put(out.get(), "applied_cursor", json_object_new_null());
+      wire::put_null(out.get(), "applied_cursor");
       wire::flag(out.get(), "queued", false);
       wire::text(out.get(), "standing",
                  "actual current native clock boundary; "
@@ -142,7 +142,7 @@ class NativePerformanceTimingOwner {
       const auto &operation = score_->queue().operation();
       wire::u64(out.get(), "requested_cursor", operation.requested_sample);
       wire::u64(out.get(), "admitted_cursor", operation.sample);
-      wire::put(out.get(), "applied_cursor", json_object_new_null());
+      wire::put_null(out.get(), "applied_cursor");
       wire::flag(out.get(), "queued", true);
       wire::put(out.get(), "native_operation",
                 wire::operation(operation).release());
@@ -157,7 +157,7 @@ class NativePerformanceTimingOwner {
                   "exact actual AUHAL clock/queue admission unavailable");
       wire::u64(out.get(), "requested_cursor", clock_->requested_sample);
       wire::u64(out.get(), "admitted_cursor", clock_->accepted_sample);
-      wire::put(out.get(), "applied_cursor", json_object_new_null());
+      wire::put_null(out.get(), "applied_cursor");
       wire::flag(out.get(), "queued", true);
       auto clock = wire::object();
       wire::u64(clock.get(), "epoch", clock_->epoch);

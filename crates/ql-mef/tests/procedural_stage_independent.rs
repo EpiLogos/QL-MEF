@@ -85,6 +85,7 @@ fn a06_a07_numeric_overlay_cannot_transfer_human_override_after_reordering() {
             value: json!(0.9),
             actor_ref: "human:owner".into(),
             persistent: true,
+            operation: OverlayOperation::Set,
         }],
     };
     // Until overlays have a stable constituent-address form, an index pointer
@@ -115,6 +116,7 @@ fn a05_a08_frozen_membership_cannot_write_a_different_existing_entity() {
         entity_ref: Some(b.clone()),
         component: "property".into(),
         constituent_ref: None,
+        parent_ref: None,
         property: Some("scale".into()),
     }];
     c.native_changes = vec![NativeChange::ParameterSet {
@@ -135,6 +137,7 @@ fn a05_a08_frozen_membership_cannot_write_a_different_existing_entity() {
                 entity_ref: Some("expression:independent:entity:existing-a".into()),
                 component: "entity".into(),
                 constituent_ref: None,
+                parent_ref: None,
                 property: None,
             },
         )]),
@@ -180,6 +183,7 @@ fn a07_a08_scene_and_contained_property_writers_are_overlapping() {
         entity_ref: Some(r.clone()),
         component: "property".into(),
         constituent_ref: None,
+        parent_ref: None,
         property: Some("scale".into()),
     }];
     contained.native_changes = vec![NativeChange::ParameterSet {

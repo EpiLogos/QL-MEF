@@ -26,6 +26,13 @@ inline Json array() {
 inline void put(J *object, const char *key, J *value) {
   ql::physical_wire::checkpoint_put(object, key, value);
 }
+// json-c represents an explicit JSON null with nullptr. Keep put()
+// strict for allocated values; nullable producer fields use this path.
+inline void put_null(J *object, const char *key) {
+  require(object && json_object_is_type(object, json_type_object) && key &&
+              json_object_object_add(object, key, nullptr) == 0,
+          "checkpoint explicit null insertion failed");
+}
 inline void text(J *object, const char *key, const std::string &value) {
   ql::physical_wire::checkpoint_string(object, key, value);
 }

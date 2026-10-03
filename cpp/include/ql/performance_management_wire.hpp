@@ -403,6 +403,13 @@ class Control {
     wire::text(roles.get(), "physical",
                standing_.source_form ? "canonical-source-form-scalar-excitation"
                                      : "reference-metric-scalar-excitation");
+    // Publish the actual validated preparation standing on every native
+    // reading. Activation replaces its source roles with this producer.
+    if (standing_.source_form)
+      wire::text(roles.get(), "legacy_mode_frequency_remapping",
+                 "retired-in-this-explicit-physical-projection");
+    else
+      null(roles.get(), "legacy_mode_frequency_remapping");
     auto personal = wire::object();
     const bool routes_admitted =
         r.has_route_programs && admitted_route_count_ == 9;

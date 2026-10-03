@@ -261,10 +261,17 @@ static void corruption(Session &s) {
   const auto original =
       management_checkpoint_transport::checkpoint_wire(*saved);
   {
+    const auto &immutable = s.owner->native().body->preparation();
+    auto original_preparation = receiving(immutable, 0, 0);
+    auto motion = original_preparation.motion();
+    const auto duration = motion.end_sample - motion.origin_sample;
+    motion.origin_sample = saved->native_pair.audio.cursor;
+    motion.end_sample = motion.origin_sample + duration;
+    PreparedMovingSpatialReceiving valid_current_receiver(
+        immutable, original_preparation.spatial().input(), motion);
     auto new_owner = std::make_shared<MovingReceivingPortBinding>(
-        s.owner->native().body, s.owner->native().body->preparation(),
-        saved->native_pair.audio.cursor,
-        receiving(s.owner->native().body->preparation(), 0, 0));
+        s.owner->native().body, immutable, saved->native_pair.audio.cursor,
+        std::move(valid_current_receiver));
     auto guard = s.owner->native().engine->acquire_stopped_custody();
     assert(guard && !s.owner->native().engine->install_receiving_port(
                         new_owner->port(new_owner), guard,
@@ -744,6 +751,7 @@ static Json measure(J *fixture) {
   wrong_input.body_revision++;
   PreparedPhysicalBody wrong(wrong_input);
   auto wrong_motion = receiving(wrong, 0, 0).motion();
+  wrong_motion.origin_sample = 96000;
   wrong_motion.end_sample = 192000;
   PreparedMovingSpatialReceiving wrong_receiving(
       wrong, receiving(wrong, 0, 0).spatial().input(), wrong_motion);

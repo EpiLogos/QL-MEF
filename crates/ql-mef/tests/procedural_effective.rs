@@ -150,7 +150,9 @@ fn newest_native_intervention_wins_and_release_restores_recipe_without_fabricati
         .unwrap()
         .push(earlier);
     let mut c = vec![original.clone()];
-    let proof = apply_retained_force_interventions(&mut c, &[reading.clone()], &context).unwrap();
+    let proof =
+        apply_retained_force_interventions(&mut c, std::slice::from_ref(&reading), &context)
+            .unwrap();
     assert_eq!(proof[0].actor_ref, "human:owner");
     let overlay = &mut context.scenes[0].existing_retention.as_mut().unwrap()["contributions"][0]["authored_overrides"]
         [0];
@@ -159,12 +161,17 @@ fn newest_native_intervention_wins_and_release_restores_recipe_without_fabricati
     let legacy = overlay.clone();
     context.scenes[0].existing_retention.as_mut().unwrap()["contributions"][0]["authored_overrides"] =
         json!([legacy]);
-    assert!(apply_retained_force_interventions(&mut c, &[reading.clone()], &context).is_err());
+    assert!(
+        apply_retained_force_interventions(&mut c, std::slice::from_ref(&reading), &context)
+            .is_err()
+    );
     // Legacy attribution without its actual revision remains unavailable rather
     // than gaining a fabricated accepted CAS origin.
     context.scenes[0].existing_retention.as_mut().unwrap()["contributions"][0]["authored_overrides"]
         [0]["revision"] = json!(8);
-    let proof = apply_retained_force_interventions(&mut c, &[reading.clone()], &context).unwrap();
+    let proof =
+        apply_retained_force_interventions(&mut c, std::slice::from_ref(&reading), &context)
+            .unwrap();
     assert!(proof[0].operation_ref.is_none());
     assert_eq!(proof[0].intervention_revision, Some(8));
     context.scenes[0].existing_retention.as_mut().unwrap()["contributions"][0]["authored_overrides"] =
@@ -266,14 +273,10 @@ fn shared_global_parameter_uses_one_native_value_for_all_owned_scene_locations()
         .properties
         .insert("force_radius".into(), json!(641.0));
     assert!(
-        apply_retained_force_interventions(
-            &mut vec![c.clone()],
-            &[first.clone(), second],
-            &context
-        )
-        .is_err()
+        apply_retained_force_interventions(&mut [c.clone()], &[first.clone(), second], &context)
+            .is_err()
     );
-    assert!(apply_retained_force_interventions(&mut vec![c], &[first], &context).is_err());
+    assert!(apply_retained_force_interventions(&mut [c], &[first], &context).is_err());
 }
 
 #[test]
@@ -283,8 +286,12 @@ fn active_gesture_takeover_preserves_actual_native_value_until_source_release() 
     retention["contributions"][0]["authored_overrides"] = json!([]);
     retention["controls"] = json!([{"address":original.owned_addresses[0],"takeover":{"value":0.3,"native_value":120,"lifetime":"gesture","actor":"human:gesture","operation_ref":"ordinary:gesture","revision":9}}]);
     let mut generated = vec![original.clone()];
-    let preserved =
-        apply_retained_force_interventions(&mut generated, &[reading.clone()], &context).unwrap();
+    let preserved = apply_retained_force_interventions(
+        &mut generated,
+        std::slice::from_ref(&reading),
+        &context,
+    )
+    .unwrap();
     assert_eq!(preserved[0].value, json!(640.0));
     assert_eq!(preserved[0].actor_ref, "human:gesture");
     assert_eq!(generated[0].generated_basis, original.generated_basis);

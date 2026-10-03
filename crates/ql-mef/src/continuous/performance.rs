@@ -679,6 +679,15 @@ impl PerformanceOwner {
         {
             return Err("native performance/body/source reply disconnected".into());
         }
+        // Native activation retains these exact producer roles. A reply
+        // cannot silently replace the explicit physical source projection.
+        if !r["consumer_roles"].is_object()
+            || r["consumer_roles"]["physical"] != "canonical-source-form-scalar-excitation"
+            || r["consumer_roles"]["legacy_mode_frequency_remapping"]
+                != "retired-in-this-explicit-physical-projection"
+        {
+            return Err("native performance source consumer roles disconnected".into());
+        }
         let cursor = decimal(&r["samples_elapsed"])?;
         let sequence = decimal(&r["accepted_sequence"])?;
         let epoch = decimal(&r["transport_epoch"])?;

@@ -374,8 +374,9 @@ fn actual_receiver_segment_retains_original_source_history_and_context() {
                     .is_err()
             );
         }
-        let mut changed_basis = basis.clone();
-        changed_basis.m3.clock_steps += 1;
+        let mut changed_input = basis.input.clone();
+        changed_input.m3.clock_steps += 1;
+        let changed_basis = changed_input.compose().unwrap();
         assert!(
             owner
                 .prepare_acoustic_receiver_update(&changed_basis, &after_source, &original, 4096)

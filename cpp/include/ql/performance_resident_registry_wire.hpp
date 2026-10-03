@@ -159,7 +159,7 @@ inline wire::Json registry(const NativeResidentRegistry &registry) {
               wire::receiving_manifest(r.receiving.manifest).release());
     wire::put(out.get(), "receiving_observation", receiving.release());
   } else {
-    wire::put(out.get(), "receiving_observation", json_object_new_null());
+    wire::put_null(out.get(), "receiving_observation");
   }
   return out;
 }

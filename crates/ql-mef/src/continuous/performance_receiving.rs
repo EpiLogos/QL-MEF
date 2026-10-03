@@ -195,9 +195,9 @@ impl NativePerformanceReceivingSource {
         self.acoustic = Some(configuration);
         Ok(self)
     }
-    pub(crate) fn acoustic_configuration(
-        &self,
-    ) -> Option<&super::performance::AcousticConfiguration> {
+    /// Borrow the exact retained authored magnitudes; this read does not
+    /// admit a receiver, native callback or current Scene/Act lease.
+    pub fn acoustic_configuration(&self) -> Option<&super::performance::AcousticConfiguration> {
         self.acoustic.as_ref()
     }
     fn replay(&self, actual_original: &CoupledBasis) -> Result<CurrentSourceReading, String> {

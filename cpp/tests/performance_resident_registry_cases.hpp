@@ -54,9 +54,42 @@ static std::string resident_role_token(J *registry, const char *role) {
           "source/state reference masquerades as native lifetime");
   return token;
 }
+static Json actual_resident_timing(Resident &resident, const char *moment,
+                                   std::uint64_t ordinal) {
+  auto request = resident.command("timing");
+  wire::text(request.get(), "moment", moment);
+  wire::u64(request.get(), "ordinal", ordinal);
+  resident.apply(request.get());
+  auto *fact = packet::field(packet::field(resident.last.get(), "payload"),
+                             "timing_fact");
+  require(packet::string(packet::field(fact, "schema")) ==
+              "ql.native-performance-timing-fact/v1",
+          "actual native timing producer absent");
+  J *mapping = nullptr;
+  require(json_object_object_get_ex(packet::field(fact, "binding"),
+                                    "time_mapping_ref", &mapping) &&
+              !mapping,
+          "native timing fabricated an authored mapping");
+  return copy(fact);
+}
 static Json actual_resident_registry(J *fixture) {
   auto first = std::make_unique<Resident>(fixture);
   auto initial = resident_registry_copy(*first);
+  J *absent_receiving = nullptr;
+  require(json_object_object_get_ex(initial.get(), "receiving_observation",
+                                    &absent_receiving) &&
+              !absent_receiving,
+          "uninstalled receiver must retain an explicit native null");
+  auto boundary_timing = actual_resident_timing(*first, "boundary", 0);
+  J *unapplied = nullptr;
+  require(
+      json_object_object_get_ex(boundary_timing.get(), "applied_cursor",
+                                &unapplied) &&
+          !unapplied &&
+          !packet::boolean(packet::field(boundary_timing.get(), "queued")) &&
+          wire::decimal(
+              packet::field(boundary_timing.get(), "committed_cursor")) == 0,
+      "native prepared boundary became an applied event");
   const auto audio = resident_role_token(initial.get(), "audio_engine"),
              body = resident_role_token(initial.get(), "physical_body");
   require(
@@ -153,6 +186,16 @@ static Json actual_resident_registry(J *fixture) {
           "actual receiving installation aliased owner/source references");
   first->attack();
   auto queued = resident_registry_copy(*first);
+  auto score_timing = actual_resident_timing(*first, "score", 1);
+  require(json_object_object_get_ex(score_timing.get(), "applied_cursor",
+                                    &unapplied) &&
+              !unapplied &&
+              packet::boolean(packet::field(score_timing.get(), "queued")) &&
+              wire::decimal(
+                  packet::field(score_timing.get(), "requested_cursor")) == 0 &&
+              wire::decimal(
+                  packet::field(score_timing.get(), "admitted_cursor")) == 0,
+          "actual native score queue lost null application standing");
   require(!packet::boolean(
               packet::field(packet::field(queued.get(), "audio_observation"),
                             "callback_output_committed")) &&
@@ -177,6 +220,12 @@ static Json actual_resident_registry(J *fixture) {
     require(wire::decimal(packet::field(packet::field(played.get(), key),
                                         "sample")) == 4096,
             "independent consumer observation has detached output cursor");
+  auto applied_timing = actual_resident_timing(*first, "applied", 1);
+  require(wire::decimal(
+              packet::field(applied_timing.get(), "applied_cursor")) == 0 &&
+              wire::decimal(packet::field(applied_timing.get(),
+                                          "committed_cursor")) == 4096,
+          "actual native callback application lost its original sample");
   auto saved = first->checkpoint();
   (void)control_commit_receiver(*first, original, after_packet, 4096,
                                 saved.get());
@@ -240,6 +289,9 @@ static Json actual_resident_registry(J *fixture) {
   auto out = wire::object();
   wire::text(out.get(), "schema", "ql.native-resident-registry-component/v1");
   wire::put(out.get(), "initial", initial.release());
+  wire::put(out.get(), "boundary_timing", boundary_timing.release());
+  wire::put(out.get(), "score_timing", score_timing.release());
+  wire::put(out.get(), "applied_timing", applied_timing.release());
   wire::put(out.get(), "other_same_source", other.release());
   wire::put(out.get(), "installed", installed.release());
   wire::put(out.get(), "queued", queued.release());
