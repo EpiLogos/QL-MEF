@@ -680,7 +680,9 @@
       "tests": [
         "cpp/tests/performance_audio.cpp",
         "cpp/tests/performance_management_packet.cpp",
-        "cpp/tests/performance_requested_timing_packet.cpp"
+        "cpp/tests/performance_requested_timing_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
       ],
       "kind": "computational"
     },
@@ -1008,7 +1010,9 @@
       "rationale": "Serial existing native A/P/device management with current K-resolved Janko catalog, input lifetimes, bounded pulse/receipts and existing C history ports. No private store/undo, new oscillator, clock or context authority.",
       "tests": [
         "cpp/tests/performance_management_packet.cpp",
-        "cpp/tests/performance_managed_application_order_packet.cpp"
+        "cpp/tests/performance_managed_application_order_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
       ]
     },
     {
@@ -1019,7 +1023,9 @@
       "kind": "computational",
       "rationale": "Complete versioned wrapper of the existing native audio/physical pair and exact original UI input bindings, pending releases, histories and actual excitation-release proof; authentic stopped custody preflights both owners and no second timeline/store is created.",
       "tests": [
-        "cpp/tests/performance_management_packet.cpp"
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
       ]
     },
     {
@@ -1685,6 +1691,23 @@
       "tests": [
         "scripts/tests/test_ql_agent_corpus.py",
         "crates/ql-cli/tests/agent_corpus_native.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_restore.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native stopped A/Manager/P exact checkpoint transaction retains original saved and operative current-receiving admission, preserves source, queues, input history and same physical eigenbasis/q-v. Numerical source component; current private selected Act, receiving grants and Control join remain separate required custody.",
+      "tests": [
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
       ]
     }
   ]

@@ -424,13 +424,16 @@ public:
   class StoppedCustody {
     friend class Engine;
     Engine *owner_ = nullptr;
-    explicit StoppedCustody(Engine *owner) : owner_(owner) {}
+    std::uint64_t nonce_ = 0;
+    explicit StoppedCustody(Engine *owner, std::uint64_t nonce)
+        : owner_(owner), nonce_(nonce) {}
 
   public:
     StoppedCustody() = default;
     StoppedCustody(const StoppedCustody &) = delete;
     StoppedCustody &operator=(const StoppedCustody &) = delete;
-    StoppedCustody(StoppedCustody &&other) noexcept : owner_(other.owner_) {
+    StoppedCustody(StoppedCustody &&other) noexcept
+        : owner_(other.owner_), nonce_(other.nonce_) {
       other.owner_ = nullptr;
     }
     ~StoppedCustody() {
@@ -471,6 +474,31 @@ public:
     std::uint64_t sample() const noexcept { return cursor_; }
   };
 
+  // Private heap candidate for exact saved receiving continuation. Its original
+  // saved checkpoint remains unchanged. The operative copy differs only in
+  // native route admission handles qualified at the SAVED cursor.
+  class PreparedReceivingRestore {
+    friend class Engine;
+    Engine *owner_ = nullptr;
+    PhysicalPort candidate_port_{};
+    std::unique_ptr<Checkpoint> admitted_;
+    Determination before_{};
+    std::uint64_t cursor_ = 0, accepted_sequence_ = 0, applied_ordinal_ = 0,
+                  control_revision_ = 0, guard_nonce_ = 0,
+                  emergency_requested_ = 0, panic_fence_ = 0;
+    bool capture_ = false, emergency_ = false, fault_ = false, ready_ = false;
+
+  public:
+    PreparedReceivingRestore() = default;
+    PreparedReceivingRestore(const PreparedReceivingRestore &) = delete;
+    PreparedReceivingRestore &
+    operator=(const PreparedReceivingRestore &) = delete;
+    PreparedReceivingRestore(PreparedReceivingRestore &&) = delete;
+    PreparedReceivingRestore &operator=(PreparedReceivingRestore &&) = delete;
+    bool ready() const noexcept { return ready_; }
+    const Checkpoint &admitted_checkpoint() const { return *admitted_; }
+  };
+
 private:
   Determination determination_{};
   // Owned only by the serial producer; callback never touches this copy.
@@ -480,7 +508,7 @@ private:
   std::size_t source_schedule_size_ = 1;
   unsigned rate_;
   PhysicalPort body_{};
-  std::uint64_t combined_control_revision_ = 0;
+  std::uint64_t combined_control_revision_ = 0, stopped_custody_nonce_ = 0;
   bool has_route_programs_ = false;
   NativeRouteProgramSet route_programs_{};
   std::array<double, ql::physical_max_personal_force_routes> route_step_sine_{},
@@ -1456,7 +1484,11 @@ public:
       activity_.store(0, std::memory_order_release);
       return {};
     }
-    return StoppedCustody(this);
+    if (stopped_custody_nonce_ == std::numeric_limits<std::uint64_t>::max()) {
+      activity_.store(0, std::memory_order_release);
+      return {};
+    }
+    return StoppedCustody(this, ++stopped_custody_nonce_);
   }
   // Native stopped/acknowledged owner can preflight an actual P transaction.
   // Pending future source generations require a separately prepared combined
@@ -1678,25 +1710,30 @@ public:
     write_checkpoint(cp, guard);
     return cp;
   }
-  bool validate_checkpoint(const Checkpoint &cp, const StoppedCustody &guard,
-                           std::uint64_t expected_cursor) const noexcept {
+
+private:
+  bool validate_checkpoint_for_port(const Checkpoint &cp,
+                                    const StoppedCustody &guard,
+                                    std::uint64_t expected_cursor,
+                                    const PhysicalPort &port) const noexcept {
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
         cp.version != 2 || cp.sample_rate != rate_ ||
-        cp.has_route_programs != bool(body_.route_manifest) ||
-        (cp.has_route_programs && !valid_route_programs(cp.route_programs)) ||
+        cp.has_route_programs != bool(port.route_manifest) ||
+        (cp.has_route_programs &&
+         !valid_route_programs(cp.route_programs, port, cp.determination)) ||
         !valid_determination(cp.determination) ||
         !valid_determination(cp.producer_determination) ||
         !same_lineage(cp.determination.identity, determination_.identity) ||
         !same_lineage(cp.producer_identity, cp.determination.identity) ||
         !(cp.producer_identity == cp.producer_determination.identity) ||
-        cp.determination.body_revision != body_.revision(body_.owner) ||
-        cp.determination.body_preparation_ref != body_.preparation ||
-        cp.determination.body_state_ref != body_.state ||
+        cp.determination.body_revision != port.revision(port.owner) ||
+        cp.determination.body_preparation_ref != port.preparation ||
+        cp.determination.body_state_ref != port.state ||
         cp.producer_determination.body_revision !=
             cp.determination.body_revision ||
-        cp.producer_determination.body_preparation_ref != body_.preparation ||
-        cp.producer_determination.body_state_ref != body_.state ||
+        cp.producer_determination.body_preparation_ref != port.preparation ||
+        cp.producer_determination.body_state_ref != port.state ||
         !cp.source_schedule_size ||
         cp.source_schedule_size > cp.source_schedule.size() ||
         cp.heap_size > queue_capacity ||
@@ -1736,8 +1773,8 @@ public:
       if (!valid_determination(s.value) ||
           !same_lineage(s.value.identity, cp.determination.identity) ||
           s.value.body_revision != cp.determination.body_revision ||
-          s.value.body_preparation_ref != body_.preparation ||
-          s.value.body_state_ref != body_.state ||
+          s.value.body_preparation_ref != port.preparation ||
+          s.value.body_state_ref != port.state ||
           (i && (s.from_sample < cp.source_schedule[i - 1].from_sample ||
                  s.value.identity.m2_generation <=
                      cp.source_schedule[i - 1].value.identity.m2_generation ||
@@ -1884,8 +1921,8 @@ public:
                valid_origin(op.determination.identity) &&
                op.determination.body_revision ==
                    cp.determination.body_revision &&
-               op.determination.body_preparation_ref == body_.preparation &&
-               op.determination.body_state_ref == body_.state;
+               op.determination.body_preparation_ref == port.preparation &&
+               op.determination.body_state_ref == port.state;
       case Kind::Panic:
         return true;
       }
@@ -1963,6 +2000,12 @@ public:
     }
     return true;
   }
+
+public:
+  bool validate_checkpoint(const Checkpoint &cp, const StoppedCustody &guard,
+                           std::uint64_t expected_cursor) const noexcept {
+    return validate_checkpoint_for_port(cp, guard, expected_cursor, body_);
+  }
   bool restore_checkpoint(const Checkpoint &cp, const StoppedCustody &guard,
                           std::uint64_t expected_cursor) noexcept {
     if (combined_control_revision_ == std::numeric_limits<std::uint64_t>::max())
@@ -1970,6 +2013,12 @@ public:
     if (!validate_checkpoint(cp, guard, expected_cursor) ||
         body_.cursor(body_.owner) != cp.cursor)
       return false;
+    commit_checkpoint_state(cp);
+    return true;
+  }
+
+private:
+  void commit_checkpoint_state(const Checkpoint &cp) noexcept {
     determination_ = cp.determination;
     producer_determination_ = cp.producer_determination;
     producer_identity_ = cp.producer_identity;
@@ -2030,7 +2079,135 @@ public:
     recording_failure_.store(std::uint8_t(cp.recording.failure),
                              std::memory_order_release);
     block_application_count_ = 0;
+  }
+
+public:
+  static bool same_prepared_determination(const Determination &a,
+                                          const Determination &b) noexcept {
+    if (!(a.identity == b.identity) || a.m1_coordinate != b.m1_coordinate ||
+        a.m2_writer != b.m2_writer ||
+        a.registry_revision != b.registry_revision ||
+        a.source_revision != b.source_revision ||
+        a.relation_plan_ref != b.relation_plan_ref ||
+        a.tuning_ref != b.tuning_ref ||
+        a.native_receipt_ref != b.native_receipt_ref ||
+        a.body_preparation_ref != b.body_preparation_ref ||
+        a.body_state_ref != b.body_state_ref || a.m1_face != b.m1_face ||
+        a.m2_face != b.m2_face || a.tick12 != b.tick12 || a.basis != b.basis ||
+        a.lens12 != b.lens12 || a.context_frame != b.context_frame ||
+        a.degree720 != b.degree720 || a.audio_octet_hz != b.audio_octet_hz ||
+        a.body_revision != b.body_revision ||
+        a.tuning_available != b.tuning_available ||
+        a.excitation.policy_ref != b.excitation.policy_ref ||
+        a.excitation.standing != b.excitation.standing ||
+        a.excitation.scaling != b.excitation.scaling ||
+        a.excitation.reference_hertz != b.excitation.reference_hertz ||
+        a.excitation.root_linear != b.excitation.root_linear ||
+        a.excitation.octet_linear != b.excitation.octet_linear ||
+        a.excitation.weights != b.excitation.weights)
+      return false;
+    for (std::size_t i = 0; i < a.nodal_quartet.size(); ++i)
+      if (a.nodal_quartet[i].position != b.nodal_quartet[i].position ||
+          a.nodal_quartet[i].face != b.nodal_quartet[i].face ||
+          a.nodal_quartet[i].m != b.nodal_quartet[i].m ||
+          a.nodal_quartet[i].n != b.nodal_quartet[i].n)
+        return false;
     return true;
+  }
+  // Fresh source/receiving qualification occurs in the existing private owner
+  // before this numerical seam. No CP JSON or manifest is an authority grant.
+  // All allocation and source/queue/port validation precede P mutation.
+  bool preflight_stopped_receiving_restore(
+      const Checkpoint &saved, const PhysicalPort &port,
+      const NativeRouteProgramSet &fresh_seed, const StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedReceivingRestore &out) {
+    if (out.owner_ || out.ready_ || guard.owner_ != this ||
+        activity_.load() != 2 || device_running_.load() ||
+        cursor_ != expected_cursor ||
+        combined_control_revision_ ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        !same_prepared_determination(saved.determination, determination_) ||
+        port.owner != body_.owner ||
+        port.custody.get() != body_.custody.get() ||
+        port.advance != body_.advance || port.observe != body_.observe ||
+        port.cursor != body_.cursor || port.revision != body_.revision ||
+        port.event != body_.event || port.subject != body_.subject ||
+        port.preparation != body_.preparation || port.state != body_.state ||
+        port.sample_rate != rate_ ||
+        port.max_force_newtons != body_.max_force_newtons ||
+        body_.cursor(body_.owner) != cursor_ ||
+        body_.revision(body_.owner) != determination_.body_revision ||
+        !saved.has_route_programs || !port.route_manifest ||
+        fresh_seed.manifest.admitted_cursor != saved.cursor ||
+        !valid_route_programs(fresh_seed, port, saved.determination) ||
+        saved.route_programs.program_count != fresh_seed.program_count)
+      return false;
+    auto admitted = std::make_unique<Checkpoint>(saved);
+    auto &programmes = admitted->route_programs;
+    // Seals include the native admitted cursor. Requalify ONLY those derivative
+    // seals/cursor through the fresh private port; every other saved native
+    // source/programme/calibration/Hz/share/force identity must match exactly.
+    programmes.manifest.admitted_cursor = fresh_seed.manifest.admitted_cursor;
+    programmes.manifest.source_basis_seal =
+        fresh_seed.manifest.source_basis_seal;
+    for (std::size_t i = 0; i < programmes.program_count; ++i) {
+      const auto &fresh = fresh_seed.programs[i].handle;
+      auto &handle = programmes.programs[i].handle;
+      handle.preparation_seal = fresh.preparation_seal;
+      handle.program_seal = fresh.program_seal;
+      programmes.manifest.programs[i].preparation_seal = fresh.preparation_seal;
+      programmes.manifest.programs[i].program_seal = fresh.program_seal;
+    }
+    if (!validate_checkpoint_for_port(*admitted, guard, expected_cursor, port))
+      return false;
+    out.admitted_ = std::move(admitted);
+    out.candidate_port_ = port;
+    out.before_ = determination_;
+    out.cursor_ = cursor_;
+    out.accepted_sequence_ = accepted_sequence_;
+    out.applied_ordinal_ = applied_application_ordinal_;
+    out.control_revision_ = combined_control_revision_;
+    out.guard_nonce_ = guard.nonce_;
+    out.emergency_requested_ = emergency_requested_.load();
+    out.panic_fence_ = panic_fence_.load();
+    out.capture_ = capture_.load();
+    out.emergency_ = emergency_.load();
+    out.fault_ = fault_.load();
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  bool receiving_restore_current(const PreparedReceivingRestore &out,
+                                 const StoppedCustody &guard) const noexcept {
+    return out.ready_ && out.owner_ == this && out.admitted_ &&
+           guard.owner_ == this && guard.nonce_ == out.guard_nonce_ &&
+           activity_.load() == 2 && !device_running_.load() &&
+           cursor_ == out.cursor_ &&
+           accepted_sequence_ == out.accepted_sequence_ &&
+           applied_application_ordinal_ == out.applied_ordinal_ &&
+           combined_control_revision_ == out.control_revision_ &&
+           emergency_requested_.load() == out.emergency_requested_ &&
+           panic_fence_.load() == out.panic_fence_ &&
+           capture_.load() == out.capture_ &&
+           emergency_.load() == out.emergency_ && fault_.load() == out.fault_ &&
+           same_prepared_determination(determination_, out.before_) &&
+           body_.owner == out.candidate_port_.owner &&
+           body_.custody.get() == out.candidate_port_.custody.get();
+  }
+  // Nofail commit AFTER the existing P owner atomically restores the exact
+  // saved q/v/cursor under this SAME uninterrupted guard. Retired routes stay
+  // held by the token until the control owner retains the genuine ACK.
+  void commit_stopped_receiving_restore(PreparedReceivingRestore &out,
+                                        const StoppedCustody &guard) noexcept {
+    if (!receiving_restore_current(out, guard) ||
+        out.candidate_port_.cursor(out.candidate_port_.owner) !=
+            out.admitted_->cursor ||
+        out.candidate_port_.revision(out.candidate_port_.owner) !=
+            out.admitted_->determination.body_revision)
+      std::terminate();
+    std::swap(body_, out.candidate_port_);
+    commit_checkpoint_state(*out.admitted_);
+    out.ready_ = false;
   }
   bool available() const noexcept {
     return !fault_.load(std::memory_order_acquire);
@@ -2138,11 +2315,11 @@ public:
         emergency_observed_ =
             emergency_requested_.load(std::memory_order_acquire);
         emergency_applied_sample_ = cursor_ + i;
-        touches_.fill({});
-        sustain_ = false;
-        for (auto &v : voices_)
-          if (v.active)
-            release(v);
+        // Emergency Hold ends EVERY active scalar exciter immediately,
+        // including finite voice-steal fades. Ordinary key-up still uses its
+        // declared release envelope. The same P state keeps ringing; native
+        // programme phases and future source/parameter reservations survive.
+        clear();
       }
       // Bounded sample/sequence order, independent of arrival order.
       // Live playing and releases can overtake future clip/automation.

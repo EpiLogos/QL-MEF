@@ -130,11 +130,12 @@ class PerformanceManagement {
         return &i;
     return nullptr;
   }
-  void capture_stopped_reading(const Engine::StoppedCustody &guard) {
+  bool
+  capture_stopped_reading_from(const Engine::Checkpoint &saved,
+                               const Engine::StoppedCustody &guard) noexcept {
     if (!guard)
-      throw std::logic_error("stopped callback custody required");
-    auto cp = std::make_unique<Engine::Checkpoint>();
-    native_.engine->write_checkpoint(*cp, guard);
+      return false;
+    const auto *cp = &saved;
     Readback next{};
     next.identity = cp->determination.identity;
     next.determination = cp->determination;
@@ -178,9 +179,17 @@ class PerformanceManagement {
       }
     if (!ql::write_physical_snapshot(*native_.body, next.physical,
                                      next.body_revision, next.samples_elapsed))
-      throw std::logic_error("resident stopped audio/body snapshot refused");
+      return false;
     latest_ = next;
     has_latest_ = true;
+    return true;
+  }
+
+  void capture_stopped_reading(const Engine::StoppedCustody &guard) {
+    auto cp = std::make_unique<Engine::Checkpoint>();
+    native_.engine->write_checkpoint(*cp, guard);
+    if (!capture_stopped_reading_from(*cp, guard))
+      throw std::logic_error("resident stopped audio/body snapshot refused");
   }
 
 public:
@@ -802,6 +811,153 @@ public:
     // the paired wrapper. A source_touch_ref is never substituted for UI input.
     capture_stopped_reading(guard);
     return true;
+  }
+  // Private numerical candidate owned on the existing host heap. Original
+  // saved wire/checkpoint remains lossless; only derivative route handles in
+  // Engine's operative copy are refreshed by the native current source owner.
+  class PreparedReceivingRestore {
+    friend class PerformanceManagement;
+    PerformanceManagement *owner_ = nullptr;
+    std::unique_ptr<ManagementCheckpoint> saved_;
+    std::unique_ptr<Engine::PreparedReceivingRestore> engine_;
+    std::vector<KeyboardCell> catalog_;
+    std::vector<NoteTarget> notes_;
+    Identity before_catalog_{};
+    std::uint64_t catalog_revision_ = 0, epoch_ = 0, input_read_ = 0,
+                  input_write_ = 0, input_ordinal_ = 0, touch_token_ = 0,
+                  member_token_ = 0, release_request_ = 0,
+                  release_sequence_ = 0, release_proof_cursor_ = 0;
+    bool release_pending_ = false, panic_applied_ = false,
+         recording_failed_ = false, ready_ = false;
+
+  public:
+    PreparedReceivingRestore() = default;
+    PreparedReceivingRestore(const PreparedReceivingRestore &) = delete;
+    PreparedReceivingRestore &
+    operator=(const PreparedReceivingRestore &) = delete;
+    PreparedReceivingRestore(PreparedReceivingRestore &&) = delete;
+    PreparedReceivingRestore &operator=(PreparedReceivingRestore &&) = delete;
+    bool ready() const noexcept { return ready_; }
+    const ManagementCheckpoint &original_checkpoint() const { return *saved_; }
+    const Engine::PreparedReceivingRestore &engine_candidate() const {
+      return *engine_;
+    }
+    const ql::PhysicalBodyCheckpoint &physical_checkpoint() const {
+      return saved_->native_pair.physical;
+    }
+  };
+  // Existing private source/Act/lease/occasion owner replays the entire saved
+  // source bundle and prepares this SAME body's receiving port at saved cursor.
+  // This control-only preflight cannot mint that authority from imported JSON.
+  bool preflight_stopped_receiving_restore(
+      const ManagementCheckpoint &saved, const PhysicalPort &fresh_port,
+      const NativeRouteProgramSet &fresh_seed, std::vector<NoteTarget> notes,
+      std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedReceivingRestore &out) {
+    if (out.owner_ || out.ready_ || saved.session != session_ ||
+        !valid_management_checkpoint(saved) || notes.empty() ||
+        notes.size() > 192 ||
+        saved.native_pair.audio.cursor !=
+            saved.native_pair.physical.samples_elapsed ||
+        saved.native_pair.audio.determination.body_revision !=
+            saved.native_pair.physical.body_revision ||
+        saved.native_pair.audio.determination.body_preparation_ref !=
+            reference(saved.native_pair.physical.preparation_ref.c_str()) ||
+        saved.native_pair.audio.determination.body_state_ref !=
+            reference(saved.native_pair.physical.state_ref.c_str()) ||
+        transport_epoch_ == std::numeric_limits<std::uint64_t>::max() ||
+        catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
+      return false;
+    const auto &determination = saved.native_pair.audio.determination;
+    for (const auto &note : notes)
+      if (!native_.engine->validate_candidate_note_target(note, determination))
+        return false;
+    validate_catalog(cells, determination);
+    auto engine_candidate =
+        std::make_unique<Engine::PreparedReceivingRestore>();
+    if (!native_.engine->preflight_stopped_receiving_restore(
+            saved.native_pair.audio, fresh_port, fresh_seed, guard,
+            expected_cursor, *engine_candidate))
+      return false;
+    auto original = std::make_unique<ManagementCheckpoint>(saved);
+    out.saved_ = std::move(original);
+    out.engine_ = std::move(engine_candidate);
+    out.catalog_ = std::move(cells);
+    out.notes_ = std::move(notes);
+    out.before_catalog_ = catalog_identity_;
+    out.catalog_revision_ = catalog_revision_;
+    out.epoch_ = transport_epoch_;
+    out.input_read_ = bindings_.history_read();
+    out.input_write_ = bindings_.history_write();
+    out.input_ordinal_ = bindings_.history_ordinal();
+    out.touch_token_ = bindings_.last_touch_token();
+    out.member_token_ = bindings_.last_member_token();
+    out.release_request_ = release_request_;
+    out.release_sequence_ = release_sequence_;
+    out.release_proof_cursor_ = release_proof_cursor_;
+    out.release_pending_ = release_pending_;
+    out.panic_applied_ = panic_applied_;
+    out.recording_failed_ = control_recording_failed_;
+    out.owner_ = this;
+    out.ready_ = true;
+    return true;
+  }
+  bool receiving_restore_current(
+      const PreparedReceivingRestore &out,
+      const Engine::StoppedCustody &guard) const noexcept {
+    return out.ready_ && out.owner_ == this && out.engine_ && out.saved_ &&
+           transport_epoch_ == out.epoch_ &&
+           catalog_identity_ == out.before_catalog_ &&
+           catalog_revision_ == out.catalog_revision_ &&
+           catalog_revision_ != std::numeric_limits<std::uint64_t>::max() &&
+           bindings_.history_read() == out.input_read_ &&
+           bindings_.history_write() == out.input_write_ &&
+           bindings_.history_ordinal() == out.input_ordinal_ &&
+           bindings_.last_touch_token() == out.touch_token_ &&
+           bindings_.last_member_token() == out.member_token_ &&
+           release_request_ == out.release_request_ &&
+           release_sequence_ == out.release_sequence_ &&
+           release_proof_cursor_ == out.release_proof_cursor_ &&
+           release_pending_ == out.release_pending_ &&
+           panic_applied_ == out.panic_applied_ &&
+           control_recording_failed_ == out.recording_failed_ &&
+           native_.engine->receiving_restore_current(*out.engine_, guard);
+  }
+  // Called ONLY after Root's P restore candidate and receiving source
+  // currentness preflights all succeeded before first mutation. No allocation,
+  // journal drain, queued operation redating, seed reset or implicit panic.
+  void
+  commit_stopped_receiving_restore(PreparedReceivingRestore &out,
+                                   const Engine::StoppedCustody &guard,
+                                   Ref transaction, Ref checkpoint_ref,
+                                   TransportAcknowledgement &ack) noexcept {
+    if (!receiving_restore_current(out, guard) || !valid_ref(transaction) ||
+        !valid_ref(checkpoint_ref))
+      std::terminate();
+    const auto previous_cursor = native_.engine->samples_elapsed();
+    const auto previous_sequence = native_.engine->accepted_sequence();
+    native_.engine->commit_stopped_receiving_restore(*out.engine_, guard);
+    const auto &saved = *out.saved_;
+    const auto &admitted = out.engine_->admitted_checkpoint();
+    bindings_.restore_validated(saved.bindings);
+    control_recording_failed_ = saved.recording_failed;
+    release_pending_ = saved.release_pending;
+    panic_applied_ = saved.panic_applied;
+    release_request_ = saved.release_request;
+    release_sequence_ = saved.release_sequence;
+    release_proof_cursor_ = saved.release_proof_cursor;
+    native_.determination = admitted.determination;
+    std::swap(native_.notes, out.notes_);
+    std::swap(catalog_, out.catalog_);
+    catalog_identity_ = admitted.determination.identity;
+    ++catalog_revision_;
+    ack = {transport_epoch_,  transport_epoch_ + 1, previous_cursor,
+           previous_sequence, admitted.cursor,      admitted.accepted_sequence,
+           transaction,       checkpoint_ref};
+    ++transport_epoch_;
+    if (!capture_stopped_reading_from(admitted, guard))
+      std::terminate();
+    out.ready_ = false;
   }
   ManagementAdmission
   admit_distinct_receiving(PhysicalPort qualified_port,

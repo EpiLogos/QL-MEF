@@ -66,6 +66,9 @@ public:
   std::uint64_t last_member_token() const noexcept {
     return state_.last_member_token;
   }
+  std::uint64_t history_read() const noexcept { return state_.read; }
+  std::uint64_t history_write() const noexcept { return state_.write; }
+  std::uint64_t history_ordinal() const noexcept { return state_.last_ordinal; }
   auto &inputs() noexcept { return state_.inputs; }
   const auto &inputs() const noexcept { return state_.inputs; }
   bool bind(const Ref &input_ref, const NoteTarget &target,

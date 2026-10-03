@@ -309,6 +309,90 @@ static void finite_polyphony_and_panic_cancel_pending_attacks() {
   r = render(f);
   assert(r.active_voices == 1 && r.active_touches == 1);
 }
+static void emergency_hold_clears_long_release_and_steal_excitation() {
+  Parameters p{};
+  p.release_seconds = 30;
+  Fixture f(p);
+  auto sustain = operation(f.d, Kind::Sustain, 1, 0);
+  sustain.value = 1;
+  assert(f.engine->enqueue(sustain) == Result::Accepted);
+  for (std::uint64_t i = 1; i <= max_voices; ++i)
+    assert(f.engine->enqueue(note_on(f.d, i + 1, 0, target(f.d, i, i))) ==
+           Result::Accepted);
+  assert(f.engine->enqueue(note_on(f.d, 26, 127, target(f.d, 25, 25))) ==
+         Result::Accepted);
+  Capture capture{};
+  auto r = render(f, 128, &capture);
+  assert(r.active_voices == max_voices && r.active_tails > 0 && r.stolen == 1 &&
+         energy(f) > 0);
+  auto parameter = operation(f.d, Kind::Parameter, 27, 1024);
+  parameter.parameter = Parameter::MasterLinear;
+  parameter.value = .73;
+  assert(f.engine->enqueue(parameter) == Result::Accepted);
+  auto next = f.d;
+  ++next.identity.m2_generation;
+  ++next.identity.m1_revision;
+  for (auto &hz : next.audio_octet_hz)
+    hz *= 1.125;
+  auto determination = operation(f.d, Kind::Determination, 28, 384);
+  determination.determination = next;
+  assert(f.engine->enqueue(determination) == Result::Accepted);
+  assert(f.engine->enqueue(note_on(next, 29, 1024, target(next, 29, 29))) ==
+         Result::Accepted);
+  const auto request = f.engine->request_panic();
+  assert(request != 0);
+  bool ringdown = false;
+  for (unsigned block = 0; block < 4; ++block) {
+    r = render(f, 128, &capture);
+    assert(r.active_voices == 0 && r.active_touches == 0 &&
+           r.active_tails == 0 && !r.sustain);
+    for (unsigned i = 0; i < capture.frames; ++i) {
+      assert(capture.force_newtons[i] == 0);
+      ringdown |= capture.pickup_linear[i] != 0;
+    }
+  }
+  assert(ringdown && energy(f) > 0 && r.force_zero_samples == 512 &&
+         r.emergency_observed == request && r.identity == next.identity);
+  std::unique_ptr<PairedCheckpoint> saved;
+  {
+    auto guard = f.engine->acquire_stopped_custody();
+    saved = checkpoint_heap(*f.engine, *f.body, guard);
+  }
+  assert(saved->audio.cursor == 640 && saved->audio.accepted_sequence == 29 &&
+         saved->audio.heap_size == 2);
+  Fixture reopened(p);
+  {
+    auto guard = reopened.engine->acquire_stopped_custody();
+    assert(
+        restore_checkpoint(*reopened.engine, *reopened.body, *saved, guard, 0));
+  }
+  Capture original{}, replay{};
+  render(f, 128, &original);
+  render(reopened, 128, &replay);
+  assert(original.force_newtons == replay.force_newtons &&
+         original.pickup_linear == replay.pickup_linear &&
+         original.output_linear == replay.output_linear);
+  // A later human attack has a higher sequence and can play. The older
+  // scheduled attack remains in its original slot and is refused at apply.
+  const auto after_hold = f.engine->samples_elapsed();
+  assert(f.engine->enqueue(note_on(next, 30, after_hold,
+                                   target(next, 30, 30))) == Result::Accepted);
+  r = render(f, 128, &capture);
+  assert(r.active_voices == 1 && r.active_touches == 1 &&
+         std::any_of(capture.force_newtons.begin(),
+                     capture.force_newtons.begin() + capture.frames,
+                     [](double force) { return force != 0; }));
+  render_until(f, 1152);
+  r = render(f);
+  assert(r.active_voices == 1 && r.active_touches == 1 &&
+         r.voices[0].member == 30 &&
+         std::find(r.held_touch_tokens.begin(), r.held_touch_tokens.end(),
+                   std::uint64_t(30)) != r.held_touch_tokens.end());
+  auto guard = f.engine->acquire_stopped_custody();
+  auto final = checkpoint_heap(*f.engine, *f.body, guard);
+  assert(final->audio.source.master_linear == .73 &&
+         final->audio.panic_fence == 29);
+}
 static void late_release_invalid_inputs_and_source_generations() {
   Fixture f;
   auto on = note_on(f.d, 1, 0, target(f.d));
@@ -914,6 +998,7 @@ int main() {
   partition_and_view_independence();
   repeated_touches_sustain_release_and_body_tail();
   finite_polyphony_and_panic_cancel_pending_attacks();
+  emergency_hold_clears_long_release_and_steal_excitation();
   late_release_invalid_inputs_and_source_generations();
   rational_pitch_accuracy_and_parameter_readback();
   late_noteoff_overtakes_future_automation_without_moving_it();
