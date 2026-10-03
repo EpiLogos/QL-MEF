@@ -354,9 +354,30 @@ int main() {
             "genuine native source fixture required");
     auto out = wire::object();
     wire::text(out.get(), "schema", "ql.receiving-restore-native-receipt/v1");
-    for (const char *kind : {"world", "personal", "shared"})
-      wire::put(out.get(), kind,
-                trial(packet::field(root.get(), kind)).release());
+    J *context_kind = nullptr;
+    if (json_object_object_get_ex(root.get(), "context_kind", &context_kind)) {
+      // Closed test carrier only. Full actual native source/context validators
+      // still execute inside trial; selecting a name grants no native work.
+      ql::physical_wire::keys(root.get(),
+                              {"schema", "context_kind", "context"});
+      const auto kind = packet::string(context_kind);
+      require(kind == "world" || kind == "personal" || kind == "shared",
+              "unknown named native receiving context carrier");
+      auto *fixture = packet::field(root.get(), "context");
+      auto *actual_context = packet::field(
+          packet::field(packet::field(packet::field(fixture, "initial"),
+                                      "native_admission"),
+                        "operation"),
+          "context");
+      require(packet::string(packet::field(actual_context, "kind")) == kind,
+              "named context carrier differs from actual native producer");
+      wire::put(out.get(), kind.c_str(), trial(fixture).release());
+    } else {
+      // Preserve the original complete-three fixture when it fits the same cap.
+      for (const char *kind : {"world", "personal", "shared"})
+        wire::put(out.get(), kind,
+                  trial(packet::field(root.get(), kind)).release());
+    }
     std::cout << json_object_to_json_string_ext(out.get(),
                                                 JSON_C_TO_STRING_PLAIN)
               << '\n';

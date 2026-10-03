@@ -18,15 +18,65 @@ use ql_mef::nara_performance_receiving::*;
 use ql_mef::performance_audio::PreparedPerformanceBinding;
 use ql_mef::physical_body::{PhysicalProvenance, PhysicalStanding, SpatialProjection};
 use serde_json::{Value, json};
-fn preserve_native_restore_evidence(input: &[u8], result: &std::process::Output) {
+fn prepare_native_restore_evidence(kind: &str, input: &[u8]) -> Option<std::path::PathBuf> {
     use std::io::Write;
     let Some(path) = std::env::var_os("QL_RECEIVING_RESTORE_EVIDENCE_DIR") else {
-        return;
+        eprintln!(
+            "actual_receiving_restore_preexecution context={kind} input_bytes={} input_limit={}",
+            input.len(),
+            16 * 1024 * 1024
+        );
+        return None;
     };
     let root = std::path::Path::new(&path);
-    std::fs::create_dir(root).expect("fresh native receiving restore evidence directory");
+    std::fs::create_dir_all(root).expect("native receiving restore evidence root");
+    let context = root.join(kind);
+    std::fs::create_dir(&context).expect("fresh named native context evidence destination");
+    let limit = 16 * 1024 * 1024;
+    let mut source = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(context.join("producer-input.json"))
+        .unwrap();
+    source.write_all(&input[..input.len().min(limit)]).unwrap();
+    source.sync_all().unwrap();
+    let mut metadata = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(context.join("native-preexecution.json"))
+        .unwrap();
+    write!(
+        metadata,
+        "{}",
+        json!({"schema":"ql.native-receiving-restore-preexecution/v1",
+        "context_kind":kind,"actual_input_bytes":input.len(),"stdin_limit_bytes":limit,
+        "retained_input_bytes":input.len().min(limit),"complete_input":input.len() <= limit,
+        "child_spawned":false})
+    )
+    .unwrap();
+    metadata.sync_all().unwrap();
+    if input.len() > limit {
+        let mut marker = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(context.join("producer-input.json.truncated.json"))
+            .unwrap();
+        write!(
+            marker,
+            "{}",
+            json!({"complete":false,"actual_bytes":input.len(),"retained_prefix_bytes":limit})
+        )
+        .unwrap();
+        marker.sync_all().unwrap();
+    }
+    Some(context)
+}
+fn preserve_native_restore_evidence(root: Option<&std::path::Path>, result: &std::process::Output) {
+    use std::io::Write;
+    let Some(root) = root else {
+        return;
+    };
     for (name, bytes, limit) in [
-        ("producer-input.json", input, 16 * 1024 * 1024),
         (
             "native-stdout.json",
             result.stdout.as_slice(),
@@ -57,6 +107,7 @@ fn preserve_native_restore_evidence(input: &[u8], result: &std::process::Output)
                 json!({"complete":false,"actual_bytes":bytes.len(),"retained_prefix_bytes":limit})
             )
             .unwrap();
+            marker.sync_all().unwrap();
         }
     }
     let mut exit = std::fs::OpenOptions::new()
@@ -72,10 +123,8 @@ fn preserve_native_restore_evidence(input: &[u8], result: &std::process::Output)
     .unwrap();
     exit.sync_all().unwrap();
     assert!(
-        input.len() <= 16 * 1024 * 1024
-            && result.stdout.len() <= 32 * 1024 * 1024
-            && result.stderr.len() <= 4 * 1024 * 1024,
-        "native receiving restore evidence exceeded bounded custody; incomplete prefix marked explicitly"
+        result.stdout.len() <= 32 * 1024 * 1024 && result.stderr.len() <= 4 * 1024 * 1024,
+        "native receiving restore output exceeds bounded custody; incomplete prefix marked explicitly"
     );
 }
 fn reference(s: &str) -> Reference {
@@ -304,24 +353,63 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         let other = wrong.prepare_current(&owner, &current, 640).unwrap();
         json!({"native_preparation":packet,"native_basis":owner.binding().native_basis(),"native_catalog":owner.native_catalog(),"initial":at_zero.snapshot().unwrap(),"saved_current":at_saved.snapshot().unwrap(),"other_valid_context":other.snapshot().unwrap()})
     };
-    let bytes=serde_json::to_vec(&json!({"schema":"ql.receiving-restore-native-fixture/v1","world":one(&world_source,&ps),"personal":one(&ps,&ss),"shared":one(&ss,&other_shared)})).unwrap();
-    assert!(bytes.len() < 16 * 1024 * 1024);
-    let mut child = Command::new(binary)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-    child.stdin.take().unwrap().write_all(&bytes).unwrap();
-    let output = child.wait_with_output().unwrap();
-    preserve_native_restore_evidence(&bytes, &output);
-    assert!(
-        output.status.success(),
-        "{}\n{}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let result: Value = serde_json::from_slice(&output.stdout).unwrap();
+    // All original source fields and every actual trial remain complete. The
+    // bounded child request carries ONE named context, never three duplicate
+    // native bases at once. The legacy complete-three CPP path remains intact.
+    let mut result = json!({"schema":"ql.receiving-restore-native-receipt/v1"});
+    for kind in ["world", "personal", "shared"] {
+        let context = match kind {
+            "world" => one(&world_source, &ps),
+            "personal" => one(&ps, &ss),
+            "shared" => one(&ss, &other_shared),
+            _ => unreachable!(),
+        };
+        let request = json!({"schema":"ql.receiving-restore-native-fixture/v1",
+            "context_kind":kind,"context":context});
+        let bytes = serde_json::to_vec(&request).unwrap();
+        let evidence = prepare_native_restore_evidence(kind, &bytes);
+        // Preexecution byte count and bounded original prefix exist even when
+        // this limit refuses. No fake child exit or callback pulse is emitted.
+        assert!(bytes.len() < 16 * 1024 * 1024);
+        assert_eq!(
+            serde_json::from_slice::<Value>(&bytes).unwrap()["context"],
+            context
+        );
+        let mut child = Command::new(&binary)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        if let Some(root) = evidence.as_deref() {
+            let mut started = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(root.join("native-child-started.json"))
+                .unwrap();
+            write!(
+                started,
+                "{}",
+                json!({"child_spawned":true,"process_id":child.id()})
+            )
+            .unwrap();
+            started.sync_all().unwrap();
+        }
+        child.stdin.take().unwrap().write_all(&bytes).unwrap();
+        let output = child.wait_with_output().unwrap();
+        preserve_native_restore_evidence(evidence.as_deref(), &output);
+        assert!(
+            output.status.success(),
+            "{}\n{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let actual: Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(actual["schema"], "ql.receiving-restore-native-receipt/v1");
+        assert_eq!(actual.as_object().unwrap().len(), 2);
+        assert!(actual[kind].is_object());
+        result[kind] = actual[kind].clone();
+    }
     assert_eq!(result["schema"], "ql.receiving-restore-native-receipt/v1");
     for kind in ["world", "personal", "shared"] {
         assert_eq!(result[kind]["saved_cursor"], "640");
