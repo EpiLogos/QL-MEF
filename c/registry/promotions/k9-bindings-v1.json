@@ -1348,7 +1348,9 @@
         "crates/ql-mef/tests/performance_source_owner.rs",
         "crates/ql-mef/tests/performance_source_context.rs",
         "crates/ql-mef/src/continuous/performance_reply_tests.rs",
-        "cpp/tests/performance_source_reply_wire.cpp"
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "crates/ql-mef/tests/retained_score_source.rs"
       ]
     },
     {
@@ -1379,7 +1381,8 @@
       "rationale": "QL #281 private source-key policy preserves native sparse collection order and explicitly unavailable keys; original K resolves carriers without synthesizing chromatic closure or physical body modes.",
       "tests": [
         "crates/ql-mef/tests/performance_source_owner.rs",
-        "crates/ql-mef/tests/source_key_determination.rs"
+        "crates/ql-mef/tests/source_key_determination.rs",
+        "crates/ql-mef/tests/retained_score_source.rs"
       ]
     },
     {
@@ -1449,7 +1452,9 @@
       "rationale": "QL #281: Actual retained worker readback/control projects same native catalog, physical positions, actual-rate parameter bounds and full stopped checkpoint. JSON stays outside callback and never replaces source admission.",
       "tests": [
         "cpp/tests/performance_source_reply_wire.cpp",
-        "cpp/tests/performance_management_packet.cpp"
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp"
       ]
     },
     {
@@ -1633,6 +1638,23 @@
       "tests": [
         "crates/ql-mef/tests/performance_route_management_native_wire.rs",
         "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_receiving.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 existing FieldHost private original receiving owner independently repeats actual World or N identity/current providers, original occasion and receiving calibration under the current retained lease. Complete source/definition/admission equality precedes same-body force publication; serialized inputs or hashes grant no Act, disclosure, consent or playback authority.",
+      "tests": [
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
       ]
     }
   ]

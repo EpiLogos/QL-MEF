@@ -2,13 +2,17 @@
 //! by the native host; a subject/reference is not a grant of authority.
 use super::coupled::{CoupledFieldSession, CoupledInput};
 use super::performance::{PerformanceCommand, PerformanceConfig, PerformanceOwner};
+use super::performance_receiving::NativePerformanceReceivingSource;
 use super::scene_field::{self, SceneConfig, SceneInstrument};
 use super::{FieldInput, LiftInput};
+use crate::musical_performance_return::ReturnContext;
+use crate::scene::{WorldRequest, world};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::path::Path;
 use std::time::Duration;
 
+pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
 pub const HOST_RECEIPT: &str = "ql.field-host-receipt/v1";
 pub const MAX_HOST_INPUT: u64 = 32 * 1024 * 1024;
@@ -20,6 +24,18 @@ pub struct HostConfig {
     pub instance_ref: String,
     pub basis: CoupledInput,
     pub field: FieldInput,
+}
+
+/// Native World factory input retained under the existing host lease. The
+/// source constructor independently regenerates its complete scene config;
+/// a supplied scene/body/witness is deliberately absent from this contract.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct WorldHostConfig {
+    pub schema: String,
+    pub instance_ref: String,
+    pub world_request: WorldRequest,
+    pub receiving_context: ReturnContext,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -117,6 +133,7 @@ pub struct FieldHost {
     session: Owner,
     last_request: u64,
     performance: Option<PerformanceOwner>,
+    receiving_source: Option<NativePerformanceReceivingSource>,
 }
 impl FieldHost {
     pub fn open(worker: &Path, config: HostConfig, timeout: Duration) -> Result<Self, String> {
@@ -136,6 +153,7 @@ impl FieldHost {
             )?)),
             last_request: 0,
             performance: None,
+            receiving_source: None,
         })
     }
 
@@ -150,12 +168,61 @@ impl FieldHost {
             session: Owner::Scene(Box::new(instrument)),
             last_request: 0,
             performance: None,
+            receiving_source: None,
         })
+    }
+
+    /// The existing native Factory opens this under its actual World lease.
+    /// Reconstruct before starting the existing worker; original sky/private
+    /// source classification and native World completion are both checked.
+    pub fn open_world(
+        worker: &Path,
+        config: WorldHostConfig,
+        timeout: Duration,
+    ) -> Result<Self, String> {
+        if config.schema != WORLD_HOST_CONFIG
+            || config.instance_ref != config.world_request.instance_ref
+        {
+            return Err("native World host source/instance differs".into());
+        }
+        let source = NativePerformanceReceivingSource::world_source(
+            config.world_request.clone(),
+            config.receiving_context,
+        )?;
+        let produced = world(config.world_request)?;
+        let scene: SceneConfig = serde_json::from_value(produced["binding"]["host"].clone())
+            .map_err(|e| e.to_string())?;
+        let mut host = Self::open_scene(worker, scene, timeout)?;
+        host.bind_performance_receiving_source(source)?;
+        Ok(host)
+    }
+    /// Protected N owner calls this with its privately constructed actual
+    /// profile/occasion/consent source while holding the current Act/lease.
+    /// There is no HostOperation accepting a browser witness or definition.
+    pub fn bind_performance_receiving_source(
+        &mut self,
+        source: NativePerformanceReceivingSource,
+    ) -> Result<(), String> {
+        if self.performance.is_some() {
+            return Err(
+                "receiving replacement requires an atomic retained source/body transaction".into(),
+            );
+        }
+        if !self.available() {
+            return Err("native current owner/lease unavailable".into());
+        }
+        self.receiving_source = Some(source);
+        Ok(())
     }
 
     /// Chooses the owner from the configuration's own contract.
     pub fn open_config(worker: &Path, bytes: &[u8], timeout: Duration) -> Result<Self, String> {
         let value: Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if value.get("schema").and_then(Value::as_str) == Some(WORLD_HOST_CONFIG) {
+            let config: WorldHostConfig =
+                serde_json::from_value(value).map_err(|e| e.to_string())?;
+            return Self::open_world(worker, config, timeout);
+        }
         if value.get("schema").and_then(Value::as_str) == Some(scene_field::CONFIG) {
             let config: SceneConfig = serde_json::from_value(value).map_err(|e| e.to_string())?;
             return Self::open_scene(worker, config, timeout);
@@ -182,6 +249,46 @@ impl FieldHost {
 
     pub fn ready(&self) -> Value {
         self.response(None, "ready", None)
+    }
+
+    /// Native C/Act retention consumes the actual activated owner, not a
+    /// preparation-only source bundle assembled beside it. This is an immutable
+    /// source artifact, not a device/output or checkpoint admission.
+    pub fn retained_performance_source_artifact(
+        &self,
+        declared_seed: u64,
+    ) -> Result<Value, String> {
+        let owner = self
+            .performance
+            .as_ref()
+            .ok_or("actual retained performance is not active")?;
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original receiving source is not bound")?;
+        let current = self.session.session().current_basis();
+        if !self.available() || owner.reading().is_none() {
+            return Err("native activated owner/current readback unavailable".into());
+        }
+        // Full original/current producer, receiver, occasion and consent replay
+        // precedes retention. A stored snapshot or binding-only setter is not it.
+        let prepared_receiving = source.prepare_current(owner, current, 0)?;
+        if prepared_receiving.snapshot()? != owner.source_assets()["current_receiving"] {
+            return Err(
+                "activated native source artifact lost exact current receiving owner".into(),
+            );
+        }
+        let returned = crate::musical_performance_return::bind_performance_return(
+            owner.binding(),
+            source.original_occasion().cloned(),
+            source.return_context().clone(),
+            declared_seed,
+        )?;
+        Ok(json!({"schema":"ql.retained-source-performance-fixture/v1",
+            "basis":returned.expression_basis()?,"pitches":returned.expression_pitches(0)?,
+            "source_assets":owner.source_assets(),"native_preparation":owner.native_packet()?,
+            "native_basis":owner.binding().native_basis(),"native_reading":owner.reading(),
+            "standing":"actual activated existing FieldHost/PerformanceOwner/worker; source artifact only, no hardware output or file/Act acceptance"}))
     }
 
     /// Bad JSON/unknown fields have no admitted sequence and never reach C++.
@@ -242,8 +349,15 @@ impl FieldHost {
                     } else {
                         PerformanceOwner::prepare(&current, &self.instance_ref, *config).and_then(
                             |mut performance| {
-                                let reply =
-                                    performance.activate(&current, self.session.session_mut())?;
+                                let reply = match &self.receiving_source {
+                                    Some(source) => performance.activate_with_current_receiving(
+                                        &current,
+                                        self.session.session_mut(),
+                                        source,
+                                    )?,
+                                    None => performance
+                                        .activate(&current, self.session.session_mut())?,
+                                };
                                 self.performance = Some(performance);
                                 Ok(reply)
                             },

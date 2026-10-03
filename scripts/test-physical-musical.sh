@@ -17,7 +17,15 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
   native=${suite/_native_wire/_wire}
   binary="$TASK_OUTPUT/native/$native-test"
   [[ -x "$binary" ]] || { printf 'Missing paired native producer binary: %s\n' "$binary" >&2; exit 1; }
-  QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  if [[ "$suite" == "current_performance_receiving_native_wire" ]]; then
+    v_receiving_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_RECEIVING_OUTPUT="$TASK_OUTPUT/current-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_receiving_nonce"
+    QL_NATIVE_WIRE_TEST="$binary" QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+      QL_CURRENT_RECEIVING_ARTIFACT_OUTPUT="$TASK_RECEIVING_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  else
+    QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  fi
 done
 
 # Exact original SourceForm, source-key and resident reply production owners.

@@ -806,8 +806,9 @@ static void native_timestamp_mapping_uses_real_engine_and_physical_force() {
   const auto admitted = clock.enqueue(
       *f.engine, note_on(f.d, 1, 0, target(f.d)), stamp, 1001000000);
   assert(admitted.result == Result::Accepted &&
-         admitted.accepted_sample == 48 && admitted.epoch == 1 &&
-         admitted.anchor_ordinal == 1 && !admitted.input_transit_unknown);
+         admitted.requested_sample == 48 && admitted.accepted_sample == 48 &&
+         admitted.epoch == 1 && admitted.anchor_ordinal == 1 &&
+         !admitted.input_transit_unknown);
   near(admitted.mapping_uncertainty_samples, 1.0048);
   Capture capture{};
   count_allocations.store(true);
@@ -821,10 +822,11 @@ static void native_timestamp_mapping_uses_real_engine_and_physical_force() {
                      [](double x) { return x != 0; }));
   NativeGestureApplication application{};
   assert(f.engine->pop_gesture_application(application));
-  assert(application.applied && application.sequence == 1 &&
-         application.admitted_sample == 48 &&
-         application.applied_sample == 48 &&
-         application.identity == f.d.identity && application.touch == 1);
+  assert(
+      application.applied && application.sequence == 1 &&
+      application.has_requested_sample && application.requested_sample == 48 &&
+      application.admitted_sample == 48 && application.applied_sample == 48 &&
+      application.identity == f.d.identity && application.touch == 1);
   auto future = operation(f.d, Kind::Parameter, 2, 48000);
   future.parameter = Parameter::MasterLinear;
   future.value = 0.1;
@@ -833,11 +835,16 @@ static void native_timestamp_mapping_uses_real_engine_and_physical_force() {
                                 0};
   const auto next = clock.enqueue(
       *f.engine, note_on(f.d, 3, 0, target(f.d, 2, 2)), bridge, 1002000000);
-  assert(next.result == Result::Accepted && next.accepted_sample == 128 &&
-         next.input_transit_unknown);
+  assert(next.result == Result::Accepted && next.requested_sample == 96 &&
+         next.accepted_sample == 128 && next.input_transit_unknown);
   render(f, 128);
   assert(f.engine->pop_gesture_application(application) &&
-         application.applied_sample == 128 && application.sequence == 3);
+         application.has_requested_sample &&
+         application.requested_sample == 96 &&
+         application.admitted_sample == 128 &&
+         application.applied_sample == 128 && application.sequence == 3 &&
+         application.clock.trigger_host_ticks == 1002000000 &&
+         application.clock.epoch == 1);
   assert(f.engine->enqueue(note_on(f.d, 4, 0, target(f.d, 3, 3))) ==
          Result::Late);
   auto forged = note_on(f.d, 4, 256, target(f.d, 3, 3));

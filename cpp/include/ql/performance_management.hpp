@@ -16,6 +16,27 @@ struct ManagementAdmission {
   NativeClockAdmission clock{};
   std::string reason;
 };
+// Stamped only by the same native management owner after real Engine
+// enqueue. Transport epoch is not the independent AudioUnit clock epoch.
+class NativeScoreAdmission {
+  friend class PerformanceManagement;
+  Result result_ = Result::Unavailable;
+  NativeQueueAdmission queue_{};
+  Ref session_{}, input_{};
+  std::uint64_t epoch_ = 0;
+  static NativeScoreAdmission refused(Result result) {
+    NativeScoreAdmission out{};
+    out.result_ = result;
+    return out;
+  }
+
+public:
+  Result result() const noexcept { return result_; }
+  const NativeQueueAdmission &queue() const noexcept { return queue_; }
+  const Ref &session_ref() const noexcept { return session_; }
+  const Ref &input_ref() const noexcept { return input_; }
+  std::uint64_t transport_epoch() const noexcept { return epoch_; }
+};
 struct KeyboardCell {
   std::uint8_t row = 0, column = 0;
   NoteTarget native_target{};
@@ -444,40 +465,46 @@ public:
   // method never dates live gestures or fabricates an AudioUnit epoch. The
   // existing native score/source owner supplies qualified NoteTargets; no UI
   // endpoint accepts an Operation/NoteTarget packet from this seam.
-  Result enqueue_score_input(Operation op, Ref original_input = {}) {
+  NativeScoreAdmission enqueue_score_input_admission(Operation op,
+                                                     Ref original_input = {}) {
     if (control_recording_failed_ || release_pending_)
-      return Result::Unavailable;
+      return NativeScoreAdmission::refused(Result::Unavailable);
     if (op.sequence != next_sequence())
-      return Result::Order;
+      return NativeScoreAdmission::refused(Result::Order);
     Input *held = valid_ref(original_input) ? input(original_input) : nullptr;
     const bool touch_operation = op.kind == Kind::NoteOn ||
                                  op.kind == Kind::NoteOff ||
                                  op.kind == Kind::Expression;
     if (touch_operation) {
       if (!valid_ref(original_input) || !bindings_.can_record())
-        return Result::Invalid;
+        return NativeScoreAdmission::refused(Result::Invalid);
       if (op.kind == Kind::NoteOn) {
         if (held || !op.note.touch || !op.note.member ||
             std::none_of(inputs_.begin(), inputs_.end(),
                          [](const auto &i) { return !i.active; }))
-          return Result::Exhausted;
+          return NativeScoreAdmission::refused(Result::Exhausted);
         for (const auto &i : inputs_)
           if (i.active && i.target.touch == op.note.touch)
-            return Result::Invalid;
+            return NativeScoreAdmission::refused(Result::Invalid);
         auto checkpoint = std::make_unique<NativeInputBindings::State>();
         bindings_.write_checkpoint(*checkpoint);
         if (op.note.touch <= checkpoint->last_touch_token)
-          return Result::Invalid;
+          return NativeScoreAdmission::refused(Result::Invalid);
       } else if (!held || held->release_pending ||
                  held->target.touch != op.touch ||
                  (op.kind == Kind::NoteOff &&
                   !(op.identity == held->target.identity)))
-        return Result::Stale;
+        return NativeScoreAdmission::refused(Result::Stale);
     } else if (original_input != Ref{})
-      return Result::Invalid;
-    const auto result = native_.engine->enqueue(op);
-    if (result != Result::Accepted)
-      return result;
+      return NativeScoreAdmission::refused(Result::Invalid);
+    NativeScoreAdmission admitted{};
+    admitted.queue_ = native_.engine->enqueue_with_receipt(op);
+    admitted.result_ = admitted.queue_.result();
+    if (!admitted.queue_.queued())
+      return admitted;
+    admitted.session_ = session_;
+    admitted.input_ = original_input;
+    admitted.epoch_ = transport_epoch_;
     bool recorded = true;
     if (op.kind == Kind::NoteOn)
       recorded = bindings_.bind(original_input, op.note, op.sequence);
@@ -485,10 +512,16 @@ public:
       recorded = bindings_.release_admitted(original_input, op.sequence);
     if (!recorded) {
       hold();
-      return Result::Unavailable;
+      // The queued native fact remains visible even when its input journal
+      // failed. The caller must retain it as failed recording, never retry.
+      admitted.result_ = Result::Unavailable;
     }
-    return result;
+    return admitted;
   }
+  Result enqueue_score_input(Operation op, Ref original_input = {}) {
+    return enqueue_score_input_admission(op, original_input).result();
+  }
+
   ManagementAdmission release(Ref input_ref) {
     auto *held = input(input_ref);
     if (!held || held->release_pending)

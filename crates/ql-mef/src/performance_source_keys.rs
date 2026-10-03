@@ -114,6 +114,25 @@ impl PreparedSourcePerformance {
             collection,
         )
     }
+    /// Borrow the exact native condition producer and joined consumer for
+    /// the retained score compiler. No serialized receipt reconstructs them.
+    pub fn consumer<'a>(
+        &'a self,
+        current: &'a PreparedPerformanceBinding,
+    ) -> Result<SparseMusicalConsumer<'a>, String> {
+        self.validate_current(current, &self.collection)?;
+        Ok(SparseMusicalConsumer {
+            basis: current.native_basis(),
+            writer: &self.writer,
+            phase: self.phase,
+            condition: self.original_condition_input.as_ref().map(|original| {
+                SparseConditionConsumer {
+                    producer_input: original,
+                    plan: current.relation_plan(),
+                }
+            }),
+        })
+    }
     pub fn source_preparation(&self) -> Result<Value, String> {
         self.targets.preparation_receipt()
     }

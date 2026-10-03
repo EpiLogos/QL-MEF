@@ -149,8 +149,9 @@ public:
     receipt.mapping_uncertainty_samples = uncertainty;
     receipt.input_transit_unknown =
         trigger.origin == NativeInputOrigin::BridgeReceipt;
-    operation.sample =
-        std::max(receipt.requested_sample, engine.admission_horizon());
+    // Engine captures the original native mapped sample before resolving the
+    // callback horizon. Host ticks and uncertainty retain their native domain.
+    operation.sample = receipt.requested_sample;
     operation.native_clock = {
         a.epoch,          a.ordinal,   trigger.host_ticks,
         native_now_ticks, uncertainty, receipt.input_transit_unknown};

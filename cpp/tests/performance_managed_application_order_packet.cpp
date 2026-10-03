@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ql/performance_checkpoint_wire.hpp>
 #include <ql/performance_management.hpp>
+#include <ql/performance_management_wire.hpp>
 using namespace ql::performance;
 static std::string file(const std::string &path) {
   std::ifstream in(path, std::ios::binary);
@@ -109,18 +110,70 @@ static void managed_trial(const std::string &dir, bool panic,
   attack.value = .8;
   const auto original_input = reference("native-score:original-pointer/42");
   assert(original_input != attack.note.touch_ref);
-  assert(owner->enqueue_score_input(attack, original_input) ==
-         Result::Accepted);
+  const auto attack_admission =
+      owner->enqueue_score_input_admission(attack, original_input);
+  assert(attack_admission.result() == Result::Accepted &&
+         attack_admission.queue().queued());
+  assert(attack_admission.queue().operation().requested_sample == 37 &&
+         attack_admission.queue().operation().sample == 37 &&
+         attack_admission.queue().queue_cursor() == 0 &&
+         attack_admission.transport_epoch() == 1 &&
+         attack_admission.input_ref() == original_input);
   auto future = op(source, Kind::Parameter, 2, 48000);
   future.parameter = Parameter::MasterLinear;
   future.value = .2;
-  assert(owner->enqueue_score_input(future) == Result::Accepted);
+  const auto future_admission = owner->enqueue_score_input_admission(future);
+  assert(future_admission.result() == Result::Accepted &&
+         future_admission.queue().operation().requested_sample == 48000 &&
+         future_admission.queue().operation().sample == 48000 &&
+         future_admission.queue().operation().sequence == 2);
   std::array<float, 512> pcm{}, reopened_pcm{};
   assert(owner->offline_advance(pcm.data(), 128, 0));
   auto release = op(source, panic ? Kind::Panic : Kind::NoteOff, 3, 0);
   release.touch = attack.note.touch;
-  assert(owner->enqueue_score_input(release, panic ? Ref{} : original_input) ==
-         Result::Accepted);
+  const auto release_admission = owner->enqueue_score_input_admission(
+      release, panic ? Ref{} : original_input);
+  assert(release_admission.result() == Result::Accepted &&
+         release_admission.queue().queued());
+  const auto &queued_release = release_admission.queue().operation();
+  assert(queued_release.has_requested_sample &&
+         queued_release.requested_sample == 0 && queued_release.sample == 128 &&
+         queued_release.sequence == 3 && queued_release.late_admitted);
+  assert(release_admission.queue().queue_cursor() == 128 &&
+         release_admission.queue().queue_horizon() == 128 &&
+         release_admission.transport_epoch() == 1);
+  assert(release_admission.queue().source().identity == source.identity &&
+         release_admission.session_ref() == owner->session_ref());
+  auto pending = owner->stopped_checkpoint();
+  assert(pending->native_pair.audio.cursor == 128 &&
+         pending->native_pair.audio.applied_application_ordinal == 1);
+  const auto &release_ring = pending->native_pair.audio.releases;
+  assert(release_ring.write == release_ring.read + 1);
+  const auto &pending_release = release_ring.storage[release_ring.read % 64];
+  assert(
+      pending_release.sequence == 3 && pending_release.has_requested_sample &&
+      pending_release.requested_sample == 0 && pending_release.sample == 128);
+  auto pending_wire =
+      management_checkpoint_transport::checkpoint_wire(*pending);
+  auto admission_wire =
+      management_transport::score_admission(release_admission);
+  assert(checkpoint_transport::decimal(
+             packet::field(admission_wire.get(), "queue_cursor")) == 128);
+  if (!output_dir.empty()) {
+    const auto prefix = panic ? "panic" : "release";
+    write_json(output_dir / (std::string(prefix) + ".pending-checkpoint.json"),
+               pending_wire.get());
+    auto receipts = checkpoint_transport::array();
+    checkpoint_transport::append(
+        receipts.get(),
+        management_transport::score_admission(attack_admission).release());
+    checkpoint_transport::append(
+        receipts.get(),
+        management_transport::score_admission(future_admission).release());
+    checkpoint_transport::append(receipts.get(), admission_wire.release());
+    write_json(output_dir / (std::string(prefix) + ".score-admissions.json"),
+               receipts.get());
+  }
   assert(owner->offline_advance(pcm.data(), 128, 128));
   auto saved = owner->stopped_checkpoint();
   assert(saved->native_pair.audio.applied_application_ordinal == 2);
@@ -252,6 +305,9 @@ static void trailing_application_loss(const std::string &dir) {
   // missing fact even though all available history is internally contiguous.
 }
 int main(int argc, char **argv) {
+  std::cout << "sizeof(NativeQueueAdmission)=" << sizeof(NativeQueueAdmission)
+            << " sizeof(NativeScoreAdmission)=" << sizeof(NativeScoreAdmission)
+            << '\n';
   try {
     if (argc < 2 || argc > 3)
       throw std::invalid_argument(

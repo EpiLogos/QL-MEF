@@ -179,6 +179,23 @@ enum class Result : std::uint8_t {
   Unavailable,
   Exhausted
 };
+// Constructed only by the actual Engine admission. It is neither a
+// caller-carried operation nor a callback application receipt.
+class NativeQueueAdmission {
+  friend class Engine;
+  Result result_ = Result::Unavailable;
+  Operation operation_{};
+  Determination source_{};
+  std::uint64_t cursor_ = 0, horizon_ = 0;
+
+public:
+  Result result() const noexcept { return result_; }
+  bool queued() const noexcept { return result_ == Result::Accepted; }
+  const Operation &operation() const noexcept { return operation_; }
+  const Determination &source() const noexcept { return source_; }
+  std::uint64_t queue_cursor() const noexcept { return cursor_; }
+  std::uint64_t queue_horizon() const noexcept { return horizon_; }
+};
 struct Parameters {
   double force_newtons = 0.01, attack_seconds = 0.003, release_seconds = 0.05,
          cutoff_hertz = 18000, master_linear = 0.25, body_linear = 1,
@@ -1166,18 +1183,26 @@ public:
   // Single control owner only. Failed admission consumes no source sequence.
   // A full queue additionally requests safe all-notes-off out of band, so a
   // lost NoteOff can never leave a permanently sounding excitation.
-  Result enqueue(const Operation &op) noexcept {
+  NativeQueueAdmission enqueue_with_receipt(const Operation &op) noexcept {
+    NativeQueueAdmission receipt{};
     if (op.has_requested_sample || op.requested_sample ||
         op.native_clock.epoch || op.native_clock.anchor_ordinal ||
         op.native_clock.trigger_host_ticks ||
         op.native_clock.admitted_host_ticks ||
-        op.native_clock.mapping_uncertainty_samples)
-      return Result::Invalid;
-    return enqueue_impl(op, false);
+        op.native_clock.mapping_uncertainty_samples) {
+      receipt.result_ = Result::Invalid;
+      return receipt;
+    }
+    receipt.result_ = enqueue_impl(op, false, &receipt);
+    return receipt;
+  }
+  Result enqueue(const Operation &op) noexcept {
+    return enqueue_with_receipt(op).result();
   }
 
 private:
-  Result enqueue_impl(const Operation &op, bool native_gesture) noexcept {
+  Result enqueue_impl(const Operation &op, bool native_gesture,
+                      NativeQueueAdmission *receipt = nullptr) noexcept {
     if (activity_.load(std::memory_order_acquire) == 2)
       return Result::Unavailable;
     if (fault_.load(std::memory_order_acquire))
@@ -1275,6 +1300,12 @@ private:
       overflow_count_.fetch_add(1);
       emergency_.store(true, std::memory_order_release);
       return Result::Overflow;
+    }
+    if (receipt) {
+      receipt->operation_ = admitted;
+      receipt->source_ = source;
+      receipt->cursor_ = cursor;
+      receipt->horizon_ = horizon;
     }
     accepted_sequence_ = op.sequence;
     last_admission_sample_ = admitted.sample;

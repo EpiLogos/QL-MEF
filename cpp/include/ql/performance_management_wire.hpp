@@ -1,6 +1,7 @@
 #ifndef QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #define QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #include <ql/performance_offline_wire.hpp>
+#include <ql/performance_physical_routes.hpp>
 #include <ql/performance_source_packet.hpp>
 
 namespace ql::performance::management_transport {
@@ -111,6 +112,24 @@ inline Json devices(const std::vector<DeviceDescription> &list) {
               json_object_new_uint64(d.buffer_frames));
     wire::append(out.get(), value.release());
   }
+  return out;
+}
+inline Json score_admission(const NativeScoreAdmission &a) {
+  auto out = wire::object();
+  wire::text(out.get(), "schema", "ql.native-score-admission/v1");
+  wire::flag(out.get(), "queued", a.queue().queued());
+  wire::ref(out.get(), "session_ref", a.session_ref());
+  wire::u64(out.get(), "transport_epoch", a.transport_epoch());
+  wire::u64(out.get(), "queue_cursor", a.queue().queue_cursor());
+  wire::u64(out.get(), "queue_horizon", a.queue().queue_horizon());
+  if (valid_ref(a.input_ref()))
+    wire::ref(out.get(), "input_ref", a.input_ref());
+  else
+    null(out.get(), "input_ref");
+  wire::put(out.get(), "event",
+            wire::operation(a.queue().operation()).release());
+  wire::put(out.get(), "source",
+            wire::determination(a.queue().source()).release());
   return out;
 }
 inline Json key(const KeyboardCell &k) {
@@ -278,6 +297,7 @@ class Control {
   BodyStanding standing_{};
   unsigned transpose_ = 0;
   bool released_ = false;
+  std::size_t admitted_route_count_ = 0;
   static const char *result(Result r) {
     switch (r) {
     case Result::Accepted:
@@ -355,10 +375,28 @@ class Control {
                standing_.source_form ? "canonical-source-form-scalar-excitation"
                                      : "reference-metric-scalar-excitation");
     auto personal = wire::object();
-    wire::flag(personal.get(), "available", false);
-    wire::text(personal.get(), "reason",
-               "native N9 programme/route admission not installed in this "
-               "scalar management consumer");
+    const bool routes_admitted =
+        r.has_route_programs && admitted_route_count_ == 9;
+    wire::flag(personal.get(), "available", routes_admitted);
+    wire::text(personal.get(), "standing",
+               routes_admitted
+                   ? "native-current-source-nine-programmes-same-body"
+                   : "not-admitted");
+    wire::text(personal.get(), "admission",
+               routes_admitted && r.physical_routes.route_count == 9 &&
+                       r.physical_routes.end_sample == r.samples_elapsed
+                   ? "applied"
+               : routes_admitted ? "prepared"
+                                 : "unavailable");
+    wire::put(personal.get(), "route_count",
+              json_object_new_uint64(admitted_route_count_));
+    wire::flag(personal.get(), "suspended", r.routes_suspended);
+    if (routes_admitted)
+      null(personal.get(), "reason");
+    else
+      wire::text(personal.get(), "reason",
+                 "actual original native N9 programmes/projections not "
+                 "admitted for this receiving context");
     wire::put(roles.get(), "personal_nine_force_routes", personal.release());
     auto sky = wire::object();
     wire::flag(sky.get(), "available", false);
@@ -442,10 +480,25 @@ public:
     std::string reason;
     Json payload = wire::object();
     if (op == "prepare") {
-      wire::keys(request,
-                 {"schema", "operation", "session_ref", "packet",
-                  "actual_native_basis", "m1_pratibimba", "physical_pratibimba",
-                  "body_source", "current_source_packet"});
+      J *receiving = nullptr, *current_receiving = nullptr;
+      const bool has_receiving =
+          json_object_object_get_ex(request, "receiving_admission", &receiving);
+      const bool has_current_receiving = json_object_object_get_ex(
+          request, "current_receiving_admission", &current_receiving);
+      require(has_receiving == has_current_receiving,
+              "native receiving candidate/current pair incomplete");
+      if (has_receiving) {
+        wire::keys(request, {"schema", "operation", "session_ref", "packet",
+                             "actual_native_basis", "m1_pratibimba",
+                             "physical_pratibimba", "body_source",
+                             "current_source_packet", "receiving_admission",
+                             "current_receiving_admission"});
+      } else {
+        wire::keys(request, {"schema", "operation", "session_ref", "packet",
+                             "actual_native_basis", "m1_pratibimba",
+                             "physical_pratibimba", "body_source",
+                             "current_source_packet"});
+      }
       require(!owner_, "one native performance session already resides in this "
                        "retained worker");
       auto packet_value = packet::field(request, "packet");
@@ -488,12 +541,65 @@ public:
       } else
         require(kind == "referenceMetric" && !recipe && !generation,
                 "reference body cannot claim source form standing");
+      // The body is still stopped and unpublished here. Capture only its
+      // immutable preparation before any AudioUnit/consumer can own q/v.
+      const auto prepared = native.body->preparation();
+      std::shared_ptr<PhysicalRoutesPortBinding> routes;
+      NativeRouteProgramSet programs{};
+      if (has_receiving) {
+        require(receiving && current_receiving && !native.notes.empty(),
+                "current native receiving/M1 programme phase absent");
+        auto *operation = packet::field(current_receiving, "operation");
+        auto *sources = packet::field(operation, "sources");
+        require(json_object_is_type(sources, json_type_array) &&
+                    json_object_array_length(sources) <= 9,
+                "native receiving source bound differs");
+        std::vector<std::string> program_refs;
+        for (std::size_t i = 0; i < json_object_array_length(sources); ++i) {
+          const auto driver = packet::string(packet::field(
+              json_object_array_get_idx(sources, i), "driver_ref"));
+          program_refs.push_back(driver + "/m1-excitation-program");
+        }
+        auto admitted = std::make_shared<const AdmittedNativeReceivingSource>(
+            read_native_receiving_admission(
+                receiving, current_receiving, native,
+                packet::field(request, "actual_native_basis"), prepared,
+                program_refs, 0));
+        routes = std::make_shared<PhysicalRoutesPortBinding>(
+            native.body, admitted, prepared, native.determination,
+            packet::field(request, "actual_native_basis"),
+            packet::boolean(packet::field(request, "m1_pratibimba")), 0);
+        programs.manifest = routes->manifest();
+        programs.program_count = programs.manifest.route_count;
+        programs.scalar_note_enabled = programs.manifest.scalar_note_enabled;
+        programs.scalar_note_gain = programs.manifest.scalar_note_gain;
+        for (std::size_t i = 0; i < programs.program_count; ++i) {
+          auto &program = programs.programs[i];
+          program.handle = programs.manifest.programs[i];
+          program.phase_source_ref = programs.manifest.m1_coordinate;
+          program.sine = native.notes.front().phase_sin;
+          program.cosine = native.notes.front().phase_cos;
+        }
+        for (const auto &note : native.notes)
+          require(note.phase_sin == native.notes.front().phase_sin &&
+                      note.phase_cos == native.notes.front().phase_cos,
+                  "native M1 source quadrature differs across supplied source "
+                  "targets");
+      }
       auto next = std::make_unique<PerformanceManagement>(
           std::move(native), packet::ref(request, "session_ref"));
+      if (routes) {
+        const auto result = next->admit_distinct_receiving(
+            physical_routes_port(physical_port(next->native().body), routes),
+            programs, 0);
+        require(
+            result.result == Result::Accepted,
+            "actual source-qualified native receiving route install refused");
+      }
       owner_ = std::move(next);
+      admitted_route_count_ = routes ? programs.program_count : 0;
       standing_ = stamp;
       accepted = true;
-      const auto &prepared = owner_->native().body->preparation();
       auto descriptor = wire::object();
       wire::text(descriptor.get(), "schema",
                  "ql.native-physical-descriptor/v1");
@@ -630,9 +736,13 @@ public:
             (!input_ref || json_object_is_type(input_ref, json_type_null))
                 ? Ref{}
                 : reference(packet::string(input_ref).c_str());
-        const auto r = owner_->enqueue_score_input(operation, original_input);
-        accepted = r == Result::Accepted;
-        reason = result(r);
+        const auto admitted =
+            owner_->enqueue_score_input_admission(operation, original_input);
+        accepted = admitted.result() == Result::Accepted;
+        reason = result(admitted.result());
+        if (admitted.queue().queued())
+          wire::put(payload.get(), "score_admission",
+                    score_admission(admitted).release());
       } else if (op == "checkpoint") {
         auto saved = owner_->stopped_checkpoint();
         wire::put(
@@ -679,6 +789,8 @@ public:
         auto a = wire::object();
         wire::u64(a.get(), "sequence", admission.clock.sequence);
         wire::u64(a.get(), "sample", admission.clock.accepted_sample);
+        wire::u64(a.get(), "requested_sample",
+                  admission.clock.requested_sample);
         wire::u64(a.get(), "clock_epoch", admission.clock.epoch);
         wire::u64(a.get(), "anchor_ordinal", admission.clock.anchor_ordinal);
         wire::u64(a.get(), "trigger_host_ticks",

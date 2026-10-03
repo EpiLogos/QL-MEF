@@ -442,27 +442,11 @@ impl PerformanceOwner {
         }
         Ok(touches)
     }
-    fn initial_source_touch(&self) -> Result<KeyTouch, String> {
-        let cell = self
-            .cells
-            .iter()
-            .find(|c| c["available"] == true)
-            .ok_or("native source has no assigned playable key")?;
-        Ok(KeyTouch {
-            key: cell["key"].as_u64().ok_or("native source key absent")? as u8,
-            register: cell["register_octave"]
-                .as_i64()
-                .ok_or("native source register absent")? as i8,
-            member: 1,
-            touch: 1,
-            touch_ref: "native:performance/source-preparation-target".into(),
-        })
-    }
     fn packet(&self) -> Result<Value, String> {
         if let Some(source) = &self.sparse {
             let mut packet = serde_json::to_value(self.binding()).map_err(|e| e.to_string())?;
             packet["source_key_admission"] = source
-                .packet_for_touches(&[self.initial_source_touch()?])?["source_key_admission"]
+                .packet_for_touches(&self.available_source_preparation_touches()?)?["source_key_admission"]
                 .clone();
             Ok(packet)
         } else {
@@ -619,18 +603,61 @@ impl PerformanceOwner {
         current: &CoupledBasis,
         session: &mut CoupledFieldSession,
     ) -> Result<Value, String> {
+        self.activate_prepared(current, session, None)
+    }
+    /// Called only by the retained FieldHost's original receiving/context
+    /// owner under its actual lease. Source and consent bytes do not grant it.
+    pub fn activate_with_current_receiving(
+        &mut self,
+        current: &CoupledBasis,
+        session: &mut CoupledFieldSession,
+        source: &super::performance_receiving::NativePerformanceReceivingSource,
+    ) -> Result<Value, String> {
+        let admitted = source.admit_current(self, current, 0)?;
+        self.source_assets["receiving_source_inputs"] = admitted.source_inputs().clone();
+        self.source_assets["receiving_definition"] = admitted.definition().snapshot()?;
+        self.source_assets["current_receiving"] = admitted.snapshot()?;
+        self.activate_prepared(current, session, Some(&admitted))
+    }
+    fn activate_prepared(
+        &mut self,
+        current: &CoupledBasis,
+        session: &mut CoupledFieldSession,
+        receiving: Option<&super::performance_receiving::PreparedCurrentReceiving>,
+    ) -> Result<Value, String> {
         self.validate_current(current)?;
         let packet = self.packet()?;
-        let prepare = json!({"schema":CONTROL,"operation":"prepare","session_ref":self.config.session_ref,"packet":packet,"current_source_packet":packet,"actual_native_basis":self.binding.native_basis(),"m1_pratibimba":self.config.source_face==1,"physical_pratibimba":self.config.physical_face==1,"body_source":{"kind":"sourceForm","recipe_ref":self.config.recipe.provenance.reference,"validated_m3_generation":self.config.controls.expected_m3_generation.to_string()}});
+        let mut prepare = json!({"schema":CONTROL,"operation":"prepare","session_ref":self.config.session_ref,"packet":packet,"current_source_packet":packet,"actual_native_basis":self.binding.native_basis(),"m1_pratibimba":self.config.source_face==1,"physical_pratibimba":self.config.physical_face==1,"body_source":{"kind":"sourceForm","recipe_ref":self.config.recipe.provenance.reference,"validated_m3_generation":self.config.controls.expected_m3_generation.to_string()}});
+        if let Some(receiving) = receiving {
+            // Both fields are the private CURRENT native producer's output on
+            // this existing Rust->worker pipe. The UI has no raw packet route.
+            let current = receiving.admission().snapshot()?;
+            prepare["receiving_admission"] = current.clone();
+            prepare["current_receiving_admission"] = current;
+        }
         self.exchange(session, prepare)?;
         let mut catalog = self.raw("catalog")?;
         catalog["cells"] = json!(self.cells);
         catalog["transpose"] = json!(self.config.transpose);
         let reply = self.exchange(session, catalog)?;
+        self.source_assets["consumer_roles"] = reply["reading"]["consumer_roles"].clone();
         Ok(self.public_reply("performance-prepare", reply, None, None))
     }
     pub fn binding(&self) -> &PreparedPerformanceBinding {
         self.return_binding.as_ref().unwrap_or(&self.binding)
+    }
+    /// Existing K source targets and their complete original B condition
+    /// consumer, borrowed from this current owner for native score compilation.
+    /// Absence means the separately declared twelve-key policy, never fillers.
+    pub fn source_key_consumer<'a>(
+        &'a self,
+        current: &CoupledBasis,
+    ) -> Result<Option<(&'a SparseKeyTargets, SparseMusicalConsumer<'a>)>, String> {
+        self.validate_current(current)?;
+        self.sparse
+            .as_ref()
+            .map(|source| Ok((source.targets(), source.consumer(self.binding())?)))
+            .transpose()
     }
     pub fn native_packet(&self) -> Result<Value, String> {
         self.packet()
