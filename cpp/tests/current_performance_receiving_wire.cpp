@@ -110,10 +110,13 @@ struct Resident {
       auto *payload = packet::field(last.get(), "payload");
       J *chunk = nullptr;
       if (json_object_object_get_ex(payload, "chunk", &chunk)) {
-        J *result = nullptr;
-        if (json_object_object_get_ex(chunk, "result", &result))
-          wire::put(diagnostic.get(), "native_chunk_result",
-                    json_object_get(result));
+        for (const char *key :
+             {"result", "reason", "start_sample", "committed_cursor",
+              "state_committed", "capture_complete"}) {
+          J *value = nullptr;
+          if (json_object_object_get_ex(chunk, key, &value))
+            wire::put(diagnostic.get(), key, json_object_get(value));
+        }
       }
       wire::put(diagnostic.get(), "recording",
                 json_object_get(packet::field(last.get(), "recording")));
