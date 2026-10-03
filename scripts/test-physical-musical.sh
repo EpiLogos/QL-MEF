@@ -28,6 +28,11 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     TASK_RESEARCH_OUTPUT="$TASK_OUTPUT/research-mechanisms-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_research_nonce"
     QL_NATIVE_WIRE_TEST="$binary" QL_RESEARCH_EVIDENCE_DIR="$TASK_RESEARCH_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  elif [[ "$suite" == "receiving_restore_native_wire" ]]; then
+    v_restore_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_RESTORE_OUTPUT="$TASK_OUTPUT/receiving-restore-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_restore_nonce"
+    QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_RESTORE_EVIDENCE_DIR="$TASK_RESTORE_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored
   else
     QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
   fi

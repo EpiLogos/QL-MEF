@@ -325,18 +325,21 @@ static void emergency_hold_clears_long_release_and_steal_excitation() {
   auto r = render(f, 128, &capture);
   assert(r.active_voices == max_voices && r.active_tails > 0 && r.stolen == 1 &&
          energy(f) > 0);
-  auto parameter = operation(f.d, Kind::Parameter, 27, 1024);
-  parameter.parameter = Parameter::MasterLinear;
-  parameter.value = .73;
-  assert(f.engine->enqueue(parameter) == Result::Accepted);
   auto next = f.d;
   ++next.identity.m2_generation;
   ++next.identity.m1_revision;
   for (auto &hz : next.audio_octet_hz)
     hz *= 1.125;
-  auto determination = operation(f.d, Kind::Determination, 28, 384);
+  auto determination = operation(f.d, Kind::Determination, 27, 384);
   determination.determination = next;
   assert(f.engine->enqueue(determination) == Result::Accepted);
+  // Admit the source transition first so the owner's actual future-source
+  // schedule qualifies this later parameter at its intended sample. Hold
+  // never grants an old-source operation permission to cross the transition.
+  auto parameter = operation(next, Kind::Parameter, 28, 1024);
+  parameter.parameter = Parameter::MasterLinear;
+  parameter.value = .73;
+  assert(f.engine->enqueue(parameter) == Result::Accepted);
   assert(f.engine->enqueue(note_on(next, 29, 1024, target(next, 29, 29))) ==
          Result::Accepted);
   const auto request = f.engine->request_panic();

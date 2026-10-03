@@ -18,6 +18,66 @@ use ql_mef::nara_performance_receiving::*;
 use ql_mef::performance_audio::PreparedPerformanceBinding;
 use ql_mef::physical_body::{PhysicalProvenance, PhysicalStanding, SpatialProjection};
 use serde_json::{Value, json};
+fn preserve_native_restore_evidence(input: &[u8], result: &std::process::Output) {
+    use std::io::Write;
+    let Some(path) = std::env::var_os("QL_RECEIVING_RESTORE_EVIDENCE_DIR") else {
+        return;
+    };
+    let root = std::path::Path::new(&path);
+    std::fs::create_dir(root).expect("fresh native receiving restore evidence directory");
+    for (name, bytes, limit) in [
+        ("producer-input.json", input, 16 * 1024 * 1024),
+        (
+            "native-stdout.json",
+            result.stdout.as_slice(),
+            32 * 1024 * 1024,
+        ),
+        (
+            "native-stderr.txt",
+            result.stderr.as_slice(),
+            4 * 1024 * 1024,
+        ),
+    ] {
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(root.join(name))
+            .unwrap();
+        file.write_all(&bytes[..bytes.len().min(limit)]).unwrap();
+        file.sync_all().unwrap();
+        if bytes.len() > limit {
+            let mut marker = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(root.join(format!("{name}.truncated.json")))
+                .unwrap();
+            write!(
+                marker,
+                "{}",
+                json!({"complete":false,"actual_bytes":bytes.len(),"retained_prefix_bytes":limit})
+            )
+            .unwrap();
+        }
+    }
+    let mut exit = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(root.join("native-exit.json"))
+        .unwrap();
+    write!(
+        exit,
+        "{}",
+        json!({"success":result.status.success(),"code":result.status.code()})
+    )
+    .unwrap();
+    exit.sync_all().unwrap();
+    assert!(
+        input.len() <= 16 * 1024 * 1024
+            && result.stdout.len() <= 32 * 1024 * 1024
+            && result.stderr.len() <= 4 * 1024 * 1024,
+        "native receiving restore evidence exceeded bounded custody; incomplete prefix marked explicitly"
+    );
+}
 fn reference(s: &str) -> Reference {
     Reference {
         reference: s.into(),
@@ -254,6 +314,7 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         .unwrap();
     child.stdin.take().unwrap().write_all(&bytes).unwrap();
     let output = child.wait_with_output().unwrap();
+    preserve_native_restore_evidence(&bytes, &output);
     assert!(
         output.status.success(),
         "{}\n{}",
