@@ -17,7 +17,10 @@ static std::string file(const std::string &path) {
     throw std::invalid_argument("actual producer fixture absent");
   in.seekg(0, std::ios::end);
   const auto size = in.tellg();
-  if (size < 1 || size > 4 * 1024 * 1024)
+  // Full activated source evidence has its own existing 16MiB native control
+  // transport bound. This test reader does not alter packet, Document, Act,
+  // encoded page, data-file or runtime budgets.
+  if (size < 1 || size > 16 * 1024 * 1024)
     throw std::invalid_argument("fixture size refused");
   std::string out(std::size_t(size), '\0');
   in.seekg(0);
@@ -54,9 +57,47 @@ static NativePerformance native(const std::string &dir) {
   return prepare_performance_packet(file(dir + "/baseline.packet.json"),
                                     basis.get(), true, true);
 }
-static auto manager(const std::string &dir) {
+static auto manager(const std::string &dir, json_object *activated) {
+  if (!activated)
+    return std::make_unique<PerformanceManagement>(
+        native(dir), reference("expression:managed-order/session"));
+  using namespace ql::physical_wire;
+  auto text_of = [](json_object *value) {
+    if (!value || json_object_get_type(value) != json_type_string)
+      throw std::invalid_argument("activated native string absent");
+    return std::string(json_object_get_string(value));
+  };
+  if (text_of(field(activated, "schema")) !=
+      "ql.retained-source-performance-fixture/v1")
+    throw std::invalid_argument(
+        "actual activated source fixture schema differs");
+  auto *assets = field(activated, "source_assets");
+  auto *basis = field(activated, "native_basis");
+  auto *packet = field(activated, "native_preparation");
+  auto *receiving = field(assets, "current_receiving");
+  auto *payload_private =
+      field(field(receiving, "source_payload_context"), "private");
+  if (!json_object_is_type(payload_private, json_type_boolean) ||
+      !json_object_equal(
+          field(field(receiving, "native_admission"), "native_basis"), basis) ||
+      !json_object_equal(field(assets, "native_basis"), basis))
+    throw std::invalid_argument(
+        "actual source payload context/full native basis differs");
+  if (text_of(field(field(assets, "source_context"), "availability")) !=
+          "available" ||
+      text_of(field(field(field(receiving, "source_context"), "context"),
+                    "kind")) != "world" ||
+      json_object_get_boolean(
+          field(field(receiving, "source_payload_context"), "private")))
+    throw std::invalid_argument(
+        "full workload requires actual activated public World source");
+  // The genuine native parser replays the complete SourceForm preparation and
+  // actual basis. It cannot relabel the old two-node Reference preparation.
+  const auto text = std::string(
+      json_object_to_json_string_ext(packet, JSON_C_TO_STRING_PLAIN));
   return std::make_unique<PerformanceManagement>(
-      native(dir), reference("expression:managed-order/session"));
+      prepare_performance_packet(text, basis, true, true),
+      reference("expression:retained-source-workload/session"));
 }
 static void write_json(const std::filesystem::path &path, json_object *value) {
   if (std::filesystem::exists(path))
@@ -111,18 +152,24 @@ static auto artifacts(const std::vector<NativeGestureApplication> &applications,
 // claim.
 int main(int argc, char **argv) {
   try {
-    if (argc != 3)
+    if (argc != 3 && argc != 4)
       throw std::invalid_argument(
           "usage: performance_retained_workload_packet-test "
-          "ACTUAL_NATIVE_DIRECTORY NEW_OUTPUT_DIRECTORY");
+          "ACTUAL_NATIVE_DIRECTORY NEW_OUTPUT_DIRECTORY "
+          "[ACTUAL_ACTIVATED_WORLD_SOURCE]");
     const std::filesystem::path output(argv[2]);
     if (std::filesystem::exists(output) ||
         !std::filesystem::create_directory(output))
       throw std::invalid_argument("workload destination must be new");
-    auto owner = manager(argv[1]);
+    ql::physical_wire::Json activated{nullptr, json_object_put};
+    if (argc == 4)
+      activated = parse(file(argv[3]));
+    auto owner = manager(argv[1], activated.get());
     const auto source = owner->native().determination;
     const auto target = owner->native().notes.at(4);
     const std::uint64_t rate = 48000, interval = 5 * rate;
+    if (owner->stopped_checkpoint()->native_pair.physical.sample_rate != rate)
+      throw std::invalid_argument("full workload actual body rate differs");
     std::uint64_t sequence = 0, committed = 0, journal_ordinal = 0;
     std::array<float, 128> pcm{};
     auto manifest = checkpoint_transport::object();
@@ -141,6 +188,16 @@ int main(int argc, char **argv) {
                               "automation_last_sample_in_interval", 94700);
     checkpoint_transport::u64(manifest.get(),
                               "release_first_sample_in_interval", 40000);
+    if (activated) {
+      checkpoint_transport::text(manifest.get(), "source_performance",
+                                 "source-performance.json");
+      write_json(output / "source-performance.json", activated.get());
+      auto initial = owner->stopped_checkpoint();
+      auto wire = management_checkpoint_transport::checkpoint_wire(*initial);
+      write_json(output / "initial.checkpoint.json", wire.get());
+      checkpoint_transport::text(manifest.get(), "initial_checkpoint",
+                                 "initial.checkpoint.json");
+    }
     auto parts = checkpoint_transport::array();
     for (std::uint64_t block = 0; block < 180; ++block) {
       const auto base = block * interval;
@@ -287,7 +344,11 @@ int main(int argc, char **argv) {
     if (sequence != 45000 || committed != 45000)
       throw std::runtime_error("full workload was truncated");
     checkpoint_transport::put(manifest.get(), "editions", parts.release());
-    auto basis = parse(file(std::string(argv[1]) + "/baseline.basis.json"));
+    auto basis =
+        activated
+            ? ql::physical_wire::own(json_object_get(
+                  ql::physical_wire::field(activated.get(), "native_basis")))
+            : parse(file(std::string(argv[1]) + "/baseline.basis.json"));
     write_json(output / "basis.json", basis.get());
     write_json(output / "manifest.json", manifest.get());
     std::cout

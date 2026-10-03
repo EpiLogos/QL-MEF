@@ -89,6 +89,38 @@ struct Resident {
   }
   void apply(J *request) {
     last = control.execute(request);
+    if (!packet::boolean(packet::field(last.get(), "accepted"))) {
+      // Controlled native floor diagnostics only: no original identity/natal,
+      // protected occasion, complete source assets or PCM is printed here.
+      auto diagnostic = wire::object();
+      wire::text(diagnostic.get(), "schema",
+                 "ql.current-receiving-test-refusal/v1");
+      wire::text(diagnostic.get(), "operation",
+                 packet::string(packet::field(request, "operation")));
+      wire::put(diagnostic.get(), "reason",
+                json_object_get(packet::field(last.get(), "reason")));
+      auto *reading = packet::field(last.get(), "reading");
+      for (const char *key :
+           {"samples_elapsed", "accepted_sequence", "transport_epoch",
+            "active_voices", "active_touches", "recording_available"}) {
+        J *value = nullptr;
+        if (json_object_object_get_ex(reading, key, &value))
+          wire::put(diagnostic.get(), key, json_object_get(value));
+      }
+      auto *payload = packet::field(last.get(), "payload");
+      J *chunk = nullptr;
+      if (json_object_object_get_ex(payload, "chunk", &chunk)) {
+        J *result = nullptr;
+        if (json_object_object_get_ex(chunk, "result", &result))
+          wire::put(diagnostic.get(), "native_chunk_result",
+                    json_object_get(result));
+      }
+      wire::put(diagnostic.get(), "recording",
+                json_object_get(packet::field(last.get(), "recording")));
+      std::cerr << json_object_to_json_string_ext(diagnostic.get(),
+                                                  JSON_C_TO_STRING_PLAIN)
+                << '\n';
+    }
     require(packet::boolean(packet::field(last.get(), "accepted")),
             "actual native worker operation refused");
   }
@@ -177,6 +209,14 @@ struct Resident {
     auto *chunk = packet::field(packet::field(last.get(), "payload"), "chunk");
     require(packet::string(packet::field(chunk, "result")) == "accepted",
             "actual captured callback output refused");
+    auto *same_callback = packet::field(last.get(), "reading");
+    require(json_object_equal(packet::field(same_callback, "samples_elapsed"),
+                              packet::field(chunk, "committed_cursor")) &&
+                json_object_equal(
+                    packet::field(packet::field(same_callback, "physical"),
+                                  "samples_elapsed"),
+                    packet::field(chunk, "committed_cursor")),
+            "offline management lost actual callback audio/body readback");
     auto *pcm = packet::field(chunk, "interleaved_f32");
     packet::array(pcm, frames);
     std::vector<double> out;

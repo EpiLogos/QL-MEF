@@ -730,8 +730,18 @@ public:
       out->reason = "offline scope differs from resident retained session";
       return out;
     }
-    return render_native_offline_chunk(*native_.engine, native_.body, scope,
-                                       output, frames);
+    auto chunk = render_native_offline_chunk(*native_.engine, native_.body,
+                                             scope, output, frames);
+    // The offline consumer already removed the actual callback's readback
+    // from the Engine ring to qualify captured PCM. Publish THAT same copied
+    // body/cursor/application high-water to management; do not wait for a
+    // nonexistent second readback or reconstruct/integrate the physical state.
+    if (chunk->result == Result::Accepted && chunk->state_committed &&
+        chunk->capture_complete) {
+      latest_ = chunk->reading;
+      has_latest_ = true;
+    }
+    return chunk;
   }
   std::unique_ptr<ManagementCheckpoint> stopped_checkpoint() {
     auto guard = native_.engine->acquire_stopped_custody();
