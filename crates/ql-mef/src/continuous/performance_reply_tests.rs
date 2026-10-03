@@ -122,7 +122,10 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
     for reply in &replies[1..] {
         assert!(resident.validate_reply(reply).is_err());
     }
-    assert_eq!(
+    // A genuine physical pose change preserves the entire native M1 carrier
+    // and changes its coupled MEF determination, including tuning and nodes.
+    assert_eq!(rotated.m1, current.m1);
+    assert_ne!(
         other_pose.binding().determination(),
         resident.binding().determination()
     );
