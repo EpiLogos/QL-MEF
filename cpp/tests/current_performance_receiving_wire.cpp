@@ -7,6 +7,7 @@ using namespace ql::performance;
 namespace wire = checkpoint_transport;
 using Json = wire::Json;
 using J = json_object;
+using ql::require;
 static Json copy(J *value) {
   return ql::physical_wire::parse_native(
       json_object_to_json_string_ext(value, JSON_C_TO_STRING_PLAIN));
@@ -14,7 +15,7 @@ static Json copy(J *value) {
 struct Resident {
   management_transport::Control control;
   J *fixture;
-  Json last;
+  Json last{nullptr, json_object_put};
   explicit Resident(J *source) : fixture(source) {
     auto request = wire::object();
     auto *p = packet::field(source, "native_preparation");
@@ -193,7 +194,7 @@ int main() {
       require(bytes.size() <= 16 * 1024 * 1024,
               "native receiving fixture exceeds bound");
     }
-    auto root = ql::physical_wire::parse_native(bytes);
+    auto root = ql::physical_wire::parse_native(bytes.c_str());
     require(packet::string(packet::field(root.get(), "schema")) ==
                 "ql.current-native-receiving-worker-fixture/v1",
             "actual native producer fixture required");
