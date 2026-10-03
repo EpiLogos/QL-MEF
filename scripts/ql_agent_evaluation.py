@@ -9,8 +9,10 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import resource
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -75,12 +77,40 @@ def load_suite(path, expected_digest):
 
 def invoke(argv, document, timeout):
     started = time.monotonic()
-    completed = subprocess.run(argv, input=c.canonical(document), capture_output=True, timeout=timeout)
+    def interrupted(signum, _frame):
+        raise SystemExit(128 + signum)
+
+    handlers = {signum: signal.getsignal(signum) for signum in (signal.SIGTERM, signal.SIGINT)}
+    for signum in handlers:
+        signal.signal(signum, interrupted)
+    process = None
+    try:
+        process = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, start_new_session=True)
+        stdout, stderr = process.communicate(input=c.canonical(document), timeout=timeout)
+    except BaseException:
+        if process is not None:
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            try:
+                process.communicate(timeout=3)
+            except subprocess.TimeoutExpired:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                process.communicate()
+        raise
+    finally:
+        for signum, handler in handlers.items():
+            signal.signal(signum, handler)
     elapsed = time.monotonic() - started
-    if completed.returncode:
-        raise RuntimeError(f"{argv[0]} exited {completed.returncode}: " +
-                           completed.stderr.decode("utf-8", errors="replace")[:4096])
-    return decode(completed.stdout), elapsed
+    if process.returncode:
+        raise RuntimeError(f"{argv[0]} exited {process.returncode}: " +
+                           stderr.decode("utf-8", errors="replace")[:4096])
+    return decode(stdout), elapsed
 
 
 def check_projection(projection):

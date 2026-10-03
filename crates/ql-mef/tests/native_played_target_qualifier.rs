@@ -99,3 +99,95 @@ fn declared_architectural_target_uses_existing_resolver_for_arbitrary_register()
         note
     );
 }
+
+#[test]
+fn complete_native_note_accepts_equal_f64_bits_with_different_decimal_spelling() {
+    let (current, config) = source::config(true);
+    let owner = PerformanceOwner::prepare(&current, "native:played/source-owner", config).unwrap();
+    let note = sparse_note(&owner, &current, -1, 77);
+    let mut wire = note.clone();
+    for field in ["hertz", "fundamental_hz", "phase_cos", "phase_sin"] {
+        let expected = note[field].as_f64().unwrap();
+        wire[field] = serde_json::from_str(&format!("{expected:.17e}")).unwrap();
+        assert_eq!(wire[field].as_f64().unwrap().to_bits(), expected.to_bits());
+        assert_ne!(wire[field].to_string(), note[field].to_string());
+    }
+    assert_ne!(wire, note);
+    // These are the exact two native JSON spellings observed in hosted run45.
+    let left: Value = serde_json::from_str("0.86602540378443915").unwrap();
+    let right: Value = serde_json::from_str("0.8660254037844392").unwrap();
+    assert_ne!(left, right);
+    assert_eq!(left.as_f64().unwrap().to_bits(), 0x3febb67ae8584caf);
+    assert_eq!(
+        left.as_f64().unwrap().to_bits(),
+        right.as_f64().unwrap().to_bits()
+    );
+    assert_eq!(
+        owner.qualify_recorded_note(&current, &wire, &note).unwrap(),
+        note
+    );
+    assert_eq!(
+        owner.qualify_recorded_note(&current, &note, &wire).unwrap(),
+        note
+    );
+}
+
+#[test]
+fn native_note_next_ulp_missing_wrong_type_or_field_set_never_qualifies() {
+    let (current, config) = source::config(true);
+    let owner = PerformanceOwner::prepare(&current, "native:played/source-owner", config).unwrap();
+    let note = sparse_note(&owner, &current, -1, 78);
+    for field in ["hertz", "fundamental_hz", "phase_cos", "phase_sin"] {
+        let original = note[field].as_f64().unwrap();
+        let mut wrong = note.clone();
+        wrong[field] = json!(f64::from_bits(original.to_bits() + 1));
+        assert!(
+            owner
+                .qualify_recorded_note(&current, &wrong, &wrong)
+                .is_err(),
+            "{field} next ULP"
+        );
+        assert!(
+            owner
+                .qualify_recorded_note(&current, &wrong, &note)
+                .is_err(),
+            "{field} journal mismatch"
+        );
+        wrong = note.clone();
+        wrong.as_object_mut().unwrap().remove(field);
+        assert!(
+            owner
+                .qualify_recorded_note(&current, &wrong, &wrong)
+                .is_err(),
+            "{field} missing"
+        );
+        for value in [Value::Null, json!(original.to_string()), json!(true)] {
+            wrong = note.clone();
+            wrong[field] = value;
+            assert!(
+                owner
+                    .qualify_recorded_note(&current, &wrong, &wrong)
+                    .is_err(),
+                "{field} wrong type"
+            );
+        }
+    }
+    let mut extra = note.clone();
+    extra["new_source_authority"] = json!(true);
+    assert!(
+        owner
+            .qualify_recorded_note(&current, &extra, &extra)
+            .is_err()
+    );
+    let mut replaced = note.clone();
+    replaced
+        .as_object_mut()
+        .unwrap()
+        .remove("source_coordinate");
+    replaced["renamed_source_coordinate"] = note["source_coordinate"].clone();
+    assert!(
+        owner
+            .qualify_recorded_note(&current, &replaced, &replaced)
+            .is_err()
+    );
+}

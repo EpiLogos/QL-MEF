@@ -11,6 +11,66 @@ fn bounded(value: &str) -> Result<(), String> {
     }
     Ok(())
 }
+/// Compare complete native NoteTarget wires against a separately produced
+/// target. JSON decimal spelling is not a floating-point state: the four
+/// native f64 fields must have identical finite IEEE-754 bits. Every other
+/// field and the complete closed field set remain exact. This numerical
+/// comparison grants no source, currentness, input-journal or Act authority.
+pub fn qualify_native_note_wire(expected: &Value, actual: &Value) -> Result<(), String> {
+    const FLOATS: [&str; 4] = ["hertz", "fundamental_hz", "phase_cos", "phase_sin"];
+    const FIELDS: [&str; 19] = [
+        "identity",
+        "source_coordinate",
+        "source_face",
+        "tuning_ref",
+        "member",
+        "touch",
+        "touch_ref",
+        "key",
+        "position",
+        "coordinate_face",
+        "register_octave",
+        "pitch_class",
+        "fundamental_hz",
+        "hertz",
+        "ratio_numerator",
+        "ratio_denominator",
+        "exact_ratio",
+        "phase_cos",
+        "phase_sin",
+    ];
+    let expected = expected
+        .as_object()
+        .ok_or("native note target object absent")?;
+    let actual = actual
+        .as_object()
+        .ok_or("native note target object absent")?;
+    if expected.len() != FIELDS.len() || actual.len() != FIELDS.len() {
+        return Err("native note target field set differs".into());
+    }
+    for field in FIELDS {
+        let left = expected
+            .get(field)
+            .ok_or("native note target field absent")?;
+        let right = actual.get(field).ok_or("native note target field absent")?;
+        if FLOATS.contains(&field) {
+            let left = left
+                .as_f64()
+                .filter(|v| v.is_finite())
+                .ok_or("native note finite f64 absent")?;
+            let right = right
+                .as_f64()
+                .filter(|v| v.is_finite())
+                .ok_or("native note finite f64 absent")?;
+            if left.to_bits() != right.to_bits() {
+                return Err(format!("native note {field} bits differ"));
+            }
+        } else if left != right {
+            return Err(format!("native note {field} differs"));
+        }
+    }
+    Ok(())
+}
 /// Resolves each independent touch through the SAME retained K/M1/M2 binding.
 /// The serial host allocates member/touch tokens and retains the current lease.
 /// Source currentness and scope are checked before this helper is entered.

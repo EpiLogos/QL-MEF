@@ -23,6 +23,11 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     QL_NATIVE_WIRE_TEST="$binary" QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
       QL_CURRENT_RECEIVING_ARTIFACT_OUTPUT="$TASK_RECEIVING_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  elif [[ "$suite" == "performance_research_native_wire" ]]; then
+    v_research_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_RESEARCH_OUTPUT="$TASK_OUTPUT/research-mechanisms-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_research_nonce"
+    QL_NATIVE_WIRE_TEST="$binary" QL_RESEARCH_EVIDENCE_DIR="$TASK_RESEARCH_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored
   else
     QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
   fi

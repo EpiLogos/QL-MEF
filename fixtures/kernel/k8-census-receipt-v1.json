@@ -1,16 +1,16 @@
 {
   "schema": "ql.k8-current-inventory-receipt/v1",
-  "inventory_sha256": "266551f3d3f2ba8a6fb1bc9ad98489126fd91df309dfafe8c344379f6336d0f3",
+  "inventory_sha256": "cbb5f3b1bce3907b5f63a004cb86c6ff615653d19138adc5859c5faa3a6164f0",
   "registry_revision": "a8fa3d70db87efcfa2e0ff8ffa90f309c64b6a192a36abe19adeee10882e9825",
   "inherited_ledger_revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
   "inherited_ledger_sha256": "cea0ff2565dca9dff0c439614c431ebe0cd3b0814b923d2766fad685010fbfef",
-  "constructs": 3325,
+  "constructs": 3326,
   "inherited_unresolved": 886,
-  "reviewed_K8_constructs": 1699,
+  "reviewed_K8_constructs": 1700,
   "linked_K8_public_exports": 75,
+  "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate",
   "reviewed_K8_rust_modules": 137,
   "reviewed_K8_cpp_modules": 36,
   "reviewed_K8_javascript_modules": 4,
-  "reviewed_K8_python_modules": 7,
-  "standing": "current source and linked inventory; no inherited proof retargeted; runtime parity is separate"
+  "reviewed_K8_python_modules": 9
 }

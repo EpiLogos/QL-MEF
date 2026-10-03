@@ -691,7 +691,12 @@ impl PerformanceOwner {
         original_press_target: &Value,
     ) -> Result<Value, String> {
         self.validate_current(current)?;
-        if played_note != original_press_target {
+        if crate::performance_management::qualify_native_note_wire(
+            original_press_target,
+            played_note,
+        )
+        .is_err()
+        {
             return Err("played native note lost its exact original input target".into());
         }
         let counter = |name: &str| -> Result<u64, String> {
@@ -723,7 +728,7 @@ impl PerformanceOwner {
                 .to_owned(),
         };
         let actual = self.native_note_target(current, touch)?;
-        if actual != *played_note {
+        if crate::performance_management::qualify_native_note_wire(&actual, played_note).is_err() {
             return Err(
                 "played native note differs from the current K/B/source/phase target".into(),
             );

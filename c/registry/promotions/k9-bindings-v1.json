@@ -1045,7 +1045,9 @@
       "kind": "computational",
       "rationale": "Current immutable native M1/K/M2/P binding resolves exact independent touch and six-row, two-family, three-copy Janko catalog; no alternate pitch theory or body advance. Sparse source collections require explicit subsequent K availability, not inferred twelve-pitch closure.",
       "tests": [
-        "crates/ql-mef/tests/performance_management.rs"
+        "crates/ql-mef/tests/performance_management.rs",
+        "crates/ql-mef/tests/native_played_target_qualifier.rs",
+        "crates/ql-mef/tests/performance_research_native_wire.rs"
       ]
     },
     {
@@ -1154,7 +1156,8 @@
       "kind": "computational",
       "rationale": "Public CLI JSON transport invokes the same native event projector/admitter. Actual process tests exercise supplied source, wrong face and stale response; this transport supplies no independent semantics, model, body or scheduler.",
       "tests": [
-        "crates/ql-cli/tests/agent_event_native.rs"
+        "crates/ql-cli/tests/agent_event_native.rs",
+        "crates/ql-cli/tests/agent_corpus_native.rs"
       ]
     },
     {
@@ -1188,7 +1191,8 @@
       "kind": "computational",
       "rationale": "Explicit frozen evaluation invokes the actual native CLI and optional caller-selected provider process with an evidence allow-list. Exact family split, input/source/binary digest, failure record and measured available metrics are retained; no training, provider election, body acceptance or absent metric is invented.",
       "tests": [
-        "scripts/tests/test_ql_agent_evaluation.py"
+        "scripts/tests/test_ql_agent_evaluation.py",
+        "scripts/tests/test_ql_agent_aikit.py"
       ]
     },
     {
@@ -1658,6 +1662,29 @@
       "tests": [
         "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
         "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_aikit.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Explicit source-pinned QL decision transport translates the actual native eligible heads through existing AIKit decision execution and retains original provider receipts. Native QL alone admits candidates; packed ambiguity/thresholds and owned client cancellation create no QL table, model, body, source authority or blocking hook.",
+      "tests": [
+        "scripts/tests/test_ql_agent_aikit.py"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_corpus.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded deterministic structural corpus invokes the actual public QL projector, derives labels, overlap, completion and harmonics from native receipts, retains source/executable digests and exact counterfactual refusals, and keeps reversed/ambiguous traversals held out. It provides no classifier, learned labels, native execution acceptance or second QL arithmetic.",
+      "tests": [
+        "scripts/tests/test_ql_agent_corpus.py",
+        "crates/ql-cli/tests/agent_corpus_native.rs"
       ]
     }
   ]

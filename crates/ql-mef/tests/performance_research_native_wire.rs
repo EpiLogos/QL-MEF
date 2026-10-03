@@ -8,10 +8,61 @@ use ql_mef::musical_performance_return::{ReturnContext, ReturnReference, bind_pe
 use ql_mef::nara_performance_receiving::{
     ContextKind, ReceivingContext, ReceivingPreparation, Reference, prepare_native_receiving,
 };
+use ql_mef::performance_management::qualify_native_note_wire;
 use ql_mef::performance_source_context::{
     NativePublicSourceOwnership, prepare_native_source_context,
 };
 use serde_json::{Value, json};
+
+fn preserve_native_evidence(input: &[u8], result: &std::process::Output) {
+    use std::io::Write;
+    let Some(path) = std::env::var_os("QL_RESEARCH_EVIDENCE_DIR") else {
+        return;
+    };
+    let root = std::path::Path::new(&path);
+    // The floor supplies a fresh UUID destination. Existing evidence is never
+    // overwritten; exact controlled producer input and child output precede
+    // every postvalidation assertion, including status and JSON parsing.
+    std::fs::create_dir(root).expect("fresh native research evidence directory");
+    let write = |name: &str, bytes: &[u8], limit: usize| {
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(root.join(name))
+            .unwrap();
+        file.write_all(&bytes[..bytes.len().min(limit)]).unwrap();
+        file.sync_all().unwrap();
+        if bytes.len() > limit {
+            let mut overflow = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(root.join(format!("{name}.truncated.json")))
+                .unwrap();
+            write!(
+                overflow,
+                "{}",
+                json!({"complete":false,"actual_bytes":bytes.len(),"retained_prefix_bytes":limit})
+            )
+            .unwrap();
+        }
+    };
+    write("producer-input.json", input, 16 * 1024 * 1024);
+    write("native-stdout.json", &result.stdout, 32 * 1024 * 1024);
+    write("native-stderr.txt", &result.stderr, 4 * 1024 * 1024);
+    write(
+        "native-exit.json",
+        json!({"success":result.status.success(),"code":result.status.code()})
+            .to_string()
+            .as_bytes(),
+        4096,
+    );
+    assert!(
+        input.len() <= 16 * 1024 * 1024
+            && result.stdout.len() <= 32 * 1024 * 1024
+            && result.stderr.len() <= 4 * 1024 * 1024,
+        "native research evidence exceeded declared bound; explicit truncated custody retained"
+    );
+}
 fn source_packet(changed: bool) -> Value {
     let (mut basis, mut config) = source::config(true);
     config.use_native_m1_harmonic_ratio = false;
@@ -113,6 +164,7 @@ fn actual_source_to_force_body_pickup_receiving_and_continuation_measurements() 
         .unwrap();
     child.stdin.take().unwrap().write_all(&bytes).unwrap();
     let result = child.wait_with_output().unwrap();
+    preserve_native_evidence(&bytes, &result);
     assert!(
         result.status.success(),
         "{}\n{}",
@@ -212,10 +264,11 @@ fn actual_source_to_force_body_pickup_receiving_and_continuation_measurements() 
     }
     assert_eq!(applications[0]["operation"], "note_on");
     assert_eq!(applications[0]["value"], 0.8);
-    assert_eq!(
-        applications[0]["note"],
-        packet["baseline"]["native_preparation"]["notes"][0]
-    );
+    qualify_native_note_wire(
+        &packet["baseline"]["native_preparation"]["notes"][0],
+        &applications[0]["note"],
+    )
+    .expect("complete native source target with exact f64 bits");
     assert_eq!(applications[1]["operation"], "parameter");
     assert_eq!(applications[1]["value"], 0.73);
     assert_eq!(applications[1]["note"], Value::Null);
@@ -223,7 +276,8 @@ fn actual_source_to_force_body_pickup_receiving_and_continuation_measurements() 
         assert_eq!(history["ordinal"], (index + 1).to_string());
         assert_eq!(history["native_sequence"], "1");
         assert_eq!(history["input_ref"], "research:retained/original-touch");
-        assert_eq!(history["target"], applications[0]["note"]);
+        qualify_native_note_wire(&applications[0]["note"], &history["target"])
+            .expect("complete original input target with exact f64 bits");
     }
     assert_eq!(journal[0]["change"], 0);
     assert_eq!(journal[1]["change"], 2);
