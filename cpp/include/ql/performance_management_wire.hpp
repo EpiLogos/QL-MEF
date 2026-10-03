@@ -759,7 +759,8 @@ public:
             packet::string(packet::field(chunk.get(), "result")) == "accepted";
         // This is the actual stopped A/P callback verdict. An unavailable
         // output device is unrelated to this operation and cannot explain it.
-        reason = packet::string(packet::field(chunk.get(), "reason"));
+        if (!accepted)
+          reason = packet::string(packet::field(chunk.get(), "reason"));
         wire::put(payload.get(), "chunk", chunk.release());
       } else if (op == "restore") {
         auto saved = management_checkpoint_transport::read_checkpoint_wire(
