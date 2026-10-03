@@ -172,7 +172,9 @@ impl FieldHost {
                 || actual["original_checkpoint_wire"] != original_checkpoint_wire
                 || actual["current_receiving"] != prepared.snapshot()?
                 || actual["current_source_packet"] != owner.native_packet()?
-                || actual["actual_native_basis"] != *owner.binding().native_basis()
+                || actual["actual_native_basis"]
+                    != serde_json::to_value(owner.binding().native_basis())
+                        .map_err(|e| e.to_string())?
                 || actual["transport_ack"] != pulse["payload"]["transport_ack"]
             {
                 return Err("complete actual receiving readmission/source evidence differs".into());
