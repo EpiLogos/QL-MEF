@@ -101,6 +101,99 @@ static auto artifacts(const std::vector<NativeGestureApplication> &applications,
   put(output.get(), "input_history", journal.release());
   return output;
 }
+// A second actual owner reopens the genuine pending snapshot. The original
+// un-restored overtaking trial below remains unchanged; no epoch is relabelled.
+static void pending_restore_trial(const std::string &dir, bool panic,
+                                  const ManagementCheckpoint &saved,
+                                  const std::filesystem::path &output_dir) {
+  using namespace checkpoint_transport;
+  auto owner = manager(dir);
+  auto before = owner->stopped_checkpoint();
+  assert(before->native_pair.audio.cursor == 0);
+  TransportAcknowledgement ack{};
+  assert(owner->stopped_restore(
+      saved, 0, reference("native:restore/pending-order"),
+      reference("native:checkpoint/pending-order"), ack));
+  auto after = owner->stopped_checkpoint();
+  assert(saved.transport_epoch == 1 && before->transport_epoch == 1 &&
+         after->transport_epoch == 2 && ack.previous_epoch == 1 &&
+         ack.epoch == 2 && ack.previous_cursor == 0 &&
+         ack.target_sample == 128 && ack.accepted_sequence == 3);
+  assert(after->native_pair.audio.cursor == 128 &&
+         after->native_pair.audio.applied_application_ordinal == 1);
+  auto original = management_checkpoint_transport::checkpoint_wire(saved);
+  auto preceding = management_checkpoint_transport::checkpoint_wire(*before);
+  auto current = management_checkpoint_transport::checkpoint_wire(*after);
+  for (const char *key :
+       {"native_pair", "inputs", "input_history", "recording_failed",
+        "release_pending", "panic_applied", "release_request",
+        "release_sequence", "release_proof_cursor"})
+    assert(json_object_equal(packet::field(original.get(), key),
+                             packet::field(current.get(), key)));
+  if (!output_dir.empty()) {
+    auto proof = object();
+    put(proof.get(), "saved", json_object_get(original.get()));
+    put(proof.get(), "before", json_object_get(preceding.get()));
+    put(proof.get(), "after", json_object_get(current.get()));
+    auto acknowledgement = object();
+    u64(acknowledgement.get(), "previous_epoch", ack.previous_epoch);
+    u64(acknowledgement.get(), "epoch", ack.epoch);
+    u64(acknowledgement.get(), "previous_cursor", ack.previous_cursor);
+    u64(acknowledgement.get(), "previous_sequence", ack.previous_sequence);
+    u64(acknowledgement.get(), "target_sample", ack.target_sample);
+    u64(acknowledgement.get(), "accepted_sequence", ack.accepted_sequence);
+    ref(acknowledgement.get(), "transaction_ref", ack.transaction);
+    ref(acknowledgement.get(), "checkpoint_ref", ack.checkpoint);
+    put(proof.get(), "transport_ack", acknowledgement.release());
+    // No observer pulse has run after restore. The checkpoint contains every
+    // original unread application/history entry exactly; neither is dropped.
+    put(proof.get(), "restored_applications", array().release());
+    put(proof.get(), "restored_input_history", array().release());
+    const std::string prefix = panic ? "panic" : "release";
+    write_json(output_dir / (prefix + ".restore.json"), proof.get());
+  }
+  std::vector<NativeGestureApplication> applications;
+  std::vector<InputBindingRecord> history;
+  auto first = owner->pulse();
+  append_pulse(*first, applications, history);
+  std::array<float, 512> pcm{};
+  while (owner->native().engine->samples_elapsed() < 48128) {
+    const auto cursor = owner->native().engine->samples_elapsed();
+    const auto frames =
+        std::size_t(std::min<std::uint64_t>(512, 48128 - cursor));
+    assert(owner->offline_advance(pcm.data(), frames, cursor));
+    auto pulse = owner->pulse();
+    append_pulse(*pulse, applications, history);
+    assert(pulse->recording.failure == RecordingFailure::None &&
+           pulse->recording.dropped_applications == 0);
+  }
+  assert(applications.size() == 3);
+  assert(applications[0].sequence == 1 && applications[1].sequence == 3 &&
+         applications[2].sequence == 2);
+  assert(applications[1].has_requested_sample &&
+         applications[1].requested_sample == 0 &&
+         applications[1].admitted_sample == 128 &&
+         applications[1].applied_sample == 128);
+  assert(applications[2].requested_sample == 48000 &&
+         applications[2].admitted_sample == 48000 &&
+         applications[2].applied_sample == 48000);
+  for (std::size_t i = 0; i < applications.size(); ++i)
+    assert(applications[i].applied &&
+           applications[i].applied_application_ordinal == i + 1);
+  assert(owner->transport_epoch() == 2 && owner->recording_available());
+  if (!output_dir.empty()) {
+    const std::string prefix = panic ? "panic" : "release";
+    auto records = artifacts(applications, history);
+    write_json(output_dir / (prefix + ".restored-history.json"), records.get());
+    auto final = owner->stopped_checkpoint();
+    assert(final->transport_epoch == 2 &&
+           final->native_pair.audio.cursor == 48128 &&
+           final->native_pair.audio.applied_application_ordinal == 3);
+    auto final_wire = management_checkpoint_transport::checkpoint_wire(*final);
+    write_json(output_dir / (prefix + ".restored-checkpoint.json"),
+               final_wire.get());
+  }
+}
 static void managed_trial(const std::string &dir, bool panic,
                           const std::filesystem::path &output_dir) {
   auto owner = manager(dir);
@@ -119,6 +212,24 @@ static void managed_trial(const std::string &dir, bool panic,
          attack_admission.queue().queue_cursor() == 0 &&
          attack_admission.transport_epoch() == 1 &&
          attack_admission.input_ref() == original_input);
+  if (!output_dir.empty()) {
+    // Actual original reservation BEFORE ID1 is applied. No C-authored
+    // operation/checkpoint is reconstructed from later callback history.
+    auto original_queued = owner->stopped_checkpoint();
+    assert(original_queued->transport_epoch == 1 &&
+           original_queued->native_pair.audio.cursor == 0 &&
+           original_queued->native_pair.audio.accepted_sequence == 1 &&
+           original_queued->native_pair.audio.applied_application_ordinal == 0);
+    const std::string prefix = panic ? "panic" : "release";
+    auto original_wire =
+        management_checkpoint_transport::checkpoint_wire(*original_queued);
+    write_json(output_dir / (prefix + ".original-queued-checkpoint.json"),
+               original_wire.get());
+    auto admitted_wire =
+        management_transport::score_admission(attack_admission);
+    write_json(output_dir / (prefix + ".original-score-admission.json"),
+               admitted_wire.get());
+  }
   auto future = op(source, Kind::Parameter, 2, 48000);
   future.parameter = Parameter::MasterLinear;
   future.value = .2;
@@ -174,6 +285,7 @@ static void managed_trial(const std::string &dir, bool panic,
     write_json(output_dir / (std::string(prefix) + ".score-admissions.json"),
                receipts.get());
   }
+  pending_restore_trial(dir, panic, *pending, output_dir);
   assert(owner->offline_advance(pcm.data(), 128, 128));
   auto saved = owner->stopped_checkpoint();
   assert(saved->native_pair.audio.applied_application_ordinal == 2);

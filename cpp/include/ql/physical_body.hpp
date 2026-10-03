@@ -496,6 +496,9 @@ class PhysicalBody {
   std::array<float, physical_max_frames> scratch_audio_{};
   std::uint64_t elapsed_ = 0;
   double last_ = 0;
+  // Same stopped/callback custody as q/v. Diagnostic only: never serialized
+  // as numerical state, and fixed literals require no callback allocation.
+  const char *advance_refusal_ = nullptr;
   bool admissible(const std::vector<double> &q,
                   const std::vector<double> &v) const noexcept {
     // Triangle bound guarantees every nodal displacement is inside the
@@ -518,6 +521,7 @@ class PhysicalBody {
   bool advance_projected_force_block(Projection projected_force,
                                      float *pickup_linear,
                                      std::size_t frames) noexcept {
+    advance_refusal_ = nullptr;
     std::copy(q_.begin(), q_.end(), scratch_q_.begin());
     std::copy(v_.begin(), v_.end(), scratch_v_.begin());
     for (std::size_t i = 0; i < frames; ++i) {
@@ -525,16 +529,25 @@ class PhysicalBody {
       for (std::size_t m = 0; m < q_.size(); ++m) {
         const auto &a = prepared_.step_[m];
         const double force = projected_force(m, i, prepared_.excitation_[m]);
-        if (!std::isfinite(force))
+        if (!std::isfinite(force)) {
+          advance_refusal_ = "native physical projected force is not finite";
           return false;
+        }
         const double q = scratch_q_[m], v = scratch_v_[m];
         scratch_q_[m] = a.a11 * q + a.a12 * v + a.bq * force;
         scratch_v_[m] = a.a21 * q + a.a22 * v + a.bv * force;
         pickup += scratch_q_[m] * prepared_.pickup_[m];
       }
-      if (!admissible(scratch_q_, scratch_v_) || !std::isfinite(pickup) ||
-          std::abs(pickup) > std::numeric_limits<float>::max())
+      if (!admissible(scratch_q_, scratch_v_)) {
+        advance_refusal_ =
+            "native physical modal state exceeds finite/displacement limits";
         return false;
+      }
+      if (!std::isfinite(pickup) ||
+          std::abs(pickup) > std::numeric_limits<float>::max()) {
+        advance_refusal_ = "native physical pickup exceeds finite float range";
+        return false;
+      }
       scratch_audio_[i] = static_cast<float>(pickup);
     }
     q_.swap(scratch_q_);
@@ -554,6 +567,10 @@ public:
     scratch_v_ = q_;
   }
   const PreparedPhysicalBody &preparation() const noexcept { return prepared_; }
+  const char *advance_refusal_reason() const noexcept {
+    return advance_refusal_;
+  }
+  void clear_advance_refusal() noexcept { advance_refusal_ = nullptr; }
   std::uint64_t body_revision() const noexcept {
     return prepared_.input_.body_revision;
   }
@@ -568,19 +585,26 @@ public:
                            std::size_t frames,
                            std::uint64_t expected_body_revision,
                            std::uint64_t start_sample) noexcept {
+    advance_refusal_ = nullptr;
     if (!force_newtons || !pickup_linear || frames == 0 ||
         frames > physical_max_frames ||
         expected_body_revision != body_revision() || start_sample != elapsed_ ||
-        elapsed_ > std::numeric_limits<std::uint64_t>::max() - frames)
+        elapsed_ > std::numeric_limits<std::uint64_t>::max() - frames) {
+      advance_refusal_ = "native physical buffer/body/cursor admission differs";
       return false;
+    }
     for (std::size_t i = 0; i < frames; ++i)
       if (!std::isfinite(force_newtons[i]) ||
-          std::abs(force_newtons[i]) > prepared_.input_.max_force_newtons)
+          std::abs(force_newtons[i]) > prepared_.input_.max_force_newtons) {
+        advance_refusal_ =
+            "native physical scalar force exceeds finite Newton bound";
         return false;
+      }
     return advance_projected_force_block(
         [&](std::size_t, std::size_t sample, double excitation) noexcept {
           return force_newtons[sample] * excitation;
-        }, pickup_linear, frames);
+        },
+        pickup_linear, frames);
   }
   bool apply_impulse_newton_seconds(double impulse, std::uint64_t revision,
                                     std::uint64_t sample) noexcept {

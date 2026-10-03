@@ -461,11 +461,15 @@ static void callback_refusal_is_atomic_and_allocation_free() {
     check();
   };
   reject(blocks, 9, 2, 512);
+  assert(std::strcmp(body.advance_refusal_reason(),
+                     "native physical route buffer/body/source/cursor admission differs") == 0);
   reject(blocks, 9, 1, 511);
   reject(blocks, 8, 1, 512);
   auto bad = blocks;
   ++bad[0].preparation_seal;
   reject(bad, 9, 1, 512);
+  assert(std::strcmp(body.advance_refusal_reason(),
+                     "native physical route block/seal/gain differs") == 0);
   auto recalibrated = inputs;
   for (auto &route : recalibrated)
     route.calibration_revision = "2";
@@ -488,6 +492,8 @@ static void callback_refusal_is_atomic_and_allocation_free() {
   reject(bad, 9, 1, 512);
   force.back() = std::numeric_limits<double>::infinity();
   reject(blocks, 9, 1, 512);
+  assert(std::strcmp(body.advance_refusal_reason(),
+                     "native physical independent route exceeds finite Newton bound") == 0);
   force.back() = .51;
   reject(blocks, 9, 1, 512);
   force.fill(.01);
@@ -500,6 +506,8 @@ static void callback_refusal_is_atomic_and_allocation_free() {
   scalar.fill(10);
   assert(!routes.advance_force_block(body, {scalar.data(), 1, true}, blocks.data(),
                                      9, unchanged.data(), 512, 1, 512, &receipt));
+  assert(std::strcmp(body.advance_refusal_reason(),
+                     "native physical summed routes exceed finite Newton bound") == 0);
   check();
   auto changed = two_axes();
   changed.material.density_kg_per_m3 *= 4;
@@ -520,6 +528,8 @@ static void callback_refusal_is_atomic_and_allocation_free() {
   assert(!bounded.advance_force_block(limited, {}, bounded_blocks.data(), 9,
                                       unchanged.data(), 512, 1, 0));
   assert(limited.samples_elapsed() == 0 && limited.mechanical_energy_joules() == 0);
+  assert(std::strcmp(limited.advance_refusal_reason(),
+                     "native physical modal state exceeds finite/displacement limits") == 0);
   check();
 }
 static void partitions_and_checkpoint_preserve_one_native_cursor() {

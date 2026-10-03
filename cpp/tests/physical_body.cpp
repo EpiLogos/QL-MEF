@@ -184,12 +184,16 @@ static void force_blocks_refuse_atomically() {
       assert(x == 123);
   };
   assert(!body.advance_force_block(force.data(), output.data(), 4, 2, cursor));
+  assert(std::string(body.advance_refusal_reason()) ==
+         "native physical buffer/body/cursor admission differs");
   check();
   assert(
       !body.advance_force_block(force.data(), output.data(), 4, 1, cursor - 1));
   check();
   force[3] = std::numeric_limits<double>::quiet_NaN();
   assert(!body.advance_force_block(force.data(), output.data(), 4, 1, cursor));
+  assert(std::string(body.advance_refusal_reason()) ==
+         "native physical scalar force exceeds finite Newton bound");
   check();
   force[3] = 100;
   assert(!body.advance_force_block(force.data(), output.data(), 4, 1, cursor));
@@ -204,10 +208,15 @@ static void force_blocks_refuse_atomically() {
   PhysicalBody bounded{PreparedPhysicalBody(tiny)};
   force.fill(1);
   assert(!bounded.advance_force_block(force.data(), output.data(), 4, 1, 0));
+  assert(std::string(bounded.advance_refusal_reason()) ==
+         "native physical modal state exceeds finite/displacement limits");
   assert(bounded.samples_elapsed() == 0 &&
          bounded.mechanical_energy_joules() == 0);
   for (float x : output)
     assert(x == 123);
+  force.fill(0);
+  assert(bounded.advance_force_block(force.data(), output.data(), 4, 1, 0));
+  assert(!bounded.advance_refusal_reason());
 }
 static void material_update_preserves_resident_geometry_state_and_time() {
   auto in = bar();

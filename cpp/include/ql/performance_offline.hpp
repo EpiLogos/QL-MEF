@@ -57,6 +57,7 @@ inline std::unique_ptr<NativeOfflineRenderChunk> render_native_offline_chunk(
          ++i) {
     }
     engine.enable_capture(true);
+    body->clear_advance_refusal();
   }
   result->start_sample = scope.expected_cursor;
   result->frames = unsigned(frames);
@@ -64,7 +65,8 @@ inline std::unique_ptr<NativeOfflineRenderChunk> render_native_offline_chunk(
     result->committed_cursor = engine.samples_elapsed();
     result->state_committed = result->committed_cursor != scope.expected_cursor;
     result->reason =
-        body->samples_elapsed() == scope.expected_cursor
+        body->advance_refusal_reason() ? body->advance_refusal_reason()
+        : body->samples_elapsed() == scope.expected_cursor
             ? "actual native A/P callback refused before physical commit"
             : "actual native A/P callback refused after physical commit";
     return result;
