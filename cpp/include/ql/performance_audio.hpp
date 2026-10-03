@@ -14,6 +14,7 @@
 #include <limits>
 #include <memory>
 #include <ql/m_tree_live.h>
+#include <ql/performance_receiving_port.hpp>
 #include <ql/performance_route_programs.hpp>
 #include <ql/physical_snapshot.hpp>
 #include <stdexcept>
@@ -224,6 +225,8 @@ struct Readback {
   Identity identity{};
   Determination determination{};
   ql::PhysicalSnapshot physical{};
+  bool has_receiving = false;
+  NativeReceivingReadback receiving{};
   std::uint64_t samples_elapsed = 0, body_revision = 0, last_sequence = 0,
                 last_applied_application_ordinal = 0, refused = 0, late = 0,
                 overflows = 0, stolen = 0, dropped_readbacks = 0,
@@ -270,7 +273,9 @@ struct Capture {
   std::uint64_t start_sample = 0, body_revision = 0;
   std::uint32_t frames = 0;
   std::array<double, max_frames> force_newtons{};
-  std::array<float, max_frames> pickup_linear{}, output_linear{};
+  std::array<float, max_frames> pickup_linear{}, received_linear{},
+      output_linear{};
+  bool has_receiving = false;
   std::size_t route_count = 0;
   std::array<std::array<double, max_frames>,
              ql::physical_max_personal_force_routes>
@@ -411,6 +416,9 @@ public:
     RecordingStatus recording{};
     bool has_route_programs = false;
     NativeRouteProgramSet route_programs{};
+    // Wire-presence custody keeps original no-receiving v2 literal shape.
+    bool has_receiving = false, receiving_encoding_present = false;
+    NativeReceivingCheckpoint receiving{};
     Parameters source{}, effective{};
     std::uint64_t cursor = 0, accepted_sequence = 0, accepted_sample = 0,
                   applied_sequence = 0, applied_application_ordinal = 0,
@@ -508,6 +516,8 @@ private:
   std::size_t source_schedule_size_ = 1;
   unsigned rate_;
   PhysicalPort body_{};
+  ReceivingPort receiving_{};
+  bool receiving_encoding_present_ = false;
   std::uint64_t combined_control_revision_ = 0, stopped_custody_nonce_ = 0;
   bool has_route_programs_ = false;
   NativeRouteProgramSet route_programs_{};
@@ -540,6 +550,26 @@ private:
       recording_failure_sample_.store(sample, std::memory_order_relaxed);
       recording_failure_.store(std::uint8_t(reason), std::memory_order_release);
     }
+  }
+  static bool
+  receiving_matches_snapshot(const NativeReceivingManifest &m,
+                             const ql::PhysicalSnapshot &p) noexcept {
+    return valid_receiving_manifest(m) && m.sample_rate == p.sample_rate &&
+           m.body_revision == p.body_revision &&
+           m.source_generation == p.source_generation &&
+           m.pratibimba == p.pratibimba && m.event == p.event_ref &&
+           m.subject == p.subject_ref && m.preparation == p.preparation_ref &&
+           m.state == p.state_ref &&
+           m.source_coordinate == p.source_coordinate &&
+           m.source_revision == p.source_revision &&
+           m.eigenbasis == p.eigenbasis_identity;
+  }
+  bool complete_receiving_port(const ReceivingPort &p) const noexcept {
+    return p.owner && p.body_owner == body_.owner && p.manifest &&
+           p.custody.get() == p.owner && p.preflight && p.process && p.cursor &&
+           p.observe && p.write_checkpoint && p.validate_checkpoint &&
+           p.restore_checkpoint && valid_receiving_manifest(*p.manifest) &&
+           p.manifest->sample_rate == rate_;
   }
   bool stage_application(const NativeGestureApplication &value) noexcept {
     if (block_application_count_ == block_applications_.size()) {
@@ -1357,6 +1387,41 @@ public:
   std::uint64_t last_admitted_sample() const noexcept {
     return last_admission_sample_;
   }
+  // Actual private source/context owner qualifies the immutable preparation
+  // before first installation. Replacement needs the prepared retained-history
+  // transaction; it cannot restart a transport through this method.
+  // This stopped numerical seam verifies its full copied
+  // source against the sole P owner; a matching JSON manifest is not a grant.
+  bool install_receiving_port(ReceivingPort port, const StoppedCustody &guard,
+                              std::uint64_t expected_cursor) noexcept {
+    if (guard.owner_ != this || activity_.load() != 2 ||
+        device_running_.load() || cursor_ != expected_cursor ||
+        receiving_.owner || !complete_receiving_port(port) ||
+        combined_control_revision_ ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        port.cursor(port.owner) != cursor_)
+      return false;
+    ql::PhysicalSnapshot physical{};
+    if (!body_.observe(body_.owner, physical, determination_.body_revision,
+                       cursor_) ||
+        !receiving_matches_snapshot(*port.manifest, physical) ||
+        cursor_ < port.manifest->origin_sample ||
+        cursor_ >= port.manifest->end_sample)
+      return false;
+    receiving_ = std::move(port); // Retired resources released on control only.
+    receiving_encoding_present_ = true;
+    ++combined_control_revision_;
+    return true;
+  }
+  bool has_receiving_port() const noexcept { return bool(receiving_.owner); }
+  bool write_stopped_receiving_readback(
+      NativeReceivingReadback &out, const StoppedCustody &guard,
+      std::uint64_t expected_cursor) const noexcept {
+    return guard.owner_ == this && activity_.load() == 2 &&
+           !device_running_.load() && cursor_ == expected_cursor &&
+           receiving_.owner && complete_receiving_port(receiving_) &&
+           receiving_.observe(receiving_.owner, out, expected_cursor);
+  }
   bool install_routes_port(PhysicalPort port, const NativeRouteProgramSet &set,
                            const StoppedCustody &guard,
                            std::uint64_t expected_cursor) noexcept {
@@ -1497,8 +1562,8 @@ public:
       const Determination &after, const PhysicalPort &port,
       const StoppedCustody &guard) const noexcept {
     return guard.owner_ == this && activity_.load() == 2 &&
-           !device_running_.load() && source_schedule_size_ == 1 &&
-           valid_determination(after) &&
+           !device_running_.load() && !receiving_.owner &&
+           source_schedule_size_ == 1 && valid_determination(after) &&
            same_lineage(after.identity, determination_.identity) &&
            after.identity.m1_revision >= determination_.identity.m1_revision &&
            after.identity.m2_generation >=
@@ -1677,6 +1742,14 @@ public:
     cp.recording = recording_status();
     cp.has_route_programs = has_route_programs_;
     cp.route_programs = route_programs_;
+    cp.has_receiving = bool(receiving_.owner);
+    cp.receiving_encoding_present = receiving_encoding_present_;
+    if (cp.has_receiving) {
+      if (!receiving_.write_checkpoint(receiving_.owner, cp.receiving, cursor_))
+        throw std::logic_error(
+            "paired native receiving checkpoint custody refused");
+    } else
+      cp.receiving = {};
     cp.source = source_;
     cp.effective = effective_;
     cp.cursor = cursor_;
@@ -1719,6 +1792,19 @@ private:
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
         cp.version != 2 || cp.sample_rate != rate_ ||
+        cp.has_receiving != bool(receiving_.owner) ||
+        (cp.has_receiving && !cp.receiving_encoding_present) ||
+        (cp.has_receiving &&
+         (!complete_receiving_port(receiving_) ||
+          cp.receiving.samples_elapsed != cp.cursor ||
+          !receiving_.validate_checkpoint(receiving_.owner, cp.receiving,
+                                          expected_cursor) ||
+          cp.receiving.manifest.body_revision !=
+              cp.determination.body_revision ||
+          std::strcmp(cp.receiving.manifest.preparation.data(),
+                      port.preparation.data()) != 0 ||
+          std::strcmp(cp.receiving.manifest.state.data(), port.state.data()) !=
+              0)) ||
         cp.has_route_programs != bool(port.route_manifest) ||
         (cp.has_route_programs &&
          !valid_route_programs(cp.route_programs, port, cp.determination)) ||
@@ -2038,6 +2124,9 @@ private:
     has_route_programs_ = cp.has_route_programs;
     route_programs_ = cp.route_programs;
     prepare_route_steps();
+    receiving_encoding_present_ = cp.receiving_encoding_present;
+    if (cp.has_receiving)
+      receiving_.restore_checkpoint(receiving_.owner, cp.receiving);
     ++combined_control_revision_;
     cursor_ = cp.cursor;
     accepted_sequence_ = cp.accepted_sequence;
@@ -2271,6 +2360,12 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
+    if (receiving_.owner &&
+        (!complete_receiving_port(receiving_) ||
+         !receiving_.preflight(receiving_.owner, frames, cursor_))) {
+      fault_.store(true, std::memory_order_release);
+      return false;
+    }
     published_horizon_.store(cursor_ + frames, std::memory_order_release);
     block_application_count_ = 0;
     Capture capture{};
@@ -2496,6 +2591,22 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
+    capture.has_receiving = bool(receiving_.owner);
+    if (capture.has_receiving) {
+      if (!receiving_.process(receiving_.owner, capture.pickup_linear.data(),
+                              capture.received_linear.data(), frames,
+                              cursor_)) {
+        // P did commit. Never claim a refused transported/output block is a
+        // complete audio commit, or roll back its real q/v with a second clock.
+        cursor_ += frames;
+        published_cursor_.store(cursor_, std::memory_order_release);
+        clear();
+        fault_.store(true, std::memory_order_release);
+        return false;
+      }
+    } else
+      std::copy_n(capture.pickup_linear.data(), frames,
+                  capture.received_linear.data());
     cursor_ += frames;
     published_cursor_.store(cursor_, std::memory_order_release);
     ql::PhysicalSnapshot physical{};
@@ -2530,12 +2641,23 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
+    NativeReceivingReadback receiving_readback{};
+    if (capture.has_receiving &&
+        (!receiving_.observe(receiving_.owner, receiving_readback, cursor_) ||
+         !receiving_matches_snapshot(receiving_readback.manifest, physical) ||
+         !same_receiving_manifest(receiving_readback.manifest,
+                                  *receiving_.manifest) ||
+         receiving_readback.samples_elapsed != cursor_)) {
+      clear();
+      fault_.store(true, std::memory_order_release);
+      return false;
+    }
     double peak = 0, power = 0;
     for (std::size_t i = 0; i < frames; ++i) {
       const double monitor =
           force_scale[i] > 0 ? capture.force_newtons[i] / force_scale[i] : 0;
       const double raw =
-          body_gain[i] * capture.pickup_linear[i] + monitor_gain[i] * monitor;
+          body_gain[i] * capture.received_linear[i] + monitor_gain[i] * monitor;
       if (!std::isfinite(raw)) {
         fault_.store(true, std::memory_order_release);
         clear();
@@ -2608,6 +2730,8 @@ public:
     receipt.identity = determination_.identity;
     receipt.determination = determination_;
     receipt.physical = physical;
+    receipt.has_receiving = capture.has_receiving;
+    receipt.receiving = receiving_readback;
     receipt.scalar_force_budget_newtons =
         has_route_programs_ ? route_scalar_budget(route_programs_.manifest)
                             : body_.max_force_newtons;

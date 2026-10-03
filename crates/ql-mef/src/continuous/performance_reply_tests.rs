@@ -49,19 +49,36 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         .operations
         .push(crate::m3_state::M3Operation::AdvanceClock { steps: 1 });
     let pose = pose.compose().unwrap();
+    let other_clock =
+        PerformanceOwner::prepare(&pose, "expression:retained/current", config.clone()).unwrap();
+    // AdvanceClock changes genuine source time but can leave the current pose
+    // and numerical body unchanged. Separately exercise an actual SetPose.
+    let mut rotated = current.input.clone();
+    let pose_index = current.m3["form"]["pose"].as_u64().unwrap();
+    let pose_count = current.m3["form"]["state_count"].as_u64().unwrap();
+    assert!(pose_count > 1);
+    let next_pose = u8::try_from((pose_index + 1) % pose_count).unwrap();
+    rotated
+        .m3_commands
+        .last_mut()
+        .unwrap()
+        .operations
+        .push(crate::m3_state::M3Operation::SetPose { pose: next_pose });
+    let rotated = rotated.compose().unwrap();
     let other_pose =
-        PerformanceOwner::prepare(&pose, "expression:retained/current", config).unwrap();
+        PerformanceOwner::prepare(&rotated, "expression:retained/current", config).unwrap();
     let owners = [
         &resident,
         &other_body,
         &other_face,
         &other_generation,
+        &other_clock,
         &other_pose,
     ];
 
     let binary =
         std::env::var("QL_NATIVE_SOURCE_REPLY_TEST").expect("actual native reply driver required");
-    let mut replies = Vec::with_capacity(5);
+    let mut replies = Vec::with_capacity(6);
     for (index, owner) in owners.iter().enumerate() {
         let input = json!({"schema":"ql.source-reply-detecting-input/v1","case_index":index,"case":wire(owner)});
         let bytes = serde_json::to_vec(&input).unwrap();
@@ -94,8 +111,9 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         assert_eq!(actual.len(), 1);
         replies.push(actual[0].clone());
     }
-    assert_eq!(replies.len(), 5);
-    // Every alternative is an actual valid independently prepared source/body.
+    assert_eq!(replies.len(), 6);
+    // All five original cases and the additional real pose are independently
+    // valid complete native preparations; their source differences must refuse.
     // Rejecting it below is current resident identity, never malformed JSON.
     for (owner, reply) in owners.iter().zip(&replies) {
         owner.validate_reply(reply).unwrap();
@@ -108,9 +126,21 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         other_pose.binding().determination(),
         resident.binding().determination()
     );
-    assert_ne!(
+    assert_eq!(
         replies[4]["reading"]["physical"]["eigenbasis_identity"],
         replies[0]["reading"]["physical"]["eigenbasis_identity"]
+    );
+    assert_ne!(
+        replies[4]["payload"]["body_descriptor"]["physical_preparation"]["clock"],
+        replies[0]["payload"]["body_descriptor"]["physical_preparation"]["clock"]
+    );
+    assert_ne!(
+        replies[5]["reading"]["physical"]["eigenbasis_identity"],
+        replies[0]["reading"]["physical"]["eigenbasis_identity"]
+    );
+    assert_ne!(
+        replies[5]["payload"]["body_descriptor"]["physical_preparation"]["request"]["geometry"],
+        replies[0]["payload"]["body_descriptor"]["physical_preparation"]["request"]["geometry"]
     );
 }
 

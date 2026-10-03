@@ -50,6 +50,7 @@ pub mod musical_performance_source_score;
 pub mod nara;
 pub mod performance_audio;
 pub mod performance_management;
+pub mod performance_observer;
 pub mod performance_receiving_admission;
 pub mod performance_source_context;
 pub mod performance_source_keys;

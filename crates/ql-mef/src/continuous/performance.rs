@@ -652,7 +652,11 @@ impl PerformanceOwner {
                     return Err("native transport changed without exact acknowledgement".into());
                 }
             }
-        } else {
+        }
+        // A valid independently prepared body can share the exact eigenbasis
+        // while its original M3 clock differs. EVERY prepare must retain the
+        // complete current source descriptor, even after the resident is known.
+        if self.last.is_none() || reply["operation"] == "prepare" {
             let descriptor = &reply["payload"]["body_descriptor"];
             if reply["operation"] != "prepare"
                 || reply["accepted"] != true

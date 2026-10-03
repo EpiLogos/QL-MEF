@@ -180,6 +180,10 @@ class PerformanceManagement {
     if (!ql::write_physical_snapshot(*native_.body, next.physical,
                                      next.body_revision, next.samples_elapsed))
       return false;
+    next.has_receiving = cp->has_receiving;
+    if (next.has_receiving && !native_.engine->write_stopped_receiving_readback(
+                                  next.receiving, guard, next.samples_elapsed))
+      return false;
     latest_ = next;
     has_latest_ = true;
     return true;

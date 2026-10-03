@@ -3,6 +3,7 @@
 #include <ql/performance_offline_wire.hpp>
 #include <ql/performance_physical_routes.hpp>
 #include <ql/performance_receiving_restore.hpp>
+#include <ql/performance_receiving_wire.hpp>
 #include <ql/performance_source_packet.hpp>
 
 namespace ql::performance::management_transport {
@@ -455,6 +456,12 @@ class Control {
     wire::put(out.get(), "devices", devices(devices_).release());
     wire::put(out.get(), "device", device(pulse.device).release());
     wire::put(out.get(), "physical", physical(r.physical).release());
+    if (r.has_receiving) {
+      require(r.receiving.samples_elapsed == r.samples_elapsed,
+              "receiving copied observation detached from native body cursor");
+      wire::put(out.get(), "receiving_transport",
+                receiving_transport::readback(r.receiving).release());
+    }
     wire::put(out.get(), "active_voices",
               json_object_new_uint64(r.active_voices));
     wire::put(out.get(), "active_touches",

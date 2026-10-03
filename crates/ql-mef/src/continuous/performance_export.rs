@@ -749,64 +749,13 @@ impl NativeActRenderer<'_> {
             .iter()
             .flat_map(|r| r["input_history"].as_array().into_iter().flatten().cloned())
             .collect();
-        let mut original = saved.clone();
-        let mut actual = checkpoint.clone();
-        original
-            .as_object_mut()
-            .ok_or("original management checkpoint absent")?
-            .remove("transport_epoch");
-        actual
-            .as_object_mut()
-            .ok_or("restored management checkpoint absent")?
-            .remove("transport_epoch");
-        for (path, drained) in [
-            ("/native_pair/audio/applications", &apps),
-            ("/input_history", &journal),
-        ] {
-            let entries = format!("{path}/entries");
-            let read = format!("{path}/read");
-            let mut received = drained.clone();
-            received.extend(
-                list(
-                    actual
-                        .pointer(&entries)
-                        .ok_or("restored native observer queue absent")?,
-                )?
-                .iter()
-                .cloned(),
-            );
-            if original.pointer(&entries) != Some(&json!(received)) {
-                return Err(
-                    "native original unread applications/input history were lost on restitution"
-                        .into(),
-                );
-            }
-            let prior = count(
-                original
-                    .pointer(&read)
-                    .ok_or("original observer read absent")?,
-            )?;
-            let current = count(
-                actual
-                    .pointer(&read)
-                    .ok_or("restored observer read absent")?,
-            )?;
-            if prior.checked_add(drained.len() as u64) != Some(current) {
-                return Err("native restored observer FIFO cursor differs".into());
-            }
-            *original
-                .pointer_mut(&entries)
-                .ok_or("original observer entries absent")? = json!([]);
-            *actual
-                .pointer_mut(&entries)
-                .ok_or("restored observer entries absent")? = json!([]);
-            *original
-                .pointer_mut(&read)
-                .ok_or("original observer read absent")? = json!(current.to_string());
-        }
-        if original != actual {
-            return Err("native phases/touches/sustain/tails/source/queues/input custody did not restitute exactly".into());
-        }
+        crate::performance_observer::qualify_stopped_observer_feedback(
+            saved,
+            &checkpoint,
+            count(&reply["payload"]["transport_ack"]["epoch"])?,
+            &apps,
+            &journal,
+        )?;
         let mut receipts = prefix;
         receipts.push(after);
         Ok(NativeRenderRestoration {

@@ -5,6 +5,9 @@
 // The policy is explicit architecture-model work, not vendor DSP internals.
 #include <ql/physical_receiving.hpp>
 
+namespace ql::performance {
+class MovingReceivingPortBinding;
+}
 namespace ql {
 struct SpatialMotionInput {
   std::string source_motion_ref, receiver_motion_ref, policy_ref,
@@ -217,6 +220,7 @@ struct MovingSpatialCheckpoint {
   std::array<float, receiving_history_samples> history_linear{};
 };
 class MovingSpatialReceiving {
+  friend class ql::performance::MovingReceivingPortBinding;
   PreparedMovingSpatialReceiving prepared_;
   std::array<float, receiving_history_samples> history_{};
   std::uint64_t elapsed_ = 0, history_start_ = 0;

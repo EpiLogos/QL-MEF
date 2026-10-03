@@ -31,7 +31,9 @@ int main() {
     if (single) {
       ql::physical_wire::keys(input.get(), {"schema", "case_index", "case"});
       selected_index = packet::integer(case_index);
-      ql::require(selected_index < 5, "actual native source case index bound");
+      ql::require(
+          selected_index < 6,
+          "actual native original five plus genuine pose case index bound");
     } else {
       // Original full-five transport remains supported under the same bound.
       cases = packet::field(input.get(), "cases");

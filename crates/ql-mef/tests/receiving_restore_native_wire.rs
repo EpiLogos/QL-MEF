@@ -541,6 +541,81 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
             after["inputs"], expected_inputs,
             "{kind}/whole input custody"
         );
+        // The export receiver must accept the very same actual native stopped
+        // observer operation. No synthetic checkpoint/source grant is created.
+        let qualify = |checkpoint: &Value, apps: &[Value], journal: &[Value]| {
+            ql_mef::performance_observer::qualify_stopped_observer_feedback(
+                &operative, checkpoint, 2, apps, journal,
+            )
+        };
+        qualify(&after, applications, history).unwrap();
+        // The actual original native producer remains untouched. Its binary64
+        // target may have a different shortest decimal after Rust serializes it.
+        let mut decimal_after = after.clone();
+        let mut decimal_history = history.clone();
+        let mut decimal_apps = applications.clone();
+        for target in std::iter::once(&mut decimal_after["inputs"][0]["target"])
+            .chain(decimal_history.iter_mut().map(|entry| &mut entry["target"]))
+            .chain(std::iter::once(&mut decimal_apps[0]["note"]))
+        {
+            for field in ["hertz", "fundamental_hz", "phase_cos", "phase_sin"] {
+                let native = target[field].as_f64().unwrap();
+                target[field] = json!(native);
+                assert_eq!(target[field].as_f64().unwrap().to_bits(), native.to_bits());
+            }
+        }
+        qualify(&decimal_after, &decimal_apps, &decimal_history).unwrap();
+        let mut changed = decimal_history.clone();
+        changed[1]["target"]["phase_cos"] = json!(
+            changed[1]["target"]["phase_cos"]
+                .as_f64()
+                .unwrap()
+                .to_string()
+        );
+        assert!(qualify(&decimal_after, &decimal_apps, &changed).is_err());
+        let mut changed = decimal_history.clone();
+        changed[1]["target"]
+            .as_object_mut()
+            .unwrap()
+            .remove("phase_cos");
+        assert!(qualify(&decimal_after, &decimal_apps, &changed).is_err());
+        let mut changed = decimal_history.clone();
+        changed[1]["target"]["foreign_field"] = json!(true);
+        assert!(qualify(&decimal_after, &decimal_apps, &changed).is_err());
+
+        assert!(qualify(&after, applications, &history[..1]).is_err());
+        let mut reordered = history.clone();
+        reordered.reverse();
+        assert!(qualify(&after, applications, &reordered).is_err());
+        let mut changed = history.clone();
+        let phase = changed[1]["target"]["phase_cos"].as_f64().unwrap();
+        changed[1]["target"]["phase_cos"] = json!(f64::from_bits(phase.to_bits() + 1));
+        assert!(qualify(&after, applications, &changed).is_err());
+        let mut changed = after.clone();
+        changed["inputs"][0]["press_applied"] = json!(false);
+        assert!(qualify(&changed, applications, history).is_err());
+        let mut changed = after.clone();
+        changed["inputs"][0]["target"]["source_coordinate"] = json!("#1-0");
+        assert!(qualify(&changed, applications, history).is_err());
+        let mut changed = after.clone();
+        let phase = changed["inputs"][0]["target"]["phase_cos"]
+            .as_f64()
+            .unwrap();
+        changed["inputs"][0]["target"]["phase_cos"] = json!(f64::from_bits(phase.to_bits() + 1));
+        assert!(qualify(&changed, applications, history).is_err());
+        let mut changed = after.clone();
+        let q = changed["native_pair"]["physical"]["state"]["displacement_modal_metres"][0]
+            .as_f64()
+            .unwrap();
+        changed["native_pair"]["physical"]["state"]["displacement_modal_metres"][0] =
+            json!(q + 1.0);
+        assert!(qualify(&changed, applications, history).is_err());
+        let mut changed = after.clone();
+        changed["native_pair"]["audio"]["applications"]["foreign_field"] = json!(true);
+        assert!(qualify(&changed, applications, history).is_err());
+        let mut changed = applications.clone();
+        changed[0]["requested_sample"] = json!("999999");
+        assert!(qualify(&after, &changed, history).is_err());
         assert_eq!(original["transport_epoch"], operative["transport_epoch"]);
         assert_eq!(after["transport_epoch"], "2");
         assert_eq!(

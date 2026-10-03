@@ -9,6 +9,25 @@ cd "$TASK_ROOT"
 make -C c all
 make -C cpp test BUILD_DIR="$TASK_OUTPUT/native" -j1
 
+# Independent real leaves keep running after an actual failed assertion. A
+# producer failure gates only its own consumers; every failure remains RED.
+# Build/packaging foundations above must succeed before any native is run.
+TASK_GATE_FAILURES=()
+run_native_gate() {
+  local gate_name=$1
+  shift
+  local gate_status
+  if "$@"; then
+    printf 'native_gate name=%s status=passed\n' "$gate_name" >&2
+    return 0
+  else
+    gate_status=$?
+    TASK_GATE_FAILURES+=("$gate_name:$gate_status")
+    printf 'native_gate name=%s status=failed exit=%s\n' "$gate_name" "$gate_status" >&2
+    return "$gate_status"
+  fi
+}
+
 # Discover paired suites from native source. Each receives the exact binary
 # just built from the same native source/registry, never a supplied mock frame.
 for source in crates/ql-mef/tests/*_native_wire.rs; do
@@ -16,98 +35,122 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
   suite=${source##*/}; suite=${suite%.rs}
   native=${suite/_native_wire/_wire}
   binary="$TASK_OUTPUT/native/$native-test"
-  [[ -x "$binary" ]] || { printf 'Missing paired native producer binary: %s\n' "$binary" >&2; exit 1; }
+  if ! run_native_gate "$suite-native-built" test -x "$binary"; then continue; fi
   if [[ "$suite" == "current_performance_receiving_native_wire" ]]; then
     v_receiving_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_RECEIVING_OUTPUT="$TASK_OUTPUT/current-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_receiving_nonce"
-    QL_NATIVE_WIRE_TEST="$binary" QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
       QL_CURRENT_RECEIVING_ARTIFACT_OUTPUT="$TASK_RECEIVING_OUTPUT" \
-      cargo test -p ql-mef --locked --test "$suite" -- --ignored
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "performance_research_native_wire" ]]; then
     v_research_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_RESEARCH_OUTPUT="$TASK_OUTPUT/research-mechanisms-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_research_nonce"
-    QL_NATIVE_WIRE_TEST="$binary" QL_RESEARCH_EVIDENCE_DIR="$TASK_RESEARCH_OUTPUT" \
-      cargo test -p ql-mef --locked --test "$suite" -- --ignored
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_RESEARCH_EVIDENCE_DIR="$TASK_RESEARCH_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
+  elif [[ "$suite" == "performance_receiving_port_native_wire" ]]; then
+    v_port_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_PORT_OUTPUT="$TASK_OUTPUT/receiving-port-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_port_nonce"
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_PORT_EVIDENCE_DIR="$TASK_PORT_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "receiving_restore_native_wire" ]]; then
     v_restore_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_RESTORE_OUTPUT="$TASK_OUTPUT/receiving-restore-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_restore_nonce"
-    QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_RESTORE_EVIDENCE_DIR="$TASK_RESTORE_OUTPUT" \
-      cargo test -p ql-mef --locked --test "$suite" -- --ignored
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_RESTORE_EVIDENCE_DIR="$TASK_RESTORE_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "performance_moving_receiving_native_wire" ]]; then
     v_motion_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_MOTION_OUTPUT="$TASK_OUTPUT/moving-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_motion_nonce"
-    QL_NATIVE_WIRE_TEST="$binary" QL_MOVING_RECEIVING_EVIDENCE_DIR="$TASK_MOTION_OUTPUT" \
-      cargo test -p ql-mef --locked --test "$suite" -- --ignored
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_MOVING_RECEIVING_EVIDENCE_DIR="$TASK_MOTION_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   else
-    QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   fi
 done
 
 # Exact original SourceForm, source-key and resident reply production owners.
 TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
 mkdir -p "$TASK_SOURCE_OUTPUT"
-cargo run --quiet -p ql-mef --locked --example retained-source-performance-fixture > "$TASK_SOURCE_OUTPUT/native-source.json"
-"$TASK_OUTPUT/native/performance_source_packet-test" "$TASK_SOURCE_OUTPUT/native-source.json"
+if run_native_gate source-performance-producer cargo run --quiet -p ql-mef --locked --example retained-source-performance-fixture > "$TASK_SOURCE_OUTPUT/native-source.json"; then
+  run_native_gate source-performance-packet "$TASK_OUTPUT/native/performance_source_packet-test" "$TASK_SOURCE_OUTPUT/native-source.json" || :
+fi
 v_source_reply_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
 TASK_SOURCE_REPLY_OUTPUT="$TASK_OUTPUT/source-reply-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_source_reply_nonce"
-QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" \
+run_native_gate source-replies env QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" \
   QL_NATIVE_SOURCE_REPLY_EVIDENCE_DIR="$TASK_SOURCE_REPLY_OUTPUT" \
-  cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored
+  cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored || :
 
 # Keep the real Rust producer and the C++ consumer in one executed passage.
 # These are finite component fixtures; they are not installed host authority.
 TASK_PROCEDURAL_OUTPUT="$TASK_OUTPUT/procedural-stage"
 mkdir -p "$TASK_PROCEDURAL_OUTPUT"
-TA_ONTA_FIXTURE_OUTPUT="$TASK_PROCEDURAL_OUTPUT/native-producer.json" cargo test -p ql-mef --locked --test procedural_manifestation --test procedural_composition --test procedural_stage_independent
+run_native_gate procedural-stage env TA_ONTA_FIXTURE_OUTPUT="$TASK_PROCEDURAL_OUTPUT/native-producer.json" cargo test -p ql-mef --locked --test procedural_manifestation --test procedural_composition --test procedural_stage_independent || :
 TASK_PACKET_OUTPUT="$TASK_OUTPUT/performance-packets"
 mkdir -p "$TASK_PACKET_OUTPUT"
-QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact
-"$TASK_OUTPUT/native/native_performance_packet-test" "$TASK_PACKET_OUTPUT"
-"$TASK_OUTPUT/native/independent_clock_admission_packet-test" "$TASK_PACKET_OUTPUT"
-"$TASK_OUTPUT/native/performance_management_packet-test" "$TASK_PACKET_OUTPUT"
-"$TASK_OUTPUT/native/performance_application_order_packet-test" "$TASK_PACKET_OUTPUT"
+TASK_PACKETS_READY=false
+if run_native_gate native-performance-producer env QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact; then
+TASK_PACKETS_READY=true
+run_native_gate native_performance_packet "$TASK_OUTPUT/native/native_performance_packet-test" "$TASK_PACKET_OUTPUT" || :
+run_native_gate independent_clock_admission_packet "$TASK_OUTPUT/native/independent_clock_admission_packet-test" "$TASK_PACKET_OUTPUT" || :
+run_native_gate performance_management_packet "$TASK_OUTPUT/native/performance_management_packet-test" "$TASK_PACKET_OUTPUT" || :
+run_native_gate performance_application_order_packet "$TASK_OUTPUT/native/performance_application_order_packet-test" "$TASK_PACKET_OUTPUT" || :
 v_order_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
 TASK_MANAGED_ORDER_OUTPUT="$TASK_OUTPUT/managed-application-order-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_order_nonce"
-"$TASK_OUTPUT/native/performance_managed_application_order_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_MANAGED_ORDER_OUTPUT"
-"$TASK_OUTPUT/native/performance_requested_timing_packet-test" "$TASK_PACKET_OUTPUT"
-QL_NATIVE_RECEIVING_ADMISSION_TEST="$TASK_OUTPUT/native/performance_receiving_admission-test" cargo test -p ql-mef --locked --test performance_receiving_admission -- --ignored
+run_native_gate performance_managed_application_order_packet "$TASK_OUTPUT/native/performance_managed_application_order_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_MANAGED_ORDER_OUTPUT" || :
+run_native_gate performance_requested_timing_packet "$TASK_OUTPUT/native/performance_requested_timing_packet-test" "$TASK_PACKET_OUTPUT" || :
+run_native_gate receiving-admission env QL_NATIVE_RECEIVING_ADMISSION_TEST="$TASK_OUTPUT/native/performance_receiving_admission-test" cargo test -p ql-mef --locked --test performance_receiving_admission -- --ignored || :
+fi
 
 # Actual post-command SourceForm material and its genuine mechanical body:
 # the same q/v emits both copied visible positions and native PCM.
 TASK_MATERIAL_OUTPUT="$TASK_OUTPUT/material-fold"
 mkdir -p "$TASK_MATERIAL_OUTPUT"
-QL_MATERIAL_FOLD_FIXTURE="$TASK_MATERIAL_OUTPUT/native-fold.json" cargo test -p ql-mef --locked --test m3_material_fold
-"$TASK_OUTPUT/native/material_fold_body-test" "$TASK_MATERIAL_OUTPUT/native-fold.json" "$TASK_MATERIAL_OUTPUT/physical-observed.json" "$TASK_MATERIAL_OUTPUT/captured-native.wav"
+if run_native_gate material-fold-producer env QL_MATERIAL_FOLD_FIXTURE="$TASK_MATERIAL_OUTPUT/native-fold.json" cargo test -p ql-mef --locked --test m3_material_fold; then
+  run_native_gate material-fold-body "$TASK_OUTPUT/native/material_fold_body-test" "$TASK_MATERIAL_OUTPUT/native-fold.json" "$TASK_MATERIAL_OUTPUT/physical-observed.json" "$TASK_MATERIAL_OUTPUT/captured-native.wav" || :
+fi
 # Preserve the actual original pre-material source and applied input journal
 # for the existing C Scene/Act gate. Its optional offline fingerprint belongs
 # to that native owner and is supplied by the ordinary C fixture gate.
 TASK_MANAGEMENT_OUTPUT="$TASK_OUTPUT/management-artifacts"
 mkdir -p "$TASK_MANAGEMENT_OUTPUT"
-"$TASK_OUTPUT/native/performance_management_artifacts_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_MANAGEMENT_OUTPUT"
+if [[ "$TASK_PACKETS_READY" == true ]]; then
+  run_native_gate management-artifacts "$TASK_OUTPUT/native/performance_management_artifacts_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_MANAGEMENT_OUTPUT" || :
+fi
 
 # Exact original context, real queue cancellation/loss and complete 45k/24voice native workload.
-cargo run --quiet -p ql-mef --locked --example retained-performance-context-fixture > "$TASK_OUTPUT/retained-performance-context-fixture.json"
-"$TASK_OUTPUT/native/performance_score_reservation_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_OUTPUT/native-score-reservations"
-"$TASK_OUTPUT/native/performance_retained_workload_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_OUTPUT/native-retained-workload"
+run_native_gate retained-context-producer cargo run --quiet -p ql-mef --locked --example retained-performance-context-fixture > "$TASK_OUTPUT/retained-performance-context-fixture.json" || :
+if [[ "$TASK_PACKETS_READY" == true ]]; then
+  run_native_gate performance_score_reservation_packet "$TASK_OUTPUT/native/performance_score_reservation_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_OUTPUT/native-score-reservations" || :
+fi
+if [[ "$TASK_PACKETS_READY" == true ]]; then
+  run_native_gate performance_retained_workload_packet "$TASK_OUTPUT/native/performance_retained_workload_packet-test" "$TASK_PACKET_OUTPUT" "$TASK_OUTPUT/native-retained-workload" || :
+fi
 
 # Retain the same native M3 score/return and real A/P continuation for the
 # existing Expression/Act tests. Full paused voice/body state is generated by
 # the actual C++ owner and independently replayed before it is emitted.
-cargo run --quiet -p ql-mef --locked --example retained-performance-fixture > "$TASK_OUTPUT/retained-performance-fixture.json"
-"$TASK_OUTPUT/native/retained_performance_checkpoint_wire-test" "$TASK_OUTPUT/retained-performance-fixture.json" > "$TASK_OUTPUT/retained-performance-checkpoint-fixture.json"
+if run_native_gate retained-performance-producer cargo run --quiet -p ql-mef --locked --example retained-performance-fixture > "$TASK_OUTPUT/retained-performance-fixture.json"; then
+  run_native_gate retained-performance-checkpoint "$TASK_OUTPUT/native/retained_performance_checkpoint_wire-test" "$TASK_OUTPUT/retained-performance-fixture.json" > "$TASK_OUTPUT/retained-performance-checkpoint-fixture.json" || :
+fi
 
 # Independent V/#293 trials use the same compiled native producer. Copy the
 # unchanged verifier into its bounded evidence directory before invocation.
-cargo build -p ql-mef --locked --example m2_engine
+if run_native_gate independent-native-m2-producer cargo build -p ql-mef --locked --example m2_engine; then
 TASK_INDEPENDENT="$TASK_OUTPUT/independent"
 mkdir -p "$TASK_INDEPENDENT"
 cp scripts/test-m2-producer-negatives.py "$TASK_INDEPENDENT/driver.py"
 v_candidate_revision=$(git rev-parse HEAD)
 v_source_revision=$(python3 -c 'import json; print(json.load(open("fixtures/kernel/m2-correspondences-v1.json"))["source_revision"])')
 v_trial_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
-python3 "$TASK_INDEPENDENT/driver.py" \
+run_native_gate independent-native-m2-trials python3 "$TASK_INDEPENDENT/driver.py" \
   --producer target/debug/examples/m2_engine \
   --fixture fixtures/kernel/m2-condition-request-v1.json \
   --output "$TASK_INDEPENDENT/run-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_trial_nonce" \
   --candidate-revision "$v_candidate_revision" \
-  --source-revision "$v_source_revision"
+  --source-revision "$v_source_revision" || :
+fi
+
+if (( ${#TASK_GATE_FAILURES[@]} )); then
+  printf 'Native physical-musical floor failed; all independent available leaves attempted:\n' >&2
+  printf '  %s\n' "${TASK_GATE_FAILURES[@]}" >&2
+  exit 1
+fi

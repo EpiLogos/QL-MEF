@@ -606,17 +606,22 @@ inline void audio_keys(J *in, std::initializer_list<const char *> names) {
   const bool apps = json_object_object_get_ex(in, "applications", &v);
   require(apps == bool(json_object_object_get_ex(in, "recording", &v)),
           "partial recording checkpoint extension");
+  const bool receiving = json_object_object_get_ex(in, "has_receiving", &v);
+  require(receiving == bool(json_object_object_get_ex(in, "receiving", &v)),
+          "partial native receiving checkpoint extension");
   const bool proof = json_object_object_get_ex(in, "release_proof", &v);
   const bool routes = audio_checkpoint_encoding(in) ==
                       AudioCheckpointEncoding::V2WithRoutePrograms;
-  require(json_object_object_length(in) == int(names.size()) + (apps ? 2 : 0) +
-                                               (proof ? 1 : 0) +
-                                               (routes ? 2 : 0),
+  require(json_object_object_length(in) ==
+              int(names.size()) + (apps ? 2 : 0) + (proof ? 1 : 0) +
+                  (routes ? 2 : 0) + (receiving ? 2 : 0),
           "audio checkpoint fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
-    require((routes && (std::strcmp(key, "has_route_programs") == 0 ||
-                        std::strcmp(key, "route_programs") == 0)) ||
+    require((receiving && (std::strcmp(key, "has_receiving") == 0 ||
+                           std::strcmp(key, "receiving") == 0)) ||
+                (routes && (std::strcmp(key, "has_route_programs") == 0 ||
+                            std::strcmp(key, "route_programs") == 0)) ||
                 (proof && std::strcmp(key, "release_proof") == 0) ||
                 (apps && (std::strcmp(key, "applications") == 0 ||
                           std::strcmp(key, "recording") == 0)) ||
@@ -1001,9 +1006,153 @@ inline NativeRouteProgramSet read_route_programs(J *in) {
   return v;
 }
 
+// Numerical state only. Original source/context and actual current private
+// owner remain admission authority. Old complete v2 records without this pair
+// retain original no-receiving standing; they cannot restore a live receiver.
+inline ReceivingRef receiving_ref(J *in, const char *key) {
+  const auto value = ql::physical_wire::text(field(in, key));
+  require(value.size() < ReceivingRef{}.size(),
+          "receiving reference bound exceeded");
+  ReceivingRef out{};
+  std::copy(value.begin(), value.end(), out.begin());
+  return out;
+}
+inline Json receiving_manifest(const NativeReceivingManifest &m) {
+  require(valid_receiving_manifest(m), "native receiving manifest refused");
+  auto out = object();
+  put(out.get(), "version", json_object_new_uint64(m.version));
+  put(out.get(), "sample_rate", json_object_new_uint64(m.sample_rate));
+  for (const auto &entry :
+       {std::pair{"receiving_identity", &m.receiving_identity},
+        std::pair{"event", &m.event}, std::pair{"subject", &m.subject},
+        std::pair{"preparation", &m.preparation}, std::pair{"state", &m.state},
+        std::pair{"source_coordinate", &m.source_coordinate},
+        std::pair{"source_revision", &m.source_revision},
+        std::pair{"eigenbasis", &m.eigenbasis},
+        std::pair{"receiver", &m.receiver}, std::pair{"context", &m.context},
+        std::pair{"source_motion", &m.source_motion},
+        std::pair{"receiver_motion", &m.receiver_motion},
+        std::pair{"policy", &m.policy},
+        std::pair{"policy_revision", &m.policy_revision},
+        std::pair{"standing", &m.standing}})
+    text(out.get(), entry.first, entry.second->data());
+  u64(out.get(), "source_generation", m.source_generation);
+  u64(out.get(), "body_revision", m.body_revision);
+  u64(out.get(), "history_origin_sample", m.history_origin_sample);
+  u64(out.get(), "origin_sample", m.origin_sample);
+  u64(out.get(), "end_sample", m.end_sample);
+  flag(out.get(), "pratibimba", m.pratibimba);
+  return out;
+}
+inline NativeReceivingManifest read_receiving_manifest(J *in) {
+  keys(in, {"version",
+            "sample_rate",
+            "receiving_identity",
+            "event",
+            "subject",
+            "preparation",
+            "state",
+            "source_coordinate",
+            "source_revision",
+            "eigenbasis",
+            "receiver",
+            "context",
+            "source_motion",
+            "receiver_motion",
+            "policy",
+            "policy_revision",
+            "standing",
+            "source_generation",
+            "body_revision",
+            "origin_sample",
+            "end_sample",
+            "pratibimba",
+            "history_origin_sample"});
+  NativeReceivingManifest m{};
+  require(integer(field(in, "version")) == 1,
+          "unsupported native receiving manifest");
+  const auto rate = integer(field(in, "sample_rate"));
+  require(rate >= 8000 && rate <= 192000, "native receiving rate differs");
+  m.sample_rate = unsigned(rate);
+  for (const auto &entry :
+       {std::pair{"receiving_identity", &m.receiving_identity},
+        std::pair{"event", &m.event}, std::pair{"subject", &m.subject},
+        std::pair{"preparation", &m.preparation}, std::pair{"state", &m.state},
+        std::pair{"source_coordinate", &m.source_coordinate},
+        std::pair{"source_revision", &m.source_revision},
+        std::pair{"eigenbasis", &m.eigenbasis},
+        std::pair{"receiver", &m.receiver}, std::pair{"context", &m.context},
+        std::pair{"source_motion", &m.source_motion},
+        std::pair{"receiver_motion", &m.receiver_motion},
+        std::pair{"policy", &m.policy},
+        std::pair{"policy_revision", &m.policy_revision},
+        std::pair{"standing", &m.standing}})
+    *entry.second = receiving_ref(in, entry.first);
+  m.source_generation = decimal(field(in, "source_generation"));
+  m.body_revision = decimal(field(in, "body_revision"));
+  m.history_origin_sample = decimal(field(in, "history_origin_sample"));
+  m.origin_sample = decimal(field(in, "origin_sample"));
+  m.end_sample = decimal(field(in, "end_sample"));
+  m.pratibimba = boolean(field(in, "pratibimba"));
+  require(valid_receiving_manifest(m), "native receiving manifest refused");
+  return m;
+}
+inline Json receiving_checkpoint(const NativeReceivingCheckpoint &cp) {
+  require(valid_receiving_checkpoint(cp, cp.manifest),
+          "native receiving checkpoint refused");
+  auto out = object();
+  text(out.get(), "schema", "ql.performance-receiving-checkpoint/v1");
+  put(out.get(), "version", json_object_new_uint64(cp.version));
+  put(out.get(), "manifest", receiving_manifest(cp.manifest).release());
+  u64(out.get(), "samples_elapsed", cp.samples_elapsed);
+  u64(out.get(), "history_start_sample", cp.history_start_sample);
+  text(out.get(), "history_units", "linear-pickup");
+  auto history = array();
+  for (float v : cp.history_linear)
+    append(history.get(), json_object_new_double(double(v)));
+  put(out.get(), "history_linear", history.release());
+  return out;
+}
+inline void read_receiving_checkpoint(J *in, NativeReceivingCheckpoint &cp) {
+  keys(in, {"schema", "version", "manifest", "samples_elapsed",
+            "history_start_sample", "history_units", "history_linear"});
+  require(packet::string(field(in, "schema")) ==
+                  "ql.performance-receiving-checkpoint/v1" &&
+              integer(field(in, "version")) == 1 &&
+              packet::string(field(in, "history_units")) == "linear-pickup",
+          "native receiving checkpoint schema/units differ");
+  cp.version = 1;
+  cp.manifest = read_receiving_manifest(field(in, "manifest"));
+  cp.samples_elapsed = decimal(field(in, "samples_elapsed"));
+  cp.history_start_sample = decimal(field(in, "history_start_sample"));
+  auto history = field(in, "history_linear");
+  packet::array(history, ql::receiving_history_samples);
+  for (std::size_t i = 0; i < ql::receiving_history_samples; ++i) {
+    const double v = number(json_object_array_get_idx(history, i));
+    require(std::abs(v) <= std::numeric_limits<float>::max(),
+            "receiving history exceeds finite native f32");
+    cp.history_linear[i] = float(v);
+    require(std::isfinite(cp.history_linear[i]) &&
+                double(cp.history_linear[i]) == v &&
+                std::signbit(cp.history_linear[i]) == std::signbit(v),
+            "receiving history differs from exact native f32");
+  }
+  require(valid_receiving_checkpoint(cp, cp.manifest),
+          "native receiving checkpoint refused");
+}
 inline Json audio_wire(const Engine::Checkpoint &cp) {
   auto out = object();
   text(out.get(), "schema", Engine::Checkpoint::schema);
+  require(!cp.has_receiving || cp.receiving_encoding_present,
+          "operative receiving lacks native encoding custody");
+  if (cp.receiving_encoding_present) {
+    flag(out.get(), "has_receiving", cp.has_receiving);
+    if (cp.has_receiving)
+      put(out.get(), "receiving", receiving_checkpoint(cp.receiving).release());
+    else
+      require(json_object_object_add(out.get(), "receiving", nullptr) == 0,
+              "null native receiving state allocation failed");
+  }
   flag(out.get(), "has_route_programs", cp.has_route_programs);
   if (cp.has_route_programs)
     put(out.get(), "route_programs",
@@ -1188,6 +1337,22 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
               integer(field(in, "version")) == 2 &&
               packet::string(field(in, "model_revision")) == contract,
           "unsupported performance checkpoint model");
+  cp.has_receiving = false;
+  cp.receiving_encoding_present = false;
+  cp.receiving = {};
+  J *receiving_state = nullptr;
+  if (json_object_object_get_ex(in, "has_receiving", &receiving_state)) {
+    cp.receiving_encoding_present = true;
+    cp.has_receiving = boolean(receiving_state);
+    require(json_object_object_get_ex(in, "receiving", &receiving_state),
+            "native receiving state missing");
+    if (cp.has_receiving)
+      read_receiving_checkpoint(receiving_state, cp.receiving);
+    else
+      require(!receiving_state ||
+                  json_object_is_type(receiving_state, json_type_null),
+              "inactive receiving contains native state");
+  }
   cp.has_route_programs = false;
   cp.route_programs = {};
   if (audio_checkpoint_encoding(in) ==
