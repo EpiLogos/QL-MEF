@@ -72,7 +72,9 @@ fn actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis() 
     let original = host.retained_procedural_source_artifact().unwrap();
     assert_eq!(original["original_field"], original_field);
     assert_eq!(original["original_basis"]["input"], original_input);
-    input.m1.revision = "controlled:dense-source/later-current".into();
+    // Revision belongs to the actual M1 native counter grammar.
+    let original_revision: u64 = input.m1.revision.parse().unwrap();
+    input.m1.revision = original_revision.checked_add(1).unwrap().to_string();
     let ready = host.ready();
     let request = HostRequest {
         schema: HOST_REQUEST.into(),

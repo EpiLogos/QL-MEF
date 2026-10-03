@@ -177,6 +177,7 @@ impl ActRequest {
                 | "performance-timing"
                 | "recording-command"
                 | "recording-origin"
+                | "recording-save-cut"
         )
     }
 }
@@ -192,6 +193,7 @@ enum NativeActSource<'a> {
         registration: &'a Value,
         retained_source: Option<&'a Value>,
         source_read: Option<&'a Value>,
+        world_carrier: &'a Value,
     },
 }
 pub struct NativeActSourceLease<'a> {
@@ -206,6 +208,14 @@ impl NativeActSourceLease<'_> {
         match self.source {
             NativeActSource::Field { registration, .. } => Some(registration),
             NativeActSource::Performance { .. } => None,
+        }
+    }
+    fn field_world_carrier(&self) -> Result<&Value, String> {
+        match self.source {
+            NativeActSource::Field { world_carrier, .. } => Ok(world_carrier),
+            NativeActSource::Performance { .. } => {
+                Err("private native FIELD World carrier absent".into())
+            }
         }
     }
     fn retained_field_source(&self) -> Option<&Value> {
@@ -349,7 +359,7 @@ impl NativeActSourceLease<'_> {
             return Err("native Act lease has no privately selected Field Scene".into());
         }
         FieldHost::validate_retained_field_sources_with_artifact(
-            &self.manifest["scene"]["presentation"],
+            &self.field_world_carrier()?["presentation"],
             instance_ref,
             original,
             current,
@@ -670,6 +680,30 @@ fn validate_closed_scene_manifest(manifest: &Value) -> Result<(), String> {
     Ok(())
 }
 
+// Resolve the sole original World from the SAME fully validated closed
+// Document. Selected canonical/generated Scenes retain their own source/CAS;
+// they do not acquire copied World material or a caller-provided source asset.
+fn closed_field_world_carrier(manifest: &Value) -> Result<Value, String> {
+    let document: Value = serde_json::from_str(
+        manifest["canonical_document_bytes"]
+            .as_str()
+            .ok_or("native FIELD full Document bytes absent")?,
+    )
+    .map_err(|error| error.to_string())?;
+    let scenes = document["scenes"]
+        .as_array()
+        .ok_or("native FIELD full Document Scenes absent")?;
+    let mut carriers = scenes
+        .iter()
+        .filter(|scene| scene["presentation"]["scene"]["epiWorld"].is_object());
+    let carrier = carriers
+        .next()
+        .ok_or("native FIELD original World carrier absent")?;
+    if carriers.next().is_some() {
+        return Err("native FIELD original World carrier is ambiguous".into());
+    }
+    Ok(carrier.clone())
+}
 fn source_header(source: &Value) -> Result<Value, String> {
     let object = source
         .as_object()
@@ -699,11 +733,12 @@ fn qualify_field_source_parts<
     W: FnMut(&Value) -> Result<(), String>,
 >(
     manifest: &Value,
+    world_carrier: &Value,
     actual: &Value,
     pipe: &RefCell<Pipe<R, W>>,
 ) -> Result<(), String> {
     use sha2::{Digest, Sha256};
-    let asset = &manifest["scene"]["native_field_source"];
+    let asset = &world_carrier["native_field_source"];
     let source = &manifest["field_source_manifest"];
     let samples = actual["original_field"]["samples"]
         .as_array()
@@ -846,6 +881,7 @@ fn serve_native_act_operation(
             "performance-timing",
             "recording-command",
             "recording-origin",
+            "recording-save-cut",
         ]
         .contains(&request.mode.as_str())
     {
@@ -875,6 +911,13 @@ fn serve_native_act_operation(
             request_id: request.request_id.clone(),
             query: 0,
         });
+        let mut recording_diagnostics = super::native_act_diagnostics::NativeDiagnosticSender::new(
+            &request.instance_ref,
+            &request.request_id,
+            |value| pipe.borrow_mut().send(value),
+            || pipe.borrow_mut().receive(),
+        )?;
+        let mut recording_delivery_error = None;
         let outcome = (|| -> Result<Value, String> {
             if !matches!(
                 request.manifest["schema"].as_str(),
@@ -894,6 +937,7 @@ fn serve_native_act_operation(
                 );
             }
             validate_closed_scene_manifest(&request.manifest)?;
+            let world_carrier = closed_field_world_carrier(&request.manifest)?;
             if !matches!(
                 request.mode.as_str(),
                 "source-bootstrap" | "source-lifecycle"
@@ -933,18 +977,19 @@ fn serve_native_act_operation(
                     | "performance-timing"
                     | "recording-command"
                     | "recording-origin"
+                    | "recording-save-cut"
                     | "acoustic-stage"
                     | "acoustic-replace"
                     | "acoustic-prepare"
             ) {
-                qualify_field_source_parts(&request.manifest, &artifact, &pipe)?;
+                qualify_field_source_parts(&request.manifest, &world_carrier, &artifact, &pipe)?;
                 Some(&artifact)
             } else {
                 // Explicit source observation retains a newly changed current
                 // tuple. It grants no timing or material application. Its
                 // actual portable original source/owner must still match.
                 FieldHost::validate_retained_field_sources_with_artifact(
-                    &request.manifest["scene"]["presentation"],
+                    &world_carrier["presentation"],
                     &request.instance_ref,
                     &original,
                     &original,
@@ -961,6 +1006,7 @@ fn serve_native_act_operation(
                     registration,
                     retained_source,
                     source_read: request.source_bootstrap.as_ref(),
+                    world_carrier: &world_carrier,
                 },
             };
             if retained_source.is_some() {
@@ -1051,7 +1097,7 @@ fn serve_native_act_operation(
             }
             if matches!(
                 request.mode.as_str(),
-                "recording-command" | "recording-origin"
+                "recording-command" | "recording-origin" | "recording-save-cut"
             ) {
                 use sha2::{Digest, Sha256};
                 if request.source_bootstrap.is_some()
@@ -1060,7 +1106,10 @@ fn serve_native_act_operation(
                 {
                     return Err("recording command requires its actual current Document/Scene; no fabricated Act/source issuer".into());
                 }
-                let (scene_constructor, command) = if request.mode == "recording-origin" {
+                let (scene_constructor, command) = if matches!(
+                    request.mode.as_str(),
+                    "recording-origin" | "recording-save-cut"
+                ) {
                     let query: NativeRecordingOriginQuery = serde_json::from_value(
                         request
                             .procedural_request
@@ -1068,7 +1117,13 @@ fn serve_native_act_operation(
                             .ok_or("native recording origin query absent")?,
                     )
                     .map_err(|e| e.to_string())?;
-                    if query.schema != "ql.native-scene-recording-origin/v1" {
+                    if query.schema
+                        != if request.mode == "recording-save-cut" {
+                            "ql.native-scene-recording-save-cut/v1"
+                        } else {
+                            "ql.native-scene-recording-origin/v1"
+                        }
+                    {
                         return Err("foreign native recording origin query".into());
                     }
                     (query.scene_constructor, None)
@@ -1104,6 +1159,44 @@ fn serve_native_act_operation(
                 // edit; this JSON cannot mint that owner.
                 let mut selection = lease.evidence();
                 selection["scene_constructor"] = scene_constructor;
+                if request.mode == "recording-save-cut" {
+                    return Ok(match host.capture_native_stopped_recording_cut(&lease) {
+                        Ok(cut) => {
+                            let delivery = recording_diagnostics
+                                .send_receipt("recording.cut_observation", 0, cut.observation())
+                                .and_then(|()| {
+                                    recording_diagnostics.send_receipt(
+                                        "recording.cut_checkpoint",
+                                        0,
+                                        cut.checkpoint(),
+                                    )
+                                });
+                            if let Err(error) = delivery {
+                                recording_delivery_error = Some(error.clone());
+                                json!({"schema":"ql.native-scene-recording-save-cut/v1","selection":selection,
+                                    "accepted":false,"reason":error,
+                                    "host_receipt":host.recording_controller_refusal(&request.request_id,"actual native save cut receipt delivery failed")})
+                            } else {
+                                json!({"schema":"ql.native-scene-recording-save-cut/v1","selection":selection,"accepted":true,
+                                    "host_receipt":host.recording_controller_receipt(&request.request_id,Some(cut.command_receipt()))})
+                            }
+                        }
+                        Err(failure) => {
+                            for (index, pulse) in failure.native_receipts.iter().enumerate() {
+                                if let Err(error) = recording_diagnostics.send_receipt(
+                                    "recording.cut_failure",
+                                    index,
+                                    pulse,
+                                ) {
+                                    recording_delivery_error = Some(error);
+                                    break;
+                                }
+                            }
+                            json!({"schema":"ql.native-scene-recording-save-cut/v1","selection":selection,"accepted":false,
+                                "reason":failure.reason,"host_receipt":host.recording_controller_refusal(&request.request_id,&failure.reason)})
+                        }
+                    });
+                }
                 if command.is_none() {
                     return Ok(match host.capture_native_recording_origin(&lease) {
                         Ok(origin) => {
@@ -1329,7 +1422,22 @@ fn serve_native_act_operation(
                 }
             })
         })();
-        let reply = host.native_act_result(&request.request_id, &outcome);
+        let mut reply = host.native_act_result(&request.request_id, &outcome);
+        if request.mode == "field-source" {
+            // Genuine SAME-operation host observation for the existing Session.
+            // Failed pre-admission retains the actual old last_request_id;
+            // no caller may promote it into an acknowledged next ordinal.
+            reply["host_receipt"] = match &outcome {
+                Ok(_) => host.recording_controller_receipt(&request.request_id, None),
+                Err(reason) => host.recording_controller_refusal(&request.request_id, reason),
+            };
+        }
+        if request.mode == "recording-save-cut" {
+            reply["diagnostics"] = recording_diagnostics.manifest();
+            if let Some(error) = recording_delivery_error {
+                reply["diagnostic_delivery_error"] = json!(error);
+            }
+        }
         bounded(&reply, MAX_HOST_OUTPUT as u64)?;
         return pipe.borrow_mut().send(&reply);
     }
@@ -1638,5 +1746,89 @@ mod render_command_tests {
         ));
         assert!(aborted.next(&command("finished", None)).is_err());
         assert!(NativeRenderCommands::new(0).is_err());
+    }
+}
+
+#[cfg(test)]
+mod closed_field_carrier_tests {
+    use super::*;
+    use sha2::{Digest, Sha256};
+
+    // These exercise the real closed-Document parser and full CAS validator.
+    // They grant no native source lease or private host/Scene constructor.
+    fn manifest(mut scenes: Vec<Value>) -> Value {
+        let selected = scenes.remove(0);
+        scenes.insert(0, selected.clone());
+        let document = json!({"expression_ref":"unqualified:parser-document",
+            "revision":7,"scenes":scenes});
+        let doc_text = serde_json::to_string(&document).unwrap();
+        let scene_text = serde_json::to_string(&selected).unwrap();
+        json!({"schema":"oi.expression-native-current-scene-delivery/v1",
+            "expression_ref":document["expression_ref"],"expression_revision":document["revision"],
+            "expanded_document_sha256":format!("sha256:{:x}",Sha256::digest(doc_text.as_bytes())),
+            "canonical_document_bytes":doc_text,"scene_ref":selected["scene_ref"],
+            "scene_revision":selected["revision"],"scene":selected,
+            "canonical_scene_bytes":scene_text,
+            "selected_scene_sha256":format!("sha256:{:x}",Sha256::digest(scene_text.as_bytes())),
+            "field_source_manifest":null})
+    }
+    fn selected() -> Value {
+        json!({"scene_ref":"unqualified:generated-scene","revision":2,
+            "presentation":{"schema":"oi.journey-scene/v1","scene":{}},
+            "native_field_source":{"instance_ref":"unqualified:wrong-face"}})
+    }
+    fn world() -> Value {
+        json!({"scene_ref":"unqualified:world-scene","revision":4,
+            "presentation":{"schema":"oi.journey-scene/v1","scene":{
+                "epiWorld":{"schema":"oi.epi-world-material/v1","world":{}}}},
+            "native_field_source":{"instance_ref":"unqualified:world-source"}})
+    }
+    #[test]
+    fn selected_generated_scene_resolves_only_the_same_document_world_carrier() {
+        let source = world();
+        let closed = manifest(vec![selected(), source.clone()]);
+        validate_closed_scene_manifest(&closed).unwrap();
+        assert_eq!(closed_field_world_carrier(&closed).unwrap(), source);
+        assert_eq!(
+            closed["scene"]["native_field_source"]["instance_ref"],
+            "unqualified:wrong-face"
+        );
+        let selected_world = manifest(vec![world(), selected()]);
+        validate_closed_scene_manifest(&selected_world).unwrap();
+        assert_eq!(
+            closed_field_world_carrier(&selected_world).unwrap(),
+            selected_world["scene"]
+        );
+    }
+    #[test]
+    fn lost_or_ambiguous_world_carriers_cannot_fall_back_to_selected_source() {
+        let missing = manifest(vec![selected()]);
+        validate_closed_scene_manifest(&missing).unwrap();
+        assert!(closed_field_world_carrier(&missing).is_err());
+        let mut second = world();
+        second["scene_ref"] = json!("unqualified:second-world");
+        let ambiguous = manifest(vec![selected(), world(), second]);
+        validate_closed_scene_manifest(&ambiguous).unwrap();
+        assert!(closed_field_world_carrier(&ambiguous).is_err());
+    }
+    #[test]
+    fn carrier_resolution_does_not_excuse_changed_full_document_or_selected_cas() {
+        let original = manifest(vec![selected(), world()]);
+        validate_closed_scene_manifest(&original).unwrap();
+        for key in ["expanded_document_sha256", "selected_scene_sha256"] {
+            let mut changed = original.clone();
+            changed[key] = json!("sha256:stale");
+            assert!(validate_closed_scene_manifest(&changed).is_err());
+        }
+        let mut changed = original.clone();
+        changed["scene"]["revision"] = json!(3);
+        assert!(validate_closed_scene_manifest(&changed).is_err());
+        let mut document: Value =
+            serde_json::from_str(original["canonical_document_bytes"].as_str().unwrap()).unwrap();
+        document["scenes"][1]["native_field_source"]["instance_ref"] =
+            json!("unqualified:foreign-source");
+        let mut changed = original;
+        changed["canonical_document_bytes"] = json!(serde_json::to_string(&document).unwrap());
+        assert!(validate_closed_scene_manifest(&changed).is_err());
     }
 }

@@ -12,11 +12,6 @@
 namespace ql::performance {
 // This object belongs to the existing field worker's serial control owner.
 // It has one resident P/Engine/device; copied observations never integrate P.
-struct ManagementAdmission {
-  Result result = Result::Unavailable;
-  NativeClockAdmission clock{};
-  std::string reason;
-};
 // Stamped only by the same native management owner after real Engine
 // enqueue. Transport epoch is not the independent AudioUnit clock epoch.
 class NativeScoreAdmission {
@@ -37,6 +32,13 @@ public:
   const Ref &session_ref() const noexcept { return session_; }
   const Ref &input_ref() const noexcept { return input_; }
   std::uint64_t transport_epoch() const noexcept { return epoch_; }
+};
+struct ManagementAdmission {
+  Result result = Result::Unavailable;
+  NativeClockAdmission clock{};
+  std::string reason;
+  NativeScoreAdmission stopped_queue{};
+  bool has_stopped_queue = false;
 };
 struct KeyboardCell {
   std::uint8_t row = 0, column = 0;
@@ -690,6 +692,26 @@ public:
     }
     return admitted;
   }
+  NativeScoreAdmission
+  enqueue_stopped_parameter_admission(Parameter target, double value,
+                                      const Identity &expected_source,
+                                      std::uint64_t expected_cursor) {
+    if (control_recording_failed_ || release_pending_ ||
+        unsigned(target) > unsigned(Parameter::MonitorLinear))
+      return NativeScoreAdmission::refused(Result::Unavailable);
+    auto guard = native_.engine->acquire_stopped_custody();
+    if (!guard)
+      return NativeScoreAdmission::refused(Result::Unavailable);
+    NativeScoreAdmission admitted{};
+    admitted.queue_ = native_.engine->enqueue_stopped_parameter_with_receipt(
+        target, value, expected_source, guard, expected_cursor);
+    admitted.result_ = admitted.queue_.result();
+    if (admitted.queue_.queued()) {
+      admitted.session_ = session_;
+      admitted.epoch_ = transport_epoch_;
+    }
+    return admitted;
+  }
   ManagementAdmission set_parameter(Parameter target, double value) {
     if (unsigned(target) > unsigned(Parameter::MonitorLinear))
       return {Result::Invalid, {}, "unknown native parameter"};
@@ -698,8 +720,18 @@ public:
     op.identity = native_.engine->source_for_native_admission().identity;
     op.parameter = target;
     op.value = value;
-    auto admitted = live(op);
-    return admitted;
+    if (native_.engine->device_callbacks_running())
+      return live(op);
+    const auto admitted = enqueue_stopped_parameter_admission(
+        target, value, native_.engine->current_source().identity,
+        native_.engine->samples_elapsed());
+    return {admitted.result(),
+            {},
+            admitted.result() == Result::Accepted
+                ? std::string{}
+                : "native stopped parameter queue admission refused",
+            admitted,
+            true};
   }
   // Installed C history supplies the value at its native document CAS. It
   // consumes the actual resulting application receipt for retained automation.

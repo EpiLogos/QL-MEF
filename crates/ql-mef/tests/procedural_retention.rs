@@ -156,7 +156,7 @@ fn retire(
         "expression:acceptance",
         4,
         membership(),
-        &[c.clone()],
+        std::slice::from_ref(c),
         &[CurrentContribution {
             contribution_ref: c.contribution_ref.clone(),
             material: actual,
@@ -334,7 +334,7 @@ fn original_authored_parameter_basis_is_immutable_under_retained_regeneration() 
             membership(),
             vec![next],
             BTreeSet::from(["scene".into()]),
-            &[c.clone()],
+            std::slice::from_ref(&c),
             &[CurrentContribution {
                 contribution_ref: c.contribution_ref.clone(),
                 material: actual,
@@ -588,7 +588,7 @@ fn sustained_native_output_membership_retirement_keeps_original_empty_selection_
         &p.occurrence_ref,
         4,
         membership(),
-        &[c.clone()],
+        std::slice::from_ref(&c),
         &[current],
         &[],
         vec![source],

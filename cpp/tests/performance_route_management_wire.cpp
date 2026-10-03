@@ -5,6 +5,8 @@
 
 #include "../test_support/independent_genuine_carrier_scalar_cases.hpp"
 #include <cassert>
+#include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <new>
 #include <ql/performance_checkpoint_wire.hpp>
@@ -712,6 +714,258 @@ static void retained_material_revision(J *fixture) {
       << "actual native N9+M1 held touches+future parameter/release -> same P "
          "material projection+phase/history -> exact1024 reopen passed\n";
 }
+// Optional native CI artifact output. Every value is taken from this actual
+// same-owner stopped queue/application activity; no precomputed receipt.
+static void prearm_artifact(const char *name, const Json &value) {
+  const auto *directory = std::getenv("QL_NATIVE_PREARM_RECEIPT_DIR");
+  if (!directory || !*directory)
+    return;
+  std::ofstream file(std::string(directory) + "/" + name,
+                     std::ios::binary | std::ios::trunc);
+  assert(file.good());
+  file << json_object_to_json_string_ext(value.get(), JSON_C_TO_STRING_PLAIN)
+       << "\n";
+  file.close();
+  assert(!file.fail());
+}
+static void stopped_force_savecut_artifacts(J *fixture) {
+  auto prepared = prepare(fixture);
+  auto owner = std::make_unique<PerformanceManagement>(
+      prepared.native,
+      reference("native-test:prearm/force-savecut/same-manager"));
+  const auto born = owner->stopped_checkpoint();
+  assert(born->native_pair.audio.source.force_newtons != 2 &&
+         born->native_pair.audio.accepted_sequence == 0);
+  const auto admission = owner->set_parameter(Parameter::ForceNewtons, 2);
+  assert(admission.result == Result::Accepted && admission.has_stopped_queue &&
+         admission.stopped_queue.queue().queued());
+  const auto &event = admission.stopped_queue.queue().operation();
+  assert(event.kind == Kind::Parameter &&
+         event.parameter == Parameter::ForceNewtons && event.value == 2 &&
+         event.sequence == 1 && event.sample == 0 &&
+         event.has_requested_sample && event.requested_sample == 0 &&
+         !valid_ref(admission.stopped_queue.input_ref()) &&
+         event.native_clock.epoch == 0 && event.native_clock.sequence == 0);
+  const auto pending = owner->stopped_checkpoint();
+  assert(pending->native_pair.audio.accepted_sequence == 1 &&
+         pending->native_pair.audio.applied_application_ordinal == 0 &&
+         pending->native_pair.audio.source.force_newtons ==
+             born->native_pair.audio.source.force_newtons);
+  prearm_artifact("stopped-force-born0-management.json",
+                  management_checkpoint_transport::checkpoint_wire(*born));
+  prearm_artifact(
+      "stopped-force-admission.json",
+      management_transport::score_admission(admission.stopped_queue));
+  prearm_artifact("stopped-force-pending-management.json",
+                  management_checkpoint_transport::checkpoint_wire(*pending));
+  std::array<float, 128> pcm{};
+  callback_probe = true;
+  const bool advanced = owner->offline_advance(pcm.data(), pcm.size(), 0);
+  callback_probe = false;
+  assert(advanced && allocations == 0 && releases == 0);
+  const auto pulse = owner->pulse();
+  assert(pulse->applications.size() == 1 && pulse->applications[0].applied &&
+         pulse->applications[0].kind == Kind::Parameter &&
+         pulse->applications[0].parameter == Parameter::ForceNewtons &&
+         pulse->applications[0].value == 2 &&
+         pulse->applications[0].sequence == 1 &&
+         pulse->applications[0].applied_sample == 0 &&
+         pulse->reading.source.force_newtons == 2);
+  prearm_artifact("stopped-force-applied.json",
+                  checkpoint_transport::application(pulse->applications[0]));
+  const auto after = owner->stopped_checkpoint();
+  assert(after->native_pair.audio.source.force_newtons == 2 &&
+         after->native_pair.audio.cursor == 128);
+  prearm_artifact("stopped-force-after-management.json",
+                  management_checkpoint_transport::checkpoint_wire(*after));
+  // A separate genuine cold native continuation preserves the original born,
+  // pending and application trial above. Decode the complete actual pending
+  // wrapper and restore to a fresh SAME-source manager through its real API.
+  auto encoded = management_checkpoint_transport::checkpoint_wire(*pending);
+  auto decoded =
+      management_checkpoint_transport::read_checkpoint_wire(encoded.get());
+  auto fresh = prepare(fixture);
+  auto reopened = std::make_unique<PerformanceManagement>(fresh.native,
+                                                          owner->session_ref());
+  const auto restore_before = reopened->stopped_checkpoint();
+  prearm_artifact(
+      "stopped-force-restore-before-management.json",
+      management_checkpoint_transport::checkpoint_wire(*restore_before));
+  TransportAcknowledgement ack{};
+  assert(reopened->stopped_restore(
+      *decoded, 0, reference("native-test:prearm/force-restore/transaction"),
+      reference("native-test:prearm/force-restore/pending-cut"), ack));
+  assert(ack.previous_epoch == 1 && ack.epoch == 2 &&
+         ack.previous_cursor == 0 && ack.previous_sequence == 0 &&
+         ack.target_sample == 0 && ack.accepted_sequence == 1);
+  auto ack_wire = checkpoint_transport::object();
+  checkpoint_transport::u64(ack_wire.get(), "previous_epoch",
+                            ack.previous_epoch);
+  checkpoint_transport::u64(ack_wire.get(), "epoch", ack.epoch);
+  checkpoint_transport::u64(ack_wire.get(), "previous_cursor",
+                            ack.previous_cursor);
+  checkpoint_transport::u64(ack_wire.get(), "previous_sequence",
+                            ack.previous_sequence);
+  checkpoint_transport::u64(ack_wire.get(), "target_sample", ack.target_sample);
+  checkpoint_transport::u64(ack_wire.get(), "accepted_sequence",
+                            ack.accepted_sequence);
+  checkpoint_transport::ref(ack_wire.get(), "transaction_ref", ack.transaction);
+  checkpoint_transport::ref(ack_wire.get(), "checkpoint_ref", ack.checkpoint);
+  prearm_artifact("stopped-force-restore-ack.json", ack_wire);
+  const auto restored_pending = reopened->stopped_checkpoint();
+  assert(restored_pending->transport_epoch == 2 &&
+         restored_pending->native_pair.audio.applied_application_ordinal == 0 &&
+         restored_pending->native_pair.audio.accepted_sequence == 1 &&
+         restored_pending->native_pair.audio.source.force_newtons ==
+             born->native_pair.audio.source.force_newtons);
+  prearm_artifact(
+      "stopped-force-restored-pending-management.json",
+      management_checkpoint_transport::checkpoint_wire(*restored_pending));
+  std::array<float, 128> continued{};
+  callback_probe = true;
+  const bool restored_advance =
+      reopened->offline_advance(continued.data(), continued.size(), 0);
+  callback_probe = false;
+  assert(restored_advance && allocations == 0 && releases == 0 &&
+         continued == pcm);
+  const auto restored_pulse = reopened->pulse();
+  assert(restored_pulse->applications.size() == 1 &&
+         restored_pulse->applications[0].applied &&
+         restored_pulse->applications[0].kind == Kind::Parameter &&
+         restored_pulse->applications[0].parameter == Parameter::ForceNewtons &&
+         restored_pulse->applications[0].value == 2 &&
+         restored_pulse->applications[0].sequence == 1 &&
+         restored_pulse->applications[0].applied_application_ordinal == 1 &&
+         restored_pulse->applications[0].applied_sample == 0 &&
+         restored_pulse->reading.source.force_newtons == 2);
+  prearm_artifact(
+      "stopped-force-restored-applied.json",
+      checkpoint_transport::application(restored_pulse->applications[0]));
+  const auto restored_after = reopened->stopped_checkpoint();
+  assert(restored_after->transport_epoch == 2 &&
+         restored_after->native_pair.audio.cursor == 128 &&
+         restored_after->native_pair.audio.applied_application_ordinal == 1 &&
+         restored_after->native_pair.audio.source.force_newtons == 2);
+  prearm_artifact(
+      "stopped-force-restored-after-management.json",
+      management_checkpoint_transport::checkpoint_wire(*restored_after));
+  assert(reopened->offline_advance(continued.data(), continued.size(), 128));
+  const auto next = reopened->pulse();
+  assert(next->applications.empty() && next->reading.source.force_newtons == 2);
+}
+static void stopped_parameter_admission_cases(J *fixture) {
+  auto prepared = prepare(fixture), unchanged = prepare(fixture);
+  auto owner = std::make_unique<PerformanceManagement>(
+      prepared.native, reference("native-test:prearm/same-manager"));
+  auto twin = std::make_unique<PerformanceManagement>(
+      unchanged.native,
+      reference("native-test:prearm/independent-unedited-manager"));
+  owner->native().engine->enable_capture(true);
+  twin->native().engine->enable_capture(true);
+  const auto before = owner->stopped_checkpoint();
+  const auto admitted = owner->set_parameter(Parameter::MasterLinear, .5);
+  assert(admitted.result == Result::Accepted && admitted.has_stopped_queue &&
+         admitted.clock.epoch == 0 && admitted.clock.sequence == 0 &&
+         admitted.stopped_queue.queue().queued());
+  const auto &q = admitted.stopped_queue.queue();
+  assert(q.operation().kind == Kind::Parameter && q.operation().sequence == 1 &&
+         q.operation().sample == 0 && q.operation().requested_sample == 0 &&
+         q.operation().has_requested_sample &&
+         q.operation().native_clock.epoch == 0 && q.queue_cursor() == 0 &&
+         q.queue_horizon() == 0 &&
+         admitted.stopped_queue.session_ref() == owner->session_ref());
+  const auto queued = owner->stopped_checkpoint();
+  assert(queued->native_pair.audio.accepted_sequence == 1 &&
+         queued->native_pair.audio.source.master_linear ==
+             before->native_pair.audio.source.master_linear &&
+         queued->native_pair.audio.applied_application_ordinal == 0 &&
+         queued->native_pair.audio.applications.write ==
+             queued->native_pair.audio.applications.read);
+  const auto original_wire =
+      management_checkpoint_transport::checkpoint_wire(*queued);
+  auto wrong_source = owner->native().determination.identity;
+  wrong_source.instance = reference("native-test:prearm/foreign-instance");
+  assert(owner
+             ->enqueue_stopped_parameter_admission(Parameter::MasterLinear, .75,
+                                                   wrong_source, 0)
+             .result() == Result::Stale);
+  assert(owner
+             ->enqueue_stopped_parameter_admission(
+                 Parameter::MasterLinear, .75,
+                 owner->native().determination.identity, 1)
+             .result() == Result::Stale);
+  {
+    auto foreign_guard = twin->native().engine->acquire_stopped_custody();
+    assert(foreign_guard &&
+           owner->native()
+                   .engine
+                   ->enqueue_stopped_parameter_with_receipt(
+                       Parameter::MasterLinear, .75,
+                       owner->native().determination.identity, foreign_guard, 0)
+                   .result() == Result::Unavailable);
+  }
+  const auto refused_state = owner->stopped_checkpoint();
+  const auto refused_wire =
+      management_checkpoint_transport::checkpoint_wire(*refused_state);
+  assert(json_object_equal(original_wire.get(), refused_wire.get()));
+  std::array<float, 128> pcm{}, original{};
+  callback_probe = true;
+  const bool first = owner->offline_advance(pcm.data(), pcm.size(), 0);
+  const bool second =
+      twin->offline_advance(original.data(), original.size(), 0);
+  callback_probe = false;
+  assert(first && second && allocations == 0 && releases == 0);
+  const auto pulse = owner->pulse();
+  assert(pulse->applications.size() == 1 && pulse->applications[0].applied &&
+         pulse->applications[0].kind == Kind::Parameter &&
+         pulse->applications[0].sequence == 1 &&
+         pulse->applications[0].applied_sample == 0 &&
+         pulse->applications[0].value == .5 &&
+         pulse->reading.source.master_linear == .5);
+  Capture changed{}, unedited{};
+  assert(owner->pop_audio_capture(changed) &&
+         twin->pop_audio_capture(unedited));
+  assert(changed.pickup_linear == unedited.pickup_linear &&
+         changed.force_newtons == unedited.force_newtons &&
+         changed.route_force_newtons == unedited.route_force_newtons &&
+         pcm != original &&
+         changed.body_gain_linear != unedited.body_gain_linear);
+  auto full = prepare(fixture);
+  auto full_owner = std::make_unique<PerformanceManagement>(
+      full.native, reference("native-test:prearm/full-native-queue"));
+  for (std::uint64_t i = 0; i < queue_capacity; ++i) {
+    auto op = operation(full_owner->native().determination, Kind::Parameter,
+                        i + 1, 0);
+    op.parameter = Parameter::MasterLinear;
+    op.value = .5;
+    assert(full_owner->enqueue_score_input(op) == Result::Accepted);
+  }
+  const auto full_before = full_owner->stopped_checkpoint();
+  const auto full_before_wire =
+      management_checkpoint_transport::checkpoint_wire(*full_before);
+  const auto overflow = full_owner->set_parameter(Parameter::MasterLinear, .75);
+  assert(overflow.has_stopped_queue && overflow.result == Result::Overflow &&
+         !overflow.stopped_queue.queue().queued());
+  const auto full_after = full_owner->stopped_checkpoint();
+  const auto full_after_wire =
+      management_checkpoint_transport::checkpoint_wire(*full_after);
+  assert(json_object_equal(full_before_wire.get(), full_after_wire.get()));
+  assert(full_owner->offline_advance(pcm.data(), pcm.size(), 0));
+  full_owner->pulse();
+  const auto recovered =
+      full_owner->set_parameter(Parameter::MasterLinear, .75);
+  assert(recovered.result == Result::Accepted &&
+         recovered.stopped_queue.queue().operation().sequence ==
+             queue_capacity + 1 &&
+         recovered.stopped_queue.queue().operation().sample == 128);
+  assert(full_owner->offline_advance(pcm.data(), pcm.size(), 128));
+  const auto final = full_owner->pulse();
+  assert(final->applications.size() == 1 &&
+         final->applications[0].sequence == queue_capacity + 1 &&
+         final->applications[0].applied &&
+         final->applications[0].applied_sample == 128 &&
+         final->reading.source.master_linear == .75);
+}
 static void neutral_world(J *fixture) {
   auto quiet = prepare(fixture, true), keyed = prepare(fixture, true);
   note(keyed);
@@ -1139,6 +1393,8 @@ int main() {
   neutral_world(fixture.get());
   independent_retained_body_revision_cases(fixture.get());
   retained_material_revision(fixture.get());
+  stopped_parameter_admission_cases(fixture.get());
+  stopped_force_savecut_artifacts(fixture.get());
   allroute_management_hold(fixture.get());
   committed_v2_scalar_import(fixture.get());
   accepted_future_attack_after_hold(fixture.get());

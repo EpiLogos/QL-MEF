@@ -1299,16 +1299,49 @@ public:
   Result enqueue(const Operation &op) noexcept {
     return enqueue_with_receipt(op).result();
   }
+  // Same stopped native owner only. No AUHAL epoch or applied event is
+  // invented: this produces an actual pending queue fact at the native cursor.
+  NativeQueueAdmission enqueue_stopped_parameter_with_receipt(
+      Parameter target, double value, const Identity &expected_source,
+      const StoppedCustody &guard, std::uint64_t expected_cursor) noexcept {
+    NativeQueueAdmission receipt{};
+    if (guard.owner_ != this || activity_.load() != 2 ||
+        device_running_.load()) {
+      receipt.result_ = Result::Unavailable;
+      return receipt;
+    }
+    if (cursor_ != expected_cursor ||
+        published_cursor_.load() != expected_cursor ||
+        !(expected_source == source_at(cursor_).identity)) {
+      receipt.result_ = Result::Stale;
+      return receipt;
+    }
+    if (accepted_sequence_ == std::numeric_limits<std::uint64_t>::max()) {
+      receipt.result_ = Result::Exhausted;
+      return receipt;
+    }
+    Operation op{};
+    op.kind = Kind::Parameter;
+    op.parameter = target;
+    op.value = value;
+    op.identity = expected_source;
+    op.sequence = accepted_sequence_ + 1;
+    op.sample = cursor_;
+    receipt.result_ = enqueue_impl(op, false, &receipt, true);
+    return receipt;
+  }
 
 private:
   Result enqueue_impl(const Operation &op, bool native_gesture,
-                      NativeQueueAdmission *receipt = nullptr) noexcept {
-    if (activity_.load(std::memory_order_acquire) == 2)
+                      NativeQueueAdmission *receipt = nullptr,
+                      bool stopped_parameter = false) noexcept {
+    if (activity_.load(std::memory_order_acquire) == 2 && !stopped_parameter)
       return Result::Unavailable;
     if (fault_.load(std::memory_order_acquire))
       return Result::Unavailable;
     const auto cursor = published_cursor_.load(std::memory_order_acquire);
-    retire_source_schedule(cursor);
+    if (!stopped_parameter)
+      retire_source_schedule(cursor);
     if (accepted_sequence_ == std::numeric_limits<std::uint64_t>::max())
       return Result::Exhausted;
     if (unsigned(op.kind) > unsigned(Kind::Determination) ||
@@ -1318,7 +1351,9 @@ private:
     if (op.sequence != accepted_sequence_ + 1)
       return Result::Order;
     const bool late = op.sample < cursor;
-    const auto horizon = published_horizon_.load(std::memory_order_acquire);
+    const auto horizon =
+        stopped_parameter ? cursor
+                          : published_horizon_.load(std::memory_order_acquire);
     const bool critical = op.kind == Kind::NoteOff || op.kind == Kind::Panic ||
                           (op.kind == Kind::Sustain && op.value == 0);
     const auto &source = source_at(std::max(op.sample, cursor));
@@ -1397,6 +1432,8 @@ private:
                   admitted.requested_sample, true})
             : operations_.push(admitted);
     if (!queued) {
+      if (stopped_parameter)
+        return Result::Overflow;
       overflow_count_.fetch_add(1);
       emergency_.store(true, std::memory_order_release);
       return Result::Overflow;

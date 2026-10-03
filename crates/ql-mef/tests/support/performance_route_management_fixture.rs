@@ -23,6 +23,13 @@ fn reference(value: &str) -> Reference {
     }
 }
 fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Value, String> {
+    for_prepared_retained(p, native_cursor, None)
+}
+fn for_prepared_retained(
+    p: &PreparedPerformanceBinding,
+    native_cursor: u64,
+    retained: Option<&mut Value>,
+) -> Result<Value, String> {
     p.validate_native_consumers(p.native_basis(), p.physical_body())?;
     let profile: IdentityProfile = serde_json::from_value(json!({
         "schema":"ql.nara-identity-profile/v1", "person_ref":p.physical_body().subject_ref(),
@@ -237,12 +244,64 @@ fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Va
         "native_admission":native_admission,"current_native_admission":current_native_admission,
         "world_native_admission":world_native_admission,"world_current_native_admission":world_current_native_admission,
         "performance_preparation":p,"native_catalog":native_catalog});
+    if let Some(retained) = retained {
+        use ql_mef::musical_performance_return::{
+            ReturnContext, ReturnReference, bind_performance_return,
+        };
+        let reference = |value: &Reference| ReturnReference {
+            reference: value.reference.clone(),
+            revision: value.revision.clone(),
+        };
+        let returned = bind_performance_return(
+            p,
+            Some(occasion.clone()),
+            ReturnContext {
+                context: reference(&context.context),
+                receiver: reference(&context.receiver),
+                source_occasion: context.original_occasion.as_ref().map(reference),
+                protected_state: context.protected_state.as_ref().map(reference),
+                consent: context.consent.as_ref().map(reference),
+                kind: "personal".into(),
+                private: context.private,
+                required_assets: vec![],
+            },
+            73,
+        )?;
+        let basis = returned.expression_basis()?;
+        let pitches = returned.expression_pitches(0)?;
+        if basis["prepared_body"] != out["preparation"]
+            || basis["audio_determination"]
+                != serde_json::to_value(p.determination()).map_err(|e| e.to_string())?
+            || out["native_admission"]["native_basis"]
+                != serde_json::to_value(p.native_basis()).map_err(|e| e.to_string())?
+        {
+            return Err(
+                "same native route-management Return/preparation/source basis disconnected".into(),
+            );
+        }
+        *retained = json!({"schema":"ql.retained-route-management-return/v1",
+            "standing":"controlled-native-component; no current Scene/Act grant or astronomical verdict",
+            "basis":basis,"pitches":pitches,"native_return":returned.snapshot()?,
+            "native_preparation":p,"native_basis":p.native_basis(),
+            "native_receiving":definition,"native_admission":out["native_admission"],
+            "native_catalog":out["native_catalog"],
+            "original_source_inputs":{"identity_profile":profile,"natal":natal,"identity":identity,
+                "dated_sky":sky,"current":current,"original_occasion":occasion,"context":context,"calibration":calibration}});
+    }
     Ok(out)
 }
 
 pub fn packet() -> Result<Value, String> {
+    packet_retained(None)
+}
+pub fn packet_with_return() -> Result<(Value, Value), String> {
+    let mut retained = Value::Null;
+    let packet = packet_retained(Some(&mut retained))?;
+    Ok((packet, retained))
+}
+fn packet_retained(retained: Option<&mut Value>) -> Result<Value, String> {
     let before = prepare_native_performance(support::preparation())?;
-    let mut output = for_prepared(&before, 0)?;
+    let mut output = for_prepared_retained(&before, 0, retained)?;
     let mut request = support::preparation();
     request.physical.material.young_modulus_pa *= 4.0;
     request.physical.material.provenance.revision = "2".into();

@@ -23,6 +23,9 @@ fn count(value: &Value) -> Result<u64, String> {
 }
 fn kind(value: &str) -> Result<(), String> {
     let scalar = [
+        "recording.cut_observation",
+        "recording.cut_checkpoint",
+        "recording.cut_failure",
         "original_capture_receipt",
         "saved_native_checkpoint",
         "last_activity_reply",

@@ -50,6 +50,46 @@ impl From<&str> for NativeFieldTimingRefusal {
         reason.to_owned().into()
     }
 }
+/// The normal browser save codec writes an integral binary64 value such as
+/// 220.0 as 220. Compare that spelling only for this portable World basis.
+/// Exact native integers beyond the browser's safe range never pass through
+/// binary64. Browser JSON also spells -0.0 as 0; this metadata-only check
+/// admits that zero spelling. Native sealed values and feedback stay exact.
+fn same_portable_basis(left: &Value, right: &Value) -> bool {
+    match (left, right) {
+        (Value::Number(a), Value::Number(b)) => {
+            if a == b {
+                return true;
+            }
+            if (a.is_i64() || a.is_u64()) && (b.is_i64() || b.is_u64()) {
+                return false;
+            }
+            const SAFE: u64 = 9_007_199_254_740_991;
+            if [a, b].iter().any(|n| {
+                n.as_u64().is_some_and(|v| v > SAFE)
+                    || n.as_i64().is_some_and(|v| v.unsigned_abs() > SAFE)
+            }) {
+                return false;
+            }
+            match (a.as_f64(), b.as_f64()) {
+                (Some(a), Some(b)) => (a == 0.0 && b == 0.0) || a.to_bits() == b.to_bits(),
+                _ => false,
+            }
+        }
+        (Value::Array(a), Value::Array(b)) => {
+            a.len() == b.len() && a.iter().zip(b).all(|(a, b)| same_portable_basis(a, b))
+        }
+        (Value::Object(a), Value::Object(b)) => {
+            a.len() == b.len()
+                && a.iter().all(|(key, value)| {
+                    b.get(key)
+                        .is_some_and(|other| same_portable_basis(value, other))
+                })
+        }
+        _ => left == right,
+    }
+}
+
 impl FieldHost {
     /// C28's private reader compares this exact actual native tuple with the
     /// original selected Scene/World source by its existing native producers.
@@ -312,7 +352,7 @@ impl FieldHost {
         }
         let original = serde_json::to_value(actual_original).map_err(|e| e.to_string())?;
         let current = serde_json::to_value(actual_current).map_err(|e| e.to_string())?;
-        if world["basis"] != original {
+        if !same_portable_basis(&world["basis"], &original) {
             return Err(
                 "canonical original portable world basis differs from actual original FIELD source"
                     .into(),
@@ -326,7 +366,7 @@ impl FieldHost {
             {
                 return Err("closed native FIELD source differs from actual full original/current held owners".into());
             }
-        } else if original != current || world["basis"] != original {
+        } else if original != current || !same_portable_basis(&world["basis"], &original) {
             return Err("full native FIELD continuation source has not been retained in its canonical Scene".into());
         }
         for actual in [actual_original, actual_current] {
@@ -378,6 +418,108 @@ mod tests {
         );
         // This pure source-content validator constructs NO native lease/witness.
     }
+    /// Only the normal browser JSON codec's safe integral-number spelling.
+    /// The source values are the COMPLETE actual CoupledInput composition,
+    /// not reconstructed modal summaries or a private native owner fixture.
+    fn browser_safe_number_spellings(value: &mut Value) -> usize {
+        match value {
+            Value::Number(number) if number.is_f64() => {
+                let actual = number.as_f64().unwrap();
+                if actual.fract() == 0.0 && actual.abs() <= 9_007_199_254_740_991f64 {
+                    *value = json!(actual as i64);
+                    1
+                } else {
+                    0
+                }
+            }
+            Value::Array(rows) => rows.iter_mut().map(browser_safe_number_spellings).sum(),
+            Value::Object(rows) => rows.values_mut().map(browser_safe_number_spellings).sum(),
+            _ => 0,
+        }
+    }
+
+    #[test]
+    fn actual_complete_portable_world_basis_accepts_browser_number_spelling_only() {
+        let (basis, mut presentation) = source();
+        let original = serde_json::to_value(&basis).unwrap();
+        let world = &mut presentation["scene"]["epiWorld"]["world"];
+        // Exercise every safe integral binary64 descendant of the actual
+        // complete native World basis and its matching full original event.
+        let changed_basis = browser_safe_number_spellings(&mut world["basis"]);
+        let changed_event = browser_safe_number_spellings(&mut world["event"]);
+        assert!(
+            changed_basis > 1 && changed_event > 0,
+            "complete native numeric rows must be exercised"
+        );
+        assert_eq!(
+            world["basis"]["input"]["m1"]["revision"],
+            original["input"]["m1"]["revision"]
+        );
+        let saved: Value =
+            serde_json::from_slice(&serde_json::to_vec(&presentation).unwrap()).unwrap();
+        assert_ne!(saved["scene"]["epiWorld"]["world"]["basis"], original);
+        FieldHost::validate_retained_field_sources(&saved, "native:field-instance", &basis, &basis)
+            .unwrap();
+        let mut changed = saved.clone();
+        changed["scene"]["epiWorld"]["world"]["basis"]["input"]["m2"]["condition"]["tonic_hz"] =
+            json!(221);
+        changed["scene"]["epiWorld"]["world"]["event"]["m2"]["condition"]["tonic_hz"] = json!(221);
+        assert!(
+            FieldHost::validate_retained_field_sources(
+                &changed,
+                "native:field-instance",
+                &basis,
+                &basis
+            )
+            .is_err()
+        );
+        let mut added = saved.clone();
+        added["scene"]["epiWorld"]["world"]["basis"]["extra"] = json!("another source");
+        assert!(
+            FieldHost::validate_retained_field_sources(
+                &added,
+                "native:field-instance",
+                &basis,
+                &basis
+            )
+            .is_err()
+        );
+        // This content check never constructs an Act lease, FIELD witness,
+        // Source admission, owner receipt or alternate native clock.
+    }
+
+    #[test]
+    fn portable_basis_number_equality_preserves_exact_large_identity_and_structure() {
+        assert!(same_portable_basis(&json!(0), &json!(-0.0)));
+        assert!(same_portable_basis(&json!(0.0), &json!(-0.0)));
+        assert!(!same_portable_basis(&json!(0), &json!(-f64::MIN_POSITIVE)));
+        assert!(same_portable_basis(
+            &json!({"tonic":220}),
+            &json!({"tonic":220.0})
+        ));
+        assert!(same_portable_basis(
+            &json!(9_007_199_254_740_991u64),
+            &json!(9_007_199_254_740_991f64)
+        ));
+        assert!(!same_portable_basis(
+            &json!(9_007_199_254_740_992u64),
+            &json!(9_007_199_254_740_992f64)
+        ));
+        assert!(!same_portable_basis(
+            &json!(9_007_199_254_740_993u64),
+            &json!(9_007_199_254_740_992u64)
+        ));
+        assert!(!same_portable_basis(
+            &json!(220),
+            &json!(220.00000000000003)
+        ));
+        assert!(!same_portable_basis(&json!([1, 2]), &json!([2.0, 1.0])));
+        assert!(!same_portable_basis(
+            &json!({"tonic":220}),
+            &json!({"tonic":220.0,"actor":"foreign"})
+        ));
+    }
+
     #[test]
     fn native_field_source_accessor_refuses_foreign_subject_and_owner_cut() {
         let (basis, presentation) = source();

@@ -67,6 +67,15 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     TASK_MOTION_OUTPUT="$TASK_OUTPUT/moving-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_motion_nonce"
     run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_MOVING_RECEIVING_EVIDENCE_DIR="$TASK_MOTION_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
+  elif [[ "$suite" == "performance_route_management_native_wire" ]]; then
+    # Retain actual born/pending/applied Force and complete cold continuation
+    # from the SAME native source, queue and Manager, never reconstructed data.
+    v_prearm_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_PREARM_OUTPUT="$TASK_OUTPUT/prearm-source-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_prearm_nonce"
+    mkdir -p "$TASK_PREARM_OUTPUT"
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" \
+      QL_NATIVE_PREARM_RECEIPT_DIR="$TASK_PREARM_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "performance_calibration_native_wire" ]]; then
     v_calibration_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_CALIBRATION_OUTPUT="$TASK_OUTPUT/calibration-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_calibration_nonce"

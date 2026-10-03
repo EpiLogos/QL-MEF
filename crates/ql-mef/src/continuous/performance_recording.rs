@@ -211,3 +211,171 @@ impl FieldHost {
         )
     }
 }
+
+/// Two original serial exchanges at one actual stopped boundary. The first
+/// owns any committed application/input feedback; the second snapshots the
+/// exact resulting management state. No values can construct this carrier.
+pub(crate) struct NativeCapturedStoppedRecordingCut {
+    command_receipt: Value,
+    observation: Value,
+    checkpoint: Value,
+}
+impl NativeCapturedStoppedRecordingCut {
+    pub(crate) fn command_receipt(&self) -> &Value {
+        &self.command_receipt
+    }
+    pub(crate) fn observation(&self) -> &Value {
+        &self.observation
+    }
+    pub(crate) fn checkpoint(&self) -> &Value {
+        &self.checkpoint
+    }
+}
+fn validate_stopped_recording_cut(observation: &Value, checkpoint: &Value) -> Result<(), String> {
+    let first = &observation["reading"];
+    let after = &checkpoint["reading"];
+    for pulse in [observation, checkpoint] {
+        if pulse["accepted"] != true
+            || pulse["recording"]["failure"] != 0
+            || origin_counter(&pulse["recording"]["dropped_applications"])? != 0
+            || !matches!(
+                pulse["reading"]["device"]["state"].as_str(),
+                Some("closed" | "prepared")
+            )
+            || origin_counter(&pulse["last_input_ordinal"])?
+                != origin_counter(&pulse["reading"]["last_input_ordinal"])?
+        {
+            return Err(
+                "stopped recording cut has native failure/running device/input loss".into(),
+            );
+        }
+    }
+    for field in [
+        "session_ref",
+        "transport_epoch",
+        "samples_elapsed",
+        "accepted_sequence",
+        "last_applied_application_ordinal",
+        "last_input_ordinal",
+        "scope",
+        "physical",
+        "parameters",
+    ] {
+        if first.get(field).is_none() || first[field] != after[field] {
+            return Err(format!("stopped recording boundary changed: {field}"));
+        }
+    }
+    if checkpoint["operation"] != "checkpoint"
+        || !checkpoint["applications"]
+            .as_array()
+            .is_some_and(Vec::is_empty)
+        || !checkpoint["input_history"]
+            .as_array()
+            .is_some_and(Vec::is_empty)
+    {
+        return Err("save cut encountered additional observer feedback; retain both originals and complete recording before retry".into());
+    }
+    let saved = &checkpoint["payload"]["checkpoint"];
+    let audio = &saved["native_pair"]["audio"];
+    if saved["schema"] != "ql.performance-management-checkpoint/v1"
+        || origin_counter(&audio["cursor"])? != origin_counter(&first["samples_elapsed"])?
+        || origin_counter(&audio["accepted_sequence"])?
+            != origin_counter(&first["accepted_sequence"])?
+        || origin_counter(&audio["applied_application_ordinal"])?
+            != origin_counter(&first["last_applied_application_ordinal"])?
+        || origin_counter(&saved["transport_epoch"])? != origin_counter(&first["transport_epoch"])?
+        || origin_counter(&saved["input_history"]["last_ordinal"])?
+            != origin_counter(&first["last_input_ordinal"])?
+        || !audio["applications"]["entries"]
+            .as_array()
+            .is_some_and(Vec::is_empty)
+        || !saved["input_history"]["entries"]
+            .as_array()
+            .is_some_and(Vec::is_empty)
+    {
+        return Err("save cut checkpoint is not the complete actual post-feedback boundary".into());
+    }
+    Ok(())
+}
+impl FieldHost {
+    pub(crate) fn capture_native_stopped_recording_cut(
+        &mut self,
+        lease: &NativeActSourceLease<'_>,
+    ) -> Result<NativeCapturedStoppedRecordingCut, NativeStoppedExchangeFailure> {
+        let reading = self
+            .performance
+            .as_ref()
+            .and_then(|owner| owner.reading())
+            .ok_or("stopped recording cut has no actual native owner reading")?;
+        if !matches!(
+            reading["device"]["state"].as_str(),
+            Some("closed" | "prepared")
+        ) {
+            return Err("stop the actual device before taking a recording/save cut".into());
+        }
+        let captured = self
+            .capture_native_performance_command(lease, PerformanceCommand::Inspect {})
+            .map_err(|failure| NativeStoppedExchangeFailure {
+                reason: failure.reason,
+                native_receipts: failure.native_pulse.into_iter().collect(),
+            })?;
+        let NativeCapturedPerformancePulse {
+            receipt: command_receipt,
+            pulse: observation,
+        } = captured;
+        let current = self.session.session().current_basis().clone();
+        let second = (|| {
+            let source = self
+                .receiving_source
+                .as_ref()
+                .ok_or("save cut receiving source absent")?;
+            let owner = self
+                .performance
+                .as_mut()
+                .ok_or("save cut native owner absent")?;
+            owner.validate_current(&current)?;
+            lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            owner.owner_stopped_exchange(
+                &current,
+                source,
+                self.session.session_mut(),
+                "checkpoint",
+                &serde_json::json!({}),
+            )
+        })();
+        let checkpoint = match second {
+            Ok(checkpoint) => checkpoint,
+            Err(mut failure) => {
+                failure.native_receipts.insert(0, observation);
+                return Err(failure);
+            }
+        };
+        let post = (|| -> Result<(), String> {
+            validate_stopped_recording_cut(&observation, &checkpoint)?;
+            let owner = self
+                .performance
+                .as_ref()
+                .ok_or("save cut native owner lost")?;
+            owner.validate_current(&current)?;
+            lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            if serde_json::to_value(self.session.session().current_basis())
+                .map_err(|e| e.to_string())?
+                != serde_json::to_value(&current).map_err(|e| e.to_string())?
+            {
+                return Err("save cut changed the complete original native source".into());
+            }
+            Ok(())
+        })();
+        match post {
+            Ok(()) => Ok(NativeCapturedStoppedRecordingCut {
+                command_receipt,
+                observation,
+                checkpoint,
+            }),
+            Err(reason) => Err(NativeStoppedExchangeFailure {
+                reason,
+                native_receipts: vec![observation, checkpoint],
+            }),
+        }
+    }
+}

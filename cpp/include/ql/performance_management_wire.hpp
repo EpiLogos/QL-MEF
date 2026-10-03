@@ -1208,8 +1208,16 @@ public:
         require(op == "inspect", "unknown native performance operation");
       if (op == "inspect")
         accepted = true;
-      if (admission.clock.sequence || admission.result != Result::Unavailable ||
-          !admission.reason.empty()) {
+      if (admission.has_stopped_queue) {
+        accepted = admission.result == Result::Accepted;
+        reason = admission.reason;
+        if (admission.stopped_queue.queue().queued())
+          wire::put(payload.get(), "score_admission",
+                    score_admission(admission.stopped_queue).release());
+        timing_.score(admission.stopped_queue);
+      } else if (admission.clock.sequence ||
+                 admission.result != Result::Unavailable ||
+                 !admission.reason.empty()) {
         accepted = admission.result == Result::Accepted;
         reason = admission.reason;
         auto a = wire::object();

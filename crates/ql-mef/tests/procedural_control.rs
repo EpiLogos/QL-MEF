@@ -73,6 +73,18 @@ fn input() -> NativeControlInput {
     material["scene"]["automation"] = json!([leader, child]);
     material["scene"]["propertyTracks"] = json!([{"id":"actual-track:radius","bind":"entity.force.radius","entityId":id,"points":[{"time":0,"value":0.3},{"time":2,"value":0.5}]}]);
     material["scene"]["procedural"] = json!({"schema":"oi.expression-procedural/v1","bindings":[],"procedures":[{"procedure_ref":p.procedure_ref,"revision":p.revision,"source_basis":[{"ref":p.recipe.source_ref,"revision":p.recipe.revision,"availability":"available"},{"ref":p.profile.source_ref,"revision":p.profile.revision,"availability":"available"}],"seed":{"algorithm":p.seed_algorithm,"version":"1","value":p.seed},"definition":p,"resolved_targets":[],"cursor":0,"state":"held","membership_events":[]}],"contributions":[],"controls":[],"operations":[],"scene_flow":[],"time_mappings":[],"source_basis":[{"ref":"source:canonical","revision":"1","availability":"available"}]});
+    // Whole-Scene interventions walk every real constituent in the production
+    // authoring template, including its force pin. Keep the exact identity map
+    // for the complete material rather than only the controlled formation.
+    let entity_refs = material["scene"]["entities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entity| {
+            let actual = entity["id"].as_str().unwrap().to_owned();
+            (actual.clone(), actual)
+        })
+        .collect();
     let mut candidate = material.clone();
     candidate["scene"]["entities"][0]["force"]["radius"] = json!(1.6);
     NativeControlInput {
@@ -98,7 +110,7 @@ fn input() -> NativeControlInput {
             ],
             scenes: vec![NativeDriverScene {
                 scene_ref: scene.into(),
-                entity_refs: BTreeMap::from([(id, native.into())]),
+                entity_refs,
                 presentation: material,
                 parameter_candidate: Some(candidate),
             }],
@@ -1563,12 +1575,46 @@ fn release_synchronized_order(
         request.reading.scenes[0].parameter_candidate = None;
         let released = prepare_native_control(&request).unwrap();
         assert_eq!(released["resolved_scope"], json!(request.reading.addresses));
-        assert_eq!(
-            released["managed_control_addresses"]
+        let mut expected_metadata_scope = request.reading.addresses.clone();
+        if offset == 0 {
+            let peer_address = &inputs[1 - index].reading.addresses[0];
+            let before_peer =
+                request.reading.scenes[0].presentation["scene"]["procedural"]["controls"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|control| control["address"] == json!(peer_address))
+                    .unwrap();
+            let after_peer = released["native_edit"]["changes"][0]["presentation"]["scene"]
+                ["procedural"]["controls"]
                 .as_array()
                 .unwrap()
-                .len(),
-            if offset == 0 { 2 } else { 1 }
+                .iter()
+                .find(|control| control["address"] == json!(peer_address))
+                .unwrap();
+            if before_peer != after_peer {
+                expected_metadata_scope.push(peer_address.clone());
+            } else {
+                // A retained promoted Source group can already have the exact
+                // remaining driver's full baseline and suspension. Removing
+                // its sibling does not claim unchanged peer metadata.
+                assert_eq!(
+                    after_peer, before_peer,
+                    "unchanged peer retains all source/clock bytes"
+                );
+                assert!(
+                    !released["managed_control_addresses"]
+                        .as_array()
+                        .unwrap()
+                        .contains(&json!(peer_address)),
+                    "metadata coverage must not widen to an unchanged peer"
+                );
+            }
+        }
+        expected_metadata_scope.sort();
+        assert_eq!(
+            released["managed_control_addresses"],
+            json!(expected_metadata_scope)
         );
         assert_eq!(
             released["scene_coverage"][0]["managed_control_addresses"],
