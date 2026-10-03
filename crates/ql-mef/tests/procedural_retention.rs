@@ -147,7 +147,7 @@ fn retire(
     c: &GeneratedContribution,
     actual: Value,
     context: &NativeMaterialization,
-) -> Result<PreparedProcedure> {
+) -> std::result::Result<PreparedProcedure, String> {
     let r = reading(p, c, actual.clone());
     prepare_native_retirement(
         m_tree::native_current_m_registry(),
