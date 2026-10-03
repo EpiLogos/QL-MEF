@@ -194,6 +194,81 @@ static void pending_restore_trial(const std::string &dir, bool panic,
                final_wire.get());
   }
 }
+// Independent real owner preserves the original trial's unread observers.
+// This cut observes only the genuinely committed attack at128 while IDs3/2
+// remain queued; neither pending release nor future automation is fabricated.
+static void pending_pulse_trial(const std::string &dir, bool panic,
+                                const std::filesystem::path &output_dir) {
+  if (output_dir.empty())
+    return;
+  auto owner = manager(dir);
+  const auto &source = owner->native().determination;
+  auto attack = op(source, Kind::NoteOn, 1, 37);
+  attack.note = owner->native().notes.at(4);
+  attack.value = .8;
+  const auto input = reference("native-score:original-pointer/42");
+  auto attack_admission = owner->enqueue_score_input_admission(attack, input);
+  assert(attack_admission.result() == Result::Accepted &&
+         attack_admission.queue().queued());
+  auto future = op(source, Kind::Parameter, 2, 48000);
+  future.parameter = Parameter::MasterLinear;
+  future.value = .2;
+  auto future_admission = owner->enqueue_score_input_admission(future);
+  assert(future_admission.result() == Result::Accepted);
+  std::array<float, 128> pcm{};
+  assert(owner->offline_advance(pcm.data(), 128, 0));
+  auto release = op(source, panic ? Kind::Panic : Kind::NoteOff, 3, 0);
+  release.touch = attack.note.touch;
+  auto release_admission =
+      owner->enqueue_score_input_admission(release, panic ? Ref{} : input);
+  assert(release_admission.result() == Result::Accepted &&
+         release_admission.queue().queued());
+  const auto &queued = release_admission.queue().operation();
+  assert(queued.has_requested_sample && queued.requested_sample == 0 &&
+         queued.sample == 128 && queued.late_admitted);
+  auto pulse = owner->pulse();
+  assert(pulse->reading.samples_elapsed == 128 &&
+         pulse->reading.last_applied_application_ordinal == 1 &&
+         pulse->applications.size() == 1);
+  assert(pulse->applications[0].sequence == 1 &&
+         pulse->applications[0].applied_application_ordinal == 1 &&
+         pulse->applications[0].requested_sample == 37 &&
+         pulse->applications[0].admitted_sample == 37 &&
+         pulse->applications[0].applied_sample == 37 &&
+         pulse->applications[0].applied);
+  std::vector<NativeGestureApplication> applications;
+  std::vector<InputBindingRecord> history;
+  append_pulse(*pulse, applications, history);
+  assert(!history.empty());
+  for (const auto &record : history)
+    assert(record.input_ref == input &&
+           record.target.touch == attack.note.touch);
+  auto stopped = owner->stopped_checkpoint();
+  assert(stopped->transport_epoch == 1 &&
+         stopped->native_pair.audio.cursor == 128 &&
+         stopped->native_pair.physical.samples_elapsed == 128 &&
+         stopped->native_pair.audio.accepted_sequence == 3 &&
+         stopped->native_pair.audio.applied_application_ordinal == 1 &&
+         stopped->native_pair.audio.heap_size == 1 &&
+         stopped->bindings.inputs[0].press_applied);
+  assert(stopped->native_pair.audio.releases.write ==
+         stopped->native_pair.audio.releases.read + 1);
+  const auto &pending =
+      stopped->native_pair.audio.releases
+          .storage[stopped->native_pair.audio.releases.read % 64];
+  assert(pending.sequence == 3 && pending.has_requested_sample &&
+         pending.requested_sample == 0 && pending.sample == 128);
+  assert(pulse->recording.failure == RecordingFailure::None &&
+         pulse->recording.dropped_applications == 0 &&
+         owner->recording_available());
+  auto checkpoint = management_checkpoint_transport::checkpoint_wire(*stopped);
+  auto records = artifacts(applications, history);
+  const std::string prefix = panic ? "panic" : "release";
+  write_json(output_dir / (prefix + ".pending-pulse-checkpoint.json"),
+             checkpoint.get());
+  write_json(output_dir / (prefix + ".pending-pulse-history.json"),
+             records.get());
+}
 static void managed_trial(const std::string &dir, bool panic,
                           const std::filesystem::path &output_dir) {
   auto owner = manager(dir);
@@ -313,6 +388,19 @@ static void managed_trial(const std::string &dir, bool panic,
          pulse->applications[1].sequence == 3);
   assert(pulse->applications[1].applied_sample == 128);
   append_pulse(*pulse, applications, history);
+  if (!output_dir.empty()) {
+    // Genuine SAME256 state after pulse committed Applied journal records.
+    // Original pre-pulse .checkpoint.json remains untouched for its own proof.
+    auto pulse_checkpoint = owner->stopped_checkpoint();
+    assert(pulse_checkpoint->native_pair.audio.cursor == 256 &&
+           pulse_checkpoint->native_pair.audio.applied_application_ordinal ==
+               2);
+    auto pulse_wire =
+        management_checkpoint_transport::checkpoint_wire(*pulse_checkpoint);
+    const auto prefix = panic ? "panic" : "release";
+    write_json(output_dir / (std::string(prefix) + ".pulse-checkpoint.json"),
+               pulse_wire.get());
+  }
   for (std::size_t i = 0; i < history.size(); ++i) {
     assert(history[i].input_ref == original_input);
     assert(history[i].target.touch == attack.note.touch);
@@ -435,6 +523,8 @@ int main(int argc, char **argv) {
     }
     managed_trial(argv[1], false, output);
     managed_trial(argv[1], true, output);
+    pending_pulse_trial(argv[1], false, output);
+    pending_pulse_trial(argv[1], true, output);
     readback_cutoff(argv[1]);
     trailing_application_loss(argv[1]);
     std::cout << "real-native-manager overtaking=2 same-body-highwater=65 "

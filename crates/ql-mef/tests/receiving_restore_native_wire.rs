@@ -471,7 +471,7 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         let applications = reply["applications"].as_array().unwrap();
         let history = reply["input_history"].as_array().unwrap();
         assert_eq!(applications.len(), 1);
-        assert_eq!(history.len(), 1);
+        assert_eq!(history.len(), 2);
         for (name, expected) in [
             ("requested_sample", "0"),
             ("admitted_sample", "0"),
@@ -507,6 +507,40 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
             serde_json::from_str(evidence["operative_checkpoint_wire"].as_str().unwrap()).unwrap();
         let after: Value =
             serde_json::from_str(evidence["after_checkpoint_wire"].as_str().unwrap()).unwrap();
+        // Restoring and pulsing preserves the original unread application,
+        // then appends its genuine same-input feedback to the admitted journal.
+        // Compare every original operand, not just queue lengths or labels.
+        assert_eq!(
+            reply["applications"], original["native_pair"]["audio"]["applications"]["entries"],
+            "{kind}/whole original native application"
+        );
+        let admitted = original["input_history"]["entries"].as_array().unwrap();
+        assert_eq!(admitted.len(), 1);
+        assert_eq!(admitted[0]["change"], 0);
+        assert_eq!(history[0], admitted[0], "{kind}/whole original admission");
+        let saved_ordinal = original["input_history"]["last_ordinal"]
+            .as_str()
+            .unwrap()
+            .parse::<u64>()
+            .unwrap();
+        let next_ordinal = saved_ordinal.checked_add(1).unwrap().to_string();
+        let mut expected_applied = admitted[0].clone();
+        expected_applied["ordinal"] = json!(next_ordinal);
+        expected_applied["native_sequence"] = applications[0]["sequence"].clone();
+        expected_applied["change"] = json!(2);
+        expected_applied["operation"] = json!(0);
+        assert_eq!(history[1], expected_applied, "{kind}/whole native feedback");
+        assert_eq!(after["input_history"]["last_ordinal"], next_ordinal);
+        assert_eq!(after["input_history"]["write"], next_ordinal);
+        assert_eq!(after["input_history"]["read"], next_ordinal);
+        let mut expected_inputs = original["inputs"].clone();
+        assert_eq!(expected_inputs.as_array().unwrap().len(), 1);
+        assert_eq!(expected_inputs[0]["press_applied"], false);
+        expected_inputs[0]["press_applied"] = json!(true);
+        assert_eq!(
+            after["inputs"], expected_inputs,
+            "{kind}/whole input custody"
+        );
         assert_eq!(original["transport_epoch"], operative["transport_epoch"]);
         assert_eq!(after["transport_epoch"], "2");
         assert_eq!(
