@@ -358,17 +358,71 @@ static Json control_trial(J *fixture) {
   auto *evidence =
       packet::field(packet::field(readmission_reply.get(), "payload"),
                     "receiving_readmission");
+  // A pulse materializes the unread callback application in serial input
+  // custody before draining it. Preserve the original PressAdmitted entry AND
+  // require its actual Applied entry; expecting one row discards real history.
+  auto expected_applications = clone_json(packet::field(
+      packet::field(packet::field(saved_wire.get(), "native_pair"), "audio"),
+      "applications"));
+  auto expected_journal = wire::array();
+  for (auto i = saved->bindings.read; i < saved->bindings.write; ++i)
+    wire::append(expected_journal.get(),
+                 management_transport::history(saved->bindings.history[i % 256])
+                     .release());
+  require(saved->bindings.write == saved->bindings.read + 1 &&
+              saved->bindings.last_ordinal <
+                  std::numeric_limits<std::uint64_t>::max() &&
+              saved->bindings.history[saved->bindings.read % 256].change ==
+                  InputBindingChange::PressAdmitted,
+          "actual Control source needs its unread original press admission");
+  auto expected_applied = saved->bindings.history[saved->bindings.read % 256];
+  expected_applied.ordinal = saved->bindings.last_ordinal + 1;
+  expected_applied.native_sequence = attack.sequence;
+  expected_applied.change = InputBindingChange::Applied;
+  expected_applied.operation = Kind::NoteOn;
+  wire::append(expected_journal.get(),
+               management_transport::history(expected_applied).release());
+  const bool original_text_preserved =
+      management_transport::checkpoint_text(
+          packet::field(evidence, "original_checkpoint_wire")) == original_text;
+  const bool receiving_preserved =
+      json_object_equal(packet::field(evidence, "current_receiving"), fresh);
+  const bool source_preserved = json_object_equal(
+      packet::field(evidence, "current_source_packet"), packet_value);
+  const bool applications_preserved =
+      json_object_equal(packet::field(reply.get(), "applications"),
+                        packet::field(expected_applications.get(), "entries"));
+  const bool journal_preserved = json_object_equal(
+      packet::field(reply.get(), "input_history"), expected_journal.get());
+  if (!(original_text_preserved && receiving_preserved && source_preserved &&
+        applications_preserved && journal_preserved)) {
+    // Preserve the complete genuine emitted pulse before this detecting guard
+    // refuses, so the original child stdout artifact names the exact operand.
+    auto frontier = wire::object();
+    wire::text(frontier.get(), "schema",
+               "ql.receiving-control-custody-frontier/v1");
+    wire::put(frontier.get(), "native_pulse",
+              clone_json(reply.get()).release());
+    wire::put(frontier.get(), "expected_applications",
+              expected_applications.release());
+    wire::put(frontier.get(), "expected_input_history",
+              expected_journal.release());
+    wire::flag(frontier.get(), "original_checkpoint_text_preserved",
+               original_text_preserved);
+    wire::flag(frontier.get(), "current_receiving_preserved",
+               receiving_preserved);
+    wire::flag(frontier.get(), "current_source_preserved", source_preserved);
+    wire::flag(frontier.get(), "original_applications_preserved",
+               applications_preserved);
+    wire::flag(frontier.get(), "original_and_applied_journal_preserved",
+               journal_preserved);
+    std::cout << json_object_to_json_string_ext(frontier.get(),
+                                                JSON_C_TO_STRING_PLAIN)
+              << '\n';
+  }
   require(
-      management_transport::checkpoint_text(packet::field(
-          evidence, "original_checkpoint_wire")) == original_text &&
-          json_object_equal(packet::field(evidence, "current_receiving"),
-                            fresh) &&
-          json_object_equal(packet::field(evidence, "current_source_packet"),
-                            packet_value) &&
-          json_object_array_length(
-              packet::field(reply.get(), "applications")) == 1 &&
-          json_object_array_length(
-              packet::field(reply.get(), "input_history")) == 1,
+      original_text_preserved && receiving_preserved && source_preserved &&
+          applications_preserved && journal_preserved,
       "actual Control lost original source/observer application/input custody");
   auto operative_json = ql::physical_wire::parse_native(
       management_transport::checkpoint_text(
