@@ -2263,18 +2263,23 @@ public:
           p.effective_gain += (p.target_gain - p.effective_gain) * smoothing;
           capture.route_force_newtons[route][i] =
               p.enabled && !route_programs_.owner_suspended
-                  ? p.handle.peak_force_newtons * p.sine * p.effective_gain
+                  ? p.handle.peak_force_newtons *
+                        std::clamp(p.sine, -1.0, 1.0) * p.effective_gain
                   : 0;
           const double sine = p.sine * route_step_cosine_[route] +
                               p.cosine * route_step_sine_[route];
           const double cosine = p.cosine * route_step_cosine_[route] -
                                 p.sine * route_step_sine_[route];
-          p.sine = sine;
-          p.cosine = cosine;
+          // Recursive quadrature can overshoot an exact unit peak by roundoff.
+          // Its mathematical range is closed [-1,1]; keep that same range in
+          // both force samples and stored checkpoint components. This neither
+          // changes the calibrated Newton bound nor rephases the programme.
+          p.sine = std::clamp(sine, -1.0, 1.0);
+          p.cosine = std::clamp(cosine, -1.0, 1.0);
           if ((cursor_ + i + 1) % 1024 == 0) {
             const double norm = std::hypot(p.sine, p.cosine);
-            p.sine /= norm;
-            p.cosine /= norm;
+            p.sine = std::clamp(p.sine / norm, -1.0, 1.0);
+            p.cosine = std::clamp(p.cosine / norm, -1.0, 1.0);
           }
         }
       }

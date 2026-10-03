@@ -1351,7 +1351,9 @@
         "cpp/tests/performance_source_reply_wire.cpp",
         "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
         "crates/ql-mef/tests/retained_score_source.rs",
-        "crates/ql-mef/tests/native_played_target_qualifier.rs"
+        "crates/ql-mef/tests/native_played_target_qualifier.rs",
+        "cpp/tests/performance_research_wire.cpp",
+        "crates/ql-mef/tests/performance_research_native_wire.rs"
       ]
     },
     {

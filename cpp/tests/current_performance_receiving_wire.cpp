@@ -1,5 +1,6 @@
 // Actual Rust source/receiving owners -> existing worker Control -> sole A/P.
 // In-memory native proof only: installed UI/device/C export remain separate.
+#include <cmath>
 #include <iostream>
 #include <ql/performance_management_wire.hpp>
 #include <vector>
@@ -228,6 +229,94 @@ struct Resident {
     return out;
   }
 };
+// The real native Pluto driver is 140Hz and the admitted M1 Pratibimba
+// carrier starts at 30 degrees. At sample400 its true sinusoid is exactly1.
+// Recursive double quadrature must remain in the mathematical unit range,
+// including when saved at that peak, without relaxing any P Newton bound.
+static Json actual_route_unit_peak(J *source) {
+  auto original = std::make_unique<Resident>(source);
+  original->attack();
+  original->render(400);
+  auto saved = original->checkpoint();
+  auto *audio =
+      packet::field(packet::field(saved.get(), "native_pair"), "audio");
+  require(wire::decimal(packet::field(audio, "cursor")) == 400 &&
+              packet::boolean(packet::field(audio, "has_route_programs")),
+          "actual unit-peak checkpoint lost current native programmes");
+  auto *set = packet::field(audio, "route_programs");
+  auto *programs = packet::field(set, "programs");
+  packet::array(programs, 9);
+  std::size_t pluto = 9;
+  for (std::size_t i = 0; i < 9; ++i) {
+    auto *program = json_object_array_get_idx(programs, i);
+    const auto sine = packet::number(packet::field(program, "sine"));
+    const auto cosine = packet::number(packet::field(program, "cosine"));
+    require(std::abs(sine) <= 1 && std::abs(cosine) <= 1 &&
+                std::abs(sine * sine + cosine * cosine - 1) <= 1e-10,
+            "actual evolved checkpoint quadrature exceeds native unit range");
+    auto *handle = packet::field(program, "handle");
+    if (packet::number(packet::field(handle, "source_hertz")) == 140)
+      pluto = i;
+  }
+  require(pluto < 9 && packet::number(packet::field(
+                           json_object_array_get_idx(programs, pluto),
+                           "sine")) > .999999999999,
+          "actual native 140Hz source did not reach its sample400 unit peak");
+  auto resumed = std::make_unique<Resident>(source);
+  resumed->restore(saved.get());
+  require(original->render(1) == resumed->render(1),
+          "actual unit-peak Newton sample or exact reopen failed");
+  for (unsigned block = 0; block < 2; ++block)
+    require(original->render(512) == resumed->render(512),
+            "actual nine programmes lost exact continuation across unit peak");
+  auto continued = original->checkpoint();
+  auto continued_reopened = resumed->checkpoint();
+  auto *continued_pair = packet::field(continued.get(), "native_pair");
+  auto *reopened_pair = packet::field(continued_reopened.get(), "native_pair");
+  require(
+      json_object_equal(packet::field(continued_pair, "physical"),
+                        packet::field(reopened_pair, "physical")) &&
+          json_object_equal(
+              packet::field(packet::field(continued_pair, "audio"),
+                            "route_programs"),
+              packet::field(packet::field(reopened_pair, "audio"),
+                            "route_programs")),
+      "unit-peak continuation lost actual modal q/v or programme phase/gain");
+  auto corrupt = copy(saved.get());
+  auto *corrupt_programs = packet::field(
+      packet::field(
+          packet::field(packet::field(corrupt.get(), "native_pair"), "audio"),
+          "route_programs"),
+      "programs");
+  wire::real(json_object_array_get_idx(corrupt_programs, pluto), "sine",
+             std::nextafter(1.0, 2.0));
+  auto refused = std::make_unique<Resident>(source);
+  auto before = refused->checkpoint();
+  bool rejected = false;
+  try {
+    refused->restore(corrupt.get());
+  } catch (const std::invalid_argument &) {
+    rejected = true;
+  }
+  require(rejected, "corrupted super-unit checkpoint was silently accepted");
+  auto after = refused->checkpoint();
+  require(json_object_equal(before.get(), after.get()),
+          "super-unit checkpoint refusal changed original native state");
+  auto receipt = wire::object();
+  wire::u64(receipt.get(), "peak_sample", 400);
+  wire::u64(receipt.get(), "continued_frames", 1025);
+  wire::flag(receipt.get(), "all_nine_unit_components", true);
+  wire::flag(receipt.get(), "exact_reopen", true);
+  wire::flag(receipt.get(), "super_unit_checkpoint_refused_atomically", true);
+  wire::put(receipt.get(), "native_programmes_at_peak", json_object_get(set));
+  wire::put(receipt.get(), "native_physical_at_peak",
+            json_object_get(packet::field(
+                packet::field(saved.get(), "native_pair"), "physical")));
+  wire::put(receipt.get(), "native_physical_after_continuation",
+            json_object_get(packet::field(continued_pair, "physical")));
+  return receipt;
+}
+
 int main() {
   try {
     std::string bytes;
@@ -288,7 +377,10 @@ int main() {
       wire::u64(receipt.get(), "committed_cursor", 3072);
       wire::append(results.get(), receipt.release());
     }
+    auto unit_peak =
+        actual_route_unit_peak(packet::field(root.get(), "personal"));
     auto out = wire::object();
+    wire::put(out.get(), "native_route_unit_peak", unit_peak.release());
     wire::text(out.get(), "schema",
                "ql.current-native-receiving-worker-receipt/v1");
     wire::put(out.get(), "contexts", results.release());
