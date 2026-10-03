@@ -32,6 +32,7 @@ impl FieldHost {
     ) -> Result<Value, NativeSourceBootstrapRefusal> {
         let mut native_receipt = None;
         let mut native_timing_pulse = None;
+        let mut native_source_correspondence = None;
         let result = (|| -> Result<Value, String> {
             input.scene.validate()?;
             lease.validate_field_sources(
@@ -74,6 +75,7 @@ impl FieldHost {
                     }
                 };
                 native_timing_pulse = Some(descriptor.native_pulse().clone());
+                native_source_correspondence = Some(descriptor.source_correspondence().clone());
                 (
                     descriptor.position().clone(),
                     descriptor.binding().clone(),
@@ -100,7 +102,16 @@ impl FieldHost {
                 native_timing_pulse: native_timing_pulse.clone(),
                 native_act_source: lease.evidence(),
             };
-            let result = compile_native_source_bootstrap(input, &observed)?;
+            let mut result = compile_native_source_bootstrap(input, &observed)?;
+            if let Some(correspondence) = &native_source_correspondence {
+                result["native_resident_source_correspondence"] = correspondence.clone();
+                // The actual producer is part of the unchanged original pulse;
+                // this read-only convenience copy cannot create a clock grant.
+                result["native_timing_owner"] = native_timing_pulse
+                    .as_ref()
+                    .ok_or("same-pulse Management constructor missing")?["native_timing_owner"]
+                    .clone();
+            }
             if self.retained_procedural_source_artifact()? != source {
                 return Err(
                     "native source bootstrap changed full original/current field source".into(),

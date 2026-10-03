@@ -1269,6 +1269,176 @@ fn actual_native_resident_registration_keeps_lifetimes_and_output_facts_distinct
         );
         let output: Value = serde_json::from_slice(&result.stdout).unwrap();
         assert_eq!(output["schema"], "ql.native-resident-registry-component/v1");
+        let original_pulse = &output["initial_native_pulse"];
+        let original_copy = original_pulse.clone();
+        let correspondence = owner
+            .binding()
+            .resident_source_correspondence(original_pulse)
+            .unwrap();
+        assert_eq!(
+            original_pulse, &original_copy,
+            "read-only correspondence altered the original native pulse"
+        );
+        assert_eq!(
+            correspondence["schema"],
+            "ql.native-resident-source-correspondence/v1"
+        );
+        assert_eq!(
+            correspondence["physical_preparation"],
+            serde_json::to_value(owner.binding().physical_body()).unwrap()
+        );
+        let actual_nodes = correspondence["nodes"].as_array().unwrap();
+        let source_nodes = &owner.binding().physical_body().request().geometry.nodes;
+        assert_eq!(actual_nodes.len(), source_nodes.len());
+        for (actual, source) in actual_nodes.iter().zip(source_nodes) {
+            assert_eq!(actual["native_node_id"], source.identity.to_string());
+            assert_eq!(actual["source_constituent_ref"], source.constituent);
+            assert_eq!(actual["fixed"], json!(source.fixed));
+            for axis in 0..3 {
+                assert_eq!(
+                    actual["rest_metres"][axis].as_f64().unwrap().to_bits(),
+                    source.rest_metres[axis].to_bits()
+                );
+            }
+        }
+        let scene_ref = "expression:actual-native-node-address:scene:source";
+        let address = |id: String| ql_mef::procedural_composition::OwnedAddress {
+            expression_ref: "expression:actual-native-node-address".into(),
+            scene_ref: Some(scene_ref.into()),
+            entity_ref: None,
+            component: "physical_node".into(),
+            constituent_ref: Some(id),
+            parent_ref: None,
+            property: None,
+        };
+        let mut native_addresses = std::collections::BTreeSet::new();
+        for source in source_nodes {
+            let exact = address(source.identity.to_string());
+            exact.validate().unwrap();
+            assert!(native_addresses.insert(exact.clone()));
+            assert!(exact.covers(&exact));
+            for invalid in ["0", "01", "+1", "-1", "1.0", "18446744073709551616"] {
+                assert!(address(invalid.into()).validate().is_err());
+            }
+            let mut wrong = exact.clone();
+            wrong.entity_ref = Some("expression:actual-native-node-address:entity:alias".into());
+            assert!(wrong.validate().is_err());
+            wrong = exact.clone();
+            wrong.parent_ref = Some(None);
+            assert!(wrong.validate().is_err());
+            for component in ["scene", "field"] {
+                wrong = exact.clone();
+                wrong.component = component.into();
+                assert!(
+                    wrong.validate().is_err(),
+                    "existing Scene/Field guard was widened"
+                );
+            }
+            wrong = exact.clone();
+            wrong.scene_ref = None;
+            assert!(wrong.validate().is_err());
+        }
+        for first in &native_addresses {
+            for second in &native_addresses {
+                assert_eq!(first.covers(second), first == second);
+            }
+        }
+        for corruption in 0..15 {
+            let mut wrong = original_pulse.clone();
+            match corruption {
+                0 => {
+                    wrong["resident_consumers"]["native_nodes"]
+                        .as_array_mut()
+                        .unwrap()
+                        .pop();
+                }
+                1 => wrong["resident_consumers"]["native_nodes"][0]["rest_metres"][0] = json!(99.),
+                2 => {
+                    wrong["resident_consumers"]["physical_observation"]["snapshot"]["body_revision"] =
+                        json!("0")
+                }
+                3 => {
+                    wrong["resident_consumers"]["physical_observation"]["snapshot"]["pratibimba"] = json!(
+                        !owner
+                            .binding()
+                            .physical_body()
+                            .source_coordinate()
+                            .face
+                            .eq(&ql_mef::MFace::Pratibimba)
+                    )
+                }
+                4 => {
+                    wrong["native_timing_owner"]["instance_ref"] =
+                        wrong["resident_consumers"]["physical_observation"]["instance_ref"].clone()
+                }
+                5 => {
+                    wrong["native_timing_owner"]["generation_domain"] =
+                        json!("native-management-transport-epoch")
+                }
+                6 => {
+                    wrong["resident_consumers"]["native_nodes"][1]["native_node_id"] =
+                        wrong["resident_consumers"]["native_nodes"][0]["native_node_id"].clone()
+                }
+                7 => {
+                    wrong["resident_consumers"]["physical_observation"]["snapshot"]["state_ref"] =
+                        json!("stale:body-state")
+                }
+                8 => wrong["resident_consumers"]["sample"] = json!("1"),
+                9 => wrong["resident_consumers"]["preparation_ref"] = json!("stale:preparation"),
+                10 => {
+                    wrong["resident_consumers"]["source_coordinate"] = json!("foreign:coordinate")
+                }
+                11 => {
+                    wrong["resident_consumers"]["audio_observation"]["instance_ref"] =
+                        json!("disconnected:audio")
+                }
+                12 => wrong["resident_consumers"]["physical_observation"]["sample"] = json!("1"),
+                13 => {
+                    wrong["resident_consumers"]["physical_observation"]["snapshot"]["resident_instance_ref"] =
+                        json!("disconnected:body")
+                }
+                _ => {
+                    wrong["native_timing_owner"]["callback_output_committed"] = json!("label-only")
+                }
+            }
+            assert!(
+                owner
+                    .binding()
+                    .resident_source_correspondence(&wrong)
+                    .is_err(),
+                "original native correspondence accepted corruption{corruption}"
+            );
+        }
+        for state in [
+            "initial_management",
+            "other_management",
+            "restored_management",
+        ] {
+            assert_eq!(
+                output[state]["schema"],
+                "ql.native-management-timing-owner/v1"
+            );
+            assert_eq!(
+                output[state]["generation_domain"],
+                "native-management-construction"
+            );
+            assert_eq!(
+                output[state]["generation"],
+                output[state]["construction_ordinal"]
+            );
+            assert_ne!(output[state]["generation"], "0");
+        }
+        assert_ne!(
+            output["initial_management"]["instance_ref"],
+            output["other_management"]["instance_ref"]
+        );
+        for key in ["instance_ref", "generation", "construction_ordinal"] {
+            assert_eq!(
+                output["initial_management"][key],
+                output["restored_management"][key]
+            );
+        }
+        assert_eq!(output["restored_management"]["transport_epoch"], "2");
         let role = |v: &Value, name: &str| -> Value {
             v["required_consumers"]
                 .as_array()

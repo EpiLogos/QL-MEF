@@ -54,6 +54,40 @@ static std::string resident_role_token(J *registry, const char *role) {
           "source/state reference masquerades as native lifetime");
   return token;
 }
+// Copied from the SAME actual Control reply; never caller-authored identity.
+static Json management_timing_copy(Resident &resident, J *registry) {
+  auto *owner = packet::field(resident.last.get(), "native_timing_owner");
+  require(packet::string(packet::field(owner, "schema")) ==
+                  "ql.native-management-timing-owner/v1" &&
+              packet::string(packet::field(owner, "role")) == "timing_owner" &&
+              packet::string(packet::field(owner, "generation_domain")) ==
+                  "native-management-construction" &&
+              wire::decimal(packet::field(owner, "generation")) != 0 &&
+              json_object_equal(packet::field(owner, "generation"),
+                                packet::field(owner, "construction_ordinal")),
+          "actual Management constructor lifetime absent or aliased");
+  for (const char *key : {"sample", "transport_epoch", "source",
+                          "m3_source_generation", "body_revision"})
+    require(json_object_equal(packet::field(owner, key),
+                              packet::field(registry, key)),
+            "Management clock differs from same original native pulse");
+  auto *reading = packet::field(resident.last.get(), "reading");
+  require(json_object_equal(packet::field(owner, "owner_ref"),
+                            packet::field(reading, "session_ref")),
+          "Management constructor lost the actual Session owner");
+  const auto token = packet::string(packet::field(owner, "instance_ref"));
+  require(token.rfind("native-resident:v1:", 0) == 0,
+          "Management source reference replaced its actual constructor");
+  for (const char *role :
+       {"audio_engine", "physical_body", "acoustic_receiving"})
+    require(token != resident_role_token(registry, role),
+            "Management lifetime aliases another actual native constructor");
+  J *mapping = nullptr;
+  require(json_object_object_get_ex(owner, "time_mapping_ref", &mapping) &&
+              !mapping,
+          "Management fabricated an authored timing mapping");
+  return copy(owner);
+}
 static Json actual_resident_timing(Resident &resident, const char *moment,
                                    std::uint64_t ordinal) {
   auto request = resident.command("timing");
@@ -75,6 +109,8 @@ static Json actual_resident_timing(Resident &resident, const char *moment,
 static Json actual_resident_registry(J *fixture) {
   auto first = std::make_unique<Resident>(fixture);
   auto initial = resident_registry_copy(*first);
+  auto initial_management = management_timing_copy(*first, initial.get());
+  auto initial_native_pulse = copy(first->last.get());
   J *absent_receiving = nullptr;
   require(json_object_object_get_ex(initial.get(), "receiving_observation",
                                     &absent_receiving) &&
@@ -103,6 +139,11 @@ static Json actual_resident_registry(J *fixture) {
       "prepared native state fabricated receiving or played output");
   auto second = std::make_unique<Resident>(fixture);
   auto other = resident_registry_copy(*second);
+  auto other_management = management_timing_copy(*second, other.get());
+  require(!json_object_equal(
+              packet::field(initial_management.get(), "instance_ref"),
+              packet::field(other_management.get(), "instance_ref")),
+          "two actual same-source Management constructors share a lifetime");
   require(resident_role_token(other.get(), "audio_engine") != audio &&
               resident_role_token(other.get(), "physical_body") != body &&
               json_object_equal(packet::field(initial.get(), "source"),
@@ -200,6 +241,10 @@ static Json actual_resident_registry(J *fixture) {
   auto injected = first->command("inspect");
   wire::put(injected.get(), "resident_consumers", json_object_get(other.get()));
   control_refusal_unchanged(*first, injected.get(), pristine.get());
+  auto injected_clock = first->command("inspect");
+  wire::put(injected_clock.get(), "native_timing_owner",
+            json_object_get(other_management.get()));
+  control_refusal_unchanged(*first, injected_clock.get(), pristine.get());
   auto *original = packet::field(packet::field(fixture, "acoustic"), "packet");
   auto *after_packet =
       packet::field(packet::field(fixture, "after_acoustic"), "packet");
@@ -292,6 +337,16 @@ static Json actual_resident_registry(J *fixture) {
              "native:resident/paired-saved4608");
   first->apply(restore.get());
   auto restored = resident_registry_copy(*first);
+  auto restored_management = management_timing_copy(*first, restored.get());
+  for (const char *key : {"instance_ref", "construction_ordinal", "generation"})
+    require(json_object_equal(packet::field(initial_management.get(), key),
+                              packet::field(restored_management.get(), key)),
+            "paired restore replaced original Management constructor");
+  require(wire::decimal(
+              packet::field(restored_management.get(), "transport_epoch")) >
+              wire::decimal(
+                  packet::field(initial_management.get(), "transport_epoch")),
+          "actual restored transport did not change its independent epoch");
   require(resident_role_token(restored.get(), "audio_engine") == audio &&
               resident_role_token(restored.get(), "physical_body") == body &&
               resident_role_token(restored.get(), "acoustic_receiving") ==
@@ -315,6 +370,10 @@ static Json actual_resident_registry(J *fixture) {
           "temporary checkpoint candidate supplied resident observation");
   auto out = wire::object();
   wire::text(out.get(), "schema", "ql.native-resident-registry-component/v1");
+  wire::put(out.get(), "initial_native_pulse", initial_native_pulse.release());
+  wire::put(out.get(), "initial_management", initial_management.release());
+  wire::put(out.get(), "other_management", other_management.release());
+  wire::put(out.get(), "restored_management", restored_management.release());
   wire::put(out.get(), "initial", initial.release());
   wire::put(out.get(), "boundary_timing", boundary_timing.release());
   wire::put(out.get(), "score_timing", score_timing.release());

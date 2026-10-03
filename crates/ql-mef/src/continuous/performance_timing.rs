@@ -55,8 +55,12 @@ pub(crate) struct PreparedProceduralTimingDescriptor {
     position: NativePosition,
     native_fact: Value,
     native_pulse: Value,
+    source_correspondence: Value,
 }
 impl PreparedProceduralTimingDescriptor {
+    pub(crate) fn source_correspondence(&self) -> &Value {
+        &self.source_correspondence
+    }
     pub(crate) fn binding(&self) -> &TimingBinding {
         &self.binding
     }
@@ -137,7 +141,7 @@ impl PerformanceOwner {
         // All failure paths AFTER this real exchange retain its complete pulse.
         // A reason-only error would discard original committed applications and
         // input history; the next Inspect cannot recreate that drained cohort.
-        let prepared = (|| -> Result<(NativePosition, TimingBinding), String> {
+        let prepared = (|| -> Result<(NativePosition, TimingBinding, Value), String> {
             if pulse["accepted"] != true {
                 return Err(pulse["reason"]
                     .as_str()
@@ -254,15 +258,19 @@ impl PerformanceOwner {
                     "native source/receiving currentness changed during timing preparation".into(),
                 );
             }
-            Ok((position, native_binding))
+            let correspondence = self.binding.resident_source_correspondence(&pulse)?;
+            Ok((position, native_binding, correspondence))
         })();
         match prepared {
-            Ok((position, binding)) => Ok(PreparedProceduralTimingDescriptor {
-                position,
-                binding,
-                native_fact: pulse["payload"]["timing_fact"].clone(),
-                native_pulse: pulse,
-            }),
+            Ok((position, binding, source_correspondence)) => {
+                Ok(PreparedProceduralTimingDescriptor {
+                    position,
+                    binding,
+                    native_fact: pulse["payload"]["timing_fact"].clone(),
+                    native_pulse: pulse,
+                    source_correspondence,
+                })
+            }
             Err(reason) => Err(NativeTimingRefusal {
                 reason,
                 native_pulse: Some(pulse),

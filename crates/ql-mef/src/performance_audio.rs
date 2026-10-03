@@ -141,6 +141,221 @@ impl PreparedPerformanceBinding {
     pub fn source_form_recipe(&self) -> Option<&SourceGeometryRecipe> {
         self.source_form_recipe.as_ref()
     }
+    /// Read-only correspondence from this actual immutable native preparation
+    /// and ONE original resident pulse. Imported data can qualify a comparison,
+    /// never mint a resident, document address, clock, lease or application ACK.
+    /// The private selected-Act caller separately retains the original pulse.
+    pub fn resident_source_correspondence(&self, pulse: &Value) -> Result<Value, String> {
+        let number = |value: &Value| -> Result<u64, String> {
+            let text = value.as_str().ok_or("canonical native decimal absent")?;
+            let parsed = text.parse::<u64>().map_err(|e| e.to_string())?;
+            if text != parsed.to_string() {
+                return Err("noncanonical native decimal".into());
+            }
+            Ok(parsed)
+        };
+        let registry = &pulse["resident_consumers"];
+        let reading = &pulse["reading"];
+        let owner = &pulse["native_timing_owner"];
+        let body = self.physical_body();
+        let request = body.request();
+        let snapshot = &registry["physical_observation"]["snapshot"];
+        if pulse["schema"] != "ql.performance-worker-reply/v1"
+            || pulse["accepted"] != true
+            || registry["schema"] != "ql.native-resident-consumer-registry/v1"
+            || registry["origin"] != "actual-native-constructors-and-same-pulse"
+            || registry["source"] != self.determination()["identity"]
+            || registry["sample"] != reading["samples_elapsed"]
+            || registry["transport_epoch"] != reading["transport_epoch"]
+            || snapshot["schema"] != "ql.native-physical-snapshot/v1"
+            || snapshot["version"] != 1
+            || snapshot["event_ref"] != body.event_ref()
+            || snapshot["subject_ref"] != body.subject_ref()
+            || snapshot["source_coordinate"] != body.source_coordinate().source_ref
+            || snapshot["source_revision"] != body.source_revision()
+            || snapshot["preparation_ref"] != request.preparation_ref
+            || snapshot["state_ref"] != request.state_ref
+            || number(&snapshot["body_revision"])? != request.body_revision
+            || number(&snapshot["source_generation"])? != body.source_generation()
+            || snapshot["body_revision"] != registry["body_revision"]
+            || snapshot["source_generation"] != registry["m3_source_generation"]
+            || snapshot["sample_rate"] != request.sample_rate
+            || snapshot["pratibimba"] != (body.source_coordinate().face == MFace::Pratibimba)
+            || snapshot["samples_elapsed"] != registry["sample"]
+            || snapshot["eigenbasis_identity"] != reading["physical"]["eigenbasis_identity"]
+            || registry["preparation_ref"] != snapshot["preparation_ref"]
+            || registry["state_ref"] != snapshot["state_ref"]
+            || registry["source_coordinate"] != snapshot["source_coordinate"]
+            || registry["source_revision"] != snapshot["source_revision"]
+            || registry["eigenbasis_identity"] != snapshot["eigenbasis_identity"]
+            || registry["physical_pratibimba"] != snapshot["pratibimba"]
+        {
+            return Err(
+                "resident correspondence differs from actual prepared source/body/pulse".into(),
+            );
+        }
+        for (role, provenance) in [
+            ("geometry", &request.geometry.provenance),
+            ("material", &request.material.provenance),
+        ] {
+            if snapshot[format!("{role}_ref")] != provenance.reference
+                || snapshot[format!("{role}_revision")] != provenance.revision
+            {
+                return Err("resident correspondence lost original metric source revision".into());
+            }
+        }
+        let roles = registry["required_consumers"]
+            .as_array()
+            .ok_or("native resident roster absent")?;
+        let mut tokens = BTreeSet::new();
+        let mut names = BTreeSet::new();
+        for role in roles {
+            let token = role["instance_ref"]
+                .as_str()
+                .ok_or("native resident constructor absent")?;
+            let name = role["role"].as_str().ok_or("native resident role absent")?;
+            let generation = number(&role["generation"])?;
+            let observation = match name {
+                "audio_engine" => &registry["audio_observation"],
+                "physical_body" => &registry["physical_observation"],
+                "acoustic_receiving" => &registry["receiving_observation"],
+                _ => return Err("unknown actual resident role".into()),
+            };
+            if !token.starts_with("native-resident:v1:")
+                || !tokens.insert(token)
+                || !names.insert(name)
+                || !["audio_engine", "physical_body", "acoustic_receiving"].contains(&name)
+                || role["generation_domain"] != "native-resident-construction"
+                || generation == 0
+                || token.rsplit(':').next() != Some(generation.to_string().as_str())
+                || role["sample"] != registry["sample"]
+                || observation["instance_ref"] != role["instance_ref"]
+                || observation["sample"] != role["sample"]
+                || !role["callback_output_committed"].is_boolean()
+                || role["callback_output_committed"]
+                    != registry["audio_observation"]["callback_output_committed"]
+                || name == "physical_body"
+                    && snapshot["resident_instance_ref"] != role["instance_ref"]
+            {
+                return Err(
+                    "resident correspondence has duplicate/disconnected actual lifetimes".into(),
+                );
+            }
+        }
+        if !(roles.len() == 2 || roles.len() == 3)
+            || !names.contains("audio_engine")
+            || !names.contains("physical_body")
+            || names.contains("acoustic_receiving") == registry["receiving_observation"].is_null()
+        {
+            return Err("resident correspondence lacks the complete installed roster".into());
+        }
+        let management = owner["instance_ref"]
+            .as_str()
+            .ok_or("actual Management constructor absent")?;
+        let generation = number(&owner["generation"])?;
+        if owner["schema"] != "ql.native-management-timing-owner/v1"
+            || owner["role"] != "timing_owner"
+            || owner["generation_domain"] != "native-management-construction"
+            || generation == 0
+            || owner["construction_ordinal"] != owner["generation"]
+            || !management.starts_with("native-resident:v1:")
+            || management.rsplit(':').next() != Some(generation.to_string().as_str())
+            || tokens.contains(management)
+            || owner["owner_ref"] != reading["session_ref"]
+            || owner.get("time_mapping_ref").is_none_or(|v| !v.is_null())
+            || owner["callback_output_committed"]
+                != registry["audio_observation"]["callback_output_committed"]
+        {
+            return Err("Management construction/source/transport identities are aliased".into());
+        }
+        for key in [
+            "sample",
+            "transport_epoch",
+            "source",
+            "m3_source_generation",
+            "body_revision",
+        ] {
+            if owner.get(key).is_none() || owner[key] != registry[key] {
+                return Err("Management differs from same original resident pulse".into());
+            }
+        }
+        let actual_nodes = registry["native_nodes"]
+            .as_array()
+            .ok_or("native physical nodes absent")?;
+        let prepared_nodes = &request.geometry.nodes;
+        let ids = snapshot["node_identity"]
+            .as_array()
+            .ok_or("original physical node IDs absent")?;
+        let rest = snapshot["rest_positions_metres"]
+            .as_array()
+            .ok_or("original rest positions absent")?;
+        let visible = snapshot["visible_positions_metres"]
+            .as_array()
+            .ok_or("original visible positions absent")?;
+        if prepared_nodes.len() < 2
+            || prepared_nodes.len() > 32
+            || [actual_nodes.len(), ids.len(), rest.len(), visible.len()]
+                .iter()
+                .any(|n| *n != prepared_nodes.len())
+            || snapshot["node_count"].as_u64() != Some(prepared_nodes.len() as u64)
+        {
+            return Err(
+                "resident source correspondence dropped or filled a physical descendant".into(),
+            );
+        }
+        let mut identities = BTreeSet::new();
+        let mut nodes = Vec::with_capacity(prepared_nodes.len());
+        for (index, (observed, prepared)) in actual_nodes.iter().zip(prepared_nodes).enumerate() {
+            if number(&observed["native_node_id"])? != prepared.identity
+                || number(&ids[index])? != prepared.identity
+                || !identities.insert(prepared.identity)
+                || prepared.constituent.trim().is_empty()
+                || observed["visible_metres"] != visible[index]
+            {
+                return Err(
+                    "resident source correspondence reordered or replaced a descendant".into(),
+                );
+            }
+            for axis in 0..3 {
+                let actual = observed["rest_metres"][axis]
+                    .as_f64()
+                    .ok_or("metric rest absent")?;
+                let copied = rest[index][axis]
+                    .as_f64()
+                    .ok_or("copied metric rest absent")?;
+                let position = visible[index][axis]
+                    .as_f64()
+                    .ok_or("visible metric position absent")?;
+                if actual.to_bits() != prepared.rest_metres[axis].to_bits()
+                    || copied.to_bits() != actual.to_bits()
+                    || !position.is_finite()
+                    || observed["rest_metres"]
+                        .as_array()
+                        .is_none_or(|v| v.len() != 3)
+                    || visible[index].as_array().is_none_or(|v| v.len() != 3)
+                {
+                    return Err(
+                        "resident source correspondence changed metric source/rest/visible copy"
+                            .into(),
+                    );
+                }
+            }
+            nodes.push(json!({"native_node_id":prepared.identity.to_string(),
+                "source_constituent_ref":prepared.constituent,
+                "rest_metres":prepared.rest_metres,"visible_metres":visible[index],
+                "fixed":prepared.fixed}));
+        }
+        Ok(
+            json!({"schema":"ql.native-resident-source-correspondence/v1",
+            "source":registry["source"],"sample":registry["sample"],
+            "transport_epoch":registry["transport_epoch"],"body_revision":registry["body_revision"],
+            "m3_source_generation":registry["m3_source_generation"],
+            "physical_preparation":body,"source_form_recipe":self.source_form_recipe().ok_or("native source geometry recipe absent")?,
+            "native_timing_owner":owner,"required_consumers":roles,"nodes":nodes,
+            "document_address_correspondence":"requires-private-current-document-source-recipe-CAS",
+            "standing":"exact immutable native source-to-resident comparison; no Document address, grant or application ACK"}),
+        )
+    }
     /// Control-owner source admission. The exact post-command native state
     /// and metric recipe must still describe this immutable prepared binding.
     /// Reading-only edits use the existing P update policy before re-admission;

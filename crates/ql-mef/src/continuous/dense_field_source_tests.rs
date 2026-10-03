@@ -88,8 +88,65 @@ fn actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis() 
             basis: Box::new(input.clone()),
         },
     };
-    let reply = host.execute(request);
+    // Keep the originally detected activity: an M1-only change is not a
+    // newer M2 modal basis. The actual worker must refuse it without replacing
+    // any retained native source, modal state or the 65,000 samples.
+    let refused = host.execute(request);
+    assert_eq!(refused["status"], "refused");
+    assert!(
+        refused["error"]
+            .as_str()
+            .unwrap()
+            .contains("changed identity/material or unrelated M2 generation")
+    );
+    assert_eq!(
+        host.retained_procedural_source_artifact().unwrap(),
+        original
+    );
+
+    // Supply the next actual M2 generation consistently through all of its
+    // typed producer stamps. Material, modes, samples, source references and
+    // the original M3 receipt history remain the authored operands above.
+    assert!(input.m2.condition.is_none());
+    input.m2.stamp.identity.profile_generation = input
+        .m2
+        .stamp
+        .identity
+        .profile_generation
+        .checked_add(1)
+        .unwrap();
+    let next_identity = input.m2.stamp.identity.clone();
+    if let Some(excitation) = input.m2.m1_excitation.as_mut() {
+        excitation.stamp.identity.clone_from(&next_identity);
+    }
+    if let Some(vimarsha) = input.m2.vimarsha.as_mut() {
+        vimarsha.stamp.identity.clone_from(&next_identity);
+    }
+    input
+        .m2
+        .resonator
+        .as_mut()
+        .unwrap()
+        .stamp
+        .identity
+        .clone_from(&next_identity);
+    let reply = host.execute(HostRequest {
+        schema: HOST_REQUEST.into(),
+        instance_ref: host.instance_ref.clone(),
+        event_ref: ready["field"]["event_ref"].as_str().unwrap().into(),
+        subject_ref: ready["field"]["subject_ref"].as_str().unwrap().into(),
+        request_id: "2".into(),
+        expected_generation: ready["field"]["generation"].as_str().unwrap().into(),
+        expected_samples_elapsed: ready["field"]["samples_elapsed"].as_str().unwrap().into(),
+        command: HostOperation::Replace {
+            basis: Box::new(input.clone()),
+        },
+    });
     assert_eq!(reply["status"], "ok", "{reply}");
+    assert_eq!(
+        reply["field"]["m2_identity"]["profile_generation"].as_u64(),
+        Some(next_identity.profile_generation)
+    );
     let artifact = host.retained_procedural_source_artifact().unwrap();
     assert_eq!(artifact["original_field"], original_field);
     assert_eq!(artifact["original_basis"], original["original_basis"]);

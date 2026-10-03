@@ -74,6 +74,10 @@ struct TransportAcknowledgement {
 
 class PerformanceManagement {
   using Input = NativeInputBinding;
+  // Actual serial Management constructor identity. Restore changes transport
+  // epoch, never this lifetime; copied source/clock/checkpoint JSON cannot mint
+  // it.
+  ql::NativeResidentLifetime lifetime_;
   NativePerformance native_;
   MacAudioDevice device_;
   Ref session_{};
@@ -221,6 +225,9 @@ public:
   PerformanceManagement(const PerformanceManagement &) = delete;
   PerformanceManagement &operator=(const PerformanceManagement &) = delete;
   const Ref &session_ref() const noexcept { return session_; }
+  const ql::NativeResidentToken &resident_token() const noexcept {
+    return lifetime_.token();
+  }
   std::uint64_t transport_epoch() const noexcept { return transport_epoch_; }
   const NativePerformance &native() const noexcept { return native_; }
   const Readback &last_readback() const {

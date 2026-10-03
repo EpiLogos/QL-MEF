@@ -74,6 +74,38 @@ inline wire::Json physical_snapshot(const ql::PhysicalSnapshot &p) {
   wire::put(out.get(), "visible_positions_metres", visible.release());
   return out;
 }
+// Same original pulse as the A/P/M4 registry, with the distinct ACTUAL
+// serial Management constructor. Source generation and transport epoch are
+// separate facts; neither is used as a construction generation.
+inline wire::Json timing_owner(const PerformanceManagement &owner,
+                               const NativeResidentRegistry &registry) {
+  const auto &r = registry.boundary;
+  const auto &token = owner.resident_token();
+  ql::require(token.valid() && registry.version == 1 &&
+                  (registry.count == 2 || registry.count == 3) &&
+                  registry.transport_epoch == owner.transport_epoch() &&
+                  r.physical.samples_elapsed == r.samples_elapsed &&
+                  token != r.audio_resident && token != r.physical.resident &&
+                  (!r.has_receiving || token != r.receiving.resident),
+              "actual same-pulse Management constructor differs");
+  auto out = wire::object();
+  wire::text(out.get(), "schema", "ql.native-management-timing-owner/v1");
+  wire::text(out.get(), "role", "timing_owner");
+  wire::ref(out.get(), "owner_ref", owner.session_ref());
+  wire::text(out.get(), "instance_ref", token_text(token));
+  wire::u64(out.get(), "construction_ordinal", token.ordinal);
+  wire::u64(out.get(), "generation", token.ordinal);
+  wire::text(out.get(), "generation_domain", "native-management-construction");
+  wire::u64(out.get(), "transport_epoch", registry.transport_epoch);
+  wire::u64(out.get(), "sample", r.samples_elapsed);
+  wire::put(out.get(), "source", wire::identity(r.identity).release());
+  wire::u64(out.get(), "m3_source_generation", r.physical.source_generation);
+  wire::u64(out.get(), "body_revision", r.physical.body_revision);
+  wire::flag(out.get(), "callback_output_committed",
+             r.callback_output_committed);
+  wire::put_null(out.get(), "time_mapping_ref");
+  return out;
+}
 inline wire::Json registry(const NativeResidentRegistry &registry) {
   ql::require(registry.version == 1 &&
                   (registry.count == 2 || registry.count == 3),

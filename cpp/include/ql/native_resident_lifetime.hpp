@@ -12,6 +12,7 @@ class PhysicalBody;
 namespace performance {
 class Engine;
 class MovingReceivingPortBinding;
+class PerformanceManagement;
 } // namespace performance
 // Identity only. A token is NOT a source, consent, document, clock or IPC
 // grant. JSON/CP never supplies one. Native constructors mint distinct
@@ -34,6 +35,7 @@ class NativeResidentLifetime {
   friend class PhysicalBody;
   friend class performance::Engine;
   friend class performance::MovingReceivingPortBinding;
+  friend class performance::PerformanceManagement;
   NativeResidentToken token_{};
   static NativeResidentToken mint() {
     // Once per actual native process, on its control-construction path. No

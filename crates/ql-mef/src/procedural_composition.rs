@@ -684,6 +684,7 @@ impl OwnedAddress {
                 "expression",
                 "scene",
                 "field",
+                "physical_node",
                 "entity",
                 "force",
                 "layer",
@@ -712,11 +713,29 @@ impl OwnedAddress {
             || (["entity", "force", "layer", "sequence", "sequence_link"]
                 .contains(&self.component.as_str())
                 && self.entity_ref.is_none())
-            || (["scene", "field"].contains(&self.component.as_str()) && self.entity_ref.is_some())
-            || (["layer", "sequence_link", "driver"].contains(&self.component.as_str())
+            || (["scene", "field", "physical_node"].contains(&self.component.as_str())
+                && self.entity_ref.is_some())
+            || (["layer", "sequence_link", "driver", "physical_node"]
+                .contains(&self.component.as_str())
                 != self.constituent_ref.is_some())
         {
             return Err("native address lacks its exact containing occurrence".into());
+        }
+        // A native physical descendant is the actual numeric node identity
+        // under its exact containing Scene. Its source constituent may repeat;
+        // it is not an Entity/layer ID or a body/source revision alias. The
+        // closed Document/source owner separately resolves that immutable body.
+        if self.component == "physical_node" {
+            let id = self
+                .constituent_ref
+                .as_deref()
+                .ok_or("native physical node ID absent")?;
+            let number = id
+                .parse::<u64>()
+                .map_err(|_| "invalid native physical node ID")?;
+            if number == 0 || number.to_string() != id {
+                return Err("native physical node ID must be positive canonical decimal".into());
+            }
         }
         if self.parent_ref.is_some() && self.component != "layer" {
             return Err("native parent coordinate belongs only to a state layer".into());

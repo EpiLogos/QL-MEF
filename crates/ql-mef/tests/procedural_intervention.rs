@@ -484,3 +484,70 @@ fn scene_deletion_keeps_prior_human_rows_and_release_restores_child_overlay() {
     assert_eq!(overlays[0].actor_ref, child.actor);
     assert_ne!(overlays[0].pointer, "/scene");
 }
+
+#[test]
+fn later_real_child_edit_refreshes_nonpersistent_native_parent_without_promoting_it() {
+    let mut creation = edit();
+    creation.before["scene"]["entities"] = json!([]);
+    let produced = extract_owned_manual_interventions(&creation).unwrap();
+    let id = creation.after["scene"]["entities"][0]["id"]
+        .as_str()
+        .unwrap();
+    let path = format!("/scene/entities/@{id}");
+    let mut actual = creation.clone();
+    actual.before = creation.after.clone();
+    actual.after = creation.after.clone();
+    actual.after["scene"]["entities"][0]["name"] = json!("accepted later human name");
+    actual.after["scene"]["entities"][0]["force"]["strength"] = json!(0.73);
+    actual.retained_native_records = produced.native_records;
+    actual
+        .retained_native_records
+        .iter_mut()
+        .find(|row| row.path == path)
+        .unwrap()
+        .persistent = false;
+    actual.document_revision = 10;
+    actual.operation_ref = "ordinary-edit:later-native-child".into();
+    let retained_before = actual.retained_native_records.clone();
+    let refreshed = extract_owned_manual_interventions(&actual).unwrap();
+    let parent = refreshed
+        .native_records
+        .iter()
+        .find(|row| row.path == path)
+        .unwrap();
+    assert_eq!(parent.value, actual.after["scene"]["entities"][0]);
+    assert_eq!(parent.revision, 10);
+    assert_eq!(parent.actor, actual.actor_ref);
+    assert_eq!(
+        parent.operation_ref.as_deref(),
+        Some(actual.operation_ref.as_str())
+    );
+    assert!(
+        !parent.persistent,
+        "updating custody must not grant persistence to a gesture"
+    );
+    for row in retained_before.iter().filter(|row| row.path != path) {
+        assert!(
+            refreshed.native_records.contains(row),
+            "unrelated actual constituent was changed"
+        );
+    }
+    let overlays =
+        project_native_authored_interventions(&actual, &refreshed.native_records).unwrap();
+    assert!(!overlays.iter().any(|row| row.pointer == path));
+    assert!(
+        overlays
+            .iter()
+            .any(|row| row.pointer == format!("{path}/name")
+                && row.value == "accepted later human name"
+                && row.persistent)
+    );
+    assert!(
+        overlays
+            .iter()
+            .any(|row| row.pointer == format!("{path}/force/strength")
+                && row.value == 0.73
+                && row.persistent)
+    );
+    assert_eq!(actual.retained_native_records, retained_before);
+}

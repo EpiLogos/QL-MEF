@@ -1291,11 +1291,14 @@ public:
     wire::put(out.get(), "recording",
               wire::recording(pulse->recording).release());
     auto registry = std::make_unique<NativeResidentRegistry>();
-    if (owner_->write_resident_registry(*pulse, *registry))
+    if (owner_->write_resident_registry(*pulse, *registry)) {
       wire::put(out.get(), "resident_consumers",
                 resident_wire::registry(*registry).release());
-    else {
+      wire::put(out.get(), "native_timing_owner",
+                resident_wire::timing_owner(*owner_, *registry).release());
+    } else {
       null(out.get(), "resident_consumers");
+      null(out.get(), "native_timing_owner");
       wire::text(out.get(), "resident_registry_reason",
                  "actual native same-pulse registration unavailable");
     }

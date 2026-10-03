@@ -684,9 +684,42 @@ fn extract_manual_interventions_inner(
         }
     }
     for retained in &edit.retained_native_records {
-        if !native_records.iter().any(|r| r.path == retained.path) {
-            native_records.push(retained.clone());
+        if native_records.iter().any(|r| r.path == retained.path) {
+            continue;
         }
+        // Gesture parents remain native custody even while their scalar
+        // override is nonpersistent. The overlay projector intentionally
+        // omits those rows, so it cannot refresh them above. A later accepted
+        // child edit must still update that complete parent from actual material;
+        // otherwise release restores an old name/sibling over the human edit.
+        // Keep its temporary/persistent status and exact stable native address.
+        let changed_child = interventions.iter().any(|row| {
+            row.pointer.starts_with(&format!("{}/", retained.path))
+                && !matches!(row.kind, InterventionKind::Reorder)
+        });
+        if changed_child
+            && matches!(
+                retained.kind,
+                InterventionKind::Set | InterventionKind::Create
+            )
+        {
+            let parts = decoded_pointer(&retained.path)?;
+            if let Some(current) = current_at(&edit.after, &parts) {
+                native_records.push(NativeAuthoredIntervention {
+                    address: retained.address.clone(),
+                    actor: edit.actor_ref.clone(),
+                    persistent: retained.persistent,
+                    revision: edit.document_revision,
+                    path: retained.path.clone(),
+                    value: current.clone(),
+                    kind: InterventionKind::Set,
+                    operation_ref: Some(edit.operation_ref.clone()),
+                    before: current_at(&edit.before, &parts).cloned(),
+                });
+                continue;
+            }
+        }
+        native_records.push(retained.clone());
     }
     Ok(ManualInterventions {
         native_records,
