@@ -356,6 +356,7 @@ def verify_implementation_relocation(root: Path, receipt: dict) -> dict:
 
 def verify_source_comparator_reconciliation(root: Path, receipt: dict) -> None:
     """Admit an executed source-comparator successor without restamping old replays."""
+    receipt = verify_implementation_relocation(root, receipt)
     retained = m.read(root / "fixtures/kernel/source-requalification/m3-source-audit.json")
     lock = m.read(root / "fixtures/kernel/m3-source-bindings-v1.json")
     if m.digest(m.canonical(retained)) == lock["audit_sha256"]:
@@ -417,8 +418,7 @@ def check() -> None:
     for path, digest in receipt["historical_numerical_proofs_unchanged"].items():
         verify_historical_proof(ROOT, path, digest, receipt["historical"]["git_commit"])
     history(receipt["historical"]["git_commit"])
-    prior_qualification = verify_implementation_relocation(ROOT, receipt)
-    verify_source_comparator_reconciliation(ROOT, prior_qualification)
+    verify_source_comparator_reconciliation(ROOT, receipt)
     m.verify(ROOT, ledger)
     print("Current source requalification, preserved historical proofs and131 decisions verified")
 

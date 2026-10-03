@@ -60,15 +60,6 @@ impl FieldHost {
             "original_basis":session.original_basis(),"current_basis":session.current_basis(),
             "original_field":session.original_field()})
     }
-    /// Native retention of the actual held field, before C closes its source
-    /// into the existing selected Scene/Act. Readback summaries are insufficient
-    /// to reconstruct full current owner source generations.
-    pub(crate) fn retained_field_source_artifact(&self) -> Result<Value, String> {
-        if !self.available() || self.performance.is_some() {
-            return Err("actual native field source unavailable or owned by A/P".into());
-        }
-        self.retained_procedural_source_artifact()
-    }
     /// Complete Coupled source shared by the actual field/performance owners.
     /// Content restitution grants no FIELD timing or independently live lease.
     pub(crate) fn retained_procedural_source_artifact(&self) -> Result<Value, String> {
@@ -218,6 +209,7 @@ impl FieldHost {
     /// C28 validate_field_timing invokes this on its actual closed Scene.
     /// Full native field material/samples/units/initial clock are required;
     /// a basis-only fallback cannot qualify an imported FieldInput.
+    #[cfg(test)]
     pub(crate) fn validate_retained_field_input(
         presentation: &Value,
         actual_original_field: &FieldInput,
@@ -239,6 +231,7 @@ impl FieldHost {
         }
         Ok(())
     }
+    #[cfg(test)]
     pub(crate) fn validate_retained_field_sources(
         presentation: &Value,
         instance_ref: &str,

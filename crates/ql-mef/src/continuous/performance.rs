@@ -1250,8 +1250,8 @@ pub(crate) use timing::{
 
 #[path = "performance_acoustic.rs"]
 mod acoustic;
-pub(crate) use acoustic::AcousticRefusal;
 pub use acoustic::{
     AcousticConfiguration, AcousticDirectivity, PreparedAcousticReceiverUpdate,
     PreparedAcousticReceiving,
 };
+pub(crate) use acoustic::{AcousticRefusal, PreparedAcousticInstallation};

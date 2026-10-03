@@ -2079,7 +2079,8 @@
       "rationale": "Same native performance source and physical body prepare strict authored source/receiver trajectories and acoustic pickup configuration. Actual selected Scene/Act lease replays full original source assets before stopped install/replace/fresh saved restore; the original segment origin/history birth/full ring and native cursor remain distinct. Numerical preparation never creates source or disclosure authority.",
       "tests": [
         "crates/ql-mef/tests/performance_acoustic_native_wire.rs",
-        "cpp/tests/performance_acoustic_wire.cpp"
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs"
       ]
     },
     {
@@ -2328,6 +2329,65 @@
       "tests": [
         "scripts/tests/test_historical_proof_alias.py",
         "scripts/tests/test_m_ledger.py"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual World/FieldHost/native worker producer detects pure candidate/drop, different valid receiver refusal and same-cursor actual future queue admission invalidating the first complete stopped boundary. No manufactured private lease or numerical positive. Hosted native execution is separate.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_calibration_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual retained SourceForm physical/pickup/audio calibration producer, queued force, complete q/v/PCM replay across nondividing blocks and genuine note release; original before/after checkpoint equality detects refused force mutation; actual24voices/16tails callback allocation/bounds guards remain. No default or device audibility is inferred.",
+      "tests": [
+        "cpp/tests/performance_calibration_wire.cpp",
+        "crates/ql-mef/tests/performance_calibration_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_calibration_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Genuine ordinary scene::world to native FieldHost source producer feeds separately preserved baseline, sensor and queued-force trials. Full original input/output/status/deadline bounds retained; actual new numerical/physical measurement is a hosted native gate, not source readiness.",
+      "tests": [
+        "crates/ql-mef/tests/performance_calibration_native_wire.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/worker_malloc_observation.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Apple-only off-by-default original native worker diagnostics after request destruction; at most3 actual all-zone SDK observations retain source/PID/ordinal/raw-byte/frame metadata. Source registration grants no allocator diagnosis; exact Apple image/native replay remains required.",
+      "tests": [
+        "scripts/qualify-worker-malloc-observations.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/qualify-worker-malloc-observations.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Finite verifier of complete genuinely retained native input/stdout/stderr streams and optional3 actual allocator observations. Detects absent owner fabricated FIELD counts, wrong requested/returned frames, unpaired bytes and source-domain/cursor detachment; neither launches nor synthesizes native observations.",
+      "tests": [
+        "scripts/qualify-worker-malloc-observations.py"
       ]
     }
   ]

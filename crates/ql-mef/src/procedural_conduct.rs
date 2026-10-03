@@ -1313,7 +1313,7 @@ pub fn program_contributions(
                 contribution_ref: contribution_identity(
                     &procedure.procedure_ref,
                     "native-flow",
-                    &[procedure.principal_subject_ref.clone()],
+                    std::slice::from_ref(&procedure.principal_subject_ref),
                     &procedure.occurrence_ref,
                 )?,
                 procedure_ref: procedure.procedure_ref.clone(),

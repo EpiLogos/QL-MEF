@@ -137,11 +137,13 @@ fn keyed(values: &[Value]) -> Result<Option<BTreeMap<String, &Value>>> {
         Ok(None)
     }
 }
+type InterventionDelta = (Vec<String>, InterventionKind, Option<Value>, Option<Value>);
+
 fn deltas(
     before: Option<&Value>,
     after: Option<&Value>,
     path: &mut Vec<String>,
-    out: &mut Vec<(Vec<String>, InterventionKind, Option<Value>, Option<Value>)>,
+    out: &mut Vec<InterventionDelta>,
 ) -> Result<()> {
     if before == after || path.get(1).is_some_and(|p| p == "procedural") {
         return Ok(());

@@ -36,6 +36,14 @@ class HistoricalProofAliasTests(unittest.TestCase):
             "docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md",
         )}
 
+        # The actual comparator checks safe in-repository paths. Retain its
+        # genuine source/audit/log inputs as regular files in the isolated copy;
+        # symlinks outside that copy are correctly refused by the native checker.
+        comparator = json.loads((ROOT / QUALIFICATION).read_text())["source_comparator_reconciliation"]
+        wanted.update(Path(row["path"]) for row in comparator["inputs"])
+        wanted.update(Path(comparator[key]["path"]) for key in ("current_audit", "actual_source_tests"))
+        wanted.add(Path(comparator["actual_source_tests"]["source"]["path"]))
+
         def copy_paths(real, destination, prefix):
             for child in real.iterdir():
                 relative = prefix / child.name
@@ -76,6 +84,9 @@ class HistoricalProofAliasTests(unittest.TestCase):
         self.assertEqual(restored, json.loads(owner.git_bytes(
             self.relocation()["implementation_relocation"]["previous_git_commit"], QUALIFICATION)))
         self.assertEqual(before, {path: (self.root / path).read_bytes() for path in paths})
+
+    def test_actual_m1_comparator_consumer_routes_exact_relocation_before_old_comparison(self):
+        owner.verify_source_comparator_reconciliation(self.root, self.relocation())
 
     def test_native_relocation_cannot_restamp_a_changed_assessment(self):
         path = "fixtures/kernel/m-ledger-v1.json"

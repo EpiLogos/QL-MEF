@@ -132,7 +132,20 @@ pub(crate) struct ActRequest {
     procedural_request: Option<Value>,
     #[serde(default)]
     declared_seed: Option<String>,
+    #[serde(default)]
+    acoustic_configuration: Option<super::performance::AcousticConfiguration>,
+    #[serde(default)]
+    original_acoustic_boundary: Option<Value>,
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativePerformanceTimingQuery {
+    schema: String,
+    binding: crate::procedural_composition::TimingBinding,
+    moment: String,
+    ordinal: String,
+}
+
 impl ActRequest {
     pub(crate) fn is_field(&self) -> bool {
         matches!(
@@ -142,7 +155,12 @@ impl ActRequest {
                 | "source-bootstrap"
                 | "source-lifecycle"
                 | "acoustic-install"
+                | "acoustic-stage"
+                | "acoustic-replace"
+                | "acoustic-prepare"
                 | "performance-source"
+                | "performance-descriptor"
+                | "performance-timing"
         )
     }
 }
@@ -786,7 +804,7 @@ fn serve_native_act_operation(
     host: &mut FieldHost,
     value: Value,
     read: impl FnMut() -> Result<Value, String>,
-    mut write: impl FnMut(&Value) -> Result<(), String>,
+    write: impl FnMut(&Value) -> Result<(), String>,
     parent_qualification: &Value,
 ) -> Result<(), String> {
     bounded(&value, MAX_HOST_INPUT)?;
@@ -804,7 +822,12 @@ fn serve_native_act_operation(
             "source-bootstrap",
             "source-lifecycle",
             "acoustic-install",
+            "acoustic-stage",
+            "acoustic-replace",
+            "acoustic-prepare",
             "performance-source",
+            "performance-descriptor",
+            "performance-timing",
         ]
         .contains(&request.mode.as_str())
     {
@@ -813,6 +836,17 @@ fn serve_native_act_operation(
     if request.declared_seed.is_some() && request.mode != "performance-source" {
         return Err(
             "native source seed belongs only to the explicit private source producer".into(),
+        );
+    }
+    if (request.mode == "acoustic-prepare") != request.acoustic_configuration.is_some()
+        || (request.original_acoustic_boundary.is_some()
+            && !matches!(
+                request.mode.as_str(),
+                "acoustic-install" | "acoustic-stage" | "acoustic-replace"
+            ))
+    {
+        return Err(
+            "native acoustic input/boundary belongs only to its closed source operation".into(),
         );
     }
     if request.is_field() {
@@ -877,6 +911,11 @@ fn serve_native_act_operation(
                     | "source-lifecycle"
                     | "performance-source"
                     | "acoustic-install"
+                    | "performance-descriptor"
+                    | "performance-timing"
+                    | "acoustic-stage"
+                    | "acoustic-replace"
+                    | "acoustic-prepare"
             ) {
                 qualify_field_source_parts(&request.manifest, &artifact, &pipe)?;
                 Some(&artifact)
@@ -990,6 +1029,60 @@ fn serve_native_act_operation(
                 );
                 return Ok(json!({"selection":lease.evidence(),"native_receipt":receipt}));
             }
+            if matches!(
+                request.mode.as_str(),
+                "performance-descriptor" | "performance-timing"
+            ) {
+                if request.source_bootstrap.is_some() {
+                    return Err("native performance timing carries unowned source issuance".into());
+                }
+                if request.mode == "performance-descriptor" {
+                    if request.procedural_request.is_some() {
+                        return Err(
+                            "native performance descriptor carries a foreign timing query".into(),
+                        );
+                    }
+                    return Ok(match host.procedural_timing_descriptor(&lease) {
+                        Ok(prepared) => json!({"selection":lease.evidence(),"available":true,
+                            "binding":prepared.binding(),"native_position":prepared.position(),
+                            "native_pulse":prepared.native_pulse(),
+                            "standing":"actual original native management timing descriptor; observed source/clock boundary only"}),
+                        Err(refusal) => json!({"selection":lease.evidence(),"available":false,
+                            "reason":refusal.reason(),"native_pulse":refusal.native_pulse()}),
+                    });
+                }
+                let query: NativePerformanceTimingQuery = serde_json::from_value(
+                    request
+                        .procedural_request
+                        .clone()
+                        .ok_or("native timing query absent")?,
+                )
+                .map_err(|e| e.to_string())?;
+                if query.schema != "ql.native-performance-timing-query/v1" {
+                    return Err("foreign native performance timing query schema".into());
+                }
+                let ordinal = count(&json!(query.ordinal))?;
+                let moment = match (query.moment.as_str(), ordinal) {
+                    ("boundary", 0) => super::performance::NativeTimingMoment::Boundary,
+                    ("score", n) if n != 0 => super::performance::NativeTimingMoment::Score(n),
+                    ("clock", n) if n != 0 => super::performance::NativeTimingMoment::Clock(n),
+                    ("applied", n) if n != 0 => super::performance::NativeTimingMoment::Applied(n),
+                    _ => return Err("native timing query has no exact owner moment/ordinal".into()),
+                };
+                // Imported operands create no witness. The SAME actual private
+                // Management owner must supply the exact queue/clock/application
+                // fact, full source, domain, epoch and current body position.
+                return Ok(
+                    match host.procedural_timing_witness(query.binding, &lease, moment) {
+                        Ok(prepared) => json!({"selection":lease.evidence(),"available":true,
+                        "timing_evidence":prepared.witness().evidence(),
+                        "native_position":prepared.position(),"native_pulse":prepared.native_pulse(),
+                        "standing":"actual native timing observation; serialized evidence cannot mint a witness or consumer acknowledgement"}),
+                        Err(refusal) => json!({"selection":lease.evidence(),"available":false,
+                        "reason":refusal.reason(),"native_pulse":refusal.native_pulse()}),
+                    },
+                );
+            }
             if request.mode == "performance-source" {
                 if request.source_bootstrap.is_some() || request.procedural_request.is_some() {
                     return Err(
@@ -1012,17 +1105,110 @@ fn serve_native_act_operation(
                     "standing":"same privately borrowed native Scene and actual activated source/Return; no selected Act, rendered output or public disclosure grant"}),
                 );
             }
-            if request.mode == "acoustic-install" {
+            if matches!(
+                request.mode.as_str(),
+                "acoustic-prepare" | "acoustic-install" | "acoustic-stage" | "acoustic-replace"
+            ) {
                 if request.source_bootstrap.is_some() || request.procedural_request.is_some() {
-                    return Err("acoustic install carries unowned procedural authority".into());
+                    return Err(
+                        "acoustic source operation carries unowned procedural authority".into(),
+                    );
                 }
-                return Ok(match host.install_performance_acoustic(&lease) {
-                    Ok(pulse) => {
-                        json!({"selection":lease.evidence(),"accepted":true,"native_pulse":pulse})
+                let sources = request.manifest["scene"]["performance"]["native_sources"]
+                    .as_array()
+                    .ok_or("closed Scene has no complete native source")?;
+                if sources.len() != 1 {
+                    return Err("acoustic operation requires exact selected native source".into());
+                }
+                let configuration = if request.mode == "acoustic-prepare" {
+                    request
+                        .acoustic_configuration
+                        .as_ref()
+                        .ok_or("closed authored acoustic configuration absent")?
+                        .clone()
+                } else {
+                    serde_json::from_value::<super::performance::AcousticConfiguration>(
+                        sources[0]["native_bundle"]["acoustic_receiving"]["packet"]["configuration"].clone())
+                        .map_err(|e|e.to_string())?
+                };
+                if request.mode == "acoustic-prepare" {
+                    if sources[0]["native_bundle"]
+                        .get("acoustic_receiving")
+                        .is_some()
+                    {
+                        let candidate = host.prepare_performance_acoustic_update(configuration)?;
+                        lease.validate_source_assets(
+                            &request.instance_ref,
+                            candidate.before_source_assets(),
+                        )?;
+                        lease.validate_field_sources(&request.instance_ref, &original, &current)?;
+                        return Ok(json!({"selection":lease.evidence(),"prepared_acoustic":{
+                            "schema":"ql.native-current-scene-acoustic-candidate/v1","change":"geometry-replacement",
+                            "configuration":candidate.configuration(),"source_assets":candidate.source_assets(),
+                            "native_boundary":candidate.native_boundary()},
+                            "standing":"pure stopped same-source receiver replacement; no history/output/source publication or pulse drain"}));
                     }
-                    Err(refusal) => {
-                        json!({"selection":lease.evidence(),"accepted":false,"reason":refusal.reason(),"native_pulse":refusal.native_pulse()})
+                    let candidate =
+                        host.prepare_performance_acoustic_installation(configuration)?;
+                    lease.validate_source_assets(
+                        &request.instance_ref,
+                        candidate.before_source_assets(),
+                    )?;
+                    lease.validate_field_sources(&request.instance_ref, &original, &current)?;
+                    return Ok(json!({"selection":lease.evidence(),"prepared_acoustic":{
+                        "schema":"ql.native-current-scene-acoustic-candidate/v1","change":"initial",
+                        "configuration":candidate.configuration(),"source_assets":candidate.source_assets(),
+                        "native_boundary":candidate.native_boundary()},
+                        "standing":"pure current native source candidate; no output/source publication or pulse drain"}));
+                }
+                if request.mode == "acoustic-replace" {
+                    let candidate = host.prepare_performance_acoustic_update(configuration)?;
+                    if request.original_acoustic_boundary.as_ref()
+                        != Some(candidate.native_boundary())
+                    {
+                        return Err("original receiver replacement boundary changed before current Scene application".into());
                     }
+                    return Ok(
+                        match host.replace_performance_acoustic(&candidate, &lease) {
+                            Ok(pulse) => {
+                                json!({"selection":lease.evidence(),"accepted":true,"native_pulse":pulse})
+                            }
+                            Err(refusal) => {
+                                json!({"selection":lease.evidence(),"accepted":false,"reason":refusal.reason(),"native_pulse":refusal.native_pulse()})
+                            }
+                        },
+                    );
+                }
+                let (candidate, preparation_error) =
+                    match host.prepare_performance_acoustic_installation(configuration) {
+                        Ok(candidate) => (Some(candidate), None),
+                        Err(reason) => (None, Some(reason)),
+                    };
+                if let Some(expected) = &request.original_acoustic_boundary {
+                    let candidate = candidate
+                        .as_ref()
+                        .ok_or("prepared original acoustic source/boundary unavailable")?;
+                    if candidate.native_boundary() != expected {
+                        return Err("original acoustic preparation boundary changed before current Scene installation".into());
+                    }
+                }
+                let applied = if request.mode == "acoustic-stage" {
+                    let candidate = candidate.as_ref().ok_or(
+                        "staging requires the exact original pure candidate after actual Scene CAS",
+                    )?;
+                    host.stage_performance_acoustic_candidate(candidate, &lease)
+                } else if let Some(candidate) = candidate.as_ref() {
+                    host.install_performance_acoustic_candidate(candidate, &lease)
+                } else {
+                    // Existing fully selected staged legacy snapshots retain
+                    // their native install path; no imported timing is guessed.
+                    host.install_performance_acoustic(&lease)
+                };
+                return Ok(match applied {
+                    Ok(pulse) => json!({"selection":lease.evidence(),"accepted":true,
+                        "staged":request.mode=="acoustic-stage","native_pulse":pulse}),
+                    Err(refusal) => json!({"selection":lease.evidence(),"accepted":false,
+                        "reason":refusal.reason(),"preparation_error":preparation_error,"native_pulse":refusal.native_pulse()}),
                 });
             }
             if request.source_bootstrap.is_some() || request.procedural_request.is_some() {

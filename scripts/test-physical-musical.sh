@@ -67,10 +67,19 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     TASK_MOTION_OUTPUT="$TASK_OUTPUT/moving-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_motion_nonce"
     run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_MOVING_RECEIVING_EVIDENCE_DIR="$TASK_MOTION_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
+  elif [[ "$suite" == "performance_calibration_native_wire" ]]; then
+    v_calibration_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_CALIBRATION_OUTPUT="$TASK_OUTPUT/calibration-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_calibration_nonce"
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+      QL_CALIBRATION_EVIDENCE_DIR="$TASK_CALIBRATION_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   else
     run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   fi
 done
+
+run_native_gate initial-acoustic-candidate env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  cargo test -p ql-mef --locked --lib continuous::host::acoustic_initial_tests::actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary -- --ignored || :
 
 # Exact original SourceForm, source-key and resident reply production owners.
 TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"

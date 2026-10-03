@@ -283,6 +283,60 @@ impl FieldHost {
         Ok(pulse)
     }
 
+    /// Explicit legacy staging is lawful only AFTER the actual C Scene CAS
+    /// selects the complete independently prepared after-assets. The initial
+    /// default uses install_performance_acoustic_candidate without staging.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn stage_performance_acoustic_candidate(
+        &mut self,
+        candidate: &super::performance::PreparedAcousticInstallation,
+        source_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<Value, super::performance::AcousticRefusal> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let original = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic source absent")?
+            .clone();
+        let after = original
+            .clone()
+            .with_acoustic_configuration(candidate.configuration().clone())?;
+        source_lease.validate_source_assets(&self.instance_ref, candidate.source_assets())?;
+        self.performance
+            .as_ref()
+            .ok_or("native acoustic performance absent")?
+            .validate_stopped_acoustic_installation_candidate(
+                &current, &original, &after, candidate,
+            )?;
+        let pulse = self.stage_performance_acoustic(candidate.configuration().clone())?;
+        let checked = (|| -> Result<(), String> {
+            let owner = self
+                .performance
+                .as_ref()
+                .ok_or("native acoustic performance disappeared")?;
+            owner.validate_current(&current)?;
+            if owner.source_assets() != candidate.source_assets() {
+                return Err(
+                    "actual staged native source differs from full selected candidate".into(),
+                );
+            }
+            source_lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            Ok(())
+        })();
+        match checked {
+            Ok(()) => Ok(pulse),
+            Err(reason) => {
+                let reason = self.session.session_mut().performance_invalidate(&reason);
+                Err(super::performance::AcousticRefusal::retaining_native_pulse(
+                    reason, pulse,
+                ))
+            }
+        }
+    }
+
     /// Only the closed selected-Act channel supplies this native lease.
     /// Public Exchange/HostOperation never accepts an acoustic witness Value.
     #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -307,6 +361,64 @@ impl FieldHost {
                 self.session.session_mut(),
                 act_lease,
             )
+    }
+
+    /// Pure initial candidate over the SAME original native source and copied
+    /// stopped boundary. No inspect, drain, source change or receiver install.
+    pub(crate) fn prepare_performance_acoustic_installation(
+        &self,
+        configuration: super::performance::AcousticConfiguration,
+    ) -> Result<super::performance::PreparedAcousticInstallation, String> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis();
+        let original = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?;
+        let after = original
+            .clone()
+            .with_acoustic_configuration(configuration)?;
+        self.performance
+            .as_ref()
+            .ok_or("native acoustic performance not active")?
+            .prepare_stopped_acoustic_installation_assets(current, original, &after)
+    }
+    /// Fresh closed native Scene/Act selection must match the full candidate
+    /// after-assets. Source publication follows the accepted actual install.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn install_performance_acoustic_candidate(
+        &mut self,
+        candidate: &super::performance::PreparedAcousticInstallation,
+        source_lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<Value, super::performance::AcousticRefusal> {
+        if !self.available() {
+            return Err("held native acoustic source owner unavailable".into());
+        }
+        let current = self.session.session().current_basis().clone();
+        let original = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original acoustic receiving source not bound")?
+            .clone();
+        let after = original
+            .clone()
+            .with_acoustic_configuration(candidate.configuration().clone())?;
+        let pulse = self
+            .performance
+            .as_mut()
+            .ok_or("native acoustic performance not active")?
+            .install_acoustic_candidate(
+                &current,
+                &original,
+                &after,
+                self.session.session_mut(),
+                candidate,
+                source_lease,
+            )?;
+        self.receiving_source = Some(after);
+        Ok(pulse)
     }
 
     /// Numerical/source preparation for the existing current Scene CAS. This
@@ -1127,3 +1239,7 @@ mod tests {
         assert!(matches!(command, HostOperation::Read {}));
     }
 }
+
+#[cfg(test)]
+#[path = "performance_acoustic_installation_tests.rs"]
+mod acoustic_initial_tests;
