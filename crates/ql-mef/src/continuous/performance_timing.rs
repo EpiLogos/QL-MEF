@@ -188,7 +188,7 @@ impl PerformanceOwner {
             }
             if fact["schema"] != "ql.native-performance-timing-fact/v1"
                 || fact["moment"] != selected
-                || fact["source"] != self.binding.determination()
+                || &fact["source"] != self.binding.determination()
                 || binding["owner_ref"] != pulse["reading"]["session_ref"]
                 || binding["epoch_ref"]
                     != format!(

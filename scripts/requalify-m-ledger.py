@@ -287,6 +287,73 @@ def apply(args) -> None:
                       "registry_revision": registry["registry_revision"], "preserved_applied_decisions": len(applied)}))
 
 
+def verify_implementation_relocation(root: Path, receipt: dict) -> dict:
+    """Verify a concrete owner move while retaining every prior semantic record.
+
+    Implementation IDs are stable opaque references in the native ledger.
+    The explicit path is the current implementation location. This admission
+    neither changes historical evidence nor qualifies runtime behavior.
+    """
+    record = receipt.get("implementation_relocation")
+    if record is None:
+        return receipt
+    if not isinstance(record, dict) or record.get("schema") != "ql.native-implementation-relocation/v1":
+        raise ValueError("unqualified implementation relocation")
+    commit = record.get("previous_git_commit", "")
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("implementation relocation needs an exact prior Git commit")
+    def previous(path: str) -> bytes:
+        return subprocess.check_output(["git", "show", commit + ":" + path], cwd=root)
+    old_raw = previous(m.LEDGER.as_posix())
+    old = json.loads(old_raw)
+    current_raw = (root / m.LEDGER).read_bytes()
+    current = json.loads(current_raw)
+    if sha(old_raw) != record["previous_ledger_sha256"] or sha(current_raw) != record["current_ledger_sha256"]:
+        raise ValueError("implementation relocation ledger bytes changed")
+    restored = copy.deepcopy(current)
+    implementations = {row["id"]: row for row in restored["implementations"]}
+    moves = record["moves"]
+    expected_symbols = {"face", "ground", "parse_language", "frame_view", "return_view"}
+    if len(moves) != 5 or {row["symbol"] for row in moves} != expected_symbols or len({row["id"] for row in moves}) != 5:
+        raise ValueError("implementation relocation exceeded the five canonical helpers")
+    for move in moves:
+        if move["before_path"] != "crates/ql-cli/src/vak_composition.rs" or move["after_path"] != "crates/ql-mef/src/vak_composition_wire.rs":
+            raise ValueError("implementation relocation changed its native owner")
+        row = implementations.get(move["id"])
+        if row is None or row["symbol"] != move["symbol"] or row["path"] != move["after_path"]:
+            raise ValueError("implementation relocation lost an original binding")
+        row["path"] = move["before_path"]
+    restored["ledger_revision"] = old["ledger_revision"]
+    if restored != old:
+        raise ValueError("implementation relocation changed retained semantic ledger data")
+    prior_receipt = json.loads(previous(RECEIPT.as_posix()))
+    restored_receipt = copy.deepcopy(receipt)
+    restored_receipt.pop("implementation_relocation")
+    restored_receipt["ledger_revision"] = prior_receipt["ledger_revision"]
+    if restored_receipt != prior_receipt or receipt["ledger_revision"] != current["ledger_revision"]:
+        raise ValueError("implementation relocation rewrote retained qualification")
+    if set(record["current_source_locks"]) != {"crates/ql-cli/src/vak_composition.rs", "crates/ql-mef/src/vak_composition_wire.rs"}:
+        raise ValueError("implementation relocation lost its actual canonical source locks")
+    for path, digest in record["current_source_locks"].items():
+        if sha((root / path).read_bytes()) != digest or sha(previous(path)) != digest:
+            raise ValueError("implementation relocation canonical source changed")
+    integration_path = "fixtures/kernel/m3-journey-source-integration-v1.json"
+    prior_integration = json.loads(previous(integration_path))
+    integration = json.loads((root / integration_path).read_bytes())
+    restored_integration = copy.deepcopy(integration)
+    restored_integration["current_source"]["ledger"] = prior_integration["current_source"]["ledger"]
+    if restored_integration != prior_integration:
+        raise ValueError("implementation relocation rewrote historical native integration")
+    active_lock = integration["current_source"]["ledger"]
+    if active_lock["path"] != m.LEDGER.as_posix() or active_lock["sha256"] != sha(current_raw) or active_lock["revision"] != current["ledger_revision"]:
+        raise ValueError("implementation relocation current integration lock is stale")
+    expected_lock = copy.deepcopy(prior_integration["current_source"]["ledger"])
+    expected_lock.update(sha256=sha(current_raw), revision=current["ledger_revision"])
+    if active_lock != expected_lock:
+        raise ValueError("implementation relocation changed integration standing")
+    return restored_receipt
+
+
 def verify_source_comparator_reconciliation(root: Path, receipt: dict) -> None:
     """Admit an executed source-comparator successor without restamping old replays."""
     retained = m.read(root / "fixtures/kernel/source-requalification/m3-source-audit.json")
@@ -350,7 +417,8 @@ def check() -> None:
     for path, digest in receipt["historical_numerical_proofs_unchanged"].items():
         verify_historical_proof(ROOT, path, digest, receipt["historical"]["git_commit"])
     history(receipt["historical"]["git_commit"])
-    verify_source_comparator_reconciliation(ROOT, receipt)
+    prior_qualification = verify_implementation_relocation(ROOT, receipt)
+    verify_source_comparator_reconciliation(ROOT, prior_qualification)
     m.verify(ROOT, ledger)
     print("Current source requalification, preserved historical proofs and131 decisions verified")
 

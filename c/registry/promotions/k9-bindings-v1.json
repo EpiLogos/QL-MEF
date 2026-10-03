@@ -2317,6 +2317,18 @@
       "tests": [
         "cpp/tests/performance_resident_registry_cases.hpp"
       ]
+    },
+    {
+      "path": "scripts/requalify-m-ledger.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing source-ledger lineage checker verifies the actual stable opaque implementation identities at the canonical native composition owner, exact retained prior ledger and qualification, and unchanged numerical replay/history artifacts. Source migration grants no runtime or installed readiness.",
+      "tests": [
+        "scripts/tests/test_historical_proof_alias.py",
+        "scripts/tests/test_m_ledger.py"
+      ]
     }
   ]
 }

@@ -272,7 +272,7 @@ fn compile_source(
         method_skill_ref: None,
     };
     let binding = graph
-        .bind_operative_scope(&s.expression_ref, a.profile, correlation.clone())
+        .bind_operative_scope(&s.expression_ref, a.profile.clone(), correlation.clone())
         .map_err(|e| e.to_string())?;
     let request = OperativeScopeCurrentnessRequest {
         contract: OPERATIVE_CURRENTNESS_CONTRACT.into(),
@@ -290,7 +290,7 @@ fn compile_source(
         return Err("fresh native source bootstrap did not reobserve as current".into());
     }
     let compiled = graph
-        .compile_profile(&s.expression_ref, a.profile)
+        .compile_profile(&s.expression_ref, a.profile.clone())
         .map_err(|e| e.to_string())?;
     compiled
         .validate_plan(&a.thread_plan)

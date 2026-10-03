@@ -1266,7 +1266,7 @@ fn serve_native_act_operation(
                 )
             }
             Err(failure) => {
-                let reason = failure.to_string();
+                let reason = failure.reason.clone();
                 native_render_failure = Some(failure.compact_metadata());
                 if let Err(error) = failure.visit_original_receipts(&mut |kind, index, receipt| {
                     diagnostic_sender.send_receipt(kind, index, receipt)

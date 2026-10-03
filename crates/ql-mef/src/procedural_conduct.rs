@@ -968,7 +968,7 @@ impl ConductHost {
             installed.checkpoint = next;
             return Ok(result);
         }
-        if input.event.kind == TriggerKind::SourceChange {
+        if input.event.kind == TriggerKind::SourceChanged {
             next.rule.pause(witness.admitted_cursor());
             let result = receipt(
                 &next,
@@ -2000,7 +2000,7 @@ pub fn apply_released_scene_interventions(
             e["id"]
                 .as_str()
                 .map(str::to_owned)
-                .ok_or("effective entity has no stable ID")
+                .ok_or_else(|| "effective entity has no stable ID".to_owned())
         })
         .collect::<Result<Vec<_>>>()?;
     contribution.native_changes.retain(|change| match change {
