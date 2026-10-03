@@ -278,9 +278,13 @@ fn retained_retry_cannot_change_original_selector_or_write_another_existing_targ
         &template(),
     )
     .unwrap();
-    let mut address = a.address.clone();
-    address.component = "property".into();
-    address.property = Some("force_strength".into());
+    let address = native_parameter_address(
+        &a.address.expression_ref,
+        a.address.scene_ref.as_deref().unwrap(),
+        a.address.entity_ref.as_deref().unwrap(),
+        "force_strength",
+    )
+    .unwrap();
     c.owned_addresses = vec![address];
     c.native_changes = vec![NativeChange::ParameterSet {
         entity_ref: a.address.entity_ref.clone().unwrap(),
@@ -301,7 +305,11 @@ fn retained_retry_cannot_change_original_selector_or_write_another_existing_targ
         json!("expression:acceptance:entity:b");
     wrong["contributions"][0]["native_changes"][0]["entity_ref"] =
         json!("expression:acceptance:entity:b");
-    refused("prepare", &wrong, "membership");
+    refused(
+        "prepare",
+        &wrong,
+        "global Entity write lacks actual native Scene locations",
+    );
 }
 
 fn rule(p: &Procedure, checkpoint: Option<Value>, operation: Value) -> Value {

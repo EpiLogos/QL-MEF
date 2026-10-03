@@ -20,6 +20,9 @@ fn edit() -> ManualEdit {
             )
         })
         .collect::<BTreeMap<_, _>>();
+    // Each ordinary radius edit below writes 0.3. Start from a distinct real
+    // authored baseline so the extractor exercises an actual delta.
+    material["scene"]["entities"][0]["force"]["radius"] = json!(0.2);
     ManualEdit {
         expression_ref: "expression:acceptance".into(),
         scene_ref: "expression:acceptance:scene:canonical".into(),

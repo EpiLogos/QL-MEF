@@ -266,7 +266,9 @@ fn human_edited_atlas_detaches_without_requiring_absent_authored_focus_reset() {
         scene_ref: "expression:acceptance:scene:canonical".into(),
         entity_ref: None,
     }];
-    let baseline = json!({"schema":"ql.native-atlas-state/v1","expression_ref":occurrence,"focus":null,"scene_order":["expression:acceptance:scene:canonical"]});
+    // Historical authored baseline has no resettable Selection. The CURRENT
+    // native Document always has a real Selection object in its scene order.
+    let baseline = json!({"schema":"ql.native-atlas-state/v1","expression_ref":occurrence,"focus":null,"scene_order":["expression:acceptance:scene:canonical","expression:acceptance:scene:other"]});
     let c = GeneratedContribution {
         contribution_ref: contribution_identity(
             &p.procedure_ref,
@@ -293,9 +295,24 @@ fn human_edited_atlas_detaches_without_requiring_absent_authored_focus_reset() {
         native_changes: flow.clone(),
         generated_basis: json!({"native_flow":flow,"authored_basis":baseline}),
     };
-    // Actual native Document has no current Selection after a human clear.
-    // This is edited material and detaches; it does not need a reset operation.
-    let prepared = retire(&p, &c, baseline.clone(), &materialization()).unwrap();
+    // The human moved the native Selection to another actual Scene. This is
+    // edited material and detaches without inventing an unavailable reset.
+    let mut current = baseline.clone();
+    current["focus"] = json!({"scene_ref":"expression:acceptance:scene:other","entity_ref":null});
+    for malformed_focus in [
+        Value::Null,
+        json!("missing-native-selection"),
+        json!({"scene_ref":"expression:foreign:scene:a","entity_ref":null}),
+        json!({"scene_ref":"expression:acceptance:scene:other","entity_ref":"expression:foreign:entity:a"}),
+    ] {
+        let mut malformed = current.clone();
+        malformed["focus"] = malformed_focus;
+        assert!(retire(&p, &c, malformed, &materialization()).is_err());
+    }
+    let mut missing = current.clone();
+    missing.as_object_mut().unwrap().remove("focus");
+    assert!(retire(&p, &c, missing, &materialization()).is_err());
+    let prepared = retire(&p, &c, current, &materialization()).unwrap();
     assert_eq!(prepared.native_edit["changes"].as_array().unwrap().len(), 1);
     assert_eq!(
         prepared.native_edit["changes"][0]["change"],

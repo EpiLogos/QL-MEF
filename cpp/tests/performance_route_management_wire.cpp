@@ -745,7 +745,12 @@ static void stopped_force_savecut_artifacts(J *fixture) {
          event.sequence == 1 && event.sample == 0 &&
          event.has_requested_sample && event.requested_sample == 0 &&
          !valid_ref(admission.stopped_queue.input_ref()) &&
-         event.native_clock.epoch == 0 && event.native_clock.sequence == 0);
+         event.native_clock.epoch == 0 &&
+         event.native_clock.anchor_ordinal == 0 &&
+         event.native_clock.trigger_host_ticks == 0 &&
+         event.native_clock.admitted_host_ticks == 0 &&
+         event.native_clock.mapping_uncertainty_samples == 0 &&
+         event.native_clock.input_transit_unknown);
   const auto pending = owner->stopped_checkpoint();
   assert(pending->native_pair.audio.accepted_sequence == 1 &&
          pending->native_pair.audio.applied_application_ordinal == 0 &&

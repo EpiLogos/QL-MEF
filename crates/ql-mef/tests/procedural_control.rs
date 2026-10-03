@@ -81,8 +81,13 @@ fn input() -> NativeControlInput {
         .unwrap()
         .iter()
         .map(|entity| {
-            let actual = entity["id"].as_str().unwrap().to_owned();
-            (actual.clone(), actual)
+            let material_id = entity["id"].as_str().unwrap().to_owned();
+            let native_id = if material_id.starts_with("expression:acceptance:entity:") {
+                material_id.clone()
+            } else {
+                format!("expression:acceptance:entity:{material_id}")
+            };
+            (material_id, native_id)
         })
         .collect();
     let mut candidate = material.clone();
