@@ -441,10 +441,9 @@ fn serve_native_act_operation(
                     _=>return Err("unknown native selected Act render consumer operation".into()),
                 }
             }
-        }).and_then(|rendered| {
-            let payload=json!({"score":score,"selection":selected,"rendered":rendered.result.is_ok(),"restoration":rendered.restoration,
-                "activity_error":rendered.result.err()});
-            Ok(payload)
+        }).map(|rendered| {
+            json!({"score":score,"selection":selected,"rendered":rendered.result.is_ok(),"restoration":rendered.restoration,
+                "activity_error":rendered.result.err()})
         })
     })();
     let reply = host.native_act_result(&request.request_id, &result);

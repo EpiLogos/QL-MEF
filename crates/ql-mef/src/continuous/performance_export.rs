@@ -673,9 +673,9 @@ impl NativeActRenderer<'_> {
             let admission = &reply["payload"]["score_admission"];
             if admission["schema"] != "ql.native-score-admission/v1"
                 || admission["queued"] != true
-                || admission["event"]["sequence"] != sequence.to_string()
-                || admission["event"]["requested_sample"] != event.effective.to_string()
-                || admission["event"]["sample"] != event.effective.to_string()
+                || count(&admission["event"]["sequence"])? != sequence
+                || count(&admission["event"]["requested_sample"])? != event.effective
+                || count(&admission["event"]["sample"])? != event.effective
                 || admission["input_ref"] != input
                 || admission["source"]["identity"]
                     != self.owner.binding().determination()["identity"]
