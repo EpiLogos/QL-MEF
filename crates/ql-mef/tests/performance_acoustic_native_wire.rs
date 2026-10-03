@@ -1100,7 +1100,16 @@ fn actual_control_fresh_saved_segment_retains_original_ring_and_future_work() {
             let after: Value =
                 serde_json::from_str(receipt["after_checkpoint_wire"].as_str().unwrap()).unwrap();
             assert_eq!(before["native_pair"]["audio"]["cursor"], "0");
-            assert_eq!(before["native_pair"]["audio"]["has_receiving"], false);
+            // The strict native codec preserves pre-install encoding
+            // absence, independently of an explicitly encoded inactive port.
+            let before_audio = &before["native_pair"]["audio"];
+            match before_audio.get("has_receiving") {
+                None => assert!(before_audio.get("receiving").is_none()),
+                Some(flag) => {
+                    assert_eq!(flag, false);
+                    assert!(before_audio.get("receiving").is_some_and(Value::is_null));
+                }
+            }
             let receiving = &original["native_pair"]["audio"]["receiving"];
             assert_eq!(receiving, &output["original_receiving"]);
             for checkpoint in [&operative, &after] {

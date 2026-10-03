@@ -71,6 +71,7 @@ fn reading(p: &Procedure, c: &GeneratedContribution, actual: Value) -> RetainedO
         document_revision: 4,
         procedure_ref: p.procedure_ref.clone(),
         source_basis: vec![p.recipe.clone(), p.profile.clone()],
+        origin_source_basis: None,
         contribution_ref: c.contribution_ref.clone(),
         output_slot: c.output_slot.clone(),
         subject_refs: c.subjects.clone(),

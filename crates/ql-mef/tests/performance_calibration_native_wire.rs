@@ -18,7 +18,10 @@ use std::{
     time::Duration,
 };
 const BASELINE_PICKUP: f64 = 1000.;
-const CANDIDATE_PICKUP: f64 = 1_000_000.;
+// Original63 measured full stress raw_peak2.206540584564209 at1e6.
+// Quarter sensitivity predicts0.5516351461410522 (about5dB headroom),
+// with the SAME2N operation/24voices/16tails/P; actual trial must verify.
+const CANDIDATE_PICKUP: f64 = 250_000.;
 fn reference(s: &str) -> ReturnReference {
     ReturnReference {
         reference: s.into(),
@@ -359,10 +362,10 @@ fn actual_source_calibration_native_force_pcm_and_exact_continuation() {
         readings[0]["physical_positions_metres"],
         readings[1]["physical_positions_metres"]
     );
-    assert!(
-        readings[1]["trial"]["rms"].as_f64().unwrap()
-            > readings[0]["trial"]["rms"].as_f64().unwrap() * 999.
-    );
+    let actual_sensor_ratio = readings[1]["trial"]["rms"].as_f64().unwrap()
+        / readings[0]["trial"]["rms"].as_f64().unwrap();
+    let declared_sensor_ratio = CANDIDATE_PICKUP / BASELINE_PICKUP;
+    assert!((actual_sensor_ratio / declared_sensor_ratio - 1.0).abs() < 1e-5);
     assert!(
         readings[2]["trial"]["rms"].as_f64().unwrap()
             > readings[1]["trial"]["rms"].as_f64().unwrap()

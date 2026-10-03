@@ -82,7 +82,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.native == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # Actual63 reached21 original leaves in25min and timed out. Keep every
+    # canonical leaf/workload; allow this bounded complete native floor.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:

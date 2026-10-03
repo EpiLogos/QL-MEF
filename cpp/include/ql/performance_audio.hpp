@@ -277,6 +277,10 @@ struct Capture {
   std::uint64_t start_sample = 0, body_revision = 0;
   std::uint32_t frames = 0;
   std::array<double, max_frames> force_newtons{};
+  // Per-sample causal control values captured from the SAME committed
+  // output callback. Observers never derive gain from a later block meter.
+  std::array<double, max_frames> body_gain_linear{}, monitor_gain_linear{},
+      force_scale_newtons{};
   std::array<float, max_frames> pickup_linear{}, received_linear{},
       output_linear{};
   bool has_receiving = false;
@@ -2773,6 +2777,9 @@ public:
       body_gain[i] = effective_.master_linear * effective_.body_linear;
       monitor_gain[i] = effective_.master_linear * effective_.monitor_linear;
       force_scale[i] = effective_.force_newtons;
+      capture.body_gain_linear[i] = body_gain[i];
+      capture.monitor_gain_linear[i] = monitor_gain[i];
+      capture.force_scale_newtons[i] = force_scale[i];
     }
     capture.end_identity = determination_.identity;
     bool physical_committed = false;

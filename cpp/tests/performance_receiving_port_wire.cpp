@@ -110,6 +110,7 @@ static PreparedMovingSpatialReceiving receiving(const PreparedPhysicalBody &p,
 
 struct Output {
   std::vector<float> pickup, received, pcm;
+  std::vector<double> body_gain;
   std::unique_ptr<PhysicalBodyCheckpoint> physical;
   PhysicalSnapshot snapshot{};
   NativeReceivingReadback receiving{};
@@ -192,9 +193,14 @@ struct Session {
                      pulse->input_history.end());
       for (std::size_t i = 0; i < frames; ++i) {
         assert(capture.output_linear[i] == pcm[i]);
+        assert(std::isfinite(capture.body_gain_linear[i]) &&
+               capture.body_gain_linear[i] >= 0 &&
+               capture.monitor_gain_linear[i] == 0);
         assert(pcm[i] ==
-               float(std::clamp(.25 * double(capture.received_linear[i]), -.98,
-                                .98)));
+               float(std::clamp(capture.body_gain_linear[i] *
+                                    double(capture.received_linear[i]),
+                                -.98, .98)));
+        out.body_gain.push_back(capture.body_gain_linear[i]);
         if (!capture.has_receiving)
           assert(capture.received_linear[i] == capture.pickup_linear[i]);
       }
@@ -516,6 +522,15 @@ static Json replacement(J *fixture) {
   assert(same_receiving_manifest(candidate->manifest(), new_rx.manifest));
   s->receiving_owner = candidate;
   const auto first = s->advance(13000, 128);
+  // The exact recorded MasterLinear event changes the SAME actual output
+  // gain at sample9000, with the native five-ms smoothing preserved.
+  assert(first.body_gain.size() == 13000 - 4096);
+  const auto event_index = std::size_t(9000 - 4096);
+  assert(first.body_gain[event_index - 1] == .25 &&
+         first.body_gain[event_index] > .25 &&
+         first.body_gain[event_index] < automation.value &&
+         first.body_gain.back() > .60 &&
+         first.body_gain.back() <= automation.value);
   assert(std::any_of(first.received.begin(), first.received.begin() + 512,
                      [](float value) { return value != 0.f; }));
   auto stationary = std::make_unique<Session>(fixture, 0, 0);
@@ -528,7 +543,7 @@ static Json replacement(J *fixture) {
          Result::Accepted);
   const auto unmoved = stationary->advance(13000, 128);
   assert(first.pickup == unmoved.pickup && first.received != unmoved.received &&
-         first.pcm != unmoved.pcm);
+         first.pcm != unmoved.pcm && first.body_gain == unmoved.body_gain);
   exact_body(*first.physical, *unmoved.physical);
   const auto first_journal = s->journal;
   const auto final = s->owner->stopped_checkpoint();
@@ -556,7 +571,7 @@ static Json replacement(J *fixture) {
          ack.epoch == ack.previous_epoch + 1);
   const auto repeat = s->advance(13000, 512);
   assert(first.pickup == repeat.pickup && first.received == repeat.received &&
-         first.pcm == repeat.pcm);
+         first.pcm == repeat.pcm && first.body_gain == repeat.body_gain);
   exact_body(*first.physical, *repeat.physical);
   const auto replay_final = s->owner->stopped_checkpoint();
   auto f = receiving_checkpoint(final->native_pair.audio.receiving),

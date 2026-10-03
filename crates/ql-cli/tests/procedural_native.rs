@@ -546,6 +546,7 @@ fn retained_native_output_input_does_not_expand_original_empty_selector() {
         document_revision: 4,
         procedure_ref: p.procedure_ref.clone(),
         source_basis: vec![p.profile.clone(), old.recipe.clone()],
+        origin_source_basis: None,
         contribution_ref: old.contribution_ref.clone(),
         output_slot: old.output_slot.clone(),
         subject_refs: old.subjects.clone(),

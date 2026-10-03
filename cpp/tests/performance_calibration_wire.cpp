@@ -449,6 +449,15 @@ static Json calibration_trial(J *source, double force, bool stress) {
               many->native().engine->sample_rate());
     wire::real(diagnostic.get(), "peak_linear", observed.peak);
     wire::real(diagnostic.get(), "raw_peak_linear", observed.raw_peak);
+    wire::real(diagnostic.get(), "single_voice_peak_linear", trial.peak);
+    wire::real(diagnostic.get(), "single_voice_raw_peak_linear",
+               trial.raw_peak);
+    wire::real(diagnostic.get(), "single_voice_rms_linear",
+               std::sqrt(trial.square_sum / trial.samples));
+    wire::real(diagnostic.get(), "single_voice_force_peak_newtons",
+               trial.force_peak);
+    wire::real(diagnostic.get(), "single_voice_maximum_displacement_metres",
+               trial.max_displacement_metres);
     wire::real(diagnostic.get(), "rms_linear",
                std::sqrt(observed.square_sum / observed.samples));
     wire::real(diagnostic.get(), "pickup_peak_linear", observed.pickup_peak);

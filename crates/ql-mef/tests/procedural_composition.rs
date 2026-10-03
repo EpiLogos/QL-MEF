@@ -1,17 +1,13 @@
 //! Procedure compiler tests execute real production functions and native wire.
 //! Installed stage/body/audio application is verified by the paired consumers.
-use ql_mef::{
-    MFace, aw1_world, coordinate_expression, m_tree, m3_state, vak_composition, vak_profile,
-    vak_scope, vak_scope_wire, vak_workflow_types,
-};
-use std::collections::{BTreeMap, BTreeSet};
-#[path = "../src/procedural_composition.rs"]
-pub mod procedural_composition;
-#[path = "../src/procedural_manifestation.rs"]
-pub mod procedural_manifestation;
 use procedural_composition::*;
 use procedural_manifestation::*;
+use ql_mef::{
+    m_tree, procedural_composition, procedural_manifestation, procedural_retention,
+    vak_composition, vak_profile, vak_scope, vak_scope_wire, vak_workflow_types,
+};
 use serde_json::{Value, json};
+use std::collections::{BTreeMap, BTreeSet};
 
 fn subject() -> NativeSubject {
     let manifest = m_tree::native_current_m_registry().manifest();
@@ -86,6 +82,51 @@ fn membership() -> ResolvedMembership {
         joined: vec![],
         left: vec![],
     }
+}
+
+/// Real production materialization before immutable envelope preparation.
+/// This supplies producer test input; native S still attests its own typed
+/// original operation and current Document before receiving any continuation.
+fn materialized_creation_changes(p: &Procedure, old: &GeneratedContribution) -> Value {
+    let mut prepared = compile_native_batch(
+        m_tree::native_current_m_registry(),
+        p,
+        "operation:original-materialized-creation",
+        "expression:acceptance",
+        1,
+        membership(),
+        vec![old.clone()],
+        BTreeSet::from(["scene".into(), "nativeBody".into(), "audio".into()]),
+    )
+    .unwrap();
+    procedural_retention::materialize_retention(
+        &mut prepared,
+        &procedural_retention::NativeMaterialization {
+            schema: procedural_retention::MATERIALIZATION_CONTRACT.into(),
+            lifecycles: vec![],
+            document_revision: 1,
+            rule_cursor: 0,
+            state: "running".into(),
+            scenes: vec![procedural_retention::NativeRetentionScene {
+                scene_ref: old.occurrence_ref.clone(),
+                document_revision: 1,
+                existing_retention: None,
+                current_presentation: None,
+                principal: subject(),
+                contributors: vec![],
+                locus: NativeReading {
+                    reference: p.locus_ref.clone(),
+                    revision: m_tree::native_current_m_registry()
+                        .manifest()
+                        .source_snapshot_sha256
+                        .clone(),
+                    availability: ReadingAvailability::Available,
+                },
+            }],
+        },
+    )
+    .unwrap();
+    prepared.native_edit["changes"].clone()
 }
 
 #[test]
@@ -188,14 +229,15 @@ fn first_connected_batch_creates_real_scenes_constituents_force_and_sequence() {
             overlays: vec![],
         };
         let regeneration = regenerate(
-            &[old.clone()],
-            &[current.clone()],
+            std::slice::from_ref(&old),
+            std::slice::from_ref(&current),
             &[next],
             RemovalPolicy::RetireUneditedDetachEdited,
         )
         .unwrap();
         let native_regeneration =
-            regeneration_native_changes(&regeneration, &[old.clone()], &[current]).unwrap();
+            regeneration_native_changes(&regeneration, std::slice::from_ref(&old), &[current])
+                .unwrap();
         std::fs::write(path, serde_json::to_vec_pretty(&json!({"schema":"ql.procedural-stage-fixture/v1", "procedure":procedure,
             "prepared":prepared,"contributions":contributions,"create":{"operation":"create","expression_ref":"expression:acceptance",
             "title":"Ta-Onta Procedural Stage Acceptance","actor":"agent:anima"},
@@ -387,8 +429,8 @@ fn three_way_diff_preserves_human_force_override_and_accepts_new_generated_seque
         overlays: vec![],
     };
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
     )
@@ -434,7 +476,7 @@ fn explicit_persistent_overlay_survives_reordering_regeneration_and_serializatio
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        &[old.clone()],
+        std::slice::from_ref(&old),
         &[current],
         &[next],
         RemovalPolicy::RetireUneditedDetachEdited,
@@ -476,9 +518,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
         overlays: vec![overlay.clone()],
     };
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
-        &[next.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+        std::slice::from_ref(&next),
         RemovalPolicy::RetireUneditedDetachEdited,
     )
     .unwrap();
@@ -497,9 +539,9 @@ fn stable_constituent_override_cannot_move_to_another_id_or_silently_disappear()
     positional.overlays[0].pointer = "/scene/entities/0/force/strength".into();
     assert!(
         regenerate(
-            &[old.clone()],
+            std::slice::from_ref(&old),
             &[positional],
-            &[next.clone()],
+            std::slice::from_ref(&next),
             RemovalPolicy::RetireUneditedDetachEdited
         )
         .unwrap_err()
@@ -565,7 +607,7 @@ fn stable_id_merge_preserves_edited_retired_layer_and_unrelated_authored_materia
     let effective = reconcile_material(&old, &current, &generated).unwrap();
     assert_eq!(
         effective["entities"],
-        json!([{"id":"a","scale":2},{"id":"b","scale":9},{"id":"human","scale":3}])
+        json!([{"id":"b","scale":9},{"id":"a","scale":2},{"id":"human","scale":3}])
     );
     assert_eq!(effective["sequence"]["hold"], 2);
     assert!(reconcile_material(&json!({}), &json!({"created":1}), &json!({"created":2})).is_err());
@@ -610,7 +652,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let frozen = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[a.clone()],
+        std::slice::from_ref(&a),
         MembershipMode::Frozen,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -630,7 +672,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
         resolve_membership(
             &Selector::All,
             "expression:acceptance",
-            &[a.clone()],
+            std::slice::from_ref(&a),
             MembershipMode::Frozen,
             Some(&frozen),
             MembershipChangePolicy::AdmitAndRecord
@@ -641,7 +683,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let sustained = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[a.clone()],
+        std::slice::from_ref(&a),
         MembershipMode::Sustained,
         None,
         MembershipChangePolicy::AdmitAndRecord,
@@ -650,7 +692,7 @@ fn frozen_membership_does_not_absorb_later_tags_and_sustained_changes_are_record
     let updated = resolve_membership(
         &selector,
         "expression:acceptance",
-        &[b.clone()],
+        std::slice::from_ref(&b),
         MembershipMode::Sustained,
         Some(&sustained),
         MembershipChangePolicy::AdmitAndRecord,
@@ -773,7 +815,7 @@ fn source_qualified_conditions_are_resolved_before_frozen_native_scope() {
             registry,
             &p,
             "expression:acceptance",
-            &[related.clone()],
+            std::slice::from_ref(&related),
             None
         )
         .unwrap()
@@ -795,9 +837,14 @@ fn existing_force_write_must_match_actual_resolved_entity_and_writer_scope() {
     let registry = m_tree::native_current_m_registry();
     let p = procedure();
     let a = reading("a", 9);
-    let selected =
-        resolve_procedure_membership(registry, &p, "expression:acceptance", &[a.clone()], None)
-            .unwrap();
+    let selected = resolve_procedure_membership(
+        registry,
+        &p,
+        "expression:acceptance",
+        std::slice::from_ref(&a),
+        None,
+    )
+    .unwrap();
     let mut c = contribution(&p, "existing-force");
     let mut owned = a.address.clone();
     owned.component = "force".into();
@@ -834,7 +881,7 @@ fn existing_force_write_must_match_actual_resolved_entity_and_writer_scope() {
     assert!(
         compile(selected.clone(), wrong)
             .unwrap_err()
-            .contains("membership")
+            .contains("global Entity write lacks actual native Scene locations")
     );
     let mut lost = selected;
     lost.addresses.clear();
@@ -920,18 +967,22 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
     next.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
         json!(true);
     let delta = regenerate(
-        &[old.clone()],
-        &[current.clone()],
-        &[next.clone()],
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+        std::slice::from_ref(&next),
         p.removal_policy,
     )
     .unwrap();
-    next.native_changes =
-        regeneration_native_changes(&delta, &[old.clone()], &[current.clone()]).unwrap();
+    next.native_changes = regeneration_native_changes(
+        &delta,
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&current),
+    )
+    .unwrap();
     // This is pure producer input validation. Only native S can attest the
     // opaque typed journal digest and actual consumer observations at apply.
     let envelope = json!({"operation_ref":"operation:original","expression_ref":"expression:acceptance","expected_revision":1,
-        "actor":"agent:anima","scope":{"kind":"expression"},"changes":old.native_changes,
+        "actor":"agent:anima","scope":{"kind":"expression"},"changes":materialized_creation_changes(&p, &old),
         "sources":[{"ref":p.profile.source_ref,"revision":p.profile.revision,"availability":"available"},
             {"ref":old.recipe.source_ref,"revision":old.recipe.revision,"availability":"available"}],
         "participants":[],"timing":{"kind":"immediate"},"cause_ref":null});
@@ -942,6 +993,7 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         document_revision: 4,
         procedure_ref: p.procedure_ref.clone(),
         source_basis: vec![p.profile.clone(), old.recipe.clone()],
+        origin_source_basis: Some(serde_json::from_value(envelope["sources"].clone()).unwrap()),
         contribution_ref: old.contribution_ref.clone(),
         output_slot: old.output_slot.clone(),
         subject_refs: old.subjects.clone(),
@@ -964,8 +1016,8 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
             membership(),
             vec![generated],
             BTreeSet::from(["scene".into()]),
-            &[old.clone()],
-            &[current.clone()],
+            std::slice::from_ref(&old),
+            std::slice::from_ref(&current),
             readings,
         )
     };
@@ -1020,6 +1072,7 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         let mut authored = p.clone();
         authored.revision = format!("revision:{generation}");
         authored.recipe.revision = format!("recipe:{generation}");
+        authored.profile.revision = format!("profile:{generation}");
         let mut revised = previous_generation.clone();
         revised.procedure_revision = authored.revision.clone();
         revised.recipe = authored.recipe.clone();
@@ -1028,16 +1081,16 @@ fn retained_native_output_continuation_keeps_original_selector_and_rejects_forge
         revised.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
             json!(true);
         let delta = regenerate(
-            &[previous_generation.clone()],
-            &[current_generation.clone()],
-            &[revised.clone()],
+            std::slice::from_ref(&previous_generation),
+            std::slice::from_ref(&current_generation),
+            std::slice::from_ref(&revised),
             p.removal_policy,
         )
         .unwrap();
         revised.native_changes = regeneration_native_changes(
             &delta,
-            &[previous_generation.clone()],
-            &[current_generation.clone()],
+            std::slice::from_ref(&previous_generation),
+            std::slice::from_ref(&current_generation),
         )
         .unwrap();
         let mut reading = output.clone();
@@ -1893,7 +1946,7 @@ fn procedural_target_readings_require_current_native_basis_on_initial_and_frozen
         registry,
         &procedure,
         "expression:acceptance",
-        &[target.clone()],
+        std::slice::from_ref(&target),
         None,
     )
     .unwrap();
@@ -1923,7 +1976,7 @@ fn procedural_target_readings_require_current_native_basis_on_initial_and_frozen
                 registry,
                 &procedure,
                 "expression:acceptance",
-                &[invalid.clone()],
+                std::slice::from_ref(&invalid),
                 None
             )
             .is_err()
@@ -1960,6 +2013,7 @@ fn native_output_reading(
         document_revision: 4,
         procedure_ref: p.procedure_ref.clone(),
         source_basis: vec![p.profile.clone(), old.recipe.clone()],
+        origin_source_basis: None,
         contribution_ref: old.contribution_ref.clone(),
         output_slot: old.output_slot.clone(),
         subject_refs: old.subjects.clone(),
@@ -1988,7 +2042,7 @@ fn compile_native_output(
         membership(),
         vec![next],
         BTreeSet::from(["scene".into()]),
-        &[old.clone()],
+        std::slice::from_ref(old),
         &[CurrentContribution {
             contribution_ref: old.contribution_ref.clone(),
             material: readings
@@ -2000,6 +2054,99 @@ fn compile_native_output(
         readings,
     )
 }
+
+#[test]
+fn historical_materialized_creation_roles_survive_profile_edit_and_refuse_origin_substitution() {
+    let original = procedure();
+    let old = contribution(&original, "original-role-receipt");
+    let current = old.generated_basis.clone();
+    let mut reading = native_output_reading(&original, &old, current.clone());
+    reading.applied_operation["envelope"]["changes"] =
+        materialized_creation_changes(&original, &old);
+    // The immutable producer test operation is sealed only after actual
+    // materialization. This is not S's typed journal/digest attestation.
+    reading.applied_operation["fingerprint"] =
+        json!(fingerprint(&reading.applied_operation["envelope"]).unwrap());
+    reading.origin_source_basis = Some(
+        serde_json::from_value(reading.applied_operation["envelope"]["sources"].clone()).unwrap(),
+    );
+    let immutable_creation = reading.applied_operation.clone();
+    let mut edited = original.clone();
+    edited.profile.revision = "profile:later-authored".into();
+    reading.source_basis = vec![edited.profile.clone(), old.recipe.clone()];
+    let next = old.clone();
+    let prepared =
+        compile_native_output(&edited, &old, next.clone(), vec![reading.clone()]).unwrap();
+    assert_eq!(
+        prepared.output_readings[0].applied_operation,
+        immutable_creation
+    );
+    assert_eq!(prepared.membership, membership());
+    for mutation in 0..15 {
+        let mut wrong = reading.clone();
+        match mutation {
+            0 => wrong.origin_source_basis = None,
+            1 => wrong.origin_source_basis.as_mut().unwrap().reverse(),
+            2 => wrong.origin_source_basis.as_mut().unwrap()[0].revision = "later".into(),
+            3 => wrong.origin_source_basis.as_mut().unwrap()[0].reference = "source:wrong".into(),
+            4 => {
+                wrong.origin_source_basis.as_mut().unwrap()[0].availability =
+                    ReadingAvailability::Stale
+            }
+            5 => wrong.origin_source_basis.as_mut().unwrap().clear(),
+            6 => {
+                let extra = wrong.origin_source_basis.as_ref().unwrap()[0].clone();
+                wrong.origin_source_basis.as_mut().unwrap().push(extra);
+            }
+            _ => {
+                let changes = wrong.applied_operation["envelope"]["changes"]
+                    .as_array_mut()
+                    .unwrap();
+                let material = changes
+                    .iter_mut()
+                    .find(|change| change["change"] == "scene_material_set")
+                    .unwrap();
+                let retention = &mut material["presentation"]["scene"]["procedural"];
+                match mutation {
+                    7 => *retention = Value::Null,
+                    8 => {
+                        retention["procedures"][0]["definition"]["profile"]["revision"] =
+                            json!(edited.profile.revision)
+                    }
+                    9 => retention["contributions"][0]["recipe_revision"] = json!("not-original"),
+                    10 => {
+                        retention["procedures"][0]["definition"] =
+                            json!({"recipe":original.recipe,"profile":original.profile})
+                    }
+                    11 => retention["contributions"][0]["owned_addresses"] = json!([]),
+                    12 => {
+                        retention["procedures"][0]["source_basis"][0]["availability"] =
+                            json!("withheld")
+                    }
+                    13 => {
+                        let mut conflicting = retention["procedures"][0].clone();
+                        conflicting["definition"]["seed"] = json!("conflicting-full-definition");
+                        retention["procedures"]
+                            .as_array_mut()
+                            .unwrap()
+                            .push(conflicting);
+                    }
+                    _ => retention["procedures"][0]["revision"] = json!("wrong-row-revision"),
+                }
+            }
+        }
+        assert!(
+            compile_native_output(&edited, &old, next.clone(), vec![wrong]).is_err(),
+            "historical origin substitution {mutation} was admitted"
+        );
+        assert_eq!(reading.applied_operation, immutable_creation);
+    }
+    // Older configured v1 data still passes only without original-role drift.
+    let mut legacy = native_output_reading(&original, &old, current);
+    legacy.origin_source_basis = None;
+    assert!(compile_native_output(&original, &old, next, vec![legacy]).is_ok());
+}
+
 #[test]
 fn retained_native_force_is_exact_parameter_output_and_never_scene_coerced() {
     let p = procedure();

@@ -10,8 +10,8 @@ use serde_json::{Value, json};
 
 use crate::m_tree::MRegistry;
 use crate::procedural_manifestation::{
-    NativeSubject, RequiredRelation, SourceBasis, fingerprint, nonempty, validate_material,
-    validate_native_subject_basis, validate_relation,
+    NativeReading, NativeSubject, ReadingAvailability, RequiredRelation, SourceBasis, fingerprint,
+    nonempty, validate_material, validate_native_subject_basis, validate_relation,
 };
 use crate::vak_profile::ThreadForm;
 use crate::vak_workflow_types::AuthoredCPrime;
@@ -1812,6 +1812,10 @@ pub struct RetainedOutputReading {
     pub document_revision: u64,
     pub procedure_ref: String,
     pub source_basis: Vec<SourceBasis>,
+    /// Full ordered sources from the SAME immutable native creation.
+    /// Absent historical v1 data retains the strict nondrift admission.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin_source_basis: Option<Vec<NativeReading>>,
     pub contribution_ref: String,
     pub output_slot: String,
     pub subject_refs: Vec<String>,
@@ -1860,6 +1864,125 @@ pub fn procedural_intent_projection(presentation: &Value) -> Result<Value> {
             .insert("operations".into(), json!([]));
     }
     Ok(value)
+}
+
+/// Current source qualification and historical creation roles are separate.
+/// Native S remains responsible for attesting the original typed journal and
+/// digest; these consistency checks cannot mint an application receipt.
+fn original_source_roles(
+    reading: &RetainedOutputReading,
+    changes: &[Value],
+    sources: &[NativeReading],
+) -> Result<(SourceBasis, SourceBasis)> {
+    let mut definition: Option<Procedure> = None;
+    for change in changes {
+        if change["change"] != "scene_material_set" {
+            continue;
+        }
+        let Some(retention) = change["presentation"]["scene"].get("procedural") else {
+            continue;
+        };
+        if retention["schema"] != "oi.expression-procedural/v1" {
+            return Err("original native creation has unsupported retained metadata".into());
+        }
+        let contributions = retention["contributions"]
+            .as_array()
+            .filter(|rows| rows.len() <= 2048)
+            .ok_or("original native creation lacks bounded retained contributions")?;
+        let procedures = retention["procedures"]
+            .as_array()
+            .filter(|rows| rows.len() <= 64)
+            .ok_or("original native creation lacks bounded retained procedures")?;
+        for contribution in contributions
+            .iter()
+            .filter(|row| row["contribution_ref"] == reading.contribution_ref)
+        {
+            if contribution["procedure_ref"] != reading.procedure_ref
+                || contribution["output_slot"] != reading.output_slot
+                || contribution["subject_refs"] != json!(reading.subject_refs)
+                || contribution["occurrence_ref"] != reading.occurrence_ref
+                || contribution["owned_addresses"] != json!(reading.owned_addresses)
+            {
+                return Err(
+                    "original native creation has conflicting contribution identity".into(),
+                );
+            }
+            let mut found = false;
+            for row in procedures
+                .iter()
+                .filter(|row| row["procedure_ref"] == reading.procedure_ref)
+            {
+                found = true;
+                let historical: Procedure = serde_json::from_value(row["definition"].clone())
+                    .map_err(|_| "original native creation lacks its full typed Procedure")?;
+                if historical.schema != PROCEDURE_CONTRACT
+                    || historical.procedure_ref != reading.procedure_ref
+                    || row["revision"] != historical.revision
+                    || historical.occurrence_ref != reading.expression_ref
+                    || contribution["recipe_revision"] != historical.recipe.revision
+                {
+                    return Err(
+                        "original native creation has conflicting historical Procedure".into(),
+                    );
+                }
+                nonempty(&historical.revision, "original procedure revision")?;
+                historical.recipe.validate()?;
+                historical.profile.validate()?;
+                let retained_sources: Vec<NativeReading> =
+                    serde_json::from_value(row["source_basis"].clone())
+                        .map_err(|_| "original Procedure lacks exact retained source rows")?;
+                validate_original_sources(&retained_sources)?;
+                for role in [&historical.recipe, &historical.profile] {
+                    if !contains_source_role(&retained_sources, role)
+                        || !contains_source_role(sources, role)
+                    {
+                        return Err(
+                            "original native creation lacks its exact recipe/profile source".into(),
+                        );
+                    }
+                }
+                if definition
+                    .as_ref()
+                    .is_some_and(|previous| previous != &historical)
+                {
+                    return Err(
+                        "original native creation has conflicting full role witnesses".into(),
+                    );
+                }
+                definition = Some(historical);
+            }
+            if !found {
+                return Err(
+                    "original contribution lacks its historical Procedure role witness".into(),
+                );
+            }
+        }
+    }
+    let definition = definition
+        .ok_or("original native creation lacks its retained recipe/profile role witness")?;
+    Ok((definition.recipe, definition.profile))
+}
+
+fn validate_original_sources(sources: &[NativeReading]) -> Result<()> {
+    if sources.is_empty() || sources.len() > 256 {
+        return Err("original native source list is empty or exceeds its bound".into());
+    }
+    for source in sources {
+        nonempty(&source.reference, "original source ref")?;
+        nonempty(&source.revision, "original source revision")?;
+        if source.availability != ReadingAvailability::Available {
+            return Err("original native creation has unavailable source rows".into());
+        }
+    }
+    Ok(())
+}
+
+fn contains_source_role(sources: &[NativeReading], role: &SourceBasis) -> bool {
+    sources.iter().any(|source| {
+        source.reference == role.source_ref
+            && source.revision == role.revision
+            && source.availability == ReadingAvailability::Available
+    })
 }
 
 fn validate_output_readings(
@@ -2007,20 +2130,24 @@ fn validate_output_readings(
         let sources = envelope["sources"]
             .as_array()
             .ok_or("retained output operation has no original qualified sources")?;
-        if sources.is_empty()
-            || sources.iter().any(|s| {
-                s["availability"] != "available"
-                    || s["ref"].as_str().is_none_or(str::is_empty)
-                    || s["revision"].as_str().is_none_or(str::is_empty)
-            })
-            || !sources
-                .iter()
-                .any(|s| s["ref"] == old.recipe.source_ref && s["revision"] == old.recipe.revision)
-            || !sources.iter().any(|s| {
-                s["ref"] == procedure.profile.source_ref
-                    && s["revision"] == procedure.profile.revision
-            })
+        let original_sources: Vec<NativeReading> =
+            serde_json::from_value(Value::Array(sources.clone()))
+                .map_err(|_| "retained output original source list has invalid native rows")?;
+        validate_original_sources(&original_sources)?;
+        if let Some(origin) = &reading.origin_source_basis {
+            validate_original_sources(origin)?;
+            if origin != &original_sources {
+                return Err(
+                    "retained output origin differs from the full ordered native creation sources"
+                        .into(),
+                );
+            }
+            original_source_roles(reading, changes, origin)?;
+        } else if !contains_source_role(&original_sources, &old.recipe)
+            || !contains_source_role(&original_sources, &procedure.profile)
         {
+            // Historical v1 cannot admit changed original roles. Present
+            // native origins require the full materialized role witness.
             return Err(
                 "retained output original operation lacks its exact recipe/profile source".into(),
             );

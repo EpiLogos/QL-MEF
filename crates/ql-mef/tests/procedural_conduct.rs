@@ -1023,6 +1023,7 @@ fn one_event_projects_all_native_scene_records_in_native_units_without_another_a
         document_revision: 9,
         procedure_ref: p.procedure_ref.clone(),
         source_basis: vec![p.recipe.clone(), p.profile.clone()],
+        origin_source_basis: None,
         contribution_ref: reference.into(),
         output_slot: "radius:shared".into(),
         subject_refs: vec![p.principal_subject_ref.clone()],
