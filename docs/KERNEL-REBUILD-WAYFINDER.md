@@ -1,5 +1,7 @@
 # QL-MEF Kernel Rebuild Wayfinder
 
+**3 October 2026, 19:51 UTC corrective delivery:** actual3598 is installed but the locked Mac prevents its rendered after-view; committed0b4 receiving repair is on its original native/whole replay and exact Mac-build route. The first installed cosmic/personal delivery remains incomplete. See [current fidelity audit](kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md) and the existing 14-packet/26-subpacket map for exact status and the remaining branch/journey gates. H/Recognition is unchanged.
+
 Status: **current development Wayfinder — pre-K8 full agent-world lock and parallel continuation, 2026-09-12**.  
 Programme owner: **EpiLogos/QL-MEF#135**; planning lock **#163**; full capability implementation **#94** alongside K8/K9/K10.  
 Scope: one coordinate-complete C/Rust/C++ kernel, rich Bimba/property world, Ta-Onta/Vāk operative M0/M5 field and the live planetary–Nara instrument in the existing O:I desktop.  

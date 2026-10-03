@@ -1,5 +1,7 @@
 # The living QL instrument in the existing UX spine
 
+**3 October 2026, 19:51 UTC corrective delivery:** actual3598 is installed but the locked Mac prevents its rendered after-view; committed0b4 receiving repair is on its original native/whole replay and exact Mac-build route. The first installed cosmic/personal delivery remains incomplete. See [current fidelity audit](EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md) and the existing 14-packet/26-subpacket map. Ordinary cosmic → personal → Source → personal → Save/reopen/restart and fresh selected-basis agency remain the next encounter. H/Recognition is unchanged.
+
 **Publication authorised; H ratification pending (Satya), 2026-09-12.** This UX synthesis, crosswalk and proposed human walks are merged for availability and review, not yet H-ratified by the owner. Existing owner-approved architecture, original corrections and accepted source/engine evidence keep their prior standing. Merge and tests do not confer design ratification or human validation. See [publication standing](ux-publication-standing.json).
 
 Standing: agent-authored source-grounded UX/design reconciliation; **specified, awaiting H ratification, not human-validated**. Owner: #133 with #135; agent-world #94; runtime #132; Nara #134. The [Kernel Rebuild Wayfinder](../KERNEL-REBUILD-WAYFINDER.md) remains the single development map. This file is its domain-to-spine crosswalk and human walk, not another master plan.
