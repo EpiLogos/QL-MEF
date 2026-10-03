@@ -1,55 +1,211 @@
 {
   "latest_execution_checkpoint": {
-    "at_utc": "2026-10-03T10:16:23.310285+00:00",
-    "standing": "Current executed outcomes supersede the dated queued/running checkpoint below; first installed corrective delivery incomplete, all185runtimeunaccepted and H untouched.",
-    "source_head": "ebc90af8097ef71b89c02069e744af8fa33982ec",
-    "native_original": {
-      "runs": [
-        37111248133,
-        37111286376
-      ],
-      "jobs": [
-        111169434395,
-        111169548646
-      ],
-      "result": "Both original35-minute native workloads timed out; actual logs fetch/checkout/gitlog exactEbc. Requiredbody/restart and fullworkload notaccepted.",
-      "logs": [
-        {
-          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ebc-native35-failure-01/actual-native-job-111169434395.log",
-          "sha256": "e06e5daf8c81974b3eed87ca3662f51a60734abd02291494bf77050bd235fe72"
+    "schema": "epi.current-corrective-source-and-actual-outcomes/v1",
+    "at_utc": "2026-10-03T13:34:34.867271+00:00",
+    "standing": "Current d2 three-path source repair is committed and source-qualified; original replay pending. Actual384 performance15 target passed, later native consumers and whole setup failed. Mac384 candidate is independently byte/source/output-qualified but different from d2; installation/whole/default-body/H pending.",
+    "source_head": "d2cca87e683a1557d19d5f2a74ae221923700d48",
+    "source_tree": "1163ecaa04ab0442e36bef2352f7ce1db21fdebf",
+    "committed_source": {
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/whole-local-basis-and-catalog-replay-cut-01/committed-source.json",
+      "bytes": 2081,
+      "sha256": "f6575be289e5697693771065c564dc56154215d87f244897443c8e8bf2e6e1b3"
+    },
+    "source_path_count": 3,
+    "source_repairs": {
+      "generated_receiving": {
+        "review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/11fa-generated-receiving-independent-01/manifest.json",
+          "bytes": 1198,
+          "sha256": "b968e7d48f480f853de0c75ce3f2cc6db66f90e600955031092bb426cbf35c6a"
         },
-        {
-          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ebc-native35-failure-01/actual-native-job-111169548646.log",
-          "sha256": "fcab406ec4aac204f4023235213733d427973f46415b4bd3cd2f56a5dc4d09ec"
-        }
-      ]
+        "standing": "Genuine hosted four emitted modules plus provenance independently source-qualified and committed; temporary emission helper/two workflow lines retired. Not a runtime or installed whole proof."
+      },
+      "native_performance": {
+        "canonical_stream": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-performance-canonical-stream-proposal-01/manifest.json",
+          "bytes": 2925,
+          "sha256": "2d59c2296444f7c4be354b87d7c5db275c63d6c21ddf9098702341c8c779ab1d"
+        },
+        "borrowed_metadata": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-performance-borrowed-metadata-independent-01/manifest.json",
+          "bytes": 1234,
+          "sha256": "8983ac72d29616fecb66b325b4a9b9eba00d4525e4ee13d74597e90177ae6ebc"
+        },
+        "standing": "Exact streaming canonical comparison and exhaustive borrowed Document/Scene metadata remove allocated/discarded representations. Cold/changed-byte complete validation, defaults, refs, digest/weights/CAS/privacy and original limits remain. No CPU-profile, causal speedup or deadline-fit claim.",
+        "actual_successor_scope": "Both original180-edition/45,000-application paths and15-test performance target completed1378.52s. Later native delivery/recording refusals and35-minute timeout remain. No causal speed attribution, original15-minute fit or aggregate/full native pass."
+      },
+      "selection_cleanup": {
+        "review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-whole-source-cleanup-independent-01/review.json",
+          "bytes": 3351,
+          "sha256": "b676fe7a45f2c794ee907469bbde5504c0a23d40d123b2dad21382f858358924"
+        },
+        "standing": "Actual Source request/ACK/Return pass after all three genuine negatives. Original full Document assertion fails 135/centre0 versus 136/null. Ordinary Save focus commit 202 precedes Source cleanup; Source Return preserves 136. Source-qualified negative Timeline local-selection loss causes that later Save focus. The d2 helper restores captured initial local basis through the actual Stage pointer. Original runtime replay and unchanged complete equality remain required."
+      },
+      "current_d2_source_only": {
+        "committed_source": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/whole-local-basis-and-catalog-replay-cut-01/committed-source.json",
+          "bytes": 2081,
+          "sha256": "f6575be289e5697693771065c564dc56154215d87f244897443c8e8bf2e6e1b3"
+        },
+        "owned_paths": {
+          "desktop/cradle/kernel/src/expression_performance_assets.rs": "1d8386ce83a49fa352856d1d78eb85f6499bb360fab4bab0cb1681b6ee42ed9d",
+          "desktop/cradle/kernel/tests/expression_performance.rs": "77a1a618f194003426dc6a782c400d61f1100acfa6bbae6408528ef19893ede8",
+          "desktop/cradle/tests/epi-saved-identity-use-refusals.mjs": "653b5805df2488d5bae902cc2fc402ba09d953416469faf37c1b3ca62980f26a"
+        },
+        "standing": "Two native catalogue owner paths and one genuine selection-restoration helper are source-qualified and committed. Actual catalogue consumer roles/defaults and actual local basis restoration are repaired at source; original assertions/workloads/deadlines/QLpins unchanged. No new native/whole runtime claimed.",
+        "push_standing": "Commit receipt qualified. Parent reported push in progress; no completed push receipt independently retained by this author."
+      }
     },
-    "desktop_original": {
-      "run": 37111248253,
-      "job": 111169434656,
-      "checkout": "4d3cfa993f76a320f67fa8aa1893c6b96ed8046b",
-      "result": "Original15-minute integration workload timed out; producer/unit and separatecradle/native-shell green remain bounded; nojoined consumer/complete performance acceptance.",
-      "log_sha256": "8132a49ee92861de79385f4d9990d4a4d26f037828525b29d5a8ccd8b8e883ba"
+    "predecessor_failures": {
+      "native_1cd": {
+        "job": 111185509649,
+        "log": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-native35-failure-01/job-111185509649.log",
+          "bytes": 118550,
+          "sha256": "0b231002284f579d40caeb0e83cc36b08ca16b42e48bffbd90bdf05a0e3d0548"
+        },
+        "result": "Original 35-minute workload timed out. 211 unit and eight ActWorld tests passed; actual Act120/180 and Document150/180 progress is unfinished, not a final whole/native pass."
+      },
+      "desktop_11fa": {
+        "job": 111189378825,
+        "log": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/11fa-desktop15-failure-01/job-111189378825.log",
+          "bytes": 125428,
+          "sha256": "458ed34c44f435093603d3e214f3b8e7a4b7f959b946fcc1c066a2640d1738d2"
+        },
+        "result": "Original 15-minute integration workload timed out. Its actual PR merge/producer custody is distinct from exact-head Native; no head/merge equivalence is inferred."
+      },
+      "whole_1cd": {
+        "original_custody": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-whole-failure-01/archive-read-recovery-02.json",
+          "bytes": 753,
+          "sha256": "8b4309560b290d0be4deeef7d525af1b6c18605972752e0bbf3e1e4c08073459"
+        },
+        "negative_summary": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-14/actual-selected-negative-summary.json",
+          "bytes": 1382,
+          "sha256": "006cac08edf03b3aeccc9849ee0a37ef507a0ac0deb58feea2f104b9d11ab627"
+        },
+        "result": "Three genuine real-response selection/current/consumer negatives passed. Subsequent native Source wire/inventory cleanup oracle failed; main whole and owned restart not reached."
+      }
     },
-    "whole_attempt": {
-      "jobs": [
-        111172693575,
-        111172688462
-      ],
-      "result": "Whole driver failed selected-conversation setup aftersix preceding checks before ordinaryUse firstidentityOpen109 acknowledgement; no newPin/Save/admission inferred.",
-      "original_failure": "Ordinary Epi operation must not conceal a native failure: Your saved personal reading is unavailable on this owner. Open Your identity, choose the saved profile, then Use saved identity to admit a new reading.",
-      "stderr_sha256": "091a853b566a9c2d2b34ce4986a25c3efa29bae4e820684b4fa232c0b2b65586",
-      "timeline_sha256": "76a2974ee9da85cb3f430087676a3b658efd187b2ffddc95ed3f1979766d0323",
-      "source_repair": "One test-owner terminal-Use wait source qualified by independent45 joins; original readyCurrent/noAlert/fullDocument and all deadlines retained. Actual successor replay remains necessary."
+    "bounded_predecessor_embedded": {
+      "review": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/1cd-embedded-independent-01/manifest.json",
+        "bytes": 2365,
+        "sha256": "c2fe4689999b5975eeae844c6b063d378ffa6433c8f8b3e0ea2796f9ef1f6763"
+      },
+      "standing": "Separate 1cd/QL6a hosted proof qualifies generic/Scene software-GPU/PCM, current native input/transport, retained-body receiver and six historical first-page text checks. It does not prove fresh answer/full Read, personal nine-driver/two-person whole, full shape, Mac/H. Native text full HTML/metafile, bridge image and two dependency byte bodies remain absent from that packet; it is not an all-five installed cut."
     },
-    "mac": "Canonical Maccandidate jobs skipped afternative prerequisite failure. No Ebc bundle/install/after-view.",
-    "installed_before": "Mac owner reports actual772–774 ordinary saved personal world with original “Recovery record exceeds 8 MiB”; controlled A identity/matrix partially reachable. Guard cleanup retained no remaining owned live PIDs or unknown rows; exited zombies are not labelled reaped/absent. Capture -3811 and 57.45-second saved-profile action retain environment limits. No app-leak cause, installed after-view or H inferred.",
+    "current_original_operations": {
+      "explicit_dispatch_run": 37121558833,
+      "native": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-15/actual-native-terminal-observation.json",
+        "bytes": 4539,
+        "sha256": "b932cb3299b7b6cab2a5175e4bbea2a9c3a373d3b7286649cd591bc0a501fa8b"
+      },
+      "whole": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-15/actual-whole-terminal-observation.json",
+        "bytes": 7995,
+        "sha256": "9bf56c0b20d7af98f7bb5c659c37c43d4e55d7f083f863e2cc6bd36ad3ca0376"
+      },
+      "mac": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-15/successor-01/current-mac-candidate-standing.json",
+        "bytes": 2733,
+        "sha256": "b82d144fe12676a421a3c3d346648027b80c41f3f31f9f6e024d38a7b17278dc"
+      },
+      "latest_precompletion_job_metadata": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/384d-native-actual-01/latest-jobs-snapshot-01.json",
+        "bytes": 18259,
+        "sha256": "75e1d348f0b9dad2589ecf50adc136b3c7b319b53e07101c5f8b8da5aab9eda2"
+      },
+      "standing": "Actual384 native and whole failures remain RED; qualified Mac384 is a distinct build/source/output candidate. Currentd2 source has no replay result. Embedded metadata-only qualification limit unchanged; separate Native/Desktop dated observations preserved.",
+      "unchanged_limits": {
+        "native_minutes": 35,
+        "desktop_integration_minutes": 15,
+        "editions": 180,
+        "applications": 45000,
+        "voices": 24,
+        "samples": 43200000,
+        "stored_act_mib": 4,
+        "expanded_act_mib": 8,
+        "resident_serialized_weight_mib": 64
+      }
+    },
+    "installed_before": {
+      "qualification": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/800-restart-trigger-and-save-ack-qualification.json",
+        "bytes": 1425,
+        "sha256": "d285de159ffd3d951520ba9eebe90b4578baf9bb86e3bbd7a369c1a23e7a8516"
+      },
+      "standing": "Actual installed 822 working world at772–774 was UNSAVED after failed Recovery 8 MiB; no successful Save ACK is established. Its saved controlled identity is separate. Guard SIGTERM preceded ordinary entrance784, which showed empty Library/default Day rather than prior working position. This is neither clean-quit persistence proof nor proved native checkpoint deletion. Same-environment Save/Recovery ACK/readback, clean and guarded restart and independent after-view remain required."
+    },
     "packet_dispositions": {
-      "R2": "Minimal renderer8-source/test/overlay join intoEbc independentlysource-qualified; actualcombined fourmodules/PROV emission, retirement and replay pending. Exact-byte ActStorecurrentness repair and call-local canonicalqualification being reviewed; originalcaps/workloads/deadlines unchanged.",
-      "R4": "Original pendingUse ordering corrected only inproposed driver; allreal Current/Save/coldRestore/refusal tests and originalcomplete reset/departure remain acceptance gates.",
-      "R6": "Managed build awaits native prerequisites; existingnative parent/faculty configure/readback and freshselected-basis answer remain mandatory; physical targeting limited toverifiedOI, noClaude."
+      "R2": "Committedd2 catalogue/default consumer-source repair follows actual384 native role refusals; original successor required. Actual38415-test performance success is separate from RED full-native/whole; no source absence/numerical rewrite.",
+      "R3": "Whole stops after7 setup checks. Actual SourceACK/Return conserves136; prior Save focus commit produces revision/selection delta. Main whole, complete reset/departure and restart suffix still require replay.",
+      "R4": "Same-nine-driver positive/live-zero, two-person and cosmic/personal body/audio/GPU causal acceptance unreached. Preserve exact drivers/mixture and independent predictions.",
+      "R5": "Committedd2 helper restores actual acknowledged local personal Scene/body basis before unchanged Use/Save invariant. Actual384 all3 negatives/SourceACK passed but completeDocument failed135/centre0 versus136/null. Source restoration is not successor runtime acceptance. Original saved/private-current/journey/full Read/restart obligations remain.",
+      "R6": "Mac384 source/output/archive is independently byte-qualified, including actual canonical frontend and bundle. It differs from currentd2 native kernel/source. Managed installation and live loaded image/default-parent/faculty/body/after-view remain unproved; current CUA lock limits physical input, not existing install/test authority.",
+      "R7": "This update records changed reality in existing carriers/Return only; source dispositions/owners/acceptance/DAG/history retained. No new architecture/programme or runtime/H acceptance."
     },
-    "scope": "Existing14packets/26subpackets/all185/42branchentrances/fullA0–A5/DayFlowdeckcorrection/M3 discrepancies183/source383/native384 are retained. Source proofs do not establishB/C, installed or Recognition."
+    "scope": "All 2,141 nodes/11,810 qualified relations, 42 entrances/106 M4 subjects/185 source dispositions, all 185 runtime-unaccepted obligations, 14 packets/26 ordered subpackets, A0–A5/full journeys and M3 183 source discrepancies/383 source LINE_CHANGE edges versus 384 native transitions remain. B/C whole parity, installed acceptance and person-owned H/Recognition are unaccepted.",
+    "prior_unadopted_publication14": {
+      "manifest": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-14/manifest.json",
+        "bytes": 11654,
+        "sha256": "dd9771827b35eb9f8bd6d4cc075f78624223a34928fc50d48322be7521405a64"
+      },
+      "independent_source_go": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-independent-14/correction-01/manifest.json",
+        "bytes": 1046,
+        "sha256": "2e51a9bcf347bb8d7dcdf1f6cca84293ef5b7ffaa5f041a553db759a57672224"
+      },
+      "standing": "Immutable source-qualified14 was not adopted. Successor15 incorporates its reviewed source/facts against the same six live CAS preimages."
+    },
+    "dated_original_operation_observations": [
+      {
+        "native_run": 37121475320,
+        "desktop_run": 37121475267,
+        "explicit_mac_dispatch": 37121558833,
+        "metadata": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-14/current-job-observation-02.json",
+          "bytes": 41032,
+          "sha256": "31544f00ff7b08fa50ebd963e6b22d3934682d3047cca1f4f8cfedde4997a15a"
+        },
+        "standing": "Observed actual job metadata is dated separately. Original native and desktop integration plus both actual whole jobs are still running at that observation. Embedded jobs completed SUCCESS in metadata only; their current artifacts are not qualified here. Mac construction still awaits the original native prerequisite. No aggregate success, compiled-source closure, bundle or installation is inferred.",
+        "unchanged_limits": {
+          "native_minutes": 35,
+          "desktop_integration_minutes": 15,
+          "editions": 180,
+          "applications": 45000,
+          "voices": 24,
+          "samples": 43200000,
+          "stored_act_mib": 4,
+          "expanded_act_mib": 8,
+          "resident_serialized_weight_mib": 64
+        }
+      }
+    ],
+    "executed_predecessor_source": {
+      "head": "384d19ca63a12c37d14cc78b8633bab360fd7c5a",
+      "tree": "3d305d435421a7a6b29a71424857e993a8c6ce03",
+      "committed_source": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/coherent-generated-native-replay-cut-01/committed-source.json",
+        "bytes": 4458,
+        "sha256": "3ff71d1944c8673a0d2987f3e69f953e74463880b22aea84255a6fc07a9eadec"
+      },
+      "source_path_count": 12,
+      "standing": "Actual explicit hosted native/whole failure and genuine Mac construction/byte qualification are384 only, not retagged as d2."
+    },
+    "prior_unadopted_publication15": {
+      "manifest": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/programme-actual-whole-return-proposal-15/manifest.json",
+        "bytes": 13128,
+        "sha256": "53116528e5253afd2f4519abecbbe10c4219e9eb4036ae8cdb3373b91ade9987"
+      },
+      "standing": "Immutable15 remains unadopted; this narrow successor adds committedd2 and actualMac384 independent byte/source qualification, with identical six live CAS preimages."
+    }
   },
   "schema": "epi.world-recovery-plan/v1",
   "created_at": "2026-09-30T16:28:17.956536+00:00",
@@ -43629,7 +43785,7 @@
     "R5-WORLD-SELECTION"
   ],
   "fresh_execution": {
-    "updated_at": "2026-10-03T05:00:57.613301+00:00",
+    "updated_at": "2026-10-03T13:34:34.867271+00:00",
     "prior_recovery_map_sha256": "ae5f7f2618f86ba11671ee4449c8b9481ecc8f31b23795614a8d5ec5f2536fd0",
     "responsible_lead": "codex:01a0f80e-7662-75f1-bd26-5522aa6217b3",
     "source_challenge": "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
@@ -44135,7 +44291,7 @@
       "H": "person-owned; unaccepted/notdone"
     },
     "historical_ql_native_source_cut_before_installed822": "70cefd6d9b427fbadd6ed2f496aa1b56d0cd0209",
-    "current_checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/committed_ebc90_native_current_recovery_and_original_replay_pending_2026_10_03",
+    "current_checkpoint_ref": "/Users/admin/Central/worktrees/env-2/ql-mef/docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
     "current_source_and_physical_custody_successor02": {
       "at_utc": "2026-10-03T01:27:58.991068+00:00",
       "source": "579ca6455e3e26c336adb30de8cc56398d2296e5",
@@ -46791,7 +46947,15 @@
         "current_checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/committed_ebc90_native_current_recovery_and_original_replay_pending_2026_10_03"
       },
       "note": "Preserved historical agent-pause description is superseded by direct human targeting standing; no global install/testban."
-    }
+    },
+    "dated_current_checkpoint_refs": [
+      {
+        "captured_at_utc": "2026-10-03T12:28:35.723689+00:00",
+        "ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/committed_ebc90_native_current_recovery_and_original_replay_pending_2026_10_03",
+        "standing": "Dated committed-Ebc source checkpoint; preserved original evidence, superseded current face only."
+      }
+    ],
+    "current_face_precedence": "Currentd2 source only; actual384 native/whole failures and independently byte-qualified Mac384 candidate are distinct. Earlier packet/source/history preserved, installed/default-body/H pending."
   },
   "fresh_branch_reconciliation": {
     "updated_at": "2026-10-02T00:11:11.729255+00:00",
@@ -47002,5 +47166,59 @@
       },
       "standing": "Published source-specific dispositions/owners/firstbreaks/tests discoverable at each185 current_review; full runtime/H scope unaccepted."
     }
-  }
+  },
+  "dated_latest_execution_checkpoint_history": [
+    {
+      "at_utc": "2026-10-03T10:16:23.310285+00:00",
+      "standing": "Current executed outcomes supersede the dated queued/running checkpoint below; first installed corrective delivery incomplete, all185runtimeunaccepted and H untouched.",
+      "source_head": "ebc90af8097ef71b89c02069e744af8fa33982ec",
+      "native_original": {
+        "runs": [
+          37111248133,
+          37111286376
+        ],
+        "jobs": [
+          111169434395,
+          111169548646
+        ],
+        "result": "Both original35-minute native workloads timed out; actual logs fetch/checkout/gitlog exactEbc. Requiredbody/restart and fullworkload notaccepted.",
+        "logs": [
+          {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ebc-native35-failure-01/actual-native-job-111169434395.log",
+            "sha256": "e06e5daf8c81974b3eed87ca3662f51a60734abd02291494bf77050bd235fe72"
+          },
+          {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ebc-native35-failure-01/actual-native-job-111169548646.log",
+            "sha256": "fcab406ec4aac204f4023235213733d427973f46415b4bd3cd2f56a5dc4d09ec"
+          }
+        ]
+      },
+      "desktop_original": {
+        "run": 37111248253,
+        "job": 111169434656,
+        "checkout": "4d3cfa993f76a320f67fa8aa1893c6b96ed8046b",
+        "result": "Original15-minute integration workload timed out; producer/unit and separatecradle/native-shell green remain bounded; nojoined consumer/complete performance acceptance.",
+        "log_sha256": "8132a49ee92861de79385f4d9990d4a4d26f037828525b29d5a8ccd8b8e883ba"
+      },
+      "whole_attempt": {
+        "jobs": [
+          111172693575,
+          111172688462
+        ],
+        "result": "Whole driver failed selected-conversation setup aftersix preceding checks before ordinaryUse firstidentityOpen109 acknowledgement; no newPin/Save/admission inferred.",
+        "original_failure": "Ordinary Epi operation must not conceal a native failure: Your saved personal reading is unavailable on this owner. Open Your identity, choose the saved profile, then Use saved identity to admit a new reading.",
+        "stderr_sha256": "091a853b566a9c2d2b34ce4986a25c3efa29bae4e820684b4fa232c0b2b65586",
+        "timeline_sha256": "76a2974ee9da85cb3f430087676a3b658efd187b2ffddc95ed3f1979766d0323",
+        "source_repair": "One test-owner terminal-Use wait source qualified by independent45 joins; original readyCurrent/noAlert/fullDocument and all deadlines retained. Actual successor replay remains necessary."
+      },
+      "mac": "Canonical Maccandidate jobs skipped afternative prerequisite failure. No Ebc bundle/install/after-view.",
+      "installed_before": "Mac owner reports actual772–774 ordinary saved personal world with original “Recovery record exceeds 8 MiB”; controlled A identity/matrix partially reachable. Guard cleanup retained no remaining owned live PIDs or unknown rows; exited zombies are not labelled reaped/absent. Capture -3811 and 57.45-second saved-profile action retain environment limits. No app-leak cause, installed after-view or H inferred.",
+      "packet_dispositions": {
+        "R2": "Minimal renderer8-source/test/overlay join intoEbc independentlysource-qualified; actualcombined fourmodules/PROV emission, retirement and replay pending. Exact-byte ActStorecurrentness repair and call-local canonicalqualification being reviewed; originalcaps/workloads/deadlines unchanged.",
+        "R4": "Original pendingUse ordering corrected only inproposed driver; allreal Current/Save/coldRestore/refusal tests and originalcomplete reset/departure remain acceptance gates.",
+        "R6": "Managed build awaits native prerequisites; existingnative parent/faculty configure/readback and freshselected-basis answer remain mandatory; physical targeting limited toverifiedOI, noClaude."
+      },
+      "scope": "Existing14packets/26subpackets/all185/42branchentrances/fullA0–A5/DayFlowdeckcorrection/M3 discrepancies183/source383/native384 are retained. Source proofs do not establishB/C, installed or Recognition."
+    }
+  ]
 }
