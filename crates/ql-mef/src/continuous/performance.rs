@@ -350,7 +350,7 @@ impl PerformanceOwner {
         }
         Ok(out)
     }
-    fn validate_current(&self, current: &CoupledBasis) -> Result<(), String> {
+    pub(super) fn validate_current(&self, current: &CoupledBasis) -> Result<(), String> {
         if serde_json::to_value(&current.input).map_err(|e| e.to_string())? != self.original_input {
             return Err(
                 "retained native source changed; prepared source/body transaction required".into(),
@@ -1230,6 +1230,10 @@ impl PerformanceCommand {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../../tests/support/retained_source_performance.rs"]
+pub(super) mod native_source_support;
 
 #[cfg(test)]
 #[path = "performance_reply_tests.rs"]

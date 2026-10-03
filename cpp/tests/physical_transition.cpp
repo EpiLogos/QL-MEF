@@ -163,6 +163,8 @@ static void material_ringing_work_and_allocation_custody() {
   near(velocity(body), v0);
   const auto before = body.checkpoint();
   const PhysicalBody *sole = &body;
+  const auto resident_token = body.resident_token();
+  assert(resident_token.valid());
   PhysicalLiveTransitionReceipt receipt{};
   PhysicalSnapshot visible{};
   callback_probe = true;
@@ -171,7 +173,7 @@ static void material_ringing_work_and_allocation_custody() {
   assert(write_physical_snapshot(body, visible, 2, 123));
   callback_probe = false;
   assert(allocations == 0 && releases == 0 && &body == sole &&
-         prepared.committed());
+         prepared.committed() && body.resident_token() == resident_token);
   near(displacement(body), q0);
   near(velocity(body), v0);
   near(body.preparation().frequency_hz(0), 2000 / (2 * pi));
@@ -195,9 +197,10 @@ static void material_ringing_work_and_allocation_custody() {
          1e-8, 1e-6);
   }
   const auto resident = body.checkpoint();
+  assert(body.resident_token() == resident_token);
   receipt.transaction = 999;
   assert(!prepared.apply(body, receipt));
-  assert(receipt.transaction == 999);
+  assert(receipt.transaction == 999 && body.resident_token() == resident_token);
   equal_state(body.checkpoint(), resident);
   // The old prepared payload remains immutable; the committed transaction
   // owns retired allocations until the control owner acknowledges/reclaims.

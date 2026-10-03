@@ -1,8 +1,7 @@
+use super::native_source_support as native_source;
 use super::*;
 use std::io::Write;
 use std::process::{Command, Stdio};
-#[path = "../../tests/support/retained_source_performance.rs"]
-mod native_source;
 fn wire(owner: &PerformanceOwner) -> Value {
     json!({"schema":CONTROL,"operation":"prepare","session_ref":owner.config.session_ref,
         "packet":owner.native_packet().unwrap(),"current_source_packet":owner.native_packet().unwrap(),

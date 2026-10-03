@@ -2,10 +2,9 @@
 //! The closed Scene CAS/private lease installation is tested by its C owner;
 //! no imported lease or fabricated pulse supplies a positive here.
 use super::*;
+use crate::continuous::performance::native_source_support as native_source;
 use crate::continuous::performance::{AcousticConfiguration, AcousticDirectivity};
 use crate::musical_performance_return::{ReturnContext, ReturnReference};
-#[path = "../../tests/support/retained_source_performance.rs"]
-mod native_source;
 fn configuration() -> AcousticConfiguration {
     AcousticConfiguration {
         schema: "ql.native-acoustic-receiving-configuration/v1".into(),
@@ -194,7 +193,12 @@ fn actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary()
             "score",
             &json!({"event":event,"input_ref":null}),
         )
-        .unwrap();
+        .unwrap_or_else(|failure| {
+            panic!(
+                "actual stopped score exchange refused: {}; native receipts: {:?}",
+                failure.reason, failure.native_receipts
+            )
+        });
     assert_eq!(reply["accepted"], true, "{reply}");
     assert_eq!(
         reply["payload"]["score_admission"]["queued"], true,

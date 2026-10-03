@@ -58,61 +58,71 @@ class PreparedPhysicalTransition {
   // Standard allocator-backed string/vector swaps exchange ownership without
   // allocation or destruction. Do not move-assign whole bodies on callback:
   // an implementation's moved-from string capacity is not a custody promise.
-  static void exchange(PhysicalBody &a, PhysicalBody &b) noexcept {
+  // Check every concrete member exchanged by the actual callback commit.
+  // Whole bodies deliberately cannot exchange their constructor lifetimes.
+  template <class T> static void exchange_member(T &a, T &b) noexcept {
+    static_assert(
+        std::is_nothrow_swappable_v<T>,
+        "callback commit must only exchange preallocated body ownership");
     using std::swap;
+    swap(a, b);
+  }
+  static void exchange(PhysicalBody &a, PhysicalBody &b) noexcept {
     auto &x = a.prepared_.input_;
     auto &y = b.prepared_.input_;
-    swap(x.event_ref, y.event_ref);
-    swap(x.subject_ref, y.subject_ref);
-    swap(x.source_coordinate, y.source_coordinate);
-    swap(x.source_revision, y.source_revision);
-    swap(x.geometry_ref, y.geometry_ref);
-    swap(x.geometry_revision, y.geometry_revision);
-    swap(x.geometry_source_ref, y.geometry_source_ref);
-    swap(x.geometry_standing, y.geometry_standing);
-    swap(x.preparation_ref, y.preparation_ref);
-    swap(x.state_ref, y.state_ref);
-    swap(x.source_generation, y.source_generation);
-    swap(x.body_revision, y.body_revision);
-    swap(x.sample_rate, y.sample_rate);
-    swap(x.pratibimba, y.pratibimba);
-    swap(x.family, y.family);
-    swap(x.nodes, y.nodes);
-    swap(x.edges, y.edges);
-    swap(x.pickup_linear_per_metre, y.pickup_linear_per_metre);
-    swap(x.max_force_newtons, y.max_force_newtons);
-    swap(x.max_impulse_newton_seconds, y.max_impulse_newton_seconds);
-    swap(x.max_displacement_metres, y.max_displacement_metres);
-    swap(x.material.reference, y.material.reference);
-    swap(x.material.revision, y.material.revision);
-    swap(x.material.source_ref, y.material.source_ref);
-    swap(x.material.standing, y.material.standing);
-    swap(x.material.young_modulus_pa, y.material.young_modulus_pa);
-    swap(x.material.density_kg_per_m3, y.material.density_kg_per_m3);
-    swap(x.material.damping_alpha_per_second,
-         y.material.damping_alpha_per_second);
-    swap(x.material.damping_beta_seconds, y.material.damping_beta_seconds);
-    swap(x.exciter.axis, y.exciter.axis);
-    swap(x.exciter.node_weights, y.exciter.node_weights);
-    swap(x.pickup.axis, y.pickup.axis);
-    swap(x.pickup.node_weights, y.pickup.node_weights);
-    swap(a.prepared_.eigenbasis_identity_, b.prepared_.eigenbasis_identity_);
-    swap(a.prepared_.node_mass_, b.prepared_.node_mass_);
-    swap(a.prepared_.lambda_, b.prepared_.lambda_);
-    swap(a.prepared_.gamma_, b.prepared_.gamma_);
-    swap(a.prepared_.excitation_, b.prepared_.excitation_);
-    swap(a.prepared_.pickup_, b.prepared_.pickup_);
-    swap(a.prepared_.shape_peak_, b.prepared_.shape_peak_);
-    swap(a.prepared_.shapes_, b.prepared_.shapes_);
-    swap(a.prepared_.step_, b.prepared_.step_);
-    swap(a.prepared_.dofs_, b.prepared_.dofs_);
-    swap(a.q_, b.q_);
-    swap(a.v_, b.v_);
-    swap(a.scratch_q_, b.scratch_q_);
-    swap(a.scratch_v_, b.scratch_v_);
-    swap(a.scratch_audio_, b.scratch_audio_);
-    swap(a.elapsed_, b.elapsed_);
-    swap(a.last_, b.last_);
+    exchange_member(x.event_ref, y.event_ref);
+    exchange_member(x.subject_ref, y.subject_ref);
+    exchange_member(x.source_coordinate, y.source_coordinate);
+    exchange_member(x.source_revision, y.source_revision);
+    exchange_member(x.geometry_ref, y.geometry_ref);
+    exchange_member(x.geometry_revision, y.geometry_revision);
+    exchange_member(x.geometry_source_ref, y.geometry_source_ref);
+    exchange_member(x.geometry_standing, y.geometry_standing);
+    exchange_member(x.preparation_ref, y.preparation_ref);
+    exchange_member(x.state_ref, y.state_ref);
+    exchange_member(x.source_generation, y.source_generation);
+    exchange_member(x.body_revision, y.body_revision);
+    exchange_member(x.sample_rate, y.sample_rate);
+    exchange_member(x.pratibimba, y.pratibimba);
+    exchange_member(x.family, y.family);
+    exchange_member(x.nodes, y.nodes);
+    exchange_member(x.edges, y.edges);
+    exchange_member(x.pickup_linear_per_metre, y.pickup_linear_per_metre);
+    exchange_member(x.max_force_newtons, y.max_force_newtons);
+    exchange_member(x.max_impulse_newton_seconds, y.max_impulse_newton_seconds);
+    exchange_member(x.max_displacement_metres, y.max_displacement_metres);
+    exchange_member(x.material.reference, y.material.reference);
+    exchange_member(x.material.revision, y.material.revision);
+    exchange_member(x.material.source_ref, y.material.source_ref);
+    exchange_member(x.material.standing, y.material.standing);
+    exchange_member(x.material.young_modulus_pa, y.material.young_modulus_pa);
+    exchange_member(x.material.density_kg_per_m3, y.material.density_kg_per_m3);
+    exchange_member(x.material.damping_alpha_per_second,
+                    y.material.damping_alpha_per_second);
+    exchange_member(x.material.damping_beta_seconds,
+                    y.material.damping_beta_seconds);
+    exchange_member(x.exciter.axis, y.exciter.axis);
+    exchange_member(x.exciter.node_weights, y.exciter.node_weights);
+    exchange_member(x.pickup.axis, y.pickup.axis);
+    exchange_member(x.pickup.node_weights, y.pickup.node_weights);
+    exchange_member(a.prepared_.eigenbasis_identity_,
+                    b.prepared_.eigenbasis_identity_);
+    exchange_member(a.prepared_.node_mass_, b.prepared_.node_mass_);
+    exchange_member(a.prepared_.lambda_, b.prepared_.lambda_);
+    exchange_member(a.prepared_.gamma_, b.prepared_.gamma_);
+    exchange_member(a.prepared_.excitation_, b.prepared_.excitation_);
+    exchange_member(a.prepared_.pickup_, b.prepared_.pickup_);
+    exchange_member(a.prepared_.shape_peak_, b.prepared_.shape_peak_);
+    exchange_member(a.prepared_.shapes_, b.prepared_.shapes_);
+    exchange_member(a.prepared_.step_, b.prepared_.step_);
+    exchange_member(a.prepared_.dofs_, b.prepared_.dofs_);
+    exchange_member(a.q_, b.q_);
+    exchange_member(a.v_, b.v_);
+    exchange_member(a.scratch_q_, b.scratch_q_);
+    exchange_member(a.scratch_v_, b.scratch_v_);
+    exchange_member(a.scratch_audio_, b.scratch_audio_);
+    exchange_member(a.elapsed_, b.elapsed_);
+    exchange_member(a.last_, b.last_);
   }
 
 public:
@@ -260,7 +270,7 @@ public:
     return true;
   }
 };
-static_assert(std::is_nothrow_swappable_v<PhysicalBody>,
-              "callback commit must only exchange preallocated body ownership");
+static_assert(!std::is_move_assignable_v<PhysicalBody>,
+              "callback commit must preserve the resident body lifetime");
 } // namespace ql
 #endif
