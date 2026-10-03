@@ -1,21 +1,28 @@
 {
   "latest_execution_checkpoint": {
     "schema": "epi.corrective-receiving-checkpoint/v1",
-    "at_utc": "2026-10-03T20:46:00Z",
-    "standing": "Actual0b4 ordinary opening/hub-focus/fullDocument136Save passes12checks; positiveparent7checks then freshchild misses app epiCurrent withinoriginal30s. Restore completion timing/value unqualified. Reviewed numeric custody27 committed3f1, native/whole replay pending.3598 installed but freshGUI stopped at lockedMac. First installed delivery incomplete.",
-    "source_head": "3f1e2eefbff4868a4e19337d0a363cfc5f569e8e",
+    "at_utc": "2026-10-03T21:35:00Z",
+    "standing": "Actual0b4 ordinary opening/hub-focus/fullDocument136Save passes12checks and is now managed-installed/independently22-file/signature-qualified. FreshGUI still locked before launch. Reopening child original30s fails;6b passive diagnostic committed.3f1 embedded rejects three equivalent source receipt number spellings; fullnative original35min times out in complete45000-event Act history; whole/Mac successors skipped. Fresh selected-basis native Nara streams but no completed answer by original180s. First installed encounter/whole parity incomplete.",
+    "source_head": "6b0521533f6f7267369c31afb52a36bd8fa21ee0",
     "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
     "original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37152569395",
-    "canonical_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37152674284",
-    "installed_cut": "3598a392c16295bbf2cf2ff6a81a7b28c069bdd3",
-    "installed_custody": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-3598-installed-independent-01.json",
+    "canonical_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37149174145",
+    "installed_cut": "0b4a3627ccacf98f0c3736f244493a12e508df0d",
+    "installed_custody": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-0b4-installed-independent-01.json",
     "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-ee880-whole-setup-timeout-01/manifest.json",
     "numeric_custody_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
     "next_original_encounter": "cosmic -> personal -> branch/Source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis Nara/Epii completion/Keep/full Read",
     "runtime_acceptance": false,
     "H": "not done/person-owned",
     "actual_whole_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-0b4a-whole-first-break-01/review-manifest.json",
-    "previous_checkpoint": "git:59f74f4fecd4e8ec46421ef0b594ebe7c39eb7e7:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint"
+    "previous_checkpoint": "git:1a185644071f1bcc0b47a7b5114113b6ff9515f6:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
+    "installer_receipt": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/906-actual-0b4-normal-desktop-native-installation.json",
+    "source_successor_canonical_dispatch": "https://github.com/EpiLogos/O-I/actions/runs/37152674284",
+    "source_successor_canonical_dispatch_standing": "embedded failed; whole skipped; no successor Mac bundle qualified",
+    "passive_child_replay": "https://github.com/EpiLogos/O-I/actions/runs/37153779511",
+    "fresh_native_agent_failure": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/896-fresh-native-selected-personal-body-question-replay.json",
+    "fresh_native_agent_standing": "Exact selected basis/question accepted;1594 thinking/message updates; no message_end/agent_end/final answer before original180s. Native owner repairing. Separate CLI evidence, not installed GUI/Keep/full Read.",
+    "original_replay_standing": "embedded failure at native_expression_owner.rs:142 on three equal-value numeric spellings; fullnative original35min timeout in Act45000-event history. All unreached suffix remains unaccepted."
   },
   "schema": "epi.world-recovery-plan/v1",
   "created_at": "2026-09-30T16:28:17.956536+00:00",
@@ -47034,6 +47041,27 @@
       "at_utc": "2026-10-03T13:34:34.867271+00:00",
       "source_ref": "git:8adabf8006754731c733cb21488481e8d3f91f45:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
       "standing": "Exact preceding checkpoint remains in its committed source; no history or receipt is relabelled."
+    },
+    {
+      "at_utc": "2026-10-03T20:46:00Z",
+      "checkpoint": {
+        "schema": "epi.corrective-receiving-checkpoint/v1",
+        "at_utc": "2026-10-03T20:46:00Z",
+        "standing": "Actual0b4 ordinary opening/hub-focus/fullDocument136Save passes12checks; positiveparent7checks then freshchild misses app epiCurrent withinoriginal30s. Restore completion timing/value unqualified. Reviewed numeric custody27 committed3f1, native/whole replay pending.3598 installed but freshGUI stopped at lockedMac. First installed delivery incomplete.",
+        "source_head": "3f1e2eefbff4868a4e19337d0a363cfc5f569e8e",
+        "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
+        "original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37152569395",
+        "canonical_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37152674284",
+        "installed_cut": "3598a392c16295bbf2cf2ff6a81a7b28c069bdd3",
+        "installed_custody": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-3598-installed-independent-01.json",
+        "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-ee880-whole-setup-timeout-01/manifest.json",
+        "numeric_custody_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
+        "next_original_encounter": "cosmic -> personal -> branch/Source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis Nara/Epii completion/Keep/full Read",
+        "runtime_acceptance": false,
+        "H": "not done/person-owned",
+        "actual_whole_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-0b4a-whole-first-break-01/review-manifest.json",
+        "previous_checkpoint": "git:59f74f4fecd4e8ec46421ef0b594ebe7c39eb7e7:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint"
+      }
     }
   ]
 }
