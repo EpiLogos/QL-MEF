@@ -63,7 +63,9 @@ impl FieldHost {
                 return Err("recording changed actual original receiving source/context".into());
             }
             let current_source = self.session.session().current_basis();
-            if current_source != &current {
+            if serde_json::to_value(current_source).map_err(|error| error.to_string())?
+                != serde_json::to_value(&current).map_err(|error| error.to_string())?
+            {
                 return Err("recording native source changed after actual command".into());
             }
             Ok(())
@@ -135,7 +137,10 @@ impl FieldHost {
         let validation = (|| -> Result<(), String> {
             owner.validate_current(&current)?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
-            if self.session.session().current_basis() != &current {
+            if serde_json::to_value(self.session.session().current_basis())
+                .map_err(|error| error.to_string())?
+                != serde_json::to_value(&current).map_err(|error| error.to_string())?
+            {
                 return Err("native source changed while retaining recording origin".into());
             }
             if pulse["accepted"] != true
