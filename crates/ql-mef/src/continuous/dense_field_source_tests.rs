@@ -107,7 +107,10 @@ fn actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis() 
     // Supply the next actual M2 generation consistently through all of its
     // typed producer stamps. Material, modes, samples, source references and
     // the original M3 receipt history remain the authored operands above.
-    assert!(input.m2.condition.is_none());
+    // Retain the genuine joint Condition. It contains the actual maqam,
+    // role, MEF/Vimarsha selection, tuning, tonic and optional colour palette.
+    // Absence was an invalid assumption in the preceding detecting run.
+    let original_condition = serde_json::to_value(input.m2.condition.as_ref().unwrap()).unwrap();
     input.m2.stamp.identity.profile_generation = input
         .m2
         .stamp
@@ -116,6 +119,16 @@ fn actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis() 
         .checked_add(1)
         .unwrap();
     let next_identity = input.m2.stamp.identity.clone();
+    let mut expected_condition = original_condition.clone();
+    if let Some(palette) = input.m2.condition.as_mut().unwrap().palette.as_mut() {
+        palette.stamp.identity.clone_from(&next_identity);
+        expected_condition["palette"]["stamp"]["identity"] =
+            serde_json::to_value(&next_identity).unwrap();
+    }
+    assert_eq!(
+        serde_json::to_value(input.m2.condition.as_ref().unwrap()).unwrap(),
+        expected_condition
+    );
     if let Some(excitation) = input.m2.m1_excitation.as_mut() {
         excitation.stamp.identity.clone_from(&next_identity);
     }
@@ -130,6 +143,7 @@ fn actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis() 
         .stamp
         .identity
         .clone_from(&next_identity);
+    input.m2.validate().unwrap();
     let reply = host.execute(HostRequest {
         schema: HOST_REQUEST.into(),
         instance_ref: host.instance_ref.clone(),
