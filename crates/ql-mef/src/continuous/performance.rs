@@ -474,6 +474,108 @@ impl PerformanceOwner {
         self.last = Some(receipt.clone());
         Ok(receipt)
     }
+    /// Crate-private stopped consumer used by the native selected Act export
+    /// transaction. No public HostOperation accepts a raw scope/packet here.
+    pub(crate) fn owner_stopped_exchange(
+        &mut self,
+        current: &CoupledBasis,
+        receiving: &super::performance_receiving::NativePerformanceReceivingSource,
+        session: &mut CoupledFieldSession,
+        operation: &str,
+        operands: &Value,
+    ) -> Result<Value, String> {
+        self.validate_current(current)?;
+        let reading = self
+            .reading()
+            .ok_or("actual stopped native reading absent")?;
+        if !matches!(
+            reading["device"]["state"].as_str(),
+            Some("closed" | "prepared")
+        ) {
+            return Err("native Act export requires the actual attached device stopped".into());
+        }
+        let cursor = decimal(&reading["samples_elapsed"])?;
+        // Replay the actual complete receiving constructor/grants at the copied
+        // cursor, then its retained original admission for exact asset equality.
+        receiving.prepare_current(self, current, cursor)?;
+        let original_cursor = decimal(
+            &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
+        )?;
+        let original = receiving.prepare_current(self, current, original_cursor)?;
+        if original.snapshot()? != self.source_assets["current_receiving"] {
+            return Err(
+                "native Act export complete original receiving/source/context changed".into(),
+            );
+        }
+        let allowed: &[&str] = match operation {
+            "checkpoint" => &[],
+            "score" => &["event", "input_ref"],
+            "restore" => &[
+                "checkpoint",
+                "expected_cursor",
+                "transaction_ref",
+                "checkpoint_ref",
+            ],
+            "offline-render" => &["scope", "frames"],
+            _ => return Err("operation is outside the stopped selected Act export owner".into()),
+        };
+        let object = operands
+            .as_object()
+            .ok_or("typed native export operands absent")?;
+        if object.len() != allowed.len() || object.keys().any(|k| !allowed.contains(&k.as_str())) {
+            return Err(
+                "native export operands override source/epoch/session or omit a typed field".into(),
+            );
+        }
+        let mut request = self.raw(operation)?;
+        for (key, value) in object {
+            request
+                .as_object_mut()
+                .ok_or("native owner request absent")?
+                .insert(key.clone(), value.clone());
+        }
+        let mut reply = self.exchange(session, request)?;
+        if operation == "restore" && reply["accepted"] == true {
+            // Manager stopped_restore deliberately retires its catalog. Put
+            // back THIS native owner's unchanged actual K/B catalog before
+            // returning continuation to the same original input lifetimes.
+            let mut catalog = self.raw("catalog")?;
+            catalog["cells"] = json!(self.cells);
+            catalog["transpose"] = json!(self.config.transpose);
+            let restored = self.exchange(session, catalog)?;
+            if restored["accepted"] != true {
+                return Err("native restored source catalog restitution refused".into());
+            }
+            reply["catalog_restoration"] = restored;
+        }
+        Ok(reply)
+    }
+    pub(crate) fn owner_export_touch(&self, touch: KeyTouch) -> Result<Value, String> {
+        self.resolve(touch)
+    }
+    /// Private Host/C28 continuation preserves the complete parsed native pulse
+    /// on every post-reply refusal. A lost transport has no invented pulse.
+    pub(crate) fn exchange_receiving_readmission(
+        &mut self,
+        session: &mut CoupledFieldSession,
+        request: Value,
+    ) -> Result<Value, (String, Option<Value>)> {
+        if request["operation"] != "restore-current-receiving" {
+            return Err((
+                "private receiving continuation operation required".into(),
+                None,
+            ));
+        }
+        let receipt = session
+            .performance_exchange(&request)
+            .map_err(|e| (e, None))?;
+        if let Err(error) = self.validate_reply(&receipt) {
+            let reason = session.performance_invalidate(&error);
+            return Err((reason, Some(receipt)));
+        }
+        self.last = Some(receipt.clone());
+        Ok(receipt)
+    }
     fn validate_reply(&self, reply: &Value) -> Result<(), String> {
         if reply["schema"] != "ql.performance-worker-reply/v1"
             || !reply["accepted"].is_boolean()
@@ -1070,3 +1172,7 @@ impl PerformanceCommand {
 #[cfg(test)]
 #[path = "performance_reply_tests.rs"]
 mod reply_tests;
+
+pub(crate) fn owner_parameter_id(target: &str) -> Result<u8, String> {
+    parameter_id(target)
+}

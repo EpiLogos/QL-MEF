@@ -60,6 +60,8 @@ pub struct MusicalPerformanceScore {
     /// Exact authored operands. No notes, routes, body or context are dropped.
     controls: Value,
     original_episode_refs: Vec<Option<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    native_custody: Option<crate::musical_performance_source_score::NativeScoreCustody>,
     content_digest: String,
 }
 fn digest(v: &Value) -> Result<String, String> {
@@ -171,6 +173,11 @@ impl MusicalPerformanceScore {
         sources: &[ScoreSource<'_>],
         performance: &Value,
     ) -> Result<(), String> {
+        if self.native_custody.is_some() {
+            return Err(
+                "native score replay requires the complete selected native Act delivery".into(),
+            );
+        }
         let actual = compile_score(
             &self.expression_ref,
             self.generation()?,
@@ -193,6 +200,11 @@ impl MusicalPerformanceScore {
         sources: &[ScoreSource<'_>],
         prospective: &Value,
     ) -> Result<Self, String> {
+        if self.native_custody.is_some() {
+            return Err(
+                "native score edit requires the complete selected native Act delivery".into(),
+            );
+        }
         if self.generation()? != expected_generation
             || prospective["performance_ref"] != self.performance_ref
         {
@@ -207,6 +219,53 @@ impl MusicalPerformanceScore {
             prospective,
         )
     }
+    /// Repeat the complete selected Act/page/source activity. Serialized page
+    /// witnesses alone never replace the borrowed actual native owners.
+    pub fn verify_native_replay(
+        &self,
+        sources: &[crate::musical_performance_source_score::RetainedScoreSource<'_>],
+        manifest: &Value,
+        pages: &mut impl crate::musical_performance_source_score::NativeScorePages,
+    ) -> Result<(), String> {
+        if self.native_custody.is_none() {
+            return Err("legacy score requires its original replay interface".into());
+        }
+        let actual = crate::musical_performance_source_score::compile_retained_score(
+            self.generation()?,
+            sources,
+            manifest,
+            pages,
+        )?;
+        if actual != *self {
+            return Err("complete selected native Act score/source replay differs".into());
+        }
+        Ok(())
+    }
+    /// Inscribe a prospective edit delivered by the SAME retained native
+    /// Expression/Act owner; that owner separately commits its Scene/Act CAS.
+    pub fn reinscribe_native(
+        &self,
+        expected_generation: u64,
+        sources: &[crate::musical_performance_source_score::RetainedScoreSource<'_>],
+        manifest: &Value,
+        pages: &mut impl crate::musical_performance_source_score::NativeScorePages,
+    ) -> Result<Self, String> {
+        if self.native_custody.is_none()
+            || self.generation()? != expected_generation
+            || manifest["expression_ref"] != self.expression_ref
+            || manifest["performance"]["performance_ref"] != self.performance_ref
+        {
+            return Err("stale or foreign complete native score edit".into());
+        }
+        crate::musical_performance_source_score::compile_retained_score(
+            expected_generation
+                .checked_add(1)
+                .ok_or("score edition generation exhausted")?,
+            sources,
+            manifest,
+            pages,
+        )
+    }
 }
 pub fn compile_score(
     expression_ref: &str,
@@ -214,8 +273,50 @@ pub fn compile_score(
     sources: &[ScoreSource<'_>],
     performance: &Value,
 ) -> Result<MusicalPerformanceScore, String> {
+    compile_inner(
+        expression_ref,
+        edition_generation,
+        sources,
+        performance,
+        None,
+    )
+}
+pub(crate) fn compile_current_native_score(
+    expression_ref: &str,
+    edition_generation: u64,
+    sources: &[ScoreSource<'_>],
+    performance: &Value,
+    custody: crate::musical_performance_source_score::NativeScoreCustody,
+) -> Result<MusicalPerformanceScore, String> {
+    compile_inner(
+        expression_ref,
+        edition_generation,
+        sources,
+        performance,
+        Some(custody),
+    )
+}
+fn compile_inner(
+    expression_ref: &str,
+    edition_generation: u64,
+    sources: &[ScoreSource<'_>],
+    performance: &Value,
+    native_custody: Option<crate::musical_performance_source_score::NativeScoreCustody>,
+) -> Result<MusicalPerformanceScore, String> {
     reference(&json!(expression_ref))?;
-    if edition_generation == 0 || performance["schema"] != "oi.expression-performance/v1" {
+    let schema = performance["schema"].as_str().unwrap_or("");
+    if edition_generation == 0
+        || if native_custody.is_some() {
+            ![
+                "oi.expression-performance/v1",
+                "oi.expression-performance/v2",
+                "oi.expression-performance/v3",
+            ]
+            .contains(&schema)
+        } else {
+            schema != "oi.expression-performance/v1"
+        }
+    {
         return Err("native score/Expression contract mismatch".into());
     }
     let performance_ref = reference(&performance["performance_ref"])?;
@@ -381,8 +482,19 @@ pub fn compile_score(
     for key in ["bases", "pitches", "pages", "checkpoints", "content_digest"] {
         object.remove(key);
     }
+    if native_custody.is_some() {
+        // Original native parts stay in C's selected Act. Their exact part
+        // identities and stream metadata are retained in native_custody.
+        for key in ["native_sources", "native_recordings", "native_reservations"] {
+            object.remove(key);
+        }
+    }
     let mut score = MusicalPerformanceScore {
-        schema: SCHEMA,
+        schema: if native_custody.is_some() {
+            crate::musical_performance_source_score::SCHEMA
+        } else {
+            SCHEMA
+        },
         expression_ref: expression_ref.into(),
         performance_ref: performance_ref.into(),
         edition_generation: edition_generation.to_string(),
@@ -394,6 +506,7 @@ pub fn compile_score(
         event_count: total,
         controls,
         original_episode_refs,
+        native_custody,
         content_digest: String::new(),
     };
     score.content_digest = digest(&score.snapshot()?)?;

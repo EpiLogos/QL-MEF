@@ -1750,6 +1750,90 @@
         "cpp/tests/performance_moving_receiving_wire.cpp",
         "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/native_act_channel.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "C28 existing native Manager/OS-peer channel qualifies actual loaded parent images from the native receipt owner before creating a private operation carrier. It does not derive musical, source or Act authority from public JSON. Ordinary host no-cut behavior remains available; genuine C-held channel and image-currentness positives still require the joined native owner gate.",
+      "tests": [
+        "scripts/test-k8-host.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_act_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "C29 transports complete selected native Act, exact page/checkpoint pulls and original reply custody through the already qualified native channel and current FieldHost. Only that private operation lends the non-serializable source lease; generic host requests cannot mint it. Native closed reader/CAS/runtime proof remains a separate required activity.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_export.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 native selected-score consumer validates complete immutable M1/K/M2/body/receiving source pages, uses the same stopped worker and physical owner for bounded rendering, and restitutes the entire original checkpoint/catalog/observer custody. Source-defined force/context/multisource consumers and full professional export remain required; this initial consumer is no scope ceiling or executed export claim.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/receiving_readmission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 private current receiving continuation replays the original receiving factory at the genuine saved cursor under the closed selected native checkpoint lease. It preserves full native pulse on every parsed post-exchange refusal, changes only admitted current receiving route derivatives and retains complete before/original/operative/after checkpoint texts. Numerical test evidence alone never grants Act custody.",
+      "tests": [
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_source_score.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 complete native score source compiler checks genuine original M1/K/M2/material/physical/receiving assets and exact selected event/page/checkpoint source bytes, preserving original occasions and musical editions. It is a prospective source compiler; serialized inputs do not mint the private native channel or Act lease. Same retained score/episode and whole played/reopened activity remain mandatory.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh"
+      ]
     }
   ]
 }

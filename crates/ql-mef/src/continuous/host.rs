@@ -12,6 +12,14 @@ use serde_json::{Value, json};
 use std::path::Path;
 use std::time::Duration;
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "receiving_readmission.rs"]
+mod receiving_readmission;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub use receiving_readmission::{
+    NativeReceivingReadmissionRefusal, NativeReceivingReadmissionReply,
+};
+
 pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
 pub const HOST_RECEIPT: &str = "ql.field-host-receipt/v1";
@@ -289,6 +297,135 @@ impl FieldHost {
             "source_assets":owner.source_assets(),"native_preparation":owner.native_packet()?,
             "native_basis":owner.binding().native_basis(),"native_reading":owner.reading(),
             "standing":"actual activated existing FieldHost/PerformanceOwner/worker; source artifact only, no hardware output or file/Act acceptance"}))
+    }
+
+    /// Reached by the existing guarded native Kernel/Act reader callback, not
+    /// by a public HostOperation carrying a user Value or imported scope.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn admit_native_act(
+        &mut self,
+        request: &super::performance_act_bridge::ActRequest,
+    ) -> Result<(), String> {
+        let field = self.session.session().last_field();
+        if request.instance_ref != self.instance_ref
+            || field["event_ref"] != request.event_ref
+            || field["subject_ref"] != request.subject_ref
+            || !self.available()
+            || self.performance.is_none()
+            || self.receiving_source.is_none()
+        {
+            return Err("native selected Act has no exact available original field/performance/receiving owner".into());
+        }
+        let id = exact_cursor(&request.request_id)?;
+        if self.last_request.checked_add(1) != Some(id) {
+            return Err("native selected Act request is stale/repeated/skipped".into());
+        }
+        self.last_request = id;
+        Ok(())
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn native_act_result(&self, id: &str, result: &Result<Value, String>) -> Value {
+        json!({"schema":"ql.native-act-owner-result/v1","instance_ref":self.instance_ref,
+            "request_id":id,"last_request_id":self.last_request.to_string(),"available":self.available(),
+            "status":if result.is_ok(){"ok"}else{"refused"},"result":result.as_ref().ok(),"error":result.as_ref().err()})
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    fn with_native_act_score_source<T>(
+        &self,
+        manifest: &Value,
+        consume: impl FnOnce(
+            &[crate::musical_performance_source_score::RetainedScoreSource<'_>],
+        ) -> Result<T, String>,
+    ) -> Result<T, String> {
+        let owner = self
+            .performance
+            .as_ref()
+            .ok_or("actual performance owner absent")?;
+        let receiving = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original receiving owner absent")?;
+        let current = self.session.session().current_basis();
+        let seed = manifest["performance"]["bases"][0]["seed"]
+            .as_str()
+            .ok_or("selected native seed absent")?;
+        let declared_seed = seed.parse::<u64>().map_err(|e| e.to_string())?;
+        if seed != declared_seed.to_string() {
+            return Err("selected native seed is not canonical".into());
+        }
+        let returned = crate::musical_performance_return::bind_performance_return(
+            owner.binding(),
+            receiving.original_occasion().cloned(),
+            receiving.return_context().clone(),
+            declared_seed,
+        )?;
+        let sample=owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"].as_str()
+            .ok_or("actual original receiving admitted cursor absent")?.parse::<u64>().map_err(|e|e.to_string())?;
+        let source = crate::musical_performance_source_score::RetainedScoreSource {
+            owner,
+            current,
+            receiving,
+            original_return: &returned,
+            source_sample: sample,
+        };
+        consume(&[source])
+    }
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn compile_native_act_score(
+        &self,
+        generation: u64,
+        manifest: &Value,
+        pages: &mut impl crate::musical_performance_source_score::NativeScorePages,
+    ) -> Result<Value, String> {
+        self.with_native_act_score_source(manifest, |sources| {
+            crate::musical_performance_source_score::compile_retained_score(
+                generation, sources, manifest, pages,
+            )?
+            .snapshot()
+        })
+    }
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn prepare_native_act_render(
+        &self,
+        generation: u64,
+        manifest: &Value,
+        pages: &mut impl crate::musical_performance_source_score::NativeScorePages,
+        from: u64,
+        to: u64,
+    ) -> Result<super::performance_export::NativeActRenderPlan, String> {
+        self.with_native_act_score_source(manifest, |sources| {
+            super::performance_export::NativeActRenderPlan::prepare(
+                generation, sources, manifest, pages, from, to,
+            )
+        })
+    }
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn render_native_act<T>(
+        &mut self,
+        plan: &super::performance_export::NativeActRenderPlan,
+        checkpoints: &mut impl super::performance_export::NativeActCheckpoints,
+        consume: impl FnOnce(&mut super::performance_export::NativeActRenderer<'_>) -> Result<T, String>,
+    ) -> Result<super::performance_export::NativeRenderResult<Result<T, String>>, String> {
+        let current = self.session.session().current_basis().clone();
+        let receiving = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual original receiving owner absent")?;
+        let owner = self
+            .performance
+            .as_mut()
+            .ok_or("actual performance owner absent")?;
+        super::performance_export::with_stopped_render(
+            plan,
+            owner,
+            &current,
+            receiving,
+            self.session.session_mut(),
+            checkpoints,
+            consume,
+        )
     }
 
     /// Bad JSON/unknown fields have no admitted sequence and never reach C++.

@@ -4,7 +4,12 @@
 //! runs on an audio callback; this serial API transfers bounded control batches.
 pub mod coupled;
 pub mod host;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub mod native_act_channel;
 pub mod performance;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub mod performance_act_bridge;
+pub mod performance_export;
 pub mod performance_receiving;
 pub mod personal;
 mod receipt;

@@ -46,6 +46,7 @@ mod music_completion;
 pub mod music_determination;
 pub mod musical_performance_return;
 pub mod musical_performance_score;
+pub mod musical_performance_source_score;
 pub mod nara;
 pub mod performance_audio;
 pub mod performance_management;
