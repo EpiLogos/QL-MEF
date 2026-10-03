@@ -1,7 +1,10 @@
 //! Bounded local control of the existing coupled owner. Pipe access is supplied
 //! by the native host; a subject/reference is not a grant of authority.
 use super::coupled::{CoupledFieldSession, CoupledInput};
-use super::performance::{PerformanceCommand, PerformanceConfig, PerformanceOwner};
+use super::performance::{
+    AuthoredCurrentPerformancePreparation, PerformanceCommand, PerformanceConfig, PerformanceOwner,
+    prepare_current_configuration,
+};
 use super::performance_receiving::NativePerformanceReceivingSource;
 use super::scene_field::{self, SceneConfig, SceneInstrument};
 use super::{FieldInput, LiftInput};
@@ -27,6 +30,10 @@ mod receiving_readmission;
 pub use receiving_readmission::{
     NativeReceivingReadmissionRefusal, NativeReceivingReadmissionReply,
 };
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_recording.rs"]
+mod performance_recording;
 
 pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
@@ -65,6 +72,11 @@ pub enum HostOperation {
     },
     PerformanceExchange {
         command: Box<PerformanceCommand>,
+    },
+    /// Authored first-play policy; current source context and reduction are
+    /// compiled by native owners, never supplied as observed UI receipts.
+    PerformancePrepareCurrent {
+        preparation: Box<AuthoredCurrentPerformancePreparation>,
     },
     Read {},
     Inspect {},
@@ -1017,7 +1029,9 @@ impl FieldHost {
         }
         if matches!(
             &request.command,
-            HostOperation::PerformancePrepare { .. } | HostOperation::PerformanceExchange { .. }
+            HostOperation::PerformancePrepare { .. }
+                | HostOperation::PerformancePrepareCurrent { .. }
+                | HostOperation::PerformanceExchange { .. }
         ) {
             let current = self.session.session().current_basis().clone();
             let result = match request.command {
@@ -1040,6 +1054,29 @@ impl FieldHost {
                                 Ok(reply)
                             },
                         )
+                    }
+                }
+                HostOperation::PerformancePrepareCurrent { preparation } => {
+                    if self.performance.is_some() {
+                        Err("retained native performance already owns this work".into())
+                    } else {
+                        prepare_current_configuration(&current, &self.instance_ref, *preparation)
+                            .and_then(|config| {
+                                PerformanceOwner::prepare(&current, &self.instance_ref, config)
+                            })
+                            .and_then(|mut performance| {
+                                let reply = match &self.receiving_source {
+                                    Some(source) => performance.activate_with_current_receiving(
+                                        &current,
+                                        self.session.session_mut(),
+                                        source,
+                                    )?,
+                                    None => performance
+                                        .activate(&current, self.session.session_mut())?,
+                                };
+                                self.performance = Some(performance);
+                                Ok(reply)
+                            })
                     }
                 }
                 HostOperation::PerformanceExchange { command } => match self.performance.as_mut() {
@@ -1181,6 +1218,7 @@ impl FieldHost {
             (
                 HostOperation::Procedure { .. }
                 | HostOperation::PerformancePrepare { .. }
+                | HostOperation::PerformancePrepareCurrent { .. }
                 | HostOperation::PerformanceExchange { .. }
                 | HostOperation::Inspect {}
                 | HostOperation::Influence {}
@@ -1243,3 +1281,7 @@ mod tests {
 #[cfg(test)]
 #[path = "performance_acoustic_installation_tests.rs"]
 mod acoustic_initial_tests;
+
+#[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
+#[path = "dense_field_source_tests.rs"]
+mod dense_field_source_tests;

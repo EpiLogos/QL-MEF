@@ -146,6 +146,20 @@ struct NativePerformanceTimingQuery {
     ordinal: String,
 }
 
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeRecordingCommandQuery {
+    schema: String,
+    scene_constructor: Value,
+    command: super::performance::PerformanceCommand,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeRecordingOriginQuery {
+    schema: String,
+    scene_constructor: Value,
+}
+
 impl ActRequest {
     pub(crate) fn is_field(&self) -> bool {
         matches!(
@@ -161,6 +175,8 @@ impl ActRequest {
                 | "performance-source"
                 | "performance-descriptor"
                 | "performance-timing"
+                | "recording-command"
+                | "recording-origin"
         )
     }
 }
@@ -828,6 +844,8 @@ fn serve_native_act_operation(
             "performance-source",
             "performance-descriptor",
             "performance-timing",
+            "recording-command",
+            "recording-origin",
         ]
         .contains(&request.mode.as_str())
     {
@@ -913,6 +931,8 @@ fn serve_native_act_operation(
                     | "acoustic-install"
                     | "performance-descriptor"
                     | "performance-timing"
+                    | "recording-command"
+                    | "recording-origin"
                     | "acoustic-stage"
                     | "acoustic-replace"
                     | "acoustic-prepare"
@@ -1031,6 +1051,85 @@ fn serve_native_act_operation(
             }
             if matches!(
                 request.mode.as_str(),
+                "recording-command" | "recording-origin"
+            ) {
+                use sha2::{Digest, Sha256};
+                if request.source_bootstrap.is_some()
+                    || request.manifest["schema"]
+                        != "oi.expression-native-current-scene-delivery/v1"
+                {
+                    return Err("recording command requires its actual current Document/Scene; no fabricated Act/source issuer".into());
+                }
+                let (scene_constructor, command) = if request.mode == "recording-origin" {
+                    let query: NativeRecordingOriginQuery = serde_json::from_value(
+                        request
+                            .procedural_request
+                            .clone()
+                            .ok_or("native recording origin query absent")?,
+                    )
+                    .map_err(|e| e.to_string())?;
+                    if query.schema != "ql.native-scene-recording-origin/v1" {
+                        return Err("foreign native recording origin query".into());
+                    }
+                    (query.scene_constructor, None)
+                } else {
+                    let query: NativeRecordingCommandQuery = serde_json::from_value(
+                        request
+                            .procedural_request
+                            .clone()
+                            .ok_or("native recording command absent")?,
+                    )
+                    .map_err(|e| e.to_string())?;
+                    if query.schema != "ql.native-scene-recording-command/v1" {
+                        return Err("foreign native recording command query".into());
+                    }
+                    (query.scene_constructor, Some(query.command))
+                };
+                let fact = &scene_constructor;
+                let doc_text = request.manifest["canonical_document_bytes"]
+                    .as_str()
+                    .ok_or("recording complete typed Document bytes absent")?;
+                if fact["schema"] != "oi.native-document-scene-constructor/v1"
+                    || fact["expression_ref"] != request.manifest["expression_ref"]
+                    || fact["scene_ref"] != request.manifest["scene_ref"]
+                    || fact["document_revision"] != request.manifest["expression_revision"]
+                    || fact["document_sha256"]
+                        != format!("{:x}", Sha256::digest(doc_text.as_bytes()))
+                    || fact["generation_domain"] != "native-document-scene-construction"
+                {
+                    return Err("recording lost the actual native Scene constructor/full typed Document custody".into());
+                }
+                // Evidence comes from the same OS/image-qualified C channel.
+                // Only C's actual registered Arc/Map/live owner can admit the
+                // edit; this JSON cannot mint that owner.
+                let mut selection = lease.evidence();
+                selection["scene_constructor"] = scene_constructor;
+                if command.is_none() {
+                    return Ok(match host.capture_native_recording_origin(&lease) {
+                        Ok(origin) => {
+                            json!({"schema":"ql.native-scene-recording-origin/v1","selection":selection,"accepted":true,"native_pulse":origin.native_pulse(),"host_receipt":host.recording_controller_receipt(&request.request_id,None)})
+                        }
+                        Err(refusal) => {
+                            json!({"schema":"ql.native-scene-recording-origin/v1","selection":selection,"accepted":false,"reason":refusal.reason,"native_receipts":refusal.native_receipts,"host_receipt":host.recording_controller_refusal(&request.request_id,&refusal.reason)})
+                        }
+                    });
+                }
+                return Ok(
+                    match host.capture_native_performance_command(
+                        &lease,
+                        command.ok_or("recording command absent")?,
+                    ) {
+                        Ok(captured) => json!({"schema":"ql.native-scene-recording-capture/v1",
+                        "selection":selection,"accepted":true,"command_receipt":captured.receipt(),
+                        "native_pulse":captured.native_pulse(),"host_receipt":host.recording_controller_receipt(&request.request_id,Some(captured.receipt()))}),
+                        Err(refusal) => json!({"schema":"ql.native-scene-recording-capture/v1",
+                        "selection":selection,"accepted":false,"reason":refusal.reason,
+                        "native_pulse":refusal.native_pulse,"host_receipt":host.recording_controller_refusal(&request.request_id,&refusal.reason)}),
+                    },
+                );
+            }
+            if matches!(
+                request.mode.as_str(),
                 "performance-descriptor" | "performance-timing"
             ) {
                 if request.source_bootstrap.is_some() {
@@ -1101,7 +1200,7 @@ fn serve_native_act_operation(
                 let source = host.retained_performance_source_artifact(seed)?;
                 lease.validate_field_sources(&request.instance_ref, &original, &current)?;
                 return Ok(
-                    json!({"selection":lease.evidence(),"source_artifact":source,
+                    json!({"selection":lease.evidence(),"source_artifact":source,"host_receipt":host.recording_controller_receipt(&request.request_id,None),
                     "standing":"same privately borrowed native Scene and actual activated source/Return; no selected Act, rendered output or public disclosure grant"}),
                 );
             }

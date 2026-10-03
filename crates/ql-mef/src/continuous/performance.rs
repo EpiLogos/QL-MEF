@@ -27,6 +27,14 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::sync::Arc;
 
+#[path = "performance_current_configuration.rs"]
+mod current_configuration;
+pub(crate) use current_configuration::prepare_current_configuration;
+pub use current_configuration::{
+    AuthoredCurrentPerformancePreparation, AuthoredMechanicalPolicy, CURRENT_PREPARATION,
+    CurrentMechanicalPolicy, CurrentSourceChoice,
+};
+
 pub const CONTROL: &str = "ql.performance-control/v1";
 pub const REPLY: &str = "ql.performance-management-reply/v1";
 fn bounded(s: &str) -> Result<(), String> {
@@ -966,6 +974,16 @@ impl PerformanceOwner {
         session: &mut CoupledFieldSession,
         command: PerformanceCommand,
     ) -> Result<Value, String> {
+        self.execute_with_original_pulse(current, session, command)
+            .map(|(public, _)| public)
+            .map_err(|refusal| refusal.reason)
+    }
+    pub(crate) fn execute_with_original_pulse(
+        &mut self,
+        current: &CoupledBasis,
+        session: &mut CoupledFieldSession,
+        command: PerformanceCommand,
+    ) -> Result<(Value, Value), NativeRecordingCommandRefusal> {
         self.validate_current(current)?;
         let public = command.operation();
         let mut input = None;
@@ -991,14 +1009,17 @@ impl PerformanceOwner {
                     .ok_or("native keyboard cell absent")?
                     .clone();
                 if cell["available"] != true {
-                    let mut raw = self.exchange(session, self.raw("inspect")?)?;
-                    raw["accepted"] = json!(false);
-                    raw["reason"] = json!(
+                    let raw =
+                        self.exchange_retaining_parsed_pulse(session, self.raw("inspect")?)?;
+                    let mut public_raw = raw.clone();
+                    public_raw["accepted"] = json!(false);
+                    public_raw["reason"] = json!(
                         cell["reason"]
                             .as_str()
                             .unwrap_or("native source key unavailable")
                     );
-                    return Ok(self.public_reply(public, raw, Some(&input_ref), None));
+                    let public = self.public_reply(public, public_raw, Some(&input_ref), None);
+                    return Ok((public, raw));
                 }
                 let last = self.last.as_ref().ok_or("native performance unavailable")?;
                 let token = decimal(&last["last_native_touch"])?
@@ -1128,18 +1149,52 @@ impl PerformanceOwner {
         // The worker independently checks exact source/body/epoch and dates live
         // gestures from AUHAL; no DOM timestamp or sample cursor enters this packet.
         request["schema"] = json!(CONTROL);
-        let raw = self.exchange(session, request)?;
+        let raw = self.exchange_retaining_parsed_pulse(session, request)?;
         if raw["accepted"] == true {
             if let Some((transpose, cells)) = pending_catalog {
                 self.config.transpose = transpose;
                 self.cells = cells;
                 self.source_assets["configuration"] =
-                    serde_json::to_value(&self.config).map_err(|e| e.to_string())?;
+                    serde_json::to_value(&self.config).map_err(|e| {
+                        NativeRecordingCommandRefusal {
+                            reason: e.to_string(),
+                            native_pulse: Some(raw.clone()),
+                        }
+                    })?;
             }
         }
-        Ok(self.public_reply(public, raw, input.as_deref(), touch_ref.as_deref()))
+        let public = self.public_reply(public, raw.clone(), input.as_deref(), touch_ref.as_deref());
+        Ok((public, raw))
     }
 }
+/// The actual parsed worker pulse is retained on every post-exchange
+/// qualification failure. No old reading is presented as a new pulse.
+pub(crate) struct NativeRecordingCommandRefusal {
+    pub(crate) reason: String,
+    pub(crate) native_pulse: Option<Value>,
+}
+impl From<String> for NativeRecordingCommandRefusal {
+    fn from(reason: String) -> Self {
+        Self {
+            reason,
+            native_pulse: None,
+        }
+    }
+}
+impl From<&str> for NativeRecordingCommandRefusal {
+    fn from(reason: &str) -> Self {
+        Self::from(reason.to_owned())
+    }
+}
+impl From<(String, Option<Value>)> for NativeRecordingCommandRefusal {
+    fn from((reason, native_pulse): (String, Option<Value>)) -> Self {
+        Self {
+            reason,
+            native_pulse,
+        }
+    }
+}
+
 fn parameter_id(s: &str) -> Result<u8, String> {
     let name = s
         .strip_prefix("ql:performance/parameter/")

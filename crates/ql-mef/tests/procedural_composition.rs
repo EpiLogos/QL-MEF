@@ -2059,7 +2059,8 @@ fn compile_native_output(
 fn historical_materialized_creation_roles_survive_profile_edit_and_refuse_origin_substitution() {
     let original = procedure();
     let old = contribution(&original, "original-role-receipt");
-    let current = old.generated_basis.clone();
+    let mut current = old.generated_basis.clone();
+    current["scene"]["entities"][0]["force"]["strength"] = json!(0.875);
     let mut reading = native_output_reading(&original, &old, current.clone());
     reading.applied_operation["envelope"]["changes"] =
         materialized_creation_changes(&original, &old);
@@ -2074,9 +2075,55 @@ fn historical_materialized_creation_roles_survive_profile_edit_and_refuse_origin
     let mut edited = original.clone();
     edited.profile.revision = "profile:later-authored".into();
     reading.source_basis = vec![edited.profile.clone(), old.recipe.clone()];
-    let next = old.clone();
+    // A retained creation cannot be replayed as another creation. Compile the
+    // actual three-way regeneration, preserving the current authored force.
+    assert!(
+        compile_native_output(&edited, &old, old.clone(), vec![reading.clone()])
+            .unwrap_err()
+            .contains("creation collides")
+    );
+    let actual = CurrentContribution {
+        contribution_ref: old.contribution_ref.clone(),
+        material: current.clone(),
+        overlays: vec![],
+    };
+    let mut next = old.clone();
+    next.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["hold"] = json!(3.5);
+    next.generated_basis["scene"]["entities"][0]["sequence"]["steps"][1]["holdOverride"] =
+        json!(true);
+    let delta = regenerate(
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&actual),
+        std::slice::from_ref(&next),
+        edited.removal_policy,
+    )
+    .unwrap();
+    next.native_changes = regeneration_native_changes(
+        &delta,
+        std::slice::from_ref(&old),
+        std::slice::from_ref(&actual),
+    )
+    .unwrap();
     let prepared =
         compile_native_output(&edited, &old, next.clone(), vec![reading.clone()]).unwrap();
+    let changes = prepared.native_edit["changes"].as_array().unwrap();
+    assert!(
+        changes
+            .iter()
+            .all(|change| change["change"] != "scene_create")
+    );
+    let material = changes
+        .iter()
+        .find(|change| change["change"] == "scene_material_set")
+        .unwrap();
+    assert_eq!(
+        material["presentation"]["scene"]["entities"][0]["force"]["strength"],
+        0.875
+    );
+    assert_eq!(
+        material["presentation"]["scene"]["entities"][0]["sequence"]["steps"][1]["hold"],
+        3.5
+    );
     assert_eq!(
         prepared.output_readings[0].applied_operation,
         immutable_creation

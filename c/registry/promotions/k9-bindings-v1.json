@@ -2389,6 +2389,47 @@
       "tests": [
         "scripts/qualify-worker-malloc-observations.py"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_current_configuration.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_current_configuration.rs",
+        "crates/ql-mef/tests/performance_audio.rs"
+      ],
+      "rationale": "Current performance preparation consumes the held M1/CF determination, typed M2 relation plan and post-command M3 body. It retains sparse native degree availability and declares mechanical/pickup policy without importing a caller source or clock.",
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_recording.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "tests": [
+        "crates/ql-mef/tests/performance_audio.rs",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ],
+      "rationale": "The held FieldHost exports the exact original parsed native pulse and zero-admission stopped origin through its existing private Scene/Act bridge. It creates no second Inspect, native state, source grant or recording store. These QL tests exercise its underlying numerical/source producer; complete private recording enrollment is tested through the existing OI native Scene/Act owner and remains pending until that paired caller is admitted.",
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/dense_field_source_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "tests": [
+        "crates/ql-mef/src/continuous/dense_field_source_tests.rs",
+        "crates/ql-mef/tests/procedural_control.rs"
+      ],
+      "rationale": "A mandatory bounded native producer drives the existing real FieldHost with 65000 supplied original samples, changes its actual current basis and exports the held original/current source. It grants no World/provider/private Scene authority and tests complete source retention for existing storage consumers.",
+      "kind": "computational"
     }
   ]
 }

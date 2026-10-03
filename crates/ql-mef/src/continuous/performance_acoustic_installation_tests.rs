@@ -180,8 +180,51 @@ fn actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary()
     // The actual native owner accepts a parameter into its queue without
     // advancing P. Same cursor does not make the old complete boundary current.
     let event = json!({"identity":host.performance.as_ref().unwrap().binding().determination()["identity"],
-        "kind":5,"sequence":"1","sample":"48000","requested_sample":"48000","touch":"0",
+        "kind":5,"sequence":"1","sample":"48000","touch":"0",
         "value":0.6,"pitch_hz":0.0,"parameter":4,"late_admitted":false,"has_note":false,"has_determination":false});
+    // Authored score provides its deadline. Only native admission may stamp
+    // requested_sample or a device clock: retained application fields cannot
+    // be resubmitted as if the caller owned that timing provenance.
+    for native_timing in [
+        json!({"requested_sample":"48000"}),
+        json!({"native_clock":{
+            "epoch":"1","anchor_ordinal":"1","trigger_host_ticks":"1",
+            "admitted_host_ticks":"1","mapping_uncertainty_samples":0.0,
+            "input_transit_unknown":true
+        }}),
+    ] {
+        let mut wrong = event.clone();
+        wrong
+            .as_object_mut()
+            .unwrap()
+            .extend(native_timing.as_object().unwrap().clone());
+        let refused = host
+            .performance
+            .as_mut()
+            .unwrap()
+            .owner_stopped_exchange(
+                &current,
+                &source,
+                host.session.session_mut(),
+                "score",
+                &json!({"event":wrong,"input_ref":null}),
+            )
+            .unwrap_or_else(|failure| {
+                panic!(
+                    "spoofed stopped score postvalidation failed: {}; native receipts: {:?}",
+                    failure.reason, failure.native_receipts
+                )
+            });
+        assert_eq!(refused["accepted"], false, "{refused}");
+        assert_eq!(refused["reason"], "invalid", "{refused}");
+        assert_eq!(refused["reading"], original_reading, "{refused}");
+        assert_eq!(refused["applications"], json!([]));
+        assert_eq!(refused["input_history"], json!([]));
+        assert_eq!(
+            host.performance.as_ref().unwrap().source_assets(),
+            &original_assets
+        );
+    }
     let reply = host
         .performance
         .as_mut()
@@ -204,6 +247,15 @@ fn actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary()
         reply["payload"]["score_admission"]["queued"], true,
         "{reply}"
     );
+    assert_eq!(
+        reply["payload"]["score_admission"]["event"]["sample"],
+        "48000"
+    );
+    assert_eq!(
+        reply["payload"]["score_admission"]["event"]["requested_sample"],
+        "48000"
+    );
+    assert_eq!(reply["payload"]["score_admission"]["queue_cursor"], "0");
     assert_eq!(
         host.performance.as_ref().unwrap().reading().unwrap()["samples_elapsed"],
         "0"

@@ -88,6 +88,16 @@ run_native_gate worker-malloc-custody env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/n
 run_native_gate initial-acoustic-candidate env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
   cargo test -p ql-mef --locked --lib continuous::host::acoustic_initial_tests::actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary -- --ignored || :
 
+# Produce full native-owned original/current dense source for the existing
+# Expression storage consumers. Authorised numerical operands are controlled;
+# the retained source artifact is read only from the actual held worker.
+v_dense_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_DENSE_OUTPUT="$TASK_OUTPUT/dense-source-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_dense_nonce"
+mkdir -p "$TASK_DENSE_OUTPUT"
+run_native_gate dense-field-source env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  QL_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT="$TASK_DENSE_OUTPUT/original-current-native-source.json" \
+  cargo test -p ql-mef --locked --lib continuous::host::dense_field_source_tests::actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis -- --ignored --nocapture || :
+
 # Exact original SourceForm, source-key and resident reply production owners.
 TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
 mkdir -p "$TASK_SOURCE_OUTPUT"
@@ -105,6 +115,12 @@ run_native_gate source-replies env QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/nat
 TASK_PROCEDURAL_OUTPUT="$TASK_OUTPUT/procedural-stage"
 mkdir -p "$TASK_PROCEDURAL_OUTPUT"
 run_native_gate procedural-stage env TA_ONTA_FIXTURE_OUTPUT="$TASK_PROCEDURAL_OUTPUT/native-producer.json" cargo test -p ql-mef --locked --test procedural_manifestation --test procedural_composition --test procedural_stage_independent || :
+# Export the existing real native-control producer's radius/strength
+# takeover and release for its independent Expression consumer tests.
+run_native_gate procedural-controls env \
+  QL_PROCEDURAL_CONTROL_CONSUMER_ARTIFACT="$TASK_PROCEDURAL_OUTPUT/native-radius-control.json" \
+  QL_PROCEDURAL_CONTROL_STRENGTH_ARTIFACT="$TASK_PROCEDURAL_OUTPUT/native-strength-control.json" \
+  cargo test -p ql-mef --locked --test procedural_control || :
 TASK_PACKET_OUTPUT="$TASK_OUTPUT/performance-packets"
 mkdir -p "$TASK_PACKET_OUTPUT"
 TASK_PACKETS_READY=false
