@@ -80,9 +80,10 @@ public:
       std::memcpy(&bits, &x, sizeof(bits));
       integer(bits);
     };
-    for (const auto *ref : {&spatial_.identity(), &motion_.source_motion_ref,
-                            &motion_.receiver_motion_ref, &motion_.policy_ref,
-                            &motion_.policy_revision, &motion_.standing})
+    for (const std::string *ref : std::array<const std::string *, 6>{
+             &spatial_.identity(), &motion_.source_motion_ref,
+             &motion_.receiver_motion_ref, &motion_.policy_ref,
+             &motion_.policy_revision, &motion_.standing})
       text(*ref);
     integer(motion_.origin_sample);
     integer(motion_.end_sample);
