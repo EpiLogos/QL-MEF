@@ -58,31 +58,46 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         &other_generation,
         &other_pose,
     ];
-    let input = json!({"schema":"ql.source-reply-detecting-input/v1","cases":owners.iter().map(|o|wire(o)).collect::<Vec<_>>()});
+
     let binary =
         std::env::var("QL_NATIVE_SOURCE_REPLY_TEST").expect("actual native reply driver required");
-    let mut child = Command::new(binary)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-    let mut stdin = child.stdin.take().unwrap();
-    writeln!(stdin, "{}", serde_json::to_string(&input).unwrap()).unwrap();
-    drop(stdin);
-    let result = child.wait_with_output().unwrap();
-    assert!(
-        result.status.success(),
-        "actual native reply consumer failed: {}",
-        String::from_utf8_lossy(&result.stderr)
-    );
-    let output: Value = serde_json::from_slice(&result.stdout).unwrap();
-    assert_eq!(output["schema"], "ql.actual-native-source-replies/v1");
-    let replies = output["replies"].as_array().unwrap();
+    let mut replies = Vec::with_capacity(5);
+    for (index, owner) in owners.iter().enumerate() {
+        let input = json!({"schema":"ql.source-reply-detecting-input/v1","case_index":index,"case":wire(owner)});
+        let bytes = serde_json::to_vec(&input).unwrap();
+        let destination = before_source_case(index, &bytes);
+        assert!(
+            bytes.len() <= 16 * 1024 * 1024,
+            "actual source case input bound"
+        );
+        let mut child = Command::new(&binary)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let mut stdin = child.stdin.take().unwrap();
+        stdin.write_all(&bytes).unwrap();
+        drop(stdin);
+        let result = child.wait_with_output().unwrap();
+        preserve_source_case(destination.as_deref(), &result);
+        assert!(
+            result.status.success(),
+            "actual native reply consumer failed: {}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let output: Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert_eq!(output["schema"], "ql.actual-native-source-replies/v1");
+        assert_eq!(output.as_object().unwrap().len(), 3);
+        assert_eq!(output["case_index"], index);
+        let actual = output["replies"].as_array().unwrap();
+        assert_eq!(actual.len(), 1);
+        replies.push(actual[0].clone());
+    }
     assert_eq!(replies.len(), 5);
     // Every alternative is an actual valid independently prepared source/body.
     // Rejecting it below is current resident identity, never malformed JSON.
-    for (owner, reply) in owners.iter().zip(replies) {
+    for (owner, reply) in owners.iter().zip(&replies) {
         owner.validate_reply(reply).unwrap();
     }
     resident.last = Some(replies[0].clone());
@@ -96,5 +111,67 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
     assert_ne!(
         replies[4]["reading"]["physical"]["eigenbasis_identity"],
         replies[0]["reading"]["physical"]["eigenbasis_identity"]
+    );
+}
+
+// Exact preexecution source bytes and actual child output are retained before
+// size/status/parser/native validators. Every native case keeps its full wire.
+fn before_source_case(index: usize, input: &[u8]) -> Option<std::path::PathBuf> {
+    let Some(directory) = std::env::var_os("QL_NATIVE_SOURCE_REPLY_EVIDENCE_DIR") else {
+        eprintln!(
+            "actual_source_case_preexecution index={index} input_bytes={} limit={}",
+            input.len(),
+            16 * 1024 * 1024
+        );
+        return None;
+    };
+    let root = std::path::Path::new(&directory);
+    std::fs::create_dir_all(root).unwrap();
+    let path = root.join(index.to_string());
+    std::fs::create_dir(&path).expect("fresh native source case evidence directory");
+    retain_source_case_file(&path, "producer-input.json", input, 16 * 1024 * 1024);
+    retain_source_case_file(&path, "native-preexecution.json", &serde_json::to_vec(&json!({"schema":"ql.native-source-reply-preexecution/v1","case_index":index,"actual_input_bytes":input.len(),"stdin_limit_bytes":16*1024*1024,"complete_input":input.len()<=16*1024*1024,"child_spawned":false})).unwrap(),4096);
+    Some(path)
+}
+fn retain_source_case_file(root: &std::path::Path, name: &str, bytes: &[u8], limit: usize) {
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(root.join(name))
+        .unwrap();
+    file.write_all(&bytes[..bytes.len().min(limit)]).unwrap();
+    file.sync_all().unwrap();
+    if bytes.len() > limit {
+        let mut marker = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(root.join(format!("{name}.truncated.json")))
+            .unwrap();
+        write!(
+            marker,
+            "{}",
+            json!({"complete":false,"actual_bytes":bytes.len(),"retained_prefix_bytes":limit})
+        )
+        .unwrap();
+        marker.sync_all().unwrap();
+    }
+}
+fn preserve_source_case(destination: Option<&std::path::Path>, output: &std::process::Output) {
+    if let Some(root) = destination {
+        retain_source_case_file(root, "native-stdout.json", &output.stdout, 32 * 1024 * 1024);
+        retain_source_case_file(root, "native-stderr.txt", &output.stderr, 4 * 1024 * 1024);
+        retain_source_case_file(
+            root,
+            "native-exit.json",
+            &serde_json::to_vec(
+                &json!({"success":output.status.success(),"code":output.status.code()}),
+            )
+            .unwrap(),
+            4096,
+        );
+    }
+    assert!(
+        output.stdout.len() <= 32 * 1024 * 1024 && output.stderr.len() <= 4 * 1024 * 1024,
+        "native source reply output exceeds unchanged transport bound"
     );
 }

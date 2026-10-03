@@ -33,6 +33,11 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     TASK_RESTORE_OUTPUT="$TASK_OUTPUT/receiving-restore-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_restore_nonce"
     QL_NATIVE_WIRE_TEST="$binary" QL_RECEIVING_RESTORE_EVIDENCE_DIR="$TASK_RESTORE_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored
+  elif [[ "$suite" == "performance_moving_receiving_native_wire" ]]; then
+    v_motion_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_MOTION_OUTPUT="$TASK_OUTPUT/moving-receiving-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_motion_nonce"
+    QL_NATIVE_WIRE_TEST="$binary" QL_MOVING_RECEIVING_EVIDENCE_DIR="$TASK_MOTION_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored
   else
     QL_NATIVE_WIRE_TEST="$binary" cargo test -p ql-mef --locked --test "$suite" -- --ignored
   fi
@@ -43,7 +48,11 @@ TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
 mkdir -p "$TASK_SOURCE_OUTPUT"
 cargo run --quiet -p ql-mef --locked --example retained-source-performance-fixture > "$TASK_SOURCE_OUTPUT/native-source.json"
 "$TASK_OUTPUT/native/performance_source_packet-test" "$TASK_SOURCE_OUTPUT/native-source.json"
-QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored
+v_source_reply_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_SOURCE_REPLY_OUTPUT="$TASK_OUTPUT/source-reply-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_source_reply_nonce"
+QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" \
+  QL_NATIVE_SOURCE_REPLY_EVIDENCE_DIR="$TASK_SOURCE_REPLY_OUTPUT" \
+  cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored
 
 # Keep the real Rust producer and the C++ consumer in one executed passage.
 # These are finite component fixtures; they are not installed host authority.

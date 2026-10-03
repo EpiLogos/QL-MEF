@@ -20,15 +20,34 @@ int main() {
     if (json_tokener_get_error(token.get()) != json_tokener_success ||
         json_tokener_get_parse_end(token.get()) != bytes.size())
       throw std::invalid_argument("actual source cases parser");
-    auto cases = packet::field(input.get(), "cases");
-    packet::array(cases, 5);
+    ql::require(packet::string(packet::field(input.get(), "schema")) ==
+                    "ql.source-reply-detecting-input/v1",
+                "actual source cases schema");
+    json_object *case_index = nullptr;
+    const bool single =
+        json_object_object_get_ex(input.get(), "case_index", &case_index);
+    std::uint64_t selected_index = 0;
+    json_object *cases = nullptr;
+    if (single) {
+      ql::physical_wire::keys(input.get(), {"schema", "case_index", "case"});
+      selected_index = packet::integer(case_index);
+      ql::require(selected_index < 5, "actual native source case index bound");
+    } else {
+      // Original full-five transport remains supported under the same bound.
+      cases = packet::field(input.get(), "cases");
+      packet::array(cases, 5);
+    }
     auto output = checkpoint_transport::object();
     checkpoint_transport::text(output.get(), "schema",
                                "ql.actual-native-source-replies/v1");
+    if (single)
+      checkpoint_transport::put(output.get(), "case_index",
+                                json_object_new_uint64(selected_index));
     auto replies = checkpoint_transport::array();
-    for (std::size_t i = 0; i < 5; ++i) {
+    for (std::size_t i = 0; i < (single ? 1 : 5); ++i) {
       management_transport::Control owner;
-      auto reply = owner.execute(json_object_array_get_idx(cases, i));
+      auto reply = owner.execute(single ? packet::field(input.get(), "case")
+                                        : json_object_array_get_idx(cases, i));
       assert(packet::boolean(packet::field(reply.get(), "accepted")));
       auto reading = packet::field(reply.get(), "reading");
       const auto rate = packet::integer(

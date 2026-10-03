@@ -351,7 +351,15 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         let at_zero = source.prepare_current(&owner, &current, 0).unwrap();
         let at_saved = source.prepare_current(&owner, &current, 640).unwrap();
         let other = wrong.prepare_current(&owner, &current, 640).unwrap();
-        json!({"native_preparation":packet,"native_basis":owner.binding().native_basis(),"native_catalog":owner.native_catalog(),"initial":at_zero.snapshot().unwrap(),"saved_current":at_saved.snapshot().unwrap(),"other_valid_context":other.snapshot().unwrap()})
+        use sha2::{Digest, Sha256};
+        let mut fixture = json!({"native_preparation":packet,"native_basis":owner.binding().native_basis(),"native_catalog":owner.native_catalog(),"initial":at_zero.snapshot().unwrap(),"saved_current":at_saved.snapshot().unwrap(),"other_valid_context":other.snapshot().unwrap()});
+        // Actual content digest of this complete native numerical test source.
+        // This explicit component scope grants no selected Scene/Act authority.
+        fixture["scope_performance_digest"] = json!(format!(
+            "sha256:{:x}",
+            Sha256::digest(serde_json::to_vec(&fixture).unwrap())
+        ));
+        fixture
     };
     // All original source fields and every actual trial remain complete. The
     // bounded child request carries ONE named context, never three duplicate
@@ -408,6 +416,16 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         assert_eq!(actual["schema"], "ql.receiving-restore-native-receipt/v1");
         assert_eq!(actual.as_object().unwrap().len(), 2);
         assert!(actual[kind].is_object());
+        let echo =
+            &actual[kind]["control"]["readmission_reply"]["payload"]["receiving_readmission"];
+        assert_eq!(
+            echo["current_source_packet"],
+            request["context"]["native_preparation"]
+        );
+        assert_eq!(
+            echo["current_receiving"],
+            request["context"]["saved_current"]
+        );
         result[kind] = actual[kind].clone();
     }
     assert_eq!(result["schema"], "ql.receiving-restore-native-receipt/v1");
@@ -432,5 +450,86 @@ fn actual_saved_receiving_requalifies_same_body_at_saved_cursor() {
         ] {
             assert_eq!(result[kind][key], true, "{kind}/{key}");
         }
+        let control = &result[kind]["control"];
+        for key in [
+            "actual_control_exact_continuation",
+            "actual_control_other_context_refused",
+            "actual_control_caller_source_mutation_refused",
+            "actual_control_observer_custody_preserved",
+            "actual_control_full_checkpoint_text",
+            "actual_control_malformed_checkpoint_text_refused",
+        ] {
+            assert_eq!(control[key], true, "{kind}/{key}");
+        }
+        let reply = &control["readmission_reply"];
+        assert_eq!(reply["schema"], "ql.performance-worker-reply/v1");
+        assert_eq!(reply["operation"], "restore-current-receiving");
+        assert_eq!(reply["accepted"], true);
+        assert_eq!(reply["reading"]["samples_elapsed"], "640");
+        assert_eq!(reply["reading"]["physical"]["samples_elapsed"], "640");
+        assert_eq!(reply["reading"]["transport_epoch"], "2");
+        let applications = reply["applications"].as_array().unwrap();
+        let history = reply["input_history"].as_array().unwrap();
+        assert_eq!(applications.len(), 1);
+        assert_eq!(history.len(), 1);
+        for (name, expected) in [
+            ("requested_sample", "0"),
+            ("admitted_sample", "0"),
+            ("applied_sample", "0"),
+            ("sequence", "1"),
+            ("committed_cursor", "128"),
+        ] {
+            assert_eq!(applications[0][name], expected, "{kind}/{name}");
+        }
+        assert_eq!(applications[0]["applied"], true);
+        assert_eq!(history[0]["native_sequence"], "1");
+        ql_mef::performance_management::qualify_native_note_wire(
+            &packet["notes"][0],
+            &applications[0]["note"],
+        )
+        .unwrap();
+        ql_mef::performance_management::qualify_native_note_wire(
+            &packet["notes"][0],
+            &history[0]["target"],
+        )
+        .unwrap();
+        let evidence = &reply["payload"]["receiving_readmission"];
+        assert_eq!(evidence["schema"], "ql.native-receiving-readmission/v1");
+        assert_eq!(evidence["transport_ack"], reply["payload"]["transport_ack"]);
+        assert_eq!(evidence["transport_ack"]["previous_epoch"], "1");
+        assert_eq!(evidence["transport_ack"]["epoch"], "2");
+        assert_eq!(evidence["transport_ack"]["previous_cursor"], "0");
+        assert_eq!(evidence["transport_ack"]["target_sample"], "640");
+        assert_eq!(evidence["transport_ack"]["accepted_sequence"], "2");
+        let original: Value =
+            serde_json::from_str(evidence["original_checkpoint_wire"].as_str().unwrap()).unwrap();
+        let operative: Value =
+            serde_json::from_str(evidence["operative_checkpoint_wire"].as_str().unwrap()).unwrap();
+        let after: Value =
+            serde_json::from_str(evidence["after_checkpoint_wire"].as_str().unwrap()).unwrap();
+        assert_eq!(original["transport_epoch"], operative["transport_epoch"]);
+        assert_eq!(after["transport_epoch"], "2");
+        assert_eq!(
+            original["native_pair"]["physical"],
+            operative["native_pair"]["physical"]
+        );
+        assert_eq!(
+            operative["native_pair"]["physical"],
+            after["native_pair"]["physical"]
+        );
+        assert_eq!(original["native_pair"]["audio"]["cursor"], "640");
+        assert_eq!(
+            original["input_history"]["entries"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
+        assert!(
+            after["input_history"]["entries"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
     }
 }

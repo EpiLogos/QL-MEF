@@ -1462,12 +1462,14 @@
         "#4"
       ],
       "kind": "computational",
-      "rationale": "QL #281: Actual retained worker readback/control projects same native catalog, physical positions, actual-rate parameter bounds and full stopped checkpoint. JSON stays outside callback and never replaces source admission.",
+      "rationale": "QL #281: Actual retained worker readback/control projects same native catalog, physical positions, actual-rate parameter bounds and full stopped checkpoint. JSON stays outside callback and never replaces source admission. Full current-receiving continuation restores the same stopped native checkpoint under complete source/body/receiving validation, preserves observer custody and changes only admitted route derivatives; this numerical transaction does not mint C Act authority.",
       "tests": [
         "cpp/tests/performance_source_reply_wire.cpp",
         "cpp/tests/performance_management_packet.cpp",
         "cpp/tests/current_performance_receiving_wire.cpp",
-        "cpp/tests/performance_managed_application_order_packet.cpp"
+        "cpp/tests/performance_managed_application_order_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
       ]
     },
     {
@@ -1708,6 +1710,45 @@
       "tests": [
         "cpp/tests/receiving_restore_wire.cpp",
         "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_moving_receiving.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281/#284: prepared native retarded-time moving source/listener receiving over the unchanged physical pickup, body eigenbasis and source cursor; bounded delay history and checkpoint are numerical receiving data. Existing Engine output port and private C admission remain separately required consumers. Documented Sound Particles mechanisms inform this declared native experiment, with no vendor parity or installed audibility claim.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_moving_receiving_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Independent actual Rust source producer and C++ native moving-receiving experiment verify Doppler, physical-state invariance, full checkpoint continuation, partitioning and atomic refusals. Raw original child input/output/exit are retained before validation; fixtures confer no source or Act authority.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Independent actual Rust source producer and C++ native moving-receiving experiment verify Doppler, physical-state invariance, full checkpoint continuation, partitioning and atomic refusals. Raw original child input/output/exit are retained before validation; fixtures confer no source or Act authority.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
       ]
     }
   ]

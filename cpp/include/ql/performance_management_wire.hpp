@@ -2,6 +2,7 @@
 #define QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #include <ql/performance_offline_wire.hpp>
 #include <ql/performance_physical_routes.hpp>
+#include <ql/performance_receiving_restore.hpp>
 #include <ql/performance_source_packet.hpp>
 
 namespace ql::performance::management_transport {
@@ -11,6 +12,20 @@ using Json = wire::Json;
 inline void null(J *out, const char *key) {
   require(json_object_object_add(out, key, nullptr) == 0,
           "native null allocation failed");
+}
+// Complete saved Management checkpoint text is transport data, not a Ref.
+// The caller below parses all bytes with strict UTF-8 validation before any
+// paired owner mutation. Narrow native references retain packet::string.
+inline std::string checkpoint_text(J *value) {
+  require(value && json_object_is_type(value, json_type_string),
+          "native checkpoint text string required");
+  const auto length = json_object_get_string_len(value);
+  const char *text = json_object_get_string(value);
+  require(length > 0 && std::size_t(length) <= 32 * 1024 * 1024 && text &&
+              std::memchr(text, '\0', std::size_t(length)) == nullptr,
+          "original receiving checkpoint exceeds native text bound or contains "
+          "NUL");
+  return std::string(text, std::size_t(length));
 }
 inline unsigned bounded(J *value, unsigned max) {
   const auto n = packet::integer(value);
@@ -293,6 +308,12 @@ struct BodyStanding {
 /// callback.
 class Control {
   std::unique_ptr<PerformanceManagement> owner_;
+  // Immutable output of the actual preparation on this serial worker. These
+  // retained bytes are coherence evidence, never a private Source/Act grant.
+  Json prepared_source_ = wire::own(nullptr),
+       prepared_basis_ = wire::own(nullptr);
+  std::unique_ptr<PerformanceManagement::PreparedReceivingRestore>
+      receiving_restore_;
   std::vector<DeviceDescription> devices_;
   BodyStanding standing_{};
   unsigned transpose_ = 0;
@@ -479,6 +500,7 @@ public:
     bool accepted = false;
     std::string reason;
     Json payload = wire::object();
+    Json readmission = wire::own(nullptr);
     if (op == "prepare") {
       J *receiving = nullptr, *current_receiving = nullptr;
       const bool has_receiving =
@@ -596,6 +618,18 @@ public:
             result.result == Result::Accepted,
             "actual source-qualified native receiving route install refused");
       }
+      J *source_copy = nullptr, *basis_copy = nullptr;
+      const auto source_copied =
+          json_object_deep_copy(packet_value, &source_copy, nullptr);
+      auto immutable_source = wire::own(source_copy);
+      const auto basis_copied = json_object_deep_copy(
+          packet::field(request, "actual_native_basis"), &basis_copy, nullptr);
+      auto immutable_basis = wire::own(basis_copy);
+      require(source_copied == 0 && basis_copied == 0 && immutable_source &&
+                  immutable_basis,
+              "immutable resident native preparation copy failed");
+      prepared_source_ = std::move(immutable_source);
+      prepared_basis_ = std::move(immutable_basis);
       owner_ = std::move(next);
       admitted_route_count_ = routes ? programs.program_count : 0;
       standing_ = stamp;
@@ -642,6 +676,11 @@ public:
           {"restore",
            {"checkpoint", "expected_cursor", "transaction_ref",
             "checkpoint_ref"}},
+          {"restore-current-receiving",
+           {"original_checkpoint_wire", "expected_cursor", "transaction_ref",
+            "checkpoint_ref", "current_source_packet", "actual_native_basis",
+            "receiving_admission", "current_receiving_admission",
+            "current_receiving", "native_catalog"}},
           {"inspect", {}}};
       const auto selected = fields.find(op);
       require(selected != fields.end(), "unknown native performance operation");
@@ -782,6 +821,153 @@ public:
           wire::ref(a.get(), "checkpoint_ref", ack.checkpoint);
           wire::put(payload.get(), "transport_ack", a.release());
         }
+      } else if (op == "restore-current-receiving") {
+        // The existing private C/Rust owner holds the selected Act, original
+        // occasion and current receiving lease across this exchange. This
+        // worker validates complete numerical/source coherence on SAME P.
+        require(prepared_source_ && prepared_basis_ &&
+                    json_object_equal(
+                        prepared_source_.get(),
+                        packet::field(request, "current_source_packet")) &&
+                    json_object_equal(
+                        prepared_basis_.get(),
+                        packet::field(request, "actual_native_basis")),
+                "current receiving source differs from resident preparation");
+        const auto original =
+            checkpoint_text(packet::field(request, "original_checkpoint_wire"));
+        require(!original.empty() && original.size() <= 32 * 1024 * 1024,
+                "original receiving checkpoint exceeds native transport bound");
+        auto tokener =
+            std::unique_ptr<json_tokener, decltype(&json_tokener_free)>(
+                json_tokener_new_ex(64), json_tokener_free);
+        require(bool(tokener), "native checkpoint parser allocation failed");
+        json_tokener_set_flags(tokener.get(), JSON_TOKENER_STRICT |
+                                                  JSON_TOKENER_VALIDATE_UTF8);
+        auto original_value = wire::own(json_tokener_parse_ex(
+            tokener.get(), original.data(), int(original.size())));
+        require(json_tokener_get_error(tokener.get()) == json_tokener_success &&
+                    original_value &&
+                    json_tokener_get_parse_end(tokener.get()) ==
+                        original.size(),
+                "original native receiving checkpoint text is incomplete");
+        auto saved = management_checkpoint_transport::read_checkpoint_wire(
+            original_value.get());
+        const auto saved_cursor = saved->native_pair.audio.cursor;
+        const auto expected_cursor =
+            wire::decimal(packet::field(request, "expected_cursor"));
+        auto *basis = packet::field(request, "actual_native_basis");
+        auto *current = packet::field(request, "current_receiving_admission");
+        auto *candidate = packet::field(request, "receiving_admission");
+        auto *complete = packet::field(request, "current_receiving");
+        require(json_object_equal(packet::field(complete, "native_admission"),
+                                  current),
+                "complete native receiving disagrees with actual admission");
+        auto *sources =
+            packet::field(packet::field(current, "operation"), "sources");
+        require(json_object_is_type(sources, json_type_array) &&
+                    json_object_array_length(sources) <= 9 &&
+                    !owner_->native().notes.empty(),
+                "actual receiving programmes or M1 quadrature absent");
+        std::vector<std::string> refs;
+        for (std::size_t i = 0; i < json_object_array_length(sources); ++i)
+          refs.push_back(
+              packet::string(packet::field(
+                  json_object_array_get_idx(sources, i), "driver_ref")) +
+              "/m1-excitation-program");
+        const auto immutable = owner_->native().body->preparation();
+        auto admitted = std::make_shared<const AdmittedNativeReceivingSource>(
+            read_native_receiving_admission(candidate, current,
+                                            owner_->native(), basis, immutable,
+                                            refs, saved_cursor));
+        auto routes = std::make_shared<PhysicalRoutesPortBinding>(
+            owner_->native().body, admitted, immutable,
+            owner_->native().determination, basis,
+            owner_->native().determination.m1_face == 1, saved_cursor);
+        auto seed = std::make_unique<NativeRouteProgramSet>();
+        seed->manifest = routes->manifest();
+        seed->program_count = seed->manifest.route_count;
+        seed->scalar_note_enabled = seed->manifest.scalar_note_enabled;
+        seed->scalar_note_gain = seed->manifest.scalar_note_gain;
+        for (std::size_t i = 0; i < seed->program_count; ++i) {
+          auto &program = seed->programs[i];
+          program.handle = seed->manifest.programs[i];
+          program.phase_source_ref = seed->manifest.m1_coordinate;
+          program.sine = owner_->native().notes.front().phase_sin;
+          program.cosine = owner_->native().notes.front().phase_cos;
+        }
+        auto *cells = packet::field(request, "native_catalog");
+        require(json_object_is_type(cells, json_type_array) &&
+                    json_object_array_length(cells) == owner_->catalog().size(),
+                "fresh receiving catalog differs from native current owner");
+        std::vector<KeyboardCell> catalog;
+        auto actual_catalog = wire::array();
+        for (const auto &cell : owner_->catalog()) {
+          auto original_key = key(cell);
+          for (const char *name : {"hertz", "coordinate", "face", "ratio"})
+            json_object_object_del(original_key.get(), name);
+          if (cell.available)
+            wire::put(original_key.get(), "native_target",
+                      wire::note(cell.native_target).release());
+          else
+            null(original_key.get(), "native_target");
+          wire::append(actual_catalog.get(), original_key.release());
+        }
+        require(
+            json_object_equal(cells, actual_catalog.get()),
+            "fresh receiving catalog changed original addresses or targets");
+        for (std::size_t i = 0; i < json_object_array_length(cells); ++i)
+          catalog.push_back(read_key(json_object_array_get_idx(cells, i)));
+        auto before = owner_->stopped_checkpoint();
+        auto before_wire =
+            management_checkpoint_transport::checkpoint_wire(*before);
+        std::unique_ptr<PerformanceManagement::PreparedReceivingRestore> next;
+        TransportAcknowledgement ack{};
+        accepted = restore_current_receiving_checkpoint(
+            *owner_, *saved,
+            physical_routes_port(physical_port(owner_->native().body), routes),
+            *seed, owner_->native().notes, std::move(catalog), expected_cursor,
+            packet::ref(request, "transaction_ref"),
+            packet::ref(request, "checkpoint_ref"), next, ack);
+        if (accepted) {
+          auto operative = std::make_unique<ManagementCheckpoint>(
+              next->original_checkpoint());
+          operative->native_pair.audio =
+              next->engine_candidate().admitted_checkpoint();
+          auto operative_wire =
+              management_checkpoint_transport::checkpoint_wire(*operative);
+          readmission = wire::object();
+          wire::text(readmission.get(), "schema",
+                     "ql.native-receiving-readmission/v1");
+          wire::text(readmission.get(), "original_checkpoint_wire", original);
+          wire::text(readmission.get(), "operative_checkpoint_wire",
+                     json_object_to_json_string_ext(operative_wire.get(),
+                                                    JSON_C_TO_STRING_PLAIN));
+          wire::text(readmission.get(), "before_checkpoint_wire",
+                     json_object_to_json_string_ext(before_wire.get(),
+                                                    JSON_C_TO_STRING_PLAIN));
+          wire::put(readmission.get(), "current_receiving",
+                    json_object_get(complete));
+          wire::put(
+              readmission.get(), "current_source_packet",
+              json_object_get(packet::field(request, "current_source_packet")));
+          wire::put(readmission.get(), "actual_native_basis",
+                    json_object_get(basis));
+          auto a = wire::object();
+          wire::u64(a.get(), "previous_epoch", ack.previous_epoch);
+          wire::u64(a.get(), "epoch", ack.epoch);
+          wire::u64(a.get(), "previous_cursor", ack.previous_cursor);
+          wire::u64(a.get(), "previous_sequence", ack.previous_sequence);
+          wire::u64(a.get(), "target_sample", ack.target_sample);
+          wire::u64(a.get(), "accepted_sequence", ack.accepted_sequence);
+          wire::ref(a.get(), "transaction_ref", ack.transaction);
+          wire::ref(a.get(), "checkpoint_ref", ack.checkpoint);
+          wire::put(readmission.get(), "transport_ack",
+                    json_object_get(a.get()));
+          wire::put(payload.get(), "transport_ack", a.release());
+          receiving_restore_.swap(next);
+          admitted_route_count_ = seed->program_count;
+        } else
+          reason = "current native receiving stopped continuation refused";
       } else
         require(op == "inspect", "unknown native performance operation");
       if (op == "inspect")
@@ -813,6 +999,18 @@ public:
                    ? "native operation refused"
                    : owner_->device_receipt().error;
     auto pulse = owner_->pulse();
+    if (readmission) {
+      // This checkpoint follows the actual pulse's observer drain. It proves
+      // the unchanged operative->after FIFO transition in the original C24D
+      // comparator instead of inventing an empty journal or a second clock.
+      auto after = owner_->stopped_checkpoint();
+      auto after_wire =
+          management_checkpoint_transport::checkpoint_wire(*after);
+      wire::text(readmission.get(), "after_checkpoint_wire",
+                 json_object_to_json_string_ext(after_wire.get(),
+                                                JSON_C_TO_STRING_PLAIN));
+      wire::put(payload.get(), "receiving_readmission", readmission.release());
+    }
     auto out = wire::object();
     wire::text(out.get(), "schema", "ql.performance-worker-reply/v1");
     wire::text(out.get(), "operation", op);
