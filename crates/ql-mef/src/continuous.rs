@@ -16,6 +16,9 @@ pub mod performance_receiving;
 pub mod personal;
 mod receipt;
 pub mod scene_field;
+mod worker_malloc_custody;
+#[cfg(test)]
+mod worker_malloc_custody_tests;
 
 use receipt::ReceiptGuard;
 
@@ -90,6 +93,7 @@ pub struct FieldInput {
 struct Exchange {
     request: Vec<u8>,
     reply: SyncSender<Result<Value>>,
+    diagnostic_facts: Option<worker_malloc_custody::RequestFacts>,
 }
 struct Worker {
     child: Child,
@@ -97,6 +101,9 @@ struct Worker {
     reader: Option<JoinHandle<()>>,
     timeout: Duration,
     poisoned: bool,
+    diagnostic: Option<std::sync::Arc<worker_malloc_custody::Custody>>,
+    stderr_reader: Option<JoinHandle<()>>,
+    diagnostic_writer: Option<JoinHandle<()>>,
 }
 impl Worker {
     fn open(executable: &Path, timeout: Duration) -> Result<Self> {
@@ -104,22 +111,79 @@ impl Worker {
             return Err("worker timeout must be within (0,120] seconds".into());
         }
         let executable = executable.canonicalize().map_err(|e| e.to_string())?;
-        let mut child = Command::new(executable)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::null())
-            .spawn()
-            .map_err(|e| e.to_string())?;
+        let diagnostic_config = worker_malloc_custody::DiagnosticConfig::from_env()?;
+        Self::open_with_diagnostic(&executable, timeout, diagnostic_config)
+    }
+    fn open_with_diagnostic(
+        executable: &Path,
+        timeout: Duration,
+        diagnostic_config: Option<worker_malloc_custody::DiagnosticConfig>,
+    ) -> Result<Self> {
+        if timeout.is_zero() || timeout > Duration::from_secs(120) {
+            return Err("worker timeout must be within (0,120] seconds".into());
+        }
+        let executable = executable.canonicalize().map_err(|e| e.to_string())?;
+        let mut command = Command::new(&executable);
+        command.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(
+            if diagnostic_config.is_some() {
+                Stdio::piped()
+            } else {
+                Stdio::null()
+            },
+        );
+        if let Some(config) = &diagnostic_config {
+            command.env("QL_NATIVE_WORKER_MALLOC_TRACE_REQUESTS", config.selector());
+        } else {
+            // Invalid selectors disable the C++ observer too.
+            command.env_remove("QL_NATIVE_WORKER_MALLOC_TRACE_REQUESTS");
+        }
+        let mut child = command.spawn().map_err(|e| e.to_string())?;
+        let (diagnostic, diagnostic_writer) = match diagnostic_config {
+            Some(config) => {
+                match worker_malloc_custody::Custody::open(config, child.id(), &executable) {
+                    Ok((value, writer)) => (Some(value), Some(writer)),
+                    Err(error) => {
+                        let _ = child.kill();
+                        let _ = child.wait();
+                        return Err(error);
+                    }
+                }
+            }
+            None => (None, None),
+        };
+        let stderr_reader = if let Some(custody) = &diagnostic {
+            let pipe = child
+                .stderr
+                .take()
+                .ok_or("missing diagnostic worker stderr")?;
+            let custody = custody.clone();
+            Some(thread::spawn(move || custody.stderr(pipe)))
+        } else {
+            None
+        };
         let mut input = child.stdin.take().ok_or("missing worker stdin")?;
         let mut output = BufReader::new(child.stdout.take().ok_or("missing worker stdout")?);
         let (sender, receiver): (SyncSender<Exchange>, Receiver<Exchange>) = mpsc::sync_channel(1);
+        let reader_custody = diagnostic.clone();
         let reader = thread::spawn(move || {
+            let mut frontier = worker_malloc_custody::Frontier::new();
             while let Ok(job) = receiver.recv() {
+                let ordinal = reader_custody.as_ref().and_then(|_| frontier.next());
+                let selected =
+                    ordinal.is_some_and(|n| reader_custody.as_ref().is_some_and(|c| c.selects(n)));
+                let mut bytes = Vec::new();
+                let mut written = false;
                 let result = (|| {
                     input.write_all(&job.request).map_err(|e| e.to_string())?;
                     input.write_all(b"\n").map_err(|e| e.to_string())?;
                     input.flush().map_err(|e| e.to_string())?;
-                    let mut bytes = Vec::new();
+                    written = true;
+                    if selected {
+                        reader_custody
+                            .as_ref()
+                            .expect("selected custody")
+                            .submitted(ordinal.expect("selected ordinal"));
+                    }
                     output
                         .by_ref()
                         .take((MAX_MESSAGE + 1) as u64)
@@ -130,8 +194,30 @@ impl Worker {
                     }
                     serde_json::from_slice(&bytes).map_err(|e| e.to_string())
                 })();
+                let selected_frontier = job.diagnostic_facts.as_ref().and_then(|facts| {
+                    frontier.observe(facts, result.as_ref().ok());
+                    selected.then(|| frontier.snapshot(facts, result.as_ref().ok()))
+                });
                 let failed = result.is_err();
-                if job.reply.send(result).is_err() || failed {
+                let parsed = result.is_ok();
+                // Deliver the actual parsed/refused transport result before any
+                // diagnostic byte handoff, hashing or file operation.
+                let sent = job.reply.send(result).is_ok();
+                if let Some(snapshot) = selected_frontier {
+                    reader_custody
+                        .as_ref()
+                        .expect("selected custody")
+                        .selected_pair(worker_malloc_custody::SelectedPair {
+                            ordinal: ordinal.expect("selected ordinal"),
+                            request: job.request,
+                            reply: bytes,
+                            written,
+                            parsed,
+                            frontier: snapshot,
+                            facts: job.diagnostic_facts.expect("selected facts"),
+                        });
+                }
+                if !sent || failed {
                     break;
                 }
             }
@@ -142,6 +228,9 @@ impl Worker {
             reader: Some(reader),
             timeout,
             poisoned: false,
+            diagnostic,
+            stderr_reader,
+            diagnostic_writer,
         })
     }
     fn invalidate(&mut self, reason: &str) -> String {
@@ -179,7 +268,14 @@ impl Worker {
             .sender
             .as_ref()
             .ok_or_else(|| ("worker closed".to_owned(), None))?
-            .try_send(Exchange { request, reply })
+            .try_send(Exchange {
+                request,
+                reply,
+                diagnostic_facts: self
+                    .diagnostic
+                    .as_ref()
+                    .map(|_| worker_malloc_custody::RequestFacts::new(value)),
+            })
             .map_err(|e| e.to_string())
             .and_then(|()| {
                 receiver
@@ -217,10 +313,32 @@ impl Worker {
 impl Drop for Worker {
     fn drop(&mut self) {
         self.sender.take();
+        if let Some(custody) = &self.diagnostic {
+            custody.wait_for_submitted_rows();
+        }
         let _ = self.child.kill();
-        let _ = self.child.wait();
+        let child_status = self.child.wait().ok();
         if let Some(reader) = self.reader.take() {
             let _ = reader.join();
+        }
+        if let Some(reader) = self.stderr_reader.take() {
+            let _ = reader.join();
+        }
+        if let Some(custody) = &self.diagnostic {
+            custody.finish_writer();
+        }
+        if let Some(writer) = self.diagnostic_writer.take() {
+            let _ = writer.join();
+        }
+        if let Some(custody) = &self.diagnostic {
+            custody.closed(
+                if self.poisoned {
+                    "poisoned-owner-drop"
+                } else {
+                    "normal-owner-drop"
+                },
+                child_status,
+            );
         }
     }
 }

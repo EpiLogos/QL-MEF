@@ -475,6 +475,86 @@ static void readback_cutoff(const std::string &dir) {
   assert(current->applications[0].committed_cursor == 65);
   assert(current->recording.failure == RecordingFailure::None);
 }
+// Real authored attack/release feedback creates native journal records. An
+// empty next batch must retain the actual total even after every row was read.
+static void journal_tail(const std::string &dir,
+                         const std::filesystem::path &output_dir) {
+  auto owner = manager(dir);
+  auto origin = owner->stopped_checkpoint();
+  assert(origin->transport_epoch == 1 &&
+         origin->native_pair.audio.cursor == 0 &&
+         origin->native_pair.audio.accepted_sequence == 0 &&
+         origin->native_pair.audio.applied_application_ordinal == 0 &&
+         origin->bindings.last_ordinal == 0);
+  if (!output_dir.empty()) {
+    auto original_wire =
+        management_checkpoint_transport::checkpoint_wire(*origin);
+    write_json(output_dir / "journal-tail.origin-checkpoint.json",
+               original_wire.get());
+  }
+  const auto &source = owner->native().determination;
+  const auto input = reference("native-score:journal-tail/original-input");
+  auto attack = op(source, Kind::NoteOn, 1, 37);
+  attack.note = owner->native().notes.at(4);
+  attack.value = .8;
+  assert(owner->enqueue_score_input_admission(attack, input).result() ==
+         Result::Accepted);
+  std::array<float, 128> pcm{};
+  assert(owner->offline_advance(pcm.data(), pcm.size(), 0));
+  auto release = op(source, Kind::NoteOff, 2, 128);
+  release.touch = attack.note.touch;
+  assert(owner->enqueue_score_input_admission(release, input).result() ==
+         Result::Accepted);
+  assert(owner->offline_advance(pcm.data(), pcm.size(), 128));
+  auto complete = owner->pulse();
+  assert(complete->has_readback && complete->reading.samples_elapsed == 256 &&
+         complete->applications.size() == 2 &&
+         complete->reading.last_applied_application_ordinal == 2);
+  assert(complete->input_history.size() == 4 &&
+         complete->last_input_ordinal == 4);
+  for (std::size_t i = 0; i < complete->input_history.size(); ++i) {
+    const auto &row = complete->input_history[i];
+    assert(row.ordinal == i + 1 && row.input_ref == input &&
+           row.target.touch == attack.note.touch);
+  }
+  auto stopped = owner->stopped_checkpoint();
+  assert(stopped->bindings.last_ordinal == complete->last_input_ordinal &&
+         stopped->bindings.read == stopped->bindings.write);
+  auto full_wire = checkpoint_transport::object();
+  management_transport::put_input_history(full_wire.get(), *complete);
+  auto actual_applications = checkpoint_transport::array();
+  for (const auto &application : complete->applications)
+    checkpoint_transport::append(
+        actual_applications.get(),
+        checkpoint_transport::application(application).release());
+  checkpoint_transport::put(full_wire.get(), "applications",
+                            actual_applications.release());
+  assert(checkpoint_transport::decimal(
+             packet::field(full_wire.get(), "last_input_ordinal")) == 4);
+  assert(json_object_array_length(
+             packet::field(full_wire.get(), "input_history")) == 4);
+  auto empty = owner->pulse();
+  assert(empty->applications.empty() && empty->input_history.empty() &&
+         empty->last_input_ordinal == 4 &&
+         empty->reading.last_applied_application_ordinal == 2 &&
+         empty->reading.samples_elapsed == 256);
+  auto empty_wire = checkpoint_transport::object();
+  management_transport::put_input_history(empty_wire.get(), *empty);
+  assert(empty->applications.empty());
+  checkpoint_transport::put(empty_wire.get(), "applications",
+                            checkpoint_transport::array().release());
+  assert(checkpoint_transport::decimal(
+             packet::field(empty_wire.get(), "last_input_ordinal")) == 4);
+  assert(json_object_array_length(
+             packet::field(empty_wire.get(), "input_history")) == 0);
+  if (!output_dir.empty()) {
+    write_json(output_dir / "journal-tail.complete.json", full_wire.get());
+    write_json(output_dir / "journal-tail.empty.json", empty_wire.get());
+    auto saved = management_checkpoint_transport::checkpoint_wire(*stopped);
+    write_json(output_dir / "journal-tail.checkpoint.json", saved.get());
+  }
+}
+
 static void trailing_application_loss(const std::string &dir) {
   auto owner = manager(dir);
   float pcm = 0;
@@ -527,6 +607,7 @@ int main(int argc, char **argv) {
     pending_pulse_trial(argv[1], true, output);
     readback_cutoff(argv[1]);
     trailing_application_loss(argv[1]);
+    journal_tail(argv[1], output);
     std::cout << "real-native-manager overtaking=2 same-body-highwater=65 "
                  "trailing-loss=257 reopen-next47872-exact device=unexecuted\n";
   } catch (const std::exception &error) {

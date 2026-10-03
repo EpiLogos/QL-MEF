@@ -511,6 +511,10 @@ static Json replacement(J *fixture) {
       packet::field(packet::field(after.get(), "native_pair"), "audio"),
       "receiving");
   assert(json_object_equal(original.get(), after.get()));
+  // The real native commit above installed candidate. Retain that exact owner
+  // for subsequent same-pulse manifest checks after all checkpoint proofs.
+  assert(same_receiving_manifest(candidate->manifest(), new_rx.manifest));
+  s->receiving_owner = candidate;
   const auto first = s->advance(13000, 128);
   assert(std::any_of(first.received.begin(), first.received.begin() + 512,
                      [](float value) { return value != 0.f; }));

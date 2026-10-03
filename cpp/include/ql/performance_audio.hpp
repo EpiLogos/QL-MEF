@@ -235,7 +235,9 @@ struct Readback {
                 dropped_captures = 0, clipping_samples = 0,
                 force_limited_samples = 0;
   std::uint32_t active_voices = 0, active_touches = 0;
-  double peak = 0, rms = 0, scalar_force_budget_newtons = 0;
+  // Same committed block peak before the existing final output clamp.
+  // Observation only; no gain, physical state or checkpoint counter changes.
+  double peak = 0, raw_peak = 0, rms = 0, scalar_force_budget_newtons = 0;
   std::uint64_t force_zero_samples = 0, emergency_requested = 0,
                 emergency_observed = 0, emergency_applied_sample = 0;
   std::uint32_t active_tails = 0;
@@ -2865,7 +2867,7 @@ public:
       fault_.store(true, std::memory_order_release);
       return false;
     }
-    double peak = 0, power = 0;
+    double peak = 0, raw_peak = 0, power = 0;
     for (std::size_t i = 0; i < frames; ++i) {
       const double monitor =
           force_scale[i] > 0 ? capture.force_newtons[i] / force_scale[i] : 0;
@@ -2877,6 +2879,7 @@ public:
         std::fill_n(output, frames, 0);
         return false;
       }
+      raw_peak = std::max(raw_peak, std::abs(raw));
       if (std::abs(raw) > 0.98)
         ++clipping_;
       output[i] = float(std::clamp(raw, -0.98, 0.98));
@@ -2997,6 +3000,7 @@ public:
       receipt.held_touch_tokens[i] = touches_[i].token;
     }
     receipt.peak = peak;
+    receipt.raw_peak = raw_peak;
     receipt.rms = std::sqrt(power / frames);
     receipt.source = source_;
     receipt.effective = effective_;

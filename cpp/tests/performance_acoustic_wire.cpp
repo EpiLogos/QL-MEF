@@ -627,7 +627,7 @@ static void control_reserve_future(Resident &resident) {
   parameter.value = .61;
   auto request = resident.command("score");
   wire::put(request.get(), "event", wire::operation(parameter).release());
-  wire::put(request.get(), "input_ref", nullptr);
+  wire::put_null(request.get(), "input_ref");
   resident.apply(request.get());
   auto *queue = packet::field(packet::field(resident.last.get(), "payload"),
                               "score_admission");

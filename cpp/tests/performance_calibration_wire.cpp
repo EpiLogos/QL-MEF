@@ -102,8 +102,8 @@ struct Observation {
   std::vector<float> pcm, pickup;
   std::vector<NativeGestureApplication> applications;
   std::vector<InputBindingRecord> journal;
-  double peak = 0, pickup_peak = 0, force_peak = 0, square_sum = 0,
-         max_displacement_metres = 0;
+  double peak = 0, raw_peak = 0, pickup_peak = 0, force_peak = 0,
+         square_sum = 0, max_displacement_metres = 0;
   std::uint64_t samples = 0, clipping = 0, limited = 0;
   std::uint32_t voices = 0, tails = 0;
 };
@@ -159,6 +159,9 @@ static void advance(PerformanceManagement &owner, Observation &observed,
     observed.pcm.push_back(output[i]);
     observed.pickup.push_back(captured.pickup_linear[i]);
   }
+  assert(std::isfinite(pulse->reading.raw_peak) &&
+         pulse->reading.raw_peak >= 0);
+  observed.raw_peak = std::max(observed.raw_peak, pulse->reading.raw_peak);
   observed.samples += frames;
   observed.clipping = pulse->reading.clipping_samples;
   observed.limited = pulse->reading.force_limited_samples;
@@ -182,6 +185,7 @@ static Json observation(const Observation &o, bool include_samples) {
   auto out = wire::object();
   wire::u64(out.get(), "samples", o.samples);
   wire::real(out.get(), "peak", o.peak);
+  wire::real(out.get(), "raw_peak", o.raw_peak);
   wire::real(out.get(), "rms", std::sqrt(o.square_sum / o.samples));
   wire::real(out.get(), "pickup_peak", o.pickup_peak);
   wire::real(out.get(), "max_force_newtons", o.force_peak);
@@ -382,7 +386,8 @@ static Json calibration_trial(J *source, double force, bool stress) {
   auto after_invalid = owner->stopped_checkpoint();
   auto after_invalid_wire =
       management_checkpoint_transport::checkpoint_wire(*after_invalid);
-  assert(json_object_equal(before_invalid_wire.get(), after_invalid_wire.get()));
+  assert(
+      json_object_equal(before_invalid_wire.get(), after_invalid_wire.get()));
   if (stress) {
     auto many = manager(source);
     auto p = operation(*many, Kind::Parameter, 0);
@@ -421,6 +426,63 @@ static Json calibration_trial(J *source, double force, bool stress) {
     advance(*many, observed, 1);
     assert(observed.voices == 24 && observed.tails == 16);
     through(*many, observed, trial_samples, 128);
+    // Retain measured native headroom BEFORE the unchanged detecting assert.
+    // This is the same actual Manager/P/output trial, with no normalization.
+    const auto &actual = many->last_readback();
+    assert(actual.source.master_linear == .25 &&
+           actual.effective.master_linear == .25 &&
+           actual.source.body_linear == 1 &&
+           actual.effective.body_linear == 1 &&
+           actual.source.monitor_linear == 0 &&
+           actual.effective.monitor_linear == 0);
+    // The fixed original gains make this exact power-of-two equality a
+    // detecting proof against the actual captured P pickup, including clipping.
+    assert(observed.raw_peak == observed.pickup_peak * .25);
+    auto diagnostic = wire::object();
+    wire::text(diagnostic.get(), "schema",
+               "ql.native-calibration-stress-diagnostic/v1");
+    wire::u64(diagnostic.get(), "samples", observed.samples);
+    wire::u64(diagnostic.get(), "committed_cursor", actual.samples_elapsed);
+    wire::u64(diagnostic.get(), "physical_cursor",
+              actual.physical.samples_elapsed);
+    wire::u64(diagnostic.get(), "sample_rate",
+              many->native().engine->sample_rate());
+    wire::real(diagnostic.get(), "peak_linear", observed.peak);
+    wire::real(diagnostic.get(), "raw_peak_linear", observed.raw_peak);
+    wire::real(diagnostic.get(), "rms_linear",
+               std::sqrt(observed.square_sum / observed.samples));
+    wire::real(diagnostic.get(), "pickup_peak_linear", observed.pickup_peak);
+    wire::real(diagnostic.get(), "pickup_linear_per_metre",
+               immutable.input().pickup_linear_per_metre);
+    wire::real(diagnostic.get(), "force_peak_newtons", observed.force_peak);
+    wire::real(diagnostic.get(), "maximum_displacement_metres",
+               observed.max_displacement_metres);
+    wire::real(diagnostic.get(), "physical_energy_joules",
+               actual.physical.mechanical_energy_joules);
+    wire::real(diagnostic.get(), "scalar_force_budget_newtons",
+               actual.scalar_force_budget_newtons);
+    wire::u64(diagnostic.get(), "maximum_active_voices", observed.voices);
+    wire::u64(diagnostic.get(), "maximum_active_tails", observed.tails);
+    wire::u64(diagnostic.get(), "clipping_samples", observed.clipping);
+    wire::u64(diagnostic.get(), "force_limited_samples", observed.limited);
+    wire::u64(diagnostic.get(), "dropped_captures", actual.dropped_captures);
+    wire::u64(diagnostic.get(), "dropped_readbacks", actual.dropped_readbacks);
+    wire::u64(diagnostic.get(), "recording_failure",
+              unsigned(actual.recording.failure));
+    wire::u64(diagnostic.get(), "dropped_applications",
+              actual.recording.dropped_applications);
+    wire::u64(diagnostic.get(), "accepted_sequence",
+              many->native().engine->accepted_sequence());
+    wire::u64(diagnostic.get(), "last_applied_application_ordinal",
+              actual.last_applied_application_ordinal);
+    wire::put(diagnostic.get(), "source_parameters",
+              wire::parameters(actual.source).release());
+    wire::put(diagnostic.get(), "effective_parameters",
+              wire::parameters(actual.effective).release());
+    const auto *diagnostic_text = json_object_to_json_string_ext(
+        diagnostic.get(), JSON_C_TO_STRING_PLAIN);
+    assert(diagnostic_text && std::strlen(diagnostic_text) < 8192);
+    std::cerr << diagnostic_text << '\n';
     assert(observed.clipping == 0 && observed.limited == 0);
     auto stress_wire = observation(observed, false);
     auto available = wire::array();

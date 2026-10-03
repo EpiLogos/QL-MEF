@@ -57,6 +57,9 @@ struct ManagementPulse {
   RecordingStatus recording{};
   DeviceReceipt device{};
   std::vector<InputBindingRecord> input_history;
+  // Total native journal tail AFTER feedback, independent of this drained
+  // batch.
+  std::uint64_t last_input_ordinal = 0;
   bool release_pending = false, release_zero_proven = false;
   std::uint64_t release_request = 0, release_sequence = 0,
                 release_proof_cursor = 0;
@@ -787,6 +790,7 @@ public:
     InputBindingRecord binding{};
     for (unsigned i = 0; i < 256 && bindings_.pop_history(binding); ++i)
       out->input_history.push_back(binding);
+    out->last_input_ordinal = bindings_.history_ordinal();
     if (release_pending_ && has_latest_ &&
         (release_request_ || panic_applied_) &&
         ql::performance::release_zero_proven(latest_, release_request_,

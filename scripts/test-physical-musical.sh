@@ -78,6 +78,13 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
   fi
 done
 
+# OFF-default diagnostic custody exercised only with this real compiled worker.
+v_malloc_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_MALLOC_OUTPUT="$TASK_OUTPUT/worker-malloc-custody-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_malloc_nonce"
+run_native_gate worker-malloc-custody env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  QL_WORKER_MALLOC_CUSTODY_TEST_OUTPUT="$TASK_MALLOC_OUTPUT" \
+  cargo test -p ql-mef --locked --lib continuous::worker_malloc_custody_tests::actual_worker_retains_only_selected_bytes_and_native_stderr_across_close -- --ignored || :
+
 run_native_gate initial-acoustic-candidate env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
   cargo test -p ql-mef --locked --lib continuous::host::acoustic_initial_tests::actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary -- --ignored || :
 

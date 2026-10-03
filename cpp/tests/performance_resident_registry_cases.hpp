@@ -120,11 +120,17 @@ static Json actual_resident_registry(J *fixture) {
       packet::field(initial.get(), "physical_observation"), "snapshot");
   auto *prepared = packet::field(packet::field(fixture, "native_preparation"),
                                  "physical_body");
-  for (const auto *key :
-       {"event_ref", "subject_ref", "source_coordinate", "source_revision"})
+  for (const auto *key : {"event_ref", "subject_ref", "source_revision"})
     require(json_object_equal(packet::field(full, key),
                               packet::field(prepared, key)),
             "full snapshot lost native source provenance");
+  auto *coordinate = packet::field(prepared, "source_coordinate");
+  require(json_object_equal(packet::field(full, "source_coordinate"),
+                            packet::field(coordinate, "source_ref")) &&
+              packet::boolean(packet::field(full, "pratibimba")) ==
+                  (packet::string(packet::field(coordinate, "face")) ==
+                   "pratibimba"),
+          "full snapshot changed exact admitted M3 coordinate or face");
   for (const auto *key : {"preparation_ref", "state_ref"})
     require(
         json_object_equal(packet::field(full, key), packet::field(input, key)),
@@ -170,6 +176,27 @@ static Json actual_resident_registry(J *fixture) {
     }
   }
   auto pristine = first->checkpoint();
+  // Mandatory presence is distinct from intentional null for non-touch acts.
+  // Every actual touch admission still requires its original native input.
+  Operation touch{};
+  touch.kind = Kind::NoteOn;
+  auto *native_source = packet::field(fixture, "native_preparation");
+  touch.identity = packet::identity(
+      packet::field(packet::field(native_source, "determination"), "identity"));
+  touch.note = packet::note(
+      json_object_array_get_idx(packet::field(native_source, "notes"), 0));
+  touch.sequence = 1;
+  touch.sample = 0;
+  touch.value = .7;
+  for (unsigned changed = 0; changed < 3; ++changed) {
+    auto invalid = first->command("score");
+    wire::put(invalid.get(), "event", wire::operation(touch).release());
+    if (changed == 1)
+      wire::put(invalid.get(), "input_ref", json_object_new_int(17));
+    else if (changed == 2)
+      wire::put_null(invalid.get(), "input_ref");
+    control_refusal_unchanged(*first, invalid.get(), pristine.get());
+  }
   auto injected = first->command("inspect");
   wire::put(injected.get(), "resident_consumers", json_object_get(other.get()));
   control_refusal_unchanged(*first, injected.get(), pristine.get());

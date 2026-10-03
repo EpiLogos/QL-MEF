@@ -364,7 +364,7 @@ fn new_ordinary_human_force_edit_replaces_older_override_with_actual_actor_and_s
         .unwrap()
         .reverse();
     let delta = regenerate(
-        &[old.clone()],
+        std::slice::from_ref(&old),
         &[CurrentContribution {
             contribution_ref: old.contribution_ref.clone(),
             material: after,
@@ -412,7 +412,7 @@ fn manual_deletion_tombstone_and_order_persist_through_generator_delete_readd() 
         .clear();
     next.generated_basis["scene"]["entities"][1]["force"]["strength"] = json!(0.3);
     let first = regenerate(
-        &[old.clone()],
+        std::slice::from_ref(&old),
         &[CurrentContribution {
             contribution_ref: old.contribution_ref.clone(),
             material: after,
@@ -561,7 +561,7 @@ fn property_metadata_is_prepended_without_copying_native_numerical_parameter_con
         m_tree::native_current_m_registry(),
         &p,
         &p.occurrence_ref,
-        &[reading.clone()],
+        std::slice::from_ref(&reading),
         None,
     )
     .unwrap();
@@ -759,7 +759,7 @@ fn shared_native_subject_retains_every_scene_and_one_global_parameter_operation(
         &p.selector,
         &p.occurrence_ref,
         &readings,
-        p.membership_mode.clone(),
+        p.membership_mode,
         None,
         p.membership_change_policy.clone(),
     )
@@ -806,7 +806,7 @@ fn shared_native_subject_retains_every_scene_and_one_global_parameter_operation(
         &p.selector,
         &p.occurrence_ref,
         &reverse,
-        p.membership_mode.clone(),
+        p.membership_mode,
         None,
         p.membership_change_policy.clone(),
     )
@@ -879,7 +879,7 @@ fn shared_native_subject_retains_every_scene_and_one_global_parameter_operation(
         &scalar_p.selector,
         &p.occurrence_ref,
         &scalars,
-        p.membership_mode.clone(),
+        p.membership_mode,
         None,
         p.membership_change_policy.clone(),
     )
@@ -944,7 +944,7 @@ fn shared_native_subject_retains_every_scene_and_one_global_parameter_operation(
             &p.selector,
             &p.occurrence_ref,
             &duplicate,
-            p.membership_mode.clone(),
+            p.membership_mode,
             None,
             p.membership_change_policy.clone()
         )

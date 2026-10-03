@@ -301,6 +301,15 @@ inline Json history(const InputBindingRecord &h) {
   wire::put(out.get(), "target", wire::note(h.target).release());
   return out;
 }
+// The exact batch and independent native tail travel together. This is the
+// same copied ManagementPulse; no observer drain or synthesized last-row tail.
+inline void put_input_history(J *out, const ManagementPulse &pulse) {
+  auto journal = wire::array();
+  for (const auto &h : pulse.input_history)
+    wire::append(journal.get(), history(h).release());
+  wire::put(out, "input_history", journal.release());
+  wire::u64(out, "last_input_ordinal", pulse.last_input_ordinal);
+}
 struct BodyStanding {
   bool source_form = false;
   Ref recipe{};
@@ -399,6 +408,7 @@ class Control {
               owner_->native().engine->accepted_sequence());
     wire::u64(out.get(), "last_applied_application_ordinal",
               r.last_applied_application_ordinal);
+    wire::u64(out.get(), "last_input_ordinal", pulse.last_input_ordinal);
     auto roles = wire::object();
     wire::text(roles.get(), "physical",
                standing_.source_form ? "canonical-source-form-scalar-excitation"
@@ -482,6 +492,7 @@ class Control {
               json_object_new_uint64(r.active_touches));
     wire::flag(out.get(), "sustain", r.sustain);
     wire::real(out.get(), "peak_linear", r.peak);
+    wire::real(out.get(), "raw_peak_linear", r.raw_peak);
     wire::real(out.get(), "rms_linear", r.rms);
     wire::u64(out.get(), "clipping_samples", r.clipping_samples);
     wire::real(out.get(), "scalar_force_budget_newtons",
@@ -805,7 +816,9 @@ public:
         accepted = owner_->close_device();
       else if (op == "score") {
         auto operation = wire::read_operation(packet::field(request, "event"));
-        json_object *input_ref = packet::field(request, "input_ref");
+        json_object *input_ref = nullptr;
+        require(json_object_object_get_ex(request, "input_ref", &input_ref),
+                "missing native performance field: input_ref");
         const Ref original_input =
             (!input_ref || json_object_is_type(input_ref, json_type_null))
                 ? Ref{}
@@ -1266,10 +1279,7 @@ public:
     for (const auto &a : pulse->applications)
       wire::append(applied.get(), wire::application(a).release());
     wire::put(out.get(), "applications", applied.release());
-    auto journal = wire::array();
-    for (const auto &h : pulse->input_history)
-      wire::append(journal.get(), history(h).release());
-    wire::put(out.get(), "input_history", journal.release());
+    put_input_history(out.get(), *pulse);
     wire::put(out.get(), "recording",
               wire::recording(pulse->recording).release());
     auto registry = std::make_unique<NativeResidentRegistry>();

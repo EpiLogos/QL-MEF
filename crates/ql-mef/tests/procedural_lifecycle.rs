@@ -493,7 +493,7 @@ fn lifecycle_two_same_source_slots_detach_one_preserves_sibling_and_human_materi
     );
     let delta = regenerate(
         &active_previous,
-        &[current_b.clone()],
+        std::slice::from_ref(&current_b),
         &active_next,
         RemovalPolicy::RetireUneditedDetachEdited,
     )
