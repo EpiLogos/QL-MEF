@@ -35,6 +35,19 @@ pub use receiving_readmission::{
 #[path = "performance_recording.rs"]
 mod performance_recording;
 
+#[path = "performance_calibration.rs"]
+pub(super) mod performance_calibration;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_cold_act.rs"]
+mod performance_cold_act;
+
+#[path = "performance_acoustic_scene_host.rs"]
+mod acoustic_scene_source;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_physical_scene_host.rs"]
+mod physical_scene_source;
+
 pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
 pub const HOST_RECEIPT: &str = "ql.field-host-receipt/v1";
@@ -164,6 +177,9 @@ pub struct FieldHost {
     session: Owner,
     last_request: u64,
     performance: Option<PerformanceOwner>,
+    // Original first preparation only. Cold/legacy owners cannot recreate it
+    // from saved current labels, bundle JSON or calibration flags.
+    authored_current_performance_preparation: Option<AuthoredCurrentPerformancePreparation>,
     procedural: ConductHost,
     receiving_source: Option<NativePerformanceReceivingSource>,
 }
@@ -185,6 +201,7 @@ impl FieldHost {
             )?)),
             last_request: 0,
             performance: None,
+            authored_current_performance_preparation: None,
             procedural: ConductHost::default(),
             receiving_source: None,
         })
@@ -201,6 +218,7 @@ impl FieldHost {
             session: Owner::Scene(Box::new(instrument)),
             last_request: 0,
             performance: None,
+            authored_current_performance_preparation: None,
             procedural: ConductHost::default(),
             receiving_source: None,
         })
@@ -582,7 +600,9 @@ impl FieldHost {
         }
         // Full original/current producer, receiver, occasion and consent replay
         // precedes retention. A stored snapshot or binding-only setter is not it.
-        let prepared_receiving = source.prepare_current(owner, current, 0)?;
+        let admitted_at=exact_cursor(owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"]
+            .as_str().ok_or("actual retained source admission cursor absent")?)?;
+        let prepared_receiving = source.prepare_current(owner, current, admitted_at)?;
         if prepared_receiving.snapshot()? != owner.source_assets()["current_receiving"] {
             return Err(
                 "activated native source artifact lost exact current receiving owner".into(),
@@ -594,11 +614,109 @@ impl FieldHost {
             source.return_context().clone(),
             declared_seed,
         )?;
-        Ok(json!({"schema":"ql.retained-source-performance-fixture/v1",
+        let mut artifact = json!({"schema":"ql.retained-source-performance-fixture/v1",
             "basis":returned.expression_basis()?,"pitches":returned.expression_pitches(0)?,
             "source_assets":owner.source_assets(),"native_preparation":owner.native_packet()?,
             "native_basis":owner.binding().native_basis(),"native_reading":owner.reading(),
-            "standing":"actual activated existing FieldHost/PerformanceOwner/worker; source artifact only, no hardware output or file/Act acceptance"}))
+            "standing":"actual activated existing FieldHost/PerformanceOwner/worker; source artifact only, no hardware output or file/Act acceptance"});
+        let history = owner.native_physical_source_history();
+        if !history.is_empty() {
+            let records = owner.source_assets()["physical_transition_history"]
+                .as_array()
+                .ok_or("complete physical source producer history absent")?;
+            if records.len() != history.len()
+                || records
+                    .iter()
+                    .zip(&history)
+                    .any(|(record, entry)| *record != entry["source"])
+            {
+                return Err(
+                    "actual physical source artifact lost a committed native application".into(),
+                );
+            }
+            artifact["native_physical_source_history"] = json!(history);
+        }
+        let acoustic_history = owner.native_acoustic_source_history();
+        if !acoustic_history.is_empty() {
+            let records = owner.source_assets()["acoustic_transition_history"]
+                .as_array()
+                .ok_or("complete acoustic source producer history absent")?;
+            if records.len() != acoustic_history.len()
+                || records
+                    .iter()
+                    .zip(&acoustic_history)
+                    .any(|(record, entry)| *record != entry["source"])
+            {
+                return Err(
+                    "actual acoustic source artifact lost a committed native application".into(),
+                );
+            }
+            artifact["native_acoustic_source_history"] = json!(acoustic_history);
+        }
+        Ok(artifact)
+    }
+
+    /// Pure SAME-operation observation for the closed ReadProceduralSource.
+    /// The complete bundle and original source/application sidecars select an
+    /// actual native epoch; they grant no source, Scene, playback or body lease.
+    pub(crate) fn retained_performance_source_observation(&self) -> Result<Value, String> {
+        let Some(owner) = self.performance.as_ref() else {
+            return Ok(Value::Null);
+        };
+        if !self.available() || owner.reading().is_none() {
+            return Err("actual retained source observation owner unavailable".into());
+        }
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("actual retained source observation has no receiving owner")?;
+        let current = self.session.session().current_basis();
+        owner.validate_current(current)?;
+        let admitted_at = exact_cursor(owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"]
+            .as_str().ok_or("actual retained source observation admission absent")?)?;
+        if source
+            .prepare_current(owner, current, admitted_at)?
+            .snapshot()?
+            != owner.source_assets()["current_receiving"]
+        {
+            return Err(
+                "actual retained source observation is disconnected from current receiving".into(),
+            );
+        }
+        let physical = owner.native_physical_source_history();
+        let acoustic = owner.native_acoustic_source_history();
+        for (name, applications) in [
+            ("physical_transition_history", &physical),
+            ("acoustic_transition_history", &acoustic),
+        ] {
+            let records = match owner.source_assets().get(name) {
+                Some(value) => value
+                    .as_array()
+                    .ok_or("actual source observation history is not an array")?
+                    .as_slice(),
+                None => &[],
+            };
+            if records.len() != applications.len()
+                || records
+                    .iter()
+                    .zip(applications)
+                    .any(|(record, application)| *record != application["source"])
+            {
+                return Err(
+                    "actual source observation lost its complete original application corpus"
+                        .into(),
+                );
+            }
+        }
+        Ok(json!({
+            "schema":"ql.native-held-performance-source/v1",
+            "performance_sources":owner.source_assets(),
+            "physical_preparation":serde_json::to_value(owner.binding().physical_body()).map_err(|e|e.to_string())?,
+            "native_physical_source_history":physical,
+            "native_acoustic_source_history":acoustic,
+            "native_reading":owner.reading(),
+            "standing":"actual complete same-owner source observation; no imported grant or additional Inspect/ordinal"
+        }))
     }
 
     /// Reached by the existing guarded native Kernel/Act reader callback, not
@@ -613,7 +731,8 @@ impl FieldHost {
             || field["event_ref"] != request.event_ref
             || field["subject_ref"] != request.subject_ref
             || !self.available()
-            || (!request.is_field() && self.performance.is_none())
+            || (!request.is_field() && self.performance.is_none() && !request.is_readmission())
+            || (request.is_readmission() && self.receiving_source.is_none())
             || (self.performance.is_some() && self.receiving_source.is_none())
         {
             return Err("native selected Act has no exact available original field/performance/receiving owner".into());
@@ -1060,12 +1179,13 @@ impl FieldHost {
                     if self.performance.is_some() {
                         Err("retained native performance already owns this work".into())
                     } else {
+                        let original_preparation = (*preparation).clone();
                         prepare_current_configuration(&current, &self.instance_ref, *preparation)
                             .and_then(|config| {
                                 PerformanceOwner::prepare(&current, &self.instance_ref, config)
                             })
                             .and_then(|mut performance| {
-                                let reply = match &self.receiving_source {
+                                let mut reply = match &self.receiving_source {
                                     Some(source) => performance.activate_with_current_receiving(
                                         &current,
                                         self.session.session_mut(),
@@ -1074,17 +1194,26 @@ impl FieldHost {
                                     None => performance
                                         .activate(&current, self.session.session_mut())?,
                                 };
+                                reply["current_output_calibration"] =
+                                    original_preparation.output_calibration_declaration();
+                                self.authored_current_performance_preparation =
+                                    Some(original_preparation);
                                 self.performance = Some(performance);
                                 Ok(reply)
                             })
                     }
                 }
-                HostOperation::PerformanceExchange { command } => match self.performance.as_mut() {
-                    Some(performance) => {
-                        performance.execute(&current, self.session.session_mut(), *command)
+                HostOperation::PerformanceExchange { command } => {
+                    if matches!(&*command, PerformanceCommand::CalibrateCurrent {}) {
+                        return self.current_calibration_host_response(&request.request_id);
                     }
-                    None => Err("retained native performance has not been prepared".into()),
-                },
+                    match self.performance.as_mut() {
+                        Some(performance) => {
+                            performance.execute(&current, self.session.session_mut(), *command)
+                        }
+                        None => Err("retained native performance has not been prepared".into()),
+                    }
+                }
                 _ => unreachable!(),
             };
             return match result {
@@ -1285,3 +1414,6 @@ mod acoustic_initial_tests;
 #[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
 #[path = "dense_field_source_tests.rs"]
 mod dense_field_source_tests;
+
+#[path = "performance_form_host.rs"]
+mod physical_form;

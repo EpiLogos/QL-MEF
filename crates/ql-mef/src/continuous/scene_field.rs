@@ -778,6 +778,13 @@ impl SceneInstrument {
     pub fn shape(&self) -> &ShapeBasis {
         &self.shape
     }
+    /// The SAME physical owner has acknowledged its source/body transaction.
+    /// Retain the provider input and discrete source; no legacy worker update.
+    pub(crate) fn adopt_physical_source_after_ack(&mut self, after: CoupledBasis) {
+        self.event = after.input.clone();
+        self.session.adopt_physical_source_after_ack(after);
+    }
+
     /// The caller's event, without the provider-owned voices.
     pub fn event(&self) -> CoupledInput {
         let mut event = self.event.clone();

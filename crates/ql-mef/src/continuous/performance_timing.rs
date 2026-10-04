@@ -58,6 +58,19 @@ pub(crate) struct PreparedProceduralTimingDescriptor {
     source_correspondence: Value,
 }
 impl PreparedProceduralTimingDescriptor {
+    /// Borrow the Management constructor from this exact original descriptor.
+    /// The private R factory already qualified the full immutable native body,
+    /// source, actual lease and complete resident source correspondence.
+    /// No second timing/Inspect read or imported constructor enters this method.
+    pub(crate) fn procedural_consumer_fact(
+        &self,
+    ) -> Result<crate::procedural_consumers::NativeTimingConsumerFact, String> {
+        crate::procedural_consumers::NativeTimingConsumerFact::from_registered_performance_descriptor(
+            &self.binding,
+            &self.position,
+            &self.native_pulse,
+        )
+    }
     pub(crate) fn source_correspondence(&self) -> &Value {
         &self.source_correspondence
     }

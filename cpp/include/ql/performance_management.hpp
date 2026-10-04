@@ -161,6 +161,18 @@ class PerformanceManagement {
         cp->has_route_programs
             ? native_.engine->force_parameter_maximum()
             : native_.body->preparation().input().max_force_newtons;
+    for (std::size_t i = 0; i < cp->contacts.slots.size(); ++i) {
+      const auto &slot = cp->contacts.slots[i];
+      next.contacts[i] = slot.delivery;
+      if (slot.present &&
+          (slot.delivery.status == NativeContactStatus::Queued ||
+           slot.delivery.status == NativeContactStatus::Delivering))
+        next.contact_reserved_force_newtons +=
+            std::abs(slot.operands.force_newtons);
+    }
+    next.note_headroom_newtons =
+        std::max(0.0, next.scalar_force_budget_newtons -
+                          next.contact_reserved_force_newtons);
     next.has_route_programs = cp->has_route_programs;
     next.routes_suspended =
         cp->has_route_programs && cp->route_programs.owner_suspended;
@@ -358,6 +370,11 @@ public:
     Identity before_catalog_{};
     std::uint64_t before_catalog_revision_ = 0;
     std::uint64_t transport_epoch_ = 0;
+    std::uint64_t input_read_ = 0, input_write_ = 0, input_ordinal_ = 0,
+                  touch_token_ = 0, member_token_ = 0, release_request_ = 0,
+                  release_sequence_ = 0, release_proof_cursor_ = 0;
+    bool release_pending_ = false, panic_applied_ = false,
+         recording_failed_ = false;
     bool ready_ = false;
 
   public:
@@ -373,11 +390,14 @@ public:
   // The existing native owner supplies the independently prepared source/body,
   // catalogue and full receiving source. All control allocation/validation is
   // completed BEFORE P or Engine mutates; unknown JSON cannot mint this token.
-  bool preflight_stopped_combined_revision(
+private:
+  bool preflight_stopped_combined_revision_impl(
       const Determination &after, const PhysicalPort &port,
       const NativeRouteProgramSet &after_seed, std::vector<NoteTarget> notes,
       std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
-      std::uint64_t expected_cursor, PreparedCombinedRevision &out) {
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out,
+      const ReceivingPort *after_receiving,
+      const ql::PreparedPhysicalBody *pending_after) {
     if (out.owner_ || out.ready_ || notes.empty() || notes.size() > 192 ||
         release_pending_ || control_recording_failed_ ||
         catalog_revision_ == std::numeric_limits<std::uint64_t>::max())
@@ -387,8 +407,16 @@ public:
         return false;
     validate_catalog(cells, after);
     auto candidate = std::make_unique<Engine::PreparedCombinedRevision>();
-    if (!native_.engine->preflight_stopped_combined_revision(
-            after, port, after_seed, guard, expected_cursor, *candidate))
+    if (bool(after_receiving) != bool(pending_after))
+      return false;
+    const bool admitted =
+        after_receiving
+            ? native_.engine->preflight_stopped_combined_receiving_revision(
+                  after, port, after_seed, *after_receiving, *pending_after,
+                  guard, expected_cursor, *candidate)
+            : native_.engine->preflight_stopped_combined_revision(
+                  after, port, after_seed, guard, expected_cursor, *candidate);
+    if (!admitted)
       return false;
     out.engine_ = std::move(candidate);
     out.catalog_ = std::move(cells);
@@ -396,9 +424,43 @@ public:
     out.before_catalog_ = catalog_identity_;
     out.before_catalog_revision_ = catalog_revision_;
     out.transport_epoch_ = transport_epoch_;
+    out.input_read_ = bindings_.history_read();
+    out.input_write_ = bindings_.history_write();
+    out.input_ordinal_ = bindings_.history_ordinal();
+    out.touch_token_ = bindings_.last_touch_token();
+    out.member_token_ = bindings_.last_member_token();
+    out.release_request_ = release_request_;
+    out.release_sequence_ = release_sequence_;
+    out.release_proof_cursor_ = release_proof_cursor_;
+    out.release_pending_ = release_pending_;
+    out.panic_applied_ = panic_applied_;
+    out.recording_failed_ = control_recording_failed_;
     out.owner_ = this;
     out.ready_ = true;
     return true;
+  }
+
+public:
+  bool preflight_stopped_combined_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed, std::vector<NoteTarget> notes,
+      std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out) {
+    return preflight_stopped_combined_revision_impl(
+        after, port, after_seed, std::move(notes), std::move(cells), guard,
+        expected_cursor, out, nullptr, nullptr);
+  }
+  bool preflight_stopped_combined_receiving_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed,
+      const ReceivingPort &after_receiving,
+      const ql::PreparedPhysicalBody &pending_after,
+      std::vector<NoteTarget> notes, std::vector<KeyboardCell> cells,
+      const Engine::StoppedCustody &guard, std::uint64_t expected_cursor,
+      PreparedCombinedRevision &out) {
+    return preflight_stopped_combined_revision_impl(
+        after, port, after_seed, std::move(notes), std::move(cells), guard,
+        expected_cursor, out, &after_receiving, &pending_after);
   }
   bool combined_revision_current(
       const PreparedCombinedRevision &candidate,
@@ -409,6 +471,17 @@ public:
            catalog_revision_ == candidate.before_catalog_revision_ &&
            catalog_revision_ != std::numeric_limits<std::uint64_t>::max() &&
            !release_pending_ && !control_recording_failed_ &&
+           bindings_.history_read() == candidate.input_read_ &&
+           bindings_.history_write() == candidate.input_write_ &&
+           bindings_.history_ordinal() == candidate.input_ordinal_ &&
+           bindings_.last_touch_token() == candidate.touch_token_ &&
+           bindings_.last_member_token() == candidate.member_token_ &&
+           release_request_ == candidate.release_request_ &&
+           release_sequence_ == candidate.release_sequence_ &&
+           release_proof_cursor_ == candidate.release_proof_cursor_ &&
+           release_pending_ == candidate.release_pending_ &&
+           panic_applied_ == candidate.panic_applied_ &&
+           control_recording_failed_ == candidate.recording_failed_ &&
            native_.engine->combined_revision_current(*candidate.engine_, guard);
   }
   // Called only after all P/body/receiver/private source preflights and P's
@@ -626,6 +699,24 @@ public:
       // failed. The caller must retain it as failed recording, never retry.
       admitted.result_ = Result::Unavailable;
     }
+    return admitted;
+  }
+  // Called only by the retained qualified private contact owner. Generic score
+  // operations cannot supply this non-copyable occurrence witness.
+  NativeScoreAdmission enqueue_contact_admission(
+      const std::shared_ptr<const PreparedContactProgram> &program,
+      const NativeContactOccurrenceWitness &witness) {
+    if (control_recording_failed_ || release_pending_)
+      return NativeScoreAdmission::refused(Result::Unavailable);
+    NativeScoreAdmission admitted{};
+    admitted.queue_ = native_.engine->enqueue_contact_with_receipt(
+        program, witness, next_sequence());
+    admitted.result_ = admitted.queue_.result();
+    if (!admitted.queue_.queued())
+      return admitted;
+    admitted.session_ = session_;
+    admitted.input_ = reference(program->operands().contact_ref.data());
+    admitted.epoch_ = transport_epoch_;
     return admitted;
   }
   Result enqueue_score_input(Operation op, Ref original_input = {}) {

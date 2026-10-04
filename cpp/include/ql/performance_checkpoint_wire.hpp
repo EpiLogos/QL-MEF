@@ -1,6 +1,7 @@
 #ifndef QL_PERFORMANCE_CHECKPOINT_WIRE_HPP
 #define QL_PERFORMANCE_CHECKPOINT_WIRE_HPP
 #include <ql/performance_checkpoint.hpp>
+#include <ql/performance_contact_wire.hpp>
 #include <ql/performance_packet.hpp>
 #include <ql/physical_checkpoint_wire.hpp>
 namespace ql::performance::checkpoint_transport {
@@ -261,12 +262,17 @@ inline void operation_keys(J *in, std::initializer_list<const char *> allowed) {
   J *requested = nullptr;
   const bool has_requested =
       json_object_object_get_ex(in, "requested_sample", &requested);
+  J *contact_value = nullptr;
+  const bool has_contact =
+      json_object_object_get_ex(in, "contact", &contact_value);
   require(json_object_object_length(in) ==
-              int(allowed.size()) + int(has_clock) + int(has_requested),
+              int(allowed.size()) + int(has_clock) + int(has_requested) +
+                  int(has_contact),
           "checkpoint operation fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
-    require((has_clock && std::strcmp(key, "native_clock") == 0) ||
+    require((has_contact && std::strcmp(key, "contact") == 0) ||
+                (has_clock && std::strcmp(key, "native_clock") == 0) ||
                 (has_requested && std::strcmp(key, "requested_sample") == 0) ||
                 std::any_of(allowed.begin(), allowed.end(),
                             [&](const char *known) {
@@ -277,6 +283,8 @@ inline void operation_keys(J *in, std::initializer_list<const char *> allowed) {
 }
 inline Json operation(const Operation &op) {
   auto out = object();
+  if (op.kind == Kind::Contact)
+    put(out.get(), "contact", contact_transport::handle(op.contact).release());
   put(out.get(), "identity", identity(op.identity).release());
   put(out.get(), "kind", json_object_new_int(unsigned(op.kind)));
   u64(out.get(), "sequence", op.sequence);
@@ -322,6 +330,13 @@ inline Operation read_operation(J *in) {
   Operation out{};
   out.identity = packet::identity(field(in, "identity"));
   out.kind = Kind(byte(field(in, "kind")));
+  J *contact_value = nullptr;
+  const bool has_contact =
+      json_object_object_get_ex(in, "contact", &contact_value);
+  require(has_contact == (out.kind == Kind::Contact),
+          "contact operation discriminator differs");
+  if (has_contact)
+    out.contact = contact_transport::read_handle(contact_value);
   out.sequence = decimal(field(in, "sequence"));
   out.sample = decimal(field(in, "sample"));
   J *requested = nullptr;
@@ -359,6 +374,9 @@ inline Json release(const ReleaseOperation &op) {
   return out;
 }
 inline ReleaseOperation read_release(J *in) {
+  J *contact = nullptr;
+  require(!json_object_object_get_ex(in, "contact", &contact),
+          "release cannot carry a contact handle");
   operation_keys(
       in, {"identity", "kind", "sequence", "sample", "touch", "late_admitted"});
   ReleaseOperation out{
@@ -389,12 +407,28 @@ inline const char *operation_name(Kind kind) {
     return "parameter";
   case Kind::Determination:
     return "determination";
+  case Kind::Contact:
+    return "contact";
   }
   throw std::invalid_argument("unknown applied operation");
 }
 inline Json application(const NativeGestureApplication &a) {
   auto out = object();
-  text(out.get(), "schema", "ql.performance-applied-event/v2");
+  require(a.has_contact == (a.kind == Kind::Contact),
+          "contact application discriminator differs");
+  text(out.get(), "schema",
+       a.has_contact ? "ql.performance-applied-event/v3"
+                     : "ql.performance-applied-event/v2");
+  if (a.has_contact) {
+    auto contact = object();
+    put(contact.get(), "handle",
+        contact_transport::handle(a.contact).release());
+    put(contact.get(), "occurrence",
+        contact_transport::occurrence(a.contact_occurrence).release());
+    put(contact.get(), "operands",
+        contact_transport::operands(a.contact_operands).release());
+    put(out.get(), "contact", contact.release());
+  }
   if (a.has_requested_sample)
     u64(out.get(), "requested_sample", a.requested_sample);
   text(out.get(), "operation", operation_name(a.kind));
@@ -451,11 +485,15 @@ requested_application_keys(J *in, std::initializer_list<const char *> allowed) {
   J *requested = nullptr;
   const bool present =
       json_object_object_get_ex(in, "requested_sample", &requested);
-  require(json_object_object_length(in) == int(allowed.size()) + int(present),
+  J *contact = nullptr;
+  const bool has_contact = json_object_object_get_ex(in, "contact", &contact);
+  require(json_object_object_length(in) ==
+              int(allowed.size()) + int(present) + int(has_contact),
           "applied event fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
-    require((present && std::strcmp(key, "requested_sample") == 0) ||
+    require((has_contact && std::strcmp(key, "contact") == 0) ||
+                (present && std::strcmp(key, "requested_sample") == 0) ||
                 std::any_of(allowed.begin(), allowed.end(),
                             [&](const char *known) {
                               return std::strcmp(key, known) == 0;
@@ -489,11 +527,25 @@ inline NativeGestureApplication read_application(J *in) {
                                   "determination",
                                   "late_admitted",
                                   "physical_manifest"});
+  J *contact = nullptr;
+  const bool has_contact = json_object_object_get_ex(in, "contact", &contact);
   require(packet::string(field(in, "schema")) ==
-              "ql.performance-applied-event/v2",
+              (has_contact ? "ql.performance-applied-event/v3"
+                           : "ql.performance-applied-event/v2"),
           "applied-event schema differs");
   NativeGestureApplication out{};
   out.kind = Kind(byte(field(in, "kind")));
+  require(has_contact == (out.kind == Kind::Contact),
+          "contact application kind differs");
+  if (has_contact) {
+    keys(contact, {"handle", "occurrence", "operands"});
+    out.has_contact = true;
+    out.contact = contact_transport::read_handle(field(contact, "handle"));
+    out.contact_occurrence =
+        contact_transport::read_occurrence(field(contact, "occurrence"));
+    out.contact_operands =
+        contact_transport::read_operands(field(contact, "operands"));
+  }
   out.applied = boolean(field(in, "applied"));
   require(packet::string(field(in, "operation")) == operation_name(out.kind) &&
               packet::string(field(in, "status")) ==
@@ -617,16 +669,18 @@ inline void audio_keys(J *in, std::initializer_list<const char *> names) {
   require(receiving == bool(json_object_object_get_ex(in, "receiving", &v)),
           "partial native receiving checkpoint extension");
   const bool proof = json_object_object_get_ex(in, "release_proof", &v);
+  const bool contacts = json_object_object_get_ex(in, "contacts", &v);
   const bool routes = audio_checkpoint_encoding(in) ==
                       AudioCheckpointEncoding::V2WithRoutePrograms;
   require(json_object_object_length(in) ==
               int(names.size()) + (apps ? 2 : 0) + (proof ? 1 : 0) +
-                  (routes ? 2 : 0) + (receiving ? 2 : 0),
+                  (routes ? 2 : 0) + (receiving ? 2 : 0) + (contacts ? 1 : 0),
           "audio checkpoint fields missing/unknown");
   json_object_object_foreach(in, key, value) {
     (void)value;
-    require((receiving && (std::strcmp(key, "has_receiving") == 0 ||
-                           std::strcmp(key, "receiving") == 0)) ||
+    require((contacts && std::strcmp(key, "contacts") == 0) ||
+                (receiving && (std::strcmp(key, "has_receiving") == 0 ||
+                               std::strcmp(key, "receiving") == 0)) ||
                 (routes && (std::strcmp(key, "has_route_programs") == 0 ||
                             std::strcmp(key, "route_programs") == 0)) ||
                 (proof && std::strcmp(key, "release_proof") == 0) ||
@@ -1104,11 +1158,109 @@ inline NativeReceivingManifest read_receiving_manifest(J *in) {
   require(valid_receiving_manifest(m), "native receiving manifest refused");
   return m;
 }
+inline Json receiving_source_history(const ql::ReceivingSourceHistory &h) {
+  auto out = object();
+  text(out.get(), "schema", "ql.receiving-emission-source-history/v1");
+  text(out.get(), "date_units", "native-audio-sample");
+  text(out.get(), "anchor_units", "m");
+  text(out.get(), "velocity_units", "m/s");
+  put(out.get(), "first_retained", json_object_new_uint64(h.first));
+  auto segments = array();
+  for (std::uint32_t i = 0; i < h.count; ++i) {
+    const auto &s = h.segments[i];
+    auto row = object();
+    u64(row.get(), "effective_sample", s.effective_sample);
+    u64(row.get(), "trajectory_origin_sample", s.trajectory_origin_sample);
+    u64(row.get(), "body_revision", s.body_revision);
+    u64(row.get(), "source_generation", s.source_generation);
+    flag(row.get(), "pratibimba", s.pratibimba);
+    const std::array<const char *, 6> names{
+        "source_coordinate", "source_revision", "preparation", "state",
+        "eigenbasis",        "source_motion"};
+    for (std::size_t j = 0; j < names.size(); ++j) {
+      const auto *ref = ql::receiving_source_reference(h, s.references[j]);
+      require(ref, "historical receiving source reference refused");
+      text(row.get(), names[j], ref);
+    }
+    auto anchor = array(), velocity = array();
+    for (double x : s.anchor_metres)
+      append(anchor.get(), json_object_new_double(x));
+    for (double x : s.velocity_metres_per_second)
+      append(velocity.get(), json_object_new_double(x));
+    put(row.get(), "anchor_metres", anchor.release());
+    put(row.get(), "velocity_metres_per_second", velocity.release());
+    append(segments.get(), row.release());
+  }
+  put(out.get(), "segments", segments.release());
+  return out;
+}
+inline void read_receiving_source_history(J *in, ql::ReceivingSourceHistory &h,
+                                          std::uint64_t cursor,
+                                          std::uint64_t birth) {
+  keys(in, {"schema", "date_units", "anchor_units", "velocity_units",
+            "first_retained", "segments"});
+  require(packet::string(field(in, "schema")) ==
+                  "ql.receiving-emission-source-history/v1" &&
+              packet::string(field(in, "date_units")) ==
+                  "native-audio-sample" &&
+              packet::string(field(in, "anchor_units")) == "m" &&
+              packet::string(field(in, "velocity_units")) == "m/s",
+          "historical receiving source units differ");
+  auto segments = field(in, "segments");
+  require(json_object_is_type(segments, json_type_array) &&
+              json_object_array_length(segments) > 0 &&
+              json_object_array_length(segments) <=
+                  ql::receiving_source_segments,
+          "historical receiving source segment count refused");
+  h = {};
+  h.explicit_history = true;
+  h.count = std::uint32_t(json_object_array_length(segments));
+  const auto first = integer(field(in, "first_retained"));
+  require(first < h.count,
+          "historical receiving source retention cursor refused");
+  h.first = std::uint32_t(first);
+  const std::array<const char *, 6> names{
+      "source_coordinate", "source_revision", "preparation", "state",
+      "eigenbasis",        "source_motion"};
+  for (std::uint32_t i = 0; i < h.count; ++i) {
+    auto row = json_object_array_get_idx(segments, i);
+    keys(row, {"effective_sample", "trajectory_origin_sample", "body_revision",
+               "source_generation", "pratibimba", "source_coordinate",
+               "source_revision", "preparation", "state", "eigenbasis",
+               "source_motion", "anchor_metres", "velocity_metres_per_second"});
+    auto &s = h.segments[i];
+    s.effective_sample = decimal(field(row, "effective_sample"));
+    s.trajectory_origin_sample =
+        decimal(field(row, "trajectory_origin_sample"));
+    s.body_revision = decimal(field(row, "body_revision"));
+    s.source_generation = decimal(field(row, "source_generation"));
+    s.pratibimba = boolean(field(row, "pratibimba"));
+    for (std::size_t j = 0; j < names.size(); ++j) {
+      const auto full = receiving_ref(row, names[j]);
+      require(ql::intern_receiving_source_reference(h, std::string(full.data()),
+                                                    s.references[j]),
+              "historical receiving source reference/arena refused");
+    }
+    auto anchor = field(row, "anchor_metres"),
+         velocity = field(row, "velocity_metres_per_second");
+    packet::array(anchor, 3);
+    packet::array(velocity, 3);
+    for (std::size_t j = 0; j < 3; ++j) {
+      s.anchor_metres[j] = number(json_object_array_get_idx(anchor, j));
+      s.velocity_metres_per_second[j] =
+          number(json_object_array_get_idx(velocity, j));
+    }
+  }
+  require(ql::valid_receiving_source_history(h, cursor, birth),
+          "historical receiving source dates/provenance refused");
+}
 inline Json receiving_checkpoint(const NativeReceivingCheckpoint &cp) {
   require(valid_receiving_checkpoint(cp, cp.manifest),
           "native receiving checkpoint refused");
   auto out = object();
-  text(out.get(), "schema", "ql.performance-receiving-checkpoint/v1");
+  text(out.get(), "schema",
+       cp.version == 2 ? "ql.performance-receiving-checkpoint/v2"
+                       : "ql.performance-receiving-checkpoint/v1");
   put(out.get(), "version", json_object_new_uint64(cp.version));
   put(out.get(), "manifest", receiving_manifest(cp.manifest).release());
   u64(out.get(), "samples_elapsed", cp.samples_elapsed);
@@ -1118,17 +1270,29 @@ inline Json receiving_checkpoint(const NativeReceivingCheckpoint &cp) {
   for (float v : cp.history_linear)
     append(history.get(), json_object_new_double(double(v)));
   put(out.get(), "history_linear", history.release());
+  if (cp.version == 2)
+    put(out.get(), "source_history",
+        receiving_source_history(cp.source_history).release());
   return out;
 }
 inline void read_receiving_checkpoint(J *in, NativeReceivingCheckpoint &cp) {
-  keys(in, {"schema", "version", "manifest", "samples_elapsed",
-            "history_start_sample", "history_units", "history_linear"});
+  const auto version = integer(field(in, "version"));
+  require(version == 1 || version == 2,
+          "unsupported native receiving checkpoint");
+  if (version == 2)
+    keys(in, {"schema", "version", "manifest", "samples_elapsed",
+              "history_start_sample", "history_units", "history_linear",
+              "source_history"});
+  else
+    keys(in, {"schema", "version", "manifest", "samples_elapsed",
+              "history_start_sample", "history_units", "history_linear"});
   require(packet::string(field(in, "schema")) ==
-                  "ql.performance-receiving-checkpoint/v1" &&
-              integer(field(in, "version")) == 1 &&
+                  (version == 2 ? "ql.performance-receiving-checkpoint/v2"
+                                : "ql.performance-receiving-checkpoint/v1") &&
               packet::string(field(in, "history_units")) == "linear-pickup",
           "native receiving checkpoint schema/units differ");
-  cp.version = 1;
+  cp.version = unsigned(version);
+  cp.source_history = {};
   cp.manifest = read_receiving_manifest(field(in, "manifest"));
   cp.samples_elapsed = decimal(field(in, "samples_elapsed"));
   cp.history_start_sample = decimal(field(in, "history_start_sample"));
@@ -1144,12 +1308,23 @@ inline void read_receiving_checkpoint(J *in, NativeReceivingCheckpoint &cp) {
                 std::signbit(cp.history_linear[i]) == std::signbit(v),
             "receiving history differs from exact native f32");
   }
+  if (cp.version == 2)
+    read_receiving_source_history(field(in, "source_history"),
+                                  cp.source_history, cp.samples_elapsed,
+                                  cp.history_start_sample);
   require(valid_receiving_checkpoint(cp, cp.manifest),
           "native receiving checkpoint refused");
 }
 inline Json audio_wire(const Engine::Checkpoint &cp) {
   auto out = object();
-  text(out.get(), "schema", Engine::Checkpoint::schema);
+  require((cp.version == 3) == cp.contacts.history_present,
+          "contact checkpoint version/custody differs");
+  text(out.get(), "schema",
+       cp.version == 3 ? Engine::Checkpoint::contact_schema
+                       : Engine::Checkpoint::schema);
+  if (cp.version == 3)
+    put(out.get(), "contacts",
+        contact_transport::checkpoint(cp.contacts).release());
   require(!cp.has_receiving || cp.receiving_encoding_present,
           "operative receiving lacks native encoding custody");
   if (cp.receiving_encoding_present) {
@@ -1340,10 +1515,26 @@ inline void read_audio(J *in, Engine::Checkpoint &cp) {
                   "capture",
                   "fault",
                   "sustain"});
-  require(packet::string(field(in, "schema")) == Engine::Checkpoint::schema &&
-              integer(field(in, "version")) == 2 &&
+  cp.version =
+      contact_transport::bounded_integer<std::uint32_t>(field(in, "version"));
+  require(packet::string(field(in, "schema")) ==
+                  (cp.version == 3 ? Engine::Checkpoint::contact_schema
+                                   : Engine::Checkpoint::schema) &&
+              (cp.version == 2 || cp.version == 3) &&
               packet::string(field(in, "model_revision")) == contract,
           "unsupported performance checkpoint model");
+  cp.contacts = {};
+  cp.prepared_contacts.reset();
+  J *contacts = nullptr;
+  const bool has_contacts =
+      json_object_object_get_ex(in, "contacts", &contacts);
+  require(has_contacts == (cp.version == 3),
+          "contact checkpoint extension/version differs");
+  if (has_contacts) {
+    cp.contacts = contact_transport::read_checkpoint(contacts);
+    require(cp.contacts.history_present,
+            "contact checkpoint lacks admitted occurrence history");
+  }
   cp.has_receiving = false;
   cp.receiving_encoding_present = false;
   cp.receiving = {};

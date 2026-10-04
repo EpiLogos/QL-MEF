@@ -7,6 +7,7 @@ namespace ql::performance {
 inline PhysicalPort physical_port(ql::PhysicalBody &body) {
   PhysicalPort port{};
   port.owner = &body;
+  port.contact_preparation = &body.preparation();
   port.advance = [](void *owner, const double *force, float *pickup,
                     std::size_t frames, std::uint64_t revision,
                     std::uint64_t start) noexcept {

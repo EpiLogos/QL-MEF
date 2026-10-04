@@ -14,6 +14,7 @@
 #include <limits>
 #include <memory>
 #include <ql/m_tree_live.h>
+#include <ql/performance_contact_slots.hpp>
 #include <ql/performance_receiving_port.hpp>
 #include <ql/performance_route_programs.hpp>
 #include <ql/physical_snapshot.hpp>
@@ -97,6 +98,7 @@ struct NoteTarget {
 // lifetime.
 struct PhysicalPort {
   void *owner = nullptr;
+  const ql::PreparedPhysicalBody *contact_preparation = nullptr;
   bool (*advance)(void *, const double *, float *, std::size_t, std::uint64_t,
                   std::uint64_t) noexcept = nullptr;
   std::uint64_t (*revision)(const void *) noexcept = nullptr;
@@ -126,7 +128,8 @@ enum class Kind : std::uint8_t {
   Expression,
   Panic,
   Parameter,
-  Determination
+  Determination,
+  Contact
 };
 enum class Parameter : std::uint8_t {
   ForceNewtons,
@@ -160,6 +163,7 @@ struct Operation {
   // the resolved queue deadline. Missing legacy provenance is never inferred.
   std::uint64_t requested_sample = 0;
   bool has_requested_sample = false;
+  NativeContactHandle contact{};
 };
 struct ReleaseOperation {
   Kind kind = Kind::NoteOff;
@@ -238,6 +242,8 @@ struct Readback {
   // Same committed block peak before the existing final output clamp.
   // Observation only; no gain, physical state or checkpoint counter changes.
   double peak = 0, raw_peak = 0, rms = 0, scalar_force_budget_newtons = 0;
+  double contact_reserved_force_newtons = 0, note_headroom_newtons = 0;
+  std::array<NativeContactDelivery, contact_slot_capacity> contacts{};
   std::uint64_t force_zero_samples = 0, emergency_requested = 0,
                 emergency_observed = 0, emergency_applied_sample = 0;
   std::uint32_t active_tails = 0;
@@ -255,6 +261,10 @@ struct NativeGestureApplication {
   NoteTarget note{};
   Determination determined_source{};
   bool has_determination = false;
+  bool has_contact = false;
+  NativeContactHandle contact{};
+  NativeContactOperands contact_operands{};
+  NativeContactOccurrence contact_occurrence{};
   Ref preparation_ref{}, state_ref{}, physical_event{}, physical_subject{},
       physical_source_coordinate{}, physical_source_revision{}, eigenbasis{};
   std::uint64_t physical_source_generation = 0;
@@ -276,7 +286,8 @@ struct Capture {
   Identity identity{}, end_identity{};
   std::uint64_t start_sample = 0, body_revision = 0;
   std::uint32_t frames = 0;
-  std::array<double, max_frames> force_newtons{};
+  std::array<double, max_frames> force_newtons{}, note_force_newtons{},
+      contact_force_newtons{};
   // Per-sample causal control values captured from the SAME committed
   // output callback. Observers never derive gain from a later block meter.
   std::array<double, max_frames> body_gain_linear{}, monitor_gain_linear{},
@@ -405,7 +416,12 @@ public:
   };
   struct Checkpoint {
     static constexpr const char *schema = "ql.performance-checkpoint/v2";
+    static constexpr const char *contact_schema =
+        "ql.performance-checkpoint/v3";
     std::uint32_t version = 2;
+    NativeContactCheckpoint contacts{};
+    mutable std::shared_ptr<const NativePreparedContactRestore>
+        prepared_contacts{};
     unsigned sample_rate = 0;
     Determination determination{}, producer_determination{};
     Identity producer_identity{};
@@ -473,6 +489,11 @@ public:
         step_cosine_{};
     std::uint64_t cursor_ = 0, accepted_sequence_ = 0, applied_ordinal_ = 0,
                   emergency_requested_ = 0, control_revision_ = 0;
+    ReceivingPort candidate_receiving_{};
+    std::unique_ptr<NativeReceivingCheckpoint> receiving_before_,
+        receiving_after_, receiving_current_;
+    std::uint64_t guard_nonce_ = 0, panic_fence_ = 0;
+    bool paired_receiving_ = false;
     bool ready_ = false;
 
   public:
@@ -558,6 +579,11 @@ private:
   std::size_t source_schedule_size_ = 1;
   unsigned rate_;
   PhysicalPort body_{};
+  NativeContactSlots contacts_{};
+  static NativeContactSourceIdentity
+  contact_source(const Identity &i) noexcept {
+    return {i.instance, i.event, i.subject, i.m1_revision, i.m2_generation};
+  }
   ReceivingPort receiving_{};
   bool receiving_encoding_present_ = false;
   std::uint64_t combined_control_revision_ = 0, stopped_custody_nonce_ = 0;
@@ -1026,6 +1052,8 @@ private:
     // future automation sequence without moving that automation's sample.
     applied_sequence_ = std::max(applied_sequence_, op.sequence);
     switch (op.kind) {
+    case Kind::Contact:
+      return false; // only the resident prepared-contact path applies Kind7
     case Kind::Panic:
       fence_attacks(op.sequence);
       touches_.fill({});
@@ -1285,7 +1313,8 @@ public:
   // lost NoteOff can never leave a permanently sounding excitation.
   NativeQueueAdmission enqueue_with_receipt(const Operation &op) noexcept {
     NativeQueueAdmission receipt{};
-    if (op.has_requested_sample || op.requested_sample ||
+    if (op.kind == Kind::Contact || op.contact.valid() ||
+        op.has_requested_sample || op.requested_sample ||
         op.native_clock.epoch || op.native_clock.anchor_ordinal ||
         op.native_clock.trigger_host_ticks ||
         op.native_clock.admitted_host_ticks ||
@@ -1294,6 +1323,93 @@ public:
       return receipt;
     }
     receipt.result_ = enqueue_impl(op, false, &receipt);
+    return receipt;
+  }
+  NativeQueueAdmission enqueue_contact_with_receipt(
+      const std::shared_ptr<const PreparedContactProgram> &program,
+      const NativeContactOccurrenceWitness &witness,
+      std::uint64_t sequence) noexcept {
+    NativeQueueAdmission receipt{};
+    if (!program || !witness.matches(*program) || !body_.contact_preparation) {
+      receipt.result_ = Result::Invalid;
+      return receipt;
+    }
+    if (activity_.load(std::memory_order_acquire) == 2 ||
+        fault_.load(std::memory_order_acquire))
+      return receipt;
+    const auto cursor = published_cursor_.load(std::memory_order_acquire);
+    const auto horizon = published_horizon_.load(std::memory_order_acquire);
+    const auto impact = program->operands().impact_sample;
+    if (accepted_sequence_ == std::numeric_limits<std::uint64_t>::max()) {
+      receipt.result_ = Result::Exhausted;
+      return receipt;
+    }
+    if (sequence != accepted_sequence_ + 1) {
+      receipt.result_ = Result::Order;
+      return receipt;
+    }
+    const auto limit = cursor > std::numeric_limits<std::uint64_t>::max() -
+                                    std::uint64_t(rate_) * 2
+                           ? std::numeric_limits<std::uint64_t>::max()
+                           : cursor + std::uint64_t(rate_) * 2;
+    if (impact < cursor || impact < horizon || impact > limit) {
+      receipt.result_ = Result::Late;
+      return receipt;
+    }
+    const auto &source = source_at(impact);
+    if (!(source.identity == producer_identity_) ||
+        source.body_revision != program->operands().body_revision ||
+        std::strcmp(source.body_preparation_ref.data(),
+                    program->operands().preparation_ref.data()) ||
+        std::strcmp(source.body_state_ref.data(),
+                    program->operands().state_ref.data())) {
+      receipt.result_ = Result::Stale;
+      return receipt;
+    }
+    const double budget = has_route_programs_
+                              ? route_scalar_budget(route_programs_.manifest)
+                              : body_.max_force_newtons;
+    NativeContactHandle handle{};
+    const auto reservation = contacts_.reserve(
+        program, witness.occurrence(), contact_source(source.identity),
+        sequence, *body_.contact_preparation, cursor, budget, handle);
+    switch (reservation) {
+    case NativeContactReservation::Ready:
+      break;
+    case NativeContactReservation::Stale:
+      receipt.result_ = Result::Stale;
+      return receipt;
+    case NativeContactReservation::Exhausted:
+      receipt.result_ = Result::Exhausted;
+      return receipt;
+    default:
+      receipt.result_ = Result::Invalid;
+      return receipt;
+    }
+    Operation operation{};
+    operation.kind = Kind::Contact;
+    operation.contact = handle;
+    operation.identity = source.identity;
+    operation.sequence = sequence;
+    operation.sample = operation.requested_sample = impact;
+    operation.has_requested_sample = true;
+    // All immutable slot operands publish before this ordinary queue release.
+    // A failed contact queue push never requests emergency or changes its
+    // dedup.
+    if (!operations_.push(operation)) {
+      contacts_.rollback_unpublished(handle);
+      receipt.result_ = Result::Overflow;
+      return receipt;
+    }
+    contacts_.accept(handle);
+    accepted_sequence_ = sequence;
+    accepted_sample_ = last_admission_sample_ = impact;
+    published_sequence_.store(sequence, std::memory_order_release);
+    receipt.result_ = Result::Accepted;
+    receipt.operation_ = operation;
+    receipt.source_ = source;
+    receipt.cursor_ = cursor;
+    receipt.horizon_ = horizon;
     return receipt;
   }
   Result enqueue(const Operation &op) noexcept {
@@ -1529,6 +1645,25 @@ public:
         std::memcmp(before->history_linear.data(), after->history_linear.data(),
                     sizeof(before->history_linear)) != 0)
       return false;
+    if (!candidate.immutable_preparation ||
+        !candidate.immutable_body_preparation ||
+        !receiving_.immutable_preparation ||
+        !receiving_.immutable_body_preparation ||
+        !NativeContactSlots::same_body_input(
+            candidate.immutable_body_preparation->input(),
+            receiving_.immutable_body_preparation->input()))
+      return false;
+    auto expected_history =
+        std::make_unique<ql::ReceivingSourceHistory>(before->source_history);
+    if (!expected_history->count ||
+        !ql::append_receiving_source(*expected_history,
+                                     *candidate.immutable_body_preparation,
+                                     *candidate.immutable_preparation, cursor_,
+                                     before->history_start_sample) ||
+        after->version != 2 ||
+        !ql::same_receiving_source_history(*expected_history,
+                                           after->source_history))
+      return false;
     auto current = std::make_unique<NativeReceivingCheckpoint>();
     out.before_ = std::move(before);
     out.after_ = std::move(after);
@@ -1582,6 +1717,9 @@ public:
              same_receiving_manifest(actual.manifest, expected.manifest) &&
              actual.samples_elapsed == expected.samples_elapsed &&
              actual.history_start_sample == expected.history_start_sample &&
+             (actual.version != 2 ||
+              ql::same_receiving_source_history(actual.source_history,
+                                                expected.source_history)) &&
              std::memcmp(actual.history_linear.data(),
                          expected.history_linear.data(),
                          sizeof(actual.history_linear)) == 0;
@@ -1598,6 +1736,27 @@ public:
     receiving_encoding_present_ = true;
     ++combined_control_revision_;
     out.ready_ = false;
+  }
+  // The paired native body/source transaction calls this only after its actual
+  // P/M4/Engine AFTER adoption. Already delivered J remains the previous audio
+  // commit; a real stopped body turn explicitly interrupts its remainder.
+  bool requalify_stopped_contacts(const StoppedCustody &guard,
+                                  std::uint64_t expected_cursor) noexcept {
+    if (guard.owner_ != this || activity_.load() != 2 ||
+        device_running_.load() || cursor_ != expected_cursor ||
+        body_.cursor(body_.owner) != cursor_ ||
+        body_.revision(body_.owner) != determination_.body_revision)
+      return false;
+    if (!contacts_.history_present())
+      return true;
+    if (!body_.contact_preparation)
+      return false;
+    contacts_.begin_block();
+    contacts_.requalify(contact_source(determination_.identity),
+                        *body_.contact_preparation);
+    contacts_.commit(cursor_);
+    contacts_.acknowledge_terminals();
+    return true;
   }
   const ql::NativeResidentToken &resident_token() const noexcept {
     return resident_lifetime_.token();
@@ -1636,7 +1795,8 @@ public:
     // Stopped exclusive control custody: no physical, musical or queue state
     // mutates during candidate qualification. Retired numerical-route handles
     // remain retained by previous until this acknowledged control call returns.
-    if (!valid_route_programs(set, port, determination_))
+    if (!valid_route_programs(set, port, determination_) ||
+        contacts_.reserved_force_newtons() > route_scalar_budget(set.manifest))
       return false;
     body_ = std::move(port);
     route_programs_ = set;
@@ -1653,7 +1813,8 @@ public:
         set.manifest.admitted_cursor != expected_cursor ||
         combined_control_revision_ ==
             std::numeric_limits<std::uint64_t>::max() ||
-        !valid_route_programs(set))
+        !valid_route_programs(set) ||
+        contacts_.reserved_force_newtons() > route_scalar_budget(set.manifest))
       return false;
     route_programs_ = set;
     has_route_programs_ = true;
@@ -1777,21 +1938,181 @@ public:
   // full native source/occasion/catalog custody is supplied by the existing
   // serial owner and P typed port constructor; numerical equality is not an
   // authority grant. All programmes retain exact independent native IDs.
-  bool preflight_stopped_combined_revision(
+private:
+  // Exact operand comparison is numerical qualification, not source authority.
+  static bool same_receiving_operands(
+      const ql::PreparedMovingSpatialReceiving &a,
+      const ql::PreparedMovingSpatialReceiving &b) noexcept {
+    const auto &x = a.spatial().input(), &y = b.spatial().input();
+    const auto &m = a.motion(), &n = b.motion();
+    // Actual body anchors may change at the native transition date. Full
+    // dated emitter history is qualified independently before P mutation.
+    return x.receiver_ref == y.receiver_ref && x.context_ref == y.context_ref &&
+           x.source_ref == y.source_ref && x.policy_ref == y.policy_ref &&
+           x.policy_revision == y.policy_revision && x.standing == y.standing &&
+           x.revision == y.revision &&
+           x.source_translation_metres == y.source_translation_metres &&
+           x.receiver_position_metres == y.receiver_position_metres &&
+           x.receiver_forward == y.receiver_forward &&
+           x.speed_metres_per_second == y.speed_metres_per_second &&
+           x.minimum_distance_metres == y.minimum_distance_metres &&
+           x.directivity == y.directivity &&
+           x.propagation_delay == y.propagation_delay &&
+           x.transition_samples == y.transition_samples &&
+           m.source_motion_ref == n.source_motion_ref &&
+           m.receiver_motion_ref == n.receiver_motion_ref &&
+           m.policy_ref == n.policy_ref &&
+           m.policy_revision == n.policy_revision && m.standing == n.standing &&
+           m.origin_sample == n.origin_sample && m.end_sample == n.end_sample &&
+           m.source_velocity_metres_per_second ==
+               n.source_velocity_metres_per_second &&
+           m.receiver_velocity_metres_per_second ==
+               n.receiver_velocity_metres_per_second;
+  }
+  static bool
+  receiving_matches_preparation(const ReceivingPort &p,
+                                const ql::PreparedPhysicalBody &body) noexcept {
+    if (!p.manifest || !p.immutable_preparation ||
+        !p.immutable_body_preparation ||
+        !valid_receiving_manifest(*p.manifest) ||
+        !NativeContactSlots::same_body_input(
+            p.immutable_body_preparation->input(), body.input()) ||
+        !p.immutable_preparation->matches_preparation(body))
+      return false;
+    const auto &i = body.input();
+    const auto &m = *p.manifest;
+    const auto &a = *p.immutable_preparation;
+    const auto &sp = a.spatial().input();
+    const auto &motion = a.motion();
+    return m.receiving_identity.data() == a.identity() &&
+           m.event.data() == i.event_ref && m.subject.data() == i.subject_ref &&
+           m.preparation.data() == i.preparation_ref &&
+           m.state.data() == i.state_ref &&
+           m.source_coordinate.data() == i.source_coordinate &&
+           m.source_revision.data() == i.source_revision &&
+           m.eigenbasis.data() == body.eigenbasis_identity() &&
+           m.source_generation == i.source_generation &&
+           m.body_revision == i.body_revision &&
+           m.sample_rate == i.sample_rate && m.pratibimba == i.pratibimba &&
+           m.receiver.data() == sp.receiver_ref &&
+           m.context.data() == sp.context_ref &&
+           m.source_motion.data() == motion.source_motion_ref &&
+           m.receiver_motion.data() == motion.receiver_motion_ref &&
+           m.policy.data() == motion.policy_ref &&
+           m.policy_revision.data() == motion.policy_revision &&
+           m.standing.data() == motion.standing &&
+           m.origin_sample == motion.origin_sample &&
+           m.end_sample == motion.end_sample;
+  }
+  bool preflight_stopped_combined_revision_impl(
       const Determination &after, const PhysicalPort &port,
       const NativeRouteProgramSet &after_seed, const StoppedCustody &guard,
-      std::uint64_t expected_cursor, PreparedCombinedRevision &out) noexcept {
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out,
+      const ReceivingPort *after_receiving,
+      const ql::PreparedPhysicalBody *pending_after) {
+    const bool paired = after_receiving && pending_after;
+    if (bool(after_receiving) != bool(pending_after))
+      return false;
+    // The original standalone guard remains unchanged. Paired replacement
+    // must independently supply and qualify the complete actual AFTER receiver.
+    const bool physical_ok =
+        paired
+            ? (guard.owner_ == this && activity_.load() == 2 &&
+               !device_running_.load() && receiving_.owner &&
+               source_schedule_size_ == 1 && valid_determination(after) &&
+               same_lineage(after.identity, determination_.identity) &&
+               after.identity.m1_revision >=
+                   determination_.identity.m1_revision &&
+               after.identity.m2_generation >=
+                   determination_.identity.m2_generation &&
+               port.owner == body_.owner && port.custody == body_.custody &&
+               port.advance == body_.advance && port.observe == body_.observe &&
+               port.revision == body_.revision && port.cursor == body_.cursor &&
+               port.contact_preparation == body_.contact_preparation &&
+               port.sample_rate == rate_ &&
+               port.event == after.identity.event &&
+               port.subject == after.identity.subject &&
+               valid_ref(port.preparation) && port.state == body_.state &&
+               after.body_state_ref == port.state &&
+               after.body_preparation_ref == port.preparation &&
+               after.body_revision > determination_.body_revision &&
+               scalar(port.max_force_newtons, 1e-12, 1e9))
+            : preflight_stopped_physical_revision(after, port, guard);
     if (out.ready_ || out.owner_ || !has_route_programs_ ||
         cursor_ != expected_cursor ||
         combined_control_revision_ ==
             std::numeric_limits<std::uint64_t>::max() ||
-        !preflight_stopped_physical_revision(after, port, guard) ||
+        !physical_ok ||
         body_.revision(body_.owner) != determination_.body_revision ||
         body_.cursor(body_.owner) != cursor_ ||
         after_seed.manifest.admitted_cursor != expected_cursor ||
         !valid_route_programs(after_seed, port, after) ||
         route_programs_.program_count != after_seed.program_count)
       return false;
+    if (contacts_.reserved_force_newtons() >
+        route_scalar_budget(after_seed.manifest))
+      return false;
+    std::unique_ptr<NativeReceivingCheckpoint> receiving_before,
+        receiving_after, receiving_current;
+    if (paired) {
+      const auto &candidate = *after_receiving;
+      ql::PhysicalSnapshot actual_before{};
+      if (!body_.contact_preparation || !complete_receiving_port(receiving_) ||
+          !complete_receiving_port(candidate) ||
+          candidate.owner == receiving_.owner ||
+          !receiving_.write_transport_checkpoint ||
+          !candidate.write_transport_checkpoint ||
+          !receiving_matches_preparation(receiving_,
+                                         *body_.contact_preparation) ||
+          !receiving_matches_preparation(candidate, *pending_after) ||
+          !same_receiving_operands(*receiving_.immutable_preparation,
+                                   *candidate.immutable_preparation) ||
+          candidate.cursor(candidate.owner) != cursor_ ||
+          cursor_ < candidate.manifest->origin_sample ||
+          cursor_ >= candidate.manifest->end_sample ||
+          pending_after->input().body_revision != after.body_revision ||
+          pending_after->input().preparation_ref !=
+              after.body_preparation_ref.data() ||
+          pending_after->input().state_ref != after.body_state_ref.data() ||
+          pending_after->input().max_force_newtons != port.max_force_newtons ||
+          !body_.observe(body_.owner, actual_before,
+                         determination_.body_revision, cursor_) ||
+          !receiving_matches_snapshot(*receiving_.manifest, actual_before))
+        return false;
+      receiving_before = std::make_unique<NativeReceivingCheckpoint>();
+      receiving_after = std::make_unique<NativeReceivingCheckpoint>();
+      receiving_current = std::make_unique<NativeReceivingCheckpoint>();
+      if (!receiving_.write_checkpoint(receiving_.owner, *receiving_before,
+                                       cursor_) ||
+          !candidate.write_transport_checkpoint(candidate.owner,
+                                                *receiving_after, cursor_) ||
+          !same_receiving_manifest(receiving_before->manifest,
+                                   *receiving_.manifest) ||
+          !same_receiving_manifest(receiving_after->manifest,
+                                   *candidate.manifest) ||
+          receiving_before->history_start_sample !=
+              receiving_after->history_start_sample ||
+          receiving_before->samples_elapsed !=
+              receiving_after->samples_elapsed ||
+          std::memcmp(receiving_before->history_linear.data(),
+                      receiving_after->history_linear.data(),
+                      sizeof(receiving_before->history_linear)) != 0)
+        return false;
+      // Derive the only permitted dated history from the complete actual
+      // BEFORE transport and typed AFTER preparation. Matching JSON seals or
+      // candidate labels never supply a source/Act permission.
+      auto expected_history = std::make_unique<ql::ReceivingSourceHistory>(
+          receiving_before->source_history);
+      if (!expected_history->count ||
+          !ql::append_receiving_source(
+              *expected_history, *pending_after,
+              *candidate.immutable_preparation, cursor_,
+              receiving_before->history_start_sample) ||
+          receiving_after->version != 2 ||
+          !ql::same_receiving_source_history(*expected_history,
+                                             receiving_after->source_history))
+        return false;
+    }
     // Match by the original native driver/node identity, never array slot or
     // a centre average. Geometry/projection/calibration/programme handles may
     // lawfully change after the current native source is recompiled.
@@ -1824,6 +2145,15 @@ public:
     continuation.owner_suspended = route_programs_.owner_suspended;
     if (!valid_route_programs(continuation, port, after))
       return false;
+    if (paired) {
+      out.candidate_receiving_ = *after_receiving;
+      out.receiving_before_ = std::move(receiving_before);
+      out.receiving_after_ = std::move(receiving_after);
+      out.receiving_current_ = std::move(receiving_current);
+      out.paired_receiving_ = true;
+    }
+    out.guard_nonce_ = guard.nonce_;
+    out.panic_fence_ = panic_fence_.load();
     out.before_ = determination_;
     out.after_ = after;
     out.candidate_port_ = port;
@@ -1843,14 +2173,63 @@ public:
     out.ready_ = true;
     return true;
   }
+
+public:
+  bool preflight_stopped_combined_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed, const StoppedCustody &guard,
+      std::uint64_t expected_cursor, PreparedCombinedRevision &out) {
+    return preflight_stopped_combined_revision_impl(
+        after, port, after_seed, guard, expected_cursor, out, nullptr, nullptr);
+  }
+  bool preflight_stopped_combined_receiving_revision(
+      const Determination &after, const PhysicalPort &port,
+      const NativeRouteProgramSet &after_seed,
+      const ReceivingPort &after_receiving,
+      const ql::PreparedPhysicalBody &pending_after,
+      const StoppedCustody &guard, std::uint64_t expected_cursor,
+      PreparedCombinedRevision &out) {
+    return preflight_stopped_combined_revision_impl(
+        after, port, after_seed, guard, expected_cursor, out, &after_receiving,
+        &pending_after);
+  }
   // The combined native owner calls this immediately BEFORE P preflight/apply
   // in the same uninterrupted guard. It never interprets an AFTER body label
   // as actual state. Future source schedules remain explicitly refused.
   bool combined_revision_current(const PreparedCombinedRevision &candidate,
                                  const StoppedCustody &guard) const noexcept {
+    if (!candidate.ready_ || candidate.owner_ != this || guard.owner_ != this ||
+        activity_.load() != 2 || device_running_.load() ||
+        guard.nonce_ != candidate.guard_nonce_)
+      return false;
+    if (candidate.paired_receiving_) {
+      if (!candidate.receiving_before_ || !candidate.receiving_after_ ||
+          !candidate.receiving_current_ ||
+          !complete_receiving_port(receiving_) ||
+          !complete_receiving_port(candidate.candidate_receiving_) ||
+          !receiving_.write_transport_checkpoint ||
+          !candidate.candidate_receiving_.write_transport_checkpoint ||
+          !same_receiving_manifest(*receiving_.manifest,
+                                   candidate.receiving_before_->manifest) ||
+          !same_receiving_manifest(*candidate.candidate_receiving_.manifest,
+                                   candidate.receiving_after_->manifest) ||
+          !receiving_.write_transport_checkpoint(receiving_.owner,
+                                                 *candidate.receiving_current_,
+                                                 candidate.cursor_) ||
+          !same_receiving_checkpoint(*candidate.receiving_before_,
+                                     *candidate.receiving_current_) ||
+          !candidate.candidate_receiving_.write_transport_checkpoint(
+              candidate.candidate_receiving_.owner,
+              *candidate.receiving_current_, candidate.cursor_) ||
+          !same_receiving_checkpoint(*candidate.receiving_after_,
+                                     *candidate.receiving_current_))
+        return false;
+    }
     return candidate.ready_ && candidate.owner_ == this &&
-           guard.owner_ == this && activity_.load() == 2 &&
-           !device_running_.load() && cursor_ == candidate.cursor_ &&
+           guard.owner_ == this && guard.nonce_ == candidate.guard_nonce_ &&
+           panic_fence_.load() == candidate.panic_fence_ &&
+           activity_.load() == 2 && !device_running_.load() &&
+           cursor_ == candidate.cursor_ &&
            accepted_sequence_ == candidate.accepted_sequence_ &&
            applied_application_ordinal_ == candidate.applied_ordinal_ &&
            emergency_requested_.load() == candidate.emergency_requested_ &&
@@ -1878,6 +2257,10 @@ public:
       std::terminate();
     std::swap(body_,
               candidate.candidate_port_); // token retains retired route custody
+    if (candidate.paired_receiving_) {
+      std::swap(receiving_, candidate.candidate_receiving_);
+      receiving_encoding_present_ = true;
+    }
     route_programs_ = candidate.continuation_;
     route_step_sine_ = candidate.step_sine_;
     route_step_cosine_ = candidate.step_cosine_;
@@ -1885,6 +2268,8 @@ public:
     producer_identity_ = candidate.after_.identity;
     source_schedule_[0] = ScheduledDetermination{candidate.after_, cursor_};
     ++combined_control_revision_;
+    if (!requalify_stopped_contacts(guard, cursor_))
+      std::terminate();
     candidate.ready_ = false;
     // Voice/touch/phase/tail/sustain/queued operation/release/panic fences and
     // original application/journal identities stay intact. A future old-basis
@@ -1916,7 +2301,9 @@ public:
         body_.revision(body_.owner) != determination_.body_revision)
       throw std::logic_error(
           "exclusive paired audio/body checkpoint custody required");
-    cp.version = 2;
+    contacts_.write_checkpoint(cp.contacts);
+    cp.prepared_contacts.reset();
+    cp.version = cp.contacts.history_present ? 3 : 2;
     cp.sample_rate = rate_;
     cp.determination = determination_;
     cp.producer_determination = producer_determination_;
@@ -1984,13 +2371,62 @@ private:
       std::uint64_t expected_cursor, const PhysicalPort &port,
       const ReceivingPort *saved_receiver = nullptr,
       std::uint64_t saved_receiver_cursor = 0) const noexcept {
+    if (cp.version == 3) {
+      if (!port.contact_preparation)
+        return false;
+      try {
+        if (!cp.prepared_contacts ||
+            !NativeContactSlots::same_checkpoint(
+                cp.contacts, cp.prepared_contacts->checkpoint))
+          cp.prepared_contacts = NativeContactSlots::prepare_restore(
+              cp.contacts, *port.contact_preparation, cp.cursor,
+              cp.accepted_sequence);
+        double reserved = 0;
+        for (std::size_t slot = 0; slot < cp.contacts.slots.size(); ++slot) {
+          const auto &v = cp.contacts.slots[slot];
+          if (!v.present)
+            continue;
+          if (!(v.source.instance == cp.determination.identity.instance &&
+                v.source.event == cp.determination.identity.event &&
+                v.source.subject == cp.determination.identity.subject) ||
+              v.source.m1_revision > cp.producer_identity.m1_revision ||
+              v.source.m2_generation > cp.producer_identity.m2_generation ||
+              (v.delivery.status == NativeContactStatus::Queued
+                   ? v.delivery.start_application_ordinal != 0
+                   : (!v.delivery.start_application_ordinal ||
+                      v.delivery.start_application_ordinal >
+                          cp.applied_application_ordinal)))
+            return false;
+          if (v.delivery.status == NativeContactStatus::Queued ||
+              v.delivery.status == NativeContactStatus::Delivering) {
+            if (v.delivery.status == NativeContactStatus::Delivering &&
+                !cp.prepared_contacts->programs[slot]->matches_preparation(
+                    *port.contact_preparation, v.original.start_sample))
+              return false;
+            reserved += std::abs(v.operands.force_newtons);
+          }
+        }
+        const double budget =
+            cp.has_route_programs
+                ? route_scalar_budget(cp.route_programs.manifest)
+                : port.max_force_newtons;
+        if (reserved > budget)
+          return false;
+      } catch (...) {
+        return false;
+      }
+    } else if (cp.contacts.history_present ||
+               cp.contacts.original_request_high_water) {
+      return false;
+    }
     const auto &receiver = saved_receiver ? *saved_receiver : receiving_;
     const auto receiver_cursor =
         saved_receiver ? saved_receiver_cursor : expected_cursor;
     if (guard.owner_ != this || activity_.load() != 2 ||
         device_running_.load() || cursor_ != expected_cursor ||
-        cp.version != 2 || cp.sample_rate != rate_ ||
-        cp.has_receiving != bool(receiver.owner) ||
+        (cp.version != 2 && cp.version != 3) ||
+        (cp.version == 3) != cp.contacts.history_present ||
+        cp.sample_rate != rate_ || cp.has_receiving != bool(receiver.owner) ||
         (cp.has_receiving && !cp.receiving_encoding_present) ||
         (cp.has_receiving &&
          (!complete_receiving_port(receiver) ||
@@ -2174,8 +2610,9 @@ private:
       ordinals[ordinals_size++] = sequence;
       return true;
     };
+    std::array<unsigned, contact_slot_capacity> queued_contacts{};
     auto valid_operation = [&](const Operation &op) {
-      if (unsigned(op.kind) > unsigned(Kind::Determination) ||
+      if (unsigned(op.kind) > unsigned(Kind::Contact) ||
           !ordinal(op.sequence) || !valid_origin(op.identity) ||
           !valid_native_clock(op.native_clock) ||
           !valid_requested_timing(op.has_requested_sample, op.requested_sample,
@@ -2185,6 +2622,19 @@ private:
            op.kind != Kind::Sustain && op.kind != Kind::Panic))
         return false;
       switch (op.kind) {
+      case Kind::Contact: {
+        if (cp.version != 3 || !op.contact.valid())
+          return false;
+        const auto &slot = cp.contacts.slots[op.contact.slot];
+        if (++queued_contacts[op.contact.slot] != 1)
+          return false;
+        return slot.present && slot.handle == op.contact &&
+               slot.admission_sequence == op.sequence &&
+               slot.delivery.status == NativeContactStatus::Queued &&
+               slot.operands.impact_sample == op.sample &&
+               op.requested_sample == op.sample && !op.late_admitted &&
+               slot.source == contact_source(op.identity);
+      }
       case Kind::NoteOn:
         return valid_saved_note(op.note) && op.note.identity == op.identity &&
                scalar(op.value, 0, 1);
@@ -2227,6 +2677,11 @@ private:
     for (const auto &p : cp.pending_operations)
       if (p.active && !valid_operation(p.operation))
         return false;
+    for (std::size_t i = 0; i < cp.contacts.slots.size(); ++i)
+      if (queued_contacts[i] != unsigned(cp.contacts.slots[i].present &&
+                                         cp.contacts.slots[i].delivery.status ==
+                                             NativeContactStatus::Queued))
+        return false;
     for (auto i = cp.releases.read; i < cp.releases.write; ++i)
       if (!valid_release(cp.releases.storage[i % 64]))
         return false;
@@ -2263,7 +2718,20 @@ private:
                   ->root_position != 3 ||
           a.physical_sample_rate != rate_ || !a.physical_pratibimba ||
           !valid_native_clock(a.clock) ||
-          unsigned(a.kind) > unsigned(Kind::Determination) ||
+          unsigned(a.kind) > unsigned(Kind::Contact) ||
+          a.has_contact != (a.kind == Kind::Contact) ||
+          (a.has_contact && (a.has_note || a.has_determination ||
+                             a.contact_operands.sample_rate != rate_ ||
+                             !a.contact_operands.duration_samples ||
+                             a.contact_operands.duration_samples > max_frames ||
+                             a.contact_occurrence.original_request_id >
+                                 cp.contacts.original_request_high_water)) ||
+          (a.has_contact &&
+           (cp.version != 3 || !a.contact.valid() ||
+            a.contact_operands.impact_sample != a.admitted_sample ||
+            !a.contact_occurrence.original_request_id ||
+            a.contact_occurrence.constructor_lineage !=
+                cp.contacts.constructor_lineage)) ||
           unsigned(a.parameter) > unsigned(Parameter::MonitorLinear) ||
           !std::isfinite(a.value) || !std::isfinite(a.pitch_hz) ||
           a.has_determination != (a.kind == Kind::Determination) ||
@@ -2303,6 +2771,14 @@ public:
 
 private:
   void commit_checkpoint_state(const Checkpoint &cp) noexcept {
+    if (cp.version == 3) {
+      if (!cp.prepared_contacts)
+        std::terminate();
+      contacts_.restore(*cp.prepared_contacts);
+    } else {
+      const NativePreparedContactRestore empty{};
+      contacts_.restore(empty);
+    }
     determination_ = cp.determination;
     producer_determination_ = cp.producer_determination;
     producer_identity_ = cp.producer_identity;
@@ -2599,14 +3075,18 @@ public:
       return false;
     struct RenderCustody {
       Engine &engine;
+      std::uint64_t block_start;
       ~RenderCustody() {
+        if (const auto contact = engine.contacts_.uncommitted_sequence())
+          engine.recording_failed(RecordingFailure::PhysicalCommitFailure,
+                                  contact, block_start);
         if (engine.block_application_count_)
           engine.recording_failed(RecordingFailure::PhysicalCommitFailure,
                                   engine.block_applications_[0].sequence,
                                   engine.cursor_);
         engine.activity_.store(0, std::memory_order_release);
       }
-    } rendering{*this};
+    } rendering{*this, start_sample};
     block_application_count_ = 0;
     if (fault_.load(std::memory_order_relaxed) || start_sample != cursor_ ||
         cursor_ > std::numeric_limits<std::uint64_t>::max() - frames)
@@ -2624,6 +3104,10 @@ public:
     }
     published_horizon_.store(cursor_ + frames, std::memory_order_release);
     block_application_count_ = 0;
+    contacts_.begin_block();
+    if (body_.contact_preparation)
+      contacts_.requalify(contact_source(determination_.identity),
+                          *body_.contact_preparation);
     Capture capture{};
     capture.identity = determination_.identity;
     capture.start_sample = cursor_;
@@ -2643,6 +3127,9 @@ public:
         });
     const bool operations_admitted =
         operations_.drain_snapshot([&](const Operation &arriving) noexcept {
+          if (arriving.kind == Kind::Contact &&
+              !contacts_.observe_queue(arriving.contact))
+            return false;
           return prepare_operation(arriving);
         });
     if (!releases_admitted || !operations_admitted) {
@@ -2666,6 +3153,7 @@ public:
         emergency_observed_ =
             emergency_requested_.load(std::memory_order_acquire);
         emergency_applied_sample_ = cursor_ + i;
+        contacts_.interrupt(panic_fence_.load(std::memory_order_acquire));
         // Emergency Hold ends EVERY active scalar exciter immediately,
         // including finite voice-steal fades. Ordinary key-up still uses its
         // declared release envelope. The same P state keeps ringing; native
@@ -2709,6 +3197,8 @@ public:
           application.late_admitted = due->operation.late_admitted;
           application.has_note = held_note(application.touch, application.note);
           application.applied = apply_release(due->operation);
+          if (application.applied && due->operation.kind == Kind::Panic)
+            contacts_.interrupt(due->operation.sequence);
           if (!stage_application(application)) {
             clear();
             fault_.store(true, std::memory_order_release);
@@ -2748,9 +3238,27 @@ public:
           } else
             application.has_note =
                 held_note(application.touch, application.note);
-          if (apply_now)
+          if (op->kind == Kind::Contact) {
+            application.has_contact = true;
+            application.contact = op->contact;
+            application.applied =
+                body_.contact_preparation &&
+                contacts_.begin(op->contact, op->sequence,
+                                contact_source(determination_.identity),
+                                *body_.contact_preparation, cursor_ + i,
+                                panic_fence_.load(std::memory_order_acquire),
+                                application.contact_operands,
+                                application.contact_occurrence);
+            applied_sequence_ = std::max(applied_sequence_, op->sequence);
+            if (!application.applied)
+              ++refused_;
+          } else if (apply_now) {
             application.applied = apply(*op);
-          else
+            if (application.applied && op->kind == Kind::Determination &&
+                body_.contact_preparation)
+              contacts_.requalify(contact_source(determination_.identity),
+                                  *body_.contact_preparation);
+          } else
             ++refused_;
           if (!stage_application(application)) {
             clear();
@@ -2777,13 +3285,19 @@ public:
       // Fixed headroom bound, independent of current polyphony. Newton
       // scale is declared material policy and visible in readback.
       force *= effective_.force_newtons / double(max_voices + max_tails);
-      const double scalar_budget =
+      const double total_scalar_budget =
           has_route_programs_ ? route_scalar_budget(route_programs_.manifest)
                               : body_.max_force_newtons;
+      const double scalar_budget =
+          std::max(0.0, total_scalar_budget -
+                            contacts_.callback_reserved_force_newtons());
       if (std::abs(force) > scalar_budget)
         ++force_limited_;
       force = std::clamp(force, -scalar_budget, scalar_budget);
-      capture.force_newtons[i] = force;
+      capture.note_force_newtons[i] = force;
+      const double contact_force = contacts_.force_at(cursor_ + i);
+      capture.contact_force_newtons[i] = contact_force;
+      capture.force_newtons[i] = force + contact_force;
       if (has_route_programs_) {
         capture.route_count = route_programs_.program_count;
         for (std::size_t route = 0; route < capture.route_count; ++route) {
@@ -2979,6 +3493,8 @@ public:
       // ordinal and records loss, so C can detect both interior and trailing
       // missing facts.
       a.applied_application_ordinal = ++applied_application_ordinal_;
+      if (a.has_contact)
+        contacts_.application_ordinal(a.contact, a.applied_application_ordinal);
       if (!gesture_applications_.push(a)) {
         recording_failed(RecordingFailure::ApplicationQueueOverflow, a.sequence,
                          a.applied_sample);
@@ -2986,6 +3502,7 @@ public:
       }
     }
     block_application_count_ = 0;
+    contacts_.commit(cursor_);
     Readback receipt{};
     receipt.audio_resident = resident_lifetime_.token();
     receipt.callback_output_committed = true;
@@ -2997,6 +3514,12 @@ public:
     receipt.scalar_force_budget_newtons =
         has_route_programs_ ? route_scalar_budget(route_programs_.manifest)
                             : body_.max_force_newtons;
+    receipt.contact_reserved_force_newtons =
+        contacts_.callback_reserved_force_newtons();
+    receipt.note_headroom_newtons =
+        std::max(0.0, receipt.scalar_force_budget_newtons -
+                          receipt.contact_reserved_force_newtons);
+    receipt.contacts = contacts_.deliveries();
     receipt.has_route_programs = has_route_programs_;
     receipt.routes_suspended =
         has_route_programs_ && route_programs_.owner_suspended;
@@ -3055,6 +3578,7 @@ public:
       ++dropped_readbacks_;
     if (capture_.load(std::memory_order_relaxed) && !captures_.push(capture))
       ++dropped_captures_;
+    contacts_.acknowledge_terminals();
     return true;
   }
 };

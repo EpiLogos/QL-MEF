@@ -58,6 +58,7 @@ pub mod physical_body;
 mod pole_state;
 pub mod procedural_composition;
 pub mod procedural_conduct;
+pub mod procedural_consumers;
 pub mod procedural_control;
 pub mod procedural_effective;
 pub mod procedural_intervention;

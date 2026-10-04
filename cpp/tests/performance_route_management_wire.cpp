@@ -13,8 +13,10 @@
 #include <ql/performance_management.hpp>
 #include <ql/performance_management_wire.hpp>
 #include <ql/performance_packet.hpp>
+#include <ql/performance_physical_receiving.hpp>
 #include <ql/performance_physical_revision.hpp>
 #include <ql/performance_physical_routes.hpp>
+#include <ql/performance_receiving_restore.hpp>
 #include <ql/performance_route_programs.hpp>
 #include <ql/physical_transition.hpp>
 
@@ -570,12 +572,52 @@ static RevisionSource revision_source(J *fixture,
   }
   return {std::move(prepared), std::move(admitted), std::move(binding), seed};
 }
-static void retained_material_revision(J *fixture) {
+static void retained_material_revision(J *fixture, bool with_receiving = false,
+                                       J *actual_source_form_after = nullptr) {
+  // Genuine native M1/M2/M3/N9 producer below, plus declared bounded metric
+  // receiving experiment. This does not issue the private Scene/Act authority.
+  SpatialReceivingInput spatial;
+  spatial.receiver_ref = "native-test:material/receiver";
+  spatial.context_ref = "native-test:material/context";
+  spatial.source_ref = "native-test:material/retained-body-pickup";
+  spatial.policy_ref = "native-test:material/retarded-point-source";
+  spatial.policy_revision = "native-test:material/receiving-policy/v1";
+  spatial.standing = "architecture-model";
+  spatial.receiver_position_metres = {.37, 0, 0};
+  SpatialMotionInput motion;
+  motion.source_motion_ref = "native-test:material/source-trajectory";
+  motion.receiver_motion_ref = "native-test:material/receiver-trajectory";
+  motion.policy_ref = spatial.policy_ref;
+  motion.policy_revision = spatial.policy_revision;
+  motion.standing = spatial.standing;
+  motion.end_sample = 48000 * 60;
+  motion.source_velocity_metres_per_second = {.05, 0, 0};
+  motion.receiver_velocity_metres_per_second = {-.025, 0, 0};
+  std::shared_ptr<MovingReceivingPortBinding> receiving, after_receiving;
   auto joined = prepare(fixture);
+  if (actual_source_form_after) {
+    spatial.receiver_position_metres = {};
+    const auto &in = joined.native.body->preparation().input();
+    for (std::size_t i = 0; i < in.nodes.size(); ++i)
+      for (unsigned axis = 0; axis < 3; ++axis)
+        spatial.receiver_position_metres[axis] +=
+            in.pickup.node_weights[i] * in.nodes[i].rest_metres[axis];
+    spatial.receiver_position_metres[0] += .37;
+  }
   auto owner = std::make_unique<PerformanceManagement>(
       joined.native,
       reference("expression:native-nine/retained-material-manager"));
   owner->admit_catalog(native_catalog(fixture));
+  if (with_receiving) {
+    const auto &body = owner->native().body;
+    receiving = std::make_shared<MovingReceivingPortBinding>(
+        body, body->preparation(), 0,
+        PreparedMovingSpatialReceiving(body->preparation(), spatial, motion));
+    auto guard = owner->native().engine->acquire_stopped_custody();
+    assert(guard && owner->native().engine->install_receiving_port(
+                        receiving->port(receiving), guard, 0));
+    owner->refresh_stopped_reading(guard);
+  }
   owner->native().engine->enable_capture(true);
   for (std::uint64_t i = 0; i < 2; ++i) {
     auto op = operation(owner->native().determination, Kind::NoteOn, i + 1, 0);
@@ -603,33 +645,195 @@ static void retained_material_revision(J *fixture) {
     assert(owner->offline_advance(pcm.data(), pcm.size(), block * 128));
     owner->pulse();
     assert(owner->pop_audio_capture(capture));
+    if (with_receiving) {
+      assert(capture.has_receiving);
+      if (block == 0) {
+        const auto &preparation =
+            *receiving->port(receiving).immutable_preparation;
+        SpatialMotionPoint first{}, last{};
+        assert(preparation.point_at(0, first) &&
+               preparation.point_at(127, last));
+        const auto unavailable = std::size_t(std::floor(std::min(
+            first.propagation_delay_samples, last.propagation_delay_samples)));
+        assert(unavailable > 0 && unavailable < pcm.size());
+        for (std::size_t i = 0; i < unavailable; ++i)
+          assert(capture.received_linear[i] == 0);
+        assert(std::any_of(capture.pickup_linear.begin(),
+                           capture.pickup_linear.begin() + 128,
+                           [](float x) { return x != 0; }));
+      }
+    }
   }
   const auto before = owner->stopped_checkpoint();
   assert(before->native_pair.audio.cursor == 512);
+  if (with_receiving) {
+    assert(
+        before->native_pair.audio.has_receiving &&
+        before->native_pair.audio.receiving.history_start_sample == 0 &&
+        std::any_of(before->native_pair.audio.receiving.history_linear.begin(),
+                    before->native_pair.audio.receiving.history_linear.end(),
+                    [](float x) { return x != 0; }));
+  }
   const auto before_wire =
       management_checkpoint_transport::checkpoint_wire(*before);
   const auto before_state = owner->native().body->checkpoint();
   const auto original_owner = owner->native().body.get();
   const auto before_preparation = owner->native().body->preparation();
-  auto *after_fixture = packet::field(fixture, "after_material");
+  auto *after_fixture = actual_source_form_after
+                            ? actual_source_form_after
+                            : packet::field(fixture, "after_material");
   auto source = revision_source(after_fixture, owner->native().body);
   auto physical = std::make_unique<PreparedPhysicalTransition>(
       before_preparation, source.prepared.body->preparation(), 1, 512,
-      PhysicalLiveUpdateKind::Material,
+      actual_source_form_after ? PhysicalLiveUpdateKind::FormOrBoundary
+                               : PhysicalLiveUpdateKind::Material,
       PhysicalFormTransition::ProjectCorrespondingNodes,
-      "native-score:material/actual-fourfold-stiffness-edit");
+      actual_source_form_after
+          ? "native-score:form/actual-m3-command-source-geometry"
+          : "native-score:material/actual-fourfold-stiffness-edit");
   PhysicalLiveTransitionReceipt receipt;
   std::unique_ptr<PreparedRetainedBodyRevision> transaction;
   {
     auto guard = owner->native().engine->acquire_stopped_custody();
+    ReceivingPort candidate_receiver{};
+    if (with_receiving) {
+      const auto after_port = physical_routes_port(
+          physical_port(owner->native().body), source.binding);
+      // The original standalone API must still refuse an installed receiver.
+      auto omitted =
+          std::make_unique<PerformanceManagement::PreparedCombinedRevision>();
+      assert(!owner->preflight_stopped_combined_revision(
+          source.prepared.determination, after_port, source.seed,
+          source.prepared.notes, native_catalog(after_fixture), guard, 512,
+          *omitted));
+      for (unsigned variant = 0; variant < 4; ++variant) {
+        auto changed_spatial = spatial;
+        auto changed_motion = motion;
+        if (variant == 0)
+          changed_spatial.context_ref = "native-test:material/foreign-context";
+        if (variant == 1)
+          changed_spatial.source_ref = "native-test:material/foreign-source";
+        if (variant == 2)
+          changed_motion.origin_sample = 512;
+        if (variant == 3)
+          changed_motion.source_velocity_metres_per_second[0] = .075;
+        bool refused = false;
+        try {
+          auto bad = MovingReceivingPortBinding::from_prepared_body_transition(
+              owner->native().body, *physical,
+              PreparedMovingSpatialReceiving(
+                  physical->pending_after_preparation(), changed_spatial,
+                  changed_motion),
+              before->native_pair.audio.receiving);
+          auto bad_port = bad->port(bad);
+          auto bad_token = std::make_unique<
+              PerformanceManagement::PreparedCombinedRevision>();
+          refused = !owner->preflight_stopped_combined_receiving_revision(
+              source.prepared.determination, after_port, source.seed, bad_port,
+              physical->pending_after_preparation(), source.prepared.notes,
+              native_catalog(after_fixture), guard, 512, *bad_token);
+        } catch (const std::invalid_argument &) {
+          refused = true;
+        }
+        assert(refused && physical->preflight(*owner->native().body));
+      }
+      // A valid receiver of the BEFORE body cannot masquerade as AFTER.
+      auto stale_token =
+          std::make_unique<PerformanceManagement::PreparedCombinedRevision>();
+      const auto stale_receiver = receiving->port(receiving);
+      assert(!owner->preflight_stopped_combined_receiving_revision(
+          source.prepared.determination, after_port, source.seed,
+          stale_receiver, physical->pending_after_preparation(),
+          source.prepared.notes, native_catalog(after_fixture), guard, 512,
+          *stale_token));
+      after_receiving =
+          MovingReceivingPortBinding::from_prepared_body_transition(
+              owner->native().body, *physical,
+              PreparedMovingSpatialReceiving(
+                  physical->pending_after_preparation(), spatial, motion),
+              before->native_pair.audio.receiving);
+      candidate_receiver = after_receiving->port(after_receiving);
+      // Matching labels/seals cannot conceal a lost material operand.
+      auto forged_input = physical->pending_after_preparation().input();
+      forged_input.material.density_kg_per_m3 *= 1.001;
+      const PreparedPhysicalBody different_complete_body(forged_input);
+      auto wrong_body_token =
+          std::make_unique<PerformanceManagement::PreparedCombinedRevision>();
+      assert(!owner->preflight_stopped_combined_receiving_revision(
+          source.prepared.determination, after_port, source.seed,
+          candidate_receiver, different_complete_body, source.prepared.notes,
+          native_catalog(after_fixture), guard, 512, *wrong_body_token));
+      auto ring = std::make_unique<NativeReceivingCheckpoint>();
+      assert(candidate_receiver.write_transport_checkpoint(
+          candidate_receiver.owner, *ring, 512));
+      auto changed = std::make_unique<NativeReceivingCheckpoint>(*ring);
+      changed->history_linear[17] =
+          std::nextafter(changed->history_linear[17], 1.f);
+      assert(candidate_receiver.validate_checkpoint(candidate_receiver.owner,
+                                                    *changed, 512));
+      candidate_receiver.restore_checkpoint(candidate_receiver.owner, *changed);
+      auto changed_token =
+          std::make_unique<PerformanceManagement::PreparedCombinedRevision>();
+      assert(!owner->preflight_stopped_combined_receiving_revision(
+          source.prepared.determination, after_port, source.seed,
+          candidate_receiver, physical->pending_after_preparation(),
+          source.prepared.notes, native_catalog(after_fixture), guard, 512,
+          *changed_token));
+      candidate_receiver.restore_checkpoint(candidate_receiver.owner, *ring);
+      // All refused attempts leave the actual BEFORE owner byte-for-byte.
+      auto observed_audio = std::make_unique<Engine::Checkpoint>();
+      owner->native().engine->write_checkpoint(*observed_audio, guard);
+      const auto observed_wire =
+          checkpoint_transport::audio_wire(*observed_audio);
+      const auto prior_wire =
+          checkpoint_transport::audio_wire(before->native_pair.audio);
+      assert(json_object_equal(observed_wire.get(), prior_wire.get()));
+      const auto actual_physical = ql::physical_wire::checkpoint_wire(
+          owner->native().body->checkpoint());
+      const auto prior_physical =
+          ql::physical_wire::checkpoint_wire(before_state);
+      assert(json_object_equal(actual_physical.get(), prior_physical.get()));
+    }
     transaction = std::make_unique<PreparedRetainedBodyRevision>(
         *owner, std::move(physical), source.admitted,
         source.prepared.determination,
         packet::field(packet::field(after_fixture, "performance_preparation"),
                       "native_basis"),
         source.seed, source.prepared.notes, native_catalog(after_fixture),
-        guard);
+        guard, with_receiving ? &candidate_receiver : nullptr);
     assert(transaction->current(guard));
+    if (with_receiving) {
+      auto ring = std::make_unique<NativeReceivingCheckpoint>();
+      assert(candidate_receiver.write_transport_checkpoint(
+          candidate_receiver.owner, *ring, 512));
+      auto changed = std::make_unique<NativeReceivingCheckpoint>(*ring);
+      changed->history_linear[19] =
+          std::nextafter(changed->history_linear[19], 1.f);
+      candidate_receiver.restore_checkpoint(candidate_receiver.owner, *changed);
+      assert(!transaction->current(guard));
+      PhysicalLiveTransitionReceipt refused{};
+      callback_probe = true;
+      const bool committed = transaction->commit(guard, refused);
+      callback_probe = false;
+      assert(!committed && allocations == 0 && releases == 0 &&
+             owner->native().body->body_revision() == 1);
+      candidate_receiver.restore_checkpoint(candidate_receiver.owner, *ring);
+      assert(transaction->current(guard));
+      // The actual installed BEFORE ring is independently guarded too.
+      auto before_receiver = receiving->port(receiving);
+      auto original = std::make_unique<NativeReceivingCheckpoint>();
+      assert(before_receiver.write_transport_checkpoint(before_receiver.owner,
+                                                        *original, 512));
+      auto changed_before =
+          std::make_unique<NativeReceivingCheckpoint>(*original);
+      changed_before->history_linear[23] =
+          std::nextafter(changed_before->history_linear[23], 1.f);
+      before_receiver.restore_checkpoint(before_receiver.owner,
+                                         *changed_before);
+      assert(!transaction->current(guard));
+      before_receiver.restore_checkpoint(before_receiver.owner, *original);
+      assert(transaction->current(guard));
+    }
     callback_probe = true;
     const bool committed = transaction->commit(guard, receipt);
     callback_probe = false;
@@ -646,6 +850,20 @@ static void retained_material_revision(J *fixture) {
   assert(after->native_pair.physical.samples_elapsed == 512 &&
          after->native_pair.audio.cursor == 512 &&
          after->native_pair.audio.determination.body_revision == 2);
+  if (with_receiving) {
+    const auto &a = before->native_pair.audio.receiving;
+    const auto &b = after->native_pair.audio.receiving;
+    assert(after->native_pair.audio.has_receiving &&
+           b.manifest.body_revision == 2 &&
+           b.manifest.context == a.manifest.context &&
+           b.manifest.receiver == a.manifest.receiver &&
+           b.manifest.origin_sample == a.manifest.origin_sample &&
+           b.manifest.end_sample == a.manifest.end_sample &&
+           b.history_start_sample == a.history_start_sample &&
+           b.samples_elapsed == a.samples_elapsed &&
+           std::memcmp(a.history_linear.data(), b.history_linear.data(),
+                       sizeof(a.history_linear)) == 0);
+  }
   const auto after_wire =
       management_checkpoint_transport::checkpoint_wire(*after);
   for (const char *field : {"inputs", "input_history", "transport_epoch"})
@@ -659,10 +877,25 @@ static void retained_material_revision(J *fixture) {
                             "pending_operations", "applications"})
     assert(json_object_equal(packet::field(before_audio, field),
                              packet::field(after_audio, field)));
-  assert(after->native_pair.physical.displacement_modal_metres ==
-             before_state.displacement_modal_metres &&
-         after->native_pair.physical.velocity_modal_metres_per_second ==
-             before_state.velocity_modal_metres_per_second);
+  if (!actual_source_form_after) {
+    assert(after->native_pair.physical.displacement_modal_metres ==
+               before_state.displacement_modal_metres &&
+           after->native_pair.physical.velocity_modal_metres_per_second ==
+               before_state.velocity_modal_metres_per_second);
+  } else {
+    assert(receipt.kind == PhysicalLiveUpdateKind::FormOrBoundary &&
+           source.prepared.body->preparation().eigenbasis_identity() !=
+               before_preparation.eigenbasis_identity());
+    assert(after->native_pair.audio.receiving.source_history.count == 2 &&
+           after->native_pair.audio.receiving.source_history.segments[0]
+                   .anchor_metres ==
+               before->native_pair.audio.receiving.source_history.segments[0]
+                   .anchor_metres &&
+           after->native_pair.audio.receiving.source_history.segments[1]
+                   .anchor_metres == after_receiving->port(after_receiving)
+                                         .immutable_preparation->spatial()
+                                         .source_position_metres());
+  }
   for (std::size_t i = 0; i < 9; ++i) {
     const auto &a = before->native_pair.audio.route_programs.programs[i];
     const auto &b = after->native_pair.audio.route_programs.programs[i];
@@ -688,17 +921,56 @@ static void retained_material_revision(J *fixture) {
   const auto restored =
       management_checkpoint_transport::read_checkpoint_wire(serialized.get());
   TransportAcknowledgement acknowledgement;
-  assert(reopened->stopped_restore(
-      *restored, 0, reference("native-score:material/reopen-transaction"),
-      reference("native-score:material/original-complete-checkpoint"),
-      acknowledgement));
+  std::shared_ptr<MovingReceivingPortBinding> reopened_receiving;
+  std::unique_ptr<PerformanceManagement::PreparedReceivingRestore>
+      retained_restore;
+  if (with_receiving) {
+    const auto &saved = restored->native_pair.audio.receiving;
+    reopened_receiving = MovingReceivingPortBinding::from_saved_preparation(
+        reopened_native.body, reopened_native.body->preparation(), 512,
+        PreparedMovingSpatialReceiving(reopened_native.body->preparation(),
+                                       spatial, motion),
+        0, saved);
+    const auto candidate = reopened_receiving->port(reopened_receiving);
+    assert(restore_current_receiving_checkpoint(
+        *reopened, *restored, port, reopened_source.seed, reopened_native.notes,
+        native_catalog(after_fixture), 0,
+        reference("native-score:material/reopen-transaction"),
+        reference("native-score:material/original-complete-checkpoint"),
+        retained_restore, acknowledgement, &candidate));
+  } else {
+    assert(reopened->stopped_restore(
+        *restored, 0, reference("native-score:material/reopen-transaction"),
+        reference("native-score:material/original-complete-checkpoint"),
+        acknowledgement));
+  }
   assert(acknowledgement.target_sample == 512);
+  unsigned observed_future_parameter = 0, observed_future_release = 0;
   for (unsigned block = 0; block < 8; ++block) {
     std::array<float, 128> resumed{};
     const auto start = 512 + block * 128;
     assert(owner->offline_advance(pcm.data(), pcm.size(), start));
     assert(reopened->offline_advance(resumed.data(), resumed.size(), start));
     const auto current = owner->pulse(), returned = reopened->pulse();
+    assert(current->applications.size() == returned->applications.size());
+    for (std::size_t i = 0; i < current->applications.size(); ++i) {
+      const auto &app = current->applications[i];
+      auto original_app = checkpoint_transport::application(app);
+      auto restored_app =
+          checkpoint_transport::application(returned->applications[i]);
+      assert(json_object_equal(original_app.get(), restored_app.get()));
+      if (app.sequence == 3) {
+        assert(app.kind == Kind::Parameter && app.applied &&
+               app.applied_sample == 600 &&
+               app.parameter == Parameter::MasterLinear && app.value == .25);
+        ++observed_future_parameter;
+      }
+      if (app.sequence == 4) {
+        assert(app.kind == Kind::NoteOff && app.applied &&
+               app.applied_sample == 900);
+        ++observed_future_release;
+      }
+    }
     assert(pcm == resumed &&
            current->reading.physical.visible_positions_metres ==
                returned->reading.physical.visible_positions_metres);
@@ -706,13 +978,32 @@ static void retained_material_revision(J *fixture) {
     assert(owner->pop_audio_capture(original) &&
            reopened->pop_audio_capture(replay));
     assert(original.force_newtons == replay.force_newtons &&
-           original.route_force_newtons == replay.route_force_newtons);
+           original.route_force_newtons == replay.route_force_newtons &&
+           original.pickup_linear == replay.pickup_linear &&
+           original.received_linear == replay.received_linear);
+    if (with_receiving) {
+      auto original_state = owner->stopped_checkpoint();
+      auto returned_state = reopened->stopped_checkpoint();
+      assert(same_receiving_checkpoint(
+          original_state->native_pair.audio.receiving,
+          returned_state->native_pair.audio.receiving));
+      auto first = ql::physical_wire::checkpoint_wire(
+          original_state->native_pair.physical);
+      auto second = ql::physical_wire::checkpoint_wire(
+          returned_state->native_pair.physical);
+      assert(json_object_equal(first.get(), second.get()));
+    }
   }
+  assert(observed_future_parameter == 1 && observed_future_release == 1);
   assert(owner->native().body->checkpoint().displacement_modal_metres ==
          reopened->native().body->checkpoint().displacement_modal_metres);
   std::cout
       << "actual native N9+M1 held touches+future parameter/release -> same P "
-         "material projection+phase/history -> exact1024 reopen passed\n";
+         "material projection+phase/history -> exact1024 reopen passed"
+      << (with_receiving ? " with original M4 trajectory/birth/full ring; "
+                           "wrong source/context/body/ring refused"
+                         : " without M4")
+      << "\n";
 }
 // Optional native CI artifact output. Every value is taken from this actual
 // same-owner stopped queue/application activity; no precomputed receipt.
@@ -1366,6 +1657,35 @@ static void genuine_carrier_detecting_trials(J *carrier) {
          json_object_to_json_string_ext(current, JSON_C_TO_STRING_PLAIN));
   assert(original != current);
 }
+#include "../test_support/independent_native_form_control_cases.hpp"
+#include "../test_support/independent_receiving_emission_history_cases.hpp"
+// Separate complete genuine Rust M3/source-form/N9 producer. This is transport
+// input to the actual same native owners; no JSON token can mint authority.
+static void genuine_source_form_receiving_activity() {
+  const auto *path = std::getenv("QL_SOURCE_FORM_RECEIVING_FIXTURE");
+  if (!path || !*path)
+    return; // Its paired Rust producer owns mandatory invocation.
+  std::ifstream file(path, std::ios::binary);
+  assert(file.good());
+  std::string bytes((std::istreambuf_iterator<char>(file)),
+                    std::istreambuf_iterator<char>());
+  assert(!bytes.empty() && bytes.size() < 32 * 1024 * 1024);
+  auto token = std::unique_ptr<json_tokener, decltype(&json_tokener_free)>(
+      json_tokener_new_ex(64), json_tokener_free);
+  json_tokener_set_flags(token.get(),
+                         JSON_TOKENER_STRICT | JSON_TOKENER_VALIDATE_UTF8);
+  auto raw = ql::physical_wire::own(
+      json_tokener_parse_ex(token.get(), bytes.data(), int(bytes.size())));
+  assert(json_tokener_get_error(token.get()) == json_tokener_success &&
+         json_tokener_get_parse_end(token.get()) == bytes.size());
+  assert(packet::string(packet::field(raw.get(), "schema")) ==
+         "ql.native-source-form-receiving-fixture/v1");
+  auto before = packet::field(raw.get(), "before"),
+       after = packet::field(raw.get(), "after");
+  assert(before && after);
+  retained_material_revision(before, true, after);
+  ql_test_native_form_control::activity(raw.get());
+}
 #include "../test_support/independent_retained_body_revision_cases.hpp"
 int main() {
   std::string bytes;
@@ -1398,6 +1718,9 @@ int main() {
   neutral_world(fixture.get());
   independent_retained_body_revision_cases(fixture.get());
   retained_material_revision(fixture.get());
+  retained_material_revision(fixture.get(), true);
+  independent_receiving_emission_history_cases(fixture.get());
+  genuine_source_form_receiving_activity();
   stopped_parameter_admission_cases(fixture.get());
   stopped_force_savecut_artifacts(fixture.get());
   allroute_management_hold(fixture.get());

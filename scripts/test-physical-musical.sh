@@ -107,6 +107,25 @@ run_native_gate dense-field-source env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/nati
   QL_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT="$TASK_DENSE_OUTPUT/original-current-native-source.json" \
   cargo test -p ql-mef --locked --lib continuous::host::dense_field_source_tests::actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis -- --ignored --nocapture || :
 
+# Genuine source-changing body, mixed M4 epochs and default calibration must
+# actually execute in this SAME full floor. Ignored leaves receive the worker
+# just built above. Missing, stale, skipped or failed artifacts stay RED.
+v_body_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_BODY_OUTPUT="$TASK_OUTPUT/current-body-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_body_nonce"
+mkdir -p "$TASK_BODY_OUTPUT"
+run_native_gate source-form-physical-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  QL_NATIVE_PHYSICAL_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-form-cold.json" \
+  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_stopped_form_material_applications_cold_replay_full_original_owner_and_detect_loss -- --ignored --exact --nocapture || :
+run_native_gate source-form-physical-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-form-cold.json" || :
+run_native_gate mixed-acoustic-source-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
+  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::acoustic_history::tests::actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_source_epochs -- --ignored --exact --nocapture || :
+run_native_gate mixed-acoustic-source-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" || :
+run_native_gate default-instrument-calibration env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  QL_NATIVE_INSTRUMENT_CALIBRATION_ARTIFACT="$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" \
+  cargo test -p ql-mef --locked --lib continuous::performance::current_configuration::calibration_tests::actual_default_twelve_node_instrument_calibration_measures_native_force_body_receiving_and_pcm -- --ignored --exact --nocapture || :
+run_native_gate default-instrument-calibration-artifact test -s "$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" || :
+
 # Exact original SourceForm, source-key and resident reply production owners.
 TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
 mkdir -p "$TASK_SOURCE_OUTPUT"
@@ -136,6 +155,7 @@ TASK_PACKETS_READY=false
 if run_native_gate native-performance-producer env QL_PERFORMANCE_PACKET_OUTPUT="$TASK_PACKET_OUTPUT" cargo test -p ql-mef --locked --test performance_audio actual_vimarsha_determinant_changes_octet_with_fixed_keys_metric_body_and_policy -- --exact; then
 TASK_PACKETS_READY=true
 run_native_gate native_performance_packet "$TASK_OUTPUT/native/native_performance_packet-test" "$TASK_PACKET_OUTPUT" || :
+run_native_gate performance_contact_slots_packet "$TASK_OUTPUT/native/performance_contact_slots_packet-test" "$TASK_PACKET_OUTPUT" || :
 run_native_gate independent_clock_admission_packet "$TASK_OUTPUT/native/independent_clock_admission_packet-test" "$TASK_PACKET_OUTPUT" || :
 run_native_gate performance_management_packet "$TASK_OUTPUT/native/performance_management_packet-test" "$TASK_PACKET_OUTPUT" || :
 run_native_gate performance_application_order_packet "$TASK_OUTPUT/native/performance_application_order_packet-test" "$TASK_PACKET_OUTPUT" || :
@@ -150,8 +170,9 @@ fi
 # the same q/v emits both copied visible positions and native PCM.
 TASK_MATERIAL_OUTPUT="$TASK_OUTPUT/material-fold"
 mkdir -p "$TASK_MATERIAL_OUTPUT"
-if run_native_gate material-fold-producer env QL_MATERIAL_FOLD_FIXTURE="$TASK_MATERIAL_OUTPUT/native-fold.json" cargo test -p ql-mef --locked --test m3_material_fold; then
+if run_native_gate material-fold-producer env QL_MATERIAL_FOLD_FIXTURE="$TASK_MATERIAL_OUTPUT/native-fold.json" QL_SOURCE_FORM_RECEIVING_FIXTURE="$TASK_MATERIAL_OUTPUT/native-source-form-receiving.json" cargo test -p ql-mef --locked --test m3_material_fold; then
   run_native_gate material-fold-body "$TASK_OUTPUT/native/material_fold_body-test" "$TASK_MATERIAL_OUTPUT/native-fold.json" "$TASK_MATERIAL_OUTPUT/physical-observed.json" "$TASK_MATERIAL_OUTPUT/captured-native.wav" || :
+  run_native_gate source-form-receiving-artifact test -s "$TASK_MATERIAL_OUTPUT/native-source-form-receiving.json" || :
 fi
 # Preserve the actual original pre-material source and applied input journal
 # for the existing C Scene/Act gate. Its optional offline fingerprint belongs

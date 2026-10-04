@@ -69,6 +69,24 @@ impl FieldHost {
         checkpoint_ref: &str,
         transaction_ref: &str,
     ) -> Result<NativeReceivingReadmissionReply, NativeReceivingReadmissionRefusal> {
+        self.readmit_retained_performance_checkpoint_with_history(
+            lease,
+            original_checkpoint_wire,
+            checkpoint_ref,
+            transaction_ref,
+            None,
+        )
+    }
+    /// Only independently replayed SAME selected source/checkpoint history can
+    /// qualify a dated receiver; imported JSON cannot construct this operand.
+    pub(in crate::continuous) fn readmit_retained_performance_checkpoint_with_history(
+        &mut self,
+        lease: &NativeActSourceLease<'_>,
+        original_checkpoint_wire: &str,
+        checkpoint_ref: &str,
+        transaction_ref: &str,
+        history: Option<&crate::continuous::performance::QualifiedAcousticSourceHistory>,
+    ) -> Result<NativeReceivingReadmissionReply, NativeReceivingReadmissionRefusal> {
         let preflight = || -> Result<_, String> {
             reference(checkpoint_ref)?;
             reference(transaction_ref)?;
@@ -109,12 +127,13 @@ impl FieldHost {
                 .ok_or("actual retained native reading absent")?;
             decimal(&reading["samples_elapsed"])?;
             decimal(&reading["transport_epoch"])?;
-            let original_acoustic = owner.prepare_saved_acoustic_receiving(
+            let original_acoustic = owner.prepare_saved_acoustic_receiving_with_history(
                 current,
                 source,
                 lease,
                 original_checkpoint_wire,
                 checkpoint_ref,
+                history,
             )?;
             let mut request = json!({"schema":"ql.performance-control/v1",
                 "operation":"restore-current-receiving", "session_ref":reading["session_ref"],
@@ -221,12 +240,13 @@ impl FieldHost {
                 cursor,
             )?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
-            let original_after = owner.prepare_saved_acoustic_receiving(
+            let original_after = owner.prepare_saved_acoustic_receiving_with_history(
                 self.session.session().current_basis(),
                 source,
                 lease,
                 original_checkpoint_wire,
                 checkpoint_ref,
+                history,
             )?;
             if original_after.as_ref().map(|v| v.snapshot())
                 != original_acoustic.as_ref().map(|v| v.snapshot())

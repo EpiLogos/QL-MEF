@@ -195,6 +195,13 @@ impl NativePerformanceReceivingSource {
         self.acoustic = Some(configuration);
         Ok(self)
     }
+    /// Private original-epoch replay keeps the same actual source constructor,
+    /// World/profile/occasion/context and clears only authored acoustic input.
+    /// It is a numerical source-family clone, never a new permission factory.
+    pub(crate) fn without_acoustic_configuration(mut self) -> Self {
+        self.acoustic = None;
+        self
+    }
     /// Borrow the exact retained authored magnitudes; this read does not
     /// admit a receiver, native callback or current Scene/Act lease.
     pub fn acoustic_configuration(&self) -> Option<&super::performance::AcousticConfiguration> {
@@ -256,7 +263,8 @@ impl NativePerformanceReceivingSource {
         actual_original: &CoupledBasis,
         admitted_native_cursor: u64,
     ) -> Result<PreparedCurrentReceiving, String> {
-        let reading = self.replay(actual_original)?;
+        owner.validate_current(actual_original)?;
+        let reading = self.replay(owner.immutable_source_origin())?;
         let origin = owner.source_context_basis(actual_original)?;
         let definition = prepare_native_receiving(self.input(owner, &reading))?;
         let context = prepare_native_source_context(
@@ -302,7 +310,8 @@ impl NativePerformanceReceivingSource {
         admitted_native_cursor: u64,
     ) -> Result<PreparedCurrentReceiving, String> {
         let prepared = self.prepare_current(owner, actual_original, admitted_native_cursor)?;
-        let reading = self.replay(actual_original)?;
+        owner.validate_current(actual_original)?;
+        let reading = self.replay(owner.immutable_source_origin())?;
         prepared.context.validate_current(
             &owner.source_context_basis(actual_original)?,
             &prepared.definition,

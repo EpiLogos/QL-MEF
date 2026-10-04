@@ -124,25 +124,44 @@ impl FieldHost {
         &mut self,
         act_lease: &super::super::performance_act_bridge::NativeActSourceLease<'_>,
     ) -> Result<TimingBinding, NativeFieldTimingRefusal> {
+        self.prepare_native_field_timing_descriptor(act_lease)
+            .map(|prepared| prepared.witness().original_binding().clone())
+    }
+    /// Preserve the witness of the descriptor's ONE original guarded read.
+    /// Bootstrap consumes this private result directly; it must never call
+    /// field_procedural_timing_witness for a second observation.
+    pub(crate) fn prepare_native_field_timing_descriptor(
+        &mut self,
+        act_lease: &super::super::performance_act_bridge::NativeActSourceLease<'_>,
+    ) -> Result<PreparedFieldProceduralTiming, NativeFieldTimingRefusal> {
         if !self.available() || self.performance.is_some() {
             return Err("native nonsounding field descriptor unavailable or A/P-owned".into());
         }
+        let source = self.native_field_source_tuple();
         act_lease.validate_field_sources(
             &self.instance_ref,
             self.session.session().original_basis(),
             self.session.session().current_basis(),
         )?;
+        let mut before = self.session.session().last_field().clone();
+        // A preceding Advance's emitted PCM is not part of a zero-frame read.
+        before["audio"] = json!([]);
         let receipt = self.session.session_mut().read_field()?;
-        let prepared = (|| -> Result<TimingBinding, String> {
+        let prepared = (|| -> Result<(NativePosition, NativeTimingWitness), String> {
+            if receipt != before || self.native_field_source_tuple() != source {
+                return Err(
+                    "native descriptor read changed full source or its nonadvancing boundary"
+                        .into(),
+                );
+            }
             let position = NativePosition::from_field(&self.instance_ref, &receipt)?;
+            let cursor = position.cursor()?;
             let binding = act_lease.field_timing_binding(
                 &self.instance_ref,
                 self.session.session().original_field(),
-                position.cursor()?,
+                cursor,
             )?;
-            if binding.domain != NATIVE_FIELD_TIMING_DOMAIN
-                || binding.requested_cursor != position.cursor()?
-            {
+            if binding.domain != NATIVE_FIELD_TIMING_DOMAIN || binding.requested_cursor != cursor {
                 return Err("native field timing registration has another domain/boundary".into());
             }
             act_lease.validate_field_sources(
@@ -155,12 +174,33 @@ impl FieldHost {
                 &binding,
                 self.session.session().original_field(),
             )?;
-            Ok(binding)
+            let owner = json!({"schema":"ql.native-field-timing-fact/v1",
+                "binding":binding,"native_position":position,
+                "requested_cursor":cursor.to_string(),"admitted_cursor":cursor.to_string(),
+                "applied_cursor":null,"field_clock":receipt["clock"],"native_field_receipt":receipt,
+                "standing":"same guarded native FieldSession descriptor read boundary; no material/body/audio application acknowledgement"});
+            let witness = NativeTimingWitness::from_native_owner(
+                binding,
+                position.clone(),
+                cursor,
+                cursor,
+                None,
+                owner,
+                json!({"native_act_source_lease":act_lease.evidence(),"actual_field_source":source}),
+            )?;
+            Ok((position, witness))
         })();
-        prepared.map_err(|reason| NativeFieldTimingRefusal {
-            reason,
-            native_receipt: Some(receipt),
-        })
+        match prepared {
+            Ok((position, witness)) => Ok(PreparedFieldProceduralTiming {
+                position,
+                witness,
+                native_receipt: receipt,
+            }),
+            Err(reason) => Err(NativeFieldTimingRefusal {
+                reason,
+                native_receipt: Some(receipt),
+            }),
+        }
     }
     /// No PerformanceOwner is necessary for an ordinary nonsounding material
     /// procedure. If A/P owns the field, its R boundary is mandatory instead.

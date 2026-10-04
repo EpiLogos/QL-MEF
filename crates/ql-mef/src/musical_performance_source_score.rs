@@ -479,7 +479,8 @@ pub fn compile_retained_score(
     let witnesses = array(&manifest["native_source_parts"])?;
     if bases.is_empty()
         || bases.len() > 256
-        || bases.len() != sources.len()
+        || sources.is_empty()
+        || sources.len() > 256
         || assets.len() != sources.len()
         || witnesses.len() != assets.len()
     {
@@ -487,6 +488,7 @@ pub fn compile_retained_score(
     }
     let mut source_parts = Vec::new();
     let mut source_bases = BTreeSet::new();
+    let mut source_basis_indices = Vec::with_capacity(sources.len());
     for (index, (asset, witness)) in assets.iter().zip(witnesses).enumerate() {
         canonical_part(
             witness,
@@ -504,18 +506,53 @@ pub fn compile_retained_score(
             return Err("native score asset basis missing or ambiguous".into());
         }
         let basis_index = matching[0];
-        let source = &sources[basis_index];
+        let source = &sources[index];
         if witness["source_index"].as_u64() != Some(index as u64)
             || asset["schema"] != "oi.expression-performance-source-asset/v1"
-            || !source_bases.insert(basis_index)
+            || source.source_sample
+                != counter(
+                    &asset["native_bundle"]["current_receiving"]["native_admission"]["operation"]["native_sample"],
+                )?
+            || assets[..index].iter().any(|old| {
+                old["native_bundle"] == asset["native_bundle"]
+                    && old.get("native_physical_source_history")
+                        == asset.get("native_physical_source_history")
+                    && old.get("native_acoustic_source_history")
+                        == asset.get("native_acoustic_source_history")
+            })
             || asset["identity"] != bases[basis_index]["identity"]
             || asset["context"] != bases[basis_index]["context"]
             || asset["native_bundle"] != *source.owner.source_assets()
         {
             return Err("native score asset detached from actual current native producer".into());
         }
-        source_parts
-            .push(json!({"basis":basis_index,"source_index":index,"reading":witness["reading"]}));
+        for (name, history) in [
+            (
+                "native_physical_source_history",
+                source.owner.native_physical_source_history(),
+            ),
+            (
+                "native_acoustic_source_history",
+                source.owner.native_acoustic_source_history(),
+            ),
+        ] {
+            let originals = match asset.get(name) {
+                None => &[][..],
+                Some(value) => array(value)?,
+            };
+            if originals != history.as_slice() {
+                return Err(
+                    "native score lost exact original source epoch application corpus".into(),
+                );
+            }
+        }
+        source_bases.insert(basis_index);
+        source_basis_indices.push(basis_index);
+        source_parts.push(json!({"basis":basis_index,"source_index":index,
+            "source_sample":source.source_sample.to_string(),"reading":witness["reading"]}));
+    }
+    if source_bases.len() != bases.len() {
+        return Err("native score lost a complete original musical basis".into());
     }
     let episodes = array(&manifest["original_episodes"])?;
     if episodes.len() != bases.len() {
@@ -580,6 +617,7 @@ pub fn compile_retained_score(
             .ok_or("native Expression reference absent")?,
         edition_generation,
         &prepared,
+        &source_basis_indices,
         performance,
         custody,
     )

@@ -31,12 +31,17 @@ struct NativeReceivingCheckpoint {
   NativeReceivingManifest manifest{};
   std::uint64_t samples_elapsed = 0, history_start_sample = 0;
   std::array<float, ql::receiving_history_samples> history_linear{};
+  ql::ReceivingSourceHistory source_history{};
 };
 struct NativeReceivingReadback {
   ql::NativeResidentToken resident{};
   NativeReceivingManifest manifest{};
   std::uint64_t samples_elapsed = 0;
   ql::SpatialMotionPoint end_position{};
+  bool explicit_source_history = false;
+  std::uint32_t contributing_source_segments = 0;
+  std::uint64_t emitting_body_revision = 0, emitting_effective_sample = 0;
+  ReceivingRef emitting_preparation{}, emitting_source_revision{};
 };
 struct ReceivingPort {
   ql::NativeResidentToken resident{};
@@ -65,6 +70,9 @@ struct ReceivingPort {
   // guard. Every failure condition was checked before first state mutation.
   void (*restore_checkpoint)(
       void *, const NativeReceivingCheckpoint &) noexcept = nullptr;
+  // Control-only immutable operand custody. Never a source permission.
+  const ql::PreparedMovingSpatialReceiving *immutable_preparation = nullptr;
+  const ql::PreparedPhysicalBody *immutable_body_preparation = nullptr;
 };
 inline bool same_receiving_manifest(const NativeReceivingManifest &a,
                                     const NativeReceivingManifest &b) noexcept {
@@ -113,12 +121,34 @@ valid_receiving_manifest(const NativeReceivingManifest &m) noexcept {
 inline bool
 valid_receiving_checkpoint(const NativeReceivingCheckpoint &cp,
                            const NativeReceivingManifest &m) noexcept {
-  if (cp.version != 1 || !valid_receiving_manifest(m) ||
+  if ((cp.version != 1 && cp.version != 2) || !valid_receiving_manifest(m) ||
       !same_receiving_manifest(cp.manifest, m) ||
       cp.samples_elapsed < m.origin_sample ||
       cp.samples_elapsed > m.end_sample ||
       cp.history_start_sample != m.history_origin_sample ||
       cp.history_start_sample > cp.samples_elapsed)
+    return false;
+  if (cp.version == 2) {
+    if (!cp.source_history.explicit_history ||
+        !ql::valid_receiving_source_history(
+            cp.source_history, cp.samples_elapsed, cp.history_start_sample))
+      return false;
+    const auto &last = cp.source_history.segments[cp.source_history.count - 1];
+    if (last.body_revision != m.body_revision ||
+        last.source_generation != m.source_generation ||
+        last.pratibimba != m.pratibimba ||
+        last.trajectory_origin_sample != m.origin_sample)
+      return false;
+    const std::array<const ReceivingRef *, 6> refs{
+        &m.source_coordinate, &m.source_revision, &m.preparation, &m.state,
+        &m.eigenbasis,        &m.source_motion};
+    for (std::size_t i = 0; i < refs.size(); ++i) {
+      const auto *original =
+          ql::receiving_source_reference(cp.source_history, last.references[i]);
+      if (!original || std::strcmp(original, refs[i]->data()))
+        return false;
+    }
+  } else if (cp.source_history.explicit_history)
     return false;
   for (float x : cp.history_linear)
     if (!std::isfinite(x))
@@ -132,6 +162,8 @@ same_receiving_checkpoint(const NativeReceivingCheckpoint &a,
          same_receiving_manifest(a.manifest, b.manifest) &&
          a.samples_elapsed == b.samples_elapsed &&
          a.history_start_sample == b.history_start_sample &&
+         (a.version != 2 || ql::same_receiving_source_history(
+                                a.source_history, b.source_history)) &&
          std::memcmp(a.history_linear.data(), b.history_linear.data(),
                      sizeof(a.history_linear)) == 0;
 }

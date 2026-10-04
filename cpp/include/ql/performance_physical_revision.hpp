@@ -26,7 +26,8 @@ public:
       std::shared_ptr<const AdmittedNativeReceivingSource> after_source,
       const Determination &after, json_object *actual_after_native_basis,
       const NativeRouteProgramSet &after_seed, std::vector<NoteTarget> notes,
-      std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard)
+      std::vector<KeyboardCell> cells, const Engine::StoppedCustody &guard,
+      const ReceivingPort *after_receiving = nullptr)
       : owner_(&owner), body_(owner.native().body),
         after_source_(std::move(after_source)), physical_(std::move(physical)) {
     if (!guard || !body_ || !physical_ || physical_->committed() ||
@@ -41,10 +42,17 @@ public:
         body_, after_source_, prepared_after, after, actual_after_native_basis,
         after.m1_face == 1, physical_->sample());
     const auto port = physical_routes_port(physical_port(body_), after_port_);
-    if (!physical_->preflight(*body_) ||
-        !owner.preflight_stopped_combined_revision(
-            after, port, after_seed, std::move(notes), std::move(cells), guard,
-            physical_->sample(), musical_))
+    const bool preflighted =
+        physical_->preflight(*body_) &&
+        (after_receiving
+             ? owner.preflight_stopped_combined_receiving_revision(
+                   after, port, after_seed, *after_receiving, prepared_after,
+                   std::move(notes), std::move(cells), guard,
+                   physical_->sample(), musical_)
+             : owner.preflight_stopped_combined_revision(
+                   after, port, after_seed, std::move(notes), std::move(cells),
+                   guard, physical_->sample(), musical_));
+    if (!preflighted)
       throw std::invalid_argument(
           "atomic physical/musical revision preflight refused");
     ready_ = true;

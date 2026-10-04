@@ -2430,6 +2430,466 @@
       ],
       "rationale": "A mandatory bounded native producer drives the existing real FieldHost with 65000 supplied original samples, changes its actual current basis and exports the held original/current source. It grants no World/provider/private Scene authority and tests complete source retention for existing storage consumers.",
       "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_program.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_slots.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_form_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_receiving_source_history.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_native_form_control_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_receiving_emission_history_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_contact_slots_packet.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_history.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_scene_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_scene_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source_cold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_calibration.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original authored current preparation targets the actual free native body node and admits one genuine Force control only after original recording birth. Full intent/configuration, original pulse, queued versus applied state and saved continuation remain explicit. Thresholds are unmeasured until the real worker executes.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original authored current preparation targets the actual free native body node and admits one genuine Force control only after original recording birth. Full intent/configuration, original pulse, queued versus applied state and saved continuation remain explicit. Thresholds are unmeasured until the real worker executes.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_act.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_cold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_return.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_scene_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_scene_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_consumers.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Privately registered same Scene and actual FIELD/Management timing constructors qualify source compilation. Complete original facts and current source-body correspondence are compared; serialized contracts, hashes and labels confer no constructor or lease. Original current/bootstrap/cold tests remain mandatory.",
+      "tests": [
+        "crates/ql-mef/src/procedural_consumers.rs",
+        "crates/ql-mef/tests/procedural_control.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/prepare-retained-performance-fixture.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/retained-performance-ci-environment.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/retained-performance-environment-regressions.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
     }
   ]
 }

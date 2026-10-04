@@ -2,7 +2,7 @@
 //! Public stdin, imported source JSON and read receipts cannot mint a lease.
 use super::*;
 use crate::procedural_source::{
-    NativeBootstrapObservation, NativeSourceBootstrap, compile_native_source_bootstrap,
+    NativeBootstrapObservation, NativeSourceBootstrap, compile_native_source_bootstrap_registered,
 };
 
 pub(crate) struct NativeSourceBootstrapRefusal {
@@ -50,7 +50,12 @@ impl FieldHost {
                 &input.authorship.contributors,
             )?;
             let source = self.retained_procedural_source_artifact()?;
-            let (position, timing, receipt) = if self.performance.is_some() {
+            let scene_consumer = lease.procedural_scene_consumer_fact(
+                &self.instance_ref,
+                &input.scene,
+                &input.authorship.contributors,
+            )?;
+            let (position, timing, receipt, timing_consumer) = if self.performance.is_some() {
                 // A prepared or sounding instrument keeps A/P/R as sole clock
                 // owner. Never read a stale last_field as its timing boundary.
                 let current = self.session.session().current_basis().clone();
@@ -76,24 +81,60 @@ impl FieldHost {
                 };
                 native_timing_pulse = Some(descriptor.native_pulse().clone());
                 native_source_correspondence = Some(descriptor.source_correspondence().clone());
+                // Same descriptor, same original pulse, genuine R Management
+                // constructor. No FIELD clock or extra Inspect in this branch.
+                let consumer = descriptor.procedural_consumer_fact()?;
                 (
                     descriptor.position().clone(),
                     descriptor.binding().clone(),
                     Value::Null,
+                    consumer,
                 )
             } else {
-                let timing = match self.native_field_timing_descriptor(lease) {
-                    Ok(timing) => timing,
+                let prepared = match self.prepare_native_field_timing_descriptor(lease) {
+                    Ok(prepared) => prepared,
                     Err(refusal) => {
                         native_receipt = refusal.native_receipt().cloned();
                         return Err(refusal.reason().to_owned());
                     }
                 };
-                let receipt = self.session.session().last_field().clone();
-                native_receipt = Some(receipt.clone());
-                let position = NativePosition::from_field(&self.instance_ref, &receipt)?;
-                (position, timing, receipt)
+                // Capture the original receipt BEFORE any consumer/source
+                // qualification that can refuse after this real read.
+                native_receipt = Some(prepared.native_receipt().clone());
+                let consumer = prepared.procedural_source_consumer_fact()?;
+                (
+                    prepared.position().clone(),
+                    prepared.witness().original_binding().clone(),
+                    prepared.native_receipt().clone(),
+                    consumer,
+                )
             };
+            // The same original descriptor operation carries the complete
+            // current source epoch. No extra Inspect/ordinal or JSON issuer.
+            let performance_source_observation = self.retained_performance_source_observation()?;
+            if let Some(correspondence) = &native_source_correspondence {
+                if performance_source_observation["physical_preparation"]
+                    != correspondence["physical_preparation"]
+                    || performance_source_observation["performance_sources"]["source_form_recipe"]
+                        != correspondence["source_form_recipe"]
+                    || performance_source_observation["native_reading"]
+                        != native_timing_pulse
+                            .as_ref()
+                            .ok_or("actual original timing pulse absent")?["reading"]
+                {
+                    return Err("same bootstrap source/body epoch detached from its actual original timing pulse".into());
+                }
+            } else if !performance_source_observation.is_null() {
+                return Err("bootstrap retained an acoustic/body source without its actual native correspondence".into());
+            }
+            let consumer_contract = crate::procedural_consumers::from_registered_native_consumers(
+                &input.scene,
+                &position,
+                &timing,
+                &scene_consumer,
+                &timing_consumer,
+                native_timing_pulse.as_ref(),
+            )?;
             let observed = NativeBootstrapObservation {
                 position,
                 timing,
@@ -102,15 +143,21 @@ impl FieldHost {
                 native_timing_pulse: native_timing_pulse.clone(),
                 native_act_source: lease.evidence(),
             };
-            let mut result = compile_native_source_bootstrap(input, &observed)?;
+            let mut result =
+                compile_native_source_bootstrap_registered(input, &observed, &consumer_contract)?;
+            // Retained exact getter diagnostics do not deserialize into facts.
+            result["native_scene_constructor_fact"] = scene_consumer.constructor_fact().clone();
+            result["native_timing_consumer_fact"] = timing_consumer.constructor_fact().clone();
             if let Some(correspondence) = &native_source_correspondence {
                 result["native_resident_source_correspondence"] = correspondence.clone();
-                // The actual producer is part of the unchanged original pulse;
-                // this read-only convenience copy cannot create a clock grant.
                 result["native_timing_owner"] = native_timing_pulse
                     .as_ref()
                     .ok_or("same-pulse Management constructor missing")?["native_timing_owner"]
                     .clone();
+            }
+            result["performance_source_observation"] = performance_source_observation.clone();
+            if self.retained_performance_source_observation()? != performance_source_observation {
+                return Err("same bootstrap changed its complete actual source and original application histories".into());
             }
             if self.retained_procedural_source_artifact()? != source {
                 return Err(
@@ -127,6 +174,16 @@ impl FieldHost {
                 &input.scene,
                 &input.authorship.contributors,
             )?;
+            let after_scene = lease.procedural_scene_consumer_fact(
+                &self.instance_ref,
+                &input.scene,
+                &input.authorship.contributors,
+            )?;
+            if after_scene.constructor_fact() != scene_consumer.constructor_fact() {
+                return Err(
+                    "same native Scene construction changed during Source bootstrap".into(),
+                );
+            }
             Ok(result)
         })();
         result.map_err(|reason| NativeSourceBootstrapRefusal {

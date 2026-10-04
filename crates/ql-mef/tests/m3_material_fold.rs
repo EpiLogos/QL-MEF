@@ -9,6 +9,11 @@ use serde_json::{Value, json};
 mod actual_performance_source {
     include!("support/retained_performance.rs");
 }
+// Reused producer also serves the unchanged original route corpus.
+#[allow(dead_code)]
+mod actual_receiving_source {
+    include!("support/performance_route_management_fixture.rs");
+}
 
 fn state(address: u8) -> M3State {
     let fixture: Value = serde_json::from_str(include_str!(
@@ -420,5 +425,148 @@ fn all_native_forms_project_retained_material_over_actual_body_nodes_with_explic
             prepare_body_material(&state, &r, &plan, body.body(), &recipe, &samples(), 0.0001)
                 .is_err()
         );
+    }
+}
+
+/// The paired native C++ receiving experiment consumes the two actual source
+/// owners below. No serialized fixture grants a Scene/Act Source lease.
+#[test]
+fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit() {
+    let mut input = actual_performance_source::preparation();
+    let mut state = M3State::new(input.coupled.m3.clone()).unwrap();
+    let mut original_replay = Vec::new();
+    for command in &input.coupled.m3_commands {
+        original_replay.push(state.apply(command.clone()).unwrap());
+    }
+    let recipe = body_recipe();
+    let before_source = prepare_source_form_body(
+        &state,
+        source_form_coordinate(&state, MFace::Pratibimba).unwrap(),
+        recipe.clone(),
+        body_controls(&state),
+    )
+    .unwrap();
+    before_source.validate_source_geometry(&state).unwrap();
+    input.physical = before_source.body().request().clone();
+    let before =
+        ql_mef::performance_audio::prepare_source_form_performance(input.clone(), recipe.clone())
+            .unwrap();
+    before.validate_source_form_consumer(&state).unwrap();
+    let before_basis = state.snapshot();
+    let command = M3Command {
+        schema: COMMAND_SCHEMA.into(),
+        event_ref: before_basis["identity"]["event_ref"]
+            .as_str()
+            .unwrap()
+            .into(),
+        subject_ref: before_basis["subject_ref"].as_str().unwrap().into(),
+        expected_generation: state.generation(),
+        actor_ref: "controlled:source-form-receiving-test".into(),
+        cause_ref: "controlled:actual-native-form-transition".into(),
+        occurrence_unix_ms: before_basis["occurrence_unix_ms"].as_u64().unwrap(),
+        receipt_unix_ms: before_basis["receipt_unix_ms"].as_u64().unwrap(),
+        operations: vec![
+            M3Operation::ChangeLine { line: 0 },
+            M3Operation::SetPose { pose: 2 },
+        ],
+    };
+    let receipt = state.apply(command.clone()).unwrap();
+    assert_eq!(receipt.status, "applied");
+    input.coupled.m3_commands.push(command.clone());
+    let mut controls = body_controls(&state);
+    controls.body_revision = before
+        .physical_body()
+        .request()
+        .body_revision
+        .checked_add(1)
+        .unwrap();
+    controls.preparation_ref = "controlled:source-body-form-2".into();
+    let after_source = prepare_source_form_body(
+        &state,
+        source_form_coordinate(&state, MFace::Pratibimba).unwrap(),
+        recipe.clone(),
+        controls,
+    )
+    .unwrap();
+    after_source.validate_source_geometry(&state).unwrap();
+    let transition = prepare_form_transition(
+        before.physical_body(),
+        &state,
+        source_form_coordinate(&state, MFace::Pratibimba).unwrap(),
+        after_source.body().request().clone(),
+        before.physical_body().request().body_revision,
+        512,
+        FormTransitionPolicy::ProjectCorrespondingNodes,
+    )
+    .unwrap();
+    input.physical = after_source.body().request().clone();
+    let after =
+        ql_mef::performance_audio::prepare_source_form_performance(input.clone(), recipe.clone())
+            .unwrap();
+    after.validate_source_form_consumer(&state).unwrap();
+    assert_eq!(after.native_basis().m3, receipt.after);
+    assert_eq!(before.native_basis().m3, before_basis);
+    assert_eq!(after.physical_body().request(), transition.after.request());
+    assert_eq!(
+        after.physical_body().source_generation(),
+        before.physical_body().source_generation() + 1
+    );
+    // Musical M1/M2 identity and all actual targets stay fixed. The native
+    // determination must nevertheless name the newly prepared physical body.
+    let mut before_musical = before.determination().clone();
+    let mut after_musical = after.determination().clone();
+    for field in ["body_preparation_ref", "body_state_ref", "body_revision"] {
+        before_musical.as_object_mut().unwrap().remove(field);
+        after_musical.as_object_mut().unwrap().remove(field);
+    }
+    assert_eq!(after_musical, before_musical);
+    assert_eq!(after.notes(), before.notes());
+    assert_eq!(
+        after.determination()["body_preparation_ref"],
+        after.physical_body().request().preparation_ref
+    );
+    assert_eq!(
+        after.determination()["body_state_ref"],
+        after.physical_body().request().state_ref
+    );
+    assert_eq!(
+        after.determination()["body_revision"],
+        after.physical_body().request().body_revision.to_string()
+    );
+    assert_ne!(
+        before.physical_body().request().geometry,
+        after.physical_body().request().geometry
+    );
+    assert!(before.validate_source_form_consumer(&state).is_err());
+    let before_packet = actual_receiving_source::for_prepared(&before, 0).unwrap();
+    let after_packet = actual_receiving_source::for_prepared(&after, 512).unwrap();
+    assert_eq!(
+        before_packet,
+        actual_receiving_source::for_prepared(&before, 0).unwrap()
+    );
+    assert_eq!(
+        after_packet,
+        actual_receiving_source::for_prepared(&after, 512).unwrap()
+    );
+    assert_ne!(
+        before_packet["native_admission"],
+        after_packet["native_admission"]
+    );
+    if let Some(path) = std::env::var_os("QL_SOURCE_FORM_RECEIVING_FIXTURE") {
+        use sha2::{Digest, Sha256};
+        let mut fixture = json!({
+            "schema":"ql.native-source-form-receiving-fixture/v1",
+            "before":before_packet,"after":after_packet,
+            "after_fresh":actual_receiving_source::for_prepared(&after,0).unwrap(),
+            "command":command,"receipt":receipt,"original_replay":original_replay,
+            "after_coupled_source":input.coupled,"recipe":recipe,
+            "form_transition":transition,
+            "scope":"Actual current M1/M2/M3 -> source-qualified metric Form -> N9 producer -> P/receiving component experiment; explicit Reference calibration; no Scene/Act private Source grant or installed instrument acceptance."
+        });
+        fixture["probe_scope_digest"] = json!(format!(
+            "sha256:{:x}",
+            Sha256::digest(serde_json::to_vec(&fixture).unwrap())
+        ));
+        std::fs::write(path, serde_json::to_vec_pretty(&fixture).unwrap()).unwrap();
     }
 }

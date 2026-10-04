@@ -76,6 +76,77 @@ pub struct AuthoredCurrentPerformancePreparation {
     pub transpose: u8,
 }
 
+/// Explicit proposed ordinary instrument output calibration. It uses the SAME
+/// native Parameter owner and journal; queued admission is not performed sound.
+/// Legacy/native-global parameter defaults and Explicit policies stay exact.
+pub(crate) const DECLARED_INSTRUMENT_FORCE_NEWTONS: f64 = 2.0;
+impl AuthoredCurrentPerformancePreparation {
+    /// Declaration from the exact native-held first preparation. This is not
+    /// an admission receipt and is never reconstructed for saved continuation.
+    pub(crate) fn output_calibration_declaration(&self) -> serde_json::Value {
+        let required = matches!(
+            &self.mechanical_policy,
+            CurrentMechanicalPolicy::DeclaredInstrumentDefault
+        );
+        serde_json::json!({"schema":"ql.native-current-output-calibration-declaration/v1",
+            "required":required,"operation":if required {Some("calibrate-current")} else {None},
+            "timing":"after-original-recording-birth-before-first-native-input",
+            "standing":"agent-proposed native instrument calibration, actual measurements required"})
+    }
+    pub(crate) fn admit_declared_output_calibration(
+        &self,
+        owner: &mut super::PerformanceOwner,
+        current: &CoupledBasis,
+        session: &mut crate::continuous::coupled::CoupledFieldSession,
+    ) -> Result<Option<(serde_json::Value, serde_json::Value)>, super::NativeRecordingCommandRefusal>
+    {
+        if !matches!(
+            &self.mechanical_policy,
+            CurrentMechanicalPolicy::DeclaredInstrumentDefault
+        ) {
+            return Ok(None);
+        }
+        owner.validate_current(current)?;
+        let reading = owner.reading().ok_or("native calibration reading absent")?;
+        if reading["samples_elapsed"] != "0"
+            || reading["accepted_sequence"] != "0"
+            || reading["last_applied_application_ordinal"] != "0"
+            || reading["last_input_ordinal"] != "0"
+            || !matches!(
+                reading["device"]["state"].as_str(),
+                Some("closed" | "prepared")
+            )
+        {
+            return Err("declared output calibration requires its original stopped pre-input owner; saved continuation cannot readmit it".into());
+        }
+        let instance = owner.binding().determination()["identity"]["instance"]
+            .as_str()
+            .ok_or("actual native calibration instance absent")?;
+        let expected = prepare_current_configuration(current, instance, self.clone())?;
+        if serde_json::to_value(&expected).map_err(|e| e.to_string())?
+            != serde_json::to_value(&owner.config).map_err(|e| e.to_string())?
+        {
+            return Err("declared output calibration differs from complete actual current source preparation".into());
+        }
+        let (public, original) = owner.execute_with_original_pulse(
+            current,
+            session,
+            super::PerformanceCommand::Parameter {
+                target_ref: "ql:performance/parameter/force-newtons".into(),
+                action: super::ParameterAction::Set,
+                value: Some(DECLARED_INSTRUMENT_FORCE_NEWTONS),
+            },
+        )?;
+        if original["accepted"] != true {
+            return Err(super::NativeRecordingCommandRefusal {
+                reason: "actual native declared output calibration admission refused".into(),
+                native_pulse: Some(original),
+            });
+        }
+        Ok(Some((public, original)))
+    }
+}
+
 /// The ordinary first-play action declares this policy. Its source/body content
 /// still comes exclusively from the actual current owners at preparation time.
 /// The mechanical values are AgentProposed, not measured or authentic pitches.
@@ -87,7 +158,11 @@ fn instrument_default(tonic_hertz: f64) -> AuthoredMechanicalPolicy {
         standing: PhysicalStanding::AgentProposed,
     };
     let mut weights = vec![0.0; 12];
-    weights[11] = 1.0;
+    // Native node11 is the third corner of the last source frame. Its axes
+    // remain free across every native form/pose. Node12's Z is constrained
+    // for a Resting nucleotide and cannot be the ordinary sounding pickup.
+    // Explicit mechanical policies and original saved projections stay exact.
+    weights[10] = 1.0;
     AuthoredMechanicalPolicy {
         recipe: SourceGeometryRecipe {
             provenance: provenance("policy:expressions/physical-instrument/frame-law"),
@@ -495,3 +570,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "performance_calibration_tests.rs"]
+mod calibration_tests;

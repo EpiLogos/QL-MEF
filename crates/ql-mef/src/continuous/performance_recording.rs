@@ -53,8 +53,19 @@ impl FieldHost {
         if original.snapshot()? != owner.source_assets()["current_receiving"] {
             return Err("recording lost complete original source/context/occasion/grants".into());
         }
-        let (receipt, pulse) =
-            owner.execute_with_original_pulse(&current, self.session.session_mut(), command)?;
+        let (receipt, pulse) = match command {
+            PerformanceCommand::CalibrateCurrent {} => {
+                super::performance_calibration::from_retained_preparation(
+                    self.authored_current_performance_preparation.as_ref(),
+                    owner,
+                    &current,
+                    self.session.session_mut(),
+                )?
+            }
+            command => {
+                owner.execute_with_original_pulse(&current, self.session.session_mut(), command)?
+            }
+        };
         let post = (|| -> Result<(), String> {
             owner.validate_current(&current)?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;

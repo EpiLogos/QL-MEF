@@ -182,6 +182,9 @@ pub struct PerformanceConfig {
 /// resides here. The resident C++ owner alone advances and captures q/v.
 pub struct PerformanceOwner {
     original_input: Value,
+    source_origin: CoupledBasis,
+    physical_source_history: Vec<form::NativePhysicalTransitionRecord>,
+    acoustic_source_history: Vec<Value>,
     binding: Arc<PreparedPerformanceBinding>,
     sparse: Option<PreparedSourcePerformance>,
     config: PerformanceConfig,
@@ -343,6 +346,9 @@ impl PerformanceOwner {
         let source_assets = json!({"schema":"ql.retained-performance-source-assets/v1","original_native_input":original_input,"physical_consumer_projection":projection,"native_basis":binding.native_basis(),"source_form_recipe":config.recipe,"source_geometry_reading":physical.source_reading(),"source_key_preparation":sparse.as_ref().map(|s|s.source_preparation()).transpose()?,"configuration":config,"source_context":{"available":false,"reason":"existing native receiving owner has not classified every original source receipt for this source bundle; no public disclosure authority inferred from World labels"},"consumer_roles":{"physical":"canonical-source-form-scalar-excitation","legacy_mode_frequency_remapping":"retired-in-this-explicit-physical-projection","personal_nine_force_routes":{"available":false,"reason":"original N determination and P9 callback admission not joined"},"sky_ten_source_forcing":{"available":false,"reason":"retained original sky contributors are source assets; distinct common-body forcing not joined"}}});
         let mut out = Self {
             original_input,
+            source_origin: current.clone(),
+            physical_source_history: Vec::new(),
+            acoustic_source_history: Vec::new(),
             binding,
             sparse,
             config,
@@ -359,6 +365,7 @@ impl PerformanceOwner {
         Ok(out)
     }
     pub(super) fn validate_current(&self, current: &CoupledBasis) -> Result<(), String> {
+        form::validate_form_lineage(&self.source_origin, current)?;
         if serde_json::to_value(&current.input).map_err(|e| e.to_string())? != self.original_input {
             return Err(
                 "retained native source changed; prepared source/body transaction required".into(),
@@ -482,7 +489,8 @@ impl PerformanceOwner {
         if let Some(source) = &self.sparse {
             let mut packet = serde_json::to_value(self.binding()).map_err(|e| e.to_string())?;
             packet["source_key_admission"] = source
-                .packet_for_touches(&self.available_source_preparation_touches()?)?["source_key_admission"]
+                .packet_for_touches(&self.available_source_preparation_touches()?)?
+                ["source_key_admission"]
                 .clone();
             Ok(packet)
         } else {
@@ -731,10 +739,17 @@ impl PerformanceOwner {
         // A valid independently prepared body can share the exact eigenbasis
         // while its original M3 clock differs. EVERY prepare must retain the
         // complete current source descriptor, even after the resident is known.
-        if self.last.is_none() || reply["operation"] == "prepare" {
+        if self.last.is_none()
+            || matches!(
+                reply["operation"].as_str(),
+                Some("prepare" | "source-body-transition")
+            )
+        {
             let descriptor = &reply["payload"]["body_descriptor"];
-            if reply["operation"] != "prepare"
-                || reply["accepted"] != true
+            if !matches!(
+                reply["operation"].as_str(),
+                Some("prepare" | "source-body-transition")
+            ) || reply["accepted"] != true
                 || descriptor["schema"] != "ql.native-physical-descriptor/v1"
                 || descriptor["physical_preparation"]
                     != serde_json::to_value(body).map_err(|e| e.to_string())?
@@ -929,7 +944,7 @@ impl PerformanceOwner {
         self.validate_current(current)?;
         Ok(
             crate::performance_source_context::NativeSourceContextBasis::from_retained_owner(
-                current,
+                &self.source_origin,
                 self.binding(),
             ),
         )
@@ -942,7 +957,7 @@ impl PerformanceOwner {
         context: &crate::performance_source_context::NativePerformanceSourceContext,
     ) -> Result<(), String> {
         self.validate_current(current)?;
-        context.validate_binding(current, self.binding())?;
+        context.validate_binding(&self.source_origin, self.binding())?;
         self.source_assets["source_context"] = context.snapshot()?;
         Ok(())
     }
@@ -990,6 +1005,9 @@ impl PerformanceOwner {
         let mut touch_ref = None;
         let mut pending_catalog = None;
         let mut request = match command {
+            PerformanceCommand::CalibrateCurrent {} => {
+                return Err("current calibration requires the existing FieldHost's original authored preparation owner".into());
+            }
             PerformanceCommand::Inspect {} => self.raw("inspect")?,
             PerformanceCommand::Gesture {
                 phase: GesturePhase::Press,
@@ -1228,6 +1246,10 @@ pub enum ParameterAction {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "operation", deny_unknown_fields)]
 pub enum PerformanceCommand {
+    /// Existing FieldHost consumes its private original preparation. No
+    /// caller target/value/policy/source/clock can be supplied here.
+    #[serde(rename = "calibrate-current")]
+    CalibrateCurrent {},
     #[serde(rename = "performance-inspect")]
     Inspect {},
     #[serde(rename = "performance-gesture")]
@@ -1278,6 +1300,7 @@ pub enum PerformanceCommand {
 impl PerformanceCommand {
     pub fn operation(&self) -> &'static str {
         match self {
+            Self::CalibrateCurrent {} => "calibrate-current",
             Self::Inspect {} => "performance-inspect",
             Self::Gesture { .. } => "performance-gesture",
             Self::Sustain { .. } => "performance-sustain",
@@ -1318,8 +1341,26 @@ pub(crate) use timing::{
 
 #[path = "performance_acoustic.rs"]
 mod acoustic;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_cold_source.rs"]
+mod cold_source;
 pub use acoustic::{
     AcousticConfiguration, AcousticDirectivity, PreparedAcousticReceiverUpdate,
     PreparedAcousticReceiving,
 };
 pub(crate) use acoustic::{AcousticRefusal, PreparedAcousticInstallation};
+
+#[path = "performance_form.rs"]
+mod form;
+pub use form::{AuthoredNativePhysicalEdit, PreparedNativePhysicalEdit};
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(crate) use form::PreparedColdPhysicalSource;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_acoustic_history.rs"]
+mod acoustic_history;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(crate) use acoustic_history::{
+    QualifiedAcousticSourceHistory, qualify_saved_acoustic_physical_history,
+};

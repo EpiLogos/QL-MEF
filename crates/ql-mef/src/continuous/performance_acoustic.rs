@@ -144,8 +144,16 @@ pub struct PreparedAcousticReceiverUpdate {
     configuration: AcousticConfiguration,
     native_boundary: Value,
     cursor: u64,
+    original_request_id: u64,
+    source_record: Option<Value>,
 }
 impl PreparedAcousticReceiverUpdate {
+    pub(crate) fn original_source_request_id(&self) -> u64 {
+        self.original_request_id
+    }
+    pub(crate) fn source_transition_record(&self) -> Option<&Value> {
+        self.source_record.as_ref()
+    }
     pub fn before_source_assets(&self) -> &Value {
         &self.before_assets
     }
@@ -176,8 +184,16 @@ pub(crate) struct PreparedAcousticInstallation {
     configuration: AcousticConfiguration,
     boundary: Value,
     cursor: u64,
+    original_request_id: u64,
+    source_record: Option<Value>,
 }
 impl PreparedAcousticInstallation {
+    pub(crate) fn original_source_request_id(&self) -> u64 {
+        self.original_request_id
+    }
+    pub(crate) fn source_transition_record(&self) -> Option<&Value> {
+        self.source_record.as_ref()
+    }
     pub(crate) fn before_source_assets(&self) -> &Value {
         &self.before_assets
     }
@@ -249,7 +265,7 @@ impl PerformanceOwner {
     /// Pure complete producer for a later receiving trajectory segment. The
     /// original pickup/history birth is immutable; this cursor is numerical
     /// input only until the actual stopped owner and private reader admit it.
-    fn prepare_acoustic_receiving_segment(
+    pub(super) fn prepare_acoustic_receiving_segment(
         &self,
         current: &CoupledBasis,
         source: &NativePerformanceReceivingSource,
@@ -312,6 +328,103 @@ impl PerformanceOwner {
             origin_sample: native_segment_origin,
         })
     }
+    /// Regenerate the retained body source/N9 admission and receiver trajectory
+    /// independently. A Form at512 can retain the receiver origin0: neither
+    /// copied date may replace the other's complete original producer evidence.
+    /// This is numerical/source preparation only; the closed saved checkpoint
+    /// and every historical emitter epoch still require their native owners.
+    pub(super) fn prepare_retained_acoustic_sources(
+        &self,
+        current: &CoupledBasis,
+        source: &NativePerformanceReceivingSource,
+        saved_cursor: u64,
+    ) -> Result<PreparedAcousticReceiving, String> {
+        self.validate_current(current)?;
+        let retained = &self.source_assets["acoustic_receiving"];
+        let packet = &retained["packet"];
+        let birth = decimal(&packet["history_origin_sample"])?;
+        let origin = decimal(&packet["origin_sample"])?;
+        let admitted_at = decimal(
+            &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
+        )?;
+        if birth > origin || origin > saved_cursor || admitted_at > saved_cursor {
+            return Err("saved source admission/receiver dates exceed their actual cursor".into());
+        }
+        if let Some(history) = self.source_assets.get("physical_transition_history") {
+            let latest = history
+                .as_array()
+                .and_then(|v| v.last())
+                .ok_or("actual physical source history absent")?;
+            let effective = decimal(&latest["native_sample"])?;
+            if latest["schema"] != "ql.native-physical-source-transition/v1"
+                || latest["after_current_input"]
+                    != serde_json::to_value(&current.input).map_err(|e| e.to_string())?
+                || latest["after_native_preparation"] != self.packet()?
+                || admitted_at < effective
+                || saved_cursor < effective
+            {
+                return Err("saved N9 source admission predates or differs from its actual body source epoch".into());
+            }
+        }
+        if let Some(history) = self.source_assets.get("acoustic_transition_history") {
+            let latest = history
+                .as_array()
+                .and_then(|v| v.last())
+                .ok_or("actual acoustic source history absent")?;
+            let effective = decimal(&latest["native_sample"])?;
+            let ordinal = decimal(&latest["original_native_request_id"])?;
+            let physical_ordinal = self.source_assets["physical_transition_history"]
+                .as_array()
+                .and_then(|v| v.last())
+                .map(|v| decimal(&v["original_native_request_id"]))
+                .transpose()?
+                .unwrap_or(0);
+            if latest["schema"] != "ql.native-acoustic-source-transition/v1"
+                || admitted_at < effective
+                || saved_cursor < effective
+            {
+                return Err("saved receiving source predates its actual acoustic epoch".into());
+            }
+            if ordinal > physical_ordinal
+                && (latest["native_current_input"]
+                    != serde_json::to_value(&current.input).map_err(|e| e.to_string())?
+                    || latest["native_preparation"] != self.packet()?
+                    || latest["after_acoustic"] != *packet
+                    || latest["after_current_receiving"] != self.source_assets["current_receiving"]
+                    || latest["after_source_inputs"]
+                        != self.source_assets["receiving_source_inputs"]
+                    || latest["after_source_context"] != self.source_assets["source_context"]
+                    || latest["after_receiving_definition"]
+                        != self.source_assets["receiving_definition"])
+            {
+                return Err(
+                    "saved receiving lost its complete latest acoustic producer epoch".into(),
+                );
+            }
+        }
+        let original = self.prepare_acoustic_receiving_segment(current, source, birth, origin)?;
+        if original.snapshot() != *retained {
+            return Err("original saved acoustic source cannot be regenerated".into());
+        }
+        // This source admission may be later than the retained receiver
+        // segment origin. Keep the full original N9 definition/source/context.
+        let admitted = source.prepare_current(self, current, admitted_at)?;
+        admitted.validate_current(source, self, current, admitted_at)?;
+        if admitted.snapshot()? != self.source_assets["current_receiving"]
+            || admitted.context().snapshot()? != self.source_assets["source_context"]
+            || *admitted.source_inputs() != self.source_assets["receiving_source_inputs"]
+            || admitted.definition().snapshot()? != self.source_assets["receiving_definition"]
+        {
+            return Err("full original saved acoustic receiving/source/context differs".into());
+        }
+        // Currentness at the saved sample is independent of both retained
+        // source admission and trajectory date; it never relabels either.
+        let now = source.prepare_current(self, current, saved_cursor)?;
+        now.validate_current(source, self, current, saved_cursor)?;
+        original.validate_current(self, current, source, birth)?;
+        Ok(original)
+    }
+
     /// Regenerate the ORIGINAL saved receiver segment under the exact closed
     /// source/checkpoint selection. Its origin/birth are retained producer
     /// inputs; neither the current fresh owner cursor nor the saved checkpoint
@@ -325,6 +438,28 @@ impl PerformanceOwner {
         lease: &NativeActSourceLease<'_>,
         original_checkpoint_wire: &str,
         checkpoint_ref: &str,
+    ) -> Result<Option<PreparedAcousticReceiving>, String> {
+        self.prepare_saved_acoustic_receiving_with_history(
+            current,
+            source,
+            lease,
+            original_checkpoint_wire,
+            checkpoint_ref,
+            None,
+        )
+    }
+    /// Existing v1 callers keep their strict original source guard. Dated v2
+    /// requires an operand issued from ALL original replay frames and the same
+    /// closed selected Act/source/checkpoint; a schema label cannot issue it.
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    pub(crate) fn prepare_saved_acoustic_receiving_with_history(
+        &self,
+        current: &CoupledBasis,
+        source: &NativePerformanceReceivingSource,
+        lease: &NativeActSourceLease<'_>,
+        original_checkpoint_wire: &str,
+        checkpoint_ref: &str,
+        history: Option<&QualifiedAcousticSourceHistory>,
     ) -> Result<Option<PreparedAcousticReceiving>, String> {
         self.validate_current(current)?;
         bounded(checkpoint_ref)?;
@@ -356,36 +491,41 @@ impl PerformanceOwner {
                 .ok_or("saved receiving discriminant is not boolean")?,
         };
         if !enabled {
+            if history.is_some() {
+                return Err(
+                    "disabled receiving cannot consume a dated physical history operand".into(),
+                );
+            }
             if audio.get("receiving").is_some_and(|v| !v.is_null()) {
                 return Err("disabled saved receiving carries unowned receiver state".into());
             }
             return Ok(None);
         }
         let saved_cursor = decimal(&audio["cursor"])?;
-        let retained = &self.source_assets["acoustic_receiving"];
-        let packet = &retained["packet"];
-        let birth = decimal(&packet["history_origin_sample"])?;
-        let origin = decimal(&packet["origin_sample"])?;
-        // The original typed receiving factory already contains the complete
-        // authored configuration. Do not manufacture it from checkpoint JSON.
-        let original = self.prepare_acoustic_receiving_segment(current, source, birth, origin)?;
-        if original.snapshot() != *retained {
-            return Err("original saved acoustic source cannot be regenerated".into());
-        }
-        let before = source.prepare_current(self, current, origin)?;
-        before.validate_current(source, self, current, origin)?;
-        if before.snapshot()? != self.source_assets["current_receiving"]
-            || before.context().snapshot()? != self.source_assets["source_context"]
-            || *before.source_inputs() != self.source_assets["receiving_source_inputs"]
-            || before.definition().snapshot()? != self.source_assets["receiving_definition"]
-        {
-            return Err("full original saved acoustic receiving/source/context differs".into());
-        }
+        let original = self.prepare_retained_acoustic_sources(current, source, saved_cursor)?;
+        let birth = decimal(&original.packet["history_origin_sample"])?;
+        let origin = decimal(&original.packet["origin_sample"])?;
         let checkpoint = &audio["receiving"];
         let manifest = &checkpoint["manifest"];
         let end = decimal(&original.packet["end_sample"])?;
-        if checkpoint["schema"] != "ql.performance-receiving-checkpoint/v1"
-            || saved_cursor < origin
+        match checkpoint["schema"].as_str() {
+            Some("ql.performance-receiving-checkpoint/v1") if history.is_none() => {}
+            Some("ql.performance-receiving-checkpoint/v2") => history
+                .ok_or(
+                    "dated saved receiver requires complete original physical source qualification",
+                )?
+                .validate_saved(
+                    self,
+                    current,
+                    source,
+                    lease,
+                    instance,
+                    checkpoint_ref,
+                    original_checkpoint_wire,
+                )?,
+            _ => return Err("saved acoustic checkpoint schema or typed history differs".into()),
+        }
+        if saved_cursor < origin
             || saved_cursor > end
             || decimal(&checkpoint["samples_elapsed"])? != saved_cursor
             || decimal(&checkpoint["history_start_sample"])? != birth
@@ -428,12 +568,17 @@ impl PerformanceOwner {
                 return Err("saved acoustic manifest does not belong to original source".into());
             }
         }
-        // Current source/occasion/grants must also remain valid at the saved
-        // cursor. This independent N9 admission does not retag the original
-        // receiver segment's origin or current_receiving evidence.
-        let now = source.prepare_current(self, current, saved_cursor)?;
-        now.validate_current(source, self, current, saved_cursor)?;
-        original.validate_current(self, current, source, birth)?;
+        if let Some(history) = history {
+            history.validate_saved(
+                self,
+                current,
+                source,
+                lease,
+                instance,
+                checkpoint_ref,
+                original_checkpoint_wire,
+            )?;
+        }
         lease.validate_source_assets(instance, self.source_assets())?;
         lease.validate_selected_checkpoint(instance, checkpoint_ref, original_checkpoint_wire)?;
         Ok(Some(original))
@@ -507,8 +652,11 @@ impl PerformanceOwner {
         if original.snapshot() != *retained {
             return Err("original operative acoustic source cannot be regenerated".into());
         }
-        let before = before_source.prepare_current(self, current, before_origin)?;
-        before.validate_current(&before_source, self, current, before_origin)?;
+        let original_admission = decimal(
+            &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
+        )?;
+        let before = before_source.prepare_current(self, current, original_admission)?;
+        before.validate_current(&before_source, self, current, original_admission)?;
         if before.snapshot()? != self.source_assets["current_receiving"]
             || before.context().snapshot()? != self.source_assets["source_context"]
             || *before.source_inputs() != self.source_assets["receiving_source_inputs"]
@@ -545,6 +693,8 @@ impl PerformanceOwner {
                 .ok_or("actual acoustic receiver preparation boundary absent")?
                 .clone(),
             cursor: native_segment_origin,
+            original_request_id: 0,
+            source_record: None,
         })
     }
     /// Uses the existing copied actual stopped boundary for candidate source
@@ -581,13 +731,23 @@ impl PerformanceOwner {
         if self.source_assets != candidate.before_assets {
             return Err("operative source changed after acoustic candidate preparation".into());
         }
-        let fresh = self.prepare_stopped_acoustic_receiver_assets(current, after_source)?;
+        let fresh = if candidate.source_record.is_some() {
+            self.prepare_stopped_acoustic_receiver_assets_at_request(
+                current,
+                after_source,
+                candidate.original_request_id,
+            )?
+        } else {
+            self.prepare_stopped_acoustic_receiver_assets(current, after_source)?
+        };
         if fresh.before_assets != candidate.before_assets
             || fresh.after_assets != candidate.after_assets
             || fresh.original.snapshot() != candidate.original.snapshot()
             || fresh.after.snapshot() != candidate.after.snapshot()
             || fresh.native_boundary != candidate.native_boundary
             || fresh.cursor != candidate.cursor
+            || fresh.source_record != candidate.source_record
+            || fresh.original_request_id != candidate.original_request_id
         {
             return Err(
                 "complete native acoustic candidate/source/boundary currentness differs".into(),
@@ -616,7 +776,15 @@ impl PerformanceOwner {
             .to_owned();
         source_lease.validate_source_assets(&instance, candidate.source_assets())?;
         self.validate_stopped_acoustic_receiver_candidate(current, after_source, candidate)?;
-        let fresh = self.prepare_stopped_acoustic_receiver_assets(current, after_source)?;
+        let fresh = if candidate.source_record.is_some() {
+            self.prepare_stopped_acoustic_receiver_assets_at_request(
+                current,
+                after_source,
+                candidate.original_request_id,
+            )?
+        } else {
+            self.prepare_stopped_acoustic_receiver_assets(current, after_source)?
+        };
         let reading = self
             .reading()
             .ok_or("actual acoustic stopped reading absent")?;
@@ -739,10 +907,15 @@ impl PerformanceOwner {
                 candidate.after.history_origin_sample,
             )?;
             source_lease.validate_source_assets(&instance, &after_assets)?;
+            self.validate_acoustic_source_application(candidate, &pulse)?;
             Ok(())
         })();
         match checked {
             Ok(()) => {
+                if let Some(record) = &candidate.source_record {
+                    self.acoustic_source_history
+                        .push(json!({"source":record,"native_application":pulse}));
+                }
                 self.source_assets = after_assets;
                 Ok(pulse)
             }
@@ -840,6 +1013,8 @@ impl PerformanceOwner {
             configuration,
             boundary: reading.clone(),
             cursor,
+            original_request_id: 0,
+            source_record: None,
         })
     }
     pub(crate) fn validate_stopped_acoustic_installation_candidate(
@@ -852,16 +1027,27 @@ impl PerformanceOwner {
         if self.source_assets != candidate.before_assets {
             return Err("operative source changed after initial acoustic preparation".into());
         }
-        let fresh = self.prepare_stopped_acoustic_installation_assets(
-            current,
-            original_source,
-            after_source,
-        )?;
+        let fresh = if candidate.source_record.is_some() {
+            self.prepare_stopped_acoustic_installation_assets_at_request(
+                current,
+                original_source,
+                after_source,
+                candidate.original_request_id,
+            )?
+        } else {
+            self.prepare_stopped_acoustic_installation_assets(
+                current,
+                original_source,
+                after_source,
+            )?
+        };
         if fresh.before_assets != candidate.before_assets
             || fresh.after_assets != candidate.after_assets
             || fresh.prepared.snapshot() != candidate.prepared.snapshot()
             || fresh.boundary != candidate.boundary
             || fresh.cursor != candidate.cursor
+            || fresh.source_record != candidate.source_record
+            || fresh.original_request_id != candidate.original_request_id
         {
             return Err("full initial acoustic candidate or native boundary changed".into());
         }
@@ -957,10 +1143,15 @@ impl PerformanceOwner {
                 .prepared
                 .validate_current(self, current, after_source, candidate.cursor)?;
             source_lease.validate_source_assets(&instance, &after_assets)?;
+            self.validate_acoustic_installation_source_application(candidate, &pulse)?;
             Ok(())
         })();
         match checked {
             Ok(()) => {
+                if let Some(record) = &candidate.source_record {
+                    self.acoustic_source_history
+                        .push(json!({"source":record,"native_application":pulse}));
+                }
                 self.source_assets = after_assets;
                 Ok(pulse)
             }
@@ -1107,3 +1298,6 @@ impl PerformanceOwner {
         }
     }
 }
+
+#[path = "performance_acoustic_source.rs"]
+mod source_history;

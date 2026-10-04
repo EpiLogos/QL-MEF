@@ -12,6 +12,11 @@ use std::cell::RefCell;
 pub const ACT_REQUEST: &str = "ql.native-act-owner-request/v1";
 const QUERY: &str = "ql.native-act-owner-query/v1";
 const ANSWER: &str = "oi.native-act-owner-answer/v1";
+#[path = "performance_acoustic_scene_bridge.rs"]
+mod acoustic_scene_source;
+#[path = "performance_physical_scene_bridge.rs"]
+mod physical_scene_source;
+
 const CONTROL: &str = "oi.native-act-owner-control/v1";
 
 fn count(value: &Value) -> Result<u64, String> {
@@ -128,6 +133,10 @@ pub(crate) struct ActRequest {
     field_registration: Option<Value>,
     #[serde(default)]
     source_bootstrap: Option<Value>,
+    // Only C's privately registered actual Application Scene getter may
+    // populate this separate field; the two-key source read stays unchanged.
+    #[serde(default)]
+    scene_consumer: Option<Value>,
     #[serde(default)]
     procedural_request: Option<Value>,
     #[serde(default)]
@@ -136,6 +145,14 @@ pub(crate) struct ActRequest {
     acoustic_configuration: Option<super::performance::AcousticConfiguration>,
     #[serde(default)]
     original_acoustic_boundary: Option<Value>,
+    #[serde(default)]
+    physical_edit: Option<super::performance::AuthoredNativePhysicalEdit>,
+    #[serde(default)]
+    physical_origin: Option<physical_scene_source::NativePhysicalApplyOrigin>,
+    #[serde(default)]
+    acoustic_edit: Option<super::performance::AcousticConfiguration>,
+    #[serde(default)]
+    acoustic_origin: Option<acoustic_scene_source::NativeAcousticApplyOrigin>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -161,6 +178,9 @@ struct NativeRecordingOriginQuery {
 }
 
 impl ActRequest {
+    pub(crate) fn is_readmission(&self) -> bool {
+        self.mode == "readmit"
+    }
     pub(crate) fn is_field(&self) -> bool {
         matches!(
             self.mode.as_str(),
@@ -178,6 +198,10 @@ impl ActRequest {
                 | "recording-command"
                 | "recording-origin"
                 | "recording-save-cut"
+                | "physical-prepare"
+                | "physical-apply"
+                | "acoustic-source-prepare"
+                | "acoustic-source-apply"
         )
     }
 }
@@ -194,6 +218,7 @@ enum NativeActSource<'a> {
         retained_source: Option<&'a Value>,
         source_read: Option<&'a Value>,
         world_carrier: &'a Value,
+        scene_constructor: Option<&'a Value>,
     },
 }
 pub struct NativeActSourceLease<'a> {
@@ -226,24 +251,235 @@ impl NativeActSourceLease<'_> {
             NativeActSource::Performance { .. } => None,
         }
     }
-    pub fn validate_source_assets(
-        &self,
-        instance_ref: &str,
-        actual_source_assets: &Value,
-    ) -> Result<(), String> {
+    fn performance_sources(&self) -> Result<&[Value], String> {
         let performance = if self.field_registration().is_some() {
             &self.manifest["scene"]["performance"]
         } else {
             &self.manifest["performance"]
         };
-        let sources = performance["native_sources"]
+        performance["native_sources"]
             .as_array()
-            .ok_or("native selected source array absent")?;
-        if sources.len() != 1
-            || sources[0]["identity"]["instance_ref"] != instance_ref
-            || sources[0]["native_bundle"] != *actual_source_assets
+            .map(Vec::as_slice)
+            .ok_or_else(|| "native selected source array absent".into())
+    }
+    pub fn validate_source_assets(
+        &self,
+        instance_ref: &str,
+        actual_source_assets: &Value,
+    ) -> Result<(), String> {
+        // Historical body frames may share the instance. Match the complete
+        // immutable source, never the first row, current label, or instance alone.
+        let matches = self
+            .performance_sources()?
+            .iter()
+            .filter(|source| {
+                source["identity"]["instance_ref"] == instance_ref
+                    && source["native_bundle"] == *actual_source_assets
+            })
+            .count();
+        if matches != 1 {
+            return Err(
+                "native Act lease has a missing/ambiguous full current source owner".into(),
+            );
+        }
+        Ok(())
+    }
+    pub(crate) fn selected_checkpoint_source(&self, instance_ref: &str) -> Result<&Value, String> {
+        let selected = match self.source {
+            NativeActSource::Performance {
+                checkpoint: Some(checkpoint),
+            } => checkpoint,
+            _ => return Err("closed selected checkpoint source absent".into()),
+        };
+        let checkpoint = &selected["checkpoint"];
+        let wire = selected["canonical_native_wire_bytes"]
+            .as_str()
+            .ok_or("closed selected canonical native checkpoint wire absent")?;
+        let saved: Value = serde_json::from_str(wire).map_err(|e| e.to_string())?;
+        let audio = &saved["native_pair"]["audio"];
+        let has_receiving = match audio.get("has_receiving") {
+            Some(Value::Bool(value)) => *value,
+            None if audio.get("receiving").is_none() => false,
+            _ => return Err("selected native receiver pair contract absent".into()),
+        };
+        let basis_sources = self
+            .performance_sources()?
+            .iter()
+            .filter(|source| {
+                source["identity"]["instance_ref"] == instance_ref
+                    && source["basis_digest"] == checkpoint["basis_digest"]
+                    && source["identity"] == checkpoint["identity"]
+            })
+            .collect::<Vec<_>>();
+        // Preserve the original strictly recompiled receiving/v1 path. Its
+        // one source and immutable checkpoint still face the unchanged native
+        // saved-port preflight; no new acoustic history or epoch is inferred.
+        if basis_sources.len() == 1
+            && basis_sources[0]["native_bundle"]
+                .get("acoustic_transition_history")
+                .is_none()
+            && audio["receiving"]["schema"] == "ql.performance-receiving-checkpoint/v1"
         {
-            return Err("native Act lease has a different full current source owner".into());
+            return Ok(basis_sources[0]);
+        }
+        let mut matches = Vec::new();
+        for source in self.performance_sources()? {
+            if source["identity"]["instance_ref"] != instance_ref
+                || source["basis_digest"] != checkpoint["basis_digest"]
+                || source["identity"] != checkpoint["identity"]
+            {
+                continue;
+            }
+            let acoustic = source["native_bundle"].get("acoustic_receiving");
+            if !has_receiving {
+                if acoustic.is_none() {
+                    matches.push(source);
+                }
+                continue;
+            }
+            if acoustic.is_none() {
+                continue;
+            }
+            // Receiving identity is produced by native P, never another C/QL
+            // fingerprint. The whole original accepted manifest identifies the
+            // recorded source epoch, including same-body receiver edits.
+            let mut last = None;
+            for name in [
+                "native_physical_source_history",
+                "native_acoustic_source_history",
+            ] {
+                if let Some(rows) = source.get(name) {
+                    for row in rows
+                        .as_array()
+                        .ok_or("selected native source applications have wrong type")?
+                    {
+                        let request = exact_cursor(
+                            row["source"]["original_native_request_id"]
+                                .as_str()
+                                .ok_or("actual source application request ordinal absent")?,
+                        )?;
+                        if last.as_ref().is_none_or(|(old, _)| request > *old) {
+                            last = Some((
+                                request,
+                                &row["native_application"]["reading"]["receiving_transport"]["manifest"],
+                            ));
+                        }
+                    }
+                }
+            }
+            if last.is_some_and(|(_, manifest)| {
+                manifest.is_object() && *manifest == audio["receiving"]["manifest"]
+            }) {
+                matches.push(source);
+            }
+        }
+        if matches.len() != 1 {
+            return Err(
+                "selected checkpoint has missing/ambiguous complete native source epoch".into(),
+            );
+        }
+        Ok(matches[0])
+    }
+    /// Paired complete source-epoch corpus, privately borrowed from the SAME
+    /// selected Act/current Scene. Identical physical prefixes cannot choose
+    /// among receiver epochs; the complete source and BOTH sidecars must match.
+    pub(crate) fn validate_recorded_source_applications(
+        &self,
+        instance_ref: &str,
+        expected_complete_bundle: &Value,
+        physical: &[Value],
+        acoustic: &[Value],
+    ) -> Result<(), String> {
+        let rows = |source: &Value, name: &str, originals: &[Value]| -> bool {
+            match source.get(name) {
+                None => originals.is_empty(),
+                Some(value) => value.as_array().is_some_and(|v| v.as_slice() == originals),
+            }
+        };
+        let mut matches = self.performance_sources()?.iter().filter(|source| {
+            source["identity"]["instance_ref"] == instance_ref
+                && source["native_bundle"] == *expected_complete_bundle
+                && rows(source, "native_physical_source_history", physical)
+                && rows(source, "native_acoustic_source_history", acoustic)
+        });
+        let source = matches
+            .next()
+            .ok_or("actual full selected source epoch/corpora absent")?;
+        if matches.next().is_some() {
+            return Err("actual full selected source epoch ambiguous".into());
+        }
+        for (name, originals) in [
+            ("physical_transition_history", physical),
+            ("acoustic_transition_history", acoustic),
+        ] {
+            let records = match source["native_bundle"].get(name) {
+                None => &[][..],
+                Some(value) => value
+                    .as_array()
+                    .map(Vec::as_slice)
+                    .ok_or("complete source lineage has wrong type")?,
+            };
+            if records.len() != originals.len()
+                || records.iter().zip(originals).any(|(record, original)| {
+                    original.as_object().map(|o| o.len()) != Some(2)
+                        || original["source"] != *record
+                        || !original["native_application"].is_object()
+                })
+            {
+                return Err("selected source epoch lost complete original applications".into());
+            }
+        }
+        Ok(())
+    }
+    /// Exact full stopped physical transaction corpus from the SAME selected
+    /// native C asset. No caller array or deterministic record grants authority.
+    pub(crate) fn validate_recorded_physical_applications(
+        &self,
+        instance_ref: &str,
+        originals: &[Value],
+    ) -> Result<(), String> {
+        // The complete Act can have a later body than its selected checkpoint.
+        // Locate the exact retained corpus, including an earlier prefix only if
+        // it is itself a complete source asset in this held selection.
+        let mut matches = self.performance_sources()?.iter().filter(|source| {
+            source["identity"]["instance_ref"] == instance_ref
+                && match source.get("native_physical_source_history") {
+                    Some(value) => value.as_array().is_some_and(|v| v.as_slice() == originals),
+                    None => originals.is_empty(),
+                }
+        });
+        let source = matches
+            .next()
+            .ok_or("actual selected native physical corpus absent")?;
+        if matches.next().is_some() {
+            return Err("actual selected native physical corpus ambiguous".into());
+        }
+        let retained = match source.get("native_physical_source_history") {
+            Some(value) => value
+                .as_array()
+                .ok_or("native physical application corpus has wrong type")?
+                .as_slice(),
+            None => &[],
+        };
+        let records = match source["native_bundle"].get("physical_transition_history") {
+            Some(value) => value
+                .as_array()
+                .ok_or("native physical source lineage has wrong type")?
+                .as_slice(),
+            None => &[],
+        };
+        if retained != originals
+            || records.len() != retained.len()
+            || records.iter().zip(retained).any(|(record, original)| {
+                original.as_object().map(|o| o.len()) != Some(2)
+                    || original["source"] != *record
+                    || !original["native_application"].is_object()
+            })
+        {
+            return Err(
+                "physical applications differ from complete actual selected C source custody"
+                    .into(),
+            );
         }
         Ok(())
     }
@@ -338,6 +574,49 @@ impl NativeActSourceLease<'_> {
             )?;
         }
         Ok(())
+    }
+    /// C-only actual constructor intake, AFTER the full closed current read.
+    /// Private OS/image/channel qualification is indispensable; this is not
+    /// exposed as a public Value or manifest constructor of Scene authority.
+    pub(crate) fn procedural_scene_consumer_fact(
+        &self,
+        instance_ref: &str,
+        reading: &crate::procedural_source::NativeBootstrapSceneRead,
+        contributors: &[crate::procedural_manifestation::NativeSubject],
+    ) -> Result<crate::procedural_consumers::NativeSceneConsumerFact, String> {
+        self.validate_procedural_scene_read(instance_ref, reading, contributors)?;
+        let fact = match self.source {
+            NativeActSource::Field {
+                scene_constructor: Some(fact),
+                ..
+            } => fact,
+            _ => return Err("actual privately registered Scene constructor absent".into()),
+        };
+        let document_sha256 = self.manifest["expanded_document_sha256"]
+            .as_str()
+            .and_then(|value| value.strip_prefix("sha256:"))
+            .ok_or("complete current native Document digest absent")?;
+        if fact["document_sha256"] != document_sha256 {
+            return Err(
+                "actual Scene constructor differs from SAME full closed Document bytes".into(),
+            );
+        }
+        let instance = fact["instance_ref"]
+            .as_str()
+            .ok_or("actual native Scene constructor instance absent")?;
+        let generation = fact["construction_generation"]
+            .as_u64()
+            .ok_or("actual native Scene constructor generation absent")?;
+        let domain = fact["generation_domain"]
+            .as_str()
+            .ok_or("actual native Scene constructor domain absent")?;
+        crate::procedural_consumers::NativeSceneConsumerFact::from_registered_scene(
+            reading,
+            instance.to_owned(),
+            generation,
+            domain.to_owned(),
+            fact.clone(),
+        )
     }
     /// Actual nonsounding Field sources, compared against the FULL closed
     /// Scene's original/current source. This never derives a basis from readback.
@@ -882,12 +1161,30 @@ fn serve_native_act_operation(
             "recording-command",
             "recording-origin",
             "recording-save-cut",
+            "physical-prepare",
+            "physical-apply",
+            "acoustic-source-prepare",
+            "acoustic-source-apply",
         ]
         .contains(&request.mode.as_str())
     {
         return Err("unsupported dedicated native selected Act operation".into());
     }
-    if request.declared_seed.is_some() && request.mode != "performance-source" {
+    if (request.mode == "source-bootstrap") != request.scene_consumer.is_some() {
+        return Err("private Scene constructor belongs only to original Source bootstrap".into());
+    }
+    physical_scene_source::validate_operands(&request)?;
+    acoustic_scene_source::validate_operands(&request)?;
+    if request.declared_seed.is_some()
+        && !matches!(
+            request.mode.as_str(),
+            "performance-source"
+                | "physical-prepare"
+                | "physical-apply"
+                | "acoustic-source-prepare"
+                | "acoustic-source-apply"
+        )
+    {
         return Err(
             "native source seed belongs only to the explicit private source producer".into(),
         );
@@ -981,6 +1278,10 @@ fn serve_native_act_operation(
                     | "acoustic-stage"
                     | "acoustic-replace"
                     | "acoustic-prepare"
+                    | "physical-prepare"
+                    | "physical-apply"
+                    | "acoustic-source-prepare"
+                    | "acoustic-source-apply"
             ) {
                 qualify_field_source_parts(&request.manifest, &world_carrier, &artifact, &pipe)?;
                 Some(&artifact)
@@ -1007,6 +1308,7 @@ fn serve_native_act_operation(
                     retained_source,
                     source_read: request.source_bootstrap.as_ref(),
                     world_carrier: &world_carrier,
+                    scene_constructor: request.scene_consumer.as_ref(),
                 },
             };
             if retained_source.is_some() {
@@ -1275,6 +1577,15 @@ fn serve_native_act_operation(
                     },
                 );
             }
+            if matches!(request.mode.as_str(), "physical-prepare" | "physical-apply") {
+                return physical_scene_source::execute(host, &request, &lease, &original, &current);
+            }
+            if matches!(
+                request.mode.as_str(),
+                "acoustic-source-prepare" | "acoustic-source-apply"
+            ) {
+                return acoustic_scene_source::execute(host, &request, &lease, &original, &current);
+            }
             if request.mode == "performance-source" {
                 if request.source_bootstrap.is_some() || request.procedural_request.is_some() {
                     return Err(
@@ -1409,7 +1720,8 @@ fn serve_native_act_operation(
             if request.mode == "field-source" {
                 return Ok(
                     json!({"selection":lease.evidence(),"native_field_source":artifact,
-                    "timing":null,"standing":"complete actual held Field source observation; no material/body/audio acknowledgement"}),
+                    "performance_source_observation":host.retained_performance_source_observation()?,
+                    "timing":null,"standing":"complete actual held Field and retained performance source observation; no material/body/audio acknowledgement"}),
                 );
             }
             Ok(match host.native_field_timing_descriptor(&lease) {
@@ -1423,6 +1735,21 @@ fn serve_native_act_operation(
             })
         })();
         let mut reply = host.native_act_result(&request.request_id, &outcome);
+        if matches!(
+            request.mode.as_str(),
+            "physical-prepare"
+                | "physical-apply"
+                | "acoustic-source-prepare"
+                | "acoustic-source-apply"
+        ) && reply.get("host_receipt").is_none()
+        {
+            reply["host_receipt"] = match &outcome {
+                Ok(result) => result.get("host_receipt").cloned().unwrap_or_else(|| {
+                    host.recording_controller_receipt(&request.request_id, None)
+                }),
+                Err(reason) => host.recording_controller_refusal(&request.request_id, reason),
+            };
+        }
         if request.mode == "field-source" {
             // Genuine SAME-operation host observation for the existing Session.
             // Failed pre-admission retains the actual old last_request_id;
@@ -1505,13 +1832,6 @@ fn serve_native_act_operation(
         let from = count(&json!(request.from_sample))?;
         let to = count(&json!(request.to_sample))?;
         if request.mode == "readmit" {
-            // Compile all original pages before any numerical restore. Neither
-            // a shortened manifest nor a checkpoint alone can mint the lease.
-            let score = host.compile_native_act_score(
-                count(&json!(request.edition_generation))?,
-                &request.manifest,
-                &mut pages,
-            )?;
             let index = request
                 .checkpoint_index
                 .ok_or("native readmission checkpoint index absent")?;
@@ -1566,19 +1886,55 @@ fn serve_native_act_operation(
                 },
             };
             lease.validate_selected_checkpoint(&request.instance_ref, reference, wire)?;
+            // Both paths compile every original selected C page BEFORE any
+            // preparation/restore mutation. A cold owner is pure native source
+            // reconstruction under this same closed Act, never an empty body.
+            let mut cold_receipts = Vec::new();
+            let mut acoustic_history = None;
+            let score = if host.has_native_performance() {
+                host.compile_native_act_score(
+                    count(&json!(request.edition_generation))?,
+                    &request.manifest,
+                    &mut pages,
+                )?
+            } else {
+                let candidate = host.prepare_cold_native_act(&request.manifest, &lease)?;
+                let score = host.compile_cold_native_act_score(
+                    &candidate,
+                    count(&json!(request.edition_generation))?,
+                    &request.manifest,
+                    &mut pages,
+                )?;
+                acoustic_history =
+                    host.qualify_cold_native_act_checkpoint(&candidate, &lease, reference, wire)?;
+                match host.activate_cold_native_act(candidate, &lease) {
+                    Ok(receipts) => cold_receipts = receipts,
+                    Err(failure) => {
+                        return Ok(json!({"score":score,"selection":lease.evidence(),
+                        "receiving_readmission":null,"native_pulse":null,"readmitted":false,
+                        "error":failure.reason,"cold_preparation_receipts":failure.native_receipts,
+                        "host_receipt":host.recording_controller_refusal(&request.request_id,
+                            "cold selected Act source activation refused")}));
+                    }
+                }
+                score
+            };
             return Ok(
-                match host.readmit_retained_performance_checkpoint(
+                match host.readmit_retained_performance_checkpoint_with_history(
                     &lease,
                     wire,
                     reference,
                     transaction,
+                    acoustic_history.as_ref(),
                 ) {
                     Ok(actual) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":actual.readmission(),"native_pulse":actual.native_pulse(),
-                    "readmitted":true,"error":null}),
+                    "readmitted":true,"error":null,"cold_preparation_receipts":cold_receipts,
+                    "host_receipt":host.recording_readmission_controller_receipt(&request.request_id,&actual)}),
                     Err(refusal) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":null,"native_pulse":refusal.native_pulse(),
-                    "readmitted":false,"error":refusal.reason()}),
+                    "readmitted":false,"error":refusal.reason(),"cold_preparation_receipts":cold_receipts,
+                    "host_receipt":host.recording_controller_refusal(&request.request_id,refusal.reason())}),
                 },
             );
         }
@@ -1671,6 +2027,12 @@ fn serve_native_act_operation(
         }
     })();
     let mut reply = host.native_act_result(&request.request_id, &result);
+    if request.mode == "readmit" {
+        reply["host_receipt"] = match &result {
+            Ok(result) => result["host_receipt"].clone(),
+            Err(reason) => host.recording_controller_refusal(&request.request_id, reason),
+        };
+    }
     // Only compact metadata and original-order file descriptors cross the
     // terminal frame. Each complete original receipt was separately ACKed.
     reply["diagnostics"] = diagnostic_sender.manifest();

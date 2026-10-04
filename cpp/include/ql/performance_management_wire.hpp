@@ -1,6 +1,7 @@
 #ifndef QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #define QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #include <ql/performance_acoustic_wire.hpp>
+#include <ql/performance_form_wire.hpp>
 #include <ql/performance_offline_wire.hpp>
 #include <ql/performance_physical_routes.hpp>
 #include <ql/performance_receiving_restore.hpp>
@@ -336,6 +337,7 @@ class Control {
   bool released_ = false;
   std::size_t admitted_route_count_ = 0;
   NativePerformanceTimingOwner timing_;
+  std::uint64_t last_physical_request_id_ = 0;
   static const char *result(Result r) {
     switch (r) {
     case Result::Accepted:
@@ -497,6 +499,15 @@ class Control {
     wire::u64(out.get(), "clipping_samples", r.clipping_samples);
     wire::real(out.get(), "scalar_force_budget_newtons",
                r.scalar_force_budget_newtons);
+    wire::real(out.get(), "contact_reserved_force_newtons",
+               r.contact_reserved_force_newtons);
+    wire::real(out.get(), "note_headroom_newtons", r.note_headroom_newtons);
+    auto contacts = wire::array();
+    for (const auto &delivery : r.contacts)
+      if (delivery.status != NativeContactStatus::Empty)
+        wire::append(contacts.get(),
+                     contact_transport::delivery(delivery).release());
+    wire::put(out.get(), "contacts", contacts.release());
     wire::u64(out.get(), "force_limited_samples", r.force_limited_samples);
     auto e = wire::object();
     wire::ref(e.get(), "policy_ref", r.determination.excitation.policy_ref);
@@ -519,6 +530,16 @@ class Control {
 
 public:
   bool active() const noexcept { return owner_ && !released_; }
+  // Trusted retained worker only. The private Scene occurrence owner has
+  // already qualified full current source/Act/history and exact immutable
+  // programme custody before issuing this nonserializable witness. Generic
+  // execute(JSON), score import and renderer operations cannot construct it.
+  NativeScoreAdmission enqueue_scene_contact(
+      const std::shared_ptr<const PreparedContactProgram> &programme,
+      const NativeContactOccurrenceWitness &witness) {
+    require(active(), "contact requires the retained active native worker");
+    return owner_->enqueue_contact_admission(programme, witness);
+  }
   void hold() noexcept {
     if (owner_)
       owner_->hold();
@@ -664,6 +685,7 @@ public:
       prepared_basis_ = std::move(immutable_basis);
       owner_ = std::move(next);
       timing_.reset();
+      last_physical_request_id_ = 0;
       admitted_route_count_ = routes ? programs.program_count : 0;
       standing_ = stamp;
       accepted = true;
@@ -709,6 +731,13 @@ public:
           {"receiving-transport-replace",
            {"before_acoustic", "prepared_acoustic", "current_acoustic",
             "expected_sample"}},
+          {"source-body-transition",
+           {"original_request_id", "expected_sample", "kind", "cause_ref",
+            "before_packet", "before_native_basis", "after_packet",
+            "actual_after_packet", "actual_after_native_basis",
+            "receiving_admission", "current_receiving_admission",
+            "native_catalog", "body_source", "before_acoustic",
+            "prepared_acoustic", "current_acoustic"}},
           {"timing", {"moment", "ordinal"}},
           {"checkpoint", {}},
           {"offline-render", {"scope", "frames"}},
@@ -840,6 +869,31 @@ public:
                 "unsupported actual native timing moment");
         wire::decimal(packet::field(request, "ordinal"));
         accepted = true;
+      } else if (op == "source-body-transition") {
+        auto *cells = packet::field(request, "native_catalog");
+        require(json_object_is_type(cells, json_type_array) &&
+                    json_object_array_length(cells) <= 192,
+                "native Form catalogue bound differs");
+        std::vector<KeyboardCell> catalog;
+        for (std::size_t i = 0; i < json_object_array_length(cells); ++i)
+          catalog.push_back(read_key(json_object_array_get_idx(cells, i)));
+        auto applied = form_transport::apply(
+            *owner_, request, prepared_source_.get(), prepared_basis_.get(),
+            retained_acoustic_.get(), last_physical_request_id_,
+            std::move(catalog));
+        prepared_source_ = std::move(applied.source);
+        prepared_basis_ = std::move(applied.basis);
+        retained_acoustic_ = std::move(applied.acoustic);
+        standing_.source_form = true;
+        standing_.recipe = applied.recipe;
+        standing_.validated_generation = applied.generation;
+        admitted_route_count_ = applied.route_count;
+        last_physical_request_id_ = applied.request_id;
+        wire::put(payload.get(), "physical_transition",
+                  applied.acknowledgement.release());
+        wire::put(payload.get(), "body_descriptor",
+                  applied.body_descriptor.release());
+        accepted = true;
       } else if (op == "receiving-transport-install" ||
                  op == "receiving-transport-replace") {
         // The private current Scene/Act reader qualifies the complete source
@@ -937,13 +991,10 @@ public:
                       ql::physical_wire::exact(
                           packet::field(before_config, "revision")),
               "native receiver change lost birth or original revision order");
-          for (const char *name :
-               {"source_ref", "source_motion_ref", "source_translation_metres",
-                "source_velocity_metres_per_second"})
-            require(
-                json_object_equal(packet::field(before_config, name),
-                                  packet::field(after_config, name)),
-                "native receiver change substituted original emitter history");
+          // The actual dated receiver owner appends this effective source
+          // epoch while retaining preceding retarded intervals and the ring.
+          // The same private source/Act caller qualifies the complete AFTER
+          // producer; packet equality grants no source authority.
           auto prepared = acoustic_wire::read_prepared_acoustic(
               candidate_packet, current_packet, source_body, immutable, cursor,
               acoustic_wire::AcousticReadKind::RetainedReceiverSegment);

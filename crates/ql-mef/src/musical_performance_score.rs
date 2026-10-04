@@ -279,12 +279,14 @@ pub fn compile_score(
         sources,
         performance,
         None,
+        None,
     )
 }
 pub(crate) fn compile_current_native_score(
     expression_ref: &str,
     edition_generation: u64,
     sources: &[ScoreSource<'_>],
+    source_basis_indices: &[usize],
     performance: &Value,
     custody: crate::musical_performance_source_score::NativeScoreCustody,
 ) -> Result<MusicalPerformanceScore, String> {
@@ -294,6 +296,7 @@ pub(crate) fn compile_current_native_score(
         sources,
         performance,
         Some(custody),
+        Some(source_basis_indices),
     )
 }
 fn compile_inner(
@@ -302,6 +305,7 @@ fn compile_inner(
     sources: &[ScoreSource<'_>],
     performance: &Value,
     native_custody: Option<crate::musical_performance_source_score::NativeScoreCustody>,
+    source_basis_indices: Option<&[usize]>,
 ) -> Result<MusicalPerformanceScore, String> {
     reference(&json!(expression_ref))?;
     let schema = performance["schema"].as_str().unwrap_or("");
@@ -331,7 +335,9 @@ fn compile_inner(
     if !(8000..=192000).contains(&rate)
         || bases.is_empty()
         || bases.len() > MAX_BASES
-        || sources.len() != bases.len()
+        || sources.is_empty()
+        || sources.len() > MAX_BASES
+        || (source_basis_indices.is_none() && sources.len() != bases.len())
         || pitches.len() > MAX_PITCHES
         || layers.is_empty()
         || layers.len() > 64
@@ -339,9 +345,18 @@ fn compile_inner(
         return Err("native score source/cardinality/rate bounds differ".into());
     }
     let duration = counter(&performance["duration_samples"])?;
-    let mut source_bases = Vec::with_capacity(sources.len());
-    let mut original_episode_refs = Vec::with_capacity(sources.len());
-    for (source, retained) in sources.iter().zip(bases) {
+    let ordinary_indices: Vec<_> = (0..bases.len()).collect();
+    let indices = source_basis_indices.unwrap_or(&ordinary_indices);
+    if indices.len() != sources.len()
+        || indices.iter().any(|i| *i >= bases.len())
+        || (0..bases.len()).any(|i| !indices.contains(&i))
+    {
+        return Err("native source epochs lost unique complete musical basis coverage".into());
+    }
+    let mut source_bases: Vec<Option<Value>> = vec![None; bases.len()];
+    let mut original_episode_refs: Vec<Option<Option<String>>> = vec![None; bases.len()];
+    for (source, basis_index) in sources.iter().zip(indices) {
+        let retained = &bases[*basis_index];
         source.prepared.validate_native_consumers(
             source.prepared.native_basis(),
             source.prepared.physical_body(),
@@ -408,18 +423,50 @@ fn compile_inner(
                 output["key_source"] = targets.preparation_receipt()?;
             }
         }
-        source_bases.push(output);
-        original_episode_refs.push(
-            source
-                .original_return
-                .original_occasion()
-                .map(|o| o.occasion_ref.clone()),
-        );
+        let episode = source
+            .original_return
+            .original_occasion()
+            .map(|o| o.occasion_ref.clone());
+        if source_bases[*basis_index]
+            .as_ref()
+            .is_some_and(|old| *old != output)
+            || original_episode_refs[*basis_index]
+                .as_ref()
+                .is_some_and(|old| *old != episode)
+        {
+            return Err(
+                "same musical basis epochs disagree on original native Return/source/episode"
+                    .into(),
+            );
+        }
+        source_bases[*basis_index] = Some(output);
+        original_episode_refs[*basis_index] = Some(episode);
     }
+    let source_bases = source_bases
+        .into_iter()
+        .map(|v| v.ok_or_else(|| "original musical basis absent".to_owned()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let original_episode_refs = original_episode_refs
+        .into_iter()
+        .map(|v| v.ok_or_else(|| "original musical episode absent".to_owned()))
+        .collect::<Result<Vec<_>, _>>()?;
+    // All epochs above independently qualified the same immutable musical
+    // basis. Musical operands use that basis; complete receiver epochs remain
+    // distinct in the native source-part custody, never duplicated bases.
+    let by_basis: Vec<&ScoreSource<'_>> = (0..bases.len())
+        .map(|basis| {
+            sources
+                .iter()
+                .zip(indices)
+                .find(|(_, i)| **i == basis)
+                .map(|(source, _)| source)
+                .expect("complete musical basis coverage qualified above")
+        })
+        .collect();
     let pitch_sources = pitches
         .iter()
         .enumerate()
-        .map(|(i, p)| qualify_pitch(&sources[index(&p["basis"], sources.len())?], p, i))
+        .map(|(i, p)| qualify_pitch(by_basis[index(&p["basis"], by_basis.len())?], p, i))
         .collect::<Result<Vec<_>, String>>()?;
     let mut pages = Vec::new();
     let mut total = 0usize;
@@ -445,7 +492,7 @@ fn compile_inner(
             let sequence = counter(&event[0])?;
             let sample = counter(&event[1])?;
             let layer = index(&event[2], layers.len())?;
-            let basis = index(&event[3], sources.len())?;
+            let basis = index(&event[3], by_basis.len())?;
             if sequence == 0
                 || !sequences.insert(sequence)
                 || sample > duration
@@ -460,7 +507,7 @@ fn compile_inner(
                 basis,
                 pitches,
                 performance,
-                sources,
+                &by_basis,
                 &mut touches,
             )?;
         }
@@ -518,7 +565,7 @@ fn qualify_action(
     basis: usize,
     pitches: &[Value],
     performance: &Value,
-    sources: &[ScoreSource<'_>],
+    sources: &[&ScoreSource<'_>],
     touches: &mut BTreeMap<u64, (usize, usize)>,
 ) -> Result<(), String> {
     let rate = performance["sample_rate"]

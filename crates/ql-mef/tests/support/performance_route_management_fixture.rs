@@ -22,7 +22,7 @@ fn reference(value: &str) -> Reference {
         revision: "1".into(),
     }
 }
-fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Value, String> {
+pub fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Value, String> {
     for_prepared_retained(p, native_cursor, None)
 }
 fn for_prepared_retained(
@@ -98,11 +98,28 @@ fn for_prepared_retained(
         json!({"adapter_sha256":"reference:unqualified-controlled-input; no astronomy verdict"});
     let current = current::personal_current(&identity, &current::transit(Some(&sky))?)?;
     let request = p.physical_body().request();
+    let node_count = request.geometry.nodes.len();
+    if node_count != 2 && node_count != 12 {
+        return Err(
+            "explicit native route calibration is unavailable for this actual body node count"
+                .into(),
+        );
+    }
+    let calibration_ref = if node_count == 2 {
+        "reference:force-routes/seven-metric-maps"
+    } else {
+        "reference:force-routes/source-form-first-last-metric-maps"
+    };
+    let calibration_source = if node_count == 2 {
+        "reference:explicit-instrument-force-calibration"
+    } else {
+        "reference:explicit-source-form-first-last-instrument-force-calibration"
+    };
     let calibration = ReceivingCalibration {
         provenance: PhysicalProvenance {
-            reference: "reference:force-routes/seven-metric-maps".into(),
+            reference: calibration_ref.into(),
             revision: "1".into(),
-            source_ref: "reference:explicit-instrument-force-calibration".into(),
+            source_ref: calibration_source.into(),
             standing: PhysicalStanding::Reference,
         },
         preparation: Reference {
@@ -120,7 +137,14 @@ fn for_prepared_retained(
                 ordinal: ordinal as u8,
                 projection: SpatialProjection {
                     axis: [1.0, 0.0, 0.0],
-                    node_weights: vec![1.0 - free, free],
+                    node_weights: if node_count == 2 {
+                        vec![1.0 - free, free]
+                    } else {
+                        let mut weights = vec![0.0; node_count];
+                        weights[0] = 1.0 - free;
+                        weights[node_count - 1] = free;
+                        weights
+                    },
                 },
             }
         }),

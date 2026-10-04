@@ -28,7 +28,9 @@ inline checkpoint_transport::Json readback(const NativeReceivingReadback &r) {
               p.emission_samples_per_received_sample <= 1.025 / .975,
           "native receiving numerical observation differs");
   auto out = wire::object();
-  wire::text(out.get(), "schema", "ql.native-receiving-readback/v1");
+  wire::text(out.get(), "schema",
+             r.explicit_source_history ? "ql.native-receiving-readback/v2"
+                                       : "ql.native-receiving-readback/v1");
   wire::put(out.get(), "manifest", wire::receiving_manifest(m).release());
   wire::u64(out.get(), "samples_elapsed", r.samples_elapsed);
   wire::text(out.get(), "distance_unit", "m");
@@ -47,6 +49,22 @@ inline checkpoint_transport::Json readback(const NativeReceivingReadback &r) {
   wire::real(out.get(), "gain_linear", p.gain_linear);
   wire::real(out.get(), "emission_samples_per_received_sample",
              p.emission_samples_per_received_sample);
+  if (r.explicit_source_history) {
+    require(r.contributing_source_segments <= ql::receiving_source_segments &&
+                r.emitting_body_revision &&
+                r.emitting_effective_sample <= r.samples_elapsed &&
+                r.emitting_preparation[0] && r.emitting_source_revision[0],
+            "historical emitting source observation refused");
+    wire::put(out.get(), "contributing_source_segments",
+              json_object_new_uint64(r.contributing_source_segments));
+    wire::u64(out.get(), "emitting_body_revision", r.emitting_body_revision);
+    wire::u64(out.get(), "emitting_effective_sample",
+              r.emitting_effective_sample);
+    wire::text(out.get(), "emitting_preparation",
+               r.emitting_preparation.data());
+    wire::text(out.get(), "emitting_source_revision",
+               r.emitting_source_revision.data());
+  }
   return out;
 }
 } // namespace ql::performance::receiving_transport
