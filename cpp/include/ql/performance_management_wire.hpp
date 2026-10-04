@@ -1365,7 +1365,7 @@ public:
                  "actual native same-pulse registration unavailable");
     }
     wire::put(out.get(), "native_capture",
-              native_capture_transport::batch(*owner_, pulse).release());
+              native_capture_transport::batch(*owner_, *pulse).release());
     wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
     wire::u64(out.get(), "last_native_member", owner_->last_native_member());
     wire::flag(out.get(), "recording_available", owner_->recording_available());

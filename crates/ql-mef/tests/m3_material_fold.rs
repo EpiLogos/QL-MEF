@@ -519,15 +519,33 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
         after.physical_body().source_generation(),
         before.physical_body().source_generation() + 1
     );
-    // Musical M1/M2 identity and all actual targets stay fixed. The native
-    // determination must nevertheless name the newly prepared physical body.
-    let mut before_musical = before.determination().clone();
-    let mut after_musical = after.determination().clone();
-    for field in ["body_preparation_ref", "body_state_ref", "body_revision"] {
-        before_musical.as_object_mut().unwrap().remove(field);
-        after_musical.as_object_mut().unwrap().remove(field);
-    }
-    assert_eq!(after_musical, before_musical);
+    // Canonical M1 identity and key targets persist. The actual M3 descendant
+    // also enters the source relation's Vimarsha reading: retain the exact new
+    // octet and nodal programme instead of asserting that this bus is frozen.
+    let reading: ql_mef::m2_engine::VimarshaFrame =
+        serde_json::from_value(after.native_basis().m2["vimarsha"].clone()).unwrap();
+    let mut expected = before.determination().clone();
+    expected["audio_octet_hz"] =
+        after.native_basis().m2["vimarsha"]["reading"]["audio_octet_hz"].clone();
+    expected["nodal_quartet"] = serde_json::json!(reading.reading.nodal_quartet.map(
+        |node| serde_json::json!({"position":node.ql_position,
+            "face":u8::from(node.helix == ql_mef::m2_vimarsha::VimarshaHelix::Pratibimba),
+            "m":node.m,"n":node.n})
+    ));
+    expected["body_preparation_ref"] =
+        serde_json::json!(after.physical_body().request().preparation_ref);
+    expected["body_state_ref"] = serde_json::json!(after.physical_body().request().state_ref);
+    expected["body_revision"] =
+        serde_json::json!(after.physical_body().request().body_revision.to_string());
+    assert_eq!(after.determination(), &expected);
+    assert_ne!(
+        after.determination()["audio_octet_hz"],
+        before.determination()["audio_octet_hz"]
+    );
+    assert_ne!(
+        after.determination()["nodal_quartet"],
+        before.determination()["nodal_quartet"]
+    );
     assert_eq!(after.notes(), before.notes());
     assert_eq!(
         after.determination()["body_preparation_ref"],

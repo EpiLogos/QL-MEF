@@ -179,10 +179,14 @@ fn lost_descendant_and_disconnected_m1_m2_or_source_cannot_be_form_lineage() {
 }
 #[test]
 fn authored_edit_has_no_body_face_clock_source_or_queue_override() {
-    let edit = json!({"kind":"material","cause_ref":"native:source-material/control",
-        "material":{"provenance":{"reference":"native:material","revision":"1","source_ref":crate::source_form_body::SOURCE_GEOMETRY_BASIS,"standing":"agent-proposed"},
-        "young_modulus_pa":1e6,"density_kg_per_m3":1000.,"damping_alpha_per_second":0.4,"damping_beta_seconds":0.}});
-    assert!(serde_json::from_value::<AuthoredNativePhysicalEdit>(edit.clone()).is_ok());
+    let (_, configuration) = native_source_support::config(true);
+    let authored = AuthoredNativePhysicalEdit::Material {
+        cause_ref: "native:source-material/control".into(),
+        material: configuration.controls.material,
+    };
+    let edit = serde_json::to_value(authored).unwrap();
+    let parsed: AuthoredNativePhysicalEdit = serde_json::from_value(edit.clone()).unwrap();
+    assert_eq!(serde_json::to_value(parsed).unwrap(), edit);
     for name in [
         "physical_face",
         "native_sample",
