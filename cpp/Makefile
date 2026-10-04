@@ -26,6 +26,8 @@ TEST_SOURCES := $(wildcard tests/*.cpp)
 # the native verification command; every other native suite runs directly.
 TRANSPORT_SOURCES := $(filter %_wire.cpp %_packet.cpp,$(TEST_SOURCES))
 TRANSPORT_SOURCES += tests/material_fold_body.cpp tests/performance_receiving_admission.cpp
+# Requires the existing private Scene/Act producer's genuine original corpus.
+TRANSPORT_SOURCES += tests/performance_scene_contact_cold_corpus.cpp
 # Installed probes need the installation/qualification supplied by their
 # existing owner campaigns; discovering a source does not invent those inputs.
 INSTALLED_SOURCES := $(filter %_installed.cpp,$(TEST_SOURCES))
@@ -58,6 +60,12 @@ $(BUILD_DIR)/audio-device-macos.o: src/audio_device_macos.cpp $(HEADERS) | $(BUI
 test: all
 	$(BUILD_DIR)/continuous-test
 	@set -e; for suite in $(UNIT_TESTS); do "$$suite"; done
+# Required paired gate: the original native Scene/Act producer creates both
+# pending and active trials. A missing current-run corpus is a hard refusal.
+.PHONY: test-contact-cold-corpus
+test-contact-cold-corpus: $(BUILD_DIR)/performance_scene_contact_cold_corpus-test
+	$(BUILD_DIR)/performance_scene_contact_cold_corpus-test "$${QL_NATIVE_CONTACT_REPLAY_ARTIFACT:?genuine original C Scene/Act Contact replay corpus required}"
+
 install: all
 	$(MAKE) -C $(C_ROOT) install PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
 	install -d $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/bin
