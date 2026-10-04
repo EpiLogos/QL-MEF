@@ -20,6 +20,7 @@ endif
 
 LIB := $(C_ROOT)/build/libql-mef-c.a
 HEADERS := $(wildcard include/ql/*.hpp)
+WORKER_HEADERS := $(wildcard src/*.hpp)
 TEST_SOURCES := $(wildcard tests/*.cpp)
 # Stdin transport probes are exercised by their actual Rust producers below
 # the native verification command; every other native suite runs directly.
@@ -44,11 +45,11 @@ $(BUILD_DIR):
 	mkdir -p $@
 $(LIB):
 	$(MAKE) -C $(C_ROOT) all
-$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp $(HEADERS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
+$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp $(HEADERS) $(WORKER_HEADERS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(MAC_DEVICE_OBJECT) $(LIB) $(JSON_LIBS) $(DEVICE_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
-$(BUILD_DIR)/%-test: tests/%.cpp $(HEADERS) $(ALLOCATION_HOOKS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
+$(BUILD_DIR)/%-test: tests/%.cpp $(HEADERS) $(WORKER_HEADERS) $(ALLOCATION_HOOKS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< test_support/allocation_hooks.cpp $(MAC_DEVICE_OBJECT) $(LIB) $(JSON_LIBS) $(DEVICE_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/audio-device-unavailable.o: src/audio_device_unavailable.cpp $(HEADERS) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@

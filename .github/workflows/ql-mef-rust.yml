@@ -82,9 +82,11 @@ jobs:
     needs: changes
     if: needs.changes.outputs.native == 'true'
     runs-on: ubuntu-latest
-    # Actual63 reached21 original leaves in25min and timed out. Keep every
-    # canonical leaf/workload; allow this bounded complete native floor.
-    timeout-minutes: 60
+    # Original1372 exceeded60min during full cold source replay; both required
+    # workloads remained unreached. Keep every original gate and measure the
+    # complete floor with stage timestamps. This is a coverage budget, not a
+    # cold-reopen latency acceptance or a substitute for repairing actual cost.
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with:

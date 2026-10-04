@@ -1441,6 +1441,8 @@ mod source_metadata_tests {
         assert_eq!(original_policy_rows.as_array().unwrap().len(), 1);
         assert_eq!(original_policy_rows[0]["to_scene_ref"], row.to_scene_ref);
         let checkpoint = ConductCheckpoint {
+            original_source: None,
+            original_consumer_contract: None,
             schema: CONDUCT_CONTRACT.into(),
             rule: RuleExecution::new(&definition.procedure, &definition.interval_ref).unwrap(),
             membership: prepared.membership.clone(),

@@ -33,8 +33,23 @@ pub(crate) struct PreparedProceduralTiming {
     position: NativePosition,
     witness: NativeTimingWitness,
     native_pulse: Value,
+    boundary_binding: TimingBinding,
+    source_correspondence: Value,
 }
 impl PreparedProceduralTiming {
+    /// Current descriptor from the SAME pulse which created the original-binding witness.
+    pub(crate) fn boundary_binding(&self) -> &TimingBinding {
+        &self.boundary_binding
+    }
+    pub(crate) fn source_correspondence(&self) -> &Value {
+        &self.source_correspondence
+    }
+    pub(crate) fn procedural_consumer_fact(
+        &self,
+    ) -> Result<crate::procedural_consumers::NativeTimingConsumerFact, String> {
+        crate::procedural_consumers::NativeTimingConsumerFact::from_registered_performance_descriptor(
+            &self.boundary_binding, &self.position, &self.native_pulse)
+    }
     pub(crate) fn position(&self) -> &NativePosition {
         &self.position
     }
@@ -356,6 +371,8 @@ impl PerformanceOwner {
                 position: descriptor.position,
                 witness,
                 native_pulse: descriptor.native_pulse,
+                boundary_binding: descriptor.binding,
+                source_correspondence: descriptor.source_correspondence,
             }),
             Err(reason) => Err(NativeTimingRefusal {
                 reason,

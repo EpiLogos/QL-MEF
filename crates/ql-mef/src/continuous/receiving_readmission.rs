@@ -7,13 +7,48 @@ use serde_json::{Value, json};
 
 pub struct NativeReceivingReadmissionReply {
     native_pulse: Value,
+    original_pulses: Vec<Value>,
+    source_readoption_before_source: Option<Value>,
 }
 impl NativeReceivingReadmissionReply {
+    pub(in crate::continuous) fn from_source_readoption(native_pulse: Value) -> Self {
+        Self {
+            native_pulse,
+            original_pulses: Vec::new(),
+            source_readoption_before_source: None,
+        }
+    }
+    pub(in crate::continuous) fn with_original_pulses(
+        mut self,
+        original_pulses: Vec<Value>,
+    ) -> Self {
+        self.original_pulses = original_pulses;
+        self
+    }
+    pub fn original_pulses(&self) -> &[Value] {
+        &self.original_pulses
+    }
+    /// Complete actual resident source held before the selected-source ACK.
+    /// This is retained evidence only; it cannot issue a current Act lease.
+    pub fn source_readoption_before_source(&self) -> Option<&Value> {
+        self.source_readoption_before_source.as_ref()
+    }
+    pub(in crate::continuous) fn with_source_readoption_before_source(
+        mut self,
+        original: Value,
+    ) -> Self {
+        self.source_readoption_before_source = Some(original);
+        self
+    }
     pub fn native_pulse(&self) -> &Value {
         &self.native_pulse
     }
     pub fn readmission(&self) -> &Value {
-        &self.native_pulse["payload"]["receiving_readmission"]
+        if self.native_pulse["operation"] == "selected-source-readoption" {
+            &self.native_pulse["payload"]["source_readoption"]
+        } else {
+            &self.native_pulse["payload"]["receiving_readmission"]
+        }
     }
 }
 pub struct NativeReceivingReadmissionRefusal {
@@ -59,6 +94,87 @@ fn reference(text: &str) -> Result<(), String> {
     Ok(())
 }
 impl FieldHost {
+    /// Pure selected-source preparation using this SAME retained native pipe.
+    /// The typed candidate keeps every original source and Contact qualifier
+    /// alive until the actual numerical restore has been checked.
+    pub(in crate::continuous) fn prepare_warm_retained_performance_checkpoint(
+        &mut self,
+        lease: &NativeActSourceLease<'_>,
+        original_wire: &str,
+        checkpoint_ref: &str,
+    ) -> Result<
+        crate::continuous::performance::PreparedWarmNativeSourceCheckpoint,
+        crate::continuous::performance::NativeWarmSourceCheckpointFailure,
+    > {
+        let refused =
+            |reason: String| crate::continuous::performance::NativeWarmSourceCheckpointFailure {
+                kind:
+                    crate::continuous::performance::NativeWarmSourceCheckpointFailureKind::Refused,
+                reason,
+                // No source/worker request was issued. The original request and
+                // any resident originals remain held by the Bridge and host;
+                // do not copy an uncharged envelope into the refusal.
+                original_selection: Value::Null,
+                native_receipts: Vec::new(),
+            };
+        crate::continuous::performance::retained_evidence::encoded_bound(
+            self.session.session().current_basis(),
+            MAX_HOST_INPUT as usize,
+            "warm operative whole current basis",
+        )
+        .map_err(refused)?;
+        // Borrow the same attached owners after the whole current basis has
+        // been charged; no imported Value creates or substitutes an owner.
+        let current = self.session.session().current_basis().clone();
+        let owner = self.performance.as_ref().ok_or_else(|| {
+            refused("retained performance owner absent before warm qualification".into())
+        })?;
+        let source = self.receiving_source.as_ref().ok_or_else(|| {
+            refused("retained receiving owner absent before warm qualification".into())
+        })?;
+        owner.prepare_warm_native_source_checkpoint(
+            &current,
+            source,
+            self.session.session_mut(),
+            lease,
+            checkpoint_ref,
+            original_wire,
+        )
+    }
+    pub(in crate::continuous) fn qualify_warm_retained_acoustic_history(
+        &self,
+        candidate: &crate::continuous::performance::PreparedWarmNativeSourceCheckpoint,
+        lease: &NativeActSourceLease<'_>,
+        original_wire: &str,
+        checkpoint_ref: &str,
+    ) -> Result<Option<crate::continuous::performance::QualifiedAcousticSourceHistory>, String>
+    {
+        let source = self
+            .receiving_source
+            .as_ref()
+            .ok_or("retained receiving owner absent during warm history qualification")?;
+        let owner = self
+            .performance
+            .as_ref()
+            .ok_or("retained performance owner absent during warm history qualification")?;
+        candidate.validate_held(owner, self.session.session().current_basis(), source, lease)?;
+        let saved: Value = serde_json::from_str(original_wire).map_err(|e| e.to_string())?;
+        if saved["native_pair"]["audio"]["receiving"]["schema"]
+            != "ql.performance-receiving-checkpoint/v2"
+        {
+            return Ok(None);
+        }
+        let history = crate::continuous::performance::qualify_saved_acoustic_physical_history(
+            candidate.physical(),
+            source,
+            lease,
+            &self.instance_ref,
+            checkpoint_ref,
+            original_wire,
+        )?;
+        candidate.validate_held(owner, self.session.session().current_basis(), source, lease)?;
+        Ok(Some(history))
+    }
     /// Only the actual selected native C28 operation can lend this lease.
     /// The same native session, source owner and original receiving producer
     /// are borrowed throughout preflight, serial numerical commit and return.
@@ -86,6 +202,24 @@ impl FieldHost {
         checkpoint_ref: &str,
         transaction_ref: &str,
         history: Option<&crate::continuous::performance::QualifiedAcousticSourceHistory>,
+    ) -> Result<NativeReceivingReadmissionReply, NativeReceivingReadmissionRefusal> {
+        self.readmit_retained_performance_checkpoint_with_source(
+            lease,
+            original_checkpoint_wire,
+            checkpoint_ref,
+            transaction_ref,
+            history,
+            None,
+        )
+    }
+    pub(in crate::continuous) fn readmit_retained_performance_checkpoint_with_source(
+        &mut self,
+        lease: &NativeActSourceLease<'_>,
+        original_checkpoint_wire: &str,
+        checkpoint_ref: &str,
+        transaction_ref: &str,
+        history: Option<&crate::continuous::performance::QualifiedAcousticSourceHistory>,
+        warm_source: Option<&crate::continuous::performance::PreparedWarmNativeSourceCheckpoint>,
     ) -> Result<NativeReceivingReadmissionReply, NativeReceivingReadmissionRefusal> {
         let preflight = || -> Result<_, String> {
             reference(checkpoint_ref)?;
@@ -117,6 +251,9 @@ impl FieldHost {
                 .as_ref()
                 .ok_or("retained original receiving producer absent")?;
             let current = self.session.session().current_basis();
+            if let Some(candidate) = warm_source {
+                candidate.validate_held(owner, current, source, lease)?;
+            }
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
             let prepared = source.prepare_current(owner, current, cursor)?;
             prepared.validate_current(source, owner, current, cursor)?;
@@ -162,6 +299,9 @@ impl FieldHost {
             // before the only native exchange. No state is changed by this read.
             prepared.validate_current(source, owner, current, cursor)?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            if let Some(candidate) = warm_source {
+                candidate.validate_held(owner, current, source, lease)?;
+            }
             Ok((request, prepared, cursor, original_acoustic))
         };
         let (request, prepared, cursor, original_acoustic) =
@@ -240,6 +380,14 @@ impl FieldHost {
                 cursor,
             )?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
+            if let Some(candidate) = warm_source {
+                candidate.validate_held(
+                    owner,
+                    self.session.session().current_basis(),
+                    source,
+                    lease,
+                )?;
+            }
             let original_after = owner.prepare_saved_acoustic_receiving_with_history(
                 self.session.session().current_basis(),
                 source,
@@ -265,6 +413,8 @@ impl FieldHost {
         }
         Ok(NativeReceivingReadmissionReply {
             native_pulse: pulse,
+            original_pulses: Vec::new(),
+            source_readoption_before_source: None,
         })
     }
 }

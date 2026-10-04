@@ -11,6 +11,12 @@
 #include <ql/performance_source_packet.hpp>
 #include <ql/performance_timing.hpp>
 
+namespace ql::performance::scene_contact_transport {
+class Channel;
+}
+namespace ql::performance::selected_source_transport {
+class Channel;
+}
 namespace ql::performance::management_transport {
 namespace wire = checkpoint_transport;
 using J = json_object;
@@ -322,6 +328,48 @@ struct BodyStanding {
 /// P/Engine reside in this retained worker; JSON is never parsed by the
 /// callback.
 class Control {
+  friend class ql::performance::scene_contact_transport::Channel;
+  friend class ql::performance::selected_source_transport::Channel;
+  Json serialize_pulse(const std::string &op, bool accepted,
+                       const std::string &reason, Json payload,
+                       const ManagementPulse &pulse) {
+    auto out = wire::object();
+    wire::text(out.get(), "schema", "ql.performance-worker-reply/v1");
+    wire::text(out.get(), "operation", op);
+    wire::flag(out.get(), "accepted", accepted);
+    wire::text(out.get(), "reason", reason);
+    wire::put(out.get(), "reading", reading(pulse).release());
+    wire::put(out.get(), "payload", payload.release());
+    auto applied = wire::array();
+    for (const auto &a : pulse.applications)
+      wire::append(applied.get(), wire::application(a).release());
+    wire::put(out.get(), "applications", applied.release());
+    put_input_history(out.get(), pulse);
+    wire::put(out.get(), "recording",
+              wire::recording(pulse.recording).release());
+    // Original 70301 same-pulse capture survives the Contact serializer join.
+    wire::put(out.get(), "native_capture",
+              native_capture_transport::batch(*owner_, pulse).release());
+    auto registry = std::make_unique<NativeResidentRegistry>();
+    if (owner_->write_resident_registry(pulse, *registry)) {
+      wire::put(out.get(), "resident_consumers",
+                resident_wire::registry(*registry).release());
+      wire::put(out.get(), "native_timing_owner",
+                resident_wire::timing_owner(*owner_, *registry).release());
+    } else {
+      null(out.get(), "resident_consumers");
+      null(out.get(), "native_timing_owner");
+      wire::text(out.get(), "resident_registry_reason",
+                 "actual native same-pulse registration unavailable");
+    }
+    wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
+    wire::u64(out.get(), "last_native_member", owner_->last_native_member());
+    wire::flag(out.get(), "recording_available", owner_->recording_available());
+    wire::flag(out.get(), "release_pending", pulse.release_pending);
+    wire::flag(out.get(), "release_zero_proven", pulse.release_zero_proven);
+    wire::u64(out.get(), "release_proof_cursor", pulse.release_proof_cursor);
+    return out;
+  }
   std::unique_ptr<PerformanceManagement> owner_;
   // Immutable output of the actual preparation on this serial worker. These
   // retained bytes are coherence evidence, never a private Source/Act grant.
@@ -765,13 +813,6 @@ public:
                                     &original_saved_acoustic);
       if (has_original_saved_acoustic)
         allowed.insert("original_saved_acoustic");
-      J *authored_source_transition = nullptr;
-      const bool has_authored_source_transition =
-          op == "receiving-transport-replace" &&
-          json_object_object_get_ex(request, "authored_source_transition",
-                                    &authored_source_transition);
-      if (has_authored_source_transition)
-        allowed.insert("authored_source_transition");
       require(json_object_object_length(request) == int(allowed.size()),
               "missing or unknown native performance fields");
       json_object_object_foreach(request, name, value) {
@@ -999,9 +1040,6 @@ public:
                       ql::physical_wire::exact(
                           packet::field(before_config, "revision")),
               "native receiver change lost birth or original revision order");
-          acoustic_wire::validate_receiver_replacement_source(
-              original_packet, candidate_packet, prepared_source_.get(),
-              authored_source_transition, cursor);
           // The actual dated receiver owner appends this effective source
           // epoch while retaining preceding retarded intervals and the ring.
           // The same private source/Act caller qualifies the complete AFTER
@@ -1326,6 +1364,17 @@ public:
         reason = refusal.what();
       }
     }
+    if (op == "checkpoint" && accepted) {
+      // The untouched payload checkpoint precedes this original same pulse.
+      // Capture its actual feedback-complete successor without another pulse
+      // or P/audio clock. Selected-source BEFORE uses these native bytes.
+      auto after_pulse = owner_->stopped_checkpoint();
+      auto after_wire =
+          management_checkpoint_transport::checkpoint_wire(*after_pulse);
+      wire::text(payload.get(), "checkpoint_after_pulse_wire",
+                 json_object_to_json_string_ext(after_wire.get(),
+                                                JSON_C_TO_STRING_PLAIN));
+    }
     if (readmission) {
       // This checkpoint follows the actual pulse's observer drain. It proves
       // the unchanged operative->after FIFO transition in the original C24D
@@ -1338,41 +1387,7 @@ public:
                                                 JSON_C_TO_STRING_PLAIN));
       wire::put(payload.get(), "receiving_readmission", readmission.release());
     }
-    auto out = wire::object();
-    wire::text(out.get(), "schema", "ql.performance-worker-reply/v1");
-    wire::text(out.get(), "operation", op);
-    wire::flag(out.get(), "accepted", accepted);
-    wire::text(out.get(), "reason", reason);
-    wire::put(out.get(), "reading", reading(*pulse).release());
-    wire::put(out.get(), "payload", payload.release());
-    auto applied = wire::array();
-    for (const auto &a : pulse->applications)
-      wire::append(applied.get(), wire::application(a).release());
-    wire::put(out.get(), "applications", applied.release());
-    put_input_history(out.get(), *pulse);
-    wire::put(out.get(), "recording",
-              wire::recording(pulse->recording).release());
-    auto registry = std::make_unique<NativeResidentRegistry>();
-    if (owner_->write_resident_registry(*pulse, *registry)) {
-      wire::put(out.get(), "resident_consumers",
-                resident_wire::registry(*registry).release());
-      wire::put(out.get(), "native_timing_owner",
-                resident_wire::timing_owner(*owner_, *registry).release());
-    } else {
-      null(out.get(), "resident_consumers");
-      null(out.get(), "native_timing_owner");
-      wire::text(out.get(), "resident_registry_reason",
-                 "actual native same-pulse registration unavailable");
-    }
-    wire::put(out.get(), "native_capture",
-              native_capture_transport::batch(*owner_, *pulse).release());
-    wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
-    wire::u64(out.get(), "last_native_member", owner_->last_native_member());
-    wire::flag(out.get(), "recording_available", owner_->recording_available());
-    wire::flag(out.get(), "release_pending", pulse->release_pending);
-    wire::flag(out.get(), "release_zero_proven", pulse->release_zero_proven);
-    wire::u64(out.get(), "release_proof_cursor", pulse->release_proof_cursor);
-    return out;
+    return serialize_pulse(op, accepted, reason, std::move(payload), *pulse);
   }
 };
 } // namespace ql::performance::management_transport

@@ -17,6 +17,9 @@ use std::path::Path;
 use std::time::Duration;
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "procedural_definition.rs"]
+mod procedural_definition;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 #[path = "procedural_field_timing.rs"]
 mod procedural_field_timing;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
@@ -35,6 +38,10 @@ pub use receiving_readmission::{
 #[path = "performance_recording.rs"]
 mod performance_recording;
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_recording_render.rs"]
+mod performance_recording_render;
+
 #[path = "performance_calibration.rs"]
 pub(super) mod performance_calibration;
 
@@ -47,6 +54,10 @@ mod acoustic_scene_source;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 #[path = "performance_physical_scene_host.rs"]
 mod physical_scene_source;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_scene_contact_host.rs"]
+mod scene_contact;
 
 pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
@@ -598,6 +609,7 @@ impl FieldHost {
         if !self.available() || owner.reading().is_none() {
             return Err("native activated owner/current readback unavailable".into());
         }
+        owner.precharge_source_export_inputs(current, source)?;
         // Full original/current producer, receiver, occasion and consent replay
         // precedes retention. A stored snapshot or binding-only setter is not it.
         let admitted_at=exact_cursor(owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"]
@@ -667,6 +679,34 @@ impl FieldHost {
             }
             artifact["native_acoustic_source_history"] = json!(acoustic_history);
         }
+        let contact_history = owner.native_contact_admission_history();
+        let records = owner
+            .source_assets()
+            .get("contact_occurrence_history")
+            .map(|value| {
+                value
+                    .as_array()
+                    .map(Vec::as_slice)
+                    .ok_or("native Contact history is not an array")
+            })
+            .transpose()?
+            .unwrap_or(&[]);
+        if records.len() != contact_history.len()
+            || records.iter().zip(&contact_history).any(|(record, entry)| {
+                *record != entry["source"]
+                    || entry["native_admission"]["payload"]["queue_committed"] != true
+            })
+        {
+            return Err("actual source artifact lost an original native Contact admission".into());
+        }
+        if !contact_history.is_empty() {
+            artifact["native_contact_admission_history"] = json!(contact_history);
+        }
+        super::performance::retained_evidence::encoded_bound(
+            &artifact,
+            MAX_HOST_INPUT as usize,
+            "complete actual retained source artifact",
+        )?;
         Ok(artifact)
     }
 
@@ -713,9 +753,11 @@ impl FieldHost {
         }
         let physical = owner.native_physical_source_history();
         let acoustic = owner.native_acoustic_source_history();
+        let contact = owner.native_contact_admission_history();
         for (name, applications) in [
             ("physical_transition_history", &physical),
             ("acoustic_transition_history", &acoustic),
+            ("contact_occurrence_history", &contact),
         ] {
             let records = match owner.source_assets().get(name) {
                 Some(value) => value
@@ -736,7 +778,7 @@ impl FieldHost {
                 );
             }
         }
-        Ok(json!({
+        let mut observation = json!({
             "schema":"ql.native-held-performance-source/v1",
             "performance_sources":owner.source_assets(),
             "physical_preparation":serde_json::to_value(owner.binding().physical_body()).map_err(|e|e.to_string())?,
@@ -744,7 +786,11 @@ impl FieldHost {
             "native_acoustic_source_history":acoustic,
             "native_reading":owner.reading(),
             "standing":"actual complete same-owner source observation; no imported grant or additional Inspect/ordinal"
-        }))
+        });
+        if !contact.is_empty() {
+            observation["native_contact_admission_history"] = json!(contact);
+        }
+        Ok(observation)
     }
 
     /// Reached by the existing guarded native Kernel/Act reader callback, not
@@ -952,6 +998,22 @@ impl FieldHost {
         let mut timing_pulse = None;
         let mut field_timing_receipt = None;
         let result: Result<Value, String> = (|| {
+            if matches!(
+                &*procedure_request,
+                ConductRequest::InstallPrepared { .. } | ConductRequest::SourceContinue { .. }
+            ) {
+                if !matches!(moment, super::performance::NativeTimingMoment::Boundary) {
+                    return Err(
+                        "native definition qualification uses SAME native Boundary only".into(),
+                    );
+                }
+                return self.execute_native_definition(
+                    *procedure_request,
+                    act_lease,
+                    &mut field_timing_receipt,
+                    &mut timing_pulse,
+                );
+            }
             if let ConductRequest::SourceBootstrap { input } = &*procedure_request {
                 if !matches!(moment, super::performance::NativeTimingMoment::Boundary) {
                     return Err(
@@ -1445,3 +1507,7 @@ mod dense_field_source_tests;
 
 #[path = "performance_form_host.rs"]
 mod physical_form;
+
+#[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
+#[path = "performance_scene_contact_ingress_tests.rs"]
+mod scene_contact_ingress_tests;

@@ -331,6 +331,19 @@ impl NativePerformanceReceivingSource {
         }
         Ok(prepared)
     }
+    /// Read-only score qualification across the crate boundary. The complete
+    /// old implementation/date and its independently fresh current producer
+    /// are verified by the native owner; neither closed carrier escapes here.
+    pub(crate) fn validate_retained_for_score(
+        &self,
+        owner: &PerformanceOwner,
+        current: &CoupledBasis,
+        cursor: u64,
+        expected: &Value,
+    ) -> Result<(), String> {
+        self.prepare_retained(owner, current, cursor, expected)?;
+        Ok(())
+    }
     pub(in crate::continuous) fn admit_retained(
         &self,
         owner: &mut PerformanceOwner,

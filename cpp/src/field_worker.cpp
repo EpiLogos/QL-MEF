@@ -2,6 +2,9 @@
 // stays outside render_audio. Native audio hosts call the typed library directly.
 #include <ql/continuous_field.hpp>
 #include <ql/performance_management_wire.hpp>
+#include "native_scene_contact_channel.hpp"
+#include "native_scene_contact_replay_channel.hpp"
+#include "native_selected_source_readoption_channel.hpp"
 #include <json-c/json.h>
 #include <charconv>
 #include <iostream>
@@ -185,6 +188,8 @@ int main() {
     std::cin.tie(nullptr);
     std::unique_ptr<ql::ContinuousField> field;
     ql::performance::management_transport::Control performance;
+    ql::performance::scene_contact_transport::Channel scene_contacts;
+    ql::performance::selected_source_transport::Channel selected_sources;
     Json basis = own(nullptr), gains = own(nullptr);
     std::string shape_ref;
     std::string line;
@@ -199,6 +204,8 @@ int main() {
         }
         if (line.empty() && !std::cin) break;
         bool committed = false;
+        bool contact_channel_entered = false;
+        bool selected_source_channel_entered = false;
 #if defined(__APPLE__)
         RequestMallocScope malloc_scope(malloc_observer, field, performance, line, committed);
 #endif
@@ -208,13 +215,50 @@ int main() {
             auto request = own(json_tokener_parse_ex(tok.get(), line.c_str(), int(line.size())));
             ql::require(json_tokener_get_error(tok.get()) == json_tokener_success &&
                 json_tokener_get_parse_end(tok.get()) == line.size(), "invalid complete JSON message");
-            auto op = text(get(request.get(), "operation"));
             const auto schema = text(get(request.get(), "schema"));
+            // The closed selected-source request has no caller operation. Its
+            // diagnostic name comes ONLY from this private native schema route.
+            auto op = schema == ql::performance::selected_source_transport::request_schema
+                ? std::string("selected-source-readoption")
+                : text(get(request.get(), "operation"));
 #if defined(__APPLE__)
             if (malloc_observer.selects_current_request()) malloc_scope.facts.operation = ql::worker_diagnostic::RequestMallocObserver::operation_name(op);
             if (malloc_observer.selects_current_request()) malloc_scope.facts.domain = schema == "ql.field-control/v1" ? "field" :
-                schema == "ql.performance-control/v1" ? "performance" : "unknown";
+                (schema == "ql.performance-control/v1" || schema == ql::performance::scene_contact_transport::request_schema || schema == ql::performance::scene_contact_transport::replay_request_schema || schema == ql::performance::selected_source_transport::request_schema) ? "performance" : "unknown";
 #endif
+            if (schema == ql::performance::selected_source_transport::request_schema) {
+                ql::require(bool(field), "original retained FIELD owner absent for selected source restore");
+                selected_source_channel_entered = true;
+                auto output = selected_sources.execute(performance, request.get());
+                committed = selected_sources.last_source_committed();
+#if defined(__APPLE__)
+                if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                    json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
+                std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
+                continue;
+            }
+            if (schema == ql::performance::scene_contact_transport::replay_request_schema) {
+                ql::require(bool(field), "original retained FIELD owner absent for Contact numerical replay");
+                auto output = ql::performance::scene_contact_transport::verify_replay(request.get());
+#if defined(__APPLE__)
+                if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                    json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
+                std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
+                continue;
+            }
+            if (schema == ql::performance::scene_contact_transport::request_schema) {
+                contact_channel_entered = true;
+                auto output = scene_contacts.execute(performance, request.get());
+                committed = scene_contacts.last_queue_committed();
+#if defined(__APPLE__)
+                if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                    json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
+                std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
+                continue;
+            }
             if (schema == "ql.performance-control/v1") {
                 // One retained native control owner. Callback execution never
                 // reads JSON; management prepares immutable bounded operations.
@@ -289,9 +333,15 @@ int main() {
 #if defined(__APPLE__)
             malloc_scope.facts.exception_reply = true;
 #endif
-            if (committed && performance.active()) performance.hold();
+            committed = committed || (contact_channel_entered && scene_contacts.last_queue_committed());
+            committed = committed || (selected_source_channel_entered && selected_sources.last_source_committed());
+            if (selected_source_channel_entered)
+                selected_sources.protect_after_exception(performance);
+            else if (committed && performance.active()) performance.hold();
             auto output = own(json_object_new_object()); string(output.get(), "schema", "ql.field-error/v1"); string(output.get(), "error", error.what());
             put(output.get(), "state_committed", json_object_new_boolean(committed));
+            if (selected_source_channel_entered && committed)
+                put(output.get(), "selected_source_failure", selected_sources.retained_failure().release());
 #if defined(__APPLE__)
             if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
                 json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));

@@ -502,6 +502,24 @@ impl CoupledFieldSession {
     ) -> Result<Value, (String, Option<Value>)> {
         self.field.performance_exchange_retained(request)
     }
+    pub(crate) fn selected_source_exchange_retained(
+        &mut self,
+        qualified: &Value,
+    ) -> Result<Value, (String, Option<Value>)> {
+        self.field.selected_source_exchange_retained(qualified)
+    }
+    pub(crate) fn scene_contact_exchange_retained(
+        &mut self,
+        qualified: &super::performance::QualifiedNativeSceneContactWorkerRequest,
+    ) -> Result<Value, (String, Option<Value>)> {
+        self.field.scene_contact_exchange_retained(qualified)
+    }
+    pub(crate) fn scene_contact_replay_retained(
+        &mut self,
+        qualified: &super::performance::QualifiedNativeSceneContactReplayWorkerRequest,
+    ) -> Result<Value, (String, Option<Value>)> {
+        self.field.scene_contact_replay_retained(qualified)
+    }
     pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
         self.field.performance_invalidate(reason)
     }

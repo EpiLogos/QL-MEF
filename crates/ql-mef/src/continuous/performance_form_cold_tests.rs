@@ -3,6 +3,41 @@
 use super::*;
 use crate::continuous::performance::native_source_support;
 use crate::musical_performance_return::{ReturnContext, ReturnReference};
+// Host-only test diagnostics. These times never enter a native request,
+// source snapshot, admission, checkpoint or callback clock.
+struct ColdReplayProgress {
+    test: &'static str,
+    started: std::time::Instant,
+    previous: std::time::Instant,
+}
+impl ColdReplayProgress {
+    fn new(test: &'static str) -> Self {
+        let now = std::time::Instant::now();
+        let mut progress = Self {
+            test,
+            started: now,
+            previous: now,
+        };
+        progress.mark("begin");
+        progress
+    }
+    fn mark(&mut self, stage: impl AsRef<str>) {
+        let now = std::time::Instant::now();
+        let test = self.test;
+        let stage = stage.as_ref();
+        let utc_unix_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_millis();
+        let elapsed_ms = now.duration_since(self.started).as_millis();
+        let since_previous_ms = now.duration_since(self.previous).as_millis();
+        eprintln!(
+            "native-cold-stage test={test} stage={stage} utc_unix_ms={utc_unix_ms} elapsed_ms={elapsed_ms} since_previous_ms={since_previous_ms}"
+        );
+        self.previous = now;
+    }
+}
+
 fn world_source() -> (
     crate::scene::WorldRequest,
     NativePerformanceReceivingSource,
@@ -262,32 +297,43 @@ fn actual_component_checkpoint(
 #[test]
 #[ignore = "requires actual same normal-floor native worker; no lease or native pulse is fabricated"]
 fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and_detect_loss() {
+    let mut progress = ColdReplayProgress::new("current-source-form-cold");
     use std::{path::PathBuf, time::Duration};
     let worker = PathBuf::from(
         std::env::var("QL_NATIVE_FIELD_WORKER").expect("actual matching native worker"),
     );
+    progress.mark("native-source-stage-original-line=269 begin");
     let (request, source, config) = world_source();
+    progress.mark("native-source-stage-original-line=269 complete");
     let source = acoustic_source(source);
     let produced = crate::scene::world(request).unwrap();
     let scene_config: crate::continuous::scene_field::SceneConfig =
         serde_json::from_value(produced["binding"]["host"].clone()).unwrap();
+    progress.mark("native-source-stage-original-line=274 begin");
     let mut scene = crate::continuous::scene_field::SceneInstrument::open(
         &worker,
         scene_config,
         Duration::from_secs(20),
     )
     .unwrap();
+    progress.mark("native-source-stage-original-line=274 complete");
     let original = scene.session().current_basis().clone();
+    progress.mark("native-source-stage-original-line=281 begin");
     let mut owner =
         PerformanceOwner::prepare(&original, "expression:physical-cold/world", config).unwrap();
+    progress.mark("native-source-stage-original-line=281 complete");
+    progress.mark("fresh-native-admission-original-line=283 begin");
     owner
         .activate_with_current_receiving(&original, scene.session_mut(), &source)
         .unwrap();
+    progress.mark("fresh-native-admission-original-line=283 complete");
     // Use the same native acoustic producer and actual stopped worker owner.
     // This component test has no C/Act grant; production install remains private.
+    progress.mark("native-source-stage-original-line=288 begin");
     let acoustic = owner
         .prepare_acoustic_receiving_segment(&original, &source, 0, 0)
         .unwrap();
+    progress.mark("native-source-stage-original-line=288 complete");
     let mut install = owner.raw("receiving-transport-install").unwrap();
     install["prepared_acoustic"] = acoustic.packet().clone();
     install["current_acoustic"] = acoustic.packet().clone();
@@ -296,7 +342,9 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         .session_mut()
         .performance_exchange_retained(&install)
         .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+    progress.mark("assert-original-line=299 begin");
     assert_eq!(installed["accepted"], true, "{installed}");
+    progress.mark("assert-original-line=299 complete");
     owner.validate_reply(&installed).unwrap();
     owner.last = Some(installed);
     owner.source_assets["acoustic_receiving"] = acoustic.snapshot();
@@ -334,12 +382,18 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             .session_mut()
             .performance_exchange_retained(&queued)
             .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        progress.mark("assert-original-line=337 begin");
         assert_eq!(pulse["accepted"], true, "{pulse}");
+        progress.mark("assert-original-line=337 complete");
         owner.validate_reply(&pulse).unwrap();
         owner.last = Some(pulse);
     }
+    progress.mark("native-source-stage-original-line=341 begin");
     let mut native_chunks = vec![actual_component_render(&mut owner, &mut scene)];
+    progress.mark("native-source-stage-original-line=341 complete");
+    progress.mark("native-source-stage-original-line=342 begin");
     let mut checkpoints = vec![actual_component_checkpoint(&mut owner, &mut scene)];
+    progress.mark("native-source-stage-original-line=342 complete");
     let mut current = original.clone();
     let mut actual_history = Vec::new();
     for (request_id, edit) in [
@@ -356,6 +410,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             },
         ),
     ] {
+        progress.mark("native-source-stage-original-line=359 begin");
         let mut next = owner
             .prepare_physical_source_descendant_at(
                 &current,
@@ -365,12 +420,15 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
                 decimal(&owner.reading().unwrap()["samples_elapsed"]).unwrap(),
             )
             .unwrap();
+        progress.mark("native-source-stage-original-line=359 complete");
         let request = native_request(&owner, &next, request_id, &edit);
         let pulse = scene
             .session_mut()
             .performance_exchange_retained(&request)
             .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        progress.mark("assert-original-line=373 begin");
         assert_eq!(pulse["accepted"], true, "{pulse}");
+        progress.mark("assert-original-line=373 complete");
         next.after_owner.validate_reply(&pulse).unwrap();
         actual_history.push(json!({"source":next.source_record,"native_application":pulse}));
         next.after_owner.last = Some(pulse);
@@ -381,6 +439,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         checkpoints.push(actual_component_checkpoint(&mut owner, &mut scene));
     }
     let expected = owner.source_assets().clone();
+    progress.mark("native-source-stage-original-line=384 begin");
     let replayed = PerformanceOwner::replay_cold_native_physical_source(
         &original,
         "expression:physical-cold/world",
@@ -389,9 +448,17 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         &actual_history,
     )
     .unwrap();
+    progress.mark("native-source-stage-original-line=384 complete");
+    progress.mark("assert-original-line=392 begin");
     assert_eq!(replayed.frames().len(), 3);
+    progress.mark("assert-original-line=392 complete");
+    progress.mark("assert-original-line=393 begin");
     assert_eq!(replayed.frames()[0].owner().source_assets(), &born);
+    progress.mark("assert-original-line=393 complete");
+    progress.mark("assert-original-line=394 begin");
     assert_eq!(replayed.final_frame().owner().source_assets(), &expected);
+    progress.mark("assert-original-line=394 complete");
+    progress.mark("assert-original-line=395 begin");
     assert_eq!(
         replayed
             .final_frame()
@@ -399,19 +466,28 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             .native_physical_source_history(),
         actual_history
     );
+    progress.mark("assert-original-line=395 complete");
+    progress.mark("assert-original-line=402 begin");
     assert_eq!(
         serde_json::to_value(replayed.final_frame().current()).unwrap(),
         serde_json::to_value(&current).unwrap()
     );
+    progress.mark("assert-original-line=402 complete");
     for (index, frame) in replayed.frames().iter().enumerate() {
+        progress.mark("assert-original-line=407 begin");
         assert_eq!(
             frame.owner().config.controls.body_revision,
             index as u64 + 1
         );
+        progress.mark("assert-original-line=407 complete");
+        progress.mark("assert-original-line=411 begin");
         assert!(frame.owner().reading().is_none());
+        progress.mark("assert-original-line=411 complete");
+        progress.mark("fresh-native-admission-original-line=412 begin");
         source
             .prepare_current(frame.owner(), frame.current(), frame.source_sample())
             .unwrap();
+        progress.mark("fresh-native-admission-original-line=412 complete");
     }
     for path in [
         "/physical_transition_history/0/native_m3_receipt/after",
@@ -424,6 +500,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
     ] {
         let mut lost = expected.clone();
         *lost.pointer_mut(path).unwrap() = Value::Null;
+        progress.mark("assert-original-line=427 begin");
         assert!(
             PerformanceOwner::replay_cold_native_physical_source(
                 &original,
@@ -435,6 +512,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             .is_err(),
             "{path}"
         );
+        progress.mark("assert-original-line=427 complete");
     }
     for path in [
         "/native_application/payload/physical_transition/original_native_request_id",
@@ -444,6 +522,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
     ] {
         let mut lost = actual_history.clone();
         *lost[0].pointer_mut(path).unwrap() = Value::Null;
+        progress.mark("assert-original-line=447 begin");
         assert!(
             PerformanceOwner::replay_cold_native_physical_source(
                 &original,
@@ -455,9 +534,11 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             .is_err(),
             "{path}"
         );
+        progress.mark("assert-original-line=447 complete");
     }
     let mut reversed = actual_history.clone();
     reversed.reverse();
+    progress.mark("assert-original-line=461 begin");
     assert!(
         PerformanceOwner::replay_cold_native_physical_source(
             &original,
@@ -468,6 +549,8 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         )
         .is_err()
     );
+    progress.mark("assert-original-line=461 complete");
+    progress.mark("assert-original-line=471 begin");
     assert!(
         PerformanceOwner::replay_cold_native_physical_source(
             &current,
@@ -479,6 +562,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         .is_err(),
         "final current cannot become origin"
     );
+    progress.mark("assert-original-line=471 complete");
     // Original classification and protected occasion stay bound to the origin;
     // only the actual preparation hash/operative body source changes.
     use sha2::{Digest, Sha256};
@@ -486,31 +570,38 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         "sha256:{:x}",
         Sha256::digest(serde_json::to_vec(&born["original_native_input"]).unwrap())
     );
+    progress.mark("assert-original-line=489 begin");
     assert_eq!(
         origin_context["classified_original_input_sha256"],
         expected_original_hash
     );
+    progress.mark("assert-original-line=489 complete");
     for (index, frame) in replayed.frames().iter().enumerate() {
         if index > 0 {
+            progress.mark("assert-original-line=495 begin");
             assert_ne!(
                 frame.owner().source_assets()["source_context"]["native_preparation_sha256"],
                 origin_context["native_preparation_sha256"]
             );
+            progress.mark("assert-original-line=495 complete");
         }
         for field in [
             "classified_original_input_sha256",
             "classifications",
             "original_occasion",
         ] {
+            progress.mark("assert-original-line=505 begin");
             assert_eq!(
                 frame.owner().source_assets()["source_context"][field],
                 origin_context[field],
                 "{field}"
             );
+            progress.mark("assert-original-line=505 complete");
         }
     }
     let wire =
         serde_json::to_string(&checkpoints.last().unwrap()["payload"]["checkpoint"]).unwrap();
+    progress.mark("native-source-stage-original-line=514 begin");
     let verify = |text: &str| {
         crate::continuous::performance::acoustic_history::verify_dated_source_history(
             &replayed,
@@ -519,13 +610,25 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             text,
         )
     };
+    progress.mark("native-source-stage-original-line=514 complete");
+    progress.mark("native-source-stage-original-line=522 begin");
     let genuine = verify(&wire).unwrap();
+    progress.mark("native-source-stage-original-line=522 complete");
+    progress.mark("assert-original-line=523 begin");
     assert_eq!(genuine["segments"].as_array().unwrap().len(), 3);
+    progress.mark("assert-original-line=523 complete");
+    progress.mark("assert-original-line=524 begin");
     assert_eq!(genuine["segments"][0]["effective_sample"], "0");
+    progress.mark("assert-original-line=524 complete");
+    progress.mark("assert-original-line=525 begin");
     assert_eq!(genuine["segments"][1]["effective_sample"], "512");
+    progress.mark("assert-original-line=525 complete");
+    progress.mark("assert-original-line=526 begin");
     assert_eq!(genuine["segments"][2]["effective_sample"], "1024");
+    progress.mark("assert-original-line=526 complete");
     let saved: Value = serde_json::from_str(&wire).unwrap();
     let ring = &saved["native_pair"]["audio"]["receiving"]["history_linear"];
+    progress.mark("assert-original-line=529 begin");
     assert!(
         ring.as_array()
             .unwrap()
@@ -533,6 +636,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             .any(|v| v.as_f64().unwrap() != 0.),
         "actual held note must produce a nonzero native P ring"
     );
+    progress.mark("assert-original-line=529 complete");
     for index in 0..3 {
         for (field, wrong) in [
             ("effective_sample", json!("1")),
@@ -552,13 +656,16 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             ("anchor_metres", json!([1., 2., 3.])),
             ("velocity_metres_per_second", json!([1., 2., 3.])),
         ] {
+            progress.mark(format!("segment-negative index={index} field={field}"));
             let mut wrong_saved = saved.clone();
             wrong_saved["native_pair"]["audio"]["receiving"]["source_history"]["segments"][index]
                 [field] = wrong;
+            progress.mark("assert-original-line=558 begin");
             assert!(
                 verify(&serde_json::to_string(&wrong_saved).unwrap()).is_err(),
                 "segment {index} {field}"
             );
+            progress.mark("assert-original-line=558 complete");
         }
     }
     for path in [
@@ -569,14 +676,18 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
     ] {
         let mut lost = saved.clone();
         *lost.pointer_mut(path).unwrap() = Value::Null;
+        progress.mark("assert-original-line=572 begin");
         assert!(
             verify(&serde_json::to_string(&lost).unwrap()).is_err(),
             "{path}"
         );
+        progress.mark("assert-original-line=572 complete");
     }
     let mut lossy = saved.clone();
     lossy["native_pair"]["audio"]["receiving"]["history_linear"][0] = json!(0.1);
+    progress.mark("assert-original-line=579 begin");
     assert!(verify(&serde_json::to_string(&lossy).unwrap()).is_err());
+    progress.mark("assert-original-line=579 complete");
     for (field, value) in [
         ("first_retained", json!(255)),
         ("date_units", json!("host-ticks")),
@@ -585,43 +696,65 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
     ] {
         let mut wrong = saved.clone();
         wrong["native_pair"]["audio"]["receiving"]["source_history"][field] = value;
+        progress.mark("assert-original-line=588 begin");
         assert!(
             verify(&serde_json::to_string(&wrong).unwrap()).is_err(),
             "{field}"
         );
+        progress.mark("assert-original-line=588 complete");
     }
     let mut oversized_ref = saved.clone();
     oversized_ref["native_pair"]["audio"]["receiving"]["source_history"]["segments"][0]["source_motion"] =
         json!("x".repeat(2049));
+    progress.mark("assert-original-line=596 begin");
     assert!(verify(&serde_json::to_string(&oversized_ref).unwrap()).is_err());
+    progress.mark("assert-original-line=596 complete");
     let mut extra = saved.clone();
     extra["native_pair"]["audio"]["receiving"]["source_history"]["segments"][0]["grant"] =
         json!(true);
+    progress.mark("assert-original-line=600 begin");
     assert!(verify(&serde_json::to_string(&extra).unwrap()).is_err());
+    progress.mark("assert-original-line=600 complete");
     let mut stale = saved.clone();
     stale["native_pair"]["audio"]["receiving"]["manifest"]["body_revision"] = json!("1");
+    progress.mark("assert-original-line=603 begin");
     assert!(verify(&serde_json::to_string(&stale).unwrap()).is_err());
+    progress.mark("assert-original-line=603 complete");
     // Repeat the complete untouched numerical/source compiler after mutations;
     // no failed case may poison the original replay or ring.
+    progress.mark("assert-original-line=606 begin");
     assert_eq!(verify(&wire).unwrap(), genuine);
+    progress.mark("assert-original-line=606 complete");
     let mut frame_assets = Vec::new();
     for frame in replayed.frames() {
+        progress.mark("native-source-stage-original-line=609 begin");
         let returned = frame.prepare_return(&source, 1).unwrap();
+        progress.mark("native-source-stage-original-line=609 complete");
         frame_assets.push(json!({"source_sample":frame.source_sample().to_string(),"return":returned.snapshot().unwrap(),
             "basis":returned.expression_basis().unwrap(),"pitches":returned.expression_pitches(0).unwrap(),
             "source_assets":frame.owner().source_assets(),"native_physical_source_history":frame.owner().native_physical_source_history()}));
     }
     // The callback moves only first_retained; physical compaction occurs only
     // at the next actual source transaction. Exercise both on the real owner.
+    progress.mark("native-tail-render-through18432-begin");
     let mut late_chunks = Vec::new();
     while decimal(&owner.reading().unwrap()["samples_elapsed"]).unwrap() < 18_432 {
         late_chunks.push(actual_component_render(&mut owner, &mut scene));
     }
+    progress.mark("native-source-stage-original-line=620 begin");
+    progress.mark("native-tail-render-complete");
     let retained_cut = actual_component_checkpoint(&mut owner, &mut scene);
+    progress.mark("native-source-stage-original-line=620 complete");
     let retained_wire = serde_json::to_string(&retained_cut["payload"]["checkpoint"]).unwrap();
+    progress.mark("native-source-stage-original-line=622 begin");
     let retained_history = verify(&retained_wire).unwrap();
+    progress.mark("native-source-stage-original-line=622 complete");
+    progress.mark("assert-original-line=623 begin");
     assert_eq!(retained_history["segments"].as_array().unwrap().len(), 3);
+    progress.mark("assert-original-line=623 complete");
+    progress.mark("assert-original-line=624 begin");
     assert_eq!(retained_history["first_retained"], 2);
+    progress.mark("assert-original-line=624 complete");
     // Two real body operations at the SAME actual stopped native sample.
     // Original ordered source receipts survive even though the first new
     // emitter row has no interval and is replaced by the second operation.
@@ -640,14 +773,18 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             },
         ),
     ] {
+        progress.mark("native-source-stage-original-line=643 begin");
         let mut next = owner
             .prepare_physical_source_descendant_at(&current, &source, ordinal, &edit, 18_432)
             .unwrap();
+        progress.mark("native-source-stage-original-line=643 complete");
         let pulse = scene
             .session_mut()
             .performance_exchange_retained(&native_request(&owner, &next, ordinal, &edit))
             .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        progress.mark("assert-original-line=650 begin");
         assert_eq!(pulse["accepted"], true, "{pulse}");
+        progress.mark("assert-original-line=650 complete");
         next.after_owner.validate_reply(&pulse).unwrap();
         late_history.push(json!({"source":next.source_record,"native_application":pulse}));
         late_edits.push(pulse.clone());
@@ -655,6 +792,7 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         owner = next.after_owner;
         current = next.after_current;
     }
+    progress.mark("native-source-stage-original-line=658 begin");
     let late_replayed = PerformanceOwner::replay_cold_native_physical_source(
         &original,
         "expression:physical-cold/world",
@@ -663,8 +801,12 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
         &late_history,
     )
     .unwrap();
+    progress.mark("native-source-stage-original-line=658 complete");
+    progress.mark("native-source-stage-original-line=666 begin");
     let replaced_cut = actual_component_checkpoint(&mut owner, &mut scene);
+    progress.mark("native-source-stage-original-line=666 complete");
     let replaced_wire = serde_json::to_string(&replaced_cut["payload"]["checkpoint"]).unwrap();
+    progress.mark("native-source-stage-original-line=668 begin");
     let replaced_history =
         crate::continuous::performance::acoustic_history::verify_dated_source_history(
             &late_replayed,
@@ -673,18 +815,35 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
             &replaced_wire,
         )
         .unwrap();
+    progress.mark("native-source-stage-original-line=668 complete");
+    progress.mark("assert-original-line=676 begin");
     assert_eq!(late_replayed.frames().len(), 5);
+    progress.mark("assert-original-line=676 complete");
+    progress.mark("assert-original-line=677 begin");
     assert_eq!(replaced_history["segments"].as_array().unwrap().len(), 2);
+    progress.mark("assert-original-line=677 complete");
+    progress.mark("assert-original-line=678 begin");
     assert_eq!(replaced_history["segments"][0]["effective_sample"], "1024");
+    progress.mark("assert-original-line=678 complete");
+    progress.mark("assert-original-line=679 begin");
     assert_eq!(replaced_history["segments"][1]["effective_sample"], "18432");
+    progress.mark("assert-original-line=679 complete");
+    progress.mark("assert-original-line=680 begin");
     assert_eq!(replaced_history["segments"][1]["body_revision"], "5");
+    progress.mark("assert-original-line=680 complete");
+    progress.mark("assert-original-line=681 begin");
     assert_eq!(replaced_history["first_retained"], 0);
+    progress.mark("assert-original-line=681 complete");
     // Whole original wire stays intact; valid f32 ring mutations require C's
     // exact selected-wire lease check, independently exercised by C52.
+    progress.mark("assert-original-line=684 begin");
     assert_eq!(verify(&wire).unwrap(), genuine);
+    progress.mark("assert-original-line=684 complete");
+    progress.mark("whole-original-restitution-complete/artifact-write-begin");
     if let Some(path) = std::env::var_os("QL_NATIVE_PHYSICAL_SOURCE_REPLAY_ARTIFACT") {
         std::fs::write(path,serde_json::to_vec_pretty(&json!({"schema":"ql.actual-native-physical-source-replay-component/v1","origin":born,"current":expected,"native_physical_source_history":actual_history,"frames":frame_assets,"native_checkpoints":checkpoints,"native_pcm_chunks":native_chunks,"qualified_numerical_source_history":genuine,"retention_trial":{"native_chunks":late_chunks,"before_compaction":retained_cut,"actual_same_sample_applications":late_edits,"full_native_source_history":late_history,"after_compaction":replaced_cut,"qualified_numerical_source_history":replaced_history},"scope":"actual source/worker Form512/material1024 and original-owner replay with native M4 ring; no private Scene/Act lease or installed application acceptance"})).unwrap()).unwrap();
     }
+    progress.mark("full-original-restitution-complete");
 }
 
 #[test]
@@ -1174,34 +1333,46 @@ fn actual_acoustic_consumer_refuses_foreign_invocation_source_owner_and_current(
 #[test]
 #[ignore = "requires the actual normal native worker; historical evidence cannot manufacture native applications"]
 fn actual_native_original703_form_material_source_replays_full_history_and_fresh_admission() {
+    let mut progress = ColdReplayProgress::new("archived703-source-form-cold");
     use std::{path::PathBuf, time::Duration};
     let worker =
         PathBuf::from(std::env::var("QL_NATIVE_FIELD_WORKER").expect("actual native worker"));
+    progress.mark("native-source-stage-original-line=1180 begin");
     let (request, source, config) = world_source();
+    progress.mark("native-source-stage-original-line=1180 complete");
     let source = acoustic_source(source);
     let produced = crate::scene::world(request).unwrap();
+    progress.mark("native-source-stage-original-line=1183 begin");
     let mut scene = crate::continuous::scene_field::SceneInstrument::open(
         &worker,
         serde_json::from_value(produced["binding"]["host"].clone()).unwrap(),
         Duration::from_secs(20),
     )
     .unwrap();
+    progress.mark("native-source-stage-original-line=1183 complete");
     let original = scene.session().current_basis().clone();
+    progress.mark("native-source-stage-original-line=1190 begin");
     let mut owner =
         PerformanceOwner::prepare(&original, "expression:physical-cold/world", config).unwrap();
+    progress.mark("native-source-stage-original-line=1190 complete");
+    progress.mark("fresh-native-admission-original-line=1192 begin");
     owner
         .activate_with_current_receiving(&original, scene.session_mut(), &source)
         .unwrap();
+    progress.mark("fresh-native-admission-original-line=1192 complete");
     // Execute the real archived producer under the SAME current numerical
     // owner. Keep its original snapshot; operative context remains freshly
     // constructed by the current native implementation.
+    progress.mark("native-source-stage-original-line=1198 begin");
     let historical = source
         .admit_replayed(&mut owner, &original, 0, ReceivingImplementation::Native703)
         .unwrap();
+    progress.mark("native-source-stage-original-line=1198 complete");
     owner.source_assets["receiving_source_inputs"] = historical.fresh().source_inputs().clone();
     owner.source_assets["receiving_definition"] =
         historical.fresh().definition().snapshot().unwrap();
     owner.source_assets["current_receiving"] = historical.retained_snapshot().clone();
+    progress.mark("native-source-stage-original-line=1205 begin");
     let acoustic = owner
         .prepare_acoustic_receiving_segment_for_replay(
             &original,
@@ -1211,6 +1382,7 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             ReceivingImplementation::Native703,
         )
         .unwrap();
+    progress.mark("native-source-stage-original-line=1205 complete");
     let mut install = owner.raw("receiving-transport-install").unwrap();
     install["prepared_acoustic"] = acoustic.packet().clone();
     install["current_acoustic"] = acoustic.packet().clone();
@@ -1219,7 +1391,9 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         .session_mut()
         .performance_exchange_retained(&install)
         .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+    progress.mark("assert-original-line=1222 begin");
     assert_eq!(installed["accepted"], true, "{installed}");
+    progress.mark("assert-original-line=1222 complete");
     owner.validate_reply(&installed).unwrap();
     owner.last = Some(installed);
     owner.source_assets["acoustic_receiving"] = acoustic.snapshot();
@@ -1257,7 +1431,9 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             .session_mut()
             .performance_exchange_retained(&queued)
             .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        progress.mark("assert-original-line=1260 begin");
         assert_eq!(pulse["accepted"], true, "{pulse}");
+        progress.mark("assert-original-line=1260 complete");
         owner.validate_reply(&pulse).unwrap();
         owner.last = Some(pulse);
     }
@@ -1279,6 +1455,7 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         ),
     ] {
         let cursor = decimal(&owner.reading().unwrap()["samples_elapsed"]).unwrap();
+        progress.mark("native-source-stage-original-line=1282 begin");
         let mut descendant = owner
             .prepare_physical_source_descendant_for_replay_at(
                 &current,
@@ -1289,6 +1466,7 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
                 ReceivingImplementation::Native703,
             )
             .unwrap();
+        progress.mark("native-source-stage-original-line=1282 complete");
         descendant
             .current_receiving
             .validate_current(
@@ -1303,7 +1481,9 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             .session_mut()
             .performance_exchange_retained(&raw)
             .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        progress.mark("assert-original-line=1306 begin");
         assert_eq!(pulse["accepted"], true, "{pulse}");
+        progress.mark("assert-original-line=1306 complete");
         descendant.after_owner.validate_reply(&pulse).unwrap();
         applications.push(json!({"source":descendant.source_record,"native_application":pulse}));
         descendant.after_owner.last = Some(pulse);
@@ -1312,6 +1492,7 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         actual_component_render(&mut owner, &mut scene);
     }
     let expected = owner.source_assets().clone();
+    progress.mark("native-source-stage-original-line=1315 begin");
     let replay = || {
         PerformanceOwner::replay_cold_native_physical_source(
             &original,
@@ -1321,11 +1502,19 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             &applications,
         )
     };
+    progress.mark("native-source-stage-original-line=1315 complete");
     let complete = replay().unwrap();
+    progress.mark("assert-original-line=1325 begin");
     assert_eq!(complete.frames().len(), 3);
+    progress.mark("assert-original-line=1325 complete");
+    progress.mark("assert-original-line=1326 begin");
     assert_eq!(complete.frames()[0].owner().source_assets(), &born);
+    progress.mark("assert-original-line=1326 complete");
+    progress.mark("assert-original-line=1327 begin");
     assert_eq!(complete.final_frame().owner().source_assets(), &expected);
+    progress.mark("assert-original-line=1327 complete");
     for frame in complete.frames() {
+        progress.mark("assert-original-line=1329 begin");
         assert_eq!(
             ReceivingImplementation::of_retained(
                 &frame.owner().source_assets()["current_receiving"]
@@ -1333,17 +1522,27 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             .unwrap(),
             ReceivingImplementation::Native703
         );
+        progress.mark("assert-original-line=1329 complete");
+        progress.mark("native-source-stage-original-line=1336 begin");
         let fresh = source
             .prepare_current(frame.owner(), frame.current(), frame.source_sample())
             .unwrap();
+        progress.mark("native-source-stage-original-line=1336 complete");
+        progress.mark("assert-original-line=1339 begin");
         assert_eq!(
             ReceivingImplementation::of_retained(&fresh.snapshot().unwrap()).unwrap(),
             ReceivingImplementation::Current
         );
+        progress.mark("assert-original-line=1339 complete");
+        progress.mark("fresh-native-admission-original-line=1343 begin");
         frame.prepare_return(&source, 1).unwrap();
+        progress.mark("fresh-native-admission-original-line=1343 complete");
     }
+    progress.mark("native-source-stage-original-line=1345 begin");
     let checkpoint = actual_component_checkpoint(&mut owner, &mut scene);
+    progress.mark("native-source-stage-original-line=1345 complete");
     let wire = serde_json::to_string(&checkpoint["payload"]["checkpoint"]).unwrap();
+    progress.mark("native-source-stage-original-line=1347 begin");
     let history = crate::continuous::performance::acoustic_history::verify_dated_source_history(
         &complete,
         &source,
@@ -1351,7 +1550,11 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         &wire,
     )
     .unwrap();
+    progress.mark("native-source-stage-original-line=1347 complete");
+    progress.mark("assert-original-line=1354 begin");
     assert_eq!(history["segments"].as_array().unwrap().len(), 3);
+    progress.mark("assert-original-line=1354 complete");
+    progress.mark("assert-original-line=1355 begin");
     assert!(
         checkpoint["payload"]["checkpoint"]["native_pair"]["audio"]["receiving"]["history_linear"]
             .as_array()
@@ -1359,9 +1562,11 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
             .iter()
             .any(|value| value.as_f64().unwrap() != 0.)
     );
+    progress.mark("assert-original-line=1355 complete");
     let mut lost = expected.clone();
     lost["physical_transition_history"][0]["after_current_receiving"]["source_payload_context"]["owner"]
         ["revision"] = json!("sha256:unimplemented");
+    progress.mark("assert-original-line=1365 begin");
     assert!(
         PerformanceOwner::replay_cold_native_physical_source(
             &original,
@@ -1372,8 +1577,12 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         )
         .is_err()
     );
+    progress.mark("assert-original-line=1365 complete");
     let repeated = replay().unwrap();
+    progress.mark("assert-original-line=1376 begin");
     assert_eq!(repeated.final_frame().owner().source_assets(), &expected);
+    progress.mark("assert-original-line=1376 complete");
+    progress.mark("assert-original-line=1377 begin");
     assert_eq!(
         crate::continuous::performance::acoustic_history::verify_dated_source_history(
             &repeated,
@@ -1384,6 +1593,8 @@ fn actual_native_original703_form_material_source_replays_full_history_and_fresh
         .unwrap(),
         history
     );
+    progress.mark("assert-original-line=1377 complete");
+    progress.mark("full-original-restitution-complete");
 }
 
 #[test]

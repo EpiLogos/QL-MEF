@@ -63,6 +63,19 @@ impl NativePhysicalTransitionRecord {
     pub(crate) fn snapshot(&self) -> Value {
         json!({"source":self.source,"native_application":self.application})
     }
+    /// Borrow the original evidence for a bounded serializer. No record copy
+    /// or imported permission is created before its complete byte charge.
+    pub(crate) fn borrowed_snapshot(&self) -> impl serde::Serialize + '_ {
+        #[derive(serde::Serialize)]
+        struct Original<'a> {
+            source: &'a Value,
+            native_application: &'a Value,
+        }
+        Original {
+            source: &self.source,
+            native_application: &self.application,
+        }
+    }
 }
 
 /// Pure source production shared by live preparation and original-owner cold
@@ -391,6 +404,7 @@ impl PerformanceOwner {
         // This exact origin is transferred only from the existing native owner.
         // The operative source and new binding remain independent descendants.
         after_owner.source_origin = self.source_origin.clone();
+        after_owner.contact_admission_history = self.contact_admission_history.clone();
         let after_state = replay(&after_current)?;
         after_owner
             .binding()
@@ -674,6 +688,7 @@ impl PerformanceOwner {
         self.cells = candidate.after_owner.cells;
         self.return_binding = candidate.after_owner.return_binding;
         self.source_assets = candidate.after_owner.source_assets;
+        self.prepared_scene_contact = None;
         self.physical_source_history
             .push(NativePhysicalTransitionRecord {
                 source: candidate.source_record,

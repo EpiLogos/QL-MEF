@@ -16,6 +16,10 @@ pub const SCHEMA: &str = "ql.musical-performance-score/v2";
 const PART_BYTES: usize = 4 * 1024 * 1024;
 const MAX_PAGES: usize = 4096;
 
+#[path = "musical_performance_score_contact.rs"]
+mod contact;
+pub(crate) use contact::qualify_action as qualify_recorded_contact_action;
+
 /// Implemented by the existing C Act delivery owner. Read each original page
 /// under the SAME selection. No QL codec, persistent score store or clock.
 pub trait NativeScorePages {
@@ -33,12 +37,15 @@ pub struct RetainedScoreSource<'a> {
 }
 impl RetainedScoreSource<'_> {
     fn source(&self) -> Result<ScoreSource<'_>, String> {
-        let current =
-            self.receiving
-                .prepare_current(self.owner, self.current, self.source_sample)?;
-        if current.snapshot()? != self.owner.source_assets()["current_receiving"] {
-            return Err("native score receiving payload is stale or disconnected".into());
-        }
+        // Reopen preserves the original saved native implementation and date.
+        // prepare_retained independently regenerates its complete historical
+        // admission and the fresh current native source through the same owner.
+        self.receiving.validate_retained_for_score(
+            self.owner,
+            self.current,
+            self.source_sample,
+            &self.owner.source_assets()["current_receiving"],
+        )?;
         let keys = match self.owner.source_key_consumer(self.current)? {
             Some((targets, consumer)) => ScoreKeys::Sparse { targets, consumer },
             None => ScoreKeys::Architectural,
@@ -215,6 +222,7 @@ fn page_score(
         if proof["schema"] != "oi.expression-native-reservation-continuation/v1" {
             return Err("original native reservation continuation absent".into());
         }
+        qualify_continued_source(manifest, sources, proof)?;
         let saved_epoch = counter(&proof["saved"]["management"]["transport_epoch"])?;
         let epoch = counter(&proof["transport_ack"]["epoch"])?;
         let applied = counter(&proof["saved"]["audio"]["applied_application_ordinal"])?;
@@ -280,8 +288,12 @@ fn page_score(
             .ok_or("native application ordinal exhausted")?;
         let admitted = counter(&app["admitted_sample"])?;
         let applied = counter(&app["applied_sample"])?;
-        if app["schema"] != "ql.performance-applied-event/v2"
-            || counter(&app["applied_application_ordinal"])? != ordinal
+        let kind = app["kind"].as_u64().ok_or("native operation kind absent")?;
+        if if kind == 7 {
+            app["schema"] != "ql.performance-applied-event/v3"
+        } else {
+            kind > 6 || app["schema"] != "ql.performance-applied-event/v2"
+        } || counter(&app["applied_application_ordinal"])? != ordinal
             || counter(&app["sequence"])? == 0
             || applied < admitted
             || applied >= counter(&app["committed_cursor"])?
@@ -300,6 +312,49 @@ fn page_score(
                 }
             }
             None => out.unknown_requested_times += 1,
+        }
+        if kind == 7 {
+            let original = contact::original(&app["contact"], basis, &manifest["performance"])?;
+            let queue = &original["native_admission"]["payload"]["score_admission"];
+            let operands = &app["contact"]["operands"];
+            if app["operation"] != "contact"
+                || app["has_note"] != false
+                || app["has_determination"] != false
+                || app["touch"] != "0"
+                || app["sequence"] != queue["event"]["sequence"]
+                || app["admitted_sample"] != operands["impact_sample"]
+                || app["requested_sample"] != operands["impact_sample"]
+                || app["physical_manifest"]["eigenbasis_identity"] != operands["eigenbasis"]
+                || !sources.iter().any(|source| {
+                    source
+                        .owner
+                        .native_contact_admission_history()
+                        .iter()
+                        .any(|actual| contact::exact(actual, original))
+                })
+            {
+                return Err(
+                    "recorded Contact lost its actual original occurrence/source/application"
+                        .into(),
+                );
+            }
+            if app["applied"] == true {
+                let event = array(&receipt["performed_event"])?;
+                if event.len() != 5
+                    || event[0] != app["sequence"]
+                    || event[1] != app["applied_sample"]
+                    || event[3].as_u64() != Some(basis_index as u64)
+                    || !contact::exact(&event[4], &json!({"k":app["contact"]}))
+                {
+                    return Err(
+                        "performed Contact score changed original native timing/operands".into(),
+                    );
+                }
+            } else if !receipt["performed_event"].is_null() {
+                return Err("refused Contact was inscribed as performed".into());
+            }
+        } else if app.get("contact").is_some() {
+            return Err("ordinary application acquired a Contact operand".into());
         }
         qualify_original_input(sources, manifest, receipt, journal)?;
         if out.first_applied_ordinal.is_none() {
@@ -323,6 +378,97 @@ fn page_score(
     out.original_inputs = journal.len();
     out.transport_epoch = Some(epoch.to_string());
     Ok(out)
+}
+
+// C retains and validates the complete continuation codec and native ACK.
+// QL repeats only its native producer relationships through the actual borrowed
+// source owners. A serialized continuation never constructs such an owner.
+fn qualify_continued_source(
+    manifest: &Value,
+    sources: &[RetainedScoreSource<'_>],
+    proof: &Value,
+) -> Result<(), String> {
+    let receiving = proof.get("receiving_readmission").filter(|v| !v.is_null());
+    let selected = proof.get("source_readoption").filter(|v| !v.is_null());
+    if receiving.is_some() && selected.is_some() {
+        return Err("native continuation joined conflicting restore producers".into());
+    }
+    let Some(selected) = selected else {
+        return Ok(());
+    };
+    let projection = &selected["selected_source_projection"];
+    let index = usize::try_from(
+        projection["source_index"]
+            .as_u64()
+            .ok_or("continued native source index absent")?,
+    )
+    .map_err(|e| e.to_string())?;
+    let assets = array(&manifest["performance"]["native_sources"])?;
+    let asset = assets
+        .get(index)
+        .ok_or("continued original source asset absent")?;
+    let source = sources
+        .get(index)
+        .ok_or("continued source lost its actual native owner")?;
+    let bundle = source.owner.source_assets();
+    let before = &selected["before_source"];
+    let before_sources = sources
+        .iter()
+        .filter(|source| contact::exact(source.owner.source_assets(), &before["native_bundle"]))
+        .count();
+    let actual = &selected["source_readoption"];
+    if selected["schema"] != "oi.expression-native-source-readoption/v1"
+        || projection["schema"] != "ql.native-retained-performance-source-selection/v1"
+        || projection["expression_ref"] != manifest["expression_ref"]
+        || projection["scene_ref"] != manifest["scene_ref"]
+        || projection["basis_digest"] != asset["basis_digest"]
+        || projection["identity"] != asset["identity"]
+        || projection["source_sample"]
+            != bundle["current_receiving"]["native_admission"]["operation"]["native_sample"]
+        || !contact::exact(&asset["native_bundle"], bundle)
+        || before_sources != 1
+        || !contact::exact(
+            &before["native_basis"],
+            &before["native_bundle"]["native_basis"],
+        )
+        || !contact::exact(
+            &before["native_preparation"],
+            &before["native_bundle"]["current_receiving"]["native_admission"]["native_preparation"],
+        )
+        || !contact::exact(
+            &before["reading"],
+            &selected["before_restoration_receipt"]["reading"],
+        )
+        || !contact::exact(&actual["actual_native_basis"], &bundle["native_basis"])
+        || !contact::exact(
+            &actual["current_source_packet"],
+            &bundle["current_receiving"]["native_admission"]["native_preparation"],
+        )
+        || !contact::exact(
+            &actual["current_receiving"]["source_inputs"],
+            &bundle["receiving_source_inputs"],
+        )
+        || !contact::exact(
+            &actual["current_receiving"]["source_context"],
+            &bundle["source_context"],
+        )
+        || !contact::exact(
+            &actual["current_receiving"]["receiving_definition"],
+            &bundle["receiving_definition"],
+        )
+        || !contact::exact(
+            &selected["native_pulse"]["payload"]["source_readoption"],
+            actual,
+        )
+    {
+        return Err("continued source detached exact original owner/body/context/feedback".into());
+    }
+    if let Some(acoustic) = actual.get("original_saved_acoustic")
+        && !contact::exact(acoustic, &bundle["acoustic_receiving"]["packet"])
+    {
+        return Err("continued source lost whole original acoustic history".into());
+    }
+    Ok(())
 }
 
 // Only the four explicit native NoteTarget f64 projections use bit equality.
@@ -519,10 +665,12 @@ pub fn compile_retained_score(
                         == asset.get("native_physical_source_history")
                     && old.get("native_acoustic_source_history")
                         == asset.get("native_acoustic_source_history")
+                    && old.get("native_contact_admission_history")
+                        == asset.get("native_contact_admission_history")
             })
             || asset["identity"] != bases[basis_index]["identity"]
             || asset["context"] != bases[basis_index]["context"]
-            || asset["native_bundle"] != *source.owner.source_assets()
+            || !contact::exact(&asset["native_bundle"], source.owner.source_assets())
         {
             return Err("native score asset detached from actual current native producer".into());
         }
@@ -535,12 +683,21 @@ pub fn compile_retained_score(
                 "native_acoustic_source_history",
                 source.owner.native_acoustic_source_history(),
             ),
+            (
+                "native_contact_admission_history",
+                source.owner.native_contact_admission_history(),
+            ),
         ] {
             let originals = match asset.get(name) {
                 None => &[][..],
                 Some(value) => array(value)?,
             };
-            if originals != history.as_slice() {
+            if originals.len() != history.len()
+                || originals
+                    .iter()
+                    .zip(&history)
+                    .any(|(original, actual)| !contact::exact(original, actual))
+            {
                 return Err(
                     "native score lost exact original source epoch application corpus".into(),
                 );

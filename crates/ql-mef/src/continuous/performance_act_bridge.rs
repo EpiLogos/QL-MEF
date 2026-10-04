@@ -3,6 +3,7 @@
 //! C keeps its native Act reader and pre/post store CAS while servicing pulls.
 use super::host::{FieldHost, MAX_HOST_INPUT, MAX_HOST_OUTPUT};
 use super::native_act_channel::NativeActOperation;
+use super::performance::retained_evidence::exact_value;
 use super::performance_export::NativeActCheckpoints;
 use crate::musical_performance_source_score::NativeScorePages;
 use serde::Deserialize;
@@ -16,6 +17,9 @@ const ANSWER: &str = "oi.native-act-owner-answer/v1";
 mod acoustic_scene_source;
 #[path = "performance_physical_scene_bridge.rs"]
 mod physical_scene_source;
+
+#[path = "performance_scene_contact_bridge.rs"]
+mod scene_contact;
 
 const CONTROL: &str = "oi.native-act-owner-control/v1";
 
@@ -176,6 +180,13 @@ struct NativeRecordingOriginQuery {
     schema: String,
     scene_constructor: Value,
 }
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeRecordingRenderQuery {
+    schema: String,
+    scene_constructor: Value,
+    frames: u32,
+}
 
 impl ActRequest {
     pub(crate) fn is_readmission(&self) -> bool {
@@ -188,6 +199,7 @@ impl ActRequest {
                 | "field-descriptor"
                 | "source-bootstrap"
                 | "source-lifecycle"
+                | "source-definition"
                 | "acoustic-install"
                 | "acoustic-stage"
                 | "acoustic-replace"
@@ -198,10 +210,14 @@ impl ActRequest {
                 | "recording-command"
                 | "recording-origin"
                 | "recording-save-cut"
+                | "recording-render"
                 | "physical-prepare"
                 | "physical-apply"
                 | "acoustic-source-prepare"
                 | "acoustic-source-apply"
+                | "contact-prepare"
+                | "contact-apply"
+                | "contact-trigger"
         )
     }
 }
@@ -274,7 +290,7 @@ impl NativeActSourceLease<'_> {
             .iter()
             .filter(|source| {
                 source["identity"]["instance_ref"] == instance_ref
-                    && source["native_bundle"] == *actual_source_assets
+                    && exact_value(&source["native_bundle"], actual_source_assets)
             })
             .count();
         if matches != 1 {
@@ -293,7 +309,7 @@ impl NativeActSourceLease<'_> {
         let mut source_matches = sources
             .iter()
             .enumerate()
-            .filter(|(_, source)| *source == selected);
+            .filter(|(_, source)| exact_value(source, selected));
         let (source_index, source) = source_matches
             .next()
             .ok_or("selected checkpoint full native source epoch absent")?;
@@ -356,15 +372,16 @@ impl NativeActSourceLease<'_> {
             None if audio.get("receiving").is_none() => false,
             _ => return Err("selected native receiver pair contract absent".into()),
         };
-        let basis_sources = self
-            .performance_sources()?
-            .iter()
-            .filter(|source| {
-                source["identity"]["instance_ref"] == instance_ref
-                    && source["basis_digest"] == checkpoint["basis_digest"]
-                    && source["identity"] == checkpoint["identity"]
-            })
-            .collect::<Vec<_>>();
+        let mut basis_sources = Vec::new();
+        for source in self.performance_sources()? {
+            if source["identity"]["instance_ref"] == instance_ref
+                && source["basis_digest"] == checkpoint["basis_digest"]
+                && source["identity"] == checkpoint["identity"]
+                && self.checkpoint_contacts_match(source, audio)?
+            {
+                basis_sources.push(source);
+            }
+        }
         // Preserve the original strictly recompiled receiving/v1 path. Its
         // one source and immutable checkpoint still face the unchanged native
         // saved-port preflight; no new acoustic history or epoch is inferred.
@@ -381,6 +398,7 @@ impl NativeActSourceLease<'_> {
             if source["identity"]["instance_ref"] != instance_ref
                 || source["basis_digest"] != checkpoint["basis_digest"]
                 || source["identity"] != checkpoint["identity"]
+                || !self.checkpoint_contacts_match(source, audio)?
             {
                 continue;
             }
@@ -401,6 +419,7 @@ impl NativeActSourceLease<'_> {
             for name in [
                 "native_physical_source_history",
                 "native_acoustic_source_history",
+                "native_contact_admission_history",
             ] {
                 if let Some(rows) = source.get(name) {
                     for row in rows
@@ -409,9 +428,14 @@ impl NativeActSourceLease<'_> {
                     {
                         let request = count(&row["source"]["original_native_request_id"])?;
                         if last.as_ref().is_none_or(|(old, _)| request > *old) {
+                            let original = if name == "native_contact_admission_history" {
+                                &row["native_admission"]
+                            } else {
+                                &row["native_application"]
+                            };
                             last = Some((
                                 request,
-                                &row["native_application"]["reading"]["receiving_transport"]["manifest"],
+                                &original["reading"]["receiving_transport"]["manifest"],
                             ));
                         }
                     }
@@ -443,12 +467,17 @@ impl NativeActSourceLease<'_> {
         let rows = |source: &Value, name: &str, originals: &[Value]| -> bool {
             match source.get(name) {
                 None => originals.is_empty(),
-                Some(value) => value.as_array().is_some_and(|v| v.as_slice() == originals),
+                Some(value) => value.as_array().is_some_and(|v| {
+                    v.len() == originals.len()
+                        && v.iter()
+                            .zip(originals)
+                            .all(|(held, original)| exact_value(held, original))
+                }),
             }
         };
         let mut matches = self.performance_sources()?.iter().filter(|source| {
             source["identity"]["instance_ref"] == instance_ref
-                && source["native_bundle"] == *expected_complete_bundle
+                && exact_value(&source["native_bundle"], expected_complete_bundle)
                 && rows(source, "native_physical_source_history", physical)
                 && rows(source, "native_acoustic_source_history", acoustic)
         });
@@ -472,7 +501,7 @@ impl NativeActSourceLease<'_> {
             if records.len() != originals.len()
                 || records.iter().zip(originals).any(|(record, original)| {
                     original.as_object().map(|o| o.len()) != Some(2)
-                        || original["source"] != *record
+                        || !exact_value(&original["source"], record)
                         || !original["native_application"].is_object()
                 })
             {
@@ -893,6 +922,14 @@ fn validate_closed_scene_manifest(manifest: &Value) -> Result<(), String> {
     if !current {
         keys.extend(["act_ref", "act_revision", "act_digest", "edition_position"]);
     }
+    if manifest.get("native_render_selection").is_some() {
+        if !current {
+            return Err(
+                "recording render selection requires the actual current Document reader".into(),
+            );
+        }
+        keys.push("native_render_selection");
+    }
     let object = manifest
         .as_object()
         .ok_or("native selected Scene manifest absent")?;
@@ -1149,6 +1186,7 @@ fn serve_native_act_operation(
             "field-descriptor",
             "source-bootstrap",
             "source-lifecycle",
+            "source-definition",
             "acoustic-install",
             "acoustic-stage",
             "acoustic-replace",
@@ -1159,10 +1197,14 @@ fn serve_native_act_operation(
             "recording-command",
             "recording-origin",
             "recording-save-cut",
+            "recording-render",
             "physical-prepare",
             "physical-apply",
             "acoustic-source-prepare",
             "acoustic-source-apply",
+            "contact-prepare",
+            "contact-apply",
+            "contact-trigger",
         ]
         .contains(&request.mode.as_str())
     {
@@ -1170,6 +1212,14 @@ fn serve_native_act_operation(
     }
     if (request.mode == "source-bootstrap") != request.scene_consumer.is_some() {
         return Err("private Scene constructor belongs only to original Source bootstrap".into());
+    }
+    if (request.mode == "recording-render")
+        != request.manifest.get("native_render_selection").is_some()
+    {
+        return Err(
+            "private stopped render selection belongs only to its actual current Scene activity"
+                .into(),
+        );
     }
     physical_scene_source::validate_operands(&request)?;
     acoustic_scene_source::validate_operands(&request)?;
@@ -1181,6 +1231,9 @@ fn serve_native_act_operation(
                 | "physical-apply"
                 | "acoustic-source-prepare"
                 | "acoustic-source-apply"
+                | "contact-prepare"
+                | "contact-apply"
+                | "contact-trigger"
         )
     {
         return Err(
@@ -1235,7 +1288,7 @@ fn serve_native_act_operation(
             let world_carrier = closed_field_world_carrier(&request.manifest)?;
             if !matches!(
                 request.mode.as_str(),
-                "source-bootstrap" | "source-lifecycle"
+                "source-bootstrap" | "source-lifecycle" | "source-definition"
             ) {
                 host.admit_native_act(&request)?;
             }
@@ -1266,6 +1319,7 @@ fn serve_native_act_operation(
                 "field-descriptor"
                     | "source-bootstrap"
                     | "source-lifecycle"
+                    | "source-definition"
                     | "performance-source"
                     | "acoustic-install"
                     | "performance-descriptor"
@@ -1273,6 +1327,7 @@ fn serve_native_act_operation(
                     | "recording-command"
                     | "recording-origin"
                     | "recording-save-cut"
+                    | "recording-render"
                     | "acoustic-stage"
                     | "acoustic-replace"
                     | "acoustic-prepare"
@@ -1280,6 +1335,9 @@ fn serve_native_act_operation(
                     | "physical-apply"
                     | "acoustic-source-prepare"
                     | "acoustic-source-apply"
+                    | "contact-prepare"
+                    | "contact-apply"
+                    | "contact-trigger"
             ) {
                 qualify_field_source_parts(&request.manifest, &world_carrier, &artifact, &pipe)?;
                 Some(&artifact)
@@ -1314,7 +1372,7 @@ fn serve_native_act_operation(
             }
             if matches!(
                 request.mode.as_str(),
-                "source-bootstrap" | "source-lifecycle"
+                "source-bootstrap" | "source-lifecycle" | "source-definition"
             ) {
                 let source_read = request
                     .source_bootstrap
@@ -1360,6 +1418,23 @@ fn serve_native_act_operation(
                             &bootstrap.authorship.contributors,
                         )?;
                     }
+                    ("source-definition", Some("install_prepared" | "source_continue")) => {
+                        let bootstrap: crate::procedural_source::NativeSourceBootstrap =
+                            serde_json::from_value(input["source_bootstrap"].clone())
+                                .map_err(|e| e.to_string())?;
+                        if input["source_bootstrap"]["authorship"]
+                            != source_read["issuer_receipt"]["original_intent"]["authorship"]
+                        {
+                            return Err(
+                                "native definition changed full original Source authorship".into(),
+                            );
+                        }
+                        lease.validate_procedural_scene_read(
+                            &request.instance_ref,
+                            &bootstrap.scene,
+                            &bootstrap.authorship.contributors,
+                        )?;
+                    }
                     ("source-lifecycle", Some("lifecycle")) => {
                         let lifecycle: crate::procedural_conduct::lifecycle::NativeLifecycleInput =
                             serde_json::from_value(input.clone()).map_err(|e| e.to_string())?;
@@ -1394,6 +1469,72 @@ fn serve_native_act_operation(
                     super::performance::NativeTimingMoment::Boundary,
                 );
                 return Ok(json!({"selection":lease.evidence(),"native_receipt":receipt}));
+            }
+            if request.mode == "recording-render" {
+                use sha2::{Digest, Sha256};
+                if request.source_bootstrap.is_some()
+                    || request.declared_seed.is_some()
+                    || request.manifest["schema"]
+                        != "oi.expression-native-current-scene-delivery/v1"
+                {
+                    return Err("stopped recording callback requires the closed current Document/Scene owner".into());
+                }
+                let query: NativeRecordingRenderQuery = serde_json::from_value(
+                    request
+                        .procedural_request
+                        .clone()
+                        .ok_or("actual stopped recording activity query absent")?,
+                )
+                .map_err(|e| e.to_string())?;
+                if query.schema != "ql.native-scene-recording-render/v1"
+                    || !(1..=512).contains(&query.frames)
+                {
+                    return Err(
+                        "native stopped recording activity shape/frame range differs".into(),
+                    );
+                }
+                let fact = &query.scene_constructor;
+                let doc_text = request.manifest["canonical_document_bytes"]
+                    .as_str()
+                    .ok_or("complete recording current Document bytes absent")?;
+                if fact["schema"] != "oi.native-document-scene-constructor/v1"
+                    || fact["expression_ref"] != request.manifest["expression_ref"]
+                    || fact["scene_ref"] != request.manifest["scene_ref"]
+                    || fact["document_revision"] != request.manifest["expression_revision"]
+                    || fact["document_sha256"]
+                        != format!("{:x}", Sha256::digest(doc_text.as_bytes()))
+                    || fact["generation_domain"] != "native-document-scene-construction"
+                {
+                    return Err(
+                        "stopped recording callback lost actual current Scene constructor/custody"
+                            .into(),
+                    );
+                }
+                let mut selection = lease.evidence();
+                selection["scene_constructor"] = query.scene_constructor;
+                return Ok(
+                    match host.capture_native_recording_render(
+                        &lease,
+                        &request.manifest,
+                        query.frames,
+                        &selection,
+                        &request.request_id,
+                    ) {
+                        Ok(captured) => {
+                            json!({"schema":"ql.native-scene-recording-render/v1","selection":selection,
+                        "accepted":true,"source_artifact":captured.source_artifact,
+                        "original_worker_request":captured.original_request,"native_pulse":captured.native_pulse,
+                        "host_receipt":host.recording_controller_receipt(&request.request_id,None)})
+                        }
+                        Err(failure) => {
+                            json!({"schema":"ql.native-scene-recording-render/v1","selection":selection,
+                        "accepted":false,"reason":failure.reason,"source_artifact":failure.source_artifact,
+                        "original_worker_request":failure.original_request,
+                        "native_receipts":failure.native_receipts,
+                        "host_receipt":host.recording_controller_refusal(&request.request_id,&failure.reason)})
+                        }
+                    },
+                );
             }
             if matches!(
                 request.mode.as_str(),
@@ -1584,6 +1725,12 @@ fn serve_native_act_operation(
             ) {
                 return acoustic_scene_source::execute(host, &request, &lease, &original, &current);
             }
+            if matches!(
+                request.mode.as_str(),
+                "contact-prepare" | "contact-apply" | "contact-trigger"
+            ) {
+                return scene_contact::execute(host, &request, &lease, &original, &current);
+            }
             if request.mode == "performance-source" {
                 if request.source_bootstrap.is_some() || request.procedural_request.is_some() {
                     return Err(
@@ -1739,6 +1886,9 @@ fn serve_native_act_operation(
                 | "physical-apply"
                 | "acoustic-source-prepare"
                 | "acoustic-source-apply"
+                | "contact-prepare"
+                | "contact-apply"
+                | "contact-trigger"
         ) && reply.get("host_receipt").is_none()
         {
             reply["host_receipt"] = match &outcome {
@@ -1890,29 +2040,164 @@ fn serve_native_act_operation(
             // preparation/restore mutation. A cold owner is pure native source
             // reconstruction under this same closed Act, never an empty body.
             let mut cold_receipts = Vec::new();
-            let mut acoustic_history = None;
+            let acoustic_history;
+            let native_contact_checkpoint_evidence;
+            let mut warm_source = None;
+            // Keep every original Act source view through the warm restore too.
+            let mut _resident_source_views = None;
             let score = if host.has_native_performance() {
-                host.compile_native_act_score(
+                let mut resident = host.prepare_resident_native_act(&request.manifest, &lease)?;
+                let score = host.compile_cold_native_act_score(
+                    &resident,
                     count(&json!(request.edition_generation))?,
                     &request.manifest,
                     &mut pages,
-                )?
+                )?;
+                let candidate = match host
+                    .prepare_warm_retained_performance_checkpoint(&lease, wire, reference)
+                {
+                    Ok(candidate) => candidate,
+                    Err(failure) => {
+                        let needs_source_requalification = failure.kind
+                            == crate::continuous::performance::NativeWarmSourceCheckpointFailureKind::NeedSourceRequalification;
+                        if !needs_source_requalification {
+                            return Ok(json!({"score":score,"selection":lease.evidence(),
+                                "receiving_readmission":null,"native_pulse":null,"readmitted":false,
+                                "error":failure.reason,"native_source_requalification_required":false,
+                                "original_selected_source":failure.original_selection,
+                                "cold_preparation_receipts":failure.native_receipts,
+                                "host_receipt":host.recording_controller_refusal(&request.request_id,
+                                    "selected native checkpoint full source qualification refused")}));
+                        }
+                        let trigger = json!({"reason":failure.reason,
+                            "original_selected_source":failure.original_selection,
+                            "native_receipts":failure.native_receipts});
+                        let history = match host.qualify_cold_native_act_checkpoint(
+                            &mut resident,
+                            &lease,
+                            reference,
+                            wire,
+                        ) {
+                            Ok(history) => history,
+                            Err(refusal) => {
+                                return Ok(json!({"score":score,"selection":lease.evidence(),
+                                "receiving_readmission":null,"native_source_readoption":null,
+                                "native_pulse":null,"readmitted":false,"error":refusal.reason,
+                                "source_requalification_trigger":trigger,
+                                "cold_preparation_receipts":refusal.native_receipts,
+                                "host_receipt":host.recording_controller_refusal(&request.request_id,
+                                    "selected original source numeric qualification refused")}));
+                            }
+                        };
+                        let contact = resident.native_contact_checkpoint_evidence(&lease)?;
+                        let selection = lease.evidence();
+                        let diagnostics = diagnostic_sender.manifest();
+                        let return_context = super::performance::selected_source_budget::NativeSelectedSourceReturnContext::new(
+                            &score,
+                            &selection,
+                            &trigger,
+                            &retained_source_selection,
+                            &contact,
+                            &diagnostics,
+                            &request.request_id,
+                        );
+                        return Ok(
+                            match host.readopt_resident_native_act_checkpoint(
+                                resident,
+                                &lease,
+                                reference,
+                                wire,
+                                transaction,
+                                history.as_ref(),
+                                &return_context,
+                                &mut |kind, original| {
+                                    let index = match kind {
+                                        "before_restoration_receipt" => 0,
+                                        "source_readoption_original_request" => 1,
+                                        _ => {
+                                            return Err(
+                                                "unknown native selected-source original kind"
+                                                    .into(),
+                                            );
+                                        }
+                                    };
+                                    diagnostic_sender
+                                        .send_receipt(kind, index, original)
+                                        .inspect_err(|error| {
+                                            diagnostic_delivery_error = Some(error.clone())
+                                        })
+                                },
+                            ) {
+                                Ok(actual) => json!({"score":score,"selection":selection,
+                                "receiving_readmission":null,"native_source_readoption":actual.readmission(),
+                                "native_source_readoption_before_source":actual.source_readoption_before_source(),
+                                "native_pulse":actual.native_pulse(),"readmitted":true,"error":null,
+                                "source_requalification_trigger":trigger,
+                                "retained_source_selection":retained_source_selection,
+                                "native_contact_checkpoint_evidence":contact,
+                                "host_receipt":host.recording_readmission_controller_receipt(&request.request_id,&actual)}),
+                                Err(refusal) => json!({"score":score,"selection":selection,
+                                "receiving_readmission":null,"native_source_readoption":null,
+                                "native_pulse":null,"readmitted":false,"error":refusal.reason,
+                                "source_requalification_trigger":trigger,
+                                "retained_source_selection":retained_source_selection,
+                                "native_contact_checkpoint_evidence":contact,
+                                "cold_preparation_receipts":refusal.native_receipts,
+                                "host_receipt":host.recording_controller_refusal(&request.request_id,
+                                    "same-worker selected original source restore refused")}),
+                            },
+                        );
+                    }
+                };
+                native_contact_checkpoint_evidence = candidate.contact_evidence(&lease)?;
+                acoustic_history = match host
+                    .qualify_warm_retained_acoustic_history(&candidate, &lease, wire, reference)
+                {
+                    Ok(history) => history,
+                    Err(reason) => {
+                        return Ok(json!({"score":score,"selection":lease.evidence(),
+                        "receiving_readmission":null,"native_pulse":null,"readmitted":false,
+                        "error":reason,"native_contact_checkpoint_evidence":native_contact_checkpoint_evidence,
+                        "retained_source_selection":retained_source_selection,
+                        "host_receipt":host.recording_controller_refusal(&request.request_id,
+                            "selected native checkpoint dated receiving qualification refused")}));
+                    }
+                };
+                warm_source = Some(candidate);
+                _resident_source_views = Some(resident);
+                score
             } else {
-                let candidate = host.prepare_cold_native_act(&request.manifest, &lease)?;
+                let mut candidate = host.prepare_cold_native_act(&request.manifest, &lease)?;
                 let score = host.compile_cold_native_act_score(
                     &candidate,
                     count(&json!(request.edition_generation))?,
                     &request.manifest,
                     &mut pages,
                 )?;
-                acoustic_history =
-                    host.qualify_cold_native_act_checkpoint(&candidate, &lease, reference, wire)?;
+                acoustic_history = match host.qualify_cold_native_act_checkpoint(
+                    &mut candidate,
+                    &lease,
+                    reference,
+                    wire,
+                ) {
+                    Ok(history) => history,
+                    Err(failure) => {
+                        return Ok(json!({"score":score,"selection":lease.evidence(),
+                            "receiving_readmission":null,"native_pulse":null,"readmitted":false,
+                            "error":failure.reason,"cold_preparation_receipts":failure.native_receipts,
+                            "host_receipt":host.recording_controller_refusal(&request.request_id,
+                                "cold selected Act original numerical qualification refused")}));
+                    }
+                };
+                native_contact_checkpoint_evidence =
+                    candidate.native_contact_checkpoint_evidence(&lease)?;
                 match host.activate_cold_native_act(candidate, &lease) {
                     Ok(receipts) => cold_receipts = receipts,
                     Err(failure) => {
                         return Ok(json!({"score":score,"selection":lease.evidence(),
                         "receiving_readmission":null,"native_pulse":null,"readmitted":false,
-                        "error":failure.reason,"cold_preparation_receipts":failure.native_receipts,
+                         "error":failure.reason,"cold_preparation_receipts":failure.native_receipts,
+                         "native_contact_checkpoint_evidence":native_contact_checkpoint_evidence,
                         "host_receipt":host.recording_controller_refusal(&request.request_id,
                             "cold selected Act source activation refused")}));
                     }
@@ -1920,21 +2205,24 @@ fn serve_native_act_operation(
                 score
             };
             return Ok(
-                match host.readmit_retained_performance_checkpoint_with_history(
+                match host.readmit_retained_performance_checkpoint_with_source(
                     &lease,
                     wire,
                     reference,
                     transaction,
                     acoustic_history.as_ref(),
+                    warm_source.as_ref(),
                 ) {
                     Ok(actual) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":actual.readmission(),"native_pulse":actual.native_pulse(),
                     "readmitted":true,"error":null,"cold_preparation_receipts":cold_receipts,
-                    "retained_source_selection":retained_source_selection,
+                     "retained_source_selection":retained_source_selection,
+                     "native_contact_checkpoint_evidence":native_contact_checkpoint_evidence,
                     "host_receipt":host.recording_readmission_controller_receipt(&request.request_id,&actual)}),
                     Err(refusal) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":null,"native_pulse":refusal.native_pulse(),
-                    "readmitted":false,"error":refusal.reason(),"cold_preparation_receipts":cold_receipts,
+                     "readmitted":false,"error":refusal.reason(),"cold_preparation_receipts":cold_receipts,
+                     "native_contact_checkpoint_evidence":native_contact_checkpoint_evidence,
                     "host_receipt":host.recording_controller_refusal(&request.request_id,refusal.reason())}),
                 },
             );

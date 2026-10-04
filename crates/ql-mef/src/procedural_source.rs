@@ -170,10 +170,142 @@ pub(crate) fn compile_native_source_bootstrap_registered(
     result["consumer_contract"] = serde_json::to_value(contract).map_err(|e| e.to_string())?;
     Ok(result)
 }
+/// Compile structural Source authoring configuration only. A supplied
+/// historical configuration is not a native Source capability. The private
+/// continuation caller supplies it only through NativeDefinitionSourceOrigin
+/// borrowed from the genuine installed owner, never from request JSON.
+pub fn prepare_native_source_composition_configuration(
+    input: &NativeSourceBootstrap,
+    principal: &NativeSubject,
+    semantic_origin: Option<&NativeSourceBootstrap>,
+) -> Result<Value, String> {
+    struct Budget(usize);
+    impl std::io::Write for Budget {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0 = self
+                .0
+                .checked_add(bytes.len())
+                .filter(|n| *n <= MAX_BOOTSTRAP_BYTES)
+                .ok_or_else(|| {
+                    std::io::Error::other("source configuration aggregate exceeds its native bound")
+                })?;
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    serde_json::to_writer(Budget(0), &(input, principal, semantic_origin))
+        .map_err(|e| e.to_string())?;
+    if input.schema != SOURCE_BOOTSTRAP_REQUEST {
+        return Err("source configuration exceeds its native bound or request schema".into());
+    }
+    input.scene.validate()?;
+    validate_native_subject_basis(native_current_m_registry(), principal)?;
+    if let Some(original) = semantic_origin {
+        crate::procedural_conduct::definition::validate_continuation_scene_configuration(
+            &original.scene,
+            &input.scene,
+        )?;
+        if original.schema != input.schema
+            || serde_json::to_value(&original.authorship).map_err(|e| e.to_string())?
+                != serde_json::to_value(&input.authorship).map_err(|e| e.to_string())?
+        {
+            return Err(
+                "source configuration changed immutable original structural authoring".into(),
+            );
+        }
+    }
+    let s = &input.scene;
+    let a = &input.authorship;
+    let recipe = SourceBasis {
+        source_ref: "docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-CONTRACTS.md#2.3"
+            .into(),
+        revision: fingerprint(&include_str!(
+            "../../../docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-CONTRACTS.md"
+        ))?,
+    };
+    let initial = format!(
+        "{}:source:{}",
+        s.expression_ref,
+        fingerprint(&json!({"scene":s,"authorship":a}))?
+    );
+    let evidence_material = semantic_origin
+        .map(|old| &old.scene.material_fingerprint)
+        .unwrap_or(&s.material_fingerprint);
+    let basis = |source: &SourceBasis| {
+        json!({"caller":a.actor_ref,"source":source.source_ref,"revision":source.revision,
+        "standing":a.standing_ref,"evidence":[s.source_basis.source_ref,evidence_material]})
+    };
+    let members=a.members.iter().map(|m|json!({"subjectRef":m.subject_ref,"position":m.coordinate.position,"face":m.coordinate.face})).collect::<Vec<_>>();
+    let returns=a.source_returns.iter().map(|r|json!({"fromRef":r.from_ref,"anchorRef":r.anchor_ref,"groundRef":r.ground_ref,"face":r.face,"kind":r.kind})).collect::<Vec<_>>();
+    let relations=a.relations.iter().map(|r|json!({"row":r.row,"column":r.column,"relationRef":r.relation_ref,"evidence":r.evidence})).collect::<Vec<_>>();
+    Ok(json!({"contract":crate::vak_composition::CONTRACT,"steps":[
+        {"op":"whole","useRef":initial,"wholeRef":s.expression_ref,"subjectRef":principal.subject_ref,"members":members,
+         "sourceReturns":returns,"relations":relations,"category":a.category,"groundRef":a.ground_ref,"groundFace":a.ground_face,
+         "frame":a.frame,"basis":basis(&s.source_basis),"language":a.language},
+        {"op":"reframe","from":initial,"into":s.expression_ref,"frame":a.frame,"basis":basis(&recipe)}]}))
+}
+pub(crate) fn compile_native_source_bootstrap_registered_for_definition(
+    input: &NativeSourceBootstrap,
+    observed: &NativeBootstrapObservation,
+    contract: &crate::procedural_consumers::NativeConsumerContract,
+    semantic_origin: Option<
+        &crate::procedural_conduct::definition::NativeDefinitionSourceOrigin<'_>,
+    >,
+) -> Result<Value, String> {
+    contract.validate_source_read(&input.scene, &observed.position, &observed.timing)?;
+    let (mut result, _) = compile_source_with_origin(
+        native_current_m_registry(),
+        input,
+        observed,
+        semantic_origin,
+    )?;
+    if let Some(origin) = semantic_origin {
+        let d = origin.definition();
+        let currentness: OperativeScopeCurrentnessRequest =
+            serde_json::from_value(result["currentness"].clone()).map_err(|e| e.to_string())?;
+        if result["authored_cprime"]
+            != serde_json::to_value(&d.procedure.composition).map_err(|e| e.to_string())?
+            || currentness.expected != d.currentness.expected
+            || currentness.correlation != d.currentness.correlation
+            || result["thread_plan"]
+                != serde_json::to_value(&d.thread_plan).map_err(|e| e.to_string())?
+        {
+            return Err(
+                "fresh owner Source changed the immutable installed semantic definition".into(),
+            );
+        }
+        result["semantic_source_origin"] = json!({"schema":"ql.native-procedural-semantic-source-origin/v1",
+            "procedure_ref":d.procedure.procedure_ref,"procedure_revision":d.procedure.revision,
+            "original_scene":{"native_owner":origin.original().scene.native_owner,
+                "expression_ref":origin.original().scene.expression_ref,"scene_ref":origin.original().scene.scene_ref,
+                "document_revision":origin.original().scene.document_revision,"source_basis":origin.original().scene.source_basis,
+                "locus":origin.original().scene.locus,"material_fingerprint":origin.original().scene.material_fingerprint,
+                "source_read_receipt_ref":origin.original().scene.source_read_receipt_ref},
+            "original_authorship_fingerprint":fingerprint(&origin.original().authorship)?,
+            "original_authored_cprime":d.procedure.composition,
+            "current_scene_material_fingerprint":input.scene.material_fingerprint,
+            "current_document_revision":input.scene.document_revision,
+            "standing":"original accepted structural authoring; current material separately read by genuine owner"});
+    }
+    result["consumer_contract"] = serde_json::to_value(contract).map_err(|e| e.to_string())?;
+    Ok(result)
+}
 fn compile_source(
     registry: &MRegistry,
     input: &NativeSourceBootstrap,
     observed: &NativeBootstrapObservation,
+) -> Result<(Value, VakComposition), String> {
+    compile_source_with_origin(registry, input, observed, None)
+}
+fn compile_source_with_origin(
+    registry: &MRegistry,
+    input: &NativeSourceBootstrap,
+    observed: &NativeBootstrapObservation,
+    semantic_origin: Option<
+        &crate::procedural_conduct::definition::NativeDefinitionSourceOrigin<'_>,
+    >,
 ) -> Result<(Value, VakComposition), String> {
     if input.schema != SOURCE_BOOTSTRAP_REQUEST
         || serde_json::to_vec(input).map_err(|e| e.to_string())?.len() > MAX_BOOTSTRAP_BYTES
@@ -263,6 +395,9 @@ fn compile_source(
     // Exact sources consumed by production LibraryBuild; no alternate recipe
     // or profile hash. A reframe creates a new immutable native use and retains
     // the recipe's additional source basis through the existing native owner.
+    let semantic_configuration = semantic_origin.map(|origin| origin.original());
+    let composition =
+        prepare_native_source_composition_configuration(input, &principal, semantic_configuration)?;
     let recipe = SourceBasis {
         source_ref: "docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-CONTRACTS.md#2.3"
             .into(),
@@ -270,23 +405,6 @@ fn compile_source(
             "../../../docs/integrations/epi-logos/TA-ONTA-PROCEDURAL-EXPRESSION-CONTRACTS.md"
         ))?,
     };
-    let initial = format!(
-        "{}:source:{}",
-        s.expression_ref,
-        fingerprint(&json!({"scene":s,"authorship":a}))?
-    );
-    let basis = |source: &SourceBasis| {
-        json!({"caller":a.actor_ref,"source":source.source_ref,"revision":source.revision,
-        "standing":a.standing_ref,"evidence":[s.source_basis.source_ref,s.material_fingerprint]})
-    };
-    let members=a.members.iter().map(|m|json!({"subjectRef":m.subject_ref,"position":m.coordinate.position,"face":m.coordinate.face})).collect::<Vec<_>>();
-    let returns=a.source_returns.iter().map(|r|json!({"fromRef":r.from_ref,"anchorRef":r.anchor_ref,"groundRef":r.ground_ref,"face":r.face,"kind":r.kind})).collect::<Vec<_>>();
-    let relations=a.relations.iter().map(|r|json!({"row":r.row,"column":r.column,"relationRef":r.relation_ref,"evidence":r.evidence})).collect::<Vec<_>>();
-    let composition = json!({"contract":crate::vak_composition::CONTRACT,"steps":[
-        {"op":"whole","useRef":initial,"wholeRef":s.expression_ref,"subjectRef":principal.subject_ref,"members":members,
-         "sourceReturns":returns,"relations":relations,"category":a.category,"groundRef":a.ground_ref,"groundFace":a.ground_face,
-         "frame":a.frame,"basis":basis(&s.source_basis),"language":a.language},
-        {"op":"reframe","from":initial,"into":s.expression_ref,"frame":a.frame,"basis":basis(&recipe)}]});
     let (_, graph) = crate::vak_composition_wire::compile_request(&composition)?;
     let correlation = OperativeScopeCorrelation {
         world_ref: s.expression_ref.clone(),

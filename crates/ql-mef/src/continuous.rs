@@ -408,6 +408,52 @@ impl FieldSession {
         self.worker
             .exchange_contract_retained(request, "ql.performance-worker-reply/v1")
     }
+    /// Private source caller only; Control/public Host routes never accept
+    /// this numerical schema. The live closed lease remains with its caller.
+    pub(crate) fn selected_source_exchange_retained(
+        &mut self,
+        qualified: &Value,
+    ) -> std::result::Result<Value, (String, Option<Value>)> {
+        if qualified["schema"] != performance::SELECTED_SOURCE_REQUEST {
+            return Err((
+                "private selected native source request required".into(),
+                None,
+            ));
+        }
+        self.worker
+            .exchange_contract_retained(qualified, "ql.performance-worker-reply/v1")
+    }
+    pub(crate) fn scene_contact_exchange_retained(
+        &mut self,
+        qualified: &performance::QualifiedNativeSceneContactWorkerRequest,
+    ) -> std::result::Result<Value, (String, Option<Value>)> {
+        if qualified.request()["schema"] != performance::CONTACT_OWNER_REQUEST {
+            return Err((
+                "qualified native Scene Contact contract differs".into(),
+                None,
+            ));
+        }
+        self.worker
+            .exchange_contract_retained(qualified.request(), "ql.performance-worker-reply/v1")
+    }
+    pub(crate) fn scene_contact_replay_retained(
+        &mut self,
+        qualified: &performance::QualifiedNativeSceneContactReplayWorkerRequest,
+    ) -> std::result::Result<Value, (String, Option<Value>)> {
+        if !self.available() || qualified.request()["schema"] != performance::CONTACT_REPLAY_REQUEST
+        {
+            return Err((
+                "qualified retained native Contact replay owner/contract unavailable".into(),
+                None,
+            ));
+        }
+        // Pure numeric cold qualification runs on the same initialized FIELD
+        // worker before P activation; it cannot queue a Contact or mint a lease.
+        self.worker.exchange_contract_retained(
+            qualified.request(),
+            "ql.native-scene-contact-replay-reply/v1",
+        )
+    }
     pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
         self.worker.invalidate(reason)
     }

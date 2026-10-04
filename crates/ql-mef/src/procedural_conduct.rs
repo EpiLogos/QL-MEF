@@ -25,6 +25,9 @@ use std::collections::{BTreeMap, BTreeSet};
 #[path = "procedural_lifecycle.rs"]
 pub mod lifecycle;
 
+#[path = "procedural_definition.rs"]
+pub mod definition;
+
 pub const CONDUCT_CONTRACT: &str = "ql.procedural-conduct/v1";
 pub const CONDUCT_RECEIPT: &str = "ql.procedural-conduct-receipt/v1";
 pub const LIBRARY_CONTRACT: &str = "ql.procedural-library/v1";
@@ -314,6 +317,12 @@ pub struct ConductEvent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ConductRequest {
+    InstallPrepared {
+        input: Box<definition::NativePreparedInstall>,
+    },
+    SourceContinue {
+        input: Box<definition::NativeSourceContinuation>,
+    },
     SourceBootstrap {
         input: Box<crate::procedural_source::NativeSourceBootstrap>,
     },
@@ -416,6 +425,11 @@ pub struct MaterialReadback {
 pub struct ConductCheckpoint {
     pub schema: String,
     pub definition: ConductInstall,
+    /// Full immutable source authoring accepted on the private prepared-install route.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub original_source: Option<crate::procedural_source::NativeSourceBootstrap>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub original_consumer_contract: Option<crate::procedural_consumers::NativeConsumerContract>,
     pub rule: RuleExecution,
     pub membership: ResolvedMembership,
     pub last_generated: Vec<GeneratedContribution>,
@@ -500,6 +514,7 @@ impl ConductHost {
             None
         };
         match request {
+            ConductRequest::InstallPrepared { .. } | ConductRequest::SourceContinue { .. } => Err("native definition changes require staged private current Scene/source pre/post qualification".into()),
             ConductRequest::SourceBootstrap { .. } => Err("native source bootstrap requires the private actual selected-Act/Scene read and held-owner route".into()),
             ConductRequest::Lifecycle { .. } | ConductRequest::LifecycleCancel { .. } => Err("native lifecycle requires private staged Scene/source pre/post receiving route".into()),
             ConductRequest::LibraryDiscover {} => Ok(library_discover()),
@@ -692,6 +707,8 @@ impl ConductHost {
             rule: RuleExecution::new(&definition.procedure, &definition.interval_ref)?,
             membership,
             definition,
+            original_source: None,
+            original_consumer_contract: None,
             last_generated: vec![],
             pending_operation_ref: None,
             pending_preparation: None,
@@ -723,6 +740,9 @@ impl ConductHost {
             return Err("incompatible or colliding native conduct checkpoint".into());
         }
         bounded(&checkpoint)?;
+        if checkpoint.original_source.is_some() || checkpoint.original_consumer_contract.is_some() {
+            return Err("serialized checkpoint cannot restore private original Source custody; genuine protected current requalification required".into());
+        }
         validate_definition(&checkpoint.definition, &position)?;
         check_position(&checkpoint, &position)?;
         checkpoint
@@ -2056,6 +2076,10 @@ impl ConductHost {
             | ConductRequest::SceneDeletionAnchor { .. }
             | ConductRequest::ReleaseSceneDeletion { .. }
             | ConductRequest::ProjectInterventions { .. } => return Ok(None),
+            ConductRequest::InstallPrepared { input } => {
+                return Ok(Some(input.definition.procedure.timing.clone()));
+            }
+            ConductRequest::SourceContinue { input } => &input.procedure_ref,
             ConductRequest::Install { definition } | ConductRequest::Replace { definition, .. } => {
                 return Ok(Some(definition.procedure.timing.clone()));
             }

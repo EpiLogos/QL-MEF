@@ -56,7 +56,7 @@ impl PreparedFieldProceduralTiming {
         let instance = row["instance_ref"]
             .as_str()
             .ok_or("native clock constructor instance absent")?;
-        let binding = self.witness.original_binding();
+        let binding = self.witness.event_binding();
         if ordinal == 0
             || row["schema"] != "ql.native-field-clock-constructor/v1"
             || row["generation_domain"] != "native-field-clock-construction"
@@ -80,7 +80,7 @@ impl PreparedFieldProceduralTiming {
             "sample":row["samples_elapsed"],"source_instance_ref":self.position.instance_ref,
             "native_clock_constructor":row});
         Ok(NativeFieldClockConsumerFact {
-            binding: binding.clone(),
+            binding,
             position: self.position.clone(),
             instance_ref: instance.to_owned(),
             construction_generation: ordinal,

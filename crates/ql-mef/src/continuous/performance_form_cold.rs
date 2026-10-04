@@ -75,12 +75,32 @@ impl PreparedColdPhysicalSource {
 impl PerformanceOwner {
     /// Numerical/source compiler only. The paired physical/acoustic cold
     /// compiler qualifies the full closed lease; library evidence grants none.
+    #[cfg(test)]
     fn replay_cold_native_physical_source(
         original: &CoupledBasis,
         instance: &str,
         source: &NativePerformanceReceivingSource,
         expected: &Value,
         original_applications: &[Value],
+    ) -> Result<PreparedColdPhysicalSource, String> {
+        let mut contacts = super::contact_history::ContactSourceReplay::new(expected, &[])?;
+        Self::replay_cold_native_physical_source_with_contacts(
+            original,
+            instance,
+            source,
+            expected,
+            original_applications,
+            &mut contacts,
+        )
+    }
+
+    fn replay_cold_native_physical_source_with_contacts(
+        original: &CoupledBasis,
+        instance: &str,
+        source: &NativePerformanceReceivingSource,
+        expected: &Value,
+        original_applications: &[Value],
+        contacts: &mut super::contact_history::ContactSourceReplay,
     ) -> Result<PreparedColdPhysicalSource, String> {
         if serde_json::to_vec(expected)
             .map_err(|e| e.to_string())?
@@ -116,10 +136,16 @@ impl PerformanceOwner {
             return Err("cold physical source lost an original native application".into());
         }
         if history.is_empty() {
-            let owner = Self::prepare_cold_act_source(original, instance, source, expected)?;
+            let origin = contacts.origin_bundle(expected);
+            let mut owner = Self::prepare_cold_act_source(original, instance, source, origin)?;
             let source_sample = decimal(
-                &expected["current_receiving"]["native_admission"]["operation"]["native_sample"],
+                &origin["current_receiving"]["native_admission"]["operation"]["native_sample"],
             )?;
+            contacts.append_before(&mut owner, None)?;
+            contacts.complete()?;
+            if !same_retained(owner.source_assets(), expected) {
+                return Err("cold Contact-only source differs from complete original epoch".into());
+            }
             return Ok(PreparedColdPhysicalSource {
                 frames: vec![ReplayedPhysicalSourceFrame {
                     owner,
@@ -197,6 +223,7 @@ impl PerformanceOwner {
                 );
             }
             let request = decimal(&record["original_native_request_id"])?;
+            contacts.append_before(&mut owner, Some(request))?;
             let sample = decimal(&record["native_sample"])?;
             if request <= previous_request || sample < previous_sample {
                 return Err(
@@ -293,6 +320,7 @@ impl PerformanceOwner {
                     );
                 }
             }
+            contacts.check_source_application(pulse)?;
             let frame_sample = decimal(
                 &owner.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
             )?;
@@ -316,6 +344,8 @@ impl PerformanceOwner {
             previous_sequence = sequence;
             previous_eigenbasis = Some(ack["after_eigenbasis_identity"].clone());
         }
+        contacts.append_before(&mut owner, None)?;
+        contacts.complete()?;
         if !same_retained(&owner.source_assets, expected)
             || serde_json::to_value(&owner.immutable_source_origin().input)
                 .map_err(|e| e.to_string())?

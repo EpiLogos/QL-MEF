@@ -132,6 +132,27 @@ impl PerformanceOwner {
         physical_applications: &[Value],
         acoustic_applications: &[Value],
     ) -> Result<PreparedColdPhysicalSource, String> {
+        let mut contacts = super::super::contact_history::ContactSourceReplay::new(expected, &[])?;
+        Self::replay_cold_native_acoustic_source_with_contacts(
+            original,
+            instance,
+            source,
+            expected,
+            physical_applications,
+            acoustic_applications,
+            &mut contacts,
+        )
+    }
+
+    pub(in crate::continuous) fn replay_cold_native_acoustic_source_with_contacts(
+        original: &CoupledBasis,
+        instance: &str,
+        source: &NativePerformanceReceivingSource,
+        expected: &Value,
+        physical_applications: &[Value],
+        acoustic_applications: &[Value],
+        contacts: &mut super::super::contact_history::ContactSourceReplay,
+    ) -> Result<PreparedColdPhysicalSource, String> {
         if expected["schema"] != "ql.retained-performance-source-assets/v1"
             || !same_retained(
                 &expected["original_native_input"],
@@ -170,12 +191,13 @@ impl PerformanceOwner {
             );
         }
         if acoustic.is_empty() {
-            return Self::replay_cold_native_physical_source(
+            return Self::replay_cold_native_physical_source_with_contacts(
                 original,
                 instance,
                 source,
                 expected,
                 physical_applications,
+                contacts,
             );
         }
         let all = original_order(physical_applications, acoustic_applications)?;
@@ -251,6 +273,7 @@ impl PerformanceOwner {
             let record = &retained["source"];
             let pulse = &retained["native_application"];
             let request = decimal(&record["original_native_request_id"])?;
+            contacts.append_before(&mut owner, Some(request))?;
             let sample = decimal(&record["native_sample"])?;
             let frame_sample = decimal(
                 &owner.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
@@ -429,6 +452,7 @@ impl PerformanceOwner {
                     return Err("mixed source lost actual M4 shared cursor".into());
                 }
             }
+            contacts.check_source_application(pulse)?;
             frames.push(ReplayedPhysicalSourceFrame {
                 owner,
                 current,
@@ -448,6 +472,8 @@ impl PerformanceOwner {
             previous_epoch = epoch;
             previous_sequence = sequence;
         }
+        contacts.append_before(&mut owner, None)?;
+        contacts.complete()?;
         if !same_retained(owner.source_assets(), expected)
             || !same_retained(&operative_source.source_inputs()?, &source.source_inputs()?)
         {

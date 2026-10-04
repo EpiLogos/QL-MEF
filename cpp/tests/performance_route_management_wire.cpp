@@ -572,8 +572,11 @@ static RevisionSource revision_source(J *fixture,
   }
   return {std::move(prepared), std::move(admitted), std::move(binding), seed};
 }
-static void retained_material_revision(J *fixture, bool with_receiving = false,
-                                       J *actual_source_form_after = nullptr) {
+#include "performance_source_readoption_cases.hpp"
+static void
+retained_material_revision(J *fixture, bool with_receiving = false,
+                           J *actual_source_form_after = nullptr,
+                           J *actual_source_before_at512 = nullptr) {
   // Genuine native M1/M2/M3/N9 producer below, plus declared bounded metric
   // receiving experiment. This does not issue the private Scene/Act authority.
   SpatialReceivingInput spatial;
@@ -639,6 +642,7 @@ static void retained_material_revision(J *fixture, bool with_receiving = false,
   assert(owner->enqueue_score_input(
              release, reference("native-score:material/touch1")) ==
          Result::Accepted);
+  const auto original_source_birth = owner->stopped_checkpoint();
   std::array<float, 128> pcm{};
   Capture capture;
   for (unsigned block = 0; block < 4; ++block) {
@@ -1004,6 +1008,13 @@ static void retained_material_revision(J *fixture, bool with_receiving = false,
                            "wrong source/context/body/ring refused"
                          : " without M4")
       << "\n";
+  if (actual_source_before_at512)
+    ql_test_native_source_readoption::activity(
+        *owner, fixture, actual_source_before_at512, *before, spatial, motion,
+        with_receiving);
+  ql_test_native_source_readoption::activity(*owner, fixture, nullptr,
+                                             *original_source_birth, spatial,
+                                             motion, with_receiving);
 }
 // Optional native CI artifact output. Every value is taken from this actual
 // same-owner stopped queue/application activity; no precomputed receipt.
@@ -1683,7 +1694,8 @@ static void genuine_source_form_receiving_activity() {
   auto before = packet::field(raw.get(), "before"),
        after = packet::field(raw.get(), "after");
   assert(before && after);
-  retained_material_revision(before, true, after);
+  retained_material_revision(before, true, after,
+                             packet::field(raw.get(), "before_at512"));
   ql_test_native_form_control::activity(raw.get());
 }
 #include "../test_support/independent_retained_body_revision_cases.hpp"

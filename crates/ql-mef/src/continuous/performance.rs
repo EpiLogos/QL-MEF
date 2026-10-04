@@ -30,6 +30,8 @@ use std::sync::Arc;
 #[path = "performance_current_configuration.rs"]
 mod current_configuration;
 pub(crate) use current_configuration::prepare_current_configuration;
+#[path = "performance_selected_source_budget.rs"]
+pub(crate) mod selected_source_budget;
 pub use current_configuration::{
     AuthoredCurrentPerformancePreparation, AuthoredMechanicalPolicy, CURRENT_PREPARATION,
     CurrentMechanicalPolicy, CurrentSourceChoice,
@@ -185,6 +187,8 @@ pub struct PerformanceOwner {
     source_origin: CoupledBasis,
     physical_source_history: Vec<form::NativePhysicalTransitionRecord>,
     acoustic_source_history: Vec<Value>,
+    contact_admission_history: Vec<Value>,
+    prepared_scene_contact: Option<scene_contact::PreparedNativeSceneContact>,
     binding: Arc<PreparedPerformanceBinding>,
     sparse: Option<PreparedSourcePerformance>,
     config: PerformanceConfig,
@@ -192,6 +196,24 @@ pub struct PerformanceOwner {
     return_binding: Option<PreparedPerformanceBinding>,
     source_assets: Value,
     last: Option<Value>,
+}
+/// Actual private stopped request; no Clone/Deserialize or public constructor.
+pub(crate) struct NativePreparedRecordingRequest {
+    request: Value,
+}
+impl NativePreparedRecordingRequest {
+    pub(crate) fn original_request(&self) -> &Value {
+        &self.request
+    }
+}
+pub(crate) struct NativeOwnedRecordingReply {
+    pub(crate) original_request: Value,
+    pub(crate) native_pulse: Value,
+}
+pub(crate) struct NativeOwnedRecordingFailure {
+    pub(crate) reason: String,
+    pub(crate) original_request: Value,
+    pub(crate) native_receipts: Vec<Value>,
 }
 /// Complete parsed stopped-owner replies on refusal; never source authority.
 pub(crate) struct NativeStoppedExchangeFailure {
@@ -349,6 +371,8 @@ impl PerformanceOwner {
             source_origin: current.clone(),
             physical_source_history: Vec::new(),
             acoustic_source_history: Vec::new(),
+            contact_admission_history: Vec::new(),
+            prepared_scene_contact: None,
             binding,
             sparse,
             config,
@@ -536,7 +560,14 @@ impl PerformanceOwner {
         session: &mut CoupledFieldSession,
         request: Value,
     ) -> Result<Value, NativeStoppedExchangeFailure> {
-        let receipt = session.performance_exchange_retained(&request)?;
+        self.stopped_exchange_borrowed_with_receipts(session, &request)
+    }
+    fn stopped_exchange_borrowed_with_receipts(
+        &mut self,
+        session: &mut CoupledFieldSession,
+        request: &Value,
+    ) -> Result<Value, NativeStoppedExchangeFailure> {
+        let receipt = session.performance_exchange_retained(request)?;
         if let Err(error) = self.validate_reply(&receipt) {
             return Err(NativeStoppedExchangeFailure {
                 reason: session.performance_invalidate(&error),
@@ -556,6 +587,37 @@ impl PerformanceOwner {
         operation: &str,
         operands: &Value,
     ) -> Result<Value, NativeStoppedExchangeFailure> {
+        let request =
+            self.prepare_owner_stopped_request(current, receiving, operation, operands)?;
+        let mut reply = self.stopped_exchange_with_receipts(session, request)?;
+        if operation == "restore" && reply["accepted"] == true {
+            // Manager stopped_restore deliberately retires its catalog. Put
+            // back THIS native owner's unchanged actual K/B catalog before
+            // returning continuation to the same original input lifetimes.
+            let mut catalog = self.raw("catalog")?;
+            catalog["cells"] = json!(self.cells);
+            catalog["transpose"] = json!(self.config.transpose);
+            let restored = self
+                .stopped_exchange_with_receipts(session, catalog)
+                .map_err(|mut failure| {
+                    failure.native_receipts.insert(0, reply.clone());
+                    failure
+                })?;
+            // Return the actual catalog refusal together with the original
+            // restore pulse; the export validator still refuses publication.
+            reply["catalog_restoration"] = restored;
+        }
+        Ok(reply)
+    }
+    /// Pure common preparation; all original receiving/current/device/operand
+    /// guards are shared verbatim with the existing stopped owner activity.
+    fn prepare_owner_stopped_request(
+        &self,
+        current: &CoupledBasis,
+        receiving: &super::performance_receiving::NativePerformanceReceivingSource,
+        operation: &str,
+        operands: &Value,
+    ) -> Result<Value, String> {
         self.validate_current(current)?;
         let reading = self
             .reading()
@@ -611,25 +673,57 @@ impl PerformanceOwner {
                 .ok_or("native owner request absent")?
                 .insert(key.clone(), value.clone());
         }
-        let mut reply = self.stopped_exchange_with_receipts(session, request)?;
-        if operation == "restore" && reply["accepted"] == true {
-            // Manager stopped_restore deliberately retires its catalog. Put
-            // back THIS native owner's unchanged actual K/B catalog before
-            // returning continuation to the same original input lifetimes.
-            let mut catalog = self.raw("catalog")?;
-            catalog["cells"] = json!(self.cells);
-            catalog["transpose"] = json!(self.config.transpose);
-            let restored = self
-                .stopped_exchange_with_receipts(session, catalog)
-                .map_err(|mut failure| {
-                    failure.native_receipts.insert(0, reply.clone());
-                    failure
-                })?;
-            // Return the actual catalog refusal together with the original
-            // restore pulse; the export validator still refuses publication.
-            reply["catalog_restoration"] = restored;
+        Ok(request)
+    }
+    /// Only the existing closed native recording caller can issue this typed
+    /// request. Preparing it changes no native owner or callback cursor.
+    pub(crate) fn prepare_owned_recording_request(
+        &self,
+        current: &CoupledBasis,
+        receiving: &super::performance_receiving::NativePerformanceReceivingSource,
+        operands: &Value,
+    ) -> Result<NativePreparedRecordingRequest, String> {
+        Ok(NativePreparedRecordingRequest {
+            request: self.prepare_owner_stopped_request(
+                current,
+                receiving,
+                "offline-render",
+                operands,
+            )?,
+        })
+    }
+    /// The actual request remains owned throughout one existing native exchange
+    /// and is returned verbatim on success, native refusal or transport loss.
+    pub(crate) fn exchange_owned_recording_request(
+        &mut self,
+        session: &mut CoupledFieldSession,
+        prepared: NativePreparedRecordingRequest,
+    ) -> Result<NativeOwnedRecordingReply, NativeOwnedRecordingFailure> {
+        match self.stopped_exchange_borrowed_with_receipts(session, &prepared.request) {
+            Ok(native_pulse) => Ok(NativeOwnedRecordingReply {
+                original_request: prepared.request,
+                native_pulse,
+            }),
+            Err(failure) => {
+                // Worker::exchange_contract_retained uses value.to_string()
+                // for a genuine explicit field-error. Keep that whole native
+                // original once; duplicating its escaped JSON inside reason
+                // and host_receipt.error would amplify an admitted 32MiB
+                // reply beyond the final 64MiB envelope after commitment.
+                let reason = if failure.native_receipts.len() == 1
+                    && failure.native_receipts[0]["schema"] == "ql.field-error/v1"
+                {
+                    "actual native recording operation refused; complete original field-error is retained".to_owned()
+                } else {
+                    failure.reason
+                };
+                Err(NativeOwnedRecordingFailure {
+                    reason,
+                    original_request: prepared.request,
+                    native_receipts: failure.native_receipts,
+                })
+            }
         }
-        Ok(reply)
     }
     pub(crate) fn owner_export_touch(&self, touch: KeyTouch) -> Result<Value, String> {
         self.resolve(touch)
@@ -747,13 +841,13 @@ impl PerformanceOwner {
         if self.last.is_none()
             || matches!(
                 reply["operation"].as_str(),
-                Some("prepare" | "source-body-transition")
+                Some("prepare" | "source-body-transition" | "selected-source-readoption")
             )
         {
             let descriptor = &reply["payload"]["body_descriptor"];
             if !matches!(
                 reply["operation"].as_str(),
-                Some("prepare" | "source-body-transition")
+                Some("prepare" | "source-body-transition" | "selected-source-readoption")
             ) || reply["accepted"] != true
                 || descriptor["schema"] != "ql.native-physical-descriptor/v1"
                 || descriptor["physical_preparation"]
@@ -936,6 +1030,113 @@ impl PerformanceOwner {
         }
         Ok(actual)
     }
+    /// Borrow every complete source/history before the export getter copies
+    /// whole bundles or preparations. Physical records serialize their actual
+    /// snapshot fields directly; no temporary Vec<Value> precedes the bound.
+    pub(crate) fn precharge_source_export_inputs(
+        &self,
+        current: &CoupledBasis,
+        source: &super::performance_receiving::NativePerformanceReceivingSource,
+    ) -> Result<(), String> {
+        struct PhysicalHistory<'a>(&'a [form::NativePhysicalTransitionRecord]);
+        impl Serialize for PhysicalHistory<'_> {
+            fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+                use serde::ser::SerializeSeq;
+                let mut sequence = serializer.serialize_seq(Some(self.0.len()))?;
+                for record in self.0 {
+                    sequence.serialize_element(&record.borrowed_snapshot())?;
+                }
+                sequence.end()
+            }
+        }
+        let binding = retained_evidence::encoded_bound(
+            self.binding(),
+            8 * 1024 * 1024,
+            "source export complete native binding",
+        )?;
+        let assets = retained_evidence::encoded_bound(
+            self.source_assets(),
+            8 * 1024 * 1024,
+            "source export complete native bundle",
+        )?;
+        let physical = retained_evidence::encoded_bound(
+            &PhysicalHistory(&self.physical_source_history),
+            4 * 1024 * 1024,
+            "source export complete physical application sidecar",
+        )?;
+        let acoustic = retained_evidence::encoded_bound(
+            &self.acoustic_source_history,
+            4 * 1024 * 1024,
+            "source export complete acoustic application sidecar",
+        )?;
+        let contact = retained_evidence::encoded_bound(
+            &self.contact_admission_history,
+            4 * 1024 * 1024,
+            "source export complete Contact application sidecar",
+        )?;
+        let context = retained_evidence::encoded_bound(
+            source.return_context(),
+            8 * 1024 * 1024,
+            "source export original return context",
+        )?;
+        let occasion = retained_evidence::encoded_bound(
+            &source.original_occasion(),
+            8 * 1024 * 1024,
+            "source export original occasion",
+        )?;
+        let reading = retained_evidence::encoded_bound(
+            &self.reading(),
+            8 * 1024 * 1024,
+            "source export actual native reading",
+        )?;
+        // Bound the OUTPUT multiplicities before any native_packet, Return or
+        // history clone. One binding covers native_preparation; one covers
+        // native_basis. Three cover expression_basis's source sections, replay,
+        // repeated force/form references and tuning. Two cover projected pitches
+        // and their ratio object. The eighth is spare for key/punctuation growth.
+        // Context references appear as readings, context and required_assets;
+        // four whole contexts dominate these projections. The occasion appears
+        // once; two dominate its Option representation and replay copies.
+        // 64KiB covers all literal keys, five source-reference readings, at most
+        // 96 pitch keys and canonical decimal/hash fields (none grow with a
+        // history). Histories and the full bundle are charged separately once.
+        let mut budget = 64usize * 1024;
+        for (bytes, copies) in [
+            (binding, 8usize),
+            (context, 4),
+            (occasion, 2),
+            (assets, 1),
+            (reading, 1),
+            (physical, 1),
+            (acoustic, 1),
+            (contact, 1),
+        ] {
+            budget = budget
+                .checked_add(
+                    bytes
+                        .checked_mul(copies)
+                        .ok_or("complete source export size overflow")?,
+                )
+                .ok_or("complete source export size overflow")?;
+        }
+        // The sparse packet adds the preparation once and each actual unique
+        // available key/register's complete receipt. Count those borrowed
+        // originals before the producer copies any source collection.
+        budget = budget
+            .checked_add(self.sparse_packet_extra_bound()?)
+            .ok_or("complete sparse export size overflow")?;
+        // Also charge the current typed basis used by the source replay. This
+        // private constructor input is not a stored-snapshot authority.
+        retained_evidence::encoded_bound(
+            current,
+            8 * 1024 * 1024,
+            "source export fresh current replay basis",
+        )?;
+        if budget > crate::continuous::host::MAX_HOST_INPUT as usize {
+            return Err("complete projected source artifact exceeds 32MiB before copies".into());
+        }
+        Ok(())
+    }
     pub fn native_packet(&self) -> Result<Value, String> {
         self.packet()
     }
@@ -972,6 +1173,27 @@ impl PerformanceOwner {
     pub fn reading(&self) -> Option<&Value> {
         self.last.as_ref().map(|v| &v["reading"])
     }
+    /// Borrow the actual last acknowledged save-cut pulse. This observes no
+    /// worker and cannot admit an imported checkpoint or an old Scene cut.
+    pub(crate) fn acknowledged_stopped_checkpoint_pulse(&self) -> Result<&Value, String> {
+        let pulse = self
+            .last
+            .as_ref()
+            .ok_or("actual native save-cut pulse absent")?;
+        if pulse["operation"] != "checkpoint"
+            || pulse["accepted"] != true
+            || pulse["payload"]["checkpoint"]["schema"] != "ql.performance-management-checkpoint/v1"
+            || !matches!(
+                pulse["reading"]["device"]["state"].as_str(),
+                Some("closed" | "prepared")
+            )
+        {
+            return Err(
+                "native stopped activity requires the original most recent save cut".into(),
+            );
+        }
+        Ok(pulse)
+    }
     fn public_reply(
         &self,
         operation: &str,
@@ -986,7 +1208,7 @@ impl PerformanceOwner {
             Value::Null
         };
         json!({"schema":REPLY,"operation":operation,"accepted":accepted,"refusal":if accepted{Value::Null}else{json!({"code":"native-refused","reason":raw["reason"]})},"reading":raw["reading"],"transport_transition":Value::Null,"admission":admission,
-   "native_pulse":{"native_capture":raw["native_capture"],"applications":raw["applications"],"input_history":raw["input_history"],"recording":raw["recording"],"recording_available":raw["recording_available"],"release_pending":raw["release_pending"],"release_zero_proven":raw["release_zero_proven"],"release_proof_cursor":raw["release_proof_cursor"]},"native_payload":raw["payload"]})
+   "native_pulse":{"applications":raw["applications"],"input_history":raw["input_history"],"recording":raw["recording"],"recording_available":raw["recording_available"],"release_pending":raw["release_pending"],"release_zero_proven":raw["release_zero_proven"],"release_proof_cursor":raw["release_proof_cursor"]},"native_payload":raw["payload"]})
     }
     pub fn execute(
         &mut self,
@@ -1368,4 +1590,30 @@ mod acoustic_history;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 pub(crate) use acoustic_history::{
     QualifiedAcousticSourceHistory, qualify_saved_acoustic_physical_history,
+};
+
+#[path = "performance_scene_contact.rs"]
+mod scene_contact;
+pub(crate) use scene_contact::{
+    CONTACT_OWNER_REQUEST, NativeSceneContactOperation, NativeSceneContactRefusal,
+    QualifiedNativeSceneContactWorkerRequest,
+};
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "performance_selected_source.rs"]
+mod selected_source;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(crate) use selected_source::SELECTED_SOURCE_REQUEST;
+
+#[path = "performance_contact_warm.rs"]
+mod contact_warm;
+#[path = "performance_retained_evidence.rs"]
+pub(crate) mod retained_evidence;
+pub(crate) use contact_warm::{
+    NativeWarmSourceCheckpointFailure, NativeWarmSourceCheckpointFailureKind,
+    PreparedWarmNativeSourceCheckpoint,
+};
+#[path = "performance_contact_history.rs"]
+pub(crate) mod contact_history;
+pub(crate) use contact_history::{
+    CONTACT_REPLAY_REQUEST, QualifiedNativeSceneContactReplayWorkerRequest,
 };

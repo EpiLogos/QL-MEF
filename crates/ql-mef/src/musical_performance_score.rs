@@ -653,6 +653,13 @@ fn qualify_action(
                 return Err("note modulation lost original touch".into());
             }
         }
+        "k" => {
+            crate::musical_performance_source_score::qualify_recorded_contact_action(
+                args.ok_or("complete original Contact action absent")?,
+                &performance["bases"][basis],
+                performance,
+            )?;
+        }
         "f" => {
             let a = list(3)?;
             let body = &performance["bases"][basis]["prepared_body"];

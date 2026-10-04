@@ -2892,38 +2892,224 @@
       ]
     },
     {
-      "path": "cpp/include/ql/performance_capture_wire.hpp",
+      "path": "cpp/include/ql/performance_scene_contact_owner.hpp",
       "stratum": "cpp",
-      "disposition": "infrastructural",
-      "coordinates": [],
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
       "kind": "computational",
-      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
       "tests": [
-        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
         "scripts/test-physical-musical.sh"
       ]
     },
     {
-      "path": "cpp/tests/performance_capture_wire.cpp",
+      "path": "cpp/include/ql/physical_scene_contact.hpp",
       "stratum": "cpp",
-      "disposition": "infrastructural",
-      "coordinates": [],
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
       "kind": "computational",
-      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
       "tests": [
-        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
         "scripts/test-physical-musical.sh"
       ]
     },
     {
-      "path": "crates/ql-mef/tests/performance_capture_native_wire.rs",
+      "path": "cpp/include/ql/physical_scene_contact_replay.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_scene_contact_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/src/native_scene_contact_channel.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/src/native_scene_contact_replay_channel.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_contact_history.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_scene_contact.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_scene_contact_bridge.rs",
       "stratum": "rust",
       "disposition": "infrastructural",
       "coordinates": [],
       "kind": "computational",
-      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
       "tests": [
-        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_scene_contact_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 same retained physical-musical owner. The private current Scene/Act lease selects the authored full body-local plane/gravity input; native Manager ordinal and actual constructor qualify the occurrence, all512 Newton samples and original body/source are retained separately from each full admission. Typed warm and pure numerical cold worker routes preserve the same original source and checkpoint; generic producer/schema labels issue no witness. Original numeric geometry/PCM, wrong-face/lost-descendant/disconnected-producer/stale-body/whole-source/cold detectors remain required; no installed or live sound acceptance is inferred.",
+      "tests": [
+        "cpp/tests/performance_scene_contact_geometry_packet.cpp",
+        "cpp/tests/performance_scene_contact_cold_corpus.cpp",
+        "crates/ql-mef/src/continuous/performance_scene_contact_ingress_tests.rs",
         "scripts/test-physical-musical.sh"
       ]
     },
@@ -2951,6 +3137,149 @@
         "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
         "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
         "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_definition.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private staged first preparation and same retained ConductHost source continuation. Actual original definition, rule cursor, membership, pending work and source authoring remain held; the native Source/Scene/current CAS and timing consumers qualify pre/post before the checkpoint fingerprint commit. Configuration helpers construct no native lease or material acknowledgement.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_definition.rs",
+        "crates/ql-mef/tests/procedural_program_regeneration.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/procedural_definition.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing private FieldHost adapter observes the actual FIELD or Performance boundary once, retains its whole original receipt on refusal, and stages the same installed definition. Actual selected Scene/Source consumers and unchanged original source are rechecked before commit; no new clock, caller grant or inferred material reception.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_definition.rs",
+        "crates/ql-mef/tests/procedural_program_regeneration.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_selected_source_budget.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private stopped control-thread complete escaped response accounting over borrowed actual score, selection, source, context, Contact and diagnostic originals. The native selected-source pulse, separate source projection and both controller projections are charged before the only native exchange. Sparse accounting follows the actual unique key/register receipts rather than repeatedly copying the whole preparation. Counts issue no source or restore authority.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_selected_source_budget.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_score_contact.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Read-only performed Contact source consumer verifies the full original native occurrence, all36 operands, complete512-force programme and queue admission against actual retained source owners already qualified by the original score compiler. Numeric kind and finite binary64 bits remain exact. It cannot construct a Contact slot, producer or clock.",
+      "tests": [
+        "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Detecting acceptance consumes only the genuine closed C current Scene/Act/Manager Contact artifact. It changes all512 original force cells, full source leaves, body/occurrence/admission and numeric representations, then independently reparses and repeats the complete original positive after each refusal. Full native producer and original whole activity execution remain required.",
+      "tests": [
+        "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_definition.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Original retained definition detecting test owner for pending first batch, current source continuation and native source/consumer restrictions. Registration records source custody only; actual native host and complete activity execution remain required.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_definition.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_program_regeneration.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Complete original retained program regeneration detecting test owner. Tests preserve same authored subject, original rule state and consumer boundaries across actual source preparation and current material changes; no test result is inferred from source registration.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_program_regeneration.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/support/procedural_program.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Shared original typed native program test support. Source preparation and records provide test inputs only and cannot grant current host, Scene, body, callback or live timing authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_program_regeneration.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_contact_warm.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private same retained owner selected-Act checkpoint preflight. It borrows and charges the full original current/selected source, all3 sidecars, complete checkpoint and actual native replies before copying; original typed native source replay and privately qualified Contact numeric evidence remain held across the actual restore. A different genuine prefix requires source re-adoption and cannot acquire old body labels. Finite numeric kind/bit comparisons detect lossy replay; no owner activation, callback, P advance or imported lease is issued.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_contact_warm.rs",
+        "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_recording_render.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private stopped recording callback on the actual current Scene, retained Manager and Engine. Exact closed native Act/C61 cut and full source/basis/sidecars are independently qualified; the complete source, original worker request and future native reply are charged before the only callback. Full original request/replies survive every postcommit refusal. Captured exact finite f32 and native cursor/drop readbacks are required, not synthesized sound.",
+      "tests": [
+        "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_retained_evidence.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private nonallocating escaped original-evidence size accounting and recursive exact numeric representation/finite binary64 bit equality. Complete borrowed Contact originals are charged before copying. Counts, schemas and equality helpers issue no source, Scene, body, clock, Contact occurrence or lease.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_selected_source_budget.rs",
+        "crates/ql-mef/src/musical_performance_score_contact_acceptance.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_selected_source.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private selected-source same-worker request compiled only from actual original-owner replay and closed selected Act lease. Genuine fresh receiving and saved acoustic producers remain held while full selected/resident packets, basis and CPv3 transactions cross the existing worker dispatcher; exact complete native ACK/source/checkpoint qualification precedes source publication. No public control operation, imported packet, saved witness or hash grants source admission.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_selected_source_budget.rs",
+        "scripts/test-physical-musical.sh"
       ]
     }
   ]

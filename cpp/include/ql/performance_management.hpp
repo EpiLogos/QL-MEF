@@ -73,6 +73,7 @@ struct TransportAcknowledgement {
 };
 
 class PerformanceManagement {
+  friend class NativeStoppedSourceReadoption;
   using Input = NativeInputBinding;
   // Actual serial Management constructor identity. Restore changes transport
   // epoch, never this lifetime; copied source/clock/checkpoint JSON cannot mint
@@ -904,6 +905,12 @@ public:
   std::unique_ptr<ManagementPulse> pulse() {
     auto out = std::make_unique<ManagementPulse>();
     out->applications.reserve(256);
+    // All storage is obtained before either original journal is drained.
+    // A failed allocation must leave native feedback available to its owner.
+    out->input_history.reserve(256);
+    // Device receipt strings also allocate. Capture this unchanged serial
+    // device state before consuming any original feedback journal.
+    out->device = device_.receipt();
     Readback reading{};
     for (unsigned i = 0; i < 64 && native_.engine->pop_readback(reading); ++i) {
       latest_ = reading;
@@ -923,7 +930,6 @@ public:
     }
     if (has_latest_ && !bindings_.retire_absent(latest_))
       hold();
-    out->input_history.reserve(256);
     InputBindingRecord binding{};
     for (unsigned i = 0; i < 256 && bindings_.pop_history(binding); ++i)
       out->input_history.push_back(binding);
@@ -944,7 +950,6 @@ public:
     if (has_latest_)
       out->reading = latest_;
     out->recording = native_.engine->recording_status();
-    out->device = device_.receipt();
     if (out->recording.failure != RecordingFailure::None)
       control_recording_failed_ = true;
     return out;
