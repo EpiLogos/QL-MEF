@@ -1,6 +1,12 @@
 # Epi-Logos agent development programme
 
-### Current installed candidate and receiving repair — 3 October 2026, 19:51 UTC
+### Current integrated delivery — 2026-10-04T14:25:48Z
+
+**4 October 2026 current corrective delivery:** native caption/full saved-material correction and exact captured 170→171 continuation now pass at their bounded actual native scopes. Source 7b3 commits strict navigation/readiness repairs; original canonical whole/full performance replay is active. Managed CCC reaches the retained personal Expression in a separate finite 3 GiB observation, with saved personal-current restoration, native acknowledgement and Save failures still open. Concealed scene scheduling/first GL admission repair is in progress. Installed whole A/B/C acceptance, all 185 runtime obligations, 14/26/A0–A5/full journeys and person-owned H remain unaccepted.
+
+The original one-occasion cosmic/personal world, exact hub ancestry, native saved-current admission, complete Return, positive/live zero effects, two persons, source travel/save/restart and fresh selected-source agency remain the first delivery. [Audit](../../kernel-rebuild/EPI-WORLD-FIDELITY-AUDIT-2026-09-30.md) and [existing 14/26 recovery operations](../../kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json) govern the continued implementation.
+
+### Dated installed candidate and receiving repair — 3 October 2026, 19:51 UTC
 
 **The first installed corrective delivery is incomplete.** Actual O:I 3598 is managed-installed in the ordinary app: [independent archive/source qualification](/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-3598-independent-01.json) and [installed bytes, signature and CLI qualification](/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-3598-installed-independent-01.json) pass. The fresh computer-use attempt stopped at the locked Mac before app launch. No loaded frontend, rendered after-view, personal effect, Save/reopen or Recognition is claimed.
 

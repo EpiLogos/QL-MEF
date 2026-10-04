@@ -1,5 +1,7 @@
 # Epi Capability Matrix Field Index
 
+**4 October 2026 current experience binding:** all 185 source-specific dispositions remain qualified and runtime-unaccepted. Actual native caption/full material and captured prefix continuation pass at bounded scopes; installedCCC reaches retained personal material but saved current/acknowledgement/Save failures remain. Complete cosmic/personal causal/travel/Return/restart/agency proof is open in R2–R6. Existing determining sources, native owners, branch/journey obligations and 14/26 recovery map remain; no matrix runtime status is promoted.
+
 **Standing:** architecture-contract and owner-ratified pre-K8 specification.  
 **Register:** episteme.  
 **Provenance:** PR #93 R3 field, #161 living instrument, and #163 owner-approved full agent-world lock, 2026-09-12.  
