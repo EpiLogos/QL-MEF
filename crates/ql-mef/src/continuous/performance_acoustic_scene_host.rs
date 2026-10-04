@@ -139,7 +139,7 @@ impl FieldHost {
     pub(crate) fn apply_performance_acoustic_edit(
         &mut self,
         candidate: &PreparedNativeAcousticEdit,
-        lease: &super::performance_act_bridge::NativeActSourceLease<'_>,
+        lease: &super::super::performance_act_bridge::NativeActSourceLease<'_>,
     ) -> Result<Value, AcousticRefusal> {
         match candidate {
             PreparedNativeAcousticEdit::Install(candidate) => {

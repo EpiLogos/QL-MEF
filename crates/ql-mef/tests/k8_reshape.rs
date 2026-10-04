@@ -88,7 +88,15 @@ fn reshape_keeps_state_clock_and_pcm_and_moves_only_targets() {
     );
     let a = shaped.advance(1024, false).unwrap();
     let b = control.advance(1024, false).unwrap();
-    assert_eq!(a, b);
+    // Separate actual constructors must differ, even for identical source and
+    // numerical evolution. Every other receipt field stays byte-equivalent.
+    assert_ne!(
+        a["timing_owner"]["instance_ref"],
+        b["timing_owner"]["instance_ref"]
+    );
+    let mut comparable = b.clone();
+    comparable["timing_owner"]["instance_ref"] = a["timing_owner"]["instance_ref"].clone();
+    assert_eq!(a, comparable);
     let refs = |r: &Value| {
         r["targets"]
             .as_array()

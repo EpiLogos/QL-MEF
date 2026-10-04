@@ -407,3 +407,205 @@ mod transport {
         assert_eq!(session.last_receipt(), &receipt);
     }
 }
+
+/// Genuine current floor worker, existing M2 compiler and FieldSession only.
+/// Neither the fault Stub above nor serialized timing/source grants are used.
+#[test]
+#[ignore = "requires normal floor's actual QL_NATIVE_FIELD_WORKER"]
+fn actual_native_field_clock_constructor_continues_across_owned_operations() {
+    let worker = std::path::PathBuf::from(
+        std::env::var_os("QL_NATIVE_FIELD_WORKER").expect("actual floor worker required"),
+    );
+    let (m2, field, _, _) = fixture();
+    let mut owner =
+        FieldSession::open(&worker, m2.clone(), field.clone(), Duration::from_secs(20)).unwrap();
+    let other =
+        FieldSession::open(&worker, m2.clone(), field.clone(), Duration::from_secs(20)).unwrap();
+    let initial = owner.last_receipt().clone();
+    let different_constructor = other.last_receipt()["timing_owner"].clone();
+    assert_ne!(
+        initial["timing_owner"]["instance_ref"],
+        different_constructor["instance_ref"]
+    );
+    assert_eq!(initial["clock"], other.last_receipt()["clock"]);
+    assert_eq!(initial["samples_elapsed"], "0");
+    assert_eq!(initial["timing_owner"]["initial_clock_generation"], "4");
+    let stable = |actual: &Value| {
+        for key in [
+            "schema",
+            "instance_ref",
+            "construction_ordinal",
+            "generation",
+            "generation_domain",
+            "initial_clock_generation",
+        ] {
+            assert_eq!(actual["timing_owner"][key], initial["timing_owner"][key]);
+        }
+        assert_eq!(
+            actual["timing_owner"]["samples_elapsed"],
+            actual["samples_elapsed"]
+        );
+        assert_eq!(
+            actual["timing_owner"]["clock_generation"],
+            actual["clock"]["generation"]
+        );
+        assert_eq!(actual["timing_owner"]["event_ref"], actual["event_ref"]);
+        assert_eq!(actual["timing_owner"]["subject_ref"], actual["subject_ref"]);
+        assert_eq!(actual["timing_owner"]["sample_rate"], actual["sample_rate"]);
+    };
+    stable(&initial);
+    let readback = owner.read().unwrap();
+    assert_eq!(readback, initial);
+    let running = owner.advance(512, false).unwrap();
+    stable(&running);
+    assert_eq!(running["samples_elapsed"], "512");
+    assert_ne!(
+        running["clock"]["generation"],
+        initial["clock"]["generation"]
+    );
+    assert_eq!(
+        running["timing_owner"]["generation"],
+        initial["timing_owner"]["generation"]
+    );
+    assert!(
+        running["audio"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|x| x.as_f64().unwrap() != 0.)
+    );
+    let replacement = |generation: u64, amplitude: f64| -> M2Request {
+        let mut actual = serde_json::to_value(&m2).unwrap();
+        for owner in ["m1_excitation", "vimarsha", "resonator"] {
+            actual[owner]["stamp"]["identity"]["profile_generation"] = json!(generation);
+        }
+        actual["stamp"]["identity"]["profile_generation"] = json!(generation);
+        actual["resonator"]["modes"][0]["frequency_hz"] = json!(246.);
+        actual["resonator"]["modes"][0]["amplitude"][0] = json!(amplitude);
+        serde_json::from_value(actual).unwrap()
+    };
+    // Native mode replacement and deliberate modal reseeding both continue
+    // the SAME embedded clock constructor, rather than minting source aliases.
+    let changed = owner.replace_modes(replacement(2, 0.02), false).unwrap();
+    stable(&changed);
+    assert_eq!(changed["clock"], running["clock"]);
+    assert_eq!(changed["amplitudes_metres"], running["amplitudes_metres"]);
+    let reseeded = owner.replace_modes(replacement(3, 0.03), true).unwrap();
+    stable(&reseeded);
+    assert_eq!(reseeded["clock"], running["clock"]);
+    assert_ne!(reseeded["amplitudes_metres"], changed["amplitudes_metres"]);
+    let shaped = owner
+        .replace_shapes("controlled:field-clock/nodal-2", vec![vec![[0., 2., 0.]]])
+        .unwrap();
+    stable(&shaped);
+    assert_eq!(shaped["clock"], reseeded["clock"]);
+    assert_eq!(shaped["amplitudes_metres"], reseeded["amplitudes_metres"]);
+    assert_ne!(shaped["targets"], reseeded["targets"]);
+    let phase = owner
+        .set_axis(
+            1,
+            LiftInput {
+                turns: "-2".into(),
+                half_degrees: 37,
+            },
+        )
+        .unwrap();
+    stable(&phase);
+    assert_eq!(phase["samples_elapsed"], "512");
+    assert_eq!(phase["amplitudes_metres"], shaped["amplitudes_metres"]);
+    assert_ne!(phase["clock"]["generation"], shaped["clock"]["generation"]);
+    assert_eq!(
+        phase["clock"]["inscription"],
+        shaped["clock"]["inscription"]
+    );
+    let before_refusal = owner.last_receipt().clone();
+    assert!(owner.advance(8193, false).is_err());
+    assert!(owner.available());
+    assert_eq!(owner.read().unwrap(), before_refusal);
+    let final_receipt = owner.advance(128, true).unwrap();
+    stable(&final_receipt);
+    assert_eq!(final_receipt["samples_elapsed"], "640");
+    assert!(
+        final_receipt["audio"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|x| x.as_f64().unwrap() == 0.)
+    );
+    let current = owner.read().unwrap();
+    owner
+        .guard
+        .validate(&read(), Some(&current), &current)
+        .unwrap();
+    // Mutate ONLY genuine native bytes for detecting parser refusals. This
+    // does not send them to a worker or construct a private source/clock grant.
+    for (name, value) in [
+        (
+            "instance_ref",
+            different_constructor["instance_ref"].clone(),
+        ),
+        ("construction_ordinal", json!("01")),
+        ("generation", current["clock"]["generation"].clone()),
+        ("generation_domain", json!("m2_generation")),
+        ("initial_clock_generation", json!("5")),
+        ("clock_generation", json!("0")),
+        ("samples_elapsed", json!("641")),
+        ("event_ref", json!("different:valid-event")),
+        ("subject_ref", json!("different:valid-subject")),
+        ("sample_rate", json!(44100)),
+    ] {
+        let mut wrong = current.clone();
+        wrong["timing_owner"][name] = value;
+        assert!(
+            owner
+                .guard
+                .validate(&read(), Some(&current), &wrong)
+                .is_err(),
+            "accepted detached native {name}"
+        );
+    }
+    for shape in ["missing", "null", "unknown", "zero-token"] {
+        let mut wrong = current.clone();
+        match shape {
+            "missing" => {
+                wrong.as_object_mut().unwrap().remove("timing_owner");
+            }
+            "null" => wrong["timing_owner"] = Value::Null,
+            "unknown" => wrong["timing_owner"]["caller_generation"] = json!(1),
+            "zero-token" => {
+                wrong["timing_owner"]["instance_ref"] =
+                    json!("native-resident:v1:00000000000000000000000000000000:1")
+            }
+            _ => unreachable!(),
+        }
+        assert!(
+            owner
+                .guard
+                .validate(&read(), Some(&current), &wrong)
+                .is_err(),
+            "accepted {shape}"
+        );
+    }
+    // Original clock declaration may be intentionally re-used, but new native
+    // construction after genuine owner Drop is a different resident lifetime.
+    let retired_token = current["timing_owner"]["instance_ref"].clone();
+    drop(owner);
+    drop(other);
+    let fresh = FieldSession::open(&worker, m2, field, Duration::from_secs(20)).unwrap();
+    assert_ne!(
+        fresh.last_receipt()["timing_owner"]["instance_ref"],
+        retired_token
+    );
+    assert_eq!(fresh.last_receipt()["clock"], initial["clock"]);
+    assert_eq!(
+        fresh.last_receipt()["amplitudes_metres"],
+        initial["amplitudes_metres"]
+    );
+    assert_eq!(fresh.last_receipt()["samples_elapsed"], "0");
+    // Existing transport/source parser coverage can read historical literal
+    // no-constructor receipts; they have no native clock participant standing.
+    let mut historical = initial.clone();
+    historical.as_object_mut().unwrap().remove("timing_owner");
+    clock_constructor(&historical, None).unwrap();
+    assert!(clock_constructor(&initial, Some(&historical)).is_err());
+}

@@ -117,6 +117,24 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
     string(o, "material_ref", field.source().material_ref); string(o, "model_ref", field.source().model_ref);
     integer(o, "generation", r.generation); integer(o, "samples_elapsed", r.samples_elapsed); put(o, "clock", clock_output(r.clock));
     string(o, "standing", "computed-supplied-modal-model-not-empirical-material-validation");
+    // This is the SAME actual response snapshot r. The embedded native clock
+    // remains the existing numerical owner; construction is not source/M2 or
+    // clock.generation. Private Rust/C31 binds the transport and Manager lease.
+    ql::require(r.clock_resident.valid(), "native FIELD clock lifetime absent");
+    auto timing_owner = json_object_new_object();
+    string(timing_owner, "schema", "ql.native-field-clock-constructor/v1");
+    string(timing_owner, "instance_ref",
+        ql::performance::management_transport::resident_wire::token_text(r.clock_resident));
+    integer(timing_owner, "construction_ordinal", r.clock_resident.ordinal);
+    integer(timing_owner, "generation", r.clock_resident.ordinal);
+    string(timing_owner, "generation_domain", "native-field-clock-construction");
+    integer(timing_owner, "clock_generation", r.clock.generation);
+    integer(timing_owner, "initial_clock_generation", r.initial_clock_generation);
+    integer(timing_owner, "samples_elapsed", r.samples_elapsed);
+    string(timing_owner, "event_ref", field.source().event_ref);
+    string(timing_owner, "subject_ref", field.source().subject_ref);
+    put(timing_owner, "sample_rate", json_object_new_uint64(field.source().sample_rate));
+    put(o, "timing_owner", timing_owner);
     put(o, "sample_rate", json_object_new_int(field.source().sample_rate));
     auto amplitudes = json_object_new_array();
     for (std::size_t i = 0; i < field.source().modes.size(); ++i) {

@@ -26,6 +26,20 @@ int main() {
     assert(std::abs(ql::phi1({-1e-12, 1e-12}) - Complex(1 - 5e-13, 5e-13)) < 1e-15);
     auto in = input();
     ql::ContinuousField f(in);
+    const auto actual_clock_constructor = f.receipt().clock_resident;
+    assert(actual_clock_constructor.valid() &&
+           f.receipt().initial_clock_generation == in.clock.generation);
+    ql::ContinuousField distinct_same_source(in);
+    assert(distinct_same_source.receipt().clock_resident.valid() &&
+           distinct_same_source.receipt().clock_resident != actual_clock_constructor);
+    static_assert(!std::is_copy_constructible_v<ql::ContinuousField> &&
+                  !std::is_copy_assignable_v<ql::ContinuousField> &&
+                  !std::is_move_assignable_v<ql::ContinuousField>);
+    ql::ContinuousField relocated_source(in);
+    const auto relocated_token = relocated_source.receipt().clock_resident;
+    ql::ContinuousField relocated(std::move(relocated_source));
+    assert(relocated.receipt().clock_resident == relocated_token &&
+           !relocated_source.receipt().clock_resident.valid());
     std::array<float, 8192> audio{};
     assert(f.render_audio(audio.data(), audio.size()));
     assert(std::all_of(audio.begin(), audio.end(), [](float x) { return x == 0; }));
@@ -56,6 +70,9 @@ int main() {
     assert(f.receipt().clock.inscription.turns == 2 && f.receipt().clock.inscription.half_degrees == 11);
     assert(f.receipt().clock.lensing.half_degrees == before.clock.lensing.half_degrees);
     f.set_axis(9, 1, {-1, 19});
+    assert(f.receipt().clock_resident == actual_clock_constructor &&
+           f.receipt().initial_clock_generation == in.clock.generation &&
+           f.receipt().clock.generation != in.clock.generation);
     assert(f.receipt().clock.inscription.half_degrees == 11);
     // Muting and hidden/detached reads do not halt, fork or double the simulation.
     ql::ContinuousField audible(in), muted(in);
@@ -113,6 +130,9 @@ int main() {
     shaped.replace_shapes(generation, nodal);
     assert(shaped.receipt().generation == generation + 1);
     assert(shaped.amplitude(0) == z0 && shaped.amplitude(1) == z1); // bit-identical resident state
+    const auto shape_clock_constructor = shaped.receipt().clock_resident;
+    assert(shape_clock_constructor.valid() &&
+           shape_clock_constructor != control.receipt().clock_resident);
     assert(shaped.receipt().samples_elapsed == control.receipt().samples_elapsed);
     assert(shaped.receipt().clock.inscription.turns == held.inscription.turns &&
            shaped.receipt().clock.inscription.half_degrees == held.inscription.half_degrees &&
@@ -151,6 +171,7 @@ int main() {
     assert(reshaped_audio == control_audio);
     assert(std::any_of(control_audio.begin(), control_audio.begin() + 2048, [](float x) { return x != 0; }));
     assert(shaped.amplitude(0) == control.amplitude(0) && shaped.amplitude(1) == control.amplitude(1));
+    assert(shaped.receipt().clock_resident == shape_clock_constructor);
     assert(shaped.receipt().clock.inscription.half_degrees == control.receipt().clock.inscription.half_degrees);
     // A consumer left on the old basis sees different targets from the same state.
     std::array<float, 9> old_basis{}, new_basis{};

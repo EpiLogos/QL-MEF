@@ -284,6 +284,60 @@ impl NativeActSourceLease<'_> {
         }
         Ok(())
     }
+    /// Read-only epoch projection from this already qualified closed selection.
+    /// It names the retained source that the actual readmission reinstates;
+    /// musical basis alone cannot distinguish same-body acoustic epochs.
+    fn selected_checkpoint_source_projection(&self, instance_ref: &str) -> Result<Value, String> {
+        let selected = self.selected_checkpoint_source(instance_ref)?;
+        let sources = self.performance_sources()?;
+        let mut source_matches = sources
+            .iter()
+            .enumerate()
+            .filter(|(_, source)| *source == selected);
+        let (source_index, source) = source_matches
+            .next()
+            .ok_or("selected checkpoint full native source epoch absent")?;
+        if source_matches.next().is_some() {
+            return Err("selected checkpoint full native source epoch ambiguous".into());
+        }
+        let bases = self.manifest["performance"]["bases"]
+            .as_array()
+            .ok_or("selected native musical bases absent")?;
+        let mut basis_matches = bases.iter().enumerate().filter(|(_, basis)| {
+            basis["content_digest"] == source["basis_digest"]
+                && basis["identity"] == source["identity"]
+        });
+        let (basis_index, _) = basis_matches
+            .next()
+            .ok_or("selected source original musical basis absent")?;
+        if basis_matches.next().is_some() {
+            return Err("selected source original musical basis ambiguous".into());
+        }
+        let witnesses = self.manifest["native_source_parts"]
+            .as_array()
+            .ok_or("selected original native source parts absent")?;
+        let witness = witnesses
+            .get(source_index)
+            .filter(|witness| witness["source_index"].as_u64() == Some(source_index as u64))
+            .ok_or("selected original native source part index differs")?;
+        let source_sample = &source["native_bundle"]["current_receiving"]["native_admission"]["operation"]
+            ["native_sample"];
+        count(source_sample)?;
+        let checkpoint = match self.source {
+            NativeActSource::Performance {
+                checkpoint: Some(checkpoint),
+            } => checkpoint,
+            _ => return Err("actual selected checkpoint absent".into()),
+        };
+        Ok(
+            json!({"schema":"ql.native-retained-performance-source-selection/v1",
+            "expression_ref":self.manifest["expression_ref"],"scene_ref":self.manifest["scene_ref"],
+            "checkpoint_ref":checkpoint["checkpoint"]["checkpoint_ref"],
+            "source_index":source_index,"basis_index":basis_index,
+            "basis_digest":source["basis_digest"],"identity":source["identity"],
+            "source_reading":witness["reading"],"source_sample":source_sample}),
+        )
+    }
     pub(crate) fn selected_checkpoint_source(&self, instance_ref: &str) -> Result<&Value, String> {
         let selected = match self.source {
             NativeActSource::Performance {
@@ -353,11 +407,7 @@ impl NativeActSourceLease<'_> {
                         .as_array()
                         .ok_or("selected native source applications have wrong type")?
                     {
-                        let request = exact_cursor(
-                            row["source"]["original_native_request_id"]
-                                .as_str()
-                                .ok_or("actual source application request ordinal absent")?,
-                        )?;
+                        let request = count(&row["source"]["original_native_request_id"])?;
                         if last.as_ref().is_none_or(|(old, _)| request > *old) {
                             last = Some((
                                 request,
@@ -1886,6 +1936,8 @@ fn serve_native_act_operation(
                 },
             };
             lease.validate_selected_checkpoint(&request.instance_ref, reference, wire)?;
+            let retained_source_selection =
+                lease.selected_checkpoint_source_projection(&request.instance_ref)?;
             // Both paths compile every original selected C page BEFORE any
             // preparation/restore mutation. A cold owner is pure native source
             // reconstruction under this same closed Act, never an empty body.
@@ -1930,6 +1982,7 @@ fn serve_native_act_operation(
                     Ok(actual) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":actual.readmission(),"native_pulse":actual.native_pulse(),
                     "readmitted":true,"error":null,"cold_preparation_receipts":cold_receipts,
+                    "retained_source_selection":retained_source_selection,
                     "host_receipt":host.recording_readmission_controller_receipt(&request.request_id,&actual)}),
                     Err(refusal) => json!({"score":score,"selection":lease.evidence(),
                     "receiving_readmission":null,"native_pulse":refusal.native_pulse(),

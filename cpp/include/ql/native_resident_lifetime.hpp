@@ -9,6 +9,7 @@
 #include <type_traits>
 namespace ql {
 class PhysicalBody;
+class ContinuousField;
 namespace performance {
 class Engine;
 class MovingReceivingPortBinding;
@@ -33,6 +34,7 @@ struct NativeResidentToken {
 };
 class NativeResidentLifetime {
   friend class PhysicalBody;
+  friend class ContinuousField;
   friend class performance::Engine;
   friend class performance::MovingReceivingPortBinding;
   friend class performance::PerformanceManagement;

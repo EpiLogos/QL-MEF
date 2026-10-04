@@ -102,7 +102,7 @@ fn current_calibration_command_has_no_caller_policy_value_source_or_ordinal() {
 }
 
 fn world() -> (
-    crate::scene::WorldRequest,
+    Value,
     NativePerformanceReceivingSource,
     crate::continuous::scene_field::SceneConfig,
 ) {
@@ -110,7 +110,10 @@ fn world() -> (
         "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
     ))
     .unwrap();
-    let request:crate::scene::WorldRequest=serde_json::from_value(json!({"schema":crate::scene::WORLD_REQUEST,"instance_ref":"expression:calibration/world","event_ref":sky["snapshot_ref"],"subject_ref":"person:calibration/current","texture":[64,64],"units_per_metre":1.,"sky":sky,"start":{"tick12":3,"cycle":7,"aperture":9}})).unwrap();
+    // Keep the exact raw native constructor input before typed decoding.
+    let original_request = json!({"schema":crate::scene::WORLD_REQUEST,"instance_ref":"expression:calibration/world","event_ref":sky["snapshot_ref"],"subject_ref":"person:calibration/current","texture":[64,64],"units_per_metre":1.,"sky":sky,"start":{"tick12":3,"cycle":7,"aperture":9}});
+    let request: crate::scene::WorldRequest =
+        serde_json::from_value(original_request.clone()).unwrap();
     let r = |reference: &str| ReturnReference {
         reference: reference.into(),
         revision: "1".into(),
@@ -152,7 +155,7 @@ fn world() -> (
     .unwrap();
     let produced = crate::scene::world(request.clone()).unwrap();
     let config = serde_json::from_value(produced["binding"]["host"].clone()).unwrap();
-    (request, source, config)
+    (original_request, source, config)
 }
 fn exchange(
     owner: &mut PerformanceOwner,

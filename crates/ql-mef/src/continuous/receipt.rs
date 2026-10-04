@@ -45,6 +45,88 @@ fn finite(value: &Value, bound: f64) -> Result<()> {
         "receipt contains a nonfinite/out-of-range number",
     )
 }
+// Constructor evidence is accepted only from the same checked native worker
+// response. Historical receipts without it stay readable, without clock roles.
+fn clock_constructor(receipt: &Value, previous: Option<&Value>) -> Result<()> {
+    let Some(row) = receipt.get("timing_owner") else {
+        require(
+            previous.is_none_or(|p| p.get("timing_owner").is_none()),
+            "native FIELD clock constructor registration disappeared",
+        )?;
+        return Ok(());
+    };
+    keys(
+        row,
+        &[
+            "schema",
+            "instance_ref",
+            "construction_ordinal",
+            "generation",
+            "generation_domain",
+            "clock_generation",
+            "initial_clock_generation",
+            "samples_elapsed",
+            "event_ref",
+            "subject_ref",
+            "sample_rate",
+        ],
+    )?;
+    let ordinal = unsigned(&row["construction_ordinal"])?;
+    let instance = row["instance_ref"]
+        .as_str()
+        .ok_or("native clock instance absent")?;
+    let (nonce, suffix) = instance
+        .strip_prefix("native-resident:v1:")
+        .and_then(|v| v.split_once(':'))
+        .ok_or("native clock constructor token malformed")?;
+    require(
+        nonce.len() == 32
+            && nonce
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+            && nonce.bytes().any(|b| b != b'0')
+            && suffix == ordinal.to_string()
+            && ordinal != 0,
+        "native clock constructor token/ordinal differs",
+    )?;
+    require(
+        row["schema"] == "ql.native-field-clock-constructor/v1"
+            && row["generation_domain"] == "native-field-clock-construction"
+            && unsigned(&row["generation"])? == ordinal
+            && row["clock_generation"] == receipt["clock"]["generation"]
+            && row["samples_elapsed"] == receipt["samples_elapsed"]
+            && row["event_ref"] == receipt["event_ref"]
+            && row["subject_ref"] == receipt["subject_ref"]
+            && row["sample_rate"] == receipt["sample_rate"],
+        "native FIELD constructor fact detached from SAME response",
+    )?;
+    unsigned(&row["initial_clock_generation"])?;
+    if let Some(before) = previous {
+        let old = before
+            .get("timing_owner")
+            .ok_or("clock registration appeared without native construction")?;
+        for key in [
+            "schema",
+            "instance_ref",
+            "construction_ordinal",
+            "generation",
+            "generation_domain",
+            "initial_clock_generation",
+        ] {
+            require(
+                row[key] == old[key],
+                "continuing embedded clock constructor changed",
+            )?;
+        }
+    } else {
+        require(
+            row["initial_clock_generation"] == receipt["clock"]["generation"],
+            "clock construction did not retain its original native revision",
+        )?;
+    }
+    Ok(())
+}
+
 fn successor(value: &Value) -> Result<u64> {
     unsigned(value)?
         .checked_add(1)
@@ -182,29 +264,30 @@ impl ReceiptGuard {
         previous: Option<&Value>,
         value: &Value,
     ) -> Result<()> {
-        keys(
-            value,
-            &[
-                "schema",
-                "event_ref",
-                "subject_ref",
-                "registry_revision",
-                "geometry_ref",
-                "material_ref",
-                "model_ref",
-                "sample_rate",
-                "standing",
-                "generation",
-                "samples_elapsed",
-                "clock",
-                "amplitudes_metres",
-                "audio",
-                "targets",
-                "presentation_units_per_metre",
-                "m2_identity",
-                "shape_ref",
-            ],
-        )?;
+        let mut names = vec![
+            "schema",
+            "event_ref",
+            "subject_ref",
+            "registry_revision",
+            "geometry_ref",
+            "material_ref",
+            "model_ref",
+            "sample_rate",
+            "standing",
+            "generation",
+            "samples_elapsed",
+            "clock",
+            "amplitudes_metres",
+            "audio",
+            "targets",
+            "presentation_units_per_metre",
+            "m2_identity",
+            "shape_ref",
+        ];
+        if value.get("timing_owner").is_some() {
+            names.push("timing_owner");
+        }
+        keys(value, &names)?;
         let reshaping = request["operation"] == "replace-shapes";
         for (key, expected) in self.fixed.as_object().ok_or("invalid retained identity")? {
             let expected = if reshaping && key == "shape_ref" {
@@ -283,6 +366,7 @@ impl ReceiptGuard {
             }
         }
         clock(&value["clock"])?;
+        clock_constructor(value, previous)?;
         let generation = unsigned(&value["generation"])?;
         let elapsed = unsigned(&value["samples_elapsed"])?;
         let advancing = request["operation"] == "advance";

@@ -24,7 +24,100 @@ impl PreparedFieldProceduralTiming {
     pub(crate) fn native_receipt(&self) -> &Value {
         &self.native_receipt
     }
+    /// S/C31 join only: use SAME already checked native receipt and clock fact.
+    /// Adoption requires the genuine Source Scene consumer assembly call; no
+    /// field/source/clock JSON can call this private result's method.
+    pub(crate) fn procedural_source_consumer_fact(
+        &self,
+    ) -> Result<crate::procedural_consumers::NativeTimingConsumerFact, String> {
+        let native = self.procedural_consumer_fact()?;
+        crate::procedural_consumers::NativeTimingConsumerFact::from_registered_field_clock(
+            native.binding(),
+            native.position(),
+            native.instance_ref(),
+            native.required_generation(),
+            native.generation_domain(),
+            native.constructor_fact(),
+            self.native_receipt(),
+        )
+    }
+    /// No exchange/Inspect. Only this non-Serde private factory result can
+    /// expose the constructor from its already source/lease checked receipt.
+    pub(crate) fn procedural_consumer_fact(&self) -> Result<NativeFieldClockConsumerFact, String> {
+        let row = self
+            .native_receipt
+            .get("timing_owner")
+            .ok_or("historical FIELD receipt has no native clock constructor")?;
+        let ordinal = exact_cursor(
+            row["construction_ordinal"]
+                .as_str()
+                .ok_or("native clock construction ordinal absent")?,
+        )?;
+        let instance = row["instance_ref"]
+            .as_str()
+            .ok_or("native clock constructor instance absent")?;
+        let binding = self.witness.original_binding();
+        if ordinal == 0
+            || row["schema"] != "ql.native-field-clock-constructor/v1"
+            || row["generation_domain"] != "native-field-clock-construction"
+            || row["generation"] != row["construction_ordinal"]
+            || row["samples_elapsed"] != self.position.samples_elapsed
+            || row["event_ref"] != self.position.event_ref
+            || row["subject_ref"] != self.position.subject_ref
+            || row["clock_generation"] != self.native_receipt["clock"]["generation"]
+            || binding.domain != NATIVE_FIELD_TIMING_DOMAIN
+            || instance == self.position.instance_ref
+            || instance == binding.owner_ref
+        {
+            return Err(
+                "FIELD clock constructor differs from privately checked timing/source boundary"
+                    .into(),
+            );
+        }
+        let fact = json!({"role":"field_clock","owner_ref":binding.owner_ref,
+            "instance_ref":instance,"construction_ordinal":row["construction_ordinal"],
+            "generation":row["generation"],"generation_domain":"native-field-clock-construction",
+            "sample":row["samples_elapsed"],"source_instance_ref":self.position.instance_ref,
+            "native_clock_constructor":row});
+        Ok(NativeFieldClockConsumerFact {
+            binding: binding.clone(),
+            position: self.position.clone(),
+            instance_ref: instance.to_owned(),
+            construction_generation: ordinal,
+            fact,
+        })
+    }
 }
+/// Private same-receipt custody; no Deserialize/Clone/Default/public factory.
+/// S consumes these getters under the already held C31 current Scene lease.
+pub(crate) struct NativeFieldClockConsumerFact {
+    binding: TimingBinding,
+    position: NativePosition,
+    instance_ref: String,
+    construction_generation: u64,
+    fact: Value,
+}
+impl NativeFieldClockConsumerFact {
+    pub(crate) fn binding(&self) -> &TimingBinding {
+        &self.binding
+    }
+    pub(crate) fn position(&self) -> &NativePosition {
+        &self.position
+    }
+    pub(crate) fn instance_ref(&self) -> &str {
+        &self.instance_ref
+    }
+    pub(crate) fn required_generation(&self) -> u64 {
+        self.construction_generation
+    }
+    pub(crate) fn generation_domain(&self) -> &'static str {
+        "native-field-clock-construction"
+    }
+    pub(crate) fn constructor_fact(&self) -> &Value {
+        &self.fact
+    }
+}
+
 pub(crate) struct NativeFieldTimingRefusal {
     reason: String,
     native_receipt: Option<Value>,

@@ -5,6 +5,7 @@
 // Prepare/change topology off the audio callback. No provider/JSON/graph calls
 // or allocation occur in render_audio / write_targets. Callers own output buffers.
 #include <ql/coupled_clock.h>
+#include <ql/native_resident_lifetime.hpp>
 #include <array>
 #include <cmath>
 #include <complex>
@@ -51,6 +52,9 @@ struct ContinuationReceipt {
     std::uint64_t generation, samples_elapsed;
     QL_CoupledClock clock;
     double last_unmuted_sample;
+    // Embedded clock construction custody; never its source/control revision.
+    NativeResidentToken clock_resident{};
+    std::uint64_t initial_clock_generation = 0;
 };
 inline bool finite(Complex x) { return std::isfinite(x.real()) && std::isfinite(x.imag()); }
 inline void require(bool condition, const char *message) {
@@ -73,7 +77,11 @@ inline void reference(const std::string &s) {
 }
 class ContinuousField {
     struct Prepared { Mode input; Complex step, forcing, state; };
+    // Moves relocate this SAME clock owner. Copy/assignment cannot duplicate
+    // or overwrite its lifetime. Modes/shapes/axis edits never replace it.
+    NativeResidentLifetime clock_lifetime_{};
     ContinuationInput source_;
+    std::uint64_t initial_clock_generation_ = 0;
     std::vector<Prepared> modes_;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
@@ -95,7 +103,7 @@ class ContinuousField {
                 m.amplitude_metres};
     }
 public:
-    explicit ContinuousField(ContinuationInput input) : source_(std::move(input)) {
+    explicit ContinuousField(ContinuationInput input) : source_(std::move(input)), initial_clock_generation_(source_.clock.generation) {
         for (const auto *s : {&source_.event_ref, &source_.subject_ref, &source_.geometry_ref,
                               &source_.material_ref, &source_.model_ref}) reference(*s);
         require(source_.sample_rate >= 8000 && source_.sample_rate <= 192000, "unsupported sample rate");
@@ -128,10 +136,19 @@ public:
                     require(std::isfinite(x) && std::abs(x) <= 1e6, "invalid dimensionless shape coefficient");
         }
     }
+    ContinuousField(const ContinuousField &) = delete;
+    ContinuousField &operator=(const ContinuousField &) = delete;
+    // Relocation carries the same embedded-clock constructor. Assignment cannot
+    // overwrite another owner's lifetime; a real new constructor mints anew.
+    ContinuousField(ContinuousField &&) noexcept = default;
+    ContinuousField &operator=(ContinuousField &&) = delete;
     const ContinuationInput &source() const noexcept { return source_; }
     const std::vector<Sample> &samples() const noexcept { return source_.samples; }
     Complex amplitude(std::size_t i) const { return modes_.at(i).state; }
-    ContinuationReceipt receipt() const noexcept { return {source_.generation, elapsed_, source_.clock, last_}; }
+    ContinuationReceipt receipt() const noexcept {
+        return {source_.generation, elapsed_, source_.clock, last_,
+                clock_lifetime_.token(), initial_clock_generation_};
+    }
     // Same material/sample topology only. Initial amplitude is not reapplied on
     // continuation: new frequency/drive/damping takes effect from resident state.
     // A deliberate state replacement is an explicit operation, never a reseed.
