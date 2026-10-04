@@ -2105,9 +2105,11 @@ fn serve_native_act_operation(
                             match host.readopt_resident_native_act_checkpoint(
                                 resident,
                                 &lease,
-                                reference,
-                                wire,
-                                transaction,
+                                super::host::NativeActCheckpointReadoption {
+                                    checkpoint_ref: reference,
+                                    original_wire: wire,
+                                    transaction_ref: transaction,
+                                },
                                 history.as_ref(),
                                 &return_context,
                                 &mut |kind, original| {

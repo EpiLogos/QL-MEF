@@ -269,8 +269,8 @@ pub(crate) fn validate_current_scene_contact_record(
         .iter()
         .zip(&request.exciter.node_weights)
     {
-        for axis in 0..3 {
-            anchor[axis] += weight * node.rest_metres[axis];
+        for (axis, coordinate) in anchor.iter_mut().enumerate() {
+            *coordinate += weight * node.rest_metres[axis];
         }
     }
     let actual_anchor = vector(&record["exciter_position_metres"])?;
@@ -502,8 +502,8 @@ pub(crate) fn validate_current_scene_contact_record(
         return Err("contact original sample/date range differs".into());
     }
     let mut projection = 0.;
-    for axis in 0..3 {
-        projection -= normal[axis] * request.exciter.axis[axis];
+    for (axis, coordinate) in normal.iter().enumerate() {
+        projection -= coordinate * request.exciter.axis[axis];
     }
     let impulse = if actual_speed < minimum {
         0.

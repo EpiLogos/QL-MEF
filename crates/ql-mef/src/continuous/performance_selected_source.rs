@@ -180,8 +180,8 @@ impl PreparedNativeSelectedSourceRequest {
         if !exact_value(&actual["transport_ack"], &expected_ack)
             || !exact_value(&pulse["payload"]["transport_ack"], &expected_ack)
             || before["transport_epoch"] != original["transport_epoch"]
-            || after["transport_epoch"] != epoch.to_string()
-            || pulse["reading"]["transport_epoch"] != epoch.to_string()
+            || decimal(&after["transport_epoch"])? != epoch
+            || decimal(&pulse["reading"]["transport_epoch"])? != epoch
             || pulse["reading"]["samples_elapsed"] != saved["native_pair"]["audio"]["cursor"]
             || pulse["reading"]["accepted_sequence"]
                 != saved["native_pair"]["audio"]["accepted_sequence"]

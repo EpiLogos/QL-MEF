@@ -59,6 +59,15 @@ mod physical_scene_source;
 #[path = "performance_scene_contact_host.rs"]
 mod scene_contact;
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+/// One closed source selection retains its original checkpoint and transaction
+/// together. None of these references can construct a lease or a native owner.
+pub(in crate::continuous) struct NativeActCheckpointReadoption<'a> {
+    pub(in crate::continuous) checkpoint_ref: &'a str,
+    pub(in crate::continuous) original_wire: &'a str,
+    pub(in crate::continuous) transaction_ref: &'a str,
+}
+
 pub const WORLD_HOST_CONFIG: &str = "ql.field-host-world-config/v1";
 pub const HOST_REQUEST: &str = "ql.field-host-request/v1";
 pub const HOST_RECEIPT: &str = "ql.field-host-receipt/v1";

@@ -645,9 +645,7 @@ impl FieldHost {
         &mut self,
         mut candidate: PreparedColdNativeAct,
         lease: &NativeActSourceLease<'_>,
-        checkpoint_ref: &str,
-        original_wire: &str,
-        transaction_ref: &str,
+        selection: NativeActCheckpointReadoption<'_>,
         history: Option<&QualifiedAcousticSourceHistory>,
         return_context: &NativeSelectedSourceReturnContext<'_>,
         retain_original: &mut impl FnMut(&str, &Value) -> Result<(), String>,
@@ -655,6 +653,11 @@ impl FieldHost {
         super::receiving_readmission::NativeReceivingReadmissionReply,
         NativeStoppedExchangeFailure,
     > {
+        let NativeActCheckpointReadoption {
+            checkpoint_ref,
+            original_wire,
+            transaction_ref,
+        } = selection;
         return_context.charge_known()?;
         if candidate.resident_source.is_none() {
             return Err("selected native source re-adoption requires its retained resident".into());
