@@ -1,51 +1,40 @@
 {
   "latest_execution_checkpoint": {
-    "schema": "epi.corrective-receiving-checkpoint/v1",
-    "at_utc": "2026-10-04T00:12:45.211773+00:00",
-    "standing": "Material admission repaired and committed2c771f53; actual complete-document component RED→GREEN independently qualified90checks. Original502 embedded passed169checks plus bounded nativeManager/Scene effects, but complete whole failed before cold checkpoint at mandatory30s actual Pin hold. Original35min fullnative timed out after297completedpasses, Document180/asset180PASS and unresolvedAct. Installed0b4 remains qualified; freshMacUI unavailable. No whole/personal-livezero/restart/installedafter/H acceptance.",
-    "source_head": "2c771f536c5fb8ff92a55e16d5eb6aba8209f9ee",
-    "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/material-admission-commit-01/committed-source.json",
-    "original_replay": "https://github.com/EpiLogos/O-I/pull/573",
-    "canonical_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37149174145",
-    "installed_cut": "0b4a3627ccacf98f0c3736f244493a12e508df0d",
-    "installed_custody": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-0b4-installed-independent-01.json",
-    "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-ee880-whole-setup-timeout-01/manifest.json",
-    "numeric_custody_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
-    "next_original_encounter": "cosmic -> personal -> branch/Source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis Nara/Epii completion/Keep/full Read",
+    "schema": "epi.current-source-and-receiving-checkpoint/v1",
+    "at_utc": "2026-10-04T02:07:56.447948+00:00",
+    "source_head": "fb9cd2d0fc658b06c4617298bf603e78e7b82466",
+    "source_publication": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/daf457-act-read-revision-witness-proposal-01/publication.json",
+    "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-independent-01/manifest.json",
+    "ordinary_and_native_original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37169781821",
+    "standing": "Saved-world native grammar batch repair918 and continuation read-qualification repairfb9 are reviewed, committed and on original replay. Actual profile3 and Act3+existing1 native checks pass; personal orientation component evidence remains separately qualified. Actualdaf installed before-view independently verified25files/signature, no launched/loaded/UI or whole acceptance.",
+    "previous_checkpoint": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/source-and-receiving-918-01/checkpoint.json",
+    "previous_packet_standings": "git:d1ca9717cbd07017e0f2319ff552d747e7077535:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/packets",
+    "profile_native_checks": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-repair-01/actual-checks-receipt.json",
+    "orientation_component": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/personal-orientation-real-component-01/manifest.json",
+    "orientation_scope": "Same actual protected personal basis, all nine drivers and material/geometry/scene/GPU determinants fixed. Actual all7 receiving bodies change under identity-disconnected shader orientation; q/-q and repeat readbacks identical. Component sensitivity proof, not numerical force parity, ordinary positive/live-zero, hardware GPU or installed acceptance.",
+    "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-whole-first-break-01",
+    "predecessor_whole_standing": "Actual daf ordinary saved admission misses original30s hold after7 checks. Pin request to retained successful response24.481s; trace contains65 ordered profile_define calls. Source-current and visible-Scene refusal cases passed; cold/complete whole did not run. No exclusive timing cause established.",
+    "predecessor_fullnative": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-fullnative-terminal-01/manifest.json",
+    "predecessor_fullnative_standing": "299 aggregate passes,0 assertion failures,32 ignored; actual Act180/45000 applications and full stored-record read/equality reached, but final staleCAS/restart/seek/181 continuation not qualified before original35min limit. Actual duplicated cold-read/full-decode revision work is being repaired by its native owner; no relaxed workload or deadline.",
+    "predecessor_embedded": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-canonical-native-first-result-01/manifest.json",
+    "predecessor_embedded_standing": "169 Node checks plus bounded native Manager/Scene effect checks passed; separate generic Scene/software GPU/PCM scope, not personal/whole/installed proof.",
+    "predecessor_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37165285035",
+    "predecessor_mac_build_standing": "Canonical daf Mac/all-five/bundle job111333431287 SUCCESS; existing managed adoption/install completed01:53:20Z and independently verified12app+13managedfiles/image/UUID/signature. App not launched, no loaded frontend/material/after-view inferred.",
+    "installed_cut": "daf457c6ba21b2a0b02bd32c6e3750dcc3b7afbe",
+    "installed_receipt": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-daf-installed-independent-01/manifest.json",
+    "installed_boundary": "Fresh Mac interaction unavailable before launch; physical unlock question already pending with sole Mac installer/CUA owner. Independent source/native work continues.",
+    "fresh_selected_body_standing": "Separate actual920 native fresh source question completes127.629s, correctly uses exact directed relations;190words exceeds180constraint. Original896 completion, installed selection-to-body, Keep/fullRead remain open. Preserving AIKit source a1ac27414e2ddf9bae2527c741018a2e5db20d0c/PR483 published by native owner, actual Mac qualification/adoption pending.",
+    "next_original_encounter": "cosmic -> personal -> branch/source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis body completion/Keep/full Read; positive/live-zero same nine drivers and fixed-mixture/damping, isolated orientation sign/consumer counterproof, full native continuation and managed installed replay",
     "runtime_acceptance": false,
     "H": "not done/person-owned",
-    "actual_whole_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-whole-first-break-01/actual-selected/selected-conversation-setup/saved-use-real-refusals-failure.json",
-    "previous_checkpoint": "git:cd41d038ade0b2bf4dc40eac4ef461d231a03a2a:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
-    "installer_receipt": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/906-actual-0b4-normal-desktop-native-installation.json",
-    "source_successor_canonical_dispatch": "https://github.com/EpiLogos/O-I/actions/runs/37161170566",
-    "source_successor_canonical_dispatch_standing": "This actualrun is502 parent, not2c successor. EmbeddedSUCCESS; wholeFAILURE; fullnative35minFAILURE; canonical502Macbuild inprogress. No2c runtime/build dispatched yet.",
-    "passive_child_replay": "https://github.com/EpiLogos/O-I/actions/runs/37156864580",
-    "fresh_native_agent_failure": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/896-fresh-native-selected-personal-body-question-replay.json",
-    "fresh_native_agent_standing": "Original896 question still has no completedanswer within180s. Separate920 fresh native samebasis/default/deadline concisequestion completed127.629s with source-qualified directedrelations;190words exceeds180formatconstraint. CLIsemanticbounded58checks; originalquestion/installedpointer/Agency/Keep/fullRead/H remain open.",
-    "original_replay_standing": "OriginalPR checks and canonical39f replay required. No original154predicate/ninecase/deadline/workload reduction; oldduplicate9563 PR/canonicalMac cancellationsrequested afteractualnative/whole outcomes retained.",
-    "source_successor_repairs": [
-      "ExactdecimalANDfiniteIEEE receipt comparison; nonreceipt/rawSHA remainexact",
-      "Borrowedrawshape guard plus token-preserving Value decode; duplicate/reserved/finite/127depth/size/CAS unchanged",
-      "Only sourcequalified isolatedchild failure after FIRSTsuccessfulcleanup cancontinueoriginalwhole; allfailed/unreachedcaseskeepoverallRED",
-      "Single savedskycomparison retains exactdecimalANDfiniteIEEE/signedzero/fullstructure; actualadmittedworldrefusalsadded; originalprotectedowner/digest/person/profile/rawcustody unchanged",
-      "Same admitted typedDocument retained for snapshots/Act; originalcompleteDoc/immutableEdition regressionPASS at502.",
-      "Material-admission interruption retires only at differentScene/newengine; actual zero-time and source-error refusals preserved."
+    "full_scope": "2141 nodes,11810 qualified directed relations,42 entrances,185 source dispositions/runtime-unaccepted obligations,14 packets/26 subpackets,A0–A5/deep branches/full journeys/selected-deck/sharedM3/corrections retained. M3 183 discrepancies,383 source edges,384 native transitions remain distinct.",
+    "profile_source_publication": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-repair-01/publication.json",
+    "continuation_source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/daf457-act-read-revision-witness-independent-01/manifest.json",
+    "continuation_native_checks": [
+      "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/daf457-act-read-revision-witness-proposal-01/actual-native-receipt.json",
+      "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/daf457-act-read-revision-witness-proposal-01/actual-existing-write-regression-receipt.json"
     ],
-    "source_successor_previous_failed_replay": "https://github.com/EpiLogos/O-I/actions/runs/37152569395",
-    "passive_child_predecessor_standing": "6b predecessor embeddedFAIL/wholeSKIP; redundant unchanged-production nativefloor cancellation requested after original3f1 failuresretained; no passivechildruntimegreen.",
-    "actual_whole_guard_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-whole-first-break-01/saved-sky-independent-01/manifest.json",
-    "actual_whole_cause": "Mandatory newer-consumer refusal could not hold actual native Pin within30s. Pin issued23:50:22.672Z; unchanged ok:true641318B response held23:50:47.167Z; timeout failure23:50:47.191Z. First two actual pre-admission refusals passed. Native work/timing cause remains under investigation; cold checkpoint and successor whole were not reached.",
-    "bounded_native_embedded": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-canonical-native-first-result-01/manifest.json",
-    "bounded_native_embedded_independent": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-canonical-native-first-result-01/independent-manifest.json",
-    "bounded_native_embedded_standing": "Actual502169Nodechecks and nativeManagerinput/effect/refusal/restart plus separate8ScenesoftwareGPU/PCMchecks passed. Source/artifact/image join incompletely qualified; defaultsky-noneScene separate fromManager capturedinput. No personal/livezero/whole/installed/H inference.",
-    "actual_fullnative_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-fullnative-terminal-01/manifest.json",
-    "actual_fullnative_standing": "297 completed aggregatepasses/0assertionfailures/32ignored; actual fullDocument180 and asset180PASS. Act latestprinted120/180, noActPASS/finalcontinuation before original35min timeout. CompleteDoc/Edition exactregressionPASS; speedup/cause unproved.",
-    "hosted_personal_capture": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-whole-first-break-01/actual-selected/selected-conversation-setup/selection-explicit-new-private-current-admitted.png",
-    "hosted_personal_capture_standing": "ActualordinaryhostedLinuxproductionafterexplicitadmission shows7centreforms/hub/source/identity/Nara routes; preceding12setupchecksPASS. Not installedMac/personalcausal/Return/Hproof.",
-    "fresh_native_agent_source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/r5-896-stream-source-independent-01/manifest.json",
-    "material_admission_repair": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/material-admission-commit-01/committed-source.json",
-    "material_admission_independent_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/epi-material-admission-lifecycle-two-site-independent-01/manifest.json",
-    "native_root_configuration_standing": "Isolated actualMac003rootconfiguration repair qualified33checks, configured-not-started. Managed sourceplan DIVERGED from installed8c and would remove speech/Prime/Gateway changes, so nativeowner composing preservationcut. No managedadoption/installedAgency proof. Root retainsintegration."
+    "original_replay_queue": "fb9 canonical pending behind918 same-branch concurrency;918 original native/whole evidence remains to finish. No workload/deadline or concurrency change."
   },
   "schema": "epi.world-recovery-plan/v1",
   "created_at": "2026-09-30T16:28:17.956536+00:00",
@@ -24383,7 +24372,7 @@
         "QL Bimba/source registry owner; existing M ledger owner"
       ],
       "scope": "whole source prerequisite",
-      "standing": "Exact ebc90 committed22 source cut and local source checks qualified; original Native/Desktop/SourceLanding queued, no runtime result. Freshc0/776 native test corpus required; world/all-fiveQL6a unchanged. Dated c89 timeouts/8176-b389 compile refusal and original source account remain.",
+      "standing": "Current coherent sourcefb9cd2d0 is committed/pushed and independently reviewed; QL6a world/all-five remains separate from performance producer240ca. No source-coordinate/numerical rewrite. Originalfb9 native/whole/Mac replay dispatched; no runtime promotion from source qualification.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -25107,7 +25096,7 @@
         "QL M1/M2/M3 scene owner; protected Nara current owner"
       ],
       "scope": "first delivery upstream binding",
-      "standing": "Historical actual constructor/69-check hosted sameoccasion current-person qualification retained. Normal installed533 Save/use reaches source-bearing cosmic/personal material, but complete native Document/person/occasion/instance admission and saved-world continuation are not established by partial pixels/identity Saved;8MiB world refusal remains.",
+      "standing": "One actual source-defined cosmic/personal occasion and complete32/9/7 material remain retained. Actual daf saved-use setup passes7 checks but misses original30s protected Pin hold; ordinary918 opening/current admission and full continuation remain to replay. Shared canonical personal locus, private identity/current, occasion and instance remain distinct.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -25206,7 +25195,7 @@
         "O:I Expression profile/material/Scene owner; QL exact source owner"
       ],
       "scope": "first coherent native composition",
-      "standing": "Committed ebc90 receiving/current/type source candidate; actual c89 fullDoc136 material/32-9-7 preserved except coldcurrent drift137. New entry/loadedmaterial/requiredbodies/layout/fullconsumer encounter remains unexecuted; bounded embedded proof stays separate.",
+      "standing": "Complete native material lifecycle repair2c retained and source reviewed. New918 ordered profile recovery replaces65 transport calls with two native batches while preserving all original actors/order/inheritance and consumer invalidation. Actual61 full native profile results equal individual admissions; saved full Document exact replay and count/input/inherited-reply/prefix refusals pass3 tests. Ordinary and managed loading remain unaccepted.",
       "files": [
         {
           "repository": "O-I",
@@ -26163,7 +26152,7 @@
         "O:I native-field projection/renderer integration owner; QL field owner"
       ],
       "scope": "first delivery receiving repair",
-      "standing": "Original native effects/invariances/completeReturn/acknowledgeddepartures stay mandatory at committed ebc90. No new whole or personalpositive-livezero result; dated c89 embeddedgeneric/Scene effect scope remains separate.",
+      "standing": "Daf embedded169 checks and bounded native Manager/Scene effects pass on their declared source cuts/environments. Complete source-defined cosmic operation invariances, Return and acknowledged post-play departure remain required in original918 whole replay. Generic Scene/software GPU/PCM effects do not qualify personal/installed receiving.",
       "files": [
         {
           "repository": "O-I",
@@ -27046,7 +27035,7 @@
         "QL protected Nara identity/current owner; O:I personal-body/scene-reception owner"
       ],
       "scope": "personal first delivery and exact hub receiving basis",
-      "standing": "Core07 canonical private current source and native cold/test/UI admission join now committed ebc90, not executed. Exact savedReading/activityinput Restore is not freshastronomy/operableM3journal/unsavedcandidate or modal/sound acceptance.",
+      "standing": "Real fixed-nine-driver actual personal orientation component proof now changes all7 receiving bodies with unrelated determinants fixed, while q/-q and repeat are identical. The original ordinary positive/live-zero same-mixture/damping, two-person one-occasion, isolated orientation, sound and managed hardware receiving still must execute; component readbacks are not joined to another environment.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -27761,7 +27750,7 @@
         "O:I production launch/Library/save and selected-context owner; existing Nara/Epii owner"
       ],
       "scope": "production encounter/lifecycle",
-      "standing": "Committed ebc90 addresses admitted saved-current custody and ordinary intent/currentness source seams. Actual cold restore/four-casewhole/Library/restart and genuine freshdefaultNaraEpii Keep/fullRead remain pending; no cached answer substituted.",
+      "standing": "Daf original saved admission failure is retained;918 native batch repair must replay that encounter, cold Library/Save/restore/restart and fresh selection-to-body continuation. Separate920 fresh source question is bounded semantic evidence only; original896/Keep/fullRead remain open. Preserving AIKit a1ac/PR483 source is published by native owner; actual Mac qualification/adoption remains pending. Native continuation repairfb9 is reviewed with real3+existing1 checks; exact full-read qualification avoids repeated cold revision decode while fresh-file/hash/CAS/changed-byte validation remains.",
       "files": [
         {
           "repository": "O-I",
@@ -28706,7 +28695,7 @@
         "existing Mac managed-install owner; lead integration owner; independent Omarchy replay/reviewer"
       ],
       "scope": "first delivery integration gate",
-      "standing": "Original install/test commission remains authorised. Exact fresh O:I app/process/World binding verification before input is required, with current physical/resource condition observed rather than inferred from historical lock/refusal. ebc90 original native/whole/Mac proof, actual parent consumer configuration and separate unintegrated5d13 renderer qualification remain pending; no combined after-view or H acceptance.",
+      "standing": "Actual daf457 normal app now installed through existing managed route and independently verified12app+13managedfiles/image/UUID/signature. No app launch/loadedfrontend/material/after-view. Exact fb9 native/whole/Mac original replay queued behind918 under unchanged branch concurrency. Fresh Mac interaction unavailable before launch; existing physical-unlock question pending. Full joined semantic/expressive/causal encounter and H remain unaccepted.",
       "files": [
         {
           "repository": "O-I",
@@ -41226,7 +41215,7 @@
       "id": "R2-PERSISTENCE",
       "parent_packet": "R2",
       "title": "Portable native world material and acknowledged continuation lifecycle",
-      "standing": "Installed533 actualworldSave/use Recovery8MiB refusal and548 emptyLibrary restart persist. HistoricalhostednativeSave155/storage/current131tests remain datedboundedpositives; committed3c diagnostic is source-only and hasnotcaptured/refinedtheactualfailedpayload.",
+      "standing": "Actual daf full-native180 editions/45000 and full store read/equality reached, but final staleCAS/restart/firstseek/181 continuation remained unqualified before unchanged35min deadline. Native repairfb9 now issues only the existing exact-byte revision witness after successful full read; real compiled new3+existing1 tests pass staleCAS/no-write, otherStore successor, changed corrupt bytes, full restart/firstseek/Edition preservation and optional metadata poison. Every CAS still reads/hashes actual file; changed/cold bytes fully decode, body reads fully admit. Full original workload/deadline fit and ordinary saved continuation remain unproved.",
       "dependencies": [
         "R0",
         "R1"
@@ -41453,7 +41442,7 @@
           "O:I native Expression/Scene persistence owner",
           "ordinary production coordinator/scene workflow owner"
         ],
-        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/current_installed_partial_and_source_receiving_2026_10_03",
+        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
         "runtime_acceptance": false,
         "H": null
       }
@@ -41462,7 +41451,7 @@
       "id": "R2-PROFILE-CAPACITY",
       "parent_packet": "R2",
       "title": "Reference-aware reusable profile admission and reopen capacity",
-      "standing": "Oldglobal64 catalogfirstfailure preserved; native4096ref/16MiB boundedcatalog now15unique tests PASS including122exactretained/controlcohorts. Whole22 construct passescatalogandnativeCAS; completeoldworld/newcohortordinaryreopen/catalogretirement and managedlifecycle remainopen.",
+      "standing": "Existing4096refs/16MiB catalog and lineage guards retained.918 adds ordered1–64 native definition batch, each input/full inherited reply bounded8MiB; actual61 equals every single native definition, saved full Document retries conserved and ordered prefix/actor/count/input/reply refusals pass3 compiled tests with independent source Go. Original30s admission and managed reopen still unproved.",
       "dependencies": [
         "R0",
         "R1"
@@ -41515,7 +41504,7 @@
       "id": "R4-DIRECT-WAVES",
       "parent_packet": "R4",
       "title": "Actual protected direct multi-driver personal receiving",
-      "standing": "Source/projectionbankproof andexactseven-centreinstalledpartialretained; actualpersonalpositiveversuslivezero withsame9drivers/mixture/fixeddamping andtwopersononeoccasionremainunexecuted. HostedcosmicScene8/563nativeStepdo notsupplantthisgate.",
+      "standing": "Actual protected-basis component isolates orientation with same nine drivers/material/geometry/scene/GPU determinants: all7 bodies have effect above repeat/Float32 floor under identity-disconnected consumer; q/-q and repeat identical. Ordinary positive/live-zero same mixture/fixed damping and actual two-person same-occasion receiving remain unexecuted; original918 helper retains these gates and adds isolated orientation counterproof.",
       "dependencies": [
         "R1",
         "R2",
@@ -41582,13 +41571,13 @@
         "CURRENT54C-EMBEDDED-RECEIVING"
       ],
       "current_next_operation": {
-        "operation": "Replaysame9driverexcitation positive/livezero andactualresidentpersonalbodyeffect/invariants; projectionremoval/dampingchangedfalsegreensmustfail.",
+        "operation": "Run original918 ordinary same9-driver positive/live-zero/fixed-mixture-and-damping, independent two-person one-occasion receiving, and isolated orientation q/-q/identity-disconnected consumer; require actual native ACK/full material/current basis, then managed installed replay.",
         "owner": [
           "O:I Nara evidence-field owner",
           "localized resonance projection/bank/PointCloudField receiver owner",
           "QL protected identity/current owner"
         ],
-        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/current_installed_partial_and_source_receiving_2026_10_03",
+        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
         "runtime_acceptance": false,
         "H": null
       }
@@ -41718,7 +41707,7 @@
       "id": "R5-FRESH-CONTEXT",
       "parent_packet": "R5",
       "title": "Actual selected native object context and fresh Nara/Epii recovery",
-      "standing": "Original3c/installed822 ask outcome defect and immutable09 proposal capture retained. Current579 includes independently source-qualified09+11 acknowledgement/current-basis guard and real12 native driver. Typecheck/parser/structure checks pass; all four actual native cases and genuine superseded/invalidated/provider/reply/Keep/fullRead/installed/H remain unexecuted. Existing historical selected-source and54c first-page text scopes are unchanged.",
+      "standing": "Separate actual920 fresh native same-selected-source body answers with exact directed relations in127.629s;190words exceeds180constraint and original896180s question remains incomplete. Preserving AIKit a1ac/PR483 source published, qualification/install pending. Original918 selected native context/currentness and reply/explicitKeep/Edition/CAS/fullRead/samepersonal restart remain required.",
       "dependencies": [
         "R1",
         "R2-PERSISTENCE",
@@ -41797,7 +41786,7 @@
           "O:I native selected-object/context owner",
           "AIKit/Actuation resolved Nara/Epii body/source faculty owners"
         ],
-        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/current_source_and_physical_custody_successor02_2026_10_03",
+        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
         "runtime_acceptance": false,
         "H": null
       }
@@ -42592,7 +42581,7 @@
       "id": "R5-WORLD-SELECTION",
       "parent_packet": "R5",
       "title": "Real semantic body/member selection and Return to the personal occasion",
-      "standing": "Original3c/installed822 ask outcome defect and immutable09 proposal capture retained. Current579 includes independently source-qualified09+11 acknowledgement/current-basis guard and real12 native driver. Typecheck/parser/structure checks pass; all four actual native cases and genuine superseded/invalidated/provider/reply/Keep/fullRead/installed/H remain unexecuted. Existing historical selected-source and54c first-page text scopes are unchanged.",
+      "standing": "Historical native pointers/source/relation/Return positives retained; daf current ordinary setup7 checks before admission deadline failure.918 original pointer/keyboard/exact locus/member source/Return/currentness/fresh body and restart remain mandatory. No local title, wrong branch, cached focus or persisted source substitutes for actual selected consumer.",
       "dependencies": [
         "R2-WORLD-RECOGNITION",
         "R3-PAUSED-SCENE-ADMISSION",
@@ -42693,7 +42682,7 @@
           "O:I native selected-subject/source/context owner",
           "Nara/Epii production native turn receiver"
         ],
-        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/execution_return/current_source_and_physical_custody_successor02_2026_10_03",
+        "source_checkpoint": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
         "runtime_acceptance": false,
         "H": null
       }
@@ -47188,6 +47177,84 @@
       "hosted_personal_capture": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-whole-first-break-01/actual-selected/selected-conversation-setup/selection-explicit-new-private-current-admitted.png",
       "hosted_personal_capture_standing": "ActualordinaryhostedLinuxproductionafterexplicitadmission shows7centreforms/hub/source/identity/Nara routes; preceding12setupchecksPASS. Not installedMac/personalcausal/Return/Hproof.",
       "fresh_native_agent_source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/r5-896-stream-source-independent-01/manifest.json"
+    },
+    {
+      "schema": "epi.corrective-receiving-checkpoint/v1",
+      "at_utc": "2026-10-04T00:12:45.211773+00:00",
+      "standing": "Material admission repaired and committed2c771f53; actual complete-document component RED→GREEN independently qualified90checks. Original502 embedded passed169checks plus bounded nativeManager/Scene effects, but complete whole failed before cold checkpoint at mandatory30s actual Pin hold. Original35min fullnative timed out after297completedpasses, Document180/asset180PASS and unresolvedAct. Installed0b4 remains qualified; freshMacUI unavailable. No whole/personal-livezero/restart/installedafter/H acceptance.",
+      "source_head": "2c771f536c5fb8ff92a55e16d5eb6aba8209f9ee",
+      "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/material-admission-commit-01/committed-source.json",
+      "original_replay": "https://github.com/EpiLogos/O-I/pull/573",
+      "canonical_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37149174145",
+      "installed_cut": "0b4a3627ccacf98f0c3736f244493a12e508df0d",
+      "installed_custody": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-0b4-installed-independent-01.json",
+      "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-ee880-whole-setup-timeout-01/manifest.json",
+      "numeric_custody_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/ee880-native-numeric-custody-independent-04/manifest.json",
+      "next_original_encounter": "cosmic -> personal -> branch/Source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis Nara/Epii completion/Keep/full Read",
+      "runtime_acceptance": false,
+      "H": "not done/person-owned",
+      "actual_whole_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-whole-first-break-01/actual-selected/selected-conversation-setup/saved-use-real-refusals-failure.json",
+      "previous_checkpoint": "git:cd41d038ade0b2bf4dc40eac4ef461d231a03a2a:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
+      "installer_receipt": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/906-actual-0b4-normal-desktop-native-installation.json",
+      "source_successor_canonical_dispatch": "https://github.com/EpiLogos/O-I/actions/runs/37161170566",
+      "source_successor_canonical_dispatch_standing": "This actualrun is502 parent, not2c successor. EmbeddedSUCCESS; wholeFAILURE; fullnative35minFAILURE; canonical502Macbuild inprogress. No2c runtime/build dispatched yet.",
+      "passive_child_replay": "https://github.com/EpiLogos/O-I/actions/runs/37156864580",
+      "fresh_native_agent_failure": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/896-fresh-native-selected-personal-body-question-replay.json",
+      "fresh_native_agent_standing": "Original896 question still has no completedanswer within180s. Separate920 fresh native samebasis/default/deadline concisequestion completed127.629s with source-qualified directedrelations;190words exceeds180formatconstraint. CLIsemanticbounded58checks; originalquestion/installedpointer/Agency/Keep/fullRead/H remain open.",
+      "original_replay_standing": "OriginalPR checks and canonical39f replay required. No original154predicate/ninecase/deadline/workload reduction; oldduplicate9563 PR/canonicalMac cancellationsrequested afteractualnative/whole outcomes retained.",
+      "source_successor_repairs": [
+        "ExactdecimalANDfiniteIEEE receipt comparison; nonreceipt/rawSHA remainexact",
+        "Borrowedrawshape guard plus token-preserving Value decode; duplicate/reserved/finite/127depth/size/CAS unchanged",
+        "Only sourcequalified isolatedchild failure after FIRSTsuccessfulcleanup cancontinueoriginalwhole; allfailed/unreachedcaseskeepoverallRED",
+        "Single savedskycomparison retains exactdecimalANDfiniteIEEE/signedzero/fullstructure; actualadmittedworldrefusalsadded; originalprotectedowner/digest/person/profile/rawcustody unchanged",
+        "Same admitted typedDocument retained for snapshots/Act; originalcompleteDoc/immutableEdition regressionPASS at502.",
+        "Material-admission interruption retires only at differentScene/newengine; actual zero-time and source-error refusals preserved."
+      ],
+      "source_successor_previous_failed_replay": "https://github.com/EpiLogos/O-I/actions/runs/37152569395",
+      "passive_child_predecessor_standing": "6b predecessor embeddedFAIL/wholeSKIP; redundant unchanged-production nativefloor cancellation requested after original3f1 failuresretained; no passivechildruntimegreen.",
+      "actual_whole_guard_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-whole-first-break-01/saved-sky-independent-01/manifest.json",
+      "actual_whole_cause": "Mandatory newer-consumer refusal could not hold actual native Pin within30s. Pin issued23:50:22.672Z; unchanged ok:true641318B response held23:50:47.167Z; timeout failure23:50:47.191Z. First two actual pre-admission refusals passed. Native work/timing cause remains under investigation; cold checkpoint and successor whole were not reached.",
+      "bounded_native_embedded": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-canonical-native-first-result-01/manifest.json",
+      "bounded_native_embedded_independent": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-canonical-native-first-result-01/independent-manifest.json",
+      "bounded_native_embedded_standing": "Actual502169Nodechecks and nativeManagerinput/effect/refusal/restart plus separate8ScenesoftwareGPU/PCMchecks passed. Source/artifact/image join incompletely qualified; defaultsky-noneScene separate fromManager capturedinput. No personal/livezero/whole/installed/H inference.",
+      "actual_fullnative_first_break": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-5023-fullnative-terminal-01/manifest.json",
+      "actual_fullnative_standing": "297 completed aggregatepasses/0assertionfailures/32ignored; actual fullDocument180 and asset180PASS. Act latestprinted120/180, noActPASS/finalcontinuation before original35min timeout. CompleteDoc/Edition exactregressionPASS; speedup/cause unproved.",
+      "hosted_personal_capture": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-9563-whole-first-break-01/actual-selected/selected-conversation-setup/selection-explicit-new-private-current-admitted.png",
+      "hosted_personal_capture_standing": "ActualordinaryhostedLinuxproductionafterexplicitadmission shows7centreforms/hub/source/identity/Nara routes; preceding12setupchecksPASS. Not installedMac/personalcausal/Return/Hproof.",
+      "fresh_native_agent_source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/r5-896-stream-source-independent-01/manifest.json",
+      "material_admission_repair": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/publication/material-admission-commit-01/committed-source.json",
+      "material_admission_independent_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/epi-material-admission-lifecycle-two-site-independent-01/manifest.json",
+      "native_root_configuration_standing": "Isolated actualMac003rootconfiguration repair qualified33checks, configured-not-started. Managed sourceplan DIVERGED from installed8c and would remove speech/Prime/Gateway changes, so nativeowner composing preservationcut. No managedadoption/installedAgency proof. Root retainsintegration."
+    },
+    {
+      "schema": "epi.current-source-and-receiving-checkpoint/v1",
+      "at_utc": "2026-10-04T01:49:58.250965+00:00",
+      "source_head": "918788a8427cf499d817bbeccf825cefd17fd131",
+      "source_publication": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-repair-01/publication.json",
+      "source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-independent-01/manifest.json",
+      "ordinary_and_native_original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37168890468",
+      "standing": "Native ordered profile admission repaired, reviewed and committed. Real local complete61 admission/saved Document/refusal tests3PASS; fixed-nine-driver orientation real component all7 bodies causal sensitivity/sign invariance qualified separately. Original918 whole/native/Mac replay dispatched, runtime acceptance remains false.",
+      "previous_checkpoint": "git:d1ca9717cbd07017e0f2319ff552d747e7077535:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
+      "previous_packet_standings": "git:d1ca9717cbd07017e0f2319ff552d747e7077535:docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/packets",
+      "profile_native_checks": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/native-profile-batch-repair-01/actual-checks-receipt.json",
+      "orientation_component": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/personal-orientation-real-component-01/manifest.json",
+      "orientation_scope": "Same actual protected personal basis, all nine drivers and material/geometry/scene/GPU determinants fixed. Actual all7 receiving bodies change under identity-disconnected shader orientation; q/-q and repeat readbacks identical. Component sensitivity proof, not numerical force parity, ordinary positive/live-zero, hardware GPU or installed acceptance.",
+      "predecessor_whole": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-whole-first-break-01",
+      "predecessor_whole_standing": "Actual daf ordinary saved admission misses original30s hold after7 checks. Pin request to retained successful response24.481s; trace contains65 ordered profile_define calls. Source-current and visible-Scene refusal cases passed; cold/complete whole did not run. No exclusive timing cause established.",
+      "predecessor_fullnative": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-fullnative-terminal-01/manifest.json",
+      "predecessor_fullnative_standing": "299 aggregate passes,0 assertion failures,32 ignored; actual Act180/45000 applications and full stored-record read/equality reached, but final staleCAS/restart/seek/181 continuation not qualified before original35min limit. Actual duplicated cold-read/full-decode revision work is being repaired by its native owner; no relaxed workload or deadline.",
+      "predecessor_embedded": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/oi-daf457-canonical-native-first-result-01/manifest.json",
+      "predecessor_embedded_standing": "169 Node checks plus bounded native Manager/Scene effect checks passed; separate generic Scene/software GPU/PCM scope, not personal/whole/installed proof.",
+      "predecessor_mac_build": "https://github.com/EpiLogos/O-I/actions/runs/37165285035",
+      "predecessor_mac_build_standing": "Canonical daf Mac/all-five/bundle job111333431287 SUCCESS; sole installer qualifying actual artifacts. Build success is not installed encounter.",
+      "installed_cut": "0b4a3627ccacf98f0c3736f244493a12e508df0d",
+      "installed_receipt": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/mac-0b4-installed-independent-01.json",
+      "installed_boundary": "Fresh Mac interaction unavailable before launch; physical unlock question already pending with sole Mac installer/CUA owner. Independent source/native work continues.",
+      "fresh_selected_body_standing": "Separate actual920 native fresh source question completes127.629s, correctly uses exact directed relations;190words exceeds180constraint. Original896 completion, installed selection-to-body, Keep/fullRead remain open. Preserving AIKit source a1ac27414e2ddf9bae2527c741018a2e5db20d0c/PR483 published by native owner, actual Mac qualification/adoption pending.",
+      "next_original_encounter": "cosmic -> personal -> branch/source -> personal -> acknowledged Save/reopen/restart -> fresh selected-basis body completion/Keep/full Read; positive/live-zero same nine drivers and fixed-mixture/damping, isolated orientation sign/consumer counterproof, full native continuation and managed installed replay",
+      "runtime_acceptance": false,
+      "H": "not done/person-owned",
+      "full_scope": "2141 nodes,11810 qualified directed relations,42 entrances,185 source dispositions/runtime-unaccepted obligations,14 packets/26 subpackets,A0–A5/deep branches/full journeys/selected-deck/sharedM3/corrections retained. M3 183 discrepancies,383 source edges,384 native transitions remain distinct."
     }
   ]
 }
