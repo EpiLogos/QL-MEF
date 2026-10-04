@@ -91,7 +91,7 @@ struct MacAudioDevice::Impl {
   std::atomic<bool> dirty{false};
   std::atomic<std::uint64_t> callbacks{0}, frames{0}, failures{0},
       discontinuities{0}, overloads{0}, capture_drops{0};
-  Spsc<DeviceCapture, 128> captures{};
+  Spsc<DeviceCapture, device_capture_capacity> captures{};
   NativeOutputClock clock{};
   std::uint64_t device_epoch = 0;
   bool have_timestamp = false;
@@ -149,11 +149,17 @@ struct MacAudioDevice::Impl {
     capture.callback_begin_host_time = mach_absolute_time();
     capture.frames = count;
     capture.native_start_sample = self.engine->samples_elapsed();
+    capture.device_epoch = self.device_epoch;
+    capture.device_id = self.receipt.device.id;
+    capture.sample_rate = self.engine->sample_rate();
     bool clock_continuous = false;
     if (time) {
-      if (time->mFlags & kAudioTimeStampHostTimeValid)
+      if (time->mFlags & kAudioTimeStampHostTimeValid) {
+        capture.has_host_time = true;
         capture.host_time = time->mHostTime;
+      }
       if (time->mFlags & kAudioTimeStampSampleTimeValid) {
+        capture.has_device_sample_time = true;
         capture.device_sample_time = time->mSampleTime;
         const bool contiguous =
             !self.have_timestamp ||
@@ -167,6 +173,7 @@ struct MacAudioDevice::Impl {
         self.next_device_sample = time->mSampleTime + count;
       }
     }
+    capture.clock_continuous = clock_continuous;
     self.clock.publish_callback(capture.host_time, capture.native_start_sample,
                                 count, clock_continuous);
     if (!self.engine->render(capture.output_linear.data(), count,
@@ -559,6 +566,14 @@ DeviceReceipt MacAudioDevice::receipt() const {
   return result;
 }
 bool MacAudioDevice::pop_capture(DeviceCapture &out) noexcept {
+  return impl_->captures.take(out);
+}
+bool MacAudioDevice::pop_capture_up_to(
+    DeviceCapture &out, std::uint64_t committed_cursor) noexcept {
+  const auto *next = impl_->captures.peek();
+  if (!next || next->native_start_sample > committed_cursor ||
+      next->frames > committed_cursor - next->native_start_sample)
+    return false;
   return impl_->captures.take(out);
 }
 NativeClockAdmission

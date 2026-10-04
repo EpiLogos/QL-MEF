@@ -2890,6 +2890,42 @@
         "scripts/retained-performance-environment-regressions.py",
         "scripts/test-physical-musical.sh"
       ]
+    },
+    {
+      "path": "cpp/include/ql/performance_capture_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "tests": [
+        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_capture_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "tests": [
+        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_capture_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 original callback observation through the retained native performance pulse. Exact force, physical pickup, situated receiving, PCM and device timestamps retain native source/body/sample/application identity. Fixed existing capture queues and original gaps/drops are preserved; no source or Scene lease is issued. Real producer/callback/reopen and original complete workload remain required.",
+      "tests": [
+        "crates/ql-mef/tests/performance_capture_native_wire.rs",
+        "scripts/test-physical-musical.sh"
+      ]
     }
   ]
 }

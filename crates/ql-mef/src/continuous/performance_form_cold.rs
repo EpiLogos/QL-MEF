@@ -3,7 +3,6 @@
 //! installing, advancing or restoring P. Actual application custody is separate
 //! from deterministic producer records and is verified by the selected lease.
 use super::*;
-use crate::continuous::performance_act_bridge::NativeActSourceLease;
 
 /// One original source/body basis kept for complete native score compilation.
 /// No Deserialize/Clone and no live P, epoch, checkpoint or source grant.
@@ -66,38 +65,8 @@ impl PreparedColdPhysicalSource {
 }
 
 impl PerformanceOwner {
-    /// The original FieldHost opening supplies `original`: the same native
-    /// World/protected constructor. Neither final input nor source-origin JSON
-    /// can choose it. The closed lease owns both complete selected source bytes
-    /// and original stopped source applications retained by C; audio Kind6 is
-    /// unrelated and cannot stand in for these real body transactions.
-    pub(in crate::continuous) fn prepare_cold_native_physical_source(
-        original: &CoupledBasis,
-        instance: &str,
-        source: &NativePerformanceReceivingSource,
-        expected: &Value,
-        original_applications: &[Value],
-        lease: &NativeActSourceLease<'_>,
-    ) -> Result<PreparedColdPhysicalSource, String> {
-        lease.validate_source_assets(instance, expected)?;
-        // This method is issued by B's same privately selected C source owner;
-        // full equality is against its retained native source sidecar, not a
-        // caller Vec, hash or checkpoint token. No source setter lives here.
-        lease.validate_recorded_physical_applications(instance, original_applications)?;
-        let prepared = Self::replay_cold_native_physical_source(
-            original,
-            instance,
-            source,
-            expected,
-            original_applications,
-        )?;
-        lease.validate_source_assets(instance, prepared.final_frame().owner().source_assets())?;
-        lease.validate_recorded_physical_applications(instance, original_applications)?;
-        Ok(prepared)
-    }
-
-    /// Numerical/source compiler only. Production reaches it through the
-    /// closed lease above; unit/library evidence never grants activation.
+    /// Numerical/source compiler only. The paired physical/acoustic cold
+    /// compiler qualifies the full closed lease; library evidence grants none.
     fn replay_cold_native_physical_source(
         original: &CoupledBasis,
         instance: &str,

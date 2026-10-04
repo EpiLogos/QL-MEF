@@ -981,7 +981,7 @@ impl PerformanceOwner {
             Value::Null
         };
         json!({"schema":REPLY,"operation":operation,"accepted":accepted,"refusal":if accepted{Value::Null}else{json!({"code":"native-refused","reason":raw["reason"]})},"reading":raw["reading"],"transport_transition":Value::Null,"admission":admission,
-   "native_pulse":{"applications":raw["applications"],"input_history":raw["input_history"],"recording":raw["recording"],"recording_available":raw["recording_available"],"release_pending":raw["release_pending"],"release_zero_proven":raw["release_zero_proven"],"release_proof_cursor":raw["release_proof_cursor"]},"native_payload":raw["payload"]})
+   "native_pulse":{"native_capture":raw["native_capture"],"applications":raw["applications"],"input_history":raw["input_history"],"recording":raw["recording"],"recording_available":raw["recording_available"],"release_pending":raw["release_pending"],"release_zero_proven":raw["release_zero_proven"],"release_proof_cursor":raw["release_proof_cursor"]},"native_payload":raw["payload"]})
     }
     pub fn execute(
         &mut self,

@@ -481,58 +481,6 @@ impl NativeActSourceLease<'_> {
         }
         Ok(())
     }
-    /// Exact full stopped physical transaction corpus from the SAME selected
-    /// native C asset. No caller array or deterministic record grants authority.
-    pub(crate) fn validate_recorded_physical_applications(
-        &self,
-        instance_ref: &str,
-        originals: &[Value],
-    ) -> Result<(), String> {
-        // The complete Act can have a later body than its selected checkpoint.
-        // Locate the exact retained corpus, including an earlier prefix only if
-        // it is itself a complete source asset in this held selection.
-        let mut matches = self.performance_sources()?.iter().filter(|source| {
-            source["identity"]["instance_ref"] == instance_ref
-                && match source.get("native_physical_source_history") {
-                    Some(value) => value.as_array().is_some_and(|v| v.as_slice() == originals),
-                    None => originals.is_empty(),
-                }
-        });
-        let source = matches
-            .next()
-            .ok_or("actual selected native physical corpus absent")?;
-        if matches.next().is_some() {
-            return Err("actual selected native physical corpus ambiguous".into());
-        }
-        let retained = match source.get("native_physical_source_history") {
-            Some(value) => value
-                .as_array()
-                .ok_or("native physical application corpus has wrong type")?
-                .as_slice(),
-            None => &[],
-        };
-        let records = match source["native_bundle"].get("physical_transition_history") {
-            Some(value) => value
-                .as_array()
-                .ok_or("native physical source lineage has wrong type")?
-                .as_slice(),
-            None => &[],
-        };
-        if retained != originals
-            || records.len() != retained.len()
-            || records.iter().zip(retained).any(|(record, original)| {
-                original.as_object().map(|o| o.len()) != Some(2)
-                    || original["source"] != *record
-                    || !original["native_application"].is_object()
-            })
-        {
-            return Err(
-                "physical applications differ from complete actual selected C source custody"
-                    .into(),
-            );
-        }
-        Ok(())
-    }
     /// The actual coordinate owner privately issued this whole read while C
     /// held the SAME current Document/Scene. Channel image/peer qualification,
     /// not retained hashes or caller JSON, established that producer origin.

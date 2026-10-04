@@ -76,6 +76,13 @@ for source in crates/ql-mef/tests/*_native_wire.rs; do
     run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" \
       QL_NATIVE_PREARM_RECEIPT_DIR="$TASK_PREARM_OUTPUT" \
       cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
+  elif [[ "$suite" == "performance_capture_native_wire" ]]; then
+    v_capture_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+    TASK_CAPTURE_OUTPUT="$TASK_OUTPUT/native-capture-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_capture_nonce"
+    mkdir -p "$TASK_CAPTURE_OUTPUT"
+    run_native_gate "$suite" env QL_NATIVE_WIRE_TEST="$binary" \
+      QL_NATIVE_CAPTURE_RECEIPT_DIR="$TASK_CAPTURE_OUTPUT" \
+      cargo test -p ql-mef --locked --test "$suite" -- --ignored || :
   elif [[ "$suite" == "performance_calibration_native_wire" ]]; then
     v_calibration_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
     TASK_CALIBRATION_OUTPUT="$TASK_OUTPUT/calibration-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_calibration_nonce"

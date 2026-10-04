@@ -101,9 +101,9 @@ impl QualifiedAcousticSourceHistory {
         source: &NativePerformanceReceivingSource,
         lease: &NativeActSourceLease<'_>,
         instance: &str,
-        checkpoint_ref: &str,
-        original_wire: &str,
+        saved_checkpoint: (&str, &str),
     ) -> Result<(), String> {
+        let (checkpoint_ref, original_wire) = saved_checkpoint;
         owner.validate_current(current)?;
         lease.validate_source_assets(instance, owner.source_assets())?;
         lease.validate_recorded_source_applications(

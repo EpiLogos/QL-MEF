@@ -35,11 +35,15 @@ struct DeviceReceipt {
   // API-reported pipeline latency excludes input-event/ear/physical capture.
   double reported_output_latency_ms = 0;
 };
+inline constexpr std::size_t device_capture_capacity = 128;
 struct DeviceCapture {
   std::uint64_t host_time = 0, callback_begin_host_time = 0,
-                callback_end_host_time = 0, native_start_sample = 0;
+                callback_end_host_time = 0, native_start_sample = 0,
+                device_epoch = 0;
+  bool has_host_time = false, has_device_sample_time = false,
+       clock_continuous = false;
   double device_sample_time = 0;
-  std::uint32_t frames = 0;
+  std::uint32_t device_id = 0, sample_rate = 0, frames = 0;
   std::array<float, max_frames> output_linear{};
 };
 // Every lifecycle method runs on the serial control owner. Property listeners
@@ -65,6 +69,8 @@ public:
   bool recover(std::shared_ptr<Engine> engine);
   DeviceReceipt receipt() const;
   bool pop_capture(DeviceCapture &out) noexcept;
+  bool pop_capture_up_to(DeviceCapture &out,
+                         std::uint64_t committed_cursor) noexcept;
   // Serial native bridge receipt: the browser supplies neither sample time
   // nor host ticks. Earlier physical-input transit remains unmeasured.
   NativeClockAdmission enqueue_bridge_gesture(Operation operation) noexcept;

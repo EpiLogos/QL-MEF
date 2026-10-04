@@ -329,6 +329,7 @@ fn component_acoustic(
     request["expected_sample"] = json!(cursor.to_string());
     if operation == "receiving-transport-replace" {
         request["before_acoustic"] = record["before_acoustic"].clone();
+        request["authored_source_transition"] = record.clone();
     }
     // Numerical native worker component: no private Scene/Act lease is minted.
     // Production reaches the same exchange only through Root/C's opaque CAS.
@@ -353,6 +354,36 @@ fn component_acoustic(
             unchanged["payload"]["checkpoint"], before_cut["payload"]["checkpoint"],
             "{path}"
         );
+    }
+    if operation == "receiving-transport-replace" {
+        for (path, wrong) in [
+            (
+                "/authored_source_transition/native_sample",
+                json!((cursor + 1).to_string()),
+            ),
+            (
+                "/authored_source_transition/before_configuration/source_motion_ref",
+                json!("native:wrong-original-emitter"),
+            ),
+            (
+                "/authored_source_transition/after_configuration/source_translation_metres/0",
+                json!(99.0),
+            ),
+            (
+                "/authored_source_transition/after_acoustic/source_body/source_coordinate/face",
+                json!("wrong-face"),
+            ),
+        ] {
+            let mut invalid = request.clone();
+            *invalid.pointer_mut(path).unwrap() = wrong;
+            let refusal = component_exchange(owner, scene, &invalid);
+            assert_eq!(refusal["accepted"], false, "{path}: {refusal}");
+            let unchanged = actual_component_checkpoint(owner, scene);
+            assert_eq!(
+                unchanged["payload"]["checkpoint"], before_cut["payload"]["checkpoint"],
+                "{path}"
+            );
+        }
     }
     let pulse = component_exchange(owner, scene, &request);
     assert_eq!(pulse["accepted"], true, "{pulse}");
@@ -453,7 +484,13 @@ fn actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_s
     ] {
         let mut request = owner.raw("score").unwrap();
         request["event"] = event;
-        request["input_ref"] = Value::Null;
+        // Touch operations retain their original native input binding. A
+        // parameter event has no touch and keeps the literal absent binding.
+        request["input_ref"] = if matches!(request["event"]["kind"].as_u64(), Some(0 | 1 | 3)) {
+            json!("native:physical-cold/m4-score-touch")
+        } else {
+            Value::Null
+        };
         let pulse = component_exchange(&mut owner, &mut scene, &request);
         assert_eq!(pulse["accepted"], true, "{pulse}");
     }

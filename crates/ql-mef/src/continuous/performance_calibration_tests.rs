@@ -238,23 +238,25 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
     assert_eq!(born_audio["accepted_sequence"], "0");
     assert_eq!(born_audio["applied_application_ordinal"], "0");
     assert!(born["applications"].as_array().unwrap().is_empty());
-    let direct_refusal = owner
-        .execute_with_original_pulse(
-            &current,
-            scene.session_mut(),
-            PerformanceCommand::CalibrateCurrent {},
-        )
-        .err()
-        .expect("PerformanceOwner cannot grant original Host preparation custody");
-    assert!(direct_refusal.native_pulse.is_none());
-    let no_origin = crate::continuous::host::performance_calibration::from_retained_preparation(
-        None,
-        &mut owner,
+    let direct_refusal = match owner.execute_with_original_pulse(
         &current,
         scene.session_mut(),
-    )
-    .err()
-    .expect("no original fresh authored preparation means no calibration grant");
+        PerformanceCommand::CalibrateCurrent {},
+    ) {
+        Ok(_) => panic!("PerformanceOwner cannot grant original Host preparation custody"),
+        Err(refusal) => refusal,
+    };
+    assert!(direct_refusal.native_pulse.is_none());
+    let no_origin =
+        match crate::continuous::host::performance_calibration::from_retained_preparation(
+            None,
+            &mut owner,
+            &current,
+            scene.session_mut(),
+        ) {
+            Ok(_) => panic!("no original fresh authored preparation means no calibration grant"),
+            Err(refusal) => refusal,
+        };
     assert!(no_origin.native_pulse.is_none());
     let unchanged = checkpoint(&mut owner, &mut scene);
     assert_eq!(
@@ -264,10 +266,14 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
     if !legacy {
         let mut wrong_authored = authored.clone();
         wrong_authored.session_ref.push_str("/wrong-source-intent");
-        let failure = wrong_authored
-            .admit_declared_output_calibration(&mut owner, &current, scene.session_mut())
-            .err()
-            .expect("different full authored preparation must be refused");
+        let failure = match wrong_authored.admit_declared_output_calibration(
+            &mut owner,
+            &current,
+            scene.session_mut(),
+        ) {
+            Ok(_) => panic!("different full authored preparation must be refused"),
+            Err(refusal) => refusal,
+        };
         assert!(failure.native_pulse.is_none());
         let after_refusal = checkpoint(&mut owner, &mut scene);
         assert_eq!(
@@ -277,14 +283,15 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
     }
     let force_control = if legacy {
         let not_applicable =
-            crate::continuous::host::performance_calibration::from_retained_preparation(
+            match crate::continuous::host::performance_calibration::from_retained_preparation(
                 Some(&authored),
                 &mut owner,
                 &current,
                 scene.session_mut(),
-            )
-            .err()
-            .expect("actual explicit policy does not admit declared calibration");
+            ) {
+                Ok(_) => panic!("actual explicit policy does not admit declared calibration"),
+                Err(refusal) => refusal,
+            };
         assert!(not_applicable.native_pulse.is_none());
         owner
             .execute_with_original_pulse(
@@ -331,10 +338,14 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
     assert_eq!(admission["event"]["sample"], "0");
     assert_eq!(admission["event"]["requested_sample"], "0");
     if !legacy {
-        let refusal = authored
-            .admit_declared_output_calibration(&mut owner, &current, scene.session_mut())
-            .err()
-            .expect("fresh calibration cannot admit twice or during saved continuation");
+        let refusal = match authored.admit_declared_output_calibration(
+            &mut owner,
+            &current,
+            scene.session_mut(),
+        ) {
+            Ok(_) => panic!("fresh calibration cannot admit twice or during saved continuation"),
+            Err(refusal) => refusal,
+        };
         assert!(refusal.native_pulse.is_none());
         let after_refusal = checkpoint(&mut owner, &mut scene);
         assert_eq!(
@@ -404,7 +415,16 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
         event["sequence"] = json!((initial_sequence + index as u64 + 1).to_string());
         let mut request = owner.raw("score").unwrap();
         request["event"] = event;
-        request["input_ref"] = Value::Null;
+        // Native C admits and journals the same authored input for each
+        // NoteOn/NoteOff pair; parameter automation carries no input binding.
+        request["input_ref"] = if matches!(request["event"]["kind"].as_u64(), Some(0 | 1 | 3)) {
+            json!(format!(
+                "native:calibration/input/{}",
+                request["event"]["touch"].as_str().unwrap()
+            ))
+        } else {
+            Value::Null
+        };
         original_admissions.push(exchange(&mut owner, &mut scene, request));
     }
     let saved_pending = checkpoint(&mut owner, &mut scene);

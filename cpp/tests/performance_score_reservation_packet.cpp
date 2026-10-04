@@ -72,6 +72,10 @@ static void cancelled(const std::string &dir,
                       const std::filesystem::path &out) {
   auto owner = manager(dir);
   auto initial = owner->stopped_checkpoint();
+  assert(initial->native_pair.audio.cursor == 0 &&
+         initial->native_pair.audio.applied_application_ordinal == 0);
+  auto initial_wire = management_checkpoint_transport::checkpoint_wire(*initial);
+  write_json(out / "cancel.origin.json", initial_wire.get());
   auto future = op(owner->native().determination, Kind::Parameter, 1, 1000);
   future.parameter = Parameter::MasterLinear;
   future.value = .2;
@@ -107,6 +111,11 @@ static void cancelled(const std::string &dir,
 }
 static void lost(const std::string &dir, const std::filesystem::path &out) {
   auto owner = manager(dir);
+  auto initial = owner->stopped_checkpoint();
+  assert(initial->native_pair.audio.cursor == 0 &&
+         initial->native_pair.audio.applied_application_ordinal == 0);
+  auto initial_wire = management_checkpoint_transport::checkpoint_wire(*initial);
+  write_json(out / "lost.origin.json", initial_wire.get());
   auto future = op(owner->native().determination, Kind::Parameter, 1, 1000);
   future.parameter = Parameter::MasterLinear;
   future.value = .2;

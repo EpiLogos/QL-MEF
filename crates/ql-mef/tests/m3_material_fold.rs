@@ -448,9 +448,16 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
     .unwrap();
     before_source.validate_source_geometry(&state).unwrap();
     input.physical = before_source.body().request().clone();
+    // Preparation is consumed by its real producer. Re-enter that same
+    // authored source for the later transition instead of inventing a Clone
+    // contract on the preparation owner.
+    let mut after_input = actual_performance_source::preparation();
+    assert_eq!(
+        serde_json::to_value(&after_input.coupled).unwrap(),
+        serde_json::to_value(&input.coupled).unwrap()
+    );
     let before =
-        ql_mef::performance_audio::prepare_source_form_performance(input.clone(), recipe.clone())
-            .unwrap();
+        ql_mef::performance_audio::prepare_source_form_performance(input, recipe.clone()).unwrap();
     before.validate_source_form_consumer(&state).unwrap();
     let before_basis = state.snapshot();
     let command = M3Command {
@@ -472,7 +479,7 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
     };
     let receipt = state.apply(command.clone()).unwrap();
     assert_eq!(receipt.status, "applied");
-    input.coupled.m3_commands.push(command.clone());
+    after_input.coupled.m3_commands.push(command.clone());
     let mut controls = body_controls(&state);
     controls.body_revision = before
         .physical_body()
@@ -499,9 +506,10 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
         FormTransitionPolicy::ProjectCorrespondingNodes,
     )
     .unwrap();
-    input.physical = after_source.body().request().clone();
+    after_input.physical = after_source.body().request().clone();
+    let after_coupled_source = after_input.coupled.clone();
     let after =
-        ql_mef::performance_audio::prepare_source_form_performance(input.clone(), recipe.clone())
+        ql_mef::performance_audio::prepare_source_form_performance(after_input, recipe.clone())
             .unwrap();
     after.validate_source_form_consumer(&state).unwrap();
     assert_eq!(after.native_basis().m3, receipt.after);
@@ -559,7 +567,7 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
             "before":before_packet,"after":after_packet,
             "after_fresh":actual_receiving_source::for_prepared(&after,0).unwrap(),
             "command":command,"receipt":receipt,"original_replay":original_replay,
-            "after_coupled_source":input.coupled,"recipe":recipe,
+            "after_coupled_source":after_coupled_source,"recipe":recipe,
             "form_transition":transition,
             "scope":"Actual current M1/M2/M3 -> source-qualified metric Form -> N9 producer -> P/receiving component experiment; explicit Reference calibration; no Scene/Act private Source grant or installed instrument acceptance."
         });

@@ -309,8 +309,8 @@ impl PerformanceOwner {
         };
         if source["schema"] != ACOUSTIC_SOURCE_TRANSITION
             || source["kind"] != "replace"
-            || source["original_native_request_id"] != candidate.original_request_id.to_string()
-            || source["native_sample"] != candidate.cursor.to_string()
+            || decimal(&source["original_native_request_id"])? != candidate.original_request_id
+            || decimal(&source["native_sample"])? != candidate.cursor
             || pulse["accepted"] != true
             || pulse["operation"] != "receiving-transport-replace"
         {
@@ -331,8 +331,8 @@ impl PerformanceOwner {
         };
         if source["schema"] != ACOUSTIC_SOURCE_TRANSITION
             || source["kind"] != "install"
-            || source["original_native_request_id"] != candidate.original_request_id.to_string()
-            || source["native_sample"] != candidate.cursor.to_string()
+            || decimal(&source["original_native_request_id"])? != candidate.original_request_id
+            || decimal(&source["native_sample"])? != candidate.cursor
             || pulse["accepted"] != true
             || pulse["operation"] != "receiving-transport-install"
             || source["before_acoustic"] != Value::Null

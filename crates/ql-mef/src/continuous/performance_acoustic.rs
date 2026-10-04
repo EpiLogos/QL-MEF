@@ -425,29 +425,6 @@ impl PerformanceOwner {
         Ok(original)
     }
 
-    /// Regenerate the ORIGINAL saved receiver segment under the exact closed
-    /// source/checkpoint selection. Its origin/birth are retained producer
-    /// inputs; neither the current fresh owner cursor nor the saved checkpoint
-    /// can authorize a new receiver, source, protected occasion or trajectory.
-    /// This is a pure preparation: no assets, P state, queue or clock change.
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
-    pub(crate) fn prepare_saved_acoustic_receiving(
-        &self,
-        current: &CoupledBasis,
-        source: &NativePerformanceReceivingSource,
-        lease: &NativeActSourceLease<'_>,
-        original_checkpoint_wire: &str,
-        checkpoint_ref: &str,
-    ) -> Result<Option<PreparedAcousticReceiving>, String> {
-        self.prepare_saved_acoustic_receiving_with_history(
-            current,
-            source,
-            lease,
-            original_checkpoint_wire,
-            checkpoint_ref,
-            None,
-        )
-    }
     /// Existing v1 callers keep their strict original source guard. Dated v2
     /// requires an operand issued from ALL original replay frames and the same
     /// closed selected Act/source/checkpoint; a schema label cannot issue it.
@@ -520,8 +497,7 @@ impl PerformanceOwner {
                     source,
                     lease,
                     instance,
-                    checkpoint_ref,
-                    original_checkpoint_wire,
+                    (checkpoint_ref, original_checkpoint_wire),
                 )?,
             _ => return Err("saved acoustic checkpoint schema or typed history differs".into()),
         }
@@ -575,8 +551,7 @@ impl PerformanceOwner {
                 source,
                 lease,
                 instance,
-                checkpoint_ref,
-                original_checkpoint_wire,
+                (checkpoint_ref, original_checkpoint_wire),
             )?;
         }
         lease.validate_source_assets(instance, self.source_assets())?;
@@ -834,6 +809,13 @@ impl PerformanceOwner {
         request["prepared_acoustic"] = candidate.after.packet().clone();
         request["current_acoustic"] = fresh.after.packet().clone();
         request["expected_sample"] = json!(candidate.cursor.to_string());
+        // This is the actual private candidate's complete regenerated source
+        // transition, not a receiver label or imported authority. Legacy
+        // receiver-only candidates preserve their original emitter contract.
+        if let Some(record) = &candidate.source_record {
+            request["authored_source_transition"] = record.clone();
+        }
+
         let pulse = self
             .exchange_retaining_parsed_pulse(session, request)
             .map_err(|(reason, native_pulse)| AcousticRefusal {

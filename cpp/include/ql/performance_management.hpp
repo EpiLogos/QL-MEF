@@ -879,6 +879,13 @@ public:
   bool pop_device_capture(DeviceCapture &out) noexcept {
     return device_.pop_capture(out);
   }
+  bool pop_audio_capture_up_to(Capture &out, std::uint64_t cursor) noexcept {
+    return native_.engine->pop_capture_up_to(out, cursor);
+  }
+  bool pop_device_capture_up_to(DeviceCapture &out,
+                                std::uint64_t cursor) noexcept {
+    return device_.pop_capture_up_to(out, cursor);
+  }
   std::uint64_t hold() noexcept {
     release_request_ = native_.engine->request_panic();
     release_sequence_ = 0;

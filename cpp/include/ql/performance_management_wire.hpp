@@ -1,6 +1,7 @@
 #ifndef QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #define QL_PERFORMANCE_MANAGEMENT_WIRE_HPP
 #include <ql/performance_acoustic_wire.hpp>
+#include <ql/performance_capture_wire.hpp>
 #include <ql/performance_form_wire.hpp>
 #include <ql/performance_offline_wire.hpp>
 #include <ql/performance_physical_routes.hpp>
@@ -764,6 +765,13 @@ public:
                                     &original_saved_acoustic);
       if (has_original_saved_acoustic)
         allowed.insert("original_saved_acoustic");
+      J *authored_source_transition = nullptr;
+      const bool has_authored_source_transition =
+          op == "receiving-transport-replace" &&
+          json_object_object_get_ex(request, "authored_source_transition",
+                                    &authored_source_transition);
+      if (has_authored_source_transition)
+        allowed.insert("authored_source_transition");
       require(json_object_object_length(request) == int(allowed.size()),
               "missing or unknown native performance fields");
       json_object_object_foreach(request, name, value) {
@@ -836,7 +844,7 @@ public:
                 "native playable device format invalid");
         accepted = owner_->open_device(config);
       } else if (op == "device-start")
-        accepted = owner_->start_device();
+        accepted = native_capture_transport::start_device(*owner_);
       else if (op == "device-stop")
         accepted = owner_->stop_device();
       else if (op == "device-recover")
@@ -991,6 +999,9 @@ public:
                       ql::physical_wire::exact(
                           packet::field(before_config, "revision")),
               "native receiver change lost birth or original revision order");
+          acoustic_wire::validate_receiver_replacement_source(
+              original_packet, candidate_packet, prepared_source_.get(),
+              authored_source_transition, cursor);
           // The actual dated receiver owner appends this effective source
           // epoch while retaining preceding retarded intervals and the ring.
           // The same private source/Act caller qualifies the complete AFTER
@@ -1353,6 +1364,8 @@ public:
       wire::text(out.get(), "resident_registry_reason",
                  "actual native same-pulse registration unavailable");
     }
+    wire::put(out.get(), "native_capture",
+              native_capture_transport::batch(*owner_, pulse).release());
     wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
     wire::u64(out.get(), "last_native_member", owner_->last_native_member());
     wire::flag(out.get(), "recording_available", owner_->recording_available());

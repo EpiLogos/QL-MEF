@@ -7,6 +7,80 @@
 #include <ql/performance_physical_receiving.hpp>
 namespace ql::performance::acoustic_wire {
 enum class AcousticReadKind { FirstInstallation, RetainedReceiverSegment };
+// An ordinary receiver-only replacement cannot silently substitute the
+// original emitter. A genuine source-motion edit reaches this numerical seam
+// with its COMPLETE regenerated native source record after the same private
+// C source/Act qualification. This record is correspondence, never a grant.
+inline void validate_receiver_replacement_source(
+    json_object *before, json_object *after, json_object *native_preparation,
+    json_object *authored_transition, std::uint64_t cursor) {
+  namespace p = ql::physical_wire;
+  namespace w = checkpoint_transport;
+  auto *a = p::field(before, "configuration");
+  auto *b = p::field(after, "configuration");
+  if (!authored_transition) {
+    for (const char *field :
+         {"source_ref", "source_motion_ref", "source_translation_metres",
+          "source_velocity_metres_per_second"})
+      require(json_object_equal(p::field(a, field), p::field(b, field)),
+              "receiver-only replacement substituted original emitter history");
+    return;
+  }
+  p::keys(authored_transition, {"schema",
+                                "kind",
+                                "original_native_request_id",
+                                "native_sample",
+                                "performance_configuration",
+                                "native_current_input",
+                                "native_preparation",
+                                "immutable_original_input",
+                                "before_configuration",
+                                "after_configuration",
+                                "before_source_inputs",
+                                "after_source_inputs",
+                                "before_source_context",
+                                "after_source_context",
+                                "before_receiving_definition",
+                                "after_receiving_definition",
+                                "before_current_receiving",
+                                "after_current_receiving",
+                                "before_acoustic",
+                                "after_acoustic",
+                                "history_origin_sample",
+                                "policy"});
+  require(
+      p::text(p::field(authored_transition, "schema")) ==
+              "ql.native-acoustic-source-transition/v1" &&
+          p::text(p::field(authored_transition, "kind")) == "replace" &&
+          w::decimal(p::field(authored_transition,
+                              "original_native_request_id")) > 0 &&
+          w::decimal(p::field(authored_transition, "native_sample")) ==
+              cursor &&
+          json_object_equal(p::field(authored_transition, "native_preparation"),
+                            native_preparation) &&
+          json_object_equal(p::field(authored_transition, "before_acoustic"),
+                            before) &&
+          json_object_equal(p::field(authored_transition, "after_acoustic"),
+                            after) &&
+          json_object_equal(
+              p::field(authored_transition, "before_configuration"), a) &&
+          json_object_equal(
+              p::field(authored_transition, "after_configuration"), b) &&
+          json_object_equal(
+              p::field(authored_transition, "history_origin_sample"),
+              p::field(before, "history_origin_sample")) &&
+          json_object_is_type(
+              p::field(authored_transition, "immutable_original_input"),
+              json_type_object) &&
+          json_object_is_type(
+              p::field(authored_transition, "before_current_receiving"),
+              json_type_object) &&
+          json_object_is_type(
+              p::field(authored_transition, "after_current_receiving"),
+              json_type_object),
+      "native authored emitter/receiver record differs from actual "
+      "source/cursor/packets");
+}
 inline ql::PreparedMovingSpatialReceiving read_prepared_acoustic(
     json_object *candidate, json_object *actual_current,
     json_object *retained_source_body,

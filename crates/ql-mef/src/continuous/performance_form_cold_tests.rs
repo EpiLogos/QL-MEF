@@ -323,7 +323,13 @@ fn actual_stopped_form_material_applications_cold_replay_full_original_owner_and
     ] {
         let mut queued = owner.raw("score").unwrap();
         queued["event"] = event;
-        queued["input_ref"] = Value::Null;
+        // Touch operations retain their original native input binding. A
+        // parameter event has no touch and keeps the literal absent binding.
+        queued["input_ref"] = if matches!(queued["event"]["kind"].as_u64(), Some(0 | 1 | 3)) {
+            json!("native:physical-cold/actual-score-touch")
+        } else {
+            Value::Null
+        };
         let pulse = scene
             .session_mut()
             .performance_exchange_retained(&queued)

@@ -285,7 +285,12 @@ struct NativeGestureApplication {
 struct Capture {
   Identity identity{}, end_identity{};
   std::uint64_t start_sample = 0, body_revision = 0;
-  std::uint32_t frames = 0;
+  // Original same-callback body and application boundaries. Observers cannot
+  // replace these with a later Management reading after Form/material edits.
+  Ref preparation_ref{}, state_ref{};
+  std::uint64_t start_applied_sequence = 0, end_applied_sequence = 0,
+                start_application_ordinal = 0, end_application_ordinal = 0;
+  std::uint32_t sample_rate = 0, frames = 0;
   std::array<double, max_frames> force_newtons{}, note_force_newtons{},
       contact_force_newtons{};
   // Per-sample causal control values captured from the SAME committed
@@ -295,6 +300,7 @@ struct Capture {
   std::array<float, max_frames> pickup_linear{}, received_linear{},
       output_linear{};
   bool has_receiving = false;
+  NativeReceivingManifest receiving_manifest{};
   std::size_t route_count = 0;
   std::array<std::array<double, max_frames>,
              ql::physical_max_personal_force_routes>
@@ -1847,6 +1853,9 @@ public:
   void enable_capture(bool enabled) noexcept {
     capture_.store(enabled, std::memory_order_release);
   }
+  bool capture_enabled() const noexcept {
+    return capture_.load(std::memory_order_acquire);
+  }
   std::uint64_t samples_elapsed() const noexcept {
     return published_cursor_.load(std::memory_order_acquire);
   }
@@ -3052,6 +3061,14 @@ public:
   }
   bool pop_readback(Readback &out) noexcept { return readbacks_.take(out); }
   bool pop_capture(Capture &out) noexcept { return captures_.take(out); }
+  bool pop_capture_up_to(Capture &out,
+                         std::uint64_t committed_cursor) noexcept {
+    const auto *next = captures_.peek();
+    if (!next || next->start_sample > committed_cursor ||
+        next->frames > committed_cursor - next->start_sample)
+      return false;
+    return captures_.take(out);
+  }
   bool pop_gesture_application(NativeGestureApplication &out) noexcept {
     return gesture_applications_.take(out);
   }
@@ -3113,6 +3130,11 @@ public:
     capture.start_sample = cursor_;
     capture.body_revision = determination_.body_revision;
     capture.frames = std::uint32_t(frames);
+    capture.preparation_ref = determination_.body_preparation_ref;
+    capture.state_ref = determination_.body_state_ref;
+    capture.sample_rate = rate_;
+    capture.start_applied_sequence = applied_sequence_;
+    capture.start_application_ordinal = applied_application_ordinal_;
     std::array<double, max_frames> body_gain{}, monitor_gain{}, force_scale{};
     const double smoothing = parameter_smoothing_coefficient();
     const bool releases_admitted = releases_.drain_snapshot(
@@ -3503,6 +3525,10 @@ public:
     }
     block_application_count_ = 0;
     contacts_.commit(cursor_);
+    if (capture.has_receiving)
+      capture.receiving_manifest = receiving_readback.manifest;
+    capture.end_applied_sequence = applied_sequence_;
+    capture.end_application_ordinal = applied_application_ordinal_;
     Readback receipt{};
     receipt.audio_resident = resident_lifetime_.token();
     receipt.callback_output_committed = true;

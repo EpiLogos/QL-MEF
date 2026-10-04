@@ -67,7 +67,8 @@ def required_fixture_paths() -> set[str]:
         "stopped-force-restored-pending-management.json", "stopped-force-restored-applied.json",
         "stopped-force-restored-after-management.json"))
     paths.update("native-score-reservations/" + name for name in (
-        "cancel.before.json", "cancel.after.json", "cancel.ack.json", "lost.before.json", "lost.after.json", "basis.json"))
+        "cancel.origin.json", "cancel.before.json", "cancel.after.json", "cancel.ack.json",
+        "lost.origin.json", "lost.before.json", "lost.after.json", "basis.json"))
     for family in ("native-retained-workload", "native-retained-source-workload"):
         paths.update(family + "/" + name for name in ("basis.json", "manifest.json"))
         paths.update(family + "/edition-" + str(index) + "." + suffix

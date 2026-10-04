@@ -1,6 +1,7 @@
 //! Child of the retained Form cold compiler. All original body and acoustic
 //! epochs remain in its existing frame carrier; this is not another P owner.
 use super::*;
+use crate::continuous::performance_act_bridge::NativeActSourceLease;
 
 const ACOUSTIC_TRANSITION: &str = "ql.native-acoustic-source-transition/v1";
 

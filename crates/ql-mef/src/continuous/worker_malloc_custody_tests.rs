@@ -240,8 +240,25 @@ fn actual_worker_retains_only_selected_bytes_and_native_stderr_across_close() {
     assert!(plain.diagnostic.is_none());
     assert!(plain.stderr_reader.is_none());
     assert!(plain.diagnostic_writer.is_none());
-    assert_eq!(plain.exchange(&request2).unwrap(), initial);
-    assert_eq!(plain.exchange(&request3).unwrap(), reply3);
+    let plain_initial = plain.exchange(&request2).unwrap();
+    let plain_advanced = plain.exchange(&request3).unwrap();
+    let plain_instance = plain_initial["timing_owner"]["instance_ref"]
+        .as_str()
+        .unwrap();
+    let diagnostic_instance = initial["timing_owner"]["instance_ref"].as_str().unwrap();
+    assert!(plain_instance.starts_with("native-resident:v1:"));
+    assert!(diagnostic_instance.starts_with("native-resident:v1:"));
+    assert_ne!(
+        plain_instance, diagnostic_instance,
+        "independent native constructors must remain distinct"
+    );
+    assert_eq!(
+        plain_advanced["timing_owner"]["instance_ref"],
+        plain_instance
+    );
+    assert_eq!(reply3["timing_owner"]["instance_ref"], diagnostic_instance);
+    assert_same_field_with_distinct_native_constructor(&plain_initial, &initial);
+    assert_same_field_with_distinct_native_constructor(&plain_advanced, &reply3);
     drop(plain);
     assert_eq!(fs::read_dir(&output).unwrap().count(), 1);
     let qualified = qualify(&directory);
@@ -389,8 +406,14 @@ fn actual_worker_retains_only_selected_bytes_and_native_stderr_across_close() {
         .unwrap_err();
     assert_eq!(actual_refusal.as_ref(), Some(&reply1));
     assert!(!failed_writer.poisoned);
-    assert_eq!(failed_writer.exchange(&request2).unwrap(), initial);
-    assert_eq!(failed_writer.exchange(&request3).unwrap(), reply3);
+    let failed_initial = failed_writer.exchange(&request2).unwrap();
+    let failed_advanced = failed_writer.exchange(&request3).unwrap();
+    assert_eq!(
+        failed_advanced["timing_owner"]["instance_ref"],
+        failed_initial["timing_owner"]["instance_ref"]
+    );
+    assert_same_field_with_distinct_native_constructor(&failed_initial, &initial);
+    assert_same_field_with_distinct_native_constructor(&failed_advanced, &reply3);
     assert!(!failed_writer.poisoned);
     drop(failed_writer);
     let failed_close = read(&failed_directory.join("closed.json"));
@@ -398,6 +421,36 @@ fn actual_worker_retains_only_selected_bytes_and_native_stderr_across_close() {
     assert_eq!(failed_close["writer_completed"], true);
     assert_eq!(failed_close["lost_custody"], false);
     assert!(!qualify(&failed_directory).status.success());
+}
+
+fn assert_same_field_with_distinct_native_constructor(actual: &Value, expected: &Value) {
+    let actual_instance = actual["timing_owner"]["instance_ref"].as_str().unwrap();
+    let expected_instance = expected["timing_owner"]["instance_ref"].as_str().unwrap();
+    assert!(actual_instance.starts_with("native-resident:v1:"));
+    assert!(expected_instance.starts_with("native-resident:v1:"));
+    assert_ne!(
+        actual_instance, expected_instance,
+        "independent native constructors must remain distinct"
+    );
+    // Compare every other original source/state/timing/PCM field exactly.
+    // Only copies are adjusted; all original retained evidence bytes stay intact.
+    let mut actual = actual.clone();
+    let mut expected = expected.clone();
+    assert!(
+        actual["timing_owner"]
+            .as_object_mut()
+            .unwrap()
+            .remove("instance_ref")
+            .is_some()
+    );
+    assert!(
+        expected["timing_owner"]
+            .as_object_mut()
+            .unwrap()
+            .remove("instance_ref")
+            .is_some()
+    );
+    assert_eq!(actual, expected);
 }
 
 fn copy_original(directory: &Path, target: &Path) {

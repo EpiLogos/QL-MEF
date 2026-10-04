@@ -30,6 +30,10 @@ bool MacAudioDevice::recovery_needed() const noexcept { return false; }
 bool MacAudioDevice::recover(std::shared_ptr<Engine>) { return false; }
 DeviceReceipt MacAudioDevice::receipt() const { return impl_->reading; }
 bool MacAudioDevice::pop_capture(DeviceCapture &) noexcept { return false; }
+bool MacAudioDevice::pop_capture_up_to(DeviceCapture &,
+                                       std::uint64_t) noexcept {
+  return false;
+}
 NativeClockAdmission
 MacAudioDevice::enqueue_bridge_gesture(Operation) noexcept {
   return {};
