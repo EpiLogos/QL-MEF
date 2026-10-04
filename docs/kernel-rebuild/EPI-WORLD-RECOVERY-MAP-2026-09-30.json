@@ -1,10 +1,10 @@
 {
   "latest_execution_checkpoint": {
     "schema": "epi.current-source-and-receiving-checkpoint/v1",
-    "at_utc": "2026-10-04T19:59:35Z",
+    "at_utc": "2026-10-04T21:10:14Z",
     "source_head": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
     "ordinary_and_native_original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37230294991",
-    "standing": "The installed 515 world now receives a real pointer Save/use acknowledgement for the same controlled person and occasion. A subsequent restart visibly retains the personal scene and selected Anāhata; Source reaches its heading and canonical coordinate. Native current/full Source acknowledgement after restart remain unproved. Centre binding still rejects valid native world supplements; With Nara displays no prepared identity/centre despite the retained saved profile and selected header; the form read refuses an unidentified Central Action with ENOENT. These are failures, not whole acceptance. The committed successor preserves the complete centre binding, reuses strict decimal/finite-bit sky equality, repairs exact native origin publication and adds real receiving/refusal tests. Its original replay is pending. The locked Mac prevents the next live installed episode. All 185 runtime obligations,14 packets/26 subpackets,A0–A5/full journeys and person-owned H remain unaccepted.",
+    "standing": "The committed a255 candidate now passes the native sky join and acknowledges the complete staged composition: 32 cosmic, 9 personal and 7 branch memberships. The captured cosmic scene renders at rest, including the seven-centre presentation; the separate personal scene/current and complete construction remain unproved. Construction then fails at the existing 20-second recovery acknowledgement deadline; its HTTP response arrives after 27.824 seconds, with status 200 but no retained body. Save, personal-current admission and centre binding are not reached. The embedded native/software-GPU receiving tests pass at their separate component scope. The full native floor completes all 180 history editions and restart/undo/redo/continuation checks, then hits the original 35-minute limit during personal/shared delivery; no completed assertion fails. The canonical Mac candidate is qualified and installed through the existing managed route, preserving all five managed QL owners and the other products. It visibly reopens retained Personal Pratibimba/Anāhata; no first identity input is acknowledged before the observer stops. The dated installed515 baseline retains its acknowledged Save/use and visible personal restart/source arrival, with later personal/Nara/form-reading failures unaccepted. Physical screen access is recovered; native observer timing quality currently interrupts installed episodes before functional input. These are repairs to finish, not a programme hold. All 185 runtime obligations, 14 packets/26 subpackets, A0–A5/full journeys and person-owned H remain unaccepted.",
     "evidence": {
       "installed": {
         "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/installed-515-payload-independent-20261004.json",
@@ -65,34 +65,86 @@
         "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/515-personal-body-production03-independent-source-go-20261004.json",
         "bytes": 5682,
         "sha256": "06c27fa6e2fd2fd3cf2619c05c4eb0b5ba74f17437d06820baf0f0b9f66070e2"
+      },
+      "a255-embedded-independent-evidence-review-20261004.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/a255-embedded-independent-evidence-review-20261004.json",
+        "bytes": 31676,
+        "sha256": "a77862738f9a549df7c8cc9549d70e09e5c24b65bc47a070169dcb463c6ff392"
+      },
+      "actual-a255-first-construction-failure-5.png": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/actual-a255-first-construction-failure-5.png",
+        "bytes": 534166,
+        "sha256": "86347647ee5daf38ec8fc7e25c1611dc1e06c34aadbcdeef5b76f6a7f84ca78e"
+      },
+      "a255_construction_independent": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/a255-construction-expressive-witness-independent-01/manifest.json",
+        "sha256": "abc0a3b57c412ad8159a60a6c5a5ef1f8dd1362ba9d14a107b5033f9c552c07a"
+      },
+      "a255_normal_installation": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1057-actual-a2553f4e-normal-desktop-native-installation.json",
+        "bytes": 7461,
+        "sha256": "dae62b7afdc6a8a2348daaf62013dbba8b6f1b6dc727a9348b45d52068bc8361"
+      },
+      "a255-actual-terminal-official-ci-evidence-20261004.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/a255-actual-terminal-official-ci-evidence-20261004.json",
+        "bytes": 25477,
+        "sha256": "c3a8ce6799546a59804c19f183c281602a13f9f047a63ffc9a9445675d964f2b"
+      },
+      "1080-a255-actual-Mac-source-native-bundle-qualification.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1080-a255-actual-Mac-source-native-bundle-qualification.json",
+        "bytes": 8414,
+        "sha256": "9146ccd51c0f476b944081b514ca56bb0d7599a6e5fd761ab669a742fea0d7bd"
+      },
+      "1082-a255-current-integrated-policy-centres-guard-complete.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1082-a255-current-integrated-policy-centres-guard-complete.json",
+        "bytes": 178305,
+        "sha256": "b256b9daa1a88ab9f977ef554221ee6bb1ea06fa6130d11fb95e1bb97ff167d4"
+      },
+      "1082-a255-current-integrated-policy-centres-01-repaired-normal-opening.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1082-a255-current-integrated-policy-centres-01-repaired-normal-opening.json",
+        "bytes": 1458,
+        "sha256": "614ca19c9b8059961b26de53cf90d00d5596f26247359bc8ae33e5586f0db968"
+      },
+      "1082-a255-current-integrated-policy-centres-02-after-keyboard-entry.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1082-a255-current-integrated-policy-centres-02-after-keyboard-entry.json",
+        "bytes": 7902,
+        "sha256": "fa4ebfe55f63462a800491ee9859233278bc554e166833f344213f3c1a5c5227"
+      },
+      "1082-a255-current-integrated-policy-centres-02-after-keyboard-entry.png": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1082-a255-current-integrated-policy-centres-02-after-keyboard-entry.png",
+        "bytes": 226398,
+        "sha256": "bd8ef8ad6f2e3733c64dcf530ca7012446cd78179f1a569071c805569307c165"
+      },
+      "1081-native-buffer-reuse-independent-source-review-20261004.json": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/1081-native-buffer-reuse-independent-source-review-20261004.json",
+        "bytes": 10967,
+        "sha256": "43edf2deb87621821fa783018e8066c57280f5abb8879a05ec77153330124cbb"
       }
     },
-    "installed_cut": "515d3485ba97070a20cd735e59e4315630bf897a",
-    "installed_image_sha256": "ce00f72790b93cc21551ba8b486a6da5cd43b538d1c6071e9e984b1a64ec54b5",
-    "installed_image_uuid": "F0E80BC7-D80E-3E47-BF54-5139424A61E8",
-    "installed_bundle_sha256": "2d765627f25961670b844295f09803ca5312caf05699b6c23e9629a0110f3a44",
+    "installed_cut": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
+    "installed_image_sha256": "8999fb6fa48af2f04b04e1a07af4757c0e1f08cbf9fd5aaf4008ad557d3ffc36",
+    "installed_image_uuid": "B1ABC94F-A93A-3179-95C7-199AF8C28FFB",
+    "installed_bundle_sha256": "879baa07b70c564369f6d8edc43afacdc820034130cffb72609b4923be8ef223",
     "installed_all_five_ql_cut": "6a81fc441e4dda477f4de3a7ebd59c368cb28f37",
-    "installed_payload_standing": "Independent12app/13managed files, image/UUID and strict deep signature match. QL all five and other products preserved. Payload qualification does not establish loaded frontend, renderer, personal effect, audio or H.",
+    "installed_payload_standing": "Actual managed operation receipt qualifies canonical app12files/image/UUID/signature and preserves managed all-fiveQL6a/other products. Payload installation and bounded visible reopening do not establish identity input, loaded module/native-person consumer or integrated/installed causal acceptance.",
     "actual_installed_encounter": {
-      "episode": 1067,
-      "pointer_save_use_acknowledged": true,
-      "document_before": 10,
-      "document_after_save": 11,
-      "same_occasion_preserved": true,
-      "centre_binding": "refused valid enriched binding",
-      "form_read": "Central owner Action refused: No such file or directory (os error2); exact Action/cause unproved",
-      "with_nara": "actual selected Anāhata route displays Choose your identity/No centre selected/disabled Send; post12 read/release transcript absent",
-      "scope": "Actual normal installed computer interaction and same-GUI native11 readback. No personal live effect/full journey/whole acceptance."
+      "episode": 1082,
+      "source_cut": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
+      "keyboard_world_entry": true,
+      "retained_personal_scene_and_Anahata_visibly_present": true,
+      "identity_input_acknowledged": false,
+      "pointer_save_use_acknowledged": false,
+      "sampling_quality_passed": false,
+      "scope": "Actual normal installed opening/keyboard entry and retained visual scene, native-qualified captures; no current identity/personal body/native current/source/form/Nara/Save causal proof."
     },
     "actual_installed_restart": {
-      "episode": 1069,
-      "retained_person_scene_selection": true,
-      "source_heading": "Anāhata",
-      "source_depth_and_return": "unexecuted after physical screen lock",
+      "episode": 1082,
+      "source_cut": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
+      "retained_person_scene_selection_visibly_present": true,
       "sampling_quality_passed": false,
-      "scope": "Actual normal restart/source arrival; no joined later native-person/current consumer or installed causal pass."
+      "scope": "Bounded visible reopening, without native current/full Source/loaded module or integrated effect acceptance."
     },
-    "physical_boundary": "Mac manually locked; sole installer/CUA owner retains resource custody. Source/hosted work continues; no new approval ceremony.",
+    "physical_boundary": "Physical screen access recovered through the existing CUA owner. Guarded installed replay is interrupted by actual observer timing quality; no unavailable human unlock is currently established.",
     "actual_prior_whole": {
       "source_cut": "149faa3003378550e2031c51d5679be6a4bcde3a",
       "run_id": 37225127672,
@@ -145,10 +197,96 @@
     "current_original_replay": {
       "run_id": 37230294991,
       "source_cut": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
-      "standing": "pending; original workloads/assertions/deadlines retained",
+      "standing": "terminal; original assertions, workloads and deadlines retained",
+      "embedded": {
+        "job_id": 111518364945,
+        "status": "success",
+        "artifact_id": 11313721125,
+        "zip_sha256": "b2496acbb5707e0fcd62afe3c63d9c17f1798d708f3dfc96ae62670587663d05",
+        "scope": "Native/component SwiftShader receiving and disconnected-consumer negatives; no joined integrated personal/installed/hardware/audio acceptance."
+      },
+      "whole": {
+        "job_id": 111521052555,
+        "status": "failure",
+        "artifact_id": 11314512362,
+        "zip_sha256": "4bb29901784a00b1166d74694f2cc7e39633d5018d578ac2a2edaafacb62f724",
+        "preceding_checks": 5,
+        "staged_memberships": {
+          "cosmic": 32,
+          "personal": 9,
+          "branch": 7
+        },
+        "native_material_acknowledged": true,
+        "construction_completed": false,
+        "failure": "expression-recovery host channel did not answer within original 20 seconds",
+        "late_response_seconds": 27.824,
+        "late_http_status": 200,
+        "late_body_retained": false,
+        "cause": "unestablished; no proven byte-limit refusal, reload or exclusive payload-cost cause",
+        "scope": "Actual same-environment full material acknowledgement and rendered first construction; no Save/personal current/centre bind/whole or restart pass."
+      },
+      "native_floor": {
+        "job_id": 111518365067,
+        "status": "failure",
+        "artifact_id": 11314404422,
+        "zip_sha256": "d92308ae9484517cef30b0c4f5c6ed8f5a6a6012446647c956133ed4c67a3134",
+        "failure": "Native kernel regressions timed out after unchanged 35 minutes",
+        "history": {
+          "passed": 15,
+          "failed": 0,
+          "original_ignored": 1,
+          "seconds": 1371.91,
+          "editions": 180
+        },
+        "checkpoint": {
+          "passed": 3,
+          "failed": 0
+        },
+        "active_target": "genuine_activated_world_personal_shared_delivery_preserves_original_episode_and_refuses_cross_context",
+        "scope": "Actual producer/publication and completed native prefix; delivery completion and remaining suffix unproved."
+      },
+      "mac": {
+        "job_id": 111521052496,
+        "status": "success",
+        "artifact_id": 11314333913,
+        "zip_bytes": 477512678,
+        "zip_sha256": "590e96cd5c787c54a7181540b1027e08ac562dfdf86fb9f66b13a6a90ed07298",
+        "all_five_ql_cut": "6a81fc441e4dda477f4de3a7ebd59c368cb28f37",
+        "installed_image_sha256": "8999fb6fa48af2f04b04e1a07af4757c0e1f08cbf9fd5aaf4008ad557d3ffc36",
+        "installed_bundle_sha256": "879baa07b70c564369f6d8edc43afacdc820034130cffb72609b4923be8ef223",
+        "scope": "Canonical source archives/all-five owner/build success and actual managed normal installation; bounded visible reopening, no successor integrated/installed acceptance."
+      },
       "runtime_accepted": false
     },
-    "remaining_first_delivery": "Cosmic/personal/source encounter; complete Return and held departure; fixed-nine-driver positive/live-zero at same mixture/damping; two controlled persons; Library/Save/reopen/restart; fresh selected-basis Nara/Epii answer/Keep/full Read; managed independent A semantic/B expressive/C causal proof."
+    "remaining_first_delivery": "Cosmic/personal/source encounter; complete Return and held departure; fixed-nine-driver positive/live-zero at same mixture/damping; two controlled persons; Library/Save/reopen/restart; fresh selected-basis Nara/Epii answer/Keep/full Read; managed independent A semantic/B expressive/C causal proof.",
+    "dated_installed_515_payload": {
+      "installed_cut": "515d3485ba97070a20cd735e59e4315630bf897a",
+      "installed_image_sha256": "ce00f72790b93cc21551ba8b486a6da5cd43b538d1c6071e9e984b1a64ec54b5",
+      "installed_image_uuid": "F0E80BC7-D80E-3E47-BF54-5139424A61E8",
+      "installed_bundle_sha256": "2d765627f25961670b844295f09803ca5312caf05699b6c23e9629a0110f3a44",
+      "installed_payload_standing": "Independent12app/13managed files, image/UUID and strict deep signature match. QL all five and other products preserved. Payload qualification does not establish loaded frontend, renderer, personal effect, audio or H."
+    },
+    "dated_installed_515_encounter": {
+      "episode": 1067,
+      "pointer_save_use_acknowledged": true,
+      "document_before": 10,
+      "document_after_save": 11,
+      "same_occasion_preserved": true,
+      "centre_binding": "refused valid enriched binding",
+      "form_read": "Central owner Action refused: No such file or directory (os error2); exact Action/cause unproved",
+      "with_nara": "actual selected Anāhata route displays Choose your identity/No centre selected/disabled Send; post12 read/release transcript absent",
+      "scope": "Actual normal installed computer interaction and same-GUI native11 readback. No personal live effect/full journey/whole acceptance.",
+      "source_cut": "515d3485ba97070a20cd735e59e4315630bf897a"
+    },
+    "dated_installed_515_restart": {
+      "episode": 1069,
+      "retained_person_scene_selection": true,
+      "source_heading": "Anāhata",
+      "source_depth_and_return": "unexecuted after physical screen lock",
+      "sampling_quality_passed": false,
+      "scope": "Actual normal restart/source arrival; no joined later native-person/current consumer or installed causal pass.",
+      "source_cut": "515d3485ba97070a20cd735e59e4315630bf897a"
+    }
   },
   "schema": "epi.world-recovery-plan/v1",
   "created_at": "2026-09-30T16:28:17.956536+00:00",
@@ -24486,7 +24624,7 @@
         "QL Bimba/source registry owner; existing M ledger owner"
       ],
       "scope": "whole source prerequisite",
-      "standing": "Actual 149 first construction fails only five equivalent sky number spellings; strict existing decimal/finite-bit comparison now reused. Other21 source joins and all source numerical laws/discrepancies remain. Original successor replay pending.",
+      "standing": "Actual a255 native construction accepts the strict same-sky join and full staged source-derived world. Source laws/M3 discrepancies unchanged; semantic admission does not prove completed construction or runtime parity.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -25312,7 +25450,7 @@
         "O:I Expression profile/material/Scene owner; QL exact source owner"
       ],
       "scope": "first coherent native composition",
-      "standing": "Actual 149 native producer supplies21distinct pitches/full retained workloads, then publication refuses two undeclared genuine origin checkpoints. Exact783member repair passes11 checks against independently qualified actual captured corpus. Full native suffix and installed continuation remain unaccepted.",
+      "standing": "Actual full 180-edition native history prefix passes 15 checks plus 3 checkpoint checks, but original35min native floor expires during actual personal/shared delivery. Actual first-construction recovery response arrives after original20s with body absent. Native diagnosis/repair and original replay required; no cap/deadline widening.",
       "files": [
         {
           "repository": "O-I",
@@ -27156,7 +27294,7 @@
         "QL protected Nara identity/current owner; O:I personal-body/scene-reception owner"
       ],
       "scope": "personal first delivery and exact hub receiving basis",
-      "standing": "Installed 515 Save/use admits controlledA at same occasion; centre binding refuses valid native producer overlays. Successor preserves exact coordinate+person/source/current world supplements and rejects foreign/undeclared bindings. Native same-world proof and fixed-nine-driver/two-person installed effects remain pending; prior component orientation proof stays separate.",
+      "standing": "Actual hosted staged native world acknowledges32cosmic/9personal/7branch memberships; captured cosmic scene renders at rest including seven-centre presentation. Separate personal scene/current remains unproved. Recovery fails before private-current/Save/real centre-binding gates; fixed-nine-driver positive/live-zero/two-person integrated and installed effects remain unproved.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -27873,7 +28011,7 @@
         "O:I production launch/Library/save and selected-context owner; existing Nara/Epii owner"
       ],
       "scope": "production encounter/lifecycle",
-      "standing": "Installed 515 actual restart retains controlledperson/Anāhata and Source arrival is exact; With Nara displays no prepared identity/centre despite the retained saved profile and selected header and form read reports ENOENT. Bounded real read/release witnesses and exact supplied Central Action identification are integrated. Actual cause/native repair/replay plus fresh completed answer/Keep/full Read remain open.",
+      "standing": "Normal installed515 retains actual Save/use and visible personal restart/source arrival; complete native restart/current/source/selected-basis Nara/form/Keep remain outstanding. a255 tests preserve exact original encounters; current recovery failure prevents their receiving gates.",
       "files": [
         {
           "repository": "O-I",
@@ -28820,7 +28958,7 @@
         "existing Mac managed-install owner; lead integration owner; independent Omarchy replay/reviewer"
       ],
       "scope": "first delivery integration gate",
-      "standing": "Managed 515 remains normal installed view with independent12app/13managed/image/UUID/signature qualification and actual1067Save/1069restart/source positives. LockedMac blocks fresh live episode; coherent successor is source committed with original hosted/Mac replay pending. Installedwhole A/B/C/audio/H remain unaccepted.",
+      "standing": "Canonical a255 is qualified and installed through existing managed route, preserving all-fiveQL6a and other products. Actual reopening shows retained personal world/Anahata, but observer stops before first identity input. Physical access recovered; observer timing quality remains under native repair. No successor installed A/B/C/audio/whole/H accepted.",
       "files": [
         {
           "repository": "O-I",
@@ -30809,7 +30947,7 @@
         "lead whole-system integration owner; existing documentation/matrix and ticket owners"
       ],
       "scope": "programme recovery/accountability",
-      "standing": "Existing programme/currentHumanReturn amended to actual515 installed positives/failures, actual 149 constructor/publisher failures and exact coherent successor. All14/26/185 obligations and A0–A5/full journeys retained; no source count or lower-level green promotes whole acceptance.",
+      "standing": "Existing source programme and curated Human Return amended to actual a255 staged-world/rendered witness, recovery failure, completed native-history prefix plus floor timeout, Mac build and recovered physical access. All14/26/185 and A0–A5/full journeys retained.",
       "files": [
         {
           "repository": "QL-MEF",
@@ -41566,7 +41704,7 @@
       ],
       "current_next_operation": "Replay full original performance/continuation and native-browser/installed caption/Save; preserve selected draft, full sibling Library, personal admission, exact CAS and restart basis.",
       "current_checkpoint_ref": "#/latest_execution_checkpoint",
-      "current_standing": "Actual 149 native producer supplies21distinct pitches/full retained workloads, then publication refuses two undeclared genuine origin checkpoints. Exact783member repair passes11 checks against independently qualified actual captured corpus. Full native suffix and installed continuation remain unaccepted."
+      "current_standing": "Actual full 180-edition native history prefix passes 15 checks plus 3 checkpoint checks, but original35min native floor expires during actual personal/shared delivery. Actual first-construction recovery response arrives after original20s with body absent. Native diagnosis/repair and original replay required; no cap/deadline widening."
     },
     {
       "id": "R2-PROFILE-CAPACITY",
@@ -41905,7 +42043,7 @@
       ],
       "current_next_operation": "Repair concealed lifecycle and actual savedpersonal restoration/acknowledgement cause; replay original admitted selected-basis freshNara/Epii question throughanswer/Keep/full Read and restart.",
       "current_checkpoint_ref": "#/latest_execution_checkpoint",
-      "current_standing": "Installed 515 actual restart retains controlledperson/Anāhata and Source arrival is exact; With Nara displays no prepared identity/centre despite the retained saved profile and selected header and form read reports ENOENT. Bounded real read/release witnesses and exact supplied Central Action identification are integrated. Actual cause/native repair/replay plus fresh completed answer/Keep/full Read remain open."
+      "current_standing": "Normal installed515 retains actual Save/use and visible personal restart/source arrival; complete native restart/current/source/selected-basis Nara/form/Keep remain outstanding. a255 tests preserve exact original encounters; current recovery failure prevents their receiving gates."
     },
     {
       "id": "A4-DAYFLOW",
@@ -43730,7 +43868,7 @@
     "R5-WORLD-SELECTION"
   ],
   "fresh_execution": {
-    "updated_at": "2026-10-04T19:59:35Z",
+    "updated_at": "2026-10-04T21:10:14Z",
     "prior_recovery_map_sha256": "ae5f7f2618f86ba11671ee4449c8b9481ecc8f31b23795614a8d5ec5f2536fd0",
     "responsible_lead": "codex:01a0f80e-7662-75f1-bd26-5522aa6217b3",
     "source_challenge": "FRESH-INDEPENDENT-ORIGINAL-SOURCE-CHALLENGE",
@@ -46900,7 +47038,7 @@
         "standing": "Dated committed-Ebc source checkpoint; preserved original evidence, superseded current face only."
       }
     ],
-    "current_face_precedence": "Currentd2 source only; actual384 native/whole failures and independently byte-qualified Mac384 candidate are distinct. Earlier packet/source/history preserved, installed/default-body/H pending."
+    "current_face_precedence": "Actual a255 terminal scoped native/material/cosmic-scene witness and managed normal installation precede dated earlier standing; recovery20s and native-floor35min remain red, observer timing interrupts installed original input, integrated/installed A/B/C/H unaccepted. Earlier checkpoint faces remain dated evidence."
   },
   "fresh_branch_reconciliation": {
     "updated_at": "2026-10-02T00:11:11.729255+00:00",
@@ -47717,6 +47855,157 @@
         "f8989dfcf829087b6bf01b20c78f1752efc2dc3b"
       ],
       "parent_ten_file_source_review": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/successor-ten-file-independent-manifest-20261004.json"
+    },
+    {
+      "schema": "epi.current-source-and-receiving-checkpoint/v1",
+      "at_utc": "2026-10-04T19:59:35Z",
+      "source_head": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
+      "ordinary_and_native_original_replay": "https://github.com/EpiLogos/O-I/actions/runs/37230294991",
+      "standing": "The installed 515 world now receives a real pointer Save/use acknowledgement for the same controlled person and occasion. A subsequent restart visibly retains the personal scene and selected Anāhata; Source reaches its heading and canonical coordinate. Native current/full Source acknowledgement after restart remain unproved. Centre binding still rejects valid native world supplements; With Nara displays no prepared identity/centre despite the retained saved profile and selected header; the form read refuses an unidentified Central Action with ENOENT. These are failures, not whole acceptance. The committed successor preserves the complete centre binding, reuses strict decimal/finite-bit sky equality, repairs exact native origin publication and adds real receiving/refusal tests. Its original replay is pending. The locked Mac prevents the next live installed episode. All 185 runtime obligations,14 packets/26 subpackets,A0–A5/full journeys and person-owned H remain unaccepted.",
+      "evidence": {
+        "installed": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/installed-515-payload-independent-20261004.json",
+          "bytes": 7403,
+          "sha256": "a516060601ff548d2f3409c49a16a4f1b15920ccfd019adbe0feb2a8a52684f4"
+        },
+        "save": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1067-actual515-controlled-A-policy-rebind-05-pointer-save-acknowledged-A.json",
+          "bytes": 47430,
+          "sha256": "a4a84f1dea0ca80d5284090ebcde31798b01988aedcd87d06db2f84c277055bb"
+        },
+        "refusals": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1067-actual-installed-policy-save-native-read-and-owner-refusals.json",
+          "bytes": 8167,
+          "sha256": "ed4f8030e7613ab4a42f5659ee30dcb9f39766ee28367d972e55e8190f838443"
+        },
+        "source": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1069-actual515-controls-source-lifecycle-03-Anahata-source-arrival.json",
+          "bytes": 54657,
+          "sha256": "0b8f5fe5cdd8209ac8534b00c1dd9a8ebf4cd728ae9c50736335709e78fee22f"
+        },
+        "restart": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1069-actual515-controls-source-lifecycle-02-reopened-retained-profile-and-scene.json",
+          "bytes": 47568,
+          "sha256": "3b057a901448e8312d099aa16ec8ce1f08cc7a85e494c372fa4a6ab53361356a"
+        },
+        "guard": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1069-actual515-controls-source-lifecycle-guard-complete.json",
+          "bytes": 184837,
+          "sha256": "b2d58af01ab77567b5b74048db97cf419611b303a54a7e6ee209b4b7298a0b3f"
+        },
+        "native_packets": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/36daa87b8398fc007884ec58d4090cdacad2530a3af35ae9740360b73d2d6f53/T/evidence/1072-controlled-A-exact-installed-native-receiving-packets.json",
+          "bytes": 5965,
+          "sha256": "ff2207544b8916eb3fb78934762e710265e9fee904a41ade216ae0a9db45184b"
+        },
+        "sky_review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/149-world-sky-two-file-independent-source-go-20261004.json",
+          "bytes": 4696,
+          "sha256": "614052df58d02d3ebcabdffb755e74cb5e14c96f5f58f1cb525931986923ac1d"
+        },
+        "publisher_review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/149-native-reservation-origins-actual-replay-independent-addendum-20261004.json",
+          "bytes": 6337,
+          "sha256": "8104af3912e0b8196c9229e69a17577507e4d6b2c8a5f9058776bfad67de87b2"
+        },
+        "flow_review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/149-flow-refusal-action-three-file-independent-source-go-20261004.json",
+          "bytes": 4743,
+          "sha256": "24356096731adc30d1e554d88b498500589a23e6b92a14f413219d9ecc2b1f29"
+        },
+        "nara_review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/1067-nara-preparation-witness02-independent-source-go-20261004.json",
+          "bytes": 4908,
+          "sha256": "7877778210980b87cbb252b6b296f8c607f1f1b64f55ecb0ad20f354c52e04f1"
+        },
+        "centre_review": {
+          "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/515-personal-body-production03-independent-source-go-20261004.json",
+          "bytes": 5682,
+          "sha256": "06c27fa6e2fd2fd3cf2619c05c4eb0b5ba74f17437d06820baf0f0b9f66070e2"
+        }
+      },
+      "installed_cut": "515d3485ba97070a20cd735e59e4315630bf897a",
+      "installed_image_sha256": "ce00f72790b93cc21551ba8b486a6da5cd43b538d1c6071e9e984b1a64ec54b5",
+      "installed_image_uuid": "F0E80BC7-D80E-3E47-BF54-5139424A61E8",
+      "installed_bundle_sha256": "2d765627f25961670b844295f09803ca5312caf05699b6c23e9629a0110f3a44",
+      "installed_all_five_ql_cut": "6a81fc441e4dda477f4de3a7ebd59c368cb28f37",
+      "installed_payload_standing": "Independent12app/13managed files, image/UUID and strict deep signature match. QL all five and other products preserved. Payload qualification does not establish loaded frontend, renderer, personal effect, audio or H.",
+      "actual_installed_encounter": {
+        "episode": 1067,
+        "pointer_save_use_acknowledged": true,
+        "document_before": 10,
+        "document_after_save": 11,
+        "same_occasion_preserved": true,
+        "centre_binding": "refused valid enriched binding",
+        "form_read": "Central owner Action refused: No such file or directory (os error2); exact Action/cause unproved",
+        "with_nara": "actual selected Anāhata route displays Choose your identity/No centre selected/disabled Send; post12 read/release transcript absent",
+        "scope": "Actual normal installed computer interaction and same-GUI native11 readback. No personal live effect/full journey/whole acceptance."
+      },
+      "actual_installed_restart": {
+        "episode": 1069,
+        "retained_person_scene_selection": true,
+        "source_heading": "Anāhata",
+        "source_depth_and_return": "unexecuted after physical screen lock",
+        "sampling_quality_passed": false,
+        "scope": "Actual normal restart/source arrival; no joined later native-person/current consumer or installed causal pass."
+      },
+      "physical_boundary": "Mac manually locked; sole installer/CUA owner retains resource custody. Source/hosted work continues; no new approval ceremony.",
+      "actual_prior_whole": {
+        "source_cut": "149faa3003378550e2031c51d5679be6a4bcde3a",
+        "run_id": 37225127672,
+        "job_id": 111507072097,
+        "artifact_id": 11312585791,
+        "zip_bytes": 293347798,
+        "zip_sha256": "bb87d474bac83b6a351ae1a6a88bcb0244769772429151770676ba1316fb3d43",
+        "preceding_checks": 5,
+        "failed_join": "sky",
+        "differences": 5,
+        "difference_class": "number_spelling_only",
+        "exact_decimal_and_finite_binary64_equal": true,
+        "other_join_failures": 0,
+        "pairs_examined": 207,
+        "walk_complete": true,
+        "scope": "Genuine first construction refuses; sky operands not retained. No completed world/reset/restart receiving proof."
+      },
+      "actual_prior_native_producer": {
+        "source_cut": "149faa3003378550e2031c51d5679be6a4bcde3a",
+        "qualified_ql_test_cut": "cd6ec911261ca1295652dd77910b049d616acc15",
+        "job_id": 111503104437,
+        "producer_ready_seconds": 620.714,
+        "producer_commands_passed": 12,
+        "source_workload_distinct_pitches": 21,
+        "publication": "failed solely because783actual members included two genuine origin checkpoints absent from781declared set",
+        "repair_replay": {
+          "passed": 11,
+          "failed": 0,
+          "errors": 0,
+          "seconds": 6.123,
+          "scope": "Path-only relocated actual native corpus; all783fixture bytes qualified independently. Hosted96c3 receipt and local6c10 receipt are different."
+        },
+        "scope": "Native producer and exact captured publication replay; original complete native suffix not run on149."
+      },
+      "actual_prior_embedded": {
+        "source_cut": "149faa3003378550e2031c51d5679be6a4bcde3a",
+        "job_id": 111503104570,
+        "status": "success",
+        "scope": "Actual original nativeManager/browser/software GPU receiving and disconnected consumer gates; not installedMac/personalwhole/audio/H."
+      },
+      "actual_prior_mac_candidate": {
+        "source_cut": "149faa3003378550e2031c51d5679be6a4bcde3a",
+        "job_id": 111507072082,
+        "status": "success",
+        "scope": "Canonical Mac build metadata; no adoption or installed whole proof."
+      },
+      "runtime_accepted": false,
+      "installed_whole_accepted": false,
+      "H": null,
+      "current_original_replay": {
+        "run_id": 37230294991,
+        "source_cut": "a2553f4e3db545175b0b55d48fec5e7fa2f2faac",
+        "standing": "pending; original workloads/assertions/deadlines retained",
+        "runtime_accepted": false
+      },
+      "remaining_first_delivery": "Cosmic/personal/source encounter; complete Return and held departure; fixed-nine-driver positive/live-zero at same mixture/damping; two controlled persons; Library/Save/reopen/restart; fresh selected-basis Nara/Epii answer/Keep/full Read; managed independent A semantic/B expressive/C causal proof."
     }
   ]
 }
