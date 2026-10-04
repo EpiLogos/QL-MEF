@@ -4,6 +4,7 @@
 //! native solver/replay; this boundary independently verifies the genuine
 //! PreparedSourceBody, authored geometry, every force value and source epoch.
 use super::*;
+use crate::continuous::performance_receiving::NativePerformanceReceivingSource;
 
 pub(crate) const CONTACT_REPLAY_REQUEST: &str = "ql.native-scene-contact-replay-request/v1";
 const SOURCE: &str = "ql.native-scene-contact-source/v1";

@@ -134,7 +134,7 @@ inline Json verify_replay(J *request) {
       management_checkpoint_transport::read_checkpoint_wire(decoded.get());
   const auto &audio = saved->native_pair.audio;
   ql::require(
-      saved->session == session && audio.determination == determination &&
+      saved->session == session && Engine::same_prepared_determination(audio.determination, determination) &&
           audio.cursor == saved->native_pair.physical.samples_elapsed &&
           saved->transport_epoch >= previous_epoch &&
           (saved->transport_epoch != previous_epoch ||

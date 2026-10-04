@@ -547,8 +547,7 @@ public:
       // The sole actual normal feedback is retained before further allocation.
       // Root's Management dependency reserves BOTH vectors before any drain.
       original_pulse_ = control.owner_->pulse();
-      control.timing_.committed(*original_pulse_,
-                                control.owner_->transport_epoch());
+      control.commit_private_channel_pulse(*original_pulse_);
       bool accepted = restored;
       if (restored && !NativeStoppedSourceReadoption::complete_pulse(
                           *control.owner_, *original_pulse_, *retained_)) {

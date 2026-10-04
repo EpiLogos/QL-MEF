@@ -330,6 +330,14 @@ struct BodyStanding {
 class Control {
   friend class ql::performance::scene_contact_transport::Channel;
   friend class ql::performance::selected_source_transport::Channel;
+  // Only the already-friended private native channels can record their
+  // actual same-owner admission and pulse. Timing authority stays in Control.
+  void retain_private_channel_score(const NativeScoreAdmission &admission) {
+    timing_.score(admission);
+  }
+  void commit_private_channel_pulse(const ManagementPulse &pulse) {
+    timing_.committed(pulse, owner_->transport_epoch());
+  }
   Json serialize_pulse(const std::string &op, bool accepted,
                        const std::string &reason, Json payload,
                        const ManagementPulse &pulse) {
@@ -347,9 +355,6 @@ class Control {
     put_input_history(out.get(), pulse);
     wire::put(out.get(), "recording",
               wire::recording(pulse.recording).release());
-    // Original 70301 same-pulse capture survives the Contact serializer join.
-    wire::put(out.get(), "native_capture",
-              native_capture_transport::batch(*owner_, pulse).release());
     auto registry = std::make_unique<NativeResidentRegistry>();
     if (owner_->write_resident_registry(pulse, *registry)) {
       wire::put(out.get(), "resident_consumers",
@@ -362,6 +367,8 @@ class Control {
       wire::text(out.get(), "resident_registry_reason",
                  "actual native same-pulse registration unavailable");
     }
+    wire::put(out.get(), "native_capture",
+              native_capture_transport::batch(*owner_, pulse).release());
     wire::u64(out.get(), "last_native_touch", owner_->last_native_touch());
     wire::u64(out.get(), "last_native_member", owner_->last_native_member());
     wire::flag(out.get(), "recording_available", owner_->recording_available());
@@ -813,6 +820,13 @@ public:
                                     &original_saved_acoustic);
       if (has_original_saved_acoustic)
         allowed.insert("original_saved_acoustic");
+      J *authored_source_transition = nullptr;
+      const bool has_authored_source_transition =
+          op == "receiving-transport-replace" &&
+          json_object_object_get_ex(request, "authored_source_transition",
+                                    &authored_source_transition);
+      if (has_authored_source_transition)
+        allowed.insert("authored_source_transition");
       require(json_object_object_length(request) == int(allowed.size()),
               "missing or unknown native performance fields");
       json_object_object_foreach(request, name, value) {
@@ -1040,6 +1054,9 @@ public:
                       ql::physical_wire::exact(
                           packet::field(before_config, "revision")),
               "native receiver change lost birth or original revision order");
+          acoustic_wire::validate_receiver_replacement_source(
+              original_packet, candidate_packet, prepared_source_.get(),
+              authored_source_transition, cursor);
           // The actual dated receiver owner appends this effective source
           // epoch while retaining preceding retarded intervals and the ring.
           // The same private source/Act caller qualifies the complete AFTER

@@ -32,7 +32,7 @@ class Channel {
              const std::string &reason, Json payload) {
     // Exactly ONE actual same-owner pulse supplies application/input custody.
     auto pulse = control.owner_->pulse();
-    control.timing_.committed(*pulse, control.owner_->transport_epoch());
+    control.commit_private_channel_pulse(*pulse);
     return control.serialize_pulse(operation, accepted, reason,
                                    std::move(payload), *pulse);
   }
@@ -192,7 +192,7 @@ class Channel {
     // refusal. The serial native queue counter is refreshed below; no performed
     // Contact application is fabricated from admission.
     auto pulse = control.owner_->pulse();
-    control.timing_.committed(*pulse, control.owner_->transport_epoch());
+    control.commit_private_channel_pulse(*pulse);
     auto payload = wire::object();
     wire::put(payload.get(), "contact_source",
               copy(pending_->record.get()).release());
@@ -272,7 +272,7 @@ class Channel {
     if (last_queued_) {
       wire::put(actual_payload, "score_admission",
                 mt::score_admission(admitted).release());
-      control.timing_.score(admitted);
+      control.retain_private_channel_score(admitted);
       pending_.reset();
     }
     return out;

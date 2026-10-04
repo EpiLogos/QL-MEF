@@ -6,6 +6,7 @@ use super::contact_history::{
 use super::retained_evidence::{contact_checkpoint_evidence, encoded_bound, exact_value};
 use super::*;
 use crate::continuous::performance_act_bridge::NativeActSourceLease;
+use crate::continuous::performance_receiving::NativePerformanceReceivingSource;
 use serde::{Serialize, Serializer, ser::SerializeSeq};
 
 const SOURCE_ASSET_LIMIT: usize = 8 * 1024 * 1024;

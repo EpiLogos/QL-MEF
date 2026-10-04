@@ -2,6 +2,7 @@
 //! owner is activated. Full source lineage and original numerical wire remain
 //! distinct; retained JSON cannot mint an opening, clock or receiving grant.
 use super::*;
+use crate::continuous::coupled::CoupledBasis;
 use crate::continuous::performance::contact_history::{
     ColdNativeContactCorpus, PreparedColdContactSource, QualifiedContactCheckpoint,
 };

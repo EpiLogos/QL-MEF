@@ -522,4 +522,141 @@ fn actual_existing_field_host_emits_final_activated_source_artifacts() {
             "0"
         );
     }
+    emit_three_register_world_workload(&worker, &output);
+}
+
+// The original 36-cell World/Personal/Shared receivers above stay unchanged.
+// A separate actual World owner selects three native registers for the
+// mandatory retained Source workload; no pitch is copied or manufactured.
+fn emit_three_register_world_workload(worker: &std::path::Path, output: &std::path::Path) {
+    use ql_mef::continuous::host::{FieldHost, HOST_REQUEST, HostOperation, HostRequest};
+    use ql_mef::continuous::scene_field::SceneConfig;
+    use std::{collections::BTreeSet, fs::OpenOptions, io::Write, time::Duration};
+    let (current, _, world_source) = true_world();
+    let request: ql_mef::scene::WorldRequest =
+        serde_json::from_value(world_source.source_inputs().unwrap()["world_request"].clone())
+            .unwrap();
+    let actual = ql_mef::scene::world(request).unwrap();
+    let scene: SceneConfig = serde_json::from_value(actual["binding"]["host"].clone()).unwrap();
+    let instance = scene.instance_ref.clone();
+    let mut host = FieldHost::open_scene(worker, scene, Duration::from_secs(20)).unwrap();
+    host.bind_performance_receiving_source(world_source)
+        .unwrap();
+    let ready = host.ready();
+    let (_, mut config) = source::config(true);
+    config.columns = 18;
+    config.controls.expected_m3_generation = current.m3["identity"]["profile_generation"]
+        .as_u64()
+        .unwrap();
+    let request = HostRequest {
+        schema: HOST_REQUEST.into(),
+        instance_ref: instance,
+        event_ref: ready["field"]["event_ref"].as_str().unwrap().into(),
+        subject_ref: ready["field"]["subject_ref"].as_str().unwrap().into(),
+        request_id: "1".into(),
+        expected_generation: ready["field"]["generation"].as_str().unwrap().into(),
+        expected_samples_elapsed: ready["field"]["samples_elapsed"].as_str().unwrap().into(),
+        command: HostOperation::PerformancePrepare {
+            config: Box::new(config),
+        },
+    };
+    let reply = host.execute(request);
+    assert_eq!(reply["status"], "ok", "{reply}");
+    assert_eq!(reply["performance"]["accepted"], true, "{reply}");
+    let artifact = host.retained_performance_source_artifact(0).unwrap();
+    let assets = &artifact["source_assets"];
+    assert_eq!(assets["configuration"]["columns"], 18);
+    assert_eq!(assets["configuration"]["base_register"], 0);
+    assert_eq!(assets["configuration"]["transpose"], 0);
+    assert_eq!(assets["source_context"]["context"]["kind"], "world");
+    assert_eq!(assets["source_context"]["context"]["private"], false);
+    assert_eq!(
+        assets["consumer_roles"],
+        artifact["native_reading"]["consumer_roles"]
+    );
+    assert_eq!(
+        assets["current_receiving"]["source_inputs"],
+        assets["receiving_source_inputs"]
+    );
+    assert_eq!(
+        assets["current_receiving"]["source_context"],
+        assets["source_context"]
+    );
+    assert_eq!(
+        assets["current_receiving"]["receiving_definition"],
+        assets["receiving_definition"]
+    );
+    assert_eq!(
+        assets["current_receiving"]["native_admission"]["native_basis"],
+        artifact["native_basis"]
+    );
+    let keys = artifact["native_reading"]["keys"].as_array().unwrap();
+    assert_eq!(
+        keys.len(),
+        108,
+        "actual worker must admit the selected three-register catalog"
+    );
+    let available: Vec<_> = keys.iter().filter(|key| key["available"] == true).collect();
+    assert_eq!(
+        available.len(),
+        63,
+        "three repeated physical rows of21 available native addresses"
+    );
+    let pitches = artifact["pitches"].as_array().unwrap();
+    assert_eq!(
+        pitches.len(),
+        21,
+        "three actual registers of seven available source keys; no missing-key filler"
+    );
+    let addresses: BTreeSet<_> = pitches
+        .iter()
+        .map(|pitch| {
+            (
+                pitch["key"].as_u64().unwrap(),
+                pitch["register"].as_i64().unwrap(),
+            )
+        })
+        .collect();
+    assert_eq!(
+        addresses.len(),
+        21,
+        "no duplicated pitch target can count as a register"
+    );
+    for register in [0, 1, 2] {
+        assert_eq!(addresses.iter().filter(|(_, r)| *r == register).count(), 7);
+    }
+    for pitch in pitches {
+        let hertz = pitch["hertz"].as_f64().unwrap();
+        assert!(hertz.is_finite() && hertz > 0.0);
+        let face = if pitch["source_prime"].as_bool().unwrap() {
+            1
+        } else {
+            0
+        };
+        assert!(
+            available.iter().any(|key| {
+                key["key"] == pitch["key"]
+                    && key["register_octave"] == pitch["register"]
+                    && key["hertz"].as_f64() == Some(hertz)
+                    && key["coordinate"] == pitch["source_coordinate"]
+                    && key["face"].as_u64() == Some(face)
+            }),
+            "retained pitch must match a genuinely available worker target: {pitch}"
+        );
+    }
+    assert_eq!(artifact["native_reading"]["samples_elapsed"], "0");
+    assert_eq!(
+        artifact["native_reading"]["physical"]["samples_elapsed"],
+        "0"
+    );
+    let bytes = serde_json::to_vec(&artifact).unwrap();
+    assert!(bytes.len() < 16 * 1024 * 1024);
+    let mut file = OpenOptions::new()
+        .create_new(true)
+        .write(true)
+        .open(output.join("world-workload.source-performance.json"))
+        .unwrap();
+    file.write_all(&bytes).unwrap();
+    file.write_all(b"\n").unwrap();
+    file.sync_all().unwrap();
 }
