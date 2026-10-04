@@ -2,6 +2,10 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+#[cfg(test)]
+extern crate self as ql_mef;
+
+pub mod agent_event;
 pub mod anima_expression_profile;
 pub mod aw1_self_reference;
 pub mod aw1_world;
@@ -25,10 +29,12 @@ pub mod m1_engine;
 pub mod m2;
 pub mod m2_condition;
 pub mod m2_engine;
+pub mod m2_relation_plan;
 pub mod m2_sky;
 pub mod m2_vimarsha;
 pub mod m3_engine;
 pub mod m3_inscription;
+pub mod m3_material_fold;
 pub mod m3_source;
 pub mod m3_state;
 pub mod m_ledger;
@@ -37,8 +43,29 @@ pub mod m_tree;
 mod matheme;
 mod music;
 mod music_completion;
+pub mod music_determination;
+pub mod musical_performance_return;
+pub mod musical_performance_score;
+pub mod musical_performance_source_score;
 pub mod nara;
+pub mod performance_audio;
+pub mod performance_management;
+pub mod performance_observer;
+pub mod performance_receiving_admission;
+pub mod performance_source_context;
+pub mod performance_source_keys;
+pub mod physical_body;
 mod pole_state;
+pub mod procedural_composition;
+pub mod procedural_conduct;
+pub mod procedural_consumers;
+pub mod procedural_control;
+pub mod procedural_effective;
+pub mod procedural_intervention;
+pub mod procedural_manifestation;
+pub mod procedural_retention;
+pub mod procedural_source;
+pub mod procedural_timing;
 pub mod property;
 mod provenance;
 pub mod qv;
@@ -48,11 +75,14 @@ mod registry;
 mod ruling;
 pub mod scene;
 pub mod scene_sky;
+pub mod source_form_body;
+pub mod source_key_determination;
 pub mod spanda_field;
 mod sublens;
 mod templateure;
 mod vak;
 pub mod vak_composition;
+pub mod vak_composition_wire;
 mod vak_oi;
 pub mod vak_performance;
 pub mod vak_profile;
@@ -166,3 +196,7 @@ impl MCoordinate {
         self.face.ql_face()
     }
 }
+
+pub mod nara_performance_receiving;
+
+pub mod m2_tuning_sources;

@@ -1,0 +1,61 @@
+//! Complete actual Rust N/A/P admissions drive the one current native callback
+//! and paired checkpoint. Discovery uses the existing bounded native floor.
+#[path = "support/native_fixture_carrier.rs"]
+mod carrier;
+#[path = "support/performance_route_management_fixture.rs"]
+mod producer;
+include!("support/native_fixture_payload_census.rs");
+use std::io::Write;
+use std::process::{Command, Stdio};
+#[test]
+#[ignore = "requires the matching native floor's performance_route_management_wire binary"]
+fn actual_current_source_nine_programmes_janko_allroute_hold_checkpoint() {
+    let binary = std::env::var("QL_NATIVE_WIRE_TEST").expect("native floor binary");
+    let (packet, retained) =
+        producer::packet_with_return().expect("actual same native N/A/P and Return producer");
+    if let Some(directory) = std::env::var_os("QL_NATIVE_PREARM_RECEIPT_DIR") {
+        let directory = std::path::PathBuf::from(directory);
+        assert!(
+            directory.is_dir(),
+            "existing bounded native artifact custody required"
+        );
+        let path = directory.join("stopped-force.source-return.json");
+        let bytes = serde_json::to_vec(&retained).unwrap();
+        assert!(bytes.len() <= 8 * 1024 * 1024);
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+        file.write_all(&bytes).unwrap();
+        file.sync_all().unwrap();
+    }
+    let replayed = producer::packet().expect("independent exact native packet replay");
+    assert_eq!(
+        packet, replayed,
+        "Return export must not change the original native carrier"
+    );
+    report_original_native_fixture_sizes(&packet);
+    let encoded = carrier::encode(&packet);
+    carrier::detecting_trials(&packet, &encoded);
+    let bytes = serde_json::to_vec(&encoded).unwrap();
+    assert!(bytes.len() < 8 * 1024 * 1024);
+    let mut child = Command::new(binary)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("current native nine-program callback test");
+    child.stdin.take().unwrap().write_all(&bytes).unwrap();
+    let result = child.wait_with_output().unwrap();
+    eprintln!(
+        "actual_native_consumer_stdout={}",
+        String::from_utf8_lossy(&result.stdout)
+    );
+    assert!(
+        result.status.success(),
+        "native consumer failed: {}\n{}",
+        String::from_utf8_lossy(&result.stdout),
+        String::from_utf8_lossy(&result.stderr)
+    );
+}

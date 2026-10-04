@@ -1,11 +1,15 @@
 // Bounded newline-JSON management worker over the real C/C++ owner. JSON work
 // stays outside render_audio. Native audio hosts call the typed library directly.
 #include <ql/continuous_field.hpp>
+#include <ql/performance_management_wire.hpp>
 #include <json-c/json.h>
 #include <charconv>
 #include <iostream>
 #include <memory>
 #include <set>
+#if defined(__APPLE__)
+#include <ql/worker_malloc_observation.hpp>
+#endif
 
 using J = json_object;
 using Json = std::unique_ptr<J, decltype(&json_object_put)>;
@@ -133,15 +137,42 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
     }
     put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale)); return o;
 }
+#if defined(__APPLE__)
+// Declared before request temporaries: continue and exceptions also unwind the
+// JSON/tokener/audio scope before this native allocation observation runs.
+class RequestMallocScope {
+    ql::worker_diagnostic::RequestMallocObserver &observer_;
+    const std::unique_ptr<ql::ContinuousField> &field_;
+    const ql::performance::management_transport::Control &performance_;
+    const std::string &line_;
+    const bool &committed_;
+public:
+    ql::worker_diagnostic::RequestMallocFacts facts{};
+    RequestMallocScope(ql::worker_diagnostic::RequestMallocObserver &observer,
+        const std::unique_ptr<ql::ContinuousField> &field,
+        const ql::performance::management_transport::Control &performance,
+        const std::string &line, const bool &committed) noexcept
+        : observer_(observer), field_(field), performance_(performance),
+          line_(line), committed_(committed) { facts.request_bytes = line.size(); }
+    ~RequestMallocScope() noexcept {
+        observer_.completed(facts, field_.get(), performance_.active(),
+                            line_.capacity(), committed_);
+    }
+};
+#endif
 int main() {
     // Buffered, unsynchronised streams: a multi-megabyte control line must not
     // take a stdio lock per character. Framing and budgets are unchanged.
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     std::unique_ptr<ql::ContinuousField> field;
+    ql::performance::management_transport::Control performance;
     Json basis = own(nullptr), gains = own(nullptr);
     std::string shape_ref;
     std::string line;
+#if defined(__APPLE__)
+    ql::worker_diagnostic::RequestMallocObserver malloc_observer;
+#endif
     while (true) {
         line.clear(); char c;
         while (std::cin.get(c) && c != '\n') {
@@ -150,6 +181,9 @@ int main() {
         }
         if (line.empty() && !std::cin) break;
         bool committed = false;
+#if defined(__APPLE__)
+        RequestMallocScope malloc_scope(malloc_observer, field, performance, line, committed);
+#endif
         try {
             auto tok = std::unique_ptr<json_tokener, decltype(&json_tokener_free)>(json_tokener_new_ex(64), json_tokener_free);
             json_tokener_set_flags(tok.get(), JSON_TOKENER_STRICT | JSON_TOKENER_VALIDATE_UTF8);
@@ -157,7 +191,26 @@ int main() {
             ql::require(json_tokener_get_error(tok.get()) == json_tokener_success &&
                 json_tokener_get_parse_end(tok.get()) == line.size(), "invalid complete JSON message");
             auto op = text(get(request.get(), "operation"));
-            ql::require(text(get(request.get(), "schema")) == "ql.field-control/v1", "unknown field control contract");
+            const auto schema = text(get(request.get(), "schema"));
+#if defined(__APPLE__)
+            if (malloc_observer.selects_current_request()) malloc_scope.facts.operation = ql::worker_diagnostic::RequestMallocObserver::operation_name(op);
+            if (malloc_observer.selects_current_request()) malloc_scope.facts.domain = schema == "ql.field-control/v1" ? "field" :
+                schema == "ql.performance-control/v1" ? "performance" : "unknown";
+#endif
+            if (schema == "ql.performance-control/v1") {
+                // One retained native control owner. Callback execution never
+                // reads JSON; management prepares immutable bounded operations.
+                committed = true;
+                auto output = performance.execute(request.get());
+#if defined(__APPLE__)
+                if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                    json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
+                std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
+                continue;
+            }
+            ql::require(schema == "ql.field-control/v1", "unknown field control contract");
+            ql::require(!performance.active() || op == "read", "retained performance owns native time/body; prepared determinant transaction required");
             std::vector<float> audio;
             if (op == "initialize") {
                 keys(request.get(), {"schema", "operation", "m2", "field"}); ql::require(!field, "field already initialized");
@@ -177,9 +230,15 @@ int main() {
                     keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "frames", "muted"});
                     const bool muted = boolean(get(request.get(), "muted"));
                     audio.resize(small(get(request.get(), "frames"), 8192));
+#if defined(__APPLE__)
+                    malloc_scope.facts.requested_field_frames = audio.size();
+#endif
                     // A zero-frame read does not need a non-null vector buffer.
                     if (!audio.empty()) ql::require(field->render_audio(audio.data(), audio.size(), muted), "native continuation refused");
                     committed = !audio.empty();
+#if defined(__APPLE__)
+                    malloc_scope.facts.rendered_field_frames = audio.size();
+#endif
                 } else if (op == "set-axis") {
                     keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "axis", "phase"});
                     field->set_axis(field->receipt().generation, small(get(request.get(), "axis"), 1), read_phase(get(request.get(), "phase"))); committed = true;
@@ -203,10 +262,22 @@ int main() {
             auto output = own(response(*field, audio, true, 1));
             put(output.get(), "m2_identity", json_object_get(get(basis.get(), "identity")));
             string(output.get(), "shape_ref", shape_ref);
+#if defined(__APPLE__)
+            if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
         } catch (const std::exception &error) {
+#if defined(__APPLE__)
+            malloc_scope.facts.exception_reply = true;
+#endif
+            if (committed && performance.active()) performance.hold();
             auto output = own(json_object_new_object()); string(output.get(), "schema", "ql.field-error/v1"); string(output.get(), "error", error.what());
             put(output.get(), "state_committed", json_object_new_boolean(committed));
+#if defined(__APPLE__)
+            if (malloc_observer.selects_current_request()) malloc_scope.facts.serialized_reply_bytes = std::strlen(
+                json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN));
+#endif
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
         }
     }

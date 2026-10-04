@@ -1,0 +1,197 @@
+// Real native N/A/P producer material for the paired C++ transport test.
+// Controlled angular inputs have arithmetic standing and no astronomy verdict.
+mod support {
+    include!("retained_performance.rs");
+}
+use ql_mef::m_tree::native_current_m_registry;
+use ql_mef::nara::{
+    EventBasisRefs, SourceRevision, current, domain::ProtectedRef, intake::IdentityProfile,
+    replay::NaraOccasion,
+};
+use ql_mef::nara_performance_receiving::{
+    CentreCalibration, ContextKind, ReceivingCalibration, ReceivingContext, ReceivingPreparation,
+    Reference, prepare_native_receiving,
+};
+use ql_mef::performance_audio::{PreparedPerformanceBinding, prepare_native_performance};
+use ql_mef::physical_body::{PhysicalProvenance, PhysicalStanding, SpatialProjection};
+use serde_json::{Value, json};
+fn reference(value: &str) -> Reference {
+    Reference {
+        reference: value.into(),
+        revision: "1".into(),
+    }
+}
+fn for_prepared(p: &PreparedPerformanceBinding, native_cursor: u64) -> Result<Value, String> {
+    p.validate_native_consumers(p.native_basis(), p.physical_body())?;
+    let profile: IdentityProfile = serde_json::from_value(json!({
+        "schema":"ql.nara-identity-profile/v1", "person_ref":p.physical_body().subject_ref(),
+        "nara_ref":"reference:force-routes/nara", "name":"Controlled source operator",
+        "encoding_policy":ql_mef::nara::identity_encoding::EncodingPolicy::default(),
+        "composition_policy":"draft-core-birthdate-decanic-40-60-v1",
+        "birth":{"date":"1990-06-15","time":null,"precision":"unknown","uncertainty_minutes":null,"fold":null,"place":null},
+        "jungian":null,"gene_keys":null,"human_design":null,"quintessence":null
+    })).map_err(|e| e.to_string())?;
+    let natal = json!({"schema":"ql.nara-natal/v1", "request":profile.natal_request()?,
+        "status":"partial", "reason":"controlled-angular-input; astronomical-provider-unqualified", "chart":null,
+        "sky":{"schema":"ql.sky-snapshot/v1","snapshot_ref":"reference:force-routes/natal-input",
+            "bodies":(["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].iter().enumerate().map(|(i,name)|
+                json!({"native_planet_id":i,"body":name,"longitude_degrees":30.0*i as f64})).collect::<Vec<_>>())}});
+    let identity = profile.inspect(Some(&natal))?;
+    let event = EventBasisRefs::from_basis(p.native_basis())?;
+    let occasion = NaraOccasion {
+        occasion_ref: "reference:force-routes/original-occasion".into(),
+        subject_id: p.physical_body().subject_ref().into(),
+        event,
+        personal_reception_generation: 1,
+        identity_revision: identity["input_revision"]
+            .as_str()
+            .ok_or("identity revision absent")?
+            .into(),
+        day_ref: "central:day:2026-10-02".into(),
+        now_ref: "central:now:force-routes-controlled-native-test".into(),
+        occurrence_at_unix_ms: 100,
+        receipt_at_unix_ms: 900,
+        protected_state_ref: ProtectedRef {
+            ref_id: "reference:force-routes/protected-state".into(),
+            revision: "1".into(),
+            owner_ref: p.physical_body().subject_ref().into(),
+        },
+        activity_refs: vec![],
+        oracle_packet_refs: vec![],
+        transformation_phase_refs: vec![],
+        context_reading_refs: vec![],
+        integration_return_refs: vec![],
+        expression_refs: vec![],
+        source_revisions: vec![SourceRevision {
+            source_ref: "ql:m-registry".into(),
+            revision: native_current_m_registry()
+                .manifest()
+                .source_revision
+                .clone(),
+            standing_ref: "source".into(),
+        }],
+    };
+    let context = ReceivingContext {
+        kind: ContextKind::Personal,
+        context: reference("reference:force-routes/personal-context"),
+        receiver: reference("reference:force-routes/receiver"),
+        protected_state: Some(reference(&occasion.protected_state_ref.ref_id)),
+        consent: None,
+        original_occasion: Some(reference(&occasion.occasion_ref)),
+        private: true,
+    };
+    let mut sky = identity["natal"]["sky"].clone();
+    sky["snapshot_ref"] = json!("reference:force-routes/dated-operator-input");
+    sky["source_binding"] =
+        json!({"registry_revision":ql_mef::m2::catalogue().registry_revision()});
+    sky["request"] = json!({"schema":"ql.sky-request/v1","epoch":"reference:controlled-epoch"});
+    sky["receipt_unix_ms"] = json!(900);
+    sky["provider"] =
+        json!({"adapter_sha256":"reference:unqualified-controlled-input; no astronomy verdict"});
+    let current = current::personal_current(&identity, &current::transit(Some(&sky))?)?;
+    let request = p.physical_body().request();
+    let calibration = ReceivingCalibration {
+        provenance: PhysicalProvenance {
+            reference: "reference:force-routes/seven-metric-maps".into(),
+            revision: "1".into(),
+            source_ref: "reference:explicit-instrument-force-calibration".into(),
+            standing: PhysicalStanding::Reference,
+        },
+        preparation: Reference {
+            reference: request.preparation_ref.clone(),
+            revision: request.body_revision.to_string(),
+        },
+        state: Reference {
+            reference: request.state_ref.clone(),
+            revision: request.body_revision.to_string(),
+        },
+        source_force_newtons: 0.1,
+        centres: std::array::from_fn(|ordinal| {
+            let free = (ordinal + 1) as f64 / 8.0;
+            CentreCalibration {
+                ordinal: ordinal as u8,
+                projection: SpatialProjection {
+                    axis: [1.0, 0.0, 0.0],
+                    node_weights: vec![1.0 - free, free],
+                },
+            }
+        }),
+    };
+    let preparation = || ReceivingPreparation {
+        prepared: p,
+        context: context.clone(),
+        identity: Some(&identity),
+        current: Some(&current),
+        original_occasion: Some(&occasion),
+        calibration: Some(&calibration),
+    };
+    let definition = prepare_native_receiving(preparation())?;
+    definition.validate_source_registry(native_current_m_registry())?;
+    definition.validate_sources(preparation())?;
+    let operation = definition.native_operation(native_cursor)?;
+    let replayed = prepare_native_receiving(preparation())?;
+    let current_operation = replayed.native_operation(native_cursor)?;
+    let det = p.determination();
+    let source_basis = json!({
+        "event_ref":p.physical_body().event_ref(), "subject_ref":p.physical_body().subject_ref(),
+        "registry_revision":native_current_m_registry().manifest().registry_revision,
+        "source_revision":native_current_m_registry().manifest().source_revision,
+        "definition_ref":definition.content_digest(), "source_instance_ref":operation.source_instance,
+        "determination_ref":det["native_receipt_ref"], "m2_writer_coordinate":det["m2_writer"],
+        "m2_pratibimba":det["m2_face"] == 1,
+        "m1_revision":det["identity"]["m1_revision"],"m2_generation":det["identity"]["m2_generation"],
+        "m3_generation":p.physical_body().source_generation().to_string()
+    });
+    let program_refs: Vec<_> = operation
+        .sources
+        .iter()
+        .map(|s| {
+            format!(
+                "reference:force-routes/native-program/{}",
+                s.native_planet_id
+            )
+        })
+        .collect();
+    let world_preparation = || ReceivingPreparation {
+        prepared: p,
+        context: ReceivingContext {
+            kind: ContextKind::World,
+            context: reference("reference:force-routes/world-context"),
+            receiver: reference("reference:force-routes/world-receiver"),
+            protected_state: None,
+            consent: None,
+            original_occasion: None,
+            private: false,
+        },
+        identity: None,
+        current: None,
+        original_occasion: None,
+        calibration: None,
+    };
+    let world_definition = prepare_native_receiving(world_preparation())?;
+    world_definition.validate_sources(world_preparation())?;
+    let world_operation = world_definition.native_operation(native_cursor)?;
+    let world_current_operation =
+        prepare_native_receiving(world_preparation())?.native_operation(native_cursor)?;
+    let mut world_source_basis = source_basis.clone();
+    world_source_basis["definition_ref"] = json!(world_definition.content_digest());
+    world_source_basis["source_instance_ref"] = json!(world_operation.source_instance);
+    let out: Value = json!({"preparation":p.physical_body(),"current_m3":p.native_basis().m3,
+        "operation":operation,"current_operation":current_operation,"source_basis":source_basis,
+        "program_refs":program_refs,"world_operation":world_operation,
+        "world_current_operation":world_current_operation,"world_source_basis":world_source_basis});
+    Ok(out)
+}
+
+pub fn packet() -> Result<Value, String> {
+    let before = prepare_native_performance(support::preparation())?;
+    let mut output = for_prepared(&before, 0)?;
+    let mut request = support::preparation();
+    request.physical.material.young_modulus_pa *= 4.0;
+    request.physical.material.provenance.revision = "2".into();
+    request.physical.body_revision = 2;
+    request.physical.preparation_ref = "reference:performance/body-preparation2".into();
+    let after = prepare_native_performance(request)?;
+    output["after_material"] = for_prepared(&after, 512)?;
+    Ok(output)
+}

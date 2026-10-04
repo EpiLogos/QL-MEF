@@ -491,6 +491,25 @@ impl CoupledFieldSession {
     pub fn current_basis(&self) -> &CoupledBasis {
         &self.current
     }
+    pub(crate) fn performance_exchange(&mut self, request: &Value) -> Result<Value, String> {
+        self.field.performance_exchange(request)
+    }
+    /// Forward the same worker's original parsed reply even on a post-reply
+    /// refusal. A lost transport remains None; this creates no new owner.
+    pub(crate) fn performance_exchange_retained(
+        &mut self,
+        request: &Value,
+    ) -> Result<Value, (String, Option<Value>)> {
+        self.field.performance_exchange_retained(request)
+    }
+    pub(crate) fn performance_invalidate(&mut self, reason: &str) -> String {
+        self.field.performance_invalidate(reason)
+    }
+    /// Closed physical source transaction only, after exact native P/Engine ACK.
+    /// Source publication does not touch the retired legacy field voices/clock.
+    pub(crate) fn adopt_physical_source_after_ack(&mut self, after: CoupledBasis) {
+        self.current = after;
+    }
     pub fn available(&self) -> bool {
         self.field.available()
     }

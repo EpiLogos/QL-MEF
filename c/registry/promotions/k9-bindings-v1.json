@@ -571,6 +571,2325 @@
         "crates/ql-cli/tests/scene_native.rs"
       ],
       "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/music_determination.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1"
+      ],
+      "rationale": "QL #281: #285 native M1 musical carrier and exact descendant/lens/CF rational determination. Coupled-source validation retains the existing Ananda carrier and M2 target, including source-defined branches and comma witnesses; no oscillator clock, coordinate registry or physical eigenfrequency is invented.",
+      "tests": [
+        "crates/ql-mef/tests/music_determination.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/m2_relation_plan.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-0",
+        "#2-1",
+        "#2-2",
+        "#2-3",
+        "#2-4",
+        "#2-5"
+      ],
+      "rationale": "QL #281: #286 six-family M2 route plan over the admitted Bimba projection and existing Coupled producer. Actual MEF inner-octet/boundary roles, Vimarsha and unequal situated-solar provenance remain inspectable. Incomplete authentic maqam intervals, contradictions and missing source are explicit; no live Bimba mutation or replacement registry is granted.",
+      "tests": [
+        "crates/ql-mef/tests/m2_relation_plan.rs",
+        "crates/ql-mef/tests/independent_relation_admission.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/physical_body.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: #288 explicit metric material and genuine physical-body preparation with source-bound M3 identity/generation, declared physical units, mass/stiffness/tension and boundaries. M2 nodal descriptors retain source standing and physical interpretation is declared. Native Rust prepares the bounded model for C++; excitation Hertz is distinct from physical eigenfrequency.",
+      "tests": [
+        "crates/ql-mef/tests/physical_body.rs",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/source_form_body.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#3-2"
+      ],
+      "rationale": "QL #281: #288 actual native M3 three-site/form/pose producer to an explicitly declared elastic-frame/tension-network physical preparation. All source form, line-change and pose identities remain distinct; reading-only apertures preserve geometry. A glyph label does not claim a shell/cloth solver.",
+      "tests": [
+        "crates/ql-mef/tests/source_form_body.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/performance_audio.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: #287 native producer joining M1 carrier, actual M2 reading and independently qualified M3 body. The complete Coupled relation basis and genuine body mode are validated before preparing C++ musical bindings. The audio renderer and sample/device clock remain existing native owners. Native source-form admission separately regenerates the full metric topology/constraints from current post-command M3 and a retained mechanical recipe; generic metric providers cannot claim that admission.",
+      "tests": [
+        "crates/ql-mef/tests/performance_audio.rs",
+        "crates/ql-mef/tests/independent_performance_admission.rs",
+        "crates/ql-mef/tests/independent_source_form_admission.rs",
+        "crates/ql-mef/tests/independent_octet_admission.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_body.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Genuine mass/stiffness body with analytic per-sample state and pickup. Preparation occurs off callback; the same q/v supplies audible and visible displacement. Complete checkpoint restore is source/eigenbasis/currentness/cursor qualified.",
+      "tests": [
+        "cpp/tests/physical_body.cpp",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_audio.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Bounded scheduling and actual M1 excitation into the resident genuine physical body. Notes, source changes, releases and voices share one sample timeline; source inventory does not claim installed device acceptance. Callback-committed original full native event/source/body manifests and persistent recording failure retain real effects, unread history and exact reopen. Release proof observes actual zero submitted force after emergency acknowledgement, independent of mute and P ringdown. Original request time is stamped only by native admission; injected caller provenance is refused and original old checkpoint formats remain importable with unavailable requested time.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/performance_requested_timing_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_physical.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Bridge from admitted musical excitation to the existing genuine physical runtime. Body identity and sample-rate compatibility are independently validated; supplied modal frequencies are not rewritten into physical cause.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_body_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded JSON transport for complete Rust-prepared body identity, coordinate face, modal matrices and physical units. The current native C registry validates exact preparation; transport creates no coordinate owner.",
+      "tests": [
+        "cpp/tests/physical_body_wire.cpp",
+        "crates/ql-mef/tests/physical_body_native_wire.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_checkpoint_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded complete physical checkpoint JSON with source/eigenbasis/q-v/cursor and physical units for stopped/acknowledged custody. No score store, clock or source authority is created.",
+      "tests": [
+        "cpp/tests/physical_body_wire.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_packet.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded JSON admission of the real Rust musical producer and independently admitted current M1/body identities for C++ consumption. Transport creates no musical law, registry or device clock.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/independent_clock_admission_packet.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/audio_device_macos.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Native AUHAL device boundary for explicit requested device/rate/quantum, readback, callback ownership and stopped acknowledgement. No implicit resampler; source declaration is distinct from actual hardware/capture verification.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/src/audio_device_macos.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: #287 AUHAL implementation preserving actual callback custody and failed-stop ownership. Device effects require actual compilation/installed verification; source inventory alone grants no device result.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_contact.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "rationale": "QL #281: Explicit metric gravity/contact preparation consumed as dated Newton force on the same body. Particle/collider/route/dedup/event/source/face/eigenbasis/policy and physical units are preserved. Immutable preparation plus native-admitted cursor avoids live-body control reads; deterministic analytic policy is explicit, no second clock or solver.",
+      "tests": [
+        "cpp/tests/physical_contact.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_receiving.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281: Declared point-source receiving transport of the actual same-body pickup, inverse-distance gain/directivity/fractional propagation delay with retained history and exact checkpoint. Receiver/source metric motion is distinct from camera presentation; this is not a radiation-pressure solver or new private receiver definition.",
+      "tests": [
+        "cpp/tests/physical_receiving.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_snapshot.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Bounded trivially-copyable observation published by the audio callback after the sole physical advance or under stopped/acknowledged custody. Complete source/face/preparation/state/cursor and actual local-metre node positions cross the existing readback queue; the UI does not read mutable q/v or integrate another body.",
+      "tests": [
+        "cpp/tests/physical_snapshot.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_transition.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#2-1",
+        "#3"
+      ],
+      "rationale": "QL #281: Off-thread source/material/form preparation and exact-sample callback commit on the same ringing body. Precomputed exact-node mass projection, explicit reset policy, reported external work and deferred retired-allocation custody prevent silent reset or callback allocation/free. Stale source/body/face/eigenbasis/cursor and bounds refuse atomically.",
+      "tests": [
+        "cpp/tests/physical_transition.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_checkpoint.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Existing native audio/physical owners checkpoint and restore together under actual stopped exclusive custody. The production heap factory avoids multi-MiB stack temporaries; both complete pending performance state and actual P q/v validate before either commits. No second score/file store.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_checkpoint_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #281: Complete bounded versioned JSON transport of paired native A/P continuation, including source schedule, queued events, oscillator/envelope/touch/sustain/steal tails, physical eigenbasis/q-v/units/cursor. Transport creates no clock/store/authority and corrupt/source-disconnected payloads refuse before resident mutation. Optional native-owned original requested sample is retained separately from resolved admission and actual application, while absent historic v1/v2 provenance stays absent and audible continuation remains exact.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp",
+        "cpp/tests/performance_requested_timing_packet.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/physical_receiving_transition.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281: Prepared exact-native-sample metric receiver movement and receiving requalification after the same live body update. Paired callback preflight preserves receiver/body atomicity; retained propagation history and deferred allocation custody preserve ringing and exact reopen. Source/context policy authority remains in the existing action owner.",
+      "tests": [
+        "cpp/tests/physical_receiving_transition.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_return.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281: Binds the actual admitted M1/M2/K/P performance to independently replayed native M3 score/commands and exact original M4 occasion. Source/body/event generations and optional neutral World receiving survive return to the existing native Expression owner; no second store, classifier or receiving authority. Current reinscription returns a new admitted native score/body revision while preserving original occasion and prior edition bytes; command receipts alone cannot relabel the saved score.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_return.rs",
+        "crates/ql-mef/tests/musical_performance_reinscription.rs",
+        "crates/ql-mef/tests/independent_return_context_admission.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-performance-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "rationale": "QL #281 actual producer passage into native retained performance: prepares existing M1/M2/K/P owners and native M3 score return, preserving exact source generations and explicit neutral World receiving. This executable emits real producer material for paired C++ and existing Expression/Act tests; it grants no installed receiving authority.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_return.rs",
+        "cpp/tests/retained_performance_checkpoint_wire.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "scripts/test-m2-producer-negatives.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "QL #293 independent actual native M2 JSON-producer trial driver. It invokes the compiled production example, retains actual inputs/results/hashes and checks exact source edges plus refusal boundaries; it implements no alternate determination, body, audio or project store.",
+      "tests": [
+        "scripts/test-physical-musical.sh"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_live_clock.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "rationale": "QL #287 actual AUHAL timestamp/native Engine cursor mapping for bounded real gesture admission and applied-sample readback. This module publishes the existing native clock; it supplies no browser clock or parallel oscillator, and does not infer device latency from its controlled timestamp test.",
+      "tests": [
+        "cpp/tests/performance_audio.cpp"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/nara_performance_receiving.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1",
+        "#2-1",
+        "#2-5",
+        "#2-5-0/1-0",
+        "#3",
+        "#4.0",
+        "#4.1",
+        "#4.2",
+        "#4.3",
+        "#4.4",
+        "#4.4.4.4",
+        "#4.5"
+      ],
+      "kind": "computational",
+      "rationale": "Native immutable receiving source preparation replays current identity/natal/current and original occasion, preserves ten-contributor denominator and nine independent driver identities/seven calibrated projections/distinct Earth, verifies all six M4 branches and exact typed ancestry/routes. It supplies a source-qualified bounded A/P operation without granting host consent, private disclosure or numerical consumer standing; scalar ports refuse personal multiprojection.",
+      "tests": [
+        "crates/ql-mef/tests/nara_performance_receiving.rs",
+        "crates/ql-mef/tests/nara_event_generations.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_routes.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#2-5",
+        "#2-5-0/1-0",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Immutable actual native planet/chakra/typed-relation source admission and explicit calibrated independent Newton projections for at most nine source programs. Distinct Earth observer identity and original ten-contributor shares survive. All forces advance the existing physical body q/v, pickup, visible snapshot and cursor once; scalar M1 is explicitly enabled or off. The serial A/N owner retains original definition/currentness/consent authority; this module creates no oscillator, clock, store or anatomy-derived metric.",
+      "tests": [
+        "cpp/tests/physical_force_routes.cpp",
+        "cpp/tests/physical_body.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/m2_tuning_sources.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-4",
+        "#2-1",
+        "#2-5"
+      ],
+      "kind": "computational",
+      "rationale": "Native source collections retain real127 correspondence paths with explicit authentic pitch absence,17 missing typed paths, retained C quarter-tone approximations and complete row locks, actual unfolded planetary intervals including Pluto9:4 and Sun dual literal, native architectural diatonic targets and unfolded rational generators. Complete native replay comparison rejects altered receipts/relations/degrees/standing. Sparse K key reduction and A octave/component mapping remain explicit downstream operations; no twelve-pitch or eight-bus closure, unknown pitch or Earth/Uranus tone is manufactured.",
+      "tests": [
+        "crates/ql-mef/tests/m2_tuning_sources.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_routes_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Control-thread consumer of independently replayed original native N receiving operation into actual immutable P force routes; complete source/generation/typed-relation/calibration/program/cursor qualification and checkpoint witness. Equality grants no consent and no second body, clock or store is created.",
+      "tests": [
+        "cpp/tests/physical_force_routes_wire.cpp",
+        "crates/ql-mef/tests/physical_force_routes_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/physical-force-routes-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#2-5",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Real native N/A/P producer and independent recompilation for the paired native force consumer, including separately prepared material and calibrated after routes. Controlled angular inputs carry no astronomy or installed context verdict.",
+      "tests": [
+        "crates/ql-mef/tests/physical_force_routes_native_wire.rs",
+        "cpp/tests/physical_force_routes_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Serial existing native A/P/device management with current K-resolved Janko catalog, input lifetimes, bounded pulse/receipts and existing C history ports. No private store/undo, new oscillator, clock or context authority.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management_checkpoint.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Complete versioned wrapper of the existing native audio/physical pair and exact original UI input bindings, pending releases, histories and actual excitation-release proof; authentic stopped custody preflights both owners and no second timeline/store is created.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_offline.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded contiguous <=512 frame render consumes the actual stopped A/P Engine callback and requires same-cursor physical snapshot/Capture equality. Existing C/Act owner admits source/checkpoint/prefix authority; neither labels nor controlled output imply installed export acceptance.",
+      "tests": [
+        "cpp/tests/performance_management_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_management.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Current immutable native M1/K/M2/P binding resolves exact independent touch and six-row, two-family, three-copy Janko catalog; no alternate pitch theory or body advance. Sparse source collections require explicit subsequent K availability, not inferred twelve-pitch closure.",
+      "tests": [
+        "crates/ql-mef/tests/performance_management.rs",
+        "crates/ql-mef/tests/native_played_target_qualifier.rs",
+        "crates/ql-mef/tests/performance_research_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/source_key_determination.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#2-5",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Native explicit source-degree/key and separate complete octet reduction over current B source collection and complete original M2 relation-plan replay/coupled consumer. Seven available/five unassigned/no numerical sentinel,127 authentic absences/17 missing paths, original unfolded planetary/rational intervals and independent generations remain distinct; no inferred twelve/eight closure, body/clock/store or authority from serialized receipts.",
+      "tests": [
+        "crates/ql-mef/tests/source_key_determination.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/source-key-determination-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#2-5",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "Actual native M1/M2/M3 plus B source preparation emits all twelve address availability receipts and separately explicit source octet for real A/P consumption. The original full-twelve reference remains separately named; no constructed oscillator, body or device verdict.",
+      "tests": [
+        "crates/ql-mef/tests/source_key_determination.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_offline_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Control-thread JSON transport of the existing stopped A/P renderer; requires exact finite committed Capture/PCM and same cursor/source, emitting no PCM on refusal. Native C/Act owner independently admits the original performance scope; serialized digest and fixture headers grant no authority.",
+      "tests": [
+        "cpp/tests/performance_management_artifacts_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_score.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Source-qualified musical inscription consumes actual immutable M1/K/M2/post-command M3/physical/native Return and original occasion. Explicit sparse/architectural target selection, actual carrier phase and source replay bind pitches; references the same existing Expression event-page addresses with separate musical edition generation, no alternate score store, clock, codon classifier or fabricated played receipt. Normal C/Act/host consumer joins and live proof remain required.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/agent_event.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native event projection consumes actual QL structural, MEF, harmonic and callable faculty owners. Exact source/material/generation and compiled owner bytes bind independent observed/derived/learned/validated/unresolved standing; missing formal inputs and impossible prime faces are refused, not filled. No provider runtime, score store, numerical body or clock is introduced.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/agent_event/admission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native owner recomputes the actual candidate field and full source/kernel basis before optional semantic proposals become operative. Exact Unicode source spans, candidate cardinality, connected faculty/operation constraints and same native harmonic completion retain impossible/stale responses without repairing or relabelling them as observation. No provider invocation or executable authority is inferred.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/src/agent_event_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Public CLI JSON transport invokes the same native event projector/admitter. Actual process tests exercise supplied source, wrong face and stale response; this transport supplies no independent semantics, model, body or scheduler.",
+      "tests": [
+        "crates/ql-cli/tests/agent_event_native.rs",
+        "crates/ql-cli/tests/agent_corpus_native.rs"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_contracts.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Schema and provenance boundary checks distinguish original observations, native derivations and exact attributable proposals/refusals. Python supplies no QL or musical arithmetic and cannot grant native admission.",
+      "tests": [
+        "scripts/tests/test_ql_agent_contracts.py"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_fixtures.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded observation calls the actual fresh native CLI lens/context owners and records exact executable/content hashes. Portable wire specimens remain declared fixtures; they are not classifier or body acceptance.",
+      "tests": [
+        "scripts/tests/test_ql_agent_contracts.py",
+        "scripts/verify"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_evaluation.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Explicit frozen evaluation invokes the actual native CLI and optional caller-selected provider process with an evidence allow-list. Exact family split, input/source/binary digest, failure record and measured available metrics are retained; no training, provider election, body acceptance or absent metric is invented.",
+      "tests": [
+        "scripts/tests/test_ql_agent_evaluation.py",
+        "scripts/tests/test_ql_agent_aikit.py"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/coordinate.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2"
+      ],
+      "kind": "computational",
+      "rationale": "MEF absolute-to-local inversion uses the existing modulo-six rotation owner and preserves actual lens face/unit. The native all-lens/all-position regression proves the inverse round trip; no new coordinate registry, harmonic owner or semantic inference.",
+      "tests": [
+        "crates/ql-mef/tests/agent_event.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/m2_vimarsha.rs",
+      "stratum": "rust",
+      "disposition": "coordinate-bound",
+      "coordinates": [
+        "#2-1"
+      ],
+      "kind": "computational",
+      "rationale": "The existing native Vimarsha owner retains its binary32 seed formula, eight audible components and four distinct nodal constraints. Exact binary64 widening at the JSON readout conserves the actual binary32 frequency for existing coupled/native consumers under arbitrary-precision numbers; it creates no new tuning or physical eigenfrequency owner.",
+      "tests": [
+        "crates/ql-mef/src/m2_vimarsha.rs",
+        "crates/ql-mef/tests/k8_coupled.rs",
+        "crates/ql-mef/tests/k8_vak_performance.rs",
+        "crates/ql-mef/tests/performance_audio.rs",
+        "cpp/tests/native_performance_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/m3_material_fold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#3-2"
+      ],
+      "kind": "computational",
+      "rationale": "Joined #281/#296 actual post-command M3 material preparation retains exact source coordinate/face, three signed sites, ranked pose and full symbolic/clock snapshot. Explicit four-strip material construction remains distinct from the actual twelve-node mechanical source-frame topology; body material uses admitted native geometry and explicit nodal partition weights, bounded metric depth and retained sample/layer identity. No sampler, q/v solver, clock or native consumer ACK is invented.",
+      "tests": [
+        "crates/ql-mef/tests/m3_material_fold.rs",
+        "cpp/tests/material_fold_body.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_receiving_admission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Native serial-owner admission replays the original private N definition/context/registry against the actual immutable prepared M1/M2/M3/body and full current native basis. Serialize-only custody preserves the full source and distinct native generations; same-generation valid branch/clock/M3-pose substitutions refuse. It grants no consent or lease and creates no numerical body or receiving engine.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_admission.rs",
+        "cpp/tests/performance_receiving_admission.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_admission.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4.4.4.4"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native control owner compares complete independently current receiving bundle to separately retained resident native basis/determination before the existing physical-force decoder. Private typed source custody retains full native basis and requires exact current comparison before any P route port construction/swap; every changed full M3 snapshot requires fresh native source replay. Callback does not parse JSON or construct a second body.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_admission.rs",
+        "cpp/tests/performance_receiving_admission.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_manifestation.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Native exact source-registry principal/contributor/locus and Atlas occurrence plans; source and prime faces are preserved. Existing Expressions owner admits native changes and observations. Names and transported plans grant no native consumer authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_manifestation.rs",
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_composition.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native Expression recipe/Edit compiler, bounded procedure execution and source-qualified checkpoint, stable ownership and retained output regeneration. Original source/selector and human overrides survive; existing native owner independently attests journal/current CAS and actual scene/body/audio application. No second scene clock, body, store or simulated ACK.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs",
+        "crates/ql-mef/tests/procedural_stage_independent.rs",
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/src/procedural_command.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native command parsing and transport to the same registered manifestation/composition source functions. It returns source-qualified plans/Edit batches and checkpoints; native application and live observations remain with the existing Expressions owner.",
+      "tests": [
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "cpp/src/audio_device_unavailable.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual unsupported-platform native device boundary: refuses playback, clock and capture while permitting real stopped/offline Engine and recording management. Darwin links the actual CoreAudio-AUHAL provider; no simulated output, timestamp, callback or latency is emitted.",
+      "tests": [
+        "cpp/tests/audio_device_platform.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained native worker source/currentness owner prepares full original SourceForm, sparse native keys and genuine M1/M2/P binding. It admits private native context witnesses and exact resident replies; UI packets create no body, pitch, clock or receiving authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "crates/ql-mef/tests/performance_source_context.rs",
+        "crates/ql-mef/src/continuous/performance_reply_tests.rs",
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/tests/native_played_target_qualifier.rs",
+        "cpp/tests/performance_research_wire.cpp",
+        "crates/ql-mef/tests/performance_research_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_reply_tests.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual Rust-to-C++ resident reply regressions compare six independently valid source preparations/bodies and detect substitution before resident mutation; execution remains separate.",
+      "tests": [
+        "cpp/tests/performance_source_reply_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_source_keys.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 private source-key policy preserves native sparse collection order and explicitly unavailable keys; original K resolves carriers without synthesizing chromatic closure or physical body modes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "crates/ql-mef/tests/source_key_determination.rs",
+        "crates/ql-mef/tests/retained_score_source.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_source_context.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 typed original-input and receiving-definition witnesses independently replay exact native World or original Personal/Shared occasion and consent. Every opaque receipt retains private custody; serialized evidence confers no disclosure, playback or provider freshness authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_context.rs",
+        "crates/ql-mef/tests/independent_return_context_admission.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-source-performance-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual retained owner executable emits full canonical source/config/preparation, genuine available pitches and explicit native Reference World context for actual paired consumers; no installed/device or human acceptance claim.",
+      "tests": [
+        "crates/ql-mef/tests/performance_source_owner.rs",
+        "cpp/tests/performance_source_packet.cpp",
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "crates/ql-mef/tests/performance_source_context.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/examples/retained-performance-context-fixture.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 actual native Return producer supplies three distinct valid controlled protected occasions to detect leaks in existing native Expression/Act/file custody. Controlled inputs confer no real-person consent or astronomy claim.",
+      "tests": [
+        "crates/ql-mef/tests/independent_return_context_admission.rs",
+        "crates/ql-mef/tests/performance_source_context.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_management_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Actual retained worker readback/control projects same native catalog, physical positions, actual-rate parameter bounds and full stopped checkpoint. JSON stays outside callback and never replaces source admission. Full current-receiving continuation restores the same stopped native checkpoint under complete source/body/receiving validation, preserves observer custody and changes only admitted route derivatives; this numerical transaction does not mint C Act authority.",
+      "tests": [
+        "cpp/tests/performance_source_reply_wire.cpp",
+        "cpp/tests/performance_management_packet.cpp",
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "cpp/tests/performance_managed_application_order_packet.cpp",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_source_packet.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Independent full native source/currentness admission before existing packet decoding; wrong prime, stale source, other valid preparation/body and disconnected force refuse genuine operation.",
+      "tests": [
+        "cpp/tests/performance_source_packet.cpp",
+        "cpp/tests/performance_source_reply_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_physical_routes.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Private native M1/M2/body port qualifies genuine same-body nine receiving forces against full native basis/current registry and original preparation, with no frequency-as-mode substitution.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_route_programs.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Nine genuine receiving force laws feed sole numerical body under its sample cursor and bounded force budget; seven centres retain distinct calibrated metric maps including Earth.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "cpp/tests/performance_route_resources.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_force_route_port.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#3"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 borrowed fixed spatial/Newton projection on original prepared body, retaining q/v and sole callback cursor without a second dynamics owner or callback source JSON.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "cpp/tests/physical_force_routes.cpp"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_physical_revision.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Same original physical body and private receiving source compose one stopped numerical transition with preflight before mutation, preserve actual held M1 notes, independent nine route phases, queues and exact continuation. Running dated transition and native Act/current lease remain separate open acceptance.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_retained_body_revision_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281: Same original physical body and private receiving source compose one stopped numerical transition with preflight before mutation, preserve actual held M1 notes, independent nine route phases, queues and exact continuation. Running dated transition and native Act/current lease remain separate open acceptance.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/test_support/native_fixture_carrier.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_route_management_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/support/native_fixture_carrier.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/support/native_fixture_payload_census.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/support/performance_route_management_fixture.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_genuine_carrier_scalar_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281: Bounded lossless transient transport and genuine original Rust-to-C++ native scalar/part/current fixture verification. Complete original values retained, no content fingerprint grants source/consent authority and no native policy or admission bound changes.",
+      "tests": [
+        "crates/ql-mef/tests/performance_route_management_native_wire.rs",
+        "cpp/tests/performance_route_management_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_receiving.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 existing FieldHost private original receiving owner independently repeats actual World or N identity/current providers, original occasion and receiving calibration under the current retained lease. Complete source/definition/admission equality precedes same-body force publication; serialized inputs or hashes grant no Act, disclosure, consent or playback authority.",
+      "tests": [
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_aikit.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Explicit source-pinned QL decision transport translates the actual native eligible heads through existing AIKit decision execution and retains original provider receipts. Native QL alone admits candidates; packed ambiguity/thresholds and owned client cancellation create no QL table, model, body, source authority or blocking hook.",
+      "tests": [
+        "scripts/tests/test_ql_agent_aikit.py"
+      ]
+    },
+    {
+      "path": "scripts/ql_agent_corpus.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded deterministic structural corpus invokes the actual public QL projector, derives labels, overlap, completion and harmonics from native receipts, retains source/executable digests and exact counterfactual refusals, and keeps reversed/ambiguous traversals held out. It provides no classifier, learned labels, native execution acceptance or second QL arithmetic.",
+      "tests": [
+        "scripts/tests/test_ql_agent_corpus.py",
+        "crates/ql-cli/tests/agent_corpus_native.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_restore.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Existing native stopped A/Manager/P exact checkpoint transaction retains original saved and operative current-receiving admission, preserves source, queues, input history and same physical eigenbasis/q-v. Numerical source component; current private selected Act, receiving grants and Control join remain separate required custody.",
+      "tests": [
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_moving_receiving.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281/#284: prepared native retarded-time moving source/listener receiving over the unchanged physical pickup, body eigenbasis and source cursor; bounded delay history and checkpoint are numerical receiving data. Existing Engine output port and private C admission remain separately required consumers. Documented Sound Particles mechanisms inform this declared native experiment, with no vendor parity or installed audibility claim.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_moving_receiving_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Independent actual Rust source producer and C++ native moving-receiving experiment verify Doppler, physical-state invariance, full checkpoint continuation, partitioning and atomic refusals. Raw original child input/output/exit are retained before validation; fixtures confer no source or Act authority.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Independent actual Rust source producer and C++ native moving-receiving experiment verify Doppler, physical-state invariance, full checkpoint continuation, partitioning and atomic refusals. Raw original child input/output/exit are retained before validation; fixtures confer no source or Act authority.",
+      "tests": [
+        "cpp/tests/performance_moving_receiving_wire.cpp",
+        "crates/ql-mef/tests/performance_moving_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/native_act_channel.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "C28 existing native Manager/OS-peer channel qualifies actual loaded parent images from the native receipt owner before creating a private operation carrier. It does not derive musical, source or Act authority from public JSON. Ordinary host no-cut behavior remains available; genuine C-held channel and image-currentness positives still require the joined native owner gate.",
+      "tests": [
+        "scripts/test-k8-host.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_act_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "C29 transports complete selected native Act, exact page/checkpoint pulls and original reply custody through the already qualified native channel and current FieldHost. Only that private operation lends the non-serializable source lease; generic host requests cannot mint it. Native closed reader/CAS/runtime proof remains a separate required activity.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_export.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 native selected-score consumer validates complete immutable M1/K/M2/body/receiving source pages, uses the same stopped worker and physical owner for bounded rendering, and restitutes the entire original checkpoint/catalog/observer custody. Source-defined force/context/multisource consumers and full professional export remain required; this initial consumer is no scope ceiling or executed export claim.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/receiving_readmission.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 private current receiving continuation replays the original receiving factory at the genuine saved cursor under the closed selected native checkpoint lease. It preserves full native pulse on every parsed post-exchange refusal, changes only admitted current receiving route derivatives and retains complete before/original/operative/after checkpoint texts. Numerical test evidence alone never grants Act custody.",
+      "tests": [
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/musical_performance_source_score.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#1-4",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "C29 complete native score source compiler checks genuine original M1/K/M2/material/physical/receiving assets and exact selected event/page/checkpoint source bytes, preserving original occasions and musical editions. It is a prospective source compiler; serialized inputs do not mint the private native channel or Act lease. Same retained score/episode and whole played/reopened activity remain mandatory.",
+      "tests": [
+        "crates/ql-mef/tests/musical_performance_score.rs",
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_physical_receiving.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Native same-body receiving transport adapter, complete copied source/trajectory/immutable history-birth and full checkpoint/readback wire. Actual P pickup feeds the existing Engine final audio on its unchanged sample clock. Numerical installation and checkpoint proof grant no selected Scene/Act/current private context authority; native private source owner joins separately.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_port_native_wire.rs",
+        "cpp/tests/performance_receiving_port_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_port.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Native same-body receiving transport adapter, complete copied source/trajectory/immutable history-birth and full checkpoint/readback wire. Actual P pickup feeds the existing Engine final audio on its unchanged sample clock. Numerical installation and checkpoint proof grant no selected Scene/Act/current private context authority; native private source owner joins separately.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_port_native_wire.rs",
+        "cpp/tests/performance_receiving_port_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_receiving_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Native same-body receiving transport adapter, complete copied source/trajectory/immutable history-birth and full checkpoint/readback wire. Actual P pickup feeds the existing Engine final audio on its unchanged sample clock. Numerical installation and checkpoint proof grant no selected Scene/Act/current private context authority; native private source owner joins separately.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_port_native_wire.rs",
+        "cpp/tests/performance_receiving_port_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/performance_observer.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Derives the original native Management input-binding/feedback/application pulse from complete saved and actual after checkpoints. Full surrounding source, queues, types and order remain exact; only the four known finite NativeNoteTarget fields use native bit comparison. Retains original FIFO custody and actual admission/Applied feedback without repeating the original note attack. This numerical proof grants no Scene/Act/current-source authority and no executed export acceptance.",
+      "tests": [
+        "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+        "cpp/tests/receiving_restore_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs",
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_control.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_intervention.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_intervention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_retention.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#0",
+        "#1",
+        "#2",
+        "#3",
+        "#4",
+        "#5"
+      ],
+      "kind": "computational",
+      "rationale": "Existing source-owned procedure construction and retained native Expression material/control/intervention compilation across the original principal/contributor/locus registry. Whole original subject, exact prime descendants, procedure ownership, source order and native revision are preserved. Returned plans and retained records grant no current Document, lease, body/audio or callback authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_retention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_conduct.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_effective.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_lifecycle.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Bounded native procedure protocol, exact native timing-domain custody and staged lifecycle/observation/retention machinery over the existing source and Expressions owner. It retains original requests, native positions and first actual consumer receipts; deserialized data and completed source preparation grant no effective reception or source authority.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/procedural_field_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/procedural_source_bootstrap.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs",
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_timing.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/native_act_diagnostics.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing held native Field/Performance owner adapter: original native domain/epoch/cursor and selected source/Act are independently rechecked; parsed refusal replies and individually bounded original receipt bytes survive through the same private channel. No new scheduler, physical engine, public grant, aggregate checkpoint or inferred consumer acknowledgement.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "Same native performance source and physical body prepare strict authored source/receiver trajectories and acoustic pickup configuration. Actual selected Scene/Act lease replays full original source assets before stopped install/replace/fresh saved restore; the original segment origin/history birth/full ring and native cursor remain distinct. Numerical preparation never creates source or disclosure authority.",
+      "tests": [
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs",
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_acoustic_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Strict numerical adapter and same-owner observed fact custody. Immutable full source/body identity, original transport epoch/sample and history birth are independently fenced. Actual native timing observations and numerical receiving candidates are not source/Act/current-context grants; all post-pulse original history and refusal evidence remains retained.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_timing.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Strict numerical adapter and same-owner observed fact custody. Immutable full source/body identity, original transport epoch/sample and history birth are independently fenced. Actual native timing observations and numerical receiving candidates are not source/Act/current-context grants; all post-pulse original history and refusal evidence remains retained.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/native_resident_lifetime.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_resident_registry.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_resident_registry_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Ephemeral identities minted only by actual native Engine/PhysicalBody/Receiving constructors off callback, with separate real lifetime ordinals and source/body/transport generations. The same original Management pulse copies each distinct consumer observation and actual node/rest correspondence. Tokens and JSON observations never grant source, selected Act, Document mapping or hardware output authority; numerical checkpoints retain their original schema.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp",
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-cli/tests/procedural_native.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-cli/tests/procedural_native.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_composition.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_composition.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_conduct.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_conduct.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_control.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_control.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_effective.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_effective.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_intervention.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_intervention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_retention.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_retention.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/procedural_lifecycle.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/procedural_lifecycle.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_receiving_port_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_receiving_port_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_receiving_port_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/performance_receiving_port_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_acoustic_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "crates/ql-mef/tests/performance_acoustic_native_wire.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_control_restore_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_control_restore_cases.hpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_acoustic_fresh_restore_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_acoustic_fresh_restore_cases.hpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/current_performance_receiving_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_resident_registry_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Current detecting native procedure/physical/receiving transport test owner. Exact original tests are retained and new cases use their actual native constructors/Control, saved source, original full ring/future work and independent continuation comparisons. Source registration records bytes only; actual compiler/native/installed verdict remains separate.",
+      "tests": [
+        "cpp/tests/performance_resident_registry_cases.hpp"
+      ]
+    },
+    {
+      "path": "scripts/requalify-m-ledger.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Existing source-ledger lineage checker verifies the actual stable opaque implementation identities at the canonical native composition owner, exact retained prior ledger and qualification, and unchanged numerical replay/history artifacts. Source migration grants no runtime or installed readiness.",
+      "tests": [
+        "scripts/tests/test_historical_proof_alias.py",
+        "scripts/tests/test_m_ledger.py"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual World/FieldHost/native worker producer detects pure candidate/drop, different valid receiver refusal and same-cursor actual future queue admission invalidating the first complete stopped boundary. No manufactured private lease or numerical positive. Hosted native execution is separate.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_installation_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_calibration_wire.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Actual retained SourceForm physical/pickup/audio calibration producer, queued force, complete q/v/PCM replay across nondividing blocks and genuine note release; original before/after checkpoint equality detects refused force mutation; actual24voices/16tails callback allocation/bounds guards remain. No default or device audibility is inferred.",
+      "tests": [
+        "cpp/tests/performance_calibration_wire.cpp",
+        "crates/ql-mef/tests/performance_calibration_native_wire.rs"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/tests/performance_calibration_native_wire.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Genuine ordinary scene::world to native FieldHost source producer feeds separately preserved baseline, sensor and queued-force trials. Full original input/output/status/deadline bounds retained; actual new numerical/physical measurement is a hosted native gate, not source readiness.",
+      "tests": [
+        "crates/ql-mef/tests/performance_calibration_native_wire.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/worker_malloc_observation.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Apple-only off-by-default original native worker diagnostics after request destruction; at most3 actual all-zone SDK observations retain source/PID/ordinal/raw-byte/frame metadata. Source registration grants no allocator diagnosis; exact Apple image/native replay remains required.",
+      "tests": [
+        "scripts/qualify-worker-malloc-observations.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/qualify-worker-malloc-observations.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Finite verifier of complete genuinely retained native input/stdout/stderr streams and optional3 actual allocator observations. Detects absent owner fabricated FIELD counts, wrong requested/returned frames, unpaired bytes and source-domain/cursor detachment; neither launches nor synthesizes native observations.",
+      "tests": [
+        "scripts/qualify-worker-malloc-observations.py"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_current_configuration.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_current_configuration.rs",
+        "crates/ql-mef/tests/performance_audio.rs"
+      ],
+      "rationale": "Current performance preparation consumes the held M1/CF determination, typed M2 relation plan and post-command M3 body. It retains sparse native degree availability and declares mechanical/pickup policy without importing a caller source or clock.",
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_recording.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "tests": [
+        "crates/ql-mef/tests/performance_audio.rs",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs"
+      ],
+      "rationale": "The held FieldHost exports the exact original parsed native pulse and zero-admission stopped origin through its existing private Scene/Act bridge. It creates no second Inspect, native state, source grant or recording store. These QL tests exercise its underlying numerical/source producer; complete private recording enrollment is tested through the existing OI native Scene/Act owner and remains pending until that paired caller is admitted.",
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/dense_field_source_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "tests": [
+        "crates/ql-mef/src/continuous/dense_field_source_tests.rs",
+        "crates/ql-mef/tests/procedural_control.rs"
+      ],
+      "rationale": "A mandatory bounded native producer drives the existing real FieldHost with 65000 supplied original samples, changes its actual current basis and exports the held original/current source. It grants no World/provider/private Scene authority and tests complete source retention for existing storage consumers.",
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_program.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_slots.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_contact_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/performance_form_wire.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/include/ql/physical_receiving_source_history.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_native_form_control_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/test_support/independent_receiving_emission_history_cases.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Actual stopped Form/control and full dated acoustic ring/emission history preserve the same body/voice/control owner. Controlled cases and source equality do not claim private Scene authority or installed readiness.",
+      "tests": [
+        "cpp/tests/performance_route_management_wire.cpp",
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh",
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs"
+      ]
+    },
+    {
+      "path": "cpp/tests/performance_contact_slots_packet.cpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Contact law/source carrier and detecting finite collision cases. Missing production Scene occurrence issuer remains required; test friends confer no grant.",
+      "tests": [
+        "cpp/tests/performance_contact_slots_packet.cpp",
+        "cpp/tests/physical_contact.cpp",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_history.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_scene_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_scene_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source_cold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Full same-owner body/receiving epochs retain original request IDs, complete before/after bundles and actual application corpora. All historical frames compile before private cold activation; receiver/ring birth and full physical history remain separate. Actual closed native Scene authority and runtime proving remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_acoustic_source_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_calibration.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original authored current preparation targets the actual free native body node and admits one genuine Force control only after original recording birth. Full intent/configuration, original pulse, queued versus applied state and saved continuation remain explicit. Thresholds are unmeasured until the real worker executes.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original authored current preparation targets the actual free native body node and admits one genuine Force control only after original recording birth. Full intent/configuration, original pulse, queued versus applied state and saved continuation remain explicit. Thresholds are unmeasured until the real worker executes.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_calibration_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_act.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_source.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/tests/retained_score_source.rs",
+        "crates/ql-mef/src/continuous/performance_cold_source_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_cold.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-3",
+        "#2-1",
+        "#3",
+        "#4"
+      ],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_form_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_return.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_scene_bridge.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_physical_scene_host.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Source-derived M3 Form/material transitions preserve original musical, World/body, control journals and cold checkpoints under the existing privately scoped owner. Source preparation and fixtures confer no Scene/Act grant; normal closed native application and full original replay remain required.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_tests.rs",
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/procedural_consumers.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Privately registered same Scene and actual FIELD/Management timing constructors qualify source compilation. Complete original facts and current source-body correspondence are compared; serialized contracts, hashes and labels confer no constructor or lease. Original current/bootstrap/cold tests remain mandatory.",
+      "tests": [
+        "crates/ql-mef/src/procedural_consumers.rs",
+        "crates/ql-mef/tests/procedural_control.rs",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/prepare-retained-performance-fixture.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/retained-performance-ci-environment.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
+    },
+    {
+      "path": "scripts/retained-performance-environment-regressions.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "QL #281 retained single native performance delivery. Original hosted qualification of actual retained producer and complete native corpus. Exact original status/source hashes and artifacts precede environment publication. Missing, altered or disconnected producers fail; corpora issue no Scene/Act lease. Full original900s/24voices/45000applications/180Editions workload is preserved.",
+      "tests": [
+        "scripts/retained-performance-environment-regressions.py",
+        "scripts/test-physical-musical.sh"
+      ]
     }
   ]
 }

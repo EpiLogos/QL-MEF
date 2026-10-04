@@ -321,6 +321,64 @@ fn run() -> Result<(), String> {
         changed_refs.profile_generation
     );
 
+    // Advance only the real M3 command stream. M2's legacy v1 profile identity
+    // stays unchanged; the public native admission must retain the new witness.
+    let before_native_revision = owner.last_field().clone();
+    let old_native = EventBasisRefs::native_generations(owner.current_basis())?;
+    let prior_personal = owner.current_personal().cloned();
+    let mut score_revision = owner.current_basis().input.clone();
+    score_revision
+        .m3_commands
+        .push(ql_mef::m3_state::M3Command {
+            schema: ql_mef::m3_state::COMMAND_SCHEMA.into(),
+            event_ref: changed_refs.event_ref.clone(),
+            subject_ref: changed_refs.subject_ref.clone(),
+            expected_generation: old_native.m3_generation,
+            actor_ref: "controlled:installed-native-currentness".into(),
+            cause_ref: "controlled:source-defined-M3-advance-clock".into(),
+            occurrence_unix_ms: observed_at_unix_ms.checked_add(1).ok_or("time overflow")?,
+            receipt_unix_ms: observed_at_unix_ms.checked_add(1).ok_or("time overflow")?,
+            operations: vec![ql_mef::m3_state::M3Operation::AdvanceClock { steps: 1 }],
+        });
+    owner.replace_field(score_revision)?;
+    assert_eq!(
+        EventBasisRefs::from_basis(owner.current_basis())?,
+        changed_refs
+    );
+    assert!(!owner.personal_is_current()?);
+    assert!(
+        owner
+            .receive_personal(reception(&changed_refs, observed_at_unix_ms))
+            .is_err()
+    );
+    let revised_input = reception(&changed_refs, observed_at_unix_ms + 1);
+    assert!(
+        owner
+            .receive_personal_native(revised_input.clone(), &old_native)
+            .is_err()
+    );
+    assert_eq!(owner.current_personal(), prior_personal.as_ref());
+    let actual_native = EventBasisRefs::native_generations(owner.current_basis())?;
+    assert_eq!(actual_native.m2_generation, old_native.m2_generation);
+    assert_eq!(actual_native.m3_generation, old_native.m3_generation + 1);
+    let after_replace = owner.last_field().clone();
+    assert_eq!(
+        after_replace["samples_elapsed"],
+        before_native_revision["samples_elapsed"]
+    );
+    let native_received = owner.receive_personal_native(revised_input.clone(), &actual_native)?;
+    assert_eq!(
+        native_received.reception_generation,
+        second.reception_generation + 1
+    );
+    assert!(owner.personal_is_current()?);
+    assert_eq!(owner.last_field(), &after_replace);
+    assert_eq!(
+        owner.receive_personal_native(revised_input, &actual_native)?,
+        native_received
+    );
+    assert_eq!(owner.last_field(), &after_replace);
+
     let inspection = owner.inspect()?;
     let currentness = owner.currentness()?;
     let focused_snapshot =
@@ -341,6 +399,9 @@ fn run() -> Result<(), String> {
                 "world_replacement_made_old_personal_reading_stale":true,
                 "explicit_rereception_restored_currentness":owner.personal_is_current()?,
                 "exact_personal_replay":replay == first,
+                "independent_native_M3_admitted_by_public_session":true,
+                "wrong_native_witness_refused_without_mutation":true,
+                "native_generations":actual_native,
                 "m1_to_m5_focus_preserved_one_event":true,
                 "withdrawn_consent_refused":true,
                 "currentness":currentness,

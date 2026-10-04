@@ -28,12 +28,25 @@ ensure_python_deps() {
 }
 
 core() {
+  ensure_python_deps
   cargo fmt --all -- --check
   cargo clippy --workspace --all-targets --locked -- -D warnings
-  cargo test --workspace --all-targets --locked
+  cargo test --workspace --all-targets --locked --no-fail-fast
   cargo run -q -p ql-cli --locked -- --version
   cargo run -q -p ql-cli --locked -- capabilities --json >/dev/null
   cargo run -q -p ql-cli --locked -- verify --json >/dev/null
+  python3 scripts/ql_agent_fixtures.py --ql "${CARGO_TARGET_DIR:-target}/debug/ql" \
+    --output target/agent-decision/native-observation --check-labels
+  local ql_corpus_field ql_corpus_digest ql_corpus_split
+  ql_corpus_field="$(mktemp -d target/agent-decision/native-corpus-XXXXXX)"
+  python3 scripts/ql_agent_corpus.py --ql "${CARGO_TARGET_DIR:-target}/debug/ql" \
+    --output "$ql_corpus_field/corpus"
+  ql_corpus_digest="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["suite_digest"])' "$ql_corpus_field/corpus/manifest.json")"
+  for ql_corpus_split in train validation test; do
+    python3 scripts/ql_agent_evaluation.py --ql "${CARGO_TARGET_DIR:-target}/debug/ql" \
+      --suite "$ql_corpus_field/corpus/suite.jsonl" --suite-digest "$ql_corpus_digest" \
+      --split "$ql_corpus_split" --output "$ql_corpus_field/$ql_corpus_split"
+  done
 }
 
 native() {
@@ -42,11 +55,14 @@ native() {
   bash scripts/test-native-c-foundation.sh
   bash scripts/test-native-m-tree.sh
   bash scripts/test-m1-engine.sh
+  bash scripts/test-physical-musical.sh
   git diff --exit-code
 }
 
 invariants() {
   ensure_python_deps
+  python3 scripts/ql_agent_contracts.py --check-schema
+  python3 -m unittest discover -s scripts/tests -p 'test_ql_agent*.py' -v
   python3 scripts/check-ci-topology.py
   python3 scripts/check-q6-promotion-manifests.py
   python3 scripts/check-capability-matrix-registry.py

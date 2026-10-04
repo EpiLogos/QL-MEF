@@ -272,14 +272,43 @@ pub struct EventBasisRefs {
     pub m3_contract_ref: String,
 }
 
+/// Independent native producer revisions beside the preserved v1 event refs.
+/// The original occasion's profile_generation remains the M2 generation.
+/// This witness belongs in existing Scene/Edition custody, never a new clock.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NativeEventGenerations {
+    pub m1_revision: String,
+    pub m2_generation: u64,
+    pub m3_source_generation: u64,
+    pub m3_generation: u64,
+    pub m3_state_sha256: String,
+    pub basis_sha256: String,
+}
+
+fn native_basis_hash<T: Serialize>(value: &T) -> Result<String, String> {
+    use sha2::{Digest, Sha256};
+    let bytes = serde_json::to_vec(value).map_err(|error| error.to_string())?;
+    Ok(format!("{:x}", Sha256::digest(bytes)))
+}
+
 impl EventBasisRefs {
     pub fn from_basis(basis: &CoupledBasis) -> Result<Self, String> {
         let m1 = &basis.input.m1;
         let m2 = &basis.m2_input;
         let m3 = &basis.input.m3;
         let event = &m2.stamp.identity;
-        if m1.event_ref != event.event_ref || m3.stamp.identity != *event {
+        if m1.event_ref != event.event_ref || m3.stamp.identity.event_ref != event.event_ref {
             return Err("Nara requires one accepted M1/M2/M3 event identity".into());
+        }
+        // M2 and M3 retain independent source generations. Admit only the
+        // actual native composition, including the post-command M3 state and
+        // receipts; equal event labels cannot authorize a patched basis.
+        let rebuilt = basis.input.compose()?;
+        if serde_json::to_value(&rebuilt).map_err(|error| error.to_string())?
+            != serde_json::to_value(basis).map_err(|error| error.to_string())?
+        {
+            return Err("Nara event basis differs from exact native producer replay".into());
         }
         if m2.registry_revision != m3.registry_revision {
             return Err("M2/M3 registry revisions differ".into());
@@ -305,6 +334,25 @@ impl EventBasisRefs {
             m2_contract_ref: m2.stamp.contract_ref.clone(),
             m3_source_ref: m3.stamp.source_ref.clone(),
             m3_contract_ref: m3.stamp.contract_ref.clone(),
+        })
+    }
+
+    /// Source and post-command M3 generations are separate from M2. This
+    /// accessor validates complete native replay before returning its witness.
+    /// V1 occasion bytes remain unchanged; new retained consumers store this
+    /// alongside the original occasion rather than rewriting that source.
+    pub fn native_generations(basis: &CoupledBasis) -> Result<NativeEventGenerations, String> {
+        let refs = Self::from_basis(basis)?;
+        let m3_generation = basis.m3["identity"]["profile_generation"]
+            .as_u64()
+            .ok_or("native post-command M3 generation unavailable")?;
+        Ok(NativeEventGenerations {
+            m1_revision: refs.m1_revision,
+            m2_generation: refs.profile_generation,
+            m3_source_generation: basis.input.m3.stamp.identity.profile_generation,
+            m3_generation,
+            m3_state_sha256: native_basis_hash(&(&basis.m3, &basis.m3_receipts))?,
+            basis_sha256: native_basis_hash(basis)?,
         })
     }
 }
@@ -430,6 +478,7 @@ pub struct PersonalFieldInstance {
     generation: u64,
     last_event: Option<PersonalEventInput>,
     last_state: Option<PersonalFieldState>,
+    last_native_generations: Option<NativeEventGenerations>,
 }
 
 impl PersonalFieldInstance {
@@ -440,6 +489,7 @@ impl PersonalFieldInstance {
             generation: 0,
             last_event: None,
             last_state: None,
+            last_native_generations: None,
         })
     }
 
@@ -455,10 +505,46 @@ impl PersonalFieldInstance {
         self.last_state.as_ref()
     }
 
+    /// Currentness includes the independently versioned native M3 state.
+    pub fn is_current_for_basis(&self, basis: &CoupledBasis) -> Result<bool, String> {
+        let Some(state) = self.current() else {
+            return Ok(false);
+        };
+        let refs = EventBasisRefs::from_basis(basis)?;
+        let versions = EventBasisRefs::native_generations(basis)?;
+        Ok(state.event == refs
+            && state.subject_id == refs.subject_ref
+            && self.last_native_generations.as_ref() == Some(&versions))
+    }
+
+    pub fn native_generations(&self) -> Option<&NativeEventGenerations> {
+        self.last_native_generations.as_ref()
+    }
+
     pub fn receive(
         &mut self,
         basis: &CoupledBasis,
         input: PersonalEventInput,
+    ) -> Result<PersonalFieldState, String> {
+        self.receive_bound(basis, input, None)
+    }
+
+    /// Explicit control-owner admission of a new independent native revision.
+    /// A legacy v1 replay cannot silently relabel itself after M3 changes.
+    pub fn receive_native(
+        &mut self,
+        basis: &CoupledBasis,
+        input: PersonalEventInput,
+        expected: &NativeEventGenerations,
+    ) -> Result<PersonalFieldState, String> {
+        self.receive_bound(basis, input, Some(expected))
+    }
+
+    fn receive_bound(
+        &mut self,
+        basis: &CoupledBasis,
+        input: PersonalEventInput,
+        expected: Option<&NativeEventGenerations>,
     ) -> Result<PersonalFieldState, String> {
         if self.constitution.consent != ConsentState::Granted {
             return Err("personal reception requires granted consent".into());
@@ -471,17 +557,35 @@ impl PersonalFieldInstance {
             return Err("personal constitution subject does not match accepted world event".into());
         }
         input.validate(&refs)?;
+        let versions = EventBasisRefs::native_generations(basis)?;
+        if expected.is_some_and(|value| value != &versions) {
+            return Err(
+                "personal admission expected another native generation/source witness".into(),
+            );
+        }
         if let Some(previous) = &self.last_event {
             if previous.event_ref == input.event_ref
                 && previous.profile_generation == input.profile_generation
             {
-                if previous == &input {
-                    return self
-                        .last_state
-                        .clone()
-                        .ok_or_else(|| "personal replay state missing".into());
+                if self.last_native_generations.as_ref() != Some(&versions) {
+                    if expected.is_none() {
+                        return Err("personal replay belongs to another native M3/source generation; explicit native admission required".into());
+                    }
+                    if self.last_native_generations.as_ref().is_some_and(|prior| {
+                        versions.m3_source_generation < prior.m3_source_generation
+                            || versions.m3_generation < prior.m3_generation
+                    }) {
+                        return Err("stale independent personal M3 generation".into());
+                    }
+                } else {
+                    if previous == &input {
+                        return self
+                            .last_state
+                            .clone()
+                            .ok_or_else(|| "personal replay state missing".into());
+                    }
+                    return Err("conflicting replay for the same world-event generation".into());
                 }
-                return Err("conflicting replay for the same world-event generation".into());
             }
             if previous.event_ref == input.event_ref
                 && input.profile_generation < previous.profile_generation
@@ -570,6 +674,7 @@ impl PersonalFieldInstance {
         };
         self.last_event = Some(input);
         self.last_state = Some(state.clone());
+        self.last_native_generations = Some(versions);
         Ok(state)
     }
 }

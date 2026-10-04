@@ -33,6 +33,9 @@ fn read(path: &str) -> Result<Vec<u8>, CliError> {
 }
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
+    if args.first().is_some_and(|command| command == "procedural") {
+        return crate::procedural_command::command(&args[1..]);
+    }
     let usage =
         || CliError("usage: ql scene <compose|binding|world> <request.json|-> [--json]".into());
     if args.len() < 2 {

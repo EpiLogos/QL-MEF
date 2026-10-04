@@ -19,22 +19,48 @@ ifeq ($(shell uname -s),Darwin)
 endif
 
 LIB := $(C_ROOT)/build/libql-mef-c.a
+HEADERS := $(wildcard include/ql/*.hpp)
+TEST_SOURCES := $(wildcard tests/*.cpp)
+# Stdin transport probes are exercised by their actual Rust producers below
+# the native verification command; every other native suite runs directly.
+TRANSPORT_SOURCES := $(filter %_wire.cpp %_packet.cpp,$(TEST_SOURCES))
+TRANSPORT_SOURCES += tests/material_fold_body.cpp tests/performance_receiving_admission.cpp
+# Installed probes need the installation/qualification supplied by their
+# existing owner campaigns; discovering a source does not invent those inputs.
+INSTALLED_SOURCES := $(filter %_installed.cpp,$(TEST_SOURCES))
+UNIT_SOURCES := $(filter-out tests/continuous_field.cpp $(TRANSPORT_SOURCES) $(INSTALLED_SOURCES),$(TEST_SOURCES))
+UNIT_TESTS := $(patsubst tests/%.cpp,$(BUILD_DIR)/%-test,$(UNIT_SOURCES))
+TRANSPORT_TESTS := $(patsubst tests/%.cpp,$(BUILD_DIR)/%-test,$(TRANSPORT_SOURCES))
+ALLOCATION_HOOKS := test_support/allocation_hooks.cpp test_support/allocation_hooks.hpp
+MAC_DEVICE_OBJECT := $(BUILD_DIR)/audio-device-unavailable.o
+DEVICE_LIBS :=
+ifeq ($(shell uname -s),Darwin)
+  MAC_DEVICE_OBJECT := $(BUILD_DIR)/audio-device-macos.o
+  DEVICE_LIBS := -framework AudioToolbox -framework CoreAudio -framework CoreFoundation
+endif
 .PHONY: all test install
-all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test
+all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test $(UNIT_TESTS) $(TRANSPORT_TESTS) $(MAC_DEVICE_OBJECT)
 $(BUILD_DIR):
 	mkdir -p $@
 $(LIB):
 	$(MAKE) -C $(C_ROOT) all
-$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
+$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp $(HEADERS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(MAC_DEVICE_OBJECT) $(LIB) $(JSON_LIBS) $(DEVICE_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
+$(BUILD_DIR)/%-test: tests/%.cpp $(HEADERS) $(ALLOCATION_HOOKS) $(MAC_DEVICE_OBJECT) $(LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< test_support/allocation_hooks.cpp $(MAC_DEVICE_OBJECT) $(LIB) $(JSON_LIBS) $(DEVICE_LIBS) $(RPATH_FLAGS) -lm -o $@
+$(BUILD_DIR)/audio-device-unavailable.o: src/audio_device_unavailable.cpp $(HEADERS) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+$(BUILD_DIR)/audio-device-macos.o: src/audio_device_macos.cpp $(HEADERS) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 test: all
 	$(BUILD_DIR)/continuous-test
+	@set -e; for suite in $(UNIT_TESTS); do "$$suite"; done
 install: all
 	$(MAKE) -C $(C_ROOT) install PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
 	install -d $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/bin
-	install -m644 include/ql/continuous_field.hpp $(DESTDIR)$(PREFIX)/include/ql/
+	install -m644 $(HEADERS) $(DESTDIR)$(PREFIX)/include/ql/
 	install -m755 $(BUILD_DIR)/ql-field-worker $(DESTDIR)$(PREFIX)/bin/
 
 	install -d $(DESTDIR)$(PREFIX)/share/ql-mef-c/adapters/retained-field

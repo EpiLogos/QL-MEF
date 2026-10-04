@@ -471,10 +471,13 @@
         "#3",
         "#4"
       ],
-      "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced.",
+      "rationale": "#134-owned subject-local Nara reception over one already accepted M1/M2/M3 world event. Constitution, consent/lifecycle, EarthBody and seven source-qualified receiver mappings belong to Nara; no particle-derived identity, duplicate world simulation, clinical claim or fallback receiver mapping is introduced. Independent native M2/M3 source and post-command generations join through exact event, subject and recomputed producer outputs while preserving original occasion v1 bytes; additive witness records actual score/basis digests. Private independently versioned native event witnesses participate in currentness and duplicate replay; old v1 personal receipts cannot relabel themselves after real M3 commands. Explicit source-bound native admission is available through the existing PersonalCoupledSession.",
       "tests": [
         "crates/ql-mef/src/nara.rs",
-        "crates/ql-mef/tests/nara_personal_field.rs"
+        "crates/ql-mef/tests/nara_personal_field.rs",
+        "crates/ql-mef/tests/nara_event_generations.rs",
+        "crates/ql-mef/tests/musical_performance_return.rs",
+        "crates/ql-mef/examples/k8_personal.rs"
       ],
       "kind": "computational"
     },
@@ -1000,6 +1003,42 @@
       "tests": [
         "crates/ql-mef/tests/scene_instrument.rs",
         "crates/ql-mef/tests/scene_nara_reception.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/worker_malloc_custody.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Off-default bounded observation custody around the existing native child exchange. Native results and current authority remain with their original owners; no second clock, field, source grant or numerical engine.",
+      "tests": [
+        "crates/ql-mef/src/continuous/worker_malloc_custody_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/worker_malloc_custody_tests.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Actual compiled native worker, exact byte/file collision, bounded stderr and SDK schema custody regressions. Controlled schema inputs are not live Apple allocator observations or installed-app acceptance.",
+      "tests": [
+        "crates/ql-mef/src/continuous/worker_malloc_custody_tests.rs",
+        "scripts/test-physical-musical.sh"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "scripts/qualify-worker-malloc-custody.py",
+      "stratum": "python",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "Finite qualification of exact retained child bytes and native SDK diagnostic rows with independent omission/platform/refusal detection. It neither launches a child nor changes the native result or source authority.",
+      "tests": [
+        "crates/ql-mef/src/continuous/worker_malloc_custody_tests.rs",
+        "scripts/test-physical-musical.sh"
       ],
       "kind": "computational"
     }

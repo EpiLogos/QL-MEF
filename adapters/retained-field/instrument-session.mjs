@@ -22,13 +22,32 @@ function sameState(a, b) {
 }
 
 const EVENT_OPERATIONS = ['m1-advance', 'replace-event'];
-const READ_OPERATIONS = ['read', 'inspect', 'influence', 'personal', 'receive-personal'];
+const READ_OPERATIONS = ['procedure', 'read', 'inspect', 'influence', 'personal', 'receive-personal'];
 
 export class InstrumentSession {
   #context; #owner; #port; #field; #audio; #native; #instance; #sequence;
   #block; #lookahead; #maxBlocks; #maxBytes; #timeout; #queue = []; #bytes = 0;
   #views = new Set(); #maxViews; #busy = false; #held = false; #uncertain = false;
   #disposed = false; #reason = null; #presented; #timer = null; #running = false;
+  #procedureWaiters = []; #documentTransaction = false; #cadenceMs = null;
+  #releaseProcedures() { for (const resume of this.#procedureWaiters.splice(0)) resume(); }
+  async #waitIdle(allowDocument = false) {
+    const deadline = Date.now() + this.#timeout;
+    while (this.#busy || (!allowDocument && this.#documentTransaction)) {
+      need(!this.#disposed && !this.#uncertain && this.#procedureWaiters.length < 16, 'native operation wait bound/standing exceeded');
+      const remaining = deadline - Date.now(); need(remaining > 0, 'native operation admission timed out');
+      await new Promise((resolve, reject) => {
+        let timer;
+        const resume = () => { clearTimeout(timer); resolve(); };
+        timer = setTimeout(() => {
+          const index = this.#procedureWaiters.indexOf(resume);
+          if (index >= 0) this.#procedureWaiters.splice(index, 1);
+          reject(new Error('native operation admission timed out'));
+        }, remaining);
+        this.#procedureWaiters.push(resume);
+      });
+    }
+  }
   #generation = 0; #coalesced = 0; #influence = null;
 
   constructor({ context, owner, transport, initialReceipt, fieldBinding,
@@ -67,6 +86,7 @@ export class InstrumentSession {
 
   get reading() {
     return { schema: 'ql.instrument-reading/v1', instance_ref: this.#instance,
+      last_request_id: this.#sequence.toString(),
       event_ref: this.#native.event_ref, subject_ref: this.#native.subject_ref,
       acknowledged: { generation: this.#native.generation, samples_elapsed: this.#native.samples_elapsed },
       presented: { ...this.#presented }, audio: this.#audio.lastReceipt,
@@ -154,7 +174,7 @@ export class InstrumentSession {
       this.#native = withoutAudio(frame);
       // A scene determinant acknowledgement carries its own influence reading.
       if (reply.influence !== undefined) this.#influence = structuredClone(reply.influence);
-      return { frame, sources: reply.sources, influence: reply.influence, personal: reply.personal };
+      return { frame, sources: reply.sources, influence: reply.influence, personal: reply.personal, procedural: reply.procedural };
     } catch (error) {
       this.#unknown(String(error)); throw error;
     } finally { clearTimeout(timer); }
@@ -209,7 +229,7 @@ export class InstrumentSession {
       if (!this.#held) this.hold('audio-context-requires-explicit-recovery');
       return this.reading;
     }
-    if (this.#busy || this.#held || this.#uncertain) return this.reading;
+    if (this.#busy || this.#documentTransaction || this.#held || this.#uncertain) return this.reading;
     const estimate = JSON.stringify(this.#native).length * 2;
     // target_context_seconds is the device time of the last admitted END cursor,
     // including the empty post-rebase origin. That origin sits lead-seconds in the
@@ -228,13 +248,13 @@ export class InstrumentSession {
       if (generation !== this.#generation || this.#held || this.#disposed) return this.reading;
       try { this.#enqueue(reply.frame); } catch (error) { this.hold(`presentation-admission-failed: ${String(error)}`); throw error; }
       this.present(); return this.reading;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
   }
 
   /** Explicit owner-authorised domain change, serialized with data delivery.
    * It changes the existing native owner; no UI-local clock or second composer. */
   async operate(command) {
-    need(!this.#busy && !this.#held && !this.#disposed &&
+    need(!this.#busy && !this.#documentTransaction && !this.#held && !this.#disposed &&
       ['set-axis', 'replace', 'set-damping', ...EVENT_OPERATIONS].includes(command?.operation), 'domain operation requires idle admitted owner');
     this.present();
     need(this.#queue.length < this.#maxBlocks &&
@@ -246,41 +266,106 @@ export class InstrumentSession {
       if (generation !== this.#generation || this.#held || this.#disposed) return this.reading;
       try { this.#enqueue(reply.frame); } catch (error) { this.hold(`presentation-admission-failed: ${String(error)}`); throw error; }
       this.present(); return this.reading;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
+  }
+
+  /** Same admitted native owner performs source preparation/manual attribution.
+   * It does not advance numerical/body/audio clocks. The same Expression owner
+   * applies returned Edit and records actual material/consumer reception. */
+  async procedure(request) {
+    await this.#waitIdle();
+    need(!this.#disposed && !this.#uncertain,'procedure requires an admitted native owner');
+    this.#busy = true;
+    try {
+      const reply=await this.#exchange({operation:'procedure',request:structuredClone(request)});
+      need(!reply.refused,String(reply.error));
+      need(reply.procedural && typeof reply.procedural === 'object','native procedural reply missing');
+      return structuredClone(reply.procedural);
+    } finally { this.#busy=false; this.#releaseProcedures(); }
+  }
+
+  /** Serialize an actual Kernel Edit's pure source preflight with this SAME
+   * owner. Existing ACK/PCM delivery finishes; no hold, audio reset or queue
+   * discard occurs. The Kernel returns only genuine consumed receipt rows. */
+  async nativeDocumentTransaction(action) {
+    need(typeof action === 'function' && !this.#documentTransaction && !this.#disposed && !this.#uncertain,
+      'native document transaction requires one admitted owner');
+    const cadence = this.#running ? this.#cadenceMs : null;
+    const generation = this.#generation;
+    this.#documentTransaction = true; this.#cancelTimer(); this.#running = false;
+    const nativeGeneration = this.#native.generation;
+    let actionStarted = false, actionTimer, busyOwned = false;
+    try {
+      await this.#waitIdle(true);
+      need(!this.#disposed && !this.#uncertain, 'native owner lost before document transaction');
+      this.#busy = true; busyOwned = true;
+      const next = this.#sequence + 1n; need(next <= U64, 'host sequence exhausted');
+      const context = Object.freeze({ schema: 'ql.native-document-transaction/v1',
+        instance_ref: this.#instance, event_ref: this.#native.event_ref, subject_ref: this.#native.subject_ref,
+        last_request_id: this.#sequence.toString(), next_request_id: next.toString(),
+        expected_generation: this.#native.generation, expected_samples_elapsed: this.#native.samples_elapsed });
+      actionStarted = true;
+      const result = await Promise.race([Promise.resolve().then(() => action(context)),
+        new Promise((_, reject) => { actionTimer = setTimeout(() => reject(new Error('native document transaction timed out')), this.#timeout); })]);
+      need(!this.#disposed && result && typeof result === 'object' && Array.isArray(result.native_procedural_receipts) &&
+        result.native_procedural_receipts.length <= 1, 'native document transaction receipt standing unknown');
+      for (const reply of result.native_procedural_receipts) {
+        need(reply?.schema === 'ql.field-host-receipt/v1' && reply.instance_ref === this.#instance &&
+          reply.request_id === next.toString() && reply.last_request_id === next.toString() &&
+          reply.available === true && ['ok', 'refused'].includes(reply.status), 'foreign/reordered document preflight receipt');
+        const frame = reply.field;
+        need(frame && Array.isArray(frame.audio) && frame.audio.length === 0 &&
+          JSON.stringify(withoutAudio(frame)) === JSON.stringify(this.#native), 'document preflight changed native state/source or replayed PCM');
+        need(JSON.stringify(frame).length * 2 <= this.#maxBytes, 'document preflight field exceeds ceiling');
+        this.#field.validate(frame); this.#audio.validate(frame);
+        this.#sequence = next; // A refused native request still consumed its ordinal.
+      }
+      return result;
+    } catch (error) {
+      if (actionStarted) this.#unknown(String(error));
+      throw error;
+    } finally {
+      clearTimeout(actionTimer);
+      if (busyOwned) this.#busy = false;
+      this.#documentTransaction = false; this.#releaseProcedures();
+      if (cadence !== null && generation === this.#generation &&
+        nativeGeneration === this.#native.generation &&
+        !this.#held && !this.#disposed && !this.#uncertain) this.start(cadence);
+    }
   }
 
   /** The scene owner's acting-influence reading; never advances or resets. */
   async influence() {
-    need(!this.#busy && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
+    need(!this.#busy && !this.#documentTransaction && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
     try {
       const reply = await this.#exchange({ operation: 'influence' });
       need(!reply.refused, String(reply.error)); this.#influence = structuredClone(reply.influence); return reply.influence;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
   }
 
   /** A Nara-constituted scene owner's reception: `input` (seven supplied centre
    * inputs citing the current event) receives; without it, reads. The material
    * field never changes. Protected state stays with the calling host. */
   async personal(input) {
-    need(!this.#busy && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
+    need(!this.#busy && !this.#documentTransaction && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
     try {
       const reply = await this.#exchange(input === undefined ? { operation: 'personal' } : { operation: 'receive-personal', input });
       need(!reply.refused, String(reply.error)); return reply.personal;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
   }
 
   async inspect() {
-    need(!this.#busy && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
+    need(!this.#busy && !this.#documentTransaction && !this.#held, 'inspection requires an idle admitted owner'); this.#busy = true;
     try {
       const reply = await this.#exchange({ operation: 'inspect' });
       need(!reply.refused, String(reply.error)); return reply.sources;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
   }
 
   /** Explicit re-entry after device interruption/late delivery, not provider-loss
    * replay. Unknown native acknowledgements require a separately opened owner. */
   async recover(reason) {
-    need(!this.#busy && !this.#uncertain && !this.#disposed, 'cannot reconcile an unknown or in-flight native operation');
+    need(!this.#busy && !this.#documentTransaction && !this.#uncertain && !this.#disposed, 'cannot reconcile an unknown or in-flight native operation');
     this.hold(reason); this.#busy = true;
     try {
       const reply = await this.#exchange({ operation: 'read' });
@@ -290,14 +375,14 @@ export class InstrumentSession {
       this.#presented = { generation: reply.frame.generation, samples_elapsed: reply.frame.samples_elapsed };
       this.#held = false; this.#reason = null;
       return this.reading;
-    } finally { this.#busy = false; }
+    } finally { this.#busy = false; this.#releaseProcedures(); }
   }
 
   start(periodMs = 8) {
-    need(!this.#disposed && !this.#held && !this.#uncertain && Number.isInteger(periodMs) &&
+    need(!this.#documentTransaction && !this.#disposed && !this.#held && !this.#uncertain && Number.isInteger(periodMs) &&
       periodMs >= 4 && periodMs <= 100, 'invalid driver start');
     if (this.#running) return;
-    this.#running = true;
+    this.#running = true; this.#cadenceMs = periodMs;
     const tick = async () => {
       this.#timer = null;
       try { await this.pump(); } catch (error) { if (!this.#disposed && !this.#held) this.hold(String(error)); }
@@ -309,7 +394,7 @@ export class InstrumentSession {
   dispose() {
     if (this.#disposed) return;
     this.hold('instrument-driver-disposed'); this.#disposed = true;
-    this.#audio.dispose(); this.#views.clear(); this.#port.close?.(); OWNERS.delete(this.#owner);
+    this.#audio.dispose(); this.#views.clear(); this.#port.close?.(); OWNERS.delete(this.#owner); this.#releaseProcedures();
     // Retained renderer destruction/checkpoint and native material lifecycle
     // remain with their actual host. This class never seeds or steps particles.
   }

@@ -1,0 +1,362 @@
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cstdint>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <ql/performance_checkpoint_wire.hpp>
+#include <ql/performance_management.hpp>
+#include <stdexcept>
+#include <string>
+#include <vector>
+using namespace ql::performance;
+static std::string file(const std::string &path) {
+  std::ifstream in(path, std::ios::binary);
+  if (!in)
+    throw std::invalid_argument("actual producer fixture absent");
+  in.seekg(0, std::ios::end);
+  const auto size = in.tellg();
+  // Full activated source evidence has its own existing 16MiB native control
+  // transport bound. This test reader does not alter packet, Document, Act,
+  // encoded page, data-file or runtime budgets.
+  if (size < 1 || size > 16 * 1024 * 1024)
+    throw std::invalid_argument("fixture size refused");
+  std::string out(std::size_t(size), '\0');
+  in.seekg(0);
+  if (!in.read(out.data(), size))
+    throw std::invalid_argument("fixture read refused");
+  return out;
+}
+static ql::physical_wire::Json parse(const std::string &text) {
+  auto *tok = json_tokener_new_ex(64);
+  if (!tok)
+    throw std::bad_alloc();
+  json_tokener_set_flags(tok, JSON_TOKENER_STRICT);
+  auto out = ql::physical_wire::own(
+      json_tokener_parse_ex(tok, text.data(), int(text.size())));
+  const auto error = json_tokener_get_error(tok);
+  const auto end = json_tokener_get_parse_end(tok);
+  json_tokener_free(tok);
+  if (error != json_tokener_success || !out ||
+      text.find_first_not_of(" \r\n\t", end) != std::string::npos)
+    throw std::invalid_argument("strict fixture JSON refused");
+  return out;
+}
+static Operation op(const Determination &d, Kind kind, std::uint64_t id,
+                    std::uint64_t sample) {
+  Operation out{};
+  out.identity = d.identity;
+  out.kind = kind;
+  out.sequence = id;
+  out.sample = sample;
+  return out;
+}
+static NativePerformance native(const std::string &dir) {
+  auto basis = parse(file(dir + "/baseline.basis.json"));
+  return prepare_performance_packet(file(dir + "/baseline.packet.json"),
+                                    basis.get(), true, true);
+}
+static auto manager(const std::string &dir, json_object *activated) {
+  if (!activated)
+    return std::make_unique<PerformanceManagement>(
+        native(dir), reference("expression:managed-order/session"));
+  using namespace ql::physical_wire;
+  auto text_of = [](json_object *value) {
+    if (!value || json_object_get_type(value) != json_type_string)
+      throw std::invalid_argument("activated native string absent");
+    return std::string(json_object_get_string(value));
+  };
+  if (text_of(field(activated, "schema")) !=
+      "ql.retained-source-performance-fixture/v1")
+    throw std::invalid_argument(
+        "actual activated source fixture schema differs");
+  auto *assets = field(activated, "source_assets");
+  auto *basis = field(activated, "native_basis");
+  auto *packet = field(activated, "native_preparation");
+  auto *receiving = field(assets, "current_receiving");
+  auto *payload_private =
+      field(field(receiving, "source_payload_context"), "private");
+  if (!json_object_is_type(payload_private, json_type_boolean) ||
+      !json_object_equal(
+          field(field(receiving, "native_admission"), "native_basis"), basis) ||
+      !json_object_equal(field(assets, "native_basis"), basis))
+    throw std::invalid_argument(
+        "actual source payload context/full native basis differs");
+  if (text_of(field(field(assets, "source_context"), "availability")) !=
+          "available" ||
+      text_of(field(field(field(receiving, "source_context"), "context"),
+                    "kind")) != "world" ||
+      json_object_get_boolean(
+          field(field(receiving, "source_payload_context"), "private")))
+    throw std::invalid_argument(
+        "full workload requires actual activated public World source");
+  // The genuine native parser replays the complete SourceForm preparation and
+  // actual basis. It cannot relabel the old two-node Reference preparation.
+  const auto text = std::string(
+      json_object_to_json_string_ext(packet, JSON_C_TO_STRING_PLAIN));
+  return std::make_unique<PerformanceManagement>(
+      prepare_performance_packet(text, basis, true, true),
+      reference("expression:retained-source-workload/session"));
+}
+static void write_json(const std::filesystem::path &path, json_object *value) {
+  if (std::filesystem::exists(path))
+    throw std::invalid_argument("refuse overwriting managed native artifacts");
+  std::ofstream out(path, std::ios::binary);
+  if (!out)
+    throw std::invalid_argument("artifact destination unavailable");
+  out << json_object_to_json_string_ext(value, JSON_C_TO_STRING_PLAIN) << '\n';
+  if (!out)
+    throw std::invalid_argument("artifact write failed");
+}
+static void append_pulse(const ManagementPulse &pulse,
+                         std::vector<NativeGestureApplication> &applications,
+                         std::vector<InputBindingRecord> &history) {
+  assert(pulse.has_readback);
+  for (const auto &application : pulse.applications) {
+    assert(application.applied_application_ordinal <=
+           pulse.reading.last_applied_application_ordinal);
+    assert(application.committed_cursor <= pulse.reading.samples_elapsed);
+    applications.push_back(application);
+  }
+  history.insert(history.end(), pulse.input_history.begin(),
+                 pulse.input_history.end());
+}
+static auto artifacts(const std::vector<NativeGestureApplication> &applications,
+                      const std::vector<InputBindingRecord> &history) {
+  using namespace checkpoint_transport;
+  auto output = object();
+  text(output.get(), "schema", "ql.performance-managed-application-history/v1");
+  auto actual = array();
+  for (const auto &a : applications)
+    append(actual.get(), application(a).release());
+  put(output.get(), "applications", actual.release());
+  auto journal = array();
+  for (const auto &h : history) {
+    auto entry = object();
+    u64(entry.get(), "ordinal", h.ordinal);
+    u64(entry.get(), "native_sequence", h.native_sequence);
+    put(entry.get(), "change", json_object_new_uint64(unsigned(h.change)));
+    put(entry.get(), "operation",
+        json_object_new_uint64(unsigned(h.operation)));
+    ref(entry.get(), "input_ref", h.input_ref);
+    put(entry.get(), "target", note(h.target).release());
+    append(journal.get(), entry.release());
+  }
+  put(output.get(), "input_history", journal.release());
+  return output;
+}
+
+// Mandatory real 15 minute producer. This controlled Reference body proves
+// retained A/P applications/cursor/tails; it grants no AUHAL, personal or H
+// claim.
+int main(int argc, char **argv) {
+  try {
+    if (argc != 3 && argc != 4)
+      throw std::invalid_argument(
+          "usage: performance_retained_workload_packet-test "
+          "ACTUAL_NATIVE_DIRECTORY NEW_OUTPUT_DIRECTORY "
+          "[ACTUAL_ACTIVATED_WORLD_SOURCE]");
+    const std::filesystem::path output(argv[2]);
+    if (std::filesystem::exists(output) ||
+        !std::filesystem::create_directory(output))
+      throw std::invalid_argument("workload destination must be new");
+    ql::physical_wire::Json activated{nullptr, json_object_put};
+    if (argc == 4)
+      activated = parse(file(argv[3]));
+    auto owner = manager(argv[1], activated.get());
+    const auto source = owner->native().determination;
+    const auto target = owner->native().notes.at(4);
+    const std::uint64_t rate = 48000, interval = 5 * rate;
+    if (owner->stopped_checkpoint()->native_pair.physical.sample_rate != rate)
+      throw std::invalid_argument("full workload actual body rate differs");
+    std::uint64_t sequence = 0, committed = 0, journal_ordinal = 0;
+    std::array<float, 128> pcm{};
+    auto manifest = checkpoint_transport::object();
+    checkpoint_transport::text(manifest.get(), "schema",
+                               "ql.retained-native-workload/v1");
+    checkpoint_transport::u64(manifest.get(), "sample_rate", rate);
+    checkpoint_transport::u64(manifest.get(), "duration_samples", 900 * rate);
+    checkpoint_transport::u64(manifest.get(), "voice_count", 24);
+    checkpoint_transport::u64(manifest.get(), "application_count", 45000);
+    checkpoint_transport::u64(manifest.get(), "edition_count", 180);
+    checkpoint_transport::u64(manifest.get(), "admission_lookahead_samples",
+                              2 * rate);
+    checkpoint_transport::u64(manifest.get(),
+                              "automation_first_sample_in_interval", 90000);
+    checkpoint_transport::u64(manifest.get(),
+                              "automation_last_sample_in_interval", 94700);
+    checkpoint_transport::u64(manifest.get(),
+                              "release_first_sample_in_interval", 40000);
+    if (activated) {
+      checkpoint_transport::text(manifest.get(), "source_performance",
+                                 "source-performance.json");
+      write_json(output / "source-performance.json", activated.get());
+      auto initial = owner->stopped_checkpoint();
+      auto wire = management_checkpoint_transport::checkpoint_wire(*initial);
+      write_json(output / "initial.checkpoint.json", wire.get());
+      checkpoint_transport::text(manifest.get(), "initial_checkpoint",
+                                 "initial.checkpoint.json");
+    }
+    auto parts = checkpoint_transport::array();
+    for (std::uint64_t block = 0; block < 180; ++block) {
+      const auto base = block * interval;
+      std::array<Ref, 24> inputs{};
+      std::array<NoteTarget, 24> targets{};
+      auto enqueue = [&](Operation event, Ref input = Ref{}) {
+        event.sequence = ++sequence;
+        const auto result = owner->enqueue_score_input(event, input);
+        if (result != Result::Accepted)
+          throw std::runtime_error(
+              "actual native workload admission refused: result=" +
+              std::to_string(static_cast<unsigned>(result)) +
+              " sequence=" + std::to_string(event.sequence) +
+              " kind=" + std::to_string(static_cast<unsigned>(event.kind)) +
+              " sample=" + std::to_string(event.sample) + " cursor=" +
+              std::to_string(owner->native().engine->samples_elapsed()));
+      };
+      for (std::size_t voice = 0; voice < 24; ++voice) {
+        targets[voice] = target;
+        targets[voice].touch = targets[voice].member = block * 24 + voice + 1;
+        inputs[voice] =
+            reference(("native-score:retained/" + std::to_string(block) + "/" +
+                       std::to_string(voice))
+                          .c_str());
+        auto attack = op(source, Kind::NoteOn, 0, base + 37);
+        attack.note = targets[voice];
+        attack.value = .4;
+        enqueue(attack, inputs[voice]);
+      }
+      for (std::uint64_t pass = 0; pass < 5; ++pass)
+        for (std::size_t voice = 0; voice < 24; ++voice) {
+          auto expression = op(source, Kind::Expression, 0,
+                               base + 1000 + pass * 4000 + voice);
+          expression.touch = targets[voice].touch;
+          expression.value = .3 + pass * .1;
+          enqueue(expression, inputs[voice]);
+        }
+      for (std::uint64_t i = 0; i < 24; ++i) {
+        auto force = op(source, Kind::Parameter, 0, base + 22000 + i * 100);
+        force.parameter = Parameter::ForceNewtons;
+        force.value = .05 + (i % 4) * .01;
+        enqueue(force);
+      }
+      for (std::uint64_t i = 0; i < 10; ++i) {
+        auto cutoff = op(source, Kind::Parameter, 0, base + 26000 + i * 100);
+        cutoff.parameter = Parameter::CutoffHertz;
+        cutoff.value = 1000 + i * 100;
+        enqueue(cutoff);
+      }
+      // The native queue admits only two seconds beyond its current cursor.
+      // This explicit workload recipe places all 48 controls inside that
+      // lookahead; the five-second P advance/checkpoint interval stays intact.
+      // Accepted BEFORE later-ID critical releases but callback-applied AFTER.
+      constexpr std::uint64_t automation_from = 90000;
+      static_assert(automation_from + 47 * 100 < 2 * rate);
+      for (std::uint64_t i = 0; i < 48; ++i) {
+        auto automation =
+            op(source, Kind::Parameter, 0, base + automation_from + i * 100);
+        automation.parameter = Parameter::MasterLinear;
+        automation.value = .4 + (i % 3) * .1;
+        enqueue(automation);
+      }
+      for (std::size_t voice = 0; voice < 24; ++voice) {
+        auto release = op(source, Kind::NoteOff, 0, base + 40000 + voice);
+        release.touch = targets[voice].touch;
+        enqueue(release, inputs[voice]);
+      }
+      std::vector<NativeGestureApplication> applications;
+      std::vector<InputBindingRecord> journal;
+      std::uint32_t maximum_active_voices = 0;
+      while (owner->native().engine->samples_elapsed() < base + interval) {
+        const auto cursor = owner->native().engine->samples_elapsed();
+        const auto frames =
+            std::size_t(std::min<std::uint64_t>(128, base + interval - cursor));
+        if (!owner->offline_advance(pcm.data(), frames, cursor))
+          throw std::runtime_error("actual A/P workload advance refused");
+        auto pulse = owner->pulse();
+        if (!pulse->has_readback ||
+            pulse->recording.failure != RecordingFailure::None ||
+            pulse->recording.dropped_applications != 0 ||
+            !owner->recording_available())
+          throw std::runtime_error("actual native workload recording loss");
+        maximum_active_voices =
+            std::max(maximum_active_voices, pulse->reading.active_voices);
+        append_pulse(*pulse, applications, journal);
+      }
+      if (maximum_active_voices != 24)
+        throw std::runtime_error("native workload did not render 24 voices");
+      if (applications.size() != 250)
+        throw std::runtime_error("native workload application count differs");
+      bool overtook = false;
+      std::uint64_t automation_applied = 0, releases_applied = 0;
+      for (std::size_t i = 0; i < applications.size(); ++i) {
+        const auto &a = applications[i];
+        if (!a.applied || a.applied_application_ordinal != ++committed ||
+            a.physical_sample_rate != rate ||
+            a.committed_cursor > base + interval)
+          throw std::runtime_error(
+              "native workload application/body/cursor differs");
+        if (a.late_admitted || a.admitted_sample != a.applied_sample)
+          throw std::runtime_error("native workload silently redated an event");
+        if (a.kind == Kind::Parameter &&
+            a.parameter == Parameter::MasterLinear) {
+          if (a.applied_sample !=
+              base + automation_from + automation_applied * 100)
+            throw std::runtime_error(
+                "native workload automation timing differs");
+          ++automation_applied;
+        }
+        if (a.kind == Kind::NoteOff) {
+          if (a.applied_sample != base + 40000 + releases_applied)
+            throw std::runtime_error("native workload release timing differs");
+          ++releases_applied;
+        }
+        if (i && a.sequence < applications[i - 1].sequence)
+          overtook = true;
+      }
+      if (automation_applied != 48 || releases_applied != 24)
+        throw std::runtime_error(
+            "native workload control/release count differs");
+      if (!overtook)
+        throw std::runtime_error(
+            "native workload did not exercise critical overtaking");
+      for (const auto &entry : journal)
+        if (entry.ordinal != ++journal_ordinal)
+          throw std::runtime_error("native workload original input gap");
+      const auto name = "edition-" + std::to_string(block + 1);
+      auto history = artifacts(applications, journal);
+      write_json(output / (name + ".history.json"), history.get());
+      auto checkpoint = owner->stopped_checkpoint();
+      if (checkpoint->native_pair.audio.cursor != base + interval ||
+          checkpoint->native_pair.physical.samples_elapsed != base + interval ||
+          checkpoint->native_pair.audio.applied_application_ordinal !=
+              committed)
+        throw std::runtime_error("workload paired checkpoint cursor differs");
+      auto wire = management_checkpoint_transport::checkpoint_wire(*checkpoint);
+      write_json(output / (name + ".checkpoint.json"), wire.get());
+      auto part = checkpoint_transport::object();
+      checkpoint_transport::text(part.get(), "history", name + ".history.json");
+      checkpoint_transport::text(part.get(), "checkpoint",
+                                 name + ".checkpoint.json");
+      checkpoint_transport::append(parts.get(), part.release());
+    }
+    if (sequence != 45000 || committed != 45000)
+      throw std::runtime_error("full workload was truncated");
+    checkpoint_transport::put(manifest.get(), "editions", parts.release());
+    auto basis =
+        activated
+            ? ql::physical_wire::own(json_object_get(
+                  ql::physical_wire::field(activated.get(), "native_basis")))
+            : parse(file(std::string(argv[1]) + "/baseline.basis.json"));
+    write_json(output / "basis.json", basis.get());
+    write_json(output / "manifest.json", manifest.get());
+    std::cout
+        << "actual-native-workload duration=900 voices=24 applications=45000 "
+           "editions=180 force=24x180 automation=58x180 "
+           "original-inputs=preserved overtaking=180 device=unexecuted\n";
+  } catch (const std::exception &error) {
+    std::cerr << error.what() << '\n';
+    return 1;
+  }
+}

@@ -233,3 +233,63 @@ fn two_distinct_naras_receive_the_same_dated_sources_without_collapsing_constitu
             .contains("subject does not match")
     );
 }
+
+// Regression: supplied controlled receiver coefficients remain carrier inputs;
+// only exact native revision/currentness is tested here, not Nara's physiology.
+#[test]
+fn independent_m3_revision_does_not_relabel_old_personal_receipt_as_current() {
+    let input = world_input("nara-native-currentness");
+    let original = input.compose().unwrap();
+    let refs = EventBasisRefs::from_basis(&original).unwrap();
+    let mut instance = PersonalFieldInstance::new(constitution(&refs.subject_ref, 1.0)).unwrap();
+    let first = instance.receive(&original, event(&refs)).unwrap();
+    assert!(instance.is_current_for_basis(&original).unwrap());
+    let mut next = input.clone();
+    next.m3_commands.push(ql_mef::m3_state::M3Command {
+        schema: ql_mef::m3_state::COMMAND_SCHEMA.into(),
+        event_ref: refs.event_ref.clone(),
+        subject_ref: refs.subject_ref.clone(),
+        expected_generation: input.m3.stamp.identity.profile_generation,
+        actor_ref: "controlled:revision-test".into(),
+        cause_ref: "controlled:native-M3-command".into(),
+        occurrence_unix_ms: input.m3.occurrence_unix_ms + 1,
+        receipt_unix_ms: input.m3.receipt_unix_ms + 1,
+        operations: vec![ql_mef::m3_state::M3Operation::AdvanceClock { steps: 1 }],
+    });
+    let after = next.compose().unwrap();
+    assert_eq!(EventBasisRefs::from_basis(&after).unwrap(), refs);
+    assert!(!instance.is_current_for_basis(&after).unwrap());
+    assert!(
+        instance
+            .receive(&after, event(&refs))
+            .unwrap_err()
+            .contains("explicit native admission")
+    );
+    assert_eq!(instance.current(), Some(&first));
+    let old_witness = EventBasisRefs::native_generations(&original).unwrap();
+    let new_witness = EventBasisRefs::native_generations(&after).unwrap();
+    let mut new_input = event(&refs);
+    new_input.observed_at_unix_ms += 1;
+    assert!(
+        instance
+            .receive_native(&after, new_input.clone(), &old_witness)
+            .is_err()
+    );
+    assert_eq!(instance.current(), Some(&first));
+    let accepted = instance
+        .receive_native(&after, new_input.clone(), &new_witness)
+        .unwrap();
+    assert_eq!(
+        accepted.reception_generation,
+        first.reception_generation + 1
+    );
+    assert!(instance.is_current_for_basis(&after).unwrap());
+    assert!(!instance.is_current_for_basis(&original).unwrap());
+    assert!(
+        instance
+            .receive_native(&original, new_input, &old_witness)
+            .unwrap_err()
+            .contains("stale independent")
+    );
+    assert_eq!(instance.current(), Some(&accepted));
+}

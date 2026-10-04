@@ -68,13 +68,23 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Canonical Rust workspace and native CLI gate
         run: bash scripts/verify core
+      - name: Retain deterministic decision corpus and baseline receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ql-agent-deterministic-${{ github.sha }}-${{ github.run_attempt }}
+          path: target/agent-decision/native-corpus-*
+          if-no-files-found: ignore
+          retention-days: 14
 
   native:
     name: native-c
     needs: changes
     if: needs.changes.outputs.native == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # Actual63 reached21 original leaves in25min and timed out. Keep every
+    # canonical leaf/workload; allow this bounded complete native floor.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,8 +94,18 @@ jobs:
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           cache-on-failure: true
+      - name: Install native field transport development dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjson-c-dev pkg-config
       - name: Native C/C++ parity, packaging and installed-consumer floor
         run: bash scripts/verify native
+      - name: Retain physical-musical component evidence from the actual source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: physical-musical-components-${{ github.sha }}
+          path: target/physical-musical/
+          if-no-files-found: ignore
+          retention-days: 14
 
   invariants:
     name: repository-invariants

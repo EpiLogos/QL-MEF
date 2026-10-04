@@ -15,8 +15,8 @@ use serde_json::{Value, json};
 use super::coupled::{CoupledBasis, CoupledFieldSession, CoupledInput};
 use super::{FieldInput, LiftInput};
 use crate::nara::{
-    EventBasisRefs, PersonalConstitution, PersonalEventInput, PersonalFieldInstance,
-    PersonalFieldState,
+    EventBasisRefs, NativeEventGenerations, PersonalConstitution, PersonalEventInput,
+    PersonalFieldInstance, PersonalFieldState,
 };
 
 pub const PERSONAL_SESSION_CONTRACT: &str = "ql.personal-coupled-session/v1";
@@ -81,11 +81,8 @@ impl PersonalCoupledSession {
     /// event/profile generation and subject. A world replacement never silently
     /// relabels an older personal reading as current.
     pub fn personal_is_current(&self) -> Result<bool, String> {
-        let Some(personal) = self.personal.current() else {
-            return Ok(false);
-        };
-        let world = EventBasisRefs::from_basis(self.coupled.current_basis())?;
-        Ok(personal.event == world && personal.subject_id == world.subject_ref)
+        self.personal
+            .is_current_for_basis(self.coupled.current_basis())
     }
 
     /// Receives the independently supplied seven-centre inputs against the exact
@@ -95,6 +92,18 @@ impl PersonalCoupledSession {
         input: PersonalEventInput,
     ) -> Result<PersonalFieldState, String> {
         self.personal.receive(self.coupled.current_basis(), input)
+    }
+
+    /// Admit independently versioned native M3 reception through this same owner.
+    /// The expected witness is compared with the actual current basis before any
+    /// personal state changes. Legacy reception cannot relabel a stale reading.
+    pub fn receive_personal_native(
+        &mut self,
+        input: PersonalEventInput,
+        expected: &NativeEventGenerations,
+    ) -> Result<PersonalFieldState, String> {
+        self.personal
+            .receive_native(self.coupled.current_basis(), input, expected)
     }
 
     pub fn read_field(&mut self) -> Result<Value, String> {

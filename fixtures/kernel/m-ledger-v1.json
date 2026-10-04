@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "daecbea848506fe5c5ec245c72cb3fc80122c54234e88e0d9b87b2e7e15a05a6",
+  "ledger_revision": "3acbaf1268bdbbbb3b3b43d2fa250520be08b5d36942ca496e4b146d16a4e351",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc",
@@ -91356,7 +91356,7 @@
       "id": "rust:crates/ql-cli/src/vak_composition.rs:face",
       "stratum": "rust",
       "kind": "computational",
-      "path": "crates/ql-cli/src/vak_composition.rs",
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
       "symbol": "face",
       "disposition": "coordinate-bound",
       "coordinates": [
@@ -91371,7 +91371,7 @@
       "id": "rust:crates/ql-cli/src/vak_composition.rs:frame_view",
       "stratum": "rust",
       "kind": "computational",
-      "path": "crates/ql-cli/src/vak_composition.rs",
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
       "symbol": "frame_view",
       "disposition": "coordinate-bound",
       "coordinates": [
@@ -91388,7 +91388,7 @@
       "id": "rust:crates/ql-cli/src/vak_composition.rs:ground",
       "stratum": "rust",
       "kind": "computational",
-      "path": "crates/ql-cli/src/vak_composition.rs",
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
       "symbol": "ground",
       "disposition": "coordinate-bound",
       "coordinates": [
@@ -91414,7 +91414,7 @@
       "id": "rust:crates/ql-cli/src/vak_composition.rs:parse_language",
       "stratum": "rust",
       "kind": "computational",
-      "path": "crates/ql-cli/src/vak_composition.rs",
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
       "symbol": "parse_language",
       "disposition": "coordinate-bound",
       "coordinates": [
@@ -91429,7 +91429,7 @@
       "id": "rust:crates/ql-cli/src/vak_composition.rs:return_view",
       "stratum": "rust",
       "kind": "computational",
-      "path": "crates/ql-cli/src/vak_composition.rs",
+      "path": "crates/ql-mef/src/vak_composition_wire.rs",
       "symbol": "return_view",
       "disposition": "coordinate-bound",
       "coordinates": [
