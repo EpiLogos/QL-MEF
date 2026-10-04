@@ -580,9 +580,37 @@ fn emit_source_qualified_form_receiving_fixture_when_artifact_path_is_explicit()
     );
     if let Some(path) = std::env::var_os("QL_SOURCE_FORM_RECEIVING_FIXTURE") {
         use sha2::{Digest, Sha256};
+        // Selected-source re-adoption needs genuine N9 admissions at the
+        // original saved cursor. Invoke the actual before owner again;
+        // changing a serialized date would detach the numerical producer.
+        let before_at128 = actual_receiving_source::for_prepared(&before, 128).unwrap();
+        let before_at512 = actual_receiving_source::for_prepared(&before, 512).unwrap();
+        assert_eq!(
+            before_at128,
+            actual_receiving_source::for_prepared(&before, 128).unwrap()
+        );
+        assert_eq!(
+            before_at512,
+            actual_receiving_source::for_prepared(&before, 512).unwrap()
+        );
+        for selected in [&before_at128, &before_at512] {
+            for field in [
+                "performance_preparation",
+                "preparation",
+                "current_m3",
+                "program_refs",
+            ] {
+                assert_eq!(selected[field], before_packet[field]);
+            }
+            assert_ne!(
+                selected["native_admission"],
+                before_packet["native_admission"]
+            );
+        }
         let mut fixture = json!({
             "schema":"ql.native-source-form-receiving-fixture/v1",
             "before":before_packet,"after":after_packet,
+            "before_at128":before_at128,"before_at512":before_at512,
             "after_fresh":actual_receiving_source::for_prepared(&after,0).unwrap(),
             "command":command,"receipt":receipt,"original_replay":original_replay,
             "after_coupled_source":after_coupled_source,"recipe":recipe,

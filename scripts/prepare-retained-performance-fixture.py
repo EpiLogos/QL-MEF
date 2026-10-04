@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import shlex
 import signal
+import struct
 import subprocess
 import time
 import uuid
@@ -65,7 +66,10 @@ def main() -> None:
                  "crates/ql-mef/tests/procedural_control.rs",
                  "cpp/tests/performance_route_management_wire.cpp",
                  "crates/ql-mef/tests/performance_route_management_native_wire.rs",
-                 "crates/ql-mef/tests/support/performance_route_management_fixture.rs"]:
+                 "crates/ql-mef/tests/support/performance_route_management_fixture.rs",
+                 "cpp/tests/receiving_restore_wire.cpp",
+                 "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+                 "crates/ql-mef/tests/support/retained_source_performance.rs"]:
         if not (source / name).is_file():
             raise RuntimeError("qualified native source has no retained performance producer: " + name)
     output = args.output.resolve()
@@ -80,52 +84,143 @@ def main() -> None:
                "expected_ql_head": args.expected_ql_head, "actual_ql_head": args.expected_ql_head,
                "run": str(run), "commands": records, "status": "preparing",
                "source_producers":[{"path":name,"sha256":sha(source/name)} for name in (
+                   "crates/ql-mef/examples/retained-performance-fixture.rs",
                    "crates/ql-mef/src/continuous/dense_field_source_tests.rs",
                    "crates/ql-mef/tests/procedural_control.rs",
                    "cpp/tests/performance_route_management_wire.cpp",
                    "crates/ql-mef/tests/performance_route_management_native_wire.rs",
-                   "crates/ql-mef/tests/support/performance_route_management_fixture.rs")] }
+                   "crates/ql-mef/tests/support/performance_route_management_fixture.rs",
+                   "cpp/tests/receiving_restore_wire.cpp",
+                   "crates/ql-mef/tests/receiving_restore_native_wire.rs",
+                   "crates/ql-mef/tests/support/retained_source_performance.rs")] }
 
     def retain() -> None:
         receipt["elapsed_seconds"] = time.monotonic() - start
-        (run / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+        temporary = run / (".receipt-" + uuid.uuid4().hex)
+        with temporary.open("x", encoding="utf-8") as file:
+            file.write(json.dumps(receipt, indent=2) + "\n")
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(temporary, run / "receipt.json")
+        directory = os.open(run, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
 
     def execute(command: list[str], name: str, stdout: Path | None = None,
                 environment: dict[str, str] | None = None) -> None:
         remaining = args.timeout_seconds - (time.monotonic() - start)
         if remaining <= 0:
             raise RuntimeError("native fixture preparation exhausted admitted time bound")
-        record = {"argv": command, "cwd": str(source), "log": str(run / (name + ".log"))}
+        if os.name != "posix":
+            raise RuntimeError("native producer requires its existing POSIX owned-session custody")
+        original_stdout = stdout or run / (name + ".stdout")
+        record = {"argv": command, "cwd": str(source), "log": str(run / (name + ".log")),
+                  "stdout": str(original_stdout), "command_ref": "native-producer:" + uuid.uuid4().hex,
+                  "child_spawned": False, "source_head": args.expected_ql_head,
+                  "explicit_environment": dict(environment or {}),
+                  "remaining_admitted_seconds": remaining,
+                  "preexecution_receipt": str(run / (name + ".preexecution.json"))}
         records.append(record)
         then = time.monotonic()
-        with (run / (name + ".log")).open("wb") as log:
-            with (stdout.open("wb") if stdout else (run / (name + ".stdout")).open("wb")) as out:
+        with Path(record["preexecution_receipt"]).open("x", encoding="utf-8") as file:
+            json.dump({"schema":"oi.actual-native-producer-preexecution/v1", **record}, file)
+            file.flush()
+            os.fsync(file.fileno())
+        # Durable complete command/source/path custody exists BEFORE launch.
+        retain()
+        with Path(record["log"]).open("xb") as log:
+            with original_stdout.open("xb") as out:
                 child_environment = os.environ.copy()
-                if environment:
-                    child_environment.update(environment)
-                child = subprocess.Popen(command, cwd=source, stdout=out, stderr=log,
-                                         start_new_session=True, env=child_environment)
+                child_environment.update(record["explicit_environment"])
                 try:
-                    record["exit_code"] = child.wait(timeout=remaining)
+                    child = subprocess.Popen(command, cwd=source, stdout=out, stderr=log,
+                                             start_new_session=True, env=child_environment)
+                except OSError as error:
+                    record["child_start_error"] = str(error)
+                    retain()
+                    raise
+                record.update(child_spawned=True, process_id=child.pid,
+                              process_custody="single owned unreaped Popen child; new POSIX session")
+                # This script is the child's sole waiter. Its PID remains held
+                # by that unreaped child until wait completes; a process name or
+                # inferred foreign PID is never used as a termination operand.
+                try:
+                    group = os.getpgid(child.pid)
+                    session = os.getsid(child.pid)
+                    record["owned_process_group"] = {"process_id":child.pid,
+                        "process_group_id":group,"session_id":session,
+                        "matches_owned_new_session":group==child.pid and session==child.pid}
+                except ProcessLookupError:
+                    # An already-exited original child is still owned by wait;
+                    # absence is recorded, never converted into a group grant.
+                    record["owned_process_group"] = {"process_id":child.pid,
+                        "absent_at_birth_readback":True,"matches_owned_new_session":False}
+                retain()
+                try:
+                    record["exit_code"] = child.wait(timeout=max(0.,args.timeout_seconds-(time.monotonic()-start)))
                 except subprocess.TimeoutExpired:
-                    os.killpg(child.pid, signal.SIGKILL)
-                    child.wait()
-                    record["exit_code"] = child.returncode
                     record["timed_out"] = True
+                    # The original stdout/stderr files remain complete and
+                    # untrimmed. Preserve loss/deadline and current group proof
+                    # before requesting ANY stop, even when proof is absent.
+                    log.flush(); out.flush()
+                    os.fsync(log.fileno()); os.fsync(out.fileno())
+                    termination = {"schema":"oi.actual-native-producer-termination/v1",
+                        "command_ref":record["command_ref"],"reason":"admitted deadline exceeded",
+                        "requested":False,"owned_process_id":child.pid,
+                        "original_stdout_bytes_at_deadline":os.fstat(out.fileno()).st_size,
+                        "original_stderr_bytes_at_deadline":os.fstat(log.fileno()).st_size}
+                    record["termination"] = termination
+                    try:
+                        group = os.getpgid(child.pid)
+                        session = os.getsid(child.pid)
+                    except ProcessLookupError:
+                        termination["owned_group_absent_before_stop"] = True
+                        retain()
+                    else:
+                        termination.update(actual_process_group_id=group,actual_session_id=session)
+                        if (not record["owned_process_group"].get("matches_owned_new_session")
+                                or group!=child.pid or session!=child.pid):
+                            termination["custody_refused"] = True
+                            retain()
+                            raise RuntimeError("native deadline retained but owned process-group proof was lost; no unqualified stop requested") from None
+                        termination["requested"] = True
+                        termination["signal"] = int(signal.SIGKILL)
+                        retain()
+                        try:
+                            os.killpg(child.pid, signal.SIGKILL)
+                            termination["kernel_stop_request_accepted"] = True
+                        except ProcessLookupError:
+                            termination["owned_group_absent_at_stop"] = True
+                    record["exit_code"] = child.wait()
+                    termination["original_child_wait_completed"] = True
                     raise RuntimeError("native fixture command exceeded admitted bound") from None
                 finally:
+                    log.flush(); out.flush()
+                    os.fsync(log.fileno()); os.fsync(out.fileno())
                     record["elapsed_seconds"] = time.monotonic() - then
+                    # Complete final originals and their actual hashes persist
+                    # for success, failure and timeout; no synthetic exit row.
+                    record["original_output_complete"] = "exit_code" in record
+                    record["original_output"] = [{"path":str(path),"bytes":path.stat().st_size,"sha256":sha(path)}
+                        for path in (original_stdout,Path(record["log"]))]
                     retain()
         if record["exit_code"] != 0:
             raise RuntimeError("actual native producer refused; preserved command/log: " + name)
 
     try:
         rust_fixture = run / "retained-performance-fixture.json"
+        zero_fixture = run / "native-opposite-zero-fixture.json"
         checkpoint_fixture = run / "retained-performance-checkpoint-fixture.json"
         source_fixture = run / "retained-source-performance-fixture.json"
         context_fixture = run / "retained-performance-context-fixture.json"
         execute(["cargo", "run", "--quiet", "--locked", "-p", "ql-mef", "--example", "retained-performance-fixture"],
                 "rust-producer", rust_fixture)
+        execute(["cargo", "run", "--quiet", "--locked", "-p", "ql-mef", "--example",
+                 "retained-performance-fixture", "--", "--native-opposite-zero"],
+                "actual-native-m1-opposite-zero-producer", zero_fixture)
         execute(["cargo", "run", "--quiet", "--locked", "-p", "ql-mef", "--example", "retained-source-performance-fixture"],
                 "actual-retained-source-form-producer", source_fixture)
         execute(["cargo", "run", "--quiet", "--locked", "-p", "ql-mef", "--example", "retained-performance-context-fixture"],
@@ -149,6 +244,18 @@ def main() -> None:
         packet_dir.mkdir(mode=0o700)
         (packet_dir / "baseline.packet.json").write_text(json.dumps(packet, separators=(",", ":")) + "\n")
         (packet_dir / "baseline.basis.json").write_text(json.dumps(packet["native_basis"], separators=(",", ":")) + "\n")
+        zero_source=json.loads(zero_fixture.read_bytes())
+        zero_packet=zero_source.get("native_preparation")
+        if (zero_source.get("schema")!="ql.retained-performance-fixture/v1"
+                or not isinstance(zero_packet,dict) or not isinstance(zero_packet.get("native_basis"),dict)
+                or not isinstance(zero_packet.get("notes"),list) or not zero_packet["notes"]
+                or any(struct.pack(">d",note["phase_sin"])!=struct.pack(">d",-0.0)
+                       or struct.pack(">d",note["phase_cos"])!=struct.pack(">d",-1.0) or note["source_face"]!=1 for note in zero_packet["notes"])):
+            raise RuntimeError("actual native M1 opposite-phase producer lost original negative-zero bits")
+        zero_packets=run/"native-opposite-zero-packets"
+        zero_packets.mkdir(mode=0o700)
+        (zero_packets/"baseline.packet.json").write_text(json.dumps(zero_packet,separators=(",",":"))+"\n")
+        (zero_packets/"baseline.basis.json").write_text(json.dumps(zero_packet["native_basis"],separators=(",",":"))+"\n")
         native_dir = source / "target/physical-musical/native"
         native = native_dir / "retained_performance_checkpoint_wire-test"
         management_native = native_dir / "performance_management_artifacts_packet-test"
@@ -158,11 +265,12 @@ def main() -> None:
         worker_native=native_dir/"ql-field-worker"
         receiving_native=native_dir/"current_performance_receiving_wire-test"
         route_native=native_dir/"performance_route_management_wire-test"
+        restore_native=native_dir/"receiving_restore_wire-test"
         # CPP's selected build directory is absolute, while its actual C owner
         # library lives in c/build. Recursive make inherits command-line
         # BUILD_DIR, so build the native C owner explicitly at its own path.
         execute(["make", "-C", "c", "BUILD_DIR=build", "all"], "native-c-owner-build")
-        execute(["make", "-C", "cpp", "BUILD_DIR=" + str(native_dir), str(native), str(management_native),str(order_native),str(workload_native),str(reservation_native),str(worker_native),str(receiving_native),str(route_native)], "native-checkpoint-build")
+        execute(["make", "-C", "cpp", "BUILD_DIR=" + str(native_dir), str(native), str(management_native),str(order_native),str(workload_native),str(reservation_native),str(worker_native),str(receiving_native),str(route_native),str(restore_native)], "native-checkpoint-build")
         # These source/control exports come only after the existing genuine
         # worker/pure-native producer assertions, within the SAME 900s bound.
         # They are component source bytes, never World/Scene/lease authority.
@@ -277,10 +385,99 @@ def main() -> None:
                     or assets.get("current_receiving",{}).get("source_context")!=assets.get("source_context")
                     or assets.get("current_receiving",{}).get("receiving_definition")!=assets.get("receiving_definition")):
                 raise RuntimeError("actual activated original receiving/source contract differs")
+        # Whole original World/Personal/Shared native readmission corpus. The
+        # genuine Rust source factories and matching SAME A/P/Management driver
+        # execute their original complete positive and negative activity once.
+        # No extracted echo, standalone receiving JSON or supplied context label
+        # replaces the original bounded request/reply/exit files.
+        readmission_dir=run/"native-receiving-readmission"
+        execute(["cargo", "test", "-p", "ql-mef", "--locked", "--test",
+                 "receiving_restore_native_wire", "--", "--ignored", "--nocapture"],
+                "actual-native-world-personal-shared-receiving-readmission",
+                environment={"QL_NATIVE_WIRE_TEST":str(restore_native),
+                             "QL_RECEIVING_RESTORE_EVIDENCE_DIR":str(readmission_dir)})
+        readmission_names=("producer-input.json", "native-preexecution.json",
+            "native-child-started.json", "native-stdout.json", "native-stderr.txt", "native-exit.json")
+        if not readmission_dir.is_dir() or {path.name for path in readmission_dir.iterdir()}!={"world","personal","shared"}:
+            raise RuntimeError("actual native readmission omitted its complete three context corpus")
+        for kind in ("world","personal","shared"):
+            directory=readmission_dir/kind
+            if not directory.is_dir() or {path.name for path in directory.iterdir()}!=set(readmission_names):
+                raise RuntimeError("actual native readmission lost original input/reply/exit custody or exceeded its bound")
+            for name in readmission_names:
+                path=directory/name
+                size=path.stat().st_size if path.is_file() else -1
+                limit=(32 if name=="native-stdout.json" else 16 if name=="producer-input.json" else 4 if name=="native-stderr.txt" else 1)*1024*1024
+                if not 0<=size<=limit or (size==0 and name!="native-stderr.txt"):
+                    raise RuntimeError("actual native readmission original file exceeds or omits bounded complete evidence")
+            request=json.loads((directory/"producer-input.json").read_bytes())
+            preexecution=json.loads((directory/"native-preexecution.json").read_bytes())
+            started=json.loads((directory/"native-child-started.json").read_bytes())
+            native_exit=json.loads((directory/"native-exit.json").read_bytes())
+            actual=json.loads((directory/"native-stdout.json").read_bytes())
+            input_size=(directory/"producer-input.json").stat().st_size
+            if (request.get("schema")!="ql.receiving-restore-native-fixture/v1"
+                    or set(request)!={"schema","context_kind","context"} or request.get("context_kind")!=kind
+                    or preexecution.get("schema")!="ql.native-receiving-restore-preexecution/v1"
+                    or preexecution.get("context_kind")!=kind or preexecution.get("complete_input") is not True
+                    or preexecution.get("actual_input_bytes")!=input_size or preexecution.get("retained_input_bytes")!=input_size
+                    or preexecution.get("stdin_limit_bytes")!=16*1024*1024 or preexecution.get("child_spawned") is not False
+                    or started.get("child_spawned") is not True or type(started.get("process_id")) is not int or started["process_id"]<=0
+                    or native_exit.get("success") is not True or native_exit.get("code")!=0
+                    or actual.get("schema")!="ql.receiving-restore-native-receipt/v1" or set(actual)!={"schema",kind}):
+                raise RuntimeError("actual native readmission original preexecution/child/exit/context receipt differs")
+            control=actual[kind]["control"]
+            reply=control["readmission_reply"]
+            echo=reply["payload"]["receiving_readmission"]
+            if (reply.get("schema")!="ql.performance-worker-reply/v1" or reply.get("operation")!="restore-current-receiving"
+                    or reply.get("accepted") is not True or echo.get("schema")!="ql.native-receiving-readmission/v1"
+                    or echo.get("current_source_packet")!=request["context"]["native_preparation"]
+                    or echo.get("current_receiving")!=request["context"]["saved_current"]
+                    or echo.get("transport_ack")!=reply["payload"]["transport_ack"]
+                    or reply["reading"].get("transport_epoch")!="2" or reply["reading"].get("samples_elapsed")!="640"
+                    or actual[kind].get("saved_cursor")!="640" or actual[kind].get("resumed_cursor")!="1664"):
+                raise RuntimeError("actual native readmission is detached from its original complete source/cursor/feedback")
         execute([str(native), str(rust_fixture)], "actual-native-play-checkpoint-replay", checkpoint_fixture)
         management_dir = run / "native-management"
         management_dir.mkdir(mode=0o700)
         execute([str(management_native), str(packet_dir), str(management_dir)], "actual-native-managed-play-checkpoint-journal")
+        zero_management_dir=run/"native-opposite-zero-management"
+        zero_management_dir.mkdir(mode=0o700)
+        execute([str(management_native),str(zero_packets),str(zero_management_dir)],
+                "actual-native-opposite-zero-management-checkpoint-journal")
+        zero_pending=json.loads((zero_management_dir/"baseline.pending.management.json").read_bytes())
+        zero_events=json.loads((zero_management_dir/"baseline.applied-events.json").read_bytes())
+        zero_applications=zero_events.get("applications")
+        if (zero_pending.get("schema")!="ql.performance-management-checkpoint/v1"
+                or zero_events.get("schema")!="ql.native-applied-event-artifact/v1"
+                or not isinstance(zero_applications,list) or len(zero_applications)!=4
+                or any(event.get("applied") is not True for event in zero_applications)):
+            raise RuntimeError("actual opposite-zero Manager omitted original applied operations")
+        for path in [("inputs",), ("input_history","entries")]:
+            rows=zero_pending
+            for name in path:
+                rows=rows[name]
+            if not rows or any(struct.pack(">d",row["target"]["phase_sin"])!=struct.pack(">d",-0.0)
+                               or struct.pack(">d",row["target"]["phase_cos"])!=struct.pack(">d",-1.0) for row in rows):
+                raise RuntimeError("actual opposite-zero native Manager changed its original complete target bits")
+        zero_by_sequence={event["sequence"]:event for event in zero_applications}
+        zero_queued=[]
+        zero_audio=zero_pending["native_pair"]["audio"]
+        for owner,key in [("operations",None),("releases",None),("pending_operations","operation"),("pending_releases","release")]:
+            rows=zero_audio[owner]["entries"] if key is None else zero_audio[owner]
+            for row in rows:
+                operation=row if key is None else row[key]
+                application=zero_by_sequence.get(operation["sequence"])
+                if application is None or application["applied_sample"]!=operation["sample"]:
+                    raise RuntimeError("opposite-zero native pending operation lost its actual application")
+                zero_queued.append({"native_sequence":operation["sequence"],"recorded_sequence":application["sequence"],"effective_sample":operation["sample"]})
+        zero_management_fixture=run/"native-opposite-zero-management-fixture.json"
+        zero_management_fixture.write_text(json.dumps({"schema":"ql.retained-performance-management-fixture/v1",
+            "recorded_sequence_policy":"actual-native-baseline-ordinal-identity",
+            "management_checkpoint":zero_pending,"queued_events":zero_queued,
+            "actual_applied_events":zero_events,
+            "original_input_journal":json.loads((zero_management_dir/"baseline.input-journal.json").read_bytes()),
+            "original_native_basis":json.loads((zero_management_dir/"baseline.basis.json").read_bytes())},separators=(",",":"))+"\n")
         order_dir=run/"native-managed-order"
         execute([str(order_native),str(packet_dir),str(order_dir)],"actual-native-managed-overtaking-checkpoint-journal")
         reservation_dir=run/"native-score-reservations"
@@ -399,7 +596,9 @@ def main() -> None:
             "actual_applied_events": applications,
             "original_input_journal": json.loads((management_dir / "baseline.input-journal.json").read_bytes()),
             "original_native_basis": json.loads((management_dir / "baseline.basis.json").read_bytes())}, separators=(",", ":")) + "\n")
-        for fixture, schema in [(rust_fixture, "ql.retained-performance-fixture/v1"),
+        for fixture, schema in [(zero_fixture, "ql.retained-performance-fixture/v1"),
+                                (zero_management_fixture, "ql.retained-performance-management-fixture/v1"),
+                                (rust_fixture, "ql.retained-performance-fixture/v1"),
                                 (source_fixture, "ql.retained-source-performance-fixture/v1"),
                                 (checkpoint_fixture, "ql.retained-performance-checkpoint-fixture/v1"),
                                 (management_fixture, "ql.retained-performance-management-fixture/v1")]:
@@ -413,7 +612,10 @@ def main() -> None:
             raise RuntimeError("native source changed during actual fixture production")
         delivery_dir=run/"native-act-delivery"
         delivery_dir.mkdir(mode=0o700)
-        values = {"QL_RETAINED_PERFORMANCE_FIXTURE": str(rust_fixture),
+        values = {"QL_RETAINED_NATIVE_OPPOSITE_ZERO_FIXTURE": str(zero_fixture),
+                  "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_FIXTURE": str(zero_management_fixture),
+                  "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_DIRECTORY": str(zero_management_dir),
+                  "QL_RETAINED_PERFORMANCE_FIXTURE": str(rust_fixture),
                   "QL_RETAINED_SOURCE_PERFORMANCE_FIXTURE": str(source_fixture),
                   "QL_RETAINED_PERFORMANCE_CONTEXT_FIXTURE": str(context_fixture),
                   "QL_RETAINED_PERFORMANCE_WORKLOAD_DIRECTORY": str(workload_dir),
@@ -425,6 +627,7 @@ def main() -> None:
                   "QL_RETAINED_PERFORMANCE_MANAGED_ORDER_DIRECTORY":str(order_dir),
                   "QL_RETAINED_PERFORMANCE_PREARM_DIRECTORY":str(prearm_dir),
                   "QL_CURRENT_RECEIVING_ARTIFACT_DIRECTORY": str(receiving_dir),
+                  "QL_RETAINED_RECEIVING_READMISSION_DIRECTORY": str(readmission_dir),
                   "OI_NATIVE_PERFORMANCE_DELIVERY_DIRECTORY": str(delivery_dir),
                   "OI_RETAINED_PERFORMANCE_TEST_HOME": str(act_home),
                   "OI_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT":str(dense_field),
@@ -434,11 +637,13 @@ def main() -> None:
         env_file.write_text("".join("export " + name + "=" + shlex.quote(value) + "\n" for name, value in values.items()))
         receipt.update(status="ready", environment_file=str(env_file),
                        fixtures=[{"path": str(path), "sha256": sha(path), "bytes": path.stat().st_size}
-                                 for path in [rust_fixture, source_fixture, context_fixture, checkpoint_fixture, management_fixture,
+                                 for path in [zero_fixture, zero_management_fixture,
+                                              *sorted(zero_packets.glob("*.json")), *sorted(zero_management_dir.glob("*.json")),
+                                              rust_fixture, source_fixture, context_fixture, checkpoint_fixture, management_fixture,
                                               dense_field,radius_control,strength_control,
-                                              *sorted(receiving_dir.glob("*.json")),*sorted(prearm_dir.glob("*.json")),*sorted(packet_dir.glob("*.json")), *sorted(management_dir.glob("*.json")),*sorted(order_dir.glob("*.json")),*sorted(workload_dir.glob("*.json")),*sorted(source_workload_dir.glob("*.json")),*sorted(reservation_dir.glob("*.json"))]],
+                                              *sorted(receiving_dir.glob("*.json")),*sorted(readmission_dir.glob("*/*")),*sorted(prearm_dir.glob("*.json")),*sorted(packet_dir.glob("*.json")), *sorted(management_dir.glob("*.json")),*sorted(order_dir.glob("*.json")),*sorted(workload_dir.glob("*.json")),*sorted(source_workload_dir.glob("*.json")),*sorted(reservation_dir.glob("*.json"))]],
                        native_binaries=[{"path": str(path), "sha256": sha(path)}
-                                        for path in [native, management_native,order_native,workload_native,reservation_native,worker_native,receiving_native,route_native]],
+                                        for path in [native, management_native,order_native,workload_native,reservation_native,worker_native,receiving_native,route_native,restore_native]],
                        standing="actual native source/played checkpoint fixture; no installed app/device or whole C acceptance")
         print(json.dumps({"environment_file": str(env_file), "receipt": str(run / "receipt.json")}, sort_keys=True))
     except Exception as error:

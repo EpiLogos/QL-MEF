@@ -808,3 +808,648 @@ fn actual_form_n9_admission_and_retained_acoustic_origin_are_independent_complet
     assert_eq!(later_prepared.packet()["origin_sample"], "0");
     assert_eq!(later_prepared.packet()["history_origin_sample"], "0");
 }
+
+#[test]
+fn invocation_local_native_source_replay_matches_fresh_all_three_dates_and_refuses_foreign_inputs()
+{
+    let (owner, current, source) = original_source();
+    let before = owner.source_assets().clone();
+    let prepared = source.begin_current_preparation(&owner, &current).unwrap();
+    assert!(prepared.is_for(&source, &owner, &current));
+    let other_source = source.clone();
+    let other_current = current.clone();
+    let other_owner = PerformanceOwner::prepare(
+        &current,
+        "expression:physical-cold/world",
+        owner.config.clone(),
+    )
+    .unwrap();
+    assert!(!prepared.is_for(&other_source, &owner, &current));
+    assert!(!prepared.is_for(&source, &other_owner, &current));
+    assert!(!prepared.is_for(&source, &owner, &other_current));
+    let origin = prepared.prepare_at(0).unwrap();
+    for cursor in [0, 512, 1024] {
+        let dated = prepared.prepare_at(cursor).unwrap();
+        prepared.validate_at(&dated, cursor).unwrap();
+        let independently_replayed = source.prepare_current(&owner, &current, cursor).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&dated.snapshot().unwrap()).unwrap(),
+            serde_json::to_vec(&independently_replayed.snapshot().unwrap()).unwrap()
+        );
+        assert_eq!(
+            dated.snapshot().unwrap()["native_admission"]["operation"]["native_sample"],
+            cursor.to_string()
+        );
+        if cursor != 0 {
+            assert!(prepared.validate_at(&origin, cursor).is_err());
+        }
+    }
+    // A later verification receives a NEW actual full source replay. No
+    // persisted admission or cross-call cache can supply its native inputs.
+    let repeated = source.begin_current_preparation(&owner, &current).unwrap();
+    assert_eq!(
+        serde_json::to_vec(&repeated.prepare_at(1024).unwrap().snapshot().unwrap()).unwrap(),
+        serde_json::to_vec(&prepared.prepare_at(1024).unwrap().snapshot().unwrap()).unwrap()
+    );
+    assert_eq!(owner.source_assets(), &before);
+    assert!(owner.reading().is_none());
+}
+
+/// These inputs are the complete original native outputs of run37200815495,
+/// copied without rewriting a field. The test re-enters native constructors;
+/// importing their retained receiving witness grants no Act/private read.
+fn actual703_source(inputs: &Value) -> NativePerformanceReceivingSource {
+    let context: ReturnContext = serde_json::from_value(inputs["return_context"].clone()).unwrap();
+    let mut source = match inputs["constructor"].as_str().unwrap() {
+        "native-world" => NativePerformanceReceivingSource::world_source(
+            serde_json::from_value(inputs["world_request"].clone()).unwrap(),
+            context,
+        )
+        .unwrap(),
+        "native-protected" => {
+            let profile = serde_json::from_value(inputs["identity_profile"].clone()).unwrap();
+            let natal = inputs.get("natal").filter(|value| !value.is_null());
+            let sky = &inputs["sky"];
+            let occasion = serde_json::from_value(inputs["original_occasion"].clone()).unwrap();
+            let calibration = serde_json::from_value(inputs["calibration"].clone()).unwrap();
+            match context.kind.as_str() {
+                "personal" => NativePerformanceReceivingSource::personal(
+                    &profile,
+                    natal,
+                    sky,
+                    occasion,
+                    calibration,
+                    context,
+                )
+                .unwrap(),
+                "shared" => NativePerformanceReceivingSource::shared(
+                    &profile,
+                    natal,
+                    sky,
+                    occasion,
+                    calibration,
+                    context,
+                )
+                .unwrap(),
+                _ => panic!("original native protected source has another scope"),
+            }
+        }
+        _ => panic!("original703 corpus has an unsupported constructor"),
+    };
+    if let Some(configuration) = inputs.get("acoustic_receiving") {
+        source = source
+            .with_acoustic_configuration(serde_json::from_value(configuration.clone()).unwrap())
+            .unwrap();
+    }
+    source
+}
+
+#[test]
+fn genuine_original703_world_personal_shared_assets_replay_without_rewriting_current_authority() {
+    use sha2::{Digest, Sha256};
+    let archive = include_str!("performance_receiving_versions/703/performance_receiving.rs");
+    let archive_revision = format!("sha256:{:x}", Sha256::digest(archive.as_bytes()));
+    let current_revision = format!(
+        "sha256:{:x}",
+        Sha256::digest(include_str!("performance_receiving.rs").as_bytes())
+    );
+    assert_ne!(archive_revision, current_revision);
+    for original in [
+        include_str!("../../../../fixtures/native-receiving-703/world.source-performance.json"),
+        include_str!("../../../../fixtures/native-receiving-703/personal.source-performance.json"),
+        include_str!("../../../../fixtures/native-receiving-703/shared.source-performance.json"),
+    ] {
+        let fixture: Value = serde_json::from_str(original).unwrap();
+        let assets = &fixture["source_assets"];
+        let before = assets.clone();
+        let input: crate::continuous::coupled::CoupledInput =
+            serde_json::from_value(assets["original_native_input"].clone()).unwrap();
+        let current = input.compose().unwrap();
+        let source = actual703_source(&assets["receiving_source_inputs"]);
+        let instance = fixture["native_preparation"]["determination"]["identity"]["instance"]
+            .as_str()
+            .unwrap();
+        let config = serde_json::from_value(assets["configuration"].clone()).unwrap();
+        let owner = PerformanceOwner::prepare(&current, instance, config).unwrap();
+        let expected = &assets["current_receiving"];
+        let cursor = decimal(&expected["native_admission"]["operation"]["native_sample"]).unwrap();
+        assert_eq!(
+            expected["source_payload_context"]["owner"]["revision"],
+            archive_revision
+        );
+        let prepared = source
+            .prepare_retained(&owner, &current, cursor, expected)
+            .unwrap();
+        assert_eq!(prepared.retained_snapshot(), expected);
+        assert_eq!(
+            prepared.fresh().snapshot().unwrap()["source_payload_context"]["owner"]["revision"],
+            current_revision
+        );
+        // The full cold asset comparator remains operative, not just its
+        // receiving fields. Consumer roles stay original observed custody.
+        let cold =
+            PerformanceOwner::prepare_cold_act_source(&current, instance, &source, assets).unwrap();
+        assert_eq!(cold.source_assets(), assets);
+        let full_return = crate::musical_performance_return::bind_performance_return(
+            cold.binding(),
+            source.original_occasion().cloned(),
+            source.return_context().clone(),
+            fixture["basis"]["seed"].as_str().unwrap().parse().unwrap(),
+        )
+        .unwrap();
+        assert_eq!(full_return.expression_basis().unwrap(), fixture["basis"]);
+        for (path, wrong) in [
+            (
+                "/source_payload_context/owner/revision",
+                json!("sha256:unimplemented"),
+            ),
+            (
+                "/source_payload_context/owner/ref",
+                json!("native:foreign/implementation"),
+            ),
+            (
+                "/source_context/context/receiver/ref",
+                json!("native:foreign/receiver"),
+            ),
+            ("/receiving_definition", Value::Null),
+            (
+                "/native_admission/operation/native_sample",
+                json!((cursor + 1).to_string()),
+            ),
+        ] {
+            let mut changed = expected.clone();
+            *changed.pointer_mut(path).expect("exact original703 field") = wrong;
+            assert!(
+                source
+                    .prepare_retained(&owner, &current, cursor, &changed)
+                    .is_err(),
+                "{path}"
+            );
+        }
+        if assets["receiving_source_inputs"]["constructor"] == "native-world" {
+            // This +0.0 comes from the complete actual original1369 World
+            // producer. Flip only its representation; retain every other
+            // native source/payload hash/field. Value equality used to miss it.
+            let zero_path = "/native_admission/native_basis/input/m2/resonator/modes/0/amplitude/1";
+            let original_zero = expected
+                .pointer(zero_path)
+                .expect("genuine original native World zero");
+            assert!(original_zero.is_f64());
+            assert_eq!(original_zero.as_f64().unwrap().to_bits(), 0.0_f64.to_bits());
+            for changed_zero in [json!(-0.0_f64), json!(0)] {
+                let mut changed = expected.clone();
+                *changed.pointer_mut(zero_path).unwrap() = changed_zero;
+                assert!(
+                    source
+                        .prepare_retained(&owner, &current, cursor, &changed)
+                        .is_err()
+                );
+                let mut invocation = source
+                    .begin_replay_preparation(&owner, &current, ReceivingImplementation::Native703)
+                    .unwrap();
+                assert!(invocation.prepare_retained_at(cursor, &changed).is_err());
+                // NEW native constructor/replay verifies the complete untouched
+                // original after EACH refused mutation, including whole cold
+                // assets and its original score/episode Return.
+                let independent_source = actual703_source(&assets["receiving_source_inputs"]);
+                let untouched = independent_source
+                    .prepare_retained(&owner, &current, cursor, expected)
+                    .unwrap();
+                assert_eq!(
+                    serde_json::to_vec(untouched.retained_snapshot()).unwrap(),
+                    serde_json::to_vec(expected).unwrap()
+                );
+                let repeated = PerformanceOwner::prepare_cold_act_source(
+                    &current,
+                    instance,
+                    &independent_source,
+                    assets,
+                )
+                .unwrap();
+                assert_eq!(
+                    serde_json::to_vec(repeated.source_assets()).unwrap(),
+                    serde_json::to_vec(assets).unwrap()
+                );
+                let returned = crate::musical_performance_return::bind_performance_return(
+                    repeated.binding(),
+                    independent_source.original_occasion().cloned(),
+                    independent_source.return_context().clone(),
+                    fixture["basis"]["seed"].as_str().unwrap().parse().unwrap(),
+                )
+                .unwrap();
+                assert_eq!(
+                    serde_json::to_vec(&returned.expression_basis().unwrap()).unwrap(),
+                    serde_json::to_vec(&fixture["basis"]).unwrap()
+                );
+            }
+        }
+        let mut extra = expected.clone();
+        extra["imported_grant"] = json!(true);
+        assert!(
+            source
+                .prepare_retained(&owner, &current, cursor, &extra)
+                .is_err()
+        );
+        // A historical revision cannot make a separately valid old source
+        // current, nor replace its actual saved date with another native date.
+        assert!(
+            source
+                .prepare_retained(&owner, &current, cursor + 1, expected)
+                .is_err()
+        );
+        assert_eq!(
+            source
+                .prepare_retained(&owner, &current, cursor, expected)
+                .unwrap()
+                .retained_snapshot(),
+            expected
+        );
+        assert_eq!(assets, &before);
+        assert!(owner.reading().is_none());
+    }
+}
+
+#[test]
+fn genuine_original703_three_acoustic_dates_keep_old_snapshots_and_fresh_current_factories() {
+    let original =
+        include_str!("../../../../fixtures/native-receiving-703/world-acoustic-three-dates.json");
+    let fixture: Value = serde_json::from_str(original).unwrap();
+    let input: crate::continuous::coupled::CoupledInput =
+        serde_json::from_value(fixture["source_assets"]["original_native_input"].clone()).unwrap();
+    let current = input.compose().unwrap();
+    let instance = fixture["native_preparation"]["determination"]["identity"]["instance"]
+        .as_str()
+        .unwrap();
+    let owner = PerformanceOwner::prepare(
+        &current,
+        instance,
+        serde_json::from_value(fixture["source_assets"]["configuration"].clone()).unwrap(),
+    )
+    .unwrap();
+    let before = owner.source_assets().clone();
+    for (key, date) in [
+        ("acoustic", 0),
+        ("after_acoustic", 4096),
+        ("second_acoustic", 8192),
+    ] {
+        let saved = &fixture[key];
+        let receiving = &saved["current_receiving"];
+        let source = actual703_source(&receiving["source_inputs"]);
+        let pair = source
+            .prepare_retained(&owner, &current, date, receiving)
+            .unwrap();
+        pair.fresh()
+            .validate_current(&source, &owner, &current, date)
+            .unwrap();
+        let actual = owner
+            .prepare_acoustic_receiving_segment_for_replay(
+                &current,
+                &source,
+                0,
+                date,
+                ReceivingImplementation::of_retained(receiving).unwrap(),
+            )
+            .unwrap();
+        assert_eq!(&actual.snapshot(), saved);
+        assert!(
+            source
+                .prepare_retained(&owner, &current, date + 1, receiving)
+                .is_err()
+        );
+        assert_eq!(
+            &owner
+                .prepare_acoustic_receiving_segment_for_replay(
+                    &current,
+                    &source,
+                    0,
+                    date,
+                    ReceivingImplementation::of_retained(receiving).unwrap()
+                )
+                .unwrap()
+                .snapshot(),
+            saved
+        );
+    }
+    assert_eq!(owner.source_assets(), &before);
+    assert!(owner.reading().is_none());
+}
+
+#[test]
+fn actual_acoustic_consumer_refuses_foreign_invocation_source_owner_and_current() {
+    let (owner, current, source) = original_source();
+    let invocation = source
+        .begin_replay_preparation(&owner, &current, ReceivingImplementation::Current)
+        .unwrap();
+    let foreign_source = source.clone();
+    let foreign_current = current.clone();
+    let foreign_owner = PerformanceOwner::prepare(
+        &current,
+        "expression:physical-cold/world",
+        owner.config.clone(),
+    )
+    .unwrap();
+    for (selected_owner, selected_current, selected_source) in [
+        (&owner, &current, &foreign_source),
+        (&foreign_owner, &current, &source),
+        (&owner, &foreign_current, &source),
+    ] {
+        let failure = match selected_owner.prepare_acoustic_receiving_segment_from_preparation(
+            selected_current,
+            selected_source,
+            &invocation,
+            0,
+            0,
+        ) {
+            Ok(_) => panic!("native foreign invocation must refuse before configuration"),
+            Err(failure) => failure,
+        };
+        assert_eq!(
+            failure,
+            "acoustic source preparation lost its actual immutable owner/current inputs"
+        );
+    }
+    assert!(owner.reading().is_none());
+}
+
+#[test]
+#[ignore = "requires the actual normal native worker; historical evidence cannot manufacture native applications"]
+fn actual_native_original703_form_material_source_replays_full_history_and_fresh_admission() {
+    use std::{path::PathBuf, time::Duration};
+    let worker =
+        PathBuf::from(std::env::var("QL_NATIVE_FIELD_WORKER").expect("actual native worker"));
+    let (request, source, config) = world_source();
+    let source = acoustic_source(source);
+    let produced = crate::scene::world(request).unwrap();
+    let mut scene = crate::continuous::scene_field::SceneInstrument::open(
+        &worker,
+        serde_json::from_value(produced["binding"]["host"].clone()).unwrap(),
+        Duration::from_secs(20),
+    )
+    .unwrap();
+    let original = scene.session().current_basis().clone();
+    let mut owner =
+        PerformanceOwner::prepare(&original, "expression:physical-cold/world", config).unwrap();
+    owner
+        .activate_with_current_receiving(&original, scene.session_mut(), &source)
+        .unwrap();
+    // Execute the real archived producer under the SAME current numerical
+    // owner. Keep its original snapshot; operative context remains freshly
+    // constructed by the current native implementation.
+    let historical = source
+        .admit_replayed(&mut owner, &original, 0, ReceivingImplementation::Native703)
+        .unwrap();
+    owner.source_assets["receiving_source_inputs"] = historical.fresh().source_inputs().clone();
+    owner.source_assets["receiving_definition"] =
+        historical.fresh().definition().snapshot().unwrap();
+    owner.source_assets["current_receiving"] = historical.retained_snapshot().clone();
+    let acoustic = owner
+        .prepare_acoustic_receiving_segment_for_replay(
+            &original,
+            &source,
+            0,
+            0,
+            ReceivingImplementation::Native703,
+        )
+        .unwrap();
+    let mut install = owner.raw("receiving-transport-install").unwrap();
+    install["prepared_acoustic"] = acoustic.packet().clone();
+    install["current_acoustic"] = acoustic.packet().clone();
+    install["expected_sample"] = json!("0");
+    let installed = scene
+        .session_mut()
+        .performance_exchange_retained(&install)
+        .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+    assert_eq!(installed["accepted"], true, "{installed}");
+    owner.validate_reply(&installed).unwrap();
+    owner.last = Some(installed);
+    owner.source_assets["acoustic_receiving"] = acoustic.snapshot();
+    let born = owner.source_assets().clone();
+    let cell = owner
+        .cells
+        .iter()
+        .find(|cell| cell["available"] == true)
+        .unwrap();
+    let note = owner
+        .native_note_target(
+            &original,
+            KeyTouch {
+                key: cell["key"].as_u64().unwrap() as u8,
+                register: cell["register_octave"].as_i64().unwrap() as i8,
+                member: 1,
+                touch: 1,
+                touch_ref: "native:historical703/actual-touch".into(),
+            },
+        )
+        .unwrap();
+    for event in [
+        json!({"identity":owner.binding().determination()["identity"],"kind":0,"sequence":"1","sample":"0","touch":"1","value":0.8,"pitch_hz":note["hertz"],"parameter":0,"late_admitted":false,"has_note":true,"has_determination":false,"note":note}),
+        json!({"identity":owner.binding().determination()["identity"],"kind":5,"sequence":"2","sample":"768","touch":"0","value":2.,"pitch_hz":0.,"parameter":0,"late_admitted":false,"has_note":false,"has_determination":false}),
+        json!({"identity":owner.binding().determination()["identity"],"kind":1,"sequence":"3","sample":"1280","touch":"1","value":0.,"pitch_hz":0.,"parameter":0,"late_admitted":false,"has_note":false,"has_determination":false}),
+    ] {
+        let mut queued = owner.raw("score").unwrap();
+        queued["event"] = event;
+        queued["input_ref"] = if matches!(queued["event"]["kind"].as_u64(), Some(0 | 1 | 3)) {
+            json!("native:historical703/actual-touch")
+        } else {
+            Value::Null
+        };
+        let pulse = scene
+            .session_mut()
+            .performance_exchange_retained(&queued)
+            .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        assert_eq!(pulse["accepted"], true, "{pulse}");
+        owner.validate_reply(&pulse).unwrap();
+        owner.last = Some(pulse);
+    }
+    actual_component_render(&mut owner, &mut scene);
+    let mut current = original.clone();
+    let mut applications = Vec::new();
+    for (request, edit) in [
+        (9, authored(&original)),
+        (
+            13,
+            AuthoredNativePhysicalEdit::Material {
+                cause_ref: "native:historical703/material".into(),
+                material: {
+                    let mut material = owner.config.controls.material.clone();
+                    material.young_modulus_pa *= 4.;
+                    material
+                },
+            },
+        ),
+    ] {
+        let cursor = decimal(&owner.reading().unwrap()["samples_elapsed"]).unwrap();
+        let mut descendant = owner
+            .prepare_physical_source_descendant_for_replay_at(
+                &current,
+                &source,
+                request,
+                &edit,
+                cursor,
+                ReceivingImplementation::Native703,
+            )
+            .unwrap();
+        descendant
+            .current_receiving
+            .validate_current(
+                &source,
+                &descendant.after_owner,
+                &descendant.after_current,
+                cursor,
+            )
+            .unwrap();
+        let raw = native_request(&owner, &descendant, request, &edit);
+        let pulse = scene
+            .session_mut()
+            .performance_exchange_retained(&raw)
+            .unwrap_or_else(|failure| panic!("{}: {:?}", failure.0, failure.1));
+        assert_eq!(pulse["accepted"], true, "{pulse}");
+        descendant.after_owner.validate_reply(&pulse).unwrap();
+        applications.push(json!({"source":descendant.source_record,"native_application":pulse}));
+        descendant.after_owner.last = Some(pulse);
+        owner = descendant.after_owner;
+        current = descendant.after_current;
+        actual_component_render(&mut owner, &mut scene);
+    }
+    let expected = owner.source_assets().clone();
+    let replay = || {
+        PerformanceOwner::replay_cold_native_physical_source(
+            &original,
+            "expression:physical-cold/world",
+            &source,
+            &expected,
+            &applications,
+        )
+    };
+    let complete = replay().unwrap();
+    assert_eq!(complete.frames().len(), 3);
+    assert_eq!(complete.frames()[0].owner().source_assets(), &born);
+    assert_eq!(complete.final_frame().owner().source_assets(), &expected);
+    for frame in complete.frames() {
+        assert_eq!(
+            ReceivingImplementation::of_retained(
+                &frame.owner().source_assets()["current_receiving"]
+            )
+            .unwrap(),
+            ReceivingImplementation::Native703
+        );
+        let fresh = source
+            .prepare_current(frame.owner(), frame.current(), frame.source_sample())
+            .unwrap();
+        assert_eq!(
+            ReceivingImplementation::of_retained(&fresh.snapshot().unwrap()).unwrap(),
+            ReceivingImplementation::Current
+        );
+        frame.prepare_return(&source, 1).unwrap();
+    }
+    let checkpoint = actual_component_checkpoint(&mut owner, &mut scene);
+    let wire = serde_json::to_string(&checkpoint["payload"]["checkpoint"]).unwrap();
+    let history = crate::continuous::performance::acoustic_history::verify_dated_source_history(
+        &complete,
+        &source,
+        "expression:physical-cold/world",
+        &wire,
+    )
+    .unwrap();
+    assert_eq!(history["segments"].as_array().unwrap().len(), 3);
+    assert!(
+        checkpoint["payload"]["checkpoint"]["native_pair"]["audio"]["receiving"]["history_linear"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|value| value.as_f64().unwrap() != 0.)
+    );
+    let mut lost = expected.clone();
+    lost["physical_transition_history"][0]["after_current_receiving"]["source_payload_context"]["owner"]
+        ["revision"] = json!("sha256:unimplemented");
+    assert!(
+        PerformanceOwner::replay_cold_native_physical_source(
+            &original,
+            "expression:physical-cold/world",
+            &source,
+            &lost,
+            &applications,
+        )
+        .is_err()
+    );
+    let repeated = replay().unwrap();
+    assert_eq!(repeated.final_frame().owner().source_assets(), &expected);
+    assert_eq!(
+        crate::continuous::performance::acoustic_history::verify_dated_source_history(
+            &repeated,
+            &source,
+            "expression:physical-cold/world",
+            &wire,
+        )
+        .unwrap(),
+        history
+    );
+}
+
+#[test]
+fn genuine_original703_segment_and_current_admission_keep_distinct_versions_dates_and_full_replay()
+{
+    let fixture: Value = serde_json::from_str(include_str!(
+        "../../../../fixtures/native-receiving-703/world-acoustic-three-dates.json"
+    ))
+    .unwrap();
+    let retained = &fixture["acoustic"];
+    let source = actual703_source(&retained["current_receiving"]["source_inputs"]);
+    let input: crate::continuous::coupled::CoupledInput =
+        serde_json::from_value(fixture["source_assets"]["original_native_input"].clone()).unwrap();
+    let current = input.compose().unwrap();
+    let instance = fixture["native_preparation"]["determination"]["identity"]["instance"]
+        .as_str()
+        .unwrap();
+    let mut owner = PerformanceOwner::prepare(
+        &current,
+        instance,
+        serde_json::from_value(fixture["source_assets"]["configuration"].clone()).unwrap(),
+    )
+    .unwrap();
+    let original = source
+        .admit_retained(&mut owner, &current, 0, &retained["current_receiving"])
+        .unwrap();
+    owner.source_assets["receiving_source_inputs"] = original.fresh().source_inputs().clone();
+    owner.source_assets["receiving_definition"] = original.fresh().definition().snapshot().unwrap();
+    owner.source_assets["current_receiving"] = original.retained_snapshot().clone();
+    owner.source_assets["acoustic_receiving"] = retained.clone();
+    // The genuine old receiver segment stays dated0. A separately native
+    // current admission at4096 is neither backdated nor relabelled as old.
+    let later = source.prepare_current(&owner, &current, 4096).unwrap();
+    later
+        .validate_current(&source, &owner, &current, 4096)
+        .unwrap();
+    owner.source_assets["current_receiving"] = later.snapshot().unwrap();
+    let before = owner.source_assets().clone();
+    let complete = owner
+        .prepare_retained_acoustic_sources(&current, &source, 8192)
+        .unwrap();
+    assert_eq!(&complete.snapshot(), retained);
+    assert_eq!(
+        ReceivingImplementation::of_retained(&complete.snapshot()["current_receiving"]).unwrap(),
+        ReceivingImplementation::Native703
+    );
+    assert_eq!(
+        ReceivingImplementation::of_retained(&owner.source_assets()["current_receiving"]).unwrap(),
+        ReceivingImplementation::Current
+    );
+    assert_eq!(
+        owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"],
+        "4096"
+    );
+    assert!(
+        owner
+            .prepare_retained_acoustic_sources(&current, &source, 4095)
+            .is_err()
+    );
+    assert_eq!(
+        owner
+            .prepare_retained_acoustic_sources(&current, &source, 8192)
+            .unwrap()
+            .snapshot(),
+        complete.snapshot()
+    );
+    assert_eq!(owner.source_assets(), &before);
+    assert!(owner.reading().is_none());
+}

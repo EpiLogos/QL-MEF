@@ -573,8 +573,13 @@ impl PerformanceOwner {
         let original_cursor = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let original = receiving.prepare_current(self, current, original_cursor)?;
-        if original.snapshot()? != self.source_assets["current_receiving"] {
+        let original = receiving.prepare_retained(
+            self,
+            current,
+            original_cursor,
+            &self.source_assets["current_receiving"],
+        )?;
+        if *original.retained_snapshot() != self.source_assets["current_receiving"] {
             return Err(
                 "native Act export complete original receiving/source/context changed".into(),
             );

@@ -63,6 +63,22 @@ impl PerformanceOwner {
         original_request_id: u64,
         native_sample: u64,
     ) -> Result<PreparedAcousticInstallationDescendant, String> {
+        self.prepare_acoustic_installation_descendant_for_replay_at(
+            current,
+            after_source,
+            original_request_id,
+            native_sample,
+            ReceivingImplementation::Current,
+        )
+    }
+    pub(in crate::continuous) fn prepare_acoustic_installation_descendant_for_replay_at(
+        &self,
+        current: &CoupledBasis,
+        after_source: &NativePerformanceReceivingSource,
+        original_request_id: u64,
+        native_sample: u64,
+        implementation: ReceivingImplementation,
+    ) -> Result<PreparedAcousticInstallationDescendant, String> {
         self.validate_current(current)?;
         if original_request_id == 0
             || self.source_assets.get("acoustic_receiving").is_some()
@@ -93,8 +109,13 @@ impl PerformanceOwner {
         let source_sample = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let before = before_source.prepare_current(self, current, source_sample)?;
-        if before.snapshot()? != self.source_assets["current_receiving"]
+        let before = before_source.prepare_retained(
+            self,
+            current,
+            source_sample,
+            &self.source_assets["current_receiving"],
+        )?;
+        if *before.retained_snapshot() != self.source_assets["current_receiving"]
             || source_sample > native_sample
         {
             return Err("initial acoustic source lost actual previous body/N9 admission".into());
@@ -103,24 +124,31 @@ impl PerformanceOwner {
             .acoustic_configuration()
             .ok_or("actual first acoustic configuration absent")?
             .clone();
-        let after = self.prepare_acoustic_receiving_source(current, after_source, native_sample)?;
-        let admitted = after_source.prepare_current(self, current, native_sample)?;
-        admitted.validate_current(after_source, self, current, native_sample)?;
+        let after = self.prepare_acoustic_receiving_segment_for_replay(
+            current,
+            after_source,
+            native_sample,
+            native_sample,
+            implementation,
+        )?;
+        let receiving = after_source.begin_replay_preparation(self, current, implementation)?;
+        let admitted = receiving.prepare_at(native_sample)?;
+        receiving.validate_at(&admitted, native_sample)?;
         let mut assets = self.source_assets.clone();
-        assets["source_context"] = admitted.context().snapshot()?;
-        assets["receiving_source_inputs"] = admitted.source_inputs().clone();
-        assets["receiving_definition"] = admitted.definition().snapshot()?;
-        assets["current_receiving"] = admitted.snapshot()?;
+        assets["source_context"] = admitted.fresh().context().snapshot()?;
+        assets["receiving_source_inputs"] = admitted.fresh().source_inputs().clone();
+        assets["receiving_definition"] = admitted.fresh().definition().snapshot()?;
+        assets["current_receiving"] = admitted.retained_snapshot().clone();
         assets["acoustic_receiving"] = after.snapshot();
         let record = json!({"schema":ACOUSTIC_SOURCE_TRANSITION,"kind":"install",
             "original_native_request_id":original_request_id.to_string(),"native_sample":native_sample.to_string(),
             "performance_configuration":self.config,"native_current_input":current.input,
             "native_preparation":self.packet()?,"immutable_original_input":self.source_assets["original_native_input"],
             "before_configuration":Value::Null,"after_configuration":configuration,
-            "before_source_inputs":before_source.source_inputs()?,"after_source_inputs":admitted.source_inputs(),
-            "before_source_context":self.source_assets["source_context"],"after_source_context":admitted.context().snapshot()?,
-            "before_receiving_definition":self.source_assets["receiving_definition"],"after_receiving_definition":admitted.definition().snapshot()?,
-            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":admitted.snapshot()?,
+            "before_source_inputs":before_source.source_inputs()?,"after_source_inputs":admitted.fresh().source_inputs(),
+            "before_source_context":self.source_assets["source_context"],"after_source_context":admitted.fresh().context().snapshot()?,
+            "before_receiving_definition":self.source_assets["receiving_definition"],"after_receiving_definition":admitted.fresh().definition().snapshot()?,
+            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":admitted.retained_snapshot().clone(),
             "before_acoustic":Value::Null,"after_acoustic":after.packet(),"history_origin_sample":native_sample.to_string(),
             "policy":"same retained physical body and original World/occasion, exact first native receiver birth"});
         if assets.get("acoustic_transition_history").is_some() {
@@ -197,6 +225,22 @@ impl PerformanceOwner {
         original_request_id: u64,
         native_sample: u64,
     ) -> Result<PreparedAcousticSourceDescendant, String> {
+        self.prepare_acoustic_source_descendant_for_replay_at(
+            current,
+            after_source,
+            original_request_id,
+            native_sample,
+            ReceivingImplementation::Current,
+        )
+    }
+    pub(in crate::continuous) fn prepare_acoustic_source_descendant_for_replay_at(
+        &self,
+        current: &CoupledBasis,
+        after_source: &NativePerformanceReceivingSource,
+        original_request_id: u64,
+        native_sample: u64,
+        implementation: ReceivingImplementation,
+    ) -> Result<PreparedAcousticSourceDescendant, String> {
         self.validate_current(current)?;
         if original_request_id == 0 {
             return Err("actual original acoustic request ordinal required".into());
@@ -229,26 +273,32 @@ impl PerformanceOwner {
             );
         }
         let birth = original.history_origin_sample;
-        let after =
-            self.prepare_acoustic_receiving_segment(current, after_source, birth, native_sample)?;
+        let after = self.prepare_acoustic_receiving_segment_for_replay(
+            current,
+            after_source,
+            birth,
+            native_sample,
+            implementation,
+        )?;
         after.validate_current(self, current, after_source, birth)?;
-        let admitted = after_source.prepare_current(self, current, native_sample)?;
-        admitted.validate_current(after_source, self, current, native_sample)?;
+        let receiving = after_source.begin_replay_preparation(self, current, implementation)?;
+        let admitted = receiving.prepare_at(native_sample)?;
+        receiving.validate_at(&admitted, native_sample)?;
         let mut assets = self.source_assets.clone();
-        assets["source_context"] = admitted.context().snapshot()?;
-        assets["receiving_source_inputs"] = admitted.source_inputs().clone();
-        assets["receiving_definition"] = admitted.definition().snapshot()?;
-        assets["current_receiving"] = admitted.snapshot()?;
+        assets["source_context"] = admitted.fresh().context().snapshot()?;
+        assets["receiving_source_inputs"] = admitted.fresh().source_inputs().clone();
+        assets["receiving_definition"] = admitted.fresh().definition().snapshot()?;
+        assets["current_receiving"] = admitted.retained_snapshot().clone();
         assets["acoustic_receiving"] = after.snapshot();
         let record = json!({"schema":ACOUSTIC_SOURCE_TRANSITION,"kind":"replace",
             "original_native_request_id":original_request_id.to_string(),"native_sample":native_sample.to_string(),
             "performance_configuration":self.config,"native_current_input":current.input,
             "native_preparation":self.packet()?,"immutable_original_input":self.source_assets["original_native_input"],
             "before_configuration":before_configuration,"after_configuration":configuration,
-            "before_source_inputs":before_source.source_inputs()?,"after_source_inputs":admitted.source_inputs(),
-            "before_source_context":self.source_assets["source_context"],"after_source_context":admitted.context().snapshot()?,
-            "before_receiving_definition":self.source_assets["receiving_definition"],"after_receiving_definition":admitted.definition().snapshot()?,
-            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":admitted.snapshot()?,
+            "before_source_inputs":before_source.source_inputs()?,"after_source_inputs":admitted.fresh().source_inputs(),
+            "before_source_context":self.source_assets["source_context"],"after_source_context":admitted.fresh().context().snapshot()?,
+            "before_receiving_definition":self.source_assets["receiving_definition"],"after_receiving_definition":admitted.fresh().definition().snapshot()?,
+            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":admitted.retained_snapshot().clone(),
             "before_acoustic":original.packet(),"after_acoustic":after.packet(),
             "history_origin_sample":birth.to_string(),"policy":"same retained physical body and original World/occasion, exact dated emitter and receiver, full original native delay ring"});
         let history = assets

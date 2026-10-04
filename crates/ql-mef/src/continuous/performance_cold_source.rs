@@ -3,6 +3,7 @@
 //! as configuration, receiving authority, or a live body checkpoint.
 use super::*;
 use crate::continuous::performance_receiving::NativePerformanceReceivingSource;
+use crate::continuous::performance_receiving::exact_value as same_retained;
 
 impl PerformanceOwner {
     /// Pure preparation. Only the private FieldHost child, while C holds the
@@ -22,16 +23,27 @@ impl PerformanceOwner {
         let admitted_at = decimal(
             &expected["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let admitted = source.admit_current(&mut owner, current, admitted_at)?;
-        admitted.validate_current(source, &owner, current, admitted_at)?;
-        owner.source_assets["receiving_source_inputs"] = admitted.source_inputs().clone();
-        owner.source_assets["receiving_definition"] = admitted.definition().snapshot()?;
-        owner.source_assets["current_receiving"] = admitted.snapshot()?;
+        let admitted = source.admit_retained(
+            &mut owner,
+            current,
+            admitted_at,
+            &expected["current_receiving"],
+        )?;
+        owner.source_assets["receiving_source_inputs"] = admitted.fresh().source_inputs().clone();
+        owner.source_assets["receiving_definition"] = admitted.fresh().definition().snapshot()?;
+        owner.source_assets["current_receiving"] = admitted.retained_snapshot().clone();
         if let Some(retained) = expected.get("acoustic_receiving") {
             let birth = decimal(&retained["packet"]["history_origin_sample"])?;
             let origin = decimal(&retained["packet"]["origin_sample"])?;
-            let acoustic =
-                owner.prepare_acoustic_receiving_segment(current, source, birth, origin)?;
+            let acoustic = owner.prepare_acoustic_receiving_segment_for_replay(
+                current,
+                source,
+                birth,
+                origin,
+                crate::continuous::performance_receiving::ReceivingImplementation::of_retained(
+                    &retained["current_receiving"],
+                )?,
+            )?;
             acoustic.validate_current(&owner, current, source, birth)?;
             owner.source_assets["acoustic_receiving"] = acoustic.snapshot();
         } else if source.acoustic_configuration().is_some() {
@@ -46,7 +58,7 @@ impl PerformanceOwner {
             .filter(|v| v.is_object())
             .ok_or("cold Act original consumer roles absent")?;
         owner.source_assets["consumer_roles"] = historical_roles.clone();
-        if owner.source_assets != *expected {
+        if !same_retained(&owner.source_assets, expected) {
             return Err(
                 "cold Act full original source/body/context/occasion no longer replays".into(),
             );
@@ -68,9 +80,16 @@ impl PerformanceOwner {
         let original_at = decimal(
             &original_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let original = source.prepare_current(self, current, original_at)?;
-        original.validate_current(source, self, current, original_at)?;
-        if original.snapshot()? != original_assets["current_receiving"] {
+        let original = source.prepare_retained(
+            self,
+            current,
+            original_at,
+            &original_assets["current_receiving"],
+        )?;
+        if !same_retained(
+            original.retained_snapshot(),
+            &original_assets["current_receiving"],
+        ) {
             return Err("cold source changed after complete original score compilation".into());
         }
         // A new actual resident starts at zero; the saved body's numerical
@@ -118,13 +137,21 @@ impl PerformanceOwner {
                     Some("closed" | "prepared")
                 )
                 || second["reading"]["consumer_roles"] != original_assets["consumer_roles"]
-                || self.source_assets != original_assets
+                || !same_retained(&self.source_assets, &original_assets)
             {
                 return Err(
                     "cold worker did not admit the same original source/body/consumer roles".into(),
                 );
             }
-            original.validate_current(source, self, current, original_at)?;
+            let repeated = source.prepare_retained(
+                self,
+                current,
+                original_at,
+                &original_assets["current_receiving"],
+            )?;
+            if !same_retained(repeated.retained_snapshot(), original.retained_snapshot()) {
+                return Err("complete historical source changed during native activation".into());
+            }
             self.validate_current(current)
         })();
         match checked {

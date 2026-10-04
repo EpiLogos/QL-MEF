@@ -13,6 +13,9 @@ import re
 import shlex
 
 KEYS = frozenset({
+    "QL_RETAINED_NATIVE_OPPOSITE_ZERO_FIXTURE",
+    "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_FIXTURE",
+    "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_DIRECTORY",
     "QL_RETAINED_PERFORMANCE_FIXTURE",
     "QL_RETAINED_SOURCE_PERFORMANCE_FIXTURE",
     "QL_RETAINED_PERFORMANCE_CONTEXT_FIXTURE",
@@ -25,6 +28,7 @@ KEYS = frozenset({
     "QL_RETAINED_PERFORMANCE_MANAGED_ORDER_DIRECTORY",
     "QL_RETAINED_PERFORMANCE_PREARM_DIRECTORY",
     "QL_CURRENT_RECEIVING_ARTIFACT_DIRECTORY",
+    "QL_RETAINED_RECEIVING_READMISSION_DIRECTORY",
     "OI_NATIVE_PERFORMANCE_DELIVERY_DIRECTORY",
     "OI_RETAINED_PERFORMANCE_TEST_HOME",
     "OI_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT",
@@ -42,6 +46,8 @@ def required_fixture_paths() -> set[str]:
     Optional offline outputs are absent at the preparer's actual command arity.
     """
     paths = {
+        "native-opposite-zero-fixture.json", "native-opposite-zero-management-fixture.json",
+        "native-opposite-zero-packets/baseline.packet.json", "native-opposite-zero-packets/baseline.basis.json",
         "retained-performance-fixture.json", "retained-source-performance-fixture.json",
         "retained-performance-context-fixture.json", "retained-performance-checkpoint-fixture.json",
         "retained-performance-management-fixture.json",
@@ -49,7 +55,14 @@ def required_fixture_paths() -> set[str]:
         "original-current-native-source.json", "native-radius-control.json", "native-strength-control.json",
     }
     paths.update("current-receiving/" + kind + ".source-performance.json" for kind in ("world", "personal", "shared"))
+    paths.update("native-receiving-readmission/" + kind + "/" + name
+        for kind in ("world", "personal", "shared") for name in (
+            "producer-input.json", "native-preexecution.json", "native-child-started.json",
+            "native-stdout.json", "native-stderr.txt", "native-exit.json"))
     paths.update("native-management/" + name for name in (
+        "baseline.pending.management.json", "baseline.basis.json", "baseline.applied-events.json",
+        "baseline.input-journal.json", "baseline.current.management.json", "manifest.json"))
+    paths.update("native-opposite-zero-management/" + name for name in (
         "baseline.pending.management.json", "baseline.basis.json", "baseline.applied-events.json",
         "baseline.input-journal.json", "baseline.current.management.json", "manifest.json"))
     paths.update("native-managed-order/" + kind + "." + name for kind in ("release", "panic") for name in (
@@ -140,7 +153,10 @@ def verified_environment(result: Path, expected: str, output_root: Path) -> dict
         if not isinstance(item, dict):
             raise ValueError("actual native fixture inventory entry differs")
         path = inside(item.get("path"), run)
-        if path in inventory or not path.is_file() or not 0 < path.stat().st_size <= 32 * 1024 * 1024:
+        empty_stderr = path.relative_to(run).as_posix() in {
+            "native-receiving-readmission/" + kind + "/native-stderr.txt" for kind in ("world", "personal", "shared")}
+        minimum = 0 if empty_stderr else 1
+        if path in inventory or not path.is_file() or not minimum <= path.stat().st_size <= 32 * 1024 * 1024:
             raise ValueError("actual native fixture missing/duplicated/excessive")
         if path.stat().st_size != item.get("bytes") or not re.fullmatch(r"[0-9a-f]{64}", item.get("sha256", "")):
             raise ValueError("native fixture byte/hash declaration differs")
@@ -148,6 +164,42 @@ def verified_environment(result: Path, expected: str, output_root: Path) -> dict
             if hashlib.file_digest(stream, "sha256").hexdigest() != item["sha256"]:
                 raise ValueError("actual native fixture changed after producer qualification")
         inventory.add(path)
+    for command in commands:
+        log = inside(command.get("log"), run)
+        stdout = inside(command.get("stdout"), run)
+        preexecution_path = inside(command.get("preexecution_receipt"), run)
+        preexecution = read_json(preexecution_path, 65536)
+        if (preexecution.get("schema")!="oi.actual-native-producer-preexecution/v1"
+                or preexecution.get("child_spawned") is not False
+                or command.get("child_spawned") is not True
+                or command.get("source_head")!=expected
+                or not re.fullmatch(r"native-producer:[0-9a-f]{32}",command.get("command_ref",""))
+                or any(preexecution.get(key)!=command.get(key) for key in (
+                    "argv","cwd","log","stdout","command_ref","source_head","explicit_environment",
+                    "remaining_admitted_seconds","preexecution_receipt"))):
+            raise ValueError("actual producer lost its durable original preexecution custody")
+        group = command.get("owned_process_group")
+        process_id = command.get("process_id")
+        if (type(process_id) is not int or process_id<=0 or not isinstance(group,dict)
+                or group.get("process_id")!=process_id
+                or not ((group.get("matches_owned_new_session") is True
+                    and group.get("process_group_id")==process_id and group.get("session_id")==process_id)
+                    or (group.get("absent_at_birth_readback") is True
+                        and group.get("matches_owned_new_session") is False))):
+            raise ValueError("actual producer lost its owned child/session readback")
+        originals = command.get("original_output")
+        if (command.get("original_output_complete") is not True or not isinstance(originals,list)
+                or len(originals)!=2 or any(not isinstance(row,dict) for row in originals)
+                or {inside(row.get("path"),run) for row in originals}!={stdout,log}):
+            raise ValueError("actual producer lost its complete original output custody")
+        for row in originals:
+            path=inside(row.get("path"),run)
+            if (not path.is_file() or path.stat().st_size!=row.get("bytes")
+                    or not re.fullmatch(r"[0-9a-f]{64}",row.get("sha256",""))):
+                raise ValueError("actual producer original output byte/hash declaration differs")
+            with path.open("rb") as stream:
+                if hashlib.file_digest(stream,"sha256").hexdigest()!=row["sha256"]:
+                    raise ValueError("actual producer original output changed after exit")
     result_values: dict[str, str] = {}
     for line in environment_path.read_text().splitlines():
         words = shlex.split(line, comments=False)

@@ -2,6 +2,7 @@
 //! epochs remain in its existing frame carrier; this is not another P owner.
 use super::*;
 use crate::continuous::performance_act_bridge::NativeActSourceLease;
+use crate::continuous::performance_receiving::exact_value as same_retained;
 
 const ACOUSTIC_TRANSITION: &str = "ql.native-acoustic-source-transition/v1";
 
@@ -21,7 +22,10 @@ impl ReplayedPhysicalSourceFrame {
         } else {
             original.clone().without_acoustic_configuration()
         };
-        if source.source_inputs()? != self.owner.source_assets()["receiving_source_inputs"] {
+        if !same_retained(
+            &source.source_inputs()?,
+            &self.owner.source_assets()["receiving_source_inputs"],
+        ) {
             return Err(
                 "historical acoustic epoch changed complete original native source family".into(),
             );
@@ -129,8 +133,10 @@ impl PerformanceOwner {
         acoustic_applications: &[Value],
     ) -> Result<PreparedColdPhysicalSource, String> {
         if expected["schema"] != "ql.retained-performance-source-assets/v1"
-            || expected["original_native_input"]
-                != serde_json::to_value(&original.input).map_err(|e| e.to_string())?
+            || !same_retained(
+                &expected["original_native_input"],
+                &serde_json::to_value(&original.input).map_err(|e| e.to_string())?,
+            )
             || serde_json::to_vec(expected)
                 .map_err(|e| e.to_string())?
                 .len()
@@ -153,11 +159,11 @@ impl PerformanceOwner {
             || physical
                 .iter()
                 .zip(physical_applications)
-                .any(|(a, b)| b["source"] != *a)
+                .any(|(a, b)| !same_retained(&b["source"], a))
             || acoustic
                 .iter()
                 .zip(acoustic_applications)
-                .any(|(a, b)| b["source"] != *a)
+                .any(|(a, b)| !same_retained(&b["source"], a))
         {
             return Err(
                 "cold acoustic source lost complete original physical/acoustic applications".into(),
@@ -198,14 +204,21 @@ impl PerformanceOwner {
         let source_sample = decimal(
             &first["before_current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let admitted = operative_source.admit_current(&mut owner, original, source_sample)?;
-        admitted.validate_current(&operative_source, &owner, original, source_sample)?;
-        if admitted.snapshot()? != first["before_current_receiving"] {
+        let admitted = operative_source.admit_retained(
+            &mut owner,
+            original,
+            source_sample,
+            &first["before_current_receiving"],
+        )?;
+        if !same_retained(
+            admitted.retained_snapshot(),
+            &first["before_current_receiving"],
+        ) {
             return Err("initial mixed source N9/World/occasion does not replay".into());
         }
-        owner.source_assets["receiving_source_inputs"] = admitted.source_inputs().clone();
-        owner.source_assets["receiving_definition"] = admitted.definition().snapshot()?;
-        owner.source_assets["current_receiving"] = admitted.snapshot()?;
+        owner.source_assets["receiving_source_inputs"] = admitted.fresh().source_inputs().clone();
+        owner.source_assets["receiving_definition"] = admitted.fresh().definition().snapshot()?;
+        owner.source_assets["current_receiving"] = admitted.retained_snapshot().clone();
         owner.source_assets["consumer_roles"] = expected
             .get("consumer_roles")
             .filter(|v| v.is_object())
@@ -214,13 +227,14 @@ impl PerformanceOwner {
         if first["before_acoustic"].is_object() {
             let birth = decimal(&first["before_acoustic"]["history_origin_sample"])?;
             let origin = decimal(&first["before_acoustic"]["origin_sample"])?;
-            let prepared = owner.prepare_acoustic_receiving_segment(
+            let prepared = owner.prepare_acoustic_receiving_segment_for_replay(
                 original,
                 &operative_source,
                 birth,
                 origin,
+                ReceivingImplementation::of_retained(&first["before_current_receiving"])?,
             )?;
-            if prepared.packet() != &first["before_acoustic"] {
+            if !same_retained(prepared.packet(), &first["before_acoustic"]) {
                 return Err(
                     "original acoustic installation/trajectory cannot be regenerated".into(),
                 );
@@ -247,14 +261,15 @@ impl PerformanceOwner {
                 let authored: AuthoredNativePhysicalEdit =
                     serde_json::from_value(record["authored_edit"].clone())
                         .map_err(|e| e.to_string())?;
-                let descendant = owner.prepare_physical_source_descendant_at(
+                let descendant = owner.prepare_physical_source_descendant_for_replay_at(
                     &current,
                     &operative_source,
                     request,
                     &authored,
                     sample,
+                    ReceivingImplementation::of_retained(&record["after_current_receiving"])?,
                 )?;
-                if descendant.source_record != *record {
+                if !same_retained(&descendant.source_record, record) {
                     return Err(
                         "mixed source lost full original physical M3/recipe/N9 record".into(),
                     );
@@ -270,8 +285,14 @@ impl PerformanceOwner {
                     || decimal(&ack["before_body_revision"])? != owner.config.controls.body_revision
                     || decimal(&ack["after_body_revision"])?
                         != descendant.after_owner.config.controls.body_revision
-                    || ack["before_native_preparation"] != record["before_native_preparation"]
-                    || ack["after_native_preparation"] != record["after_native_preparation"]
+                    || !same_retained(
+                        &ack["before_native_preparation"],
+                        &record["before_native_preparation"],
+                    )
+                    || !same_retained(
+                        &ack["after_native_preparation"],
+                        &record["after_native_preparation"],
+                    )
                     || previous_eigenbasis
                         .as_ref()
                         .is_some_and(|v| ack["before_eigenbasis_identity"] != *v)
@@ -307,26 +328,33 @@ impl PerformanceOwner {
                     .with_acoustic_configuration(config)?;
                 let (assets, actual_record) = match record["kind"].as_str() {
                     Some("install") => {
-                        let prepared = owner.prepare_acoustic_installation_descendant_at(
-                            &current,
-                            &after_source,
-                            request,
-                            sample,
-                        )?;
+                        let prepared = owner
+                            .prepare_acoustic_installation_descendant_for_replay_at(
+                                &current,
+                                &after_source,
+                                request,
+                                sample,
+                                ReceivingImplementation::of_retained(
+                                    &record["after_current_receiving"],
+                                )?,
+                            )?;
                         (prepared.after_assets, prepared.record)
                     }
                     Some("replace") => {
-                        let prepared = owner.prepare_acoustic_source_descendant_at(
+                        let prepared = owner.prepare_acoustic_source_descendant_for_replay_at(
                             &current,
                             &after_source,
                             request,
                             sample,
+                            ReceivingImplementation::of_retained(
+                                &record["after_current_receiving"],
+                            )?,
                         )?;
                         (prepared.after_assets, prepared.record)
                     }
                     _ => return Err("unknown original acoustic source operation kind".into()),
                 };
-                if actual_record != *record {
+                if !same_retained(&actual_record, record) {
                     return Err("mixed source lost full original acoustic configuration/context/N9/trajectory record".into());
                 }
                 owner.validate_reply(pulse)?;
@@ -336,7 +364,7 @@ impl PerformanceOwner {
                     if pulse["operation"] != "receiving-transport-replace"
                         || ack["schema"] != "ql.native-receiving-replacement/v1"
                         || ack["sample"] != record["native_sample"]
-                        || ack["after_manifest"] != *manifest
+                        || !same_retained(&ack["after_manifest"], manifest)
                         || ack["before_manifest"]["eigenbasis"] != manifest["eigenbasis"]
                         || previous_eigenbasis
                             .as_ref()
@@ -420,8 +448,8 @@ impl PerformanceOwner {
             previous_epoch = epoch;
             previous_sequence = sequence;
         }
-        if owner.source_assets() != expected
-            || operative_source.source_inputs()? != source.source_inputs()?
+        if !same_retained(owner.source_assets(), expected)
+            || !same_retained(&operative_source.source_inputs()?, &source.source_inputs()?)
         {
             return Err(
                 "complete final mixed native source differs from original-owner replay".into(),
@@ -480,7 +508,7 @@ fn validate_manifest(
         ("source_revision", &body["source_revision"]),
         ("sample_rate", &body["request"]["sample_rate"]),
     ] {
-        if manifest[field] != *value {
+        if !same_retained(&manifest[field], value) {
             return Err(format!(
                 "original mixed native receiver manifest {field} differs"
             ));
@@ -492,7 +520,7 @@ fn validate_manifest(
                 .as_u64()
                 .ok_or("actual mixed source generation absent")?
         || manifest["pratibimba"] != (body["source_coordinate"]["face"] == "pratibimba")
-        || packet["source_body"] != body
+        || !same_retained(&packet["source_body"], &body)
     {
         return Err("original mixed acoustic manifest body/source/face differs".into());
     }

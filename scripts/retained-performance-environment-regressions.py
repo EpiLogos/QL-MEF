@@ -54,12 +54,22 @@ class ActualPublication(unittest.TestCase):
             os.link(source, target)
             row["path"] = str(target)
         for command in self.receipt["commands"]:
-            source = Path(command["log"])
-            target = relocate(command["log"])
-            if not target.exists():
-                target.parent.mkdir(parents=True, exist_ok=True)
-                os.link(source, target)
-            command["log"] = str(target)
+            for key in ("log","stdout"):
+                source = Path(command[key])
+                target = relocate(command[key])
+                if not target.exists():
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    os.link(source, target)
+                command[key] = str(target)
+            for row in command["original_output"]:
+                row["path"] = str(relocate(row["path"]))
+            # Only path metadata is relocated. All original native output
+            # remains byte-identical; no successful native receipt is invented.
+            preexecution = json.loads(Path(command["preexecution_receipt"]).read_bytes())
+            command["preexecution_receipt"] = str(relocate(command["preexecution_receipt"]))
+            for key in ("log","stdout","preexecution_receipt"):
+                preexecution[key] = command[key]
+            Path(command["preexecution_receipt"]).write_text(json.dumps(preexecution))
         environment = {}
         for line in Path(original["environment_file"]).read_text().splitlines():
             words = shlex.split(line, comments=False)
@@ -223,9 +233,114 @@ class ActualPublication(unittest.TestCase):
         path.write_bytes(bytes([body[0] ^ 1]) + body[1:])
         self.refused("actual native fixture changed after producer qualification")
 
+    def test_missing_actual_opposite_zero_native_member_refuses_publication(self) -> None:
+        original_fixtures = copy.deepcopy(self.receipt["fixtures"])
+        names = ("native-opposite-zero-fixture.json", "native-opposite-zero-management-fixture.json",
+            "native-opposite-zero-packets/baseline.packet.json", "native-opposite-zero-packets/baseline.basis.json",
+            *("native-opposite-zero-management/" + name for name in (
+                "baseline.pending.management.json", "baseline.basis.json", "baseline.applied-events.json",
+                "baseline.input-journal.json", "baseline.current.management.json", "manifest.json")))
+        for missing in names:
+            with self.subTest(actual_native_member=missing):
+                self.assertEqual(sum(str(Path(row["path"]).relative_to(self.run)) == missing
+                    for row in original_fixtures), 1, "Counterproof needs the genuine native opposite-phase bytes")
+                self.receipt["fixtures"] = [row for row in original_fixtures
+                    if str(Path(row["path"]).relative_to(self.run)) != missing]
+                self.refused("actual native fixture inventory membership differs")
+        self.receipt["fixtures"] = original_fixtures
+
+    def test_missing_actual_opposite_zero_receiving_path_refuses_publication(self) -> None:
+        for key in ("QL_RETAINED_NATIVE_OPPOSITE_ZERO_FIXTURE",
+                    "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_FIXTURE",
+                    "QL_RETAINED_NATIVE_OPPOSITE_ZERO_MANAGEMENT_DIRECTORY"):
+            with self.subTest(actual_receiving_path=key):
+                body = self.environment_file.read_bytes()
+                self.environment_file.write_text("".join("export " + name + "=" + shlex.quote(value) + "\n"
+                    for name, value in self.environment.items() if name != key))
+                self.refused("native kernel fixture environment is incomplete")
+                self.environment_file.write_bytes(body)
+
+    def test_changed_actual_opposite_zero_original_bytes_refuse_publication(self) -> None:
+        for relative in ("native-opposite-zero-fixture.json",
+                         "native-opposite-zero-management/baseline.applied-events.json",
+                         "native-opposite-zero-management/baseline.input-journal.json"):
+            with self.subTest(actual_native_member=relative):
+                path = self.run / relative
+                body = path.read_bytes()
+                path.unlink()
+                path.write_bytes(bytes([body[0] ^ 1]) + body[1:])
+                self.refused("actual native fixture changed after producer qualification")
+                path.unlink()
+                os.link(original_run / relative, path)
+
+    def test_missing_actual_native_readmission_member_refuses_publication(self) -> None:
+        original_fixtures = copy.deepcopy(self.receipt["fixtures"])
+        for kind in ("world", "personal", "shared"):
+            for name in ("producer-input.json", "native-preexecution.json", "native-child-started.json",
+                         "native-stdout.json", "native-stderr.txt", "native-exit.json"):
+                missing = "native-receiving-readmission/" + kind + "/" + name
+                with self.subTest(actual_native_member=missing):
+                    self.assertEqual(sum(str(Path(row["path"]).relative_to(self.run)) == missing
+                        for row in original_fixtures), 1, "Counterproof needs the actual original native context activity")
+                    self.receipt["fixtures"] = [row for row in original_fixtures
+                        if str(Path(row["path"]).relative_to(self.run)) != missing]
+                    self.refused("actual native fixture inventory membership differs")
+        self.receipt["fixtures"] = original_fixtures
+
+    def test_missing_actual_native_readmission_receiving_path_refuses_publication(self) -> None:
+        self.environment_file.write_text("".join("export " + key + "=" + shlex.quote(value) + "\n"
+            for key,value in self.environment.items() if key!="QL_RETAINED_RECEIVING_READMISSION_DIRECTORY"))
+        self.refused("native kernel fixture environment is incomplete")
+
+    def test_changed_actual_native_readmission_original_bytes_refuse_publication(self) -> None:
+        for kind in ("world", "personal", "shared"):
+            for name in ("producer-input.json", "native-preexecution.json", "native-child-started.json",
+                         "native-stdout.json", "native-stderr.txt", "native-exit.json"):
+                relative = "native-receiving-readmission/" + kind + "/" + name
+                with self.subTest(actual_native_member=relative):
+                    path=self.run/relative
+                    body=path.read_bytes()
+                    path.unlink()
+                    path.write_bytes(bytes([body[0]^1])+body[1:] if body else b"lost original empty stderr")
+                    # Changed size or same-length changed bytes must both fail
+                    # before publishing even one receiving environment entry.
+                    self.refused("native fixture byte/hash declaration differs" if not body
+                                 else "actual native fixture changed after producer qualification")
+                    path.unlink()
+                    os.link(original_run/relative,path)
+
     def test_failed_actual_command_receipt_is_refused(self) -> None:
         self.receipt["commands"][0]["exit_code"] = 1
         self.refused("actual native producer failed or timed out")
+
+    def test_lost_original_native_preexecution_custody_refuses_publication(self) -> None:
+        self.receipt["commands"][0]["source_head"] = "0"*40
+        self.refused("actual producer lost its durable original preexecution custody")
+
+    def test_lost_owned_native_child_group_refuses_publication(self) -> None:
+        self.receipt["commands"][0]["owned_process_group"] = {}
+        self.refused("actual producer lost its owned child/session readback")
+
+    def test_missing_original_native_environment_override_custody_refuses_publication(self) -> None:
+        del self.receipt["commands"][0]["explicit_environment"]
+        self.refused("actual producer lost its durable original preexecution custody")
+
+    def test_changed_actual_native_environment_override_refuses_publication(self) -> None:
+        command=next(row for row in self.receipt["commands"]
+                     if "QL_NATIVE_WIRE_TEST" in row["explicit_environment"])
+        command["explicit_environment"]["QL_NATIVE_WIRE_TEST"] += ".disconnected-producer"
+        self.refused("actual producer lost its durable original preexecution custody")
+
+    def test_lost_original_native_output_readback_refuses_publication(self) -> None:
+        self.receipt["commands"][0]["original_output_complete"] = False
+        self.refused("actual producer lost its complete original output custody")
+
+    def test_changed_original_native_stderr_refuses_publication(self) -> None:
+        path=Path(self.receipt["commands"][0]["log"])
+        body=path.read_bytes()
+        path.unlink()
+        path.write_bytes(body+b"lost original stderr")
+        self.refused("actual producer original output byte/hash declaration differs")
 
     def test_wrong_exact_source_is_refused(self) -> None:
         wrong = ("0" if args.expected_ql_head[0] != "0" else "1") + args.expected_ql_head[1:]

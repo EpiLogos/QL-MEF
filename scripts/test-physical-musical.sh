@@ -127,6 +127,9 @@ run_native_gate source-form-physical-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTP
   QL_NATIVE_PHYSICAL_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-form-cold.json" \
   cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_stopped_form_material_applications_cold_replay_full_original_owner_and_detect_loss -- --ignored --exact --nocapture || :
 run_native_gate source-form-physical-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-form-cold.json" || :
+run_native_gate source-original703-world-personal-shared cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::genuine_original703_world_personal_shared_assets_replay_without_rewriting_current_authority -- --exact --nocapture || :
+run_native_gate source-form-original703-replay env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_native_original703_form_material_source_replays_full_history_and_fresh_admission -- --ignored --exact --nocapture || :
 run_native_gate mixed-acoustic-source-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
   QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
   cargo test -p ql-mef --locked --lib continuous::performance::form::cold::acoustic_history::tests::actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_source_epochs -- --ignored --exact --nocapture || :

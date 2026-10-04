@@ -602,8 +602,22 @@ impl FieldHost {
         // precedes retention. A stored snapshot or binding-only setter is not it.
         let admitted_at=exact_cursor(owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"]
             .as_str().ok_or("actual retained source admission cursor absent")?)?;
-        let prepared_receiving = source.prepare_current(owner, current, admitted_at)?;
-        if prepared_receiving.snapshot()? != owner.source_assets()["current_receiving"] {
+        let current_cursor = exact_cursor(
+            owner
+                .reading()
+                .ok_or("actual current native reading absent")?["samples_elapsed"]
+                .as_str()
+                .ok_or("actual current native cursor absent")?,
+        )?;
+        let fresh = source.prepare_current(owner, current, current_cursor)?;
+        fresh.validate_current(source, owner, current, current_cursor)?;
+        let prepared_receiving = source.prepare_retained(
+            owner,
+            current,
+            admitted_at,
+            &owner.source_assets()["current_receiving"],
+        )?;
+        if *prepared_receiving.retained_snapshot() != owner.source_assets()["current_receiving"] {
             return Err(
                 "activated native source artifact lost exact current receiving owner".into(),
             );
@@ -674,9 +688,23 @@ impl FieldHost {
         owner.validate_current(current)?;
         let admitted_at = exact_cursor(owner.source_assets()["current_receiving"]["native_admission"]["operation"]["native_sample"]
             .as_str().ok_or("actual retained source observation admission absent")?)?;
-        if source
-            .prepare_current(owner, current, admitted_at)?
-            .snapshot()?
+        let current_cursor = exact_cursor(
+            owner
+                .reading()
+                .ok_or("actual current native reading absent")?["samples_elapsed"]
+                .as_str()
+                .ok_or("actual current native cursor absent")?,
+        )?;
+        let fresh = source.prepare_current(owner, current, current_cursor)?;
+        fresh.validate_current(source, owner, current, current_cursor)?;
+        if *source
+            .prepare_retained(
+                owner,
+                current,
+                admitted_at,
+                &owner.source_assets()["current_receiving"],
+            )?
+            .retained_snapshot()
             != owner.source_assets()["current_receiving"]
         {
             return Err(

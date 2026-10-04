@@ -4,7 +4,9 @@
 use super::*;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 use crate::continuous::performance_act_bridge::NativeActSourceLease;
-use crate::continuous::performance_receiving::NativePerformanceReceivingSource;
+use crate::continuous::performance_receiving::{
+    NativePerformanceReceivingSource, NativeReceivingReplayPreparation, ReceivingImplementation,
+};
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -117,11 +119,13 @@ impl PreparedAcousticReceiving {
         source: &NativePerformanceReceivingSource,
         original_native_birth: u64,
     ) -> Result<(), String> {
-        let actual = owner.prepare_acoustic_receiving_segment(
+        let implementation = ReceivingImplementation::of_retained(&self.current_receiving)?;
+        let actual = owner.prepare_acoustic_receiving_segment_for_replay(
             current,
             source,
             original_native_birth,
             self.origin_sample,
+            implementation,
         )?;
         if self.history_origin_sample != original_native_birth
             || actual.snapshot() != self.snapshot()
@@ -272,6 +276,44 @@ impl PerformanceOwner {
         original_native_birth: u64,
         native_segment_origin: u64,
     ) -> Result<PreparedAcousticReceiving, String> {
+        self.prepare_acoustic_receiving_segment_for_replay(
+            current,
+            source,
+            original_native_birth,
+            native_segment_origin,
+            ReceivingImplementation::Current,
+        )
+    }
+    pub(super) fn prepare_acoustic_receiving_segment_for_replay(
+        &self,
+        current: &CoupledBasis,
+        source: &NativePerformanceReceivingSource,
+        original_native_birth: u64,
+        native_segment_origin: u64,
+        implementation: ReceivingImplementation,
+    ) -> Result<PreparedAcousticReceiving, String> {
+        let prepared = source.begin_replay_preparation(self, current, implementation)?;
+        self.prepare_acoustic_receiving_segment_from_preparation(
+            current,
+            source,
+            &prepared,
+            original_native_birth,
+            native_segment_origin,
+        )
+    }
+    pub(super) fn prepare_acoustic_receiving_segment_from_preparation(
+        &self,
+        current: &CoupledBasis,
+        source: &NativePerformanceReceivingSource,
+        prepared: &NativeReceivingReplayPreparation<'_>,
+        original_native_birth: u64,
+        native_segment_origin: u64,
+    ) -> Result<PreparedAcousticReceiving, String> {
+        if !prepared.is_for(source, self, current) {
+            return Err(
+                "acoustic source preparation lost its actual immutable owner/current inputs".into(),
+            );
+        }
         self.validate_current(current)?;
         if native_segment_origin < original_native_birth {
             return Err("native acoustic segment precedes original history birth".into());
@@ -284,8 +326,8 @@ impl PerformanceOwner {
         let end = native_segment_origin
             .checked_add(u64::from(config.span_samples))
             .ok_or("native acoustic segment cursor overflow")?;
-        let receiving = source.prepare_current(self, current, native_segment_origin)?;
-        receiving.validate_current(source, self, current, native_segment_origin)?;
+        let receiving = prepared.prepare_at(native_segment_origin)?;
+        prepared.validate_at(&receiving, native_segment_origin)?;
         let context = source.return_context();
         let metric = &body.request().geometry;
         let pickup = &body.request().pickup;
@@ -323,7 +365,7 @@ impl PerformanceOwner {
                 "origin_sample":native_segment_origin.to_string(),"end_sample":end.to_string(),
                 "history_origin_sample":original_native_birth.to_string(),
                 "units":{"distance":"m","velocity":"m/s","cursor":"native-audio-sample","signal":"linear-pickup"}}),
-            current_receiving: receiving.snapshot()?,
+            current_receiving: receiving.retained_snapshot().clone(),
             history_origin_sample: original_native_birth,
             origin_sample: native_segment_origin,
         })
@@ -402,26 +444,45 @@ impl PerformanceOwner {
                 );
             }
         }
-        let original = self.prepare_acoustic_receiving_segment(current, source, birth, origin)?;
+        // Every call starts from a fresh complete native replay; keep that
+        // immutable producer only until this verification finishes. All three
+        // dated admissions and their full comparisons remain independent.
+        let original_implementation =
+            ReceivingImplementation::of_retained(&retained["current_receiving"])?;
+        let mut prepared =
+            source.begin_replay_preparation(self, current, original_implementation)?;
+        let original = self.prepare_acoustic_receiving_segment_from_preparation(
+            current, source, &prepared, birth, origin,
+        )?;
         if original.snapshot() != *retained {
             return Err("original saved acoustic source cannot be regenerated".into());
         }
         // This source admission may be later than the retained receiver
         // segment origin. Keep the full original N9 definition/source/context.
-        let admitted = source.prepare_current(self, current, admitted_at)?;
-        admitted.validate_current(source, self, current, admitted_at)?;
-        if admitted.snapshot()? != self.source_assets["current_receiving"]
-            || admitted.context().snapshot()? != self.source_assets["source_context"]
-            || *admitted.source_inputs() != self.source_assets["receiving_source_inputs"]
-            || admitted.definition().snapshot()? != self.source_assets["receiving_definition"]
+        let admitted =
+            prepared.prepare_retained_at(admitted_at, &self.source_assets["current_receiving"])?;
+        if *admitted.retained_snapshot() != self.source_assets["current_receiving"]
+            || admitted.fresh().context().snapshot()? != self.source_assets["source_context"]
+            || *admitted.fresh().source_inputs() != self.source_assets["receiving_source_inputs"]
+            || admitted.fresh().definition().snapshot()?
+                != self.source_assets["receiving_definition"]
         {
             return Err("full original saved acoustic receiving/source/context differs".into());
         }
         // Currentness at the saved sample is independent of both retained
         // source admission and trajectory date; it never relabels either.
-        let now = source.prepare_current(self, current, saved_cursor)?;
-        now.validate_current(source, self, current, saved_cursor)?;
-        original.validate_current(self, current, source, birth)?;
+        let now = prepared.prepare_current_at(saved_cursor)?;
+        prepared.validate_current_at(&now, saved_cursor)?;
+        let original_repeat = self.prepare_acoustic_receiving_segment_from_preparation(
+            current, source, &prepared, birth, origin,
+        )?;
+        if original.history_origin_sample != birth
+            || original_repeat.snapshot() != original.snapshot()
+        {
+            return Err(
+                "complete original acoustic/source/context/body preparation changed".into(),
+            );
+        }
         Ok(original)
     }
 
@@ -622,20 +683,29 @@ impl PerformanceOwner {
         let before_source = after_source
             .clone()
             .with_acoustic_configuration(before_configuration)?;
-        let original =
-            self.prepare_acoustic_receiving_segment(current, &before_source, birth, before_origin)?;
+        let original = self.prepare_acoustic_receiving_segment_for_replay(
+            current,
+            &before_source,
+            birth,
+            before_origin,
+            ReceivingImplementation::of_retained(&retained["current_receiving"])?,
+        )?;
         if original.snapshot() != *retained {
             return Err("original operative acoustic source cannot be regenerated".into());
         }
         let original_admission = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let before = before_source.prepare_current(self, current, original_admission)?;
-        before.validate_current(&before_source, self, current, original_admission)?;
-        if before.snapshot()? != self.source_assets["current_receiving"]
-            || before.context().snapshot()? != self.source_assets["source_context"]
-            || *before.source_inputs() != self.source_assets["receiving_source_inputs"]
-            || before.definition().snapshot()? != self.source_assets["receiving_definition"]
+        let before = before_source.prepare_retained(
+            self,
+            current,
+            original_admission,
+            &self.source_assets["current_receiving"],
+        )?;
+        if *before.retained_snapshot() != self.source_assets["current_receiving"]
+            || before.fresh().context().snapshot()? != self.source_assets["source_context"]
+            || *before.fresh().source_inputs() != self.source_assets["receiving_source_inputs"]
+            || before.fresh().definition().snapshot()? != self.source_assets["receiving_definition"]
         {
             return Err("original operative receiving/context/source assets differ".into());
         }
@@ -949,12 +1019,17 @@ impl PerformanceOwner {
         let before_cursor = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let original = original_source.prepare_current(self, current, before_cursor)?;
-        original.validate_current(original_source, self, current, before_cursor)?;
-        if original.snapshot()? != self.source_assets["current_receiving"]
-            || original.context().snapshot()? != self.source_assets["source_context"]
-            || *original.source_inputs() != self.source_assets["receiving_source_inputs"]
-            || original.definition().snapshot()? != self.source_assets["receiving_definition"]
+        let original = original_source.prepare_retained(
+            self,
+            current,
+            before_cursor,
+            &self.source_assets["current_receiving"],
+        )?;
+        if *original.retained_snapshot() != self.source_assets["current_receiving"]
+            || original.fresh().context().snapshot()? != self.source_assets["source_context"]
+            || *original.fresh().source_inputs() != self.source_assets["receiving_source_inputs"]
+            || original.fresh().definition().snapshot()?
+                != self.source_assets["receiving_definition"]
         {
             return Err("full original operative acoustic source/context differs".into());
         }
@@ -970,7 +1045,7 @@ impl PerformanceOwner {
             .acoustic_configuration()
             .ok_or("initial acoustic configuration absent")?
             .clone();
-        if after_inputs != *original.source_inputs()
+        if after_inputs != *original.fresh().source_inputs()
             || added != serde_json::to_value(&configuration).map_err(|e| e.to_string())?
         {
             return Err("initial acoustic candidate changed original source inputs".into());
@@ -1232,7 +1307,13 @@ impl PerformanceOwner {
         act_lease.validate_source_assets(&instance, self.source_assets())?;
         let original = self.source_assets["acoustic_receiving"].clone();
         let birth = decimal(&original["packet"]["origin_sample"])?;
-        let prepared = self.prepare_acoustic_receiving_source(current, source, birth)?;
+        let prepared = self.prepare_acoustic_receiving_segment_for_replay(
+            current,
+            source,
+            birth,
+            birth,
+            ReceivingImplementation::of_retained(&original["current_receiving"])?,
+        )?;
         if prepared.snapshot() != original {
             return Err(
                 "original acoustic source asset cannot be independently regenerated".into(),

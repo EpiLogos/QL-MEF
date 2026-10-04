@@ -5,7 +5,7 @@ use super::*;
 #[path = "performance_physical_return.rs"]
 mod scene_return;
 use crate::continuous::performance_receiving::{
-    NativePerformanceReceivingSource, PreparedCurrentReceiving,
+    NativePerformanceReceivingSource, PreparedCurrentReceiving, ReceivingImplementation,
 };
 use crate::m3_state::{COMMAND_SCHEMA, M3Command, M3Operation, M3Receipt};
 use crate::physical_body::{
@@ -299,9 +299,14 @@ impl PerformanceOwner {
         let original_cursor = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        if source
-            .prepare_current(self, current, original_cursor)?
-            .snapshot()?
+        if *source
+            .prepare_retained(
+                self,
+                current,
+                original_cursor,
+                &self.source_assets["current_receiving"],
+            )?
+            .retained_snapshot()
             != self.source_assets["current_receiving"]
         {
             return Err("physical edit lost the complete actual current receiving source".into());
@@ -340,6 +345,24 @@ impl PerformanceOwner {
         authored: &AuthoredNativePhysicalEdit,
         cursor: u64,
     ) -> Result<PreparedPhysicalSourceDescendant, String> {
+        self.prepare_physical_source_descendant_for_replay_at(
+            current,
+            source,
+            original_request_id,
+            authored,
+            cursor,
+            ReceivingImplementation::Current,
+        )
+    }
+    fn prepare_physical_source_descendant_for_replay_at(
+        &self,
+        current: &CoupledBasis,
+        source: &NativePerformanceReceivingSource,
+        original_request_id: u64,
+        authored: &AuthoredNativePhysicalEdit,
+        cursor: u64,
+        implementation: ReceivingImplementation,
+    ) -> Result<PreparedPhysicalSourceDescendant, String> {
         self.validate_current(current)?;
         if original_request_id == 0 {
             return Err("actual original physical request ordinal required".into());
@@ -348,9 +371,14 @@ impl PerformanceOwner {
         let original_cursor = decimal(
             &self.source_assets["current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        if source
-            .prepare_current(self, current, original_cursor)?
-            .snapshot()?
+        if *source
+            .prepare_retained(
+                self,
+                current,
+                original_cursor,
+                &self.source_assets["current_receiving"],
+            )?
+            .retained_snapshot()
             != self.source_assets["current_receiving"]
         {
             return Err("historical physical source receiving no longer replays".into());
@@ -395,7 +423,10 @@ impl PerformanceOwner {
                 return Err("material operation altered actual source geometry/face/clock".into());
             }
         }
-        let current_receiving = source.admit_current(&mut after_owner, &after_current, cursor)?;
+        let receiving_replay =
+            source.admit_replayed(&mut after_owner, &after_current, cursor, implementation)?;
+        let receiving_snapshot = receiving_replay.retained_snapshot().clone();
+        let current_receiving = receiving_replay.into_fresh();
         let mut assets = self.source_assets.clone();
         for name in [
             "native_basis",
@@ -412,7 +443,7 @@ impl PerformanceOwner {
             after_owner.source_assets["physical_consumer_projection"].clone();
         assets["source_form_recipe"] =
             serde_json::to_value(&after_owner.config.recipe).map_err(|e| e.to_string())?;
-        assets["current_receiving"] = current_receiving.snapshot()?;
+        assets["current_receiving"] = receiving_snapshot.clone();
         assets["receiving_definition"] = current_receiving.definition().snapshot()?;
         assets["receiving_source_inputs"] = current_receiving.source_inputs().clone();
         let before_acoustic = self
@@ -424,11 +455,12 @@ impl PerformanceOwner {
             let origin = decimal(&before["origin_sample"])?;
             // Keep the current receiver trajectory segment and original birth;
             // C++ appends this body's emitter anchor at the actual edit cursor.
-            let prepared = after_owner.prepare_acoustic_receiving_segment(
+            let prepared = after_owner.prepare_acoustic_receiving_segment_for_replay(
                 &after_current,
                 source,
                 birth,
                 origin,
+                implementation,
             )?;
             let packet = prepared.packet().clone();
             assets["acoustic_receiving"] = prepared.snapshot();
@@ -442,7 +474,7 @@ impl PerformanceOwner {
             "native_m3_receipt":receipt,"before_m3":current.m3,"after_m3":after_current.m3,
             "before_configuration":self.config,"after_configuration":after_owner.config,
             "before_native_preparation":self.packet()?,"after_native_preparation":after_owner.packet()?,
-            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":current_receiving.snapshot()?,
+            "before_current_receiving":self.source_assets["current_receiving"],"after_current_receiving":receiving_snapshot,
             "prepared_physical_transition":transition,"before_acoustic":before_acoustic,"after_acoustic":after_acoustic,
             "policy":"same retained physical body, exact corresponding-node mass projection, original native cursor and complete source lineage"});
         let history = assets

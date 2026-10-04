@@ -18,10 +18,6 @@ use crate::scene::{WorldRequest, world};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
-#[path = "performance_receiving_version.rs"]
-mod version;
-pub(super) use version::{NativeReceivingReplayPreparation, ReceivingImplementation, exact_value};
-
 /// Private native producer inputs retained under one existing owner/lease.
 /// Personal/Shared constructors replay actual N identity and current producers.
 /// Constructor calls do not grant Act, private-read or consent authority.
@@ -267,24 +263,41 @@ impl NativePerformanceReceivingSource {
         actual_original: &CoupledBasis,
         admitted_native_cursor: u64,
     ) -> Result<PreparedCurrentReceiving, String> {
-        self.begin_current_preparation(owner, actual_original)?
-            .prepare_at(admitted_native_cursor)
-    }
-    /// One freshly replayed complete immutable source for a SINGLE native
-    /// verification invocation. Borrowing all inputs prevents mutation; no
-    /// serialized witness, global cache or cross-invocation reuse can issue it.
-    pub(super) fn begin_current_preparation<'a>(
-        &'a self,
-        owner: &'a PerformanceOwner,
-        actual_original: &'a CoupledBasis,
-    ) -> Result<NativeCurrentReceivingPreparation<'a>, String> {
         owner.validate_current(actual_original)?;
         let reading = self.replay(owner.immutable_source_origin())?;
-        Ok(NativeCurrentReceivingPreparation {
-            source: self,
-            owner,
-            current: actual_original,
-            reading,
+        let origin = owner.source_context_basis(actual_original)?;
+        let definition = prepare_native_receiving(self.input(owner, &reading))?;
+        let context = prepare_native_source_context(
+            &origin,
+            &definition,
+            self.input(owner, &reading),
+            self.context.clone(),
+            reading.public.as_ref(),
+        )?;
+        context.validate_current(
+            &origin,
+            &definition,
+            self.input(owner, &reading),
+            self.context.clone(),
+            reading.public.as_ref(),
+        )?;
+        let admission = prepare_native_receiving_admission(
+            &definition,
+            self.input(owner, &reading),
+            owner.binding().native_basis(),
+            admitted_native_cursor,
+        )?;
+        admission.validate_current(
+            &definition,
+            self.input(owner, &reading),
+            owner.binding().native_basis(),
+            admitted_native_cursor,
+        )?;
+        Ok(PreparedCurrentReceiving {
+            definition,
+            context,
+            admission,
+            source_inputs: self.source_inputs()?,
         })
     }
     /// Actual host performs this at its current Act/lease, before publication.
@@ -351,76 +364,6 @@ struct CurrentSourceReading {
     current: Option<Value>,
     public: Option<NativePublicSourceOwnership>,
 }
-/// A borrowed, freshly produced native source, never a persisted grant.
-/// Each dated preparation still executes the complete definition/context/
-/// admission factories and their native validators. Only the identical World
-/// or protected identity replay is shared while these immutable borrows live.
-pub(super) struct NativeCurrentReceivingPreparation<'a> {
-    source: &'a NativePerformanceReceivingSource,
-    owner: &'a PerformanceOwner,
-    current: &'a CoupledBasis,
-    reading: CurrentSourceReading,
-}
-impl NativeCurrentReceivingPreparation<'_> {
-    pub(super) fn is_for(
-        &self,
-        source: &NativePerformanceReceivingSource,
-        owner: &PerformanceOwner,
-        current: &CoupledBasis,
-    ) -> bool {
-        std::ptr::eq(self.source, source)
-            && std::ptr::eq(self.owner, owner)
-            && std::ptr::eq(self.current, current)
-    }
-    pub(super) fn prepare_at(&self, cursor: u64) -> Result<PreparedCurrentReceiving, String> {
-        self.owner.validate_current(self.current)?;
-        let origin = self.owner.source_context_basis(self.current)?;
-        let definition = prepare_native_receiving(self.source.input(self.owner, &self.reading))?;
-        let context = prepare_native_source_context(
-            &origin,
-            &definition,
-            self.source.input(self.owner, &self.reading),
-            self.source.context.clone(),
-            self.reading.public.as_ref(),
-        )?;
-        context.validate_current(
-            &origin,
-            &definition,
-            self.source.input(self.owner, &self.reading),
-            self.source.context.clone(),
-            self.reading.public.as_ref(),
-        )?;
-        let admission = prepare_native_receiving_admission(
-            &definition,
-            self.source.input(self.owner, &self.reading),
-            self.owner.binding().native_basis(),
-            cursor,
-        )?;
-        admission.validate_current(
-            &definition,
-            self.source.input(self.owner, &self.reading),
-            self.owner.binding().native_basis(),
-            cursor,
-        )?;
-        Ok(PreparedCurrentReceiving {
-            definition,
-            context,
-            admission,
-            source_inputs: self.source.source_inputs()?,
-        })
-    }
-    pub(super) fn validate_at(
-        &self,
-        prepared: &PreparedCurrentReceiving,
-        cursor: u64,
-    ) -> Result<(), String> {
-        let actual = self.prepare_at(cursor)?;
-        if !version::exact_value(&prepared.snapshot()?, &actual.snapshot()?) {
-            return Err("complete native receiving source/context/occasion/grant changed".into());
-        }
-        Ok(())
-    }
-}
 impl PreparedCurrentReceiving {
     pub fn definition(&self) -> &ReceivingDefinition {
         &self.definition
@@ -461,7 +404,7 @@ impl PreparedCurrentReceiving {
         cursor: u64,
     ) -> Result<(), String> {
         let actual = source.prepare_current(owner, actual_original, cursor)?;
-        if !version::exact_value(&self.snapshot()?, &actual.snapshot()?) {
+        if self.snapshot()? != actual.snapshot()? {
             return Err("complete native receiving source/context/occasion/grant changed".into());
         }
         Ok(())

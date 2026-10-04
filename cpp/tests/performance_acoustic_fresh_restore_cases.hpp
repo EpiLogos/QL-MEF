@@ -139,6 +139,17 @@ static Json fresh_saved_receiver_segment(J *fixture) {
           "pure saved receiving preflight/refusal changed full fresh owner");
   // A numerically valid different context/birth/source manifest cannot be
   // installed merely because its cursor and finite history are compatible.
+  require(
+      saved->native_pair.audio.receiving.version == 2 &&
+          saved->native_pair.audio.receiving.source_history.explicit_history &&
+          saved->native_pair.audio.receiving.source_history.count == 2 &&
+          saved->native_pair.audio.receiving.source_history.first == 0 &&
+          saved->native_pair.audio.receiving.source_history.segments[0]
+                  .effective_sample == 0 &&
+          saved->native_pair.audio.receiving.source_history.segments[1]
+                  .effective_sample == 4096,
+      "wrong receiver trials lack the complete genuine dated source corpus");
+  auto detecting_receivers = wire::array();
   for (unsigned variant = 0; variant < 3; ++variant) {
     auto bad = std::make_unique<NativeReceivingCheckpoint>(
         saved->native_pair.audio.receiving);
@@ -147,11 +158,24 @@ static Json fresh_saved_receiver_segment(J *fixture) {
     else if (variant == 1) {
       bad->history_start_sample = 1;
       bad->manifest.history_origin_sample = 1;
-    } else
+      // Keep the mutated v2 numerical history internally consistent. Its real
+      // first emitter remains dated independently from the receiver birth.
+      bad->source_history.segments[0].effective_sample = 1;
+    } else {
       bad->manifest.source_revision = candidate->manifest().policy_revision;
-    require(valid_receiving_checkpoint(*bad, bad->manifest),
-            "wrong native receiver negative is not numerically well-formed");
+      auto &tail = bad->source_history.segments[bad->source_history.count - 1];
+      require(ql::intern_receiving_source_reference(
+                  bad->source_history, bad->manifest.source_revision.data(),
+                  tail.references[1]),
+              "actual wrong-source negative exceeds native reference bound");
+    }
+    require(
+        !same_receiving_checkpoint(*bad, saved->native_pair.audio.receiving) &&
+            valid_receiving_checkpoint(*bad, bad->manifest),
+        "wrong native receiver negative is not changed/numerically "
+        "well-formed");
     bool refused = false;
+    std::string actual_reason;
     try {
       auto other = acoustic_wire::read_prepared_acoustic(
           packet_value, packet_value, body_packet, *reopened->immutable, 4096,
@@ -162,11 +186,28 @@ static Json fresh_saved_receiver_segment(J *fixture) {
           std::move(other),
           wire::decimal(packet::field(packet_value, "history_origin_sample")),
           *bad);
-    } catch (const std::invalid_argument &) {
+    } catch (const std::invalid_argument &failure) {
       refused = true;
+      actual_reason = failure.what();
     }
     require(refused,
             "original receiving producer admitted a different manifest");
+    auto actual_after_refusal = reopened->owner->stopped_checkpoint();
+    auto after_refusal_wire =
+        management_checkpoint_transport::checkpoint_wire(*actual_after_refusal);
+    require(
+        std::strcmp(json_object_to_json_string_ext(pristine_wire.get(),
+                                                   JSON_C_TO_STRING_PLAIN),
+                    json_object_to_json_string_ext(
+                        after_refusal_wire.get(), JSON_C_TO_STRING_PLAIN)) == 0,
+        "wrong receiver/source/birth refusal mutated the fresh native owner");
+    auto detecting = wire::object();
+    wire::u64(detecting.get(), "variant", variant);
+    wire::flag(detecting.get(), "numerically_valid", true);
+    wire::text(detecting.get(), "actual_refusal", actual_reason);
+    wire::put(detecting.get(), "original_mutated_checkpoint",
+              wire::receiving_checkpoint(*bad).release());
+    wire::append(detecting_receivers.get(), detecting.release());
   }
   std::unique_ptr<PerformanceManagement::PreparedReceivingRestore> retained;
   TransportAcknowledgement ack{};
@@ -246,6 +287,8 @@ static Json fresh_saved_receiver_segment(J *fixture) {
   wire::put(output.get(), "applications", apps.release());
   wire::put(output.get(), "input_history", history.release());
   wire::put(output.get(), "continued_pcm", pcm.release());
+  wire::put(output.get(), "detecting_wrong_receivers",
+            detecting_receivers.release());
   wire::u64(output.get(), "end_cursor", 13000);
   return output;
 }

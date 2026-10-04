@@ -177,12 +177,14 @@ static Json causal_source_and_bus(J *baseline, J *changed) {
   auto port = physical_port(detached.body);
   port.advance = [](void *, const double *, float *, std::size_t, std::uint64_t,
                     std::uint64_t) noexcept { return false; };
-  Engine broken(detached.determination, 48000, port);
-  assert(broken.enqueue(note_operation(detached, 1, 0)) == Result::Accepted);
+  // This control-thread negative uses the same heap ownership as the native
+  // producer. Its complete queues must not depend on the process stack limit.
+  auto broken = std::make_unique<Engine>(detached.determination, 48000, port);
+  assert(broken->enqueue(note_operation(detached, 1, 0)) == Result::Accepted);
   std::array<float, 128> silence{};
-  assert(!broken.render(silence.data(), 128, 0));
+  assert(!broken->render(silence.data(), 128, 0));
   assert(detached.body->samples_elapsed() == 0 &&
-         broken.samples_elapsed() == 0 &&
+         broken->samples_elapsed() == 0 &&
          std::all_of(silence.begin(), silence.end(),
                      [](float v) { return v == 0; }));
   auto out = object();
@@ -561,6 +563,7 @@ static Json retained_controls(J *baseline) {
 }
 int main() {
   try {
+    std::cerr << "native_research_engine_size_bytes=" << sizeof(Engine) << '\n';
     std::string bytes;
     std::getline(std::cin, bytes);
     assert(!bytes.empty() && bytes.size() < 16 * 1024 * 1024);

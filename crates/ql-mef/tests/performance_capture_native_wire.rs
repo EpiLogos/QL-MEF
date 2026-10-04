@@ -48,6 +48,32 @@ fn original_native_capture_keeps_pcm_force_source_and_reopened_callback_exact() 
             file.write_all(original).unwrap();
             file.sync_all().unwrap();
         }
+        #[cfg(unix)]
+        let termination = {
+            use std::os::unix::process::ExitStatusExt;
+            serde_json::json!({"schema":"ql.actual-native-capture-child-exit/v1",
+                "success":result.status.success(),"code":result.status.code(),
+                "signal":result.status.signal(),"core_dumped":result.status.core_dumped()})
+        };
+        #[cfg(not(unix))]
+        let termination = serde_json::json!({"schema":"ql.actual-native-capture-child-exit/v1",
+            "success":result.status.success(),"code":result.status.code(),
+            "signal":null,"core_dumped":null});
+        for (name, original) in [
+            (
+                "original-native-capture-exit.json",
+                serde_json::to_vec(&termination).unwrap(),
+            ),
+            ("original-source-carrier.json", bytes.clone()),
+        ] {
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(root.join(name))
+                .unwrap();
+            file.write_all(&original).unwrap();
+            file.sync_all().unwrap();
+        }
         let bytes = serde_json::to_vec(&retained).unwrap();
         let mut file = std::fs::OpenOptions::new()
             .write(true)
@@ -69,6 +95,31 @@ fn original_native_capture_keeps_pcm_force_source_and_reopened_callback_exact() 
     assert_eq!(receipt["callback_releases"], "0");
     assert_eq!(receipt["batches"].as_array().unwrap().len(), 4);
     assert_eq!(receipt["continued_batches"].as_array().unwrap().len(), 12);
+    assert_eq!(
+        receipt["continued_applications"].as_array().unwrap().len(),
+        2
+    );
+    assert_eq!(
+        receipt["original_continued_applications"],
+        receipt["continued_applications"]
+    );
+    for (index, kind, sequence, sample) in [(0, 5, "3", "768"), (1, 1, "4", "1152")] {
+        let application = &receipt["continued_applications"][index];
+        assert_eq!(application["applied"], true);
+        assert_eq!(application["kind"], kind);
+        assert_eq!(application["sequence"], sequence);
+        assert_eq!(application["requested_sample"], sample);
+        assert_eq!(application["admitted_sample"], sample);
+        assert_eq!(application["applied_sample"], sample);
+    }
+    let original_cut = &receipt["saved_checkpoint"];
+    let restored_cut = &receipt["restored_checkpoint"];
+    assert_eq!(original_cut["transport_epoch"], "1");
+    assert_eq!(restored_cut["transport_epoch"], "2");
+    assert_eq!(original_cut["native_pair"], restored_cut["native_pair"]);
+    assert_eq!(original_cut["inputs"].as_array().unwrap().len(), 1);
+    assert_eq!(original_cut["inputs"], restored_cut["inputs"]);
+    assert_eq!(original_cut["input_history"], restored_cut["input_history"]);
     assert_eq!(
         receipt["overflow_batch"]["audio_blocks"]
             .as_array()

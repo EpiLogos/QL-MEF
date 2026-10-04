@@ -49,8 +49,20 @@ impl FieldHost {
         if original_sample != original_cursor.to_string() {
             return Err("original receiving admission cursor noncanonical".into());
         }
-        let original = source.prepare_current(owner, &current, original_cursor)?;
-        if original.snapshot()? != owner.source_assets()["current_receiving"] {
+        let current_cursor = origin_counter(
+            &owner
+                .reading()
+                .ok_or("recording actual current reading absent")?["samples_elapsed"],
+        )?;
+        let fresh = source.prepare_current(owner, &current, current_cursor)?;
+        fresh.validate_current(source, owner, &current, current_cursor)?;
+        let original = source.prepare_retained(
+            owner,
+            &current,
+            original_cursor,
+            &owner.source_assets()["current_receiving"],
+        )?;
+        if *original.retained_snapshot() != owner.source_assets()["current_receiving"] {
             return Err("recording lost complete original source/context/occasion/grants".into());
         }
         let (receipt, pulse) = match command {
@@ -69,8 +81,20 @@ impl FieldHost {
         let post = (|| -> Result<(), String> {
             owner.validate_current(&current)?;
             lease.validate_source_assets(&self.instance_ref, owner.source_assets())?;
-            let after = source.prepare_current(owner, &current, original_cursor)?;
-            if after.snapshot()? != owner.source_assets()["current_receiving"] {
+            let current_cursor = origin_counter(
+                &owner
+                    .reading()
+                    .ok_or("recording actual current reading lost")?["samples_elapsed"],
+            )?;
+            let fresh = source.prepare_current(owner, &current, current_cursor)?;
+            fresh.validate_current(source, owner, &current, current_cursor)?;
+            let after = source.prepare_retained(
+                owner,
+                &current,
+                original_cursor,
+                &owner.source_assets()["current_receiving"],
+            )?;
+            if *after.retained_snapshot() != owner.source_assets()["current_receiving"] {
                 return Err("recording changed actual original receiving source/context".into());
             }
             let current_source = self.session.session().current_basis();

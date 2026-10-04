@@ -2926,6 +2926,32 @@
         "crates/ql-mef/tests/performance_capture_native_wire.rs",
         "scripts/test-physical-musical.sh"
       ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_receiving_version.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Private compatibility consumer of the existing native receiving source owner. It executes the exact recorded implementation using privately constructed original inputs and independently regenerates fresh current source/context/admission. Whole finite numeric bit equality retains every saved determinant; neither an implementation revision nor a saved witness grants an Act, body, clock, context or private disclosure. Invocation-local current replay has no global or persistent cache.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/performance_receiving_versions/703/performance_receiving.rs",
+      "stratum": "rust",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "kind": "computational",
+      "rationale": "Byte-identical archived published703 native receiving implementation, retained privately beneath the current receiving owner for exact historical evidence replay. Its own genuine source revision remains distinct from current factories; only the adapter fresh current admission can bind the live owner. This row declares compatibility source custody, adds no coordinate coverage, authority or independent integration line.",
+      "tests": [
+        "crates/ql-mef/src/continuous/performance_form_cold_tests.rs",
+        "crates/ql-mef/tests/current_performance_receiving_native_wire.rs",
+        "cpp/tests/current_performance_receiving_wire.cpp"
+      ]
     }
   ]
 }

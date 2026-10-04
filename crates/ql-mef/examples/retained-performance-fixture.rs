@@ -14,7 +14,32 @@ fn reference(v: &str) -> ReturnReference {
     }
 }
 fn main() -> Result<(), String> {
-    let prepared = prepare_native_performance(support::preparation())?;
+    let mut arguments = std::env::args().skip(1);
+    let opposite_zero = match arguments.next().as_deref() {
+        None => false,
+        Some("--native-opposite-zero") => true,
+        _ => return Err("unknown retained native fixture mode".into()),
+    };
+    if arguments.next().is_some() {
+        return Err("retained native fixture accepts only one optional mode".into());
+    }
+    let mut input = support::preparation();
+    if opposite_zero {
+        input.coupled.m1.cycle = "0".into();
+        input.coupled.m1.tick12 = 0;
+        input.source_face = ql_mef::MFace::Pratibimba;
+    }
+    let prepared = prepare_native_performance(input)?;
+    if opposite_zero
+        && (prepared.notes().is_empty()
+            || prepared.notes().iter().any(|note| {
+                note["phase_sin"].as_f64().map(f64::to_bits) != Some((-0.0_f64).to_bits())
+                    || note["phase_cos"].as_f64() != Some(-1.0)
+                    || note["source_face"] != json!(1)
+            }))
+    {
+        return Err("native M1 opposite-zero quadrature was not produced".into());
+    }
     let context = ReturnContext {
         context: reference("reference:receiving-context"),
         receiver: reference("reference:receiving-owner"),

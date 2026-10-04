@@ -3,6 +3,7 @@
 //! installing, advancing or restoring P. Actual application custody is separate
 //! from deterministic producer records and is verified by the selected lease.
 use super::*;
+use crate::continuous::performance_receiving::exact_value as same_retained;
 
 /// One original source/body basis kept for complete native score compilation.
 /// No Deserialize/Clone and no live P, epoch, checkpoint or source grant.
@@ -25,9 +26,16 @@ impl ReplayedPhysicalSourceFrame {
         source: &NativePerformanceReceivingSource,
         declared_seed: u64,
     ) -> Result<crate::musical_performance_return::MusicalPerformanceReturn, String> {
-        let receiving = source.prepare_current(&self.owner, &self.current, self.source_sample)?;
-        receiving.validate_current(source, &self.owner, &self.current, self.source_sample)?;
-        if receiving.snapshot()? != self.owner.source_assets()["current_receiving"] {
+        let receiving = source.prepare_retained(
+            &self.owner,
+            &self.current,
+            self.source_sample,
+            &self.owner.source_assets()["current_receiving"],
+        )?;
+        if !same_retained(
+            receiving.retained_snapshot(),
+            &self.owner.source_assets()["current_receiving"],
+        ) {
             return Err("cold historical source Return lost actual receiving ownership".into());
         }
         crate::musical_performance_return::bind_performance_return(
@@ -89,8 +97,10 @@ impl PerformanceOwner {
             );
         }
         if expected["schema"] != "ql.retained-performance-source-assets/v1"
-            || expected["original_native_input"]
-                != serde_json::to_value(&original.input).map_err(|e| e.to_string())?
+            || !same_retained(
+                &expected["original_native_input"],
+                &serde_json::to_value(&original.input).map_err(|e| e.to_string())?,
+            )
         {
             return Err("cold physical source lost the actual original native constructor".into());
         }
@@ -129,14 +139,21 @@ impl PerformanceOwner {
         let source_sample = decimal(
             &first["before_current_receiving"]["native_admission"]["operation"]["native_sample"],
         )?;
-        let admitted = source.admit_current(&mut owner, original, source_sample)?;
-        admitted.validate_current(source, &owner, original, source_sample)?;
-        if admitted.snapshot()? != first["before_current_receiving"] {
+        let admitted = source.admit_retained(
+            &mut owner,
+            original,
+            source_sample,
+            &first["before_current_receiving"],
+        )?;
+        if !same_retained(
+            admitted.retained_snapshot(),
+            &first["before_current_receiving"],
+        ) {
             return Err("cold source original N9/context/occasion no longer replays".into());
         }
-        owner.source_assets["receiving_source_inputs"] = admitted.source_inputs().clone();
-        owner.source_assets["receiving_definition"] = admitted.definition().snapshot()?;
-        owner.source_assets["current_receiving"] = admitted.snapshot()?;
+        owner.source_assets["receiving_source_inputs"] = admitted.fresh().source_inputs().clone();
+        owner.source_assets["receiving_definition"] = admitted.fresh().definition().snapshot()?;
+        owner.source_assets["current_receiving"] = admitted.retained_snapshot().clone();
         let historical_roles = expected
             .get("consumer_roles")
             .filter(|v| v.is_object())
@@ -145,10 +162,15 @@ impl PerformanceOwner {
         if first["before_acoustic"].is_object() {
             let birth = decimal(&first["before_acoustic"]["history_origin_sample"])?;
             let origin = decimal(&first["before_acoustic"]["origin_sample"])?;
-            let acoustic =
-                owner.prepare_acoustic_receiving_segment(original, source, birth, origin)?;
+            let acoustic = owner.prepare_acoustic_receiving_segment_for_replay(
+                original,
+                source,
+                birth,
+                origin,
+                ReceivingImplementation::of_retained(&first["before_current_receiving"])?,
+            )?;
             acoustic.validate_current(&owner, original, source, birth)?;
-            if acoustic.packet() != &first["before_acoustic"] {
+            if !same_retained(acoustic.packet(), &first["before_acoustic"]) {
                 return Err(
                     "cold source original acoustic receiver segment no longer replays".into(),
                 );
@@ -166,7 +188,7 @@ impl PerformanceOwner {
         let mut previous_eigenbasis: Option<Value> = None;
         for (index, (record, retained)) in history.iter().zip(original_applications).enumerate() {
             if retained.as_object().map(|v| v.len()) != Some(2)
-                || retained["source"] != *record
+                || !same_retained(&retained["source"], record)
                 || record["schema"] != PHYSICAL_SOURCE_TRANSITION
                 || record["edit_schema"] != PHYSICAL_EDIT
             {
@@ -184,10 +206,15 @@ impl PerformanceOwner {
             let authored: AuthoredNativePhysicalEdit =
                 serde_json::from_value(record["authored_edit"].clone())
                     .map_err(|e| e.to_string())?;
-            let mut descendant = owner.prepare_physical_source_descendant_at(
-                &current, source, request, &authored, sample,
+            let mut descendant = owner.prepare_physical_source_descendant_for_replay_at(
+                &current,
+                source,
+                request,
+                &authored,
+                sample,
+                ReceivingImplementation::of_retained(&record["after_current_receiving"])?,
             )?;
-            if descendant.source_record != *record {
+            if !same_retained(&descendant.source_record, record) {
                 return Err("cold physical source lost full original M3 receipt/config/preparation/N9/recipe".into());
             }
             let pulse = &retained["native_application"];
@@ -210,8 +237,14 @@ impl PerformanceOwner {
                 || decimal(&ack["before_body_revision"])? != owner.config.controls.body_revision
                 || decimal(&ack["after_body_revision"])?
                     != descendant.after_owner.config.controls.body_revision
-                || ack["before_native_preparation"] != record["before_native_preparation"]
-                || ack["after_native_preparation"] != record["after_native_preparation"]
+                || !same_retained(
+                    &ack["before_native_preparation"],
+                    &record["before_native_preparation"],
+                )
+                || !same_retained(
+                    &ack["after_native_preparation"],
+                    &record["after_native_preparation"],
+                )
                 || ack["after_eigenbasis_identity"]
                     != pulse["reading"]["physical"]["eigenbasis_identity"]
                 || ack["before_eigenbasis_identity"]
@@ -283,7 +316,7 @@ impl PerformanceOwner {
             previous_sequence = sequence;
             previous_eigenbasis = Some(ack["after_eigenbasis_identity"].clone());
         }
-        if owner.source_assets != *expected
+        if !same_retained(&owner.source_assets, expected)
             || serde_json::to_value(&owner.immutable_source_origin().input)
                 .map_err(|e| e.to_string())?
                 != serde_json::to_value(&original.input).map_err(|e| e.to_string())?

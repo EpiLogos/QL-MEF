@@ -351,12 +351,79 @@ static Json run(J *fixture) {
       "capture returned disconnected physical/receiving/native-force samples");
   auto saved = rig.owner->stopped_checkpoint();
   auto saved_wire = management_checkpoint_transport::checkpoint_wire(*saved);
-  require(saved->native_pair.audio.cursor == 512 &&
-              saved->native_pair.audio.capture &&
-              saved->native_pair.audio.heap_size == 2 &&
-              saved->native_pair.audio.has_receiving &&
-              saved->native_pair.audio.receiving.history_linear.size() == 16384,
-          "native saved take lost original voices/queue/receiver ring");
+  const auto &cut = saved->native_pair.audio;
+  require(
+      cut.cursor == 512 && cut.capture && cut.has_receiving &&
+          cut.receiving.history_linear.size() == 16384 &&
+          valid_receiving_checkpoint(cut.receiving, cut.receiving.manifest) &&
+          cut.accepted_sequence == 4 && cut.applied_sequence == 2 &&
+          cut.applied_application_ordinal == 2,
+      "native saved take lost original sequence/cursor/receiver ring");
+  // Native critical releases have their own retained lane. Requiring two heap
+  // entries falsely rejected the genuine Master768 + NoteOff1152 saved cut.
+  require(cut.heap_size == 1 &&
+              std::count_if(cut.pending_operations.begin(),
+                            cut.pending_operations.end(),
+                            [](const auto &v) { return v.active; }) == 1 &&
+              std::count_if(cut.pending_releases.begin(),
+                            cut.pending_releases.end(),
+                            [](const auto &v) { return v.active; }) == 1 &&
+              cut.operations.read == cut.operations.write &&
+              cut.releases.read == cut.releases.write,
+          "native saved take lost or duplicated the separate future lanes");
+  require(cut.operation_heap[0] < cut.pending_operations.size() &&
+              cut.pending_operations[cut.operation_heap[0]].active,
+          "native saved take has no actual indexed future operation");
+  const auto &future_parameter =
+      cut.pending_operations[cut.operation_heap[0]].operation;
+  const auto future_release =
+      std::find_if(cut.pending_releases.begin(), cut.pending_releases.end(),
+                   [](const auto &v) { return v.active; });
+  require(future_parameter.kind == Kind::Parameter &&
+              future_parameter.parameter == Parameter::MasterLinear &&
+              future_parameter.value == parameter.value &&
+              future_parameter.identity == parameter.identity &&
+              future_parameter.sequence == parameter.sequence &&
+              future_parameter.sample == parameter.sample &&
+              future_parameter.has_requested_sample &&
+              future_parameter.requested_sample == parameter.sample &&
+              future_release->operation.kind == Kind::NoteOff &&
+              future_release->operation.identity == release.identity &&
+              future_release->operation.sequence == release.sequence &&
+              future_release->operation.sample == release.sample &&
+              future_release->operation.touch == release.touch &&
+              future_release->operation.has_requested_sample &&
+              future_release->operation.requested_sample == release.sample,
+          "native saved take changed actual future operands/source/timing");
+  const auto held_voice = std::find_if(cut.voices.begin(), cut.voices.end(),
+                                       [](const auto &v) { return v.active; });
+  const auto held_touch =
+      std::find_if(cut.touches.begin(), cut.touches.end(),
+                   [](const auto &v) { return v.token != 0; });
+  const auto held_input =
+      std::find_if(saved->bindings.inputs.begin(), saved->bindings.inputs.end(),
+                   [](const auto &v) { return v.active; });
+  require(std::count_if(cut.voices.begin(), cut.voices.end(),
+                        [](const auto &v) { return v.active; }) == 1 &&
+              std::count_if(cut.touches.begin(), cut.touches.end(),
+                            [](const auto &v) { return v.token != 0; }) == 1 &&
+              std::count_if(saved->bindings.inputs.begin(),
+                            saved->bindings.inputs.end(),
+                            [](const auto &v) { return v.active; }) == 1 &&
+              !held_voice->release &&
+              held_voice->note.touch == attack.note.touch &&
+              held_voice->note.member == attack.note.member &&
+              held_voice->note.identity == attack.note.identity &&
+              held_voice->velocity == attack.value &&
+              held_touch->token == attack.note.touch &&
+              held_touch->member == attack.note.member &&
+              held_touch->source_identity == attack.note.identity &&
+              held_touch->source_touch_ref == attack.note.touch_ref &&
+              held_input->input_ref == input && held_input->press_applied &&
+              held_input->release_pending &&
+              held_input->press_sequence == attack.sequence &&
+              held_input->release_sequence == release.sequence,
+          "native saved take lost held voice/touch/original input custody");
   auto decoded =
       management_checkpoint_transport::read_checkpoint_wire(saved_wire.get());
   Rig reopened(fixture);
@@ -367,10 +434,28 @@ static Json run(J *fixture) {
               ack.target_sample == 512 && ack.epoch == 2 &&
               reopened.owner->native().engine->capture_enabled(),
           "fresh same-source native checkpoint continuation refused");
+  auto expected_restored = std::make_unique<ManagementCheckpoint>(*decoded);
+  expected_restored->transport_epoch = ack.epoch;
+  auto actual_restored = reopened.owner->stopped_checkpoint();
+  auto expected_restored_wire =
+      management_checkpoint_transport::checkpoint_wire(*expected_restored);
+  auto actual_restored_wire =
+      management_checkpoint_transport::checkpoint_wire(*actual_restored);
+  require(
+      std::strcmp(json_object_to_json_string_ext(expected_restored_wire.get(),
+                                                 JSON_C_TO_STRING_PLAIN),
+                  json_object_to_json_string_ext(actual_restored_wire.get(),
+                                                 JSON_C_TO_STRING_PLAIN)) == 0,
+      "native reopen changed the complete original numerical/binding cut");
   std::array<float, 128> resumed{};
-  auto continued = wire::array();
+  auto continued = wire::array(), original_future = wire::array(),
+       resumed_future = wire::array();
   for (unsigned i = 0; i < 12; ++i) {
     auto a = render(rig, pcm), b = render(reopened, resumed);
+    for (const auto &row : a->applications)
+      wire::append(original_future.get(), wire::application(row).release());
+    for (const auto &row : b->applications)
+      wire::append(resumed_future.get(), wire::application(row).release());
     auto left = take(rig, *a), right = take(reopened, *b);
     auto *l = one_block(left.get()), *r = one_block(right.get());
     require(pcm_bits_equal(pcm, resumed) && json_object_equal(l, r),
@@ -381,14 +466,43 @@ static Json run(J *fixture) {
     compare_block_sample_bits(l, r);
     wire::append(continued.get(), right.release());
   }
+  require(
+      json_object_array_length(original_future.get()) == 2 &&
+          json_object_array_length(resumed_future.get()) == 2 &&
+          std::strcmp(json_object_to_json_string_ext(original_future.get(),
+                                                     JSON_C_TO_STRING_PLAIN),
+                      json_object_to_json_string_ext(
+                          resumed_future.get(), JSON_C_TO_STRING_PLAIN)) == 0,
+      "native reopen lost/duplicated original future applications");
+  for (const auto &entry :
+       {std::pair{&parameter,
+                  json_object_array_get_idx(resumed_future.get(), 0)},
+        std::pair{&release,
+                  json_object_array_get_idx(resumed_future.get(), 1)}})
+    require(packet::boolean(packet::field(entry.second, "applied")) &&
+                packet::integer(packet::field(entry.second, "kind")) ==
+                    unsigned(entry.first->kind) &&
+                wire::decimal(packet::field(entry.second, "sequence")) ==
+                    entry.first->sequence &&
+                wire::decimal(packet::field(
+                    entry.second, "requested_sample")) == entry.first->sample &&
+                wire::decimal(packet::field(entry.second, "applied_sample")) ==
+                    entry.first->sample,
+            "original native future operation did not apply exactly once at "
+            "its date");
   auto ended = rig.owner->stopped_checkpoint(),
        repeated = reopened.owner->stopped_checkpoint();
   auto left_physical =
            ql::physical_wire::checkpoint_wire(ended->native_pair.physical),
        right_physical =
            ql::physical_wire::checkpoint_wire(repeated->native_pair.physical);
-  require(json_object_equal(left_physical.get(), right_physical.get()),
-          "reopened sole P q/v differs");
+  require(
+      json_object_equal(left_physical.get(), right_physical.get()) &&
+          std::strcmp(json_object_to_json_string_ext(left_physical.get(),
+                                                     JSON_C_TO_STRING_PLAIN),
+                      json_object_to_json_string_ext(
+                          right_physical.get(), JSON_C_TO_STRING_PLAIN)) == 0,
+      "reopened sole P q/v differs");
   // A newer callback can finish after the copied Management pulse. Export
   // only blocks through that ORIGINAL committed cursor; leave the newer one
   // for its own pulse without rendering or minting a second readback.
@@ -450,6 +564,10 @@ static Json run(J *fixture) {
   wire::put(out.get(), "batches", batches.release());
   wire::put(out.get(), "saved_checkpoint", saved_wire.release());
   wire::put(out.get(), "continued_batches", continued.release());
+  wire::put(out.get(), "original_continued_applications",
+            original_future.release());
+  wire::put(out.get(), "continued_applications", resumed_future.release());
+  wire::put(out.get(), "restored_checkpoint", actual_restored_wire.release());
   wire::put(out.get(), "overflow_batch", overflow.release());
   wire::put(out.get(), "gap_batch", gap.release());
   wire::u64(out.get(), "callback_allocations", allocations);

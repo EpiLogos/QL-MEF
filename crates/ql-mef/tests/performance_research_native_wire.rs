@@ -49,9 +49,16 @@ fn preserve_native_evidence(input: &[u8], result: &std::process::Output) {
     write("producer-input.json", input, 16 * 1024 * 1024);
     write("native-stdout.json", &result.stdout, 32 * 1024 * 1024);
     write("native-stderr.txt", &result.stderr, 4 * 1024 * 1024);
+    #[cfg(unix)]
+    let (signal, core_dumped) = {
+        use std::os::unix::process::ExitStatusExt;
+        (result.status.signal(), result.status.core_dumped())
+    };
+    #[cfg(not(unix))]
+    let (signal, core_dumped): (Option<i32>, bool) = (None, false);
     write(
         "native-exit.json",
-        json!({"success":result.status.success(),"code":result.status.code()})
+        json!({"success":result.status.success(),"code":result.status.code(), "signal":signal,"core_dumped":core_dumped})
             .to_string()
             .as_bytes(),
         4096,

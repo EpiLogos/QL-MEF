@@ -1,0 +1,34 @@
+{
+  "schema": "ql.native-receiving-original703-corpus/v1",
+  "original_run_id": 37200815495,
+  "original_head": "70301f6940bc8db3595cbb7d71df5ec57448427b",
+  "original_tested_merge": "bd5c975ab92e8160ba83d7ff9eb4eb233a361dd8",
+  "original_zip_sha256": "8a48569d8c42614b8448c99c7dff5f41464e866ef0027ee06ab304a1da2c67f4",
+  "standing": "Unmodified original native current-receiving exports; numerical source replay tests only, no inferred live Scene/Act or personal-read grant",
+  "files": [
+    {
+      "path": "fixtures/native-receiving-703/world.source-performance.json",
+      "sha256": "2a075d478edd5ea3d5052f441cc5bf5774c988a72c8a64b7ed3f0d80776499e6",
+      "bytes": 4849251,
+      "original_zip_member": "current-receiving-37200815495-1-439300dfd58d4e05b63437a2c7b96efb/world.source-performance.json"
+    },
+    {
+      "path": "fixtures/native-receiving-703/personal.source-performance.json",
+      "sha256": "980c61a0b8bde3f158cabaaefb787e3bf105a50c129c6f419943141221a3d5b2",
+      "bytes": 4960432,
+      "original_zip_member": "current-receiving-37200815495-1-439300dfd58d4e05b63437a2c7b96efb/personal.source-performance.json"
+    },
+    {
+      "path": "fixtures/native-receiving-703/shared.source-performance.json",
+      "sha256": "5ca13c82eb208b96e6816cc9ebc82a953c478105c2044364e3e02ad1eeedf30a",
+      "bytes": 4961331,
+      "original_zip_member": "current-receiving-37200815495-1-439300dfd58d4e05b63437a2c7b96efb/shared.source-performance.json"
+    },
+    {
+      "path": "fixtures/native-receiving-703/world-acoustic-three-dates.json",
+      "sha256": "718a69213f230fbd164f39a5e2e30488593a37ad522fabcf24d4947a02c42cf3",
+      "bytes": 9289555,
+      "original_zip_member": "acoustic-receiving-37200815495-1-ba933937e3b94e9c907b0d8ba5ba7292/world/producer-input.json"
+    }
+  ]
+}
