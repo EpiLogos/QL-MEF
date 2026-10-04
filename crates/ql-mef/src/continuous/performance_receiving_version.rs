@@ -296,7 +296,7 @@ impl NativePerformanceReceivingSource {
         }
         Ok(source)
     }
-    pub(super) fn begin_replay_preparation<'a>(
+    pub(in crate::continuous) fn begin_replay_preparation<'a>(
         &'a self,
         owner: &'a PerformanceOwner,
         current: &'a CoupledBasis,
@@ -313,7 +313,7 @@ impl NativePerformanceReceivingSource {
             implementation,
         })
     }
-    pub(super) fn prepare_retained(
+    pub(in crate::continuous) fn prepare_retained(
         &self,
         owner: &PerformanceOwner,
         current: &CoupledBasis,
@@ -331,7 +331,7 @@ impl NativePerformanceReceivingSource {
         }
         Ok(prepared)
     }
-    pub(super) fn admit_retained(
+    pub(in crate::continuous) fn admit_retained(
         &self,
         owner: &mut PerformanceOwner,
         current: &CoupledBasis,
@@ -342,7 +342,7 @@ impl NativePerformanceReceivingSource {
         owner.admit_source_context(current, prepared.fresh().context())?;
         Ok(prepared)
     }
-    pub(super) fn admit_replayed(
+    pub(in crate::continuous) fn admit_replayed(
         &self,
         owner: &mut PerformanceOwner,
         current: &CoupledBasis,
