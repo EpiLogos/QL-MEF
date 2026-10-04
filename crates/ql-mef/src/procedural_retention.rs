@@ -306,6 +306,25 @@ pub fn materialize_retention(
             })
             .cloned()
             .collect::<Vec<_>>();
+        // A retained complete Scene uses the same whole-Scene binding coordinate
+        // as its original SceneMaterialSet. Repeated metadata qualification does
+        // not add child bindings just because the authored body is unchanged.
+        let whole_scene = OwnedAddress {
+            expression_ref: prepared.original_procedure.occurrence_ref.clone(),
+            scene_ref: Some(scene_ref.clone()),
+            entity_ref: None,
+            component: "scene".into(),
+            constituent_ref: None,
+            parent_ref: None,
+            property: None,
+        };
+        if prepared.contributions.iter().any(|c| {
+            c.occurrence_ref == *scene_ref
+                && c.generated_basis["schema"] == "oi.journey-scene/v1"
+                && c.owned_addresses.iter().any(|a| a == &whole_scene)
+        }) {
+            addresses = vec![whole_scene];
+        }
         if anchors.contains(scene_ref) {
             addresses.extend(
                 metadata_scope
@@ -401,12 +420,20 @@ fn retention_for_scene(
         .and_then(|p| p["membership_events"].as_array())
         .cloned()
         .unwrap_or_default();
-    if !prepared.membership.joined.is_empty() || !prepared.membership.left.is_empty() {
+    let resolved_targets = json!(prepared.membership.addresses.values().collect::<Vec<_>>());
+    // Frozen membership retains its original joined/left operands. A metadata
+    // refresh does not turn those historical joins into new membership events.
+    let targets_changed = previous
+        .as_ref()
+        .is_none_or(|p| p["resolved_targets"] != resolved_targets);
+    if targets_changed
+        && (!prepared.membership.joined.is_empty() || !prepared.membership.left.is_empty())
+    {
         membership_events.push(json!({"document_revision":context.document_revision,"joined":prepared.membership.joined,"left":prepared.membership.left}));
     }
     let row = json!({"procedure_ref":procedure.procedure_ref,"revision":procedure.revision,"source_basis":source_basis,
         "seed":{"algorithm":procedure.seed_algorithm,"version":"1","value":procedure.seed},"definition":procedure,
-        "resolved_targets":prepared.membership.addresses.values().collect::<Vec<_>>(),"cursor":context.rule_cursor,"state":context.state,"membership_events":membership_events});
+        "resolved_targets":resolved_targets,"cursor":context.rule_cursor,"state":context.state,"membership_events":membership_events});
     replace_row(
         rows(&mut retention, "procedures")?,
         "procedure_ref",
@@ -525,7 +552,55 @@ pub fn prepare_scene_regeneration(
         by_scene.entry(scene).or_default().push(change);
     }
     if by_scene.is_empty() && delta.detached.is_empty() {
-        return Ok((delta, None));
+        // Equal material is not enough: the exact original Procedure, sources,
+        // selector/driver policies and retained continuation still need saving.
+        let mut compiled = delta.contributions.clone();
+        for contribution in &mut compiled {
+            contribution.native_changes.clear();
+        }
+        let mut prepared = crate::procedural_composition::compile_retained_metadata_phase(
+            registry,
+            procedure,
+            operation_ref,
+            expression_ref,
+            document_revision,
+            membership,
+            compiled,
+            required_consumers,
+            previous,
+            current,
+            output_readings,
+        )?;
+        materialize_retention(&mut prepared, context)?;
+        let unchanged = prepared.native_edit["changes"]
+            .as_array()
+            .ok_or("native metadata preparation has no changes")?
+            .iter()
+            .all(|change| {
+                if change["change"] != "scene_material_set" {
+                    return false;
+                }
+                let Some(source) = context
+                    .scenes
+                    .iter()
+                    .find(|source| change["scene_ref"] == source.scene_ref)
+                else {
+                    return false;
+                };
+                let Some(actual_retention) = &source.existing_retention else {
+                    return false;
+                };
+                if change["presentation"]["scene"].get("procedural") != Some(actual_retention) {
+                    return false;
+                }
+                let mut material = change["presentation"].clone();
+                let Some(scene) = material["scene"].as_object_mut() else {
+                    return false;
+                };
+                scene.remove("procedural");
+                source.current_presentation.as_ref() == Some(&material)
+            });
+        return Ok((delta, (!unchanged).then_some(prepared)));
     }
     let mut compiled = delta.contributions.clone();
     for contribution in &mut compiled {

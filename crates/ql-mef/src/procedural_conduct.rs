@@ -1217,6 +1217,75 @@ fn qualify_source(
 }
 /// Source-owned actual native constructors shared by human/agent CLI prepare
 /// and installed event conduct. The receiver re-attests Document/membership.
+/// Resolve a native operand from its separately admitted scalar coordinate.
+/// Current rows disclose their own properties only; a write never borrows a
+/// sibling value from an unselected Entity/Scene or silently expands membership.
+fn parameter_recipe_value(
+    write: &ParameterRecipe,
+    expression_ref: &str,
+    locations: &[&TargetReading],
+    current: &[TargetReading],
+    membership: &ResolvedMembership,
+) -> Result<Value> {
+    let target = locations
+        .first()
+        .ok_or("native parameter write has no locations")?;
+    let RecipeValue::NativeProperty { property } = &write.value else {
+        return write.value.resolve(target);
+    };
+    nonempty(property, "native recipe input property")?;
+    let entity = target
+        .address
+        .entity_ref
+        .as_deref()
+        .ok_or("native parameter operand has no Entity")?;
+    let mut value: Option<&Value> = None;
+    for location in locations {
+        let scene = location
+            .address
+            .scene_ref
+            .as_deref()
+            .ok_or("native parameter operand has no Scene")?;
+        let operand = native_parameter_address(expression_ref, scene, entity, property)?;
+        if !membership.addresses.values().any(|a| a.covers(&operand)) {
+            return Err("native recipe operand is outside original selected scalar scope".into());
+        }
+        let mut candidates = current.iter().filter(|r| {
+            membership.targets.contains_key(&r.occurrence_ref)
+                && r.address.expression_ref == expression_ref
+                && r.address.entity_ref.as_deref() == Some(entity)
+                && r.address.scene_ref.as_deref() == Some(scene)
+                && r.address.covers(&operand)
+        });
+        let reading = candidates
+            .next()
+            .ok_or("native recipe operand lacks its exact selected scalar reading")?;
+        if candidates.next().is_some() {
+            return Err("native recipe operand has overlapping selected scalar readings".into());
+        }
+        if reading.revision != location.revision || reading.subject != location.subject {
+            return Err(
+                "native recipe operand differs from the current same-Entity subject/revision"
+                    .into(),
+            );
+        }
+        let actual = reading
+            .properties
+            .get(property)
+            .ok_or("native recipe operand property is unavailable")?;
+        validate_material(actual, 0)?;
+        if value.is_some_and(|previous| previous != actual) {
+            return Err(
+                "shared native Entity operand has conflicting actual parameter readings".into(),
+            );
+        }
+        value = Some(actual);
+    }
+    value
+        .cloned()
+        .ok_or_else(|| "native recipe operand has no admitted locations".into())
+}
+
 pub fn program_contributions(
     registry: &MRegistry,
     procedure: &Procedure,
@@ -1246,23 +1315,42 @@ pub fn program_contributions(
             }
         }
         NativeRecipeProgram::ForceParameters { writes } => {
-            let mut groups = BTreeMap::<String, Vec<&TargetReading>>::new();
-            for target in current_readings {
-                if !membership.targets.contains_key(&target.occurrence_ref) {
-                    continue;
+            // A scalar read authorizes that scalar alone. Group EACH declared
+            // write over its actual locations; unrelated selected scalars need
+            // neither its native value nor a wider Entity write permission.
+            for write in writes {
+                let mut groups = BTreeMap::<String, Vec<&TargetReading>>::new();
+                for target in current_readings {
+                    if !membership.targets.contains_key(&target.occurrence_ref) {
+                        continue;
+                    }
+                    let Some(entity) = target.address.entity_ref.as_ref() else {
+                        continue;
+                    };
+                    let Some(scene) = target.address.scene_ref.as_deref() else {
+                        continue;
+                    };
+                    let scalar =
+                        native_parameter_address(expression_ref, scene, entity, &write.parameter)?;
+                    if target.address.covers(&scalar) {
+                        groups.entry(entity.clone()).or_default().push(target);
+                    }
                 }
-                let entity = target
-                    .address
-                    .entity_ref
-                    .as_ref()
-                    .ok_or("native force recipe requires selected actual Entity")?;
-                groups.entry(entity.clone()).or_default().push(target);
-            }
-            for (entity, mut targets) in groups {
-                targets.sort_by(|a, b| a.address.cmp(&b.address));
-                for write in writes {
+                if groups.is_empty() {
+                    return Err(
+                        "declared native force write has no selected scalar location".into(),
+                    );
+                }
+                for (entity, mut targets) in groups {
+                    targets.sort_by(|a, b| a.address.cmp(&b.address));
                     let target = targets[0];
-                    let value = write.value.resolve(target)?;
+                    let value = parameter_recipe_value(
+                        write,
+                        expression_ref,
+                        &targets,
+                        current_readings,
+                        membership,
+                    )?;
                     force_parameter(&write.parameter, &value)?;
                     let native_value = target
                         .properties
@@ -1272,7 +1360,6 @@ pub fn program_contributions(
                     for location in &targets {
                         if location.revision != target.revision
                             || location.subject != target.subject
-                            || write.value.resolve(location)? != value
                             || location.properties.get(&write.parameter) != Some(native_value)
                         {
                             return Err("shared native Entity has conflicting actual subject/parameter/recipe readings".into());
@@ -1290,7 +1377,9 @@ pub fn program_contributions(
                         if !membership.addresses.values().any(|a| a.covers(&address)) {
                             return Err("shared native parameter write omits an affected resolved Scene location".into());
                         }
-                        owned.insert(address);
+                        if !owned.insert(address) {
+                            return Err("native force write has overlapping selected readings at one location".into());
+                        }
                     }
                     let owned = owned.into_iter().collect::<Vec<_>>();
                     let subjects = BTreeSet::from([
@@ -1349,6 +1438,209 @@ pub fn program_contributions(
         }
     }
     Ok(contributions)
+}
+
+/// Current owner-read inputs for explicit program regeneration. The original
+/// selector, source graph and native application remain their existing owners;
+/// no RuleEvent, NativePosition, witness or persistent conductor is synthesized.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NativeProgramRegeneration {
+    pub procedure: Procedure,
+    pub program: NativeRecipeProgram,
+    pub expression_ref: String,
+    pub document_revision: u64,
+    pub operation_ref: String,
+    pub current_readings: Vec<TargetReading>,
+    pub previous_membership: Option<ResolvedMembership>,
+    pub previous: Vec<GeneratedContribution>,
+    pub current: Vec<CurrentContribution>,
+    pub output_readings: Vec<RetainedOutputReading>,
+    pub intervention_contexts: Vec<crate::procedural_intervention::NativeInterventionBasis>,
+    pub materialization: NativeMaterialization,
+    pub required_consumers: BTreeSet<String>,
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum NativeProgramRegenerationOutcome {
+    Prepared,
+    NoChange,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct NativeProgramNoChangeBasis {
+    pub schema: String,
+    pub expression_ref: String,
+    pub document_revision: u64,
+    pub operation_ref: String,
+    pub original_procedure: Procedure,
+    pub required_consumers: BTreeSet<String>,
+    /// Audit of complete typed current inputs, not a private authority receipt.
+    pub current_inputs_fingerprint: String,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct NativeProgramRegenerationResult {
+    pub no_change_basis: Option<NativeProgramNoChangeBasis>,
+    pub outcome: NativeProgramRegenerationOutcome,
+    /// Readonly current native graph qualification for an actual no-change.
+    /// Prepared operations keep their final qualification inside `prepared`.
+    pub source_qualification: Option<NativeCPrimePreparation>,
+    /// Scene three-way material diff; Force/Atlas use their native output diff.
+    pub regeneration: Option<Regeneration>,
+    pub membership: ResolvedMembership,
+    pub prepared: Option<PreparedProcedure>,
+}
+
+/// Generate from the exact source-owned recipe and project accepted human
+/// interventions before invoking the existing retained-output compiler. Final
+/// native C-prime qualification is the caller's existing graph-owner operation.
+pub fn prepare_program_regeneration(
+    registry: &MRegistry,
+    mut input: NativeProgramRegeneration,
+) -> Result<NativeProgramRegenerationResult> {
+    input.procedure.validate(registry)?;
+    let no_change_basis = NativeProgramNoChangeBasis {
+        schema: "ql.native-procedural-no-change/v1".into(),
+        expression_ref: input.expression_ref.clone(),
+        document_revision: input.document_revision,
+        operation_ref: input.operation_ref.clone(),
+        original_procedure: input.procedure.clone(),
+        required_consumers: input.required_consumers.clone(),
+        current_inputs_fingerprint: fingerprint(&input)?,
+    };
+    input
+        .program
+        .validate(registry, &input.procedure, &input.expression_ref)?;
+    if input.previous.is_empty()
+        || input.document_revision == 0
+        || input.materialization.document_revision != input.document_revision
+        || !input.materialization.lifecycles.is_empty()
+    {
+        return Err("program regeneration requires actual current original outputs/materialization, not caller lifecycle labels".into());
+    }
+    let membership = resolve_procedure_membership(
+        registry,
+        &input.procedure,
+        &input.expression_ref,
+        &input.current_readings,
+        input.previous_membership.as_ref(),
+    )?;
+    if input.current.len() != input.output_readings.len()
+        || input.current.iter().any(|current| {
+            !input.output_readings.iter().any(|reading| {
+                reading.contribution_ref == current.contribution_ref
+                    && reading.current_basis == current.material
+            })
+        })
+    {
+        return Err("native program current contributions differ from actual ReadOutputs".into());
+    }
+    project_retained_interventions(
+        input.document_revision,
+        &mut input.current,
+        &input.output_readings,
+        &input.intervention_contexts,
+    )?;
+    let mut next = program_contributions(
+        registry,
+        &input.procedure,
+        &input.program,
+        &input.expression_ref,
+        &input.current_readings,
+        &membership,
+    )?;
+    next.retain(|contribution| !scene_deletion_tombstone(contribution, &input.materialization));
+    preserve_authored_basis(&mut next, &input.previous)?;
+    match &input.program {
+        NativeRecipeProgram::SceneMaterial { .. } => {
+            let mut recreated = BTreeSet::new();
+            for contribution in &mut next {
+                if !input
+                    .output_readings
+                    .iter()
+                    .any(|r| r.contribution_ref == contribution.contribution_ref)
+                    && apply_released_scene_interventions(
+                        contribution,
+                        &input.procedure,
+                        &input.materialization,
+                    )?
+                {
+                    recreated.insert(contribution.contribution_ref.clone());
+                }
+            }
+            let previous = input
+                .previous
+                .iter()
+                .filter(|c| {
+                    !recreated.contains(&c.contribution_ref)
+                        && !scene_deletion_tombstone(c, &input.materialization)
+                })
+                .cloned()
+                .collect::<Vec<_>>();
+            let (delta, prepared) = crate::procedural_retention::prepare_scene_regeneration(
+                registry,
+                &input.procedure,
+                &input.operation_ref,
+                &input.expression_ref,
+                input.document_revision,
+                membership.clone(),
+                &previous,
+                &input.current,
+                &next,
+                input.output_readings,
+                input.required_consumers,
+                &input.materialization,
+            )?;
+            Ok(NativeProgramRegenerationResult {
+                no_change_basis: prepared.is_none().then_some(no_change_basis),
+                outcome: if prepared.is_some() {
+                    NativeProgramRegenerationOutcome::Prepared
+                } else {
+                    NativeProgramRegenerationOutcome::NoChange
+                },
+                source_qualification: None,
+                regeneration: Some(delta),
+                membership,
+                prepared,
+            })
+        }
+        NativeRecipeProgram::ForceParameters { .. } | NativeRecipeProgram::AtlasPassage { .. } => {
+            if matches!(&input.program, NativeRecipeProgram::ForceParameters { .. }) {
+                apply_retained_force_interventions(
+                    &mut next,
+                    &input.current_readings,
+                    &input.materialization,
+                )?;
+            } else {
+                apply_retained_flow_interventions(
+                    &mut next,
+                    &input.current_readings,
+                    &input.materialization,
+                )?;
+            }
+            let prepared = crate::procedural_retention::prepare_native_output_regeneration(
+                registry,
+                &input.procedure,
+                &input.operation_ref,
+                &input.expression_ref,
+                input.document_revision,
+                membership.clone(),
+                &input.previous,
+                &input.current,
+                &next,
+                input.output_readings,
+                input.required_consumers,
+                &input.materialization,
+            )?;
+            Ok(NativeProgramRegenerationResult {
+                no_change_basis: None,
+                outcome: NativeProgramRegenerationOutcome::Prepared,
+                source_qualification: None,
+                regeneration: None,
+                membership,
+                prepared: Some(prepared),
+            })
+        }
+    }
 }
 
 /// Context for actual new Scene occurrences. Existing targets must supply
@@ -2200,30 +2492,40 @@ impl ConductHost {
 /// Document row and never forwards caller overlays. Source performs the single
 /// canonical projection before causal fingerprint/C-prime/native material.
 pub fn project_event_interventions(input: &mut ConductEvent) -> Result<()> {
+    project_retained_interventions(
+        input.document_revision,
+        &mut input.current_contributions,
+        &input.output_readings,
+        &input.intervention_contexts,
+    )
+}
+
+/// SAME canonical projection for native event conduct and bounded stateless
+/// regeneration. These protected operands require actual receiving-owner
+/// re-attestation; this function constructs no event, clock or live capability.
+pub fn project_retained_interventions(
+    document_revision: u64,
+    current: &mut [CurrentContribution],
+    outputs: &[RetainedOutputReading],
+    contexts: &[crate::procedural_intervention::NativeInterventionBasis],
+) -> Result<()> {
     use crate::procedural_intervention::{NativeAuthoredIntervention, NativeInterventionBasis};
-    if input.intervention_contexts.len() > 2048
-        || input
-            .current_contributions
-            .iter()
-            .any(|c| !c.overlays.is_empty())
-    {
+    if contexts.len() > 2048 || current.iter().any(|c| !c.overlays.is_empty()) {
         return Err("event refuses caller supplied overlays or excessive native context".into());
     }
     let mut groups = BTreeMap::<String, Vec<&NativeInterventionBasis>>::new();
-    for context in &input.intervention_contexts {
+    for context in contexts {
         groups
             .entry(context.contribution_ref().into())
             .or_default()
             .push(context);
     }
     for (reference, contexts) in groups {
-        let contribution = input
-            .current_contributions
+        let contribution = current
             .iter_mut()
             .find(|c| c.contribution_ref == reference)
             .ok_or("native context has no actual current contribution")?;
-        let outputs = input
-            .output_readings
+        let outputs = outputs
             .iter()
             .filter(|r| r.contribution_ref == reference)
             .collect::<Vec<_>>();
@@ -2254,7 +2556,7 @@ pub fn project_event_interventions(input: &mut ConductEvent) -> Result<()> {
                 ),
             };
             if expression != &output.expression_ref
-                || revision != input.document_revision
+                || revision != document_revision
                 || owned != &output.owned_addresses
             {
                 return Err("native event intervention context differs from actual output/current CAS/owned address".into());

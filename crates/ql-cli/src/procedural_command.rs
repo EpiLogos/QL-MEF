@@ -11,8 +11,8 @@ use ql_mef::procedural_composition::{
     regeneration_native_changes, resolve_procedure_membership,
 };
 use ql_mef::procedural_conduct::{
-    LibraryBuild, NativeRecipeProgram, library_build, library_discover, program_contributions,
-    program_materialization,
+    LibraryBuild, NativeProgramRegeneration, NativeRecipeProgram, library_build, library_discover,
+    prepare_program_regeneration, program_contributions, program_materialization,
 };
 use ql_mef::procedural_control::{NativeControlInput, prepare_native_control};
 use ql_mef::procedural_effective::apply_retained_force_interventions;
@@ -124,6 +124,11 @@ struct RegenerateRequest {
     previous: Vec<GeneratedContribution>,
     current: Vec<CurrentContribution>,
     next: Vec<GeneratedContribution>,
+    /// Source-owned generation; cannot be mixed with caller next material.
+    #[serde(default)]
+    program: Option<NativeRecipeProgram>,
+    #[serde(default)]
+    intervention_contexts: Vec<ql_mef::procedural_intervention::NativeInterventionBasis>,
     output_readings: Vec<RetainedOutputReading>,
     materialization: Option<NativeMaterialization>,
     native_context: Option<NativeContext>,
@@ -254,6 +259,65 @@ fn discover() -> Value {
 fn regenerate_request(input: RegenerateRequest) -> Result<Value, CliError> {
     schema(&input.schema)?;
     let registry = native_current_m_registry();
+    if let Some(program) = input.program {
+        if !input.next.is_empty() {
+            return Err(CliError(
+                "source program regeneration refuses caller next contributions".into(),
+            ));
+        }
+        let mut result = prepare_program_regeneration(
+            registry,
+            NativeProgramRegeneration {
+                procedure: input.procedure.clone(),
+                program,
+                expression_ref: input.expression_ref,
+                document_revision: input.document_revision,
+                operation_ref: input.operation_ref,
+                current_readings: input.current_readings,
+                previous_membership: input.previous_membership,
+                previous: input.previous,
+                current: input.current,
+                output_readings: input.output_readings,
+                intervention_contexts: input.intervention_contexts,
+                materialization: input.materialization.ok_or_else(|| {
+                    CliError(
+                        "program regeneration requires SAME current native materialization".into(),
+                    )
+                })?,
+                required_consumers: input.required_consumers,
+            },
+        )
+        .map_err(CliError)?;
+        if let Some(context) = input.native_context {
+            if let Some(prepared) = result.prepared.as_mut() {
+                qualify_context(context, &input.procedure, prepared)?;
+            } else {
+                result.source_qualification =
+                    Some(crate::vak_composition::execute_request_with_composition(
+                        &context.source_composition,
+                        |graph| {
+                            ql_mef::procedural_composition::prepare_native_cprime(
+                                registry,
+                                &input.procedure,
+                                graph,
+                                context.currentness,
+                                context.thread_plan,
+                            )
+                            .map_err(CliError)
+                        },
+                    )?);
+            }
+        }
+        return Ok(response(
+            "regenerate",
+            serde_json::to_value(result).map_err(|error| CliError(error.to_string()))?,
+        ));
+    }
+    if !input.intervention_contexts.is_empty() {
+        return Err(CliError(
+            "protected intervention contexts require source-owned program regeneration".into(),
+        ));
+    }
     let membership = resolve_procedure_membership(
         registry,
         &input.procedure,

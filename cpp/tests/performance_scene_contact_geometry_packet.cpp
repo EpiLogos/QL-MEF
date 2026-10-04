@@ -36,6 +36,7 @@ void operator delete[](void *value, std::size_t) noexcept {
 
 using namespace ql::performance;
 namespace sw = ql::performance::scene_contact_transport;
+namespace wire = ql::performance::checkpoint_transport;
 using J = json_object;
 using Json = ql::physical_wire::Json;
 static_assert(
