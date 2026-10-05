@@ -3,8 +3,11 @@ use super::*;
 use std::io::Write;
 use std::process::{Command, Stdio};
 fn wire(owner: &PerformanceOwner) -> Value {
+    // One immutable actual-owner serialization supplies the two required
+    // original packet operands. No cross-owner or cross-invocation cache.
+    let packet = owner.native_packet().unwrap();
     json!({"schema":CONTROL,"operation":"prepare","session_ref":owner.config.session_ref,
-        "packet":owner.native_packet().unwrap(),"current_source_packet":owner.native_packet().unwrap(),
+        "packet":packet,"current_source_packet":packet,
         "actual_native_basis":owner.binding().native_basis(),"m1_pratibimba":owner.config.source_face==1,
         "physical_pratibimba":owner.config.physical_face==1,
         "body_source":{"kind":"sourceForm","recipe_ref":owner.config.recipe.provenance.reference,
@@ -13,20 +16,29 @@ fn wire(owner: &PerformanceOwner) -> Value {
 #[test]
 #[ignore = "requires actual native source/Management wire consumer qualified by the parent"]
 fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
+    let progress = ActualSourceReplyProgress(std::time::Instant::now());
+    progress.mark("current-source-configuration begin");
     let (current, config) = native_source::config(true);
+    progress.mark("current-source-configuration complete");
+    progress.mark("resident-owner prepare begin");
     let mut resident =
         PerformanceOwner::prepare(&current, "expression:retained/current", config.clone()).unwrap();
+    progress.mark("resident prepare complete");
     let mut alternate = config.clone();
     alternate.controls.body_revision = 2;
     alternate.controls.preparation_ref =
         "controlled:source-performance/valid-other-preparation".into();
     alternate.controls.state_ref = "controlled:source-performance/valid-other-resident".into();
+    progress.mark("other_body prepare begin");
     let other_body =
         PerformanceOwner::prepare(&current, "expression:retained/current", alternate).unwrap();
+    progress.mark("other_body prepare complete");
     let mut alternate = config.clone();
     alternate.physical_face = 0;
+    progress.mark("other_face prepare begin");
     let other_face =
         PerformanceOwner::prepare(&current, "expression:retained/current", alternate).unwrap();
+    progress.mark("other_face prepare complete");
     let mut changed = current.input.clone();
     let mut source_change = changed.m3_commands[0].clone();
     source_change.expected_generation = current.m3["identity"]["profile_generation"]
@@ -41,15 +53,19 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
     alternate.controls.expected_m3_generation = changed.m3["identity"]["profile_generation"]
         .as_u64()
         .unwrap();
+    progress.mark("other_generation prepare begin");
     let other_generation =
         PerformanceOwner::prepare(&changed, "expression:retained/current", alternate).unwrap();
+    progress.mark("other_generation prepare complete");
     let mut pose = current.input.clone();
     pose.m3_commands[0]
         .operations
         .push(crate::m3_state::M3Operation::AdvanceClock { steps: 1 });
     let pose = pose.compose().unwrap();
+    progress.mark("other_clock prepare begin");
     let other_clock =
         PerformanceOwner::prepare(&pose, "expression:retained/current", config.clone()).unwrap();
+    progress.mark("other_clock prepare complete");
     // AdvanceClock changes genuine source time but can leave the current pose
     // and numerical body unchanged. Separately exercise an actual SetPose.
     let mut rotated = current.input.clone();
@@ -64,8 +80,10 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         .operations
         .push(crate::m3_state::M3Operation::SetPose { pose: next_pose });
     let rotated = rotated.compose().unwrap();
+    progress.mark("other_pose prepare begin");
     let other_pose =
         PerformanceOwner::prepare(&rotated, "expression:retained/current", config).unwrap();
+    progress.mark("other_pose prepare complete");
     let owners = [
         &resident,
         &other_body,
@@ -79,13 +97,19 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         std::env::var("QL_NATIVE_SOURCE_REPLY_TEST").expect("actual native reply driver required");
     let mut replies = Vec::with_capacity(6);
     for (index, owner) in owners.iter().enumerate() {
+        progress.mark(&format!("case-{index} original-packet serialization begin"));
         let input = json!({"schema":"ql.source-reply-detecting-input/v1","case_index":index,"case":wire(owner)});
         let bytes = serde_json::to_vec(&input).unwrap();
         let destination = before_source_case(index, &bytes);
+        progress.mark(&format!(
+            "case-{index} original-packet serialization complete bytes={}",
+            bytes.len()
+        ));
         assert!(
             bytes.len() <= 16 * 1024 * 1024,
             "actual source case input bound"
         );
+        progress.mark(&format!("case-{index} actual-native-child begin"));
         let mut child = Command::new(&binary)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -97,6 +121,10 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         drop(stdin);
         let result = child.wait_with_output().unwrap();
         preserve_source_case(destination.as_deref(), &result);
+        progress.mark(&format!(
+            "case-{index} actual-native-child complete code={:?}",
+            result.status.code()
+        ));
         assert!(
             result.status.success(),
             "actual native reply consumer failed: {}",
@@ -114,8 +142,14 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
     // All five original cases and the additional real pose are independently
     // valid complete native preparations; their source differences must refuse.
     // Rejecting it below is current resident identity, never malformed JSON.
-    for (owner, reply) in owners.iter().zip(&replies) {
+    for (index, (owner, reply)) in owners.iter().zip(&replies).enumerate() {
+        progress.mark(&format!(
+            "case-{index} complete-source-reply-validation begin"
+        ));
         owner.validate_reply(reply).unwrap();
+        progress.mark(&format!(
+            "case-{index} complete-source-reply-validation complete"
+        ));
     }
     // Detect lost or contradictory roles using the complete actual
     // native preparation; no fabricated reply supplies a positive.
@@ -170,6 +204,7 @@ fn actual_valid_other_bodies_cannot_replace_resident_source_reply() {
         replies[5]["payload"]["body_descriptor"]["physical_preparation"]["request"]["geometry"],
         replies[0]["payload"]["body_descriptor"]["physical_preparation"]["request"]["geometry"]
     );
+    progress.mark("all-six-native-cases-and-complete-original-detectors complete");
 }
 
 // Exact preexecution source bytes and actual child output are retained before
@@ -232,4 +267,23 @@ fn preserve_source_case(destination: Option<&std::path::Path>, output: &std::pro
         output.stdout.len() <= 32 * 1024 * 1024 && output.stderr.len() <= 4 * 1024 * 1024,
         "native source reply output exceeds unchanged transport bound"
     );
+}
+
+// Host-only test diagnostics: never a native sample, admission or timing grant.
+struct ActualSourceReplyProgress(std::time::Instant);
+impl ActualSourceReplyProgress {
+    fn mark(&self, stage: &str) {
+        let utc_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("host diagnostic UTC clock")
+            .as_millis();
+        // Direct stderr survives a job timeout even when this unchanged
+        // ordinary detector runs without --nocapture.
+        writeln!(
+            std::io::stderr().lock(),
+            "native-source-reply-stage stage={stage} utc_unix_ms={utc_ms} elapsed_ms={}",
+            self.0.elapsed().as_millis()
+        )
+        .expect("retain actual host source-reply progress");
+    }
 }

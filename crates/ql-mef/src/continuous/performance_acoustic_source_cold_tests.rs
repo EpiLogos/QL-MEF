@@ -499,10 +499,15 @@ fn actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_s
     let form = component_physical(&mut owner, &mut current, &source, &mut scene, 9, &edit);
     chunks.push(actual_component_render(&mut owner, &mut scene));
     let mut cuts = vec![actual_component_checkpoint(&mut owner, &mut scene)];
-    assert_eq!(
-        cuts[0]["payload"]["checkpoint"]["native_pair"]["audio"]["has_receiving"],
-        false
-    );
+    // The real v2 codec omits BOTH receiving extension keys until a native
+    // receiver was installed. Absence is original custody, not a fabricated
+    // false-valued receiver. The actual copied reading is absent as well.
+    let before_receiving = cuts[0]["payload"]["checkpoint"]["native_pair"]["audio"]
+        .as_object()
+        .expect("actual full native audio checkpoint before receiver installation");
+    assert!(!before_receiving.contains_key("has_receiving"));
+    assert!(!before_receiving.contains_key("receiving"));
+    assert!(cuts[0]["reading"].get("receiving_transport").is_none());
     let installed_source = acoustic_source(source.clone());
     let install = component_acoustic(
         &mut owner,

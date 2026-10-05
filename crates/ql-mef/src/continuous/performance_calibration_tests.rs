@@ -324,9 +324,17 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
     let pending_audio = &pending["payload"]["checkpoint"]["native_pair"]["audio"];
     assert_eq!(pending_audio["accepted_sequence"], "1");
     assert_eq!(pending_audio["applied_application_ordinal"], "0");
+    // Native Engine::Checkpoint serializes source_parameters and
+    // effective_parameters separately. A queued control changes neither yet.
+    assert_eq!(born_audio["source_parameters"]["force_newtons"], 0.01);
+    assert_eq!(born_audio["effective_parameters"]["force_newtons"], 0.01);
     assert_eq!(
-        pending_audio["source"]["force_newtons"],
-        born_audio["source"]["force_newtons"]
+        pending_audio["source_parameters"],
+        born_audio["source_parameters"]
+    );
+    assert_eq!(
+        pending_audio["effective_parameters"],
+        born_audio["effective_parameters"]
     );
     assert!(pending["applications"].as_array().unwrap().is_empty());
     let admission = &force_control["payload"]["score_admission"];
@@ -515,14 +523,23 @@ fn run_case(worker: &std::path::Path, legacy: bool) -> Value {
         1,
         "actual queued calibration must apply exactly once"
     );
+    let after_audio = &after["payload"]["checkpoint"]["native_pair"]["audio"];
+    let expected_force = if legacy {
+        0.01
+    } else {
+        DECLARED_INSTRUMENT_FORCE_NEWTONS
+    };
+    // The applied native Parameter sets the exact source target. Its callback
+    // smoothing is separate and must actually converge over this full passage.
     assert_eq!(
-        after["payload"]["checkpoint"]["native_pair"]["audio"]["source"]["force_newtons"],
-        if legacy {
-            0.01
-        } else {
-            DECLARED_INSTRUMENT_FORCE_NEWTONS
-        }
+        after_audio["source_parameters"]["force_newtons"],
+        expected_force
     );
+    let effective_force = after_audio["effective_parameters"]["force_newtons"]
+        .as_f64()
+        .expect("actual native effective Force parameter");
+    assert!(effective_force.is_finite());
+    assert!((effective_force - expected_force).abs() <= 1e-9);
     let rms = (power / samples as f64).sqrt();
     let dbfs = |linear: f64| {
         if linear > 0. {

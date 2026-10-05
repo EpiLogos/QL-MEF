@@ -13,20 +13,132 @@ make -C cpp test BUILD_DIR="$TASK_OUTPUT/native" -j1
 # producer failure gates only its own consumers; every failure remains RED.
 # Build/packaging foundations above must succeed before any native is run.
 TASK_GATE_FAILURES=()
+v_gate_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_GATE_OUTPUT="$TASK_OUTPUT/full-gate-outputs-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_gate_nonce"
+mkdir "$TASK_GATE_OUTPUT"
 run_native_gate() {
   local gate_name=$1
   shift
-  local gate_status
-  if "$@"; then
-    printf 'native_gate name=%s status=passed\n' "$gate_name" >&2
-    return 0
+  local gate_status=0 stdout_status=0 stderr_status=0 stdout_pid stderr_pid
+  local gate_output="$TASK_GATE_OUTPUT/$gate_name"
+  # Each original command keeps its exact argv, stdout, stderr and exit code.
+  # Explicit tee lifetimes finish before its receipt/producer file is consumed.
+  if ! mkdir "$gate_output"; then
+    TASK_GATE_FAILURES+=("$gate_name-output-directory")
+    return 1
+  fi
+  if ! printf '%s\0' "$@" > "$gate_output/argv.nul" ||
+     ! date -u +'%Y-%m-%dT%H:%M:%SZ' > "$gate_output/started-utc.txt" ||
+     ! mkfifo "$gate_output/stdout.pipe" "$gate_output/stderr.pipe"; then
+    TASK_GATE_FAILURES+=("$gate_name-output-prepare")
+    return 1
+  fi
+  tee "$gate_output/stdout.log" < "$gate_output/stdout.pipe" &
+  stdout_pid=$!
+  tee "$gate_output/stderr.log" < "$gate_output/stderr.pipe" >&2 &
+  stderr_pid=$!
+  if "$@" > "$gate_output/stdout.pipe" 2> "$gate_output/stderr.pipe"; then
+    gate_status=0
   else
     gate_status=$?
+  fi
+  if wait "$stdout_pid"; then :; else stdout_status=$?; fi
+  if wait "$stderr_pid"; then :; else stderr_status=$?; fi
+  if ! rm "$gate_output/stdout.pipe" "$gate_output/stderr.pipe" ||
+     ! date -u +'%Y-%m-%dT%H:%M:%SZ' > "$gate_output/finished-utc.txt" ||
+     ! printf '%s\n' "$gate_status" > "$gate_output/exit-code.txt" ||
+     ! printf 'stdout=%s stderr=%s\n' "$stdout_status" "$stderr_status" > "$gate_output/capture-exit-code.txt"; then
+    TASK_GATE_FAILURES+=("$gate_name-output-finish")
+    return 1
+  fi
+  if (( stdout_status || stderr_status )); then
+    TASK_GATE_FAILURES+=("$gate_name-output:$stdout_status:$stderr_status")
+    printf 'native_gate name=%s status=output-failed stdout=%s stderr=%s\n' "$gate_name" "$stdout_status" "$stderr_status" >&2
+    return 1
+  fi
+  if (( gate_status )); then
     TASK_GATE_FAILURES+=("$gate_name:$gate_status")
     printf 'native_gate name=%s status=failed exit=%s\n' "$gate_name" "$gate_status" >&2
     return "$gate_status"
   fi
+  printf 'native_gate name=%s status=passed\n' "$gate_name" >&2
+  return 0
 }
+
+# Compile the actual shared lib test binary once before concurrent invocations.
+# This is an additional build foundation; every original test command still runs.
+if ! run_native_gate native-lib-build cargo test -p ql-mef --locked --lib --no-run; then
+  exit 1
+fi
+
+# Two independent correctness branches own separate native processes/evidence.
+# No callback/device latency or 900s workload runs during this parallel window.
+v_body_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+TASK_BODY_OUTPUT="$TASK_OUTPUT/current-body-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_body_nonce"
+mkdir -p "$TASK_BODY_OUTPUT"
+
+run_form_replay_branch() {
+  run_native_gate source-form-physical-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    QL_NATIVE_PHYSICAL_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-form-cold.json" \
+    cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_stopped_form_material_applications_cold_replay_full_original_owner_and_detect_loss -- --ignored --exact --nocapture || :
+  run_native_gate source-form-physical-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-form-cold.json" || :
+  if (( ${#TASK_GATE_FAILURES[@]} )); then return 1; fi
+}
+run_other_replay_branch() {
+  run_native_gate default-instrument-calibration env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    QL_NATIVE_INSTRUMENT_CALIBRATION_ARTIFACT="$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" \
+    cargo test -p ql-mef --locked --lib continuous::performance::current_configuration::calibration_tests::actual_default_twelve_node_instrument_calibration_measures_native_force_body_receiving_and_pcm -- --ignored --exact --nocapture || :
+  run_native_gate default-instrument-calibration-artifact test -s "$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" || :
+
+  v_source_reply_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+  TASK_SOURCE_REPLY_OUTPUT="$TASK_OUTPUT/source-reply-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_source_reply_nonce"
+  run_native_gate source-replies env QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" \
+    QL_NATIVE_SOURCE_REPLY_EVIDENCE_DIR="$TASK_SOURCE_REPLY_OUTPUT" \
+    cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored || :
+
+  v_dense_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
+  TASK_DENSE_OUTPUT="$TASK_OUTPUT/dense-source-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_dense_nonce"
+  mkdir -p "$TASK_DENSE_OUTPUT"
+  run_native_gate dense-field-source env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    QL_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT="$TASK_DENSE_OUTPUT/original-current-native-source.json" \
+    cargo test -p ql-mef --locked --lib continuous::host::dense_field_source_tests::actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis -- --ignored --nocapture || :
+
+  run_native_gate source-original703-world-personal-shared cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::genuine_original703_world_personal_shared_assets_replay_without_rewriting_current_authority -- --exact --nocapture || :
+  run_native_gate source-form-original703-replay env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_native_original703_form_material_source_replays_full_history_and_fresh_admission -- --ignored --exact --nocapture || :
+  run_native_gate mixed-acoustic-source-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
+    QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
+    cargo test -p ql-mef --locked --lib continuous::performance::form::cold::acoustic_history::tests::actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_source_epochs -- --ignored --exact --nocapture || :
+  run_native_gate mixed-acoustic-source-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" || :
+  run_native_gate warm-source-original-prefixes env \
+    QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
+    cargo test -p ql-mef --locked --lib continuous::performance::contact_warm::source_tests::actual_native_acoustic_corpus_retains_exact_warm_prefixes -- --ignored --exact --nocapture || :
+  if (( ${#TASK_GATE_FAILURES[@]} )); then return 1; fi
+}
+# Each branch retains all its failed leaves and continues its original commands.
+# A failed sibling never cancels or shortens the other; both are always awaited.
+run_form_replay_branch &
+TASK_FORM_REPLAY_PID=$!
+run_other_replay_branch &
+TASK_OTHER_REPLAY_PID=$!
+TASK_PARALLEL_FAILURES=()
+if wait "$TASK_FORM_REPLAY_PID"; then :; else
+  TASK_PARALLEL_FAILURES+=("form-replay:$?")
+fi
+if wait "$TASK_OTHER_REPLAY_PID"; then :; else
+  TASK_PARALLEL_FAILURES+=("other-replay:$?")
+fi
+# Child arrays are process-local. Collect each original failed command from its
+# durable status after BOTH lifetimes have ended, without inventing a new result.
+for TASK_GATE_STATUS in "$TASK_GATE_OUTPUT"/*/exit-code.txt; do
+  read -r TASK_GATE_EXIT < "$TASK_GATE_STATUS"
+  if (( TASK_GATE_EXIT )); then
+    TASK_GATE_NAME=${TASK_GATE_STATUS%/exit-code.txt}
+    TASK_GATE_NAME=${TASK_GATE_NAME##*/}
+    TASK_GATE_FAILURES+=("$TASK_GATE_NAME:$TASK_GATE_EXIT")
+  fi
+done
+TASK_GATE_FAILURES+=("${TASK_PARALLEL_FAILURES[@]}")
 
 # Discover paired suites from native source. Each receives the exact binary
 # just built from the same native source/registry, never a supplied mock frame.
@@ -110,53 +222,12 @@ run_native_gate native-contact-generic-ingress env QL_NATIVE_FIELD_WORKER="$TASK
 run_native_gate initial-acoustic-candidate env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
   cargo test -p ql-mef --locked --lib continuous::host::acoustic_initial_tests::actual_native_acoustic_initial_candidate_is_pure_and_detects_stale_boundary -- --ignored || :
 
-# Produce full native-owned original/current dense source for the existing
-# Expression storage consumers. Authorised numerical operands are controlled;
-# the retained source artifact is read only from the actual held worker.
-v_dense_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
-TASK_DENSE_OUTPUT="$TASK_OUTPUT/dense-source-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_dense_nonce"
-mkdir -p "$TASK_DENSE_OUTPUT"
-run_native_gate dense-field-source env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
-  QL_NATIVE_DENSE_FIELD_SOURCE_ARTIFACT="$TASK_DENSE_OUTPUT/original-current-native-source.json" \
-  cargo test -p ql-mef --locked --lib continuous::host::dense_field_source_tests::actual_dense_field_source_keeps_all_65000_original_samples_and_later_basis -- --ignored --nocapture || :
-
-# Genuine source-changing body, mixed M4 epochs and default calibration must
-# actually execute in this SAME full floor. Ignored leaves receive the worker
-# just built above. Missing, stale, skipped or failed artifacts stay RED.
-v_body_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
-TASK_BODY_OUTPUT="$TASK_OUTPUT/current-body-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_body_nonce"
-mkdir -p "$TASK_BODY_OUTPUT"
-run_native_gate source-form-physical-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
-  QL_NATIVE_PHYSICAL_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-form-cold.json" \
-  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_stopped_form_material_applications_cold_replay_full_original_owner_and_detect_loss -- --ignored --exact --nocapture || :
-run_native_gate source-form-physical-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-form-cold.json" || :
-run_native_gate source-original703-world-personal-shared cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::genuine_original703_world_personal_shared_assets_replay_without_rewriting_current_authority -- --exact --nocapture || :
-run_native_gate source-form-original703-replay env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
-  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::tests::actual_native_original703_form_material_source_replays_full_history_and_fresh_admission -- --ignored --exact --nocapture || :
-run_native_gate mixed-acoustic-source-cold env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
-  QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
-  cargo test -p ql-mef --locked --lib continuous::performance::form::cold::acoustic_history::tests::actual_m4_install_move_body_material_cold_replay_preserves_pcm_ring_and_all_source_epochs -- --ignored --exact --nocapture || :
-run_native_gate mixed-acoustic-source-cold-artifact test -s "$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" || :
-run_native_gate warm-source-original-prefixes env \
-  QL_NATIVE_ACOUSTIC_SOURCE_REPLAY_ARTIFACT="$TASK_BODY_OUTPUT/full-original-mixed-acoustic-cold.json" \
-  cargo test -p ql-mef --locked --lib continuous::performance::contact_warm::source_tests::actual_native_acoustic_corpus_retains_exact_warm_prefixes -- --ignored --exact --nocapture || :
-run_native_gate default-instrument-calibration env QL_NATIVE_FIELD_WORKER="$TASK_OUTPUT/native/ql-field-worker" \
-  QL_NATIVE_INSTRUMENT_CALIBRATION_ARTIFACT="$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" \
-  cargo test -p ql-mef --locked --lib continuous::performance::current_configuration::calibration_tests::actual_default_twelve_node_instrument_calibration_measures_native_force_body_receiving_and_pcm -- --ignored --exact --nocapture || :
-run_native_gate default-instrument-calibration-artifact test -s "$TASK_BODY_OUTPUT/full-original-twelve-node-calibration.json" || :
-
 # Exact original SourceForm, source-key and resident reply production owners.
 TASK_SOURCE_OUTPUT="$TASK_OUTPUT/source-performance"
 mkdir -p "$TASK_SOURCE_OUTPUT"
 if run_native_gate source-performance-producer cargo run --quiet -p ql-mef --locked --example retained-source-performance-fixture > "$TASK_SOURCE_OUTPUT/native-source.json"; then
   run_native_gate source-performance-packet "$TASK_OUTPUT/native/performance_source_packet-test" "$TASK_SOURCE_OUTPUT/native-source.json" || :
 fi
-v_source_reply_nonce=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
-TASK_SOURCE_REPLY_OUTPUT="$TASK_OUTPUT/source-reply-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}-$v_source_reply_nonce"
-run_native_gate source-replies env QL_NATIVE_SOURCE_REPLY_TEST="$TASK_OUTPUT/native/performance_source_reply_wire-test" \
-  QL_NATIVE_SOURCE_REPLY_EVIDENCE_DIR="$TASK_SOURCE_REPLY_OUTPUT" \
-  cargo test -p ql-mef --locked --lib continuous::performance::reply_tests::actual_valid_other_bodies_cannot_replace_resident_source_reply -- --ignored || :
-
 # Keep the real Rust producer and the C++ consumer in one executed passage.
 # These are finite component fixtures; they are not installed host authority.
 TASK_PROCEDURAL_OUTPUT="$TASK_OUTPUT/procedural-stage"

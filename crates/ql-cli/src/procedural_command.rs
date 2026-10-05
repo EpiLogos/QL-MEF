@@ -292,20 +292,19 @@ fn regenerate_request(input: RegenerateRequest) -> Result<Value, CliError> {
             if let Some(prepared) = result.prepared.as_mut() {
                 qualify_context(context, &input.procedure, prepared)?;
             } else {
-                let (_, qualification) =
-                    crate::vak_composition::execute_request_with_composition(
-                        &context.source_composition,
-                        |graph| {
-                            ql_mef::procedural_composition::prepare_native_cprime(
-                                registry,
-                                &input.procedure,
-                                graph,
-                                context.currentness,
-                                context.thread_plan,
-                            )
-                            .map_err(CliError)
-                        },
-                    )?;
+                let (_, qualification) = crate::vak_composition::execute_request_with_composition(
+                    &context.source_composition,
+                    |graph| {
+                        ql_mef::procedural_composition::prepare_native_cprime(
+                            registry,
+                            &input.procedure,
+                            graph,
+                            context.currentness,
+                            context.thread_plan,
+                        )
+                        .map_err(CliError)
+                    },
+                )?;
                 result.source_qualification = Some(qualification);
             }
         }
