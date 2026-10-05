@@ -134,10 +134,11 @@ export class InstrumentSession {
         this.#sequence = next;
         return { refused: true, error: reply.error ?? 'native command refused' };
       }
-      const changing = command.operation === 'set-axis' || command.operation === 'replace' || command.operation === 'set-damping';
+      const changing = command.operation === 'set-axis' || command.operation === 'replace' ||
+        command.operation === 'set-damping' || command.operation === 'strike';
       // replace-event commits modes and, when required, shape. m1-advance
-      // additionally commits inscription-axis alignment. Strike is a policy
-      // within the modes commit, not another generation (scene_field.rs).
+      // additionally commits inscription-axis alignment. replace-event's own
+      // strike flag is a policy within the modes commit, not another generation.
       const event = EVENT_OPERATIONS.includes(command.operation);
       const frames = command.operation === 'advance' ? command.frames : 0;
       const before = cursor(this.#native.generation), after = cursor(frame.generation);
@@ -235,7 +236,7 @@ export class InstrumentSession {
    * It changes the existing native owner; no UI-local clock or second composer. */
   async operate(command) {
     need(!this.#busy && !this.#held && !this.#disposed &&
-      ['set-axis', 'replace', 'set-damping', ...EVENT_OPERATIONS].includes(command?.operation), 'domain operation requires idle admitted owner');
+      ['set-axis', 'replace', 'set-damping', 'strike', ...EVENT_OPERATIONS].includes(command?.operation), 'domain operation requires idle admitted owner');
     this.present();
     need(this.#queue.length < this.#maxBlocks &&
       this.#bytes + JSON.stringify(this.#native).length * 2 <= this.#maxBytes, 'wait for bounded presentation capacity');
@@ -256,6 +257,24 @@ export class InstrumentSession {
       const reply = await this.#exchange({ operation: 'influence' });
       need(!reply.refused, String(reply.error)); this.#influence = structuredClone(reply.influence); return reply.influence;
     } finally { this.#busy = false; }
+  }
+
+  /** A played excitation: strike named voices of the standing instrument now.
+   * Each act names a native mode reference (disclosed on the owner's influence
+   * voices) with an impulse in modal metres. Serialized with data delivery like
+   * every other owner operation; the reply's end-of-block targets present the
+   * struck body, so sound and visible displacement share the native state. */
+  async strike(strikes) {
+    need(Array.isArray(strikes) && strikes.length > 0 && strikes.length <= 4096, 'a strike act names 1..4096 voices');
+    const acts = strikes.map(act => {
+      need(act && typeof act.mode_ref === 'string' && act.mode_ref.length > 0 && act.mode_ref.length <= 2048,
+        'invalid strike mode reference');
+      need(Array.isArray(act.amplitude) && act.amplitude.length === 2 &&
+        act.amplitude.every(v => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1e6),
+        'strike amplitude must be two finite metres');
+      return { mode_ref: act.mode_ref, amplitude: [act.amplitude[0], act.amplitude[1]] };
+    });
+    return this.operate({ operation: 'strike', strikes: acts });
   }
 
   /** A Nara-constituted scene owner's reception: `input` (seven supplied centre

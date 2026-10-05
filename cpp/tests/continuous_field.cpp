@@ -156,9 +156,63 @@ int main() {
     std::array<float, 9> old_basis{}, new_basis{};
     assert(control.write_targets(old_basis.data(), old_basis.size()) && shaped.write_targets(new_basis.data(), new_basis.size()));
     assert(old_basis != new_basis && control.receipt().generation == generation);
+    // A played strike adds a bounded impulse to one named mode and nothing else.
+    // The clock, cursor and the unstruck voice continue bit-identically.
+    ql::ContinuousField played(voiced), untouched(voiced);
+    advance(played, 1024, 512); advance(untouched, 1024, 512);
+    const auto pre = played.receipt();
+    const Complex held0 = played.amplitude(0), held1 = played.amplitude(1);
+    const Complex impulse{0.2, -0.1};
+    played.strike({{"mode:earth-two", impulse}});
+    assert(played.receipt().generation == pre.generation + 1);
+    assert(played.receipt().samples_elapsed == pre.samples_elapsed);
+    assert(played.receipt().clock.inscription.turns == pre.clock.inscription.turns &&
+           played.receipt().clock.inscription.half_degrees == pre.clock.inscription.half_degrees);
+    assert(played.amplitude(0) == held0);
+    assert(played.amplitude(1) == held1 + impulse);
+    // PCM energy after the strike sits at the struck mode's frequency.
+    std::array<float, 4096> struck_audio{}, quiet_audio{};
+    assert(played.render_audio(struck_audio.data(), struck_audio.size()));
+    assert(untouched.render_audio(quiet_audio.data(), quiet_audio.size()));
+    auto power = [](const float *x, std::size_t n, double hz, unsigned rate) {
+        double re = 0, im = 0;
+        for (std::size_t i = 0; i < n; ++i) {
+            const double w = 2 * ql::pi * hz * double(i) / double(rate);
+            re += double(x[i]) * std::cos(w); im -= double(x[i]) * std::sin(w);
+        }
+        return re * re + im * im;
+    };
+    assert(power(struck_audio.data(), struck_audio.size(), 220, 48000) >
+           100.0 * power(quiet_audio.data(), quiet_audio.size(), 220, 48000));
+    // Ring-down follows the prepared damping between two post-strike blocks.
+    std::array<float, 4096> later{};
+    assert(played.render_audio(later.data(), later.size()));
+    const double decay = std::exp(-0.125 * 4096.0 / 48000.0);
+    const double struck_power = power(struck_audio.data(), struck_audio.size(), 220, 48000);
+    const double later_power = power(later.data(), later.size(), 220, 48000);
+    assert(std::abs(later_power / struck_power - decay * decay) < 0.05);
+    // Refusals leave state, cursor and targets untouched.
+    const auto refused_generation = played.receipt().generation;
+    const Complex after0 = played.amplitude(0), after1 = played.amplitude(1);
+    auto refused_strike = [&](std::vector<ql::Strike> acts) {
+        bool no = false;
+        try { played.strike(acts); } catch (const std::invalid_argument &) { no = true; }
+        assert(no && played.receipt().generation == refused_generation);
+        assert(played.amplitude(0) == after0 && played.amplitude(1) == after1);
+    };
+    refused_strike({});
+    refused_strike({{"mode:absent", impulse}});
+    refused_strike({{"mode:earth", impulse}, {"mode:earth", impulse}});
+    refused_strike({{"mode:earth", Complex(std::nan(""), 0)}});
+    refused_strike({{"mode:earth", Complex(2e6, 0)}});
+    refused_strike({{"", impulse}});
+    // Repeated plucks accumulate: two half-impulses carry the combined energy.
+    played.strike({{"mode:earth", {0.005, 0}}});
+    played.strike({{"mode:earth", {0.005, 0}}});
+    assert(played.amplitude(0) == after0 + Complex(0.01, 0));
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
                  "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
-                 "\"shape_replacement_keeps_state_and_pcm\":true}\n";
+                 "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true}\n";
 }

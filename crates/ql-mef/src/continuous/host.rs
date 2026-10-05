@@ -42,6 +42,12 @@ pub enum HostOperation {
     SetDamping {
         per_second: f64,
     },
+    /// A played excitation of named modes on the standing continuation. A
+    /// performance act, not a determinant: no source reading changes and the
+    /// clock continues, so the answer carries the field, not a new influence.
+    Strike {
+        strikes: Vec<super::StrikeInput>,
+    },
     /// scene only: M1's own advance action, then the whole event is re-read.
     M1Advance {
         ticks: u64,
@@ -291,6 +297,7 @@ impl FieldHost {
                 | HostOperation::SetAxis { .. }
                 | HostOperation::Replace { .. }
                 | HostOperation::SetDamping { .. }
+                | HostOperation::Strike { .. }
                 | HostOperation::M1Advance { .. }
                 | HostOperation::ReplaceEvent { .. }
                 | HostOperation::Influence {}
@@ -459,6 +466,9 @@ impl FieldHost {
                     owner.session_mut().advance_field(frames, muted)
                 }
             }
+            (HostOperation::Strike { strikes }, owner) => {
+                owner.session_mut().strike_field(&strikes)
+            }
             (HostOperation::SetAxis { axis, phase }, owner) => {
                 if axis > 1 {
                     Err("unknown independent clock axis".into())
@@ -546,6 +556,15 @@ mod tests {
         }
         let command: HostOperation = serde_json::from_value(json!({"operation":"read"})).unwrap();
         assert!(matches!(command, HostOperation::Read {}));
+        let strike: HostOperation = serde_json::from_value(json!({"operation":"strike",
+            "strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.1,0.0]}]}))
+        .unwrap();
+        assert!(matches!(strike, HostOperation::Strike { .. }));
+        assert!(
+            serde_json::from_value::<HostOperation>(json!({"operation":"strike",
+            "strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.1,0.0]}],"muted":true}))
+            .is_err()
+        );
     }
 
     #[test]

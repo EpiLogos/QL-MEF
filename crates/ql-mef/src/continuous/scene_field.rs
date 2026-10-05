@@ -101,9 +101,12 @@ pub struct SceneConfig {
 }
 
 /// One voice's source-read surface term.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Voice {
     pub planet_ref: &'static str,
+    /// The native material mode this voice sounds through; the played strike
+    /// address. One spelling, owned by `voice_mode_ref`.
+    pub mode_ref: String,
     /// The planet's ecliptic longitude: its place on the torus's large circle.
     pub longitude_radians: f64,
     pub frequency_hz: f64,
@@ -113,6 +116,12 @@ pub struct Voice {
     pub ql_position: u8,
     pub weight: f64,
     pub phase_radians: f64,
+}
+
+/// The one material-mode spelling for a scene voice: the resonator, the
+/// influence reading and the played strike address all use it.
+fn voice_mode_ref(planet_ref: &str) -> String {
+    format!("scene:planet/{planet_ref}")
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -268,6 +277,7 @@ impl ShapeBasis {
             };
             voices.push(Voice {
                 planet_ref: planet,
+                mode_ref: voice_mode_ref(planet),
                 longitude_radians: longitude.to_radians(),
                 frequency_hz: hz[i],
                 m,
@@ -349,7 +359,7 @@ fn resonator(
         .into(),
         modes: (0..VOICES)
             .map(|i| ContinuousMode {
-                mode_ref: format!("scene:planet/{}", PLANETS[i]),
+                mode_ref: voice_mode_ref(PLANETS[i]),
                 source_coordinate: PLANETS[i].into(),
                 material_fibre: fibre,
                 // The condition fixes the element; no carrier within its fibre is
@@ -385,7 +395,7 @@ pub fn complete(
     input.sky_frequency_bindings = PLANETS
         .iter()
         .map(|planet| SkyFrequencyBinding {
-            mode_ref: format!("scene:planet/{planet}"),
+            mode_ref: voice_mode_ref(planet),
             planet_ref: (*planet).into(),
         })
         .collect();
@@ -834,6 +844,41 @@ impl SceneInstrument {
         Ok(field)
     }
 
+    /// Played excitation: the performer strikes named voices of the standing
+    /// instrument. A performance act, not a determinant — pitch, material,
+    /// clocks and every source reading are unchanged, so no influence re-read
+    /// follows. Mode references must name current voices; amplitudes are modal
+    /// metres within the declared material policy (the same 1.0 m cap as
+    /// `strike_metres`). Refusals never touch the native state.
+    pub fn strike(&mut self, strikes: &[super::StrikeInput]) -> Result<Value, String> {
+        if strikes.is_empty() {
+            return Err("a played strike must name at least one voice".into());
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for act in strikes {
+            if !self
+                .shape
+                .voices
+                .iter()
+                .any(|voice| voice.mode_ref == act.mode_ref)
+                || !seen.insert(&act.mode_ref)
+            {
+                return Err(format!(
+                    "a played strike must name each current scene voice once; {:?} is not one",
+                    act.mode_ref
+                ));
+            }
+            if act
+                .amplitude
+                .iter()
+                .any(|v| !v.is_finite() || v.abs() > 1.0)
+            {
+                return Err("played strike amplitude must be finite and within the declared 1.0 metre material policy".into());
+            }
+        }
+        self.session.strike_field(strikes)
+    }
+
     /// M1's own advance action, then the whole event is re-read.
     pub fn m1_advance(&mut self, ticks: u64) -> Result<Value, String> {
         if ticks == 0 || ticks > 1_000_000 {
@@ -949,6 +994,7 @@ mod tests {
     fn voice(m: u8, n: u8, weight: f64, phase: f64) -> Voice {
         Voice {
             planet_ref: "#2-5-0/1",
+            mode_ref: voice_mode_ref("#2-5-0/1"),
             longitude_radians: 0.0,
             frequency_hz: 220.0,
             m,
@@ -980,7 +1026,7 @@ mod tests {
         let basis = ShapeBasis {
             shape_ref: "t".into(),
             address72: 0,
-            voices: [voice(1, 2, 1.0, 0.0); VOICES],
+            voices: std::array::from_fn(|_| voice(1, 2, 1.0, 0.0)),
         };
         let samples = basis.samples(&geometry).unwrap();
         assert_eq!(samples.len(), 32);
@@ -1020,7 +1066,7 @@ mod tests {
         let shape = |m, n| ShapeBasis {
             shape_ref: "t".into(),
             address72: 0,
-            voices: [voice(m, n, 1.0, 0.7); VOICES],
+            voices: std::array::from_fn(|_| voice(m, n, 1.0, 0.7)),
         };
         assert_ne!(
             shape(2, 3).shapes(&geometry).unwrap(),
@@ -1037,6 +1083,7 @@ mod scene_tests {
     fn a_voice_is_anchored_at_its_planets_longitude() {
         let base = Voice {
             planet_ref: "#2-5-4",
+            mode_ref: voice_mode_ref("#2-5-4"),
             longitude_radians: 0.0,
             frequency_hz: 220.0,
             m: 3,
@@ -1048,7 +1095,7 @@ mod scene_tests {
         };
         let moved = Voice {
             longitude_radians: 1.0,
-            ..base
+            ..base.clone()
         };
         // The same term, carried round the large circle by the longitude.
         assert!((chi(&base, 0.3, 1.2) - chi(&moved, 1.3, 1.2)).abs() < 1e-15);

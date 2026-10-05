@@ -53,6 +53,15 @@ pub struct FieldUnits {
     pub position: String,
     pub audio: String,
 }
+/// One played excitation act: an impulse (modal metres) added to a named
+/// resident mode of the standing continuation. The mode reference is the
+/// supplied M2 identity; naming an absent mode is refused without transport.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StrikeInput {
+    pub mode_ref: String,
+    pub amplitude: [f64; 2],
+}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FieldSample {
@@ -313,6 +322,31 @@ impl FieldSession {
             "replace-shapes",
             json!({"shape_ref":shape_ref, "shapes":shapes}),
         )
+    }
+    /// Played excitation: adds bounded modal amplitude to named modes of the
+    /// standing continuation. Clock, cursor and sample basis continue; the
+    /// resident state and its targets move. Malformed acts are refused here
+    /// without transport; the worker re-validates and resolves the references.
+    pub fn strike(&mut self, strikes: &[StrikeInput]) -> Result<Value> {
+        if strikes.is_empty() {
+            return Err("a strike act must name at least one mode".into());
+        }
+        for act in strikes {
+            if act.mode_ref.is_empty()
+                || act.mode_ref.len() > 2048
+                || act.mode_ref.chars().any(|c| c < ' ' || c == '\u{7f}')
+            {
+                return Err("invalid strike mode reference".into());
+            }
+            if act
+                .amplitude
+                .iter()
+                .any(|v| !v.is_finite() || v.abs() > 1e6)
+            {
+                return Err("strike amplitude must be finite and within 1e6 metres".into());
+            }
+        }
+        self.operation("strike", json!({"strikes":strikes}))
     }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))
