@@ -144,6 +144,55 @@ fn resolve(context: &mut NaraDialogueContext, verify: bool) -> Result<RootedMWor
     Ok(world)
 }
 
+struct SourceCoordinateCounter {
+    remaining: usize,
+}
+impl std::io::Write for SourceCoordinateCounter {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.remaining = self.remaining.checked_sub(bytes.len()).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::OutOfMemory,
+                "native Source coordinate projection",
+            )
+        })?;
+        Ok(bytes.len())
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+/// SAME native registry resolver, face and full typed reading. Stream the exact
+/// pretty result before allocating its Value/String projection. No new source
+/// payload files, copied fixture graph or native grant enter this private route.
+pub(super) fn source_coordinate_command(bytes: &[u8], cap: usize) -> Result<String, CliError> {
+    if cap == 0 || cap > 16 * 1024 * 1024 || bytes.len() > cap {
+        return Err(error("Native Source coordinate input exceeds its byte cap"));
+    }
+    let request: CoordinateRequest = serde_json::from_slice(bytes).map_err(error)?;
+    let face = match request.face {
+        Some(RootedFace::Bimba) => MFace::Bimba,
+        Some(RootedFace::Pratibimba) => MFace::Pratibimba,
+        None if request
+            .coordinate_ref
+            .starts_with("ql:m-coordinate:pratibimba:") =>
+        {
+            MFace::Pratibimba
+        }
+        None => MFace::Bimba,
+    };
+    let binding = ql_mef::coordinate_expression::resolve_coordinate_expression_bounded(
+        native_current_m_registry(),
+        &request.coordinate_ref,
+        face,
+        cap,
+    )
+    .map_err(error)?;
+    let mut counter = SourceCoordinateCounter { remaining: cap };
+    serde_json::to_writer_pretty(&mut counter, &binding)
+        .map_err(|_| error("Native Source coordinate projection exceeds its byte cap"))?;
+    serde_json::to_string_pretty(&binding).map_err(error)
+}
+
 pub(super) fn command(operation: &str, bytes: &[u8]) -> Result<String, CliError> {
     let result = match operation {
         "coordinate-bundle" => {
@@ -292,4 +341,27 @@ pub(super) fn command(operation: &str, bytes: &[u8]) -> Result<String, CliError>
         _ => return Err(error("unknown Nara dialogue operation")),
     };
     serde_json::to_string_pretty(&result).map_err(error)
+}
+
+#[cfg(test)]
+mod source_coordinate_same_producer_tests {
+    use super::*;
+    #[test]
+    fn private_source_route_retains_actual_native_profile_and_both_faces() {
+        for face in ["bimba", "pratibimba"] {
+            let bytes = serde_json::to_vec(&json!({"coordinate_ref":"#3","face":face})).unwrap();
+            let ordinary = command("coordinate", &bytes).unwrap();
+            let actual = source_coordinate_command(&bytes, 16 * 1024 * 1024).unwrap();
+            let original: serde_json::Value = serde_json::from_str(&ordinary).unwrap();
+            let bounded: serde_json::Value = serde_json::from_str(&actual).unwrap();
+            assert_eq!(bounded, original);
+            assert_eq!(bounded["schema"], "ql.coordinate-expression-binding/v1");
+            assert!(!bounded["inherited_profiles"].as_array().unwrap().is_empty());
+            assert!(source_coordinate_command(&bytes, actual.len() - 1).is_err());
+            assert_eq!(
+                source_coordinate_command(&bytes, actual.len()).unwrap(),
+                actual
+            );
+        }
+    }
 }

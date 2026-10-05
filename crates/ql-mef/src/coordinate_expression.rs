@@ -334,6 +334,135 @@ pub fn resolve_coordinate_expression(
     Ok(binding)
 }
 
+struct CoordinateCopyCounter {
+    remaining: usize,
+}
+impl std::io::Write for CoordinateCopyCounter {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.remaining = self.remaining.checked_sub(bytes.len()).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::OutOfMemory,
+                "native Source coordinate construction",
+            )
+        })?;
+        Ok(bytes.len())
+    }
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+impl CoordinateCopyCounter {
+    fn value<T: Serialize + ?Sized>(&mut self, value: &T) -> Result<(), String> {
+        serde_json::to_writer(&mut *self, value)
+            .map_err(|_| "Native Source coordinate construction exceeds its reserved cap".into())
+    }
+}
+
+/// Resource-bounded sibling of the actual pure native resolver. The registry
+/// and embedded grammars remain the sole source. A byte ceiling issues no
+/// binding/Scene/clock/Source capability and never changes an ordinary call.
+pub fn resolve_coordinate_expression_bounded(
+    registry: &MRegistry,
+    reference: &str,
+    face: MFace,
+    cap: usize,
+) -> Result<CoordinateExpressionBinding, String> {
+    if cap == 0 || cap > 16 * 1024 * 1024 {
+        return Err("Private Source coordinate cap is absent or exceeds ordinary Nara".into());
+    }
+    let canonical = if let Some(canonical) = reference.strip_prefix("ql:m-coordinate:") {
+        let (declared_face, reference) = canonical
+            .split_once(':')
+            .ok_or("invalid canonical M coordinate")?;
+        if declared_face != face.as_str() {
+            return Err("canonical coordinate face disagrees with requested face".into());
+        }
+        reference
+    } else {
+        reference
+    };
+    let selected = registry
+        .resolve(canonical)
+        .ok_or("unknown rooted M coordinate")?;
+    let root = selected
+        .root_position
+        .ok_or("source M coordinate has no root position")?;
+    let capability = CAPABILITIES
+        .get(usize::from(root))
+        .ok_or("native coordinate family is absent")?;
+    let mut copies = CoordinateCopyCounter {
+        remaining: cap
+            .checked_mul(32)
+            .ok_or("Native coordinate copy cap overflow")?,
+    };
+    // Borrowed embedded grammars cover parsing, capability/faculty copies and
+    // hashing before their first Value/Vec allocation. Source bodies stay in
+    // their existing native registry; no file or caller payload replaces them.
+    copies.value(&(
+        WAYFINDER, ORGANS, ORGANS, ORGANS, capability, capability, capability, capability,
+    ))?;
+    copies.value(&(
+        reference,
+        reference,
+        reference,
+        reference,
+        &registry.manifest().registry_revision,
+        &registry.manifest().source_repository,
+        &registry.manifest().source_revision,
+    ))?;
+    let mut cursor = Some(selected.id);
+    let mut visited = 0usize;
+    while let Some(id) = cursor {
+        visited = visited
+            .checked_add(1)
+            .ok_or("native coordinate ancestry overflow")?;
+        if visited > registry.manifest().nodes.len() {
+            return Err("broken M ancestry".into());
+        }
+        let node = registry.node(id).ok_or("broken M ancestry")?;
+        // Full node strings/records and repeated rooted/profile projections
+        // precede all native owned ancestry/binding/property-source copies.
+        copies.value(&(node, node, node, node, node, node, node, node))?;
+        for index in &node.records {
+            let record = registry
+                .manifest()
+                .records
+                .get(*index)
+                .ok_or("missing source record")?;
+            let file = registry
+                .manifest()
+                .files
+                .get(record.file)
+                .ok_or("missing source file")?;
+            copies.value(&(record, record, file, file))?;
+        }
+        cursor = node.parent_id;
+    }
+    for relation in registry.relations_for(selected.id) {
+        let record = registry
+            .manifest()
+            .records
+            .get(relation.record)
+            .ok_or("missing source record")?;
+        let file = registry
+            .manifest()
+            .files
+            .get(record.file)
+            .ok_or("missing source file")?;
+        copies.value(&(relation, relation, record, record, file, file))?;
+    }
+    for binding in registry
+        .manifest()
+        .bindings
+        .iter()
+        .filter(|binding| binding.coordinate_id == Some(selected.id))
+    {
+        copies.value(&(binding, binding))?;
+    }
+    copies.value(&[0_u8; 4096])?;
+    resolve_coordinate_expression(registry, reference, face)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -510,5 +639,35 @@ mod tests {
         let deep = resolve_coordinate_expression(registry, source, MFace::Bimba).unwrap();
         assert_eq!(deep.inherited_profiles.len(), 4);
         assert!(deep.rooted_world.ancestry.len() > deep.inherited_profiles.len());
+    }
+}
+
+#[cfg(test)]
+mod source_coordinate_copy_budget_tests {
+    use super::*;
+    #[test]
+    fn bounded_resolution_uses_actual_registry_and_retains_each_face_and_source() {
+        let registry = crate::m_tree::native_current_m_registry();
+        for face in [MFace::Bimba, MFace::Pratibimba] {
+            let actual = resolve_coordinate_expression(registry, "#3", face).unwrap();
+            let bounded =
+                resolve_coordinate_expression_bounded(registry, "#3", face, 16 * 1024 * 1024)
+                    .unwrap();
+            assert_eq!(
+                serde_json::to_value(&actual).unwrap(),
+                serde_json::to_value(&bounded).unwrap()
+            );
+            assert!(resolve_coordinate_expression_bounded(registry, "#3", face, 1).is_err());
+            assert!(resolve_coordinate_expression_bounded(registry, "#3", face, 0).is_err());
+        }
+        assert!(
+            resolve_coordinate_expression_bounded(
+                registry,
+                "ql:m-coordinate:pratibimba:#3",
+                MFace::Bimba,
+                16 * 1024 * 1024
+            )
+            .is_err()
+        );
     }
 }

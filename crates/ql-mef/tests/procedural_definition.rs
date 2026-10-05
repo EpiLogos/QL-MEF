@@ -1,6 +1,9 @@
 //! Actual configured native compiler and first-batch configuration tests.
 //! No private timing/Scene factory, native install, Source admission or ACK is
 //! constructed. Genuine owner installation/continuation uses the capture gate.
+// The native regeneration targets use all six shared fixture constructors.
+// This definition-only target intentionally imports their common source helpers.
+#[allow(dead_code)]
 #[path = "support/procedural_program.rs"]
 mod support;
 use ql_mef::{m_tree, procedural_composition::*, procedural_conduct::*};

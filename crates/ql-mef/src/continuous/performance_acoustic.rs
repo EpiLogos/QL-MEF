@@ -1055,7 +1055,7 @@ impl PerformanceOwner {
         admitted.validate_current(after_source, self, current, cursor)?;
         admitted
             .context()
-            .validate_binding(current, self.binding())?;
+            .validate_binding(&self.source_origin, self.binding())?;
         prepared.validate_current(self, current, after_source, cursor)?;
         let mut after_assets = self.source_assets.clone();
         after_assets["source_context"] = admitted.context().snapshot()?;
@@ -1276,7 +1276,7 @@ impl PerformanceOwner {
             admitted.validate_current(source, self, current, birth)?;
             admitted
                 .context()
-                .validate_binding(current, self.binding())?;
+                .validate_binding(&self.source_origin, self.binding())?;
             prepared.validate_current(self, current, source, birth)?;
             self.source_assets = assets;
             Ok(())

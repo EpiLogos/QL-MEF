@@ -608,6 +608,35 @@ struct PersonalRecomposeRequest {
     m3_input: Value,
 }
 
+/// Set only on the native Source child invocation. This reduction-only resource
+/// ceiling cannot supply a coordinate, registry, actor or owner grant. Ordinary
+/// Nara operations keep their original input/output policy when it is absent.
+fn source_coordinate_cap(operation: &str) -> Result<Option<usize>, CliError> {
+    if operation != "coordinate" {
+        return Ok(None);
+    }
+    let Some(raw) = std::env::var_os("QL_NATIVE_SOURCE_COORDINATE_BYTE_CAP") else {
+        return Ok(None);
+    };
+    let cap = raw
+        .to_str()
+        .and_then(|raw| raw.parse::<usize>().ok())
+        .filter(|cap| *cap > 0 && *cap <= MAX_OUTPUT as usize)
+        .ok_or_else(|| error("Invalid private native Source coordinate byte cap"))?;
+    Ok(Some(cap))
+}
+fn bounded_source_coordinate_input<R: Read>(input: R, cap: usize) -> Result<Vec<u8>, CliError> {
+    let mut bytes = Vec::new();
+    input
+        .take(cap.min(MAX_INPUT) as u64 + 1)
+        .read_to_end(&mut bytes)
+        .map_err(error)?;
+    if bytes.len() > cap.min(MAX_INPUT) {
+        return Err(error("Native Source coordinate input exceeds its byte cap"));
+    }
+    Ok(bytes)
+}
+
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
         return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","sky_snapshot_purposes":["requested","retained-occasion"],"sky_admission_schema":"ql.sky-admission/v1","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
@@ -636,6 +665,17 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
     .contains(&operation.as_str())
     {
         return Err(error("unknown Nara operation"));
+    }
+    let source_cap = source_coordinate_cap(operation)?;
+    if let Some(cap) = source_cap {
+        // File and stdin are bounded before allocation, not after reading an
+        // ordinary 2 MiB request into the Source capture horizon.
+        let bytes = if path == "-" {
+            bounded_source_coordinate_input(std::io::stdin(), cap)?
+        } else {
+            bounded_source_coordinate_input(fs::File::open(path).map_err(error)?, cap)?
+        };
+        return dialogue::source_coordinate_command(&bytes, cap);
     }
     let mut bytes = Vec::new();
     if path == "-" {
@@ -815,5 +855,22 @@ mod sky_source_tests {
         let q = source_binding_qualification(&sky, false).unwrap();
         assert_eq!(q["legacy_descriptor_admitted"], false);
         assert_eq!(q["native_sun_route"]["chakra_index"], 7);
+    }
+}
+
+#[cfg(test)]
+mod source_coordinate_input_bounds_tests {
+    use super::*;
+    #[test]
+    fn same_coordinate_input_has_exact_limit_and_limit_plus_one_refusal() {
+        let input = br##"{"coordinate_ref":"#3","face":"bimba"}"##;
+        assert_eq!(
+            bounded_source_coordinate_input(std::io::Cursor::new(input), input.len()).unwrap(),
+            input
+        );
+        assert!(
+            bounded_source_coordinate_input(std::io::Cursor::new(input), input.len() - 1).is_err()
+        );
+        assert!(bounded_source_coordinate_input(std::io::Cursor::new(input), 0).is_err());
     }
 }
