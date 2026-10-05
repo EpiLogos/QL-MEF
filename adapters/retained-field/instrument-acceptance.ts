@@ -219,12 +219,40 @@ async function main() {
     standing: 'controlled unsuspended Chromium/SwiftShader WebAudio plus retained GPU run; fixed diagnostic ceilings, not owner-hardware performance budget'
   };
 
+  // The played act: strike a prepared mode of the standing owner through the
+  // same serial session, as a performer does. The strike is not a determinant:
+  // the cursor advances one generation, no samples elapse, and the reply's
+  // end-of-block targets carry the struck body, so the audible and visible
+  // responses share one native commit like every other admitted frame.
+  const modeRef = inspected.current.m2.resonator.modes[0].mode_ref;
+  const strikeGenerationBefore = session.reading.acknowledged.generation;
+  const targetsBeforeStrike = JSON.stringify(binding.lastReceipt.targets);
+  await session.strike([{ mode_ref: modeRef, amplitude: [0.5, -0.25] }]);
+  const strikeGenerationAfter = session.reading.acknowledged.generation;
+  check(BigInt(strikeGenerationAfter) === BigInt(strikeGenerationBefore) + 1n,
+    'the played strike did not commit one generation');
+  let strikePresented = false;
+  for (let i = 0; i < 500 && !strikePresented; i++) {
+    await delay(4);
+    await session.pump();
+    session.present();
+    strikePresented = BigInt(binding.lastReceipt.generation) === BigInt(strikeGenerationAfter);
+  }
+  check(strikePresented, 'the struck body never presented');
+  check(JSON.stringify(binding.lastReceipt.targets) !== targetsBeforeStrike,
+    'the played strike left the visible body unmoved');
+  await session.recover('controlled-played-strike-reconcile');
+  check(session.reading.queued_blocks === 0, 'played strike left presentation backlog');
+
   const debug = renderer.getContext().getExtension('WEBGL_debug_renderer_info');
   const result = { schema: 'ql.k8-managed-browser-acceptance/v1', native_commands: calls.length,
     controlled_native_calls: calls, actual_particles: count, seeds, read_only_view_reads: 2000,
     source_complete_inspection: true, same_native_sound_field_generation: true, pure_future_admission: true,
     preserved_position_velocity: true, retained_target_identity_density: true, actual_gpu_motion: true,
     gpu_recovery_then_explicit_audio_epoch: true, sustained_live_measurement: sustained,
+    played_strike: { mode_ref: modeRef, amplitude_metres: [0.5, -0.25],
+      generation_before: strikeGenerationBefore, generation_after: strikeGenerationAfter,
+      presented: strikePresented, standing: 'played excitation through the same serial native owner; audible and visible response share the strike commit' },
     presentation_applications: applications,
     last_reading: views[0].read(), actual_audio_sample_rate: context.sampleRate,
     renderer: debug ? renderer.getContext().getParameter(debug.UNMASKED_RENDERER_WEBGL) : 'undisclosed',

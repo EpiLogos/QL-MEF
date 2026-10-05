@@ -53,6 +53,10 @@ function setup(options = {}) {
       assert.equal(request.expected_generation, current.generation);
       assert.equal(request.expected_samples_elapsed, current.samples_elapsed);
       current = { ...structuredClone(current), audio: [] };
+      if (port.refuseOperation === request.command.operation) {
+        return { ...initial, status: 'refused', request_id: request.request_id,
+          last_request_id: request.request_id, error: 'controlled refusal', field: structuredClone(current) };
+      }
       if (request.command.operation === 'advance') {
         current.samples_elapsed = String(BigInt(current.samples_elapsed) + BigInt(request.command.frames));
         current.audio = Array(request.command.frames).fill(0.125);
@@ -66,6 +70,10 @@ function setup(options = {}) {
         current.generation = String(BigInt(current.generation) + 1n);
         current.clock[request.command.axis ? 'lensing' : 'inscription'] = request.command.phase;
         current.clock.generation = String(BigInt(current.clock.generation) + 1n);
+      } else if (request.command.operation === 'strike') {
+        current.generation = String(BigInt(current.generation) + 1n);
+        current.amplitudes_metres[0][0] += 0.01;
+        current.targets[0].position[2] += 0.25;
       }
       let reply = { ...initial, status: 'ok', request_id: request.request_id,
         last_request_id: request.request_id, field: structuredClone(current) };
@@ -259,6 +267,58 @@ test('a duplicate driver or invalid rate/queue configuration cannot create anoth
   session.dispose();
   assert.throws(() => new InstrumentSession({ context, owner, transport: port, initialReceipt: initial,
     fieldBinding: field, blockFrames: 8192, lookaheadSeconds: 0.01 }));
+});
+
+test('a played strike moves the standing body and cursor as a performance act', async () => {
+  const { session, context, field, calls } = setup(); await session.pump();
+  const end = session.reading.audio.target_context_seconds;
+  const elapsed = session.reading.acknowledged.samples_elapsed;
+  assert.equal(session.lastInfluence, null);
+  await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.9, 0] }]);
+  assert.deepEqual(calls.at(-1).command,
+    { operation: 'strike', strikes: [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.9, 0] }] });
+  assert.equal(session.reading.acknowledged.generation, '2');
+  assert.equal(session.reading.acknowledged.samples_elapsed, elapsed,
+    'a played strike elapses no samples');
+  // A performance act is not a determinant: no influence rides the reply, and
+  // the next data-plane advance continues the same owner.
+  assert.equal(session.lastInfluence, null);
+  context.currentTime = end; session.present();
+  assert.equal(field.last.targets[0].position[2], 0.25);
+  await session.pump();
+  assert.equal(calls.at(-1).command.operation, 'advance');
+  assert.equal(session.reading.acknowledged.generation, '2');
+  assert.equal(session.reading.acknowledged.samples_elapsed, String(BigInt(elapsed) + 512n));
+  session.dispose();
+});
+
+test('a malformed played strike is refused before any native exchange', async () => {
+  const { session, calls } = setup(); await session.pump();
+  for (const bad of [
+    [], 'strike', [{ mode_ref: '', amplitude: [0, 0] }],
+    [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0] }],
+    [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [Number.NaN, 0] }],
+    [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [1e7, 0] }],
+  ]) {
+    await assert.rejects(session.strike(bad), /names 1\.\.4096|mode reference|finite metres/);
+  }
+  assert.equal(calls.length, 1, 'no exchange left the admitted owner');
+  assert.equal(session.reading.acknowledged.generation, '1');
+  assert.equal(session.reading.available, true);
+  session.dispose();
+});
+
+test('a refused played strike leaves the owner admitted and unchanged', async () => {
+  const { session, port, calls } = setup(); await session.pump();
+  port.refuseOperation = 'strike';
+  await assert.rejects(session.strike([{ mode_ref: 'scene:planet/none', amplitude: [0.1, 0] }]),
+    /controlled refusal/);
+  assert.equal(session.reading.acknowledged.generation, '1');
+  assert.equal(session.reading.available, true, 'a clean refusal is not transport uncertainty');
+  assert.equal(calls.length, 2);
+  await session.pump();
+  assert.equal(calls.length, 3);
+  session.dispose();
 });
 
 test('a scene determinant event re-reads the basis through the same serial owner', async () => {

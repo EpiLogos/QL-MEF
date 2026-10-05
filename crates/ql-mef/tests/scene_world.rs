@@ -222,7 +222,7 @@ fn native_m1_advance_moves_inscription_and_form_preserving_sky_pitch_and_apertur
         before["m3_generation"],
         before["native_readback"]["m3_generation"]
     );
-    let voices = owner.shape().voices;
+    let voices = owner.shape().voices.clone();
     let before_field = owner.session_mut().read_field().unwrap();
     owner.m1_advance(1).unwrap();
     let after = owner.influence();

@@ -5,6 +5,7 @@
 // Prepare/change topology off the audio callback. No provider/JSON/graph calls
 // or allocation occur in render_audio / write_targets. Callers own output buffers.
 #include <ql/coupled_clock.h>
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <complex>
@@ -51,6 +52,12 @@ struct ContinuationReceipt {
     std::uint64_t generation, samples_elapsed;
     QL_CoupledClock clock;
     double last_unmuted_sample;
+};
+// One played excitation act: an impulse added to a named resident mode. The
+// mode reference is the supplied M2 identity; the amplitude is modal metres.
+struct Strike {
+    std::string mode_ref;
+    Complex amplitude_metres;
 };
 inline bool finite(Complex x) { return std::isfinite(x.real()) && std::isfinite(x.imag()); }
 inline void require(bool condition, const char *message) {
@@ -174,6 +181,36 @@ public:
         require(ql_clock_set_axis(&source_.clock, source_.clock.generation, axis, phase, &next) == QL_CLOCK_OK,
                 "native clock rejected independent phase operation");
         source_.clock = next; ++source_.generation;
+    }
+    // Played excitation: each named mode's resident state receives the supplied
+    // impulse (a pluck/mallet displacement in metres). One strike act is one
+    // generation. Validation and the render-budget preflight complete before
+    // any state moves, so a refused act leaves the body exactly as it stood.
+    // The clock, sample basis, mode identities and z are untouched.
+    void strike(const std::vector<Strike> &strikes) {
+        require(!strikes.empty() && strikes.size() <= modes_.size(), "invalid strike count");
+        std::vector<Prepared *> struck;
+        struck.reserve(strikes.size());
+        for (const auto &act : strikes) {
+            reference(act.mode_ref);
+            require(finite(act.amplitude_metres) && std::abs(act.amplitude_metres) <= 1e6,
+                    "invalid strike amplitude");
+            require(!std::any_of(struck.begin(), struck.end(), [&](const Prepared *p) {
+                        return p->input.reference == act.mode_ref;
+                    }),
+                    "one strike act names a mode twice");
+            auto found = std::find_if(modes_.begin(), modes_.end(), [&](const Prepared &p) {
+                return p.input.reference == act.mode_ref;
+            });
+            require(found != modes_.end(), "strike names no prepared mode");
+            struck.push_back(&*found);
+        }
+        for (std::size_t i = 0; i < strikes.size(); ++i) {
+            const double bound = (std::abs(struck[i]->state) + std::abs(strikes[i].amplitude_metres)) * 1.000000001;
+            require(std::isfinite(bound) && bound <= 1e12, "strike exceeds the render state budget");
+        }
+        for (std::size_t i = 0; i < strikes.size(); ++i) struck[i]->state += strikes[i].amplitude_metres;
+        ++source_.generation;
     }
     // One buffer is one bounded block. Validation/preflight precedes mutation.
     // Audio gain is explicit linear output gain, not a claim of sound pressure.

@@ -558,6 +558,14 @@ impl CoupledFieldSession {
     ) -> Result<Value, String> {
         self.field.replace_shapes(shape_ref, shapes)
     }
+    /// Played excitation of named modes on the standing continuation. The whole
+    /// M1/M2/M3 basis is unchanged — pitch, material, clocks and readings stay;
+    /// the resident modal state carries the played impulse. Returns the compact
+    /// field acknowledgement like `replace_field`.
+    pub fn strike_field(&mut self, strikes: &[super::StrikeInput]) -> Result<Value, String> {
+        self.field.strike(strikes)?;
+        Ok(self.last_field().clone())
+    }
     pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
         self.replace_field(input)?;
         Ok(self.snapshot())

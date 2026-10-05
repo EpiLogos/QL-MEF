@@ -198,6 +198,17 @@ int main() {
                     auto next_ref = text(get(request.get(), "shape_ref")); ql::reference(next_ref);
                     auto next = shapes(get(request.get(), "shapes"), field->samples().size(), field->source().modes.size());
                     field->replace_shapes(field->receipt().generation, next); shape_ref.swap(next_ref); committed = true;
+                } else if (op == "strike") {
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "strikes"});
+                    J *items = get(request.get(), "strikes");
+                    auto n = count(items, field->source().modes.size());
+                    std::vector<ql::Strike> strikes; strikes.reserve(n);
+                    for (std::size_t i = 0; i < n; ++i) {
+                        auto act = at(items, i);
+                        keys(act, {"mode_ref", "amplitude"});
+                        strikes.push_back({text(get(act, "mode_ref")), pair(get(act, "amplitude"))});
+                    }
+                    field->strike(strikes); committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));

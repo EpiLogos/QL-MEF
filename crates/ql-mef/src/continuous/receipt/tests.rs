@@ -195,6 +195,45 @@ fn replacement_admits_new_basis_only_with_an_acknowledged_resident_transition() 
 }
 
 #[test]
+fn played_strike_ack_moves_resident_state_and_nothing_else() {
+    let (_, _, guard, receipt) = fixture();
+    let request = json!({"operation":"strike","strikes":[
+        {"mode_ref":"controlled:mode/0","amplitude":[0.02,-0.01]}]});
+    let mut next = receipt.clone();
+    next["generation"] = json!("2");
+    next["amplitudes_metres"][0][0] = json!(0.025);
+    next["targets"][0]["position"][0] = json!(0.025);
+    guard.validate(&request, Some(&receipt), &next).unwrap();
+    for (path, invalid) in [
+        ("/generation", json!("1")),
+        ("/clock/inscription/turns", json!("0")),
+        ("/samples_elapsed", json!("1")),
+        ("/m2_identity/profile_generation", json!(3)),
+    ] {
+        let mut bad = next.clone();
+        *bad.pointer_mut(path).unwrap() = invalid;
+        assert!(
+            guard.validate(&request, Some(&receipt), &bad).is_err(),
+            "accepted {path}"
+        );
+    }
+    for bad_request in [
+        json!({"operation":"strike","strikes":[]}),
+        json!({"operation":"strike","strikes":[{"mode_ref":"controlled:mode/0","amplitude":[0.0]}]}),
+        json!({"operation":"strike","strikes":[{"mode_ref":"","amplitude":[0.0,0.0]}]}),
+        json!({"operation":"strike","strikes":[{"mode_ref":"x\ny","amplitude":[0.0,0.0]}]}),
+        json!({"operation":"strike","strikes":[{"mode_ref":"m","amplitude":[0.0,1e7]}]}),
+        json!({"operation":"strike","strikes":[{"mode_ref":"m","amplitude":[0.0,"NaN"]}]}),
+        json!({"operation":"strike"}),
+    ] {
+        assert!(
+            guard.validate(&bad_request, Some(&receipt), &next).is_err(),
+            "accepted {bad_request}"
+        );
+    }
+}
+
+#[test]
 fn exact_cursor_strings_reject_aliases_and_overflow_without_panicking() {
     for text in [
         "",

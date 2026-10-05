@@ -309,7 +309,7 @@ impl ReceiptGuard {
             return Ok(());
         };
         let operation = request["operation"].as_str().ok_or("missing operation")?;
-        let changing = replacing || reshaping || operation == "set-axis";
+        let changing = replacing || reshaping || operation == "set-axis" || operation == "strike";
         require(
             generation
                 == if changing {
@@ -357,6 +357,36 @@ impl ReceiptGuard {
                     value["clock"] == previous["clock"]
                         && value["amplitudes_metres"] == previous["amplitudes_metres"],
                     "shape replacement changed clock or resident state",
+                )?;
+            }
+            "strike" => {
+                // A played excitation: resident state and its targets move on the
+                // standing continuation; the clock and cursor do not. Each act
+                // names a bounded amplitude; the native owner resolves the mode
+                // references, so a reply is admitted only for a well-formed act.
+                let acts = request["strikes"]
+                    .as_array()
+                    .ok_or("a strike act requires an array")?;
+                require(
+                    !acts.is_empty() && acts.len() <= self.modes,
+                    "a strike act must name 1..=mode-count modes",
+                )?;
+                for act in acts {
+                    let reference = act["mode_ref"]
+                        .as_str()
+                        .filter(|r| !r.is_empty() && r.len() <= 2048)
+                        .ok_or("invalid strike mode reference")?;
+                    require(
+                        !reference.chars().any(|c| c < ' ' || c == '\u{7f}'),
+                        "invalid strike mode reference",
+                    )?;
+                    for component in array(&act["amplitude"], 2)? {
+                        finite(component, 1e6)?;
+                    }
+                }
+                require(
+                    value["clock"] == previous["clock"],
+                    "a strike changed the clock",
                 )?;
             }
             "set-axis" => {
