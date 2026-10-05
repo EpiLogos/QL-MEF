@@ -588,6 +588,30 @@
     "crates/ql-mef/tests/ta_onta_stage.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/janko.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "M"
+   ],
+   "rationale": "The Jankó controller projection of the accepted #31 musical object (docs/music/JANKO-QL-INSTRUMENT-FIGURE.md): six rows are the kernel's direct/conjugate whole-tone helices held three times as repeated touch-points, the neighbouring interleaved row is the semitone-shifted complementary collection through the basis's own conjugate axis, and the fifths basis enters only as a second traversal over the same Z12 substrate. The surface holds no pitch table and introduces no musical semantics: the controller reads the accepted derivation, it does not author it (figure §5.7).",
+   "tests": [
+    "crates/ql-mef/tests/janko_surface.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/music_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "CLI transport for the ql music janko controller read over the accepted surface projection; discloses keys, touch-points and the fifths overlay, owns no coordinate.",
+   "tests": [
+    "crates/ql-cli/tests/music_native.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
