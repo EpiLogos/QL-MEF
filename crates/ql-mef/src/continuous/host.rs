@@ -2,6 +2,7 @@
 //! by the native host; a subject/reference is not a grant of authority.
 use super::coupled::{CoupledFieldSession, CoupledInput};
 use super::scene_field::{self, SceneConfig, SceneInstrument};
+use super::stage::{self, StageOwnership};
 use super::{FieldInput, LiftInput};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -59,6 +60,19 @@ pub enum HostOperation {
     },
     /// scene with a Nara constitution: the last reception and its currentness.
     Personal {},
+    /// scene only: the Ta-Onta procedural stage's scoped state disclosure —
+    /// the live constituents, their effective values and their owners.
+    StageState {},
+    /// scene only: evaluate one versioned stage procedure against the current
+    /// event and apply its plan through this host's own determinant paths.
+    StageEvaluate {
+        procedure: Box<stage::StageProcedure>,
+    },
+    /// scene only: release one procedure's contributions (its own key family
+    /// only); retained material stays as the now-authored state.
+    StageRetire {
+        procedure_ref: String,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -108,6 +122,7 @@ impl Owner {
 pub struct FieldHost {
     instance_ref: String,
     session: Owner,
+    stage: StageOwnership,
     last_request: u64,
 }
 impl FieldHost {
@@ -126,6 +141,7 @@ impl FieldHost {
                 config.field,
                 timeout,
             )?)),
+            stage: StageOwnership::default(),
             last_request: 0,
         })
     }
@@ -139,6 +155,7 @@ impl FieldHost {
         Ok(Self {
             instance_ref: instrument.instance_ref().to_owned(),
             session: Owner::Scene(Box::new(instrument)),
+            stage: StageOwnership::default(),
             last_request: 0,
         })
     }
@@ -156,6 +173,154 @@ impl FieldHost {
 
     pub fn available(&self) -> bool {
         self.session.session().available()
+    }
+
+    /// The procedural stage's scoped disclosure: the live constituents, their
+    /// current effective standing and the procedure that owns each slot.
+    fn stage_state(instrument: &SceneInstrument, ownership: &StageOwnership) -> Value {
+        let field = instrument.session().last_field();
+        let basis = instrument.session().current_basis();
+        let slots: Value = stage::STAGE_SLOTS
+            .iter()
+            .map(|slot| {
+                (
+                    (*slot).to_string(),
+                    match ownership.owner_of(slot) {
+                        Some(contribution) => json!({
+                            "owner": contribution.key,
+                            "procedure_ref": contribution.procedure_ref,
+                            "revision": contribution.revision,
+                        }),
+                        None => json!({"owner": Value::Null}),
+                    },
+                )
+            })
+            .collect();
+        json!({
+            "schema": stage::STAGE_STATE,
+            "instance_ref": instrument.instance_ref(),
+            "event_ref": field["event_ref"],
+            "subject_ref": field["subject_ref"],
+            "generation": field["generation"],
+            "samples_elapsed": field["samples_elapsed"],
+            "form": {"address": basis.m3["form"]["address"], "pose": basis.m3["form"]["pose"],
+                "aperture": basis.m3["aperture"]["index"], "clock_steps": basis.m3["clock"]["steps"]},
+            "shape_ref": instrument.shape().shape_ref,
+            "material": instrument.material(),
+            "slots": slots,
+            "standing": "live scene state and procedural ownership; audio is never disclosed here",
+        })
+    }
+
+    /// Applies one evaluated plan through this host's own determinant paths,
+    /// in plan order, stopping at the first refusal with its true standing.
+    fn stage_evaluate(
+        instrument: &mut SceneInstrument,
+        ownership: &mut StageOwnership,
+        procedure: stage::StageProcedure,
+    ) -> Result<(Value, Value), String> {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| "host clock before the epoch")?
+            .as_millis() as u64;
+        let live = instrument.event();
+        let plan = stage::evaluate(&procedure, &live, ownership, now, now)?;
+        let strike = instrument.material().strike_on_event;
+        let mut applied: Option<Value> = None;
+        let apply = |step: &str, result: Result<Value, String>| -> Result<Value, String> {
+            result.map_err(|error| format!("stage apply stopped at {step}: {error}"))
+        };
+        if let Some(event) = &plan.event {
+            applied = Some(apply("form", instrument.replace(event, strike))?);
+        }
+        if let Some(per_second) = plan.damping {
+            applied = Some(apply(
+                "material.damping",
+                instrument.set_damping(per_second),
+            )?);
+        }
+        for (slot, phase) in &plan.clock {
+            let axis = if slot == "clock.inscription" { 0 } else { 1 };
+            applied = Some(apply(slot, instrument.set_axis(axis, phase.clone()))?);
+        }
+        for scene in 1..=plan.passage_ticks {
+            applied = Some(apply(
+                &format!("passage-scene:{scene}"),
+                instrument.m1_advance(1),
+            )?);
+        }
+        let event_ref = applied
+            .as_ref()
+            .and_then(|field| field["event_ref"].as_str())
+            .unwrap_or(&live.m1.event_ref)
+            .to_owned();
+        Ok((
+            stage::receipt(&plan, &event_ref, true),
+            applied.unwrap_or_else(|| instrument.session().last_field().clone()),
+        ))
+    }
+
+    /// Dispatches the stage operations; every failure names its cause and the
+    /// envelope has already consumed its sequence.
+    fn stage_operation(&mut self, request: &HostRequest) -> Value {
+        let refusal = "the Ta-Onta procedural stage belongs to a provider-composed scene owner";
+        let outcome = match (&request.command, &mut self.session) {
+            (HostOperation::StageState {}, Owner::Scene(instrument)) => {
+                Ok((Self::stage_state(instrument, &self.stage), None))
+            }
+            (HostOperation::StageState {}, _) => Err(refusal.into()),
+            (HostOperation::StageEvaluate { procedure }, Owner::Scene(instrument)) => {
+                Self::stage_evaluate(instrument, &mut self.stage, (**procedure).clone())
+                    .map(|(stage, field)| (stage, Some(field)))
+            }
+            (HostOperation::StageEvaluate { .. }, _) => Err(refusal.into()),
+            (HostOperation::StageRetire { procedure_ref }, _) => {
+                let retired = self.stage.retire(procedure_ref);
+                Ok((
+                    json!({"schema": stage::STAGE_RECEIPT, "procedure_ref": procedure_ref,
+                        "applied": true, "retired": retired,
+                        "standing": "ownership released; retained material stays as the now-authored state"}),
+                    None,
+                ))
+            }
+            (
+                HostOperation::Read {}
+                | HostOperation::Inspect {}
+                | HostOperation::Advance { .. }
+                | HostOperation::SetAxis { .. }
+                | HostOperation::Replace { .. }
+                | HostOperation::SetDamping { .. }
+                | HostOperation::M1Advance { .. }
+                | HostOperation::ReplaceEvent { .. }
+                | HostOperation::Influence {}
+                | HostOperation::ReceivePersonal { .. }
+                | HostOperation::Personal {},
+                _,
+            ) => unreachable!("non-stage commands returned before stage dispatch"),
+        };
+        match outcome {
+            Ok((stage, field)) => {
+                let mut response = self.response(Some(&request.request_id), "ok", None);
+                response["stage"] = stage;
+                if let Some(field) = field {
+                    response["field"] = field;
+                    // A stage determinant answers with its new influence
+                    // reading, as the other determinant events do.
+                    if let Owner::Scene(instrument) = &self.session {
+                        response["influence"] = instrument.influence();
+                    }
+                }
+                response
+            }
+            Err(error) => {
+                let status = if self.available() {
+                    "refused"
+                } else {
+                    "unavailable"
+                };
+                self.response(Some(&request.request_id), status, Some(&error))
+            }
+        }
     }
 
     fn response(&self, request_id: Option<&str>, status: &str, error: Option<&str>) -> Value {
@@ -268,6 +433,14 @@ impl FieldHost {
             }
             return response;
         }
+        if matches!(
+            &request.command,
+            HostOperation::StageState {}
+                | HostOperation::StageEvaluate { .. }
+                | HostOperation::StageRetire { .. }
+        ) {
+            return self.stage_operation(&request);
+        }
         // A scene determinant event answers with its new influence reading, so a
         // consumer needs no second exchange while its audio waits.
         let determinant = matches!(
@@ -317,9 +490,12 @@ impl FieldHost {
                 HostOperation::Inspect {}
                 | HostOperation::Influence {}
                 | HostOperation::ReceivePersonal { .. }
-                | HostOperation::Personal {},
+                | HostOperation::Personal {}
+                | HostOperation::StageState {}
+                | HostOperation::StageEvaluate { .. }
+                | HostOperation::StageRetire { .. },
                 _,
-            ) => unreachable!("reads and reception returned before dispatch"),
+            ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };
         match result {
             Ok(field) => {
@@ -369,5 +545,40 @@ mod tests {
         }
         let command: HostOperation = serde_json::from_value(json!({"operation":"read"})).unwrap();
         assert!(matches!(command, HostOperation::Read {}));
+    }
+
+    #[test]
+    fn stage_operations_are_admitted_by_name_and_refuse_unknown_fields() {
+        let state: HostOperation =
+            serde_json::from_value(json!({"operation":"stage-state"})).unwrap();
+        assert!(matches!(state, HostOperation::StageState {}));
+        let procedure = json!({
+            "schema": stage::STAGE_PROCEDURE,
+            "procedure_ref": "ta-onta:stage:e2e",
+            "revision": 1,
+            "subject_ref": "s",
+            "trigger": {"trigger": "invocation"},
+            "selector": ["form"],
+            "changes": [{"change": "form", "operations": [{"operation": "set-pose", "pose": 2}]}]
+        });
+        let evaluate: HostOperation = serde_json::from_value(json!({
+            "operation":"stage-evaluate", "procedure": procedure}))
+        .unwrap();
+        assert!(matches!(evaluate, HostOperation::StageEvaluate { .. }));
+        let retire: HostOperation =
+            serde_json::from_value(json!({"operation":"stage-retire", "procedure_ref":"p"}))
+                .unwrap();
+        assert!(matches!(retire, HostOperation::StageRetire { .. }));
+        for value in [
+            json!({"operation":"stage-evaluate"}),
+            json!({"operation":"stage-evaluate", "procedure": {}, "extra": true}),
+            json!({"operation":"stage-retire"}),
+            json!({"operation":"stage-state", "procedure_ref": "p"}),
+        ] {
+            assert!(
+                serde_json::from_value::<HostOperation>(value.clone()).is_err(),
+                "accepted {value}"
+            );
+        }
     }
 }

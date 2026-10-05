@@ -778,6 +778,11 @@ impl SceneInstrument {
     pub fn shape(&self) -> &ShapeBasis {
         &self.shape
     }
+    /// The declared material policy currently in force; disclosed, never a
+    /// source reading.
+    pub fn material(&self) -> &SceneMaterial {
+        &self.material
+    }
     /// The caller's event, without the provider-owned voices.
     pub fn event(&self) -> CoupledInput {
         let mut event = self.event.clone();

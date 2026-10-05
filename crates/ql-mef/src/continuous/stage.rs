@@ -28,6 +28,7 @@ use crate::m3_state::{COMMAND_SCHEMA, M3Command, M3Operation};
 pub const STAGE_PROCEDURE: &str = "ql.stage-procedure/v1";
 pub const STAGE_CONTRIBUTION: &str = "ql.stage-contribution/v1";
 pub const STAGE_RECEIPT: &str = "ql.stage-receipt/v1";
+pub const STAGE_STATE: &str = "ql.stage-state/v1";
 
 /// The constituents a procedure may address, by this stage's own refs. A
 /// selector names a set; a change addresses it. Voice retuning has no admitted
