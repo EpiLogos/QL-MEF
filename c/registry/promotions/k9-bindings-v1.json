@@ -1,576 +1,593 @@
 {
-  "schema": "ql.k8-implementation-dispositions/v1",
-  "authority": "docs/kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md",
-  "modules": [
-    {
-      "path": "crates/ql-mef/src/focused_instrument.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1–M3 continuous field, #134 Nara and QL/Factory Vāk performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
-      "tests": [
-        "crates/ql-mef/src/focused_instrument.rs",
-        "crates/ql-mef/src/focused_instrument_aw1.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/focused_instrument_aw1.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "M"
-      ],
-      "rationale": "Thin K9 admission join from AW1's accepted RootedMWorld into the focused selection carrier. Source, revision, Bimba face and relation identities are received from AW1 rather than re-derived; no second M registry or Bimba graph is introduced.",
-      "tests": [
-        "crates/ql-mef/src/focused_instrument_aw1.rs",
-        "crates/ql-mef/src/aw1_world.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/focused_instrument_aw2.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Thin K9 consumer of the accepted #94/#183 ql.operative-scope-currentness/v1 owner response. It validates QL provider/owner/interpretation identity and preserves Current/Stale/Missing for presentation consumers without reobserving C-prime state, granting authority or defining another coordinate/scope registry.",
-      "tests": [
-        "crates/ql-mef/src/focused_instrument_aw2.rs",
-        "crates/ql-mef/src/vak_scope_wire.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/bin/ql-focused-host.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
-      "tests": [
-        "crates/ql-mef/src/bin/ql-focused-host.rs",
-        "crates/ql-mef/src/focused_instrument.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "adapters/retained-field/focused-instrument-session.mjs",
-      "stratum": "javascript",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "K9 browser transport/presentation driver for one already-authorised ql-focused-host. Focus/Bimba/clock requests and continuous native advances share one exact host sequence; accepted K8 NativeAudioBinding and RetainedFieldBinding receive the same acknowledged field while O:I supplies only its existing retained stage lease. Explicit source-qualified sample correspondence is required. The adapter creates no numerical owner, renderer, clock, graph, executable authority or AgentSession.",
-      "tests": [
-        "adapters/retained-field/focused-instrument-session.test.mjs",
-        "adapters/retained-field/instrument-session.test.mjs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-core/src/shape.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#1",
-        "#2",
-        "#3"
-      ],
-      "rationale": "QL #204 completes the existing L5.3 Geometry/constellation morphology, with M1 retaining the formal Spanda/QL owner while the canonical Second-Spanda body consumes the already-owned M2 six-by-six and M3 three-site fold body. The module adds shape/compression carriers and projections only; it creates no new M coordinates or competing geometry ontology. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
-      "tests": [
-        "crates/ql-core/tests/geometry_constellation_resolution.rs",
-        "crates/ql-mef/tests/second_spanda_geometry.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-core/src/shape_ref.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#1",
-        "#2",
-        "#3"
-      ],
-      "rationale": "QL #222 is the inverse lookup seam for the already-owned L5.3 Geometry shapes. It resolves only exact canonical versioned refs produced by QlShape::shape_ref, rejects aliases and anonymous Other grains, and introduces no new shape, coordinate or semantic authority.",
-      "tests": [
-        "crates/ql-core/src/shape_ref.rs",
-        "crates/ql-core/tests/geometry_constellation_resolution.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/matheme.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#1",
-        "#2",
-        "#3"
-      ],
-      "rationale": "QL #206 restores the already-authored Second-Spanda equation as one executable M1 formal reading of the existing M2 6^2 field and M3 4^3=2^6 body, including the derived decadic Geometry projection. It does not relocate M2/M3 numerical ownership or create a second Spanda source. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
-      "tests": [
-        "crates/ql-mef/tests/second_spanda_geometry.rs",
-        "crates/ql-core/tests/geometry_constellation_resolution.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/vak_composition.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0-4",
-        "#0-5"
-      ],
-      "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
-      "tests": [
-        "crates/ql-mef/tests/compressed_geometry_vak.rs",
-        "crates/ql-mef/tests/vak_composition.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-adapters/src/techne.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "L5 Technē contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation — native owners keep their refs and authority. M′ instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
-      "tests": [
-        "crates/ql-adapters/tests/techne_contract.rs",
-        "fixtures/techne/tb0-connective-base-v1.json"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-adapters/src/techne_wiki.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "Production Technē read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store — the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
-      "tests": [
-        "crates/ql-adapters/tests/techne_contract.rs",
-        "crates/ql-wiki/tests/wiki_refraction.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/vak_composition.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language — ql-core types in, JSON disclosures out; no store, no mutation.",
-      "tests": [
-        "crates/ql-cli/tests/vak_composition.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/techne_command.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "JSON command adapter for the production Technē reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser — a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
-      "tests": [
-        "crates/ql-cli/tests/techne_reading.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/voice.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#3",
-        "#4"
-      ],
-      "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented — provider selection stays outside the semantic contract.",
-      "tests": [
-        "crates/ql-mef/tests/nara_dialogue_conformance.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/dialogue.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#3",
-        "#4"
-      ],
-      "rationale": "Dialogical Nara dialogue frame (#201 TA3/TA4 slice): DialogueFrame bound to the kernel's constitutional voice mapping; deixis and dialogue-context carry canonical fixture semantics (fixtures/nara/).",
-      "tests": [
-        "crates/ql-mef/tests/nara_dialogue_conformance.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-wiki/src/shape_binding.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "QL #222 is a transport/projection consumer of the existing ShapeBinding and Wiki refraction contracts. It validates canonical ql-core shape refs and compression metadata, carries that view through Wiki readings, and deliberately leaves ParticipationForm, Geometry semantics, source relations and provider execution in their existing owners.",
-      "tests": [
-        "crates/ql-wiki/tests/shape_binding_refraction.rs",
-        "crates/ql-wiki/tests/wiki_refraction.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/epi_agent.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
-      "tests": [
-        "crates/ql-mef/src/epi_agent.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/epi_agent_command.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0–#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
-      "tests": [
-        "crates/ql-cli/src/epi_agent_command.rs",
-        "crates/ql-mef/src/epi_agent.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/vak_workflow_types.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "VW1 projection of the existing ql.vak-composition.profile/v1 vocabulary (vak_profile.rs, context_frame.rs) into the types-only @epilogos/ql-vak module that Factory's registered domain adapter admits. It renders TypeScript from the Rust enums' serde spellings and validates an authored C-prime; it adds no coordinate, composition owner, scheduler, registry or execution authority.",
-      "tests": [
-        "crates/ql-mef/tests/vak_workflow_types.rs",
-        "crates/ql-mef/src/vak_workflow_types.rs"
-      ],
-      "kind": "structural-index"
-    },
-    {
-      "path": "crates/ql-core/src/shape_presentation.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Read-only numerical presentation of an already-owned ql-core shape. It supplies versioned display coordinates for the sixfold ring and the 6x6 grid and checks local slot constraints. It creates no members, relations, semantic metric, or second geometry owner.",
-      "tests": [
-        "crates/ql-core/src/shape_presentation.rs",
-        "crates/ql-cli/src/shape_command.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/shape_command.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "JSON and plain-text CLI adapter for the existing ql-core shape presentation. It discloses one exact shape reference and refuses unknown references. It does not persist, mutate, or interpret the presentation as a semantic relation.",
-      "tests": [
-        "crates/ql-cli/src/shape_command.rs",
-        "crates/ql-core/src/shape_presentation.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/nara_command.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "QL-MEF #201 identity intake transport over the existing M4 identity producer and real Kerykeion/M2 sky provider. It bounds process input/output and timeout, materialises embedded provider resources, and discloses configured or managed provider readiness. It owns no identity calculation policy, native profile persistence, event, receiver dynamics, or full personal Expression. Exact known historical sky descriptors are admitted only for retained occasions with separate source qualification and the current native Sun-to-Sahasrara route; fresh requested source guards remain strict.",
-      "tests": [
-        "crates/ql-mef/src/nara/intake_tests.rs",
-        "providers/nara/test_natal.py",
-        "crates/ql-cli/tests/scene_native.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/intake.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#4"
-      ],
-      "rationale": "M4.0 intake into the accepted #134 six-office IdentityField: source-qualified birth facts, attributable report/import routes, chart request identity and corrections. It validates and seals source material; Central owns saving/reopening. Natal-only composition is explicitly separate from the complete identity synthesis and existing seven-centre receiver; intake does not claim those runtime joins.",
-      "tests": [
-        "crates/ql-mef/src/nara/intake_tests.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/intake_composition.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#2",
-        "#4"
-      ],
-      "rationale": "M4 natal-only reading from actual M2 sky observations and native planet/centre correspondence, using the recovered personal_identity.rs policy at Epi-Logos-C-Experiments daa660cbc1b8c5da83828698665a753852cb0287. It distinguishes L1 EFWA balances from L2-normalised natal quaternion and seven evidence partitions; it creates no full identity quaternion, receiver constitution, centre-local dynamics, world event or sonal coupling law.",
-      "tests": [
-        "crates/ql-mef/src/nara/intake_composition.rs",
-        "crates/ql-mef/src/nara/intake_tests.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/intake_tests.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Executable acceptance of native M4 identity validation, correction lineage, report route boundaries and actual natal envelope binding. Test support asserts production intake behavior; it is not a new coordinate or runtime identity owner.",
-      "tests": [
-        "crates/ql-mef/src/nara/intake_tests.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "providers/nara/natal.py",
-      "stratum": "python",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Real Kerykeion natal chart adapter and existing M2 sky projection, preserving exact entered timezone, clock precision, DST fold and source request identity. Unknown time and provider-adjusted polar houses remain explicit unavailable/partial readings; no invented time, coordinates, chart or complete identity composition. Actual chart/sky agreement and correction routes are exercised by the provider tests.",
-      "tests": [
-        "providers/nara/test_natal.py"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "c/src/m2.c",
-      "stratum": "c",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2"
-      ],
-      "rationale": "Existing M2 catalogue remains the historical descriptor; added graph-derived planet/chakra and decan/ruler queries retain exact pinned relation/property provenance and unresolved contradictory claims. Query coverage does not promote the retained catalogue or invent recipient coefficients.",
-      "tests": [
-        "crates/ql-mef/tests/m2_planet_chakra.rs",
-        "scripts/m2-planet-chakra-probe.c"
-      ],
-      "kind": "computational",
-      "header": "c/include/ql/m2.h"
-    },
-    {
-      "path": "crates/ql-mef/src/m2.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#2"
-      ],
-      "rationale": "Typed M2 access to existing native descriptors and graph-backed source routes. Decan element IDs use the C elemental vocabulary; graph rulers remain separate from retained C rulers. Source records, relation indices and conflict standing are inspectable.",
-      "tests": [
-        "crates/ql-mef/tests/m2_planet_chakra.rs",
-        "crates/ql-mef/tests/m2_engine.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/coordinate_expression.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#0",
-        "#1",
-        "#2",
-        "#3",
-        "#4",
-        "#5"
-      ],
-      "rationale": "Deterministic coordinate/profile source binding over the existing native M registry, actual properties/relations, all six M4 branches and existing capability/organ matrices. Content-addressed inheritance supplies no invented material defaults or executable capability admission.",
-      "tests": [
-        "crates/ql-mef/src/coordinate_expression.rs",
-        "crates/ql-cli/tests/nara_dialogue_native.rs"
-      ],
-      "kind": "structural-index"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/identity_encoding.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#4"
-      ],
-      "rationale": "Recovered birth/name encoding retains the original draft coefficients as an explicitly selected versioned policy; no automatic adoption or full-identity synthesis. EFWA, matrix cells and source qualification are calculated from actual entered facts.",
-      "tests": [
-        "crates/ql-mef/src/nara/identity_encoding.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/identity_contributions.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#4"
-      ],
-      "rationale": "Source-qualified contributions from actual report/import payloads: comparable Jungian function strengths, provided Gene Keys lines and Human Design data. Missing or unsupported inputs remain unavailable; type labels never fabricate questionnaire strengths or identity blending.",
-      "tests": [
-        "crates/ql-mef/src/nara/identity_contributions.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/decanic_identity.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#2",
-        "#4"
-      ],
-      "rationale": "Actual natal longitudes resolve situated decans and current graph RULED_BY recipients independently from the direct planetary route. Owner ruling QL #254 applies the Cancer-third-decan Moon correction in the admitted 907c source; the earlier Moon/Saturn contradiction remains historical provenance. Reuses source-qualified natal magnitudes and native elements; supplies evidence contributions, not admitted receiver dynamics.",
-      "tests": [
-        "crates/ql-mef/src/nara/decanic_identity.rs",
-        "crates/ql-mef/tests/m2_planet_chakra.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/nara_dialogue_command.rs",
-      "stratum": "rust",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Bounded native CLI transport for coordinate/context resolution and existing QL delegation/enrichment semantics. Reads the actual native registry; supplied context cannot claim another registry. Generic Expression mutation, sessions, provider execution and persistence stay with their existing owners.",
-      "tests": [
-        "crates/ql-cli/tests/nara_dialogue_native.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-cli/src/m3_command.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#3"
-      ],
-      "rationale": "Supported bounded transport over the existing M3State transactional producer; optional explicitly selected activity policy consumes only actual applied receipts. Native host identity/event admission remains outside the pure CLI. No second clock, renderer, or closure authority.",
-      "tests": [
-        "crates/ql-cli/tests/m3_native.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/m3_activity.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#3",
-        "#4"
-      ],
-      "rationale": "Explicit historical-personal-frame-sprite-v1 reception of actual ordered M3 receipts, using recovered typed VakAddress serialization and historical Sprite hash/axis/angle/Hamilton law. Symbolic policy is opt-in; provisional/rejected/read states emit no packet. It neither claims legacy full contemplation closure nor mutates natal identity.",
-      "tests": [
-        "crates/ql-cli/tests/m3_native.rs",
-        "crates/ql-cli/tests/nara_current_native.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/bimba_content.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "M"
-      ],
-      "rationale": "QL #135/#201/#258 source-led fidelity recovery: complete immutable Bimba properties, aliases, UUIDs and directed qualified relations from the same admitted READ as the current native M registry. Exact hashes, current-source guards, ambiguity refusal and bounded inventory/source continuation preserve original material for Expressions and selected agent context. This source projection defines no numerical law, private personal state, action authority, profile grammar or renderer.",
-      "tests": [
-        "crates/ql-mef/tests/bimba_content.rs",
-        "scripts/tests/test_bimba_content.py"
-      ],
-      "kind": "structural-index"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/domain/oracle_journey.rs",
-      "stratum": "rust",
-      "disposition": "cross-coordinate",
-      "coordinates": [
-        "#3",
-        "#4-2"
-      ],
-      "rationale": "QL-MEF #258 EA2 continuing M4.2 oracle journey: one Tarot deck shuffled once under the Quaternal Tarot protocol and one I-Ching change history across a Day/Flow concern. Card identity resolves against the M3 kernel Tarot bridge and hexagrams follow the M3/C line law; journey state is returned for its Central owner to persist, never persisted or scheduled here.",
-      "tests": [
-        "crates/ql-mef/tests/nara_oracle_journey.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "crates/ql-mef/src/nara/lived_context.rs",
-      "stratum": "rust",
-      "disposition": "coordinate-bound",
-      "coordinates": [
-        "#4"
-      ],
-      "rationale": "QL-MEF #258 EA1 lived Day/Flow context for one Nara concern: selects source-exact, attributed, correction-aware passages from Central document readings and the continuing journey for the dialogue context's occasion and disclosed refs. It reads host-supplied material only and never writes to the person's source or takes Central ownership.",
-      "tests": [
-        "crates/ql-mef/tests/nara_lived_context.rs"
-      ],
-      "kind": "computational"
-    },
-    {
-      "path": "providers/sky/kerykeion_snapshot.py",
-      "stratum": "python",
-      "disposition": "infrastructural",
-      "coordinates": [],
-      "rationale": "Actual Kerykeion/Swiss ten-body dated-sky adapter and source/digest/currentness admission. The current source emits solar-parent metadata; exact known historical e6d/82cd/7df descriptors can be retained unchanged with a separate nonfresh qualification. Native PLANETARY_RESONANCE owns Sun-to-Sahasrara reception; this transport declaration invents no planet, centre, tuning, numerical readiness or personal-current authority.",
-      "tests": [
-        "providers/sky/test_kerykeion_snapshot.py",
-        "crates/ql-cli/tests/scene_native.rs"
-      ],
-      "kind": "computational"
-    }
-  ]
+ "schema": "ql.k8-implementation-dispositions/v1",
+ "authority": "docs/kernel-rebuild/LIVING-INSTRUMENT-ARCHITECTURE.md",
+ "modules": [
+  {
+   "path": "crates/ql-mef/src/focused_instrument.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "K9 consumer projection over the already-owned AW1/Bimba, K8 M1–M3 continuous field, #134 Nara and QL/Factory Vāk performance contracts. It owns selection/focus/presentation currentness and routes deliberate operations back through the existing session; it creates no graph store, numerical field, clock, renderer, authority system or AgentSession.",
+   "tests": [
+    "crates/ql-mef/src/focused_instrument.rs",
+    "crates/ql-mef/src/focused_instrument_aw1.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/focused_instrument_aw1.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "M"
+   ],
+   "rationale": "Thin K9 admission join from AW1's accepted RootedMWorld into the focused selection carrier. Source, revision, Bimba face and relation identities are received from AW1 rather than re-derived; no second M registry or Bimba graph is introduced.",
+   "tests": [
+    "crates/ql-mef/src/focused_instrument_aw1.rs",
+    "crates/ql-mef/src/aw1_world.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/focused_instrument_aw2.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Thin K9 consumer of the accepted #94/#183 ql.operative-scope-currentness/v1 owner response. It validates QL provider/owner/interpretation identity and preserves Current/Stale/Missing for presentation consumers without reobserving C-prime state, granting authority or defining another coordinate/scope registry.",
+   "tests": [
+    "crates/ql-mef/src/focused_instrument_aw2.rs",
+    "crates/ql-mef/src/vak_scope_wire.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/bin/ql-focused-host.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "Bounded controlled-host transport over one PersonalCoupledSession and one FocusedInstrument. It resolves configured source selections through AW1 and serialises K9 commands/receipts, while all numerical, personal, Bimba and Vāk semantics remain in their existing owners.",
+   "tests": [
+    "crates/ql-mef/src/bin/ql-focused-host.rs",
+    "crates/ql-mef/src/focused_instrument.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "adapters/retained-field/focused-instrument-session.mjs",
+   "stratum": "javascript",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "K9 browser transport/presentation driver for one already-authorised ql-focused-host. Focus/Bimba/clock requests and continuous native advances share one exact host sequence; accepted K8 NativeAudioBinding and RetainedFieldBinding receive the same acknowledged field while O:I supplies only its existing retained stage lease. Explicit source-qualified sample correspondence is required. The adapter creates no numerical owner, renderer, clock, graph, executable authority or AgentSession.",
+   "tests": [
+    "adapters/retained-field/focused-instrument-session.test.mjs",
+    "adapters/retained-field/instrument-session.test.mjs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-core/src/shape.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#1",
+    "#2",
+    "#3"
+   ],
+   "rationale": "QL #204 completes the existing L5.3 Geometry/constellation morphology, with M1 retaining the formal Spanda/QL owner while the canonical Second-Spanda body consumes the already-owned M2 six-by-six and M3 three-site fold body. The module adds shape/compression carriers and projections only; it creates no new M coordinates or competing geometry ontology. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+   "tests": [
+    "crates/ql-core/tests/geometry_constellation_resolution.rs",
+    "crates/ql-mef/tests/second_spanda_geometry.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-core/src/shape_ref.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#1",
+    "#2",
+    "#3"
+   ],
+   "rationale": "QL #222 is the inverse lookup seam for the already-owned L5.3 Geometry shapes. It resolves only exact canonical versioned refs produced by QlShape::shape_ref, rejects aliases and anonymous Other grains, and introduces no new shape, coordinate or semantic authority.",
+   "tests": [
+    "crates/ql-core/src/shape_ref.rs",
+    "crates/ql-core/tests/geometry_constellation_resolution.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/matheme.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#1",
+    "#2",
+    "#3"
+   ],
+   "rationale": "QL #206 restores the already-authored Second-Spanda equation as one executable M1 formal reading of the existing M2 6^2 field and M3 4^3=2^6 body, including the derived decadic Geometry projection. It does not relocate M2/M3 numerical ownership or create a second Spanda source. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+   "tests": [
+    "crates/ql-mef/tests/second_spanda_geometry.rs",
+    "crates/ql-core/tests/geometry_constellation_resolution.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/vak_composition.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0-4",
+    "#0-5"
+   ],
+   "rationale": "QL #207 extends the existing Vāk/C-prime composition owner so a kernel-validated 2/3-fold disclosure may present as the one-fold 0/1 while retaining the actual member body, basis, operator and derivation. Recursive composition still acts on the disclosed constellation and explicit member focus reopens it; no second shape, Wiki or Vāk schema is introduced. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+   "tests": [
+    "crates/ql-mef/tests/compressed_geometry_vak.rs",
+    "crates/ql-mef/tests/vak_composition.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-adapters/src/techne.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "L5 Technē contract (ql.techne/v1, T0/TB0, issues #203/#212): the language binding of the language-neutral schemas in schemas/techne/ over native owners. It composes attributable readings, capability honesty, situated-Agency role disclosure and Action routing receipts; it creates no store, no Wiki/graph/Expression/Scene ontology, no DAY/NOW or Factory records, and never executes a mutation — native owners keep their refs and authority. M′ instrument bindings and the conjugate 3:3 reading follow the owner-ratified dual-reading lock (docs/L5-TECHNE-DUAL-READING-LOCK.md); pin record docs/L5-TECHNE-TB0-CONNECTIVE-BASE.md.",
+   "tests": [
+    "crates/ql-adapters/tests/techne_contract.rs",
+    "fixtures/techne/tb0-connective-base-v1.json"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-adapters/src/techne_wiki.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "Production Technē read model over the live Wiki refraction seam (K/AW expression production, 2026-09-17): composes the registry disclosure provider with the shape-aware Wiki refraction engine into the TechneAdapter. It is not a store — the Wiki owner supplies each subject's projection through WikiSubjectSource and every reference is copied verbatim from the target, the provider or the engine response; a bounded whole is disclosed only from a validated shape binding, never from layout.",
+   "tests": [
+    "crates/ql-adapters/tests/techne_contract.rs",
+    "crates/ql-wiki/tests/wiki_refraction.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/vak_composition.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "JSON command adapter for the VAK composition (K/AW expression production): exposes the CFP thread form, the Z cycle and the CS walk through the composition CLI. A command adapter, not a parser for AIKit's expression language — ql-core types in, JSON disclosures out; no store, no mutation.",
+   "tests": [
+    "crates/ql-cli/tests/vak_composition.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/techne_command.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "JSON command adapter for the production Technē reading (K/AW expression production): exposes the Wiki's WikiTechneAdapter reading plus its co-referenced selections through the `ql techne reading` CLI. A command adapter, not a store or parser — a WikiRefractionTarget in, the validated reading and selections out; no store, no mutation.",
+   "tests": [
+    "crates/ql-cli/tests/techne_reading.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/voice.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3",
+    "#4"
+   ],
+   "rationale": "Dialogical Nara semantic contracts (#201 TA3/TA4 slice): provider-neutral voice-body requirement contract; the kernel's constitutional voice mapping is bound, not invented — provider selection stays outside the semantic contract.",
+   "tests": [
+    "crates/ql-mef/tests/nara_dialogue_conformance.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/dialogue.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3",
+    "#4"
+   ],
+   "rationale": "Dialogical Nara dialogue frame (#201 TA3/TA4 slice): DialogueFrame bound to the kernel's constitutional voice mapping; deixis and dialogue-context carry canonical fixture semantics (fixtures/nara/).",
+   "tests": [
+    "crates/ql-mef/tests/nara_dialogue_conformance.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-wiki/src/shape_binding.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "QL #222 is a transport/projection consumer of the existing ShapeBinding and Wiki refraction contracts. It validates canonical ql-core shape refs and compression metadata, carries that view through Wiki readings, and deliberately leaves ParticipationForm, Geometry semantics, source relations and provider execution in their existing owners.",
+   "tests": [
+    "crates/ql-wiki/tests/shape_binding_refraction.rs",
+    "crates/ql-wiki/tests/wiki_refraction.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/epi_agent.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
+   "tests": [
+    "crates/ql-mef/src/epi_agent.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/epi_agent_command.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "Thin JSON CLI adapter for the existing epi_agent module: constitution/faculty discovery and revision-bound invocation only. It routes each operation to its admitted #0–#5 owner function, creates no second capability registry or source store, and grants no canonical mutation or training authority.",
+   "tests": [
+    "crates/ql-cli/src/epi_agent_command.rs",
+    "crates/ql-mef/src/epi_agent.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/vak_workflow_types.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "VW1 projection of the existing ql.vak-composition.profile/v1 vocabulary (vak_profile.rs, context_frame.rs) into the types-only @epilogos/ql-vak module that Factory's registered domain adapter admits. It renders TypeScript from the Rust enums' serde spellings and validates an authored C-prime; it adds no coordinate, composition owner, scheduler, registry or execution authority.",
+   "tests": [
+    "crates/ql-mef/tests/vak_workflow_types.rs",
+    "crates/ql-mef/src/vak_workflow_types.rs"
+   ],
+   "kind": "structural-index"
+  },
+  {
+   "path": "crates/ql-core/src/shape_presentation.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Read-only numerical presentation of an already-owned ql-core shape. It supplies versioned display coordinates for the sixfold ring and the 6x6 grid and checks local slot constraints. It creates no members, relations, semantic metric, or second geometry owner.",
+   "tests": [
+    "crates/ql-core/src/shape_presentation.rs",
+    "crates/ql-cli/src/shape_command.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/shape_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "JSON and plain-text CLI adapter for the existing ql-core shape presentation. It discloses one exact shape reference and refuses unknown references. It does not persist, mutate, or interpret the presentation as a semantic relation.",
+   "tests": [
+    "crates/ql-cli/src/shape_command.rs",
+    "crates/ql-core/src/shape_presentation.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/nara_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "QL-MEF #201 identity intake transport over the existing M4 identity producer and real Kerykeion/M2 sky provider. It bounds process input/output and timeout, materialises embedded provider resources, and discloses configured or managed provider readiness. It owns no identity calculation policy, native profile persistence, event, receiver dynamics, or full personal Expression. Exact known historical sky descriptors are admitted only for retained occasions with separate source qualification and the current native Sun-to-Sahasrara route; fresh requested source guards remain strict.",
+   "tests": [
+    "crates/ql-mef/src/nara/intake_tests.rs",
+    "providers/nara/test_natal.py",
+    "crates/ql-cli/tests/scene_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/intake.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#4"
+   ],
+   "rationale": "M4.0 intake into the accepted #134 six-office IdentityField: source-qualified birth facts, attributable report/import routes, chart request identity and corrections. It validates and seals source material; Central owns saving/reopening. Natal-only composition is explicitly separate from the complete identity synthesis and existing seven-centre receiver; intake does not claim those runtime joins.",
+   "tests": [
+    "crates/ql-mef/src/nara/intake_tests.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/intake_composition.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#4"
+   ],
+   "rationale": "M4 natal-only reading from actual M2 sky observations and native planet/centre correspondence, using the recovered personal_identity.rs policy at Epi-Logos-C-Experiments daa660cbc1b8c5da83828698665a753852cb0287. It distinguishes L1 EFWA balances from L2-normalised natal quaternion and seven evidence partitions; it creates no full identity quaternion, receiver constitution, centre-local dynamics, world event or sonal coupling law.",
+   "tests": [
+    "crates/ql-mef/src/nara/intake_composition.rs",
+    "crates/ql-mef/src/nara/intake_tests.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/intake_tests.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Executable acceptance of native M4 identity validation, correction lineage, report route boundaries and actual natal envelope binding. Test support asserts production intake behavior; it is not a new coordinate or runtime identity owner.",
+   "tests": [
+    "crates/ql-mef/src/nara/intake_tests.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "providers/nara/natal.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Real Kerykeion natal chart adapter and existing M2 sky projection, preserving exact entered timezone, clock precision, DST fold and source request identity. Unknown time and provider-adjusted polar houses remain explicit unavailable/partial readings; no invented time, coordinates, chart or complete identity composition. Actual chart/sky agreement and correction routes are exercised by the provider tests.",
+   "tests": [
+    "providers/nara/test_natal.py"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "c/src/m2.c",
+   "stratum": "c",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#2"
+   ],
+   "rationale": "Existing M2 catalogue remains the historical descriptor; added graph-derived planet/chakra and decan/ruler queries retain exact pinned relation/property provenance and unresolved contradictory claims. Query coverage does not promote the retained catalogue or invent recipient coefficients.",
+   "tests": [
+    "crates/ql-mef/tests/m2_planet_chakra.rs",
+    "scripts/m2-planet-chakra-probe.c"
+   ],
+   "kind": "computational",
+   "header": "c/include/ql/m2.h"
+  },
+  {
+   "path": "crates/ql-mef/src/m2.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#2"
+   ],
+   "rationale": "Typed M2 access to existing native descriptors and graph-backed source routes. Decan element IDs use the C elemental vocabulary; graph rulers remain separate from retained C rulers. Source records, relation indices and conflict standing are inspectable.",
+   "tests": [
+    "crates/ql-mef/tests/m2_planet_chakra.rs",
+    "crates/ql-mef/tests/m2_engine.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/coordinate_expression.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "rationale": "Deterministic coordinate/profile source binding over the existing native M registry, actual properties/relations, all six M4 branches and existing capability/organ matrices. Content-addressed inheritance supplies no invented material defaults or executable capability admission.",
+   "tests": [
+    "crates/ql-mef/src/coordinate_expression.rs",
+    "crates/ql-cli/tests/nara_dialogue_native.rs"
+   ],
+   "kind": "structural-index"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/identity_encoding.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#4"
+   ],
+   "rationale": "Recovered birth/name encoding retains the original draft coefficients as an explicitly selected versioned policy; no automatic adoption or full-identity synthesis. EFWA, matrix cells and source qualification are calculated from actual entered facts.",
+   "tests": [
+    "crates/ql-mef/src/nara/identity_encoding.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/identity_contributions.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#4"
+   ],
+   "rationale": "Source-qualified contributions from actual report/import payloads: comparable Jungian function strengths, provided Gene Keys lines and Human Design data. Missing or unsupported inputs remain unavailable; type labels never fabricate questionnaire strengths or identity blending.",
+   "tests": [
+    "crates/ql-mef/src/nara/identity_contributions.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/decanic_identity.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#4"
+   ],
+   "rationale": "Actual natal longitudes resolve situated decans and current graph RULED_BY recipients independently from the direct planetary route. Owner ruling QL #254 applies the Cancer-third-decan Moon correction in the admitted 907c source; the earlier Moon/Saturn contradiction remains historical provenance. Reuses source-qualified natal magnitudes and native elements; supplies evidence contributions, not admitted receiver dynamics.",
+   "tests": [
+    "crates/ql-mef/src/nara/decanic_identity.rs",
+    "crates/ql-mef/tests/m2_planet_chakra.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/nara_dialogue_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Bounded native CLI transport for coordinate/context resolution and existing QL delegation/enrichment semantics. Reads the actual native registry; supplied context cannot claim another registry. Generic Expression mutation, sessions, provider execution and persistence stay with their existing owners.",
+   "tests": [
+    "crates/ql-cli/tests/nara_dialogue_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/m3_command.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#3"
+   ],
+   "rationale": "Supported bounded transport over the existing M3State transactional producer; optional explicitly selected activity policy consumes only actual applied receipts. Native host identity/event admission remains outside the pure CLI. No second clock, renderer, or closure authority.",
+   "tests": [
+    "crates/ql-cli/tests/m3_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/m3_activity.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3",
+    "#4"
+   ],
+   "rationale": "Explicit historical-personal-frame-sprite-v1 reception of actual ordered M3 receipts, using recovered typed VakAddress serialization and historical Sprite hash/axis/angle/Hamilton law. Symbolic policy is opt-in; provisional/rejected/read states emit no packet. It neither claims legacy full contemplation closure nor mutates natal identity.",
+   "tests": [
+    "crates/ql-cli/tests/m3_native.rs",
+    "crates/ql-cli/tests/nara_current_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/bimba_content.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "M"
+   ],
+   "rationale": "QL #135/#201/#258 source-led fidelity recovery: complete immutable Bimba properties, aliases, UUIDs and directed qualified relations from the same admitted READ as the current native M registry. Exact hashes, current-source guards, ambiguity refusal and bounded inventory/source continuation preserve original material for Expressions and selected agent context. This source projection defines no numerical law, private personal state, action authority, profile grammar or renderer.",
+   "tests": [
+    "crates/ql-mef/tests/bimba_content.rs",
+    "scripts/tests/test_bimba_content.py"
+   ],
+   "kind": "structural-index"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/domain/oracle_journey.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3",
+    "#4-2"
+   ],
+   "rationale": "QL-MEF #258 EA2 continuing M4.2 oracle journey: one Tarot deck shuffled once under the Quaternal Tarot protocol and one I-Ching change history across a Day/Flow concern. Card identity resolves against the M3 kernel Tarot bridge and hexagrams follow the M3/C line law; journey state is returned for its Central owner to persist, never persisted or scheduled here.",
+   "tests": [
+    "crates/ql-mef/tests/nara_oracle_journey.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/nara/lived_context.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#4"
+   ],
+   "rationale": "QL-MEF #258 EA1 lived Day/Flow context for one Nara concern: selects source-exact, attributed, correction-aware passages from Central document readings and the continuing journey for the dialogue context's occasion and disclosed refs. It reads host-supplied material only and never writes to the person's source or takes Central ownership.",
+   "tests": [
+    "crates/ql-mef/tests/nara_lived_context.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "providers/sky/kerykeion_snapshot.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Actual Kerykeion/Swiss ten-body dated-sky adapter and source/digest/currentness admission. The current source emits solar-parent metadata; exact known historical e6d/82cd/7df descriptors can be retained unchanged with a separate nonfresh qualification. Native PLANETARY_RESONANCE owns Sun-to-Sahasrara reception; this transport declaration invents no planet, centre, tuning, numerical readiness or personal-current authority.",
+   "tests": [
+    "providers/sky/test_kerykeion_snapshot.py",
+    "crates/ql-cli/tests/scene_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/continuous/stage.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#1",
+    "#2",
+    "#3"
+   ],
+   "rationale": "The Ta-Onta procedural stage over the live coupled scene (QL-MEF #296): versioned procedures compile typed changes onto the event's own M3 command batch (#3), the declared material policy and the continuous display clocks, and generated passages ride the admitted M1 form advance (#1) one determinant per scene, with the M2 event identity generation moving together as the coupled composer already rules (#2). Contribution ownership is by procedure/revision/slot; evaluation is deterministic in the event basis and creates no second event universe, clock, numerical field or authority.",
+   "tests": [
+    "crates/ql-mef/src/continuous/stage.rs",
+    "crates/ql-mef/src/continuous/host.rs",
+    "crates/ql-mef/tests/ta_onta_stage.rs"
+   ],
+   "kind": "computational"
+  }
+ ]
 }
