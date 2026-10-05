@@ -44,7 +44,9 @@ The Aletheia team (`agent/aletheia` and its specialists Anansi, Janus, Moirai, M
 | CFP5 nested | Claude Code subagents cannot spawn subagents: a member returns a sub-plan and the lead dispatches it | Factory `nesting` |
 | Z | compose → perform → record → rehear → recompose under an authorised undertaking | Factory commission; the formal Z stages through `ql vak compose` (`z-begin`, `z-advance`) |
 
-A member that must run as its own process (long, isolated, other model): `aikit task spawn <name> --agent claude --worktree`, then `aikit task list` / `aikit task close`. A task for another Position (another Anima_i, an Aletheia_i, a guardian): `aikit gateway send` to its `central:position:…` ref; `aikit gateway delegate` when it must become custody-bearing work.
+A member that must run as its own process (long-running or another model): `aikit task spawn <name> --agent claude --shared`, then `aikit task list` / `aikit task close`. Before development, join the existing registered seat through that host's native Workcell policy; a separate process does not require a separate checkout. The current Central Mac policy requires the persistent env-1/2/3 seats and refuses per-task worktrees. On a host whose policy permits isolation, use `--worktree` only for an authorised independent development line with an accountable retirement path; the available option does not grant that authority.
+
+A task for another Position (another Anima_i, an Aletheia_i, a guardian): `aikit gateway send` to its `central:position:…` ref; `aikit gateway delegate` when it must become custody-bearing work.
 
 ## Factory workflow units
 
