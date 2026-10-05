@@ -297,6 +297,7 @@ impl FieldHost {
                 | HostOperation::SetAxis { .. }
                 | HostOperation::Replace { .. }
                 | HostOperation::SetDamping { .. }
+                | HostOperation::Strike { .. }
                 | HostOperation::M1Advance { .. }
                 | HostOperation::ReplaceEvent { .. }
                 | HostOperation::Influence {}
