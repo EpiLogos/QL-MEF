@@ -7,6 +7,7 @@ pub mod host;
 pub mod personal;
 mod receipt;
 pub mod scene_field;
+pub mod stage;
 
 use receipt::ReceiptGuard;
 
