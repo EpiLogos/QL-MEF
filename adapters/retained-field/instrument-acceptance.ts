@@ -53,7 +53,7 @@ async function main() {
   const initialTargets = targetArray.slice();
   const context = new AudioContext({ sampleRate: ready.field.sample_rate });
   await context.suspend();
-  const calls: any[] = [], applications: any[] = [];
+  const calls: any[] = [], applications: any[] = [], appliedFrames: any[] = [];
   let endpointClosed = false;
   const transport = {
     async request(request: any) {
@@ -72,6 +72,7 @@ async function main() {
       validate(frame: any) { return binding.validate(frame); },
       apply(frame: any) {
         const result = binding.apply(frame);
+        appliedFrames.push(frame);
         applications.push({ generation: frame.generation, samples_elapsed: frame.samples_elapsed,
           device_seconds: context.currentTime, observed_at_ms: performance.now() });
         return result;
@@ -226,7 +227,7 @@ async function main() {
   // responses share one native commit like every other admitted frame.
   const modeRef = inspected.current.m2.resonator.modes[0].mode_ref;
   const strikeGenerationBefore = session.reading.acknowledged.generation;
-  const targetsBeforeStrike = JSON.stringify(binding.lastReceipt.targets);
+  const targetsBeforeStrike = JSON.stringify(appliedFrames.at(-1)!.targets);
   await session.strike([{ mode_ref: modeRef, amplitude: [0.5, -0.25] }]);
   const strikeGenerationAfter = session.reading.acknowledged.generation;
   check(BigInt(strikeGenerationAfter) === BigInt(strikeGenerationBefore) + 1n,
@@ -239,7 +240,7 @@ async function main() {
     strikePresented = BigInt(binding.lastReceipt.generation) === BigInt(strikeGenerationAfter);
   }
   check(strikePresented, 'the struck body never presented');
-  check(JSON.stringify(binding.lastReceipt.targets) !== targetsBeforeStrike,
+  check(JSON.stringify(appliedFrames.at(-1)!.targets) !== targetsBeforeStrike,
     'the played strike left the visible body unmoved');
   await session.recover('controlled-played-strike-reconcile');
   check(session.reading.queued_blocks === 0, 'played strike left presentation backlog');
