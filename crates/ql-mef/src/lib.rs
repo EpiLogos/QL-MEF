@@ -18,6 +18,7 @@ pub mod focused_instrument;
 mod focused_instrument_aw1;
 pub mod focused_instrument_aw2;
 mod identity;
+mod janko;
 pub mod l5_projection;
 mod lens;
 pub mod m1;
@@ -73,6 +74,9 @@ pub use context_frame_target::{
 pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
+pub use janko::{
+    COLUMN_PERIOD, JankoKey, JankoSurface, JankoSurfaceProjection, ROWS, TOUCH_POINTS,
+};
 pub use lens::{LensFace, LensId, LensRef, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare};
 pub use m_map::{
     ImplementationBinding, MCoordinate, MFace, MMapIndex, MPathSeparator, MRelation,
