@@ -514,6 +514,30 @@ pub fn kernel_basis() -> Value {
             include_str!("registry/becoming.rs"),
         ),
         ("ql-mef/epi-agent", include_str!("epi_agent.rs")),
+        (
+            "epi-capability/m0",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m0.json"),
+        ),
+        (
+            "epi-capability/m1",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m1.json"),
+        ),
+        (
+            "epi-capability/m2",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m2.json"),
+        ),
+        (
+            "epi-capability/m3",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m3.json"),
+        ),
+        (
+            "epi-capability/m4",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m4.json"),
+        ),
+        (
+            "epi-capability/m5",
+            include_str!("../../../docs/integrations/epi-logos/epi-m-capability-field-m5.json"),
+        ),
         ("ql-mef/coordinate", include_str!("coordinate.rs")),
         ("ql-mef/context-frame", include_str!("context_frame.rs")),
         ("ql-mef/music", include_str!("music.rs")),
@@ -1375,12 +1399,19 @@ fn project_fields(
             SemanticHead::Faculty | SemanticHead::Operation => {
                 let mut labels = Vec::new();
                 for &(position,name) in crate::epi_agent::native_faculties() {
+                    let field = crate::epi_agent::native_capability_field(position)?;
+                    let instrument = field["m_prime"].as_str().ok_or("native capability has no instrument description")?;
+                    let concerns = field["capabilities"].as_array().ok_or("native capability has no concerns")?
+                        .iter().map(|capability| capability["for_what"].as_str().ok_or("native capability concern has no description"))
+                        .collect::<Result<Vec<_>,_>>()?.join("; ");
+                    let operations = crate::epi_agent::native_operations(position)?;
+                    let description = format!("{name}. {instrument}. {concerns}. Callable operations: {}", operations.join(", "));
                     if kind == SemanticHead::Faculty {
-                        labels.push(json!({"id":format!("#{position}"),"description":name,"owner_ref":"ql:epi-agent:constitution:v1","owner_revision":kernel["digest"]}));
+                        labels.push(json!({"id":format!("#{position}"),"description":description,"owner_ref":format!("ql:epi-agent:capability-field:M{position}"),"owner_revision":kernel["digest"]}));
                     } else {
                         if faculty.is_some_and(|selected|selected != position) { continue; }
-                        for reference in crate::epi_agent::native_operations(position)? {
-                            labels.push(json!({"id":reference,"description":format!("{name}: {reference}"),"owner_ref":"ql:epi-agent:native-operations:v1","owner_revision":kernel["digest"]}));
+                        for reference in operations {
+                            labels.push(json!({"id":reference,"description":format!("{reference}. {description}"),"owner_ref":"ql:epi-agent:native-operations:v1","owner_revision":kernel["digest"]}));
                         }
                     }
                 }

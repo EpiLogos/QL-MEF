@@ -1,0 +1,675 @@
+{
+  "schema": "ql.reviewed-semantic-specimens/v1",
+  "reviewer_ref": "agent:/root/qd0_inclusion_review",
+  "source_issue": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "standing": "Independently source-reviewed controlled semantic recognition and operation-intent mappings. Context Frame positives test recognition of native names/definitions, not actual external structural mapping/probe. Operation positives do not grant authority, supply typed operation inputs or prove invocation. Original frozen nine-case suite unchanged; this additional test suite is excluded from training.",
+  "cases": [
+    {
+      "id": "question-ground",
+      "family": "semantic-grammar-question-ground",
+      "split": "test",
+      "text": "Examine the presuppositions of this concern: why it is asked, what is meant, how it could operate, whose pattern it is, its situation, and why the question itself takes this form.",
+      "expected_fields": {
+        "lens": [
+          "L0"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L0"
+        }
+      ]
+    },
+    {
+      "id": "archetypal-number",
+      "family": "semantic-grammar-archetypal-number",
+      "split": "test",
+      "text": "Read the movement from unity through polarity and triadic relation into quaternity, quintessence and completion as a sequence of number archetypes.",
+      "expected_fields": {
+        "lens": [
+          "L0'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L0'"
+        }
+      ]
+    },
+    {
+      "id": "causal-agency",
+      "family": "semantic-grammar-causal-agency",
+      "split": "test",
+      "text": "For this change, distinguish its substance, the agent that brings it about, its organising form, its purpose, and the will through which it occurs.",
+      "expected_fields": {
+        "lens": [
+          "L1"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L1"
+        }
+      ]
+    },
+    {
+      "id": "psychic-function",
+      "family": "semantic-grammar-psychic-function",
+      "split": "test",
+      "text": "Distinguish immediate sensation, evaluation of worth, analysis by thinking and perception of possibilities, with inward and outward psychic orientation.",
+      "expected_fields": {
+        "lens": [
+          "L1'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L1'"
+        }
+      ]
+    },
+    {
+      "id": "logical-positions",
+      "family": "semantic-grammar-logical-positions",
+      "split": "test",
+      "text": "Work through affirmation, negation, their conjunction, neither alternative, and what cannot be asserted, keeping contradictory alternatives live.",
+      "expected_fields": {
+        "lens": [
+          "L2"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L2"
+        }
+      ]
+    },
+    {
+      "id": "elemental-transformation",
+      "family": "semantic-grammar-elemental-transformation",
+      "split": "test",
+      "text": "Read the transformation through aether, grounding earth, flowing water, moving air, purifying fire and the crystallised salt that remains.",
+      "expected_fields": {
+        "lens": [
+          "L2'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L2'"
+        }
+      ]
+    },
+    {
+      "id": "occasion-process",
+      "family": "semantic-grammar-occasion-process",
+      "split": "test",
+      "text": "Follow the creative urge into an actual occasion, the ingression of potentials, their integration into a community of prehensions, and the occasion reaching satisfaction and perishing.",
+      "expected_fields": {
+        "lens": [
+          "L3"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L3"
+        }
+      ]
+    },
+    {
+      "id": "historical-cycle",
+      "family": "semantic-grammar-historical-cycle",
+      "split": "test",
+      "text": "Follow spirit through emergence, maturation, harvest, dormancy and renewed life as the development of a historical cycle.",
+      "expected_fields": {
+        "lens": [
+          "L3'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L3'"
+        }
+      ]
+    },
+    {
+      "id": "lived-being",
+      "family": "semantic-grammar-lived-being",
+      "split": "test",
+      "text": "Attend to being, the givenness into which one is thrown, being present, temporality, caring involvement in the world and letting that world be.",
+      "expected_fields": {
+        "lens": [
+          "L4"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L4"
+        }
+      ]
+    },
+    {
+      "id": "inquiry-evidence",
+      "family": "semantic-grammar-inquiry-evidence",
+      "split": "test",
+      "text": "Begin with a research question, gather traces, identify challenges, recognise patterns, explore the source and crystallise an insight.",
+      "expected_fields": {
+        "lens": [
+          "L4'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L4'"
+        }
+      ]
+    },
+    {
+      "id": "speech-manifestation",
+      "family": "semantic-grammar-speech-manifestation",
+      "split": "test",
+      "text": "Trace speech from beyond articulation through pure consciousness, unified seeing and mental structuring into spoken manifestation and the measuring power of letters.",
+      "expected_fields": {
+        "lens": [
+          "L5"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L5"
+        }
+      ]
+    },
+    {
+      "id": "logos-unveiling",
+      "family": "semantic-grammar-logos-unveiling",
+      "split": "test",
+      "text": "Read the Word as beginning, revelation, creative power, wisdom, embodied presence and resurrection beyond words.",
+      "expected_fields": {
+        "lens": [
+          "L5'"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L5'"
+        }
+      ]
+    },
+    {
+      "id": "undifferentiated-ground",
+      "family": "semantic-grammar-undifferentiated-ground",
+      "split": "test",
+      "text": "The requested reading is of undifferentiated ground before any distinction has acquired standing.",
+      "expected_fields": {
+        "context-frame": [
+          "CF1"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF1"
+        }
+      ]
+    },
+    {
+      "id": "standing-identity",
+      "family": "semantic-grammar-standing-identity",
+      "split": "test",
+      "text": "The concern is the non-dual anchor by which a standing identity is held.",
+      "expected_fields": {
+        "context-frame": [
+          "CF2"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF2"
+        }
+      ]
+    },
+    {
+      "id": "triadic-circulation",
+      "family": "semantic-grammar-triadic-circulation",
+      "split": "test",
+      "text": "Interpret the circulation between dual and non-dual through a triadic relation.",
+      "expected_fields": {
+        "context-frame": [
+          "CF3"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF3"
+        }
+      ]
+    },
+    {
+      "id": "prehensive-closure",
+      "family": "semantic-grammar-prehensive-closure",
+      "split": "test",
+      "text": "Read the trinitarian relation as attaining a tetradic prehensive closure.",
+      "expected_fields": {
+        "context-frame": [
+          "CF4"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF4"
+        }
+      ]
+    },
+    {
+      "id": "fractal-execution",
+      "family": "semantic-grammar-fractal-execution",
+      "split": "test",
+      "text": "The passage calls for a fractal doubling of executive activity.",
+      "expected_fields": {
+        "context-frame": [
+          "CF5"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF5"
+        }
+      ]
+    },
+    {
+      "id": "half-bridge",
+      "family": "semantic-grammar-half-bridge",
+      "split": "test",
+      "text": "The passage concerns the half-position bridge into the next ground.",
+      "expected_fields": {
+        "context-frame": [
+          "CF6"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF6"
+        }
+      ]
+    },
+    {
+      "id": "cyclic-reopening",
+      "family": "semantic-grammar-cyclic-reopening",
+      "split": "test",
+      "text": "Read total synthesis as a Möbius cyclic closure that reopens the ground.",
+      "expected_fields": {
+        "context-frame": [
+          "CF7"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "CF7"
+        }
+      ]
+    },
+    {
+      "id": "source-row",
+      "family": "semantic-grammar-source-row",
+      "split": "test",
+      "text": "At the supplied source-language address, read the canonical formulation and its declared graph relations. Preserve the source revision and any absence.",
+      "expected_fields": {
+        "operation": [
+          "anuttara.read"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "anuttara.read"
+        }
+      ]
+    },
+    {
+      "id": "numerical-field",
+      "family": "semantic-grammar-numerical-field",
+      "split": "test",
+      "text": "Execute the supplied numerical-relational engine request at its Ananda coordinate and return the selected field or cell reading. Do not treat the arithmetic as semantic verification.",
+      "expected_fields": {
+        "operation": [
+          "ananda.m1-2"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "ananda.m1-2"
+        }
+      ]
+    },
+    {
+      "id": "distance-homology",
+      "family": "semantic-grammar-distance-homology",
+      "split": "test",
+      "text": "For the supplied finite pairwise-distance matrix, build the scale filtration and report the birth and death of connected components and loops with binary coefficients.",
+      "expected_fields": {
+        "operation": [
+          "tda.vietoris-rips"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "tda.vietoris-rips"
+        }
+      ]
+    },
+    {
+      "id": "adjacency",
+      "family": "semantic-grammar-adjacency",
+      "split": "test",
+      "text": "For this existing Bimba node, return its exact adjacent declared relations, their directions and truncation, without inventing further connections.",
+      "expected_fields": {
+        "operation": [
+          "bimba.neighborhood"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "bimba.neighborhood"
+        }
+      ]
+    },
+    {
+      "id": "representation-custody",
+      "family": "semantic-grammar-representation-custody",
+      "split": "test",
+      "text": "Bind the supplied subject and formal state to this representation, retaining source, asset, rendering and operation revisions and temporal basis. Record the binding without inferring semantic equivalence.",
+      "expected_fields": {
+        "operation": [
+          "representation.bind"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "representation.bind"
+        }
+      ]
+    },
+    {
+      "id": "activity-envelope",
+      "family": "semantic-grammar-activity-envelope",
+      "split": "test",
+      "text": "Check that this supplied personal Activity envelope has valid occurrence, source standing and privacy metadata; return its validation summary.",
+      "expected_fields": {
+        "operation": [
+          "nara.activity.validate"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.activity.validate"
+        }
+      ]
+    },
+    {
+      "id": "element-contributions",
+      "family": "semantic-grammar-element-contributions",
+      "split": "test",
+      "text": "Given caller-supplied fire, water, earth and air contribution strengths with consent and a source revision, form the elemental map while keeping missing contributions unknown.",
+      "expected_fields": {
+        "operation": [
+          "nara.elemental-map"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.elemental-map"
+        }
+      ]
+    },
+    {
+      "id": "personal-arithmetic",
+      "family": "semantic-grammar-personal-arithmetic",
+      "split": "test",
+      "text": "Receive the caller-supplied personal constitution, coupled world event and personal event into the controlled identity, transit and activity arithmetic, without asserting canonical physiology.",
+      "expected_fields": {
+        "operation": [
+          "nara.personal-receive"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.personal-receive"
+        }
+      ]
+    },
+    {
+      "id": "open-journey",
+      "family": "semantic-grammar-open-journey",
+      "split": "test",
+      "text": "Open a new continuing single-deck journey for this person and concern using the supplied consent, source basis, Day and fresh shuffle entropy.",
+      "expected_fields": {
+        "operation": [
+          "nara.journey.open"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.journey.open"
+        }
+      ]
+    },
+    {
+      "id": "apply-journey-act",
+      "family": "semantic-grammar-apply-journey-act",
+      "split": "test",
+      "text": "Apply the supplied new act to the already-open journey and return the updated journey and reading for revision-checked persistence.",
+      "expected_fields": {
+        "operation": [
+          "nara.journey.apply"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.journey.apply"
+        }
+      ]
+    },
+    {
+      "id": "read-journey",
+      "family": "semantic-grammar-read-journey",
+      "split": "test",
+      "text": "Read the current placements, card names and interpretations from this existing journey, optionally restricted to the supplied time window.",
+      "expected_fields": {
+        "operation": [
+          "nara.journey.read"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.journey.read"
+        }
+      ]
+    },
+    {
+      "id": "compose-lived-context",
+      "family": "semantic-grammar-compose-lived-context",
+      "split": "test",
+      "text": "Select a bounded set of consented source passages for this person and continuing concern using current Day, journey relations, corrections and live card evidence.",
+      "expected_fields": {
+        "operation": [
+          "nara.lived-context.compose"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "nara.lived-context.compose"
+        }
+      ]
+    },
+    {
+      "id": "return-cycle",
+      "family": "semantic-grammar-return-cycle",
+      "split": "test",
+      "text": "Record the completed inquiry cycle, original inquiry and concern, their changed forms, retained source and evidence references, and the separately supplied fresh-practice uptake reference.",
+      "expected_fields": {
+        "operation": [
+          "logos.return"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "logos.return"
+        }
+      ]
+    },
+    {
+      "id": "two-readings",
+      "family": "semantic-grammar-two-readings",
+      "split": "test",
+      "text": "Keep two separate readings: distinguish material, efficient, formal and final causes; also attend to thrownness, temporality, care and letting-be.",
+      "expected_fields": {
+        "lens": [
+          "L1",
+          "L4"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "L1/L4"
+        }
+      ]
+    },
+    {
+      "id": "list-is-data",
+      "family": "semantic-grammar-list-is-data",
+      "split": "test",
+      "text": "List the measured timestamps in ascending order and reproduce the recorded readings. This is only a raw data enumeration; no interpretive lens has been chosen.",
+      "expected_fields": {
+        "lens": []
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "data layer is pre-lens"
+        }
+      ]
+    },
+    {
+      "id": "missing-lens",
+      "family": "semantic-grammar-missing-lens",
+      "split": "test",
+      "text": "Apply that reading to the thing we mentioned earlier. Neither the thing nor the intended reading is supplied here.",
+      "expected_fields": {
+        "lens": []
+      },
+      "owner_basis": [
+        {
+          "path": "docs/MEF-LENS-REGISTER.md",
+          "capability_ref": "lens machinery requirement"
+        }
+      ]
+    },
+    {
+      "id": "missing-context",
+      "family": "semantic-grammar-missing-context",
+      "split": "test",
+      "text": "Which frame applies to this unspecified case?",
+      "expected_fields": {
+        "context-frame": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "capability_ref": "insufficient evidence"
+        }
+      ]
+    },
+    {
+      "id": "unmapped-product",
+      "family": "semantic-grammar-unmapped-product",
+      "split": "test",
+      "text": "Our app has a dashboard and a settings page. Assign a QL Context Frame from these product names alone.",
+      "expected_fields": {
+        "context-frame": []
+      },
+      "owner_basis": [
+        {
+          "path": "docs/CONTEXT-FRAME-EXTERNAL-TARGET-READING.md",
+          "capability_ref": "external mapping requirement"
+        }
+      ]
+    },
+    {
+      "id": "no-semantic-verifier",
+      "family": "semantic-grammar-no-semantic-verifier",
+      "split": "test",
+      "text": "Use the numerical Ananda engine to prove that my interpretation of this passage is semantically true.",
+      "expected_fields": {
+        "operation": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "ananda_m1_2 semantic_verification refused"
+        }
+      ]
+    },
+    {
+      "id": "no-retrieval-by-binding",
+      "family": "semantic-grammar-no-retrieval-by-binding",
+      "split": "test",
+      "text": "Find images that mean the same thing as this passage by invoking the representation binding operation.",
+      "expected_fields": {
+        "operation": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "representation binding does not retrieve"
+        }
+      ]
+    },
+    {
+      "id": "ordinary-number",
+      "family": "semantic-grammar-ordinary-number",
+      "split": "test",
+      "text": "What is the result of adding seven and five? Return just the number.",
+      "expected_fields": {
+        "operation": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "bounded current operation repertoire"
+        }
+      ]
+    }
+  ]
+}

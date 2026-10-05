@@ -1,0 +1,179 @@
+{
+  "schema": "ql.reviewed-semantic-specimens/v1",
+  "reviewer_ref": "agent:/root/qd0_inclusion_review",
+  "source_issue": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "standing": "independently reviewed controlled semantic mappings; relevance does not establish physical execution or callable operation availability",
+  "cases": [
+    {
+      "id": "source-presence",
+      "family": "reviewed-source-presence",
+      "split": "test",
+      "text": "Read the original record at this address and report what canonical text is actually present, including absence.",
+      "expected_fields": {
+        "faculty": [
+          "#0"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m0.json",
+          "capability_ref": "M0P-LANGUAGE"
+        }
+      ]
+    },
+    {
+      "id": "distance-connectivity",
+      "family": "reviewed-distance-connectivity",
+      "split": "test",
+      "text": "Using these pairwise distance measurements, determine when separate clusters join as the allowed separation increases.",
+      "expected_fields": {
+        "faculty": [
+          "#1"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m1.json",
+          "capability_ref": "M1P-TOPOLOGY"
+        }
+      ]
+    },
+    {
+      "id": "correspondential-medium",
+      "family": "reviewed-correspondential-medium",
+      "split": "test",
+      "text": "Given the source profile and current time, determine the element, bodily zone and light/shadow correspondences for its planetary segment. Keep the correspondences attributable and revisable.",
+      "expected_fields": {
+        "faculty": [
+          "#2"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m2.json",
+          "capability_ref": "M2P-ELEMENTAL-MEDIUM"
+        },
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m2.json",
+          "capability_ref": "M2P-DECANIC-FACE"
+        }
+      ]
+    },
+    {
+      "id": "shared-clock",
+      "family": "reviewed-shared-clock",
+      "split": "test",
+      "text": "The astronomy view and symbolic display show different now values. Make them use one Earth-relative reference with the same phase and trace its source.",
+      "expected_fields": {
+        "faculty": [
+          "#3"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m3.json",
+          "capability_ref": "M3P-CLOCK"
+        },
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m3.json",
+          "capability_ref": "M3P-WORLD-CLOCK"
+        }
+      ]
+    },
+    {
+      "id": "private-episode",
+      "family": "reviewed-private-episode",
+      "split": "test",
+      "text": "Retrieve yesterday’s private account for its authorised owner. Preserve its timestamp and privacy class, and distinguish memory from inference.",
+      "expected_fields": {
+        "faculty": [
+          "#4"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m4.json",
+          "capability_ref": "M4P-EPISODIC"
+        }
+      ]
+    },
+    {
+      "id": "repair-review",
+      "family": "reviewed-repair-review",
+      "split": "test",
+      "text": "The run produced a proposed repair. Compare its retained tests with the acceptance criteria and prepare a review handoff, leaving the change a candidate until the owner reviews it.",
+      "expected_fields": {
+        "faculty": [
+          "#5"
+        ]
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m5.json",
+          "capability_ref": "M5P-BACKEND-STUDIO"
+        },
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m5.json",
+          "capability_ref": "M5P-CONTROL-ROOM"
+        }
+      ]
+    },
+    {
+      "id": "ambiguous-outcome",
+      "family": "reviewed-ambiguous-outcome",
+      "split": "test",
+      "text": "Either read the original record exactly or explain its meaning for a learner. The desired outcome has not been chosen.",
+      "expected_fields": {
+        "faculty": []
+      },
+      "owner_basis": [
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m0.json",
+          "capability_ref": "M0P-LANGUAGE"
+        },
+        {
+          "path": "docs/integrations/epi-logos/epi-m-capability-field-m5.json",
+          "capability_ref": "M5P-LIBRARY"
+        }
+      ],
+      "reviewed_alternatives": {
+        "faculty": [
+          "#0",
+          "#5"
+        ]
+      },
+      "scope": "Current faculty cardinality is one with abstention. These alternatives are retained outside the acting text; this case does not measure faculty multi-label preservation."
+    },
+    {
+      "id": "ordinary-edit",
+      "family": "reviewed-ordinary-edit",
+      "split": "test",
+      "text": "In We we met at noon, remove the repeated word and return just the corrected sentence.",
+      "expected_fields": {
+        "operation": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/epi_agent.rs",
+          "capability_ref": "native operation repertoire"
+        }
+      ]
+    },
+    {
+      "id": "missing-antecedent",
+      "family": "reviewed-missing-antecedent",
+      "split": "test",
+      "text": "Do that thing with it.",
+      "expected_fields": {
+        "faculty": [],
+        "operation": []
+      },
+      "owner_basis": [
+        {
+          "path": "crates/ql-mef/src/agent_event.rs",
+          "capability_ref": "insufficient semantic evidence"
+        }
+      ]
+    }
+  ]
+}

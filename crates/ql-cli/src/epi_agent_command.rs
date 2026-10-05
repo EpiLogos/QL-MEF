@@ -39,9 +39,13 @@ pub fn command(args: &[String], json: bool) -> R<String> {
 }
 
 fn read_request(path: &str) -> R<Value> {
-    let file = std::fs::File::open(path).map_err(error)?;
+    let source: Box<dyn Read> = if path == "-" {
+        Box::new(std::io::stdin())
+    } else {
+        Box::new(std::fs::File::open(path).map_err(error)?)
+    };
     let mut data = Vec::new();
-    file.take(16 * 1024 * 1024 + 1)
+    source.take(16 * 1024 * 1024 + 1)
         .read_to_end(&mut data)
         .map_err(error)?;
     if data.len() > 16 * 1024 * 1024 {

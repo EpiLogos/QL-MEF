@@ -327,6 +327,30 @@ fn wrong_context_frame_cannot_overrule_supplied_structure() {
 }
 
 #[test]
+fn semantic_faculty_descriptions_come_from_current_owner_capabilities() {
+    let result = project(&[], &[SemanticHead::Faculty]);
+    let labels = result.frame["unresolved"][0]["labels"].as_array().unwrap();
+    for &(position, name) in epi_agent::native_faculties() {
+        let field = epi_agent::native_capability_field(position).unwrap();
+        let label = &labels[usize::from(position)];
+        let description = label["description"].as_str().unwrap();
+        assert!(description.contains(name));
+        assert!(description.contains(field["m_prime"].as_str().unwrap()));
+        for concern in field["capabilities"].as_array().unwrap() {
+            assert!(description.contains(concern["for_what"].as_str().unwrap()));
+        }
+        for operation in epi_agent::native_operations(position).unwrap() {
+            assert!(description.contains(operation));
+        }
+        assert_eq!(
+            label["owner_revision"],
+            result.frame["kernel_basis"]["digest"]
+        );
+    }
+    assert!(epi_agent::native_capability_field(6).is_err());
+}
+
+#[test]
 fn callable_operation_labels_follow_native_faculty_membership() {
     let result = project(&[("faculty", json!("#3"))], &[SemanticHead::Operation]);
     assert_eq!(

@@ -1,0 +1,41 @@
+[package]
+name = "ql-native-agent"
+version = "0.3.3"
+description = "Native QL event, decision, harmonic and operation instruments."
+homepage = "https://github.com/EpiLogos/QL-MEF/issues/291"
+
+[[package.native_tools]]
+name = "ql_project_event"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"
+
+[[package.native_tools]]
+name = "ql_decision_frame"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"
+
+[[package.native_tools]]
+name = "ql_harmonic_read"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"
+
+[[package.native_tools]]
+name = "ql_validate_determination"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"
+
+[[package.native_tools]]
+name = "ql_decide"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"
+
+[[package.native_tools]]
+name = "ql_invoke"
+target = "pi"
+member_id = "skill/ql-native-owner/ql-agent"
+module = "extensions/ql-agent.ts"

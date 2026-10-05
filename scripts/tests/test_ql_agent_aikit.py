@@ -6,6 +6,7 @@ disabled-provider cases execute the real adapter with no available executable.
 import copy
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -54,6 +55,23 @@ class AiKitTranslationChecks(unittest.TestCase):
         with self.assertRaisesRegex(c.ContractError, "allow-list"):
             a.translate_request(self.projection, "input:model")
 
+    def test_compact_semantic_input_is_identical_across_body_bindings(self):
+        prime = copy.deepcopy(self.projection)
+        pi = copy.deepcopy(self.projection)
+        pi["event"]["bindings"] = {"body_ref": "body:pi", "session_ref": "session:pi",
+                                    "native_event_refs": ["pi:event:other"]}
+        compact, bindings = a.translate_request(prime, "input:model", "compact")
+        other, other_bindings = a.translate_request(pi, "input:model", "compact")
+        self.assertEqual(compact, other)
+        self.assertEqual(bindings, other_bindings)
+        self.assertNotIn("bindings", compact["state"]["event"])
+        self.assertIn("bindings", prime["event"])
+        self.assertEqual(compact["state"]["constraints"], prime["frame"]["constraints"])
+        self.assertIn(prime["frame"]["unresolved"][0]["ambiguity_policy"],
+                      next(iter(compact["questions"].values()))["instructions"])
+        full, _ = a.translate_request(prime, "input:model")
+        self.assertEqual(full["state"]["event"], prime["event"])
+
     def test_explicit_basis_is_retained_and_not_relabelled(self):
         answer = self.answer(self.receipt({"L2": .8}))
         self.assertEqual(answer["event_basis_digest"], self.projection["frame"]["event_basis_digest"])
@@ -70,6 +88,90 @@ class AiKitTranslationChecks(unittest.TestCase):
 
     def test_insufficient_scores_abstain_instead_of_selecting_largest(self):
         self.assertEqual(self.answer(self.receipt({}))['proposals'][0]['label_ids'], [])
+
+    def faculty_choice(self):
+        executable = os.environ.get("QL_AGENT_BIN") or shutil.which("ql-agent")
+        if not executable:
+            self.skipTest("native QL executable is required for the faculty Choice comparison")
+        request = {"event": self.projection["event"], "requested_heads": ["faculty"]}
+        result = subprocess.run([executable, "agent-event", "project", "-", "--json"],
+                                input=json.dumps(request), capture_output=True, text=True, timeout=10, check=True)
+        native = json.loads(result.stdout)
+        projection = {key: native[key] for key in ("schema", "event", "frame", "decision_head_ids")}
+        translated, bindings = a.translate_request(projection, "input:controlled-codec", "choice")
+        return projection, translated, bindings
+
+    def test_native_single_cardinality_head_uses_one_choice_with_owner_descriptions(self):
+        projection, translated, bindings = self.faculty_choice()
+        self.assertEqual(len(translated["questions"]), 1)
+        question = next(iter(translated["questions"].values()))
+        self.assertEqual(question["type"], "choice")
+        owner = projection["frame"]["unresolved"][0]
+        self.assertEqual({key: value for key, value in question["criteria"].items() if key != a.ABSTAIN},
+                         {label["id"]: label["description"] for label in owner["labels"]})
+        # Multi-label lens readings retain Noul questions and ambiguity.
+        lens, lens_bindings = a.translate_request(self.projection, "input:controlled-codec", "choice")
+        self.assertTrue(all(q["type"] == "noul" for q in lens["questions"].values()))
+        self.assertEqual(lens_bindings, self.bindings)
+
+    def test_semantic_choice_retains_native_meanings_while_custody_stays_in_original_frame(self):
+        original = copy.deepcopy(self.projection)
+        request, _ = a.translate_request(self.projection,"input:model","semantic-choice")
+        self.assertEqual(request["state"]["material"],original["event"]["material"]["text"])
+        self.assertEqual(request["state"]["constraints"],original["frame"]["constraints"])
+        self.assertNotIn("kernel_basis",request["state"])
+        self.assertNotIn("source_basis",request["state"])
+        self.assertEqual(self.projection,original)
+
+    def test_packed_native_faculty_operation_field_preserves_every_legal_tuple(self):
+        executable = os.environ.get("QL_AGENT_BIN") or shutil.which("ql-agent")
+        if not executable:
+            self.skipTest("installed native QL required for constraint packing")
+        result = subprocess.run([executable,"agent-event","project","-","--json"],
+            input=json.dumps({"event":self.projection["event"],"requested_heads":["faculty","operation"]}),
+            capture_output=True,text=True,timeout=10,check=True)
+        native = json.loads(result.stdout)
+        projection = {key:native[key] for key in ("schema","event","frame","decision_head_ids")}
+        original = copy.deepcopy(projection)
+        full,bindings = a.translate_request(projection,"input:model","semantic-choice")
+        packed,packed_bindings = a.translate_request(projection,"input:model","semantic-packed")
+        self.assertEqual(bindings,packed_bindings)
+        self.assertEqual(full["questions"],packed["questions"])
+        restored = []
+        for constraint in packed["state"]["constraints"]:
+            if "selection_columns" not in constraint:
+                restored.append(constraint)
+                continue
+            columns = constraint["selection_columns"]
+            restored.append({**{key:value for key,value in constraint.items()
+                                if key not in ("selection_columns","allowed_label_sets")},
+                "allowed_tuples":[[{**column,"label_ids":labels} for column,labels in zip(columns,row,strict=True)]
+                                  for row in constraint["allowed_label_sets"]]})
+        self.assertEqual(restored,projection["frame"]["constraints"])
+        self.assertLess(len(c.canonical(packed["state"]["constraints"])),
+                        len(c.canonical(full["state"]["constraints"])))
+        self.assertEqual(projection,original)
+
+    def test_native_choice_retains_probability_abstains_on_ties_and_refuses_foreign_distribution(self):
+        projection, translated, bindings = self.faculty_choice()
+        key = next(iter(bindings))
+        labels = list(translated["questions"][key]["criteria"])
+        chosen = labels[0]
+        scores = {label: .3 / (len(labels) - 1) for label in labels}; scores[chosen] = .7
+        receipt = {"outcome":"completed", "invocation_ref":"input:choice-codec",
+            "answer":{"model":"input:returned-model", "answers":{key:{"type":"choice",
+                "choice":chosen, "probabilities":scores, "confidence":.7}}}}
+        run = lambda: a.translate_answer(projection, bindings, receipt, .5, "input:material", "input:runtime")
+        self.assertEqual(run()["proposals"][0]["label_ids"], [chosen])
+        self.assertEqual(run()["proposals"][0]["confidence"], .7)
+        entry = receipt["answer"]["answers"][key]
+        entry["probabilities"] = {label: 0. for label in labels}
+        entry["probabilities"][chosen] = .5; entry["probabilities"][labels[1]] = .5
+        self.assertEqual(run()["proposals"][0]["label_ids"], [])
+        entry.update(choice=a.ABSTAIN, confidence=1., probabilities={label: float(label == a.ABSTAIN) for label in labels})
+        self.assertEqual(run()["proposals"][0]["label_ids"], [])
+        entry["probabilities"]["foreign-impossible-label"] = 0.
+        with self.assertRaises(c.ContractError): run()
 
     def test_threshold_is_explicit_finite_and_not_an_implicit_default(self):
         for threshold in (0, -1, 1.1, float("nan"), True):

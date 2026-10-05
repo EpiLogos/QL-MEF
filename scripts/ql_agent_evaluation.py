@@ -64,7 +64,14 @@ def load_suite(path, expected_digest):
             c.require(isinstance(head, str) and bool(head) and isinstance(labels, list)
                       and all(isinstance(label, str) and bool(label) for label in labels)
                       and len(labels) == len(set(labels)), "expected candidate set")
-        c.require(expected["fields"] or expected["heads"], "empty evaluation expectation")
+        # Explicitly requested semantic reading with no material is a real
+        # negative: the owner must keep it unresolved and make no inference
+        # eligible. Its exact empty operative field/candidate sets are tested.
+        empty_evidence = (expected["status"] == "unresolved"
+                          and not request["event"]["material"]["text"].strip()
+                          and bool(request.get("requested_heads")))
+        c.require(expected["fields"] or expected["heads"] or empty_evidence,
+                  "empty evaluation expectation")
         c.require(expected["status"] in ("determined", "partial", "unresolved", "refused", "unavailable", "stale"),
                   "expected status")
         c.require(isinstance(expected["basis_refs"], list) and bool(expected["basis_refs"])
@@ -166,9 +173,23 @@ def metrics(records):
     before_refused = after_invalid = proposal_cases = 0
     admission_refused = stale = 0
     refinement_latency = []
+    completed_latency = []
+    completed = unavailable = cancelled = no_call = 0
     for record in records:
         expected, projection = record["expected"], record["projection"]
         determination = projection["determination"]
+        response = record.get("response")
+        provider_outcome = (response or {}).get("outcome")
+        # Retained determinations may predate the raw-response carrier; a
+        # genuine provider identity still discloses their learned evidence.
+        if provider_outcome is None and determination.get("provider"):
+            provider_outcome = "answered"
+        called = record["provider_calls"] > 0
+        completed += called and provider_outcome == "answered"
+        unavailable += called and provider_outcome == "unavailable"
+        cancelled += called and provider_outcome == "cancelled"
+        no_call += not called
+        evidence_available = not called or provider_outcome == "answered"
         admission_status = (record.get("admission") or {}).get("admission_status")
         invalid_response = admission_status in ("refused", "stale")
         admission_refused += record["provider_calls"] > 0 and admission_status == "refused"
@@ -197,7 +218,7 @@ def metrics(records):
         for head, gold_labels in expected["heads"].items():
             gold, prediction = set(gold_labels), predictions[head]
             head_count += 1
-            head_exact += prediction == gold
+            head_exact += evidence_available and prediction == gold
             sets_exact &= prediction == gold
             tp += len(gold & prediction)
             fp += len(prediction - gold)
@@ -210,7 +231,7 @@ def metrics(records):
             if len(gold) > 1:
                 ambiguity_count += 1
                 ambiguity += gold <= prediction
-            if not gold:
+            if not gold and evidence_available:
                 abstention_count += 1
                 abstention += not prediction and not invalid_response
                 unsupported_count += 1
@@ -222,6 +243,7 @@ def metrics(records):
                 operations += gold == prediction
         response_is_expected = not invalid_response or expected["status"] == admission_status
         exact += (response_is_expected and sets_exact and determination["status"] == expected["status"] and
+                  (bool(expected["fields"] or expected["heads"]) or not fields) and
                   all(field in fields and fields[field] == value
                       for field, value in expected["fields"].items()))
         if not projection["decision_head_ids"]:
@@ -234,6 +256,8 @@ def metrics(records):
             after_invalid += bool(admitted & refused)
         if record["provider_elapsed_seconds"] is not None:
             refinement_latency.append(record["provider_elapsed_seconds"])
+            if provider_outcome == "answered":
+                completed_latency.append(record["provider_elapsed_seconds"])
     macro = [2 * a / (2 * a + b + d) for a, b, d in labels.values()]
     return {
         "cases": len(records), "exact_determination_accuracy": rate(exact, len(records)),
@@ -244,6 +268,7 @@ def metrics(records):
         "unsupported_certainty_rate": rate(unsupported, unsupported_count),
         "operative_unsupported_certainty_rate": rate(operative_unsupported, unsupported_count),
         "missing_evidence_abstention_rate": rate(abstention, abstention_count),
+        "abstention_scope": "deterministic-only or answered cases; unavailable execution is not abstention",
         "kernel_refusal_rate": rate(before_refused, proposal_cases),
         "kernel_refusal_scope": "cases with retained learned proposals in the determination",
         "admission_refusal_rate": rate(admission_refused, sum(record["provider_calls"] for record in records)),
@@ -252,8 +277,15 @@ def metrics(records):
         "operation_routing_accuracy": rate(operations, operation_count),
         "deterministic_bypass_rate": rate(bypass, bypass_count),
         "provider_calls": sum(record["provider_calls"] for record in records),
+        "provider_completed_cases": completed,
+        "provider_unavailable_cases": unavailable,
+        "provider_cancelled_cases": cancelled,
+        "provider_no_call_cases": no_call,
+        "provider_completion_rate": rate(completed, sum(record["provider_calls"] for record in records)),
         "provider_elapsed_p50_seconds": quantile(refinement_latency, .5),
         "provider_elapsed_p95_seconds": quantile(refinement_latency, .95),
+        "completed_provider_elapsed_p50_seconds": quantile(completed_latency, .5),
+        "completed_provider_elapsed_p95_seconds": quantile(completed_latency, .95),
         "native_input_bytes": sum(record["input_bytes"] for record in records),
         # The protocol currently has supplied confidence, not ranked
         # distributions or thermal/runtime state. Absence is not a zero score.
@@ -339,7 +371,7 @@ def main():
     parser.add_argument("--suite", type=Path, required=True)
     parser.add_argument("--suite-digest", required=True)
     parser.add_argument("--split", choices=("train", "validation", "test"), default="test")
-    parser.add_argument("--ql", default="ql")
+    parser.add_argument("--ql", default="ql-agent")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--timeout", type=float, default=120)
     parser.add_argument("--provider-command", nargs=argparse.REMAINDER)

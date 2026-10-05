@@ -1,0 +1,13 @@
+{
+  "schema": "ql.reviewed-semantic-training-seeds/v1",
+  "reviewer_ref": "agent:/root/qd0_inclusion_review",
+  "source_issue": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "standing": "Independently reviewed narrow for_what associations. Relevance grants no execution authority. Frozen evaluation capabilities are excluded before generation.",
+  "capability_refs": [
+    "M0P-LANGUAGE", "M0P-RELATIONS", "M1P-CANONICAL-SOURCE", "M1P-HARMONIC-ENGINE", "M1P-TOPOLOGY",
+    "M2P-PROFILE-SOURCE", "M2P-VIMARSHA-AUDIO", "M2P-ELEMENTAL-MEDIUM", "M2P-DECANIC-FACE", "M2P-SONIC-ARENA",
+    "M3P-CLOCK", "M3P-SYMBOLIC-CODEC", "M3P-ROTATION", "M3P-WORLD-CLOCK", "M4P-IDENTITY", "M4P-EPISODIC",
+    "M5P-CANON", "M5P-BACKEND-STUDIO", "M5P-ATELIER"
+  ],
+  "validation_capability_refs": ["M1P-HARMONIC-ENGINE", "M2P-SONIC-ARENA", "M3P-ROTATION", "M5P-ATELIER"]
+}

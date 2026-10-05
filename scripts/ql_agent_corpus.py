@@ -8,6 +8,7 @@ only after all source and executable digests remain current.
 import argparse
 import copy
 import hashlib
+import itertools
 import json
 import math
 import shutil
@@ -34,6 +35,8 @@ for _family in tuple(SPLITS):
         SPLITS[_family + "-reversed"] = "test"
         SPLITS[_family + "-overlap"] = "test"
 BASES = ("chromatic", "fifths")  # Accepted input enum, not a music-theory table.
+SHAPE_OWNER = Path(__file__).resolve().parents[1] / "fixtures/kernel/ql-shape-contract-v1.json"
+SPLITS["shape-explicit"] = "test"
 
 
 def file_digest(path):
@@ -59,10 +62,10 @@ def refusal_reason(error, executable, expected):
     return expected
 
 
-def specimen(family, identifier, fields, requested_heads=()):
+def specimen(family, identifier, fields, requested_heads=(), *, material_text=None):
     c.require(family in SPLITS, "unknown structural/template family")
     reference = "ql:corpus:agent-decision/v1/" + family + "/" + identifier
-    text = c.canonical(fields).decode("utf-8")
+    text = c.canonical(fields).decode("utf-8") if material_text is None else material_text
     revision = "sha256:" + hashlib.sha256(text.encode()).hexdigest()
     event = {"schema": "ql.agent-event/v1", "event_ref": "ql:event:" + reference,
              "generation": 1, "occasion_refs": [], "kind": "controlled-formal-specimen",
@@ -109,11 +112,11 @@ class NativeCorpus:
                   "structural generation unexpectedly invoked a classifier")
         return result
 
-    def add(self, family, identifier, fields, requested_heads=()):
-        request = specimen(family, identifier, fields, requested_heads)
+    def add(self, family, identifier, fields, requested_heads=(), *, material_text=None):
+        request = specimen(family, identifier, fields, requested_heads, material_text=material_text)
         projection = self.project(request)
         heads = {head: [] for head in projection["decision_head_ids"]}
-        c.require(not heads or family == "missing-semantic-evidence",
+        c.require(not projection["decision_head_ids"],
                   "structural specimen unexpectedly requires semantic labels")
         expected = {"fields": e.operative_fields(projection["determination"]), "heads": heads,
                     "status": projection["determination"]["status"],
@@ -212,9 +215,40 @@ def generate(native):
         native.add("constellation-prefix", str(count),
                    {"constellation": {"anchor_ref": "ql:corpus:whole", "members": members[:count]},
                     "lens": lenses[0], "musical-basis": BASES[0]})
+    # Complete this same validation family with the remaining direct subsets
+    # and partial conjugate field. The kernel, not subset size, names its grain
+    # and supplies compression/recognition. Existing prefix specimens stay put.
+    seen = {tuple((member["face"], member["position"]) for member in members[:count])
+            for count in range(len(members) + 1)}
+    direct = [member for member in members if member["face"] == "direct"]
+    conjugate = [member for member in members if member["face"] == "conjugate"]
+    for face, pool in (("direct", direct), ("conjugate", conjugate)):
+        for count in range(len(pool) + 1):
+            for selected in itertools.combinations(pool, count):
+                selected = list(selected) if face == "direct" else direct + list(selected)
+                key = tuple((member["face"], member["position"]) for member in selected)
+                if key in seen:
+                    continue
+                seen.add(key)
+                native.add("constellation-prefix", "subset/" + face + "/" +
+                           ",".join(str(member["position"]) for member in selected
+                                    if member["face"] == face),
+                           {"constellation": {"anchor_ref": "ql:corpus:whole", "members": selected},
+                            "lens": lenses[0], "musical-basis": BASES[0]})
+    # Multiplicative geometry references come from the current kernel contract.
+    # No address count, fold law or shape table is reconstructed here.
+    shape_owner = json.loads(SHAPE_OWNER.read_text())
+    references = {row["shape_ref"] for row in shape_owner.values()
+                  if isinstance(row, dict) and "shape_ref" in row}
+    template = shape_owner["four_by_four"]["shape_ref_template"]
+    references.update(template.format(family=family, pair_index=index)
+                      for family, pairs in shape_owner["pair_families"].items()
+                      for index in range(len(pairs)))
+    for reference in sorted(references):
+        native.add("shape-explicit", reference, {"shape": reference})
     native.add("missing-structural-input", "traversal", {"source-position": positions[0]})
     native.add("missing-structural-input", "pitch-face", {"lens": lenses[0], "local-position": positions[0], "musical-basis": BASES[0]})
-    native.add("missing-semantic-evidence", "empty-material", {}, ["lens", "context-frame"])
+    native.add("missing-semantic-evidence", "empty-material", {}, ["lens", "context-frame"], material_text="")
 
     first = coordinates[0]
     first_values = e.operative_fields(first[1]["determination"])
@@ -249,7 +283,8 @@ def run(args):
     c.require(executable is not None, "actual QL executable unavailable")
     executable = Path(executable).resolve()
     sources = {"ql_executable": executable, "generator": Path(__file__).resolve(),
-               "contracts": Path(c.__file__).resolve(), "evaluation": Path(e.__file__).resolve()}
+               "contracts": Path(c.__file__).resolve(), "evaluation": Path(e.__file__).resolve(),
+               "shape_owner": SHAPE_OWNER}
     digests = {key: file_digest(path) for key, path in sources.items()}
     args.output.mkdir(parents=True, exist_ok=False)
     native = NativeCorpus(executable, args.timeout)
@@ -271,8 +306,9 @@ def run(args):
                   "split_counts": dict(Counter(case["split"] for case in native.cases)), "family_splits": SPLITS,
                   "native_label_owners": owners, "provider_calls": 0,
                   "standing": "deterministic structural corpus; no trained checkpoint or model benchmark",
-                  "not_covered": ["reviewed semantic routing labels", "actual agent traces", "multiplicative geometry",
-                                  "all constellation subsets", "native body execution", "model resource/latency"]}
+                  "not_covered": ["reviewed semantic routing labels", "actual agent traces",
+                                  "multiplicative geometry execution/address enumeration",
+                                  "native body execution", "model resource/latency"]}
         publish(args.output / "manifest.json", report)
         return report
     except BaseException as error:

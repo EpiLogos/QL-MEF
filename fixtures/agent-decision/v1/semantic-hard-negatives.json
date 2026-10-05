@@ -1,0 +1,90 @@
+{
+  "schema": "ql.reviewed-semantic-specimens/v1",
+  "reviewer_ref": "agent:/root/qd0_inclusion_review",
+  "source_issue": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "standing": "Independently reviewed controlled semantic hard negatives. Empty faculty gold means abstention under the native single-choice policy; ambiguity rows retain several relevant faculties rather than asserting that none is relevant. Whole negative families are split; the frozen nine-case test is unchanged.",
+  "cases": [
+    {
+      "id": "negative-quoted-clock-heading",
+      "family": "negative:incidental-domain-word-in-layout",
+      "split": "train",
+      "text": "A static document heading contains the word clock. Align that heading with the other headings; no temporal state or shared clock is being inspected.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "bounded relevance and abstention"}]
+    },
+    {
+      "id": "negative-quoted-harmonic-heading",
+      "family": "negative:incidental-domain-word-in-layout",
+      "split": "train",
+      "text": "The word harmonic appears in a page heading. Fix the heading's font size; there are no coordinates, musical state or requested harmonic reading in this concern.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "bounded relevance and abstention"}]
+    },
+    {
+      "id": "negative-two-instrument-matrices",
+      "family": "negative:unresolved-two-instrument-purpose",
+      "split": "train",
+      "text": "There are two separate requested readings: immutable harmonic matrix source facts, and correspondential descriptors for 72-space addresses. Both are needed; there is no supplied priority or basis for selecting only one faculty.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m1.json", "capability_ref": "M1P-CANONICAL-SOURCE"},
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m2.json", "capability_ref": "M2P-PROFILE-SOURCE"}
+      ]
+    },
+    {
+      "id": "negative-two-instrument-source-state",
+      "family": "negative:unresolved-two-instrument-purpose",
+      "split": "train",
+      "text": "Read both the bounded walk's coordinate and lens state and the protected personal identity's quaternion state. The material supports both concerns equally and does not determine one preferred faculty.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m1.json", "capability_ref": "M1P-INSTANCE"},
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m4.json", "capability_ref": "M4P-IDENTITY"}
+      ]
+    },
+    {
+      "id": "negative-hypothetical-instrument-menu",
+      "family": "negative:unasserted-hypothetical-menu",
+      "split": "train",
+      "text": "A planning note lists possible future work: source graph relations, harmonic matrices, correspondential descriptors, symbolic codecs, personal identity and canon review. No item has been requested or selected, and no encountered event distinguishes them.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "unavailable evidence remains unresolved"}]
+    },
+    {
+      "id": "negative-unselected-training-menu",
+      "family": "negative:unasserted-hypothetical-menu",
+      "split": "train",
+      "text": "An example form offers six domain instruments. This text describes the empty form itself; nobody has supplied a concern or selected an instrument. Do not infer a selected faculty from the presence of the menu.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "unavailable evidence remains unresolved"}]
+    },
+    {
+      "id": "negative-quoted-source-filename",
+      "family": "negative:incidental-domain-word-in-file-maintenance",
+      "split": "validation",
+      "text": "A filename contains the word identity. Rename that file to comply with the project's naming convention. No protected personal record, identity reading or QL determination is requested.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "bounded relevance and abstention"}]
+    },
+    {
+      "id": "negative-quoted-canon-filename",
+      "family": "negative:incidental-domain-word-in-file-maintenance",
+      "split": "validation",
+      "text": "The word canon appears in a temporary filename. Remove a duplicate filename suffix; the file's contents and source standing are outside this task.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [{"path": "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md", "capability_ref": "bounded relevance and abstention"}]
+    },
+    {
+      "id": "negative-three-instrument-equal-concern",
+      "family": "negative:unresolved-three-instrument-purpose",
+      "split": "validation",
+      "text": "Inspect graph relation provenance, canonical symbolic codec facts and canon authoring standing together. Each is a distinct necessary concern; there is no evidence that permits this single-choice reading to privilege one of the three faculties.",
+      "expected_fields": {"faculty": []},
+      "owner_basis": [
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m0.json", "capability_ref": "M0P-RELATIONS"},
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m3.json", "capability_ref": "M3P-SYMBOLIC-CODEC"},
+        {"path": "docs/integrations/epi-logos/epi-m-capability-field-m5.json", "capability_ref": "M5P-CANON"}
+      ]
+    }
+  ]
+}

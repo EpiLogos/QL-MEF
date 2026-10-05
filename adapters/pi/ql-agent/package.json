@@ -1,0 +1,19 @@
+{
+  "name": "@epi-logos/ql-agent-pi",
+  "version": "0.3.3",
+  "private": true,
+  "type": "module",
+  "description": "Native QL event, decision, operation and harmonic tools for Pi",
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/ql-agent.ts"
+    ],
+    "skills": ["./"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "0.84.4"
+  }
+}

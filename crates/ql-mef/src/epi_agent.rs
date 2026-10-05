@@ -158,6 +158,15 @@ fn capability_document(position: u8) -> Value {
     parsed_json(source, "Epi capability domain")
 }
 
+/// Current owner-authored semantic field, without instantiating a session or
+/// the source graph. Decision labels consume this field; they do not define it.
+pub fn native_capability_field(position: u8) -> Result<Value, String> {
+    if position > 5 {
+        return Err("Epi faculty position must be 0..5".into());
+    }
+    Ok(capability_document(position))
+}
+
 pub fn constitution() -> Value {
     let registry = native_current_m_registry();
     let manifest = registry.manifest();

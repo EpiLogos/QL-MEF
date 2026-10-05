@@ -6,10 +6,13 @@ not inference or end-to-end model benchmark receipts. No service is mocked.
 import copy
 import hashlib
 import json
+import os
+import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -78,6 +81,19 @@ class EvaluationChecks(unittest.TestCase):
         other.update(id="controlled:second", split="train")
         with self.assertRaisesRegex(c.ContractError, "leaks across splits"):
             e.load_suite(*self.frozen([self.case, other]))
+
+    def test_empty_source_can_expect_unresolved_bypass_but_not_vacuous_success(self):
+        case = copy.deepcopy(self.case)
+        case["projection"]["event"]["material"]["text"] = ""
+        case["expected"].update(fields={},heads={},status="unresolved")
+        self.assertEqual(e.load_suite(*self.frozen([case]))[0],[case])
+        for change in ({"status":"determined"},{"status":"unavailable"}):
+            bad=copy.deepcopy(case);bad["expected"].update(change)
+            with self.assertRaisesRegex(c.ContractError,"empty evaluation expectation"):
+                e.load_suite(*self.frozen([bad]))
+        bad=copy.deepcopy(case);bad["projection"]["requested_heads"]=[]
+        with self.assertRaisesRegex(c.ContractError,"empty evaluation expectation"):
+            e.load_suite(*self.frozen([bad]))
 
     def test_duplicate_ids_and_json_keys_are_refused(self):
         with self.assertRaisesRegex(c.ContractError, "duplicate case"):
@@ -181,6 +197,29 @@ class EvaluationChecks(unittest.TestCase):
         self.assertIsNone(e.quantile([], .95))
         self.assertEqual(e.quantile([4, 1, 3, 2], .5), 2)
         self.assertEqual(e.quantile([4, 1, 3, 2], .95), 4)
+
+    @unittest.skipUnless(shutil.which(os.environ.get("QL_AGENT_TEST_BIN", "ql-agent")),
+                         "requires the actual native QL instrument")
+    def test_actual_disabled_provider_is_unavailable_not_successful_abstention(self):
+        event = copy.deepcopy(self.event)
+        event["observed"] = []
+        event["native_state"] = []
+        case = copy.deepcopy(self.case)
+        case["projection"]["event"] = event
+        path, digest = self.frozen([case])
+        directory = path.parent
+        provider = directory / "provider.json"
+        provider.write_text(json.dumps({"schema":"aikit.decision-provider/v1","mode":"none"}))
+        args = SimpleNamespace(suite=path, suite_digest=digest, split="test",
+            ql=os.environ.get("QL_AGENT_TEST_BIN", "ql-agent"), output=directory/"actual",
+            timeout=10, provider_command=[sys.executable,str(ROOT/"scripts/ql_agent_aikit.py"),
+                "--provider-file",str(provider),"--receipt-dir",str(directory/"receipts"),
+                "--model-revision","controlled-disabled-native-provider","--threshold","0.5"])
+        observed = e.run(args)["metrics"]
+        self.assertEqual(observed["provider_unavailable_cases"], 1)
+        self.assertEqual(observed["provider_completed_cases"], 0)
+        self.assertEqual(observed["exact_candidate_set_accuracy"], 0)
+        self.assertIsNone(observed["missing_evidence_abstention_rate"])
 
 
 if __name__ == "__main__":

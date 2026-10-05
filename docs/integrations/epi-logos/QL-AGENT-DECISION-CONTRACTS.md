@@ -1,13 +1,13 @@
-# QL agent event and decision contracts — QD0
+# QL agent event and decision contracts
 
 Execution is governed by [QL-native decision grammar, harmonics and shared
 Prime/Pi bodies](https://github.com/EpiLogos/QL-MEF/issues/291), extending the
 existing [domain-agent programme](https://github.com/EpiLogos/QL-MEF/issues/258)
 and [Ta-Onta SDK](https://github.com/EpiLogos/QL-MEF/issues/201). This account
-records the wire/provenance boundary, native projection/admission interfaces and
-evaluation tooling. Provider execution, model benchmarks, trained models and body
-integration retain their later acceptance gates. The coordination issue tracks
-executed evidence and the whole QD0–QD5 programme.
+records the wire/provenance boundary, native projection/admission interfaces,
+shared body instruments and numerical research tooling. The coordination issue
+tracks installed observations, source publication and the remaining QD0–QD5
+acceptance gates. A trained candidate is never a default by virtue of its name.
 
 The authoritative wire grammar is `scripts/ql_agent_contracts.py`, with its
 checked export `schemas/ql-agent-contracts-v1.schema.json`. Four schemas share
@@ -218,9 +218,38 @@ single invented lens or Context Frame.
 
 The compiled kernel basis fingerprints consumed QL owners plus projection and
 admission source. No runtime Git HEAD is substituted for executing bytes. This
-API starts no classifier, tool or body session. Prime/Pi integration and stock
-model measurements remain separate required work. New source is qualified by
-real native/CLI execution, not by the wire checks alone.
+API starts no classifier, tool or body session. Body integration and model
+measurements have their own evidence on #291. New source is qualified by real
+native/CLI execution, not by the wire checks alone.
+
+## Shared body and research instruments
+
+The [Pi owner package](../../../adapters/pi/ql-agent/README.md) contributes
+`ql_project_event`, `ql_decision_frame`, `ql_harmonic_read`,
+`ql_validate_determination`, `ql_decide` and `ql_invoke`. Prime loads the same
+owner tools, skill and event hooks through Actuation's extension seam. Both call
+the native `ql-agent` owner and the explicit `ql-agent-decide` AIKit bridge.
+
+`/ql-mode on` enables asynchronous event projection. `QL state:` supplies formal
+JSON; `QL read:` supplies a concern for the current faculty/operation candidate
+field. `/ql-status` inspects the retained reading. A hook performs no inference.
+The agent may request `ql_decide` when semantic determination is warranted.
+`QL_AGENT_DECISION_CONFIG` elects execution explicitly; absent or unavailable
+execution preserves ordinary QL ability. Native invocation still requires the
+operation's typed input and body authority.
+
+`ql-agent-research --help` exposes the owner's `evaluate`, `metrics`,
+`calibrate`, `return` and `body-parity` commands. Evaluation defaults to the same
+`ql-agent` instrument as the bodies. Metrics qualify actual request/provider
+snapshots and returned distributions. Calibration reconstructs explicit
+thresholds from completed **validation** inference and replays native admission
+and M5 `logos.return`. Its regression must contain only deterministic cases,
+with zero eligible semantic heads or learned evidence. It pins the frozen suite,
+current replay implementation and exact executable before and after the run.
+Unmeasured or failed gates prevent a recommendation; calibration uses no held-out
+semantic test and elects no provider or model default. Workcell owns model
+preparation and release. Body-parity replay verifies actual native calls,
+independent provider invocations, source uptake and ordinary mode-off continuation.
 
 ## Numerical evaluation
 
@@ -249,3 +278,27 @@ certainty and operative certainty are separate. Early admission refusals have
 their own attempt-based rate and cannot receive abstention credit. Explicitly
 expected kernel refusals remain valid negative outcomes.
 These metric checks are not a stock-model benchmark or a frozen held-out suite.
+
+The explicit native research integration gate exercises reviewed corpus generation,
+family-separated training and actual AIKit schema packing, refuses frozen test
+material as training, dispatches deterministic research evaluation, and generates
+the nine real native validation/operation plan calls. It loads no weights. Supply
+the actual AIKit `gliner_decision.py` as `AIKIT_GLINER_ADAPTER` and a new retained
+output directory as `QL_AGENT_RESEARCH_EVIDENCE_ROOT`, then run
+`cargo test --locked -p ql-cli --test agent_research_native -- --ignored --nocapture`.
+The gate's Source hashes and native outputs remain in that output directory.
+The additional `semantic-grammar-reviewed.json` test suite contains 40
+independently reviewed mappings across all twelve lenses, all seven Context
+Frames and all thirteen currently callable operation references, including
+multi-lens ambiguity and unsupported/missing-evidence cases. Its Context Frame
+positives test definition recognition; its operation positives test routing
+intent. They supply neither an external structural mapping nor executable
+inputs or authority. The original nine-case held-out suite remains unchanged.
+The native research gate refuses both suites from the training pack.
+
+The structural generator also consumes the current kernel shape contract for
+four-by-four, four-by-four-by-four, six-by-six, relational sixfold, eighteenfold
+and Second-Spanda references. It projects all 127 admissible direct-subset or
+full-direct-plus-conjugate-subset specimens in one validation family. Grain,
+compression and musical consequences come from the native projector; geometry
+execution and address enumeration require their separate native checks.

@@ -13,15 +13,18 @@ struct AdmissionRequest {
 }
 
 fn read(path: &str) -> Result<Vec<u8>, CliError> {
-    if path == "-" {
-        let mut bytes = Vec::new();
-        std::io::stdin()
-            .read_to_end(&mut bytes)
-            .map_err(|e| CliError(e.to_string()))?;
-        Ok(bytes)
+    let source: Box<dyn Read> = if path == "-" {
+        Box::new(std::io::stdin())
     } else {
-        std::fs::read(path).map_err(|e| CliError(e.to_string()))
+        Box::new(std::fs::File::open(path).map_err(|e| CliError(e.to_string()))?)
+    };
+    let mut bytes = Vec::new();
+    source.take(1024 * 1024 + 1).read_to_end(&mut bytes)
+        .map_err(|e| CliError(e.to_string()))?;
+    if bytes.len() > 1024 * 1024 {
+        return Err(CliError("agent-event request exceeds 1 MiB".into()));
     }
+    Ok(bytes)
 }
 
 pub fn command(args: &[String]) -> Result<String, CliError> {

@@ -23,6 +23,8 @@ import ql_agent_contracts as c
 
 
 MAX_BYTES = 1024 * 1024
+ABSTAIN = "__ql_provider_abstain__"
+SCHEMA_PROFILES = ("full", "compact", "choice", "semantic-choice", "semantic-packed")
 
 
 def unique_object(pairs):
@@ -56,11 +58,43 @@ def eligible_heads(projection):
     return [heads[i] for i in ids]
 
 
-def translate_request(projection, model):
+def pack_constraints(constraints):
+    """Factor repeated selection columns without removing any native tuple."""
+    packed = []
+    for constraint in constraints:
+        rows = constraint.get("allowed_tuples")
+        if constraint.get("kind") != "legal-combination" or not rows or not rows[0]:
+            packed.append(constraint)
+            continue
+        columns = [{key: value for key, value in selection.items() if key != "label_ids"}
+                   for selection in rows[0]]
+        if not all([{key: value for key, value in selection.items() if key != "label_ids"}
+                    for selection in row] == columns for row in rows):
+            packed.append(constraint)
+            continue
+        packed.append({**{key: value for key, value in constraint.items() if key != "allowed_tuples"},
+                       "selection_columns": columns,
+                       "allowed_label_sets": [[selection["label_ids"] for selection in row] for row in rows]})
+    return packed
+
+
+def translate_request(projection, model, schema_profile="full"):
     c.require(isinstance(model, str) and bool(model.strip()), "explicit model required")
+    c.require(schema_profile in SCHEMA_PROFILES, "known explicit schema profile required")
     heads = eligible_heads(projection)
     questions, bindings = {}, {}
     for head_index, head in enumerate(heads):
+        if schema_profile in ("choice", "semantic-choice", "semantic-packed") and head["cardinality"]["max"] == 1:
+            labels = {label["id"]: label["description"] for label in head["labels"]}
+            c.require(ABSTAIN not in labels and len(labels) < 255, "bounded provider Choice control label")
+            question_id = f"ql-single-{head_index}"
+            bindings[question_id] = {"kind": "choice", "head_id": head["id"], "label_ids": list(labels)}
+            questions[question_id] = {"type": "choice",
+                "instructions": f"Which {head['field']} is supported by the supplied material? "
+                    f"Choose {ABSTAIN} if evidence is insufficient or competing readings remain ambiguous. "
+                    f"Ambiguity policy: {head['ambiguity_policy']}.",
+                "criteria": {**labels, ABSTAIN: "Insufficient evidence or legitimate ambiguity; accept no candidate."}}
+            continue
         for label_index, label in enumerate(head["labels"]):
             question_id = f"ql-{head_index}-{label_index}"
             bindings[question_id] = (head["id"], label["id"])
@@ -78,6 +112,18 @@ def translate_request(projection, model):
                     "false": {"candidate": label["id"], "meaning": "not supported, or evidence insufficient"},
                 },
             }
+            if schema_profile in ("compact", "choice", "semantic-choice", "semantic-packed"):
+                # Custody refs stay in the exact native projection and receipt.
+                # Repeating their hashes in every classifier label adds no
+                # semantic evidence. Labels still come only from the owner.
+                questions[question_id] = {
+                    "type": "noul",
+                    "instructions": f"Does the material support {head['field']} {label['id']}: "
+                                    f"{label['description']}? Insufficient evidence means false. "
+                                    f"Ambiguity policy: {head['ambiguity_policy']}. Multiple candidates may be supported.",
+                    "criteria": {"true": "supported by the supplied material",
+                                 "false": "unsupported or insufficient evidence"},
+                }
     c.require(len(questions) <= 256, "native eligible field exceeds packed AIKit question limit")
     request = {
         "model": model,
@@ -87,6 +133,29 @@ def translate_request(projection, model):
                   "kernel_basis": projection["frame"]["kernel_basis"]},
         "questions": questions,
     }
+    if schema_profile in ("compact", "choice", "semantic-choice", "semantic-packed"):
+        # Body/session custody is retained in the original projection, while
+        # event_basis deliberately excludes it. It must not steer a semantic
+        # reading differently in Prime and Pi.
+        request["state"]["event"] = {key: value for key, value in projection["event"].items()
+                                     if key != "bindings"}
+    if schema_profile in ("semantic-choice", "semantic-packed"):
+        # A custody digest identifies evidence; its hexadecimal spelling is
+        # not semantic evidence. Full source/frame/provider custody remains in
+        # the original projection and retained invocation translation receipt.
+        request["state"] = {"material":projection["event"]["material"]["text"],
+            "kind":projection["event"]["kind"],"subject":projection["event"]["subject"],
+            "native_state":projection["event"]["native_state"],
+            "determined":{standing:[{key:value for key,value in field.items() if key != "basis_refs"}
+                                     for field in fields]
+                          for standing,fields in projection["frame"]["determined"].items()},
+            "constraints":projection["frame"]["constraints"]}
+    if schema_profile == "semantic-packed":
+        request["state"]["constraints"] = pack_constraints(projection["frame"]["constraints"])
+        request["state"]["constraint_encoding"] = (
+            "In a legal-combination table, each allowed_label_sets row assigns its label sets "
+            "to selection_columns in column order. The column's native head_id and match policy apply. "
+            "Every original native legal combination is retained; empty label sets mean abstention.")
     c.require(len(c.canonical(request)) <= MAX_BYTES, "packed AIKit request exceeds native byte limit")
     return request, bindings
 
@@ -128,8 +197,30 @@ def translate_answer(projection, bindings, receipt, threshold, model_revision, r
                   for value in (model, invocation, model_revision, runtime_revision)),
               "returned model and exact provider/runtime revisions required")
     candidates = {head["id"]: [] for head in eligible_heads(projection)}
-    for question_id, (head_id, label_id) in bindings.items():
+    for question_id, binding in bindings.items():
         entry = answers[question_id]
+        if isinstance(binding, dict):
+            c.require(binding.get("kind") == "choice", "known native Choice binding")
+            c.require(isinstance(entry, dict) and set(entry) == {"type", "choice", "probabilities", "confidence"}
+                      and entry["type"] == "choice", "expected actual Choice evidence")
+            scores = entry["probabilities"]
+            c.require(isinstance(scores, dict) and set(scores) == set(binding["label_ids"]) | {ABSTAIN},
+                      "Choice must retain the complete legal distribution")
+            c.require(all(isinstance(score, (int, float)) and not isinstance(score, bool)
+                          and math.isfinite(score) and 0 <= score <= 1 for score in scores.values())
+                      and abs(sum(scores.values()) - 1) <= .00001, "invalid native Choice probabilities")
+            chosen, confidence = entry["choice"], entry["confidence"]
+            c.require(isinstance(chosen, str) and chosen in scores
+                      and scores[chosen] == max(scores.values())
+                      and isinstance(confidence, (int, float)) and not isinstance(confidence, bool)
+                      and math.isfinite(confidence) and 0 <= confidence <= 1, "invalid native Choice selection")
+            # Ties and the provider-local abstention control never become QL
+            # labels. The entire genuine distribution remains in the receipt.
+            if chosen != ABSTAIN and scores[chosen] >= threshold and sum(
+                    score == scores[chosen] for score in scores.values()) == 1:
+                candidates[binding["head_id"]].append((chosen, scores[chosen]))
+            continue
+        head_id, label_id = binding
         c.require(isinstance(entry, dict) and set(entry) == {"type", "noul"}
                   and entry["type"] == "noul", "expected actual Noul evidence")
         score = entry["noul"]
@@ -159,7 +250,7 @@ def file_digest(path):
     return "sha256:" + h.hexdigest()
 
 
-def run_owned(argv, timeout):
+def run_owned(argv, timeout, input_bytes=None):
     """Bounded native command; cancellation reaps only this invocation group."""
     def interrupted(signum, _frame):
         raise SystemExit(128 + signum)
@@ -169,9 +260,9 @@ def run_owned(argv, timeout):
         signal.signal(signum, interrupted)
     process = None
     try:
-        process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+        process = subprocess.Popen(argv, stdin=subprocess.PIPE if input_bytes is not None else subprocess.DEVNULL, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, start_new_session=True)
-        stdout, stderr = process.communicate(timeout=timeout)
+        stdout, stderr = process.communicate(input=input_bytes, timeout=timeout)
     except BaseException:
         if process is not None:
             try:
@@ -215,7 +306,7 @@ def execute(args, projection):
             model = tariff.get("model_version")
         else:
             model = limits.get("model")
-        request, bindings = translate_request(projection, model)
+        request, bindings = translate_request(projection, model, getattr(args, "schema_profile", "full"))
     except (OSError, ValueError, TypeError, c.ContractError) as error:
         return unavailable(projection, "AIKit provider configuration unavailable: " + str(error))
     executable = shutil.which(args.aikit)
@@ -232,6 +323,7 @@ def execute(args, projection):
               "frame_digest": c.digest(projection["frame"]),
               "request_digest": c.digest(request), "bindings": bindings,
               "provider_config_digest": c.digest(config), "threshold": args.threshold,
+              "schema_profile": getattr(args, "schema_profile", "full"),
               "model_revision": args.model_revision,
               "aikit_executable_digest": file_digest(executable),
               "adapter_digest": file_digest(Path(__file__)),
@@ -284,6 +376,8 @@ def main():
     parser.add_argument("--model-revision", required=True,
                         help="Exact installed model/material revision, independently pinned before invocation")
     parser.add_argument("--threshold", type=float, required=True)
+    parser.add_argument("--schema-profile", choices=SCHEMA_PROFILES, default="full",
+                        help="Explicit evaluation variable; compact keeps owner labels and retains custody refs in the native receipt")
     parser.add_argument("--aikit", default="aikit")
     parser.add_argument("--timeout", type=float, default=125)
     args = parser.parse_args()
