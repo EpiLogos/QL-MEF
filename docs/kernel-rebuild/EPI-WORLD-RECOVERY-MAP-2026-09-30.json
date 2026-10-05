@@ -1,10 +1,10 @@
 {
   "latest_execution_checkpoint": {
     "schema": "epi.current-original-delivery-checkpoint/v1",
-    "at_utc": "2026-10-05T04:03:51.176935+00:00",
-    "source_head": "80545906705f6bdd30202fa77266a7aa14875a95",
-    "source_commit_url": "https://github.com/EpiLogos/O-I/commit/80545906705f6bdd30202fa77266a7aa14875a95",
-    "standing": "The normal managed O:I app is now9cf, independently qualified through6318 O:I/1180 QL archive/source joins, all12 normal app files, preserved other managed products/CLI and strict codesign. Central1a and all five QL6a owners are preserved;139 is retained as recovery/historical material. The Mac remains locked, so fresh opening, repaired controls, loaded material and live personal receiving remain unobserved. Actual9cf embedded has108 independently qualified same-environment source/artifact/receiving joins at its bounded Linux/software-GPU component scope; this excludes personal same-nine positive/live-zero, complete world, recording, installed receiving and H. Original9cf construction fails while awaiting expression-recovery. The recovered original archive independently joins the complete checkpoint write and exact full native reply/socket emission after the observed failure. This later native effect does not acknowledge the pending scene edit, file Save, personal Pin or whole continuation; exact application timer-start, full consumer acknowledgement and exclusive cause remain unproved. Earlier connector403 refusals remain dated evidence, with current archive/diagnostics now qualified. Its native run reaches the unchanged35-minute deadline: complete Document180/45000 PASS, Act last sampled150/180 at13077ms, no final continuation/PASS and recording tests never launched. Current committed805 preserves exact recovery hash/bytes with bounded8KiB buffering, original8MiB+2048 traversal/20s/CAS and two additive actual-native oracles; it is a source-qualified possible hotpath repair, not an established timeout-cause or speed fix. Previous31cf now fails original first construction at the Recovery boundary and reaches the original35-minute native deadline. Its completeDocument180/45000 passes, but the Act case remains at150/180 without final continuation and recording never launches; these latest native facts are independently qualified from the official log. Its component job succeeds and Mac build remains active at the supplied03:53 cutoff. Current805 original37259231739 has started: embedded111609875532 and fullnative111609875657 are active at the supplied04:02 snapshot; no whole/Mac jobs yet. Recovery source is byte-identical between9cf and31cf; this repeat failure does not execute805. Job metadata and prefixes are not full native, whole, installed or H acceptance. Complete private source preserves custody/history, public4MiB/selected8MiB/unique-live64MiB, legacy/privacy and original180/45000/35-minute gates. One Earth/observer occasion through M1 geometry, M2 resonance/material and M3 clocks/form, personally received at canonical M4.4.4.4, remains the whole. All185 runtime obligations,14 packets/26 subpackets,A0–A5/full journeys and person-owned H remain unaccepted.",
+    "at_utc": "2026-10-05T04:49:01.437038+00:00",
+    "source_head": "5f720eb5ad74731281ddd0b79f95f08d70297834",
+    "source_commit_url": "https://github.com/EpiLogos/O-I/commit/5f720eb5ad74731281ddd0b79f95f08d70297834",
+    "standing": "The repaired O:I app is now installed at 31cf, independently qualified through all 6,318 O:I/1,180 QL source/archive joins, all 12 normal app files, managed CLI and strict signature checks. Central 1a and all-five QL 6a owners are preserved; 9cf and 139 remain qualified historical/recovery depth. The Mac remains physically locked, so ordinary opening, loaded material, live personal receiving and the complete installed encounter remain unobserved. Previous 31cf whole fails at original construction and its native run reaches the unchanged35-minute deadline: complete Document180/45000 passes, Act stops at the last150/180 sample without final continuation, and recording never launches. The earlier 9cf recovered complete native checkpoint/full reply after failure and 108 component joins retain their exact bounded scope; neither proves scene edit/Save/whole consumer acknowledgement, exclusive cause, installed effect or H. Current committed 5f removes duplicate retained pre-edit encoding only after the same complete native preflight; this is independently source-qualified with no measured timing or runtime claim. Its original replay 37262734005 is pending. Previous 805 original replay 37259231739 is executing separately at the supplied 04:34 snapshot: embedded job SUCCESS, native active and Mac building; its whole replay then fails original controlled-person-A construction at the same unanswered Recovery boundary, observed 04:42. The 805 buffering repair remains unaccepted as a fix. No complete native, successful whole or recording acceptance is inferred. One Earth/observer occasion through M1 geometry, M2 resonance/material and M3 clocks/form, personally received at canonical M4.4.4.4, remains the commissioned whole. All 185 runtime obligations, 14 packets / 26 subpackets, A0–A5/deep branches/full journeys, 183 M3 discrepancies and person-owned H remain unaccepted.",
     "evidence": {
       "private_storage_committed_source": {
         "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/private-packed-record-source-committed-20261005.json",
@@ -155,29 +155,53 @@
         "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-five-replay-terminal-proposal-02/9cf-terminal-owner-report.json",
         "bytes": 1745,
         "sha256": "313b12a91111863743b354f47cd719d5f9e625ea87c54071352aca5129ccee53"
+      },
+      "actual_managed_installed_31cf": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/31cf-actual-managed-installed-independent-20261005.json",
+        "bytes": 10982,
+        "sha256": "04c7ee80a9e632babf0740bcd1ec39bc01ccfe57876eb81f9f310f24f4cab536"
+      },
+      "retained_preflight_once_committed_5f": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+        "bytes": 994,
+        "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+      },
+      "retained_preflight_once_independent_source": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+        "bytes": 3661,
+        "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
+      },
+      "supplied_5f_805_original_replay_observation": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/supplied-actual-source-and-replay-observation.json",
+        "bytes": 1659,
+        "sha256": "46a1066613e1ced63e98624ac00ac1440d40cff6fdbc5cd0b369a23a68354e02"
+      },
+      "actual805_original_whole_terminal": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+        "bytes": 130348,
+        "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
       }
     },
-    "installed_cut": "9cf50db4a3189cc34a31d5c84784ff9652894c92",
+    "installed_cut": "31cf5a5cefcec392cb9e94bd77796404cac0145b",
     "installed_Central_cut": "1a94aeef3791dd083e789ebd332d4856daa1c62d",
-    "installed_image_sha256": "08e03f22cf7a2d5381675f8f129812027517d04752f0c0529d0b228e25e751cf",
-    "installed_image_uuid": "956BC923-F83C-30B8-B723-DEA1F7A279D1",
-    "installed_bundle_sha256": "80977e0aa6bde41cf9b5f76ddc85a44d5c83038381dd2eab9371e995507ba804",
+    "installed_image_sha256": "8025dbf0cb2981595ff112ab5ea48bdc603bd31094d8ff6b378ac10e2db73ca7",
+    "installed_image_uuid": "F079C10A-62AC-3483-BB70-08F5FDC90B7E",
+    "installed_bundle_sha256": "db3087dfb7566da511e71646ab199b6db3e2c391b2dab6eff782825459f1c324",
     "installed_all_five_ql_cut": "6a81fc441e4dda477f4de3a7ebd59c368cb28f37",
     "current_original_replay": {
-      "run": 37257784580,
-      "url": "https://github.com/EpiLogos/O-I/actions/runs/37257784580",
-      "head": "31cf5a5cefcec392cb9e94bd77796404cac0145b",
-      "observed_at_utc": "2026-10-05T03:56:00Z",
-      "native_job": 111599876763,
-      "embedded_job": 111599876578,
-      "standing": "Previous31cf original canonical replay has component-job SUCCESS, whole first-construction FAIL and original native35-minute terminal deadline. Mac build was active at supplied03:53 cutoff. These terminal failures do not execute or qualify executing805 Recovery repair.",
-      "scope": "Terminal31cf whole/native is separate from current committed805/executing replay and actual installed9cf; its Mac build remains the supplied03:53 observation. Source/prefixes are not runtime/installed acceptance.",
-      "embedded": "SUCCESS at supplied03:46 official-job observation; component job metadata only, independent complete artifact/receiving chain not added by this checkpoint",
-      "native": "Original35-minute gate terminal at03:56:00Z, independent official-log qualification: fullDocument180/45000 PASS, new raw/packed oracle PASS and243 library PASS/9ignored; Act last150/180 at11031ms without final Act180/cold CAS/restart/full performance aggregate. Recording pair not launched; unchanged source postcheck PASS. Nineteen completed aggregates total318 passed executions/0failed/33ignored, including four repeated prefixes; this is not318 unique proofs or a complete-suite PASS.",
-      "whole_job": 111604228356,
-      "whole": "FAIL at controlled person A original first construction, expression-recovery timeout; actual official log byte-qualified. No later whole gate accepted.",
-      "Mac_job": 111604228369,
-      "Mac": "Building at supplied03:53 observation; no bundle/installation result"
+      "run": 37259231739,
+      "url": "https://github.com/EpiLogos/O-I/actions/runs/37259231739",
+      "head": "80545906705f6bdd30202fa77266a7aa14875a95",
+      "observed_at_utc": "2026-10-05T04:42:00Z",
+      "embedded_job": 111609875532,
+      "embedded": "SUCCESS from supplied official job metadata only; current receiving artifact not independently joined here",
+      "native_job": 111609875657,
+      "native": "active; no full native or recording result",
+      "whole_job": 111614343013,
+      "whole": "FAIL at original controlled person A first construction, unanswered expression-recovery. Actual official log byte-qualified. No later gate reached or805 timing fix accepted.",
+      "Mac_job": 111614343016,
+      "Mac": "building; no bundle/installation result",
+      "standing": "Exact previous805 original replay continues separately from current committed5f queued replay and actual installed31cf. Job metadata or prefixes do not prove complete receiving, continuation or installed H."
     },
     "current_storage_original_replay": {
       "run": 37251983377,
@@ -191,8 +215,8 @@
       "scope": "690 terminal native evidence only; no deadline change or runtime/whole/installed acceptance."
     },
     "actual_installed_encounter": {
-      "environment": "Normal managed Mac O:I9cf/Central1a/all-fiveQL6a",
-      "standing": "Actual installed source/archive/native/bundle/managed bytes independently qualified; fresh launch/frontend/material/body/effect unobserved while physically locked. Older139 recovery and a255 encounter episodes remain dated evidence only.",
+      "environment": "Normal managed Mac O:I31cf/Central1a/all-fiveQL6a",
+      "standing": "Actual installed source/archive/native/bundle/managed bytes independently qualified; no fresh launch/frontend/material/body/effect or H while physically locked.9cf/139 recovery and earlier encounter episodes remain historical evidence.",
       "causal_accepted": false
     },
     "actual_prior_whole": {
@@ -228,31 +252,34 @@
       "checked_at_utc": "2026-10-05T01:28:19Z",
       "standing": "Mac physically locked; existing manual-unlock question remains with sole installer. No new approval requirement or programme hold."
     },
-    "remaining_first_delivery": "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
+    "remaining_first_delivery": "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
     "runtime_accepted": false,
     "installed_whole_accepted": false,
     "H": null,
     "prior_current_face_preimages": {
-      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-final-checkpoint-proposal-04/preimages-manifest.json",
-      "bytes": 5425,
-      "sha256": "55505d15e951b68b5cd108b1898c18e59315ace1fbf98ff9137c0bb94a4f8d12"
+      "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/preimages-manifest.json",
+      "bytes": 5787,
+      "sha256": "ba0865c0d573b40074ca0ca0644c8d535625fa184ac66d01afc779f6f1f69ad2"
     },
     "current_committed_successor": {
-      "head": "80545906705f6bdd30202fa77266a7aa14875a95",
-      "source_scope": "Bounded8KiB recovery SHA buffering preserves exact8MiB+2048/20s/CAS/traversal and two additive actual-native oracles. The recovered original late native completion/reply qualifies timing and stored effect, without exact app timer-start, full consumer acknowledgement or exclusive cause. This remains a source-only possible hotpath repair; original unchanged805 replay must prove deadline-fit and all native/whole gates.",
+      "head": "5f720eb5ad74731281ddd0b79f95f08d70297834",
+      "parent": "80545906705f6bdd30202fa77266a7aa14875a95",
+      "source_scope": "One native World owner path removes duplicate retained pre-edit encoding after the same complete preflight. Full bytes, original preflight/refusals/CAS/caps/numerical meaning and original workload/deadline gates remain. Independent SOURCE_GO only; no native compilation, timing benefit, full continuation, recording, whole or installed acceptance.",
       "source_receipt": {
-        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805459-recovery-owner-committed-qualification-20261005.json",
-        "bytes": 1628,
-        "sha256": "c32a45102e8df1ba78aae508af5e25df7375cdb5f9ae420dbe2ba9634ace3e3a"
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+        "bytes": 994,
+        "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+      },
+      "independent_source_review": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+        "bytes": 3661,
+        "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
       },
       "runtime_accepted": false,
-      "replay_run": 37259231739,
-      "replay_url": "https://github.com/EpiLogos/O-I/actions/runs/37259231739",
-      "replay_standing": "805 original37259231739 started at supplied04:02 snapshot: embedded111609875532 and full native111609875657 active; no805 whole/Mac jobs yet. No runtime result. Previous31cf whole/native failures are separate.",
-      "dated_pending_observation": "Pending/no jobs at supplied03:53 cutoff; superseded by supplied04:02 started observation.",
-      "observed_at_utc": "2026-10-05T04:02:00Z",
-      "embedded_job": 111609875532,
-      "native_job": 111609875657
+      "replay_run": 37262734005,
+      "replay_url": "https://github.com/EpiLogos/O-I/actions/runs/37262734005",
+      "observed_at_utc": "2026-10-05T04:34:00Z",
+      "replay_standing": "PENDING at supplied04:34 snapshot; no current5f runtime result. Exact previous805 replay remains executing separately."
     },
     "dated_installed_139": {
       "installed_cut": "139e3afbf52a3598734fd4137fc6dd699f89a129",
@@ -379,11 +406,74 @@
         "bytes": 22051,
         "sha256": "84eba6bbc12983843017c4b0ef75dc34f17423d0ae193891a7a98792caa50662"
       }
+    },
+    "dated_installed_9cf": {
+      "installed_cut": "9cf50db4a3189cc34a31d5c84784ff9652894c92",
+      "installed_image_sha256": "08e03f22cf7a2d5381675f8f129812027517d04752f0c0529d0b228e25e751cf",
+      "installed_image_uuid": "956BC923-F83C-30B8-B723-DEA1F7A279D1",
+      "installed_bundle_sha256": "80977e0aa6bde41cf9b5f76ddc85a44d5c83038381dd2eab9371e995507ba804",
+      "receipt": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/9cf-actual-managed-installed-independent-20261005.json",
+        "bytes": 10980,
+        "sha256": "f867a802e4444242c8dd831a805879140cc8f84a61fff0d620499d2791d15627"
+      },
+      "standing": "Qualified historical/recovery installation; current normal installed app is31cf. No fresh9cf encounter acceptance."
+    },
+    "dated_original31cf_replay_observation": {
+      "run": 37257784580,
+      "url": "https://github.com/EpiLogos/O-I/actions/runs/37257784580",
+      "head": "31cf5a5cefcec392cb9e94bd77796404cac0145b",
+      "observed_at_utc": "2026-10-05T03:56:00Z",
+      "native_job": 111599876763,
+      "embedded_job": 111599876578,
+      "standing": "Previous31cf original canonical replay has component-job SUCCESS, whole first-construction FAIL and original native35-minute terminal deadline. Mac build was active at supplied03:53 cutoff. These terminal failures do not execute or qualify executing805 Recovery repair.",
+      "scope": "Terminal31cf whole/native is separate from current committed805/executing replay and actual installed9cf; its Mac build remains the supplied03:53 observation. Source/prefixes are not runtime/installed acceptance.",
+      "embedded": "SUCCESS at supplied03:46 official-job observation; component job metadata only, independent complete artifact/receiving chain not added by this checkpoint",
+      "native": "Original35-minute gate terminal at03:56:00Z, independent official-log qualification: fullDocument180/45000 PASS, new raw/packed oracle PASS and243 library PASS/9ignored; Act last150/180 at11031ms without final Act180/cold CAS/restart/full performance aggregate. Recording pair not launched; unchanged source postcheck PASS. Nineteen completed aggregates total318 passed executions/0failed/33ignored, including four repeated prefixes; this is not318 unique proofs or a complete-suite PASS.",
+      "whole_job": 111604228356,
+      "whole": "FAIL at controlled person A original first construction, expression-recovery timeout; actual official log byte-qualified. No later whole gate accepted.",
+      "Mac_job": 111604228369,
+      "Mac": "Building at supplied03:53 observation; no bundle/installation result"
+    },
+    "dated_original805_start_observation": {
+      "head": "80545906705f6bdd30202fa77266a7aa14875a95",
+      "source_scope": "Bounded8KiB recovery SHA buffering preserves exact8MiB+2048/20s/CAS/traversal and two additive actual-native oracles. The recovered original late native completion/reply qualifies timing and stored effect, without exact app timer-start, full consumer acknowledgement or exclusive cause. This remains a source-only possible hotpath repair; original unchanged805 replay must prove deadline-fit and all native/whole gates.",
+      "source_receipt": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805459-recovery-owner-committed-qualification-20261005.json",
+        "bytes": 1628,
+        "sha256": "c32a45102e8df1ba78aae508af5e25df7375cdb5f9ae420dbe2ba9634ace3e3a"
+      },
+      "runtime_accepted": false,
+      "replay_run": 37259231739,
+      "replay_url": "https://github.com/EpiLogos/O-I/actions/runs/37259231739",
+      "replay_standing": "805 original37259231739 started at supplied04:02 snapshot: embedded111609875532 and full native111609875657 active; no805 whole/Mac jobs yet. No runtime result. Previous31cf whole/native failures are separate.",
+      "dated_pending_observation": "Pending/no jobs at supplied03:53 cutoff; superseded by supplied04:02 started observation.",
+      "observed_at_utc": "2026-10-05T04:02:00Z",
+      "embedded_job": 111609875532,
+      "native_job": 111609875657
+    },
+    "actual_previous805_whole": {
+      "cut": "80545906705f6bdd30202fa77266a7aa14875a95",
+      "run": 37259231739,
+      "job": 111614343013,
+      "standing": "FAIL at original controlled person A first construction, unanswered expression-recovery. Actual official log byte-qualified. No later gate reached or805 timing fix accepted.",
+      "failure_log": {
+        "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+        "bytes": 130348,
+        "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
+      },
+      "artifact_metadata": {
+        "id": 11325552886,
+        "bytes": 321727553,
+        "sha256_prefix": "7821f089",
+        "scope": "Published metadata only; M1 owns retrieval, no current archive/inner cause qualification here"
+      },
+      "artifact_scope": "Metadata only; no current805 archive/inner native timing or consumer acknowledgement inferred. Earlier9cf timing is separate."
     }
   },
   "schema": "epi.world-recovery-plan/v1",
   "created_at": "2026-09-30T16:28:17.956536+00:00",
-  "standing": "The normal managed O:I app is now9cf, independently qualified through6318 O:I/1180 QL archive/source joins, all12 normal app files, preserved other managed products/CLI and strict codesign. Central1a and all five QL6a owners are preserved;139 is retained as recovery/historical material. The Mac remains locked, so fresh opening, repaired controls, loaded material and live personal receiving remain unobserved. Actual9cf embedded has108 independently qualified same-environment source/artifact/receiving joins at its bounded Linux/software-GPU component scope; this excludes personal same-nine positive/live-zero, complete world, recording, installed receiving and H. Original9cf construction fails while awaiting expression-recovery. The recovered original archive independently joins the complete checkpoint write and exact full native reply/socket emission after the observed failure. This later native effect does not acknowledge the pending scene edit, file Save, personal Pin or whole continuation; exact application timer-start, full consumer acknowledgement and exclusive cause remain unproved. Earlier connector403 refusals remain dated evidence, with current archive/diagnostics now qualified. Its native run reaches the unchanged35-minute deadline: complete Document180/45000 PASS, Act last sampled150/180 at13077ms, no final continuation/PASS and recording tests never launched. Current committed805 preserves exact recovery hash/bytes with bounded8KiB buffering, original8MiB+2048 traversal/20s/CAS and two additive actual-native oracles; it is a source-qualified possible hotpath repair, not an established timeout-cause or speed fix. Previous31cf now fails original first construction at the Recovery boundary and reaches the original35-minute native deadline. Its completeDocument180/45000 passes, but the Act case remains at150/180 without final continuation and recording never launches; these latest native facts are independently qualified from the official log. Its component job succeeds and Mac build remains active at the supplied03:53 cutoff. Current805 original37259231739 has started: embedded111609875532 and fullnative111609875657 are active at the supplied04:02 snapshot; no whole/Mac jobs yet. Recovery source is byte-identical between9cf and31cf; this repeat failure does not execute805. Job metadata and prefixes are not full native, whole, installed or H acceptance. Complete private source preserves custody/history, public4MiB/selected8MiB/unique-live64MiB, legacy/privacy and original180/45000/35-minute gates. One Earth/observer occasion through M1 geometry, M2 resonance/material and M3 clocks/form, personally received at canonical M4.4.4.4, remains the whole. All185 runtime obligations,14 packets/26 subpackets,A0–A5/full journeys and person-owned H remain unaccepted.",
+  "standing": "The repaired O:I app is now installed at 31cf, independently qualified through all 6,318 O:I/1,180 QL source/archive joins, all 12 normal app files, managed CLI and strict signature checks. Central 1a and all-five QL 6a owners are preserved; 9cf and 139 remain qualified historical/recovery depth. The Mac remains physically locked, so ordinary opening, loaded material, live personal receiving and the complete installed encounter remain unobserved. Previous 31cf whole fails at original construction and its native run reaches the unchanged35-minute deadline: complete Document180/45000 passes, Act stops at the last150/180 sample without final continuation, and recording never launches. The earlier 9cf recovered complete native checkpoint/full reply after failure and 108 component joins retain their exact bounded scope; neither proves scene edit/Save/whole consumer acknowledgement, exclusive cause, installed effect or H. Current committed 5f removes duplicate retained pre-edit encoding only after the same complete native preflight; this is independently source-qualified with no measured timing or runtime claim. Its original replay 37262734005 is pending. Previous 805 original replay 37259231739 is executing separately at the supplied 04:34 snapshot: embedded job SUCCESS, native active and Mac building; its whole replay then fails original controlled-person-A construction at the same unanswered Recovery boundary, observed 04:42. The 805 buffering repair remains unaccepted as a fix. No complete native, successful whole or recording acceptance is inferred. One Earth/observer occasion through M1 geometry, M2 resonance/material and M3 clocks/form, personally received at canonical M4.4.4.4, remains the commissioned whole. All 185 runtime obligations, 14 packets / 26 subpackets, A0–A5/deep branches/full journeys, 183 M3 discrepancies and person-owned H remain unaccepted.",
   "commission_scope": "source-led whole fidelity audit and first integrated native cosmic/personal delivery, with full outstanding branch/praxis scope retained",
   "source_basis": {
     "Bimba": {
@@ -25943,11 +26033,11 @@
         }
       ],
       "current_receiving_work": {
-        "at_utc": "2026-10-05T04:03:51.176935+00:00",
+        "at_utc": "2026-10-05T04:49:01.437038+00:00",
         "purpose": "Receive complete native material through ordinary entry while preserving exact source/person/occasion and existing limits.",
         "owner": "O:I expression_recovery/expression_act_store/material/ordinary renderer owners.",
         "checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
-        "current_committed_source": "80545906705f6bdd30202fa77266a7aa14875a95",
+        "current_committed_source": "5f720eb5ad74731281ddd0b79f95f08d70297834",
         "source_and_operation_receipts": {
           "private_storage_committed_source": {
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/private-packed-record-source-committed-20261005.json",
@@ -26098,6 +26188,31 @@
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-five-replay-terminal-proposal-02/9cf-terminal-owner-report.json",
             "bytes": 1745,
             "sha256": "313b12a91111863743b354f47cd719d5f9e625ea87c54071352aca5129ccee53"
+          },
+          "actual_managed_installed_31cf": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/31cf-actual-managed-installed-independent-20261005.json",
+            "bytes": 10982,
+            "sha256": "04c7ee80a9e632babf0740bcd1ec39bc01ccfe57876eb81f9f310f24f4cab536"
+          },
+          "retained_preflight_once_committed_5f": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+            "bytes": 994,
+            "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+          },
+          "retained_preflight_once_independent_source": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+            "bytes": 3661,
+            "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
+          },
+          "supplied_5f_805_original_replay_observation": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/supplied-actual-source-and-replay-observation.json",
+            "bytes": 1659,
+            "sha256": "46a1066613e1ced63e98624ac00ac1440d40cff6fdbc5cd0b369a23a68354e02"
+          },
+          "actual805_original_whole_terminal": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+            "bytes": 130348,
+            "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
           }
         },
         "required_meaningful_tests": [
@@ -26105,7 +26220,7 @@
           "Full32/9/7 body/page/history survives; controlledidentity Saved alone fails world-saved gate."
         ],
         "next_operations": [
-          "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
+          "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
         ],
         "runtime_acceptance": false,
         "H": null
@@ -27169,11 +27284,11 @@
         }
       ],
       "current_receiving_work": {
-        "at_utc": "2026-10-05T04:03:51.176935+00:00",
+        "at_utc": "2026-10-05T04:49:01.437038+00:00",
         "purpose": "Restore admitted personal current custody and consume its computation in the same seven bodies and cosmic occasion.",
         "owner": "QL Nara protectedcurrent/identity and O:I personalbody/GPU/sound consumer owners.",
         "checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
-        "current_committed_source": "80545906705f6bdd30202fa77266a7aa14875a95",
+        "current_committed_source": "5f720eb5ad74731281ddd0b79f95f08d70297834",
         "source_and_operation_receipts": {
           "private_storage_committed_source": {
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/private-packed-record-source-committed-20261005.json",
@@ -27324,6 +27439,31 @@
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-five-replay-terminal-proposal-02/9cf-terminal-owner-report.json",
             "bytes": 1745,
             "sha256": "313b12a91111863743b354f47cd719d5f9e625ea87c54071352aca5129ccee53"
+          },
+          "actual_managed_installed_31cf": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/31cf-actual-managed-installed-independent-20261005.json",
+            "bytes": 10982,
+            "sha256": "04c7ee80a9e632babf0740bcd1ec39bc01ccfe57876eb81f9f310f24f4cab536"
+          },
+          "retained_preflight_once_committed_5f": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+            "bytes": 994,
+            "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+          },
+          "retained_preflight_once_independent_source": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+            "bytes": 3661,
+            "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
+          },
+          "supplied_5f_805_original_replay_observation": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/supplied-actual-source-and-replay-observation.json",
+            "bytes": 1659,
+            "sha256": "46a1066613e1ced63e98624ac00ac1440d40cff6fdbc5cd0b369a23a68354e02"
+          },
+          "actual805_original_whole_terminal": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+            "bytes": 130348,
+            "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
           }
         },
         "required_meaningful_tests": [
@@ -27331,7 +27471,7 @@
           "Wrongsharedlocus/person/source/instance or store-onlydata must refuse/failreceiving."
         ],
         "next_operations": [
-          "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
+          "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
         ],
         "runtime_acceptance": false,
         "H": null
@@ -28604,11 +28744,11 @@
         }
       ],
       "current_receiving_work": {
-        "at_utc": "2026-10-05T04:03:51.176935+00:00",
+        "at_utc": "2026-10-05T04:49:01.437038+00:00",
         "purpose": "Build and qualify exact current owner/parent/ordinary bundle then demonstrate installed semantic, expressive and causal continuity.",
         "owner": "Existingmanaged installer/Mac CUA/resource owner with accountable lead and independentreplay owner.",
         "checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
-        "current_committed_source": "80545906705f6bdd30202fa77266a7aa14875a95",
+        "current_committed_source": "5f720eb5ad74731281ddd0b79f95f08d70297834",
         "source_and_operation_receipts": {
           "private_storage_committed_source": {
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/private-packed-record-source-committed-20261005.json",
@@ -28759,6 +28899,31 @@
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-five-replay-terminal-proposal-02/9cf-terminal-owner-report.json",
             "bytes": 1745,
             "sha256": "313b12a91111863743b354f47cd719d5f9e625ea87c54071352aca5129ccee53"
+          },
+          "actual_managed_installed_31cf": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/31cf-actual-managed-installed-independent-20261005.json",
+            "bytes": 10982,
+            "sha256": "04c7ee80a9e632babf0740bcd1ec39bc01ccfe57876eb81f9f310f24f4cab536"
+          },
+          "retained_preflight_once_committed_5f": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+            "bytes": 994,
+            "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+          },
+          "retained_preflight_once_independent_source": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+            "bytes": 3661,
+            "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
+          },
+          "supplied_5f_805_original_replay_observation": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/supplied-actual-source-and-replay-observation.json",
+            "bytes": 1659,
+            "sha256": "46a1066613e1ced63e98624ac00ac1440d40cff6fdbc5cd0b369a23a68354e02"
+          },
+          "actual805_original_whole_terminal": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+            "bytes": 130348,
+            "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
           }
         },
         "required_meaningful_tests": [
@@ -28766,7 +28931,7 @@
           "Installedpartial/HoldStepor softwareGPUgreens cannotpassfullpersonal/lifecycle/hardware/audio/H."
         ],
         "next_operations": [
-          "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
+          "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
         ],
         "runtime_acceptance": false,
         "H": null
@@ -30456,11 +30621,11 @@
         }
       ],
       "current_receiving_work": {
-        "at_utc": "2026-10-05T04:03:51.176935+00:00",
+        "at_utc": "2026-10-05T04:49:01.437038+00:00",
         "purpose": "Return current failures and repaired-source standing through this existing programme/map and curated human Return.",
         "owner": "Accountablelead plus existingdocumentation/matrix/ticket protocolowners.",
         "checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
-        "current_committed_source": "80545906705f6bdd30202fa77266a7aa14875a95",
+        "current_committed_source": "5f720eb5ad74731281ddd0b79f95f08d70297834",
         "source_and_operation_receipts": {
           "private_storage_committed_source": {
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/private-packed-record-source-committed-20261005.json",
@@ -30611,6 +30776,31 @@
             "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-five-replay-terminal-proposal-02/9cf-terminal-owner-report.json",
             "bytes": 1745,
             "sha256": "313b12a91111863743b354f47cd719d5f9e625ea87c54071352aca5129ccee53"
+          },
+          "actual_managed_installed_31cf": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/31cf-actual-managed-installed-independent-20261005.json",
+            "bytes": 10982,
+            "sha256": "04c7ee80a9e632babf0740bcd1ec39bc01ccfe57876eb81f9f310f24f4cab536"
+          },
+          "retained_preflight_once_committed_5f": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/5f720-retained-preflight-once-committed-qualification-20261005.json",
+            "bytes": 994,
+            "sha256": "2600c332deaedea8e0a10486760e8f5f3dfba5a12e985a9beafb1664f1fe39d7"
+          },
+          "retained_preflight_once_independent_source": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/act-retained-preflight-once-independent-01/manifest.json",
+            "bytes": 3661,
+            "sha256": "14c7c2cc9bda1801272fc031ca4cbe8c2089f1879aa18725ba5926e2ba8dada3"
+          },
+          "supplied_5f_805_original_replay_observation": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/current-nine-installed-successor-proposal-05/supplied-actual-source-and-replay-observation.json",
+            "bytes": 1659,
+            "sha256": "46a1066613e1ced63e98624ac00ac1440d40cff6fdbc5cd0b369a23a68354e02"
+          },
+          "actual805_original_whole_terminal": {
+            "path": "/Users/admin/Central/Control/agents/now/clearings/88b16930e461ec5100d47ff9d0d233d6580e97ad31abfc40c1db6670adc7746d/T/fresh-execution-2026-10-01/source-review/7706-native-continuation-first-break-01/startup/805-original-whole-terminal-20261005.log",
+            "bytes": 130348,
+            "sha256": "d2f38f9d3cd474c31fc64f4eb5f52159c02ea214f9589aec611d87ffee47f4ef"
           }
         },
         "required_meaningful_tests": [
@@ -30618,7 +30808,7 @@
           "HumanRecognitionremainsnull/person-owned andtechnicalwhole/firstinstalledcompletefalse."
         ],
         "next_operations": [
-          "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
+          "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned."
         ],
         "runtime_acceptance": false,
         "H": null
@@ -34930,13 +35120,13 @@
     }
   ],
   "delivery_standing": {
-    "source": "Current committed/pushed805 recovery owner source-only, parent31cf continuation source; executing31cf and actual installed9cf distinct. Original bytes/hash/CAS/privacy/traversal/workload/deadlines and Bimba/numerical meaning conserved.",
+    "source": "Current committed/pushed5f native World preflight-once source-only, parent805 Recovery repair. Executing805 original replay and actual installed31cf are separate. Original bytes/hash/CAS/privacy/traversal/workloads/deadlines and Bimba/numerical meaning conserved.",
     "material": "Authored/native32cosmic/9personal/7branch composition, a255 staged/render witness and installed1093 selected personal seven-centre body remain dated material evidence. Actual9cf construction stops while awaiting a Recovery checkpoint; its late complete native Recovery reply does not apply the pending material/scene edit, file Save, personal Pin or later receiving. Complete ordinary entry remains unaccepted.",
-    "native_admission": "Actual9cf component108 joins pass; construction fails after5 checks while awaiting Recovery. Recovered complete checkpoint write/full exact reply occurs after observed failure without pending edit/Save/personal/whole consumer acknowledgement. Exact timer-start/exclusive cause remain unproved. Original9cf native35min remains red, recording unlaunched. Previous31cf component job succeeds; actualwhole fails at original construction, and the independently qualified official log reaches35min withDocument180/45000 PASS, Actlast150/no final continuation and recording unlaunched. Mac was building at03:53;805 embedded/native active at04:02 with no whole/Mac jobs yet. No complete runtime/installed/H acceptance.",
+    "native_admission": "Earlier9cf108 component joins/late complete Recovery reply retain their limits.31cf original whole construction fails; native35min deadline leaves Act continuation/recording unaccepted despite fullDocument180/45000 PASS. Supplied04:34 actual805 embeddedSUCCESS/native active/Mac building, then originalwhole terminalFAIL at the Recovery boundary observed04:42; current5f successor queued. No complete runtime, recording, installed or H acceptance.",
     "rendering": "Installeda255/Central1a1093 shows Personal Pratibimba/Anāhata at rest and visibly changing geometry after Resume motion. Paused receiving112000particles/9drivers/7targets/9admitted has zero measured energy; post-motion read absent. Component software-GPU effects are separate, not an installed causal chain or shape proof.",
     "audio": "Source-qualifiedninevoiceplan/retaineddatachecks retained.54c actualcosmicnativePCM/SoftwareGPUreceivingisnotpersonalninedriverAudioContextbank/nativeDSP/installedcapture/hearing; originalconfiguredpersonal gate remainsrequired.",
     "save_restart": "Original139 physical-record cap repaired in690 complete private packing; public/selected/live bounds and full custody/CAS/legacy preserved. Original recording/restart/runtime remains unaccepted. Prior a255 Save/correction and cold-binding failure retain dated evidence.",
-    "managed_install": "Actual normal managed9cf installation independently byte-qualified; Central1a/all-fiveQL6a preserved,139 recovery retained. Fresh loaded frontend/material/body and installed whole A/B/C remain unobserved while Mac locked.",
+    "managed_install": "Actual normal managed31cf installation independently byte-qualified; Central1a/all-fiveQL6a preserved.9cf/139 recovery retained. Fresh loaded frontend/material/body and installed whole A/B/C remain unobserved while Mac locked.",
     "whole_branch_recovery": "Complete source-specific consequential branch/capability disposition now qualified through M123103+M04582=185 plus all106M4subject copies. Complete2141/11810inventory and42entrances retained; A0–A5material/runtime/installed acceptance outstanding.",
     "H": "notdone/person-owned",
     "personal_receiving": "Independent690 source review finds complete same-nine/fixed-mixture/damping receiving and strict percentre GPU position+velocity predicates. This is source qualification; actual positive/live-zero original runtime and installed causal proof remain open.",
@@ -40776,7 +40966,7 @@
           "standing": "Source139 repairs retained cold-record timestamp after complete native projection validation and carries genuine acknowledged continuation/Save/full-file reopen tests. Parentf1fc fails timestamp equality before the whole encounter; its native Act167 floor timeout is unresolved. Original139 whole construction, Library and fresh restart remain unaccepted."
         }
       ],
-      "current_next_operation": "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
+      "current_next_operation": "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
       "current_checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint",
       "current_standing": "Original139 physical-record cap repaired in690 complete private packing; public/selected/live bounds and full custody/CAS/legacy preserved. Original recording/restart/runtime remains unaccepted. Prior a255 Save/correction and cold-binding failure retain dated evidence."
     },
@@ -40915,7 +41105,7 @@
         "INSTALLED822-PARTIAL-WORLD-REFUSAL",
         "CURRENT54C-EMBEDDED-RECEIVING"
       ],
-      "current_next_operation": "Execute the unchanged original805 native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source805, terminal31cf and installed9cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
+      "current_next_operation": "Execute the unchanged original5f native/recording and whole replay, discriminate native timing from complete consumer acknowledgement, resolve any remaining cause and replay the original first break without weakening complete bodies, CAS, privacy, assertions, workloads, bounds or deadlines. Keep source5f, executing805 and installed31cf evidence distinct; qualify any coherent successor through the existing canonical managed route. After physical unlock, independently demonstrate ordinary opening, quiet personal controls, complete Return/post-play departure, fixed-nine positive/live-zero receiving at fixed mixture/damping, two controlled persons at one occasion, branch/Source travel, Library/Save/reopen/restart and fresh selected-basis Nara/Epii answer/Keep/full Read in the actual scene. Preserve Day/Flow, continuing selected deck/sharedM3/corrections and all remaining full branch recovery. H stays person-owned.",
       "current_standing": "Independent690 source review finds complete same-nine/fixed-mixture/damping receiving and strict percentre GPU position+velocity predicates. This is source qualification; actual positive/live-zero original runtime and installed causal proof remain open.",
       "current_checkpoint_ref": "docs/kernel-rebuild/EPI-WORLD-RECOVERY-MAP-2026-09-30.json#/latest_execution_checkpoint"
     },
