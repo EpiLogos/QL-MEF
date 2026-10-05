@@ -92,7 +92,7 @@ impl Driver {
 fn procedure(changes: Vec<StageChange>) -> StageProcedure {
     let selector: Vec<String> = changes
         .iter()
-        .map(|c| c.slot().unwrap().to_owned())
+        .filter_map(|c| c.slot().unwrap().map(str::to_owned))
         .collect();
     StageProcedure {
         schema: ql_mef::continuous::stage::STAGE_PROCEDURE.into(),
@@ -346,4 +346,157 @@ fn a_second_procedure_on_an_owned_slot_is_refused_by_name() {
         state["stage"]["material"]["damping_per_second"],
         json!(0.75)
     );
+}
+
+#[ignore = "requires the installed ql-field-worker"]
+#[test]
+fn a_bound_procedure_fires_on_its_admitted_determinant() {
+    // Two owners over one event: the bound host strikes the Moon voice on
+    // every admitted M1 advance; the control host only advances.
+    let mut bound = Driver::open("test:stage-bound");
+    let mut control = Driver::open("test:stage-bound-control");
+    let mut procedure = procedure(vec![StageChange::Strike {
+        mode_ref: "scene:planet/#2-5-4".into(),
+        amplitude: [0.9, 0.0],
+    }]);
+    procedure.selector = Vec::new();
+    procedure.trigger = StageTrigger::Determinant {
+        operation: "m1-advance".into(),
+    };
+    let bind = bound.send(
+        serde_json::to_value(HostOperation::StageBind {
+            procedure: Box::new(procedure),
+            max_evaluations: None,
+        })
+        .unwrap(),
+    );
+    assert_eq!(bind["status"], "ok", "{}", bind["error"]);
+    assert_eq!(bind["stage"]["binding"]["determinant"], json!("m1-advance"));
+    assert_eq!(bind["stage"]["binding"]["standing"], json!("active"));
+    let seed_bound = bound.send(json!({"operation":"advance", "frames":256, "muted":true}));
+    let seed_control = control.send(json!({"operation":"advance", "frames":256, "muted":true}));
+    assert_eq!(seed_bound["status"], "ok");
+    assert_eq!(seed_control["status"], "ok");
+    let before_bound = seed_bound["field"]["amplitudes_metres"].clone();
+    let before_control = seed_control["field"]["amplitudes_metres"].clone();
+    let fired = bound.send(json!({"operation":"m1-advance", "ticks":1}));
+    let plain = control.send(json!({"operation":"m1-advance", "ticks":1}));
+    assert_eq!(fired["status"], "ok", "{}", fired["error"]);
+    assert_eq!(plain["status"], "ok", "{}", plain["error"]);
+    // The binding fired exactly once, named its momentary act, and the struck
+    // voice carries it: the Moon's amplitude differs from the unbound twin
+    // while every other voice rang identically.
+    let records = fired["stage_bound_firings"].as_array().unwrap();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0]["applied"], json!(true));
+    assert_eq!(
+        records[0]["receipt"]["momentary_acts"][0]["key"],
+        json!("ta-onta:stage:live-fold/strike:scene:planet/#2-5-4")
+    );
+    let struck = &fired["field"]["amplitudes_metres"];
+    let reference = &plain["field"]["amplitudes_metres"];
+    assert_ne!(
+        struck[3], reference[3],
+        "the Moon voice did not carry the strike"
+    );
+    for (index, (a, b)) in struck
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(reference.as_array().unwrap())
+        .enumerate()
+    {
+        if index != 3 {
+            assert_eq!(a, b, "voice {index} changed without being struck");
+        }
+    }
+    let _ = (before_bound, before_control);
+    // The binding's budget is disclosed and still active.
+    let state = bound.send(json!({"operation":"stage-state"}));
+    let bindings = state["stage"]["bindings"].as_array().unwrap();
+    assert_eq!(bindings.len(), 1);
+    assert_eq!(bindings[0]["evaluations"], json!(1));
+    assert_eq!(bindings[0]["standing"], json!("active"));
+}
+
+#[ignore = "requires the installed ql-field-worker"]
+#[test]
+fn the_bound_procedure_never_reenters_and_stops_at_its_budget() {
+    let mut procedure = procedure(vec![StageChange::Form {
+        operations: vec![M3Operation::SetPose { pose: 5 }],
+    }]);
+    procedure.passage = Some(StagePassage { scenes: 3 });
+    procedure.trigger = StageTrigger::Determinant {
+        operation: "m1-advance".into(),
+    };
+    let mut driver = Driver::open("test:stage-budget");
+    let bind = driver.send(
+        serde_json::to_value(HostOperation::StageBind {
+            procedure: Box::new(procedure),
+            max_evaluations: Some(2),
+        })
+        .unwrap(),
+    );
+    assert_eq!(bind["status"], "ok", "{}", bind["error"]);
+    // Firing one: the invoked fold plus its two generated scenes. The passage
+    // itself advances the M1 flow twice — under re-entry those internal
+    // determinants would consume the whole budget here.
+    let first = driver.send(json!({"operation":"m1-advance", "ticks":1}));
+    assert_eq!(first["status"], "ok", "{}", first["error"]);
+    assert_eq!(first["stage_bound_firings"].as_array().unwrap().len(), 1);
+    // Firing two: still admitted, the budget not yet spent.
+    let second = driver.send(json!({"operation":"m1-advance", "ticks":1}));
+    assert_eq!(second["status"], "ok", "{}", second["error"]);
+    assert_eq!(second["stage_bound_firings"].as_array().unwrap().len(), 1);
+    // The budget is spent: the determinant keeps working, the binding stops.
+    let third = driver.send(json!({"operation":"m1-advance", "ticks":1}));
+    assert_eq!(third["status"], "ok", "{}", third["error"]);
+    assert!(third["stage_bound_firings"].is_null());
+    let state = driver.send(json!({"operation":"stage-state"}));
+    let bindings = state["stage"]["bindings"].as_array().unwrap();
+    assert_eq!(bindings[0]["evaluations"], json!(2));
+    assert_eq!(bindings[0]["max_evaluations"], json!(2));
+    assert_eq!(bindings[0]["standing"], json!("exhausted"));
+}
+
+#[ignore = "requires the installed ql-field-worker"]
+#[test]
+fn unbinding_stops_the_firing_and_names_the_final_standing() {
+    let mut procedure = procedure(vec![StageChange::Strike {
+        mode_ref: "scene:planet/#2-5-4".into(),
+        amplitude: [0.5, 0.0],
+    }]);
+    procedure.selector = Vec::new();
+    procedure.trigger = StageTrigger::Determinant {
+        operation: "replace-event".into(),
+    };
+    let mut driver = Driver::open("test:stage-unbind");
+    let bind = driver.send(
+        serde_json::to_value(HostOperation::StageBind {
+            procedure: Box::new(procedure),
+            max_evaluations: None,
+        })
+        .unwrap(),
+    );
+    assert_eq!(bind["status"], "ok", "{}", bind["error"]);
+    // A played strike is not an admitted determinant trigger: no firing.
+    let strike = driver.send(json!({"operation":"strike", "strikes":[
+            {"mode_ref":"scene:planet/#2-5-0/1", "amplitude":[0.3, 0.0]}]}));
+    assert_eq!(strike["status"], "ok", "{}", strike["error"]);
+    assert!(strike["stage_bound_firings"].is_null());
+    let unbound =
+        driver.send(json!({"operation":"stage-unbind", "procedure_ref":"ta-onta:stage:live-fold"}));
+    assert_eq!(unbound["status"], "ok");
+    assert_eq!(unbound["stage"]["binding"]["standing"], json!("active"));
+    let again =
+        driver.send(json!({"operation":"stage-unbind", "procedure_ref":"ta-onta:stage:live-fold"}));
+    assert_eq!(again["status"], "refused");
+    assert!(
+        again["error"]
+            .as_str()
+            .unwrap()
+            .contains("no binding names")
+    );
+    let state = driver.send(json!({"operation":"stage-state"}));
+    assert!(state["stage"]["bindings"].as_array().unwrap().is_empty());
 }
