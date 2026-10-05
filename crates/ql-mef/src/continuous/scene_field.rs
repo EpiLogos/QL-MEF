@@ -788,6 +788,11 @@ impl SceneInstrument {
     pub fn shape(&self) -> &ShapeBasis {
         &self.shape
     }
+    /// The declared material policy currently in force; disclosed, never a
+    /// source reading.
+    pub fn material(&self) -> &SceneMaterial {
+        &self.material
+    }
     /// The caller's event, without the provider-owned voices.
     pub fn event(&self) -> CoupledInput {
         let mut event = self.event.clone();
@@ -800,7 +805,11 @@ impl SceneInstrument {
     /// a re-read nodal quartet/72-address reshapes the same voices explicitly.
     pub fn replace(&mut self, event: &CoupledInput, strike: bool) -> Result<Value, String> {
         let event = next_generation(event, self.event.m2.stamp.identity.profile_generation)?;
-        let (input, basis) = complete(&event, &self.material, self.fibre())?;
+        let (mut input, basis) = complete(&event, &self.material, self.fibre())?;
+        // The applied command batch is consumed: its effects and receipts live
+        // in the composed basis, and a retained command would replay its
+        // already-stale generation check on the next composition.
+        input.m3_commands = Vec::new();
         let shape = ShapeBasis::from_basis(&basis)?;
         let mut field = self.session.replace_field_state(input.clone(), strike)?;
         self.event = input;

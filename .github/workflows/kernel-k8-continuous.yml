@@ -82,6 +82,13 @@ jobs:
           cargo test --locked -p ql-mef --test k8_reshape -- --ignored 2>&1 | tee target/k8-continuous/reshape.log
           cargo test --locked -p ql-mef --test scene_instrument -- --ignored 2>&1 | tee target/k8-continuous/scene.log
           cargo test --locked -p ql-mef --test scene_nara_reception -- --ignored 2>&1 | tee target/k8-continuous/scene-nara.log
+      - name: The Ta-Onta procedural stage over the installed worker, through the field host
+        env:
+          QL_FIELD_WORKER: ${{ github.workspace }}/target/k8-cpp/bin/ql-field-worker
+        run: |
+          set -o pipefail
+          cargo test --locked -p ql-mef --test ta_onta_stage 2>&1 | tee target/k8-continuous/ta-onta-stage.log
+          cargo test --locked -p ql-mef --test ta_onta_stage -- --ignored 2>&1 | tee -a target/k8-continuous/ta-onta-stage.log
       - name: Both complete musical inputs on one installed material owner
         run: |
           cargo run --locked -p ql-mef --example k8_coupled -- target/k8-cpp/bin/ql-field-worker \
