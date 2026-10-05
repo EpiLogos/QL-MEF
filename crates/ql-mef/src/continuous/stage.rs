@@ -83,7 +83,7 @@ pub enum StageChange {
 impl StageChange {
     /// The stage slot this change addresses; a change may only address a slot
     /// its own kind admits.
-    fn slot(&self) -> Result<&'static str, String> {
+    pub fn slot(&self) -> Result<&'static str, String> {
         match self {
             Self::Form { .. } => Ok("form"),
             Self::Damping { .. } => Ok("material.damping"),
@@ -312,9 +312,24 @@ pub fn receipt(plan: &StagePlan, event_ref: &str, applied: bool) -> Value {
     })
 }
 
+/// The M3 generation the composer will see when the event is next composed.
+/// The scene owner moves every stamp carrying the event identity together
+/// (`next_generation`): when the event's own M2 generation is not ahead of the
+/// owner's applied generation, a matching M3 identity is bumped with it.
+fn composed_generation(event: &CoupledInput, applied_generation: u64) -> u64 {
+    let m2 = &event.m2.stamp.identity;
+    let m3 = &event.m3.stamp.identity;
+    if m2.profile_generation <= applied_generation && m2 == m3 {
+        applied_generation + 1
+    } else {
+        m3.profile_generation
+    }
+}
+
 fn form_command(
     procedure: &StageProcedure,
     event: &CoupledInput,
+    applied_generation: u64,
     cause: String,
     occurrence_unix_ms: u64,
     receipt_unix_ms: u64,
@@ -324,7 +339,7 @@ fn form_command(
         schema: COMMAND_SCHEMA.into(),
         event_ref: event.m1.event_ref.clone(),
         subject_ref: event.m3.subject_ref.clone(),
-        expected_generation: event.m3.stamp.identity.profile_generation,
+        expected_generation: composed_generation(event, applied_generation),
         actor_ref: procedure.key("form"),
         cause_ref: cause,
         occurrence_unix_ms,
@@ -335,11 +350,13 @@ fn form_command(
 
 /// Evaluates a procedure against the current event, claiming its slots. The
 /// M3 change is compiled onto the event's own command batch with the caller's
-/// actual times (the host supplies them; evaluation stays clock-free).
+/// actual times and the owner's applied generation basis (the host supplies
+/// both; evaluation itself stays clock-free).
 pub fn evaluate(
     procedure: &StageProcedure,
     event: &CoupledInput,
     ownership: &mut StageOwnership,
+    applied_generation: u64,
     occurrence_unix_ms: u64,
     receipt_unix_ms: u64,
 ) -> Result<StagePlan, String> {
@@ -369,6 +386,7 @@ pub fn evaluate(
                 next.m3_commands.push(form_command(
                     procedure,
                     event,
+                    applied_generation,
                     procedure.trigger.cause_ref(),
                     occurrence_unix_ms,
                     receipt_unix_ms,
@@ -469,16 +487,25 @@ mod tests {
             operations: vec![M3Operation::SetPose { pose: 3 }],
         }]);
         let mut ownership = StageOwnership::default();
-        let plan = evaluate(&procedure, &live, &mut ownership, 11, 22).unwrap();
+        // The owner's applied generation equals the event's own: the composer
+        // moves a matching M3 identity with it, so the command addresses the
+        // generation the event will carry when it is next composed.
+        let plan = evaluate(&procedure, &live, &mut ownership, generation, 11, 22).unwrap();
         let next = plan.event.expect("form change carries the event");
         assert_eq!(next.m3_commands.len(), 1);
         let command = &next.m3_commands[0];
         assert_eq!(command.schema, COMMAND_SCHEMA);
         assert_eq!(command.event_ref, live.m1.event_ref);
-        assert_eq!(command.expected_generation, generation);
+        assert_eq!(command.expected_generation, generation + 1);
         assert_eq!(command.actor_ref, "ta-onta:stage:clock-fold@3/form");
         assert_eq!(command.cause_ref, "ta-onta:invocation");
         assert_eq!(command.occurrence_unix_ms, 11);
+        // An owner still behind the event's own generation never bumps it.
+        let behind = evaluate(&procedure, &live, &mut ownership, generation - 1, 11, 22).unwrap();
+        assert_eq!(
+            behind.event.unwrap().m3_commands[0].expected_generation,
+            generation
+        );
         // The live event itself is untouched by evaluation.
         assert_eq!(live.m3_commands.len(), 0);
         assert_eq!(ownership.contributions().count(), 1);
@@ -493,12 +520,12 @@ mod tests {
         let live = event();
         let mut ownership = StageOwnership::default();
         let first = procedure(vec![StageChange::Damping { per_second: 0.5 }]);
-        evaluate(&first, &live, &mut ownership, 0, 0).unwrap();
+        evaluate(&first, &live, &mut ownership, 1, 0, 0).unwrap();
         let revised = StageProcedure {
             revision: 4,
             ..first.clone()
         };
-        let plan = evaluate(&revised, &live, &mut ownership, 0, 0).unwrap();
+        let plan = evaluate(&revised, &live, &mut ownership, 1, 0, 0).unwrap();
         assert_eq!(plan.damping, Some(0.5));
         assert_eq!(ownership.contributions().count(), 1);
         assert_eq!(
@@ -515,12 +542,12 @@ mod tests {
             procedure_ref: "ta-onta:stage:first".into(),
             ..procedure(vec![StageChange::Damping { per_second: 0.5 }])
         };
-        evaluate(&first, &live, &mut ownership, 0, 0).unwrap();
+        evaluate(&first, &live, &mut ownership, 1, 0, 0).unwrap();
         let second = StageProcedure {
             procedure_ref: "ta-onta:stage:second".into(),
             ..procedure(vec![StageChange::Damping { per_second: 0.9 }])
         };
-        let error = evaluate(&second, &live, &mut ownership, 0, 0).unwrap_err();
+        let error = evaluate(&second, &live, &mut ownership, 1, 0, 0).unwrap_err();
         assert!(error.contains("owned by ta-onta:stage:first@"), "{error}");
     }
 
@@ -538,8 +565,8 @@ mod tests {
                 operations: vec![M3Operation::SetPose { pose: 1 }],
             }])
         };
-        evaluate(&first, &live, &mut ownership, 0, 0).unwrap();
-        evaluate(&second, &live, &mut ownership, 0, 0).unwrap();
+        evaluate(&first, &live, &mut ownership, 1, 0, 0).unwrap();
+        evaluate(&second, &live, &mut ownership, 1, 0, 0).unwrap();
         let retired = ownership.retire("ta-onta:stage:first");
         assert_eq!(
             retired,
@@ -548,12 +575,12 @@ mod tests {
         assert!(ownership.owner_of("material.damping").is_none());
         assert!(ownership.owner_of("form").is_some());
         // After release the slot can be claimed by another procedure.
-        evaluate(&second, &live, &mut ownership, 0, 0).unwrap();
+        evaluate(&second, &live, &mut ownership, 1, 0, 0).unwrap();
         let third = StageProcedure {
             procedure_ref: "ta-onta:stage:third".into(),
             ..procedure(vec![StageChange::Damping { per_second: 0.2 }])
         };
-        evaluate(&third, &live, &mut ownership, 0, 0).unwrap();
+        evaluate(&third, &live, &mut ownership, 1, 0, 0).unwrap();
     }
 
     #[test]
@@ -582,8 +609,8 @@ mod tests {
                 StageChange::Damping { per_second: 0.4 },
             ])
         };
-        let a = evaluate(&build(), &live, &mut one, 0, 0).unwrap();
-        let b = evaluate(&build(), &live, &mut two, 999, 999).unwrap();
+        let a = evaluate(&build(), &live, &mut one, 1, 0, 0).unwrap();
+        let b = evaluate(&build(), &live, &mut two, 1, 999, 999).unwrap();
         let strip_times = |plan: &StagePlan| {
             let mut value = serde_json::to_value(plan).unwrap();
             if let Some(event) = value["event"].as_object_mut() {
@@ -606,7 +633,7 @@ mod tests {
         }]);
         procedure.passage = Some(StagePassage { scenes: 3 });
         let mut ownership = StageOwnership::default();
-        let plan = evaluate(&procedure, &live, &mut ownership, 0, 0).unwrap();
+        let plan = evaluate(&procedure, &live, &mut ownership, 1, 0, 0).unwrap();
         assert_eq!(plan.passage_ticks, 2);
         assert_eq!(plan.contributions.len(), 2);
         let record = receipt(&plan, &live.m1.event_ref, false);
@@ -630,7 +657,7 @@ mod tests {
             changes: vec![StageChange::Damping { per_second: 0.5 }],
             ..voice
         };
-        let error = evaluate(&voice, &live, &mut ownership, 0, 0).unwrap_err();
+        let error = evaluate(&voice, &live, &mut ownership, 1, 0, 0).unwrap_err();
         assert!(
             error.contains("voice retuning is not an admitted stage change"),
             "{error}"
@@ -640,7 +667,7 @@ mod tests {
             subject_ref: "person:someone-else".into(),
             ..procedure(vec![StageChange::Damping { per_second: 0.5 }])
         };
-        let error = evaluate(&foreign, &live, &mut ownership, 0, 0).unwrap_err();
+        let error = evaluate(&foreign, &live, &mut ownership, 1, 0, 0).unwrap_err();
         assert!(error.contains("but the live event belongs to"), "{error}");
 
         let wrong_schema = StageProcedure {
@@ -648,7 +675,7 @@ mod tests {
             ..procedure(vec![StageChange::Damping { per_second: 0.5 }])
         };
         assert!(
-            evaluate(&wrong_schema, &live, &mut ownership, 0, 0)
+            evaluate(&wrong_schema, &live, &mut ownership, 1, 0, 0)
                 .unwrap_err()
                 .contains("unsupported stage procedure contract")
         );
@@ -657,7 +684,7 @@ mod tests {
             selector: vec!["form".into()],
             ..procedure(vec![StageChange::Damping { per_second: 0.5 }])
         };
-        let error = evaluate(&selector_mismatch, &live, &mut ownership, 0, 0).unwrap_err();
+        let error = evaluate(&selector_mismatch, &live, &mut ownership, 1, 0, 0).unwrap_err();
         assert!(
             error.contains("outside the procedure's selector"),
             "{error}"
@@ -696,7 +723,7 @@ mod tests {
             operation: "m1-advance".into(),
         };
         let mut ownership = StageOwnership::default();
-        let plan = evaluate(&procedure, &live, &mut ownership, 0, 0).unwrap();
+        let plan = evaluate(&procedure, &live, &mut ownership, 1, 0, 0).unwrap();
         assert_eq!(
             plan.event.as_ref().unwrap().m3_commands[0].cause_ref,
             "ta-onta:determinant:m1-advance"
@@ -715,7 +742,7 @@ mod tests {
             },
         }]);
         assert!(
-            evaluate(&bad, &live, &mut ownership, 0, 0)
+            evaluate(&bad, &live, &mut ownership, 1, 0, 0)
                 .unwrap_err()
                 .contains("canonical")
         );
@@ -727,7 +754,7 @@ mod tests {
             },
         }]);
         assert!(
-            evaluate(&wide, &live, &mut ownership, 0, 0)
+            evaluate(&wide, &live, &mut ownership, 1, 0, 0)
                 .unwrap_err()
                 .contains("half_degrees")
         );

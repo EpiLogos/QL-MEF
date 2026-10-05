@@ -224,7 +224,8 @@ impl FieldHost {
             .map_err(|_| "host clock before the epoch")?
             .as_millis() as u64;
         let live = instrument.event();
-        let plan = stage::evaluate(&procedure, &live, ownership, now, now)?;
+        let applied_generation = live.m2.stamp.identity.profile_generation;
+        let plan = stage::evaluate(&procedure, &live, ownership, applied_generation, now, now)?;
         let strike = instrument.material().strike_on_event;
         let mut applied: Option<Value> = None;
         let apply = |step: &str, result: Result<Value, String>| -> Result<Value, String> {
