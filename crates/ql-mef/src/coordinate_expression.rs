@@ -459,7 +459,7 @@ pub fn resolve_coordinate_expression_bounded(
     {
         copies.value(&(binding, binding))?;
     }
-    copies.value(&[0_u8; 4096])?;
+    copies.value([0_u8; 4096].as_slice())?;
     resolve_coordinate_expression(registry, reference, face)
 }
 
