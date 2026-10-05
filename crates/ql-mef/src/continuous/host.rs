@@ -79,6 +79,18 @@ pub enum HostOperation {
     StageRetire {
         procedure_ref: String,
     },
+    /// scene only: bind a determinant-triggered procedure to the live flow.
+    /// It fires when this host itself performs its named determinant
+    /// operation as a request, within its evaluation budget.
+    StageBind {
+        procedure: Box<stage::StageProcedure>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        max_evaluations: Option<u32>,
+    },
+    /// scene only: remove a binding; the answer names its final standing.
+    StageUnbind {
+        procedure_ref: String,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -129,6 +141,7 @@ pub struct FieldHost {
     instance_ref: String,
     session: Owner,
     stage: StageOwnership,
+    bindings: stage::StageBindings,
     last_request: u64,
 }
 impl FieldHost {
@@ -148,6 +161,7 @@ impl FieldHost {
                 timeout,
             )?)),
             stage: StageOwnership::default(),
+            bindings: stage::StageBindings::default(),
             last_request: 0,
         })
     }
@@ -162,6 +176,7 @@ impl FieldHost {
             instance_ref: instrument.instance_ref().to_owned(),
             session: Owner::Scene(Box::new(instrument)),
             stage: StageOwnership::default(),
+            bindings: stage::StageBindings::default(),
             last_request: 0,
         })
     }
@@ -183,7 +198,11 @@ impl FieldHost {
 
     /// The procedural stage's scoped disclosure: the live constituents, their
     /// current effective standing and the procedure that owns each slot.
-    fn stage_state(instrument: &SceneInstrument, ownership: &StageOwnership) -> Value {
+    fn stage_state(
+        instrument: &SceneInstrument,
+        ownership: &StageOwnership,
+        bindings: &stage::StageBindings,
+    ) -> Value {
         let field = instrument.session().last_field();
         let basis = instrument.session().current_basis();
         let slots: Value = stage::STAGE_SLOTS
@@ -214,6 +233,7 @@ impl FieldHost {
             "shape_ref": instrument.shape().shape_ref,
             "material": instrument.material(),
             "slots": slots,
+            "bindings": bindings.state(),
             "standing": "live scene state and procedural ownership; audio is never disclosed here",
         })
     }
@@ -250,6 +270,9 @@ impl FieldHost {
             let axis = if slot == "clock.inscription" { 0 } else { 1 };
             applied = Some(apply(slot, instrument.set_axis(axis, phase.clone()))?);
         }
+        if !plan.strikes.is_empty() {
+            applied = Some(apply("strike", instrument.strike(&plan.strikes))?);
+        }
         for scene in 1..=plan.passage_ticks {
             applied = Some(apply(
                 &format!("passage-scene:{scene}"),
@@ -273,7 +296,7 @@ impl FieldHost {
         let refusal = "the Ta-Onta procedural stage belongs to a provider-composed scene owner";
         let outcome = match (&request.command, &mut self.session) {
             (HostOperation::StageState {}, Owner::Scene(instrument)) => {
-                Ok((Self::stage_state(instrument, &self.stage), None))
+                Ok((Self::stage_state(instrument, &self.stage, &self.bindings), None))
             }
             (HostOperation::StageState {}, _) => Err(refusal.into()),
             (HostOperation::StageEvaluate { procedure }, Owner::Scene(instrument)) => {
@@ -289,6 +312,45 @@ impl FieldHost {
                         "standing": "ownership released; retained material stays as the now-authored state"}),
                     None,
                 ))
+            }
+            (
+                HostOperation::StageBind {
+                    procedure,
+                    max_evaluations,
+                },
+                Owner::Scene(_),
+            ) => self
+                .bindings
+                .bind((**procedure).clone(), *max_evaluations)
+                .map(|bound| {
+                    (
+                        json!({"schema": stage::STAGE_RECEIPT, "procedure_ref": bound.procedure.procedure_ref,
+                            "applied": true,
+                            "binding": {"determinant": match &bound.procedure.trigger {
+                                stage::StageTrigger::Determinant { operation } => operation.clone(),
+                                stage::StageTrigger::Invocation => String::new(),
+                            },
+                            "evaluations": bound.evaluations,
+                            "max_evaluations": bound.max_evaluations,
+                            "standing": bound.standing},
+                            "standing": "bound to the live flow; fires when this host itself performs the named determinant operation as a request"}),
+                        None,
+                    )
+                }),
+            (HostOperation::StageBind { .. }, _) => Err(refusal.into()),
+            (HostOperation::StageUnbind { procedure_ref }, _) => {
+                match self.bindings.unbind(procedure_ref) {
+                    Some(bound) => Ok((
+                        json!({"schema": stage::STAGE_RECEIPT, "procedure_ref": procedure_ref,
+                            "applied": true,
+                            "binding": {"evaluations": bound.evaluations,
+                                "max_evaluations": bound.max_evaluations,
+                                "standing": bound.standing},
+                            "standing": "binding removed; it fires no more"}),
+                        None,
+                    )),
+                    None => Err(format!("no binding names {procedure_ref}")),
+                }
             }
             (
                 HostOperation::Read {}
@@ -446,6 +508,8 @@ impl FieldHost {
             HostOperation::StageState {}
                 | HostOperation::StageEvaluate { .. }
                 | HostOperation::StageRetire { .. }
+                | HostOperation::StageBind { .. }
+                | HostOperation::StageUnbind { .. }
         ) {
             return self.stage_operation(&request);
         }
@@ -457,6 +521,13 @@ impl FieldHost {
                 | HostOperation::ReplaceEvent { .. }
                 | HostOperation::SetDamping { .. }
         );
+        // The determinant operation name a binding may follow, if this request
+        // is one of the host's own admitted determinants.
+        let fired_determinant = match &request.command {
+            HostOperation::M1Advance { .. } => Some("m1-advance"),
+            HostOperation::ReplaceEvent { .. } => Some("replace-event"),
+            _ => None,
+        };
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
             (HostOperation::Advance { frames, muted }, owner) => {
@@ -504,7 +575,9 @@ impl FieldHost {
                 | HostOperation::Personal {}
                 | HostOperation::StageState {}
                 | HostOperation::StageEvaluate { .. }
-                | HostOperation::StageRetire { .. },
+                | HostOperation::StageRetire { .. }
+                | HostOperation::StageBind { .. }
+                | HostOperation::StageUnbind { .. },
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };
@@ -514,6 +587,22 @@ impl FieldHost {
                 response["field"] = field;
                 if let (true, Owner::Scene(instrument)) = (determinant, &self.session) {
                     response["influence"] = instrument.influence();
+                }
+                // The determinant happened: bound procedures fire now, in
+                // canonical order, within their own budgets. Their plans apply
+                // through the same instrument paths and can never re-enter the
+                // firing (only request-level determinants fire bindings).
+                if let Some(name) = fired_determinant {
+                    let (firings, applied) = self.fire_bound(name);
+                    if !firings.as_array().is_none_or(Vec::is_empty) {
+                        response["stage_bound_firings"] = firings;
+                        if let Some(field) = applied {
+                            response["field"] = field;
+                        }
+                        if let Owner::Scene(instrument) = &self.session {
+                            response["influence"] = instrument.influence();
+                        }
+                    }
                 }
                 response
             }
@@ -526,6 +615,39 @@ impl FieldHost {
                 self.response(Some(&request.request_id), status, Some(&error))
             }
         }
+    }
+
+    /// Fires every active binding admitted for this determinant operation,
+    /// in canonical order, consuming one evaluation each. A firing that is
+    /// refused is recorded with its cause; the flow continues.
+    fn fire_bound(&mut self, determinant: &str) -> (Value, Option<Value>) {
+        let mut records = Vec::new();
+        let mut last_field = None;
+        for procedure_ref in self.bindings.admissions(determinant) {
+            let Some(bound) = self.bindings.get(&procedure_ref) else {
+                continue;
+            };
+            let procedure = bound.procedure.clone();
+            let outcome = match &mut self.session {
+                Owner::Scene(instrument) => {
+                    Self::stage_evaluate(instrument, &mut self.stage, procedure)
+                }
+                Owner::Supplied(_) => Err("the bound procedure's scene owner is gone".into()),
+            };
+            self.bindings.record_fired(&procedure_ref);
+            match outcome {
+                Ok((receipt, field)) => {
+                    last_field = Some(field);
+                    records.push(json!({"procedure_ref": procedure_ref,
+                        "applied": true, "receipt": receipt}));
+                }
+                Err(error) => {
+                    records.push(json!({"procedure_ref": procedure_ref,
+                        "applied": false, "error": error}));
+                }
+            }
+        }
+        (json!(records), last_field)
     }
 }
 
@@ -589,11 +711,28 @@ mod tests {
             serde_json::from_value(json!({"operation":"stage-retire", "procedure_ref":"p"}))
                 .unwrap();
         assert!(matches!(retire, HostOperation::StageRetire { .. }));
+        let mut bound_procedure = procedure.clone();
+        bound_procedure["trigger"] = json!({"trigger": "determinant", "operation": "m1-advance"});
+        let bind: HostOperation = serde_json::from_value(json!({
+            "operation":"stage-bind", "procedure": bound_procedure,
+            "max_evaluations": 4}))
+        .unwrap();
+        assert!(matches!(bind, HostOperation::StageBind { .. }));
+        let bind_default: HostOperation = serde_json::from_value(json!({
+            "operation":"stage-bind", "procedure": bound_procedure}))
+        .unwrap();
+        assert!(matches!(bind_default, HostOperation::StageBind { .. }));
+        let unbind: HostOperation =
+            serde_json::from_value(json!({"operation":"stage-unbind", "procedure_ref":"p"}))
+                .unwrap();
+        assert!(matches!(unbind, HostOperation::StageUnbind { .. }));
         for value in [
             json!({"operation":"stage-evaluate"}),
             json!({"operation":"stage-evaluate", "procedure": {}, "extra": true}),
             json!({"operation":"stage-retire"}),
             json!({"operation":"stage-state", "procedure_ref": "p"}),
+            json!({"operation":"stage-bind"}),
+            json!({"operation":"stage-unbind"}),
         ] {
             assert!(
                 serde_json::from_value::<HostOperation>(value.clone()).is_err(),
