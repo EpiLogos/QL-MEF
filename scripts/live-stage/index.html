@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QL played-note stage — live</title>
+<style>
+  body { background: #05070d; color: #cfe3ff; font: 14px/1.5 ui-monospace, monospace; margin: 24px; }
+  canvas.webgl, canvas.overlay { position: absolute; left: 24px; top: 64px; border: 1px solid #1c2a44; pointer-events: none; }
+  canvas.overlay { pointer-events: none; }
+  #stage { position: relative; height: 480px; width: 720px; }
+  button { background: #101a2e; border: 1px solid #2c4470; color: #cfe3ff; font: inherit; padding: 8px 14px; margin: 0 8px 8px 0; }
+  button:hover { background: #1a2c4e; }
+  button:disabled { opacity: 0.4; }
+  #keys { margin-top: 18px; max-width: 720px; }
+  #status { color: #7fd2a8; min-height: 1.4em; margin-top: 10px; }
+  .hint { color: #5f7ba6; max-width: 720px; }
+</style>
+</head>
+<body>
+<h2>QL played-note stage — the coupled event, live</h2>
+<div class="hint">One real native host owns the sounding and visible state. The keys are the
+event's own disclosed played addresses (the retained reading's inner-four scaffold);
+each strike excites that voice of the physical body, and the ring you see is the same
+state the sound comes from. Press <b>start</b> first (browsers need the gesture for audio).</div>
+<div id="stage"><canvas class="webgl" width="720" height="480"></canvas><canvas class="overlay" width="720" height="480"></canvas></div>
+<div>
+  <button id="start">start</button>
+  <button id="mute" data-muted="false">mute</button>
+</div>
+<div id="keys"></div>
+<div id="status">opening the native host…</div>
+<script type="module" src="/live-stage.js"></script>
+</body>
+</html>
