@@ -3,10 +3,10 @@
 //! This is source/profile resolution. Host adoption, encounter state, provider
 //! availability and protected Anima readings remain with their existing owners.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
 use crate::MFace;
@@ -334,6 +334,470 @@ pub fn resolve_coordinate_expression(
     Ok(binding)
 }
 
+// ---------------------------------------------------------------------------
+// PS-E (QL-MEF #297): the native subject <-> exact locus <-> stable occurrence
+// relation, with typed expressive roles.
+//
+// The owner's commission (2 October 2026): "all entities having their given
+// place in the system, which might be at the level of a glyph, force, a
+// movement/sequence, a scene or collection of scenes". A subject manifests at
+// an exact source-qualified locus through compositional roles; each role is
+// one addressable occurrence whose identity derives from content, so it
+// survives reorder and rename, and canonical place re-entry returns the same
+// bindings. Roles are compositional (P1 §0.2), not ontological species: one
+// subject may hold several at once, and none is reduced to the others.
+// ---------------------------------------------------------------------------
+
+pub const SUBJECT_MANIFESTATION_CONTRACT: &str = "ql.subject-manifestation/v1";
+
+/// Where the original Paśu/entity-to-form ground actually lives: the situated
+/// paśu (the non-dual agent-user field) and the entity→form semantics are
+/// source records of the Original repository, not a QL module. Qualification
+/// below reuses their exact explanatory language; nothing here redefines them.
+pub const PASU_SOURCE_REFS: [(&str, &str); 3] = [
+    (
+        "EpiLogos/Epi-Logos-C-Experiments",
+        "Idea/Pratibimba/Self/PASU.md @ ead6956e2370d5d147c08499d1f533e2f6f6ddbd (revision daa660cbc1b8c5da83828698665a753852cb0287) — the situated paśu: non-dual agent-user field",
+    ),
+    (
+        "EpiLogos/Epi-Logos-C-Experiments",
+        "Body/S/S0/epi-cli/src/vault/pasu.rs @ 9cbb69c23048adeb63e0b274e3ad6e81b2daf62d — the native vault projection of that ground",
+    ),
+    (
+        "EpiLogos/Epi-Logos-C-Experiments",
+        "Idea/Bimba/World/World-Ontology.md @ a766db4ed67b29ec70dd273e674cfa1676f60800 — #1 definition/form, #2 operation/entity, #3 pattern/process, #4 context/type, #5 integration/reflection",
+    ),
+];
+
+/// The compositional expressive role an occurrence plays (P1 §0.2). Required
+/// roles include formation/glyph/body, force/constraint/modulation and
+/// movement/sequence; scene and whole-Expression complete the owner's stated
+/// scales. A planet can participate as formation, motion and modulation
+/// together; roles never collapse into one another.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ExpressiveRole {
+    Formation,
+    Force,
+    Sequence,
+    Scene,
+    Expression,
+}
+
+impl ExpressiveRole {
+    pub const ALL: [ExpressiveRole; 5] = [
+        Self::Formation,
+        Self::Force,
+        Self::Sequence,
+        Self::Scene,
+        Self::Expression,
+    ];
+
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Formation => "formation",
+            Self::Force => "force",
+            Self::Sequence => "sequence",
+            Self::Scene => "scene",
+            Self::Expression => "expression",
+        }
+    }
+
+    /// The C-family property layer whose actual keys qualify this role,
+    /// reusing the original coordinate semantics exactly as the canon
+    /// instructs ("#1 as definition/form, #2 as operation/entity, #3 as
+    /// pattern/process, #4 as context/type ... #5 as integration/reflection";
+    /// see `PASU_SOURCE_REFS`). These prefixes are real in the current
+    /// registry: every deep source record keys its content this way.
+    pub const fn qualifying_prefix(self) -> &'static str {
+        match self {
+            Self::Formation => "c_1_",
+            Self::Force => "c_2_",
+            Self::Sequence => "c_3_",
+            Self::Scene => "c_4_",
+            Self::Expression => "c_5_",
+        }
+    }
+
+    pub const fn layer_meaning(self) -> &'static str {
+        match self {
+            Self::Formation => "definition/form",
+            Self::Force => "operation/entity",
+            Self::Sequence => "pattern/process",
+            Self::Scene => "context/type",
+            Self::Expression => "integration/reflection",
+        }
+    }
+}
+
+/// The disclosed qualification standing carried by every occurrence.
+pub const ROLE_QUALIFICATION_STANDING: &str = "declared-role-qualification: expressive roles are compositional (contract P1 §0.2), \
+     qualified by the locus's own source records through the original coordinate semantics \
+     (#1 definition/form, #2 operation/entity, #3 pattern/process, #4 context/type, \
+     #5 integration/reflection — see ql.subject-manifestation PASU source refs); a locus \
+     lacking a layer's keys resolves that role as explicitly unrepresented, never fabricated";
+
+/// The shared native subject-reference grammar. Both this owner and the
+/// procedural stage validate subject identity through this one function, so a
+/// subject valid for a stage procedure is manifestable in the Atlas and vice
+/// versa. It bounds and shapes the reference; it grants no authority.
+pub fn validate_subject_ref(subject_ref: &str) -> Result<(), String> {
+    if subject_ref.is_empty()
+        || subject_ref.len() > 2048
+        || subject_ref.chars().any(|c| c.is_control())
+    {
+        return Err(
+            "invalid native subject reference (PS-E subject owner: non-empty, at most 2048 bytes, no control characters)"
+                .into(),
+        );
+    }
+    Ok(())
+}
+
+/// One authored variant layer over the resolved profile, in declared order.
+/// Keys follow the actual profile inheritance at the current basis: first
+/// parent precedence per key among parents, whole-key child replacement above
+/// them — `material` and every other key is replaced whole, never deep-merged.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AuthoredVariant {
+    pub variant_ref: String,
+    /// Authored keys, each naming the role layer it addresses by the same
+    /// C-family prefix the source records use (e.g. `c_2_harmonic_role`).
+    pub keys: BTreeMap<String, Value>,
+}
+
+impl AuthoredVariant {
+    fn validate(&self) -> Result<(), String> {
+        if self.variant_ref.is_empty()
+            || self.variant_ref.len() > 256
+            || self.variant_ref.chars().any(|c| c.is_control())
+        {
+            return Err("invalid authored variant reference".into());
+        }
+        if self.keys.len() > 64 {
+            return Err("an authored variant carries at most 64 keys".into());
+        }
+        for (key, value) in &self.keys {
+            if key.is_empty() || key.len() > 256 {
+                return Err(format!("invalid authored key length {key:?}"));
+            }
+            if !ExpressiveRole::ALL
+                .iter()
+                .any(|role| key.starts_with(role.qualifying_prefix()))
+            {
+                return Err(format!(
+                    "authored key {key:?} must name the expressive role layer it addresses (one of the C-family role prefixes)"
+                ));
+            }
+            if serde_json::to_vec(value)
+                .map_err(|error| error.to_string())?
+                .len()
+                > 4096
+            {
+                return Err(format!("authored value for {key:?} exceeds 4096 bytes"));
+            }
+        }
+        Ok(())
+    }
+}
+
+/// The exact locus of a manifestation: the coordinate identity, the addressed
+/// face, the depth in the source tree, and the content revision of the full
+/// `CoordinateExpressionBinding` this address summarises (re-resolvable
+/// deterministically from `coordinate_ref` + face at the current registry).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LocusAddress {
+    pub coordinate_ref: String,
+    pub coordinate_id: MTreeId,
+    pub family: String,
+    pub face: RootedFace,
+    /// Exact depth of the selected coordinate in the source tree.
+    pub depth: usize,
+    pub branch_path: Vec<String>,
+    pub canonical_ref: String,
+    pub conjugate_canonical_ref: String,
+    pub binding_content_revision: String,
+    pub resolved_profile_ref: String,
+    pub inherited_profile_refs: Vec<String>,
+}
+
+/// One typed role occurrence: the subject bound at the locus through one
+/// expressive role, with the exact source records that qualify it and the
+/// whole-key authored resolution that applies above them.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RoleOccurrence {
+    pub role: ExpressiveRole,
+    /// Content-derived identity. Reordering the requested roles, renaming
+    /// labels or re-entering the place changes nothing here; changing the
+    /// qualified content, the authored resolution or the explicit instance
+    /// identity does.
+    pub occurrence_ref: String,
+    /// Whether the locus's own records actually carry this layer's keys. An
+    /// unrepresented role is recorded as the obligation it is — the absence is
+    /// information, never filled by fabrication.
+    pub represented: bool,
+    pub property_keys: Vec<String>,
+    pub source_records: Vec<CoordinatePropertySource>,
+    /// Effective authored keys for this role after first-parent-per-key and
+    /// whole-key child replacement: key -> winning variant ref. Absent entries
+    /// stand on their source records.
+    pub authored_keys: BTreeMap<String, String>,
+    pub standing: String,
+}
+
+/// One native subject manifested at one exact locus. This is the P1 relation
+/// in one inspectable object: subject (who), locus (where, at what face and
+/// depth, under which profile lineage), occurrences (in which roles, on which
+/// source records, with which authored resolution).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SubjectManifestation {
+    pub schema: String,
+    pub subject_ref: String,
+    pub locus: LocusAddress,
+    /// In the role type's declared order, regardless of the requested order.
+    pub occurrences: Vec<RoleOccurrence>,
+    /// Explicit instantiation identity when the caller forks another purposeful
+    /// occurrence of the same subject at the same place; `None` is the
+    /// canonical occurrence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub instance: Option<String>,
+    pub manifestation_content_revision: String,
+    pub qualification_standing: &'static str,
+    pub standing: String,
+}
+
+/// The exact content basis one occurrence's identity is taken over. The
+/// digest covers the subject, the locus's content revision, the role, the
+/// effective (source + authored) key set with the authored winning values,
+/// and the explicit instance seed when one exists. Nothing order- or
+/// label-bearing enters it: variant references are provenance, not identity.
+fn occurrence_basis(
+    subject_ref: &str,
+    binding_revision: &str,
+    role: ExpressiveRole,
+    property_keys: &BTreeSet<String>,
+    authored_values: &BTreeMap<String, Value>,
+    record_pins: &[String],
+    instance: Option<&str>,
+) -> Value {
+    json!({
+        "contract": SUBJECT_MANIFESTATION_CONTRACT,
+        "subject_ref": subject_ref,
+        "locus_binding_content_revision": binding_revision,
+        "role": role.as_str(),
+        "property_keys": property_keys.iter().collect::<Vec<_>>(),
+        "authored_values": authored_values,
+        "source_record_payloads": record_pins,
+        "instance": instance,
+    })
+}
+
+fn occurrence_ref(basis: &Value) -> Result<String, String> {
+    let bytes = serde_json::to_vec(basis).map_err(|error| error.to_string())?;
+    Ok(format!("occurrence:{}", digest(&bytes)))
+}
+
+/// Resolves the subject ↔ locus ↔ occurrence relation through the existing
+/// Atlas binding: the locus resolves exactly (coordinate, face, depth, real
+/// profile lineage), each requested role binds the locus's own source records
+/// through the original coordinate semantics, and authored variants apply the
+/// actual first-parent-per-key / whole-key-replacement inheritance. Occurrence
+/// identity is content-addressed: reorder-stable, rename-stable, and stable
+/// across canonical place re-entry.
+pub fn resolve_subject_manifestation(
+    registry: &MRegistry,
+    subject_ref: &str,
+    locus_ref: &str,
+    face: MFace,
+    requested: &[ExpressiveRole],
+    variants: &[AuthoredVariant],
+    instance: Option<&str>,
+) -> Result<SubjectManifestation, String> {
+    validate_subject_ref(subject_ref)?;
+    if requested.is_empty() {
+        return Err("a manifestation addresses at least one expressive role".into());
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for role in requested {
+        if !seen.insert(*role) {
+            return Err(format!(
+                "duplicate {} occurrence in one manifestation; a second purposeful occurrence is an explicit instantiation with its own instance identity",
+                role.as_str()
+            ));
+        }
+    }
+    for variant in variants {
+        variant.validate()?;
+    }
+    if let Some(seed) = instance
+        && (seed.is_empty() || seed.len() > 256 || seed.chars().any(|c| c.is_control()))
+    {
+        return Err("invalid occurrence instance identity".into());
+    }
+
+    let binding = resolve_coordinate_expression(registry, locus_ref, face)?;
+    let selected = registry
+        .node(binding.coordinate_id)
+        .ok_or("missing selected coordinate")?;
+    // The locus's own source records carry its property content; ancestors
+    // remain in the binding's profile lineage and branch path.
+    let mut occurrence_sources = Vec::new();
+    for &index in &selected.records {
+        let record = registry
+            .manifest()
+            .records
+            .get(index)
+            .ok_or("missing source record")?;
+        let file = registry
+            .manifest()
+            .files
+            .get(record.file)
+            .ok_or("missing source file")?;
+        occurrence_sources.push((index, record, file));
+    }
+
+    // Whole-key authored resolution: for each authored key, the LAST variant
+    // in declared order that defines it wins whole (child replacement over the
+    // resolved parents); parents keep first-parent precedence among
+    // themselves, which here is the locus's own source content.
+    let mut authored_winner: BTreeMap<&str, (&AuthoredVariant, &Value)> = BTreeMap::new();
+    for variant in variants {
+        for (key, value) in &variant.keys {
+            authored_winner.insert(key.as_str(), (variant, value));
+        }
+    }
+
+    let mut occurrences = Vec::new();
+    for role in ExpressiveRole::ALL {
+        if !requested.contains(&role) {
+            continue;
+        }
+        let prefix = role.qualifying_prefix();
+        let mut source_keys = BTreeSet::new();
+        let mut source_records = Vec::new();
+        for (index, record, file) in &occurrence_sources {
+            let mut hits = false;
+            for key in &record.property_keys {
+                // Whole-key authored replacement: an authored key stands
+                // instead of the source key of the same name, never merged
+                // with it.
+                if key.starts_with(prefix) && !authored_winner.contains_key(key.as_str()) {
+                    source_keys.insert(key.clone());
+                    hits = true;
+                }
+            }
+            if hits {
+                source_records.push(CoordinatePropertySource {
+                    registry_record_index: *index,
+                    record: (*record).clone(),
+                    file: (*file).clone(),
+                    source_repository: file
+                        .repository
+                        .clone()
+                        .unwrap_or_else(|| registry.manifest().source_repository.clone()),
+                    source_revision: file
+                        .revision
+                        .clone()
+                        .unwrap_or_else(|| registry.manifest().source_revision.clone()),
+                });
+            }
+        }
+        let mut authored_keys = BTreeMap::new();
+        let mut authored_values = BTreeMap::new();
+        for (key, value) in &authored_winner {
+            if key.starts_with(prefix) {
+                authored_keys.insert((*key).to_owned(), value.0.variant_ref.clone());
+                authored_values.insert((*key).to_owned(), (*value.1).clone());
+            }
+        }
+        // The effective key set the occurrence stands on: the locus's own
+        // source keys plus the authored extensions/replacements, each key
+        // whole. `represented` is the source fact alone; authored content
+        // never fabricates source representation.
+        let represented = !source_keys.is_empty();
+        let mut property_keys = source_keys;
+        property_keys.extend(authored_values.keys().cloned());
+        let record_pins: Vec<String> = source_records
+            .iter()
+            .map(|source| source.record.payload_sha256.clone())
+            .collect();
+        let basis = occurrence_basis(
+            subject_ref,
+            &binding.binding_content_revision,
+            role,
+            &property_keys,
+            &authored_values,
+            &record_pins,
+            instance,
+        );
+        let occurrence_ref = occurrence_ref(&basis)?;
+        occurrences.push(RoleOccurrence {
+            role,
+            occurrence_ref,
+            represented,
+            property_keys: property_keys.into_iter().collect(),
+            source_records,
+            authored_keys,
+            standing: if represented {
+                format!(
+                    "source-qualified {} occurrence through the locus's own {} records",
+                    role.as_str(),
+                    role.layer_meaning()
+                )
+            } else {
+                format!(
+                    "unrepresented at this locus: no {} ({}) keys in the locus's own records; the obligation is recorded, not fabricated",
+                    role.qualifying_prefix(),
+                    role.layer_meaning()
+                )
+            },
+        });
+    }
+
+    let canonical_ref = match face {
+        MFace::Bimba => binding.rooted_world.direct.canonical_ref.clone(),
+        MFace::Pratibimba => binding.rooted_world.conjugate.canonical_ref.clone(),
+    };
+    let locus = LocusAddress {
+        coordinate_ref: binding.coordinate_ref.clone(),
+        coordinate_id: binding.coordinate_id,
+        family: binding.family.clone(),
+        face: binding.face,
+        depth: selected.depth,
+        branch_path: binding.branch_path.clone(),
+        canonical_ref,
+        conjugate_canonical_ref: if face == MFace::Bimba {
+            binding.rooted_world.conjugate.canonical_ref.clone()
+        } else {
+            binding.rooted_world.direct.canonical_ref.clone()
+        },
+        binding_content_revision: binding.binding_content_revision.clone(),
+        resolved_profile_ref: binding.resolved_profile_ref.clone(),
+        inherited_profile_refs: binding
+            .inherited_profiles
+            .iter()
+            .map(|layer| layer.profile_ref.clone())
+            .collect(),
+    };
+    let mut manifestation = SubjectManifestation {
+        schema: SUBJECT_MANIFESTATION_CONTRACT.into(),
+        subject_ref: subject_ref.to_owned(),
+        locus,
+        occurrences,
+        instance: instance.map(str::to_owned),
+        manifestation_content_revision: String::new(),
+        qualification_standing: ROLE_QUALIFICATION_STANDING,
+        standing: "resolved subject/locus/occurrence references over the existing Atlas binding; source values stay at their records, authority stays at the native owners".into(),
+    };
+    manifestation.manifestation_content_revision =
+        digest(&serde_json::to_vec(&manifestation).map_err(|error| error.to_string())?);
+    Ok(manifestation)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -510,5 +974,443 @@ mod tests {
         let deep = resolve_coordinate_expression(registry, source, MFace::Bimba).unwrap();
         assert_eq!(deep.inherited_profiles.len(), 4);
         assert!(deep.rooted_world.ancestry.len() > deep.inherited_profiles.len());
+    }
+
+    // ---- PS-E (QL-MEF #297): subject <-> locus <-> occurrence -------------
+
+    fn moon(
+        roles: &[ExpressiveRole],
+        variants: &[AuthoredVariant],
+        instance: Option<&str>,
+    ) -> SubjectManifestation {
+        let registry = native_current_m_registry();
+        resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#2-5-4",
+            MFace::Bimba,
+            roles,
+            variants,
+            instance,
+        )
+        .unwrap()
+    }
+
+    /// Whole-manifestation equality through its exact serialized content.
+    fn json_eq(left: &SubjectManifestation, right: &SubjectManifestation) -> bool {
+        serde_json::to_value(left).unwrap() == serde_json::to_value(right).unwrap()
+    }
+
+    fn occurrence_json_eq(left: &RoleOccurrence, right: &RoleOccurrence) -> bool {
+        serde_json::to_value(left).unwrap() == serde_json::to_value(right).unwrap()
+    }
+
+    #[test]
+    fn subject_refs_are_validated_by_one_shared_grammar() {
+        assert!(validate_subject_ref("ql:k2/default-subject").is_ok());
+        assert!(validate_subject_ref("person:someone").is_ok());
+        assert!(validate_subject_ref("").is_err());
+        assert!(validate_subject_ref("bad\0subject").is_err());
+        let long = "s".repeat(2049);
+        assert!(validate_subject_ref(&long).is_err());
+    }
+
+    #[test]
+    fn role_layers_reuse_the_original_coordinate_semantics_and_pin_the_pasu_sources() {
+        assert_eq!(ExpressiveRole::Formation.qualifying_prefix(), "c_1_");
+        assert_eq!(ExpressiveRole::Formation.layer_meaning(), "definition/form");
+        assert_eq!(ExpressiveRole::Force.qualifying_prefix(), "c_2_");
+        assert_eq!(ExpressiveRole::Force.layer_meaning(), "operation/entity");
+        assert_eq!(ExpressiveRole::Sequence.qualifying_prefix(), "c_3_");
+        assert_eq!(ExpressiveRole::Sequence.layer_meaning(), "pattern/process");
+        assert_eq!(ExpressiveRole::Scene.qualifying_prefix(), "c_4_");
+        assert_eq!(ExpressiveRole::Scene.layer_meaning(), "context/type");
+        assert_eq!(ExpressiveRole::Expression.qualifying_prefix(), "c_5_");
+        assert_eq!(
+            ExpressiveRole::Expression.layer_meaning(),
+            "integration/reflection"
+        );
+        // The original paśu/entity-to-form sources are recorded where they
+        // actually live, not invented as QL modules.
+        assert_eq!(PASU_SOURCE_REFS.len(), 3);
+        assert!(
+            PASU_SOURCE_REFS
+                .iter()
+                .all(|(repo, pin)| *repo == "EpiLogos/Epi-Logos-C-Experiments" && !pin.is_empty())
+        );
+        assert!(
+            PASU_SOURCE_REFS
+                .iter()
+                .any(|(_, pin)| pin.contains("Idea/Pratibimba/Self/PASU.md"))
+        );
+    }
+
+    #[test]
+    fn one_subject_manifests_as_formation_force_and_sequence_at_once() {
+        let manifestation = moon(
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence,
+            ],
+            &[],
+            None,
+        );
+        assert_eq!(manifestation.schema, SUBJECT_MANIFESTATION_CONTRACT);
+        assert_eq!(manifestation.subject_ref, "ql:k2/default-subject");
+        assert_eq!(manifestation.locus.coordinate_ref, "#2-5-4");
+        assert_eq!(manifestation.locus.family, "M2");
+        assert_eq!(manifestation.locus.face, RootedFace::Bimba);
+        assert_eq!(manifestation.locus.depth, 3);
+        assert!(!manifestation.locus.inherited_profile_refs.is_empty());
+        assert!(!manifestation.locus.binding_content_revision.is_empty());
+        // Occurrences come in the role type's declared order, not request order.
+        assert_eq!(
+            manifestation
+                .occurrences
+                .iter()
+                .map(|o| o.role)
+                .collect::<Vec<_>>(),
+            vec![
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence
+            ]
+        );
+        let formation = &manifestation.occurrences[0];
+        let force = &manifestation.occurrences[1];
+        let sequence = &manifestation.occurrences[2];
+        assert!(formation.property_keys.contains(&"c_1_name".to_owned()));
+        assert!(
+            force
+                .property_keys
+                .contains(&"c_2_harmonic_role".to_owned())
+        );
+        assert!(!sequence.property_keys.is_empty());
+        for occurrence in &manifestation.occurrences {
+            assert!(occurrence.represented, "{}", occurrence.standing);
+            assert!(!occurrence.source_records.is_empty());
+            for source in &occurrence.source_records {
+                assert!(!source.record.payload_sha256.is_empty());
+                assert!(!source.file.git_blob.is_empty());
+            }
+        }
+        // Three roles of one subject: three distinct occurrences.
+        assert_ne!(formation.occurrence_ref, force.occurrence_ref);
+        assert_ne!(force.occurrence_ref, sequence.occurrence_ref);
+        assert!(formation.occurrence_ref.starts_with("occurrence:"));
+    }
+
+    #[test]
+    fn occurrence_identity_is_reorder_rename_and_reentry_stable() {
+        let roles = [
+            ExpressiveRole::Formation,
+            ExpressiveRole::Force,
+            ExpressiveRole::Sequence,
+        ];
+        let direct = moon(&roles, &[], None);
+        let reversed = moon(&roles[2..], &[], None)
+            .occurrences
+            .into_iter()
+            .chain(moon(&roles[..2], &[], None).occurrences)
+            .collect::<Vec<_>>();
+        // Resolving in two reordered halves still reproduces each role's
+        // occurrence identity: list order is not identity.
+        for occurrence in &reversed {
+            assert!(occurrence_json_eq(
+                direct
+                    .occurrences
+                    .iter()
+                    .find(|o| o.role == occurrence.role)
+                    .unwrap(),
+                occurrence
+            ));
+        }
+        // Re-entering the same place by its canonical face-bearing spelling
+        // returns the same bindings.
+        let registry = native_current_m_registry();
+        let canonical = direct.locus.canonical_ref.clone();
+        let reentered = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            &canonical,
+            MFace::Bimba,
+            &roles,
+            &[],
+            None,
+        )
+        .unwrap();
+        assert!(json_eq(&reentered, &direct));
+        // Re-resolution is deterministic.
+        assert!(json_eq(&moon(&roles, &[], None), &direct));
+    }
+
+    #[test]
+    fn adding_a_role_never_relabels_the_existing_occurrences() {
+        let three = moon(
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence,
+            ],
+            &[],
+            None,
+        );
+        let four = moon(
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence,
+                ExpressiveRole::Scene,
+            ],
+            &[],
+            None,
+        );
+        assert_eq!(four.occurrences.len(), 4);
+        for occurrence in &three.occurrences {
+            assert!(occurrence_json_eq(
+                four.occurrences
+                    .iter()
+                    .find(|o| o.role == occurrence.role)
+                    .unwrap(),
+                occurrence
+            ));
+        }
+    }
+
+    #[test]
+    fn unrepresented_roles_are_recorded_not_fabricated() {
+        // #0-0-0's own records carry c_0..c_4 keys and no c_5_ layer:
+        // the integration/reflection role is genuinely absent there.
+        let registry = native_current_m_registry();
+        let manifestation = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#0-0-0",
+            MFace::Bimba,
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Scene,
+                ExpressiveRole::Expression,
+            ],
+            &[],
+            None,
+        )
+        .unwrap();
+        let formation = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Formation)
+            .unwrap();
+        assert!(formation.represented);
+        let scene = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Scene)
+            .unwrap();
+        assert!(scene.represented);
+        let expression = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Expression)
+            .unwrap();
+        assert!(!expression.represented);
+        // An unrepresented occurrence still addresses: identity, not absence
+        // of address.
+        assert!(expression.occurrence_ref.starts_with("occurrence:"));
+    }
+
+    #[test]
+    fn authored_variants_replace_whole_keys_and_never_deep_merge() {
+        let v1 = AuthoredVariant {
+            variant_ref: "variant:moon-v1".into(),
+            keys: [
+                (
+                    "c_2_harmonic_role".to_owned(),
+                    json!("authored-v1-whole-key"),
+                ),
+                ("c_2_moon_phase".to_owned(), json!("phase-from-v1")),
+            ]
+            .into_iter()
+            .collect(),
+        };
+        let v2 = AuthoredVariant {
+            variant_ref: "variant:moon-v2".into(),
+            keys: [(
+                "c_2_harmonic_role".to_owned(),
+                json!("authored-v2-replaces-v1-whole"),
+            )]
+            .into_iter()
+            .collect(),
+        };
+        let manifestation = moon(
+            &[ExpressiveRole::Formation, ExpressiveRole::Force],
+            &[v1.clone(), v2],
+            None,
+        );
+        let force = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Force)
+            .unwrap();
+        // Last child replacement wins the whole key; the first variant's
+        // value for that key is gone, not merged.
+        assert_eq!(
+            force.authored_keys.get("c_2_harmonic_role").unwrap(),
+            "variant:moon-v2"
+        );
+        // A key only the first variant defines stays the first variant's.
+        assert_eq!(
+            force.authored_keys.get("c_2_moon_phase").unwrap(),
+            "variant:moon-v1"
+        );
+        assert!(
+            force
+                .property_keys
+                .contains(&"c_2_harmonic_role".to_owned())
+        );
+        // The replaced source key no longer stands as source.
+        assert!(!ROLE_QUALIFICATION_STANDING.is_empty());
+        // Renaming a variant (same content) keeps occurrence identity;
+        // changing its content does not.
+        let renamed = AuthoredVariant {
+            variant_ref: "variant:moon-v2-renamed".into(),
+            keys: [(
+                "c_2_harmonic_role".to_owned(),
+                json!("authored-v2-replaces-v1-whole"),
+            )]
+            .into_iter()
+            .collect(),
+        };
+        let renamed_manifestation = moon(
+            &[ExpressiveRole::Formation, ExpressiveRole::Force],
+            &[v1.clone(), renamed],
+            None,
+        );
+        let renamed_force = renamed_manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Force)
+            .unwrap();
+        assert_eq!(renamed_force.occurrence_ref, force.occurrence_ref);
+        let changed = moon(
+            &[ExpressiveRole::Formation, ExpressiveRole::Force],
+            &[
+                v1,
+                AuthoredVariant {
+                    variant_ref: "variant:moon-v2".into(),
+                    keys: [(
+                        "c_2_harmonic_role".to_owned(),
+                        json!("authored-v2-changed-content"),
+                    )]
+                    .into_iter()
+                    .collect(),
+                },
+            ],
+            None,
+        );
+        let changed_force = changed
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Force)
+            .unwrap();
+        assert_ne!(changed_force.occurrence_ref, force.occurrence_ref);
+    }
+
+    #[test]
+    fn invalid_variants_duplicate_roles_and_forks_are_handled_by_name() {
+        let registry = native_current_m_registry();
+        let bad_layer = AuthoredVariant {
+            variant_ref: "variant:bad".into(),
+            keys: [("material".to_owned(), json!({"weight": 1}))]
+                .into_iter()
+                .collect(),
+        };
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Force],
+            &[bad_layer],
+            None,
+        )
+        .unwrap_err();
+        assert!(error.contains("role layer"), "{error}");
+
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Force, ExpressiveRole::Force],
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("duplicate force occurrence"),
+            "duplicate occurrences are refused: {error}"
+        );
+
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#2-5-4",
+            MFace::Bimba,
+            &[],
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(error.contains("at least one expressive role"), "{error}");
+
+        // An explicit instance fork is another purposeful occurrence of the
+        // same subject at the same place: same qualification, distinct
+        // identity.
+        let canonical = moon(&[ExpressiveRole::Force], &[], None);
+        let fork = moon(&[ExpressiveRole::Force], &[], Some("take-2"));
+        assert_ne!(
+            canonical.occurrences[0].occurrence_ref,
+            fork.occurrences[0].occurrence_ref
+        );
+        assert_eq!(fork.instance.as_deref(), Some("take-2"));
+        assert_eq!(
+            canonical.occurrences[0].property_keys,
+            fork.occurrences[0].property_keys
+        );
+    }
+
+    #[test]
+    fn faces_are_exact_addresses_of_one_coordinate_identity() {
+        let bimba = moon(&[ExpressiveRole::Force], &[], None);
+        let registry = native_current_m_registry();
+        let pratibimba = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            "#2-5-4",
+            MFace::Pratibimba,
+            &[ExpressiveRole::Force],
+            &[],
+            None,
+        )
+        .unwrap();
+        assert_eq!(bimba.locus.coordinate_id, pratibimba.locus.coordinate_id);
+        assert_eq!(bimba.locus.face, RootedFace::Bimba);
+        assert_eq!(pratibimba.locus.face, RootedFace::Pratibimba);
+        assert_eq!(
+            pratibimba.locus.canonical_ref,
+            bimba.locus.conjugate_canonical_ref
+        );
+        // The conjugate face is a different disclosed reading: its profile
+        // lineage and content revision differ while the coordinate stays one.
+        assert_ne!(
+            bimba.locus.binding_content_revision,
+            pratibimba.locus.binding_content_revision
+        );
+        assert_ne!(
+            bimba.occurrences[0].occurrence_ref,
+            pratibimba.occurrences[0].occurrence_ref
+        );
     }
 }

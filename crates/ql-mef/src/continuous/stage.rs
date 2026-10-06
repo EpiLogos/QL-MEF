@@ -204,11 +204,16 @@ impl StageProcedure {
                 self.schema
             ));
         }
-        for r in [&self.procedure_ref, &self.subject_ref] {
-            if r.is_empty() || r.len() > 2048 || r.chars().any(|c| c.is_control()) {
-                return Err("invalid stage procedure or subject reference".into());
-            }
+        if self.procedure_ref.is_empty()
+            || self.procedure_ref.len() > 2048
+            || self.procedure_ref.chars().any(|c| c.is_control())
+        {
+            return Err("invalid stage procedure reference".into());
         }
+        // PS-E (QL-MEF #297): the subject is validated through its semantic
+        // owner, the one grammar the Atlas manifestation resolver admits, so
+        // a procedure's subject is manifestable wherever the stage plays it.
+        crate::coordinate_expression::validate_subject_ref(&self.subject_ref)?;
         if self.revision == 0 {
             return Err("stage procedure revision must be at least 1".into());
         }
@@ -904,6 +909,34 @@ mod tests {
         assert_eq!(
             procedure.validate().unwrap_err(),
             "a procedure carries 1..16 changes"
+        );
+    }
+
+    #[test]
+    fn the_stage_subject_is_validated_through_the_pse_subject_owner() {
+        let live = event();
+        let mut ownership = StageOwnership::default();
+        // A malformed subject is refused through the semantic owner's grammar.
+        let malformed = StageProcedure {
+            subject_ref: "subject\0bad".into(),
+            ..procedure(vec![StageChange::Damping { per_second: 0.5 }])
+        };
+        let error = malformed.validate().unwrap_err();
+        assert!(error.contains("PS-E subject owner"), "{error}");
+        assert!(evaluate(&malformed, &live, &mut ownership, 1, 0, 0).is_err());
+        // The live event's own subject passes the same grammar, and the
+        // landed behavior is unchanged for valid subjects.
+        crate::coordinate_expression::validate_subject_ref(&live.m3.subject_ref).unwrap();
+        assert!(
+            evaluate(
+                &procedure(vec![StageChange::Damping { per_second: 0.5 }]),
+                &live,
+                &mut ownership,
+                1,
+                0,
+                0
+            )
+            .is_ok()
         );
     }
 
