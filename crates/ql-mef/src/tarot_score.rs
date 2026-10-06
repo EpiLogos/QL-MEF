@@ -30,17 +30,21 @@
 //! The codon→card bridge is one-directional by law (`ql_core::pole::inverse`,
 //! M3-C31 open); nothing here invents an inverse.
 
+use crate::continuous::{LiftInput, stage};
 use crate::coordinate_expression::{SubjectManifestation, validate_subject_ref};
 use crate::m_tree::native_m_registry;
+use crate::m2_engine::MAX_EXACT_JSON_INTEGER;
 use crate::m3_inscription::seed_at;
+use crate::m3_state::M3Operation;
 use crate::nara::current::transit;
 use ql_core::m3_clock::M3Clock;
 use ql_core::{
     Codon64, Element, ElementalQuaternionBasis, MatrixFamily, MinorArcanaCard,
     POLE_TAROT_BRIDGE_REF, RotationalPolarity, TarotBridge, TranscendentOperator, det_overlay,
-    generate_rotational_states, quat_active_state, rotational_profile,
+    generate_rotational_states, quat_active_state, quat_clock_steps, quat_codon_state,
+    quat_signed_argument, rotational_profile,
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::fmt::Write as _;
@@ -212,6 +216,19 @@ pub struct ScorePose {
     pub candidate_rotational_value: i16,
     /// The candidate's 45° register: 45° × slot.
     pub candidate_rotation_degrees: u16,
+    /// The codon's declared form/phase rotor read in the clock register:
+    /// `quat_clock_steps(quat_codon_state(codon, active_state))` — the
+    /// 45°-per-state encoder position of the admitted state, normalised to
+    /// [0, 720). Source: `ql.pole.phase-bridge/v1`
+    /// (`ql_core::pole::phase`, re-exported from `ql_core`).
+    pub phase_clock_steps: u64,
+    /// The same rotor's quaternion-plane argument `atan2(x, w)` in degrees,
+    /// wrapped to [0, 360) and rounded. Half-angle register: the physical
+    /// rotation is TWICE this argument, so `2 × phase_argument_degrees ≡
+    /// phase_clock_steps` (mod 720) — the SU(2) half-angle law of the vendor
+    /// rotor construction (`m3.c:131`). No correspondence beyond that law is
+    /// claimed.
+    pub phase_argument_degrees: u16,
 }
 
 /// One token of the score: one anchor, one Minor Arcana card, one or two
@@ -270,6 +287,11 @@ pub struct TarotScore {
     /// The manifestation content revision when a resolved
     /// `SubjectManifestation` was supplied for the subject; None otherwise.
     pub manifestation_ref: Option<String>,
+    /// The role of the declared primary anchor's token ("natal/Sun",
+    /// "kairos/Moon") — the one token the score exists to read and the one a
+    /// stage compilation selects. Some whenever a basis declared a primary
+    /// anchor, which `resolve_tarot_score` requires.
+    pub primary_token_role: Option<String>,
 }
 
 impl TarotScore {
@@ -281,7 +303,8 @@ impl TarotScore {
 
 /// One already-drawn journey placement, declared with its act provenance.
 /// The score reads these; it never shuffles, deals or advances a deck.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct DrawnPlacement {
     pub journey_ref: String,
     /// The journey's placement reference — the act reference recorded as the
@@ -294,7 +317,10 @@ pub struct DrawnPlacement {
 }
 
 /// The declared primary anchor: the one token the score exists to read.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Wire shape follows the score's own anchor convention
+/// (`{"kind":"natal","planet_id":0}` / `{"kind":"kairos","body_index":3}`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum PrimaryAnchor {
     Natal { planet_id: u8 },
     Kairos { body_index: u8 },
@@ -321,6 +347,56 @@ pub struct ScoreBasis<'a> {
     /// Optional resolved manifestation of the subject; its subject must be
     /// this basis's subject.
     pub manifestation: Option<&'a SubjectManifestation>,
+}
+
+/// The owned, serde wire form of [`ScoreBasis`] — the same admitted basis an
+/// `identity`/`occasion_sky` producer puts on the wire (field host
+/// `score-resolve`, `mahamaya.tarot-score.resolve`). [`Self::borrow`]
+/// reconstructs the borrowed resolution view; the resolution law itself is
+/// and stays [`resolve_tarot_score`].
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScoreBasisInput {
+    pub subject_ref: String,
+    pub locus_ref: String,
+    /// Optional `ql.nara-identity-reading/v1`; its `natal` sky carries the
+    /// natal placements.
+    pub identity: Option<Value>,
+    /// Optional `ql.sky-snapshot/v1` occasion sky.
+    pub occasion_sky: Option<Value>,
+    /// The occasion's unwrapped M3 clock position.
+    pub clock_steps: u64,
+    pub primary_anchor: PrimaryAnchor,
+    /// Already-drawn journey placements read as drawn tokens.
+    #[serde(default)]
+    pub drawn: Vec<DrawnPlacement>,
+    /// Optional (opening, completion) passage references declaring the
+    /// boundary functions; recorded as functions of the existing boundary
+    /// Major Arcana, never as fabricated cards.
+    pub boundary_passage: Option<(String, String)>,
+    /// Optional resolved manifestation of the subject; its subject must be
+    /// this basis's subject.
+    pub manifestation: Option<SubjectManifestation>,
+}
+
+impl ScoreBasisInput {
+    /// The borrowed view this input resolves through.
+    pub fn borrow(&self) -> ScoreBasis<'_> {
+        ScoreBasis {
+            subject_ref: &self.subject_ref,
+            locus_ref: &self.locus_ref,
+            identity: self.identity.as_ref(),
+            occasion_sky: self.occasion_sky.as_ref(),
+            clock_steps: self.clock_steps,
+            primary_anchor: self.primary_anchor,
+            drawn: &self.drawn,
+            boundary_passage: self
+                .boundary_passage
+                .as_ref()
+                .map(|(opening, completion)| (opening.as_str(), completion.as_str())),
+            manifestation: self.manifestation.as_ref(),
+        }
+    }
 }
 
 fn digest_hex(bytes: &[u8]) -> String {
@@ -501,6 +577,15 @@ fn codon_pose(codon: Codon64, clock: M3Clock) -> ScorePose {
         .unwrap_or_else(|| quat_active_state(overlay.composed_q, codon));
     let profile = rotational_profile(codon);
     let candidate = &generate_rotational_states(codon)[active_state as usize];
+    // The declared form/phase readout: the codon's own state rotor in the
+    // clock register and in the (half-angle) argument register.
+    let rotor = quat_codon_state(codon, active_state);
+    let phase_clock_steps = quat_clock_steps(&rotor);
+    let phase_argument_degrees = (quat_signed_argument(&rotor)
+        .to_degrees()
+        .rem_euclid(360.0)
+        .round() as u16)
+        % 360;
     ScorePose {
         torus_tick12,
         element_ring_position,
@@ -516,6 +601,8 @@ fn codon_pose(codon: Codon64, clock: M3Clock) -> ScorePose {
         },
         candidate_rotational_value: candidate.rotational_value,
         candidate_rotation_degrees: candidate.rotation_degrees,
+        phase_clock_steps,
+        phase_argument_degrees,
     }
 }
 
@@ -791,6 +878,18 @@ pub fn resolve_tarot_score(basis: &ScoreBasis) -> Result<TarotScore, String> {
         None => json!({}),
     };
 
+    // The declared primary's token role — the one token the score exists to
+    // read and the one a stage compilation selects. The primary match above
+    // already validated the body index against the ten native bodies.
+    let primary_token_role = match basis.primary_anchor {
+        PrimaryAnchor::Natal { planet_id } => {
+            format!("natal/{}", NATIVE_BODIES[usize::from(planet_id)])
+        }
+        PrimaryAnchor::Kairos { body_index } => {
+            format!("kairos/{}", NATIVE_BODIES[usize::from(body_index)])
+        }
+    };
+
     let mut score = TarotScore {
         schema: TAROT_SCORE_CONTRACT,
         subject_ref: basis.subject_ref.to_string(),
@@ -808,6 +907,7 @@ pub fn resolve_tarot_score(basis: &ScoreBasis) -> Result<TarotScore, String> {
         tokens,
         boundary_functions,
         manifestation_ref,
+        primary_token_role: Some(primary_token_role),
     };
     // The score revision is the content hash of the score itself: it moves
     // exactly when the derivation output changes for the same subject.
@@ -817,4 +917,92 @@ pub fn resolve_tarot_score(basis: &ScoreBasis) -> Result<TarotScore, String> {
     high.copy_from_slice(&digest.as_bytes()[..8]);
     score.score_revision = u64::from_be_bytes(high);
     Ok(score)
+}
+
+/// Compile the score's primary determination into one stage procedure: the
+/// primary token's form address and admitted pose select the form, the
+/// score's clock basis is the clock change, and the declared material policy
+/// rides as the damping change. One procedure, one change per slot — the
+/// stage's own law (`crate::continuous::stage`); the scene flow composes
+/// passages. The score itself is never applied here: evaluation and
+/// application stay with the stage's host paths.
+pub fn score_stage_procedure(
+    score: &TarotScore,
+    procedure_ref: &str,
+    revision: u64,
+    subject_ref: &str,
+    damping_per_second: f64,
+) -> Result<stage::StageProcedure, String> {
+    let Some(primary_role) = &score.primary_token_role else {
+        return Err(
+            "the score carries no primary token; nothing compiles into a stage procedure".into(),
+        );
+    };
+    let Some(primary) = score
+        .tokens
+        .iter()
+        .find(|token| &token.role == primary_role)
+    else {
+        return Err(format!(
+            "the score's primary token {primary_role} is absent from its own tokens"
+        ));
+    };
+    if subject_ref != score.subject_ref {
+        return Err(format!(
+            "procedure subject {subject_ref} is not the score's subject {}",
+            score.subject_ref
+        ));
+    }
+    if !damping_per_second.is_finite() || !(0.0..=1e6).contains(&damping_per_second) {
+        return Err("score stage damping must be finite and in 0..1000000 per second".into());
+    }
+    // The score's clock basis as the clock change: unwrapped steps split into
+    // the stage clock phase's canonical turns + half_degrees register.
+    let steps = score
+        .clock
+        .get("steps")
+        .and_then(Value::as_u64)
+        .ok_or("the score's clock basis carries no steps")?;
+    if steps > MAX_EXACT_JSON_INTEGER {
+        return Err("the score's clock basis exceeds the exact native range".into());
+    }
+    let phase = LiftInput {
+        turns: (steps / 720).to_string(),
+        half_degrees: (steps % 720) as u16,
+    };
+    // The primary's form: its address always selects; the pose is applied
+    // only where the rotational profile admits it.
+    let mut operations = vec![M3Operation::SelectForm {
+        address: primary.hexagram_address,
+    }];
+    if primary.pose.lawfully_admitted {
+        operations.push(M3Operation::SetPose {
+            pose: primary.pose.active_state,
+        });
+    }
+    let procedure = stage::StageProcedure {
+        schema: stage::STAGE_PROCEDURE.into(),
+        procedure_ref: procedure_ref.to_owned(),
+        revision,
+        subject_ref: subject_ref.to_owned(),
+        trigger: stage::StageTrigger::Invocation,
+        selector: vec![
+            "form".into(),
+            "material.damping".into(),
+            "clock.inscription".into(),
+        ],
+        changes: vec![
+            stage::StageChange::Form { operations },
+            stage::StageChange::Damping {
+                per_second: damping_per_second,
+            },
+            stage::StageChange::Clock {
+                slot: "clock.inscription".into(),
+                phase,
+            },
+        ],
+        passage: None,
+    };
+    procedure.validate()?;
+    Ok(procedure)
 }

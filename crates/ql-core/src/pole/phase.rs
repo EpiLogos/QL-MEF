@@ -68,13 +68,6 @@
 //! numeric behaviour to any existing function — every conversion here reads
 //! the existing registers through their own recorded arithmetic.
 
-// The pole modules are item-re-exported from lib.rs when wired; until this
-// module is wired there, rustc sees no crate-internal consumer and
-// dead-codes its API. tests/phase_bridge.rs compiles the module directly
-// through the pole shim (tests/pole_rotational.rs pattern), so the lint is
-// silenced module-wide, not item by item.
-#![allow(dead_code)]
-
 use super::quaternion::Quat;
 
 /// Semantic identity of the source-qualified phase-bridge publication.

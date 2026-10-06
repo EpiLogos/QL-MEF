@@ -11,6 +11,7 @@ use ql_mef::coordinate_expression::{
     ExpressiveRole, SubjectKind, resolve_subject_manifestation, validate_subject_ref,
 };
 use ql_mef::m_tree::native_current_m_registry;
+use ql_mef::m3_state::M3Operation;
 use ql_mef::nara::domain::*;
 use ql_mef::nara::{ConsentState, SourceRevision};
 use ql_mef::tarot_score::*;
@@ -835,4 +836,196 @@ fn subject_ref_validation_and_manifestation_link() {
         error.contains("does not match the score subject"),
         "named refusal: {error}"
     );
+}
+
+// ---------------------------------------------------------------------------
+// 9. Owned basis input, the phase readout and the stage compilation
+// ---------------------------------------------------------------------------
+
+/// The coupled scene event the stage compiles against — the stage's own pure
+/// fixture; this evaluates the plan without any field worker.
+fn stage_event() -> ql_mef::continuous::coupled::CoupledInput {
+    serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/scene-default-event-v2.json"
+    ))
+    .unwrap()
+}
+
+/// The scene subject the stage fixture event belongs to, so a score compiled
+/// for it evaluates against that event.
+const STAGE_SUBJECT: &str = "ql:k2/default-subject";
+
+#[test]
+fn score_basis_input_round_trips_through_serde_and_resolves_identically() {
+    let (identity, sky, drawn) = full_basis();
+    let direct = resolve_tarot_score(&basis(
+        Some(&identity),
+        Some(&sky),
+        359,
+        PrimaryAnchor::Natal { planet_id: 0 },
+        &drawn,
+    ))
+    .unwrap();
+
+    // The same basis through the owned wire form.
+    let input: ScoreBasisInput = serde_json::from_value(json!({
+        "subject_ref": SUBJECT,
+        "locus_ref": LOCUS,
+        "identity": identity,
+        "occasion_sky": sky,
+        "clock_steps": 359,
+        "primary_anchor": {"kind":"natal","planet_id":0},
+        "drawn": drawn
+    }))
+    .unwrap();
+    let through_wire = resolve_tarot_score(&input.borrow()).unwrap();
+    assert_eq!(
+        direct.canonical_json().unwrap(),
+        through_wire.canonical_json().unwrap(),
+        "the owned basis resolves to the byte-identical score"
+    );
+
+    // The wire form refuses unknown fields, as every host input does.
+    let mut unknown = serde_json::to_value(&input).unwrap();
+    unknown["surprise"] = json!(1);
+    assert!(serde_json::from_value::<ScoreBasisInput>(unknown).is_err());
+}
+
+#[test]
+fn score_pose_records_one_rotor_in_both_phase_registers() {
+    let (identity, sky, drawn) = full_basis();
+    let score = resolve_tarot_score(&basis(
+        Some(&identity),
+        Some(&sky),
+        359,
+        PrimaryAnchor::Natal { planet_id: 0 },
+        &drawn,
+    ))
+    .unwrap();
+    for token in &score.tokens {
+        // Both phase fields read ONE rotor — the codon's declared state rotor
+        // (`quat_codon_state(codon, active_state)`). The argument register is
+        // the half-angle register: the physical rotation (the clock readout)
+        // is twice the argument. The two records round at different points
+        // (the clock rounds the doubled argument, the argument register rounds
+        // the argument first), so the doubled argument meets the clock readout
+        // within one step of the 720-degree register.
+        let doubled = (u64::from(token.pose.phase_argument_degrees) * 2) % 720;
+        assert!(
+            doubled.abs_diff(token.pose.phase_clock_steps % 720) <= 1,
+            "token {}: doubled argument {} vs clock steps {}",
+            token.role,
+            doubled,
+            token.pose.phase_clock_steps
+        );
+        assert!(token.pose.phase_argument_degrees < 360);
+        assert!(token.pose.phase_clock_steps < 720);
+    }
+    // The primary's declared form/phase readout matches its encoder law:
+    // argument-zero seeds (outer coin value == inner value) sit exactly at
+    // 45 degrees of physical rotation per admitted state.
+    let sun = score.tokens.iter().find(|t| t.role == "natal/Sun").unwrap();
+    let codon = Codon64::new(sun.hexagram_address);
+    if codon.outer().coin_value() == codon.inner().coin_value() {
+        assert_eq!(
+            sun.pose.phase_clock_steps,
+            (45 * u64::from(sun.pose.active_state)) % 720,
+            "argument-zero seed at the exact encoder register"
+        );
+    }
+}
+
+#[test]
+fn score_compiles_to_a_stage_procedure_the_stage_accepts() {
+    let (identity, sky, drawn) = full_basis();
+    let mut score_basis = basis(
+        Some(&identity),
+        Some(&sky),
+        359,
+        PrimaryAnchor::Natal { planet_id: 0 },
+        &drawn,
+    );
+    score_basis.subject_ref = STAGE_SUBJECT;
+    let score = resolve_tarot_score(&score_basis).unwrap();
+    assert_eq!(score.primary_token_role.as_deref(), Some("natal/Sun"));
+    let primary = score
+        .tokens
+        .iter()
+        .find(|t| t.role == "natal/Sun")
+        .unwrap()
+        .clone();
+
+    let procedure =
+        score_stage_procedure(&score, "ta-onta:stage:score", 1, STAGE_SUBJECT, 0.5).unwrap();
+    procedure.validate().unwrap();
+
+    // One procedure, one change per addressed slot: form, damping, clock.
+    assert_eq!(procedure.changes.len(), 3);
+    let ql_mef::continuous::stage::StageChange::Form { operations } = &procedure.changes[0] else {
+        panic!("the form change comes first");
+    };
+    // The form selects the primary's address always, and applies its pose
+    // only where the rotational profile admits it — one operation otherwise.
+    assert_eq!(
+        operations.len(),
+        if primary.pose.lawfully_admitted { 2 } else { 1 }
+    );
+    assert!(
+        matches!(
+            &operations[0],
+            M3Operation::SelectForm { address } if *address == primary.hexagram_address
+        ),
+        "the form selects the primary's address"
+    );
+    if primary.pose.lawfully_admitted {
+        assert!(
+            matches!(
+                &operations[1],
+                M3Operation::SetPose { pose } if *pose == primary.pose.active_state
+            ),
+            "the form applies the primary's admitted pose"
+        );
+    }
+    let ql_mef::continuous::stage::StageChange::Damping { per_second } = &procedure.changes[1]
+    else {
+        panic!("the damping change comes second");
+    };
+    assert_eq!(*per_second, 0.5);
+    let ql_mef::continuous::stage::StageChange::Clock { slot, phase } = &procedure.changes[2]
+    else {
+        panic!("the clock change comes third");
+    };
+    assert_eq!(slot, "clock.inscription");
+    let steps = score.clock["steps"].as_u64().unwrap();
+    assert_eq!(phase.turns, (steps / 720).to_string());
+    assert_eq!(phase.half_degrees, (steps % 720) as u16);
+
+    // The stage accepts the compiled procedure against a real coupled event:
+    // the plan carries the M3 command batch, the damping and the clock phase,
+    // each claimed on the procedure's own key.
+    let event = stage_event();
+    assert_eq!(event.m3.subject_ref, STAGE_SUBJECT);
+    let mut ownership = ql_mef::continuous::stage::StageOwnership::default();
+    let generation = event.m3.stamp.identity.profile_generation;
+    let plan =
+        ql_mef::continuous::stage::evaluate(&procedure, &event, &mut ownership, generation, 11, 22)
+            .unwrap();
+    assert!(plan.event.is_some());
+    assert_eq!(plan.damping, Some(0.5));
+    assert_eq!(plan.clock.len(), 1);
+    assert_eq!(plan.contributions.len(), 3);
+
+    // Named refusals: a foreign subject, out-of-policy damping, a score with
+    // no primary token.
+    let error = score_stage_procedure(&score, "ta-onta:stage:score", 1, "person:someone-else", 0.5)
+        .unwrap_err();
+    assert!(error.contains("is not the score's subject"), "{error}");
+    let error =
+        score_stage_procedure(&score, "ta-onta:stage:score", 1, STAGE_SUBJECT, -1.0).unwrap_err();
+    assert!(error.contains("damping"), "{error}");
+    let mut no_primary = score.clone();
+    no_primary.primary_token_role = None;
+    let error = score_stage_procedure(&no_primary, "ta-onta:stage:score", 1, STAGE_SUBJECT, 0.5)
+        .unwrap_err();
+    assert!(error.contains("no primary token"), "{error}");
 }
