@@ -581,7 +581,7 @@
     "#2",
     "#3"
    ],
-   "rationale": "The Ta-Onta procedural stage over the live coupled scene (QL-MEF #296): versioned procedures compile typed changes onto the event's own M3 command batch (#3), the declared material policy and the continuous display clocks, and generated passages ride the admitted M1 form advance (#1) one determinant per scene, with the M2 event identity generation moving together as the coupled composer already rules (#2). Contribution ownership is by procedure/revision/slot; evaluation is deterministic in the event basis and creates no second event universe, clock, numerical field or authority.",
+   "rationale": "The Ta-Onta procedural stage over the live coupled scene (QL-MEF #296): versioned procedures compile typed changes onto the event's own M3 command batch (#3), the declared material policy and the continuous display clocks, and generated passages ride the admitted M1 form advance (#1) one determinant per scene, with the M2 event identity generation moving together as the coupled composer already rules (#2). Contribution ownership is by procedure/revision/slot; a form determinant's applied M3 state is rebased onto the event's own request, so the observed form is the applied form and never a stale request replayed (QL-MEF #299 slice 3); evaluation is deterministic in the event basis and creates no second event universe, clock, numerical field or authority.",
    "tests": [
     "crates/ql-mef/src/continuous/stage.rs",
     "crates/ql-mef/src/continuous/host.rs",
@@ -627,7 +627,7 @@
     "#2",
     "#3"
    ],
-   "rationale": "The PS-G fold sequence (QL-MEF #299 slice 2; P5 §4.2): interpolation, seek and interruption over fold progress through the stage's own display-clock axes and exact LiftInput cursor law (#2). Phase endpoints compile through the form-recipe owner's kernel cast-law core, so the standing telemetry IS the compiled M3Operation the stage routes (#3); a codon resolves at the quanta only — mid-transition the eased crease path is exact rational arithmetic and no form is fabricated. Evaluation is a pure function of sequence and cursor (seek proven, progress never a preparation dependency); an in-flight takeover is recorded with the exact standing, never discarded. No second clock, event universe, numerical field or authority.",
+   "rationale": "The PS-G fold sequence (QL-MEF #299 slices 2–3; P5 §4.2): interpolation, seek and interruption over fold progress through the stage's own display-clock axes and exact LiftInput cursor law (#2). Phase endpoints compile through the form-recipe owner's kernel cast-law core, so the standing telemetry IS the compiled M3Operation the stage routes (#3); a codon resolves at the quanta only — mid-transition the eased crease path is exact rational arithmetic and no form is fabricated. The stage-host effect binding compiles the law into the host's own typed changes: the boundary form (the same operations a recipe of the governing determination compiles) issues only when the codon resolved onto a form the host's disclosed standing does not hold, the display axis moves to the cursor, and strictly inside a transition no form is issued — re-reads re-issue nothing. Evaluation is a pure function of sequence and cursor (seek proven, progress never a preparation dependency); an in-flight takeover is recorded with the exact standing, never discarded. No second clock, event universe, numerical field or authority.",
    "tests": [
     "crates/ql-mef/src/form_sequence.rs",
     "crates/ql-mef/tests/psg_form_recipe.rs"
@@ -674,9 +674,24 @@
    "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "rationale": "CLI transport for the Ta-Onta procedural stage over the field host the Expressions application opens (QL-MEF #296 acceptance A17): one invocation is one owned exchange \u2014 open the scene host through the app's own binding route, send one stage operation (state/evaluate/bind/unbind/retire) under the exact request envelope, print the host's receipt. A command adapter, not a store \u2014 procedure JSON in, host receipts out; stage ownership and bindings live with the opened host.",
+   "rationale": "CLI transport for the Ta-Onta procedural stage over the field host the Expressions application opens (QL-MEF #296 acceptance A17): one invocation is one owned exchange — open the scene host through the app's own binding route, send one stage operation (state/evaluate/bind/unbind/retire) under the exact request envelope, print the host's receipt. A command adapter, not a store — procedure JSON in, host receipts out; stage ownership and bindings live with the opened host.",
    "tests": [
     "crates/ql-cli/tests/stage_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/form_instrument.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3"
+   ],
+   "rationale": "The PS-G form instrument (QL-MEF #299 slice 3; P5 §4.1 dependency law and §4.2 commanded-vs-observed): the rasterisation/reseed instrumentation the application's sampler half consumes, and the observed resident geometry readback, natively (#2). Counters and receipts per event — rasterisation, cache hit, reseed, progress read — wired to the dependency-correct cache key each happened under, so repeated angle/progress updates are PROVEN by counters to re-sample nothing and reset no resident. The instrument enforces the law it counts: a reseed is admitted only through a genuine topology change mapped by the samples owner's own explicit correspondence; a coating change that keeps topology moves the key and is refused a reseed by name. Observation is pure and separate from command: the resident identity digest, occupancy and rest extent are read FROM the retained body beside the commanded crease state, so a lagging consumer cannot be disguised as an applied pose (#3). The rasterisation itself stays the application's PS-G half; no second store, clock, numerical field or authority.",
+   "tests": [
+    "crates/ql-mef/src/form_instrument.rs",
+    "crates/ql-mef/tests/psg_form_recipe.rs"
    ],
    "kind": "computational"
   }

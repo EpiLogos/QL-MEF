@@ -760,6 +760,45 @@ fn next_generation(event: &CoupledInput, applied: u64) -> Result<CoupledInput, S
     serde_json::from_value(value).map_err(|e| e.to_string())
 }
 
+/// Rebases an event's M3 request to the applied M3 state of a composed basis:
+/// form address, pose, aperture, matrix axis, transcription, clock and the
+/// identity generation — with the request's M2 basis moving with the stamp,
+/// as the M3 owner's own drift law requires. A consumed command batch's
+/// effects live here, not in a retained command; the next composition then
+/// reproduces exactly what the determinant applied.
+fn rebase_m3_request(
+    request: &mut crate::m3_state::M3Request,
+    basis: &CoupledBasis,
+) -> Result<(), String> {
+    let m3 = &basis.m3;
+    let exact = |value: &serde_json::Value, name: &str| -> Result<u64, String> {
+        value
+            .as_u64()
+            .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
+            .ok_or_else(|| format!("composed M3 basis carries no exact {name}"))
+    };
+    request.address = u8::try_from(exact(&m3["form"]["address"], "form address")?)
+        .map_err(|_| "composed M3 form address outside 0..255".to_string())?;
+    request.pose = u8::try_from(exact(&m3["form"]["pose"], "pose")?)
+        .map_err(|_| "composed M3 pose outside 0..255".to_string())?;
+    request.aperture = u8::try_from(exact(&m3["aperture"]["index"], "aperture index")?)
+        .map_err(|_| "composed M3 aperture outside 0..255".to_string())?;
+    request.matrix_axis = u8::try_from(exact(&m3["form"]["matrix_axis"], "matrix axis")?)
+        .map_err(|_| "composed M3 matrix axis outside 0..255".to_string())?;
+    request.rna = m3["transcription"]["rna"]
+        .as_bool()
+        .ok_or("composed M3 basis carries no transcription reading")?;
+    request.clock_steps = exact(&m3["clock"]["steps"], "clock steps")?;
+    request.occurrence_unix_ms = exact(&m3["occurrence_unix_ms"], "occurrence instant")?;
+    request.receipt_unix_ms = exact(&m3["receipt_unix_ms"], "receipt instant")?;
+    let generation = exact(&m3["identity"]["profile_generation"], "identity generation")?;
+    request.stamp.identity.profile_generation = generation;
+    if let Some(m2_basis) = &mut request.m2_basis {
+        m2_basis.identity.profile_generation = generation;
+    }
+    Ok(())
+}
+
 /// One live scene instrument over one native coupled owner.
 pub struct SceneInstrument {
     instance_ref: String,
@@ -886,8 +925,13 @@ impl SceneInstrument {
         let (mut input, basis) = complete(&event, &self.material, self.fibre())?;
         // The applied command batch is consumed: its effects and receipts live
         // in the composed basis, and a retained command would replay its
-        // already-stale generation check on the next composition.
+        // already-stale generation check on the next composition. The event's
+        // own M3 request is rebased to the applied M3 state, so the retained
+        // basis reads what the determinant actually applied — the observed
+        // form is the applied form, never a stale request replayed (the same
+        // law the M1-advance path follows on its own address and clock).
         input.m3_commands = Vec::new();
+        rebase_m3_request(&mut input.m3, &basis)?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let mut field = self.session.replace_field_state(input.clone(), strike)?;
         self.event = input;

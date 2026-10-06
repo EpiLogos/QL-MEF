@@ -18,6 +18,7 @@ use ql_mef::coordinate_expression::{
     SubjectManifestation, manifestation_fixture_file, resolve_subject_manifestation,
     verify_manifestation_fixtures, verify_producer_fixture,
 };
+use ql_mef::form_instrument::{FormInstrument, PreparationReceipt};
 use ql_mef::form_recipe::{
     DeclaredMobility, DeclaredPolarity, DeclaredSite, FORM_LAW_SOURCE_REFS, FORM_RECIPE_CONTRACT,
     FormDetermination, FormRecipe, resolve_form_recipe,
@@ -28,10 +29,10 @@ use ql_mef::form_samples::{
 };
 use ql_mef::form_sequence::{
     Easing, FORM_SEQUENCE_CONTRACT, FoldSequence, FoldSequenceOwner, SequenceAxis, SequencePhase,
-    cursor_from_lift, evaluate_fold_sequence,
+    cursor_from_lift, evaluate_fold_sequence, stage_effect,
 };
 use ql_mef::m_tree::native_current_m_registry;
-use ql_mef::m3_state::{M3Command, M3Operation, M3State};
+use ql_mef::m3_state::{M3Command, M3Operation, M3Receipt, M3State};
 
 const MOON: &str = "#2-5-4";
 const SUBJECT: &str = "ql:k2/default-subject";
@@ -532,4 +533,181 @@ fn a_sequence_takeover_records_the_interrupted_standing() {
     let replay = evaluate_fold_sequence(&specimen_sequence(), 1000).unwrap();
     assert_eq!(replay.eased_steps_num, mid.eased_steps_num);
     assert_eq!(replay.site_angles_deg10, mid.site_angles_deg10);
+}
+
+/// One driven step of the journey: read the host's observed standing form,
+/// compile the stage effect at the cursor against it, evaluate the carrying
+/// procedure through the stage's own evaluate path, and apply the plan's form
+/// command to the real M3State owner when the plan carries one.
+fn drive_step(
+    event: &CoupledInput,
+    sequence: &FoldSequence,
+    ownership: &mut StageOwnership,
+    state: &mut M3State,
+    cursor: u64,
+) -> (
+    ql_mef::form_sequence::StageEffect,
+    ql_mef::continuous::stage::StagePlan,
+    Option<M3Receipt>,
+) {
+    let standing = state.snapshot()["form"]["address"].as_u64().unwrap() as u8;
+    let effect = stage_effect(sequence, cursor, standing).unwrap();
+    let procedure = StageProcedure {
+        schema: STAGE_PROCEDURE.into(),
+        procedure_ref: "ta-onta:stage:psg-driven-journey".into(),
+        revision: 1,
+        subject_ref: sequence.subject_ref.clone(),
+        trigger: StageTrigger::Invocation,
+        selector: effect.selector(),
+        changes: effect.changes(),
+        passage: None,
+    };
+    procedure.validate().unwrap();
+    let plan = evaluate(&procedure, event, ownership, 0, 1, 1).unwrap();
+    let applied = plan
+        .event
+        .as_ref()
+        .map(|next| state.apply(next.m3_commands[0].clone()).unwrap());
+    (effect, plan, applied)
+}
+
+#[test]
+fn the_driven_journey_moves_the_body_through_named_quanta_end_to_end() {
+    // The whole lane in one driven walk: the PS-E producer fixture resolves
+    // to a manifestation (1), the recipe names and compiles the determination
+    // (2), the sequence walks determined forms over the display clock (3),
+    // the stage host carries every cursor through its own evaluate path (4),
+    // and the real M3State owner moves exactly at the named quanta (5) —
+    // while the instrument proves the retained body re-sampled nothing and
+    // reset no resident.
+    let manifestation = moon_manifestation();
+    let recipe = resolve_form_recipe(&manifestation, specimen_determination()).unwrap();
+    let sequence = specimen_sequence();
+    let event: CoupledInput = serde_json::from_str(EVENT).unwrap();
+    let mut state = M3State::new(event.m3.clone()).unwrap();
+    let mut ownership = StageOwnership::default();
+    let (preparation, expected_body) = specimen_body();
+    let mut instrument = FormInstrument::default();
+    let (body, rasterised) = instrument.prepare(preparation).unwrap();
+    assert_eq!(rasterised, PreparationReceipt::Rasterised);
+    assert_eq!(body, expected_body);
+    let mut digests = Vec::new();
+
+    let mut observe_at = |cursor: u64| {
+        let progress = evaluate_fold_sequence(&sequence, cursor).unwrap();
+        let observation = instrument.progress_update(&body, &progress).unwrap();
+        digests.push(observation.observed.resident_sha256.clone());
+        observation
+    };
+
+    // (a) Origin — the sequence holds the event's standing form 7. The effect
+    // names the quanta, issues no form change, and the host is carried by the
+    // clock change alone.
+    let (effect, plan, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 0);
+    assert!(effect.form_operations.is_none());
+    assert!(applied.is_none(), "no form command mid-journey");
+    assert!(plan.event.is_none());
+    assert_eq!(
+        plan.clock,
+        vec![(
+            "clock.inscription".to_owned(),
+            LiftInput {
+                turns: "0".into(),
+                half_degrees: 0
+            }
+        )]
+    );
+    assert_eq!(state.snapshot()["form"]["address"], 7);
+    let origin = observe_at(0);
+    assert_eq!(origin.commanded_site_angles_deg10, [225, -225, -225]);
+    assert_eq!(origin.commanded_form_address, Some(7));
+
+    // (b) Strictly inside the transition — the eased crease path is the
+    // commanded state; no form is named, none is issued, the body stands.
+    let (effect, plan, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 1080);
+    assert!(effect.form_operations.is_none());
+    assert!(plan.event.is_none());
+    assert!(applied.is_none());
+    assert!(effect.standing.contains("no form is named"));
+    assert_eq!(state.snapshot()["form"]["address"], 7);
+    let mid = observe_at(1080);
+    assert_eq!(mid.commanded_site_angles_deg10, [225, -225, 0]);
+    assert_eq!(mid.commanded_form_address, None);
+
+    // (c) The boundary — the codon resolves onto ATC while the host stands on
+    // 7: the effect compiles the recipe's OWN operations, the plan carries
+    // both the clock and the form, and the real owner moves at the exact cast
+    // telemetry.
+    let (effect, plan, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 1440);
+    assert_eq!(effect.form_operations.as_ref().unwrap(), &recipe.operations);
+    assert_eq!(plan.contributions.len(), 2);
+    assert_eq!(plan.contributions[0].slot, "form");
+    assert_eq!(plan.contributions[1].slot, "clock.inscription");
+    let receipt = applied.expect("the boundary applies a form command");
+    assert_eq!(receipt.status, "applied");
+    assert_eq!(receipt.after_generation, 2, "exactly one determinant moved");
+    let after = state.snapshot();
+    assert_eq!(after["form"]["address"], recipe.form.address);
+    assert_eq!(
+        after["form"]["angles_deg10"],
+        serde_json::json!([225, -225, 225])
+    );
+    assert_eq!(
+        after["form"]["velocities_deg10"],
+        serde_json::json!([225, 225, 0])
+    );
+    let boundary = observe_at(1440);
+    assert_eq!(boundary.commanded_site_angles_deg10, [225, -225, 225]);
+    assert_eq!(boundary.commanded_form_address, Some(recipe.form.address));
+
+    // (d) The hold after the boundary — the form is already bound: no form
+    // change is re-issued, the codon's resolution is carried not replayed.
+    let (effect, plan, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 1500);
+    assert!(effect.form_operations.is_none());
+    assert!(plan.event.is_none());
+    assert!(applied.is_none());
+    assert!(effect.standing.contains("quanta already bound"));
+    assert_eq!(state.snapshot()["form"]["address"], recipe.form.address);
+    observe_at(1500);
+
+    // (e) Seek back mid-path — re-reading names no form and issues nothing;
+    // the observed form stays exactly where the boundary put it.
+    let (effect, _, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 1080);
+    assert!(effect.form_operations.is_none());
+    assert!(applied.is_none());
+    assert_eq!(state.snapshot()["form"]["address"], recipe.form.address);
+    observe_at(1080);
+
+    // (f) The completed end — the final form stands, already bound.
+    let (effect, _, applied) = drive_step(&event, &sequence, &mut ownership, &mut state, 2160);
+    assert!(effect.form_operations.is_none());
+    assert!(applied.is_none());
+    assert!(effect.progress.standing.contains("sequence completed"));
+    assert_eq!(state.snapshot()["form"]["address"], recipe.form.address);
+    observe_at(2160);
+
+    // The slot is held by the journey's procedure, and the instrument's proof
+    // surface reads exactly what the law demands: one rasterisation, no
+    // reseeds, six reads; commanded angles moved, the resident identity stood.
+    assert_eq!(
+        ownership.owner_of("form").unwrap().key,
+        "ta-onta:stage:psg-driven-journey@1/form"
+    );
+    assert_eq!(
+        instrument.totals(),
+        ql_mef::form_instrument::PreparationCounters {
+            rasterisations: 1,
+            cache_hits: 0,
+            reseeds: 0,
+            progress_reads: 6,
+        }
+    );
+    assert!(
+        digests.windows(2).all(|w| w[0] == w[1]),
+        "the resident identity digest stood under every cursor"
+    );
+    assert_ne!(
+        origin.commanded_site_angles_deg10,
+        boundary.commanded_site_angles_deg10
+    );
 }

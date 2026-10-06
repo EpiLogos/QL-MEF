@@ -500,3 +500,156 @@ fn unbinding_stops_the_firing_and_names_the_final_standing() {
     let state = driver.send(json!({"operation":"stage-state"}));
     assert!(state["stage"]["bindings"].as_array().unwrap().is_empty());
 }
+
+/// The driven journey's specimen over the installed worker: the fold sequence
+/// holds the event's standing form 7 for one turn, transitions to the ATC
+/// fold motif over one turn (smoothstep), and holds ATC for one turn — the
+/// same walk the native specimen proves, here carried by the live host.
+fn driven_sequence() -> ql_mef::form_sequence::FoldSequence {
+    use ql_mef::form_recipe::{
+        DeclaredMobility, DeclaredPolarity, DeclaredSite, FormDetermination,
+    };
+    let atc = FormDetermination::FoldMotif {
+        sites: [
+            DeclaredSite {
+                polarity: DeclaredPolarity::Yin,
+                mobility: DeclaredMobility::Moving,
+            },
+            DeclaredSite {
+                polarity: DeclaredPolarity::Yang,
+                mobility: DeclaredMobility::Moving,
+            },
+            DeclaredSite {
+                polarity: DeclaredPolarity::Yin,
+                mobility: DeclaredMobility::Resting,
+            },
+        ],
+    };
+    ql_mef::form_sequence::FoldSequence {
+        schema: ql_mef::form_sequence::FORM_SEQUENCE_CONTRACT.into(),
+        sequence_ref: "ta-onta:psg:driven-journey".into(),
+        revision: 1,
+        subject_ref: "ql:k2/default-subject".into(),
+        axis: ql_mef::form_sequence::SequenceAxis::Inscription,
+        origin: ql_mef::continuous::LiftInput {
+            turns: "0".into(),
+            half_degrees: 0,
+        },
+        phases: vec![
+            ql_mef::form_sequence::SequencePhase::Hold {
+                determination: FormDetermination::Address { address: 7 },
+                half_degrees: 720,
+            },
+            ql_mef::form_sequence::SequencePhase::Transition {
+                to: atc.clone(),
+                half_degrees: 720,
+                easing: ql_mef::form_sequence::Easing::Smoothstep,
+            },
+            ql_mef::form_sequence::SequencePhase::Hold {
+                determination: atc.clone(),
+                half_degrees: 720,
+            },
+        ],
+    }
+}
+
+#[ignore = "requires the installed ql-field-worker"]
+#[test]
+fn the_driven_sequence_moves_the_real_worker_through_named_quanta() {
+    use ql_mef::form_sequence::stage_effect;
+
+    let sequence = driven_sequence();
+    let mut driver = Driver::open("test:psg-driven-journey");
+    let standing = |state: &Value| state["stage"]["form"]["address"].as_u64().unwrap() as u8;
+    // One driven step: read the host's observed standing through its own
+    // stage-state disclosure, compile the fold law's effect at the cursor
+    // against it, and evaluate the carrying procedure on the live host.
+    let drive = |driver: &mut Driver, cursor: u64| {
+        let state = driver.send(json!({"operation":"stage-state"}));
+        let effect = stage_effect(&sequence, cursor, standing(&state)).unwrap();
+        let mut carried = procedure(effect.changes());
+        carried.procedure_ref = "ta-onta:stage:psg-driven".into();
+        carried.selector = effect.selector();
+        let response = driver.send(
+            serde_json::to_value(HostOperation::StageEvaluate {
+                procedure: Box::new(carried),
+            })
+            .unwrap(),
+        );
+        (effect, response)
+    };
+    let observed = |response: &Value| {
+        response["influence"]["native_readback"]["form"]["address"]
+            .as_u64()
+            .expect("the native readback discloses the form address")
+    };
+
+    // (a) Strictly inside the transition: the effect names no form and issues
+    // none — the receipt carries the clock slot alone, and the worker's own
+    // readback still stands on form 7. The display axis moved to the cursor.
+    let (effect, response) = drive(&mut driver, 1080);
+    assert_eq!(response["status"], "ok", "{}", response["error"]);
+    assert!(effect.form_operations.is_none());
+    let slots: Vec<&str> = response["stage"]["contributions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c["slot"].as_str().unwrap())
+        .collect();
+    assert_eq!(slots, vec!["clock.inscription"]);
+    // The display axis moved to the exact cursor phase (1080 steps).
+    assert_eq!(
+        response["field"]["clock"]["inscription"]["turns"],
+        json!("1")
+    );
+    assert_eq!(
+        response["field"]["clock"]["inscription"]["half_degrees"],
+        json!(360)
+    );
+    assert_eq!(observed(&response), 7);
+
+    // (b) The boundary: the codon resolves onto ATC while the host stands on
+    // 7 — the compiled form change rides the event's own command batch, the
+    // real worker applies it, and the readback discloses the exact cast
+    // telemetry of the new form.
+    let (effect, response) = drive(&mut driver, 1440);
+    assert_eq!(response["status"], "ok", "{}", response["error"]);
+    assert!(effect.form_operations.is_some());
+    let contributions = response["stage"]["contributions"].as_array().unwrap();
+    assert_eq!(contributions.len(), 2);
+    assert_eq!(contributions[0]["slot"], json!("form"));
+    assert_eq!(
+        contributions[0]["key"],
+        json!("ta-onta:stage:psg-driven@1/form")
+    );
+    assert_eq!(contributions[1]["slot"], json!("clock.inscription"));
+    assert_eq!(
+        observed(&response),
+        6,
+        "the body moved through the named quanta"
+    );
+    let form = &response["influence"]["native_readback"]["form"];
+    assert_eq!(form["angles_deg10"], json!([225, -225, 225]));
+    assert_eq!(form["velocities_deg10"], json!([225, 225, 0]));
+    assert_eq!(form["nucleotides"], json!([0, 1, 2]));
+
+    // (c) The hold after the boundary: the form is already bound — the effect
+    // re-issues nothing, the receipt carries the clock alone, the form stands.
+    let (effect, response) = drive(&mut driver, 1500);
+    assert_eq!(response["status"], "ok", "{}", response["error"]);
+    assert!(effect.form_operations.is_none());
+    assert!(effect.standing.contains("quanta already bound"));
+    let slots: Vec<&str> = response["stage"]["contributions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c["slot"].as_str().unwrap())
+        .collect();
+    assert_eq!(slots, vec!["clock.inscription"]);
+    let state = driver.send(json!({"operation":"stage-state"}));
+    assert_eq!(standing(&state), 6, "the boundary's form still stands");
+    assert_eq!(
+        state["stage"]["slots"]["form"]["owner"],
+        json!("ta-onta:stage:psg-driven@1/form")
+    );
+}

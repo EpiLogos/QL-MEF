@@ -25,11 +25,14 @@
 use serde::{Deserialize, Serialize};
 
 use crate::continuous::LiftInput;
+use crate::continuous::stage::StageChange;
 use crate::form_recipe::{FormDetermination, ResolvedForm, codon_telemetry, compile_determination};
+use crate::m3_state::M3Operation;
 use ql_core::SiteReading;
 
 pub const FORM_SEQUENCE_CONTRACT: &str = "ql.psg-form-sequence/v1";
 pub const FORM_PROGRESS_CONTRACT: &str = "ql.psg-fold-progress/v1";
+pub const FOLD_STAGE_EFFECT_CONTRACT: &str = "ql.psg-fold-stage-effect/v1";
 
 /// The phases of one sequence: 1..=16, each 1..=360 turns of its axis.
 pub const MAX_PHASES: usize = 16;
@@ -409,6 +412,150 @@ pub fn evaluate_fold_sequence(
         site_angles_deg10,
         site_velocities_deg10,
         resolved_form,
+        standing,
+    })
+}
+
+/// The exact display-clock phase of a cursor: canonical turns and
+/// half_degrees below a turn — the inverse of [`cursor_from_lift`]. The host's
+/// own axis phase, compiled from the fold law's step count.
+pub fn lift_from_cursor(cursor_steps: u64) -> Result<LiftInput, String> {
+    if cursor_steps > crate::m2_engine::MAX_EXACT_JSON_INTEGER {
+        return Err("clock phase exceeds the exact native range".into());
+    }
+    Ok(LiftInput {
+        turns: (cursor_steps / 720).to_string(),
+        half_degrees: (cursor_steps % 720) as u16,
+    })
+}
+
+/// The determination whose form the progress names at a quanta: a hold's own
+/// endpoint, a transition onset's from-form (the previous phase's endpoint —
+/// a transition is never the first segment), a transition end's target.
+fn governing_determination<'a>(
+    sequence: &'a FoldSequence,
+    progress: &FoldProgress,
+) -> &'a FormDetermination {
+    let index = progress.segment_index;
+    if progress.phase == "hold" || progress.offset_steps == progress.length_steps {
+        sequence.phases[index].endpoint()
+    } else {
+        sequence.phases[index - 1].endpoint()
+    }
+}
+
+/// The stage-host effect binding (P5 §4.2, the stage's own sequence
+/// semantics): what the Ta-Onta stage performs for the fold sequence at one
+/// exact display-clock cursor — the fold law compiled into the host's own
+/// typed changes. A native receipt: produced here, read by consumers, never
+/// fabricated from JSON.
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct StageEffect {
+    pub schema: &'static str,
+    pub sequence_ref: String,
+    pub revision: u64,
+    pub subject_ref: String,
+    pub axis: SequenceAxis,
+    pub cursor_steps: u64,
+    /// The cursor as the exact display-clock phase the host sets.
+    pub cursor_phase: LiftInput,
+    /// The commanded fold state at this cursor — the progress law's own
+    /// reading, unchanged.
+    pub progress: FoldProgress,
+    /// The boundary form's exact M3 operations — the same compiled
+    /// determination the form-recipe owner names — present only when the codon
+    /// resolved onto a form the host's disclosed standing does not hold.
+    /// Strictly inside a transition this is absent: the codon resolves at the
+    /// quanta only, and the host is issued no form mid-path.
+    pub form_operations: Option<Vec<M3Operation>>,
+    pub standing: String,
+}
+
+impl StageEffect {
+    /// The host's own typed changes carrying this effect, in the application
+    /// order the stage's evaluate path performs them: the boundary form onto
+    /// the event's own command batch when one resolved, then the display axis
+    /// moved to the cursor.
+    pub fn changes(&self) -> Vec<StageChange> {
+        let mut changes = Vec::with_capacity(2);
+        if let Some(operations) = &self.form_operations {
+            changes.push(StageChange::Form {
+                operations: operations.clone(),
+            });
+        }
+        changes.push(StageChange::Clock {
+            slot: self.axis.slot().to_owned(),
+            phase: self.cursor_phase.clone(),
+        });
+        changes
+    }
+
+    /// The stage slots the effect's changes address — the selector the
+    /// carrying procedure must declare.
+    pub fn selector(&self) -> Vec<String> {
+        let mut slots = Vec::with_capacity(2);
+        if self.form_operations.is_some() {
+            slots.push("form".to_owned());
+        }
+        slots.push(self.axis.slot().to_owned());
+        slots
+    }
+}
+
+/// Compiles the stage effect for the sequence at one exact cursor against the
+/// host's disclosed standing form address. Pure: the same sequence, cursor and
+/// standing name the same effect — the driven stage re-reads, never replays,
+/// and a form already standing is never re-issued.
+pub fn stage_effect(
+    sequence: &FoldSequence,
+    cursor_steps: u64,
+    standing_address: u8,
+) -> Result<StageEffect, String> {
+    let progress = evaluate_fold_sequence(sequence, cursor_steps)?;
+    let cursor_phase = lift_from_cursor(cursor_steps)?;
+    let form_operations = match progress.resolved_form.as_ref() {
+        None => None,
+        // The codon's form already stands on the host: the binding re-issues
+        // nothing — the boundary is carried, not replayed every read.
+        Some(form) if form.address == standing_address => None,
+        Some(form) => {
+            let (operations, codon) =
+                compile_determination(governing_determination(sequence, &progress))?;
+            if codon.address() != form.address {
+                return Err(format!(
+                    "the sequence's governing determination resolves form {}, but the progress named {} at cursor {cursor_steps}",
+                    codon.address(),
+                    form.address
+                ));
+            }
+            Some(operations)
+        }
+    };
+    let standing = match (&form_operations, progress.resolved_form.as_ref()) {
+        (Some(_), Some(form)) => format!(
+            "boundary resolution: the codon resolved onto form {} at the quanta; the compiled form change rides the event's own command batch",
+            form.address
+        ),
+        (None, Some(form)) => format!(
+            "quanta already bound: the codon's form {form_address} stands on the host; no form change is issued",
+            form_address = form.address
+        ),
+        (None, None) => {
+            "in transition: no form is named and none is issued; the eased crease path is the commanded state the sampler deforms the retained body with".to_string()
+        }
+        (Some(_), None) => unreachable!("a form change exists only at a named quanta"),
+    };
+    Ok(StageEffect {
+        schema: FOLD_STAGE_EFFECT_CONTRACT,
+        sequence_ref: sequence.sequence_ref.clone(),
+        revision: sequence.revision,
+        subject_ref: sequence.subject_ref.clone(),
+        axis: sequence.axis,
+        cursor_steps,
+        cursor_phase,
+        progress,
+        form_operations,
         standing,
     })
 }
@@ -910,5 +1057,99 @@ mod tests {
             .map(|s| body_after.rest_metres(s))
             .collect();
         assert_eq!(rest_before, rest_after);
+    }
+
+    #[test]
+    fn the_cursor_phase_is_the_exact_inverse_of_the_cursor_law() {
+        for cursor in [0u64, 1, 719, 720, 756, 1440, 2160, 123_457] {
+            let phase = lift_from_cursor(cursor).unwrap();
+            assert_eq!(phase.half_degrees as u64, cursor % 720);
+            assert_eq!(cursor_from_lift(&phase).unwrap(), cursor);
+            assert_eq!(
+                cursor_from_lift(&phase).unwrap(),
+                cursor / 720 * 720 + cursor % 720
+            );
+        }
+        assert!(lift_from_cursor(u64::MAX).is_err());
+    }
+
+    #[test]
+    fn the_stage_effect_binds_the_law_to_the_hosts_own_changes() {
+        let seq = sequence();
+        // Origin, the host standing on form 7 (the sequence's own hold): no
+        // form change exists — the law's standing IS the host's standing.
+        let at_origin = stage_effect(&seq, 0, 7).unwrap();
+        assert_eq!(at_origin.schema, FOLD_STAGE_EFFECT_CONTRACT);
+        assert_eq!(at_origin.cursor_steps, 0);
+        assert_eq!(at_origin.cursor_phase, origin());
+        assert!(at_origin.form_operations.is_none());
+        assert_eq!(at_origin.selector(), vec!["clock.inscription".to_owned()]);
+        assert_eq!(at_origin.changes().len(), 1);
+        assert!(at_origin.standing.contains("quanta already bound"));
+        assert_eq!(at_origin.progress.resolved_form.unwrap().address, 7);
+
+        // Strictly inside the transition: no form is named and none is issued.
+        let mid = stage_effect(&seq, 1080, 7).unwrap();
+        assert!(mid.form_operations.is_none());
+        assert_eq!(mid.selector(), vec!["clock.inscription".to_owned()]);
+        assert_eq!(mid.progress.site_angles_deg10, [225, -225, 0]);
+        assert!(mid.standing.contains("no form is named and none is issued"));
+
+        // The boundary: the codon resolves onto ATC while the host stands on
+        // 7 — the effect compiles the SAME operations the recipe of that
+        // determination compiles, and the changes carry the clock and the form.
+        let boundary = stage_effect(&seq, 1440, 7).unwrap();
+        assert_eq!(
+            boundary.cursor_phase,
+            LiftInput {
+                turns: "2".into(),
+                half_degrees: 0
+            }
+        );
+        let (expected, _) = compile_determination(&atc()).unwrap();
+        assert_eq!(boundary.form_operations.as_ref().unwrap(), &expected);
+        assert_eq!(
+            boundary.selector(),
+            vec!["form".to_owned(), "clock.inscription".to_owned()]
+        );
+        let changes = boundary.changes();
+        assert_eq!(changes.len(), 2);
+        assert_eq!(
+            serde_json::to_value(&changes[0]).unwrap(),
+            serde_json::to_value(&crate::continuous::stage::StageChange::Form {
+                operations: expected.clone()
+            })
+            .unwrap()
+        );
+        assert!(matches!(
+            &changes[1],
+            StageChange::Clock { slot, .. } if slot == "clock.inscription"
+        ));
+        assert!(boundary.standing.contains("boundary resolution"));
+
+        // The same boundary with the form already bound: re-issued nothing.
+        let rebound = stage_effect(&seq, 1440, 0b00_01_10).unwrap();
+        assert!(rebound.form_operations.is_none());
+        assert!(rebound.standing.contains("quanta already bound"));
+
+        // The transition onset names the from-form: a host standing elsewhere
+        // is told the law's standing at the one quanta where naming is lawful.
+        let onset = stage_effect(&seq, 720, 3).unwrap();
+        let (from_ops, from_codon) = compile_determination(&address(7)).unwrap();
+        assert_eq!(from_codon.address(), 7);
+        assert_eq!(onset.form_operations.as_ref().unwrap(), &from_ops);
+        assert!(onset.standing.contains("boundary resolution"));
+
+        // Purity: the same sequence, cursor and standing name the same effect.
+        assert_eq!(
+            stage_effect(&seq, 1440, 7).unwrap(),
+            stage_effect(&seq, 1440, 7).unwrap()
+        );
+        // And the cursor law's own refusals surface by name.
+        assert!(
+            stage_effect(&seq, 2161, 7)
+                .unwrap_err()
+                .contains("past the sequence's end")
+        );
     }
 }
