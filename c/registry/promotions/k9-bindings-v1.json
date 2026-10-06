@@ -638,6 +638,17 @@
     "crates/ql-cli/tests/scene_render_native.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/stage_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "CLI transport for the Ta-Onta procedural stage over the field host the Expressions application opens (QL-MEF #296 acceptance A17): one invocation is one owned exchange \u2014 open the scene host through the app's own binding route, send one stage operation (state/evaluate/bind/unbind/retire) under the exact request envelope, print the host's receipt. A command adapter, not a store \u2014 procedure JSON in, host receipts out; stage ownership and bindings live with the opened host.",
+   "tests": [
+    "crates/ql-cli/tests/stage_native.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
