@@ -45,7 +45,7 @@ pub use codon::{
 pub use coin::{CoinFace, CoinSum, CoinTriple, Mobility, Polarity, monoid};
 pub use fold::{
     ApplyOutcome, FoldGeometry, FoldState, M3_RES_MATRIX, RES_ADMITTED_COUNT, RES_GAP_ADDRESSES,
-    RESONANCE_GAP, SiteReading, is_resonance_gap, resonance_entry,
+    RESONANCE_GAP, SiteReading, is_resonance_gap, project_site, resonance_entry,
 };
 pub use iching::{
     ICHING_GRAMMAR_REF, Trigram, complement, compose_hexagram, flow_clockwise,

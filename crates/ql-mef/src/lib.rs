@@ -17,6 +17,7 @@ mod error;
 pub mod focused_instrument;
 mod focused_instrument_aw1;
 pub mod focused_instrument_aw2;
+pub mod form_recipe;
 mod identity;
 mod janko;
 pub mod l5_projection;
