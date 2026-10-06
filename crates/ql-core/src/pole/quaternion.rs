@@ -6,8 +6,16 @@
 //!
 //! ```text
 //! composed = ring_quaternion(tick) × element_quaternion × matrix_axis
-//! for each active codon:  state = floor(arg(composed × q_codon) / 45°) & 7
+//! for each active codon:
+//!     state = floor(2·atan2(|v|, w) / 45°) & 7      |v| = sqrt(x²+y²+z²)
 //! ```
+//!
+//! The reader is the CORRECTED all-axis law (vendor `m3.c:136-152`,
+//! integrated by the #312 §5 amendment): the full rotation angle about the
+//! composed axis, all three matrix axes contributing. The predecessor —
+//! the i-only half-angle `atan2(x, w)` — is retired but retained as
+//! [`quat_active_state_retired_i_plane`], the regression witness of the old
+//! register.
 //!
 //! The chain orients forms that are already determined — the DET overlay's
 //! active codon set comes from the M2 vibration masks (see
@@ -242,9 +250,56 @@ pub fn quat_codon_state(codon: Codon64, state: u8) -> Quat {
 }
 
 /// The active rotational state of a codon under a composed environment
-/// quaternion (vendor m3.h `m3_quat_active_state`): compose, read the
-/// argument `atan2(x, w)` wrapped to [0, 2π), quantize to 45° states.
+/// quaternion (vendor `m3.c:136-152` `m3_quat_active_state`, CORRECTED
+/// all-axis law — #312 §5 amendment): compose, read the FULL rotation angle
+/// about the composed axis, `2·atan2(|v|, w)` with `|v| = sqrt(x²+y²+z²)`,
+/// normalised to [0°, 360°] PHYSICAL, and quantise to eight 45° bins.
+///
+/// The corrected register: all three matrix axes contribute through `|v|` —
+/// i (Complementary/x), j (Moving-Resting/y), k (Same-Quality/z) — so the
+/// codon's Mod (`z = Σ mod 6`) and any j environmental torque enter the
+/// reading (HMS Sec.V j/k-symmetry; the DR-ENV correction reason). `w < 0`
+/// (opposite hemisphere) reads the far states ~4..7. The conversion is
+/// published in [`crate::pole::phase`] (`quat_argument_bin`,
+/// `quat_rotation_degrees`).
 pub fn quat_active_state(environment: Quat, codon: Codon64) -> u8 {
+    let composed = environment.mul(quat_from_codon(codon));
+    // Full rotation angle about the composed axis: 2*atan2(|v|, w), with
+    // |v| = sqrt(x^2 + y^2 + z^2). All three matrix axes contribute — i
+    // (Complementary/x), j (Moving-Resting/y), k (Same-Quality/z) — not
+    // only i. The retired law read atan2(x, w), the i-only half-angle, so
+    // a codon's Mod (k/z = sum%6) and any j environmental torque were
+    // discarded (HMS Sec.V j/k-symmetry; DR-ENV). w < 0 (opposite
+    // hemisphere) reaches the composite state 7. angle in [0, 2*pi]; the
+    // &0x07 folds the 2*pi edge back to 0.
+    // (Verbatim port of vendor/epi-kernel/reference/src/m3.c:145-152,
+    // verified 2026-10-06; #312 §5 amendment.)
+    let vmag = (composed.x * composed.x
+        + composed.y * composed.y
+        + composed.z * composed.z)
+        .sqrt();
+    let mut angle = 2.0 * vmag.atan2(composed.w);
+    if angle < 0.0 {
+        angle += core::f32::consts::TAU;
+    }
+    ((angle / core::f32::consts::FRAC_PI_4) as u8) & 0x07
+}
+
+/// The RETIRED i-plane law: the predecessor active-state reader, retained
+/// verbatim as the regression witness of the old register (#312 §5). It
+/// read `atan2(x, w)` — the i-only HALF-angle argument wrapped to [0, 2π),
+/// quantised at 45° per bin — discarding a codon's Mod (`z = Σ mod 6`) and
+/// any j environmental torque; its bins are 45° of ARGUMENT = 90° of
+/// physical rotation.
+///
+/// The +4 antipodal shift under quaternion negation is a diagnostic of THIS
+/// function only, not of the corrected law: negating `q` shifts the i-plane
+/// argument by 180°, which the retired half-angle reading stretches to a
+/// full bin+4 move. The corrected law's antipodal relation is the octant
+/// MIRROR (see `crate::pole::phase`). Used by the retired witness tests
+/// (`tests/phase_bridge.rs`) and by the k7 C-ABI parity record, whose C
+/// mirror still carries this law.
+pub fn quat_active_state_retired_i_plane(environment: Quat, codon: Codon64) -> u8 {
     let composed = environment.mul(quat_from_codon(codon));
     let mut angle = composed.x.atan2(composed.w);
     if angle < 0.0 {
@@ -392,19 +447,23 @@ mod tests {
 
     #[test]
     fn active_state_quantizes_the_environment_argument() {
-        // Identity environment: the codon's own argument decides.
+        // Identity environment: AAA's seed (18, 0, 0, 0) is pure w — the
+        // corrected reading is the 2π-folded 360°/0° edge, state 0.
         let codon = Codon64::from_nucleotides(Nucleotide::A, Nucleotide::A, Nucleotide::A);
-        let state = quat_active_state(Quat::IDENTITY, codon);
-        assert!(state <= 7);
-        // A pure i-axis environment rotates the argument by 90°: two states.
+        assert_eq!(quat_active_state(Quat::IDENTITY, codon), 0);
+        // A pure i-axis environment (0, 1, 0, 0) composes to (0, 18, 0, 0):
+        // the corrected reading is the FULL rotation 2·atan2(18, 0) = 180° —
+        // state 4. The retired i-plane law read the same composition at the
+        // half-angle 90° — state 2 — half the physical register (witness:
+        // `quat_active_state_retired_i_plane`).
         let env = Quat {
             w: 0.0,
             x: 1.0,
             y: 0.0,
             z: 0.0,
         };
-        let shifted = quat_active_state(env, codon);
-        let _ = (state, shifted);
+        assert_eq!(quat_active_state(env, codon), 4);
+        assert_eq!(quat_active_state_retired_i_plane(env, codon), 2);
     }
 
     #[test]
