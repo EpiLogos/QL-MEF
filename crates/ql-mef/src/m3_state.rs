@@ -43,7 +43,7 @@ pub struct M3Request {
     pub bases: Vec<BasisRef>,
     pub m2_basis: Option<InputStamp>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "operation", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum M3Operation {
     SelectForm {
