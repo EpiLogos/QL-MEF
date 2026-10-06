@@ -64,7 +64,7 @@ pub use pole::{
     POLE_FOLD_STATE_REF, PairIndex16, Polarity, QuaternionComponents, RES_ADMITTED_COUNT,
     RES_GAP_ADDRESSES, RESONANCE_GAP, ROTATIONAL_STATE_TOTAL, RetrievalEvidence, RotationalPose,
     SelectionContext, SelectionLaw, SiteProperty, SiteReading, SiteState, Transduction18to16,
-    all_poses, carrier, det_shadow, is_resonance_gap, monoid, resonance_entry,
+    all_poses, carrier, det_shadow, is_resonance_gap, monoid, project_site, resonance_entry,
 };
 pub use pole::{
     DetOverlay, ICHING_GRAMMAR_REF, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF,

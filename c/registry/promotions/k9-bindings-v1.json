@@ -590,6 +590,21 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-mef/src/form_recipe.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3"
+   ],
+   "rationale": "The PS-G form-recipe join (QL-MEF #299 first vertical): the M3 form law meeting the landed Paśu manifestation owner. A resolved subject manifestation's formation occurrence takes a declared entity-to-form determination (fold motif through the kernel cast law, or bounded six-bit address), compiled to the exact M3Operations the Ta-Onta stage already routes onto the event's own command batch (#3), with the qualification's source basis carried and refusals by name where the locus's records qualify no formation layer (#2). No invented lookup from descriptive keys; upstream primary-form selection stays the source's named open seam (M3 matrix §8).",
+   "tests": [
+    "crates/ql-mef/src/form_recipe.rs",
+    "crates/ql-mef/tests/psg_form_recipe.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "crates/ql-mef/src/janko.rs",
    "stratum": "rust",
    "disposition": "coordinate-bound",
