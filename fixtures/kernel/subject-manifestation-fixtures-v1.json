@@ -1,0 +1,180 @@
+{
+  "schema": "ql.pse-manifestation-fixtures/v1",
+  "description": "PS-E (QL-MEF #297) producer fixtures: machine-readable manifestation, occurrence and place-transition bodies with their expected readbacks, published for the paired consumer lanes (PS-S state surface, PS-U Studio, PS-C retention). Every body resolves against the real native registry through the ql.subject-manifestation/v1 and ql.place-transition/v1 owners; nothing here stands in for a source, and no revision is invented — cursors are derived from the actual resolution.",
+  "source_pins": [
+    "Idea/Pratibimba/Self/PASU.md @ ead6956e2370d5d147c08499d1f533e2f6f6ddbd (revision daa660cbc1b8c5da83828698665a753852cb0287) — the situated paśu: non-dual agent-user field",
+    "Body/S/S0/epi-cli/src/vault/pasu.rs @ 9cbb69c23048adeb63e0b274e3ad6e81b2daf62d — the native vault projection of that ground",
+    "Idea/Bimba/World/World-Ontology.md @ a766db4ed67b29ec70dd273e674cfa1676f60800 — #1 definition/form, #2 operation/entity, #3 pattern/process, #4 context/type, #5 integration/reflection"
+  ],
+  "fixtures": [
+    {
+      "kind": "manifestation",
+      "name": "moon-as-formation-force-and-sequence",
+      "request": {
+        "subject_ref": "ql:k2/default-subject",
+        "subject_kind": "native",
+        "locus_ref": "#2-5-4",
+        "face": "bimba",
+        "roles": ["formation", "force", "sequence"],
+        "relations": [
+          {
+            "role": "force",
+            "relation_ref": "bimba:relation:0bcfeaf7bf1582d0c70f9f10"
+          }
+        ]
+      },
+      "expected": {
+        "locus_coordinate_ref": "#2-5-4",
+        "locus_family": "M2",
+        "locus_depth": 3,
+        "subject_kind": "native",
+        "occurrences": [
+          {
+            "role": "formation",
+            "represented": true,
+            "key_prefix": "c_1_",
+            "contains_keys": ["c_1_name"]
+          },
+          {
+            "role": "force",
+            "represented": true,
+            "key_prefix": "c_2_",
+            "contains_keys": ["c_2_harmonic_role"],
+            "relation_qualifications": [
+              {
+                "role": "force",
+                "kind": "HARMONICALLY_RESONATES_WITH",
+                "orientation": "directed"
+              }
+            ]
+          },
+          {
+            "role": "sequence",
+            "represented": true,
+            "key_prefix": "c_3_"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "manifestation",
+      "name": "moon-formation-with-contributing-subjects",
+      "request": {
+        "subject_ref": "ql:k2/default-subject",
+        "subject_kind": "native",
+        "locus_ref": "#2-5-4",
+        "face": "bimba",
+        "roles": ["formation"],
+        "contributions": [
+          {
+            "carrier_role": "formation",
+            "subject_ref": "ql:k2/default-sky",
+            "role": "scene"
+          },
+          {
+            "carrier_role": "formation",
+            "subject_ref": "ql:k2/harmonic-series",
+            "role": "force"
+          }
+        ]
+      },
+      "expected": {
+        "locus_coordinate_ref": "#2-5-4",
+        "locus_family": "M2",
+        "locus_depth": 3,
+        "subject_kind": "native",
+        "occurrences": [
+          {
+            "role": "formation",
+            "represented": true,
+            "key_prefix": "c_1_",
+            "contributing_subjects": [
+              {
+                "subject_ref": "ql:k2/default-sky",
+                "role": "scene",
+                "represented": true
+              },
+              {
+                "subject_ref": "ql:k2/harmonic-series",
+                "role": "force",
+                "represented": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "manifestation",
+      "name": "sky-as-scene-subject",
+      "request": {
+        "subject_ref": "ql:k2/default-sky",
+        "subject_kind": "scene",
+        "locus_ref": "#2-5",
+        "face": "bimba",
+        "roles": ["scene"]
+      },
+      "expected": {
+        "locus_coordinate_ref": "#2-5",
+        "locus_family": "M2",
+        "locus_depth": 2,
+        "subject_kind": "scene",
+        "occurrences": [
+          {
+            "role": "scene",
+            "represented": true,
+            "key_prefix": "c_4_",
+            "contains_keys": ["c_4_subsystem"],
+            "bounded_subject_presentation": true
+          }
+        ]
+      }
+    },
+    {
+      "kind": "place-transition",
+      "name": "moon-to-sky-scene-change-with-checkpoint",
+      "request": {
+        "source": {
+          "subject_ref": "ql:k2/default-subject",
+          "subject_kind": "native",
+          "locus_ref": "#2-5-4",
+          "face": "bimba",
+          "roles": ["formation", "force", "sequence"]
+        },
+        "destination": {
+          "subject_ref": "ql:k2/default-subject",
+          "subject_kind": "native",
+          "locus_ref": "#2-5",
+          "face": "bimba",
+          "roles": ["scene"],
+          "instance": "night-sky-watch"
+        },
+        "act": "scene-change",
+        "retained_subjects": ["ql:k2/default-subject"],
+        "continuation": "checkpoint-release",
+        "record_cursor": true
+      },
+      "expected": {
+        "act": "scene-change",
+        "changes_the_event": false,
+        "continuation": "checkpoint-release",
+        "cursor_recorded": true,
+        "retained_subjects": ["ql:k2/default-subject"],
+        "resume_matches_destination": true,
+        "destination": {
+          "locus_coordinate_ref": "#2-5",
+          "locus_family": "M2",
+          "locus_depth": 2,
+          "subject_kind": "native",
+          "occurrences": [
+            {
+              "role": "scene",
+              "represented": true,
+              "key_prefix": "c_4_"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
