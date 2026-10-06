@@ -623,6 +623,35 @@
     "crates/ql-cli/tests/scene_render_native.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-core/src/pole/phase.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#3"
+   ],
+   "rationale": "The source-qualified phase bridge (QL-MEF #312 §4 TS0): explicit conversions between the three coexisting native angle registers — quat_codon_state's physical 45-degree encoder (half-angle rotor), quat_active_state's argument register whose eight bins tile the 720-degree SU(2) double cover, and M3Clock's 30-degree D5 ticks. Publishes clock720 = 2*signed_argument, the ring LUT's 60-degree triangle mapping and the raw argument bin; the antipodal +4 raw-classifier shift follows. A conversion publication over the existing registers only: it changes no existing function and claims no owner ruling where ledger record gate0-m1:tick-degree-law stays open.",
+   "tests": [
+    "crates/ql-core/tests/phase_bridge.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/tarot_score.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3",
+    "#4"
+   ],
+   "rationale": "The first-class deterministic Tarot score (QL-MEF #312 §§2-3 TS1, ql.tarot-score/v1): an admitted entity/event basis (nara identity natal placements, qualified dated sky snapshot, declared unwrapped clock steps) resolves per-longitude through the existing m3_inscription chains to codons, reads the 56-Minor exact cover (dual courts carry both codons; majors never receive codon addresses), records raw FourCharge with the 4X invariant, admits the environment-conditioned pose through det_overlay + quat_active_state against the 7/8 rotational profile, and projects the M3Clock basis. Origins (computed/drawn/authored/interpreted) stay distinct; computed scores never draw from the Nara one-deck journey; token identity is content-addressed independent of longitude correction. The M3-C31 quaternion preimage stays closed: every card arrives through the forward anchor/inscription law.",
+   "tests": [
+    "crates/ql-mef/tests/tarot_score.rs",
+    "crates/ql-mef/tests/pasu_manifestation.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
