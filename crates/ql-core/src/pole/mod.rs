@@ -27,6 +27,7 @@ pub mod fold;
 pub mod iching;
 pub mod inverse;
 pub mod nucleotide;
+pub mod phase;
 pub mod pose;
 pub mod quaternion;
 pub mod rotational;
