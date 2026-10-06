@@ -82,6 +82,7 @@ jobs:
           cargo test --locked -p ql-mef --test k8_reshape -- --ignored 2>&1 | tee target/k8-continuous/reshape.log
           cargo test --locked -p ql-mef --test scene_instrument -- --ignored 2>&1 | tee target/k8-continuous/scene.log
           cargo test --locked -p ql-mef --test scene_nara_reception -- --ignored 2>&1 | tee target/k8-continuous/scene-nara.log
+          cargo test --locked -p ql-mef --test played_note_native -- --ignored 2>&1 | tee target/k8-continuous/played-notes.log
       - name: The Ta-Onta procedural stage over the installed worker, through the field host
         env:
           QL_FIELD_WORKER: ${{ github.workspace }}/target/k8-cpp/bin/ql-field-worker
