@@ -1,15 +1,21 @@
-//! PS-E (QL-MEF #297) first specimen, integrated: one native subject
-//! manifested simultaneously as formation, force and sequence at a canonical
-//! Bimba place, occurrence identity stable under reorder/rename, canonical
-//! place re-entry preserving bindings, and the procedural stage validating its
-//! subject through the same semantic owner. Sources are the real registry and
-//! the real profile lineage — no fixture stand-ins.
+//! PS-E (QL-MEF #297) specimens, integrated: one native subject manifested
+//! simultaneously as formation, force and sequence at a canonical Bimba
+//! place, occurrence identity stable under reorder/rename, canonical place
+//! re-entry preserving bindings, and the procedural stage validating its
+//! subject through the same semantic owner. Slice 2 adds contributing source
+//! subjects inside one occurrence with separately qualified roles (P1 §0.1),
+//! scene-as-subject and whole-Expression-as-subject bounded presentations,
+//! and the joined place walk through distinct recorded transitions (P4
+//! §3.2/§3.3). Sources are the real registry and the real profile lineage —
+//! no fixture stand-ins.
 
 use ql_mef::MFace;
 use ql_mef::continuous::stage::{STAGE_PROCEDURE, StageChange, StageProcedure, StageTrigger};
 use ql_mef::coordinate_expression::{
-    AuthoredVariant, ExpressiveRole, SUBJECT_MANIFESTATION_CONTRACT, SubjectManifestation,
-    resolve_subject_manifestation, validate_subject_ref,
+    AuthoredVariant, ContinuationCursor, ContinuationPolicy, ContributingSubjectBinding,
+    ExpressiveRole, PLACE_TRANSITION_CONTRACT, PlaceTransitionKind, SUBJECT_MANIFESTATION_CONTRACT,
+    SubjectKind, SubjectManifestation, admit_place_transition, resolve_subject_manifestation,
+    resume_place_transition, validate_subject_ref,
 };
 use ql_mef::m_tree::native_current_m_registry;
 use ql_mef::m3_state::M3Operation;
@@ -24,9 +30,39 @@ fn resolve(
     variants: &[AuthoredVariant],
     instance: Option<&str>,
 ) -> SubjectManifestation {
+    resolve_kind(
+        SubjectKind::Native,
+        locus,
+        face,
+        roles,
+        variants,
+        &[],
+        instance,
+    )
+}
+
+fn resolve_kind(
+    kind: SubjectKind,
+    locus: &str,
+    face: MFace,
+    roles: &[ExpressiveRole],
+    variants: &[AuthoredVariant],
+    contributions: &[ContributingSubjectBinding],
+    instance: Option<&str>,
+) -> SubjectManifestation {
     let registry = native_current_m_registry();
-    resolve_subject_manifestation(registry, SUBJECT, locus, face, roles, variants, instance)
-        .unwrap()
+    resolve_subject_manifestation(
+        registry,
+        SUBJECT,
+        kind,
+        locus,
+        face,
+        roles,
+        variants,
+        contributions,
+        instance,
+    )
+    .unwrap()
 }
 
 fn triple() -> Vec<ExpressiveRole> {
@@ -224,9 +260,11 @@ fn faces_forks_and_subjects_are_exact_addresses() {
     let other = resolve_subject_manifestation(
         registry,
         "person:night-listener",
+        SubjectKind::Native,
         MOON,
         MFace::Bimba,
         &roles,
+        &[],
         &[],
         None,
     )
@@ -266,9 +304,11 @@ fn the_stage_and_the_manifestation_owner_admit_one_subject_grammar() {
     let manifestation = resolve_subject_manifestation(
         registry,
         &procedure.subject_ref,
+        SubjectKind::Native,
         MOON,
         MFace::Bimba,
         &[ExpressiveRole::Force],
+        &[],
         &[],
         None,
     )
@@ -288,4 +328,275 @@ fn the_stage_and_the_manifestation_owner_admit_one_subject_grammar() {
     })
     .unwrap();
     assert_eq!(form["change"], "form");
+}
+
+// ---- PS-E slice 2: contributing subjects, scene/Expression subjects,
+// canonical place transitions ----------------------------------------------
+
+fn contributing(
+    carrier_role: ExpressiveRole,
+    subject: &str,
+    role: ExpressiveRole,
+) -> ContributingSubjectBinding {
+    ContributingSubjectBinding {
+        carrier_role,
+        subject_ref: subject.to_owned(),
+        role,
+    }
+}
+
+#[test]
+fn the_moon_occurrence_carries_contributing_subjects_with_separate_roles() {
+    // The Moon's formation occurrence carries two contributing source
+    // subjects, each separately qualified at the same canonical place: the
+    // sky binds as the occurrence's scene (context/type records), the
+    // harmonic series as a force (operation/entity records).
+    let contributions = [
+        contributing(
+            ExpressiveRole::Formation,
+            "ql:k2/default-sky",
+            ExpressiveRole::Scene,
+        ),
+        contributing(
+            ExpressiveRole::Formation,
+            "ql:k2/harmonic-series",
+            ExpressiveRole::Force,
+        ),
+    ];
+    let manifestation = resolve_kind(
+        SubjectKind::Native,
+        MOON,
+        MFace::Bimba,
+        &[ExpressiveRole::Formation],
+        &[],
+        &contributions,
+        None,
+    );
+    let formation = &manifestation.occurrences[0];
+    assert_eq!(formation.contributing_subjects.len(), 2);
+    for contributor in &formation.contributing_subjects {
+        assert!(contributor.represented, "{}", contributor.standing);
+        assert!(contributor.binding_ref.starts_with("contributing:"));
+    }
+    let sky = formation
+        .contributing_subjects
+        .iter()
+        .find(|c| c.subject_ref == "ql:k2/default-sky")
+        .unwrap();
+    assert_eq!(sky.role, ExpressiveRole::Scene);
+    assert!(!sky.property_keys.is_empty());
+    assert!(sky.property_keys.iter().all(|key| key.starts_with("c_4_")));
+    let harmonic = formation
+        .contributing_subjects
+        .iter()
+        .find(|c| c.subject_ref == "ql:k2/harmonic-series")
+        .unwrap();
+    assert_eq!(harmonic.role, ExpressiveRole::Force);
+    assert!(
+        harmonic
+            .property_keys
+            .contains(&"c_2_harmonic_role".to_owned())
+    );
+    assert_ne!(sky.binding_ref, harmonic.binding_ref);
+
+    // Declared order is not identity: the reversed contributions resolve to
+    // the identical manifestation, and the carrier occurrence keeps its
+    // identity with and without its contributors.
+    let mut reversed = contributions.clone();
+    reversed.reverse();
+    assert_eq!(
+        value(&resolve_kind(
+            SubjectKind::Native,
+            MOON,
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &reversed,
+            None,
+        )),
+        value(&manifestation),
+        "contributor order is not identity"
+    );
+    let bare = resolve(MOON, MFace::Bimba, &[ExpressiveRole::Formation], &[], None);
+    assert_eq!(
+        bare.occurrences[0].occurrence_ref, formation.occurrence_ref,
+        "adding a contributor never relabels the carrier occurrence"
+    );
+}
+
+#[test]
+fn the_sky_presents_a_bounded_scene_and_the_moon_a_bounded_expression() {
+    // Scene-as-subject: the sky itself is the presented subject, bounded
+    // through the context/type layer its own records carry.
+    let scene_subject = resolve_kind(
+        SubjectKind::Scene,
+        "#2-5",
+        MFace::Bimba,
+        &[ExpressiveRole::Scene],
+        &[],
+        &[],
+        None,
+    );
+    assert_eq!(scene_subject.subject_kind, SubjectKind::Scene);
+    let presentation = &scene_subject.occurrences[0];
+    assert!(presentation.bounded_subject_presentation);
+    assert!(presentation.represented, "{}", presentation.standing);
+    assert!(
+        presentation
+            .property_keys
+            .contains(&"c_4_subsystem".to_owned())
+    );
+
+    // Whole-Expression-as-subject: the Moon presents a bounded whole
+    // Expression through its own integration/reflection record.
+    let expression_subject = resolve_kind(
+        SubjectKind::Expression,
+        MOON,
+        MFace::Bimba,
+        &[ExpressiveRole::Expression],
+        &[],
+        &[],
+        None,
+    );
+    assert_eq!(expression_subject.subject_kind, SubjectKind::Expression);
+    let presentation = &expression_subject.occurrences[0];
+    assert!(presentation.bounded_subject_presentation);
+    assert!(presentation.represented, "{}", presentation.standing);
+    assert_eq!(
+        presentation.property_keys,
+        vec!["c_5_spanda_resonance".to_owned()]
+    );
+
+    // Canonical re-entry preserves both bounded presentations exactly.
+    assert_eq!(
+        value(&resolve_kind(
+            SubjectKind::Scene,
+            &scene_subject.locus.canonical_ref,
+            MFace::Bimba,
+            &[ExpressiveRole::Scene],
+            &[],
+            &[],
+            None,
+        )),
+        value(&scene_subject)
+    );
+    assert_eq!(
+        value(&resolve_kind(
+            SubjectKind::Expression,
+            &expression_subject.locus.canonical_ref,
+            MFace::Bimba,
+            &[ExpressiveRole::Expression],
+            &[],
+            &[],
+            None,
+        )),
+        value(&expression_subject)
+    );
+    // And the two subjects are distinct bounded cases, never coerced.
+    assert_ne!(value(&scene_subject), value(&expression_subject));
+}
+
+#[test]
+fn the_joined_stage_walks_places_through_distinct_recorded_transitions() {
+    // The real walk: the subject stands at the Moon as formation, force and
+    // sequence; reframes in place; moves the active scene to the Sky under a
+    // checkpoint-and-release; re-enters from the recorded policy; and resets
+    // to the canonical default.
+    let roles = triple();
+    let moon = resolve(MOON, MFace::Bimba, &roles, &[], None);
+
+    // Focus/reframing: same place, a widened reading — mere navigation, the
+    // event preserved.
+    let reframed = resolve(
+        MOON,
+        MFace::Bimba,
+        &[
+            ExpressiveRole::Formation,
+            ExpressiveRole::Force,
+            ExpressiveRole::Sequence,
+            ExpressiveRole::Scene,
+        ],
+        &[],
+        None,
+    );
+    let focus = admit_place_transition(
+        &moon,
+        &reframed,
+        PlaceTransitionKind::FocusReframe,
+        &[SUBJECT.to_owned()],
+        ContinuationPolicy::Continue,
+        &[],
+        None,
+    )
+    .unwrap();
+    assert_eq!(focus.kind, PlaceTransitionKind::FocusReframe);
+    assert!(!focus.kind.changes_the_event());
+    assert_eq!(focus.schema, PLACE_TRANSITION_CONTRACT);
+
+    // Active scene change: another canonical place, checkpoint-and-release,
+    // the actual cursor recorded. The person arrives on their own active
+    // occurrence of the sky scene — an explicit instance fork.
+    let active_sky = resolve_kind(
+        SubjectKind::Native,
+        "#2-5",
+        MFace::Bimba,
+        &[ExpressiveRole::Scene],
+        &[],
+        &[],
+        Some("night-sky-watch"),
+    );
+    let cursor = ContinuationCursor {
+        locus_canonical_ref: active_sky.locus.canonical_ref.clone(),
+        face: active_sky.locus.face,
+        binding_content_revision: active_sky.locus.binding_content_revision.clone(),
+        active_manifestation_revision: active_sky.manifestation_content_revision.clone(),
+    };
+    let scene_change = admit_place_transition(
+        &reframed,
+        &active_sky,
+        PlaceTransitionKind::SceneChange,
+        &[SUBJECT.to_owned()],
+        ContinuationPolicy::CheckpointRelease,
+        &[],
+        Some(cursor),
+    )
+    .unwrap();
+    assert!(!scene_change.kind.changes_the_event());
+    assert_ne!(
+        scene_change.transition_content_revision, focus.transition_content_revision,
+        "distinct acts are distinct records"
+    );
+
+    // Re-entry resumes from the recorded policy into exactly the admitted
+    // bindings.
+    let reentered = resume_place_transition(native_current_m_registry(), &scene_change).unwrap();
+    assert_eq!(value(&reentered), value(&active_sky));
+
+    // Full reset returns the canonical default occurrence at the same place,
+    // which stays separate from the person's active one.
+    let canonical_sky = resolve("#2-5", MFace::Bimba, &[ExpressiveRole::Scene], &[], None);
+    let reset = admit_place_transition(
+        &active_sky,
+        &canonical_sky,
+        PlaceTransitionKind::FullReset,
+        &[],
+        ContinuationPolicy::Continue,
+        &[],
+        None,
+    )
+    .unwrap();
+    assert_eq!(reset.kind, PlaceTransitionKind::FullReset);
+    assert!(reset.kind.changes_the_event());
+    assert_eq!(reset.destination.instance, None);
+    assert_eq!(
+        reset.destination.manifestation_content_revision,
+        canonical_sky.manifestation_content_revision,
+        "the canonical default is preserved separately from the active occurrence"
+    );
+    // And the canonical default at the Moon is untouched by the whole walk.
+    let canonical_moon = resolve(MOON, MFace::Bimba, &roles, &[], None);
+    assert_eq!(
+        canonical_moon.manifestation_content_revision, moon.manifestation_content_revision,
+        "changing focus or adopting a profile does not relabel unrelated resident entities"
+    );
 }
