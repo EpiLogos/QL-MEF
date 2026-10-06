@@ -1,0 +1,18 @@
+{
+  "schema": "ql.stage-procedure/v1",
+  "procedure_ref": "ta-onta:stage:cli-fold",
+  "revision": 1,
+  "subject_ref": "ql:k2/default-subject",
+  "trigger": {"trigger": "invocation"},
+  "selector": ["form"],
+  "changes": [
+    {
+      "change": "form",
+      "operations": [
+        {"operation": "cast-creases", "angles_deg10": [120, -60, 30], "velocities_deg10": [0, 0, 0]},
+        {"operation": "set-pose", "pose": 2}
+      ]
+    }
+  ],
+  "passage": {"scenes": 3}
+}
