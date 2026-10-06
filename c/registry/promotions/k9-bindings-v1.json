@@ -612,6 +612,17 @@
     "crates/ql-cli/tests/music_native.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/wav.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Canonical 16-bit mono WAV container for offline renders of the played/sounding scene through the native host (QL-MEF #281 G6 offline clause and owner played-back evidence). Container bytes only; no musical or physical semantics.",
+   "tests": [
+    "crates/ql-cli/tests/scene_render_native.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }

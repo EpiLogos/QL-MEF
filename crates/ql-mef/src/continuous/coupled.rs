@@ -25,6 +25,10 @@ pub const REQUEST_V2: &str = "ql.coupled-event-request/v2";
 pub const REQUEST_V3: &str = "ql.coupled-event-request/v3";
 pub const CONTRACT: &str = "ql.coupled-event/v1";
 
+fn position_of(value: u8) -> ql_core::QlPosition {
+    ql_core::QlPosition::new(value).expect("inner-four positions are canonical")
+}
+
 /// A deliberate instrument mapping, not a claim that symbolic frequencies are
 /// measured eigenvalues. Modes not listed here keep their supplied frequency.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -54,6 +58,59 @@ pub struct SkyFrequencyBinding {
     pub mode_ref: String,
     pub planet_ref: String,
 }
+
+/// The played address scaffold: the retained Vimarśā reading's own inner-four
+/// layout (`INNER_FOUR_OFFSETS`; derivation §II-3.2/3.3) used as the routing
+/// from a played kernel coordinate to an octet slot. Slots 0..4 sound the
+/// direct inner-four positions 1..=4, slots 4..8 the conjugate positions
+/// 1..=4 (the reading's own helix lift at slot 4). The outer-two positions
+/// (0 and 5, both helices) are the nodal quartet's boundary anchors — they
+/// carry no voice and route nothing. This is a DECLARED INSTRUMENT MAPPING
+/// under the wayfinder's §2.2 standing for source-unfixed choices ("explicit,
+/// tunable engineering interpretations, with units, valid domains and
+/// returned evidence"), never a derivation: the sources define the scaffold
+/// and define no position→slot routing, so this one is named, bounded, and
+/// disclosed with every reading that carries it.
+pub fn octet_slot(coordinate: &ql_core::QlCoordinate) -> Option<u8> {
+    let position = coordinate.position.value();
+    if !(1..=4).contains(&position) {
+        return None;
+    }
+    Some(match coordinate.face {
+        ql_core::QlFace::Direct => position - 1,
+        ql_core::QlFace::Conjugate => position + 3,
+    })
+}
+
+/// One playable address of the standing instrument: the coordinate a played
+/// key projects, its substrate pitch class, the octet slot the declared
+/// scaffold routes it to, and the mode that slot is bound to sound through.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PlayedAddress {
+    pub coordinate: ql_core::QlCoordinate,
+    pub direct_prime_face: &'static str,
+    pub pitch_class: u8,
+    pub pitch_name: &'static str,
+    pub octet_slot: u8,
+    pub mode_ref: String,
+}
+
+impl PlayedAddress {
+    /// The JSON disclosure consumers (CLI, browser) read; no private state.
+    pub fn disclosure(&self) -> serde_json::Value {
+        serde_json::json!({
+            "coordinate": {"position": self.coordinate.position.value(), "face": self.direct_prime_face},
+            "direct_prime_face": self.direct_prime_face,
+            "pitch_class": self.pitch_class,
+            "pitch_name": self.pitch_name,
+            "octet_slot": self.octet_slot,
+            "mode_ref": self.mode_ref,
+        })
+    }
+}
+
+/// The standing of the played-address scaffold, carried wherever it routes.
+pub const PLAYED_ADDRESS_STANDING: &str = "declared-instrument-mapping: the retained reading's inner-four scaffold routes played kernel coordinates to octet slots; the sources define the scaffold and define no routing, so this routing is declared, bounded, and disclosed (wayfinder §2.2; D13 keeps the sounding pitch the reading's own, never the key's equal-tempered class)";
 
 /// The octet's C-rooted C3 (130.81279 Hz), before any interval offset: the
 /// root M1's harmonic ratio scales.
@@ -174,6 +231,39 @@ fn ql_vak_performance(receipts: &[Value]) -> Result<Option<QlVakPerformance>, St
 }
 
 impl CoupledInput {
+    /// The playable addresses this event's own octet bindings admit: every
+    /// bound slot resolves through the declared inner-four scaffold to its
+    /// kernel coordinate and substrate pitch class. Unbound slots and the
+    /// nodal outer twos route nothing.
+    pub fn played_addresses(&self) -> Vec<PlayedAddress> {
+        let basis = crate::music::MusicalBasis::Chromatic;
+        let mut out = Vec::new();
+        for binding in &self.frequency_bindings {
+            let coordinate = match usize::from(binding.octet_index) {
+                slot @ 0..=3 => {
+                    ql_core::QlCoordinate::new(position_of(slot as u8 + 1), ql_core::QlFace::Direct)
+                }
+                slot @ 4..=7 => ql_core::QlCoordinate::new(
+                    position_of(slot as u8 - 3),
+                    ql_core::QlFace::Conjugate,
+                ),
+                _ => continue,
+            };
+            debug_assert_eq!(octet_slot(&coordinate), Some(binding.octet_index));
+            let pitch_class = basis.pitch_at(coordinate);
+            out.push(PlayedAddress {
+                coordinate,
+                direct_prime_face: coordinate.face.kernel_code(),
+                pitch_class,
+                pitch_name: crate::music::pitch_name(pitch_class),
+                octet_slot: binding.octet_index,
+                mode_ref: binding.mode_ref.clone(),
+            });
+        }
+        out.sort_by_key(|address| address.octet_slot);
+        out
+    }
+
     pub fn compose(&self) -> Result<CoupledBasis, String> {
         if !matches!(self.schema.as_str(), REQUEST | REQUEST_V2 | REQUEST_V3)
             || (self.schema == REQUEST && !self.condition_frequency_bindings.is_empty())
@@ -415,6 +505,15 @@ impl CoupledInput {
                 "standing":"owner-ruled tuning target (#254 D13); root and scaling are tunable (D30)"
             });
         }
+        let played = self.played_addresses();
+        if !played.is_empty() {
+            derivation["played_addresses"] = json!({
+                "addresses": played.iter().map(|address| address.disclosure()).collect::<Vec<_>>(),
+                "octet_hz": initial.vimarsha.as_ref()
+                    .ok_or("missing joined Vimarsha reading")?.reading.audio_octet_hz,
+                "standing": PLAYED_ADDRESS_STANDING,
+            });
+        }
         if let Some(performance) = performance {
             derivation["m1_context_frame"] = json!(m1_cf.code());
             derivation["vak_performance_event"] = json!({
@@ -548,6 +647,37 @@ impl CoupledFieldSession {
         self.current = next;
         Ok(self.last_field().clone())
     }
+    /// Played note: strikes the mode the declared inner-four scaffold routes
+    /// this coordinate to. Refusals name their cause — a nodal outer-two
+    /// address carries no played voice, and a slot the event's own octet
+    /// bindings leave unbound routes nothing. No re-derivation occurs: the
+    /// sounding pitch stays the reading's own (D13).
+    pub fn strike_played(
+        &mut self,
+        coordinate: &ql_core::QlCoordinate,
+        amplitude: [f64; 2],
+    ) -> Result<Value, String> {
+        let slot = octet_slot(coordinate).ok_or_else(|| {
+            "the outer-two positions are the nodal anchors; they carry no played voice".to_string()
+        })?;
+        let mode_ref = self
+            .current
+            .input
+            .frequency_bindings
+            .iter()
+            .find(|binding| binding.octet_index == slot)
+            .map(|binding| binding.mode_ref.clone())
+            .ok_or_else(|| {
+                format!(
+                    "octet slot {slot} carries no bound mode in this event's own frequency bindings"
+                )
+            })?;
+        self.strike_field(&[super::StrikeInput {
+            mode_ref,
+            amplitude,
+        }])
+    }
+
     /// Explicit nodal re-reading of the same samples and modal voices
     /// (`shapes[sample][mode]`). The whole basis is unchanged; returns the compact
     /// field acknowledgement like `replace_field`. Audio and resident state continue.

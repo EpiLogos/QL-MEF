@@ -30,6 +30,7 @@ export class InstrumentSession {
   #views = new Set(); #maxViews; #busy = false; #held = false; #uncertain = false;
   #disposed = false; #reason = null; #presented; #timer = null; #running = false;
   #generation = 0; #coalesced = 0; #influence = null;
+  #acts = []; #advances = { blocks: 0, frames: 0, first_samples_elapsed: null, last_samples_elapsed: null };
 
   constructor({ context, owner, transport, initialReceipt, fieldBinding,
     blockFrames = 512, lookaheadSeconds = 0.1, maxBlocks = 16,
@@ -74,6 +75,14 @@ export class InstrumentSession {
       reason: this.#reason, in_flight: this.#busy, queued_blocks: this.#queue.length,
       queued_bytes: this.#bytes, coalesced_presentation_frames: this.#coalesced,
       views: this.#views.size, disposed: this.#disposed };
+  }
+
+  /** The played-performance journal: a frozen independent copy of every admitted
+   * owner act and the aggregate advance data plane. Refused exchanges and plain
+   * inspection reads are not acts; the copy survives disposal. */
+  journal() {
+    return Object.freeze(structuredClone({ schema: 'ql.instrument-performance-journal/v1',
+      instance_ref: this.#instance, acts: this.#acts, advances: this.#advances }));
   }
 
   /** The host must authorise disclosure before passing even this reference-only
@@ -153,12 +162,28 @@ export class InstrumentSession {
       // The native operation is now acknowledged even if presentation later
       // fails. Recovery reads this cursor; no claim of rolling native state back.
       this.#native = withoutAudio(frame);
+      this.#journal(command, request.request_id);
       // A scene determinant acknowledgement carries its own influence reading.
       if (reply.influence !== undefined) this.#influence = structuredClone(reply.influence);
       return { frame, sources: reply.sources, influence: reply.influence, personal: reply.personal };
     } catch (error) {
       this.#unknown(String(error)); throw error;
     } finally { clearTimeout(timer); }
+  }
+
+  /** Admitted-exchange record: data-plane advances aggregate into ranges; owner
+   * acts and explicit recovery reads journal individually at their commit cursor. */
+  #journal(command, requestId) {
+    const acknowledged = { generation: this.#native.generation, samples_elapsed: this.#native.samples_elapsed };
+    if (command.operation === 'advance') {
+      const advances = this.#advances; advances.blocks++; advances.frames += command.frames;
+      if (advances.first_samples_elapsed === null) advances.first_samples_elapsed = acknowledged.samples_elapsed;
+      advances.last_samples_elapsed = acknowledged.samples_elapsed;
+    } else if (command.operation === 'read') {
+      this.#acts.push({ request_id: requestId, operation: command.operation, command: structuredClone(command), acknowledged, kind: 'recovery' });
+    } else if (!READ_OPERATIONS.includes(command.operation)) {
+      this.#acts.push({ request_id: requestId, operation: command.operation, command: structuredClone(command), acknowledged, kind: 'act' });
+    }
   }
 
   #enqueue(frame) {

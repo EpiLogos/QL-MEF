@@ -61,6 +61,7 @@ pub mod vak_scope;
 pub mod vak_scope_wire;
 pub mod vak_thought_consumption;
 pub mod vak_workflow_types;
+pub mod wav;
 
 pub use context_frame::{
     CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameCoordinate, ContextFrameCut, ContextFrameId,
@@ -162,6 +163,7 @@ pub use vak_oi::{
     factory_request_evidence_profile, oi_reference_primitive_matrix, recognise_vak_return,
     reconstruct_observed_vak_path, reconstruct_observed_vak_path_for_revision,
 };
+pub use wav::wav16;
 
 impl MCoordinate {
     /// Project the coordinate face into the existing QL direct/conjugate floor

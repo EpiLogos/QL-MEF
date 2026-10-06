@@ -225,7 +225,15 @@ async function main() {
   // the cursor advances one generation, no samples elapse, and the reply's
   // end-of-block targets carry the struck body, so the audible and visible
   // responses share one native commit like every other admitted frame.
-  const modeRef = inspected.current.m2.resonator.modes[0].mode_ref;
+  // The played address comes from the owner's own disclosure: the coupled
+  // derivation's declared inner-four scaffold routes kernel coordinates to the
+  // bound octet slots. The browser never invents the routing.
+  const played_addresses_standing =
+    inspected.current.derivation?.played_addresses?.standing ?? null;
+  const playedAddresses = inspected.current.derivation?.played_addresses?.addresses;
+  const played = Array.isArray(playedAddresses) && playedAddresses.length > 0
+    ? playedAddresses[0] : null;
+  const modeRef = played ? played.mode_ref : inspected.current.m2.resonator.modes[0].mode_ref;
   const strikeGenerationBefore = session.reading.acknowledged.generation;
   const targetsBeforeStrike = JSON.stringify(appliedFrames.at(-1)!.targets);
   await session.strike([{ mode_ref: modeRef, amplitude: [0.5, -0.25] }]);
@@ -246,14 +254,19 @@ async function main() {
   check(session.reading.queued_blocks === 0, 'played strike left presentation backlog');
 
   const debug = renderer.getContext().getExtension('WEBGL_debug_renderer_info');
+  const performed = session.journal();
   const result = { schema: 'ql.k8-managed-browser-acceptance/v1', native_commands: calls.length,
     controlled_native_calls: calls, actual_particles: count, seeds, read_only_view_reads: 2000,
     source_complete_inspection: true, same_native_sound_field_generation: true, pure_future_admission: true,
     preserved_position_velocity: true, retained_target_identity_density: true, actual_gpu_motion: true,
     gpu_recovery_then_explicit_audio_epoch: true, sustained_live_measurement: sustained,
     played_strike: { mode_ref: modeRef, amplitude_metres: [0.5, -0.25],
+      played_address: played ? { pitch_class: played.pitch_class, octet_slot: played.octet_slot,
+        coordinate: played.coordinate, standing: played_addresses_standing } : null,
       generation_before: strikeGenerationBefore, generation_after: strikeGenerationAfter,
       presented: strikePresented, standing: 'played excitation through the same serial native owner; audible and visible response share the strike commit' },
+    performance_journal: { acts: performed.acts.length,
+      advances: { blocks: performed.advances.blocks, frames: performed.advances.frames } },
     presentation_applications: applications,
     last_reading: views[0].read(), actual_audio_sample_rate: context.sampleRate,
     renderer: debug ? renderer.getContext().getParameter(debug.UNMASKED_RENDERER_WEBGL) : 'undisclosed',

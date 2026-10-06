@@ -1,8 +1,9 @@
 //! Whole native M1/M2/M3 derivation. The installed native continuation and GPU
 //! receive this same producer in kernel-k8-continuous, not a fake worker here.
+use ql_core::{QlCoordinate, QlFace, QlPosition};
 use ql_mef::continuous::coupled::{
-    ConditionFrequencyBinding, CoupledInput, FrequencyBinding, HarmonicSource, REQUEST, REQUEST_V2,
-    SKY_ROOT_HZ, SkyFrequencyBinding,
+    ConditionFrequencyBinding, CoupledInput, FrequencyBinding, HarmonicSource,
+    PLAYED_ADDRESS_STANDING, REQUEST, REQUEST_V2, SKY_ROOT_HZ, SkyFrequencyBinding, octet_slot,
 };
 use ql_mef::m1_engine::{EngineConfig, M1Engine};
 use ql_mef::m2_condition::{
@@ -458,4 +459,75 @@ fn the_sky_bus_voices_observed_planets_at_their_map_just_ratio() {
         octet_index: 0,
     }];
     assert!(request.compose().unwrap_err().contains("duplicate"));
+}
+
+#[test]
+fn the_declared_scaffold_routes_inner_fours_and_refuses_nodal_anchors() {
+    let coordinate =
+        |position: u8, face: QlFace| QlCoordinate::new(QlPosition::new(position).unwrap(), face);
+    // Direct inner-four positions sound slots 0..4; conjugate inner-four
+    // positions sound slots 4..8 (the reading's own helix lift at slot 4).
+    for position in 1..=4_u8 {
+        assert_eq!(
+            octet_slot(&coordinate(position, QlFace::Direct)),
+            Some(position - 1)
+        );
+        assert_eq!(
+            octet_slot(&coordinate(position, QlFace::Conjugate)),
+            Some(position + 3)
+        );
+    }
+    // The outer twos are the nodal quartet's anchors; they route nothing.
+    for position in [0_u8, 5] {
+        assert_eq!(octet_slot(&coordinate(position, QlFace::Direct)), None);
+        assert_eq!(octet_slot(&coordinate(position, QlFace::Conjugate)), None);
+    }
+}
+
+#[test]
+fn played_addresses_disclose_the_event_s_own_bound_voices_with_their_classes() {
+    let mut request = musical_input();
+    // One binding on slot 3: exactly one playable address, the direct
+    // inner-four position 4, whose substrate class is 8.
+    let addresses = request.played_addresses();
+    assert_eq!(addresses.len(), 1);
+    assert_eq!(addresses[0].octet_slot, 3);
+    assert_eq!(addresses[0].coordinate.position.value(), 4);
+    assert_eq!(addresses[0].direct_prime_face, "direct");
+    assert_eq!(addresses[0].pitch_class, 8);
+    assert_eq!(addresses[0].mode_ref, "controlled:musical-mode/0");
+    // A full octave binding admits all eight explicate addresses, in slot
+    // order, with the substrate classes the scaffold sits on. The condition
+    // bus would double-bind modes 1..7; it is not this reading's subject.
+    request.condition_frequency_bindings.clear();
+    request.frequency_bindings = (0..8)
+        .map(|slot| FrequencyBinding {
+            mode_ref: format!("controlled:musical-mode/{slot}"),
+            octet_index: slot,
+        })
+        .collect();
+    let addresses = request.played_addresses();
+    assert_eq!(addresses.len(), 8);
+    let classes: Vec<u8> = addresses.iter().map(|a| a.pitch_class).collect();
+    assert_eq!(classes, vec![2, 4, 6, 8, 3, 5, 7, 9]);
+    for (slot, address) in addresses.iter().enumerate() {
+        assert_eq!(address.octet_slot, slot as u8);
+        assert_eq!(address.mode_ref, format!("controlled:musical-mode/{slot}"));
+    }
+    // The derivation carries the disclosure with its declared standing.
+    let basis = request.compose().unwrap();
+    let played = &basis.derivation["played_addresses"];
+    assert_eq!(played["addresses"].as_array().unwrap().len(), 8);
+    assert_eq!(
+        played["addresses"][3]["mode_ref"],
+        "controlled:musical-mode/3"
+    );
+    assert_eq!(played["standing"], PLAYED_ADDRESS_STANDING);
+    assert_eq!(
+        played["octet_hz"],
+        basis.m2["vimarsha"]["reading"]["audio_octet_hz"]
+    );
+    // An event with no octet bindings discloses no played addresses.
+    let plain = input().compose().unwrap();
+    assert!(plain.derivation.get("played_addresses").is_none());
 }
