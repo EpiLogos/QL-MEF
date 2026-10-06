@@ -27,6 +27,7 @@ pub mod fold;
 pub mod iching;
 pub mod inverse;
 pub mod nucleotide;
+pub mod phase;
 pub mod pose;
 pub mod quaternion;
 pub mod rotational;
@@ -56,6 +57,10 @@ pub use inverse::{
     CanonicalAddress, INVERSE_SEAM_CONTRACT_REF, RetrievalEvidence, SelectionContext, SelectionLaw,
 };
 pub use nucleotide::Nucleotide;
+pub use phase::{
+    PHASE_BRIDGE_REF, quat_argument_bin, quat_clock_steps, quat_signed_argument,
+    ring_tick_clock_steps,
+};
 pub use pose::{ROTATIONAL_STATE_TOTAL, RotationalPose, all_poses};
 pub use quaternion::{
     DetOverlay, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF, Quat, RING_QUATERNION_LUT,
