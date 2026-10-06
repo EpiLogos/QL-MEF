@@ -605,6 +605,36 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-mef/src/form_samples.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3"
+   ],
+   "rationale": "The PS-G retained sample body (QL-MEF #299 slice 2; P5 §4.1 material preparation): the form-recipe body's correspondence held natively — stable per-point identity derived from the preparation reference and allocation indices, square-domain rest (u,v,w) with layer/source identity, declared coverage, and the explicit normalised→stage-unit→metre conversion the existing scene geometry and field samples already speak (#2). The preparation's content hash is the dependency-correct cache key: progress, cursor and camera are not preparation inputs. Glyph-mask occupancy is a DECLARED determination (mask_ref + coverages) carried under the same stable identities — the rasterisation itself stays the application's PS-G half; genuine topology changes map explicitly, not by invention (#3).",
+   "tests": [
+    "crates/ql-mef/src/form_samples.rs",
+    "crates/ql-mef/tests/psg_form_recipe.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/form_sequence.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3"
+   ],
+   "rationale": "The PS-G fold sequence (QL-MEF #299 slice 2; P5 §4.2): interpolation, seek and interruption over fold progress through the stage's own display-clock axes and exact LiftInput cursor law (#2). Phase endpoints compile through the form-recipe owner's kernel cast-law core, so the standing telemetry IS the compiled M3Operation the stage routes (#3); a codon resolves at the quanta only — mid-transition the eased crease path is exact rational arithmetic and no form is fabricated. Evaluation is a pure function of sequence and cursor (seek proven, progress never a preparation dependency); an in-flight takeover is recorded with the exact standing, never discarded. No second clock, event universe, numerical field or authority.",
+   "tests": [
+    "crates/ql-mef/src/form_sequence.rs",
+    "crates/ql-mef/tests/psg_form_recipe.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "crates/ql-mef/src/janko.rs",
    "stratum": "rust",
    "disposition": "coordinate-bound",
