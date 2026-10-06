@@ -437,6 +437,43 @@ pub const ROLE_QUALIFICATION_STANDING: &str = "declared-role-qualification: expr
      #5 integration/reflection — see ql.subject-manifestation PASU source refs); a locus \
      lacking a layer's keys resolves that role as explicitly unrepresented, never fabricated";
 
+/// The declared kind of subject a manifestation presents (P1 §0.1: "Scene and
+/// Expression subjects ... become inspectable through the same binding
+/// relation"). A native entity presents compositionally through any roles; a
+/// scene subject or a whole-Expression subject presents its bounded case
+/// through its own scale's role, at a locus whose records actually carry that
+/// scale's layer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum SubjectKind {
+    Native,
+    Scene,
+    Expression,
+}
+
+impl SubjectKind {
+    pub const ALL: [SubjectKind; 3] = [Self::Native, Self::Scene, Self::Expression];
+
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Native => "native",
+            Self::Scene => "scene",
+            Self::Expression => "expression",
+        }
+    }
+
+    /// The role through which this kind of subject presents as a bounded
+    /// whole. A native entity has no single presenting scale: its roles are
+    /// compositional (P1 §0.2).
+    pub const fn bounded_presentation_role(self) -> Option<ExpressiveRole> {
+        match self {
+            Self::Native => None,
+            Self::Scene => Some(ExpressiveRole::Scene),
+            Self::Expression => Some(ExpressiveRole::Expression),
+        }
+    }
+}
+
 /// The shared native subject-reference grammar. Both this owner and the
 /// procedural stage validate subject identity through this one function, so a
 /// subject valid for a stage procedure is manifestable in the Atlas and vice
@@ -545,6 +582,18 @@ pub struct RoleOccurrence {
     /// whole-key child replacement: key -> winning variant ref. Absent entries
     /// stand on their source records.
     pub authored_keys: BTreeMap<String, String>,
+    /// Whether this occurrence IS its subject's bounded presentation — the
+    /// scene-as-subject or whole-Expression-as-subject case (P1 §0.1). True
+    /// exactly when the manifestation's declared subject kind presents through
+    /// this occurrence's role.
+    pub bounded_subject_presentation: bool,
+    /// Contributing source subjects bound inside this occurrence, each with
+    /// its own separately qualified role (P1 §0.1: "an occurrence can contain
+    /// several contributing source subjects with separately qualified roles").
+    /// Preserved as distinct bindings, never coerced into a fabricated
+    /// identity; in canonical order regardless of the declared order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub contributing_subjects: Vec<ContributingSubject>,
     pub standing: String,
 }
 
@@ -557,6 +606,10 @@ pub struct RoleOccurrence {
 pub struct SubjectManifestation {
     pub schema: String,
     pub subject_ref: String,
+    /// The declared kind of subject presented: a native entity, a scene, or a
+    /// whole Expression (P1 §0.1). A scene or Expression subject presents its
+    /// bounded case through its own scale's role.
+    pub subject_kind: SubjectKind,
     pub locus: LocusAddress,
     /// In the role type's declared order, regardless of the requested order.
     pub occurrences: Vec<RoleOccurrence>,
@@ -566,17 +619,357 @@ pub struct SubjectManifestation {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub instance: Option<String>,
     pub manifestation_content_revision: String,
-    pub qualification_standing: &'static str,
+    pub qualification_standing: String,
     pub standing: String,
 }
 
+/// One declared contributing binding: another source subject playing its own
+/// role inside a carrier occurrence of the principal subject (P1 §0.1). The
+/// contributor is preserved as its own binding — "preserve each contributing
+/// binding rather than coercing several subjects into a fabricated identity".
+/// Where a force is a value object within an entity, this is its address: the
+/// stable carrier occurrence plus a validated component role; no independent
+/// native occurrence is minted for it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContributingSubjectBinding {
+    /// The carrier occurrence's role this contribution joins; must be one of
+    /// the requested roles.
+    pub carrier_role: ExpressiveRole,
+    pub subject_ref: String,
+    /// The contributor's own, separately qualified role within the occurrence.
+    pub role: ExpressiveRole,
+}
+
+/// One resolved contributing binding. Its role is qualified against the
+/// locus's own records for the contributor's role layer — separately from the
+/// carrier's qualification, which may differ. Identity is content-addressed
+/// off the carrier occurrence: reordering contributions, renaming or
+/// re-entering the place changes nothing here.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContributingSubject {
+    pub subject_ref: String,
+    pub role: ExpressiveRole,
+    /// Whether the locus's own records carry the contributor's role layer. A
+    /// contributor playing a layer the locus does not represent stands on its
+    /// declared binding alone — recorded, never fabricated into source.
+    pub represented: bool,
+    /// The contributor's role layer's keys in the locus's own records.
+    pub property_keys: Vec<String>,
+    /// Content-derived binding identity: carrier occurrence + contributor +
+    /// separately qualified role. Stable under contributor reordering.
+    pub binding_ref: String,
+    pub standing: String,
+}
+
+// ---------------------------------------------------------------------------
+// P4 §3.2/§3.3: canonical place transition operations with re-entry
+// continuation policy.
+//
+// An admitted transition records its source and destination occurrences,
+// retained subjects, continuation policy and actual cursor. The four acts —
+// focus/reframing, active scene change, domain-state operation and full reset
+// — are distinct kinds, never collapsed: "The UI and operation record reveal
+// which act occurred." Re-entry resumes from the recorded policy, and the
+// canonical default/source definition stays separate from the person's active
+// occurrence.
+// ---------------------------------------------------------------------------
+
+pub const PLACE_TRANSITION_CONTRACT: &str = "ql.place-transition/v1";
+
+/// The four distinct transition acts of P4 §3.2.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum PlaceTransitionKind {
+    FocusReframe,
+    SceneChange,
+    DomainStateOperation,
+    FullReset,
+}
+
+impl PlaceTransitionKind {
+    pub const ALL: [PlaceTransitionKind; 4] = [
+        Self::FocusReframe,
+        Self::SceneChange,
+        Self::DomainStateOperation,
+        Self::FullReset,
+    ];
+
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::FocusReframe => "focus-reframe",
+            Self::SceneChange => "scene-change",
+            Self::DomainStateOperation => "domain-state-operation",
+            Self::FullReset => "full-reset",
+        }
+    }
+
+    pub const fn meaning(self) -> &'static str {
+        match self {
+            Self::FocusReframe => {
+                "focus/reframing: the same place is re-entered with a changed reading; mere navigation preserves the running event"
+            }
+            Self::SceneChange => {
+                "active scene change: the active scene moves to another canonical place; retained subjects and the continuation policy carry"
+            }
+            Self::DomainStateOperation => {
+                "domain-state operation: a declared operation on the domain state; the chosen musical/physical operation may deliberately change the event"
+            }
+            Self::FullReset => {
+                "full reset: the active occurrence is released to the canonical default, which is preserved separately (P4 §3.3); existing engine meaning retained"
+            }
+        }
+    }
+
+    /// P4 §3.2: "The chosen musical/physical operation can deliberately change
+    /// the event; mere navigation preserves it according to the source-defined
+    /// invariant." Recorded, not inferred: the operation record reveals which
+    /// act occurred.
+    pub const fn changes_the_event(self) -> bool {
+        matches!(self, Self::DomainStateOperation | Self::FullReset)
+    }
+}
+
+/// The continuation policy recorded for each continued scene/instance
+/// (P4 §3.3: "select continue, pause/hold or checkpoint-and-release. Record
+/// the policy and actual cursor. Re-entry resumes from that policy.").
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ContinuationPolicy {
+    Continue,
+    PauseHold,
+    CheckpointRelease,
+}
+
+impl ContinuationPolicy {
+    pub const ALL: [ContinuationPolicy; 3] =
+        [Self::Continue, Self::PauseHold, Self::CheckpointRelease];
+
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Continue => "continue",
+            Self::PauseHold => "pause-hold",
+            Self::CheckpointRelease => "checkpoint-release",
+        }
+    }
+}
+
+/// The actual cursor of a continuation: the face-bearing canonical place, the
+/// binding content revision the continuation was taken against (the source
+/// definition at its consumed revision), and the active occurrence's revision
+/// — the person's occurrence, distinct from the canonical default preserved
+/// separately.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContinuationCursor {
+    pub locus_canonical_ref: String,
+    pub face: RootedFace,
+    pub binding_content_revision: String,
+    pub active_manifestation_revision: String,
+}
+
+/// One admitted place transition: source occurrence, resolved destination,
+/// retained subjects, continuation policy and actual cursor, with the act
+/// recorded as exactly one of the four P4 §3.2 kinds.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlaceTransition {
+    pub schema: String,
+    pub kind: PlaceTransitionKind,
+    pub source_subject_ref: String,
+    pub source_locus_canonical_ref: String,
+    pub source_face: RootedFace,
+    /// The active occurrence the transition departs from.
+    pub source_manifestation_revision: String,
+    /// The resolved destination — admitted through the same manifestation
+    /// resolver, never asserted.
+    pub destination: SubjectManifestation,
+    /// The authored content the destination was admitted with, so re-entry
+    /// reproduces it exactly.
+    pub destination_variants: Vec<AuthoredVariant>,
+    /// Subjects retained across the transition, in canonical order.
+    pub retained_subjects: Vec<String>,
+    pub continuation: ContinuationPolicy,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cursor: Option<ContinuationCursor>,
+    pub transition_content_revision: String,
+    pub standing: String,
+}
+
+fn transition_place(manifestation: &SubjectManifestation) -> (&str, RootedFace) {
+    (&manifestation.locus.canonical_ref, manifestation.locus.face)
+}
+
+/// Admits a place transition between two resolved manifestations. The
+/// destination is resolved by the caller through the normal resolver (one
+/// address model, P1 §0.3); admission validates that the declared act is the
+/// act the record will show: focus/reframing stays at the same place, an
+/// active scene change moves to another place, a full reset returns the same
+/// subject's canonical default occurrence and discards the cursor,
+/// checkpoint-and-release records the actual cursor. Engine-side application
+/// (partitions, voices, clocks) stays with its existing owners; this is the
+/// operation record.
+// The arguments are the transition specification's own declared fields (P4
+// §3.2): the two admitted occurrences and what carries between them.
+#[allow(clippy::too_many_arguments)]
+pub fn admit_place_transition(
+    source: &SubjectManifestation,
+    destination: &SubjectManifestation,
+    kind: PlaceTransitionKind,
+    retained_subjects: &[String],
+    continuation: ContinuationPolicy,
+    destination_variants: &[AuthoredVariant],
+    cursor: Option<ContinuationCursor>,
+) -> Result<PlaceTransition, String> {
+    for variant in destination_variants {
+        variant.validate()?;
+    }
+    if continuation == ContinuationPolicy::CheckpointRelease && cursor.is_none() {
+        return Err(
+            "a checkpoint-and-release continuation records the actual cursor; admit the transition with one"
+                .into(),
+        );
+    }
+    if kind == PlaceTransitionKind::FullReset {
+        if cursor.is_some() {
+            return Err(
+                "a full reset discards the recorded cursor; the canonical default is preserved separately from the active occurrence (P4 §3.3)".into(),
+            );
+        }
+        if destination.subject_ref != source.subject_ref
+            || transition_place(destination) != transition_place(source)
+        {
+            return Err(
+                "a full reset returns the same subject's canonical default at the same place; a different destination is a scene change".into(),
+            );
+        }
+        if destination.instance.is_some() {
+            return Err(
+                "a full reset returns the canonical occurrence; an explicit instance is an active occurrence, not the default".into(),
+            );
+        }
+    }
+    match kind {
+        PlaceTransitionKind::FocusReframe
+            if transition_place(destination) == transition_place(source) => {}
+        PlaceTransitionKind::FocusReframe => {
+            return Err(
+                "focus/reframing re-enters the same place; an actual place change is an active scene change".into(),
+            );
+        }
+        PlaceTransitionKind::SceneChange
+            if transition_place(destination) != transition_place(source) => {}
+        PlaceTransitionKind::SceneChange => {
+            return Err(
+                "an active scene change moves to another canonical place; same-place re-entry is focus/reframing".into(),
+            );
+        }
+        _ => {}
+    }
+    let mut retained = Vec::with_capacity(retained_subjects.len());
+    for subject in retained_subjects {
+        validate_subject_ref(subject)?;
+        if retained.contains(subject) {
+            return Err(format!(
+                "duplicate retained subject {subject}; retain each subject once"
+            ));
+        }
+        retained.push(subject.clone());
+    }
+    retained.sort();
+    let mut transition = PlaceTransition {
+        schema: PLACE_TRANSITION_CONTRACT.into(),
+        kind,
+        source_subject_ref: source.subject_ref.clone(),
+        source_locus_canonical_ref: source.locus.canonical_ref.clone(),
+        source_face: source.locus.face,
+        source_manifestation_revision: source.manifestation_content_revision.clone(),
+        destination: destination.clone(),
+        destination_variants: destination_variants.to_vec(),
+        retained_subjects: retained,
+        continuation,
+        cursor,
+        transition_content_revision: String::new(),
+        standing: format!(
+            "{} — admitted place transition with {} continuation; the operation record distinguishes the act (P4 §3.2) and re-entry resumes from the recorded policy (P4 §3.3)",
+            kind.meaning(),
+            continuation.as_str()
+        ),
+    };
+    transition.transition_content_revision =
+        digest(&serde_json::to_vec(&transition).map_err(|error| error.to_string())?);
+    Ok(transition)
+}
+
+/// Re-enters a continued place from its recorded policy (P4 §3.3): the
+/// destination is re-resolved through the resolver from the recorded request —
+/// subject, kind, canonical locus, face, the recorded roles, the authored
+/// content and any explicit instance — and the place's binding content
+/// revision is checked against the recorded cursor. A moved source basis is a
+/// named refusal: the transition must be re-admitted against the current
+/// revision. A matching basis re-enters into exactly the recorded bindings.
+pub fn resume_place_transition(
+    registry: &MRegistry,
+    transition: &PlaceTransition,
+) -> Result<SubjectManifestation, String> {
+    let destination = &transition.destination;
+    let mut requested = Vec::new();
+    for occurrence in &destination.occurrences {
+        requested.push(occurrence.role);
+    }
+    let mut contributions = Vec::new();
+    for occurrence in &destination.occurrences {
+        for contributing in &occurrence.contributing_subjects {
+            contributions.push(ContributingSubjectBinding {
+                carrier_role: occurrence.role,
+                subject_ref: contributing.subject_ref.clone(),
+                role: contributing.role,
+            });
+        }
+    }
+    let face = match destination.locus.face {
+        RootedFace::Bimba => MFace::Bimba,
+        RootedFace::Pratibimba => MFace::Pratibimba,
+    };
+    let fresh = resolve_subject_manifestation(
+        registry,
+        &destination.subject_ref,
+        destination.subject_kind,
+        &destination.locus.canonical_ref,
+        face,
+        &requested,
+        &transition.destination_variants,
+        &contributions,
+        destination.instance.as_deref(),
+    )?;
+    let recorded_revision = transition
+        .cursor
+        .as_ref()
+        .map(|cursor| cursor.binding_content_revision.as_str())
+        .unwrap_or(destination.locus.binding_content_revision.as_str());
+    if fresh.locus.binding_content_revision != recorded_revision {
+        return Err(format!(
+            "the place's source basis moved since the transition was admitted (recorded {recorded_revision}, current {}); re-admit the transition against the current revision",
+            fresh.locus.binding_content_revision
+        ));
+    }
+    Ok(fresh)
+}
+
 /// The exact content basis one occurrence's identity is taken over. The
-/// digest covers the subject, the locus's content revision, the role, the
-/// effective (source + authored) key set with the authored winning values,
-/// and the explicit instance seed when one exists. Nothing order- or
-/// label-bearing enters it: variant references are provenance, not identity.
+/// digest covers the subject (with its declared kind), the locus's content
+/// revision, the role, the effective (source + authored) key set with the
+/// authored winning values, and the explicit instance seed when one exists.
+/// Nothing order- or label-bearing enters it: variant references are
+/// provenance, not identity. Contributing bindings are not part of it: they
+/// are bindings INTO the occurrence and carry their own content-addressed
+/// identities, so adding or removing a contributor never relabels the carrier
+/// occurrence.
+#[allow(clippy::too_many_arguments)] // the identity basis' own declared fields
 fn occurrence_basis(
     subject_ref: &str,
+    subject_kind: SubjectKind,
     binding_revision: &str,
     role: ExpressiveRole,
     property_keys: &BTreeSet<String>,
@@ -587,6 +980,7 @@ fn occurrence_basis(
     json!({
         "contract": SUBJECT_MANIFESTATION_CONTRACT,
         "subject_ref": subject_ref,
+        "subject_kind": subject_kind.as_str(),
         "locus_binding_content_revision": binding_revision,
         "role": role.as_str(),
         "property_keys": property_keys.iter().collect::<Vec<_>>(),
@@ -605,16 +999,25 @@ fn occurrence_ref(basis: &Value) -> Result<String, String> {
 /// Atlas binding: the locus resolves exactly (coordinate, face, depth, real
 /// profile lineage), each requested role binds the locus's own source records
 /// through the original coordinate semantics, and authored variants apply the
-/// actual first-parent-per-key / whole-key-replacement inheritance. Occurrence
-/// identity is content-addressed: reorder-stable, rename-stable, and stable
-/// across canonical place re-entry.
+/// actual first-parent-per-key / whole-key-replacement inheritance. A scene
+/// or whole-Expression subject presents its bounded case through its own
+/// scale's role; contributing bindings preserve several source subjects
+/// inside one occurrence with separately qualified roles. Occurrence identity
+/// is content-addressed: reorder-stable, rename-stable, and stable across
+/// canonical place re-entry.
+// The arguments are the P1 §0.2 resolution's own declared inputs: the subject
+// (who, of what kind), the locus (where, at what face), the requested scales,
+// the authored content and the explicit instance.
+#[allow(clippy::too_many_arguments)]
 pub fn resolve_subject_manifestation(
     registry: &MRegistry,
     subject_ref: &str,
+    subject_kind: SubjectKind,
     locus_ref: &str,
     face: MFace,
     requested: &[ExpressiveRole],
     variants: &[AuthoredVariant],
+    contributions: &[ContributingSubjectBinding],
     instance: Option<&str>,
 ) -> Result<SubjectManifestation, String> {
     validate_subject_ref(subject_ref)?;
@@ -627,6 +1030,50 @@ pub fn resolve_subject_manifestation(
             return Err(format!(
                 "duplicate {} occurrence in one manifestation; a second purposeful occurrence is an explicit instantiation with its own instance identity",
                 role.as_str()
+            ));
+        }
+    }
+    // A scene subject or a whole-Expression subject presents its bounded case
+    // through its own scale's role (P1 §0.1); a native subject's roles stay
+    // compositional.
+    if let Some(presenting) = subject_kind.bounded_presentation_role()
+        && !requested.contains(&presenting)
+    {
+        return Err(format!(
+            "a {} subject presents its bounded case through the {} role; request it",
+            subject_kind.as_str(),
+            presenting.as_str()
+        ));
+    }
+    // Contributing bindings are validated by name: each joins a requested
+    // carrier occurrence, each contributor is a valid subject distinct from
+    // the principal, and duplicates are refused — several subjects are
+    // preserved as several bindings, never coerced into one identity.
+    let mut seen_contributions = std::collections::BTreeSet::new();
+    for binding in contributions {
+        if !requested.contains(&binding.carrier_role) {
+            return Err(format!(
+                "a contributing binding joins the {} occurrence, which this manifestation does not request",
+                binding.carrier_role.as_str()
+            ));
+        }
+        validate_subject_ref(&binding.subject_ref)?;
+        if binding.subject_ref == subject_ref {
+            return Err(
+                "the principal subject cannot contribute to its own occurrence; request its additional roles instead"
+                    .into(),
+            );
+        }
+        if !seen_contributions.insert((
+            binding.carrier_role,
+            binding.subject_ref.as_str(),
+            binding.role,
+        )) {
+            return Err(format!(
+                "duplicate contributing binding ({}, {}, {}) in one occurrence; preserve each contributing subject as its own binding",
+                binding.carrier_role.as_str(),
+                binding.subject_ref,
+                binding.role.as_str()
             ));
         }
     }
@@ -727,6 +1174,7 @@ pub fn resolve_subject_manifestation(
             .collect();
         let basis = occurrence_basis(
             subject_ref,
+            subject_kind,
             &binding.binding_content_revision,
             role,
             &property_keys,
@@ -735,6 +1183,61 @@ pub fn resolve_subject_manifestation(
             instance,
         );
         let occurrence_ref = occurrence_ref(&basis)?;
+        // Contributing source subjects bound inside this occurrence (P1
+        // §0.1), in canonical order regardless of the declared order: each
+        // contributor's own role is qualified against the locus's records for
+        // that role's layer — separately from the carrier's qualification.
+        let mut carrier_contributions: Vec<&ContributingSubjectBinding> = contributions
+            .iter()
+            .filter(|binding| binding.carrier_role == role)
+            .collect();
+        carrier_contributions.sort_by(|left, right| {
+            (&left.subject_ref, left.role).cmp(&(&right.subject_ref, right.role))
+        });
+        let mut resolved_contributions = Vec::with_capacity(carrier_contributions.len());
+        for binding in carrier_contributions {
+            let contributor_prefix = binding.role.qualifying_prefix();
+            let contributor_keys: BTreeSet<String> = occurrence_sources
+                .iter()
+                .flat_map(|(_, record, _)| record.property_keys.iter())
+                .filter(|key| key.starts_with(contributor_prefix))
+                .cloned()
+                .collect();
+            let contributor_represented = !contributor_keys.is_empty();
+            let binding_basis = json!({
+                "contract": SUBJECT_MANIFESTATION_CONTRACT,
+                "carrier_occurrence_ref": occurrence_ref,
+                "carrier_role": role.as_str(),
+                "contributing_subject_ref": binding.subject_ref,
+                "contributing_role": binding.role.as_str(),
+                "contributing_property_keys": contributor_keys.iter().collect::<Vec<_>>(),
+                "instance": instance,
+            });
+            let binding_ref = format!(
+                "contributing:{}",
+                digest(&serde_json::to_vec(&binding_basis).map_err(|error| error.to_string())?)
+            );
+            resolved_contributions.push(ContributingSubject {
+                subject_ref: binding.subject_ref.clone(),
+                role: binding.role,
+                represented: contributor_represented,
+                property_keys: contributor_keys.into_iter().collect(),
+                binding_ref,
+                standing: if contributor_represented {
+                    format!(
+                        "declared contributing binding; its {} ({}) role is qualified by the locus's own records",
+                        binding.role.as_str(),
+                        binding.role.layer_meaning()
+                    )
+                } else {
+                    format!(
+                        "declared contributing binding; the locus's own records carry no {} ({}) keys, so the contribution stands on its declared qualification alone — recorded, not fabricated",
+                        binding.role.qualifying_prefix(),
+                        binding.role.layer_meaning()
+                    )
+                },
+            });
+        }
         occurrences.push(RoleOccurrence {
             role,
             occurrence_ref,
@@ -742,6 +1245,8 @@ pub fn resolve_subject_manifestation(
             property_keys: property_keys.into_iter().collect(),
             source_records,
             authored_keys,
+            bounded_subject_presentation: subject_kind.bounded_presentation_role() == Some(role),
+            contributing_subjects: resolved_contributions,
             standing: if represented {
                 format!(
                     "source-qualified {} occurrence through the locus's own {} records",
@@ -786,11 +1291,12 @@ pub fn resolve_subject_manifestation(
     let mut manifestation = SubjectManifestation {
         schema: SUBJECT_MANIFESTATION_CONTRACT.into(),
         subject_ref: subject_ref.to_owned(),
+        subject_kind,
         locus,
         occurrences,
         instance: instance.map(str::to_owned),
         manifestation_content_revision: String::new(),
-        qualification_standing: ROLE_QUALIFICATION_STANDING,
+        qualification_standing: ROLE_QUALIFICATION_STANDING.to_owned(),
         standing: "resolved subject/locus/occurrence references over the existing Atlas binding; source values stay at their records, authority stays at the native owners".into(),
     };
     manifestation.manifestation_content_revision =
@@ -987,10 +1493,12 @@ mod tests {
         resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#2-5-4",
             MFace::Bimba,
             roles,
             variants,
+            &[],
             instance,
         )
         .unwrap()
@@ -1133,9 +1641,11 @@ mod tests {
         let reentered = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             &canonical,
             MFace::Bimba,
             &roles,
+            &[],
             &[],
             None,
         )
@@ -1186,6 +1696,7 @@ mod tests {
         let manifestation = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#0-0-0",
             MFace::Bimba,
             &[
@@ -1193,6 +1704,7 @@ mod tests {
                 ExpressiveRole::Scene,
                 ExpressiveRole::Expression,
             ],
+            &[],
             &[],
             None,
         )
@@ -1329,10 +1841,12 @@ mod tests {
         let error = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#2-5-4",
             MFace::Bimba,
             &[ExpressiveRole::Force],
             &[bad_layer],
+            &[],
             None,
         )
         .unwrap_err();
@@ -1341,9 +1855,11 @@ mod tests {
         let error = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#2-5-4",
             MFace::Bimba,
             &[ExpressiveRole::Force, ExpressiveRole::Force],
+            &[],
             &[],
             None,
         )
@@ -1356,8 +1872,10 @@ mod tests {
         let error = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#2-5-4",
             MFace::Bimba,
+            &[],
             &[],
             &[],
             None,
@@ -1388,9 +1906,11 @@ mod tests {
         let pratibimba = resolve_subject_manifestation(
             registry,
             "ql:k2/default-subject",
+            SubjectKind::Native,
             "#2-5-4",
             MFace::Pratibimba,
             &[ExpressiveRole::Force],
+            &[],
             &[],
             None,
         )
@@ -1411,6 +1931,626 @@ mod tests {
         assert_ne!(
             bimba.occurrences[0].occurrence_ref,
             pratibimba.occurrences[0].occurrence_ref
+        );
+    }
+
+    // ---- PS-E slice 2: contributing subjects, scene/Expression subjects,
+    // place transitions ----------------------------------------------------
+
+    fn contribution(
+        carrier_role: ExpressiveRole,
+        subject: &str,
+        role: ExpressiveRole,
+    ) -> ContributingSubjectBinding {
+        ContributingSubjectBinding {
+            carrier_role,
+            subject_ref: subject.to_owned(),
+            role,
+        }
+    }
+
+    fn moon_with(
+        roles: &[ExpressiveRole],
+        contributions: &[ContributingSubjectBinding],
+    ) -> SubjectManifestation {
+        let registry = native_current_m_registry();
+        resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            roles,
+            &[],
+            contributions,
+            None,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn one_occurrence_carries_several_contributing_subjects_with_separate_roles() {
+        // The Moon's formation occurrence carries two contributing source
+        // subjects with separately qualified roles: the sky binds as the
+        // occurrence's scene (context/type), the harmonic series as a force
+        // (operation/entity).
+        let contributions = [
+            contribution(
+                ExpressiveRole::Formation,
+                "ql:k2/default-sky",
+                ExpressiveRole::Scene,
+            ),
+            contribution(
+                ExpressiveRole::Formation,
+                "ql:k2/harmonic-series",
+                ExpressiveRole::Force,
+            ),
+        ];
+        let manifestation = moon_with(&[ExpressiveRole::Formation], &contributions);
+        let formation = &manifestation.occurrences[0];
+        assert_eq!(formation.contributing_subjects.len(), 2);
+        // Separately qualified: the contributor's own role layer decides its
+        // qualification, not the carrier's.
+        let sky = formation
+            .contributing_subjects
+            .iter()
+            .find(|c| c.subject_ref == "ql:k2/default-sky")
+            .unwrap();
+        assert_eq!(sky.role, ExpressiveRole::Scene);
+        assert!(sky.represented, "{}", sky.standing);
+        assert!(!sky.property_keys.is_empty());
+        assert!(sky.property_keys.iter().all(|key| key.starts_with("c_4_")));
+        let harmonic = formation
+            .contributing_subjects
+            .iter()
+            .find(|c| c.subject_ref == "ql:k2/harmonic-series")
+            .unwrap();
+        assert_eq!(harmonic.role, ExpressiveRole::Force);
+        assert!(harmonic.represented);
+        assert!(
+            harmonic
+                .property_keys
+                .iter()
+                .all(|key| key.starts_with("c_2_"))
+        );
+        // Each binding is content-addressed and distinct.
+        assert!(sky.binding_ref.starts_with("contributing:"));
+        assert_ne!(sky.binding_ref, harmonic.binding_ref);
+    }
+
+    #[test]
+    fn contributing_bindings_are_canonical_reorder_stable_and_non_relabeling() {
+        let sky = contribution(
+            ExpressiveRole::Formation,
+            "ql:k2/default-sky",
+            ExpressiveRole::Scene,
+        );
+        let harmonic = contribution(
+            ExpressiveRole::Formation,
+            "ql:k2/harmonic-series",
+            ExpressiveRole::Force,
+        );
+        let direct = moon_with(
+            &[ExpressiveRole::Formation],
+            &[sky.clone(), harmonic.clone()],
+        );
+        let reversed = moon_with(&[ExpressiveRole::Formation], &[harmonic, sky]);
+        assert!(
+            json_eq(&direct, &reversed),
+            "contributor order is not identity"
+        );
+        // Adding a contributor never relabels the carrier occurrence.
+        let bare = moon_with(&[ExpressiveRole::Formation], &[]);
+        assert_eq!(
+            bare.occurrences[0].occurrence_ref,
+            direct.occurrences[0].occurrence_ref
+        );
+        // The whole manifestation revision does move with its content.
+        assert_ne!(
+            bare.manifestation_content_revision,
+            direct.manifestation_content_revision
+        );
+    }
+
+    #[test]
+    fn contributing_bindings_are_validated_by_name() {
+        let registry = native_current_m_registry();
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[contribution(
+                ExpressiveRole::Force,
+                "ql:k2/default-sky",
+                ExpressiveRole::Scene,
+            )],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("does not request"),
+            "a contribution joins a requested carrier occurrence: {error}"
+        );
+
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[contribution(
+                ExpressiveRole::Formation,
+                "ql:k2/default-subject",
+                ExpressiveRole::Force,
+            )],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("cannot contribute to its own occurrence"),
+            "{error}"
+        );
+
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[
+                contribution(
+                    ExpressiveRole::Formation,
+                    "ql:k2/default-sky",
+                    ExpressiveRole::Scene,
+                ),
+                contribution(
+                    ExpressiveRole::Formation,
+                    "ql:k2/default-sky",
+                    ExpressiveRole::Scene,
+                ),
+            ],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("duplicate contributing binding"),
+            "distinct subjects stay distinct bindings: {error}"
+        );
+
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[contribution(
+                ExpressiveRole::Formation,
+                "bad\0subject",
+                ExpressiveRole::Scene,
+            )],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("invalid native subject reference"),
+            "contributors pass the shared grammar: {error}"
+        );
+    }
+
+    #[test]
+    fn a_contributor_on_an_unrepresented_layer_stands_on_its_declaration_alone() {
+        // #0-0-0's own records carry no c_5_ layer, so a contributor playing
+        // the whole-Expression role there is recorded as the obligation it is.
+        let registry = native_current_m_registry();
+        let manifestation = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#0-0-0",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[contribution(
+                ExpressiveRole::Formation,
+                "ql:k2/default-sky",
+                ExpressiveRole::Expression,
+            )],
+            None,
+        )
+        .unwrap();
+        let formation = &manifestation.occurrences[0];
+        let contributor = &formation.contributing_subjects[0];
+        assert!(!contributor.represented, "{}", contributor.standing);
+        assert!(contributor.property_keys.is_empty());
+        assert!(contributor.binding_ref.starts_with("contributing:"));
+        assert!(contributor.standing.contains("recorded, not fabricated"));
+    }
+
+    #[test]
+    fn scene_and_expression_subjects_present_through_their_own_scale() {
+        let registry = native_current_m_registry();
+        // Scene-as-subject: the sky presents a bounded scene at its own place,
+        // source-qualified through the context/type records it actually
+        // carries.
+        let scene_subject = resolve_subject_manifestation(
+            registry,
+            "scene:sky-integration",
+            SubjectKind::Scene,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Scene],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap();
+        assert_eq!(scene_subject.subject_kind, SubjectKind::Scene);
+        let presentation = &scene_subject.occurrences[0];
+        assert_eq!(presentation.role, ExpressiveRole::Scene);
+        assert!(presentation.bounded_subject_presentation);
+        assert!(presentation.represented);
+        assert!(
+            presentation
+                .property_keys
+                .iter()
+                .all(|key| key.starts_with("c_4_"))
+        );
+
+        // Whole-Expression-as-subject: the Moon presents a bounded Expression
+        // through the integration/reflection layer its own records carry
+        // (c_5_spanda_resonance).
+        let expression_subject = resolve_subject_manifestation(
+            registry,
+            "expression:spanda-integration",
+            SubjectKind::Expression,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Expression],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap();
+        assert_eq!(expression_subject.subject_kind, SubjectKind::Expression);
+        let presentation = &expression_subject.occurrences[0];
+        assert!(presentation.bounded_subject_presentation);
+        assert!(presentation.represented, "{}", presentation.standing);
+        assert_eq!(
+            presentation.property_keys,
+            vec!["c_5_spanda_resonance".to_owned()]
+        );
+        // The two bounded presentations are different subjects: distinct
+        // identities, neither relabelled by the other.
+        assert_ne!(
+            scene_subject.manifestation_content_revision,
+            expression_subject.manifestation_content_revision
+        );
+
+        // Where the locus genuinely lacks the scale's layer, the bounded
+        // presentation is recorded as the obligation it is.
+        let unrepresented = resolve_subject_manifestation(
+            registry,
+            "expression:absent-integration",
+            SubjectKind::Expression,
+            "#0-0-0",
+            MFace::Bimba,
+            &[ExpressiveRole::Expression],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap();
+        assert!(!unrepresented.occurrences[0].represented);
+        assert!(unrepresented.occurrences[0].bounded_subject_presentation);
+
+        // A scene subject that does not request its presenting scale is
+        // refused by name.
+        let error = resolve_subject_manifestation(
+            registry,
+            "scene:sky-integration",
+            SubjectKind::Scene,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("presents its bounded case through the scene role"),
+            "{error}"
+        );
+        // A native subject keeps its compositional freedom: the same role at
+        // the same place carries no bounded-presentation claim.
+        let native = moon(&[ExpressiveRole::Scene], &[], None);
+        assert!(!native.occurrences[0].bounded_subject_presentation);
+        assert!(native.occurrences[0].represented);
+    }
+
+    #[test]
+    fn place_transitions_distinguish_the_four_acts_by_name() {
+        for (kind, changes) in [
+            (PlaceTransitionKind::FocusReframe, false),
+            (PlaceTransitionKind::SceneChange, false),
+            (PlaceTransitionKind::DomainStateOperation, true),
+            (PlaceTransitionKind::FullReset, true),
+        ] {
+            assert_eq!(kind.changes_the_event(), changes, "{}", kind.as_str());
+            assert!(!kind.meaning().is_empty());
+        }
+    }
+
+    fn sky_scene_subject() -> SubjectManifestation {
+        let registry = native_current_m_registry();
+        resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Scene],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn admitted_transitions_record_their_act_policy_and_cursor() {
+        let source = moon(
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence,
+            ],
+            &[],
+            None,
+        );
+
+        // Focus/reframing: the same place, a changed reading.
+        let reframed = moon(
+            &[
+                ExpressiveRole::Formation,
+                ExpressiveRole::Force,
+                ExpressiveRole::Sequence,
+                ExpressiveRole::Scene,
+            ],
+            &[],
+            None,
+        );
+        let focus = admit_place_transition(
+            &source,
+            &reframed,
+            PlaceTransitionKind::FocusReframe,
+            &["ql:k2/default-sky".to_owned()],
+            ContinuationPolicy::Continue,
+            &[],
+            None,
+        )
+        .unwrap();
+        assert_eq!(focus.kind, PlaceTransitionKind::FocusReframe);
+        assert_eq!(focus.retained_subjects, vec!["ql:k2/default-sky"]);
+        assert!(focus.cursor.is_none());
+        assert!(!focus.transition_content_revision.is_empty());
+
+        // An actual place change is not focus/reframing, and a same-place
+        // re-entry is not an active scene change.
+        let sky = sky_scene_subject();
+        let error = admit_place_transition(
+            &source,
+            &sky,
+            PlaceTransitionKind::FocusReframe,
+            &[],
+            ContinuationPolicy::Continue,
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("focus/reframing re-enters the same place"),
+            "{error}"
+        );
+        let error = admit_place_transition(
+            &source,
+            &reframed,
+            PlaceTransitionKind::SceneChange,
+            &[],
+            ContinuationPolicy::Continue,
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("moves to another canonical place"),
+            "{error}"
+        );
+
+        // Scene change with checkpoint-and-release records the actual cursor.
+        let cursor = ContinuationCursor {
+            locus_canonical_ref: sky.locus.canonical_ref.clone(),
+            face: sky.locus.face,
+            binding_content_revision: sky.locus.binding_content_revision.clone(),
+            active_manifestation_revision: sky.manifestation_content_revision.clone(),
+        };
+        let scene_change = admit_place_transition(
+            &source,
+            &sky,
+            PlaceTransitionKind::SceneChange,
+            &[
+                "ql:k2/default-sky".to_owned(),
+                "ql:k2/default-subject".to_owned(),
+            ],
+            ContinuationPolicy::CheckpointRelease,
+            &[],
+            Some(cursor.clone()),
+        )
+        .unwrap();
+        assert_eq!(scene_change.kind, PlaceTransitionKind::SceneChange);
+        assert_eq!(
+            scene_change.continuation,
+            ContinuationPolicy::CheckpointRelease
+        );
+        assert_eq!(scene_change.cursor.as_ref().unwrap(), &cursor);
+        // Retained subjects are canonical, duplicate-free.
+        assert_eq!(
+            scene_change.retained_subjects,
+            vec!["ql:k2/default-sky", "ql:k2/default-subject"]
+        );
+        let error = admit_place_transition(
+            &source,
+            &sky,
+            PlaceTransitionKind::SceneChange,
+            &[
+                "ql:k2/default-sky".to_owned(),
+                "ql:k2/default-sky".to_owned(),
+            ],
+            ContinuationPolicy::CheckpointRelease,
+            &[],
+            Some(cursor),
+        )
+        .unwrap_err();
+        assert!(error.contains("duplicate retained subject"), "{error}");
+
+        // Checkpoint-and-release without a cursor is refused.
+        let error = admit_place_transition(
+            &source,
+            &sky,
+            PlaceTransitionKind::SceneChange,
+            &[],
+            ContinuationPolicy::CheckpointRelease,
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(error.contains("records the actual cursor"), "{error}");
+    }
+
+    #[test]
+    fn full_reset_returns_the_canonical_default_and_discards_the_cursor() {
+        let registry = native_current_m_registry();
+        // The person's active occurrence: an explicit instance fork.
+        let active = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Force],
+            &[],
+            &[],
+            Some("night-watch"),
+        )
+        .unwrap();
+        let canonical = moon(&[ExpressiveRole::Force], &[], None);
+        let reset = admit_place_transition(
+            &active,
+            &canonical,
+            PlaceTransitionKind::FullReset,
+            &[],
+            ContinuationPolicy::Continue,
+            &[],
+            None,
+        )
+        .unwrap();
+        assert_eq!(reset.kind, PlaceTransitionKind::FullReset);
+        assert_eq!(reset.destination.instance, None);
+        assert_eq!(
+            reset.source_manifestation_revision,
+            active.manifestation_content_revision
+        );
+
+        // A reset that lands on the active instance is not a reset.
+        let error = admit_place_transition(
+            &active,
+            &active,
+            PlaceTransitionKind::FullReset,
+            &[],
+            ContinuationPolicy::Continue,
+            &[],
+            None,
+        )
+        .unwrap_err();
+        assert!(error.contains("canonical occurrence"), "{error}");
+        // A reset discards the recorded cursor.
+        let error = admit_place_transition(
+            &active,
+            &canonical,
+            PlaceTransitionKind::FullReset,
+            &[],
+            ContinuationPolicy::Continue,
+            &[],
+            Some(ContinuationCursor {
+                locus_canonical_ref: canonical.locus.canonical_ref.clone(),
+                face: canonical.locus.face,
+                binding_content_revision: canonical.locus.binding_content_revision.clone(),
+                active_manifestation_revision: active.manifestation_content_revision.clone(),
+            }),
+        )
+        .unwrap_err();
+        assert!(error.contains("discards the recorded cursor"), "{error}");
+    }
+
+    #[test]
+    fn reentry_resumes_from_the_recorded_policy_or_refuses_a_moved_basis() {
+        let registry = native_current_m_registry();
+        let source = moon(&[ExpressiveRole::Formation], &[], None);
+        let destination_contributions = [contribution(
+            ExpressiveRole::Scene,
+            "ql:k2/default-sky",
+            ExpressiveRole::Formation,
+        )];
+        let destination = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Scene, ExpressiveRole::Expression],
+            &[],
+            &destination_contributions,
+            None,
+        )
+        .unwrap();
+        let cursor = ContinuationCursor {
+            locus_canonical_ref: destination.locus.canonical_ref.clone(),
+            face: destination.locus.face,
+            binding_content_revision: destination.locus.binding_content_revision.clone(),
+            active_manifestation_revision: destination.manifestation_content_revision.clone(),
+        };
+        let transition = admit_place_transition(
+            &source,
+            &destination,
+            PlaceTransitionKind::SceneChange,
+            &["ql:k2/default-subject".to_owned()],
+            ContinuationPolicy::CheckpointRelease,
+            &[],
+            Some(cursor),
+        )
+        .unwrap();
+        // Re-entry re-resolves from the recorded request and returns exactly
+        // the admitted bindings — contributions included.
+        let reentered = resume_place_transition(registry, &transition).unwrap();
+        assert!(json_eq(&reentered, &destination));
+
+        // A moved source basis is a named refusal, not a silent replay.
+        let mut stale = transition.clone();
+        stale.cursor.as_mut().unwrap().binding_content_revision = "moved-revision".into();
+        let error = resume_place_transition(registry, &stale).unwrap_err();
+        assert!(
+            error.contains("source basis moved"),
+            "stale checkpoints are refused by name: {error}"
         );
     }
 }
