@@ -657,7 +657,7 @@
    "coordinates": [
     "#3"
    ],
-   "rationale": "The source-qualified phase bridge (QL-MEF #312 §4 TS0): explicit conversions between the three coexisting native angle registers — quat_codon_state's physical 45-degree encoder (half-angle rotor), quat_active_state's argument register whose eight bins tile the 720-degree SU(2) double cover, and M3Clock's 30-degree D5 ticks. Publishes clock720 = 2*signed_argument, the ring LUT's 60-degree triangle mapping and the raw argument bin; the antipodal +4 raw-classifier shift follows. A conversion publication over the existing registers only: it changes no existing function and claims no owner ruling where ledger record gate0-m1:tick-degree-law stays open.",
+   "rationale": "The source-qualified phase bridge (QL-MEF #312 §4 TS0, reader corrected by the #312 §5 amendment, 2026-10-06): explicit conversions between the coexisting native angle registers — quat_codon_state's physical 45-degree encoder (half-angle rotor, unchanged), the CORRECTED all-axis reader (vendor m3.c:136-152: 2*atan2(|v|,w), 45 physical-degree bins over the composed axis) with quat_rotation_degrees as the primary conversion, and M3Clock's 30-degree D5 ticks (unchanged). The retired i-plane register is retained as the regression witness (quat_clock_steps_retired_i_plane, quat_argument_bin_retired_i_plane); the corrected antipodal law is the octant mirror (7 - bin) mod 8, not the retired +4. A conversion publication over the existing registers only: it claims no owner ruling where ledger record gate0-m1:tick-degree-law stays open.",
    "tests": [
     "crates/ql-core/tests/phase_bridge.rs"
    ],

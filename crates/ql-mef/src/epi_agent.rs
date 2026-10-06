@@ -810,16 +810,17 @@ pub fn mahamaya_phase_bridge(input: Value) -> Result<Value, String> {
         "ring_lut": ring_lut,
         "registers": {
             "encoder": "quat_codon_state: the state angle is 45 degrees per state and the rotor is built at the half angle (vendor m3.c:131), so the encoder steps the physical rotation 45 degrees per state",
-            "reader": "quat_active_state: the quaternion-plane argument atan2(x, w) quantised at 45 degrees per bin; one argument bin is 90 degrees of physical rotation, so the eight bins tile the 720-degree SU(2) double cover",
+            "reader": "quat_active_state (CORRECTED, #312 section 5): the full rotation angle about the composed axis, 2 x atan2(|v|, w) with |v| = sqrt(x^2+y^2+z^2), in [0, 360] physical, quantised at 45 physical degrees per bin over the composed axis; all three matrix axes (i, j, k) contribute through |v|. The retired predecessor read the i-only half-angle atan2(x, w) (45 argument degrees = 90 physical); it is retained as quat_active_state_retired_i_plane, the regression witness of the old register",
             "clock": "M3Clock: unwrapped steps, one step = 1 degree; degree720 = steps % 720; layer = degree720 / 360; tick12 = degree360 / 30 (m3_clock.rs:56-68)",
-            "conversion": "clock720 = 2 x signed_argument normalised to [0, 720): physical rotation is twice the quaternion-plane argument (SU(2) half-angle law)",
-            "ring_lut": "one RING_QUATERNION_LUT tick spans 60 degrees of physical rotation (m1.h:497 TRIG_STEP_DEG 60, m1.h:501 DEGREE_PER_TICK 30, ratio asserted at m1.h:512); the LUT covers the 720-degree cover in 12 ticks against the clock's 24 ticks of 30 degrees (D5)"
+            "conversion": "quat_rotation_degrees: the physical SO(3) rotation a bare quaternion carries (2 x atan2(|v|, w), degrees, [0, 360]); a bare quaternion carries no sheet — the 720-degree double-cover position is traversal history the M3Clock owns. The retired conversion clock720 = 2 x signed_argument over the i-plane is retained as quat_clock_steps_retired_i_plane (witness only)",
+            "ring_lut": "one RING_QUATERNION_LUT tick spans 60 degrees of physical rotation (m1.h:497 TRIG_STEP_DEG 60, m1.h:501 DEGREE_PER_TICK 30, ratio asserted at m1.h:512); the LUT covers the 720-degree cover in 12 ticks against the clock's 24 ticks of 30 degrees (D5); under the corrected direction-blind reading the return ticks 6..11 read the same magnitudes as ticks 1..5, tick 11 (atan2(0, -1) = pi) reading 360"
         },
         "source": {
             "module": "crates/ql-core/src/pole/phase.rs",
             "conformance": "crates/ql-core/tests/phase_bridge.rs",
             "vendor": [
                 "vendor/epi-kernel m3.c:124-134 (quat_codon_state half-angle rotor)",
+                "vendor/epi-kernel m3.c:136-152 (CORRECTED m3_quat_active_state, #312 section 5)",
                 "vendor/epi-kernel m1.c:29, m1.h:515 (RING_QUATERNION_LUT)",
                 "vendor/epi-kernel m1.h:497,501,512 (tick-degree registers)"
             ],

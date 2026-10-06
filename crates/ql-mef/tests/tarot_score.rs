@@ -894,7 +894,7 @@ fn score_basis_input_round_trips_through_serde_and_resolves_identically() {
 }
 
 #[test]
-fn score_pose_records_one_rotor_in_both_phase_registers() {
+fn score_pose_records_the_rotor_in_the_corrected_rotation_register() {
     let (identity, sky, drawn) = full_basis();
     let score = resolve_tarot_score(&basis(
         Some(&identity),
@@ -905,33 +905,31 @@ fn score_pose_records_one_rotor_in_both_phase_registers() {
     ))
     .unwrap();
     for token in &score.tokens {
-        // Both phase fields read ONE rotor — the codon's declared state rotor
-        // (`quat_codon_state(codon, active_state)`). The argument register is
-        // the half-angle register: the physical rotation (the clock readout)
-        // is twice the argument. The two records round at different points
-        // (the clock rounds the doubled argument, the argument register rounds
-        // the argument first), so the doubled argument meets the clock readout
-        // within one step of the 720-degree register.
-        let doubled = (u64::from(token.pose.phase_argument_degrees) * 2) % 720;
+        // The corrected all-axis register (#312 §5): the pose's phase field
+        // is the physical rotation the codon's declared state rotor carries,
+        // `quat_rotation_degrees(quat_codon_state(codon, active_state))` —
+        // 2·atan2(|v|, w) in degrees over the composed axis, [0, 360]. (The
+        // predecessor published the same rotor in two retired i-plane
+        // registers — a 720° clock position and a half-angle argument;
+        // witness only, no longer recorded here.)
         assert!(
-            doubled.abs_diff(token.pose.phase_clock_steps % 720) <= 1,
-            "token {}: doubled argument {} vs clock steps {}",
+            token.pose.phase_rotation_degrees <= 360,
+            "token {}: rotation register {} out of [0, 360]",
             token.role,
-            doubled,
-            token.pose.phase_clock_steps
+            token.pose.phase_rotation_degrees
         );
-        assert!(token.pose.phase_argument_degrees < 360);
-        assert!(token.pose.phase_clock_steps < 720);
     }
     // The primary's declared form/phase readout matches its encoder law:
     // argument-zero seeds (outer coin value == inner value) sit exactly at
-    // 45 degrees of physical rotation per admitted state.
+    // 45 degrees of physical rotation per admitted state (state s reads
+    // 45·s for s <= 8; the 2π edge folds to 0 — within f32 rounding of the
+    // rotor construction).
     let sun = score.tokens.iter().find(|t| t.role == "natal/Sun").unwrap();
     let codon = Codon64::new(sun.hexagram_address);
     if codon.outer().coin_value() == codon.inner().coin_value() {
         assert_eq!(
-            sun.pose.phase_clock_steps,
-            (45 * u64::from(sun.pose.active_state)) % 720,
+            sun.pose.phase_rotation_degrees,
+            (45 * u16::from(sun.pose.active_state)) % 360,
             "argument-zero seed at the exact encoder register"
         );
     }

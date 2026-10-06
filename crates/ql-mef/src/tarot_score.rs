@@ -41,8 +41,8 @@ use ql_core::m3_clock::M3Clock;
 use ql_core::{
     Codon64, Element, ElementalQuaternionBasis, MatrixFamily, MinorArcanaCard,
     POLE_TAROT_BRIDGE_REF, RotationalPolarity, TarotBridge, TranscendentOperator, det_overlay,
-    generate_rotational_states, quat_active_state, quat_clock_steps, quat_codon_state,
-    quat_signed_argument, rotational_profile,
+    generate_rotational_states, quat_active_state, quat_codon_state, quat_rotation_degrees,
+    rotational_profile,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -216,19 +216,19 @@ pub struct ScorePose {
     pub candidate_rotational_value: i16,
     /// The candidate's 45° register: 45° × slot.
     pub candidate_rotation_degrees: u16,
-    /// The codon's declared form/phase rotor read in the clock register:
-    /// `quat_clock_steps(quat_codon_state(codon, active_state))` — the
-    /// 45°-per-state encoder position of the admitted state, normalised to
-    /// [0, 720). Source: `ql.pole.phase-bridge/v1`
-    /// (`ql_core::pole::phase`, re-exported from `ql_core`).
-    pub phase_clock_steps: u64,
-    /// The same rotor's quaternion-plane argument `atan2(x, w)` in degrees,
-    /// wrapped to [0, 360) and rounded. Half-angle register: the physical
-    /// rotation is TWICE this argument, so `2 × phase_argument_degrees ≡
-    /// phase_clock_steps` (mod 720) — the SU(2) half-angle law of the vendor
-    /// rotor construction (`m3.c:131`). No correspondence beyond that law is
-    /// claimed.
-    pub phase_argument_degrees: u16,
+    /// The codon's declared form/phase rotor read in the CORRECTED all-axis
+    /// register (#312 §5): the physical rotation the rotor carries,
+    /// `quat_rotation_degrees(quat_codon_state(codon, active_state))` —
+    /// `2·atan2(|v|, w)` in degrees over the composed axis, in [0, 360]. On
+    /// argument-zero seeds (outer coin value == inner value) this is exactly
+    /// `45° × active_state`, the encoder's own register; the 2π edge folds to
+    /// 0. The predecessor published this rotor in two retired i-plane
+    /// registers (`phase_clock_steps` over the 720° cover,
+    /// `phase_argument_degrees` half-angle); they are retained in
+    /// `ql_core::pole::phase` as the regression witness only. Source:
+    /// `ql.pole.phase-bridge/v1` (`ql_core::pole::phase`, re-exported from
+    /// `ql_core`).
+    pub phase_rotation_degrees: u16,
 }
 
 /// One token of the score: one anchor, one Minor Arcana card, one or two
@@ -578,14 +578,10 @@ fn codon_pose(codon: Codon64, clock: M3Clock) -> ScorePose {
     let profile = rotational_profile(codon);
     let candidate = &generate_rotational_states(codon)[active_state as usize];
     // The declared form/phase readout: the codon's own state rotor in the
-    // clock register and in the (half-angle) argument register.
+    // corrected all-axis register (#312 §5) — the physical rotation
+    // 2·atan2(|v|, w) the rotor carries, in [0, 360].
     let rotor = quat_codon_state(codon, active_state);
-    let phase_clock_steps = quat_clock_steps(&rotor);
-    let phase_argument_degrees = (quat_signed_argument(&rotor)
-        .to_degrees()
-        .rem_euclid(360.0)
-        .round() as u16)
-        % 360;
+    let phase_rotation_degrees = quat_rotation_degrees(&rotor);
     ScorePose {
         torus_tick12,
         element_ring_position,
@@ -601,8 +597,7 @@ fn codon_pose(codon: Codon64, clock: M3Clock) -> ScorePose {
         },
         candidate_rotational_value: candidate.rotational_value,
         candidate_rotation_degrees: candidate.rotation_degrees,
-        phase_clock_steps,
-        phase_argument_degrees,
+        phase_rotation_degrees,
     }
 }
 
