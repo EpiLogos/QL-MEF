@@ -27,7 +27,7 @@ pub const FIELD_CONTRACT: &str = "ql.continuous-field/v1";
 const MAX_MESSAGE: usize = 32 * 1024 * 1024;
 type Result<T> = std::result::Result<T, String>;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LiftInput {
     pub turns: String,
