@@ -356,3 +356,62 @@ test('each scene operation retains its own exact native commit range', async () 
     }
   }
 });
+
+test('the journal records every admitted owner act in request order and aggregates the advance data plane', async () => {
+  const { session, port } = setup();
+  await session.pump(); await session.pump();
+  await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.9, 0] }]);
+  await session.operate({ operation: 'set-axis', axis: 1, phase: { turns: '-2', half_degrees: 37 } });
+  port.refuseOperation = 'set-damping';
+  await assert.rejects(session.operate({ operation: 'set-damping', value: 1 }), /controlled refusal/);
+  port.refuseOperation = null;
+  session.hold('controlled-journal-hold');
+  await session.recover('controlled-journal-recovery');
+  const j = session.journal();
+  assert.equal(j.schema, 'ql.instrument-performance-journal/v1');
+  assert.equal(j.instance_ref, 'controlled:instance');
+  assert.deepEqual(j.acts.map(act => [act.request_id, act.operation, act.kind]),
+    [['3', 'strike', 'act'], ['4', 'set-axis', 'act'], ['6', 'read', 'recovery']]);
+  assert.deepEqual(j.acts[0].command,
+    { operation: 'strike', strikes: [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.9, 0] }] });
+  assert.deepEqual(j.acts[0].acknowledged, { generation: '2', samples_elapsed: '1024' });
+  assert.deepEqual(j.acts[1].command, { operation: 'set-axis', axis: 1, phase: { turns: '-2', half_degrees: 37 } });
+  assert.deepEqual(j.acts[1].acknowledged, { generation: '3', samples_elapsed: '1024' });
+  assert.deepEqual(j.acts[2].command, { operation: 'read' });
+  assert.deepEqual(j.acts[2].acknowledged, { generation: '3', samples_elapsed: '1024' });
+  assert.deepEqual(j.advances, { blocks: 2, frames: 1024, first_samples_elapsed: '512', last_samples_elapsed: '1024' });
+  session.dispose();
+});
+
+test('the performance journal is frozen, independent and survives disposal', async () => {
+  const { session } = setup(); await session.pump();
+  await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.5, 0] }]);
+  const j = session.journal();
+  assert.ok(Object.isFrozen(j));
+  assert.throws(() => { j.instance_ref = 'foreign'; }, TypeError);
+  j.acts[0].operation = 'foreign'; j.acts.push({ forged: true }); j.advances.blocks = 99;
+  const fresh = session.journal();
+  assert.equal(fresh.acts.length, 1);
+  assert.equal(fresh.acts[0].operation, 'strike');
+  assert.deepEqual(fresh.acts[0].acknowledged, { generation: '2', samples_elapsed: '512' });
+  assert.equal(fresh.advances.blocks, 1);
+  session.dispose();
+  const after = session.journal();
+  assert.deepEqual(after.acts, fresh.acts);
+  assert.deepEqual(after.advances, fresh.advances);
+  assert.equal(after.instance_ref, 'controlled:instance');
+});
+
+test('a refused played strike is absent from the performance journal', async () => {
+  const { session, port } = setup(); await session.pump();
+  port.refuseOperation = 'strike';
+  await assert.rejects(session.strike([{ mode_ref: 'scene:planet/none', amplitude: [0.1, 0] }]), /controlled refusal/);
+  assert.deepEqual(session.journal().acts, []);
+  assert.deepEqual(session.journal().advances,
+    { blocks: 1, frames: 512, first_samples_elapsed: '512', last_samples_elapsed: '512' });
+  port.refuseOperation = null;
+  await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.25, 0] }]);
+  assert.equal(session.journal().acts.length, 1);
+  assert.equal(session.journal().acts[0].operation, 'strike');
+  session.dispose();
+});

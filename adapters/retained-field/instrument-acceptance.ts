@@ -246,6 +246,7 @@ async function main() {
   check(session.reading.queued_blocks === 0, 'played strike left presentation backlog');
 
   const debug = renderer.getContext().getExtension('WEBGL_debug_renderer_info');
+  const performed = session.journal();
   const result = { schema: 'ql.k8-managed-browser-acceptance/v1', native_commands: calls.length,
     controlled_native_calls: calls, actual_particles: count, seeds, read_only_view_reads: 2000,
     source_complete_inspection: true, same_native_sound_field_generation: true, pure_future_admission: true,
@@ -254,6 +255,8 @@ async function main() {
     played_strike: { mode_ref: modeRef, amplitude_metres: [0.5, -0.25],
       generation_before: strikeGenerationBefore, generation_after: strikeGenerationAfter,
       presented: strikePresented, standing: 'played excitation through the same serial native owner; audible and visible response share the strike commit' },
+    performance_journal: { acts: performed.acts.length,
+      advances: { blocks: performed.advances.blocks, frames: performed.advances.frames } },
     presentation_applications: applications,
     last_reading: views[0].read(), actual_audio_sample_rate: context.sampleRate,
     renderer: debug ? renderer.getContext().getParameter(debug.UNMASKED_RENDERER_WEBGL) : 'undisclosed',
