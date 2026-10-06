@@ -736,3 +736,83 @@ fn scene_damping_host_requires_exact_scope_cursor_and_complete_ack() {
         "expected_generation":admitted["field"]["generation"],"expected_samples_elapsed":initial["samples_elapsed"],
         "command":{"operation":"set-damping","per_second":2.0,"strike":true}})).is_err());
 }
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_played_class_strikes_the_voices_nearest_it_and_never_retunes_them() {
+    let (mut played, mut control) = (open(), open());
+    let influence = played.influence();
+    let played_addresses = &influence["played_addresses"];
+    assert_eq!(
+        played_addresses["standing"],
+        ql_mef::continuous::scene_field::SCENE_PLAYED_STANDING
+    );
+    let classes = played_addresses["by_class"].as_array().unwrap();
+    assert_eq!(classes.len(), 12);
+    // Every standing voice is addressed by exactly one class, the one its own
+    // pitch is nearest over C3, within a quarter-tone.
+    let root = ql_mef::continuous::coupled::SKY_ROOT_HZ;
+    let mut addressed = 0;
+    for (class, entry) in classes.iter().enumerate() {
+        assert_eq!(entry["pitch_class"], class);
+        for voice in entry["voices"].as_array().unwrap() {
+            addressed += 1;
+            let hz = voice["frequency_hz"].as_f64().unwrap();
+            let semitones = 12.0 * (hz / root).log2();
+            assert_eq!(
+                semitones.round().rem_euclid(12.0) as usize,
+                class,
+                "{voice}"
+            );
+            assert!(voice["cents_from_class"].as_f64().unwrap().abs() <= 50.0);
+        }
+    }
+    assert_eq!(addressed, PLANETS.len());
+    // A key of the first sounding class: strike exactly the addressed refs.
+    let key = classes
+        .iter()
+        .find(|c| !c["voices"].as_array().unwrap().is_empty())
+        .expect("some class sounds");
+    let acts: Vec<StrikeInput> = key["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| StrikeInput {
+            mode_ref: v["mode_ref"].as_str().unwrap().into(),
+            amplitude: [0.9, 0.0],
+        })
+        .collect();
+    let before: Vec<f64> = played
+        .shape()
+        .voices
+        .iter()
+        .map(|v| v.frequency_hz)
+        .collect();
+    played.session_mut().advance_field(1024, false).unwrap();
+    control.session_mut().advance_field(1024, false).unwrap();
+    played.strike(&acts).unwrap();
+    let (mut struck_pcm, mut control_pcm) = (Vec::new(), Vec::new());
+    for _ in 0..3 {
+        struck_pcm.extend(audio(
+            &played.session_mut().advance_field(8192, false).unwrap(),
+        ));
+        control_pcm.extend(audio(
+            &control.session_mut().advance_field(8192, false).unwrap(),
+        ));
+    }
+    for v in key["voices"].as_array().unwrap() {
+        let hz = v["frequency_hz"].as_f64().unwrap();
+        assert!(
+            power(&struck_pcm, hz) > 50.0 * power(&control_pcm, hz),
+            "class key did not sound its voice at {hz} Hz"
+        );
+    }
+    // Played, never retuned: every voice keeps its own just-ratio pitch.
+    let after: Vec<f64> = played
+        .shape()
+        .voices
+        .iter()
+        .map(|v| v.frequency_hz)
+        .collect();
+    assert_eq!(before, after);
+}
