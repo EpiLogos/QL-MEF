@@ -72,10 +72,12 @@ pub use pole::{
     compose_hexagram, det_overlay, element_quaternion, flow_clockwise, integral_symmetry_field,
     lower_trigram_id, matrix_axis_quaternion, nuclear_hexagram, nuclear_lower, nuclear_upper,
     palindromic_anchors, polar_opposite_simple, polar_opposite_su2, quadrant, quat_active_state,
-    quat_codon_state, quat_from_codon, quat_from_ring_pos, upper_trigram_id,
+    quat_active_state_retired_i_plane, quat_codon_state, quat_from_codon, quat_from_ring_pos,
+    upper_trigram_id,
 };
 pub use pole::{
-    PHASE_BRIDGE_REF, quat_argument_bin, quat_clock_steps, quat_signed_argument,
+    PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
+    quat_clock_steps_retired_i_plane, quat_rotation_degrees, quat_signed_argument,
     ring_tick_clock_steps,
 };
 pub use position::QlPosition;
