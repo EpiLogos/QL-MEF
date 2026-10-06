@@ -13,9 +13,11 @@ use ql_mef::MFace;
 use ql_mef::continuous::stage::{STAGE_PROCEDURE, StageChange, StageProcedure, StageTrigger};
 use ql_mef::coordinate_expression::{
     AuthoredVariant, ContinuationCursor, ContinuationPolicy, ContributingSubjectBinding,
-    ExpressiveRole, PLACE_TRANSITION_CONTRACT, PlaceTransitionKind, SUBJECT_MANIFESTATION_CONTRACT,
-    SubjectKind, SubjectManifestation, admit_place_transition, resolve_subject_manifestation,
-    resume_place_transition, validate_subject_ref,
+    DeterminedRelation, ExpressiveRole, MANIFESTATION_FIXTURES_CONTRACT, PASU_SOURCE_REFS,
+    PLACE_TRANSITION_CONTRACT, PlaceTransitionKind, SUBJECT_MANIFESTATION_CONTRACT, SubjectKind,
+    SubjectManifestation, admit_place_transition, manifestation_fixture_file,
+    resolve_subject_manifestation, resume_place_transition, validate_subject_ref,
+    verify_manifestation_fixtures, verify_producer_fixture,
 };
 use ql_mef::m_tree::native_current_m_registry;
 use ql_mef::m3_state::M3Operation;
@@ -37,10 +39,14 @@ fn resolve(
         roles,
         variants,
         &[],
+        &[],
         instance,
     )
 }
 
+// The helper carries the resolver's own declared inputs (the relation's own
+// fields), exactly as the owner resolver does.
+#[allow(clippy::too_many_arguments)]
 fn resolve_kind(
     kind: SubjectKind,
     locus: &str,
@@ -48,6 +54,7 @@ fn resolve_kind(
     roles: &[ExpressiveRole],
     variants: &[AuthoredVariant],
     contributions: &[ContributingSubjectBinding],
+    relations: &[DeterminedRelation],
     instance: Option<&str>,
 ) -> SubjectManifestation {
     let registry = native_current_m_registry();
@@ -60,6 +67,7 @@ fn resolve_kind(
         roles,
         variants,
         contributions,
+        relations,
         instance,
     )
     .unwrap()
@@ -266,6 +274,7 @@ fn faces_forks_and_subjects_are_exact_addresses() {
         &roles,
         &[],
         &[],
+        &[],
         None,
     )
     .unwrap();
@@ -308,6 +317,7 @@ fn the_stage_and_the_manifestation_owner_admit_one_subject_grammar() {
         MOON,
         MFace::Bimba,
         &[ExpressiveRole::Force],
+        &[],
         &[],
         &[],
         None,
@@ -370,6 +380,7 @@ fn the_moon_occurrence_carries_contributing_subjects_with_separate_roles() {
         &[ExpressiveRole::Formation],
         &[],
         &contributions,
+        &[],
         None,
     );
     let formation = &manifestation.occurrences[0];
@@ -412,6 +423,7 @@ fn the_moon_occurrence_carries_contributing_subjects_with_separate_roles() {
             &[ExpressiveRole::Formation],
             &[],
             &reversed,
+            &[],
             None,
         )),
         value(&manifestation),
@@ -435,6 +447,7 @@ fn the_sky_presents_a_bounded_scene_and_the_moon_a_bounded_expression() {
         &[ExpressiveRole::Scene],
         &[],
         &[],
+        &[],
         None,
     );
     assert_eq!(scene_subject.subject_kind, SubjectKind::Scene);
@@ -454,6 +467,7 @@ fn the_sky_presents_a_bounded_scene_and_the_moon_a_bounded_expression() {
         MOON,
         MFace::Bimba,
         &[ExpressiveRole::Expression],
+        &[],
         &[],
         &[],
         None,
@@ -476,6 +490,7 @@ fn the_sky_presents_a_bounded_scene_and_the_moon_a_bounded_expression() {
             &[ExpressiveRole::Scene],
             &[],
             &[],
+            &[],
             None,
         )),
         value(&scene_subject)
@@ -486,6 +501,7 @@ fn the_sky_presents_a_bounded_scene_and_the_moon_a_bounded_expression() {
             &expression_subject.locus.canonical_ref,
             MFace::Bimba,
             &[ExpressiveRole::Expression],
+            &[],
             &[],
             &[],
             None,
@@ -541,6 +557,7 @@ fn the_joined_stage_walks_places_through_distinct_recorded_transitions() {
         "#2-5",
         MFace::Bimba,
         &[ExpressiveRole::Scene],
+        &[],
         &[],
         &[],
         Some("night-sky-watch"),
@@ -599,4 +616,85 @@ fn the_joined_stage_walks_places_through_distinct_recorded_transitions() {
         canonical_moon.manifestation_content_revision, moon.manifestation_content_revision,
         "changing focus or adopting a profile does not relabel unrelated resident entities"
     );
+}
+
+// ---- PS-E slice 3: producer fixtures for the consumer lanes ----------------
+
+#[test]
+fn the_producer_fixtures_parse_resolve_and_match_their_expected_readbacks() {
+    // The fixture file is data with a declared contract: it parses, carries
+    // the pinned Paśu ground, and names the four consumer cases.
+    let file = manifestation_fixture_file().unwrap();
+    assert_eq!(file.schema, MANIFESTATION_FIXTURES_CONTRACT);
+    assert_eq!(
+        file.source_pins,
+        PASU_SOURCE_REFS
+            .iter()
+            .map(|(_, pin)| pin.to_string())
+            .collect::<Vec<_>>(),
+        "the fixture bodies qualify through the same pinned ground the contract records"
+    );
+    let names = file
+        .fixtures
+        .iter()
+        .map(|fixture| fixture.name())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        names,
+        vec![
+            "moon-as-formation-force-and-sequence",
+            "moon-formation-with-contributing-subjects",
+            "sky-as-scene-subject",
+            "moon-to-sky-scene-change-with-checkpoint",
+        ]
+    );
+
+    // Every body resolves against the real registry and matches its expected
+    // readbacks — the one-call proof a consumer lane runs first.
+    let registry = native_current_m_registry();
+    verify_manifestation_fixtures(registry).unwrap();
+
+    // The same subject as formation+force+sequence: the fixture's determined
+    // relation qualification is a real readback on the force occurrence, and
+    // the fixture's request resolves deterministically.
+    for fixture in &file.fixtures {
+        verify_producer_fixture(registry, fixture).unwrap();
+    }
+    let ql_mef::coordinate_expression::ProducerFixture::Manifestation { request, .. } =
+        &file.fixtures[0]
+    else {
+        panic!("the first fixture is a manifestation body");
+    };
+    let first = request.resolve(registry).unwrap();
+    let again = request.resolve(registry).unwrap();
+    assert_eq!(
+        serde_json::to_value(&first).unwrap(),
+        serde_json::to_value(&again).unwrap()
+    );
+    let force = first
+        .occurrences
+        .iter()
+        .find(|o| o.role == ExpressiveRole::Force)
+        .unwrap();
+    assert_eq!(force.relation_qualifications.len(), 1);
+    assert_eq!(
+        force.relation_qualifications[0].kind,
+        "HARMONICALLY_RESONATES_WITH"
+    );
+    assert_eq!(
+        force.relation_qualifications[0].source_revision,
+        registry.manifest().source_revision,
+        "the relation's source revision is the registry revision it stands on"
+    );
+    // And the same request without the determination resolves a different
+    // force occurrence: the qualification is identity-bearing.
+    let mut bare_request = request.clone();
+    bare_request.relations.clear();
+    let bare = bare_request.resolve(registry).unwrap();
+    let bare_force = bare
+        .occurrences
+        .iter()
+        .find(|o| o.role == ExpressiveRole::Force)
+        .unwrap();
+    assert_ne!(bare_force.occurrence_ref, force.occurrence_ref);
 }

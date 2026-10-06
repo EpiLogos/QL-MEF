@@ -437,6 +437,59 @@ pub const ROLE_QUALIFICATION_STANDING: &str = "declared-role-qualification: expr
      #5 integration/reflection — see ql.subject-manifestation PASU source refs); a locus \
      lacking a layer's keys resolves that role as explicitly unrepresented, never fabricated";
 
+/// The disclosed standing of determined native-relation qualification. Beyond
+/// the property layer, a role may be qualified by an exact native Bimba
+/// relation the coordinate owner already carries — the full relation record
+/// (`MTreeRelation`, class `bimba-source`) with its own source revision. The
+/// relation is required by name and looked up among the locus's own relation
+/// records; a required relation the locus does not carry is refused by name.
+/// Relations are never fabricated, and per-role selection stays a declared
+/// determination of the caller, never an inferred mapping.
+pub const RELATION_QUALIFICATION_STANDING: &str = "determined-relation-qualification: a role may be qualified beyond the \
+     property layer by an exact native Bimba relation required by name at the locus (the full \
+     relation records the coordinate owners already carry, class bimba-source); the relation's \
+     own source revision and record payload pin are recorded; a required relation the locus \
+     does not carry is refused by name — relations are never fabricated";
+
+/// One declared determination: the named role's qualification stands also on
+/// one exact native relation at the locus. The caller determines WHICH
+/// relation qualifies WHICH role — the resolver verifies the determination
+/// against the locus's actual relation records and records what stands; it
+/// never selects or invents a relation on the caller's behalf.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DeterminedRelation {
+    /// The occurrence's role this relation qualifies; must be a requested role.
+    pub role: ExpressiveRole,
+    /// The exact native relation reference, in the existing Bimba relation
+    /// grammar (`bimba:relation:<content>`), as the locus's records carry it.
+    pub relation_ref: String,
+}
+
+/// One verified determined relation that qualifies an occurrence's role: the
+/// full Bimba relation record the coordinate owner carries, with the relation
+/// record's own payload pin and the source revision it stands on.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RelationQualification {
+    pub role: ExpressiveRole,
+    pub relation_ref: String,
+    /// The relation's own kind and class exactly as the source record carries
+    /// them (e.g. `HARMONICALLY_RESONATES_WITH`, `bimba-source`).
+    pub kind: String,
+    pub class: String,
+    pub from_ref: Option<String>,
+    pub to_ref: Option<String>,
+    pub orientation: String,
+    pub cross_m: bool,
+    /// The relation's own source record: its payload pin and the source
+    /// revision it stands on (the record's file revision, else the registry's).
+    pub payload_sha256: String,
+    pub source_repository: String,
+    pub source_revision: String,
+    pub standing: String,
+}
+
 /// The declared kind of subject a manifestation presents (P1 §0.1: "Scene and
 /// Expression subjects ... become inspectable through the same binding
 /// relation"). A native entity presents compositionally through any roles; a
@@ -582,6 +635,12 @@ pub struct RoleOccurrence {
     /// whole-key child replacement: key -> winning variant ref. Absent entries
     /// stand on their source records.
     pub authored_keys: BTreeMap<String, String>,
+    /// Determined native-relation qualifications: the exact Bimba relations
+    /// (required by name, verified against the locus's own relation records)
+    /// that qualify this role beyond the property layer, each with its source
+    /// revision. Canonical order regardless of the declared order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub relation_qualifications: Vec<RelationQualification>,
     /// Whether this occurrence IS its subject's bounded presentation — the
     /// scene-as-subject or whole-Expression-as-subject case (P1 §0.1). True
     /// exactly when the manifestation's declared subject kind presents through
@@ -928,6 +987,18 @@ pub fn resume_place_transition(
             });
         }
     }
+    // Determined relation requirements re-enter from the recorded
+    // qualifications: the relation named per role is re-verified against the
+    // place's current records by the resolver itself.
+    let mut relations = Vec::new();
+    for occurrence in &destination.occurrences {
+        for qualification in &occurrence.relation_qualifications {
+            relations.push(DeterminedRelation {
+                role: occurrence.role,
+                relation_ref: qualification.relation_ref.clone(),
+            });
+        }
+    }
     let face = match destination.locus.face {
         RootedFace::Bimba => MFace::Bimba,
         RootedFace::Pratibimba => MFace::Pratibimba,
@@ -941,6 +1012,7 @@ pub fn resume_place_transition(
         &requested,
         &transition.destination_variants,
         &contributions,
+        &relations,
         destination.instance.as_deref(),
     )?;
     let recorded_revision = transition
@@ -960,12 +1032,12 @@ pub fn resume_place_transition(
 /// The exact content basis one occurrence's identity is taken over. The
 /// digest covers the subject (with its declared kind), the locus's content
 /// revision, the role, the effective (source + authored) key set with the
-/// authored winning values, and the explicit instance seed when one exists.
-/// Nothing order- or label-bearing enters it: variant references are
-/// provenance, not identity. Contributing bindings are not part of it: they
-/// are bindings INTO the occurrence and carry their own content-addressed
-/// identities, so adding or removing a contributor never relabels the carrier
-/// occurrence.
+/// authored winning values, the determined relation qualifications with their
+/// source pins, and the explicit instance seed when one exists. Nothing
+/// order- or label-bearing enters it: variant references are provenance, not
+/// identity. Contributing bindings are not part of it: they are bindings INTO
+/// the occurrence and carry their own content-addressed identities, so adding
+/// or removing a contributor never relabels the carrier occurrence.
 #[allow(clippy::too_many_arguments)] // the identity basis' own declared fields
 fn occurrence_basis(
     subject_ref: &str,
@@ -974,6 +1046,7 @@ fn occurrence_basis(
     role: ExpressiveRole,
     property_keys: &BTreeSet<String>,
     authored_values: &BTreeMap<String, Value>,
+    relation_pins: &[Value],
     record_pins: &[String],
     instance: Option<&str>,
 ) -> Value {
@@ -985,6 +1058,7 @@ fn occurrence_basis(
         "role": role.as_str(),
         "property_keys": property_keys.iter().collect::<Vec<_>>(),
         "authored_values": authored_values,
+        "relation_qualifications": relation_pins,
         "source_record_payloads": record_pins,
         "instance": instance,
     })
@@ -1007,7 +1081,7 @@ fn occurrence_ref(basis: &Value) -> Result<String, String> {
 /// canonical place re-entry.
 // The arguments are the P1 §0.2 resolution's own declared inputs: the subject
 // (who, of what kind), the locus (where, at what face), the requested scales,
-// the authored content and the explicit instance.
+// the authored content, the determined relations and the explicit instance.
 #[allow(clippy::too_many_arguments)]
 pub fn resolve_subject_manifestation(
     registry: &MRegistry,
@@ -1018,6 +1092,7 @@ pub fn resolve_subject_manifestation(
     requested: &[ExpressiveRole],
     variants: &[AuthoredVariant],
     contributions: &[ContributingSubjectBinding],
+    relations: &[DeterminedRelation],
     instance: Option<&str>,
 ) -> Result<SubjectManifestation, String> {
     validate_subject_ref(subject_ref)?;
@@ -1077,6 +1152,37 @@ pub fn resolve_subject_manifestation(
             ));
         }
     }
+    // Determined native-relation qualification is validated by name: each
+    // requirement joins a requested role, carries a bounded relation
+    // reference, is stated once, and — decisively — the named relation must
+    // already exist among the locus's own relation records. A required
+    // relation the locus does not carry is refused by name; the resolver
+    // never fabricates a relation or selects one on the caller's behalf.
+    let mut seen_relations = std::collections::BTreeSet::new();
+    for requirement in relations {
+        if !requested.contains(&requirement.role) {
+            return Err(format!(
+                "a determined relation qualifies the {} occurrence, which this manifestation does not request",
+                requirement.role.as_str()
+            ));
+        }
+        if requirement.relation_ref.is_empty()
+            || requirement.relation_ref.len() > 512
+            || requirement.relation_ref.chars().any(|c| c.is_control())
+        {
+            return Err(format!(
+                "invalid determined relation reference {:?}",
+                requirement.relation_ref
+            ));
+        }
+        if !seen_relations.insert((requirement.role, requirement.relation_ref.as_str())) {
+            return Err(format!(
+                "duplicate determined relation {} for the {} occurrence; one relation qualifies an occurrence once",
+                requirement.relation_ref,
+                requirement.role.as_str()
+            ));
+        }
+    }
     for variant in variants {
         variant.validate()?;
     }
@@ -1087,6 +1193,24 @@ pub fn resolve_subject_manifestation(
     }
 
     let binding = resolve_coordinate_expression(registry, locus_ref, face)?;
+    // The decisive determination: the named relation must already exist among
+    // the locus's own relation records. A required relation the locus does
+    // not carry is refused by name — the resolver never fabricates a relation
+    // or selects one on the caller's behalf.
+    for requirement in relations {
+        if !binding
+            .source_relations
+            .iter()
+            .any(|relation| relation.relation_ref == requirement.relation_ref)
+        {
+            return Err(format!(
+                "the determined relation {} does not exist at locus {} ({} face): native relations are qualified only where the locus actually carries them, never fabricated — record the obligation or require an existing relation",
+                requirement.relation_ref,
+                binding.coordinate_ref,
+                binding.face.as_str()
+            ));
+        }
+    }
     let selected = registry
         .node(binding.coordinate_id)
         .ok_or("missing selected coordinate")?;
@@ -1172,6 +1296,73 @@ pub fn resolve_subject_manifestation(
             .iter()
             .map(|source| source.record.payload_sha256.clone())
             .collect();
+        // Determined native-relation qualification for THIS role: the
+        // requirements validated above resolve to the locus's actual relation
+        // records, in canonical order regardless of the declared order. Each
+        // resolved qualification carries the relation's own source revision;
+        // its content pin enters the occurrence identity, so a moved relation
+        // is a changed qualification, never a silently kept one.
+        let mut role_relations: Vec<(&DeterminedRelation, &MTreeRelation)> = relations
+            .iter()
+            .map(|requirement| {
+                let relation = binding
+                    .source_relations
+                    .iter()
+                    .find(|relation| relation.relation_ref == requirement.relation_ref)
+                    .expect("determined relation validated against the locus's records");
+                (requirement, relation)
+            })
+            .filter(|(requirement, _)| requirement.role == role)
+            .collect();
+        role_relations.sort_by(|left, right| left.0.relation_ref.cmp(&right.0.relation_ref));
+        let mut relation_qualifications = Vec::with_capacity(role_relations.len());
+        let mut relation_pins = Vec::with_capacity(role_relations.len());
+        for (requirement, relation) in &role_relations {
+            let record = registry
+                .manifest()
+                .records
+                .get(relation.record)
+                .ok_or("missing determined relation source record")?;
+            let file = registry
+                .manifest()
+                .files
+                .get(record.file)
+                .ok_or("missing determined relation source file")?;
+            let source_repository = file
+                .repository
+                .clone()
+                .unwrap_or_else(|| registry.manifest().source_repository.clone());
+            let source_revision = file
+                .revision
+                .clone()
+                .unwrap_or_else(|| registry.manifest().source_revision.clone());
+            relation_pins.push(json!({
+                "relation_ref": relation.relation_ref,
+                "kind": relation.source_kind,
+                "payload_sha256": record.payload_sha256,
+                "source_revision": source_revision,
+            }));
+            relation_qualifications.push(RelationQualification {
+                role,
+                relation_ref: relation.relation_ref.clone(),
+                kind: relation.source_kind.clone(),
+                class: relation.class.clone(),
+                from_ref: relation.from_ref.clone(),
+                to_ref: relation.to_ref.clone(),
+                orientation: relation.orientation.clone(),
+                cross_m: relation.cross_m,
+                payload_sha256: record.payload_sha256.clone(),
+                source_repository,
+                source_revision: source_revision.clone(),
+                standing: format!(
+                    "determined relation qualification: the {} occurrence stands also on the native {} relation {} at this locus; its source revision {} is recorded, never asserted",
+                    role.as_str(),
+                    relation.source_kind,
+                    requirement.relation_ref,
+                    source_revision
+                ),
+            });
+        }
         let basis = occurrence_basis(
             subject_ref,
             subject_kind,
@@ -1179,6 +1370,7 @@ pub fn resolve_subject_manifestation(
             role,
             &property_keys,
             &authored_values,
+            &relation_pins,
             &record_pins,
             instance,
         );
@@ -1245,6 +1437,7 @@ pub fn resolve_subject_manifestation(
             property_keys: property_keys.into_iter().collect(),
             source_records,
             authored_keys,
+            relation_qualifications,
             bounded_subject_presentation: subject_kind.bounded_presentation_role() == Some(role),
             contributing_subjects: resolved_contributions,
             standing: if represented {
@@ -1302,6 +1495,450 @@ pub fn resolve_subject_manifestation(
     manifestation.manifestation_content_revision =
         digest(&serde_json::to_vec(&manifestation).map_err(|error| error.to_string())?);
     Ok(manifestation)
+}
+
+// ---------------------------------------------------------------------------
+// PS-E (QL-MEF #297) producer fixtures: the machine-readable manifestation,
+// occurrence and place-transition bodies the paired consumer lanes (PS-S
+// state surface, PS-U Studio, PS-C retention) consume. The fixture file is
+// DATA; this section is the small typed loader around it: each body parses,
+// resolves against the real native registry through the owners above, and is
+// verified against its expected readbacks. Fixtures never stand in for
+// sources and never invent a revision: cursors are derived from the actual
+// resolution, and every expected readback is checked, never assumed.
+// ---------------------------------------------------------------------------
+
+pub const MANIFESTATION_FIXTURES_CONTRACT: &str = "ql.pse-manifestation-fixtures/v1";
+pub const MANIFESTATION_FIXTURES_PATH: &str =
+    "fixtures/kernel/subject-manifestation-fixtures-v1.json";
+pub const MANIFESTATION_FIXTURES: &str =
+    include_str!("../../../fixtures/kernel/subject-manifestation-fixtures-v1.json");
+
+/// The fixture file: declared schema, what the bodies are for, the pinned
+/// Paśu/entity-to-form ground the examples qualify through, and the fixture
+/// bodies.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ManifestationFixtureFile {
+    pub schema: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub description: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub source_pins: Vec<String>,
+    pub fixtures: Vec<ProducerFixture>,
+}
+
+/// One producer fixture body: a manifestation request with its expected
+/// readbacks, or a place-transition request with its own.
+// The variants are the fixture file's own declared bodies, carried by
+// reference through the loader; boxing a declared body would bend the data
+// contract to suit a lint.
+#[allow(clippy::large_enum_variant)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
+pub enum ProducerFixture {
+    Manifestation {
+        name: String,
+        request: ManifestationFixtureRequest,
+        expected: ManifestationFixtureExpectation,
+    },
+    PlaceTransition {
+        name: String,
+        request: PlaceTransitionFixtureRequest,
+        expected: PlaceTransitionFixtureExpectation,
+    },
+}
+
+impl ProducerFixture {
+    pub fn name(&self) -> &str {
+        match self {
+            Self::Manifestation { name, .. } | Self::PlaceTransition { name, .. } => name,
+        }
+    }
+}
+
+/// The exact manifestable request a consumer lane issues: the resolver's own
+/// declared inputs minus the registry, which the producer supplies.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ManifestationFixtureRequest {
+    pub subject_ref: String,
+    pub subject_kind: SubjectKind,
+    pub locus_ref: String,
+    pub face: RootedFace,
+    pub roles: Vec<ExpressiveRole>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub variants: Vec<AuthoredVariant>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub contributions: Vec<ContributingSubjectBinding>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub relations: Vec<DeterminedRelation>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub instance: Option<String>,
+}
+
+impl ManifestationFixtureRequest {
+    /// Resolves this body against the real owners — the same resolver every
+    /// lane shares, over the current native registry.
+    pub fn resolve(&self, registry: &MRegistry) -> Result<SubjectManifestation, String> {
+        let face = match self.face {
+            RootedFace::Bimba => MFace::Bimba,
+            RootedFace::Pratibimba => MFace::Pratibimba,
+        };
+        resolve_subject_manifestation(
+            registry,
+            &self.subject_ref,
+            self.subject_kind,
+            &self.locus_ref,
+            face,
+            &self.roles,
+            &self.variants,
+            &self.contributions,
+            &self.relations,
+            self.instance.as_deref(),
+        )
+    }
+}
+
+/// One occurrence's expected readbacks: content facts a consumer lane
+/// verifies against the actual resolution. Every field is checked, never
+/// assumed.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OccurrenceFixtureExpectation {
+    pub role: ExpressiveRole,
+    pub represented: bool,
+    /// Every qualifying key starts with this layer prefix.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key_prefix: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub contains_keys: Vec<String>,
+    #[serde(default)]
+    pub bounded_subject_presentation: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub relation_qualifications: Vec<RelationQualificationFixtureExpectation>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub contributing_subjects: Vec<ContributorFixtureExpectation>,
+}
+
+/// The expected shape of one determined relation qualification: the role it
+/// qualifies, the relation's own kind, and its orientation.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RelationQualificationFixtureExpectation {
+    pub role: ExpressiveRole,
+    pub kind: String,
+    pub orientation: String,
+}
+
+/// The expected readback of one contributing binding.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContributorFixtureExpectation {
+    pub subject_ref: String,
+    pub role: ExpressiveRole,
+    pub represented: bool,
+}
+
+/// The expected readbacks of one manifestation body.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ManifestationFixtureExpectation {
+    pub locus_coordinate_ref: String,
+    pub locus_family: String,
+    pub locus_depth: usize,
+    pub subject_kind: SubjectKind,
+    /// In the role type's declared order, exactly as the resolver discloses.
+    pub occurrences: Vec<OccurrenceFixtureExpectation>,
+}
+
+impl ManifestationFixtureExpectation {
+    pub fn verify(&self, manifestation: &SubjectManifestation) -> Result<(), String> {
+        if manifestation.locus.coordinate_ref != self.locus_coordinate_ref {
+            return Err(format!(
+                "locus {} does not match expected {}",
+                manifestation.locus.coordinate_ref, self.locus_coordinate_ref
+            ));
+        }
+        if manifestation.locus.family != self.locus_family {
+            return Err(format!(
+                "locus family {} does not match expected {}",
+                manifestation.locus.family, self.locus_family
+            ));
+        }
+        if manifestation.locus.depth != self.locus_depth {
+            return Err(format!(
+                "locus depth {} does not match expected {}",
+                manifestation.locus.depth, self.locus_depth
+            ));
+        }
+        if manifestation.subject_kind != self.subject_kind {
+            return Err(format!(
+                "subject kind {} does not match expected {}",
+                manifestation.subject_kind.as_str(),
+                self.subject_kind.as_str()
+            ));
+        }
+        if manifestation.occurrences.len() != self.occurrences.len() {
+            return Err(format!(
+                "{} occurrences resolved, {} expected",
+                manifestation.occurrences.len(),
+                self.occurrences.len()
+            ));
+        }
+        for (resolved, expected) in manifestation.occurrences.iter().zip(&self.occurrences) {
+            if resolved.role != expected.role {
+                return Err(format!(
+                    "occurrence role {} does not match expected {} (declared order is identity-bearing disclosure)",
+                    resolved.role.as_str(),
+                    expected.role.as_str()
+                ));
+            }
+            if resolved.represented != expected.represented {
+                return Err(format!(
+                    "{} occurrence represented={} does not match expected {}",
+                    resolved.role.as_str(),
+                    resolved.represented,
+                    expected.represented
+                ));
+            }
+            if let Some(prefix) = &expected.key_prefix
+                && !resolved
+                    .property_keys
+                    .iter()
+                    .all(|key| key.starts_with(prefix))
+            {
+                return Err(format!(
+                    "{} occurrence keys {property_keys:?} are not all {prefix:?}-prefixed",
+                    resolved.role.as_str(),
+                    property_keys = resolved.property_keys
+                ));
+            }
+            for key in &expected.contains_keys {
+                if !resolved.property_keys.contains(key) {
+                    return Err(format!(
+                        "{} occurrence does not carry the expected key {key:?}",
+                        resolved.role.as_str()
+                    ));
+                }
+            }
+            if resolved.bounded_subject_presentation != expected.bounded_subject_presentation {
+                return Err(format!(
+                    "{} occurrence bounded_subject_presentation={} does not match expected {}",
+                    resolved.role.as_str(),
+                    resolved.bounded_subject_presentation,
+                    expected.bounded_subject_presentation
+                ));
+            }
+            if resolved.relation_qualifications.len() != expected.relation_qualifications.len() {
+                return Err(format!(
+                    "{} occurrence carries {} relation qualifications, {} expected",
+                    resolved.role.as_str(),
+                    resolved.relation_qualifications.len(),
+                    expected.relation_qualifications.len()
+                ));
+            }
+            for qualification in &resolved.relation_qualifications {
+                if !expected.relation_qualifications.iter().any(|expected| {
+                    expected.role == qualification.role
+                        && expected.kind == qualification.kind
+                        && expected.orientation == qualification.orientation
+                }) {
+                    return Err(format!(
+                        "unexpected relation qualification {} ({}, {}) on the {} occurrence",
+                        qualification.relation_ref,
+                        qualification.kind,
+                        qualification.orientation,
+                        qualification.role.as_str()
+                    ));
+                }
+                if qualification.source_revision.is_empty() {
+                    return Err(format!(
+                        "relation qualification {} carries no source revision",
+                        qualification.relation_ref
+                    ));
+                }
+            }
+            if resolved.contributing_subjects.len() != expected.contributing_subjects.len() {
+                return Err(format!(
+                    "{} occurrence carries {} contributing subjects, {} expected",
+                    resolved.role.as_str(),
+                    resolved.contributing_subjects.len(),
+                    expected.contributing_subjects.len()
+                ));
+            }
+            for contributor in &resolved.contributing_subjects {
+                if !expected.contributing_subjects.iter().any(|expected| {
+                    expected.subject_ref == contributor.subject_ref
+                        && expected.role == contributor.role
+                        && expected.represented == contributor.represented
+                }) {
+                    return Err(format!(
+                        "unexpected contributing binding ({}, {}) on the {} occurrence",
+                        contributor.subject_ref,
+                        contributor.role.as_str(),
+                        resolved.role.as_str()
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+/// A place-transition fixture request: both admitted occurrences as
+/// manifestable request bodies, the declared act, and the continuation
+/// policy. The cursor itself is never written in the fixture: when
+/// `record_cursor` is set, the loader derives the actual cursor from the
+/// resolved destination — a fixture never invents a revision.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlaceTransitionFixtureRequest {
+    pub source: ManifestationFixtureRequest,
+    pub destination: ManifestationFixtureRequest,
+    pub act: PlaceTransitionKind,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub retained_subjects: Vec<String>,
+    pub continuation: ContinuationPolicy,
+    pub record_cursor: bool,
+}
+
+impl PlaceTransitionFixtureRequest {
+    /// Resolves both occurrences through the normal resolver and admits the
+    /// declared transition — the same admission every lane shares.
+    pub fn resolve(&self, registry: &MRegistry) -> Result<PlaceTransition, String> {
+        let source = self.source.resolve(registry)?;
+        let destination = self.destination.resolve(registry)?;
+        let cursor = if self.record_cursor {
+            Some(ContinuationCursor {
+                locus_canonical_ref: destination.locus.canonical_ref.clone(),
+                face: destination.locus.face,
+                binding_content_revision: destination.locus.binding_content_revision.clone(),
+                active_manifestation_revision: destination.manifestation_content_revision.clone(),
+            })
+        } else {
+            None
+        };
+        admit_place_transition(
+            &source,
+            &destination,
+            self.act,
+            &self.retained_subjects,
+            self.continuation,
+            &self.destination.variants,
+            cursor,
+        )
+    }
+}
+
+/// The expected readbacks of one place-transition body.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlaceTransitionFixtureExpectation {
+    pub act: PlaceTransitionKind,
+    pub changes_the_event: bool,
+    pub continuation: ContinuationPolicy,
+    pub cursor_recorded: bool,
+    /// In canonical (sorted) order, exactly as admission records it.
+    pub retained_subjects: Vec<String>,
+    /// Re-entry from the recorded policy re-enters exactly the admitted
+    /// destination.
+    pub resume_matches_destination: bool,
+    pub destination: ManifestationFixtureExpectation,
+}
+
+/// Parses the committed fixture file and checks its declared schema.
+pub fn manifestation_fixture_file() -> Result<ManifestationFixtureFile, String> {
+    let file: ManifestationFixtureFile = serde_json::from_str(MANIFESTATION_FIXTURES)
+        .map_err(|error| format!("{MANIFESTATION_FIXTURES_PATH}: {error}"))?;
+    if file.schema != MANIFESTATION_FIXTURES_CONTRACT {
+        return Err(format!(
+            "{MANIFESTATION_FIXTURES_PATH}: unsupported fixture schema {} (expected {MANIFESTATION_FIXTURES_CONTRACT})",
+            file.schema
+        ));
+    }
+    Ok(file)
+}
+
+/// Verifies one fixture body against the real owners: parse (done at load),
+/// resolve through the current native registry, verify the expected
+/// readbacks — and, for a transition, re-enter from the recorded policy.
+pub fn verify_producer_fixture(
+    registry: &MRegistry,
+    fixture: &ProducerFixture,
+) -> Result<(), String> {
+    match fixture {
+        ProducerFixture::Manifestation {
+            request, expected, ..
+        } => expected.verify(&request.resolve(registry)?),
+        ProducerFixture::PlaceTransition {
+            request, expected, ..
+        } => {
+            let transition = request.resolve(registry)?;
+            if transition.kind != expected.act {
+                return Err(format!(
+                    "transition act {} does not match expected {}",
+                    transition.kind.as_str(),
+                    expected.act.as_str()
+                ));
+            }
+            if transition.kind.changes_the_event() != expected.changes_the_event {
+                return Err(format!(
+                    "act {} changes_the_event={} does not match expected {}",
+                    transition.kind.as_str(),
+                    transition.kind.changes_the_event(),
+                    expected.changes_the_event
+                ));
+            }
+            if transition.continuation != expected.continuation {
+                return Err(format!(
+                    "continuation {} does not match expected {}",
+                    transition.continuation.as_str(),
+                    expected.continuation.as_str()
+                ));
+            }
+            if transition.cursor.is_some() != expected.cursor_recorded {
+                return Err(format!(
+                    "cursor recorded={} does not match expected {}",
+                    transition.cursor.is_some(),
+                    expected.cursor_recorded
+                ));
+            }
+            if transition.retained_subjects != expected.retained_subjects {
+                return Err(format!(
+                    "retained subjects {retained:?} do not match expected {expected:?}",
+                    retained = transition.retained_subjects,
+                    expected = expected.retained_subjects
+                ));
+            }
+            expected.destination.verify(&transition.destination)?;
+            if expected.resume_matches_destination {
+                let reentered = resume_place_transition(registry, &transition)?;
+                if serde_json::to_value(&reentered).map_err(|error| error.to_string())?
+                    != serde_json::to_value(&transition.destination)
+                        .map_err(|error| error.to_string())?
+                {
+                    return Err(
+                        "re-entry from the recorded policy did not return the admitted destination"
+                            .into(),
+                    );
+                }
+            }
+            Ok(())
+        }
+    }
+}
+
+/// The one-call producer proof: every fixture body parses, resolves against
+/// the real registry and matches its expected readbacks. Consumer lanes (and
+/// CI) run this before trusting the fixture bodies.
+pub fn verify_manifestation_fixtures(registry: &MRegistry) -> Result<(), String> {
+    let file = manifestation_fixture_file()?;
+    for fixture in &file.fixtures {
+        verify_producer_fixture(registry, fixture)
+            .map_err(|error| format!("fixture {}: {error}", fixture.name()))?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -1499,6 +2136,7 @@ mod tests {
             roles,
             variants,
             &[],
+            &[],
             instance,
         )
         .unwrap()
@@ -1647,6 +2285,7 @@ mod tests {
             &roles,
             &[],
             &[],
+            &[],
             None,
         )
         .unwrap();
@@ -1704,6 +2343,7 @@ mod tests {
                 ExpressiveRole::Scene,
                 ExpressiveRole::Expression,
             ],
+            &[],
             &[],
             &[],
             None,
@@ -1847,6 +2487,7 @@ mod tests {
             &[ExpressiveRole::Force],
             &[bad_layer],
             &[],
+            &[],
             None,
         )
         .unwrap_err();
@@ -1859,6 +2500,7 @@ mod tests {
             "#2-5-4",
             MFace::Bimba,
             &[ExpressiveRole::Force, ExpressiveRole::Force],
+            &[],
             &[],
             &[],
             None,
@@ -1875,6 +2517,7 @@ mod tests {
             SubjectKind::Native,
             "#2-5-4",
             MFace::Bimba,
+            &[],
             &[],
             &[],
             &[],
@@ -1910,6 +2553,7 @@ mod tests {
             "#2-5-4",
             MFace::Pratibimba,
             &[ExpressiveRole::Force],
+            &[],
             &[],
             &[],
             None,
@@ -1963,6 +2607,7 @@ mod tests {
             roles,
             &[],
             contributions,
+            &[],
             None,
         )
         .unwrap()
@@ -2068,6 +2713,7 @@ mod tests {
                 "ql:k2/default-sky",
                 ExpressiveRole::Scene,
             )],
+            &[],
             None,
         )
         .unwrap_err();
@@ -2089,6 +2735,7 @@ mod tests {
                 "ql:k2/default-subject",
                 ExpressiveRole::Force,
             )],
+            &[],
             None,
         )
         .unwrap_err();
@@ -2117,6 +2764,7 @@ mod tests {
                     ExpressiveRole::Scene,
                 ),
             ],
+            &[],
             None,
         )
         .unwrap_err();
@@ -2138,6 +2786,7 @@ mod tests {
                 "bad\0subject",
                 ExpressiveRole::Scene,
             )],
+            &[],
             None,
         )
         .unwrap_err();
@@ -2165,6 +2814,7 @@ mod tests {
                 "ql:k2/default-sky",
                 ExpressiveRole::Expression,
             )],
+            &[],
             None,
         )
         .unwrap();
@@ -2189,6 +2839,7 @@ mod tests {
             "#2-5",
             MFace::Bimba,
             &[ExpressiveRole::Scene],
+            &[],
             &[],
             &[],
             None,
@@ -2216,6 +2867,7 @@ mod tests {
             "#2-5-4",
             MFace::Bimba,
             &[ExpressiveRole::Expression],
+            &[],
             &[],
             &[],
             None,
@@ -2247,6 +2899,7 @@ mod tests {
             &[ExpressiveRole::Expression],
             &[],
             &[],
+            &[],
             None,
         )
         .unwrap();
@@ -2262,6 +2915,7 @@ mod tests {
             "#2-5",
             MFace::Bimba,
             &[ExpressiveRole::Formation],
+            &[],
             &[],
             &[],
             None,
@@ -2300,6 +2954,7 @@ mod tests {
             "#2-5",
             MFace::Bimba,
             &[ExpressiveRole::Scene],
+            &[],
             &[],
             &[],
             None,
@@ -2450,6 +3105,7 @@ mod tests {
             &[ExpressiveRole::Force],
             &[],
             &[],
+            &[],
             Some("night-watch"),
         )
         .unwrap();
@@ -2520,6 +3176,7 @@ mod tests {
             &[ExpressiveRole::Scene, ExpressiveRole::Expression],
             &[],
             &destination_contributions,
+            &[],
             None,
         )
         .unwrap();
@@ -2551,6 +3208,284 @@ mod tests {
         assert!(
             error.contains("source basis moved"),
             "stale checkpoints are refused by name: {error}"
+        );
+    }
+
+    // ---- PS-E slice 3: determined native-relation qualification ------------
+
+    /// The Moon's harmonic resonance relation, as the current registry's
+    /// Bimba relation records actually carry it (#2-3-3-1-0 -> #2-5-4).
+    const MOON_HARMONIC_RESONANCE: &str = "bimba:relation:0bcfeaf7bf1582d0c70f9f10";
+    /// A second real relation at the same locus (RULED_BY -> #2-5-4), for
+    /// multi-relation determination.
+    const MOON_RULED_BY: &str = "bimba:relation:0709eb81d5cc104db049987e";
+
+    fn determined(role: ExpressiveRole, relation_ref: &str) -> DeterminedRelation {
+        DeterminedRelation {
+            role,
+            relation_ref: relation_ref.to_owned(),
+        }
+    }
+
+    #[test]
+    fn a_determined_relation_qualifies_its_role_with_its_source_revision() {
+        let registry = native_current_m_registry();
+        let manifestation = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation, ExpressiveRole::Force],
+            &[],
+            &[],
+            &[determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE)],
+            None,
+        )
+        .unwrap();
+        let force = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Force)
+            .unwrap();
+        let formation = manifestation
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Formation)
+            .unwrap();
+        assert!(formation.relation_qualifications.is_empty());
+        assert_eq!(force.relation_qualifications.len(), 1);
+        let qualification = &force.relation_qualifications[0];
+        assert_eq!(qualification.role, ExpressiveRole::Force);
+        assert_eq!(qualification.relation_ref, MOON_HARMONIC_RESONANCE);
+        assert_eq!(qualification.kind, "HARMONICALLY_RESONATES_WITH");
+        assert_eq!(qualification.class, "bimba-source");
+        assert_eq!(qualification.orientation, "directed");
+        assert!(!qualification.cross_m);
+        // The full relation record's endpoints, as the locus carries them.
+        assert_eq!(qualification.to_ref.as_deref(), Some("#2-5-4"));
+        assert!(qualification.from_ref.is_some());
+        // The relation's own source revision is recorded, not asserted: the
+        // record's file carries no per-file revision, so the registry's
+        // source revision is the revision it stands on.
+        assert_eq!(
+            qualification.source_revision,
+            registry.manifest().source_revision
+        );
+        assert!(!qualification.payload_sha256.is_empty());
+        assert!(qualification.standing.contains("recorded, never asserted"));
+        assert!(
+            qualification
+                .standing
+                .contains("HARMONICALLY_RESONATES_WITH")
+        );
+
+        // The determination is identity-bearing for the role it qualifies and
+        // only for it: the force occurrence relabels, the formation keeps its
+        // identity.
+        let bare = moon(
+            &[ExpressiveRole::Formation, ExpressiveRole::Force],
+            &[],
+            None,
+        );
+        let bare_force = bare
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Force)
+            .unwrap();
+        let bare_formation = bare
+            .occurrences
+            .iter()
+            .find(|o| o.role == ExpressiveRole::Formation)
+            .unwrap();
+        assert_ne!(bare_force.occurrence_ref, force.occurrence_ref);
+        assert_eq!(bare_formation.occurrence_ref, formation.occurrence_ref);
+    }
+
+    #[test]
+    fn a_required_relation_absent_from_the_locus_is_refused_by_name() {
+        let registry = native_current_m_registry();
+        // A well-formed but nonexistent relation reference.
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Force],
+            &[],
+            &[],
+            &[determined(
+                ExpressiveRole::Force,
+                "bimba:relation:000000000000000000000000",
+            )],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("bimba:relation:000000000000000000000000")
+                && error.contains("#2-5-4")
+                && error.contains("never fabricated"),
+            "the refusal names the relation and the locus: {error}"
+        );
+        // A real relation that exists elsewhere but not at this locus: the
+        // Moon's resonance is not among the Sky's own relation records.
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Force],
+            &[],
+            &[],
+            &[determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE)],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains(MOON_HARMONIC_RESONANCE) && error.contains("#2-5"),
+            "a foreign locus's relation is refused by name: {error}"
+        );
+        // A requirement naming a role the manifestation does not request.
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Formation],
+            &[],
+            &[],
+            &[determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE)],
+            None,
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("does not request"),
+            "unrequested roles are refused: {error}"
+        );
+        // The same relation required twice is refused: one relation qualifies
+        // an occurrence once.
+        let error = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &[ExpressiveRole::Force],
+            &[],
+            &[],
+            &[
+                determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE),
+                determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE),
+            ],
+            None,
+        )
+        .unwrap_err();
+        assert!(error.contains("duplicate determined relation"), "{error}");
+    }
+
+    #[test]
+    fn determined_relations_are_reorder_stable_and_reenter_through_the_recorded_transition() {
+        let registry = native_current_m_registry();
+        let roles = [ExpressiveRole::Force];
+        let relations = [
+            determined(ExpressiveRole::Force, MOON_RULED_BY),
+            determined(ExpressiveRole::Force, MOON_HARMONIC_RESONANCE),
+        ];
+        let mut reversed = relations.clone();
+        reversed.reverse();
+        let direct = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5-4",
+            MFace::Bimba,
+            &roles,
+            &[],
+            &[],
+            &relations,
+            None,
+        )
+        .unwrap();
+        let force = &direct.occurrences[0];
+        assert_eq!(force.relation_qualifications.len(), 2);
+        // Canonical order regardless of the declared order: by relation ref.
+        assert_eq!(force.relation_qualifications[0].relation_ref, MOON_RULED_BY);
+        assert_eq!(
+            force.relation_qualifications[1].relation_ref,
+            MOON_HARMONIC_RESONANCE
+        );
+        assert!(json_eq(
+            &resolve_subject_manifestation(
+                registry,
+                "ql:k2/default-subject",
+                SubjectKind::Native,
+                "#2-5-4",
+                MFace::Bimba,
+                &roles,
+                &[],
+                &[],
+                &reversed,
+                None,
+            )
+            .unwrap(),
+            &direct,
+        ));
+
+        // The determination re-enters through a recorded transition: resume
+        // reconstructs the requirements from the recorded qualifications and
+        // the resolver re-verifies them against the place's records.
+        let destination = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            "#2-5",
+            MFace::Bimba,
+            &[ExpressiveRole::Scene],
+            &[],
+            &[],
+            &[],
+            None,
+        )
+        .unwrap();
+        let cursor = ContinuationCursor {
+            locus_canonical_ref: destination.locus.canonical_ref.clone(),
+            face: destination.locus.face,
+            binding_content_revision: destination.locus.binding_content_revision.clone(),
+            active_manifestation_revision: destination.manifestation_content_revision.clone(),
+        };
+        let transition = admit_place_transition(
+            &direct,
+            &destination,
+            PlaceTransitionKind::SceneChange,
+            &[],
+            ContinuationPolicy::CheckpointRelease,
+            &[],
+            Some(cursor),
+        )
+        .unwrap();
+        let reentered = resume_place_transition(registry, &transition).unwrap();
+        assert!(json_eq(&reentered, &destination));
+        // And re-entering the qualified place directly returns the same
+        // force occurrence.
+        let requalified = resolve_subject_manifestation(
+            registry,
+            "ql:k2/default-subject",
+            SubjectKind::Native,
+            &direct.locus.canonical_ref,
+            MFace::Bimba,
+            &roles,
+            &[],
+            &[],
+            &relations,
+            None,
+        )
+        .unwrap();
+        assert_eq!(
+            requalified.occurrences[0].occurrence_ref,
+            force.occurrence_ref
         );
     }
 }
