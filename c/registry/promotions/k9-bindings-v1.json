@@ -803,6 +803,53 @@
    "tests": [
     "scripts/tests/test_ql_agent_evaluation.py"
    ]
+  },
+  {
+   "path": "adapters/pi/ql-agent/extensions/ql-agent.ts",
+   "stratum": "javascript",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Typed native Pi tools execute the same QL CLI and retained AIKit decision adapter. The owner schema, native validation, cancellation and exact returned receipts remain authoritative; the module contains no QL coordinate tables or classifier election.",
+   "tests": [
+    "crates/ql-cli/tests/pi_agent_native.rs",
+    "scripts/tests/test_ql_agent_body_evidence.py"
+   ]
+  },
+  {
+   "path": "adapters/pi/ql-agent/extensions/ql-event-context.ts",
+   "stratum": "javascript",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Bounded Pi/Prime hooks carry native event occasions and successful QL receipts. Shared native encounter projection runs asynchronously; stale, mode-off and superseded context is cleared. No provider inference occurs in body entry.",
+   "tests": [
+    "crates/ql-cli/tests/pi_agent_native.rs",
+    "scripts/tests/test_ql_agent_body_evidence.py",
+    "scripts/tests/test_ql_agent_encounter.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_body_evidence.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Actual Prime/Pi call IDs, exact actor arguments, native results and adjacent genuine provider snapshots are joined and replayed through the native owner. Source uptake, mode-off continuation and parity are checked without treating body identity as determination identity.",
+   "tests": [
+    "scripts/tests/test_ql_agent_body_evidence.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_receipt_metrics.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Qualifies actual AIKit distributions, request/provider hashes, model/runtime identity and input/latency usage against retained native evaluation. Unknown metrics remain absent and independent scores are not joint evidence.",
+   "tests": [
+    "scripts/tests/test_ql_agent_receipt_metrics.py"
+   ]
   }
  ]
 }
