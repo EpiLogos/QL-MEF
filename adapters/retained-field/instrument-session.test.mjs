@@ -74,12 +74,20 @@ function setup(options = {}) {
         current.generation = String(BigInt(current.generation) + 1n);
         current.amplitudes_metres[0][0] += 0.01;
         current.targets[0].position[2] += 0.25;
+      } else if (request.command.operation === 'stage-evaluate') {
+        // Controlled protocol case: the host's own compiled plan applies 1..N
+        // admitted applications in one envelope, so the generation moves by
+        // the plan's own steps while samples and PCM stay put.
+        current.generation = String(BigInt(current.generation) + (port.stageStep ?? 2n));
+        current.targets[0].position[2] += 0.125;
       }
       let reply = { ...initial, status: 'ok', request_id: request.request_id,
         last_request_id: request.request_id, field: structuredClone(current) };
       if (request.command.operation === 'inspect') reply.sources = { private: 'owner-only-source' };
       if (['influence', 'm1-advance', 'replace-event'].includes(request.command.operation))
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation };
+      if (['stage-state', 'stage-evaluate'].includes(request.command.operation))
+        reply.stage = port.stageBody ?? { schema: 'ql.stage-state/v1', subject_ref: current.subject_ref, slots: {} };
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -413,5 +421,59 @@ test('a refused played strike is absent from the performance journal', async () 
   await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.25, 0] }]);
   assert.equal(session.journal().acts.length, 1);
   assert.equal(session.journal().acts[0].operation, 'strike');
+  session.dispose();
+});
+
+test('stage-state is a read: the stage body is disclosed and the field never moves', async () => {
+  const { session, calls, port } = setup();
+  const stage = { schema: 'ql.stage-state/v1', subject_ref: 'controlled:one', slots: { form: { owner: null } } };
+  port.stageBody = stage;
+  const disclosed = await session.stageState();
+  assert.equal(disclosed, stage);
+  assert.deepEqual(calls.at(-1).command, { operation: 'stage-state' });
+  assert.equal(session.reading.available, true);
+  assert.equal(session.reading.acknowledged.generation, '1', 'a disclosure read does not advance the owner');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'stage-state'),
+    'a disclosure read is not an owner act');
+  session.dispose();
+});
+
+test('a stage evaluation is one owner act: the plan advances the generation inside one envelope', async () => {
+  const { session, calls } = setup();
+  await session.pump();
+  const before = session.reading.acknowledged.generation;
+  await session.operate({ operation: 'stage-evaluate',
+    procedure: { schema: 'ql.stage-procedure/v1', procedure_ref: 'ta-onta:studio:first-vertical', revision: 1,
+      subject_ref: 'controlled:one', trigger: { trigger: 'invocation' }, selector: ['material.damping'],
+      changes: [{ change: 'damping', per_second: 0.25 }] } });
+  assert.equal(calls.at(-1).command.operation, 'stage-evaluate');
+  assert.equal(BigInt(session.reading.acknowledged.generation) > BigInt(before), true);
+  assert.equal(session.reading.acknowledged.samples_elapsed, '512', 'a plan never schedules data-plane samples');
+  const acts = session.journal().acts;
+  assert.equal(acts.at(-1).operation, 'stage-evaluate');
+  assert.equal(acts.at(-1).command.procedure.procedure_ref, 'ta-onta:studio:first-vertical');
+  session.dispose();
+});
+
+test('a stage evaluation whose host reply did not advance is a cursor disagreement', async () => {
+  const { session, port } = setup();
+  port.stageStep = 0n;
+  await assert.rejects(session.operate({ operation: 'stage-evaluate', procedure: { schema: 'ql.stage-procedure/v1' } }),
+    /native cursor disagree/);
+  assert.equal(session.reading.available, false, 'an unexplained acknowledgement ends this lifetime');
+});
+
+test('stage retire/bind/unbind are not studio-driven: operate admits by exact name', async () => {
+  const { session } = setup();
+  await assert.rejects(session.operate({ operation: 'stage-retire', procedure_ref: 'x' }), /idle admitted owner/);
+  await assert.rejects(session.operate({ operation: 'stage-bind', procedure: {} }), /idle admitted owner/);
+  await assert.rejects(session.operate({ operation: 'stage-unbind', procedure_ref: 'x' }), /idle admitted owner/);
+  session.dispose();
+});
+
+test('a held owner takes no stage disclosure reads', async () => {
+  const { session } = setup();
+  session.hold('controlled hold');
+  await assert.rejects(session.stageState(), /idle admitted owner/);
   session.dispose();
 });
