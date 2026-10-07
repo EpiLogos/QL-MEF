@@ -1,0 +1,108 @@
+{
+  "constraints": [],
+  "determined": {
+    "derived": [],
+    "observed": []
+  },
+  "event_basis_digest": "sha256:03f36b162a07c8e916ed7c0c74cec325f2a5309ea706eba9b5235b8035b131e2",
+  "event_ref": "ql:event:qd0-controlled-concern",
+  "frame_ref": "ql:frame:qd0-controlled-concern",
+  "kernel_basis": {
+    "digest": "sha256:332ff7373cc16fc0cc26c033dde315c807b878a03ce368b3c82375c65707a78f",
+    "owner_ref": "ql:owner:mef-lens-registry",
+    "revision": "1.0.0-q2"
+  },
+  "requested_evidence": [],
+  "schema": "ql.agent-decision-frame/v1",
+  "source_basis": [
+    {
+      "ref": "ql:fixture:agent-decision/v1/semantic-specimen.txt",
+      "revision": "sha256:67cd1141d0d505f81687680f8066947ab704d143570f8719ad9c1e37a39a4786"
+    }
+  ],
+  "unresolved": [
+    {
+      "ambiguity_policy": "preserve-candidates",
+      "cardinality": {
+        "max": 12,
+        "min": 0
+      },
+      "field": "lens",
+      "id": "semantic-lens",
+      "labels": [
+        {
+          "description": "Quaternal",
+          "id": "L0",
+          "owner_ref": "mef:lens:L0@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Archetypal-Numerical",
+          "id": "L0'",
+          "owner_ref": "mef:lens:L0'@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Causal",
+          "id": "L1",
+          "owner_ref": "mef:lens:L1@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Phenomenal",
+          "id": "L1'",
+          "owner_ref": "mef:lens:L1'@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Logical",
+          "id": "L2",
+          "owner_ref": "mef:lens:L2@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Alchemical-Elemental",
+          "id": "L2'",
+          "owner_ref": "mef:lens:L2'@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Processual",
+          "id": "L3",
+          "owner_ref": "mef:lens:L3@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Chronological",
+          "id": "L3'",
+          "owner_ref": "mef:lens:L3'@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Phenomenological",
+          "id": "L4",
+          "owner_ref": "mef:lens:L4@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Scientific",
+          "id": "L4'",
+          "owner_ref": "mef:lens:L4'@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Para Vāk",
+          "id": "L5",
+          "owner_ref": "mef:lens:L5@1",
+          "owner_revision": "1.0.0-q2"
+        },
+        {
+          "description": "Divine Logos",
+          "id": "L5'",
+          "owner_ref": "mef:lens:L5'@1",
+          "owner_revision": "1.0.0-q2"
+        }
+      ]
+    }
+  ]
+}

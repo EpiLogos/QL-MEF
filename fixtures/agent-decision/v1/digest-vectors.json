@@ -1,0 +1,1596 @@
+{
+  "standing": "independently generated Python canonical-byte comparison vectors; not a model corpus",
+  "vectors": [
+    {
+      "value": 0,
+      "digest": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "value": 18446744073709551616,
+      "digest": "sha256:8b292fc2d32f1fd491784610c61b90dc4632a6e4add19261eca4c3979e4ea6d2"
+    },
+    {
+      "value": 1267650600228229401496703205376,
+      "digest": "sha256:5ee7924f903dfefa9253b5f63147f53433516da9daf01f6e729331dcf31b28c6"
+    },
+    {
+      "value": -1267650600228229401496703205376,
+      "digest": "sha256:a5577715f1e65fba7bcd108d30177fd124a7055d606a7d82b5f6fa471a2e43d2"
+    },
+    {
+      "value": -0.0,
+      "digest": "sha256:c26617c7ccbcaa6631b45d851b8cf56e21d2ca624bdb1193afdbd4b560702cec"
+    },
+    {
+      "value": 1.0,
+      "digest": "sha256:d0ff5974b6aa52cf562bea5921840c032a860a91a3512f7fe8f768f6bbe005f6"
+    },
+    {
+      "value": 1e-06,
+      "digest": "sha256:1187132475a4431d8ce6b306fecd75b877993db3279c7769716dacb5ed57e6b7"
+    },
+    {
+      "value": 1e+20,
+      "digest": "sha256:7c18c9fbdcc8281573e9db9e04f04c3790b10696f3706f0f03fa87427d33e28b"
+    },
+    {
+      "value": 5e-324,
+      "digest": "sha256:c46e7ca1be4c8734f373a56530787288fa2058d73d07855e9247e949f811a42a"
+    },
+    {
+      "value": 1.7976931348623157e+308,
+      "digest": "sha256:c2784e1abd6317452708f3fbf9641c16b959561bc621a1d408c23a20aa2cb585"
+    },
+    {
+      "value": {
+        "z": "🌟 L2′",
+        "a": "\n\u0001"
+      },
+      "digest": "sha256:132874888cdc580f41e715469df1d9563c332f2bf22677ff278dbf439ade792b"
+    },
+    {
+      "value": [
+        1.0,
+        1e-05,
+        1e+16
+      ],
+      "digest": "sha256:1d6494466df8215a00675540b81c816d93095f7b8176add22ecd3c9200f9e8e5"
+    },
+    {
+      "value": {
+        "native_measurement": 3.1687501777274505e+213
+      },
+      "digest": "sha256:a19d4802bf4c4b9ad93824f8be9672b268810203e263b8bed6aba242227ad5c8"
+    },
+    {
+      "value": {
+        "native_measurement": 6.570347263143165e+98
+      },
+      "digest": "sha256:d91fe9dcc13fc47a8b33c9d0e618d57a58d03eb9624f65c3a44ce4b915ac0fc5"
+    },
+    {
+      "value": {
+        "native_measurement": 2.609105804436482e+257
+      },
+      "digest": "sha256:e59d26314f77c83e80bac2ee17e7998cd72b477dd421413058219270ac3f818c"
+    },
+    {
+      "value": {
+        "native_measurement": -3.8185475507700466e+288
+      },
+      "digest": "sha256:16d5cd31efe7a81b9ab5bb894e939a689dd41807c6c0220582c87b283964bb0b"
+    },
+    {
+      "value": {
+        "native_measurement": -4.676891007102117e-93
+      },
+      "digest": "sha256:dbc2ccd16cf12047532addc4c22d2956fe8b827584bcd8692d70bab98e392316"
+    },
+    {
+      "value": {
+        "native_measurement": -4.813160660484721e-33
+      },
+      "digest": "sha256:4ed51bc51121ecfc8dafba514e66b6d8b2889aae636e1975d77658c4ef56bb1f"
+    },
+    {
+      "value": {
+        "native_measurement": -3.290378089392214e-190
+      },
+      "digest": "sha256:1034abfb70b532cd68deb84ddc372163c7a1ce76bf82cf330db1579027c89a04"
+    },
+    {
+      "value": {
+        "native_measurement": -6.553156571198406e-79
+      },
+      "digest": "sha256:35992c9b8259df3f15502cb841953907aec6a90d01900ee368b1a7e90e8032c0"
+    },
+    {
+      "value": {
+        "native_measurement": -3.8588505879076543e+31
+      },
+      "digest": "sha256:da944f5b660b6ad29ca7f096458075604860f3f07a846b501e1a73b5bb509202"
+    },
+    {
+      "value": {
+        "native_measurement": -8.36666316721336e+159
+      },
+      "digest": "sha256:885a24742548144daaef618cffda2bab726e1b51e0fba1f5616e8f98193c0b74"
+    },
+    {
+      "value": {
+        "native_measurement": -8.713382892534756e-96
+      },
+      "digest": "sha256:3aa7be2cc6b3d056c249cbe6ce14b923419774ef3a322011018f958592f0f9fe"
+    },
+    {
+      "value": {
+        "native_measurement": -6.751674416232305e-25
+      },
+      "digest": "sha256:f15a528ca66c6d89d4513a3b77a43c92e1595d641cf3551f50df0177b5ca2d44"
+    },
+    {
+      "value": {
+        "native_measurement": 7.818547614561802e-298
+      },
+      "digest": "sha256:c94c5816a99fed54c0e39a00cdde96622cea546520884cd39a1902f6ae4d26c0"
+    },
+    {
+      "value": {
+        "native_measurement": 2.1872398184014567e+245
+      },
+      "digest": "sha256:ee3185f0b8c80edb2ca9a4e11d00b93584d9a47387dc299e1d5d9191f280f920"
+    },
+    {
+      "value": {
+        "native_measurement": 4.0360326335859512e-115
+      },
+      "digest": "sha256:36bbe8377f8c4d45570554723b6440d6df33481feacdf8d62489bbb99b7992d4"
+    },
+    {
+      "value": {
+        "native_measurement": -9.56366109291183e+137
+      },
+      "digest": "sha256:7b2f07c16a252f2fff5f38dd817cd712381eaecc087ada84bf717499e2f5c77f"
+    },
+    {
+      "value": {
+        "native_measurement": -3.697666257469701e-287
+      },
+      "digest": "sha256:9a2a092ed280af1274fd251c9374bd4e1f3f2ecb080c8084e724fdaadfc662cd"
+    },
+    {
+      "value": {
+        "native_measurement": 4.875318182391713e+242
+      },
+      "digest": "sha256:ddc916dc1bb057464a2793d16d0bec6630f918591e88b4ab95b58c477a3eb5b7"
+    },
+    {
+      "value": {
+        "native_measurement": -5.779398815476626e-161
+      },
+      "digest": "sha256:bccac17db49226ae4da4196a3e5bf01b53c1cc85227a93a5d42c8c7fc80d8132"
+    },
+    {
+      "value": {
+        "native_measurement": 6.220697038819103e+163
+      },
+      "digest": "sha256:871bac0ab152cebeb575f3147810c531bd72c9524817ea45551d3cdf6708d642"
+    },
+    {
+      "value": {
+        "native_measurement": 6.9415902983842125e-208
+      },
+      "digest": "sha256:7c4af21d091a611a0df302c6fa519da700fe1a99b4bc33287aa5fa964d27c860"
+    },
+    {
+      "value": {
+        "native_measurement": 6.940746976551688e-96
+      },
+      "digest": "sha256:f6ad6879937c3ba1347f4b317791548aa19c8e6b678a74d557a3cb1a5afd3a31"
+    },
+    {
+      "value": {
+        "native_measurement": 1.985459272878516e-253
+      },
+      "digest": "sha256:8a704eb7c7d95efaeefd98153d71f7cc78e329d024757b4179575333ca742533"
+    },
+    {
+      "value": {
+        "native_measurement": 5.956495521197052e+154
+      },
+      "digest": "sha256:e3519bac2da42f12aff5c395eda62296cce16e6160c30263e180c65c849e8096"
+    },
+    {
+      "value": {
+        "native_measurement": -9.607407003810065e+106
+      },
+      "digest": "sha256:77416fc9abdc4fec4da484054da0f413cc7d3de64ae1f2c5d73b2efdf8e12eb1"
+    },
+    {
+      "value": {
+        "native_measurement": -8.801160129825276e+119
+      },
+      "digest": "sha256:264c9cc6229e4fca51bd9f4246330177ccf6df427b29756434448514d0e25260"
+    },
+    {
+      "value": {
+        "native_measurement": -6.783521780197515e+114
+      },
+      "digest": "sha256:4e22fedb3f96812c99006004ecbfd202df45d2c5f512fa81cd2df8f2cf20d133"
+    },
+    {
+      "value": {
+        "native_measurement": 2.267879332811349e-78
+      },
+      "digest": "sha256:51ffb55ad22cd1ad41ce4dfc85625933b20542f79668c29115101df0eeb86fdb"
+    },
+    {
+      "value": {
+        "native_measurement": 3.94032507083409e+68
+      },
+      "digest": "sha256:6ad4c3d272bf438820c5998bd23bc980c043f43257e60dc8b8d35079d9276a2e"
+    },
+    {
+      "value": {
+        "native_measurement": 8.505564682767068e+264
+      },
+      "digest": "sha256:54cd709fa07803dbd860e6a9f89b9d69094a688411ef07bf464bca666275b5e5"
+    },
+    {
+      "value": {
+        "native_measurement": 8.285954439017748e-177
+      },
+      "digest": "sha256:87e9aefe2802e164938c18531f7b72094916793e0d63755b7f5d9783f9101b2f"
+    },
+    {
+      "value": {
+        "native_measurement": 4.361993270793851e-23
+      },
+      "digest": "sha256:75d7a9eee037624ca7eebc2c1281b0452a6bcb6da30fdae7b48ac5a0e6b6e76e"
+    },
+    {
+      "value": {
+        "native_measurement": 4.4373083783943733e+254
+      },
+      "digest": "sha256:6bd3f1021f29f772319fc0741fe36650ed05d05ecc6b0ab10aedb945f601e84a"
+    },
+    {
+      "value": {
+        "native_measurement": 3.025580867511508e+150
+      },
+      "digest": "sha256:76d53b41c712317a8f40589f624bd15faabbaf53929b436894d136ecab31084e"
+    },
+    {
+      "value": {
+        "native_measurement": 4.435948124841498e-236
+      },
+      "digest": "sha256:41689e1c672f7c69b93a7eaa7f59bf74adbc3a6c1ef9f8b50dc198da2ab2c2bb"
+    },
+    {
+      "value": {
+        "native_measurement": -8.458907637626378e+286
+      },
+      "digest": "sha256:4d66590bdefb74058382e6ae6ecceb3a0ee755362ae3e06f1c5161d9b8aea983"
+    },
+    {
+      "value": {
+        "native_measurement": -4.795005063232034e-243
+      },
+      "digest": "sha256:eb713e0a74dfb44cd254a0f8f13902d67403468bd75b17673e8a58d888f1d4af"
+    },
+    {
+      "value": {
+        "native_measurement": 7.451230916230234e+146
+      },
+      "digest": "sha256:c9ca234dc8d9604e2e03f28efb7a8fd570f3211aeaf87fe8d60e4796a2c463e7"
+    },
+    {
+      "value": {
+        "native_measurement": -3.720240680332488e+250
+      },
+      "digest": "sha256:e3b3c5ef7176adbb97cdfd94f99ea25f6e67db2bc4e4483c47bcd2df0c178fc9"
+    },
+    {
+      "value": {
+        "native_measurement": 6.7292322803458025e-227
+      },
+      "digest": "sha256:65d6083bdb17de40461dbc1c006f219259181425a51b92ccc9f4f0b21bfdd94a"
+    },
+    {
+      "value": {
+        "native_measurement": 9.439217432314606e+258
+      },
+      "digest": "sha256:d6dfb93b61d57044832f97164da279ad585a8577a216700ce8097ce4193dbfd5"
+    },
+    {
+      "value": {
+        "native_measurement": 2.4584423707626038e-158
+      },
+      "digest": "sha256:5a969866664ff7f0107ad874c36f4ea173ec50b5c2386a8512a0b776f1a0ca49"
+    },
+    {
+      "value": {
+        "native_measurement": -8.352843145084267e-160
+      },
+      "digest": "sha256:321b8f871c7a944ce562898b6c58bd764ea9f93ac2c509c2cf5620e06dda6895"
+    },
+    {
+      "value": {
+        "native_measurement": 5.3966269858258386e-182
+      },
+      "digest": "sha256:8f308cda1c27ad4231c8814201c383c3a847a8c4c3376aaad5c6a5c61342d54b"
+    },
+    {
+      "value": {
+        "native_measurement": 3.528626543866964e+155
+      },
+      "digest": "sha256:ef5e6302b20f8f281b33ebbb49dc4da1e412dfb88306bbff3752789b842da280"
+    },
+    {
+      "value": {
+        "native_measurement": -1.9128717324600198e-176
+      },
+      "digest": "sha256:b9356b5622fcf7de0dccc79ace29d972fb351288ff678405858dd735591a466d"
+    },
+    {
+      "value": {
+        "native_measurement": -6.859074787922694e-154
+      },
+      "digest": "sha256:3f2f8f2f7ce0234e04fb4af26fcd2b9f3987b8aa197d17afb3565ef91a8f953e"
+    },
+    {
+      "value": {
+        "native_measurement": 3.6855074278014646e-92
+      },
+      "digest": "sha256:009a91ba2ac9ad3b1f190c939c10dde4917cd72e10df08185fb9c7941f08c19c"
+    },
+    {
+      "value": {
+        "native_measurement": -4.8216788116383835e-262
+      },
+      "digest": "sha256:7eb5fc984e1ffc65050b210a6c8ab2946198566519f9e2673ba588f36385e940"
+    },
+    {
+      "value": {
+        "native_measurement": -6.132673126929171e+165
+      },
+      "digest": "sha256:cf6735bede33eb808680418c69638d381afc0f322c224329acf57f12a05d8426"
+    },
+    {
+      "value": {
+        "native_measurement": 7.205588018011093e-158
+      },
+      "digest": "sha256:0f48da62d5f3813dec48132b75852a8a0acd988918e2b585f57abb5429b90ac5"
+    },
+    {
+      "value": {
+        "native_measurement": -2.6316397385569657e-256
+      },
+      "digest": "sha256:82d5e90cd5543da61330643712e24ee32a6e3c46c598d997615e5e4ea10d6929"
+    },
+    {
+      "value": {
+        "native_measurement": -4.783375990754056e+189
+      },
+      "digest": "sha256:a8bfe74d6b14524d01f4960aa8bd190386a8be2b360f763c3d47e07279601351"
+    },
+    {
+      "value": {
+        "native_measurement": 2.49060699510677e-230
+      },
+      "digest": "sha256:1316305c81a63d3e6d33a5c91f65122f02c02c4b12475fb5eeb79ec418a5e50d"
+    },
+    {
+      "value": {
+        "native_measurement": -6.53166568415382e+62
+      },
+      "digest": "sha256:7482739858c13bbf041484323ac68a0f908ab5cf7bcfcf345948878313586574"
+    },
+    {
+      "value": {
+        "native_measurement": 5.3620214470882057e-17
+      },
+      "digest": "sha256:9dfd1c5de8ecaddd259d03c28ddc9a6974696632e57496f2ac07539823aefc1e"
+    },
+    {
+      "value": {
+        "native_measurement": -5.939018276617554e-116
+      },
+      "digest": "sha256:035b7629b2c09a956b3ab0a238000c0e8b1a1091cddc40c75545ffa401fcec2c"
+    },
+    {
+      "value": {
+        "native_measurement": -2.9286753348526153e+243
+      },
+      "digest": "sha256:1b5d4969127aa38a6aee8831aa3eab154341f40ae2f7e56a6afcfa120d9055e5"
+    },
+    {
+      "value": {
+        "native_measurement": -7.254017042219023e+106
+      },
+      "digest": "sha256:5025b2ed73dddba85e862695fc076b0c3a839915a42b52501fc49fd7e7f14ebc"
+    },
+    {
+      "value": {
+        "native_measurement": 6.737869198871866e-270
+      },
+      "digest": "sha256:dee1e2659c36a56bd2bb75ce4cdf66a1baf56f6c82ba23e1c118c40338aec4e0"
+    },
+    {
+      "value": {
+        "native_measurement": -6.986321537050715e-79
+      },
+      "digest": "sha256:12f6e2bfb5f7007fed5a95b10b725bca594ad14ff72b93d6e1a4961058865c15"
+    },
+    {
+      "value": {
+        "native_measurement": -2.3714658014663214e-184
+      },
+      "digest": "sha256:c2e6e2d662e402c34a5a1b3df514a7926307bd53e941d48b3b1ab9e6a97d85d4"
+    },
+    {
+      "value": {
+        "native_measurement": 1.8914666248508438e-280
+      },
+      "digest": "sha256:3713c33868b5ed0711c5b0db4ada4f19e2cbadaa29b7190f6479d282b48e8516"
+    },
+    {
+      "value": {
+        "native_measurement": -3.639989821716874e-167
+      },
+      "digest": "sha256:f050f0656cb0d62b31069531bc7254f60f4814a58d56456f6de075a0f892c7a2"
+    },
+    {
+      "value": {
+        "native_measurement": -1.089818673909917e+47
+      },
+      "digest": "sha256:f56377f26fa500ba7b22803e634990d002eed2ae2a389b2f528cd763f87b7a63"
+    },
+    {
+      "value": {
+        "native_measurement": -8.059240313757417e-248
+      },
+      "digest": "sha256:d28c645c7065448338ecf8743b0a58d1c5feb94a300674f12f90d7092aa562ed"
+    },
+    {
+      "value": {
+        "native_measurement": -7.411299839302497e-128
+      },
+      "digest": "sha256:fb59e93215039b1887da83ec38860a469828550fb69ac09081266d7fd5d977e0"
+    },
+    {
+      "value": {
+        "native_measurement": -8.939591197784291e-154
+      },
+      "digest": "sha256:fdc1c8332c4c937787053e9bff81bc5821de6f15886c5a2653d3c7ba8ceadaf2"
+    },
+    {
+      "value": {
+        "native_measurement": -4.020214591347795e-290
+      },
+      "digest": "sha256:a506f506106ef3af81caf14912a048cce315994ab2fe2db515cf082e74272299"
+    },
+    {
+      "value": {
+        "native_measurement": -4.85341134257937e+17
+      },
+      "digest": "sha256:4882c5db67923d877495a8c46c03ef5f0afcb96e4192b2aac1a2037309d087ca"
+    },
+    {
+      "value": {
+        "native_measurement": 4.275477828153995e-239
+      },
+      "digest": "sha256:22a31f5c3b5fccad06a501ba83faa00aae24260d0c22b65a9bfc06f22df136b0"
+    },
+    {
+      "value": {
+        "native_measurement": -4.506111719216006e+176
+      },
+      "digest": "sha256:e3e394460d19615cb9ba468963ba947ae79dfa3d88c677c5d589fc275ab21525"
+    },
+    {
+      "value": {
+        "native_measurement": 1.6264224235611469e-195
+      },
+      "digest": "sha256:ccc7b8994ef9b1f8cf3427e1e2c344317ae8b56b9d670865a1bfa641f00c1293"
+    },
+    {
+      "value": {
+        "native_measurement": 2.895934564541414e-60
+      },
+      "digest": "sha256:afd815441fde2c8d1c13e2f6730614c6ffb3a6381abece710913fe876052bdca"
+    },
+    {
+      "value": {
+        "native_measurement": 6.141083565526965e+82
+      },
+      "digest": "sha256:4602ac06b65820a984362a6434a8863b0543c375c357a2e9f0cb37336cf69c86"
+    },
+    {
+      "value": {
+        "native_measurement": -6.821477677085238e+250
+      },
+      "digest": "sha256:5cfb4c4670fa5b4194074cb4104727528f3cbf930d1e019408c5ddb1dc39a967"
+    },
+    {
+      "value": {
+        "native_measurement": -0.03858961455922205
+      },
+      "digest": "sha256:6498cb3c1e0956d4926201e0d584c9f74fe65d0eaa00476695474d4b8eb988b4"
+    },
+    {
+      "value": {
+        "native_measurement": 9.322124386189972e-285
+      },
+      "digest": "sha256:2bae78f49a86cfcefe9c0f70a684dabd63f44c70857300a04d29b3da556334c7"
+    },
+    {
+      "value": {
+        "native_measurement": -3.559658698741028e-198
+      },
+      "digest": "sha256:6fe6e3e97df6188e6467c7054129a04d339177726242d8425d891547b4be4796"
+    },
+    {
+      "value": {
+        "native_measurement": 8.43704664844327e+287
+      },
+      "digest": "sha256:56b53a0489926deb0bc63e542fec905236cd47e874f0323c80874f566c189b8b"
+    },
+    {
+      "value": {
+        "native_measurement": -9.679131914139538e-39
+      },
+      "digest": "sha256:a76d3ec5174aab946a9f619b6c4fc96c8a0f4eeaf9d7ee6e9969bc5954d2740e"
+    },
+    {
+      "value": {
+        "native_measurement": -3.2252814143286005e+160
+      },
+      "digest": "sha256:ab6b433fdc84ff97ee5250cff9d06e8d5fbc0e27e5453def081897c1aec6d3a7"
+    },
+    {
+      "value": {
+        "native_measurement": -2.926410100696939
+      },
+      "digest": "sha256:1fcf4719f81f9167b654195a48aa3ad807c5e0a345a2fb01d0af42a162fe5bfa"
+    },
+    {
+      "value": {
+        "native_measurement": 9.631201755769341e+145
+      },
+      "digest": "sha256:7af49648ed8c5ef949abe343b13c6195e904c6bc81b356243ea85aaf1d98b9b0"
+    },
+    {
+      "value": {
+        "native_measurement": 2.85000976575059e-47
+      },
+      "digest": "sha256:676da19b6cf521f2649a6c9ea5389c7bf4ad237b6d5316aecb7e8454a1dc92e6"
+    },
+    {
+      "value": {
+        "native_measurement": 1.5147187949026697e+114
+      },
+      "digest": "sha256:07ff2199d011e6e5e0f37c2ef2b7c2521afed0b87ecd194a81a3cfdaa9ba2ee6"
+    },
+    {
+      "value": {
+        "native_measurement": 3.4930921116068524e+34
+      },
+      "digest": "sha256:d92178a4332d5a8d807e156907f25d213027c6c089b543dc445831654e4113ab"
+    },
+    {
+      "value": {
+        "native_measurement": -8.829193372271714e+50
+      },
+      "digest": "sha256:c24f7f4bc3347b4b7b0d5b7563613805cbfb476a28ed2c0ba3ebd3a447573a15"
+    },
+    {
+      "value": {
+        "native_measurement": 6.154358868878229e-54
+      },
+      "digest": "sha256:fcbce00dd1051b54f014e05ed2179990c733eaee62d4d650590d23bc329622f0"
+    },
+    {
+      "value": {
+        "native_measurement": -4.998886271405132e-133
+      },
+      "digest": "sha256:9c81a5747d34524f0a17f20d7741afd06ac670e9b81c2a4284f06a6230ba522e"
+    },
+    {
+      "value": {
+        "native_measurement": -6.754090315977324e-134
+      },
+      "digest": "sha256:bbd2d2f617d254ec454348ac4496e243afa092697be6bb0cca19052c56cd4f65"
+    },
+    {
+      "value": {
+        "native_measurement": 2.553547966355283e-283
+      },
+      "digest": "sha256:05fd4fe5723ec2c415ee48e29a7f7f4a3338804ce1005eaadc7100234a3fb41c"
+    },
+    {
+      "value": {
+        "native_measurement": -3.611132665512473e-129
+      },
+      "digest": "sha256:90b144a8cbb26746031787bb477ab31ad5e834f26a1b59f2f6efcb0061370e0f"
+    },
+    {
+      "value": {
+        "native_measurement": -6.436788521392883e+259
+      },
+      "digest": "sha256:06dd259b7651506cd0859048cb529f41221767231c867d98d5e9ec7fd7f17532"
+    },
+    {
+      "value": {
+        "native_measurement": -4.16419385073435e-269
+      },
+      "digest": "sha256:e30ffb123dfc686822265e14356c3832a5aa3039af7ac66e3e854866c68c7dd8"
+    },
+    {
+      "value": {
+        "native_measurement": 2.8972436722742704e+151
+      },
+      "digest": "sha256:d90b14f54dd38d2aac8711833fe8c1946c7afd9192f113e0591fe8b5e741d710"
+    },
+    {
+      "value": {
+        "native_measurement": -3.1660794953015638e-93
+      },
+      "digest": "sha256:717d75d4a39737e2b083dd583906bd6d42187a9bace185fba0ce03416089b34b"
+    },
+    {
+      "value": {
+        "native_measurement": 2.807071620080495e-102
+      },
+      "digest": "sha256:7f61d670ca41370d085da953503ff9bfc103fda8cc60c041e4d6dc10cce81a60"
+    },
+    {
+      "value": {
+        "native_measurement": 1.2188914117904702e-146
+      },
+      "digest": "sha256:d695c6c69e6a5cdd44068e214762910da16acb1b4e367e5d54002332b9a4e686"
+    },
+    {
+      "value": {
+        "native_measurement": -1.0809247691931478e-125
+      },
+      "digest": "sha256:2f45b9b16862947306fd50214d8776c7cd8d91cbe5ed133653fbfe530ad24079"
+    },
+    {
+      "value": {
+        "native_measurement": 8.361423475049093e-183
+      },
+      "digest": "sha256:5c23e3e309d65fa9b85c6442104f2301e26367d19e7c1fac1193749e20a93e27"
+    },
+    {
+      "value": {
+        "native_measurement": -4.442785868222554e-42
+      },
+      "digest": "sha256:4b8f188b667f6c1a5df6b2f8377b6895ff9996a7f8fa82c0fbbe9e2f934b14cc"
+    },
+    {
+      "value": {
+        "native_measurement": 9.427063062535206e+214
+      },
+      "digest": "sha256:3540a61e4f534338e5158336f27484248647b459ad20d9e15ddc5bbeace8f699"
+    },
+    {
+      "value": {
+        "native_measurement": -8.528402529001567e-54
+      },
+      "digest": "sha256:6177d1221793fa485dd1d305185fe9d779bc22889e1b3da4550b008d90038243"
+    },
+    {
+      "value": {
+        "native_measurement": 5.084969931330037e-219
+      },
+      "digest": "sha256:5d4d8051e6773958aeb9f3be999382062778a3ff73b5f19c3b1e46ac2d9e5ef2"
+    },
+    {
+      "value": {
+        "native_measurement": -2.4705312741888984e-264
+      },
+      "digest": "sha256:5ba946f2cf3bf2783e8ae23cd5c5b234f8ff6285917bc749a63c22db2311419e"
+    },
+    {
+      "value": {
+        "native_measurement": -9.96708679585974e+288
+      },
+      "digest": "sha256:cd12c843b27821487ce3d74fe0f7f334739fffc62ed7ebf137ee10334789410b"
+    },
+    {
+      "value": {
+        "native_measurement": 8.79380293801233e+178
+      },
+      "digest": "sha256:7562a920718b0209a4107157df2054d1b6de5293e5338766e3d7108eff13ba4c"
+    },
+    {
+      "value": {
+        "native_measurement": -3.712470034986992e+237
+      },
+      "digest": "sha256:079ce7ca408a1f666a02c367ed2178e9209f116bf827efd5c20f66bed8a2327f"
+    },
+    {
+      "value": {
+        "native_measurement": 1.7913374139203797e-116
+      },
+      "digest": "sha256:1769070ceef4fa1fd103219c19c63cce2cb57f12cdecca1f889516fd017bc782"
+    },
+    {
+      "value": {
+        "native_measurement": -8.777124452790461e-24
+      },
+      "digest": "sha256:05d5ed0e225d5e46600a8e3e2a50d9f438bbb8ded6b63bea5c3a453dc545a71e"
+    },
+    {
+      "value": {
+        "native_measurement": 1.3837812278477735e-205
+      },
+      "digest": "sha256:4d953bca264ebbee1d1a114b3f5a5e67359a9f6ad4c546f4ddec0fcbb7f245a0"
+    },
+    {
+      "value": {
+        "native_measurement": -4.4784268126377304e-156
+      },
+      "digest": "sha256:c90db23787c6c0bfdf13660c066f4908f40fab4f4903f525c8a26679536aee77"
+    },
+    {
+      "value": {
+        "native_measurement": -5.9905082038117975e-102
+      },
+      "digest": "sha256:20ed0f0f458916de63f35597fb91102062a883915c557765ec038816872544c1"
+    },
+    {
+      "value": {
+        "native_measurement": 7.822274433576581e-145
+      },
+      "digest": "sha256:e8b8f0500d41a848d6a36ae2113925f8a94172fe4b53f5e1c1081fe014e870cd"
+    },
+    {
+      "value": {
+        "native_measurement": 1.448323189195253e-177
+      },
+      "digest": "sha256:297ecc0adc81642a529131186da1bd4cbb3398ecfd088009bec06b347dbfde14"
+    },
+    {
+      "value": {
+        "native_measurement": 5.469822742872077e-171
+      },
+      "digest": "sha256:8028e556b4ec416eea25813f4830e2e3f235209265872f19c0a942dde88a6d95"
+    },
+    {
+      "value": {
+        "native_measurement": -7.542719172691134e-75
+      },
+      "digest": "sha256:1fb67236fbdf4527d825353949dbe26afcbc1495d1d3b233a2717a9d8e7b9609"
+    },
+    {
+      "value": {
+        "native_measurement": -1.1031713193096415e+217
+      },
+      "digest": "sha256:dfd449f906bf0c7542902deab8d8a1862188c174db71fee155793f1a284a119e"
+    },
+    {
+      "value": {
+        "native_measurement": 5.530390938526477e-227
+      },
+      "digest": "sha256:137fd59cc691b6d9ef30dc65015baa47b0fe9b2b7d3ed34b5fde983ae4e8eaa2"
+    },
+    {
+      "value": {
+        "native_measurement": 2.9696403153690067e-288
+      },
+      "digest": "sha256:388ecfd899c53a93ebf368c9c1ef94a36cb3326e5077e56cf417ca560334c2be"
+    },
+    {
+      "value": {
+        "native_measurement": -7.90734037379329e+115
+      },
+      "digest": "sha256:5169469863e6b210951d73a32c37af6f7fdc400b06f22bb86cc778b586cb82bb"
+    },
+    {
+      "value": {
+        "native_measurement": 7.501752342909395e-238
+      },
+      "digest": "sha256:a2ab39a1a96aef8331a6b0d1ddfd849432221584688f325669a68b9e7e870168"
+    },
+    {
+      "value": {
+        "native_measurement": -7.682069911252626e+32
+      },
+      "digest": "sha256:5a4a74567157029ff0be7e295aa7553bba7a20e10d9bb2f0eb2ae7be0c5cfce5"
+    },
+    {
+      "value": {
+        "native_measurement": 4.465770654906383e-63
+      },
+      "digest": "sha256:1048e247ba56b5a091c2715f5a325dbf3118d5f0f03e5497edb79684efa7dcee"
+    },
+    {
+      "value": {
+        "native_measurement": -3.1363201239065217e-52
+      },
+      "digest": "sha256:9cedda306668922ea4272f89dc1f1fa572d9ee4e9e457999907dc7c8c42b3cdb"
+    },
+    {
+      "value": {
+        "native_measurement": 4.3077123265748396e-141
+      },
+      "digest": "sha256:3da7db93a934c1ccfc9eaa7b8ef4aca092b41ad8353719559c3e4a19b7587128"
+    },
+    {
+      "value": {
+        "native_measurement": 5.932056881371732e-185
+      },
+      "digest": "sha256:0f494696a55d85c6f827229b9d2897bb5c05171748fb802385f951754a3d0859"
+    },
+    {
+      "value": {
+        "native_measurement": -9.00229918008641e+32
+      },
+      "digest": "sha256:e0fcadc3556170e6d41e3cc453a3ee26f190f6e085d1f2cc60155796621be76d"
+    },
+    {
+      "value": {
+        "native_measurement": 2.720132900913337e-84
+      },
+      "digest": "sha256:ec6432dad6a2d7bdb36b85400791fca3f6b089ed96c373803efae004c16e379c"
+    },
+    {
+      "value": {
+        "native_measurement": -3.34720078959452e-189
+      },
+      "digest": "sha256:ef33bb4dcc7364eb9eb1f094711a3e2cd8e8d5c56fb443d721fec9d1c3eafc86"
+    },
+    {
+      "value": {
+        "native_measurement": 4.795075858979181e+218
+      },
+      "digest": "sha256:d921745f379a11fe99b41e6db805261989d047a1653c35836e99daa4ad1b747e"
+    },
+    {
+      "value": {
+        "native_measurement": -4.949492656015435e-257
+      },
+      "digest": "sha256:f1838e8ae8691930250281614acd1b920fcef78b829d4cf2853d28f3ee5ed111"
+    },
+    {
+      "value": {
+        "native_measurement": 2.5982180077655405e+144
+      },
+      "digest": "sha256:c278f74876c7408a44de0de7fabd7da98aa711a47700c0b6eb5d3fd18b9b61b6"
+    },
+    {
+      "value": {
+        "native_measurement": -5.1606636600402875e-266
+      },
+      "digest": "sha256:e3976a59d1624ac03a09a30fd1182e3c8a69b8875c7180de8c06a0959b7f34e3"
+    },
+    {
+      "value": {
+        "native_measurement": 6.046458074834072e-156
+      },
+      "digest": "sha256:439b7b2fe68e7f6e3765c3394cf58a1707483491ee773d526d74e5be26dfcaab"
+    },
+    {
+      "value": {
+        "native_measurement": -8.741840638689046e+83
+      },
+      "digest": "sha256:973a1b9767ad46bc6311cae1988de8f2c0890a8da50bfcd209cb1feadb0cc8c0"
+    },
+    {
+      "value": {
+        "native_measurement": -3.7305517461673805e+246
+      },
+      "digest": "sha256:71b4d7db2c61c51cb6ba44dcc8651c232397807b460e7331d1791357c99d3edf"
+    },
+    {
+      "value": {
+        "native_measurement": -7.330391731039553e+85
+      },
+      "digest": "sha256:4cb0e18ff334c709a34514a9eda34f054dc0a338e7bb457e63724e7a9917d794"
+    },
+    {
+      "value": {
+        "native_measurement": -9.333371324063382e-127
+      },
+      "digest": "sha256:5e888cefb556ac843f1f97758d1a1de621e346c7818313d849ef199e335b399f"
+    },
+    {
+      "value": {
+        "native_measurement": -4.176339970420748e-257
+      },
+      "digest": "sha256:760fc047cdadbe54b3ae25040fb3ec431ee9ad33139b83f51260b04a145568f3"
+    },
+    {
+      "value": {
+        "native_measurement": -9.992909556679996e-182
+      },
+      "digest": "sha256:ad7f64c08af4467ac493622f21b9a6303cfe93facf7846c408408c349ccdbefe"
+    },
+    {
+      "value": {
+        "native_measurement": -9.861041954898297e+267
+      },
+      "digest": "sha256:33026347948d4838329bcb7fe662c22c4851c3618d91f77ab0f8208d588f2862"
+    },
+    {
+      "value": {
+        "native_measurement": -2.202656969284722e+168
+      },
+      "digest": "sha256:15e8375cfe8593191c38e878c62d1c842501a5e0504917d04f35181f6927c7d9"
+    },
+    {
+      "value": {
+        "native_measurement": 4.950169058426721e+227
+      },
+      "digest": "sha256:59e77be7bff40c741c2e4d90b9a53b47a924856491c402bda60daa9fb16f60bc"
+    },
+    {
+      "value": {
+        "native_measurement": 8.889989681592871e+295
+      },
+      "digest": "sha256:c1a01abf460afde1a470719b60936fe94a3328cfc33e6db34889374eddca1487"
+    },
+    {
+      "value": {
+        "native_measurement": -1.8720293211118587e-66
+      },
+      "digest": "sha256:f7037fe36c437a971e87dd34a32f6fdc6eb097e9ddd9838ce77d2d827fa421db"
+    },
+    {
+      "value": {
+        "native_measurement": -3.6705302775105155e-85
+      },
+      "digest": "sha256:929bdbc051d582bf3ae55e20093daff2c4a23db1ffba740ce4ed955a9e8d2386"
+    },
+    {
+      "value": {
+        "native_measurement": 4.410831260662553e-109
+      },
+      "digest": "sha256:025091ac5c4e71ffbc6a0a38e9a4ca590017995b600e29de517a3523a2bbe184"
+    },
+    {
+      "value": {
+        "native_measurement": 7.39598309717123e+57
+      },
+      "digest": "sha256:f3cbfcf79df417fe6a499a02e8d6c2da10a9fef4c408b26f86359b5e60123cb6"
+    },
+    {
+      "value": {
+        "native_measurement": -1.0687682203629788e-45
+      },
+      "digest": "sha256:eb4537274ff85caf52c001d2b65ebd718a9a3b3b9c2a1baf7d7cf61fc29d654b"
+    },
+    {
+      "value": {
+        "native_measurement": 7.61684521197957
+      },
+      "digest": "sha256:b28e0df446843d42afc2412e091594718a257171ea404f659da7e21cf9e99b9a"
+    },
+    {
+      "value": {
+        "native_measurement": -1.4858857387657575e-40
+      },
+      "digest": "sha256:ba051a5ffcd98f6f21795c082728d83ab0eed1f2c9def9d36a4202a612e2fbea"
+    },
+    {
+      "value": {
+        "native_measurement": 1.76358668202393e-259
+      },
+      "digest": "sha256:b28533e8e86ebc1591f5c03af5bfd8d8efce3ffd54ac08fef8c97d0545f98905"
+    },
+    {
+      "value": {
+        "native_measurement": 9.183828452945534e-208
+      },
+      "digest": "sha256:20b5f1918d6cc4492bc63e11c1886ad0e78cc73ccd750febe5e931b53aa45e72"
+    },
+    {
+      "value": {
+        "native_measurement": 9.341110452219527e-280
+      },
+      "digest": "sha256:701e91f23387f646e34ad318e2d8ddfeb744265a2df37df192bc2560df149e54"
+    },
+    {
+      "value": {
+        "native_measurement": 6.5050589955294115e-242
+      },
+      "digest": "sha256:55b18986f9fc2b1fa93e6a9ef51727866ee4eb14710a13dd1f0e7cfba5b50712"
+    },
+    {
+      "value": {
+        "native_measurement": -3.012861038181103e-15
+      },
+      "digest": "sha256:c6c07743f5250e75108abe94d17e99040801716652a523fc9726baa8eb76b21a"
+    },
+    {
+      "value": {
+        "native_measurement": 1.0554152552413964e+76
+      },
+      "digest": "sha256:bf26fd0d65daa1595832b5c3fdaa5c65d0d739d4915a316ff5364698d5b7b972"
+    },
+    {
+      "value": {
+        "native_measurement": -5.3888098381799314e-257
+      },
+      "digest": "sha256:531b0c75cce6fd67ab2a944d3ea56e173d93955ef17168f5fbb91e8b9685dee9"
+    },
+    {
+      "value": {
+        "native_measurement": 5.653217623852377e+185
+      },
+      "digest": "sha256:77b188385b5ec966fed5803df1d35198648948e3183cee8fb449beb8fd3cefec"
+    },
+    {
+      "value": {
+        "native_measurement": -5.145320204648026e-212
+      },
+      "digest": "sha256:66b98e0697387ea0a2c0813101e8960fe5ab2a57955d76c8f65c092d2bf4a9c6"
+    },
+    {
+      "value": {
+        "native_measurement": 90005287618916.58
+      },
+      "digest": "sha256:4b21f8aa6c06bf5fae286b3891bd5c7d8db8be8a31f427953a3403046530ae6f"
+    },
+    {
+      "value": {
+        "native_measurement": -2.1777380549944293e+220
+      },
+      "digest": "sha256:31b4d780cc83ef013a49933cedb0f239da52f3aed4eeee70bf77206b13dde6a1"
+    },
+    {
+      "value": {
+        "native_measurement": -7.379628790838552e-214
+      },
+      "digest": "sha256:f279f9eaff97af229d6ce4a8b043f8c1f4478c6a6ef684af229aa3c25b2ca85f"
+    },
+    {
+      "value": {
+        "native_measurement": 9.901264081866505e-45
+      },
+      "digest": "sha256:147ad77ddbbe79a370a63f950038599fe8e3e96cb7954cb1b433770066f986b4"
+    },
+    {
+      "value": {
+        "native_measurement": 1.3468791353727028e+176
+      },
+      "digest": "sha256:22d3d9f62a765fed770f3b18b44591b30541449d43f1100cb9d2944fb5646d66"
+    },
+    {
+      "value": {
+        "native_measurement": -6.700757356781407e-116
+      },
+      "digest": "sha256:aa529020bf3871d8488e1c38abb5d6578591de4f7da8634f418c3de416c0aa9d"
+    },
+    {
+      "value": {
+        "native_measurement": -1.0627770600184694e+201
+      },
+      "digest": "sha256:32eb0ccc9ca504beaa22ab385fb13849717d05bcc7cb615c293b9a8a51b89aba"
+    },
+    {
+      "value": {
+        "native_measurement": 7.272900701798458e-280
+      },
+      "digest": "sha256:0570b6fcf1a9566df46d22b2cb58ec97e6fba718255dab5ff16df3c73fe308ad"
+    },
+    {
+      "value": {
+        "native_measurement": -4.021169243832765e+113
+      },
+      "digest": "sha256:c04123d33269b4c3a8f33cb43b04d4a967f5d5d953c09412392c03246b67d5ac"
+    },
+    {
+      "value": {
+        "native_measurement": 4.614659095462752e-13
+      },
+      "digest": "sha256:b39894d727a04442af425fc404f80ff4ff646d64ca42cd3d86a522dc957758aa"
+    },
+    {
+      "value": {
+        "native_measurement": -8.632054945226402e-143
+      },
+      "digest": "sha256:fdc79fa4c1eb5bd0da141edc4a85f92fff510a4fb7b6cca3b6cde094ff298e4b"
+    },
+    {
+      "value": {
+        "native_measurement": -9.492511035209017e-143
+      },
+      "digest": "sha256:9bf883a4d09c9d1627d065c0018757db0b77eaf8245932859e16ff618609d583"
+    },
+    {
+      "value": {
+        "native_measurement": -2.601711023507507e-103
+      },
+      "digest": "sha256:33b3d6cfd17ff5598d5cf1b737e599e5f0e79071fc26f51833ab4f60c99beae0"
+    },
+    {
+      "value": {
+        "native_measurement": 7.402240144181747e+247
+      },
+      "digest": "sha256:4345690b6d8f178b5a39ed56c40a24ec79850eedc071c6f957e842b240688ee4"
+    },
+    {
+      "value": {
+        "native_measurement": 7.117396764112078e-130
+      },
+      "digest": "sha256:4a8dff952d24bebf013b56c2ae9486e1e0bb9d7d5f32d90d64a7fc03c9a60936"
+    },
+    {
+      "value": {
+        "native_measurement": 3.177286150430696e+287
+      },
+      "digest": "sha256:0e96fab38bc557c715a93de33c8f8ab2c978663f3fe5d2a0ba909396edd74606"
+    },
+    {
+      "value": {
+        "native_measurement": 1.22937947637908e-171
+      },
+      "digest": "sha256:c1bcccef6646daf78e4f54907bfcd0b0aaef71656a75be501a880b1c1cb3ac4c"
+    },
+    {
+      "value": {
+        "native_measurement": 9.72391173325056e+19
+      },
+      "digest": "sha256:915e2f7257627a342d81b948a379e32574b798be35cf56f4cc1d3c4248381d74"
+    },
+    {
+      "value": {
+        "native_measurement": -1.909724841588436e+97
+      },
+      "digest": "sha256:589518ac414cb11488395f979be862c7d599faa6778273128a1c3c69c410ab85"
+    },
+    {
+      "value": {
+        "native_measurement": 4.5494717517315156e+42
+      },
+      "digest": "sha256:d2f3f8f21c77835744ef058f2b97c8b9bbfeb75c44a3029c7489f0a2df894263"
+    },
+    {
+      "value": {
+        "native_measurement": 4.193015459035432e+110
+      },
+      "digest": "sha256:7905a90c7d73174ab6d02b9bb1cb7c66695e5f415e9c653cb084c777e25b00eb"
+    },
+    {
+      "value": {
+        "native_measurement": -3.315694925626653e+144
+      },
+      "digest": "sha256:64f3aa3fbd4abd2fdeccfb39db3eb6420c1c7b6f96ee7aeb545619902cd0c1ad"
+    },
+    {
+      "value": {
+        "native_measurement": 7.966764696368782e+150
+      },
+      "digest": "sha256:526e20e82227135e916746f94a595d454c594865bc5da4816c536d2a1d34182d"
+    },
+    {
+      "value": {
+        "native_measurement": 1.4653061842781657e+270
+      },
+      "digest": "sha256:013ef06db416a1229fe63a7b0a331c70a35935200db8e676d82ec1964e8c149b"
+    },
+    {
+      "value": {
+        "native_measurement": 3.650140268126378e-79
+      },
+      "digest": "sha256:f5b7d15becba6703661ba2a2fa7592a7aafc8dcae12027c4a8a9431b0a7f48b9"
+    },
+    {
+      "value": {
+        "native_measurement": 5.779966491116271e-167
+      },
+      "digest": "sha256:eb76d029731a90d2f61bddc77bbe03f27d95368ebe71853dd107540364e42fde"
+    },
+    {
+      "value": {
+        "native_measurement": 4.287267698346979e-286
+      },
+      "digest": "sha256:8de1d830600f2796caa942f00dd05f4b641bf4c8c2f230882b8634542bd80ff2"
+    },
+    {
+      "value": {
+        "native_measurement": -7.164221530164085e-241
+      },
+      "digest": "sha256:90a6bc4d7a107135470547a9fdfac427fd3466b99638c7e31c881d2e7cff5cbd"
+    },
+    {
+      "value": {
+        "native_measurement": 3.4767310399891138e+84
+      },
+      "digest": "sha256:333f6df1d33459a108d66013b9da37a5be8f68ae9aa21592be551259825800ff"
+    },
+    {
+      "value": {
+        "native_measurement": -4.9833909842055716e-272
+      },
+      "digest": "sha256:d56754fc22bde38f71c46bb2463bcdc9c4763ab136f5fad84318fbaf3f34e56e"
+    },
+    {
+      "value": {
+        "native_measurement": 4.598672110050663e-39
+      },
+      "digest": "sha256:e03c3e130fc7e29db92a761351ec7a1254e3c15ee4d277b286b42f7adcb3e560"
+    },
+    {
+      "value": {
+        "native_measurement": 8.213283330833783e-180
+      },
+      "digest": "sha256:069bd2101ffcaf4ff30abe68dec84d5c4384cf41923f07f2af7f217942691ec6"
+    },
+    {
+      "value": {
+        "native_measurement": 2.6934469554933037e-79
+      },
+      "digest": "sha256:90466f1f60f076c45b0d8624dbb628aefdbc31db8b9a32901410f76827267566"
+    },
+    {
+      "value": {
+        "native_measurement": -4.973634797148501e+192
+      },
+      "digest": "sha256:8cff6186ddd9ee0584c79efd061f1973cdc2d5ec7655ac99674d8c97473df718"
+    },
+    {
+      "value": {
+        "native_measurement": 5.736302336540158e-208
+      },
+      "digest": "sha256:9180b0fdc2c9326b61d4889bd0da1aa945f392d80d7f6e3359a833e08841fd2a"
+    },
+    {
+      "value": {
+        "native_measurement": 8.633023491842575e-217
+      },
+      "digest": "sha256:2d38a3ba62ebb1b9ae7228dafae86e7f567d91845db5ee65863b48c727f8b0eb"
+    },
+    {
+      "value": {
+        "native_measurement": 784751500215498.4
+      },
+      "digest": "sha256:5825f7f157398eb6c7f03373c1c365e49c91ae9f4b46451771e188ccac5a41a7"
+    },
+    {
+      "value": {
+        "native_measurement": 3.4256658493076845e+217
+      },
+      "digest": "sha256:8fcd567727684d4f7027d436de5d371e405100f1d851b39f0f3dfa8d13e7b018"
+    },
+    {
+      "value": {
+        "native_measurement": 3.534200315714362e+273
+      },
+      "digest": "sha256:932a448e13577f2fea05b3800386abeb71fba02a6385583b832b2f9b268a6fd2"
+    },
+    {
+      "value": {
+        "native_measurement": 3.898033933134781e+80
+      },
+      "digest": "sha256:e5bccec604e40d8739ed70706306c88ead07b530edfe2f3f26b433f00d8f0120"
+    },
+    {
+      "value": {
+        "native_measurement": 4.270786023206173e+187
+      },
+      "digest": "sha256:f7d72e960aa05e77cebb0c79fc48eac959524207e1d4bfade6b00b9219fb7b17"
+    },
+    {
+      "value": {
+        "native_measurement": 6.50565884573288e+44
+      },
+      "digest": "sha256:a6f8282a7f33a5c67b88f11b29220fd09951df347ea2d594e94fc02786746602"
+    },
+    {
+      "value": {
+        "native_measurement": 3.957235095686793e+51
+      },
+      "digest": "sha256:94c8aeb6fec3e6d1fd979b014974edcc8f8d090db8e52f5b4d6f5a436117de79"
+    },
+    {
+      "value": {
+        "native_measurement": -8.929522275534034e+289
+      },
+      "digest": "sha256:a7ead170ca6a8d56af0b61df441a50cc69feb668eceace794e3c0b808873d5b1"
+    },
+    {
+      "value": {
+        "native_measurement": 6.52392153146401e+221
+      },
+      "digest": "sha256:a4ca6e5828d8723158601a26438d19cdbae0a852d0cd206b678a821a5f46e85f"
+    },
+    {
+      "value": {
+        "native_measurement": -1.825402632686346e-209
+      },
+      "digest": "sha256:7afaee9eff9b5d1a3875ca8a13f80a15712bb3a7b4c6c40b4462920374b98331"
+    },
+    {
+      "value": {
+        "native_measurement": 3.255430651929274e+117
+      },
+      "digest": "sha256:2109d0b3a37688cf88470a3e5a37a89feeb2f2fb4ebe860486758e3103536290"
+    },
+    {
+      "value": {
+        "native_measurement": 3.335209483955579e-262
+      },
+      "digest": "sha256:44d37558197123dc30cc65354ca5531432d9d1814d224dcb74c90ac9b3943105"
+    },
+    {
+      "value": {
+        "native_measurement": 1.9289074636517876e-253
+      },
+      "digest": "sha256:5fb4d38fa6c18294fd3585f85e673c49cd655b6c749cb383a24ad8c9d673f4a8"
+    },
+    {
+      "value": {
+        "native_measurement": -7.386872141504388e+248
+      },
+      "digest": "sha256:beb63558ef09b4238cf31a47710449db3d3aca40ed2e07f41a68a96aee5086a8"
+    },
+    {
+      "value": {
+        "native_measurement": -7.348195295573823e+278
+      },
+      "digest": "sha256:91792ca2f03dd7fd4c2e58cf5ee4500d6b3066fbcca75b14f2b2fb81f58884c7"
+    },
+    {
+      "value": {
+        "native_measurement": -7.848883632438148e-55
+      },
+      "digest": "sha256:f3eb1a1cb878fbf22a8b3454b91501aa067bd7419d5f28f2cfa267797717d184"
+    },
+    {
+      "value": {
+        "native_measurement": 9.24826439234947e-270
+      },
+      "digest": "sha256:4d62739a0865e390dbaad759419b82fc3d0b7b000266233fb7c9d287032ddec3"
+    },
+    {
+      "value": {
+        "native_measurement": -6.646570016894771e-161
+      },
+      "digest": "sha256:b63199a40807d8aa97ff3d12e85e37a82f971ede0843d0e7bdc012f729b0c275"
+    },
+    {
+      "value": {
+        "native_measurement": -5.951281922085445e+64
+      },
+      "digest": "sha256:65bfb80c1d34ed07e51dc11c309de9cf24949fdb25c67c5a86cead8f9d3d586f"
+    },
+    {
+      "value": {
+        "native_measurement": -9.170500601384346e+126
+      },
+      "digest": "sha256:da3023d85511d8df254170859870c7f92a48b202a7982567bcac544b668a2f66"
+    },
+    {
+      "value": {
+        "native_measurement": -9.863422934073636e+83
+      },
+      "digest": "sha256:4d6d1392e905d25bc6f905b29cd48eb7e83cee4c6f9ddebb77bea5b212220f52"
+    },
+    {
+      "value": {
+        "native_measurement": 8.534772605417603e+127
+      },
+      "digest": "sha256:a4aac611e7feb69eafb24819893cb2442aa56615c0ce23bc75c310aad4818231"
+    },
+    {
+      "value": {
+        "native_measurement": 6.090637785188253e+228
+      },
+      "digest": "sha256:237ec0e7f94a0f2bf44c306476c16a1a70bb47688e82a2431b8cae73107c3a36"
+    },
+    {
+      "value": {
+        "native_measurement": -2.0036373733001644e+167
+      },
+      "digest": "sha256:2eb3180f6f06800d7340e9d98025d1fcfceb651c52137091f8c981efc5bd4940"
+    },
+    {
+      "value": {
+        "native_measurement": -2.3509252840959284e-117
+      },
+      "digest": "sha256:6086aeecaaa2a6126036d8d55e1e5fb7669767b06ae96814f3865ea5e19beef5"
+    },
+    {
+      "value": {
+        "native_measurement": -2.3747254805981343e-142
+      },
+      "digest": "sha256:3ca2536fe71d2e660eda727bea091377992aa1e8b989c938fc533720eeb0a239"
+    },
+    {
+      "value": {
+        "native_measurement": -9.038365062633025e+239
+      },
+      "digest": "sha256:8a28eced87425d546977332ca731aee48e90ed89332a87bc1906c59380bb5c54"
+    },
+    {
+      "value": {
+        "native_measurement": -3.3021563704303626e-219
+      },
+      "digest": "sha256:ca849ab439ff40af1147f18b37f5cd6228c61391b88fcc47fbd123c28e6b343a"
+    },
+    {
+      "value": {
+        "native_measurement": -9.228007473133083e-114
+      },
+      "digest": "sha256:964078539a0afaf34e432998e9fb235121f2d2b8e97bce9c49e168db7cf1a009"
+    },
+    {
+      "value": {
+        "native_measurement": -2.9110716570099315e-169
+      },
+      "digest": "sha256:b4025dab0b5c1b4a0d2fb0e1527409f1881dd3f0f4f854c704857aba0d65a9fc"
+    },
+    {
+      "value": {
+        "native_measurement": -7.867849087303205e+34
+      },
+      "digest": "sha256:0bfea02e5199e772283af7a204721ce2bdd47258ef7a2ecb5b4c864ba8c1b417"
+    },
+    {
+      "value": {
+        "native_measurement": -6.757180457136252e-237
+      },
+      "digest": "sha256:87e3f9c178ccc5a043a3626b47bbe420ba92d1d6d522a76f6b265699e5e6f41c"
+    },
+    {
+      "value": {
+        "native_measurement": 3.1937102005535724e-141
+      },
+      "digest": "sha256:91c5211b49b11588d14bd891da6e54e74509bdaf60012c8b825e115282045bee"
+    },
+    {
+      "value": {
+        "native_measurement": -2.7487553954622635e-132
+      },
+      "digest": "sha256:e2d4706610f058fbbf109c16f3bea74f926621d25c567c2ab6c9a970556fff96"
+    },
+    {
+      "value": {
+        "native_measurement": -7.096317507126318e-167
+      },
+      "digest": "sha256:5daa5f6dcbb61f84486aaba2ae89f2a5047db90e09ba9a3414aae6475c496ba6"
+    },
+    {
+      "value": {
+        "native_measurement": -4.13355044065752e+295
+      },
+      "digest": "sha256:363b962251e94fd46b0c86462eb435dbed3d32ecf2a01e8e1151da2a4ef41436"
+    },
+    {
+      "value": {
+        "native_measurement": -5.776359005428959e-292
+      },
+      "digest": "sha256:28df0eedb0a428cb17bb93bd470f4652137382b538aaf0967a5aca32c855e8ff"
+    },
+    {
+      "value": {
+        "native_measurement": 2.2506591785433926e-157
+      },
+      "digest": "sha256:53c37f9a67a78780996bd1d8e44e51ee29a8a8dea5a3e57e0cc2364dd95b3676"
+    },
+    {
+      "value": {
+        "native_measurement": 6.288830280987955e-164
+      },
+      "digest": "sha256:564c2e358813c641b9ab18cd1f363351733fb6cbd1742122161282ea1777ed77"
+    },
+    {
+      "value": {
+        "native_measurement": 3.324210071403602e-280
+      },
+      "digest": "sha256:c8703036860a2c24d3c265730ff06cd86f8d725f699c38676b6f384a7197436f"
+    },
+    {
+      "value": {
+        "native_measurement": 9.481477522785943e+283
+      },
+      "digest": "sha256:9f2ae97f548da8353a631cdf7cd3bcd7a73b499549c178093901f613ba9305d8"
+    },
+    {
+      "value": {
+        "native_measurement": -2.925679462122235e-273
+      },
+      "digest": "sha256:8a00ec8087734947b9fb23e20401e54577af5d9a8f439daa772a753cead86ea2"
+    },
+    {
+      "value": {
+        "native_measurement": 4.839100264354759e+111
+      },
+      "digest": "sha256:8214f933b7c311ea4ee82c3de0dbf83ac9f484265ac70cab06e9e7931f0a98ef"
+    },
+    {
+      "value": {
+        "native_measurement": -3.2348233968574335e-72
+      },
+      "digest": "sha256:2d14f272cfd4362c2eaeee62235e73a4288077472394fcee21ee6c180e0fb425"
+    },
+    {
+      "value": {
+        "native_measurement": 4.26189503695096e+184
+      },
+      "digest": "sha256:763a16c12916e38e1dc946cb450c3872049f67154ba5ee99e2ad94e2b7fdf525"
+    },
+    {
+      "value": {
+        "native_measurement": 6.00655157953298e-209
+      },
+      "digest": "sha256:16e3ab540f0cb8e768892ae6897087d4b4d4aad55a45c87c17af9ec51bd70a3d"
+    },
+    {
+      "value": {
+        "native_measurement": -4.122209455439547e+103
+      },
+      "digest": "sha256:5deaec5dbd494d91104cf318cc41e7ab6404028b7f00322a65ae15e8617ddfe0"
+    },
+    {
+      "value": {
+        "native_measurement": 7.366487375573037e-260
+      },
+      "digest": "sha256:86c511b461868b8a97d669e10dca373a704f396a0c95ea965bd4551dfb52d8aa"
+    },
+    {
+      "value": {
+        "native_measurement": 233460.99221976436
+      },
+      "digest": "sha256:637b1abbfa7dc76d23bf375ddcee34a0b438dac2d843d33a4c382d94b6c6fdf4"
+    },
+    {
+      "value": {
+        "native_measurement": 9.234752106135414e+152
+      },
+      "digest": "sha256:ce4349ace6411a853fb6ab5e7c740ece422ce5f0cc9db6e94ffbd92fa0b99811"
+    },
+    {
+      "value": {
+        "native_measurement": 8.426881291539018e-66
+      },
+      "digest": "sha256:77359b35c9d1a51f921043a949382fef702544f3b112f4147bd573d61563aed0"
+    },
+    {
+      "value": {
+        "native_measurement": 7.256052217282691e-213
+      },
+      "digest": "sha256:f0356163ed4734aa52bc80e272dfd695711862192b9589e90756a0201c7ea51b"
+    },
+    {
+      "value": {
+        "native_measurement": -6.230043401586007e-212
+      },
+      "digest": "sha256:79768a92c2d7328fbc5e4d748cd738cd434111f9976f1490ef9c2894054eb695"
+    },
+    {
+      "value": {
+        "native_measurement": -3.516449930079726e+19
+      },
+      "digest": "sha256:46640348a42bc14db749e527ec68d7d8c87cc8f61c4bcd6427224b623101403b"
+    },
+    {
+      "value": {
+        "native_measurement": 4.636564056159416e+205
+      },
+      "digest": "sha256:4e8284041ea2e21a476d7b9ca57ad2aa36f3dd8d822297b2c1d455193df2386a"
+    },
+    {
+      "value": {
+        "native_measurement": 9940.559105722374
+      },
+      "digest": "sha256:c6f7fa27d8f8a6779aec2f8fabe6f1e26800386d445dc7e4068a2de5abb03fe0"
+    },
+    {
+      "value": {
+        "native_measurement": -6.338883280337046e-25
+      },
+      "digest": "sha256:91c2d28b4bf2390d0b9b7027915f05992b8c26fddca80b0da2c542cd04d2dfe6"
+    },
+    {
+      "value": {
+        "native_measurement": 7.498076296429272e+223
+      },
+      "digest": "sha256:3d2cd6895c6e769bea7eff1b4fd3d092683f9637595e1d0281d2937abc8d4b46"
+    }
+  ]
+}

@@ -272,11 +272,15 @@ fn v2_binds_both_tunings_over_every_present_source_path_without_replacing_vimars
                     *frequency
                 );
             }
+            // The audio path computes mode frequencies at f32-grade precision;
+            // authored octet values are exact decimals (serde_json carries them
+            // verbatim under arbitrary_precision), so compare at the audio
+            // path's own precision rather than raw f64 equality.
             assert_eq!(
-                modes[0].frequency_hz,
+                modes[0].frequency_hz as f32,
                 basis.m2["vimarsha"]["reading"]["audio_octet_hz"][3]
                     .as_f64()
-                    .unwrap()
+                    .unwrap() as f32
             );
             assert_eq!(modes[9].frequency_hz, 137.0, "unbound mode was rewritten");
             assert_eq!(

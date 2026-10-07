@@ -17,6 +17,7 @@ use std::fmt::{self, Display};
 use std::process::ExitCode;
 use std::str::FromStr;
 
+mod agent_event_command;
 pub mod configuration;
 mod epi_agent_command;
 mod m3_command;
@@ -328,6 +329,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
         Some("techne") => plain(techne_command::command(&args[1..], json)),
         Some("shape") => plain(shape_command::command(&args[1..], json)),
         Some("epi-agent") => plain(epi_agent_command::command(&args[1..], json)),
+        Some("agent-event") => plain(agent_event_command::command(&args[1..])),
         Some("nara") => plain(nara_command::command(&args[1..])),
         Some("scene") => plain(scene_command::command(&args[1..])),
         Some("music") => plain(music_command::command(&args[1..])),
@@ -358,6 +360,7 @@ Ta-Onta procedural stage (the live scene's procedural owner; one command, one ho
 Music (controller projections of the accepted musical object):\n  ql music janko window [--columns N] [--first-column C] [--lens 0..=11] [--json]\n                                    the six-row surface over one column period\n  ql music janko key --row 0..=5 --column C [--lens 0..=11] [--json]\n                                    one key's sounding class, kernel coordinate and fifths overlay\n  ql music janko touch-points --pitch 0..=11 [--json]\n                                    the three repeated touch-points of one sounding note\n\n\
 Nara personal field (contextual):\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|context|delegate|enrichment|receive> <request.json|-> [--json]\n\n\
 Specialised constitution and invocation (contextual; not the generic Agent creator):\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n\n\
+Agent event reading (supplied events; deterministic completion before optional decisions):\n  ql agent-event project <request.json|-> [--json]\n  ql agent-event frame <request.json|-> [--json]\n  ql agent-event harmonic <request.json|-> [--json]\n  ql agent-event validate <request.json|-> [--json]\n\n\
 Service negotiation (operator negotiation, contextual supplied operations):\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n                                    provider-backed operations disclose their current negotiated availability\n\n\
 System, diagnosis and configuration (operator; the configuration surface is disclosure-only):\n  ql verify [--json]\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n                                    every contributed setting is read-only; mutation refuses with a structured unsupported_setting error\n  ql --version\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.",
@@ -397,6 +400,10 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "epi-agent.constitution",
             "epi-agent.faculty",
             "epi-agent.invoke",
+            "agent-event.project",
+            "agent-event.frame",
+            "agent-event.harmonic",
+            "agent-event.validate",
             "nara.capabilities",
             "nara.inspect",
             "nara.calculate",

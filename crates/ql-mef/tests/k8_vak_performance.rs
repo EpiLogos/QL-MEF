@@ -189,11 +189,15 @@ fn ql_performance_event_selects_context_frame_mode_without_rewriting_m1() {
     );
     assert_eq!(serde_json::to_value(&basis.input).unwrap(), original);
     assert_eq!(basis.input.source_receipts[1], event);
+    // The audio path computes mode frequencies at f32-grade precision;
+    // authored octet values are exact decimals (serde_json carries them
+    // verbatim under arbitrary_precision), so compare at the audio
+    // path's own precision rather than raw f64 equality.
     assert_eq!(
-        basis.m2_input.resonator.as_ref().unwrap().modes[0].frequency_hz,
+        basis.m2_input.resonator.as_ref().unwrap().modes[0].frequency_hz as f32,
         basis.m2["vimarsha"]["reading"]["audio_octet_hz"][0]
             .as_f64()
-            .unwrap()
+            .unwrap() as f32
     );
     assert_eq!(
         serde_json::to_value(request.compose().unwrap()).unwrap(),

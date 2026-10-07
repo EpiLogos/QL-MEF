@@ -1,0 +1,31 @@
+{
+  "bindings": {
+    "body_ref": "body:prime:contract-specimen",
+    "native_event_refs": [
+      "prime:event:qd0"
+    ],
+    "session_ref": "session:qd0:prime"
+  },
+  "event_ref": "ql:event:qd0-controlled-concern",
+  "generation": 1,
+  "kind": "controlled-source-reading",
+  "material": {
+    "ref": "ql:fixture:agent-decision/v1/semantic-specimen.txt",
+    "revision": "sha256:67cd1141d0d505f81687680f8066947ab704d143570f8719ad9c1e37a39a4786",
+    "text": "A procedure fails although its inputs look unchanged. Which reading would help investigate it?"
+  },
+  "native_state": [],
+  "observed": [],
+  "occasion_refs": [],
+  "provenance_refs": [
+    "https://github.com/EpiLogos/QL-MEF/issues/291"
+  ],
+  "schema": "ql.agent-event/v1",
+  "source_basis": [
+    {
+      "ref": "ql:fixture:agent-decision/v1/semantic-specimen.txt",
+      "revision": "sha256:67cd1141d0d505f81687680f8066947ab704d143570f8719ad9c1e37a39a4786"
+    }
+  ],
+  "subject": "procedure failure"
+}
