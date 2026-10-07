@@ -91,6 +91,16 @@ pub enum HostOperation {
     StageUnbind {
         procedure_ref: String,
     },
+    /// scene only: the selected subject's deterministic Tarot score — resolve
+    /// an admitted basis through `ql.tarot-score/v1` and hold it as the host's
+    /// current score reading. Read-only: the field does not advance.
+    ScoreResolve {
+        basis: Box<crate::tarot_score::ScoreBasisInput>,
+    },
+    /// scene only: the held score reading and its currentness against the
+    /// live field identity; refuses by name when no score has been resolved
+    /// on this host, and discloses a stale basis instead of re-deriving.
+    ScoreState {},
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -142,6 +152,14 @@ pub struct FieldHost {
     session: Owner,
     stage: StageOwnership,
     bindings: stage::StageBindings,
+    /// The held score reading (`ql.tarot-score/v1`): resolved once by name
+    /// through `score-resolve`, then answered with its currentness — never
+    /// silently re-derived.
+    score: Option<crate::tarot_score::TarotScore>,
+    score_basis_revision: Option<String>,
+    /// The field event the held score was resolved against; `score-state`
+    /// compares it against the live `event_ref` to answer currentness.
+    score_event_ref: Option<String>,
     last_request: u64,
 }
 impl FieldHost {
@@ -162,6 +180,9 @@ impl FieldHost {
             )?)),
             stage: StageOwnership::default(),
             bindings: stage::StageBindings::default(),
+            score: None,
+            score_basis_revision: None,
+            score_event_ref: None,
             last_request: 0,
         })
     }
@@ -177,6 +198,9 @@ impl FieldHost {
             session: Owner::Scene(Box::new(instrument)),
             stage: StageOwnership::default(),
             bindings: stage::StageBindings::default(),
+            score: None,
+            score_basis_revision: None,
+            score_event_ref: None,
             last_request: 0,
         })
     }
@@ -364,7 +388,9 @@ impl FieldHost {
                 | HostOperation::ReplaceEvent { .. }
                 | HostOperation::Influence {}
                 | HostOperation::ReceivePersonal { .. }
-                | HostOperation::Personal {},
+                | HostOperation::Personal {}
+                | HostOperation::ScoreResolve { .. }
+                | HostOperation::ScoreState {},
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -380,6 +406,81 @@ impl FieldHost {
                         response["influence"] = instrument.influence();
                     }
                 }
+                response
+            }
+            Err(error) => {
+                let status = if self.available() {
+                    "refused"
+                } else {
+                    "unavailable"
+                };
+                self.response(Some(&request.request_id), status, Some(&error))
+            }
+        }
+    }
+
+    /// Dispatches the Tarot score operations. Scene-only, exactly like the
+    /// stage operations, and read-only: the field does not advance and no
+    /// determinant fires, while an admitted request still consumes its
+    /// sequence. A held score is disclosed with its currentness against the
+    /// live field identity — a stale basis is named, never re-derived.
+    fn score_operation(&mut self, request: &HostRequest) -> Value {
+        let refusal = "the Tarot score reading belongs to a provider-composed scene owner";
+        let outcome = match (&request.command, &mut self.session) {
+            (HostOperation::ScoreResolve { basis }, Owner::Scene(instrument)) => {
+                if basis.subject_ref != request.subject_ref {
+                    Err(format!(
+                        "score basis subject {} is not this field's subject {}",
+                        basis.subject_ref, request.subject_ref
+                    ))
+                } else {
+                    match crate::tarot_score::resolve_tarot_score(&basis.borrow()) {
+                        Ok(score) => match serde_json::to_value(&score) {
+                            Ok(reading) => {
+                                let resolved_event_ref =
+                                    instrument.session().last_field()["event_ref"]
+                                        .as_str()
+                                        .unwrap_or_default()
+                                        .to_owned();
+                                self.score_basis_revision = Some(score.basis_revision.clone());
+                                self.score_event_ref = Some(resolved_event_ref.clone());
+                                self.score = Some(score);
+                                Ok((reading, true, resolved_event_ref))
+                            }
+                            Err(error) => Err(error.to_string()),
+                        },
+                        Err(error) => Err(error),
+                    }
+                }
+            }
+            (HostOperation::ScoreResolve { .. }, _) => Err(refusal.into()),
+            (HostOperation::ScoreState {}, Owner::Scene(instrument)) => {
+                let Some(score) = self.score.clone() else {
+                    return self.response(
+                        Some(&request.request_id),
+                        "refused",
+                        Some(
+                            "no Tarot score has been resolved on this host; score-state follows a score-resolve",
+                        ),
+                    );
+                };
+                let resolved_event_ref = self.score_event_ref.clone().unwrap_or_default();
+                let current = instrument.session().last_field()["event_ref"].as_str()
+                    == Some(resolved_event_ref.as_str());
+                match serde_json::to_value(&score) {
+                    Ok(reading) => Ok((reading, current, resolved_event_ref)),
+                    Err(error) => Err(error.to_string()),
+                }
+            }
+            (HostOperation::ScoreState {}, _) => Err(refusal.into()),
+            _ => unreachable!("only score operations reach the score dispatch"),
+        };
+        match outcome {
+            Ok((score, current, resolved_event_ref)) => {
+                let mut response = self.response(Some(&request.request_id), "ok", None);
+                response["score"] = score;
+                response["current"] = json!(current);
+                response["resolved_event_ref"] = json!(resolved_event_ref);
                 response
             }
             Err(error) => {
@@ -513,6 +614,12 @@ impl FieldHost {
         ) {
             return self.stage_operation(&request);
         }
+        if matches!(
+            &request.command,
+            HostOperation::ScoreResolve { .. } | HostOperation::ScoreState {}
+        ) {
+            return self.score_operation(&request);
+        }
         // A scene determinant event answers with its new influence reading, so a
         // consumer needs no second exchange while its audio waits.
         let determinant = matches!(
@@ -577,7 +684,9 @@ impl FieldHost {
                 | HostOperation::StageEvaluate { .. }
                 | HostOperation::StageRetire { .. }
                 | HostOperation::StageBind { .. }
-                | HostOperation::StageUnbind { .. },
+                | HostOperation::StageUnbind { .. }
+                | HostOperation::ScoreResolve { .. }
+                | HostOperation::ScoreState {},
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };

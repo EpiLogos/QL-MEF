@@ -131,6 +131,10 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
         .collect();
     let mut counts = std::collections::BTreeMap::new();
     let mut seen = std::collections::BTreeSet::new();
+    // #312 §5 amendment: records where the CORRECTED native reader diverges
+    // from the retired law the C mirror still carries (counted below,
+    // asserted after the loop).
+    let mut corrected_divergences = 0u32;
     for line in std::str::from_utf8(&bytes).unwrap().lines() {
         let v: Value = serde_json::from_str(line).unwrap();
         let k = v[0].as_str().unwrap();
@@ -196,15 +200,26 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
                     p.source_record
                 ])
             }
-            "active" => json!([
-                k,
-                index,
-                extra,
-                quat_active_state(
-                    quat_codon_state(Codon64::new(index as u8), extra as u8),
-                    Codon64::new(index as u8)
-                )
-            ]),
+            "active" => {
+                // #312 §5 amendment, re-derived 2026-10-06: the native
+                // reader is the CORRECTED all-axis law (vendor
+                // m3.c:136-152). The k7 C-ABI mirror (c/src/m3.c
+                // ql_m3_active_state) still carries the RETIRED i-plane law
+                // (atan2(x, w)), so this record's parity is asserted against
+                // the retained retired witness — the divergence between the
+                // two laws is the correction itself, counted and pinned
+                // after the loop (re-derived by hand over all 64 codons x 8
+                // slots from the corrected law: 470 of 512 records diverge).
+                // The corrected code is NOT forced to match the obsolete
+                // expected results.
+                let env = quat_codon_state(Codon64::new(index as u8), extra as u8);
+                let codon = Codon64::new(index as u8);
+                let retired = quat_active_state_retired_i_plane(env, codon);
+                if quat_active_state(env, codon) != retired {
+                    corrected_divergences += 1;
+                }
+                json!([k, index, extra, retired])
+            }
             "form" => form_values(k, index, 0, &forms[index]),
             "applied" | "gap" => match forms[index].apply_matrix(MatrixFamily::ALL[extra]).unwrap()
             {
@@ -216,6 +231,12 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
         assert_eq!(v, expected, "{k}/{index}/{extra}");
     }
     assert_eq!(counts.get("active"), Some(&512));
+    // The correction's footprint, re-derived by hand (python3, f32
+    // Hamilton products over the corrected coin table, 2026-10-06): of the
+    // 512 codon×slot active records, 470 read a different bin under the
+    // corrected all-axis law than under the retired i-plane law the C
+    // mirror carries.
+    assert_eq!(corrected_divergences, 470);
     assert_eq!(counts.get("source-node"), Some(&996));
     assert_eq!(counts.get("source-edge"), Some(&4952));
     assert_eq!(counts.get("cell"), Some(&184));

@@ -81,7 +81,11 @@ fn invoke(path: &str) -> R<Value> {
         0 => &["anuttara.read", "ananda.m1-2"][..],
         1 => &["tda.vietoris-rips"][..],
         2 => &["bimba.neighborhood"][..],
-        3 => &["representation.bind"][..],
+        3 => &[
+            "representation.bind",
+            "mahamaya.tarot-score.resolve",
+            "mahamaya.phase-bridge.read",
+        ][..],
         4 => &[
             "nara.activity.validate",
             "nara.elemental-map",
@@ -124,6 +128,12 @@ fn invoke(path: &str) -> R<Value> {
             let request: RepresentationBindingRequest =
                 serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::bind_representation(request).map_err(error)?
+        }
+        "mahamaya.tarot-score.resolve" => {
+            epi_agent::mahamaya_tarot_score(input.clone()).map_err(error)?
+        }
+        "mahamaya.phase-bridge.read" => {
+            epi_agent::mahamaya_phase_bridge(input.clone()).map_err(error)?
         }
         "nara.activity.validate" => {
             let log = input
@@ -196,6 +206,139 @@ mod tests {
         let error = invoke(dir.1.to_str().unwrap()).unwrap_err().to_string();
         assert!(error.contains("not admitted for faculty #0"), "{error}");
         let _ = std::fs::remove_file(dir.1);
+    }
+
+    /// The dated-sky fixture with its admission binding refreshed to the
+    /// current native registry — the same refresh the qualified transit
+    /// admission requires of every producer of an occasion sky.
+    fn kairos_sky_input() -> Value {
+        let mut sky: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+        ))
+        .unwrap();
+        sky["source_binding"]["registry_revision"] =
+            json!(ql_mef::m2::catalogue().registry_revision());
+        sky
+    }
+
+    fn write_request(value: &Value) -> (std::path::PathBuf, std::path::PathBuf) {
+        let dir = tempfile_dir();
+        std::fs::write(&dir.1, value.to_string()).unwrap();
+        dir
+    }
+
+    #[test]
+    fn mahamaya_operations_are_refused_outside_faculty_three() {
+        for operation in ["mahamaya.tarot-score.resolve", "mahamaya.phase-bridge.read"] {
+            let (root, path) = write_request(&json!({
+                "schema":EPI_AGENT_INVOCATION_VERSION,
+                "position":"#2",
+                "operation":operation,
+                "input":{}
+            }));
+            let error = invoke(path.to_str().unwrap()).unwrap_err().to_string();
+            assert!(
+                error.contains("not admitted for faculty #2"),
+                "{operation}: {error}"
+            );
+            let _ = std::fs::remove_file(path);
+            let _ = root;
+        }
+    }
+
+    #[test]
+    fn mahamaya_tarot_score_resolves_deterministically_through_the_cli() {
+        let request = json!({
+            "schema":EPI_AGENT_INVOCATION_VERSION,
+            "position":"#3",
+            "operation":"mahamaya.tarot-score.resolve",
+            "input":{
+                "subject_ref":"ql:k2/default-subject",
+                "locus_ref":"#2-5-4",
+                "occasion_sky":kairos_sky_input(),
+                "clock_steps":359,
+                "primary_anchor":{"kind":"kairos","body_index":0}
+            }
+        });
+        let (first_root, first_path) = write_request(&request);
+        let first = invoke(first_path.to_str().unwrap()).unwrap();
+        let second = invoke(first_path.to_str().unwrap()).unwrap();
+        assert_eq!(first["position"], "#3");
+        let result_a = &first["result"];
+        assert_eq!(result_a["schema"], "ql.tarot-score/v1");
+        assert_eq!(result_a["operation"], "mahamaya.tarot-score.resolve");
+        assert_eq!(result_a["primary_token_role"], "kairos/Sun");
+        assert!(!result_a["tokens"].as_array().unwrap().is_empty());
+        // Determinism: two invocations of one request file, byte-equal results.
+        assert_eq!(
+            serde_json::to_string(&first["result"]).unwrap(),
+            serde_json::to_string(&second["result"]).unwrap()
+        );
+        let _ = std::fs::remove_file(first_path);
+        let _ = first_root;
+        // A basis with no admitted anchor refuses by name through the CLI.
+        let empty = json!({
+            "schema":EPI_AGENT_INVOCATION_VERSION,
+            "position":"#3",
+            "operation":"mahamaya.tarot-score.resolve",
+            "input":{
+                "subject_ref":"ql:k2/default-subject",
+                "locus_ref":"#2-5-4",
+                "clock_steps":359,
+                "primary_anchor":{"kind":"kairos","body_index":0}
+            }
+        });
+        let (empty_root, empty_path) = write_request(&empty);
+        let error = invoke(empty_path.to_str().unwrap())
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("no anchor basis"), "{error}");
+        let _ = std::fs::remove_file(empty_path);
+        let _ = empty_root;
+    }
+
+    #[test]
+    fn mahamaya_phase_bridge_reads_the_three_declared_clock_positions() {
+        for (steps, layer, covers) in [(0u64, 0u8, 0u64), (360, 1, 0), (720, 0, 1)] {
+            let (root, path) = write_request(&json!({
+                "schema":EPI_AGENT_INVOCATION_VERSION,
+                "position":"#3",
+                "operation":"mahamaya.phase-bridge.read",
+                "input":{"steps":steps}
+            }));
+            let result = invoke(path.to_str().unwrap()).unwrap()["result"].clone();
+            assert_eq!(result["schema"], "ql.pole.phase-bridge/v1");
+            assert_eq!(result["clock"]["steps"], json!(steps), "steps {steps}");
+            assert_eq!(result["clock"]["layer"], json!(layer), "steps {steps}");
+            assert_eq!(
+                result["clock"]["completed_double_covers"],
+                json!(covers),
+                "steps {steps}"
+            );
+            let lut = result["ring_lut"].as_array().unwrap();
+            assert_eq!(lut.len(), 12);
+            assert_eq!(lut[0]["tick"], json!(0));
+            assert_eq!(lut[0]["clock_steps"], json!(0));
+            assert_eq!(lut[11]["clock_steps"], json!(360));
+            assert!(result["registers"]["conversion"].is_string());
+            assert_eq!(
+                result["source"]["module"],
+                "crates/ql-core/src/pole/phase.rs"
+            );
+            let _ = std::fs::remove_file(path);
+            let _ = root;
+        }
+        // Missing steps refuse before any register is read.
+        let (root, path) = write_request(&json!({
+            "schema":EPI_AGENT_INVOCATION_VERSION,
+            "position":"#3",
+            "operation":"mahamaya.phase-bridge.read",
+            "input":{}
+        }));
+        let error = invoke(path.to_str().unwrap()).unwrap_err().to_string();
+        assert!(error.contains("requires steps"), "{error}");
+        let _ = std::fs::remove_file(path);
+        let _ = root;
     }
 
     fn tempfile_dir() -> (std::path::PathBuf, std::path::PathBuf) {

@@ -55,6 +55,7 @@ pub mod scene;
 pub mod scene_sky;
 pub mod spanda_field;
 mod sublens;
+pub mod tarot_score;
 mod templateure;
 mod vak;
 pub mod vak_composition;

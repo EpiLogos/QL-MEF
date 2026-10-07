@@ -13,6 +13,8 @@ use crate::{
         PersonalFieldInstance, SourceRevision, activity::NaraActivityLog,
     },
 };
+use ql_core::m3_clock::M3Clock;
+use ql_core::{PHASE_BRIDGE_REF, ring_tick_clock_steps};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -180,7 +182,7 @@ pub fn constitution() -> Value {
             {"position":"#0","name":"Anuttara","operations":["anuttara.read","ananda.m1-2"],"source_owner":"QL-MEF","optional_instruments":["jev","ebm"]},
             {"position":"#1","name":"Paramaśiva","operations":["tda.vietoris-rips"],"source_owner":"QL-MEF","optional_instruments":["external-tda-provider"]},
             {"position":"#2","name":"Paraśakti","operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-representations"]},
-            {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
+            {"position":"#3","name":"Mahāmāyā","operations":["representation.bind","ql-techne-reading","mahamaya.tarot-score.resolve","mahamaya.phase-bridge.read"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
             {"position":"#4","name":"Nara","operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read","nara.lived-context.compose"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
             {"position":"#5","name":"Epii","operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
@@ -763,6 +765,72 @@ pub fn bind_representation(request: RepresentationBindingRequest) -> Result<Valu
     }))
 }
 
+/// `mahamaya.tarot-score.resolve` — the subject's deterministic Tarot score
+/// (`ql.tarot-score/v1`), resolved through the existing score owner from an
+/// admitted basis. Same basis, byte-identical score; the score owner's named
+/// refusals are the faculty's own.
+pub fn mahamaya_tarot_score(input: Value) -> Result<Value, String> {
+    let basis: crate::tarot_score::ScoreBasisInput = serde_json::from_value(input)
+        .map_err(|error| format!("invalid Tarot score basis: {error}"))?;
+    let score = crate::tarot_score::resolve_tarot_score(&basis.borrow())?;
+    let mut reading = serde_json::to_value(&score).map_err(|error| error.to_string())?;
+    reading["operation"] = json!("mahamaya.tarot-score.resolve");
+    reading["canonical_mutation"] = json!(false);
+    Ok(reading)
+}
+
+/// `mahamaya.phase-bridge.read` — the source-qualified phase-bridge
+/// publication (`ql.pole.phase-bridge/v1`) read at a declared M3 clock
+/// position: the clock register's projection, the ring LUT's double-cover
+/// mapping and the documented register conversions. The bridge publishes
+/// conversions between existing native registers; it rules nothing and the
+/// recorded open tick-law question stays owned by its ledger record.
+pub fn mahamaya_phase_bridge(input: Value) -> Result<Value, String> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct PhaseBridgeRead {
+        steps: u64,
+    }
+    let request: PhaseBridgeRead = serde_json::from_value(input)
+        .map_err(|error| format!("mahamaya.phase-bridge.read requires steps as u64: {error}"))?;
+    let clock = M3Clock::at_steps(request.steps);
+    let ring_lut: Vec<Value> = (0..12u32)
+        .map(|tick| json!({"tick": tick, "clock_steps": ring_tick_clock_steps(tick)}))
+        .collect();
+    Ok(json!({
+        "schema": PHASE_BRIDGE_REF,
+        "clock": {
+            "steps": clock.steps(),
+            "degree360": clock.degree360(),
+            "degree720": clock.degree720(),
+            "layer": clock.layer(),
+            "tick12": clock.tick12(),
+            "completed_double_covers": clock.completed_double_covers()
+        },
+        "ring_lut": ring_lut,
+        "registers": {
+            "encoder": "quat_codon_state: the state angle is 45 degrees per state and the rotor is built at the half angle (vendor m3.c:131), so the encoder steps the physical rotation 45 degrees per state",
+            "reader": "quat_active_state (CORRECTED, #312 section 5): the full rotation angle about the composed axis, 2 x atan2(|v|, w) with |v| = sqrt(x^2+y^2+z^2), in [0, 360] physical, quantised at 45 physical degrees per bin over the composed axis; all three matrix axes (i, j, k) contribute through |v|. The retired predecessor read the i-only half-angle atan2(x, w) (45 argument degrees = 90 physical); it is retained as quat_active_state_retired_i_plane, the regression witness of the old register",
+            "clock": "M3Clock: unwrapped steps, one step = 1 degree; degree720 = steps % 720; layer = degree720 / 360; tick12 = degree360 / 30 (m3_clock.rs:56-68)",
+            "conversion": "quat_rotation_degrees: the physical SO(3) rotation a bare quaternion carries (2 x atan2(|v|, w), degrees, [0, 360]); a bare quaternion carries no sheet — the 720-degree double-cover position is traversal history the M3Clock owns. The retired conversion clock720 = 2 x signed_argument over the i-plane is retained as quat_clock_steps_retired_i_plane (witness only)",
+            "ring_lut": "one RING_QUATERNION_LUT tick spans 60 degrees of physical rotation (m1.h:497 TRIG_STEP_DEG 60, m1.h:501 DEGREE_PER_TICK 30, ratio asserted at m1.h:512); the LUT covers the 720-degree cover in 12 ticks against the clock's 24 ticks of 30 degrees (D5); under the corrected direction-blind reading the return ticks 6..11 read the same magnitudes as ticks 1..5, tick 11 (atan2(0, -1) = pi) reading 360"
+        },
+        "source": {
+            "module": "crates/ql-core/src/pole/phase.rs",
+            "conformance": "crates/ql-core/tests/phase_bridge.rs",
+            "vendor": [
+                "vendor/epi-kernel m3.c:124-134 (quat_codon_state half-angle rotor)",
+                "vendor/epi-kernel m3.c:136-152 (CORRECTED m3_quat_active_state, #312 section 5)",
+                "vendor/epi-kernel m1.c:29, m1.h:515 (RING_QUATERNION_LUT)",
+                "vendor/epi-kernel m1.h:497,501,512 (tick-degree registers)"
+            ],
+            "clock_projection": "crates/ql-core/src/m3_clock.rs degree720/layer register (docs/kernel-rebuild/m123-scene-map/m3-clock.md:16,144)",
+            "open_question": "ledger record gate0-m1:tick-degree-law (docs/kernel-rebuild/m123-scene-map/m1-body.md:269-271) holds the 30-vs-60-degrees-per-tick coexistence open for an owner ruling; the LUT mapping is cited against it, not ruled by it"
+        },
+        "canonical_mutation": false
+    }))
+}
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LogosReturnRequest {
@@ -1088,6 +1156,65 @@ mod tests {
             error.contains("requires source_refs and evidence_refs"),
             "{error}"
         );
+    }
+
+    #[test]
+    fn mahamaya_resolves_the_score_deterministically_and_reads_the_phase_bridge() {
+        let mut sky: Value = serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json"
+        ))
+        .unwrap();
+        sky["source_binding"]["registry_revision"] =
+            json!(crate::m2::catalogue().registry_revision());
+        let basis = || {
+            json!({
+                "subject_ref": "ql:k2/default-subject",
+                "locus_ref": "#2-5-4",
+                "occasion_sky": sky.clone(),
+                "clock_steps": 359,
+                "primary_anchor": {"kind":"kairos","body_index":0}
+            })
+        };
+        let first = mahamaya_tarot_score(basis()).unwrap();
+        let second = mahamaya_tarot_score(basis()).unwrap();
+        assert_eq!(first["schema"], "ql.tarot-score/v1");
+        assert_eq!(first["operation"], "mahamaya.tarot-score.resolve");
+        assert_eq!(first["canonical_mutation"], false);
+        assert_eq!(first["primary_token_role"], "kairos/Sun");
+        assert!(!first["tokens"].as_array().unwrap().is_empty());
+        assert_eq!(
+            serde_json::to_string(&first).unwrap(),
+            serde_json::to_string(&second).unwrap(),
+            "the same basis resolves byte-identically"
+        );
+        // A basis with no admitted anchor refuses through the score owner.
+        let error = mahamaya_tarot_score(json!({
+            "subject_ref": "ql:k2/default-subject",
+            "locus_ref": "#2-5-4",
+            "clock_steps": 359,
+            "primary_anchor": {"kind":"kairos","body_index":0}
+        }))
+        .unwrap_err();
+        assert!(error.contains("no anchor basis"), "{error}");
+
+        // The phase bridge at three declared clock positions: the layer bit
+        // is the double-cover sheet, completed covers count the 720° wraps.
+        for (steps, layer, covers) in [(0u64, 0u8, 0u64), (360, 1, 0), (720, 0, 1)] {
+            let read = mahamaya_phase_bridge(json!({"steps": steps})).unwrap();
+            assert_eq!(read["schema"], "ql.pole.phase-bridge/v1");
+            assert_eq!(read["clock"]["layer"], json!(layer), "steps {steps}");
+            assert_eq!(
+                read["clock"]["completed_double_covers"],
+                json!(covers),
+                "steps {steps}"
+            );
+            let lut = read["ring_lut"].as_array().unwrap();
+            assert_eq!(lut.len(), 12);
+            assert_eq!(lut[0]["clock_steps"], json!(0));
+            assert_eq!(lut[11]["clock_steps"], json!(360));
+        }
+        assert!(mahamaya_phase_bridge(json!({})).is_err());
+        assert!(mahamaya_phase_bridge(json!({"steps": -1})).is_err());
     }
 }
 
