@@ -146,7 +146,7 @@ pub struct ResolvedForm {
 }
 
 impl ResolvedForm {
-    fn of_codon(codon: Codon64) -> Self {
+    pub(crate) fn of_codon(codon: Codon64) -> Self {
         let geometry = FoldGeometry::from_codon(codon);
         Self {
             address: codon.address(),
@@ -198,8 +198,9 @@ pub struct FormRecipe {
 }
 
 /// The determination's compile core: verified form law, exactly — the same
-/// path [`resolve_form_recipe`] runs after the locus qualification holds.
-fn compile_determination(
+/// path [`resolve_form_recipe`] runs after the locus qualification holds. The
+/// fold-sequence owner compiles its phase endpoints through this same core.
+pub(crate) fn compile_determination(
     determination: &FormDetermination,
 ) -> Result<(Vec<M3Operation>, Codon64), String> {
     match determination {
@@ -237,6 +238,14 @@ fn compile_determination(
             ))
         }
     }
+}
+
+/// The canonical cast telemetry of a resolved form: the codon's own site
+/// readings under the kernel cast law — the standing form the fold-sequence
+/// owner holds and interpolates from. Exactly the telemetry a fold-motif
+/// determination compiles to.
+pub(crate) fn codon_telemetry(codon: Codon64) -> [SiteReading; 3] {
+    codon.fold_motif().sites().map(project_site)
 }
 
 /// Resolves the form recipe over a resolved manifestation: the formation

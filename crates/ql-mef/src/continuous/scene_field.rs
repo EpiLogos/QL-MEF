@@ -23,7 +23,9 @@ use std::time::Duration;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
-use super::coupled::{CoupledBasis, CoupledFieldSession, CoupledInput, SkyFrequencyBinding};
+use super::coupled::{
+    CoupledBasis, CoupledFieldSession, CoupledInput, SKY_ROOT_HZ, SkyFrequencyBinding,
+};
 use super::{ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput};
 use crate::m1_engine::M1Engine;
 use crate::m2_engine::{
@@ -116,6 +118,79 @@ pub struct Voice {
     pub ql_position: u8,
     pub weight: f64,
     pub phase_radians: f64,
+    /// The chromatic class (0..12 over C3 = `SKY_ROOT_HZ`) this voice's own
+    /// sounding pitch is nearest to. A reading of the voice, not a retune:
+    /// the voice keeps its just-ratio frequency (D13).
+    pub sounding_class: u8,
+    /// How far the voice's own pitch sits from that class, in cents (signed).
+    pub class_error_cents: f64,
+}
+
+/// The standing of the scene's played-key routing. The sources define the nine
+/// voices' just-ratio pitches and the Jankó surface's twelve classes; they define
+/// no routing between them, so a key sounds the voices whose own pitch is nearest
+/// its class, the offset disclosed per voice (wayfinder §2.2).
+pub const SCENE_PLAYED_STANDING: &str = "declared-instrument-mapping: a played key sounds the scene voices whose own just-ratio pitch is nearest the key's chromatic class over C3; the sources define the voices' pitches and the surface's classes and define no routing between them, so this routing is declared, bounded and disclosed with each voice's cents offset (wayfinder §2.2); D13 keeps every sounding pitch the voice's own, never the key's equal-tempered class";
+
+/// The chromatic class nearest a frequency over C3, and the signed cents offset.
+fn nearest_class(frequency_hz: f64) -> (u8, f64) {
+    let semitones = 12.0 * (frequency_hz / SKY_ROOT_HZ).log2();
+    let nearest = semitones.round();
+    (
+        nearest.rem_euclid(12.0) as u8,
+        (semitones - nearest) * 100.0,
+    )
+}
+
+/// Columns of the Jankó surface the disclosure carries: two column periods, so
+/// every one of the twelve classes appears twice along each row family.
+pub const JANKO_DISCLOSED_COLUMNS: u16 = 12;
+
+/// The six-row Jankó surface held by the event's own lens, exactly as the
+/// kernel projection discloses it (`janko.rs`); the app lays it out and never
+/// derives a pitch.
+pub fn janko_window(lens12: u8) -> Value {
+    let lens = crate::LensId::ALL[usize::from(lens12 % 12)];
+    let surface = crate::janko::JankoSurface::anchored(lens);
+    let keys: Vec<Value> = (0..crate::janko::ROWS)
+        .flat_map(|row| {
+            (0..JANKO_DISCLOSED_COLUMNS).map(move |column| crate::janko::JankoKey::new(row, column))
+        })
+        .map(|key| surface.project(key).disclosure())
+        .collect();
+    json!({
+        "schema": "ql.janko-surface/v1",
+        "lens12": lens12 % 12,
+        "rows": crate::janko::ROWS,
+        "touch_points": crate::janko::TOUCH_POINTS,
+        "column_period": crate::janko::COLUMN_PERIOD,
+        "columns": JANKO_DISCLOSED_COLUMNS,
+        "keys": keys,
+    })
+}
+
+/// The played addresses of the standing voices: for each of the twelve classes
+/// the voices a key of that class strikes (possibly none).
+pub fn played_addresses(voices: &[Voice], lens12: u8) -> Value {
+    let by_class: Vec<Value> = (0u8..12)
+        .map(|class| {
+            json!({
+                "pitch_class": class,
+                "voices": voices
+                    .iter()
+                    .filter(|v| v.sounding_class == class)
+                    .map(|v| json!({
+                        "mode_ref": v.mode_ref,
+                        "planet_ref": v.planet_ref,
+                        "frequency_hz": v.frequency_hz,
+                        "cents_from_class": v.class_error_cents,
+                    }))
+                    .collect::<Vec<_>>(),
+            })
+        })
+        .collect();
+    json!({"standing": SCENE_PLAYED_STANDING, "root_hz": SKY_ROOT_HZ, "by_class": by_class,
+        "janko": janko_window(lens12)})
 }
 
 /// The one material-mode spelling for a scene voice: the resonator, the
@@ -275,6 +350,7 @@ impl ShapeBasis {
                 Some("pratibimba") => "pratibimba",
                 _ => return Err("unknown Vimarśā helix".into()),
             };
+            let (sounding_class, class_error_cents) = nearest_class(hz[i]);
             voices.push(Voice {
                 planet_ref: planet,
                 mode_ref: voice_mode_ref(planet),
@@ -286,6 +362,8 @@ impl ShapeBasis {
                 ql_position: node["ql_position"].as_u64().unwrap_or(0) as u8,
                 weight: hz[i] / max,
                 phase_radians: f64::from(u16::from(address72) + i as u16 + 1) * PI / 36.0,
+                sounding_class,
+                class_error_cents,
             });
             // Whole degrees: a planet moving within its degree keeps its shape.
             shape_ref.push_str(&format!(":{m}x{n}@{}", longitude.floor() as i64));
@@ -682,6 +760,45 @@ fn next_generation(event: &CoupledInput, applied: u64) -> Result<CoupledInput, S
     serde_json::from_value(value).map_err(|e| e.to_string())
 }
 
+/// Rebases an event's M3 request to the applied M3 state of a composed basis:
+/// form address, pose, aperture, matrix axis, transcription, clock and the
+/// identity generation — with the request's M2 basis moving with the stamp,
+/// as the M3 owner's own drift law requires. A consumed command batch's
+/// effects live here, not in a retained command; the next composition then
+/// reproduces exactly what the determinant applied.
+fn rebase_m3_request(
+    request: &mut crate::m3_state::M3Request,
+    basis: &CoupledBasis,
+) -> Result<(), String> {
+    let m3 = &basis.m3;
+    let exact = |value: &serde_json::Value, name: &str| -> Result<u64, String> {
+        value
+            .as_u64()
+            .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
+            .ok_or_else(|| format!("composed M3 basis carries no exact {name}"))
+    };
+    request.address = u8::try_from(exact(&m3["form"]["address"], "form address")?)
+        .map_err(|_| "composed M3 form address outside 0..255".to_string())?;
+    request.pose = u8::try_from(exact(&m3["form"]["pose"], "pose")?)
+        .map_err(|_| "composed M3 pose outside 0..255".to_string())?;
+    request.aperture = u8::try_from(exact(&m3["aperture"]["index"], "aperture index")?)
+        .map_err(|_| "composed M3 aperture outside 0..255".to_string())?;
+    request.matrix_axis = u8::try_from(exact(&m3["form"]["matrix_axis"], "matrix axis")?)
+        .map_err(|_| "composed M3 matrix axis outside 0..255".to_string())?;
+    request.rna = m3["transcription"]["rna"]
+        .as_bool()
+        .ok_or("composed M3 basis carries no transcription reading")?;
+    request.clock_steps = exact(&m3["clock"]["steps"], "clock steps")?;
+    request.occurrence_unix_ms = exact(&m3["occurrence_unix_ms"], "occurrence instant")?;
+    request.receipt_unix_ms = exact(&m3["receipt_unix_ms"], "receipt instant")?;
+    let generation = exact(&m3["identity"]["profile_generation"], "identity generation")?;
+    request.stamp.identity.profile_generation = generation;
+    if let Some(m2_basis) = &mut request.m2_basis {
+        m2_basis.identity.profile_generation = generation;
+    }
+    Ok(())
+}
+
 /// One live scene instrument over one native coupled owner.
 pub struct SceneInstrument {
     instance_ref: String,
@@ -808,8 +925,13 @@ impl SceneInstrument {
         let (mut input, basis) = complete(&event, &self.material, self.fibre())?;
         // The applied command batch is consumed: its effects and receipts live
         // in the composed basis, and a retained command would replay its
-        // already-stale generation check on the next composition.
+        // already-stale generation check on the next composition. The event's
+        // own M3 request is rebased to the applied M3 state, so the retained
+        // basis reads what the determinant actually applied — the observed
+        // form is the applied form, never a stale request replayed (the same
+        // law the M1-advance path follows on its own address and clock).
         input.m3_commands = Vec::new();
+        rebase_m3_request(&mut input.m3, &basis)?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let mut field = self.session.replace_field_state(input.clone(), strike)?;
         self.event = input;
@@ -941,6 +1063,7 @@ impl SceneInstrument {
             "shape_ref": self.shape.shape_ref,
             "address72": self.shape.address72,
             "voices": self.shape.voices,
+            "played_addresses": played_addresses(&self.shape.voices, basis.input.m1.lens12),
             "geometry": self.geometry,
             "material": self.material,
             "material_standing": MATERIAL_STANDING,
@@ -1003,7 +1126,50 @@ mod tests {
             ql_position: 0,
             weight,
             phase_radians: phase,
+            sounding_class: 7,
+            class_error_cents: 0.0,
         }
+    }
+
+    #[test]
+    fn a_voice_reads_its_own_nearest_class_with_the_cents_it_keeps() {
+        // 3/2 over C3 is G (class 7) at +1.955 cents; 27/16 is A (9) at +5.9 cents.
+        let (class, cents) = nearest_class(SKY_ROOT_HZ * 1.5);
+        assert_eq!(class, 7);
+        assert!((cents - 1.955).abs() < 0.01, "{cents}");
+        let (class, cents) = nearest_class(SKY_ROOT_HZ * 27.0 / 16.0);
+        assert_eq!(class, 9);
+        assert!((cents - 5.865).abs() < 0.01, "{cents}");
+        // an octave up is the same class; below the root wraps
+        assert_eq!(nearest_class(SKY_ROOT_HZ * 3.0).0, 7);
+        assert_eq!(nearest_class(SKY_ROOT_HZ / 2.0).0, 0);
+    }
+
+    #[test]
+    fn played_addresses_disclose_every_class_and_never_retune_a_voice() {
+        let mut voices: Vec<Voice> = (0..3).map(|_| voice(1, 2, 1.0, 0.0)).collect();
+        voices[0].mode_ref = "scene:planet/a".into();
+        voices[1].mode_ref = "scene:planet/b".into();
+        voices[1].sounding_class = 9;
+        voices[1].frequency_hz = 220.7;
+        voices[2].mode_ref = "scene:planet/c".into();
+        let played = played_addresses(&voices, 3);
+        assert_eq!(played["standing"], SCENE_PLAYED_STANDING);
+        let classes = played["by_class"].as_array().unwrap();
+        assert_eq!(classes.len(), 12);
+        assert_eq!(classes[7]["voices"].as_array().unwrap().len(), 2);
+        assert_eq!(classes[9]["voices"][0]["mode_ref"], "scene:planet/b");
+        assert_eq!(classes[9]["voices"][0]["frequency_hz"], 220.7);
+        assert!(classes[0]["voices"].as_array().unwrap().is_empty());
+        // The Jankó surface is the kernel projection held by the event's lens.
+        let janko = &played["janko"];
+        assert_eq!(janko["lens12"], 3);
+        assert_eq!(janko["rows"], 6);
+        assert_eq!(janko["touch_points"], 3);
+        let keys = janko["keys"].as_array().unwrap();
+        assert_eq!(keys.len(), 6 * usize::from(JANKO_DISCLOSED_COLUMNS));
+        // lens12 3 is L1′; a key's own lens field names the lens number (1).
+        assert!(keys.iter().all(|k| k["lens"] == 1));
     }
 
     #[test]
@@ -1092,6 +1258,8 @@ mod scene_tests {
             ql_position: 0,
             weight: 1.0,
             phase_radians: 0.4,
+            sounding_class: 0,
+            class_error_cents: 0.0,
         };
         let moved = Voice {
             longitude_radians: 1.0,
