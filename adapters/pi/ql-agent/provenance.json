@@ -1,0 +1,25 @@
+{
+  "schema": "ql.pi-tool-source/v1",
+  "source_issue": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "source_sha256": {
+    "schemas/ql-agent-contracts-v1.schema.json": "3290d93bf0c2e3e2acb922b8f96750d1623b30aeb08d4711f8b6956fe9e5d957",
+    "crates/ql-mef/src/agent_event.rs": "35211df6d3a266d0378a5c8fa580eb6ef399e9a9dee1ef751da86bf9610285b3",
+    "crates/ql-mef/src/agent_event/admission.rs": "4018fc4dc2c73db78af44ac2c0615978c996a1b9a51b19f39af635eb596089de",
+    "crates/ql-mef/src/epi_agent.rs": "2938fdb9d42415acfb9c96b9181cc48c8b748c5f5d5b7ed4caf113c60c0e08cd",
+    "crates/ql-cli/src/agent_event_command.rs": "5531b361ee7d686825b9800b75af0b023f1b45c1541bbc0d2efe91e1025c5e63",
+    "crates/ql-cli/src/epi_agent_command.rs": "656456db509854b0f1f659a4727d3b567d95b5ebc47795b6e22120f64766e054",
+    "docs/integrations/epi-logos/epi-m-capability-field-m0.json": "a7d0790c7597718288919d6fdd319de78833a18360c3daf8f83631dca4fe324c",
+    "docs/integrations/epi-logos/epi-m-capability-field-m1.json": "5cb1559d5a916b164fa359a1fbecafb1d75b34d2f4e0336f6173b68384919c73",
+    "docs/integrations/epi-logos/epi-m-capability-field-m2.json": "cd2fd9b13457407580946c8924e357b993fe3d1eac00c2539925c3b7a467ef86",
+    "docs/integrations/epi-logos/epi-m-capability-field-m3.json": "86ec337c43ff1c5ee9f50e607e4482154b0ab6243452918c7f60eeb5d7ae3fdf",
+    "docs/integrations/epi-logos/epi-m-capability-field-m4.json": "94256b409293869a5c54af2b1d7cb2e53e6b43993d92055162881912a6ff4538",
+    "docs/integrations/epi-logos/epi-m-capability-field-m5.json": "a25a7f7358d49320f48694fc3c9ade3e1cad0f8418b354b5364d8ab9f51b6b9b",
+    "scripts/ql_agent_contracts.py": "0db0bb37eca6558c3d1b485e2791189041c74616dddf6d6639e40bd79acf7153",
+    "scripts/ql_agent_aikit.py": "0168bf3e6982b8f9d89d6544eb3668678e0d8b5a7af90e1d206871edee862732",
+    "scripts/ql_agent_decide.py": "d02c38c5bf116e092c5725b413b7f89078dcd2ff0f5e0039313841bea4c84f84",
+    "scripts/ql_agent_encounter.py": "183e3ee03bc4a84f20219d2232e553a1069de784fe2bf98c1da0f40d140d62c1"
+  },
+  "native_binary_sha256": "1a50b99ccf1884a4adbb3e3d6386854678de76d1ee899d89d629c7153977103d",
+  "kernel_digest": "sha256:06245147c803a50e569c4adc9766664d251c4b788b9b61b5008344679a0b2a53",
+  "scope": "Explicit native QL/AIKit decision and operation tools; no implicit inference or default model election"
+}

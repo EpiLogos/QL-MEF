@@ -694,6 +694,162 @@
     "crates/ql-mef/tests/psg_form_recipe.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/agent_event.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "M",
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "kind": "computational",
+   "rationale": "Native event, decision-frame and harmonic projection over owned QL law: positions, lenses and MEF rotation, relation grammar, D1-D3 completion, Context Frames, shapes and canonical harmonic ratios derive the deterministic field; unresolved semantic heads route faculty and lens candidates to optional providers. Deterministic results stay kernel-owned; learned results stay provider-attributed and never become source evidence; no model runtime, graph store, clock or authority system.",
+   "tests": [
+    "crates/ql-mef/tests/agent_event.rs",
+    "crates/ql-cli/tests/agent_event_native.rs",
+    "fixtures/agent-decision/v1/digest-vectors.json"
+   ]
+  },
+  {
+   "path": "crates/ql-mef/src/agent_event/admission.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "M",
+    "#0",
+    "#1",
+    "#2",
+    "#3",
+    "#4",
+    "#5"
+   ],
+   "kind": "computational",
+   "rationale": "Kernel admission of proposed determinations: candidate-field and cardinality legality, native constraint application, event/frame/kernel basis staleness, exact evidence-span verification and provider identity. Determined, partial, unresolved, unavailable, refused and stale standings stay distinguishable, and observed native state bypasses providers entirely.",
+   "tests": [
+    "crates/ql-mef/tests/agent_event.rs",
+    "crates/ql-cli/tests/agent_event_native.rs"
+   ]
+  },
+  {
+   "path": "crates/ql-cli/src/agent_event_command.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Typed CLI transport for the native projection, frame, harmonic and admission owner: bounded one-MiB input, structured receipts, no model runtime and no QL tables.",
+   "tests": [
+    "crates/ql-cli/tests/agent_event_native.rs"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_contracts.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Publishes the canonical agent-event contract schema and digest vectors from the native source basis; publication establishes intent and contracts, not runtime authority.",
+   "tests": [
+    "scripts/tests/test_ql_agent_contracts.py",
+    "fixtures/agent-decision/v1/digest-vectors.json"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_aikit.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Translates a native decision frame into provider-neutral AIKit decide execution and returns the response for re-admission against the same native owner; provider and model identity are carried end to end, with no election and no shadow QL.",
+   "tests": [
+    "scripts/tests/test_ql_agent_aikit.py",
+    "scripts/tests/test_ql_agent_decide.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_decide.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "The explicit decision instrument derives in the native QL CLI before optional attributable AIKit execution and re-admits against the same native owner. Zero heads bypass all provider configuration; unavailable service stays unresolved; no provider election or shadow QL.",
+   "tests": [
+    "scripts/tests/test_ql_agent_decide.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_encounter.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Bounded deterministic carrier eligibility and source hashing delegate formal projection to the native QL CLI. Ordinary material is not classified, and only explicit carriers create semantic candidates; no model call or body database.",
+   "tests": [
+    "scripts/tests/test_ql_agent_encounter.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_evaluation.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Numerically comparable local evaluation harness over frozen case sets: deterministic, provider and learned arms run through the same native admission with digests and receipts; abstention, refusal and latency are measured, never elected.",
+   "tests": [
+    "scripts/tests/test_ql_agent_evaluation.py"
+   ]
+  },
+  {
+   "path": "adapters/pi/ql-agent/extensions/ql-agent.ts",
+   "stratum": "javascript",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Typed native Pi tools execute the same QL CLI and retained AIKit decision adapter. The owner schema, native validation, cancellation and exact returned receipts remain authoritative; the module contains no QL coordinate tables or classifier election.",
+   "tests": [
+    "crates/ql-cli/tests/pi_agent_native.rs",
+    "scripts/tests/test_ql_agent_body_evidence.py"
+   ]
+  },
+  {
+   "path": "adapters/pi/ql-agent/extensions/ql-event-context.ts",
+   "stratum": "javascript",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Bounded Pi/Prime hooks carry native event occasions and successful QL receipts. Shared native encounter projection runs asynchronously; stale, mode-off and superseded context is cleared. No provider inference occurs in body entry.",
+   "tests": [
+    "crates/ql-cli/tests/pi_agent_native.rs",
+    "scripts/tests/test_ql_agent_body_evidence.py",
+    "scripts/tests/test_ql_agent_encounter.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_body_evidence.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Actual Prime/Pi call IDs, exact actor arguments, native results and adjacent genuine provider snapshots are joined and replayed through the native owner. Source uptake, mode-off continuation and parity are checked without treating body identity as determination identity.",
+   "tests": [
+    "scripts/tests/test_ql_agent_body_evidence.py"
+   ]
+  },
+  {
+   "path": "scripts/ql_agent_receipt_metrics.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "kind": "computational",
+   "rationale": "Qualifies actual AIKit distributions, request/provider hashes, model/runtime identity and input/latency usage against retained native evaluation. Unknown metrics remain absent and independent scores are not joint evidence.",
+   "tests": [
+    "scripts/tests/test_ql_agent_receipt_metrics.py"
+   ]
   }
  ]
 }

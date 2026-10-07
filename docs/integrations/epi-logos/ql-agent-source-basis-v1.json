@@ -1,0 +1,59 @@
+{
+  "schema": "ql.agent-decision-source-lock/v1",
+  "standing": "observed-source-basis; not immutable dependency pins or runtime acceptance",
+  "programme": "https://github.com/EpiLogos/QL-MEF/issues/291",
+  "owners": [
+    {
+      "repository": "EpiLogos/QL-MEF",
+      "observed_head": "61344c687be668c9446d73c720866c966e676ccd",
+      "files": [
+        {
+          "path": "crates/ql-core/src/structural.rs",
+          "sha256": "f3a952e28bf9b640dbf812f982b054c19e2a4f66cb9c0c2fa5ca45547b1bc36b"
+        },
+        {
+          "path": "crates/ql-core/src/pairing.rs",
+          "sha256": "480e0ec36ed4a5fe6cbe14d3a91af71cf32772a3ef7c6dd30257af47be975df9"
+        },
+        {
+          "path": "crates/ql-core/src/shape.rs",
+          "sha256": "6d890682ab7a60a794e4018e5ef59ca8e62c6075bdfc177ddc068cdae8eee29b"
+        },
+        {
+          "path": "crates/ql-mef/src/lens.rs",
+          "sha256": "51b53c9755aa72e0fe3fb396dbeb42a4ab944723171fe7274510eb51acb0f3bf"
+        },
+        {
+          "path": "crates/ql-mef/src/context_frame.rs",
+          "sha256": "cd4b2fef86a3f8b604b0048608d5946543ac2ce3cb6786c5272a744a6cc1b15c"
+        },
+        {
+          "path": "crates/ql-mef/src/music.rs",
+          "sha256": "c98e0d3edcff19a2864c6028659d1373e5292cebf45d69a89ffb94214f8257f1"
+        },
+        {
+          "path": "crates/ql-mef/src/music_completion.rs",
+          "sha256": "7e8477359ea471aeb23d7a71e88cfba94c3f73332d5f93a39bcccc19ae49fe3e"
+        }
+      ]
+    },
+    {
+      "repository": "EpiLogos/ai-kit",
+      "observed_head": "8c6c48f03996807723336b963a5a6014da38ea5b",
+      "files": [
+        {
+          "path": "crates/aikit-cli/src/decide.rs",
+          "sha256": "1408b202043640b51ecf32a5c5f7c8e6fabfa038ae74602ec89c74287d57153c"
+        },
+        {
+          "path": "crates/aikit-core/src/skillset_package/model.rs",
+          "sha256": "9aa85d600ad1d08c3acce33f578ed3b2b7cda36abc175005ee785772cae81199"
+        },
+        {
+          "path": "crates/aikit-core/src/skillset_package/pi.rs",
+          "sha256": "de5fbd2abb4ef0a43f45e5d06d1b3bbcab43643623a7354cbfde5cb42c5fcaf6"
+        }
+      ]
+    }
+  ]
+}

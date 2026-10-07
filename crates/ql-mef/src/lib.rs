@@ -2,6 +2,7 @@
 //!
 //! Q2 keeps deterministic registry topology separate from semantic/stochastic readings.
 
+pub mod agent_event;
 pub mod anima_expression_profile;
 pub mod aw1_self_reference;
 pub mod aw1_world;

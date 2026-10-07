@@ -1,0 +1,30 @@
+{
+  "constraint_application": [],
+  "derived": [],
+  "event_basis_digest": "sha256:03f36b162a07c8e916ed7c0c74cec325f2a5309ea706eba9b5235b8035b131e2",
+  "event_ref": "ql:event:qd0-controlled-concern",
+  "frame_digest": "sha256:e452fc3142419cc021ea3ba5d46c2a43f750b7e989638f395cdad92d37b950d0",
+  "kernel_basis": {
+    "digest": "sha256:332ff7373cc16fc0cc26c033dde315c807b878a03ce368b3c82375c65707a78f",
+    "owner_ref": "ql:owner:mef-lens-registry",
+    "revision": "1.0.0-q2"
+  },
+  "learned": [],
+  "observed": [],
+  "refused_candidates": [],
+  "schema": "ql.agent-determination/v1",
+  "source_basis": [
+    {
+      "ref": "ql:fixture:agent-decision/v1/semantic-specimen.txt",
+      "revision": "sha256:67cd1141d0d505f81687680f8066947ab704d143570f8719ad9c1e37a39a4786"
+    }
+  ],
+  "status": "unavailable",
+  "unresolved": [
+    {
+      "head_id": "semantic-lens",
+      "reason": "QD0 has no decision provider; semantic mapping remains unresolved"
+    }
+  ],
+  "validated": []
+}
