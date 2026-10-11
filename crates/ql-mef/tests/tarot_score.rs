@@ -791,6 +791,7 @@ fn subject_ref_validation_and_manifestation_link() {
         ],
         &[],
         &[],
+        &[],
         None,
     )
     .unwrap();
@@ -818,6 +819,7 @@ fn subject_ref_validation_and_manifestation_link() {
         LOCUS,
         MFace::Bimba,
         &[ExpressiveRole::Formation],
+        &[],
         &[],
         &[],
         None,
