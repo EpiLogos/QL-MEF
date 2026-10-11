@@ -361,13 +361,14 @@ fn callable_operation_labels_follow_native_faculty_membership() {
     for (label, operation) in labels.iter().zip(expected.iter()) {
         assert_eq!(label["id"], *operation);
     }
-    assert!(
-        project_event(ProjectionRequest {
-            event: event(&[("operation", json!("ql-techne-reading"))]),
-            requested_heads: vec![]
-        })
-        .is_err()
+    // A Mahamaya/techne operation alone derives faculty #3 (same inverse law as
+    // nara.journey.open → #4 below). A foreign faculty+operation pairing still
+    // refuses.
+    let techne = project(
+        &[("operation", json!("ql-techne-reading"))],
+        &[SemanticHead::Faculty],
     );
+    assert_eq!(value(&techne.determination["derived"], "faculty"), "#3");
     assert!(
         project_event(ProjectionRequest {
             event: event(&[
