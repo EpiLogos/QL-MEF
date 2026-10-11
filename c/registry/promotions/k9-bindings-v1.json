@@ -267,7 +267,7 @@
     "#4",
     "#5"
    ],
-   "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences.",
+   "rationale": "QL-MEF #201 Epi-Logos agent faculty surface over the existing current MRegistry, Anuttara source table, Nara contracts and formal QL operations. It exposes source-qualified #0–#5 reads/operations for the Actuation-owned #0/1 body without creating another M registry, Bimba graph, Agent runtime, provider, training service or mutation authority; unavailable Jev/EBM/GDS/learned extensions remain explicit absences. Faculty #3 (Mahamaya) grows two source-qualified callables over existing owners: mahamaya.tarot-score.resolve resolves the admitted basis through ql.tarot-score/v1 and mahamaya.phase-bridge.read reads the phase-bridge publication ql.pole.phase-bridge/v1 at a declared clock position; the CLI adapter (crates/ql-cli/src/epi_agent_command.rs) admits both by the same names.",
    "tests": [
     "crates/ql-mef/src/epi_agent.rs"
    ],
@@ -581,56 +581,11 @@
     "#2",
     "#3"
    ],
-   "rationale": "The Ta-Onta procedural stage over the live coupled scene (QL-MEF #296): versioned procedures compile typed changes onto the event's own M3 command batch (#3), the declared material policy and the continuous display clocks, and generated passages ride the admitted M1 form advance (#1) one determinant per scene, with the M2 event identity generation moving together as the coupled composer already rules (#2). Contribution ownership is by procedure/revision/slot; a form determinant's applied M3 state is rebased onto the event's own request, so the observed form is the applied form and never a stale request replayed (QL-MEF #299 slice 3); evaluation is deterministic in the event basis and creates no second event universe, clock, numerical field or authority.",
+   "rationale": "The Ta-Onta procedural stage over the live coupled scene (QL-MEF #296): versioned procedures compile typed changes onto the event's own M3 command batch (#3), the declared material policy and the continuous display clocks, and generated passages ride the admitted M1 form advance (#1) one determinant per scene, with the M2 event identity generation moving together as the coupled composer already rules (#2). Contribution ownership is by procedure/revision/slot; evaluation is deterministic in the event basis and creates no second event universe, clock, numerical field or authority.",
    "tests": [
     "crates/ql-mef/src/continuous/stage.rs",
     "crates/ql-mef/src/continuous/host.rs",
     "crates/ql-mef/tests/ta_onta_stage.rs"
-   ],
-   "kind": "computational"
-  },
-  {
-   "path": "crates/ql-mef/src/form_recipe.rs",
-   "stratum": "rust",
-   "disposition": "cross-coordinate",
-   "coordinates": [
-    "#2",
-    "#3"
-   ],
-   "rationale": "The PS-G form-recipe join (QL-MEF #299 first vertical): the M3 form law meeting the landed Paśu manifestation owner. A resolved subject manifestation's formation occurrence takes a declared entity-to-form determination (fold motif through the kernel cast law, or bounded six-bit address), compiled to the exact M3Operations the Ta-Onta stage already routes onto the event's own command batch (#3), with the qualification's source basis carried and refusals by name where the locus's records qualify no formation layer (#2). No invented lookup from descriptive keys; upstream primary-form selection stays the source's named open seam (M3 matrix §8).",
-   "tests": [
-    "crates/ql-mef/src/form_recipe.rs",
-    "crates/ql-mef/tests/psg_form_recipe.rs"
-   ],
-   "kind": "computational"
-  },
-  {
-   "path": "crates/ql-mef/src/form_samples.rs",
-   "stratum": "rust",
-   "disposition": "cross-coordinate",
-   "coordinates": [
-    "#2",
-    "#3"
-   ],
-   "rationale": "The PS-G retained sample body (QL-MEF #299 slice 2; P5 §4.1 material preparation): the form-recipe body's correspondence held natively — stable per-point identity derived from the preparation reference and allocation indices, square-domain rest (u,v,w) with layer/source identity, declared coverage, and the explicit normalised→stage-unit→metre conversion the existing scene geometry and field samples already speak (#2). The preparation's content hash is the dependency-correct cache key: progress, cursor and camera are not preparation inputs. Glyph-mask occupancy is a DECLARED determination (mask_ref + coverages) carried under the same stable identities — the rasterisation itself stays the application's PS-G half; genuine topology changes map explicitly, not by invention (#3).",
-   "tests": [
-    "crates/ql-mef/src/form_samples.rs",
-    "crates/ql-mef/tests/psg_form_recipe.rs"
-   ],
-   "kind": "computational"
-  },
-  {
-   "path": "crates/ql-mef/src/form_sequence.rs",
-   "stratum": "rust",
-   "disposition": "cross-coordinate",
-   "coordinates": [
-    "#2",
-    "#3"
-   ],
-   "rationale": "The PS-G fold sequence (QL-MEF #299 slices 2–3; P5 §4.2): interpolation, seek and interruption over fold progress through the stage's own display-clock axes and exact LiftInput cursor law (#2). Phase endpoints compile through the form-recipe owner's kernel cast-law core, so the standing telemetry IS the compiled M3Operation the stage routes (#3); a codon resolves at the quanta only — mid-transition the eased crease path is exact rational arithmetic and no form is fabricated. The stage-host effect binding compiles the law into the host's own typed changes: the boundary form (the same operations a recipe of the governing determination compiles) issues only when the codon resolved onto a form the host's disclosed standing does not hold, the display axis moves to the cursor, and strictly inside a transition no form is issued — re-reads re-issue nothing. Evaluation is a pure function of sequence and cursor (seek proven, progress never a preparation dependency); an in-flight takeover is recorded with the exact standing, never discarded. No second clock, event universe, numerical field or authority.",
-   "tests": [
-    "crates/ql-mef/src/form_sequence.rs",
-    "crates/ql-mef/tests/psg_form_recipe.rs"
    ],
    "kind": "computational"
   },
@@ -670,186 +625,200 @@
    "kind": "computational"
   },
   {
-   "path": "crates/ql-cli/src/stage_command.rs",
+   "path": "crates/ql-core/src/pole/phase.rs",
    "stratum": "rust",
-   "disposition": "infrastructural",
-   "coordinates": [],
-   "rationale": "CLI transport for the Ta-Onta procedural stage over the field host the Expressions application opens (QL-MEF #296 acceptance A17): one invocation is one owned exchange — open the scene host through the app's own binding route, send one stage operation (state/evaluate/bind/unbind/retire) under the exact request envelope, print the host's receipt. A command adapter, not a store — procedure JSON in, host receipts out; stage ownership and bindings live with the opened host.",
-   "tests": [
-    "crates/ql-cli/tests/stage_native.rs"
-   ],
-   "kind": "computational"
-  },
-  {
-   "path": "crates/ql-mef/src/form_instrument.rs",
-   "stratum": "rust",
-   "disposition": "cross-coordinate",
+   "disposition": "coordinate-bound",
    "coordinates": [
-    "#2",
     "#3"
    ],
-   "rationale": "The PS-G form instrument (QL-MEF #299 slice 3; P5 §4.1 dependency law and §4.2 commanded-vs-observed): the rasterisation/reseed instrumentation the application's sampler half consumes, and the observed resident geometry readback, natively (#2). Counters and receipts per event — rasterisation, cache hit, reseed, progress read — wired to the dependency-correct cache key each happened under, so repeated angle/progress updates are PROVEN by counters to re-sample nothing and reset no resident. The instrument enforces the law it counts: a reseed is admitted only through a genuine topology change mapped by the samples owner's own explicit correspondence; a coating change that keeps topology moves the key and is refused a reseed by name. Observation is pure and separate from command: the resident identity digest, occupancy and rest extent are read FROM the retained body beside the commanded crease state, so a lagging consumer cannot be disguised as an applied pose (#3). The rasterisation itself stays the application's PS-G half; no second store, clock, numerical field or authority.",
+   "rationale": "The source-qualified phase bridge (QL-MEF #312 §4 TS0, reader corrected by the #312 §5 amendment, 2026-10-06): explicit conversions between the coexisting native angle registers — quat_codon_state's physical 45-degree encoder (half-angle rotor, unchanged), the CORRECTED all-axis reader (vendor m3.c:136-152: 2*atan2(|v|,w), 45 physical-degree bins over the composed axis) with quat_rotation_degrees as the primary conversion, and M3Clock's 30-degree D5 ticks (unchanged). The retired i-plane register is retained as the regression witness (quat_clock_steps_retired_i_plane, quat_argument_bin_retired_i_plane); the corrected antipodal law is the octant mirror (7 - bin) mod 8, not the retired +4. A conversion publication over the existing registers only: it claims no owner ruling where ledger record gate0-m1:tick-degree-law stays open.",
    "tests": [
-    "crates/ql-mef/src/form_instrument.rs",
-    "crates/ql-mef/tests/psg_form_recipe.rs"
+    "crates/ql-core/tests/phase_bridge.rs"
    ],
    "kind": "computational"
   },
   {
-   "path": "crates/ql-mef/src/agent_event.rs",
+   "path": "crates/ql-mef/src/tarot_score.rs",
    "stratum": "rust",
    "disposition": "cross-coordinate",
    "coordinates": [
-    "M",
-    "#0",
-    "#1",
     "#2",
     "#3",
-    "#4",
-    "#5"
+    "#4"
    ],
-   "kind": "computational",
-   "rationale": "Native event, decision-frame and harmonic projection over owned QL law: positions, lenses and MEF rotation, relation grammar, D1-D3 completion, Context Frames, shapes and canonical harmonic ratios derive the deterministic field; unresolved semantic heads route faculty and lens candidates to optional providers. Deterministic results stay kernel-owned; learned results stay provider-attributed and never become source evidence; no model runtime, graph store, clock or authority system.",
+   "rationale": "The first-class deterministic Tarot score (QL-MEF #312 §§2-3 TS1, ql.tarot-score/v1): an admitted entity/event basis (nara identity natal placements, qualified dated sky snapshot, declared unwrapped clock steps) resolves per-longitude through the existing m3_inscription chains to codons, reads the 56-Minor exact cover (dual courts carry both codons; majors never receive codon addresses), records raw FourCharge with the 4X invariant, admits the environment-conditioned pose through det_overlay + quat_active_state against the 7/8 rotational profile, and projects the M3Clock basis. Origins (computed/drawn/authored/interpreted) stay distinct; computed scores never draw from the Nara one-deck journey; token identity is content-addressed independent of longitude correction. The M3-C31 quaternion preimage stays closed: every card arrives through the forward anchor/inscription law. The score's owned wire basis (ScoreBasisInput) and its stage compilation (score_stage_procedure, ql.tarot-score/v1 -> ql.stage-procedure/v1) serve the field host's scene-only score-resolve/score-state operations (crates/ql-mef/src/continuous/host.rs, a K8-owned module), which hold one named reading and disclose its currentness without advancing the field.",
    "tests": [
-    "crates/ql-mef/tests/agent_event.rs",
-    "crates/ql-cli/tests/agent_event_native.rs",
-    "fixtures/agent-decision/v1/digest-vectors.json"
-   ]
-  },
-  {
-   "path": "crates/ql-mef/src/agent_event/admission.rs",
-   "stratum": "rust",
-   "disposition": "cross-coordinate",
-   "coordinates": [
-    "M",
-    "#0",
-    "#1",
-    "#2",
-    "#3",
-    "#4",
-    "#5"
+    "crates/ql-mef/tests/tarot_score.rs",
+    "crates/ql-mef/tests/pasu_manifestation.rs"
    ],
-   "kind": "computational",
-   "rationale": "Kernel admission of proposed determinations: candidate-field and cardinality legality, native constraint application, event/frame/kernel basis staleness, exact evidence-span verification and provider identity. Determined, partial, unresolved, unavailable, refused and stale standings stay distinguishable, and observed native state bypasses providers entirely.",
-   "tests": [
-    "crates/ql-mef/tests/agent_event.rs",
-    "crates/ql-cli/tests/agent_event_native.rs"
-   ]
+   "kind": "computational"
   },
   {
    "path": "crates/ql-cli/src/agent_event_command.rs",
    "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Typed CLI transport for the native projection, frame, harmonic and admission owner: bounded one-MiB input, structured receipts, no model runtime and no QL tables.",
+   "rationale": "Thin JSON CLI transport over ql_mef::agent_event projection and decision admission. Deserialises ProjectionRequest/DecisionResponse, bounds request size, and discloses frame/harmonic/validate results. Owns no store, model runtime, or QL table; admission policy stays in ql-mef::agent_event.",
    "tests": [
-    "crates/ql-cli/tests/agent_event_native.rs"
-   ]
+    "crates/ql-cli/tests/agent_event_native.rs",
+    "crates/ql-mef/tests/agent_event.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_contracts.py",
-   "stratum": "python",
+   "path": "crates/ql-cli/src/stage_command.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Publishes the canonical agent-event contract schema and digest vectors from the native source basis; publication establishes intent and contracts, not runtime authority.",
+   "rationale": "CLI/source construct `TIMEOUT` under `crates/ql-cli/src/stage_command.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "scripts/tests/test_ql_agent_contracts.py",
-    "fixtures/agent-decision/v1/digest-vectors.json"
-   ]
+    "crates/ql-cli/src/stage_command.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_aikit.py",
-   "stratum": "python",
+   "path": "crates/ql-mef/src/agent_event/admission.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Translates a native decision frame into provider-neutral AIKit decide execution and returns the response for re-admission against the same native owner; provider and model identity are carried end to end, with no election and no shadow QL.",
+   "rationale": "CLI/source construct `decision_error` under `crates/ql-mef/src/agent_event/admission.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "scripts/tests/test_ql_agent_aikit.py",
-    "scripts/tests/test_ql_agent_decide.py"
-   ]
+    "crates/ql-mef/src/agent_event/admission.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_decide.py",
-   "stratum": "python",
+   "path": "crates/ql-mef/src/agent_event.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "The explicit decision instrument derives in the native QL CLI before optional attributable AIKit execution and re-admits against the same native owner. Zero heads bypass all provider configuration; unavailable service stays unresolved; no provider election or shadow QL.",
+   "rationale": "CLI/source construct `AGENT_PROJECTION_VERSION` under `crates/ql-mef/src/agent_event.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "scripts/tests/test_ql_agent_decide.py"
-   ]
+    "crates/ql-mef/tests/agent_event.rs",
+    "crates/ql-mef/src/agent_event.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_encounter.py",
-   "stratum": "python",
+   "path": "crates/ql-mef/src/form_instrument.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Bounded deterministic carrier eligibility and source hashing delegate formal projection to the native QL CLI. Ordinary material is not classified, and only explicit carriers create semantic candidates; no model call or body database.",
+   "rationale": "CLI/source construct `FORM_INSTRUMENT_CONTRACT` under `crates/ql-mef/src/form_instrument.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "scripts/tests/test_ql_agent_encounter.py"
-   ]
+    "crates/ql-mef/src/form_instrument.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_evaluation.py",
-   "stratum": "python",
+   "path": "crates/ql-mef/src/form_recipe.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Numerically comparable local evaluation harness over frozen case sets: deterministic, provider and learned arms run through the same native admission with digests and receipts; abstention, refusal and latency are measured, never elected.",
+   "rationale": "CLI/source construct `FORM_RECIPE_CONTRACT` under `crates/ql-mef/src/form_recipe.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "scripts/tests/test_ql_agent_evaluation.py"
-   ]
+    "crates/ql-mef/src/form_recipe.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "adapters/pi/ql-agent/extensions/ql-agent.ts",
-   "stratum": "javascript",
+   "path": "crates/ql-mef/src/form_samples.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Typed native Pi tools execute the same QL CLI and retained AIKit decision adapter. The owner schema, native validation, cancellation and exact returned receipts remain authoritative; the module contains no QL coordinate tables or classifier election.",
+   "rationale": "CLI/source construct `FORM_SAMPLES_CONTRACT` under `crates/ql-mef/src/form_samples.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "crates/ql-cli/tests/pi_agent_native.rs",
-    "scripts/tests/test_ql_agent_body_evidence.py"
-   ]
+    "crates/ql-mef/src/form_samples.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "adapters/pi/ql-agent/extensions/ql-event-context.ts",
-   "stratum": "javascript",
+   "path": "crates/ql-mef/src/form_sequence.rs",
+   "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "kind": "computational",
-   "rationale": "Bounded Pi/Prime hooks carry native event occasions and successful QL receipts. Shared native encounter projection runs asynchronously; stale, mode-off and superseded context is cleared. No provider inference occurs in body entry.",
+   "rationale": "CLI/source construct `FORM_SEQUENCE_CONTRACT` under `crates/ql-mef/src/form_sequence.rs` admitted as infrastructural transport; no coordinate ownership. Added so the cumulative K8/K9 census can review the landed surface.",
    "tests": [
-    "crates/ql-cli/tests/pi_agent_native.rs",
-    "scripts/tests/test_ql_agent_body_evidence.py",
-    "scripts/tests/test_ql_agent_encounter.py"
-   ]
+    "crates/ql-mef/src/form_sequence.rs"
+   ],
+   "kind": "computational"
   },
   {
-   "path": "scripts/ql_agent_body_evidence.py",
-   "stratum": "python",
-   "disposition": "infrastructural",
-   "coordinates": [],
-   "kind": "computational",
-   "rationale": "Actual Prime/Pi call IDs, exact actor arguments, native results and adjacent genuine provider snapshots are joined and replayed through the native owner. Source uptake, mode-off continuation and parity are checked without treating body identity as determination identity.",
+   "path": "crates/ql-core/src/pole/quaternion.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3-2-1-1-1",
+    "#3-2-1-1-2",
+    "#3-2-1-1-3",
+    "#3-2-1-1-4",
+    "#3-2-1-2-1",
+    "#3-2-1-2-2",
+    "#3-2-1-2-3",
+    "#3-2-1-2-4",
+    "#3-2-1-3-1",
+    "#3-2-1-3-2",
+    "#3-2-1-3-3",
+    "#3-2-1-3-4",
+    "#3-2-1-4-1",
+    "#3-2-1-4-2",
+    "#3-2-1-4-3",
+    "#3-2-1-4-4",
+    "#3-2-2-1-1",
+    "#3-2-2-1-2",
+    "#3-2-2-1-3",
+    "#3-2-2-1-4",
+    "#3-2-2-2-1",
+    "#3-2-2-2-2",
+    "#3-2-2-2-3",
+    "#3-2-2-2-4",
+    "#3-2-2-3-1",
+    "#3-2-2-3-2",
+    "#3-2-2-3-3",
+    "#3-2-2-3-4",
+    "#3-2-2-4-1",
+    "#3-2-2-4-2",
+    "#3-2-2-4-3",
+    "#3-2-2-4-4",
+    "#3-2-3-1-1",
+    "#3-2-3-1-2",
+    "#3-2-3-1-3",
+    "#3-2-3-1-4",
+    "#3-2-3-2-1",
+    "#3-2-3-2-2",
+    "#3-2-3-2-3",
+    "#3-2-3-2-4",
+    "#3-2-3-3-1",
+    "#3-2-3-3-2",
+    "#3-2-3-3-3",
+    "#3-2-3-3-4",
+    "#3-2-3-4-1",
+    "#3-2-3-4-2",
+    "#3-2-3-4-3",
+    "#3-2-3-4-4",
+    "#3-2-4-1-1",
+    "#3-2-4-1-2",
+    "#3-2-4-1-3",
+    "#3-2-4-1-4",
+    "#3-2-4-2-1",
+    "#3-2-4-2-2",
+    "#3-2-4-2-3",
+    "#3-2-4-2-4",
+    "#3-2-4-3-1",
+    "#3-2-4-3-2",
+    "#3-2-4-3-3",
+    "#3-2-4-3-4",
+    "#3-2-4-4-1",
+    "#3-2-4-4-2",
+    "#3-2-4-4-3",
+    "#3-2-4-4-4"
+   ],
+   "rationale": "The M3 quaternion active-state reader and its #312 §5 amendment (2026-10-06): quat_active_state is the corrected all-axis reader (vendor m3.c:136-152); quat_active_state_retired_i_plane is retained as the regression witness for the retired i-plane law. Existing ledger-bound symbols in this file keep their inherited ledger standing; this K9 module owns only new constructs that the ledger has not yet requalified.",
    "tests": [
-    "scripts/tests/test_ql_agent_body_evidence.py"
-   ]
-  },
-  {
-   "path": "scripts/ql_agent_receipt_metrics.py",
-   "stratum": "python",
-   "disposition": "infrastructural",
-   "coordinates": [],
-   "kind": "computational",
-   "rationale": "Qualifies actual AIKit distributions, request/provider hashes, model/runtime identity and input/latency usage against retained native evaluation. Unknown metrics remain absent and independent scores are not joint evidence.",
-   "tests": [
-    "scripts/tests/test_ql_agent_receipt_metrics.py"
-   ]
+    "crates/ql-core/tests/phase_bridge.rs",
+    "crates/ql-mef/tests/m3_domain.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }

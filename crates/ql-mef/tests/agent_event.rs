@@ -353,24 +353,20 @@ fn semantic_faculty_descriptions_come_from_current_owner_capabilities() {
 #[test]
 fn callable_operation_labels_follow_native_faculty_membership() {
     let result = project(&[("faculty", json!("#3"))], &[SemanticHead::Operation]);
-    assert_eq!(
-        result.frame["unresolved"][0]["labels"]
-            .as_array()
-            .unwrap()
-            .len(),
-        1
+    let expected = epi_agent::native_operations(3).unwrap();
+    let labels = result.frame["unresolved"][0]["labels"].as_array().unwrap();
+    assert_eq!(labels.len(), expected.len());
+    for (label, operation) in labels.iter().zip(expected.iter()) {
+        assert_eq!(label["id"], *operation);
+    }
+    // A Mahamaya/techne operation alone derives faculty #3 (same inverse law as
+    // nara.journey.open → #4 below). A foreign faculty+operation pairing still
+    // refuses.
+    let techne = project(
+        &[("operation", json!("ql-techne-reading"))],
+        &[SemanticHead::Faculty],
     );
-    assert_eq!(
-        result.frame["unresolved"][0]["labels"][0]["id"],
-        "representation.bind"
-    );
-    assert!(
-        project_event(ProjectionRequest {
-            event: event(&[("operation", json!("ql-techne-reading"))]),
-            requested_heads: vec![]
-        })
-        .is_err()
-    );
+    assert_eq!(value(&techne.determination["derived"], "faculty"), "#3");
     assert!(
         project_event(ProjectionRequest {
             event: event(&[
