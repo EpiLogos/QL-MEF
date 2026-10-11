@@ -353,17 +353,14 @@ fn semantic_faculty_descriptions_come_from_current_owner_capabilities() {
 #[test]
 fn callable_operation_labels_follow_native_faculty_membership() {
     let result = project(&[("faculty", json!("#3"))], &[SemanticHead::Operation]);
-    assert_eq!(
-        result.frame["unresolved"][0]["labels"]
-            .as_array()
-            .unwrap()
-            .len(),
-        1
-    );
-    assert_eq!(
-        result.frame["unresolved"][0]["labels"][0]["id"],
-        "representation.bind"
-    );
+    let expected = epi_agent::native_operations(3).unwrap();
+    let labels = result.frame["unresolved"][0]["labels"]
+        .as_array()
+        .unwrap();
+    assert_eq!(labels.len(), expected.len());
+    for (label, operation) in labels.iter().zip(expected.iter()) {
+        assert_eq!(label["id"], *operation);
+    }
     assert!(
         project_event(ProjectionRequest {
             event: event(&[("operation", json!("ql-techne-reading"))]),
