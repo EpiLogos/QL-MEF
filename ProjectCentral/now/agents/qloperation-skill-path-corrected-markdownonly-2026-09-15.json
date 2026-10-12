@@ -7,5 +7,11 @@
   "recorded_at_unix_seconds": 1789445284,
   "subject": "ql-operation skill path corrected (markdown-only)",
   "result": "Suite-level skill conformance audit found ql-operation naming ql-adapters/tests/noql_matrix.rs, which moved under crates/. Fixed on agent/skill-path-conformance (4292c56 on origin/main 4276b94); PR QL-MEF#200. Side finding: ql --version prints no revision, weakening pin disclosure (owner call).",
-  "status": "active"
+  "status": "carried",
+  "carried_from_days": [
+    "2026-10-08",
+    "2026-10-09",
+    "2026-10-10",
+    "2026-10-11"
+  ]
 }

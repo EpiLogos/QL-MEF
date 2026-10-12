@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788863875157278000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex-ql-matrix-migration",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788863875,
+  "subject": "QL multi-matrix product profile migration prepared",
+  "result": "Clean branch agent/ql-multi-matrix-profile at eb6115f95b8114d706de9ffe3032ccc2b3324787, based on origin/main 914ffe4. Recovered the existing uncommitted 71-record ProjectCentral product profile into a landed-ready commit without touching the occupied primary checkout. Preserved and registered four distinct families: suite profile, Epi readiness, Ta-Onta agent-world, and deep M field with M0-M5 partitions. Added .oi/product.json oi.product-capability-sources/v1 registry, a real carrier/schema/reference validator, and CI. Verified validator, Central generic ql-capability-matrix validator, ql-cli 10 tests plus live capabilities/verify commands, and current O:I collation (449 total records, 71 QL). O:I companion remains: collator must read each product .oi/product.json, select the sole suite_catalogue=true entry instead of hard-coded paths, and retain metadata/hashes for all native matrices.",
+  "status": "waiting"
+}
