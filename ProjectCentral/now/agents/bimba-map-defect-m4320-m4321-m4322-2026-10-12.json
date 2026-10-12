@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "bimba-map-defect-m4320-m4321-m4322-2026-10-12",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-code-dlw-conductor",
+  "kind": "question",
+  "recorded_at_unix_seconds": 1791821651,
+  "subject": "Bimba map defect: M4.3-2.0, M4.3-2.1, M4.3-2.2 put a dot after a 2 (no nesting-threshold ledger record)",
+  "result": "Read only, 2026-10-12T16:10:53Z, graph_revision 12, content digest 1a4b75ce1660e89f104e7d8b24b35748eef7d0c0dcfb878a0bfaf08591ca6b6c (re-run 16:13:28Z, same digest). M4.3-2.0 Bohmian Dialogue, M4.3-2.1 Native Talking Circle and M4.3-2.2 Diamond Approach Inquiry put a '.' after a position-2 segment; the QL law allows a dot only after a 4 (skills/ql-law/SKILL.md:26). None of the 19 k2-grammar-nesting-threshold:* records in fixtures/kernel/m-ledger-v1.json covers them, and migration/bimba-map/2026-09-29-nesting-threshold.cypher does not touch them. Receipt: O-I desktop/cradle/docs/world-shell/evidence/p0-bimba-live/read.out row D3 (ticket P0-BIMBA-LIVE, lane dlw/build-20261012). Nothing was written to the map or the ledger fixture. The respelling and its ledger record are the QL owner's decision.",
+  "status": "active"
+}

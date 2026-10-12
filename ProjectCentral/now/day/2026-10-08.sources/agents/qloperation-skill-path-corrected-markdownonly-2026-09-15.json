@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "qloperation-skill-path-corrected-markdownonly-2026-09-15",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-session",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1789445284,
+  "subject": "ql-operation skill path corrected (markdown-only)",
+  "result": "Suite-level skill conformance audit found ql-operation naming ql-adapters/tests/noql_matrix.rs, which moved under crates/. Fixed on agent/skill-path-conformance (4292c56 on origin/main 4276b94); PR QL-MEF#200. Side finding: ql --version prints no revision, weakening pin disclosure (owner call).",
+  "status": "active"
+}

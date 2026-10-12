@@ -1,0 +1,932 @@
+{
+  "attention": [
+    {
+      "branch": "agent/o-i-20261007-1639",
+      "kind": "unattributed_worktree",
+      "path": "/Users/admin/Central/worktrees/env-1/ql-mef",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/stage-cli-20261006",
+      "kind": "unattributed_worktree",
+      "path": "/Users/admin/Central/worktrees/env-2/ql-mef",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "kind": "detached_head",
+      "path": "/Users/admin/Central/worktrees/env-3/ql-mef",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": null,
+      "kind": "unattributed_worktree",
+      "path": "/Users/admin/Central/worktrees/env-3/ql-mef",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "chore/target-gitignore",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "cutover/knowledge-register-fix-20260923",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "cutover/knowledge-register-fix-20260923",
+      "days_idle": 16,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "docs/architecture-reconciliation-20260930",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "docs/m123-scene-structural-map",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "epi-prime-ql/spec-complete-20260923",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "epi-prime-ql/spec-complete-20260923",
+      "days_idle": 16,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/bimba-live-divergence",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/continuous-host-infra",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/epi-world-native-installed-replay-20261002",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/expression-acts-20260926",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/janko-played-notes-20261005",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/live-stage-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/m1-spanda-field",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/m3-spanda-advance",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/nara-identity-expression-20260927",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/pase-manifestation-2-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/pase-manifestation-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/pase-manifestation-3-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/physical-musical-20261005",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/played-path-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/psg-form-recipe-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/psg-form-recipe-3-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/psv-verification-20261006",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/ql-decide-qd1-20261007",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/scene-sound",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/stage-cli-20261006",
+      "checked_out": true,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/ta-onta-stage-2-20261005",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "feat/ta-onta-stage-20261005",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "help/task-oriented-frontdoor",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "integrate/nara-m4",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "intelligence-arm/practice-skills-20260923",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "intelligence-arm/practice-skills-20260923",
+      "days_idle": 16,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "knowledge-register-fix-20260923",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "knowledge-register-fix-20260923",
+      "days_idle": 16,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "land/ea-first-journey",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "land/ea-first-journey-20260930",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "map/m3-5-clock-inscription",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "map/m3-5-refresh",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "preserve/local-main-pre-converge-20260924",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "preserve/local-main-pre-converge-20260924",
+      "days_idle": 16,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "programme/ea-first-journey-20260928",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "record-state/fold-20261008",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "recover/ql-mef-dirt-20261007",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "telos/ql-m-integrated",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "telos/scene-landed",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "ui/cradle-native-shapes-20260924",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "ui/cradle-native-shapes-20260924",
+      "days_idle": 15,
+      "kind": "stale_branch",
+      "repo": "Work/Quaternal-Logic"
+    },
+    {
+      "branch": "verify/target-pool",
+      "checked_out": false,
+      "kind": "local_only_branch",
+      "repo": "Work/Quaternal-Logic"
+    }
+  ],
+  "generated_at": "2026-10-09T23:00:50.130941+00:00",
+  "repos": [
+    {
+      "bare": false,
+      "branches": [
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [
+            "/Users/admin/Central/worktrees/env-1/ql-mef"
+          ],
+          "last_commit_at": "2026-10-07T15:07:18+01:00",
+          "local_only": false,
+          "name": "agent/o-i-20261007-1639",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": null,
+          "behind": 10,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T17:53:59+01:00",
+          "local_only": false,
+          "name": "agent/ql-mef-20261006-1508",
+          "upstream": "origin/agent/ql-mef-20261006-1508"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T13:14:45+01:00",
+          "local_only": true,
+          "name": "chore/target-gitignore",
+          "upstream": "origin/chore/target-gitignore"
+        },
+        {
+          "ahead": null,
+          "behind": 4,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T23:45:45+01:00",
+          "local_only": false,
+          "name": "corrected-classifier",
+          "upstream": "origin/agent/ql-mef-20261006-1508"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-23T18:30:37+01:00",
+          "local_only": true,
+          "name": "cutover/knowledge-register-fix-20260923",
+          "upstream": "origin/knowledge-register-fix-20260923"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-01T01:41:59+01:00",
+          "local_only": true,
+          "name": "docs/architecture-reconciliation-20260930",
+          "upstream": "origin/docs/architecture-reconciliation-20260930"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T16:27:11+01:00",
+          "local_only": true,
+          "name": "docs/m123-scene-structural-map",
+          "upstream": "origin/docs/m123-scene-structural-map"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-23T08:34:48+01:00",
+          "local_only": true,
+          "name": "epi-prime-ql/spec-complete-20260923",
+          "upstream": "origin/epi-prime-ql/spec-complete-20260923"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-27T23:25:00+01:00",
+          "local_only": true,
+          "name": "feat/bimba-live-divergence",
+          "upstream": "origin/feat/bimba-live-divergence"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T22:43:51+01:00",
+          "local_only": true,
+          "name": "feat/continuous-host-infra",
+          "upstream": "origin/feat/continuous-host-infra"
+        },
+        {
+          "ahead": 4,
+          "behind": 24,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-02T13:52:15+01:00",
+          "local_only": true,
+          "name": "feat/epi-world-native-installed-replay-20261002",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": 5,
+          "behind": 66,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-26T21:46:06+01:00",
+          "local_only": true,
+          "name": "feat/expression-acts-20260926",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T00:30:44+01:00",
+          "local_only": true,
+          "name": "feat/janko-played-notes-20261005",
+          "upstream": "origin/feat/janko-played-notes-20261005"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T13:10:32+01:00",
+          "local_only": true,
+          "name": "feat/live-stage-20261006",
+          "upstream": "origin/feat/live-stage-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T19:17:55+01:00",
+          "local_only": true,
+          "name": "feat/m1-spanda-field",
+          "upstream": "origin/feat/m1-spanda-field"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T18:43:00+01:00",
+          "local_only": true,
+          "name": "feat/m3-spanda-advance",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T10:25:00+01:00",
+          "local_only": true,
+          "name": "feat/nara-identity-expression-20260927",
+          "upstream": "origin/feat/nara-identity-expression-20260927"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T14:11:40+01:00",
+          "local_only": true,
+          "name": "feat/pase-manifestation-2-20261006",
+          "upstream": "origin/feat/pase-manifestation-2-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T12:25:29+01:00",
+          "local_only": true,
+          "name": "feat/pase-manifestation-20261006",
+          "upstream": "origin/feat/pase-manifestation-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T19:56:16+01:00",
+          "local_only": true,
+          "name": "feat/pase-manifestation-3-20261006",
+          "upstream": "origin/feat/pase-manifestation-3-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-05T19:26:14+01:00",
+          "local_only": true,
+          "name": "feat/physical-musical-20261005",
+          "upstream": "origin/feat/physical-musical-20261005"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T02:57:22+01:00",
+          "local_only": true,
+          "name": "feat/played-path-20261006",
+          "upstream": "origin/feat/played-path-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T23:02:05+01:00",
+          "local_only": false,
+          "name": "feat/psg-form-recipe-2-20261006",
+          "upstream": "origin/feat/psg-form-recipe-2-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T21:21:36+01:00",
+          "local_only": true,
+          "name": "feat/psg-form-recipe-20261006",
+          "upstream": "origin/feat/psg-form-recipe-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-07T00:31:46+01:00",
+          "local_only": true,
+          "name": "feat/psg-form-recipe-3-20261006",
+          "upstream": "origin/feat/psg-form-recipe-3-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-07T12:29:23+01:00",
+          "local_only": true,
+          "name": "feat/psv-verification-20261006",
+          "upstream": "origin/feat/psv-verification-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-07T14:46:48+01:00",
+          "local_only": true,
+          "name": "feat/ql-decide-qd1-20261007",
+          "upstream": "origin/feat/ql-decide-qd1-20261007"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T21:17:00+01:00",
+          "local_only": true,
+          "name": "feat/scene-sound",
+          "upstream": "origin/feat/scene-sound"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [
+            "/Users/admin/Central/worktrees/env-2/ql-mef"
+          ],
+          "last_commit_at": "2026-10-06T20:49:41+01:00",
+          "local_only": true,
+          "name": "feat/stage-cli-20261006",
+          "upstream": "origin/feat/stage-cli-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T00:15:26+01:00",
+          "local_only": true,
+          "name": "feat/ta-onta-stage-2-20261005",
+          "upstream": "origin/feat/ta-onta-stage-2-20261005"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-05T18:22:33+01:00",
+          "local_only": true,
+          "name": "feat/ta-onta-stage-20261005",
+          "upstream": "origin/feat/ta-onta-stage-20261005"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-27T14:14:17+01:00",
+          "local_only": true,
+          "name": "help/task-oriented-frontdoor",
+          "upstream": "origin/help/task-oriented-frontdoor"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T11:36:16+01:00",
+          "local_only": true,
+          "name": "integrate/nara-m4",
+          "upstream": "origin/integrate/nara-m4"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-23T20:45:29+01:00",
+          "local_only": true,
+          "name": "intelligence-arm/practice-skills-20260923",
+          "upstream": "origin/intelligence-arm/practice-skills-20260923"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-23T12:51:55+01:00",
+          "local_only": true,
+          "name": "knowledge-register-fix-20260923",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-30T17:31:11+01:00",
+          "local_only": true,
+          "name": "land/ea-first-journey",
+          "upstream": "origin/programme/ea-first-journey-20260928"
+        },
+        {
+          "ahead": 13,
+          "behind": 29,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-30T17:45:04+01:00",
+          "local_only": true,
+          "name": "land/ea-first-journey-20260930",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": 23,
+          "behind": 37,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T11:54:09+01:00",
+          "local_only": false,
+          "name": "lane/m123-engine-infra",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [
+            "/Users/admin/Central/Work/Quaternal-Logic"
+          ],
+          "last_commit_at": "2026-10-07T15:07:18+01:00",
+          "local_only": false,
+          "name": "main",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-02T02:04:42+01:00",
+          "local_only": true,
+          "name": "map/m3-5-clock-inscription",
+          "upstream": "origin/map/m3-5-clock-inscription"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T18:50:46+01:00",
+          "local_only": true,
+          "name": "map/m3-5-refresh",
+          "upstream": "origin/map/m3-5-clock-inscription"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-29T11:54:09+01:00",
+          "local_only": false,
+          "name": "pr-251",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-23T21:25:09+01:00",
+          "local_only": true,
+          "name": "preserve/local-main-pre-converge-20260924",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T17:42:24+01:00",
+          "local_only": true,
+          "name": "programme/ea-first-journey-20260928",
+          "upstream": "origin/programme/ea-first-journey-20260928"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-08T10:21:33+01:00",
+          "local_only": true,
+          "name": "record-state/fold-20261008",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T23:34:32+01:00",
+          "local_only": false,
+          "name": "recover/psg-s2-quaternion-dirt-20261006",
+          "upstream": "origin/recover/psg-s2-quaternion-dirt-20261006"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-07T11:34:31+01:00",
+          "local_only": true,
+          "name": "recover/ql-mef-dirt-20261007",
+          "upstream": null
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-30T17:42:33+01:00",
+          "local_only": false,
+          "name": "skills/quaternal-oracle",
+          "upstream": "origin/skills/quaternal-oracle"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-28T19:34:06+01:00",
+          "local_only": true,
+          "name": "telos/ql-m-integrated",
+          "upstream": "origin/telos/ql-m-integrated"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-30T15:52:41+01:00",
+          "local_only": true,
+          "name": "telos/scene-landed",
+          "upstream": "origin/telos/scene-landed"
+        },
+        {
+          "ahead": 3,
+          "behind": 6,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T22:05:09+01:00",
+          "local_only": false,
+          "name": "temp-converge-312",
+          "upstream": "origin/main"
+        },
+        {
+          "ahead": null,
+          "behind": null,
+          "checked_out_in": [],
+          "last_commit_at": "2026-09-24T23:10:22+01:00",
+          "local_only": true,
+          "name": "ui/cradle-native-shapes-20260924",
+          "upstream": "origin/ui/cradle-native-shapes-20260924"
+        },
+        {
+          "ahead": null,
+          "behind": 14,
+          "checked_out_in": [],
+          "last_commit_at": "2026-10-06T03:10:45+01:00",
+          "local_only": true,
+          "name": "verify/target-pool",
+          "upstream": "origin/main"
+        }
+      ],
+      "default_branch": "main",
+      "dirty_paths": null,
+      "head_branch": "main",
+      "head_sha": "ba4c5cfee09e2a441113a56ac3b370ae45bdc55d",
+      "remote": "https://github.com/EpiLogos/QL-MEF.git",
+      "repo": "Work/Quaternal-Logic",
+      "repo_root": "/Users/admin/Central/Work/Quaternal-Logic",
+      "unborn": false,
+      "unmerged_tips": [
+        "chore/target-gitignore",
+        "cutover/knowledge-register-fix-20260923",
+        "docs/architecture-reconciliation-20260930",
+        "docs/m123-scene-structural-map",
+        "epi-prime-ql/spec-complete-20260923",
+        "feat/bimba-live-divergence",
+        "feat/continuous-host-infra",
+        "feat/epi-world-native-installed-replay-20261002",
+        "feat/expression-acts-20260926",
+        "feat/janko-played-notes-20261005",
+        "feat/live-stage-20261006",
+        "feat/m1-spanda-field",
+        "feat/m3-spanda-advance",
+        "feat/nara-identity-expression-20260927",
+        "feat/pase-manifestation-2-20261006",
+        "feat/pase-manifestation-20261006",
+        "feat/pase-manifestation-3-20261006",
+        "feat/physical-musical-20261005",
+        "feat/played-path-20261006",
+        "feat/psg-form-recipe-20261006",
+        "feat/psg-form-recipe-3-20261006",
+        "feat/psv-verification-20261006",
+        "feat/ql-decide-qd1-20261007",
+        "feat/scene-sound",
+        "feat/stage-cli-20261006",
+        "feat/ta-onta-stage-2-20261005",
+        "feat/ta-onta-stage-20261005",
+        "help/task-oriented-frontdoor",
+        "integrate/nara-m4",
+        "intelligence-arm/practice-skills-20260923",
+        "knowledge-register-fix-20260923",
+        "land/ea-first-journey",
+        "land/ea-first-journey-20260930",
+        "map/m3-5-clock-inscription",
+        "map/m3-5-refresh",
+        "preserve/local-main-pre-converge-20260924",
+        "programme/ea-first-journey-20260928",
+        "record-state/fold-20261008",
+        "recover/ql-mef-dirt-20261007",
+        "telos/ql-m-integrated",
+        "telos/scene-landed",
+        "ui/cradle-native-shapes-20260924",
+        "verify/target-pool"
+      ],
+      "worktrees": [
+        {
+          "ahead": null,
+          "bare": false,
+          "behind": null,
+          "branch": "main",
+          "detached": false,
+          "dirty_files": 28,
+          "lane": "unattributed",
+          "last_commit_at": "2026-10-07T15:07:18+01:00",
+          "locked": false,
+          "path": "/Users/admin/Central/Work/Quaternal-Logic",
+          "prunable": false
+        },
+        {
+          "ahead": null,
+          "bare": false,
+          "behind": null,
+          "branch": "agent/o-i-20261007-1639",
+          "detached": false,
+          "dirty_files": 3,
+          "lane": "unattributed",
+          "last_commit_at": "2026-10-07T15:07:18+01:00",
+          "locked": false,
+          "path": "/Users/admin/Central/worktrees/env-1/ql-mef",
+          "prunable": false
+        },
+        {
+          "ahead": null,
+          "bare": false,
+          "behind": null,
+          "branch": "feat/stage-cli-20261006",
+          "detached": false,
+          "dirty_files": 2,
+          "lane": "unattributed",
+          "last_commit_at": "2026-10-06T20:49:41+01:00",
+          "locked": false,
+          "path": "/Users/admin/Central/worktrees/env-2/ql-mef",
+          "prunable": false
+        },
+        {
+          "ahead": null,
+          "bare": false,
+          "behind": null,
+          "branch": null,
+          "detached": true,
+          "dirty_files": null,
+          "lane": "unattributed",
+          "last_commit_at": "2026-10-07T12:57:07+01:00",
+          "locked": false,
+          "path": "/Users/admin/Central/worktrees/env-3/ql-mef",
+          "prunable": false
+        }
+      ]
+    }
+  ],
+  "schema": "central.git-census/v1",
+  "scope": [
+    "Work/Quaternal-Logic"
+  ],
+  "summary": {
+    "attention_items": 53,
+    "branches": 53,
+    "local_only_branches": 43,
+    "repos_censused": 1,
+    "repos_errored": 0,
+    "unattributed_worktrees": 3,
+    "worktrees": 4
+  }
+}
