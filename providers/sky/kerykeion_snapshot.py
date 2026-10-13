@@ -62,6 +62,9 @@ def provider_quantity_payload(value):
             record[key] = float(record[key])
     quantity(result, 'julian_day_ut_argument')
     quantity(result, 'ayanamsha_degrees')
+    if isinstance(result.get('subsolar'), dict):
+        quantity(result['subsolar'], 'latitude_degrees')
+        quantity(result['subsolar'], 'longitude_degrees')
     for body in result.get('bodies', []):
         if isinstance(body, dict):
             for key in ('longitude_degrees', 'latitude_degrees', 'distance_au',
@@ -169,6 +172,41 @@ def source_bindings():
             'transpersonal_meaning': 'source-preempted-not-invented'}
 
 
+def subsolar_point(jd, sun_backend):
+    """State the geocentric subsolar point of the Julian day `jd` (UT argument).
+
+    Method (no series of our own; the Swiss Ephemeris engine the provider already
+    runs supplies every astronomical quantity):
+      1. The Sun's apparent geocentric equatorial position of date:
+         swe.calc_ut(jd, SUN, FLG_SWIEPH | FLG_SPEED | FLG_EQUATORIAL). No
+         sidereal, topocentric or true-position flag is used, so the point does
+         not depend on the request's zodiac, perspective or observer.
+      2. Latitude = the Sun's declination (the subsolar latitude).
+      3. Longitude = right ascension minus apparent Greenwich sidereal time,
+         where swe.sidtime(jd) (hours) is the apparent sidereal time at the
+         Greenwich meridian; times 15 gives degrees. Normalised to [-180, 180),
+         east positive. The subsolar point is where the Sun's local hour angle
+         is zero, so this is the longitude whose local sidereal time equals the
+         Sun's right ascension.
+    The Sun must come from the same backend as the Sun body row (`sun_backend`),
+    so this point never mixes ephemeris sources. UT is the provider's stated
+    time-scale policy (UTC as UT; no UT1 correction). A UT1-UTC offset of one
+    second moves the longitude by 15 arcseconds (about 0.004 degrees), so the
+    stated longitude carries at most that offset under the provider's policy.
+    """
+    import swisseph as swe
+    vector, returned = swe.calc_ut(jd, swe.SUN, swe.FLG_SWIEPH | swe.FLG_SPEED | swe.FLG_EQUATORIAL)
+    require(len(vector) == 6 and all(math.isfinite(x) for x in vector),
+            'invalid subsolar vector')
+    backend = {swe.FLG_SWIEPH: 'swiss-files', swe.FLG_MOSEPH: 'moshier', swe.FLG_JPLEPH: 'jpl-files'}.get(
+        returned & (swe.FLG_SWIEPH | swe.FLG_MOSEPH | swe.FLG_JPLEPH))
+    require(backend == sun_backend, 'subsolar backend differs from the Sun body row')
+    right_ascension = vector[0] % 360.0
+    greenwich_apparent_sidereal = swe.sidtime(jd) * 15.0
+    longitude = (right_ascension - greenwich_apparent_sidereal + 180.0) % 360.0 - 180.0
+    return {'latitude_degrees': vector[1], 'longitude_degrees': longitude}
+
+
 def produce(data, *, now=None):
     """Calculate one immutable generation; `now` is injectable for controlled tests."""
     time = request(data)
@@ -245,6 +283,7 @@ def produce(data, *, now=None):
                                'latitude_speed_degrees_per_day': vector[4],
                                'radial_speed_au_per_day': vector[5], 'retrograde': vector[3] < 0,
                                'backend': backend, 'returned_flags': returned, 'data_files': files})
+            subsolar = subsolar_point(jd, bodies[0]['backend'])
             ayanamsha_degrees = swe.get_ayanamsa_ut(jd) if data['zodiac'] == 'Sidereal' else None
         provider = {'name': 'Kerykeion', 'version': metadata.version('kerykeion'),
                     'wrapper': 'pyswisseph', 'wrapper_version': metadata.version('pyswisseph'),
@@ -268,18 +307,26 @@ def produce(data, *, now=None):
              'house_policy': 'not-emitted; factory auxiliary Whole-Sign houses discarded',
              'scope': 'observer-private' if data['observer'] else 'shared-geocentric',
              'standing': 'calculated-ephemeris-not-observed-sky', 'provider': provider,
-             'source_binding': source_bindings(), 'bodies': bodies}
+             'source_binding': source_bindings(), 'subsolar': subsolar, 'bodies': bodies}
     value['snapshot_ref'] = 'sha256:' + digest(value)
     validate_snapshot(value, now=received, require_current=data['mode'] == 'current')
     return value
 
 
 def validate_snapshot(value, *, now=None, require_current=False):
-    require(isinstance(value, dict) and set(value) == {
+    # `subsolar` is additive: snapshots produced before it existed remain valid
+    # exactly as they were (their digest excludes the key), and no other key is admitted.
+    require(isinstance(value, dict) and set(value) - {'subsolar'} == {
         'schema', 'request', 'epoch_utc', 'epoch_unix_ms', 'receipt_utc', 'receipt_clock',
         'receipt_unix_ms', 'julian_day_ut_argument', 'time_scale_policy', 'reference_frame',
         'ayanamsha_degrees', 'house_policy', 'scope', 'standing', 'provider', 'source_binding',
         'bodies', 'snapshot_ref'} and value.get('schema') == SCHEMA, 'unsupported snapshot')
+    if 'subsolar' in value:
+        point = value['subsolar']
+        require(isinstance(point, dict) and set(point) == {'latitude_degrees', 'longitude_degrees'},
+                'invalid subsolar point fields')
+        number(point['latitude_degrees'], -90, 90, 'subsolar latitude')
+        number(point['longitude_degrees'], -180, 180, 'subsolar longitude')
     original = copy.deepcopy(value)
     reference = original.pop('snapshot_ref', None)
     require(reference in ('sha256:' + digest(original),

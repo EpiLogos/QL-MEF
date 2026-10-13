@@ -103,6 +103,16 @@ than accepting the factory's silent polar adjustment.
 
 All ten bodies have explicit name, native M2 planet identity, Swiss identity,
 longitude/latitude, distance, full three-component speed and retrograde sign.
+A snapshot may also state `subsolar: {latitude_degrees, longitude_degrees}` —
+the point where the Sun stands at the zenith at the epoch: the Sun's apparent
+geocentric declination (latitude) and its apparent right ascension minus
+apparent Greenwich sidereal time (longitude, east positive, in [-180, 180)),
+computed by `subsolar_point()` in `providers/sky/kerykeion_snapshot.py` from
+the same Sun row and backend. It is optional (earlier snapshots validate
+without it) and independent of zodiac, perspective and observer. Consumers that
+draw daylight (O:I's Places terminator) read it as stated and compute no
+astronomy of their own.
+
 Positions are ecliptic-of-date, degrees/AU; speeds are per day. Each body's
 **returned** ephemeris flags determine the actual backend. The requested SWIEPH
 flag is not evidence that Swiss planetary data files were used. `allow-moshier`

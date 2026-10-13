@@ -2,6 +2,7 @@ import copy
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 import json
+import math
 from pathlib import Path
 import subprocess
 import sys
@@ -12,6 +13,36 @@ sys.path.insert(0, str(Path(__file__).parent))
 import kerykeion_snapshot as sky
 
 NOW = datetime(2026, 9, 12, 12, tzinfo=timezone.utc)
+J2000 = datetime(2000, 1, 1, 12, tzinfo=timezone.utc)
+
+
+def wrap180(degrees):
+    return (degrees + 180.0) % 360.0 - 180.0
+
+
+def independent_subsolar(snapshot):
+    """Low-precision cross-check that shares no code path with the producer's RA or sidereal time.
+
+    Inputs are the snapshot's own ecliptic Sun, the mean obliquity formula and the
+    Meeus mean longitude L0 (accurate to about 0.01 deg). Declination follows from the
+    ecliptic position. The equation of time E = L0 - 0.0057 - alpha gives the subsolar
+    longitude 15*(12 - UT_hours) - E, which is the producer's alpha - GAST rewritten.
+    Nutation in E (about 0.004 deg) is omitted, inside the stated 0.05 deg tolerance.
+    """
+    epoch = datetime.fromisoformat(snapshot['epoch_utc'].replace('Z', '+00:00'))
+    days = (epoch - J2000).total_seconds() / 86400.0
+    centuries = days / 36525.0
+    eps = math.radians(23.439291 - 0.0130042 * centuries)
+    sun = snapshot['bodies'][0]
+    lam, beta = math.radians(sun['longitude_degrees']), math.radians(sun['latitude_degrees'])
+    alpha = math.degrees(math.atan2(math.cos(eps) * math.sin(lam) - math.tan(beta) * math.sin(eps),
+                                    math.cos(lam))) % 360.0
+    delta = math.degrees(math.asin(math.sin(beta) * math.cos(eps)
+                                   + math.cos(beta) * math.sin(eps) * math.sin(lam)))
+    mean_longitude = (280.46646 + 36000.76983 * centuries + 0.0003032 * centuries ** 2) % 360.0
+    equation = wrap180(mean_longitude - 0.0057183 - alpha)
+    ut_hours = epoch.hour + epoch.minute / 60 + epoch.second / 3600
+    return delta, wrap180(15.0 * (12.0 - ut_hours) - equation)
 
 
 def query(**overrides):
@@ -341,6 +372,89 @@ class SkyTests(unittest.TestCase):
         self.assertEqual(results[1], results[4])
         self.assertEqual(results[2], results[5])
         self.assertNotEqual(results[0], results[1])
+
+    def test_subsolar_shape_is_stated_on_every_produced_sky(self):
+        for snapshot in (self.saved, sky.produce(query(epoch='2026-06-21T12:00:00Z'), now=NOW)):
+            point = snapshot['subsolar']
+            self.assertEqual(set(point), {'latitude_degrees', 'longitude_degrees'})
+            self.assertTrue(-90 <= point['latitude_degrees'] <= 90)
+            self.assertTrue(-180 <= point['longitude_degrees'] <= 180)
+            self.assertEqual(sky.validate_snapshot(snapshot)['subsolar'], point)
+
+    def test_subsolar_march_equinox_noon_known_values(self):
+        # 2026-03-20 equinox is 14:46 UTC, so declination at 12:00 UT is about -0.05 deg.
+        # Equation of time that day is about -7.5 min, so the subsolar point is about
+        # 1.9 deg east of Greenwich at 12:00 UT. Tolerances: lat 0.1 deg, lon 0.2 deg.
+        s = sky.produce(query(epoch='2026-03-20T12:00:00Z'), now=NOW)
+        point = s['subsolar']
+        self.assertLess(abs(point['latitude_degrees']), 0.1)
+        self.assertLess(abs(point['longitude_degrees'] - 1.9), 0.2)
+        delta, longitude = independent_subsolar(s)
+        self.assertLess(abs(point['latitude_degrees'] - delta), 0.01)
+        self.assertLess(abs(wrap180(point['longitude_degrees'] - longitude)), 0.05)
+
+    def test_subsolar_solstice_known_declinations(self):
+        # Tolerance 0.02 deg: the solstice declinations are +/-23.44 deg (obliquity).
+        june = sky.produce(query(epoch='2026-06-21T12:00:00Z'), now=NOW)
+        self.assertLess(abs(june['subsolar']['latitude_degrees'] - 23.44), 0.02)
+        self.assertLess(abs(june['subsolar']['longitude_degrees'] - 0.45), 0.2)
+        december = sky.produce(query(epoch='2026-12-21T12:00:00Z'), now=NOW)
+        self.assertLess(abs(december['subsolar']['latitude_degrees'] + 23.44), 0.02)
+        for s in (june, december):
+            delta, longitude = independent_subsolar(s)
+            self.assertLess(abs(s['subsolar']['latitude_degrees'] - delta), 0.01)
+            self.assertLess(abs(wrap180(s['subsolar']['longitude_degrees'] - longitude)), 0.05)
+
+    def test_subsolar_moves_west_at_the_solar_rate(self):
+        a = sky.produce(query(epoch='2026-03-20T12:00:00Z'), now=NOW)['subsolar']
+        b = sky.produce(query(epoch='2026-03-20T13:00:00Z'), now=NOW)['subsolar']
+        # One hour of UT moves the subsolar longitude 15 deg west, to within 0.05 deg.
+        self.assertLess(abs(wrap180(b['longitude_degrees'] - a['longitude_degrees']) + 15.0), 0.05)
+
+    def test_subsolar_is_geocentric_and_request_independent(self):
+        base = self.saved['subsolar']
+        variants = [query(zodiac='Sidereal', ayanamsha='LAHIRI'),
+                    query(perspective='True Geocentric'),
+                    query(perspective='Topocentric', observer=dict(
+                        reference='controlled:observer', longitude_degrees=0.1,
+                        latitude_degrees=51.5, altitude_metres=10))]
+        for variant in variants:
+            with self.subTest(variant=variant['zodiac'] + ' ' + variant['perspective']):
+                self.assertEqual(sky.produce(variant, now=NOW)['subsolar'], base)
+
+    def test_subsolar_is_additive_and_closed(self):
+        legacy = copy.deepcopy(self.saved)
+        del legacy['subsolar']
+        self.assertEqual(sky.validate_snapshot(signed(legacy))['snapshot_ref'], signed(legacy)['snapshot_ref'])
+        cases = [
+            ('subsolar', lambda s: s['subsolar'].update(altitude_metres=1), 'invalid subsolar point fields'),
+            ('subsolar', lambda s: s['subsolar'].pop('latitude_degrees'), 'invalid subsolar point fields'),
+            ('subsolar', lambda s: s['subsolar'].update(longitude_degrees=180.5), 'subsolar longitude'),
+            ('subsolar', lambda s: s['subsolar'].update(latitude_degrees=91), 'subsolar latitude'),
+            ('top', lambda s: s.update(subsolar_note='extra'), 'unsupported snapshot'),
+        ]
+        for label, mutate, message in cases:
+            with self.subTest(case=message):
+                changed = copy.deepcopy(self.saved)
+                mutate(changed)
+                with self.assertRaisesRegex(sky.SkyError, message):
+                    sky.validate_snapshot(signed(changed))
+        changed = copy.deepcopy(self.saved)
+        changed['subsolar']['longitude_degrees'] += 0.1
+        with self.assertRaisesRegex(sky.SkyError, 'digest'):
+            sky.validate_snapshot(changed)
+
+    def test_subsolar_zero_latitude_survives_json_number_transport(self):
+        # A zero declination is a float in the provider and an integer after JavaScript.
+        changed = copy.deepcopy(self.saved)
+        changed['subsolar']['latitude_degrees'] = 0.0
+        changed = signed(changed)
+        transport = subprocess.run(
+            ['node', '-e', 'process.stdout.write(JSON.stringify(JSON.parse(require("fs").readFileSync(0,"utf8"))))'],
+            input=json.dumps(changed), text=True, capture_output=True, check=True)
+        received = json.loads(transport.stdout)
+        self.assertIs(type(received['subsolar']['latitude_degrees']), int)
+        self.assertEqual(sky.validate_snapshot(received)['snapshot_ref'], changed['snapshot_ref'])
 
 
 if __name__ == '__main__':
