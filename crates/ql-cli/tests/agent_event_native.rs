@@ -15,12 +15,16 @@ fn invoke(operation: &str, input: &Value) -> Result<Value, String> {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
-    child
+    // A refusal may exit before reading its input; the broken pipe that leaves is not the
+    // outcome — the process's own exit status and stderr are.
+    if let Err(error) = child
         .stdin
         .take()
         .unwrap()
         .write_all(&serde_json::to_vec(input).unwrap())
-        .unwrap();
+    {
+        assert_eq!(error.kind(), std::io::ErrorKind::BrokenPipe, "{error}");
+    }
     let result = child.wait_with_output().unwrap();
     if !result.status.success() {
         return Err(String::from_utf8_lossy(&result.stderr).into_owned());
