@@ -165,6 +165,21 @@ The numerical Ananda substrate, pitch class and physical key remain distinct typ
 
 ---
 
+## 4a. The surface as the torus unwound (owner ruling, 13 October 2026)
+
+The Figure is no longer only a controller projection. In the DLW's one instrument (Wayfinder §0.4) the Jankó surface is the M1 torus unwound:
+
+```text
+bimba helix (orientable torus arc)          ↔ WT₀ ↔ Jankó row family A/B (as #31 anchors it)
+pratibimba helix (Klein-extension arc)      ↔ WT₁ ↔ the interleaved row family
+key                                         ↔ excitation point on its helix of the M1 torus
+semitone (cross-row / diagonal)             ↔ cross-helix step (conjugate axis)
+transposition (same fingering)              ↔ motion along the helix (same surface figure)
+chord                                       ↔ simultaneous excitation set → its figure on the surface
+```
+
+Playing a key excites the torus at that point; the visible pattern and the sound are observations of the same body. The figure a chord draws is the figure shown for the symbol that harmony belongs to. The historical-instrument provenance boundary of §0 still holds: Jankó did not encode QL. What is new is that the playable surface and the sounding body are one object read flat and read wound. The exact angular placement on the arcs is a kernel derivation (Wayfinder §0.4 item 4), not a layout choice.
+
 ## 5. Acceptance for a future Jankó mapping
 
 A controller implementation is faithful when:
@@ -175,7 +190,8 @@ A controller implementation is faithful when:
 4. direct/prime and A/B/C+D state are projected from canonical kernel IDs;
 5. transposition preserves fingering shape as expected of the isomorphic surface;
 6. the `3:3` and `4:2` reading is represented explicitly as a project-level Figure with historical provenance kept separate from QL derivational provenance;
-7. no controller-specific representation becomes a new authority for the musical system.
+7. no controller-specific representation becomes a new authority for the musical system;
+8. each key excites the M1 torus at its derived helix point, and the surface figure and the sound of a chord come from the same state (§4a).
 
 ## 6. Historical references
 
