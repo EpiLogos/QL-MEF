@@ -61,6 +61,8 @@ Publish paired producer and consumer fixtures early. Contract agreement is not o
 
 ## 3. K — Kernel music, MEF, Context Frames and M1 harmonic instrument
 
+**13 Oct ruling (Wayfinder §0.4):** add the derivation of the twelve positions' angular placement on the two arcs of the M1 torus (bimba arc orientable, pratibimba arc the Klein extension, 720° cover) so that each Jankó key has an exact excitation point; publish it in I1.
+
 **Purpose:** make the one formal musical field executable and inspectable throughout performance, rather than splitting it into an M1 pitch wheel and unrelated M2 scale tables.
 
 **Context:** complete musical V3, #31/#78 accepted relations, current native MEF/CF/music code, M1 contract, full M1′/Ananda sources, QL law and the current scene corrections. Include founding L0 as the lens that establishes positions and questions; do not reduce it to a mere text-label/interrogative lookup.
@@ -99,6 +101,8 @@ Publish paired producer and consumer fixtures early. Contract agreement is not o
 
 ## 6. P — M3 form, resonating geometry and shared sonic/visible physics
 
+**13 Oct ruling (Wayfinder §0.4):** the visible M1 torus is itself a prepared resonating body — excitation at the key's helix point, cymatic surface pattern and audio from one state, run as a real simulation in the Expressions engine and shared by Live mode and every Expression.
+
 **Purpose:** make source-defined glyphs, surfaces, forces and sequences physically operative, with sound and visible behaviour derived from the relevant common state.
 
 **Context:** full M3 form/transcription/sequence sources and native contract; M1 topology; M2 material/nodal sources; current C++ modal/wave/acoustic implementation; retained GPU solver and geometry APIs; recovered Chladni implementation; L5 §11a; R's resonator/interactive-body experiments. Read the actual compact versus full form producer interfaces before claiming a body exists.
@@ -122,6 +126,8 @@ Publish paired producer and consumer fixtures early. Contract agreement is not o
 **Proof/return:** same performance in two declared contexts gives only the specified receiving differences; shared source stays unchanged; return to a context resumes its own lawful state. Personal data never enters public presets/receipts. Source corrections, late updates, disconnected optional provider and reopen are explicit. A changed M3 display aperture with the relevant sounding determinants fixed preserves sound; a genuine M2 reading/receiver operation has its specified effect. Return the exact native context binding and installed tests, not a thematic personal overlay.
 
 ## 8. U — Musical mode, Jankó and professional Expressions interaction
+
+**13 Oct ruling (Wayfinder §0.4):** the DLW's Live mode is the dedicated playing surface of this one instrument, presented three ways (compact rack widget, expanded browser pool, full torus in the centre pane). Deliver the complete Jankó instrument device, a mode-aware piano roll (fold/highlight), MIDI in/out and key/MIDI mapping. Scales follow Live's grammar: transport key/root/scale for the set, per-clip mode in Clip view, note devices (scale mapping, exact-ratio tuning, sky modulation) in Device view; the Jankó surface recolours to the mode. Saved instrument states are presets in the browser; derived Live capacities appear as chain devices, not as a ported catalogue.
 
 **Purpose:** provide a first-class working instrument inside the existing Expressions host, with ordinary musical operations immediately usable and deep source meaning accessible.
 
