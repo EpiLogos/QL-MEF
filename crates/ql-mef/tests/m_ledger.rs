@@ -72,10 +72,10 @@ fn imports_existing_matrix_families_not_a_manual_deep_census() {
         ("M0", 108),
         ("M1", 43),
         ("M2", 598),
-        ("M3", 996),
+        ("M3", 1004),
         ("M4", 106),
         ("M5", 31),
-        ("M", 1883),
+        ("M", 1891),
     ] {
         let coverage = l
             .coverage(registry, scope, "c", "coordinate", "verified")

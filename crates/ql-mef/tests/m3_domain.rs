@@ -53,8 +53,8 @@ fn form_values(kind: &str, index: usize, extra: usize, f: &FoldState) -> Value {
 #[test]
 fn source_reading_retains_full_depth_and_multivalued_genetics() {
     let s = native_m3_source();
-    assert_eq!(s.nodes().len(), 996);
-    assert_eq!(s.relations().len(), 4952);
+    assert_eq!(s.nodes().len(), 1004);
+    assert_eq!(s.relations().len(), 5071);
     // 307 until the map took C=8/G=7 (owner ruling, #254): the 112 codon-charge
     // and 12 pair-descriptor findings resolved when kernel and map agreed.
     assert_eq!(s.discrepancies().len(), 183);
@@ -238,9 +238,9 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
     // corrected all-axis law than under the retired i-plane law the C
     // mirror carries.
     assert_eq!(corrected_divergences, 470);
-    assert_eq!(counts.get("source-node"), Some(&996));
-    assert_eq!(counts.get("source-edge"), Some(&4952));
-    assert_eq!(counts.get("cell"), Some(&184));
+    assert_eq!(counts.get("source-node"), Some(&1004));
+    assert_eq!(counts.get("source-edge"), Some(&5071));
+    assert_eq!(counts.get("cell"), Some(&192));
     assert_eq!(counts.get("projection"), Some(&1441));
     assert_eq!(counts.get("form"), Some(&(472 * 16)));
     assert_eq!(counts["applied"], 472 * 16 * 3);

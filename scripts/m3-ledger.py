@@ -54,7 +54,7 @@ def materialize(previous):
       cb('ql_m3_source_node_at',path='c/src/m3_domain.c'),rb('node',path='crates/ql-mef/src/m3_source.rs'),True)
  add('source-relations','All 4891 exact qualified source relations, preserving duplicate/null endpoints',[n['ref'] for n in nodes],
      cb('ql_m3_source_relation_at',path='c/src/m3_domain.c'),rb('relations',path='crates/ql-mef/src/m3_source.rs'),True)
- add('source-matrices','All 184 source matrix cells with independently attributed pair/codon links',coords('matrix-cell'),
+ add('source-matrices','All 192 source matrix cells with independently attributed pair/codon links',coords('matrix-cell'),
      cb('ql_m3_matrix_cell_at','ql_m3_matrix_cell_relation',path='c/src/m3_domain.c'),rb('matrix_cells','relation',path='crates/ql-mef/src/m3_source.rs'),True)
  add('codon','Ratified four-state nucleotide, 64 codons and four-charge computation',coords('nucleotide','dna-codon'),
      cb('ql_m3_codon'),rb('four_charge','site_values',path='crates/ql-core/src/pole/codon.rs'))

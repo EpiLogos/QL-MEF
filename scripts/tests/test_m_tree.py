@@ -31,12 +31,12 @@ class MTreeTests(unittest.TestCase):
         m = self.manifest
         # Counts of the map read the committed extract came from (one record per
         # node and relation; relation types in the map's own spelling).
-        self.assertEqual(len(m["nodes"]), 1883)
-        self.assertEqual(len(m["relations"]), 10892)
-        self.assertEqual(len(m["records"]), 12774)
+        self.assertEqual(len(m["nodes"]), 1891)
+        self.assertEqual(len(m["relations"]), 11011)
+        self.assertEqual(len(m["records"]), 12901)
         self.assertEqual(len(m["alternate_notation_groups"]), 0)
         by_ref = {n["source_ref"]: n for n in m["nodes"]}
-        self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 598, 996, 106, 31])
+        self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 598, 1004, 106, 31])
         self.assertNotIn("#0-4.0", by_ref)
         self.assertNotIn("#3-5-5", by_ref)
         self.assertEqual(by_ref["#0-4.0/1/2"]["parent_id"], by_ref["#0-4"]["id"])

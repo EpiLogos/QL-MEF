@@ -34,7 +34,7 @@ static void boundary_checks(void) {
  assert(ql_m3_active_state((QL_M3_Quaternion){NAN,0,0,0},0,&value)==QL_M3_INVALID);
  assert(ql_m3_active_state((QL_M3_Quaternion){0,0,0,0},0,&value)==QL_M3_INVALID);
  assert(!ql_m3_node(QL_M3_DEGREE,360));assert(!ql_m3_node((QL_M3_NodeKind)255,0));
- assert(ql_m3_coordinate_count()==996);assert(!ql_m3_coordinate_at(996));
+ assert(ql_m3_coordinate_count()==1004);assert(!ql_m3_coordinate_at(1004));
 }
 int main(void) {
  boundary_checks();

@@ -311,17 +311,19 @@ class Audit:
                            "pair_relations": [e["id"] for e in uses],
                            "codon_relations": [e["id"] for e in yields]})
         sizes = Counter(row["family"] for row in result)
-        require(sizes == {0: 64, 1: 64, 2: 56}, "three matrix field cardinality drift")
+        # The generation law fills every matrix: 3 x 64 cells (migration/bimba-map,
+        # 2026-10-19). The kernel has no resonance gaps (pole/generation.rs).
+        require(sizes == {0: 64, 1: 64, 2: 64}, "three matrix field cardinality drift")
         for family in range(3):
             addresses = [r["address"] for r in result if r["family"] == family]
             require(len(set(addresses)) == len(addresses), "duplicate resolved address in matrix family")
         source_gaps = sorted(set(range(64)) - {r["address"] for r in result if r["family"] == 2})
-        native_gaps = [5, 21, 26, 34, 42, 53, 58, 61]
+        native_gaps: list[int] = []
         if source_gaps != native_gaps:
             self.finding("resonance-admissibility", ["deep-M3:M3-C09", "deep-M3:M3-C16"], "operational", "#3-3-2-2",
                          {"source_absent_hexagram_addresses": source_gaps, "native_gap_addresses": native_gaps,
-                          "note": "The native header calls these hexagram gap positions. Equal cardinality is not address parity."},
-                         "crates/ql-core/src/pole/fold.rs", peer="rust")
+                          "note": "The generation law fills every matrix; a source cell is missing."},
+                         "crates/ql-core/src/pole/generation.rs", peer="rust")
         return sorted(result, key=lambda r: (r["family"], r["address"]))
 
     def genetics(self) -> dict:

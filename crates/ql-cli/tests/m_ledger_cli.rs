@@ -9,7 +9,7 @@ fn native_coverage_and_joined_ledger_require_no_python_or_working_checkout() {
     let value: serde_json::Value =
         serde_json::from_str(&run(&["kernel", "coverage", "M3", "--json"]).unwrap()).unwrap();
     assert_eq!(value["schema"], "ql.m-coverage/v1");
-    assert_eq!(value["structural_coordinates"], 996);
+    assert_eq!(value["structural_coordinates"], 1004);
     assert!(!value["blocking_rows"].as_array().unwrap().is_empty());
     let value: serde_json::Value =
         serde_json::from_str(&run(&["kernel", "ledger", "M0-4.0/1/2", "--json"]).unwrap()).unwrap();

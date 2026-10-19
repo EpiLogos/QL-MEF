@@ -4,7 +4,34 @@ K7 / #131 support contract. The native engine and its C/Rust execution evidence
 remain separate from this independent source observation. This is not an accepted
 K4 census, a second M registry, a live Neo4j observation, or a C++ embodiment test.
 
-## Current source comparison — 1 October 2026
+## Current source comparison — 19 October 2026
+
+The current lock `fixtures/kernel/m3-source-bindings-v1.json` observes Bimba
+source revision `4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4`:
+1,004 M3 nodes and 5,071 incident qualified relations, from a live READ on
+19 October 2026 (2,149 nodes; 11,929 relations in the whole map). Two map
+migrations changed M3 since 1 October:
+
+- `migration/bimba-map/2026-10-19-m3-generation-cells.cypher` completes the
+  M3-3-2 layer under the generation law. It adds the 8 Matrix 3 cells whose
+  lower trigram is Xun, sets Matrix 1's Zhen and Gen pairs to the HMS table, and
+  gives every cell its lower and upper pair, its role and its full
+  classification. The layer holds 192 cells, 336 `YIELDS_CODON` edges (one per
+  distinct yield) and 360 `USES_PAIR` edges (a cell whose two trigrams share a
+  pair has one edge carrying both roles).
+- `migration/bimba-map/2026-10-19-m3-coin-naming.cypher` names the nucleotides by
+  their coin values: A Old Yin (6), T Old Yang (9), C Young Yin (8), G Young Yang
+  (7), carried as `m_3_2_coin_value`, `m_3_2_iching_line`, `m_3_2_polarity` and
+  `m_3_2_mobility`.
+
+The comparison retains **182 unresolved findings**: 75 line-change targets, 45
+incomplete or non-distinct six-line fields, 60 nuclear-register disagreements, and
+one each for clock-placeholder and orientation-count. The resonance-admissibility
+finding is gone: every matrix is full. The current comparator also emits the 305
+open line-change qualification records admitted on 2 October; none is decided
+here. The 383 source `LINE_CHANGE` edges are unchanged.
+
+## Source comparison — 1 October 2026 (predecessor)
 
 The current lock `fixtures/kernel/m3-source-bindings-v1.json` observes Bimba
 source revision `907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288`:
@@ -112,8 +139,8 @@ matches the reviewed lock; it does not mean that all source/native semantics agr
 | Nuclear register | 60 | Source nuclear strings/coordinates differ from the native inner-line extraction. Both readings are recorded; no convention change or source rewrite is silently inferred. |
 | Pair descriptors | 12 | Frozen source S/D values differ from the existing M3-COIN-1-corrected C table. The audit tests its native comparison values against that actual retained table. |
 | Codon/phase charge records | 112 | Frozen four-charge records differ from the ratified A=6, T=9, C=8, G=7 derivation. Both complete charge vectors remain visible. |
-| Matrix pair endpoints | 114 | `USES_Pair` targets are null in the source. These are unresolved edges, not zero-valued pairs. **Resolved 19 Oct 2026:** the map's M3-3-2 layer is being corrected by the generation-law migration (every cell carries its lower and upper pair and its role); the native law reproduces all 192 cells (see "The generation law" below). |
-| Matrix pair role | 1 | `#3-3-2-2-24` has only its upper-pair edge. |
+| Matrix pair endpoints | 114 | `USES_Pair` targets are null in the source. These are unresolved edges, not zero-valued pairs. **Resolved 19 Oct 2026:** the generation-law migration gave every cell of the map's M3-3-2 layer its lower and upper pair and its role; the native law reproduces all 192 cells (see "The generation law" below). |
+| Matrix pair role | 1 | `#3-3-2-2-24` has only its upper-pair edge. **Resolved 19 Oct 2026:** the cell now carries both pairs. |
 | Resonance admissibility | 1 | Source Matrix3 absence is `[6,14,22,30,38,46,54,62]` in relation-derived hexagram addresses; the retained native gap set is `[5,21,26,34,42,53,58,61]`. Both contain eight entries, but they are not the same set. **Resolved 19 Oct 2026:** both were artefacts. The map lacked the 8 Matrix 3 cells whose lower trigram is Xun (the migration adds them: 192 cells, no absence). The native gap set came from a legacy table (`M3_RES_MATRIX`, 56 identity entries and 8 invented holes) that was not the Same-Quality matrix; it is retired and no native gap set remains. |
 | Orientation count | 1 | Source `#3-4.0-2-8` / TCT says eight states. The native palindromic classifier/profile says seven. The frozen source sums to 473; the existing lawful native surface remains 472. |
 | Legacy clock placeholder warrant | 1 | The old C LUT explicitly used a computed hexagram approximation and zero-valued symbolic placeholders. Those fields and fifteenth-degree flags are not proof of source-backed symbolic projections or independent backbone identities. |

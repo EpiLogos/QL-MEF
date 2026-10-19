@@ -329,7 +329,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
 #[test]
 fn clock_boundaries_and_unreconciled_symbolic_values_are_explicit() {
     let engine = native_m3_engine();
-    assert_eq!(engine.coordinates().count(), 996);
+    assert_eq!(engine.coordinates().count(), 1004);
     for d in 0..360 {
         let a = engine.clock(M3Clock::at_steps(d));
         let b = engine.clock(M3Clock::at_steps(d + 360));
