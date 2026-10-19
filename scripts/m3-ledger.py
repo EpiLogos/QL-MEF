@@ -127,7 +127,9 @@ def coverage():
  rows=[{'coordinate':n['ref'],'id':n['id'],'source_role':n['role'],'k4_row':'census:'+n['ref'],
  'c':'qualified-source-descriptor','rust':'full-source-payload-and-qualified-relations',
  'operational_disposition':'see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation',
- 'k4_discovery':{'c':census[n['ref']]['c']['state'],'rust':census[n['ref']]['rust']['state']}} for n in cat['nodes']]
+ 'k4_discovery':{peer:census[n['ref']][peer]['state'] if n['ref'] in census else 'after-accepted-k4' for peer in ('c','rust')}} for n in cat['nodes']]
+ # Coordinates the map gained after the accepted K4 census (the 8 Matrix 3 cells
+ # of the generation law) say so; they borrow no K4 discovery state.
  return {'schema':'ql.m3-coverage/v1','registry_revision':cat['registry_revision'],'domain_revision':cat['catalogue_revision'],
   'accepted_k4':'5b24b95d17234ab5d23d84e658c0cc06434b41a3','coordinates':rows,'source_relations':len(cat['relations']),
   'source_capability_ids':[r['id'] for r in ledger['rows'] if r['scope']=='M3' and r['source']],
