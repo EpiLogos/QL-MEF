@@ -86,3 +86,28 @@ fn the_live_pose_moves_with_the_environment_not_the_table() {
     );
     assert!(seed_at(360.0).is_err() && seed_at(f64::NAN).is_err());
 }
+
+#[test]
+fn a_pose_reading_carries_the_laws_that_produced_it() {
+    use ql_core::{PoseMap, QuatSeed};
+    use ql_mef::m3_inscription::active_pose_under;
+    let s = seed_at(123.0).unwrap();
+    let env = Quat {
+        w: 0.0,
+        x: 1.0,
+        y: 0.0,
+        z: 0.0,
+    };
+    let default = active_pose(&s, env);
+    assert_eq!(
+        (default.seed_law, default.pose_map),
+        ("sum-difference-mod", "raw-bin")
+    );
+    assert_eq!(default.rotational_state, default.rotational_bin);
+    assert!(!default.collapsed);
+    let other = active_pose_under(&s, env, QuatSeed::FourCharge, PoseMap::LawfulSlot);
+    assert_eq!(
+        (other.seed_law, other.pose_map),
+        ("four-charge", "lawful-slot")
+    );
+}

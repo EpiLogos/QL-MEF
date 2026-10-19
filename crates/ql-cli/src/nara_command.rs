@@ -762,13 +762,41 @@ mod sky_source_tests {
         .unwrap()
     }
 
+    fn current_world_sky() -> Value {
+        serde_json::from_str(include_str!(
+            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+        ))
+        .unwrap()
+    }
+
     #[test]
-    fn retained_legacy_descriptor_has_a_separate_actual_native_sun_route() {
+    fn the_known_legacy_descriptor_retires_with_its_registry() {
+        // The e6d exception was admitted on its own registry only. After the
+        // map moved the registry, the exact snapshot is kept and refused.
         let sky = known_legacy_sky();
+        let before = sky.clone();
+        assert_eq!(
+            sky["source_binding"]["registry_revision"],
+            LEGACY_SUN_REGISTRY
+        );
+        assert_ne!(
+            ql_mef::m_tree::native_m_registry()
+                .manifest()
+                .registry_revision,
+            LEGACY_SUN_REGISTRY
+        );
+        assert!(source_binding_qualification(&sky, true).is_err());
+        assert!(source_binding_qualification(&sky, false).is_err());
+        assert_eq!(sky, before);
+    }
+
+    #[test]
+    fn a_retained_occasion_has_a_separate_actual_native_sun_route() {
+        let sky = current_world_sky();
         let before = sky.clone();
         let qualification = source_binding_qualification(&sky, true).unwrap();
         assert_eq!(sky, before);
-        assert_eq!(qualification["legacy_descriptor_admitted"], true);
+        assert_eq!(qualification["legacy_descriptor_admitted"], false);
         assert_eq!(qualification["fresh_current_attested"], false);
         assert_eq!(
             qualification["native_sun_route"]["planet_coordinate"],
@@ -781,7 +809,10 @@ mod sky_source_tests {
         assert_eq!(qualification["native_sun_route"]["chakra_index"], 7);
         assert_eq!(
             qualification["native_sun_route"]["source_revision"],
-            "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"
+            ql_mef::m_tree::native_m_registry()
+                .manifest()
+                .source_revision
+                .as_str()
         );
         assert!(
             qualification["native_sun_route"]["relations"]
@@ -791,7 +822,6 @@ mod sky_source_tests {
                 .any(|r| r["source_kind"] == "PLANETARY_RESONANCE"
                     && r["relation_ref"] == "bimba:relation:710326725339389fb6905570")
         );
-        assert!(source_binding_qualification(&sky, false).is_err());
     }
 
     #[test]
@@ -808,12 +838,15 @@ mod sky_source_tests {
         }
         // This unit tests the native route after provider admission, not a
         // replacement for complete provider digest/field validation.
-        let sky: Value = serde_json::from_str(include_str!(
+        let q = source_binding_qualification(&current_world_sky(), false).unwrap();
+        assert_eq!(q["legacy_descriptor_admitted"], false);
+        assert_eq!(q["native_sun_route"]["chakra_index"], 7);
+        // The same occasion bound to the previous registry is stale.
+        let previous: Value = serde_json::from_str(include_str!(
             "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
         ))
         .unwrap();
-        let q = source_binding_qualification(&sky, false).unwrap();
-        assert_eq!(q["legacy_descriptor_admitted"], false);
-        assert_eq!(q["native_sun_route"]["chakra_index"], 7);
+        assert!(source_binding_qualification(&previous, true).is_err());
+        assert!(source_binding_qualification(&previous, false).is_err());
     }
 }

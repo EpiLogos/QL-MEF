@@ -72,8 +72,8 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(self.original["source_revision"], self.registry["source_revision"])
         encoded = json.dumps(self.content, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
         self.assertEqual(hashlib.sha256(encoded).hexdigest(), self.original["source_revision"])
-        self.assertEqual((len(self.content["nodes"]), len(self.content["relations"])), (2141, 11810))
-        self.assertEqual((len(self.raw_nodes), len(self.raw_edges)), (996, 4952))
+        self.assertEqual((len(self.content["nodes"]), len(self.content["relations"])), (2149, 11929))
+        self.assertEqual((len(self.raw_nodes), len(self.raw_edges)), (1004, 5071))
         self.assertEqual(m3.lock_for(self.projection, self.audit), self.lock)
         self.assertEqual(m3.project(self.registry, self.read), self.projection)
         self.assert_original_correspondence(self.projection)
@@ -246,16 +246,17 @@ class M3SourceParityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unreadable source trigram line description"):
             m3.Audit(changed).run()
 
-    def test_matrix_field_retains_original_qualified_cardinality_and_distinct_admissibility(self):
+    def test_matrix_field_is_the_full_generation_law_field(self):
+        # The generation law fills every matrix (migration/bimba-map, 2026-10-19).
         rows = self.audit["details"]["matrices"]
-        self.assertEqual([sum(r["family"] == f for r in rows) for f in range(3)], [64, 64, 56])
+        self.assertEqual([sum(r["family"] == f for r in rows) for f in range(3)], [64, 64, 64])
         self.assertNotIn("matrix-unresolved-endpoint", self.lock["finding_counts"])
         self.assertNotIn("matrix-missing-pair-role", self.lock["finding_counts"])
-        self.assertEqual(self.lock["finding_counts"]["resonance-admissibility"], 1)
-        self.assertEqual(sorted(set(range(64)) - {r["address"] for r in rows if r["family"] == 2}),
-                         [6, 14, 22, 30, 38, 46, 54, 62])
+        self.assertNotIn("resonance-admissibility", self.lock["finding_counts"])
+        self.assertEqual(sorted(set(range(64)) - {r["address"] for r in rows if r["family"] == 2}), [])
+        self.assertEqual(sum(r["non_dual"] for r in rows), 48)
         cell = next(r for r in rows if r["ref"] == "#3-3-2-2-24")
-        self.assertEqual(len(cell["pair_relations"]), 1)
+        self.assertEqual(len(cell["pair_relations"]), 2)
         source_yields = sum(kind == "YIELDS_CODON" and a.startswith("M3-3-2-")
                             for a, kind, _, _ in self.raw_edges)
         self.assertEqual(sum(len(r["codon_relations"]) for r in rows), source_yields)
@@ -376,11 +377,11 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(self.lock["finding_counts"], {
             "legacy-clock-placeholder": 1, "line-change": 75, "line-change-field": 45,
             "line-change-qualification": 305, "nuclear-register": 60,
-            "orientation-count": 1, "resonance-admissibility": 1,
+            "orientation-count": 1,
         })
         # 305 qualified-edge conflicts overlap the original structural findings;
         # 488 is a comparison-record count, not 488 unique Bimba defects.
-        self.assertEqual(len(self.audit["discrepancies"]), 488)
+        self.assertEqual(len(self.audit["discrepancies"]), 487)
 
 
 if __name__ == "__main__":

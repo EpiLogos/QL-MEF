@@ -17,6 +17,7 @@ PROOF = "fixtures/kernel/m3-finite-proof-v1.json"
 ORIGINAL = "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json"
 RECORD = "fixtures/kernel/m3-journey-source-integration-v1.json"
 LINEAGE = "fixtures/kernel/k8-build-lineage-v1.json"
+M2_PROOF = "fixtures/kernel/m2-finite-proof-v1.json"
 QUALIFICATION = "fixtures/kernel/m-ledger-source-requalification-v1.json"
 spec = importlib.util.spec_from_file_location("historical_proof_owner", ROOT / "scripts/requalify-m-ledger.py")
 owner = importlib.util.module_from_spec(spec)
@@ -29,7 +30,7 @@ class HistoricalProofAliasTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         wanted = {Path(name) for name in (
-            PROOF, ORIGINAL, RECORD, LINEAGE,
+            PROOF, M2_PROOF, ORIGINAL, RECORD, LINEAGE,
             "docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md",
         )}
 
@@ -102,6 +103,50 @@ class HistoricalProofAliasTests(unittest.TestCase):
                 self.mutate(RECORD, lambda value: value["native_history"]["native_lineage"].update(sha256=digest))
                 with self.assertRaisesRegex(ValueError, "native historical lineage missing or forged"):
                     self.verify()
+
+    def publish(self, path, engine):
+        """A successor as its ledger owner publishes it: a new proof and one appended lineage entry."""
+        self.mutate(path, lambda value: value.update(standing="successor under test"))
+        new = hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+        lineage = json.loads((self.root / LINEAGE).read_text())
+        previous = lineage["proofs"][engine]
+        lineage["proofs"][engine] = new
+        lineage["successors"].append({"engine": engine, "previous_sha256": previous, "sha256": new,
+                                      "accepted_at_revision": "0" * 40, "reason": "successor under test"})
+        (self.root / LINEAGE).write_text(json.dumps(lineage))
+        return lineage
+
+    def verify_m2(self):
+        qualification = json.loads((ROOT / QUALIFICATION).read_text())
+        owner.verify_historical_proof(self.root, M2_PROOF, qualification["historical_numerical_proofs_unchanged"][M2_PROOF], self.commit)
+
+    def test_a_published_successor_after_the_alias_is_admitted(self):
+        self.publish(PROOF, "m3")
+        self.verify()
+        self.publish(M2_PROOF, "m2")
+        self.verify_m2()
+
+    def test_an_unpublished_successor_is_refused(self):
+        self.mutate(PROOF, lambda value: value.update(standing="unpublished"))
+        with self.assertRaisesRegex(ValueError, "not the published lineage proof"):
+            self.verify()
+        self.mutate(M2_PROOF, lambda value: value.update(standing="unpublished"))
+        with self.assertRaisesRegex(ValueError, "not the published lineage proof"):
+            self.verify_m2()
+
+    def test_a_broken_successor_chain_is_refused(self):
+        lineage = self.publish(PROOF, "m3")
+        lineage["successors"][-1]["previous_sha256"] = "0" * 64
+        (self.root / LINEAGE).write_text(json.dumps(lineage))
+        with self.assertRaisesRegex(ValueError, "native historical lineage missing or forged: successor chain"):
+            self.verify()
+
+    def test_a_successor_cannot_rewrite_the_published_lineage(self):
+        lineage = self.publish(PROOF, "m3")
+        lineage["successors"].pop(0)
+        (self.root / LINEAGE).write_text(json.dumps(lineage))
+        with self.assertRaisesRegex(ValueError, "native historical lineage missing or forged"):
+            self.verify()
 
     def test_stale_current_source_record_is_refused(self):
         self.mutate(RECORD, lambda value: value["current_source"].update(numerical_registry_revision="0" * 64))

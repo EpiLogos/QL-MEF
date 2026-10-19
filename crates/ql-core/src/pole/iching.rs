@@ -184,8 +184,9 @@ pub const fn compose_hexagram(upper: u8, lower: u8) -> Result<u8, QlError> {
 
 /// Complement: all six lines inverted (`id ^ 0x3F`).
 ///
-/// The same law the Complementary matrix family applies as a fold
-/// (see [`crate::pole::fold`]); exposed here at the hexagram register.
+/// A named I Ching relation. Matrix 1 (Complementary) acts on a hexagram with
+/// the same result (see [`crate::pole::generation`]) but on a codon it is the
+/// Watson–Crick base partner, not this complement.
 pub const fn complement(hex: u8) -> u8 {
     hex ^ 0x3F
 }
@@ -303,25 +304,25 @@ mod tests {
     }
 
     #[test]
-    fn complement_is_involutive_and_agrees_with_the_matrix_fold() {
+    fn complement_is_involutive_and_is_matrix_one_at_the_hexagram_scale() {
+        use crate::pole::MatrixFamily;
         for hex in 0u8..64 {
             assert_eq!(complement(complement(hex)), hex);
-            // The hexagram complement and the complementary matrix family
-            // act identically on the address (the fold law of pole::fold).
-            use crate::pole::{FoldState, MatrixFamily};
-            let state = FoldState::from_codon(
-                crate::pole::Codon64::new(hex),
-                crate::pole::ApertureIndex::new(0).expect("aperture"),
-                0,
+            // The I Ching complement flips all six lines. Matrix 1
+            // (Complementary) acts on a hexagram by flipping all three
+            // lines of each trigram, so the two coincide numerically at
+            // the hexagram scale; Matrix 1 on a codon is the base partner
+            // (⊕0x15), which is a different action.
+            assert_eq!(
+                MatrixFamily::Complementary.apply_to_hexagram(hex),
+                complement(hex)
             );
-            let complemented = state
-                .apply_matrix(MatrixFamily::Complementary)
-                .expect("complement applies")
-                .applied()
-                .expect("complement is always admitted")
-                .codon()
-                .address();
-            assert_eq!(complemented, complement(hex));
+            assert_ne!(
+                MatrixFamily::Complementary
+                    .apply_to_codon(crate::pole::Codon64::new(hex))
+                    .address(),
+                complement(hex)
+            );
         }
     }
 

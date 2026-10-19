@@ -100,12 +100,38 @@ Parity joins by sweep identity and compares the rank, rather than assuming
 identical array ordering. Environment-conditioned eight-bin rotation is a
 separate existing operation, not an inverse from a quaternion to an identity.
 
-**Matrix operation and source matrix cell.** Native family operators preserve
-the complementary, trigram-exchange and retained resonance laws. All 184
-source cells remain addressable with their `RESOLVES_TO`, `USES_Pair` and
-codon relations. A cell can contain multiple qualified links or an unresolved
-endpoint. Source Matrix 3 and the native resonance table have different eight-
-gap sets; equal cardinality does not establish equal admissibility.
+**Matrix operation and generation law.** Each matrix acts on a codon as its
+base partner at every site: Complementary (A↔T, C↔G) `⊕0x15`, Moving/Resting
+(A↔G, T↔C) `⊕0x3F`, Same-Quality (A↔C, T↔G) `⊕0x2A`; the masks are derived from
+the partner table. Every codon resolves; there is no gap. On a hexagram each
+matrix sends every trigram to the trigram whose pair is the partner of its pair
+(`MatrixFamily::apply_to_hexagram`, `ql_m3_apply_matrix_hexagram`). Matrix 1 then
+Matrix 2 is Matrix 3 at both scales. The generation law gives the cell of a
+matrix at a hexagram: positive codon `a·c·d`, negative codon `a·b·d` for lower
+pair `ab` and upper pair `cd`, non-dual exactly when `b = c`
+(`pole::generation::generate`, `ql_m3_generate`); it reproduces the map's 192
+M3-3-2 cells. The earlier trigram-exchange and resonance-table operators are
+retired (see `docs/kernel-rebuild/M3-SOURCE-PARITY.md`). The source cells remain
+addressable with their `RESOLVES_TO`, `USES_Pair` and codon relations; a cell
+can contain multiple qualified links.
+
+**Active pose laws.** The active-pose reader has two declared test variables.
+`seed` is `sum-difference-mod` (FR 2.Q.9, the default) or `four-charge`
+(FR 2.Q.17, the elemental bioquaternion). `pose_map` is `raw-bin` (the default)
+or `lawful-slot` (bins mapped onto the codon's 7 or 8 lawful poses; for a
+non-dual codon bin 7, the collapsed orientation, reads as its mirror bin 0).
+A reading names the laws that produced it.
+
+The bin is `floor(2·atan2(|v|, w) / 45°) & 7` over all three axes, read the same
+way in Rust (`quat_argument_bin`) and C (`ql_m3_active_state`): `|v|²` against
+`w²` at the edges `tan² 22.5° = 3 − 2√2`, `1` and `tan² 67.5° = 3 + 2√2`, with a
+value within `BIN_EDGE` (5·10⁻⁶, relative) of an edge read as on it and an
+on-edge value taking the upper bin. No libm call decides a bin, so every
+platform reads the same pose: the folded 2π edge reads 0, `w = 0` reads 4, and
+an encoder state on the 45° grid reads itself. (The earlier `atan2f` reader put
+15 folded-edge states in bin 7 on macOS and in bin 0 on glibc. The C reader
+also still read the retired i-plane half-angle; both peers now read the
+corrected law, and C/Rust parity covers it over the eight axis environments.)
 
 **DNA/RNA and translation.** Alphabetic transcription substitutes T→U without
 flipping nucleotide polarity. The 37 T-containing source RNA forms retain
@@ -154,8 +180,8 @@ are retained separately; neither is treated as a Day or an agent NOW.
 event, subject, actor/cause refs and occurrence/receipt times. Supported Actions
 select a form, change a line, apply a matrix, select a lawful pose or aperture,
 move to its reciprocal, advance the clock, transcribe DNA/RNA, or receive
-three signed crease readings. Invalid input aborts the batch. A resonance gap
-returns `provisional-unchanged` and rolls back earlier operations in that batch.
+three signed crease readings. Invalid input aborts the batch and changes
+nothing. The matrices have no gaps, so a valid batch always applies.
 A successful batch commits one new generation. A replayed/stale command cannot
 silently apply twice. Clock or generation overflow is rejected.
 

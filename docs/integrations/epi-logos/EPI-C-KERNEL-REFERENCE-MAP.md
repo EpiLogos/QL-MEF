@@ -138,7 +138,7 @@ The object map exposes writable/global state such as `QL_STACK`, `M1_M0_CROSSLIN
 Explicit source markers include:
 
 - M0 Siva operator stubs;
-- M3 `56 valid + 8 evolutionary gaps`, including `STATUS_PROVISIONAL` handling;
+- M3 `56 valid + 8 evolutionary gaps`, including `STATUS_PROVISIONAL` handling (a property of the vendor reference only; the native kernel retired this table, see `docs/kernel-rebuild/M3-SOURCE-PARITY.md`);
 - M4 six lens vtable stubs;
 - M4 36 protocol cards explicitly described as stub values whose real values should come from a dataset;
 - M4 seven alchemical operation stubs;

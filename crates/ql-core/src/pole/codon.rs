@@ -17,9 +17,9 @@
 //! axes already bound in the kernel:
 //!
 //! ```text
-//! Complementary  -> i (complementation = polarity-conjugating fold)
-//! Moving/Resting -> j (mobility half-exchange)
-//! Same-Quality   -> k (diagonal resonance action)
+//! Complementary  -> i (A<->T, C<->G: the base partner on every site)
+//! Moving/Resting -> j (A<->G, T<->C)
+//! Same-Quality   -> k (A<->C, T<->G)
 //! ```
 //!
 //! One operation, four registers: symbol / matrix / quaternion-axis / visible
@@ -409,7 +409,7 @@ impl FourCharge {
 /// The three M3 matrix families and their bound quaternion axes.
 ///
 /// The kernel binds `Complementary → i`, `Moving/Resting → j`,
-/// `Same-Quality/RES → k`; one operation, four registers: symbol /
+/// `Same-Quality → k`; one operation, four registers: symbol /
 /// matrix / quaternion-axis / visible fold.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MatrixFamily {

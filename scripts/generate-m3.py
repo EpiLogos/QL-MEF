@@ -144,8 +144,10 @@ def generate(root: Path = ROOT) -> str:
     array('M3_MATRIX_PAIR','native_matrix_pairs','uint8_t')
     array('M3_TRIGRAM_LUT','native_trigrams','uint16_t','[7]')
     array('M3_HEXAGRAM_LUT','native_hexagrams','uint8_t','[5]')
-    for name, native in [('M3_COMP_MATRIX','native_comp'),('M3_MOVE_MATRIX','native_move'),('M3_RES_MATRIX','native_res'),('M3_CODON_TO_AA','native_aa')]:
-        array(name,native,'uint8_t')
+    # The vendor M3_COMP_MATRIX / M3_MOVE_MATRIX / M3_RES_MATRIX tables are retired: they
+    # were not the matrices (see docs/kernel-rebuild/M3-SOURCE-PARITY.md). The matrix
+    # action is derived from M3_MATRIX_PAIR in c/src/m3.c.
+    array('M3_CODON_TO_AA','native_aa','uint8_t')
     array('M3_MAJOR_ARCANA','native_major','QL_M3_Major')
     tarot = source[source.index('#define COD('):source.index('#undef NONE')+len('#undef NONE')]
     tarot = tarot.replace('const M3_TarotCodonEntry M3_TAROT_CODON_MAP[4][16]', 'static const uint8_t native_minor[4][16][4]')

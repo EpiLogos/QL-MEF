@@ -77,28 +77,28 @@ class SkyTests(unittest.TestCase):
         self.assertTrue(all(len(s['provider'][k]) == 64 for k in
                             ('engine_sha256', 'factory_sha256', 'adapter_sha256')))
 
-    def test_sun_descriptor_and_exact_known_legacy_retention(self):
+    def test_sun_descriptor_and_known_legacy_retirement(self):
         self.assertEqual(self.saved['source_binding']['sun_role'], 'solar-parent')
         fixture = sky.ROOT / 'fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json'
         original = json.loads(fixture.read_text())
         before = json.dumps(original, sort_keys=True)
         self.assertEqual(original['provider']['adapter_sha256'], sky.LEGACY_SUN_ADAPTER_SHA256)
         self.assertEqual(original['source_binding']['sun_role'], 'parent-not-chakra-mapped')
-        # The original artifact's physical sky, source qualifiers and digest are
-        # retained exactly. A separate receipt tells the truth about the label.
-        replay = sky.validate_retained_snapshot(original)
-        self.assertEqual(json.dumps(replay, sort_keys=True), before)
-        qualification = sky.source_binding_qualification(original, retained=True)
-        self.assertTrue(qualification['legacy_descriptor_admitted'])
-        self.assertEqual(qualification['current_sun_role'], 'solar-parent')
-        self.assertFalse(qualification['fresh_current_attested'])
+        # The e6d label was admitted on its own registry only. Once the map
+        # moved the registry, the exact artifact is kept and refused.
+        self.assertEqual(original['source_binding']['registry_revision'], sky.LEGACY_SUN_REGISTRY_REVISION)
+        self.assertNotEqual(sky.source_bindings()['registry_revision'], sky.LEGACY_SUN_REGISTRY_REVISION)
+        for retained in (True, False):
+            with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
+                sky.source_binding_qualification(original, retained=retained)
         with self.assertRaisesRegex(sky.SkyError, 'native source binding is stale'):
-            sky.source_binding_qualification(original, retained=False)
-        refused = subprocess.run([sys.executable, str(Path(sky.__file__)), '-',
-                                  '--validate-snapshot'], input=json.dumps(original),
-                                 text=True, capture_output=True)
-        self.assertEqual(refused.returncode, 2)
-        self.assertIn('native source binding is stale', refused.stderr)
+            sky.validate_retained_snapshot(original)
+        for flag in ('--validate-snapshot', '--validate-retained-snapshot'):
+            refused = subprocess.run([sys.executable, str(Path(sky.__file__)), '-', flag],
+                                     input=json.dumps(original), text=True, capture_output=True)
+            self.assertEqual(refused.returncode, 2)
+            self.assertIn('native source binding is stale', refused.stderr)
+        self.assertEqual(json.dumps(original, sort_keys=True), before)
 
     def test_known_legacy_sun_descriptor_is_not_a_general_source_exception(self):
         fixture = sky.ROOT / 'fixtures/kernel/sky-snapshot-known-e6d-2026-09-15-v1.json'

@@ -160,14 +160,15 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
         (root / "fixtures/kernel/source-requalification/native-rust-c-replay.log").read_bytes(),
         load("fixtures/kernel/source-requalification/m3-source-audit.json"), registry)
     replay = (root / "fixtures/kernel/source-requalification/native-rust-c-replay.log").read_text()
-    expected_tests = set()
-    for path in ["crates/ql-mef/tests/m1_engine.rs", "crates/ql-mef/tests/m1_state.rs",
-                 "crates/ql-mef/tests/native_m_tree.rs"]:
-        expected_tests.update(re.findall(r"#\[test\]\s*fn\s+(\w+)\s*\(", (root / path).read_text()))
+    # Replay order; the inventory is each suite's declared tests, not a count.
+    declared = [re.findall(r"#\[test\]\s*fn\s+(\w+)\s*\(", (root / path).read_text())
+                for path in ["crates/ql-mef/tests/bimba_content.rs", "crates/ql-mef/tests/m1_engine.rs",
+                             "crates/ql-mef/tests/m1_state.rs", "crates/ql-mef/tests/native_m_tree.rs"]]
+    expected_tests = set().union(*declared[1:])
     passed_tests = re.findall(r"^test (\w+) \.\.\. ok$", replay, re.MULTILINE)
     assert len(expected_tests) == 21 and expected_tests <= set(passed_tests), "native replay omitted locked M1/tree tests"
-    assert len(passed_tests) == len(set(passed_tests)) == 23, "native replay test inventory differs"
-    assert re.findall(r"^test result: ok\. (\d+) passed; 0 failed;", replay, re.MULTILINE) == ["2", "8", "8", "5"]
+    assert sorted(passed_tests) == sorted(name for names in declared for name in names), "native replay test inventory differs"
+    assert re.findall(r"^test result: ok\. (\d+) passed; 0 failed;", replay, re.MULTILINE) == [str(len(names)) for names in declared]
     for path, digest in qualification["historical_numerical_proofs_unchanged"].items():
         module.verify_historical_proof(root, path, digest, historical["git_commit"])
     rows = {r["id"]: r for r in ledger["rows"]}
@@ -204,7 +205,7 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
     module.m.verify(root, ledger)
     return {"standing": "current-source-qualified; historical numerical readiness unassessed",
             "coordinates": len(m1), "source_capabilities": len(caps), "input_locks": len(locks),
-            "preserved_applied_decisions": 131, "current_native_replay_tests": 23}
+            "preserved_applied_decisions": 131, "current_native_replay_tests": len(passed_tests)}
 
 
 def verify(root: Path = ROOT) -> dict[str, int | str]:

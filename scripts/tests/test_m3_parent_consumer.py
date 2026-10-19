@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PATHS = (
     "scripts/refresh-m3-parent-consumer.py",
     "fixtures/kernel/m3-parent-consumer-v1.json",
-    "fixtures/kernel/m3-finite-proof-v1.json",
+    "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json",
     "fixtures/kernel/m3-parent-consumer-current-v1.json",
     "fixtures/kernel/m3-parent-consumer-current-v1.basis.json",
     "fixtures/kernel/m-tree-v1.json",

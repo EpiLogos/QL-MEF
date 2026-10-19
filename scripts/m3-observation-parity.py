@@ -27,7 +27,7 @@ _spec.loader.exec_module(source)
 ALPHABET = "ATCG"
 GROUP_COUNTS = (1, 4, 16, 64, 8, 64, 3, 56, 22, 360, 24, 1)
 SELECTED = {"node", "transcription", "clock"}
-OTHER_KINDS = {"pair", "trigram", "codon", "line", "matrix", "profile", "pose",
+OTHER_KINDS = {"pair", "trigram", "codon", "line", "matrix", "generation", "active", "profile", "pose",
                "rotation", "quaternion", "partner", "minor", "major", "transduce", "record"}
 
 
