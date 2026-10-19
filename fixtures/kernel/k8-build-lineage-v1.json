@@ -4,7 +4,7 @@
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
     "m2": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
-    "m3": "26f25589c5e75bfed0d1ea1e4453f83183769a13831e3e7fc9951c612849752e"
+    "m3": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -111,6 +111,13 @@
       "sha256": "26f25589c5e75bfed0d1ea1e4453f83183769a13831e3e7fc9951c612849752e",
       "accepted_at_revision": "15363786040315c293d9b9b3aec3e133a17c08b2",
       "reason": "M3 generation law and base-partner matrices in the kernel (QL-MEF #332), map-derived M3 domain refreshed, and the active-pose bin read exactly in Rust and C (corrected all-axis law in both peers). Full M3 acceptance executed on Linux CI run 39292244928 at this head."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "26f25589c5e75bfed0d1ea1e4453f83183769a13831e3e7fc9951c612849752e",
+      "sha256": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70",
+      "accepted_at_revision": "958ef92597fb23e0e1034a5c13d8141fcef3d711",
+      "reason": "The controlled M3 basis names the retained historical proof instead of the moving active proof, ending the loop in which each successor staled the basis and the basis staled the proof. Full M3 acceptance executed on Linux CI run 39294404146 at this head."
     }
   ]
 }
