@@ -343,6 +343,8 @@ At each cell three kinds of participant stand.
 - **Decision instruments** are typed frames over the cell's closed label sets. They are `ql.agent-decision-frame/v1` heads with their legal labels, cardinality and ambiguity policy. A small model may answer one.
 - **The engine** validates: `ql vak compose`, the gate rules and the kernel operations accept or refuse.
 
+In the face rig these are three kinds of face (owner direction, 18–19 October 2026). The member is a team face. The helper that answers an instrument is an animal: a Kev decision agent, shown as the creature whose real behaviour matches its type (`Work/face-rig/CREATURE-SPEC.md` Part II). Any member may call any helper; Anima and Aletheia orchestrate the helpers. The engine and the passes it runs, such as the Day/Night′ pass and the gate rules, are processes and show as environs. An animal answers; it does not act in the cell, which is why rule 6 below keeps it apart from the members.
+
 The instruments:
 
 | Organ | Instrument | Labels |
