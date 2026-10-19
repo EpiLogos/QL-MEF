@@ -107,16 +107,21 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
     assert qualification["registry_revision"] == ledger["registry"]["revision"] == registry["registry_revision"], "source qualification is for a different registry"
     assert qualification["ledger_revision"] == ledger["ledger_revision"], "source qualification is for a different ledger"
     assert qualification["preserved_applied_decisions"] == 131
-    assert qualification["standing"] == "current source/application revalidation; old numerical readiness/parity unassessed until full successor execution"
-    assert "current whole M1/M2/M3 numerical readiness from this bootstrap" in qualification["not_claimed"]
-
     spec = importlib.util.spec_from_file_location("m1_source_qualification", root / "scripts/requalify-m-ledger.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    assert qualification["standing"] == module.STANDING, "requalification standing is not the current claim"
+    assert "current whole M1/M2/M3 numerical readiness from this bootstrap" in qualification["not_claimed"]
     prior, historical = module.history(qualification["historical"]["git_commit"])
     assert historical == qualification["historical"], "historical evidence was rewritten"
-    assert len(prior["discrepancies"]) == len(ledger["discrepancies"]), "historical decisions were omitted or added without review"
-    for before, after in zip(prior["discrepancies"], ledger["discrepancies"]):
+    # The historical decisions are compared one by one, by id. A composed
+    # successor vertical may add open, undecided records of its own engine
+    # (the M3 source findings); nothing else may be added.
+    current = {d["id"]: d for d in ledger["discrepancies"]}
+    assert all(d["id"] in current for d in prior["discrepancies"]), "historical decisions were omitted"
+    module.verify_added_discrepancies(root, prior, ledger, qualification["successor_verticals"])
+    for before in prior["discrepancies"]:
+        after = current[before["id"]]
         restored = copy.deepcopy(after)
         for part in ["decision", "proposal"]:
             original = before.get(part)
@@ -202,8 +207,10 @@ def verify_requalified(root: Path) -> dict[str, int | str]:
     aliases = [d for d in ledger["discrepancies"] if d["id"].startswith("k4-live-spelling-composite-m1")]
     assert aliases and all(d["state"] == "rejected" for d in aliases)
     assert len([d for d in prior["discrepancies"] if d["state"] == "applied"]) == 131
+    module.verify_readiness(root, qualification, ledger)
     module.m.verify(root, ledger)
-    return {"standing": "current-source-qualified; historical numerical readiness unassessed",
+    return {"standing": "current-source-qualified; readiness only where a published successor backs it",
+            "successor_verticals": sorted(qualification["successor_verticals"]),
             "coordinates": len(m1), "source_capabilities": len(caps), "input_locks": len(locks),
             "preserved_applied_decisions": 131, "current_native_replay_tests": len(passed_tests)}
 

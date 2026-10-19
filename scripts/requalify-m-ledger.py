@@ -22,6 +22,8 @@ spec = importlib.util.spec_from_file_location("m_ledger", ROOT / "scripts/m-ledg
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 RECEIPT = Path("fixtures/kernel/m-ledger-source-requalification-v1.json")
+STANDING = ("current source/application revalidation; numerical readiness and parity are claimed only where an "
+            "engine's published successor proof at the current registry backs them (successor_verticals)")
 REPLAYS = Path("fixtures/kernel/source-requalification")
 PROOF_FILES = [Path(f"fixtures/kernel/{name}-finite-proof-v1.json") for name in ("m2", "m3")]
 INPUTS = [
@@ -65,8 +67,147 @@ def lineage_chain(lineage: dict, engine: str, head: str, bases: set[str]) -> str
     return current
 
 
+ENGINE_OWNERS = {"m2": ("scripts/m2-ledger.py", "k6-m2:"), "m3": ("scripts/m3-ledger.py", "k7-m3:")}
+UNASSESSED = ("unassessed", "unimplemented")
+
+
+def load_owner(root: Path, engine: str):
+    """The engine's own ledger owner, loaded the way ``m-ledger.py`` is."""
+    owner_spec = importlib.util.spec_from_file_location(f"{engine}_ledger_owner", root / ENGINE_OWNERS[engine][0])
+    module = importlib.util.module_from_spec(owner_spec)
+    owner_spec.loader.exec_module(module)
+    return module
+
+
+def historical_bases(root: Path, engine: str, digest: str) -> set[str]:
+    """Proofs already qualified here: the historical original and, for M3, the published alias."""
+    bases = {digest}
+    if engine == "m3":
+        record = json.loads((root / "fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
+        bases.add(record["native_history"]["successor"]["sha256"])
+    return bases
+
+
+def successor_engines(root: Path, proof_locks: dict[str, str]) -> dict[str, dict]:
+    """Engines whose active proof is a published successor at the current registry.
+
+    Three conditions, each refused separately: the active proof is the one the
+    build lineage publishes and differs from the historical original; the
+    lineage walks back from it to a proof qualified here; and the proof's own
+    input locks are the current files, binding the current registry (directly
+    when it locks the tree, otherwise through a registry-stamped input).
+    An engine failing any of them is not composed and stays unassessed.
+    """
+    registry = m.read(root / m.REGISTRY)
+    tree_sha = sha((root / m.REGISTRY).read_bytes())
+    lineage = json.loads((root / LINEAGE).read_bytes())
+    found = {}
+    for engine in ENGINE_OWNERS:
+        path = f"fixtures/kernel/{engine}-finite-proof-v1.json"
+        original = proof_locks[path]
+        active = sha((root / path).read_bytes())
+        if active == original:
+            continue
+        try:
+            base = lineage_chain(lineage, engine, active, historical_bases(root, engine, original))
+        except ValueError:
+            continue
+        proof = json.loads((root / path).read_text())
+        inputs = proof.get("inputs", {})
+        if not inputs or proof.get("result") != "passed" \
+                or any(sha((root / name).read_bytes()) != digest for name, digest in inputs.items()):
+            continue
+        if m.REGISTRY.as_posix() in inputs:
+            bound = inputs[m.REGISTRY.as_posix()] == tree_sha
+        else:
+            bound = any(name.endswith(".json") and json.loads((root / name).read_text()).get("registry_revision")
+                        == registry["registry_revision"] for name in inputs)
+        if not bound:
+            continue
+        accepted = next(e["accepted_at_revision"] for e in lineage["successors"]
+                        if e["engine"] == engine and e["sha256"] == active)
+        found[engine] = {"proof": path, "proof_sha256": active, "historical_base_sha256": base,
+                         "accepted_at_revision": accepted}
+    return found
+
+
+def verify_added_discrepancies(root: Path, prior: dict, ledger: dict, composed) -> list[str]:
+    """Records a composed engine's owner adds beside the historical decisions.
+
+    The historical decisions are compared by id elsewhere. Anything else must
+    be open and undecided, and must be that engine's own: its prefix, or, for
+    M3, a finding template of its source catalogue. Returns the added ids.
+    """
+    known = {d["id"] for d in prior["discrepancies"]}
+    allowed_prefixes = tuple(ENGINE_OWNERS[e][1] for e in composed)
+    templates = set()
+    if "m3" in composed:
+        templates = {d["id"] for d in json.loads((root / "fixtures/kernel/m3-domain-v1.json").read_text())["discrepancies"]}
+    added = [d for d in ledger["discrepancies"] if d["id"] not in known]
+    for d in added:
+        if not (d["id"].startswith(allowed_prefixes) or d["id"] in templates):
+            raise ValueError("composition added a discrepancy no composed engine owns: " + d["id"])
+        if d["state"] != "open" or d["decision"] is not None or d["proposal"] is not None or d.get("promotion") is not None:
+            raise ValueError("composition added a decided discrepancy: " + d["id"])
+    if len({d["id"] for d in ledger["discrepancies"]}) != len(ledger["discrepancies"]):
+        raise ValueError("duplicate discrepancy ids after composition")
+    return [d["id"] for d in added]
+
+
+def verify_readiness(root: Path, receipt: dict, ledger: dict) -> None:
+    """Readiness stands only where a composed engine's successor evidence backs it.
+
+    Every assessment outside a composed engine's own vertical is unassessed or
+    unimplemented with no evidence and no parity. Inside a composed vertical,
+    each claim cites only that vertical's evidence, whose artifacts lock the
+    current files; a tested claim cites the successor test-receipt that locks
+    the current proof file named by the receipt.
+    """
+    composed = receipt.get("successor_verticals")
+    if composed is None or set(composed) - set(ENGINE_OWNERS):
+        raise ValueError("receipt does not record its successor verticals")
+    if composed != successor_engines(root, receipt["historical_numerical_proofs_unchanged"]):
+        raise ValueError("composed successor vertical is not a published successor at the current registry")
+    evidence = {e["id"]: e for e in ledger["evidence"]}
+    prefixes = {ENGINE_OWNERS[e][1]: e for e in composed}
+    for ident, assessment in ledger["assessments"].items():
+        if ident == "k2-index":
+            continue
+        engine = next((prefixes[p] for p in prefixes if ident.startswith(p)), None)
+        claims = list(assessment["readiness"].values())
+        pairs = [pair for group in assessment["parity"].values() for pair in group]
+        if engine is None:
+            if any(c["status"] not in UNASSESSED or c["evidence"] for c in claims) or pairs:
+                raise ValueError("readiness without successor evidence: " + ident)
+            continue
+        proof_lock = {"path": composed[engine]["proof"], "sha256": composed[engine]["proof_sha256"]}
+        for claim in claims + pairs:
+            if claim["status"] in UNASSESSED and not claim["evidence"]:
+                continue
+            if not claim["evidence"]:
+                raise ValueError("readiness without evidence: " + ident)
+            for ref in claim["evidence"]:
+                item = evidence.get(ref)
+                if item is None or not ref.startswith(ENGINE_OWNERS[engine][1]) \
+                        or m.lock(root, item["artifact"]["path"]) != item["artifact"]:
+                    raise ValueError("readiness cites evidence outside its successor vertical: " + ident)
+                if claim["warrant"] == "tested" and (
+                        item["kind"] != "test-receipt" or item["artifact"] != proof_lock or item["result"] != "passed"):
+                    raise ValueError("tested readiness is not backed by the successor proof: " + ident)
+    for engine, record in composed.items():
+        if not any(e["kind"] == "test-receipt" and e["id"].startswith(ENGINE_OWNERS[engine][1])
+                   and e["artifact"] == {"path": record["proof"], "sha256": record["proof_sha256"]}
+                   for e in ledger["evidence"]):
+            raise ValueError("composed vertical has no successor test-receipt: " + engine)
+    for e in ledger["evidence"]:
+        for engine, (_, prefix) in ENGINE_OWNERS.items():
+            if e["id"].startswith(prefix) and engine not in composed:
+                raise ValueError("successor evidence for an engine that is not composed: " + e["id"])
+
+
 JOURNEY_RECORD = Path("fixtures/kernel/m3-journey-source-integration-v1.json")
-JOURNEY_LEDGER_STANDING = "byte-identical current131 decisions and unassessed broad readiness retained"
+JOURNEY_LEDGER_STANDING = ("byte-identical current131 decisions retained; broad readiness unassessed except "
+                          "engines with a published successor proof at the current registry")
 
 
 def journey_source_standing(root: Path) -> dict:
@@ -254,7 +395,12 @@ def verify_replays(c_log: bytes, rust_log: bytes, audit: dict, registry: dict) -
         raise ValueError("current coin source readings disagree with the ratified law")
 
 
-def apply(args) -> None:
+def build(args, base: dict | None = None, write_replays: bool = True) -> tuple[dict, dict]:
+    """Compute the requalified ledger and its receipt, writing nothing but the replay copies.
+
+    ``base`` is the ledger to start from (default: the current one); a test
+    passes a stripped one and ``write_replays=False`` to leave the tree alone.
+    """
     prior, old = history(args.previous_git_ref)
     registry = m.read(ROOT / m.REGISTRY)
     if prior["registry"]["revision"] == registry["registry_revision"]:
@@ -270,11 +416,12 @@ def apply(args) -> None:
     applied = [d for d in prior["discrepancies"] if d["state"] == "applied"]
     if len(applied) != 131:
         raise ValueError("inspect the changed decision inventory before requalification")
-    REPLAYS_ABS = ROOT / REPLAYS
-    REPLAYS_ABS.mkdir(parents=True, exist_ok=True)
-    for name, data in [("m1-native-c-replay.log", c_log), ("native-rust-c-replay.log", rust_log),
-                       ("m3-source-audit.json", args.m3_audit.read_bytes())]:
-        (REPLAYS_ABS / name).write_bytes(data)
+    if write_replays:
+        REPLAYS_ABS = ROOT / REPLAYS
+        REPLAYS_ABS.mkdir(parents=True, exist_ok=True)
+        for name, data in [("m1-native-c-replay.log", c_log), ("native-rust-c-replay.log", rust_log),
+                           ("m3-source-audit.json", args.m3_audit.read_bytes())]:
+            (REPLAYS_ABS / name).write_bytes(data)
     mapping = {
         "coin-1:map-corrected-audit": "source-requalification:coin-current-source",
         "k5-m1:reviewed-dispositions": "source-requalification:m1-current-source",
@@ -289,8 +436,11 @@ def apply(args) -> None:
     # The current ledger carries the rows, implementations and matrices
     # reconciled since the historical base; its decisions are the historical
     # ones, re-evidenced below and compared with that base.
-    base = m.read(ROOT / m.LEDGER)
-    if len(base["discrepancies"]) != len(prior["discrepancies"]):
+    base = base if base is not None else m.read(ROOT / m.LEDGER)
+    # The base may already carry a composed engine's own open records (re-running
+    # over this tool's output); they are validated against the composed engines
+    # below. Every historical decision must lead, in order.
+    if [d["id"] for d in base["discrepancies"][:len(prior["discrepancies"])]] != [d["id"] for d in prior["discrepancies"]]:
         raise ValueError("inspect the changed decision inventory before requalification")
     ledger = m.refresh(ROOT, copy.deepcopy(base))
     for assessment in ledger["assessments"].values():
@@ -347,6 +497,23 @@ def apply(args) -> None:
                 restored[part]["evidence"] = before[part]["evidence"]
         if restored != before:
             raise ValueError("a prior decision/lifecycle would be rewritten: " + before["id"])
+    # Full successor execution re-enters through the engines' own owners: an
+    # engine whose active proof is a published successor at the current
+    # registry has its vertical materialised; any other stays stripped.
+    composed = successor_engines(ROOT, proof_locks)
+    for engine in composed:
+        ledger = load_owner(ROOT, engine).materialize(ledger)
+    current = {d["id"]: d for d in ledger["discrepancies"]}
+    for before in prior["discrepancies"]:
+        if before["id"] not in current:
+            raise ValueError("successor composition dropped a prior decision: " + before["id"])
+        restored = copy.deepcopy(current[before["id"]])
+        for part in ("decision", "proposal"):
+            if before.get(part):
+                restored[part]["evidence"] = before[part]["evidence"]
+        if restored != before:
+            raise ValueError("successor composition rewrote a prior decision: " + before["id"])
+    verify_added_discrepancies(ROOT, prior, ledger, composed)
     ledger["ledger_revision"] = m.digest(m.canonical({k: v for k, v in ledger.items() if k != "ledger_revision"}))
     m.verify(ROOT, ledger)
     receipt = {"schema": "ql.m-ledger-source-requalification/v1", "source_revision": registry["source_revision"],
@@ -355,15 +522,25 @@ def apply(args) -> None:
                "replays": [m.lock(ROOT, REPLAYS / p) for p in ("m1-native-c-replay.log", "native-rust-c-replay.log", "m3-source-audit.json")],
                "evidence_mapping": mapping, "preserved_applied_decisions": len(applied),
                "historical_numerical_proofs_unchanged": proof_locks,
-               "standing": "current source/application revalidation; old numerical readiness/parity unassessed until full successor execution",
-               "not_claimed": ["current whole M1/M2/M3 numerical readiness from this bootstrap", "installed visual/audio acceptance"]}
+               "successor_verticals": composed,
+               "standing": STANDING,
+               "not_claimed": ["current whole M1/M2/M3 numerical readiness from this bootstrap", "installed visual/audio acceptance",
+                               "readiness for any engine without a published successor proof at the current registry"]}
+    verify_readiness(ROOT, receipt, ledger)
+    return ledger, receipt
+
+
+def apply(args) -> None:
+    ledger, receipt = build(args)
+    proof_locks, old = receipt["historical_numerical_proofs_unchanged"], receipt["historical"]
+    registry, applied = receipt, receipt["preserved_applied_decisions"]
     (ROOT / RECEIPT).write_text(m.encode(receipt))
     (ROOT / m.LEDGER).write_text(m.encode(ledger))
     advance_journey_source_standing()
     for path, digest in proof_locks.items():
         verify_historical_proof(ROOT, path, digest, old["git_commit"])
     print(json.dumps({"result": "source-requalified", "ledger_revision": ledger["ledger_revision"],
-                      "registry_revision": registry["registry_revision"], "preserved_applied_decisions": len(applied)}))
+                      "registry_revision": registry["registry_revision"], "preserved_applied_decisions": applied}))
 
 
 def verify_source_comparator_reconciliation(root: Path, receipt: dict) -> None:
@@ -431,6 +608,9 @@ def check() -> None:
     history(receipt["historical"]["git_commit"])
     verify_source_comparator_reconciliation(ROOT, receipt)
     m.verify(ROOT, ledger)
+    if receipt["standing"] != STANDING:
+        raise ValueError("source requalification standing is not the current claim")
+    verify_readiness(ROOT, receipt, ledger)
     print("Current source requalification, preserved historical proofs and131 decisions verified")
 
 
