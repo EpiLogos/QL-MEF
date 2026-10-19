@@ -329,7 +329,7 @@ Two points are this space's own readings. The roster seats Moirai once, at CF3, 
 
 ### 10.2 The depth: six M domains
 
-The same grid is situated in each M domain: Anima_i = M_i × S4′ and Aletheia_i = M_i × S5′; Technē_i := Aletheia_i operating M_i′ (`L5-TECHNE-DUAL-READING-LOCK.md` §15). They are not identities: Aletheia is not Technē, and Guardian_i is neither. The M_i′ instruments are M0′ Project / Wiki / Graph, M1′ Canvas / Constellation, M2′ Relation Field / Timeline, M3′ Journey / Scenes, M4′ Places / World and M5′ Palace. Each depth entry also lists the native operations of its faculty (`native_operations`). The proving positions are `central:position:project:O-I:anima-4` and `central:position:project:O-I:aletheia-5`.
+The same grid is situated in each M domain: Anima_i = M_i × S4′ and Aletheia_i = M_i × S5′. Each depth entry names its faculty and lists the native operations of that faculty (`native_operations`). The proving positions are `central:position:project:O-I:anima-4` and `central:position:project:O-I:aletheia-5`.
 
 ### 10.3 The path: the Vāk block
 
