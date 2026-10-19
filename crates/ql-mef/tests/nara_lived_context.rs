@@ -22,7 +22,7 @@ fn day_document(
 ) -> serde_json::Value {
     json!({
         "schema": "central.document-reading/v1",
-        "source": {"source_ref": source_ref, "path": "Control/user/day/x/day.md"},
+        "source": {"ref": source_ref, "path": "Control/user/day/x/day.md"},
         "revision": {"revision": revision, "byte_len": 100},
         "document_id": "doc:day",
         "document": {

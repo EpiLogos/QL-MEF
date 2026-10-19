@@ -296,9 +296,10 @@ pub fn entries_from_central_document(reading: &Value) -> Result<Vec<LivedEntry>,
     if reading["schema"] != CENTRAL_DOCUMENT_READING {
         return Err("expected a central.document-reading/v1 result".into());
     }
-    let source_ref = reading["source"]["source_ref"]
+    // Central serialises its source binding's ref as `ref` (ctrl source_horizon.rs `SourceBinding`, `#[serde(rename = "ref")]`).
+    let source_ref = reading["source"]["ref"]
         .as_str()
-        .ok_or("document reading lacks source.source_ref")?;
+        .ok_or("document reading lacks source.ref")?;
     let revision = reading["revision"]["revision"]
         .as_str()
         .ok_or("document reading lacks revision.revision")?;
