@@ -68,6 +68,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
             "node"
                 | "line"
                 | "matrix"
+                | "generation"
                 | "pose"
                 | "rotation"
                 | "quaternion"
@@ -144,19 +145,28 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 c.line_change(number(&v, 2)).unwrap().address()
             ]),
             "matrix" => {
+                // The matrix action is the base partner at every site, total.
                 let matrix = number(&v, 2);
-                let target = match matrix {
-                    0 => Some(complement(c.address())),
-                    1 => Some(((c.address() & 7) << 3) | (c.address() >> 3)),
-                    2 => resonance_entry(c.address()),
-                    _ => panic!("unknown matrix"),
-                };
+                let target = MatrixFamily::ALL[matrix as usize].apply_to_codon(c);
+                json!([kind, index, matrix, 0, target.address()])
+            }
+            "generation" => {
+                // The generation law (map M3-3-2-*): [hexagram, matrix, lower
+                // pair, upper pair, positive, negative, non-dual, class,
+                // hexagram image under the matrix].
+                let family = MatrixFamily::ALL[number(&v, 2) as usize];
+                let cell = generate(family, index as u8);
                 json!([
                     kind,
                     index,
-                    matrix,
-                    if target.is_some() { 0 } else { 2 },
-                    target.unwrap_or(255)
+                    v[2],
+                    cell.lower_pair.index(),
+                    cell.upper_pair.index(),
+                    cell.positive.address(),
+                    cell.negative.address(),
+                    u8::from(cell.is_non_dual()),
+                    cell.class as u8,
+                    family.apply_to_hexagram(index as u8)
                 ])
             }
             "profile" => {
@@ -298,6 +308,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 ("codon", 64),
                 ("line", 384),
                 ("matrix", 192),
+                ("generation", 192),
                 ("profile", 64),
                 ("pose", 472),
                 ("rotation", 512),

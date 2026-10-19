@@ -40,6 +40,11 @@ typedef struct {
  int8_t charges[4]; /* pp, mm, mp, pm */
  QL_M_NodeId coordinate;
 } QL_M3_CodonRecord;
+/* One cell of the generation field: positive = a.c.d, negative = a.b.d for
+ * lower pair ab and upper pair cd; non-dual exactly when b = c. class_id as in
+ * QL_M3_CodonRecord (0 perfect palindromic, 1 imperfect, 2 non-palindromic
+ * non-dual, 3 dual). */
+typedef struct { uint8_t matrix, hexagram, lower_pair, upper_pair, positive, negative, non_dual, class_id; } QL_M3_GenerationCell;
 typedef struct { float w,x,y,z; } QL_M3_Quaternion;
 typedef struct { uint8_t card_id; const char *name; uint8_t chromosome_pair, amino_acid_index; } QL_M3_Major;
 typedef struct {
@@ -68,7 +73,16 @@ QL_M3_Result ql_m3_trigram(unsigned id, uint16_t out[7]);
 QL_M3_Result ql_m3_hexagram(unsigned id, uint8_t out[5]);
 QL_M3_Result ql_m3_line_change(unsigned codon, unsigned line, uint8_t *out);
 QL_M3_Result ql_m3_matrix_partner(unsigned matrix, unsigned nucleotide, uint8_t *out);
+/* Matrix action on a codon: the matrix base partner at every site (derived from
+ * the partner table). Total; QL_M3_GAP is never returned. */
 QL_M3_Result ql_m3_apply_matrix(unsigned matrix, unsigned codon, uint8_t *out);
+/* Generation law (map M3-3-2-*): trigram line pattern (bit 0 = bottom line) to
+ * the matrix's nucleotide pair, and the cell of a matrix at a hexagram. */
+QL_M3_Result ql_m3_trigram_pair(unsigned matrix, unsigned pattern, uint8_t *out);
+QL_M3_Result ql_m3_generate(unsigned matrix, unsigned hexagram, QL_M3_GenerationCell *out);
+/* Matrix action on a hexagram: each trigram goes to the trigram whose pair is
+ * the partner of its pair. */
+QL_M3_Result ql_m3_apply_matrix_hexagram(unsigned matrix, unsigned hexagram, uint8_t *out);
 QL_M3_Result ql_m3_rotational_profile(unsigned codon, uint8_t out[5]);
 QL_M3_Result ql_m3_rotations(unsigned codon, QL_M3_Rotation out[8]);
 QL_M3_Result ql_m3_pose_ordinal(unsigned codon, unsigned slot, uint16_t *out);

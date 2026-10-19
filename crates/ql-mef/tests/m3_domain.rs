@@ -221,11 +221,12 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
                 json!([k, index, extra, retired])
             }
             "form" => form_values(k, index, 0, &forms[index]),
-            "applied" | "gap" => match forms[index].apply_matrix(MatrixFamily::ALL[extra]).unwrap()
-            {
-                ApplyOutcome::Applied(f) => form_values("applied", index, extra, &f),
-                ApplyOutcome::Provisional => json!(["gap", index, extra]),
-            },
+            "applied" => form_values(
+                "applied",
+                index,
+                extra,
+                &forms[index].apply_matrix(MatrixFamily::ALL[extra]),
+            ),
             _ => panic!("unexpected record"),
         };
         assert_eq!(v, expected, "{k}/{index}/{extra}");
@@ -242,5 +243,6 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
     assert_eq!(counts.get("cell"), Some(&184));
     assert_eq!(counts.get("projection"), Some(&1441));
     assert_eq!(counts.get("form"), Some(&(472 * 16)));
-    assert_eq!(counts["applied"] + counts["gap"], 472 * 16 * 3);
+    assert_eq!(counts["applied"], 472 * 16 * 3);
+    assert_eq!(counts.get("gap"), None, "the matrices have no gaps");
 }

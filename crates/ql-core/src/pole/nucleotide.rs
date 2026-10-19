@@ -16,10 +16,10 @@ use core::fmt;
 /// (0 = yin), bit 1 mobility (0 = moving).
 ///
 /// ```text
-/// A = 0b00 yin/moving   — old yin   (6) — Water
-/// T = 0b01 yang/moving  — old yang  (9) — Fire
-/// C = 0b10 yin/resting  — young yin (8) — Earth
-/// G = 0b11 yang/resting — young yang(7) — Air
+/// A = 0b00 = 6 Old Yin    (moving)  — Water
+/// T = 0b01 = 9 Old Yang   (moving)  — Fire
+/// C = 0b10 = 8 Young Yin  (resting) — Earth
+/// G = 0b11 = 7 Young Yang (resting) — Air
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Nucleotide {
@@ -35,9 +35,8 @@ impl Nucleotide {
     /// THE canonical nucleotide → coin-value table of the physical pole.
     ///
     /// Parity law: odd sums are yang, even sums are yin; the extreme sums
-    /// move, the mixed sums rest. Classical grades: old yin 6 (A, dominant
-    /// yin), young yang 7 (G, subdominant yang), young yin 8 (C, subdominant
-    /// yin), old yang 9 (T, dominant yang). Complementary pairs keep
+    /// move, the mixed sums rest. The four lines: A = 6 Old Yin, G = 7 Young
+    /// Yang, C = 8 Young Yin, T = 9 Old Yang. Complementary pairs keep
     /// A+T = C+G = 15 and the total 30. The same table stands in the C
     /// reference kernel (FR 2.3.12) — pinned by test.
     pub const NUCLEOTIDE_COIN_VALUE: [u8; 4] = [6, 9, 8, 7];

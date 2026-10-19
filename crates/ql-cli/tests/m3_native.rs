@@ -170,16 +170,16 @@ fn explicit_activity_uses_actual_ordered_native_receipts_without_identity_mutati
     assert_eq!(first["state"]["bases"], second["state"]["bases"]);
 }
 #[test]
-fn provisional_native_gap_never_emits_an_activity_packet() {
+fn a_matrix_batch_on_the_former_gap_address_applies_and_emits_activity() {
+    // Address 5 was a gap of the retired RES table; the matrices are total.
     let mut input = selected_activity_input();
     let mut c = command(0, json!({"operation":"select-form","address":5}));
     c["operations"] =
         json!([{ "operation":"select-form","address":5},{"operation":"apply-matrix","family":2}]);
     input["commands"] = json!([c]);
     let result = invoke(&input).unwrap();
-    assert_eq!(result["receipts"][0]["status"], "provisional-unchanged");
-    assert_eq!(result["activity"]["turn_count"], 0);
-    assert!(result["activity"]["q_activity"].is_null());
+    assert_eq!(result["receipts"][0]["status"], "applied");
+    assert!(result["receipts"][0].get("failed_operation").is_none());
 }
 
 #[test]

@@ -1,3 +1,4 @@
+use ql_core::MatrixAxis;
 use ql_mef::m3_state::*;
 use serde_json::{Value, json};
 use std::{path::Path, process::Command};
@@ -79,7 +80,10 @@ fn all_three_consumers_share_one_event_generation_clock_and_source_return() {
     );
     let first = s.apply(commands[0].clone()).unwrap();
     let f = s.snapshot();
-    assert_eq!(f["form"]["address"], 56);
+    // The fixture selects address 7 then applies Matrix 1 (Complementary): the
+    // Watson-Crick partner at every site, 7 xor 0x15 = 18 (the retired operator
+    // xor 0x3F read 56).
+    assert_eq!(f["form"]["address"], 18);
     assert_eq!(f["clock"]["degree720"], 360);
     assert_eq!(f["clock"]["layer"], 1);
     assert_eq!(f["aperture"]["fibonacci_phase60"], 0);
@@ -174,9 +178,10 @@ fn stale_event_subject_generation_and_bad_batches_never_mutate() {
     assert_eq!(s.snapshot(), after);
 }
 #[test]
-fn matrix_gap_rolls_back_the_whole_batch() {
+fn every_matrix_applies_to_every_form_and_there_is_no_gap() {
+    // Address 5 was a "gap" of the retired RES table; it resolves like any
+    // other codon: Same-Quality takes it to its base partner (xor 0x2A).
     let (mut s, c) = setup();
-    let before = s.snapshot();
     let mut cmd = c[0].clone();
     cmd.operations = vec![
         M3Operation::SelectForm { address: 5 },
@@ -184,10 +189,10 @@ fn matrix_gap_rolls_back_the_whole_batch() {
         M3Operation::ApplyMatrix { family: 2 },
     ];
     let r = s.apply(cmd).unwrap();
-    assert_eq!(r.status, "provisional-unchanged");
-    assert_eq!(r.failed_operation, Some(2));
-    assert_eq!(r.before, r.after);
-    assert_eq!(s.snapshot(), before);
+    assert_eq!(r.status, "applied");
+    assert_eq!(r.after_generation, r.before_generation + 1);
+    assert_eq!(s.fold().codon().address(), 5 ^ 0x2A);
+    assert_eq!(s.fold().active_matrix_axis(), MatrixAxis::K);
 }
 #[test]
 fn input_rejects_wrong_registry_mixed_generation_and_collapsed_identity_roles() {

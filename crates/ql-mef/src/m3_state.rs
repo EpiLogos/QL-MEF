@@ -101,7 +101,6 @@ pub struct M3Receipt {
     pub before_generation: u64,
     pub after_generation: u64,
     pub status: &'static str,
-    pub failed_operation: Option<usize>,
     pub command: M3Command,
     pub before: Value,
     pub after: Value,
@@ -217,8 +216,9 @@ impl M3State {
         next.set_matrix_axis(self.fold.active_matrix_axis());
         self.fold = next;
     }
-    /// Atomic batch: any invalid operation is an error; any source-native RES
-    /// gap returns a non-mutating provisional receipt, including earlier ops.
+    /// Atomic batch: any invalid operation is an error and nothing changes.
+    /// The three matrices are total (the base partner on every site), so a
+    /// valid batch always applies.
     pub fn apply(&mut self, command: M3Command) -> Result<M3Receipt, String> {
         if command.schema != COMMAND_SCHEMA
             || command.event_ref != self.request.stamp.identity.event_ref
@@ -241,8 +241,7 @@ impl M3State {
         exact(next_generation)?;
         let before = self.snapshot();
         let mut next = self.clone();
-        let mut gap = None;
-        for (index, op) in command.operations.iter().enumerate() {
+        for op in command.operations.iter() {
             match *op {
                 M3Operation::SelectForm { address } => next.replace_form(code(address)?),
                 M3Operation::ChangeLine { line } => {
@@ -252,13 +251,7 @@ impl M3State {
                     let f = *MatrixFamily::ALL
                         .get(family as usize)
                         .ok_or("invalid matrix family")?;
-                    match next.fold.apply_matrix(f).map_err(err)? {
-                        ApplyOutcome::Applied(fold) => next.fold = fold,
-                        ApplyOutcome::Provisional => {
-                            gap = Some(index);
-                            break;
-                        }
-                    }
+                    next.fold = next.fold.apply_matrix(f);
                 }
                 M3Operation::SetPose { pose } => {
                     next.fold.set_rotational_index(pose).map_err(err)?
@@ -308,24 +301,17 @@ impl M3State {
                 }
             }
         }
-        if gap.is_none() {
-            next.generation = next_generation;
-            next.occurrence_unix_ms = command.occurrence_unix_ms;
-            next.receipt_unix_ms = command.receipt_unix_ms;
-            *self = next;
-        }
+        next.generation = next_generation;
+        next.occurrence_unix_ms = command.occurrence_unix_ms;
+        next.receipt_unix_ms = command.receipt_unix_ms;
+        *self = next;
         Ok(M3Receipt {
             schema: "ql.m3-receipt/v1",
             event_ref: command.event_ref.clone(),
             subject_ref: command.subject_ref.clone(),
             before_generation: command.expected_generation,
             after_generation: self.generation,
-            status: if gap.is_some() {
-                "provisional-unchanged"
-            } else {
-                "applied"
-            },
-            failed_operation: gap,
+            status: "applied",
             command,
             before,
             after: self.snapshot(),

@@ -47,10 +47,9 @@ int main(void) {
    QL_M3_Form f;assert(ql_m3_form(c,p,a,row%60,row%3,&f)==QL_M3_OK);form_row("form",row,0,&f);
    uint8_t cast=255;assert(ql_m3_cast(f.angles_deg10,f.velocities_deg10,&cast)==QL_M3_OK && cast==c);
    for(unsigned m=0;m<3;m++) {
-    QL_M3_Form to;memset(&to,0xa5,sizeof(to));QL_M3_Form prior=to;
+    QL_M3_Form to;memset(&to,0xa5,sizeof(to));
     QL_M3_Result result=ql_m3_form_apply_matrix(&f,m,&to);
-    if(result==QL_M3_GAP){assert(!memcmp(&to,&prior,sizeof(to)));printf("[\"gap\",%u,%u]\n",row,m);}
-    else{assert(result==QL_M3_OK);form_row("applied",row,m,&to);}
+    assert(result==QL_M3_OK);form_row("applied",row,m,&to);
    }
    row++;
   }

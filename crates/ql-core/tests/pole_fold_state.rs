@@ -3,7 +3,7 @@
 //! reciprocal-aperture fold, and the open inverse seam.
 
 use ql_core::{
-    ApertureIndex, ApplyOutcome, Codon64, MatrixFamily, Mobility, POLE_FOLD_STATE_REF, Polarity,
+    ApertureIndex, Codon64, MatrixFamily, Mobility, POLE_FOLD_STATE_REF, Polarity,
     QuaternionComponents, RetrievalEvidence, SelectionContext, SiteReading,
 };
 
@@ -46,30 +46,32 @@ fn fixture_site_conventions_match_the_cast_law() {
     }
 }
 
-#[test]
-fn fixture_matrix_complement_rows_flip_all_six_bits() {
-    let rows = rows("matrix-complement");
+/// The fixture rows are derived independently of the kernel from the three
+/// base-partner maps; the kernel's `apply_matrix` must reproduce every row.
+fn matrix_rows_reproduced(tag: &str, family: MatrixFamily) {
+    let rows = rows(tag);
     assert_eq!(rows.len(), 64);
     for fields in rows {
         let address: u8 = fields[1].parse().unwrap();
         let expected: u8 = fields[2].parse().unwrap();
-        let state = FoldStateForTest::new(address);
-        let complemented = state.apply(MatrixFamily::Complementary);
-        assert_eq!(complemented, expected, "complement of {address}");
+        let applied = FoldStateForTest::new(address).apply(family);
+        assert_eq!(applied, expected, "{tag} of {address}");
     }
 }
 
 #[test]
-fn fixture_matrix_move_rows_exchange_trigrams() {
-    let rows = rows("matrix-move");
-    assert_eq!(rows.len(), 64);
-    for fields in rows {
-        let address: u8 = fields[1].parse().unwrap();
-        let expected: u8 = fields[2].parse().unwrap();
-        let state = FoldStateForTest::new(address);
-        let moved = state.apply(MatrixFamily::MovingResting);
-        assert_eq!(moved, expected, "trigram exchange of {address}");
-    }
+fn fixture_matrix_i_rows_are_the_complementary_partner() {
+    matrix_rows_reproduced("matrix-i", MatrixFamily::Complementary);
+}
+
+#[test]
+fn fixture_matrix_j_rows_are_the_moving_resting_partner() {
+    matrix_rows_reproduced("matrix-j", MatrixFamily::MovingResting);
+}
+
+#[test]
+fn fixture_matrix_k_rows_are_the_same_quality_partner() {
+    matrix_rows_reproduced("matrix-k", MatrixFamily::SameQuality);
 }
 
 /// Thin helper exercising FoldState's matrix application.
@@ -85,40 +87,8 @@ impl FoldStateForTest {
     }
 
     fn apply(&self, family: MatrixFamily) -> u8 {
-        self.0
-            .apply_matrix(family)
-            .expect("matrix law applies")
-            .applied()
-            .expect("determinate transform")
-            .codon()
-            .address()
+        self.0.apply_matrix(family).codon().address()
     }
-}
-
-#[test]
-fn fixture_resonance_rows_are_the_ported_dataset_table() {
-    let rows = rows("matrix-resonance");
-    assert_eq!(rows.len(), 1);
-    // The k axis is no longer typed-unresolved: the RES matrix is ported
-    // verbatim from the C kernel — identity partners on the 56 admitted
-    // entries, the 8 evolutionary gaps typed as Provisional.
-    assert_eq!(rows[0][1], "identity-on-56-admitted");
-    assert_eq!(rows[0][2], "dataset-structural");
-    assert_eq!(rows[0][3], "8-gaps");
-    // Executable half: admitted codons apply through the k axis; gap codons
-    // yield the typed provisional outcome, never an error.
-    let applied = FoldStateForTest::new(0)
-        .0
-        .apply_matrix(MatrixFamily::SameQuality)
-        .expect("k axis executes");
-    assert!(matches!(applied, ApplyOutcome::Applied(_)));
-    assert!(matches!(
-        FoldStateForTest::new(0x05)
-            .0
-            .apply_matrix(MatrixFamily::SameQuality)
-            .expect("k axis executes"),
-        ApplyOutcome::Provisional
-    ));
 }
 
 #[test]

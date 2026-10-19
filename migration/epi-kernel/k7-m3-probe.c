@@ -12,8 +12,15 @@ static void boundary_checks(void) {
  assert(ql_m3_codon(64,&c)==QL_M3_INVALID && !memcmp(&c,&old,sizeof(c)));
  assert(ql_m3_codon(0,NULL)==QL_M3_INVALID);
  uint8_t value=42;assert(ql_m3_line_change(0,6,&value)==QL_M3_INVALID && value==42);
- assert(ql_m3_apply_matrix(2,5,&value)==QL_M3_GAP && value==42);
  assert(ql_m3_apply_matrix(3,0,&value)==QL_M3_INVALID && value==42);
+ assert(ql_m3_apply_matrix(0,64,&value)==QL_M3_INVALID && value==42);
+ assert(ql_m3_apply_matrix(2,5,&value)==QL_M3_OK && value==(5u^0x2Au)); /* total: no gap */
+ value=42;
+ QL_M3_GenerationCell cell;memset(&cell,0xa5,sizeof(cell));QL_M3_GenerationCell cell_old=cell;
+ assert(ql_m3_generate(3,0,&cell)==QL_M3_INVALID && !memcmp(&cell,&cell_old,sizeof(cell)));
+ assert(ql_m3_generate(0,64,&cell)==QL_M3_INVALID && ql_m3_generate(0,0,NULL)==QL_M3_INVALID);
+ assert(ql_m3_apply_matrix_hexagram(0,64,&value)==QL_M3_INVALID && ql_m3_apply_matrix_hexagram(3,0,&value)==QL_M3_INVALID && value==42);
+ assert(ql_m3_trigram_pair(0,8,&value)==QL_M3_INVALID && ql_m3_trigram_pair(3,0,&value)==QL_M3_INVALID && value==42);
  uint8_t minor[4]={0};assert(ql_m3_minor(56,minor)==QL_M3_INVALID);
  uint64_t word=123;uint8_t bad[]={0,72};
  assert(ql_m3_transduce(bad,2,&word)==QL_M3_INVALID && word==123);
@@ -42,6 +49,11 @@ int main(void) {
   printf("[\"codon\",%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%d,%d,%d,%d]\n",i,c.values[0],c.values[1],c.values[2],c.class_id,c.state_count,c.complement,c.nuclear,c.anticodon,c.amino_record,c.rna_changes,c.charges[0],c.charges[1],c.charges[2],c.charges[3]);
   for(unsigned l=0;l<6;l++){uint8_t to;assert(ql_m3_line_change(i,l,&to)==QL_M3_OK);printf("[\"line\",%u,%u,%u]\n",i,l,to);}
   for(unsigned m=0;m<3;m++){uint8_t to=255;QL_M3_Result result=ql_m3_apply_matrix(m,i,&to);printf("[\"matrix\",%u,%u,%u,%u]\n",i,m,(unsigned)result,to);}
+  for(unsigned m=0;m<3;m++){
+   QL_M3_GenerationCell g;assert(ql_m3_generate(m,i,&g)==QL_M3_OK);
+   uint8_t image=255;assert(ql_m3_apply_matrix_hexagram(m,i,&image)==QL_M3_OK);
+   printf("[\"generation\",%u,%u,%u,%u,%u,%u,%u,%u,%u]\n",i,m,g.lower_pair,g.upper_pair,g.positive,g.negative,g.non_dual,g.class_id,image);
+  }
   uint8_t profile[5];assert(ql_m3_rotational_profile(i,profile)==QL_M3_OK);bytes("profile",i,profile,5);
   for(unsigned slot=0;slot<c.state_count;slot++){uint16_t ordinal;assert(ql_m3_pose_ordinal(i,slot,&ordinal)==QL_M3_OK);printf("[\"pose\",%u,%u,%u]\n",i,slot,ordinal);}
   uint16_t bad=123;assert(ql_m3_pose_ordinal(i,c.state_count,&bad)==QL_M3_INVALID && bad==123);

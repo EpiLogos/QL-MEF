@@ -14,12 +14,12 @@
 //!   description names its season's perfect palindrome.
 //!
 //! The live form at that place is not a table lookup: [`active_pose`] composes
-//! the seed codon with an environment quaternion (`quat_active_state`), which
+//! the seed codon with an environment quaternion (`quat_active_pose`), which
 //! is where the rotational states and the three matrices enter.
 
 use crate::m_tree::{MRegistry, MTreeId, native_m_registry};
 use crate::m3_source::{M3Source, native_m3_source};
-use ql_core::{Codon64, Quat, quat_active_state};
+use ql_core::{Codon64, PoseMap, Quat, QuatSeed, quat_active_pose};
 use serde::Serialize;
 use std::collections::BTreeMap;
 use std::sync::OnceLock;
@@ -66,7 +66,18 @@ pub struct InscriptionSeed {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 pub struct ActivePose {
     pub codon: u8,
+    /// The pose slot under `pose_map` (the raw bin under the default map).
     pub rotational_state: u8,
+    /// The reader's raw eight-bin result.
+    pub rotational_bin: u8,
+    /// The bin lay outside the codon's lawful poses and was collapsed onto its
+    /// mirror (only under the lawful-slot map).
+    pub collapsed: bool,
+    /// Which seed produced this reading: `sum-difference-mod` (FR 2.Q.9) or
+    /// `four-charge` (FR 2.Q.17).
+    pub seed_law: &'static str,
+    /// Which pose map produced it: `raw-bin` or `lawful-slot`.
+    pub pose_map: &'static str,
 }
 
 fn codon_of(sequence: &str) -> Result<Codon64, String> {
@@ -208,11 +219,28 @@ pub fn seed_at(longitude_deg: f64) -> Result<InscriptionSeed, String> {
 }
 
 /// The seed codon's live pose: its active rotational state under the
-/// environment quaternion (the ring × element × matrix composition).
+/// environment quaternion (the ring × element × matrix composition), under the
+/// default laws (FR 2.Q.9 seed, raw bin).
 pub fn active_pose(seed: &InscriptionSeed, environment: Quat) -> ActivePose {
+    active_pose_under(seed, environment, QuatSeed::default(), PoseMap::default())
+}
+
+/// The same pose under declared test variables; the reading carries the laws
+/// that produced it.
+pub fn active_pose_under(
+    seed: &InscriptionSeed,
+    environment: Quat,
+    quat_seed: QuatSeed,
+    pose_map: PoseMap,
+) -> ActivePose {
     let codon = Codon64::new(seed.pip_codon);
+    let reading = quat_active_pose(environment, codon, quat_seed, pose_map);
     ActivePose {
         codon: seed.pip_codon,
-        rotational_state: quat_active_state(environment, codon),
+        rotational_state: reading.slot,
+        rotational_bin: reading.bin,
+        collapsed: reading.collapsed,
+        seed_law: quat_seed.name(),
+        pose_map: pose_map.name(),
     }
 }

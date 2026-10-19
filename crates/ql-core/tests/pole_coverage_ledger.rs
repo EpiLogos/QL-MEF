@@ -166,7 +166,7 @@ fn ported_rows_resolve_to_existing_rust_homes() {
         ql_core::POLE_COIN_CONTRACT_REF,
         ql_core::POLE_FOLD_STATE_REF,
         ql_core::POLE_ICHING_GRAMMAR_CONTRACT_REF,
-        ql_core::RES_GAP_ADDRESSES,
+        ql_core::POLE_GENERATION_LAW_REF,
         ql_core::Trigram::LUT,
         ql_core::palindromic_anchors(),
         ql_core::det_overlay,
