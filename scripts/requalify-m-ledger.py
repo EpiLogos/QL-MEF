@@ -59,7 +59,7 @@ def lineage_chain(lineage: dict, engine: str, head: str, bases: set[str]) -> str
         entries = [e for e in lineage["successors"] if e["engine"] == engine and e["sha256"] == current]
         if (len(entries) != 1 or current in seen or not entries[0].get("reason", "").strip()
                 or not re.fullmatch(r"[0-9a-f]{40}", entries[0].get("accepted_at_revision", ""))):
-            raise ValueError("historical proof successor chain is not published: " + engine)
+            raise ValueError("native historical lineage missing or forged: successor chain of " + engine)
         seen.add(current)
         current = entries[0]["previous_sha256"]
     return current

@@ -138,7 +138,7 @@ class HistoricalProofAliasTests(unittest.TestCase):
         lineage = self.publish(PROOF, "m3")
         lineage["successors"][-1]["previous_sha256"] = "0" * 64
         (self.root / LINEAGE).write_text(json.dumps(lineage))
-        with self.assertRaisesRegex(ValueError, "successor chain is not published"):
+        with self.assertRaisesRegex(ValueError, "native historical lineage missing or forged: successor chain"):
             self.verify()
 
     def test_a_successor_cannot_rewrite_the_published_lineage(self):
