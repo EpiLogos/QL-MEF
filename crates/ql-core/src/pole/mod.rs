@@ -24,6 +24,7 @@ pub mod basis;
 pub mod codon;
 pub mod coin;
 pub mod fold;
+pub mod generation;
 pub mod iching;
 pub mod inverse;
 pub mod nucleotide;
@@ -44,9 +45,10 @@ pub use codon::{
     SiteProperty, SiteState,
 };
 pub use coin::{CoinFace, CoinSum, CoinTriple, Mobility, Polarity, monoid};
-pub use fold::{
-    ApplyOutcome, FoldGeometry, FoldState, M3_RES_MATRIX, RES_ADMITTED_COUNT, RES_GAP_ADDRESSES,
-    RESONANCE_GAP, SiteReading, is_resonance_gap, project_site, resonance_entry,
+pub use fold::{FoldGeometry, FoldState, SiteReading, project_site};
+pub use generation::{
+    GENERATION_CELL_COUNT, GenerationCell, POLE_GENERATION_LAW_REF, TRIGRAM_PAIRS, all_cells,
+    cells as generation_cells, generate, trigram_pair,
 };
 pub use iching::{
     ICHING_GRAMMAR_REF, Trigram, complement, compose_hexagram, flow_clockwise,
@@ -58,15 +60,16 @@ pub use inverse::{
 };
 pub use nucleotide::Nucleotide;
 pub use phase::{
-    PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
+    BIN_EDGE, PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
     quat_clock_steps_retired_i_plane, quat_rotation_degrees, quat_signed_argument,
     ring_tick_clock_steps,
 };
 pub use pose::{ROTATIONAL_STATE_TOTAL, RotationalPose, all_poses};
 pub use quaternion::{
-    DetOverlay, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF, Quat, RING_QUATERNION_LUT,
-    det_overlay, element_quaternion, matrix_axis_quaternion, quat_active_state,
-    quat_active_state_retired_i_plane, quat_codon_state, quat_from_codon, quat_from_ring_pos,
+    ActivePoseReading, DetOverlay, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF, PoseMap, Quat,
+    QuatSeed, RING_QUATERNION_LUT, det_overlay, element_quaternion, matrix_axis_quaternion,
+    quat_active_bin, quat_active_pose, quat_active_state, quat_active_state_retired_i_plane,
+    quat_codon_state, quat_from_codon, quat_from_four_charge, quat_from_ring_pos,
 };
 pub use rotational::{
     POLARIZED_ENTRIES, POLE_ROTATIONAL_PROFILE_REF, RECORDED_PAIR_DIFF_SIGNS,

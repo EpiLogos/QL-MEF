@@ -295,7 +295,7 @@ floor(index72 × 8 / 9)
 
 This map covers all 64 target addresses. There are **8 codomain collisions** because 72 source positions compress into 64 target positions. A source-index round-trip test can mark **9 source indices as non-closing/fold points**. Those are two descriptions of the many-to-one map and must not be collapsed into one “gap count”.
 
-The older `M3_RES_MATRIX` independently carries **8 resonance gaps** in 64-space. The present matrix keeps this distinct from the DET collision/fold accounting until a source-backed equivalence is demonstrated.
+The older vendor `M3_RES_MATRIX` carried 8 "resonance gaps" in 64-space. It was not the Same-Quality matrix and the native kernel no longer reads it (19 Oct 2026); there is no gap set to relate to the DET collisions.
 
 ### Cymatic relation
 
@@ -374,9 +374,9 @@ The I-Ching gives M3 its native language of **change inside a determinate six-bi
 Current operators include:
 
 - `m3_line_change(hex, line) = hex XOR (1 << line)`;
-- full complement `hex XOR 0x3F`;
+- full complement `hex XOR 0x3F` (an I Ching relation; Matrix 1 acts on a hexagram with the same result by flipping all three lines of each trigram, but on a codon Matrix 1 is the base partner `⊕0x15`);
 - upper/lower trigram decomposition and recomposition;
-- upper↔lower trigram exchange;
+- upper↔lower trigram exchange (an I Ching relation, not a matrix);
 - nuclear trigram structure;
 - Earlier-Heaven / Later-Heaven positional data.
 
@@ -467,13 +467,17 @@ Matrix 2 → j
 Matrix 3 → k
 ```
 
-At 64-space the corresponding operator family currently appears as:
+At 64-space the three matrices act as the base partner at every site (corrected
+19 Oct 2026; the earlier table read full six-line inversion, trigram exchange and
+"56 admitted states + 8 gaps", none of which is a matrix):
 
 ```text
-Complementarity → full six-line inversion
-Movement        → upper/lower trigram exchange
-Resonance       → 56 admitted states + 8 gaps
+Matrix 1 Complementary  → A↔T, C↔G   codon ⊕0x15
+Matrix 2 Moving/Resting → A↔G, T↔C   codon ⊕0x3F
+Matrix 3 Same-Quality   → A↔C, T↔G   codon ⊕0x2A
 ```
+
+Each is total (no gaps); Matrix 1 then Matrix 2 is Matrix 3.
 
 The later Clifford work proposes a deeper relation to the three Clifford involutions. That mapping remains a research proposition requiring exact verification against the M3 operator laws.
 
@@ -1021,7 +1025,7 @@ It does **not** yet expose the M3 16-lens + Fibonacci-ground aperture state as a
 | `M3-C13` | 472-state rotational surface | M3-3 | codon + overlapping pair relations | 40×7 + 24×8 | Exposes oriented expression of a form | Implemented generation/profile |
 | `M3-C14` | Environment-conditioned rotation | M3-3 | active codon + composed ring/element/matrix quaternion | active 0..7 state | Deterministically augments a reading with current orientation | Implemented in C DET overlay |
 | `M3-C15` | Tarot orientation refinement | M3-3/M3-4 | classical card orientation + codon rotation | upright/reversed expanded to 8-fold potential / 7 distinct non-dual | Gives readings finer archetypal nuance | Current-authored purpose; Nara payload integration missing |
-| `M3-C16` | Resonance/admissibility field | M3-3 | 64 address | 56 admitted + 8 gap states | Exposes closure/slack in resonance reading | Implemented; relation to DET folds remains open |
+| `M3-C16` | Same-Quality matrix / generation field | M3-3 | 64 address | A↔C, T↔G on every site; 192 generation cells | The k-axis partner action and the generation cells (`pole::generation`) | Implemented; the former 56 + 8 "gap" table is retired (not the matrix) |
 | `M3-C17` | DNA→RNA transcription | M3-3/M3-4 | DNA codon | T→U expressive descendant; 37 changed/27 shared target model | Distinguishes stored form from expression | Research/domain direction; current Rust phase implementation conflicts |
 | `M3-C18` | Amino/protein/backbone projection | M3-3/M3-5 | codon / RNA sequence | amino/output + 24-fold backbone | Connects symbolic form to functional/body/clock relations | Partial implementation; mapping rigor needs audit |
 | `M3-C19` | Minor Arcana exact cover | M3-4 | 64 codons | 56 cards, 48 single + 8 dual-codon courts | Human-readable archetypal expression of codon field | Implemented LUT + tests |
@@ -1152,7 +1156,7 @@ Cross-coordinate dependencies remain many-to-many. M3′ uses M1/M2 kernel, M4 p
 
 1. canonical `Q_entity/Q_composed → primary address64/codon` transcriber;
 2. exact semantic definition of pair `difference_value`, especially class-stable Matrix-2 values;
-3. relation between 8 `M3_RES_MATRIX` gaps, 8 72→64 target collisions and 9 source round-trip non-closures;
+3. (closed 19 Oct 2026: the `M3_RES_MATRIX` gaps are retired) relation between the 8 72→64 target collisions and 9 source round-trip non-closures;
 4. current polarity-wide Rust RNA phase vs T→U transcription architecture;
 5. code/spec expression of Fool/World additional governance roles instead of ambiguous “two extra transcendent cards”;
 6. full biological/canonical audit of current simplified codon→amino and 24-output tables;

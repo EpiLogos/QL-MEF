@@ -15,7 +15,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HISTORICAL = "fixtures/kernel/m3-parent-consumer-v1.json"
-PROOF = "fixtures/kernel/m3-finite-proof-v1.json"
+# The retained proof that accepted the historical request. Not the active
+# proof: that moves with every published successor, and this basis is one
+# of its inputs, so naming it here would stale one or the other forever.
+PROOF = "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json"
 CURRENT = "fixtures/kernel/m3-parent-consumer-current-v1.json"
 BASIS = "fixtures/kernel/m3-parent-consumer-current-v1.basis.json"
 REGISTRY = "fixtures/kernel/m-tree-v1.json"

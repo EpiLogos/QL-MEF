@@ -1,7 +1,7 @@
 {
   "schema": "ql.m3-coverage/v1",
-  "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
-  "domain_revision": "ec2b4faafc5d5c0cfbf02de9bcdf1890b8c6d9a45146fe3710e632b5c6cf9253",
+  "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
+  "domain_revision": "0071f1b26868aa9b8d5148e0a508cbd3b530ac37c77c7c86149b658199b8bff2",
   "accepted_k4": "5b24b95d17234ab5d23d84e658c0cc06434b41a3",
   "coordinates": [
     {
@@ -4009,6 +4009,19 @@
       }
     },
     {
+      "coordinate": "#3-3-2-2-18",
+      "id": "9d8059bfc0eb4efc",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-18",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
+      }
+    },
+    {
       "coordinate": "#3-3-2-2-19",
       "id": "00cb7d4b9e70f955",
       "source_role": "matrix-cell",
@@ -4139,6 +4152,19 @@
       }
     },
     {
+      "coordinate": "#3-3-2-2-28",
+      "id": "179d472d036a941b",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-28",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
+      }
+    },
+    {
       "coordinate": "#3-3-2-2-29",
       "id": "d1f00e13a408adba",
       "source_role": "matrix-cell",
@@ -4188,6 +4214,19 @@
       "k4_discovery": {
         "c": "unimplemented",
         "rust": "unimplemented"
+      }
+    },
+    {
+      "coordinate": "#3-3-2-2-32",
+      "id": "b927086acd00e6b8",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-32",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
       }
     },
     {
@@ -4347,6 +4386,19 @@
       }
     },
     {
+      "coordinate": "#3-3-2-2-44",
+      "id": "ce917037fce34767",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-44",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
+      }
+    },
+    {
       "coordinate": "#3-3-2-2-45",
       "id": "bd28cbc01f260c32",
       "source_role": "matrix-cell",
@@ -4360,6 +4412,19 @@
       }
     },
     {
+      "coordinate": "#3-3-2-2-46",
+      "id": "42c1be041cc7deba",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-46",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
+      }
+    },
+    {
       "coordinate": "#3-3-2-2-47",
       "id": "27f70182c08924ff",
       "source_role": "matrix-cell",
@@ -4370,6 +4435,19 @@
       "k4_discovery": {
         "c": "unimplemented",
         "rust": "unimplemented"
+      }
+    },
+    {
+      "coordinate": "#3-3-2-2-48",
+      "id": "a4b24b8fdc7a43f7",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-48",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
       }
     },
     {
@@ -4396,6 +4474,19 @@
       "k4_discovery": {
         "c": "unimplemented",
         "rust": "unimplemented"
+      }
+    },
+    {
+      "coordinate": "#3-3-2-2-50",
+      "id": "4cb1f4b42af0dd64",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-50",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
       }
     },
     {
@@ -4474,6 +4565,19 @@
       "k4_discovery": {
         "c": "unimplemented",
         "rust": "unimplemented"
+      }
+    },
+    {
+      "coordinate": "#3-3-2-2-57",
+      "id": "ef0327600f7a6c1c",
+      "source_role": "matrix-cell",
+      "k4_row": "census:#3-3-2-2-57",
+      "c": "qualified-source-descriptor",
+      "rust": "full-source-payload-and-qualified-relations",
+      "operational_disposition": "see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation",
+      "k4_discovery": {
+        "c": "after-accepted-k4",
+        "rust": "after-accepted-k4"
       }
     },
     {
@@ -12953,7 +13057,7 @@
       }
     }
   ],
-  "source_relations": 4952,
+  "source_relations": 5071,
   "source_capability_ids": [
     "deep-M3:M3-C01",
     "deep-M3:M3-C02",
@@ -13002,7 +13106,7 @@
     "field-M3:M3P-MEASUREMENT-INSPECTOR",
     "field-M3:M3P-WORLD-CLOCK"
   ],
-  "source_discrepancy_templates": 183,
+  "source_discrepancy_templates": 487,
   "contract": "docs/KERNEL-M3-ENGINE-CONTRACT.md",
   "standing": "complete known coordinate/source coverage, scoped finite operations, broad capabilities retain incomplete research/provider/experiential depth"
 }

@@ -109,10 +109,10 @@ fn actual_c_descriptors_equal_every_rust_manifest_record() {
 #[test]
 fn actual_source_parentage_asymmetry_and_alternate_spellings_survive() {
     let r = native_m_registry();
-    assert_eq!(r.manifest().nodes.len(), 1883);
-    assert_eq!(r.manifest().relations.len(), 10892);
+    assert_eq!(r.manifest().nodes.len(), 1891);
+    assert_eq!(r.manifest().relations.len(), 11011);
     assert_eq!(r.master().children.len(), 6);
-    for (i, expected) in [108, 43, 598, 996, 106, 31].into_iter().enumerate() {
+    for (i, expected) in [108, 43, 598, 1004, 106, 31].into_iter().enumerate() {
         let root = r.root(i).unwrap();
         assert_eq!(root.subtree_count, expected);
         assert_eq!(r.resolve(&format!("M{i}")).unwrap().id, root.id);
@@ -157,8 +157,8 @@ fn actual_source_parentage_asymmetry_and_alternate_spellings_survive() {
 fn compatibility_projection_preserves_records_relations_and_reflection() {
     let r = native_m_registry();
     let index = r.to_m_map_index().unwrap();
-    assert_eq!(index.source_coordinate_count(), 1882);
-    assert_eq!(index.relation_count(), 10892);
+    assert_eq!(index.source_coordinate_count(), 1890);
+    assert_eq!(index.relation_count(), 11011);
     assert_eq!(index.roots(), BTreeSet::from([0, 1, 2, 3, 4, 5]));
     for n in r.manifest().nodes.iter().filter(|n| n.source_ref != "M") {
         let bimba = index.resolve(&n.source_ref, MFace::Bimba).unwrap();

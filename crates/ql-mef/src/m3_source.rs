@@ -111,10 +111,12 @@ impl M3Source {
             serde_json::from_value(data["backbones"].clone()).map_err(|e| e.to_string())?;
         let cells: Vec<MatrixCell> =
             serde_json::from_value(data["matrix_cells"].clone()).map_err(|e| e.to_string())?;
-        if nodes.len() != 996
-            || relations.len() != 4952
+        // The generation law fills all three matrices: 3 x 64 cells
+        // (migration/bimba-map, 2026-10-19).
+        if nodes.len() != 1004
+            || relations.len() != 5071
             || backbones.len() != 24
-            || cells.len() != 184
+            || cells.len() != 192
         {
             return Err("incomplete M3 source contract".into());
         }

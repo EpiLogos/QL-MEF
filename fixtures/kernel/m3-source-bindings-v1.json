@@ -1,9 +1,9 @@
 {
-  "audit_sha256": "7a35180f9573d6050a0837e2f6fd7fe9cc82c31533aa66ab7bbf8db98a126e86",
+  "audit_sha256": "87efc19f26c274c056aad13c5a22b8dba9497c3e24f1f8c4d2638f292976a6e8",
   "counts": {
     "native_orientation_states": 472,
-    "nodes": 996,
-    "open_findings": 488,
+    "nodes": 1004,
+    "open_findings": 487,
     "relation_kinds": {
       "ADJACENT_TO": 2,
       "ALIGNS_WITH_COMPASS": 4,
@@ -65,12 +65,12 @@
       "HORIZONTAL_SYMMETRY": 32,
       "HYDROPHOBIC_FAMILY": 36,
       "INHERITS_QUATERNION_FROM": 1,
-      "INITIATES": 182,
+      "INITIATES": 192,
       "INITIATES_SEASON": 4,
       "INTEGRAL_SYMMETRY": 64,
       "INTEGRATES_WITH": 1,
       "INVERTS_TO": 1,
-      "IS_CLASSIFIED_AS": 183,
+      "IS_CLASSIFIED_AS": 192,
       "KARMIC_BLUEPRINT": 22,
       "LATER_HEAVEN_LINK": 10,
       "LINE_CHANGE": 383,
@@ -104,7 +104,7 @@
       "RECEIVES_VIBRATIONAL_MATRIX_FROM": 1,
       "REFLECTS_DNA_FORM": 64,
       "REFLECTS_FOUNDATION": 1,
-      "RESOLVES_TO": 184,
+      "RESOLVES_TO": 192,
       "RESONANCE_PATH": 21,
       "RESONATES_WITH": 3,
       "RESONATES_WITH_SUIT": 4,
@@ -123,11 +123,11 @@
       "TRANSFORMS_72_TO_64_VIA": 1,
       "TRANSITIONS_TO": 4,
       "TRANSLATES_TO": 65,
-      "USES_PAIR": 282,
+      "USES_PAIR": 360,
       "VERTICAL_SYMMETRY": 32,
-      "YIELDS_CODON": 322
+      "YIELDS_CODON": 336
     },
-    "relations": 4952,
+    "relations": 5071,
     "roles": {
       "amino-or-translation-signal": 24,
       "clock-backbone": 24,
@@ -137,7 +137,7 @@
       "hexagram": 64,
       "karyotype": 28,
       "major-arcana": 22,
-      "matrix-cell": 184,
+      "matrix-cell": 192,
       "minor-arcana": 56,
       "nucleotide": 4,
       "phase-codon": 64,
@@ -152,7 +152,7 @@
     "clock": "b7e902f852e1789e187bf5ada37abe1c1bba283e39ed083acb6e873dc576b250",
     "genetics": "b2772dd8177c4e116fbf862c865f9c20fea91cda37e929cf4ad871c55fb56e60",
     "hexagrams": "4ff88ca0cc57d6bc20ff0d29f707e6e2b264abde847cb64e2797c32b92090053",
-    "matrices": "44b19405df3bc8665ef447ea3d1055659c4af9fa9ab032e9e49eb41de1c6fa51"
+    "matrices": "c9b61f11040ed4f4d403a38ac64c59f42860135330176d8396eb6ab52f83babf"
   },
   "finding_counts": {
     "legacy-clock-placeholder": 1,
@@ -160,32 +160,31 @@
     "line-change-field": 45,
     "line-change-qualification": 305,
     "nuclear-register": 60,
-    "orientation-count": 1,
-    "resonance-admissibility": 1
+    "orientation-count": 1
   },
   "generator": "scripts/m3-source-parity.py",
   "native_authority_lock": {
-    "crates/ql-core/src/pole/codon.rs": "4fcedb4594ec17dc9097b3ec28ff4535437dcd8b56a9c71cc6330e4e22250cd3",
-    "crates/ql-core/src/pole/fold.rs": "0a1630d6efb7a95757e4c973d5c425c8b9d1b1486ec61078b1c16d2dee0e1001",
-    "crates/ql-core/src/pole/iching.rs": "e1c080c0e62359127483164adb793ce314d4a605a1e91c30e1b797ca4633bf90",
+    "crates/ql-core/src/pole/codon.rs": "707cb39b2efd4efd408eb8eb11dd17337eb3ea36efaa4be34cfb7739712dbfe0",
+    "crates/ql-core/src/pole/fold.rs": "085f1d57bbcc6068305cbbe27593b421ec86b94c31534d1338757cad474f22fc",
+    "crates/ql-core/src/pole/iching.rs": "38431418979b2015e608fe9ccaf384946a30e09ece288324fa4e77ad34d4c316",
     "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14",
     "vendor/epi-kernel/reference/src/m3.c": "ba7236d3b5624b5f841531255e9602f9ab1ed52fe5607e822d7e1fd74995c5c1",
     "vendor/epi-kernel/reference/src/m3_clock_lut.c": "e4aab6c7394cb45528dead0ad63f12965a25b6d10987e190a02ce8f85caf92e1"
   },
-  "projection_sha256": "08f20113674669c254480ff80aaae44ea0594181b10bcb1925191707647cf70f",
-  "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+  "projection_sha256": "c725b00f4913b968cfc0fffb4c98378d26b2636be8c80267f4eb2f4e8480f048",
+  "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
   "schema": "ql.m3-source-bindings-lock/v1",
   "source_files": [
     {
-      "bytes": 39532050,
-      "git_blob": "b7adfad708eb433fabab9cffeaad31e58b4846f6",
+      "bytes": 39582661,
+      "git_blob": "ade99f991628454664db356c065c159257734073",
       "path": "bimba-map:http://100.92.62.101:7474",
       "record_class": "bimba-map-read",
-      "sha256": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288"
+      "sha256": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4"
     }
   ],
   "source_repository": "bimba-map",
-  "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+  "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
   "standing": {
     "K4_acceptance": "not-claimed",
     "c_rust_execution": "not-claimed-by-this-source-audit",

@@ -68,9 +68,11 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
             "node"
                 | "line"
                 | "matrix"
+                | "generation"
                 | "pose"
                 | "rotation"
                 | "quaternion"
+                | "active"
                 | "transcription"
                 | "partner"
         );
@@ -144,19 +146,28 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 c.line_change(number(&v, 2)).unwrap().address()
             ]),
             "matrix" => {
+                // The matrix action is the base partner at every site, total.
                 let matrix = number(&v, 2);
-                let target = match matrix {
-                    0 => Some(complement(c.address())),
-                    1 => Some(((c.address() & 7) << 3) | (c.address() >> 3)),
-                    2 => resonance_entry(c.address()),
-                    _ => panic!("unknown matrix"),
-                };
+                let target = MatrixFamily::ALL[matrix as usize].apply_to_codon(c);
+                json!([kind, index, matrix, 0, target.address()])
+            }
+            "generation" => {
+                // The generation law (map M3-3-2-*): [hexagram, matrix, lower
+                // pair, upper pair, positive, negative, non-dual, class,
+                // hexagram image under the matrix].
+                let family = MatrixFamily::ALL[number(&v, 2) as usize];
+                let cell = generate(family, index as u8);
                 json!([
                     kind,
                     index,
-                    matrix,
-                    if target.is_some() { 0 } else { 2 },
-                    target.unwrap_or(255)
+                    v[2],
+                    cell.lower_pair.index(),
+                    cell.upper_pair.index(),
+                    cell.positive.address(),
+                    cell.negative.address(),
+                    u8::from(cell.is_non_dual()),
+                    cell.class as u8,
+                    family.apply_to_hexagram(index as u8)
                 ])
             }
             "profile" => {
@@ -212,6 +223,27 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                     );
                 }
                 v.clone()
+            }
+            "active" => {
+                // The eight unit axis environments compose exactly with the
+                // integer codon quaternion, the folded 2π edge among them.
+                let axis = [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [-1.0, 0.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                    [0.0, -1.0, 0.0, 0.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 0.0, -1.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 0.0, -1.0],
+                ][number(&v, 2) as usize];
+                let env = Quat {
+                    w: axis[0],
+                    x: axis[1],
+                    y: axis[2],
+                    z: axis[3],
+                };
+                json!([kind, index, v[2], quat_active_state(env, c)])
             }
             "transcription" => json!([
                 kind,
@@ -298,10 +330,12 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 ("codon", 64),
                 ("line", 384),
                 ("matrix", 192),
+                ("generation", 192),
                 ("profile", 64),
                 ("pose", 472),
                 ("rotation", 512),
                 ("quaternion", 512),
+                ("active", 512),
                 ("transcription", 128),
                 ("partner", 12),
                 ("minor", 56),
@@ -318,7 +352,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
 #[test]
 fn clock_boundaries_and_unreconciled_symbolic_values_are_explicit() {
     let engine = native_m3_engine();
-    assert_eq!(engine.coordinates().count(), 996);
+    assert_eq!(engine.coordinates().count(), 1004);
     for d in 0..360 {
         let a = engine.clock(M3Clock::at_steps(d));
         let b = engine.clock(M3Clock::at_steps(d + 360));

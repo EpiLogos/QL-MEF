@@ -3,8 +3,8 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
-    "m2": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
-    "m3": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232"
+    "m2": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
+    "m3": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -97,6 +97,27 @@
       "sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
       "accepted_at_revision": "1d82187645e8c5a80987e4e2f4a43675a5a8492f",
       "reason": "Nara journeys (#261): the core Thoth court normalisation in pole/tarot.rs (pip 13 = Knight), agreeing with the map's REFLECTS_DNA_FORM. Acceptance run 36741745238 at 1d82187."
+    },
+    {
+      "engine": "m2",
+      "previous_sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
+      "sha256": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
+      "accepted_at_revision": "15363786040315c293d9b9b3aec3e133a17c08b2",
+      "reason": "QL rebuilt from the corrected Bimba map (generation cells, coin naming; registry 83278b28, source 4afb7c6d): M2 request fixtures re-targeted and map-derived M2 tables refreshed. Full M2 acceptance executed on Linux CI run 39292240149 at this head."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
+      "sha256": "26f25589c5e75bfed0d1ea1e4453f83183769a13831e3e7fc9951c612849752e",
+      "accepted_at_revision": "15363786040315c293d9b9b3aec3e133a17c08b2",
+      "reason": "M3 generation law and base-partner matrices in the kernel (QL-MEF #332), map-derived M3 domain refreshed, and the active-pose bin read exactly in Rust and C (corrected all-axis law in both peers). Full M3 acceptance executed on Linux CI run 39292244928 at this head."
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "26f25589c5e75bfed0d1ea1e4453f83183769a13831e3e7fc9951c612849752e",
+      "sha256": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70",
+      "accepted_at_revision": "958ef92597fb23e0e1034a5c13d8141fcef3d711",
+      "reason": "The controlled M3 basis names the retained historical proof instead of the moving active proof, ending the loop in which each successor staled the basis and the basis staled the proof. Full M3 acceptance executed on Linux CI run 39294404146 at this head."
     }
   ]
 }

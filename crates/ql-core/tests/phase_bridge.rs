@@ -154,11 +154,12 @@ fn encoder_and_reader_agree_on_the_ascending_half() {
     // s = 8 folding to 0 (the 2π edge).
     //
     // These rotors sit ON the 45° grid (the measured angle is 45·s within an
-    // f32 hair) — the boundary class, not the interior class: the reading
-    // relies on the f32 construction landing on or above each boundary, so
-    // each case is verified to sit within 1e-3° of its boundary and the bin
-    // is then pinned as measured. (Interior-mirror behaviour is a different
-    // test; the vendor's own agreement claim is this boundary-class pin.)
+    // f32 hair) — the boundary class, not the interior class. The reader
+    // reads a value within BIN_EDGE of an edge as on it and gives an on-edge
+    // value the upper bin, so each state reads itself on every platform,
+    // whichever side of the edge the f32 construction lands. Each case is
+    // verified to sit within 1e-3° of its boundary. (Interior-mirror
+    // behaviour is a different test.)
     let codon = Codon64::from_nucleotides(Nucleotide::A, Nucleotide::A, Nucleotide::A);
     let seed = quat_from_codon(codon);
     assert_eq!((seed.w, seed.x, seed.y, seed.z), (18.0, 0.0, 0.0, 0.0));

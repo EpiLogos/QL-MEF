@@ -54,14 +54,14 @@ def materialize(previous):
       cb('ql_m3_source_node_at',path='c/src/m3_domain.c'),rb('node',path='crates/ql-mef/src/m3_source.rs'),True)
  add('source-relations','All 4891 exact qualified source relations, preserving duplicate/null endpoints',[n['ref'] for n in nodes],
      cb('ql_m3_source_relation_at',path='c/src/m3_domain.c'),rb('relations',path='crates/ql-mef/src/m3_source.rs'),True)
- add('source-matrices','All 184 source matrix cells with independently attributed pair/codon links',coords('matrix-cell'),
+ add('source-matrices','All 192 source matrix cells with independently attributed pair/codon links',coords('matrix-cell'),
      cb('ql_m3_matrix_cell_at','ql_m3_matrix_cell_relation',path='c/src/m3_domain.c'),rb('matrix_cells','relation',path='crates/ql-mef/src/m3_source.rs'),True)
  add('codon','Ratified four-state nucleotide, 64 codons and four-charge computation',coords('nucleotide','dna-codon'),
      cb('ql_m3_codon'),rb('four_charge','site_values',path='crates/ql-core/src/pole/codon.rs'))
  add('pair','All 16 ratified sum/difference pair operations',coords('dinucleotide'),cb('ql_m3_pair'),rb('pair_sum','pair_difference',path='crates/ql-core/src/pole/transcription.rs'))
  add('iching','Independent source address binding and native trigram/nuclear/complement law',coords('trigram','hexagram'),cb('ql_m3_trigram','ql_m3_hexagram'),rb('nuclear_hexagram','complement',path='crates/ql-core/src/pole/iching.rs'))
  add('line-change','Complete 384 native XOR transitions, separate from stale source edge assertions',coords('hexagram'),cb('ql_m3_line_change'),rb('line_change',path='crates/ql-core/src/pole/codon.rs'))
- add('matrix','Three exact native family operations and explicit resonance gaps',['#3-3-2-0','#3-3-2-1','#3-3-2-2'],cb('ql_m3_apply_matrix','ql_m3_matrix_partner'),rb('apply_matrix',path='crates/ql-core/src/pole/fold.rs'))
+ add('matrix','Three exact native family operations (base partner at every site, total) and the generation law',['#3-3-2-0','#3-3-2-1','#3-3-2-2'],cb('ql_m3_apply_matrix','ql_m3_matrix_partner'),rb('apply_to_codon','generate',path='crates/ql-core/src/pole/generation.rs'))
  add('rotation','472 lawful pose ordinals and 512 ranked/sweep candidate rotations',coords('dna-codon','phase-codon'),cb('ql_m3_pose_ordinal','ql_m3_rotations'),rb('generate_rotational_states',path='crates/ql-core/src/pole/rotational.rs')+rb('ordinal',path='crates/ql-core/src/pole/pose.rs'))
  add('quaternion','Codon orientation seed, rotations and environment-conditioned bin; not primary-address inverse',coords('dna-codon'),cb('ql_m3_quaternion','ql_m3_active_state'),rb('quat_codon_state','quat_active_state',path='crates/ql-core/src/pole/quaternion.rs'))
  add('tarot','Retained 56-card exact cover and 22 Major records; source associations separate',coords('minor-arcana','major-arcana'),cb('ql_m3_minor','ql_m3_major'),rb('minor','major',path='crates/ql-core/src/pole/tarot.rs'))
@@ -127,7 +127,9 @@ def coverage():
  rows=[{'coordinate':n['ref'],'id':n['id'],'source_role':n['role'],'k4_row':'census:'+n['ref'],
  'c':'qualified-source-descriptor','rust':'full-source-payload-and-qualified-relations',
  'operational_disposition':'see-scoped-k7-operation-rows; descriptor-is-not-whole-coordinate-implementation',
- 'k4_discovery':{'c':census[n['ref']]['c']['state'],'rust':census[n['ref']]['rust']['state']}} for n in cat['nodes']]
+ 'k4_discovery':{peer:census[n['ref']][peer]['state'] if n['ref'] in census else 'after-accepted-k4' for peer in ('c','rust')}} for n in cat['nodes']]
+ # Coordinates the map gained after the accepted K4 census (the 8 Matrix 3 cells
+ # of the generation law) say so; they borrow no K4 discovery state.
  return {'schema':'ql.m3-coverage/v1','registry_revision':cat['registry_revision'],'domain_revision':cat['catalogue_revision'],
   'accepted_k4':'5b24b95d17234ab5d23d84e658c0cc06434b41a3','coordinates':rows,'source_relations':len(cat['relations']),
   'source_capability_ids':[r['id'] for r in ledger['rows'] if r['scope']=='M3' and r['source']],

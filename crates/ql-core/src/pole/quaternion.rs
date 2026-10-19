@@ -214,10 +214,20 @@ pub const fn matrix_axis_quaternion(family: MatrixFamily) -> Quat {
     }
 }
 
-/// The codon's base quaternion seed (vendor m3.h `m3_quat_from_codon`):
-/// `w = Σ values`, `x = v_outer − v_inner`, `y = 0`, `z = Σ mod 6`.
+/// The codon's Sum/Difference/Mod quaternion — the **FR 2.Q.9** seed
+/// (vendor m3.h `m3_quat_from_codon`): `w = Σ values`, `x = v_outer − v_inner`,
+/// `y = 0`, `z = Σ mod 6`.
 ///
-/// Value-dependent — it reads the corrected coin table. (The kernel's only
+/// Its job is the codon's orientation seed for the active-state reader and
+/// the encoder ([`quat_codon_state`]). It is a different object from the
+/// elemental bioquaternion ([`quat_from_four_charge`], FR 2.Q.17) and the two
+/// must not be mistaken for each other: they put 64 codons in different places
+/// (`y` here is always 0, because the Prime term only fires for sums 41–43 and
+/// codon sums are 18–27; there are 46 distinct values over 64 codons). Which
+/// one seeds a reading is the declared test variable [`QuatSeed`].
+///
+/// Value-dependent — it reads the corrected coin table (A = 6 Old Yin,
+/// T = 9 Old Yang, C = 8 Young Yin, G = 7 Young Yang). (The kernel's only
 /// quaternion→codon bridge is this map's non-invertible shadow; see
 /// [`crate::pole::inverse`].)
 pub fn quat_from_codon(codon: Codon64) -> Quat {
@@ -229,6 +239,141 @@ pub fn quat_from_codon(codon: Codon64) -> Quat {
         x: diff,
         y: 0.0,
         z: (sum as u32 % 6) as f32,
+    }
+}
+
+/// The four-charge elemental bioquaternion — the **FR 2.Q.17** seed
+/// (vendor m3.h `m3_eval_to_quat`): the codon's charges
+/// `(pp, mm, mp, pm)` become `(w = Earth, x = Fire, y = Water, z = Air)`.
+/// One-to-one over the 64 codons. Its job is the elemental reading of a
+/// codon; [`QuatSeed::FourCharge`] lets the active-state reader use it as the
+/// seed instead of the Sum/Difference/Mod quaternion.
+pub fn quat_from_four_charge(codon: Codon64) -> Quat {
+    let charge = codon.four_charge();
+    Quat {
+        w: f32::from(charge.pp),
+        x: f32::from(charge.mm),
+        y: f32::from(charge.mp),
+        z: f32::from(charge.pm),
+    }
+}
+
+/// Which quaternion seeds the active-state reader. A declared test variable:
+/// the default is today's behaviour, so C/Rust parity holds, and every reading
+/// built on it carries the value that produced it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum QuatSeed {
+    /// FR 2.Q.9 Sum/Difference/Mod quaternion ([`quat_from_codon`]). Default.
+    #[default]
+    SumDifferenceMod,
+    /// FR 2.Q.17 four-charge elemental bioquaternion
+    /// ([`quat_from_four_charge`]).
+    FourCharge,
+}
+
+impl QuatSeed {
+    /// The seed quaternion of a codon under this law.
+    pub fn quat(self, codon: Codon64) -> Quat {
+        match self {
+            Self::SumDifferenceMod => quat_from_codon(codon),
+            Self::FourCharge => quat_from_four_charge(codon),
+        }
+    }
+
+    /// The HMS functional requirement that states this seed.
+    pub const fn fr(self) -> &'static str {
+        match self {
+            Self::SumDifferenceMod => "FR 2.Q.9",
+            Self::FourCharge => "FR 2.Q.17",
+        }
+    }
+
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::SumDifferenceMod => "sum-difference-mod",
+            Self::FourCharge => "four-charge",
+        }
+    }
+}
+
+/// How the reader's eight-bin result becomes a pose. A declared test
+/// variable; the default is today's behaviour.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum PoseMap {
+    /// The raw bin 0..8, whatever the codon's lawful pose count. Default.
+    #[default]
+    RawBin,
+    /// A lawful slot of the codon's 7 or 8 poses. Dual codons (8 poses) keep
+    /// the bin. Non-dual codons (7 poses) have no bin 7 (the collapsed
+    /// orientation); bin 7 reads as its antipodal mirror, bin 0. The mirror
+    /// law is `quat_argument_bin(−q) = 7 − bin` ([`crate::pole::phase`]), and
+    /// bin 7 (315°–360°) and bin 0 (0°–45°) sit either side of the same
+    /// wrap, so the mirror and the neighbour agree.
+    LawfulSlot,
+}
+
+impl PoseMap {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::RawBin => "raw-bin",
+            Self::LawfulSlot => "lawful-slot",
+        }
+    }
+
+    /// The pose slot of `bin` for `codon`, and whether the bin had to be
+    /// collapsed onto its mirror.
+    pub const fn slot(self, codon: Codon64, bin: u8) -> (u8, bool) {
+        let bin = bin & 0x07;
+        match self {
+            Self::RawBin => (bin, false),
+            Self::LawfulSlot => {
+                if bin >= codon.rotational_state_count() {
+                    (7 - bin, true)
+                } else {
+                    (bin, false)
+                }
+            }
+        }
+    }
+}
+
+/// An active-pose reading and the law that produced it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ActivePoseReading {
+    pub codon: Codon64,
+    /// The reader's raw eight-bin result.
+    pub bin: u8,
+    /// The pose slot under [`Self::pose_map`] (equals `bin` for `RawBin`).
+    pub slot: u8,
+    /// The bin was outside the codon's lawful poses and was collapsed.
+    pub collapsed: bool,
+    pub seed: QuatSeed,
+    pub pose_map: PoseMap,
+}
+
+/// The raw bin of a codon under a composed environment, with the seed chosen.
+pub fn quat_active_bin(environment: Quat, codon: Codon64, seed: QuatSeed) -> u8 {
+    let composed = environment.mul(seed.quat(codon));
+    crate::pole::phase::quat_argument_bin(&composed)
+}
+
+/// The active pose under both declared variables. With the defaults
+/// (`SumDifferenceMod`, `RawBin`) `.slot` equals [`quat_active_state`].
+pub fn quat_active_pose(
+    environment: Quat,
+    codon: Codon64,
+    seed: QuatSeed,
+    pose_map: PoseMap,
+) -> ActivePoseReading {
+    let bin = quat_active_bin(environment, codon, seed);
+    let (slot, collapsed) = pose_map.slot(codon, bin);
+    ActivePoseReading {
+        codon,
+        bin,
+        slot,
+        collapsed,
+        seed,
+        pose_map,
     }
 }
 
@@ -272,14 +417,10 @@ pub fn quat_active_state(environment: Quat, codon: Codon64) -> u8 {
     // discarded (HMS Sec.V j/k-symmetry; DR-ENV). w < 0 (opposite
     // hemisphere) reaches the composite state 7. angle in [0, 2*pi]; the
     // &0x07 folds the 2*pi edge back to 0.
-    // (Verbatim port of vendor/epi-kernel/reference/src/m3.c:145-152,
-    // verified 2026-10-06; #312 §5 amendment.)
-    let vmag = (composed.x * composed.x + composed.y * composed.y + composed.z * composed.z).sqrt();
-    let mut angle = 2.0 * vmag.atan2(composed.w);
-    if angle < 0.0 {
-        angle += core::f32::consts::TAU;
-    }
-    ((angle / core::f32::consts::FRAC_PI_4) as u8) & 0x07
+    // (Law of vendor/epi-kernel/reference/src/m3.c:145-152, #312 §5
+    // amendment; read exactly by `quat_argument_bin`, which every platform
+    // quantises the same way.)
+    crate::pole::phase::quat_argument_bin(&composed)
 }
 
 /// The RETIRED i-plane law: the predecessor active-state reader, retained

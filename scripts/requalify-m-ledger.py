@@ -47,11 +47,72 @@ def git_bytes(commit: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=ROOT)
 
 
-def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> None:
+LINEAGE = Path("fixtures/kernel/k8-build-lineage-v1.json")
+
+
+def lineage_chain(lineage: dict, engine: str, head: str, bases: set[str]) -> str:
+    """Walk an engine's published successors back from ``head`` to one of ``bases``."""
+    if lineage["schema"] != "ql.k8-build-lineage/v1" or lineage["proofs"][engine] != head:
+        raise ValueError("active historical proof is not the published lineage proof: " + engine)
+    current, seen = head, set()
+    while current not in bases:
+        entries = [e for e in lineage["successors"] if e["engine"] == engine and e["sha256"] == current]
+        if (len(entries) != 1 or current in seen or not entries[0].get("reason", "").strip()
+                or not re.fullmatch(r"[0-9a-f]{40}", entries[0].get("accepted_at_revision", ""))):
+            raise ValueError("native historical lineage missing or forged: successor chain of " + engine)
+        seen.add(current)
+        current = entries[0]["previous_sha256"]
+    return current
+
+
+JOURNEY_RECORD = Path("fixtures/kernel/m3-journey-source-integration-v1.json")
+JOURNEY_LEDGER_STANDING = "byte-identical current131 decisions and unassessed broad readiness retained"
+
+
+def journey_source_standing(root: Path) -> dict:
+    """The current admitted source, registries and ledger a published journey record stands on."""
+    registry = m.read(root / m.REGISTRY)
+    coordinates = m.read(root / "fixtures/kernel/k8-structure-receipt-v1.json")
+    structure_spec = importlib.util.spec_from_file_location("historical_alias_current_structure", root / "scripts/k8-structure.py")
+    structure = importlib.util.module_from_spec(structure_spec)
+    structure_spec.loader.exec_module(structure)
+    projected, _ = structure.project(root)
+    if coordinates["registry_revision"] != projected["registry_revision"]:
+        raise ValueError("historical integration record has stale current source standing")
+    ledger_bytes = (root / m.LEDGER).read_bytes()
+    return {"source_revision": registry["source_revision"],
+            "numerical_registry_revision": registry["registry_revision"],
+            "coordinate_registry_revision": coordinates["registry_revision"],
+            "ledger": {"path": m.LEDGER.as_posix(), "sha256": sha(ledger_bytes),
+                       "revision": json.loads(ledger_bytes)["ledger_revision"], "standing": JOURNEY_LEDGER_STANDING}}
+
+
+def advance_journey_source_standing() -> None:
+    """Stand the published journey record on the requalified owners; its prior standing stays dated."""
+    path = ROOT / JOURNEY_RECORD
+    raw = path.read_bytes()
+    record = json.loads(raw)
+    current = journey_source_standing(ROOT)
+    if record["current_source"] == current:
+        return
+    published = subprocess.check_output(["git", "log", "-1", "--format=%H", "HEAD", "--", JOURNEY_RECORD.as_posix()],
+                                        cwd=ROOT, text=True).strip()
+    if git_bytes(published, JOURNEY_RECORD.as_posix()) != raw:
+        raise ValueError("journey integration record differs from its published Git source")
+    record["current_source_history"].append({
+        "source": record["current_source"], "git_ref": f"git:{published}:{JOURNEY_RECORD.as_posix()}",
+        "standing": "Dated published source standing; preserved, not retargeted numerical evidence"})
+    record["current_source"] = current
+    path.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+
+
+def verify_historical_proof(root: Path, path: str, digest: str, commit: str, *, standing: bool = True) -> None:
     """Retain the qualified original while admitting a published history alias.
 
     This checks source lineage only. It does not requalify current numerical
-    inputs, publish a new finite proof, or confer numerical readiness.
+    inputs, publish a new finite proof, or confer numerical readiness. Without
+    ``standing`` the alias lineage is checked but not the record's current
+    source standing, which a requalification advances after it writes the ledger.
     """
     def checked_path(value: str) -> Path:
         candidate = Path(value)
@@ -72,28 +133,32 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> 
     active = checked_path(path).read_bytes()
     if active == original:
         return
-    if path != "fixtures/kernel/m3-finite-proof-v1.json":
+    engine = re.fullmatch(r"fixtures/kernel/(m[23])-finite-proof-v1\.json", path)
+    if not engine:
         raise ValueError("unqualified historical proof alias: " + path)
+    engine = engine[1]
 
-    record = json.loads(checked_path("fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
-    if record["schema"] != "ql.published-journey-source-integration/v1":
-        raise ValueError("unqualified historical proof integration record")
-    source = record["current_source"]
-    registry = json.loads(checked_path("fixtures/kernel/m-tree-v1.json").read_text())
-    coordinates = json.loads(checked_path("fixtures/kernel/k8-structure-receipt-v1.json").read_text())
-    structure_spec = importlib.util.spec_from_file_location("historical_alias_current_structure", checked_path("scripts/k8-structure.py"))
-    structure = importlib.util.module_from_spec(structure_spec)
-    structure_spec.loader.exec_module(structure)
-    projected, _ = structure.project(root)
-    ledger_bytes = checked_path(source["ledger"]["path"]).read_bytes()
-    ledger = json.loads(ledger_bytes)
-    if (source["source_revision"] != registry["source_revision"]
-            or source["numerical_registry_revision"] != registry["registry_revision"]
-            or source["coordinate_registry_revision"] != coordinates["registry_revision"]
-            or source["coordinate_registry_revision"] != projected["registry_revision"]
-            or source["ledger"]["path"] != "fixtures/kernel/m-ledger-v1.json"
-            or source["ledger"]["sha256"] != sha(ledger_bytes)
-            or source["ledger"]["revision"] != ledger["ledger_revision"]):
+    record = alias = None
+    if engine == "m3":
+        record = json.loads(checked_path("fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
+        if record["schema"] != "ql.published-journey-source-integration/v1":
+            raise ValueError("unqualified historical proof integration record")
+        alias = record["native_history"]["successor"]["sha256"]
+    if sha(active) != alias:
+        # A later successor stands on the lineage its owner published; walk it
+        # back to a proof already qualified here, the original or the alias.
+        lineage = json.loads(checked_path(LINEAGE.as_posix()).read_bytes())
+        published = json.loads(subprocess.check_output(["git", "show", f"{commit}:{LINEAGE.as_posix()}"], cwd=root))
+        if lineage["successors"][:len(published["successors"])] != published["successors"]:
+            raise ValueError("native historical lineage missing or forged")
+        reached = lineage_chain(lineage, engine, sha(active), {digest} | ({alias} if alias else set()))
+        if reached == digest:
+            return
+        alias_bytes = git_source(record["native_history"]["successor"]["git_ref"])
+    else:
+        alias_bytes = active
+
+    if standing and journey_source_standing(root) != record["current_source"]:
         raise ValueError("historical integration record has stale current source standing")
 
     history = record["native_history"]
@@ -105,15 +170,19 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> 
     successor = history["successor"]
     expected_ref = f"git:{record['parents']['incoming']}:{path}"
     if (successor["path"] != path or successor["git_ref"] != expected_ref
-            or successor["sha256"] != sha(active)
-            or git_source(expected_ref) != active):
+            or successor["sha256"] != sha(alias_bytes)
+            or git_source(expected_ref) != alias_bytes):
         raise ValueError("active historical successor differs from published Git source")
 
+    # The alias is qualified by the lineage as it was published with it; the
+    # current lineage may only extend that.
     lock = history["native_lineage"]
-    lineage_bytes = checked_path(lock["path"]).read_bytes()
-    if (lock["path"] != "fixtures/kernel/k8-build-lineage-v1.json"
+    lineage_bytes = git_source(f"git:{record['parents']['incoming']}:{lock['path']}")
+    current_lineage = json.loads(checked_path(lock["path"]).read_bytes())
+    if (lock["path"] != LINEAGE.as_posix()
             or sha(lineage_bytes) != lock["sha256"]
-            or git_source(f"git:{record['parents']['incoming']}:{lock['path']}") != lineage_bytes):
+            or current_lineage["successors"][:len(json.loads(lineage_bytes)["successors"])]
+            != json.loads(lineage_bytes)["successors"]):
         raise ValueError("native historical lineage missing or forged")
     lineage = json.loads(lineage_bytes)
     pointer = re.fullmatch(r"/successors/(\d+)", lock["pointer"])
@@ -121,13 +190,13 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> 
         raise ValueError("unqualified native historical lineage pointer")
     entry = lineage["successors"][int(pointer[1])]
     if (lineage["schema"] != "ql.k8-build-lineage/v1"
-            or lineage["proofs"]["m3"] != sha(active)
+            or lineage["proofs"]["m3"] != sha(alias_bytes)
             or entry["engine"] != "m3" or entry["previous_sha256"] != digest
-            or entry["sha256"] != sha(active)
+            or entry["sha256"] != sha(alias_bytes)
             or entry["accepted_at_revision"] != history["published_ci"]["revision"]):
         raise ValueError("native historical successor is not qualified by its original")
 
-    before, after = json.loads(original), json.loads(active)
+    before, after = json.loads(original), json.loads(alias_bytes)
     changed_input = "crates/ql-core/src/pole/tarot.rs"
     if history["only_proof_input_change"] != "/inputs/" + changed_input:
         raise ValueError("unqualified historical successor input change")
@@ -135,7 +204,7 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str) -> 
     restored["inputs"][changed_input] = before["inputs"][changed_input]
     if restored != before or after["inputs"][changed_input] == before["inputs"][changed_input]:
         raise ValueError("historical successor changes more than its naming input")
-    if sha(checked_path(changed_input).read_bytes()) != after["inputs"][changed_input]:
+    if alias_bytes == active and sha(checked_path(changed_input).read_bytes()) != after["inputs"][changed_input]:
         raise ValueError("published historical naming input differs from current source")
 
 
@@ -193,10 +262,11 @@ def apply(args) -> None:
     c_log, rust_log = args.m1_c_log.read_bytes(), args.rust_log.read_bytes()
     audit = m.read(args.m3_audit)
     verify_replays(c_log, rust_log, audit, registry)
-    proof_locks = {p.as_posix(): sha((ROOT / p).read_bytes()) for p in PROOF_FILES}
+    # Locks are the historical originals; an active file may differ only by its
+    # published, lineage-qualified successor.
+    proof_locks = {p.as_posix(): sha(git_bytes(old["git_commit"], p.as_posix())) for p in PROOF_FILES}
     for path, digest in proof_locks.items():
-        if sha(git_bytes(old["git_commit"], path)) != digest:
-            raise ValueError("historical numerical proof changed before successor execution: " + path)
+        verify_historical_proof(ROOT, path, digest, old["git_commit"], standing=False)
     applied = [d for d in prior["discrepancies"] if d["state"] == "applied"]
     if len(applied) != 131:
         raise ValueError("inspect the changed decision inventory before requalification")
@@ -216,7 +286,13 @@ def apply(args) -> None:
     }
     # Import immutable source locks through the existing owner, preserving the
     # reviewed rows, bindings and all discrepancy lifecycle/decision content.
-    ledger = m.refresh(ROOT, copy.deepcopy(prior))
+    # The current ledger carries the rows, implementations and matrices
+    # reconciled since the historical base; its decisions are the historical
+    # ones, re-evidenced below and compared with that base.
+    base = m.read(ROOT / m.LEDGER)
+    if len(base["discrepancies"]) != len(prior["discrepancies"]):
+        raise ValueError("inspect the changed decision inventory before requalification")
+    ledger = m.refresh(ROOT, copy.deepcopy(base))
     for assessment in ledger["assessments"].values():
         for claim in assessment["readiness"].values():
             if claim["status"] != "unimplemented":
@@ -230,10 +306,10 @@ def apply(args) -> None:
     seed = m.refresh(ROOT)
     ledger["evidence"] = seed["evidence"]
     ledger["assessments"]["k2-index"] = seed["assessments"]["k2-index"]
-    for d in ledger["discrepancies"]:
+    for before, d in zip(prior["discrepancies"], ledger["discrepancies"]):
         for part in ("decision", "proposal"):
-            if d.get(part) and (part == "decision" or d["state"] == "applied"):
-                d[part]["evidence"] = [mapping[ref] for ref in d[part]["evidence"]]
+            if before.get(part) and (part == "decision" or before["state"] == "applied"):
+                d[part]["evidence"] = [mapping[ref] for ref in before[part]["evidence"]]
     new = []
     for original, ident in mapping.items():
         subjects = [d["id"] for d in prior["discrepancies"]
@@ -283,6 +359,9 @@ def apply(args) -> None:
                "not_claimed": ["current whole M1/M2/M3 numerical readiness from this bootstrap", "installed visual/audio acceptance"]}
     (ROOT / RECEIPT).write_text(m.encode(receipt))
     (ROOT / m.LEDGER).write_text(m.encode(ledger))
+    advance_journey_source_standing()
+    for path, digest in proof_locks.items():
+        verify_historical_proof(ROOT, path, digest, old["git_commit"])
     print(json.dumps({"result": "source-requalified", "ledger_revision": ledger["ledger_revision"],
                       "registry_revision": registry["registry_revision"], "preserved_applied_decisions": len(applied)}))
 

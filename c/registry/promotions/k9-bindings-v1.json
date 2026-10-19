@@ -821,6 +821,37 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-core/src/pole/generation.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3-3-2-0",
+    "#3-3-2-1",
+    "#3-3-2-2"
+   ],
+   "rationale": "The generation law of the three matrix operators: each matrix sends the eight trigrams to eight nucleotide pairs (palindromic trigrams to the four homo pairs, the mixed trigrams to the matrix's two hetero partner pairs in both orders); a cell over upper/lower trigram yields the positive codon a.c.d and the negative a.b.d, non-dual when b = c. It reproduces the map's 192 M3-3-2 cells (384 yields, 336 distinct, 96 non-dual) carried by fixtures/kernel/m3-generation-field-v1.json.",
+   "tests": [
+    "crates/ql-core/tests/pole_generation_law.rs",
+    "crates/ql-mef/tests/m3_generation_field.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "c/src/m3.c",
+   "stratum": "c",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#3"
+   ],
+   "rationale": "Existing M3 kernel remains the historical descriptor; the added generation-law queries (trigram pair under a matrix, positive/negative generation of a cell, a matrix applied at hexagram scale) share the Rust generation tables and the base-partner matrix actions, with C/Rust parity over every cell. The file's earlier unbound queries (node and coordinate lookup, rotational profile, the quaternion group product) are reviewed at the M3 root with them. Query coverage does not promote the retained descriptor or confer numerical readiness.",
+   "tests": [
+    "crates/ql-mef/tests/m3_engine.rs",
+    "migration/epi-kernel/k7-m3-probe.c"
+   ],
+   "kind": "computational",
+   "header": "c/include/ql/m3.h"
+  },
+  {
    "path": "crates/ql-mef/src/team_space.rs",
    "stratum": "rust",
    "disposition": "cross-coordinate",

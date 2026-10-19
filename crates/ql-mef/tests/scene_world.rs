@@ -6,7 +6,7 @@ use serde_json::{Value, json};
 
 fn request() -> WorldRequest {
     let sky: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v1.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
     ))
     .unwrap();
     serde_json::from_value(json!({"schema":scene::WORLD_REQUEST,
@@ -131,7 +131,11 @@ fn one_native_constructor_joins_the_actual_event_sky_form_and_field() {
     );
     assert_eq!(
         world["native_readback"]["form_process"]["hexagram_reading"]["revision"],
-        json!("907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288")
+        json!(
+            ql_mef::m_tree::native_m_registry()
+                .manifest()
+                .source_revision
+        )
     );
     let mut held = request();
     held.start =
