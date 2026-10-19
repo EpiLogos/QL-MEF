@@ -57,7 +57,10 @@ fn source_reading_retains_full_depth_and_multivalued_genetics() {
     assert_eq!(s.relations().len(), 5071);
     // 307 until the map took C=8/G=7 (owner ruling, #254): the 112 codon-charge
     // and 12 pair-descriptor findings resolved when kernel and map agreed.
-    assert_eq!(s.discrepancies().len(), 183);
+    // 183 until the generation law filled Matrix 3 (resonance-admissibility
+    // resolved) and the current comparator carried the 305 line-change
+    // qualification records admitted on 2 October: 182 + 305.
+    assert_eq!(s.discrepancies().len(), 487);
     let atg = Codon64::from_nucleotides(Nucleotide::A, Nucleotide::T, Nucleotide::G);
     assert_eq!(
         s.genetic(atg)
