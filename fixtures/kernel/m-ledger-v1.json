@@ -1,10 +1,10 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "b8f316693bac1cc94575a265605316dda0e879fdd728aa181aa60579190fb278",
+  "ledger_revision": "cad603da6697cdb6b8d40ce236b9db1d30d31948db5579ee277b29bec7d50613",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
-    "sha256": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc",
-    "revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2"
+    "sha256": "0ad64001e7db4b4dbe18f12da27d3cd33cf89bb0354b62e6ffc569d5743de3e7",
+    "revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8"
   },
   "matrices": [
     {
@@ -109861,9 +109861,9 @@
       "kind": "source",
       "artifact": {
         "path": "fixtures/kernel/m-tree-v1.json",
-        "sha256": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc"
+        "sha256": "0ad64001e7db4b4dbe18f12da27d3cd33cf89bb0354b62e6ffc569d5743de3e7"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "ql.m-index:M",
         "ql.m-index:M0",
@@ -109888,9 +109888,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/m3-source-audit.json",
-        "sha256": "977c60ad135e1beda7f4e69c196a29414efb54fecdcd0b5df8eaacefb7ce0a5b"
+        "sha256": "0570b09a897ea5f2fe01769a882829f7d4ee7b0e8f46117c4ccf48ff98c05929"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k7-source-codon-charge-0573da4e542fca0f",
         "k7-source-codon-charge-079586ea15ef40f1",
@@ -110032,7 +110032,7 @@
         "path": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
         "sha256": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k4-live-spelling-composite-m1-(1, 3, 4, 4, 0)",
         "k4-live-spelling-composite-m1-1-3-4-4-0",
@@ -110054,9 +110054,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
-        "sha256": "775eee4615d5547661266a6b94668e99a13884b90d0ced9c9d93da15adea9bbb"
+        "sha256": "b68d1c0d6dc564957da0957a377b4f2c448b801173566fec03b1a0225f24223c"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k-move-m1:retired-lazy-ananda-core",
         "k5-m1:difference-a-dr",
@@ -110079,9 +110079,9 @@
       "kind": "source",
       "artifact": {
         "path": "fixtures/kernel/m-tree-v1.json",
-        "sha256": "2108875cd4c7bf1bc7c6ae2f8ecd9fad24a4de6392edac6083f0a69d0880f8fc"
+        "sha256": "0ad64001e7db4b4dbe18f12da27d3cd33cf89bb0354b62e6ffc569d5743de3e7"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k4-live-spelling-composite-m0-(0, 4, 4, 0)",
         "k4-live-spelling-composite-m0-0-4-4-0"
@@ -110101,9 +110101,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
-        "sha256": "775eee4615d5547661266a6b94668e99a13884b90d0ced9c9d93da15adea9bbb"
+        "sha256": "b68d1c0d6dc564957da0957a377b4f2c448b801173566fec03b1a0225f24223c"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k4-live-spelling-composite-m0-(0, 4, 4, 0)",
         "k4-live-spelling-composite-m0-0-4-4-0"
@@ -110125,7 +110125,7 @@
         "path": "vendor/epi-kernel/reference/src/m1.c",
         "sha256": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a"
       },
-      "registry_revision": "82cd2a438fe82fdf3cd6a56383cc591b3beef53bd22b593922cd3fd6768f7de2",
+      "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
       "subjects": [
         "k-move-m1:retired-lazy-ananda-core"
       ],
