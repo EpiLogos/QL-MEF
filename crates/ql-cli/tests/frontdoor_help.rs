@@ -38,6 +38,7 @@ fn bare_and_help_print_the_grouped_reference_without_side_effects() {
             "ql matheme shadow",
             "ql mef lenses",
             "ql context-frame list",
+            "ql context-frame team-space",
             "ql vak compose",
             "ql vak locate",
             "ql vak context",

@@ -302,3 +302,92 @@ Skills: 38 of 65 pinned skill files match at HEAD; 7 drifted (`anima-orchestrati
 - The Central profiles and agent sets are proposal inputs only in this change; proposing them (`agent-profile.propose`, `central.agent-set.propose`) and recognising them (`agent-profile.accept`) are separate acts.
 - AIKit catalogues these skills when its `ql` source is moved to a QL-MEF revision that contains them.
 - Specs A–D and the symbolic-protein reader are unbuilt; A waits on an owner decision about arena scenes.
+
+## 10. Team space
+
+**Standing:** owner direction of 19 October 2026; built in `crates/ql-mef/src/team_space.rs` and read with `ql context-frame team-space [--json]` (contract `ql.vak-team-space/v1`). The command is read-only, derived from the kernel owners, and calls no model.
+
+The team space lives inside two organs only: S4′ Anima, which composes the situated act through the C′ Vāk grammar, and S5′ Aletheia, which discloses what happened and returns it. It is the full agentic side of the Vāk system: the Context Frame language of agentic orchestration. The faces in it are LLM-bodied members. They may put small typed questions to a decision model (Kev is one) and the two leads orchestrate those subagent systems. The space is a grid; an act's Vāk block is its path through the grid.
+
+### 10.1 The grid: seven rows
+
+Each row is a context frame. It joins the Anima voice, the Aletheia member the roster seats there, the Day and Night′ questions that frame asks, and the gate whose primary contact is that voice. Frame expressions, voices and offices come from `ContextFrameId`, `constitutional_voice` and `Specialist`; the Day and Night′ questions are held once in the module and tested against `skills/day-night-pass` and `skills/vak-coordinate-frame`; the gate contacts are tested against the gate skills.
+
+| CF | Anima voice | Aletheia member | Day question | Night′ question (reading) | Gate |
+|---|---|---|---|---|---|
+| CF1 `(00/00)` | Nous | Anansi | none fixed (4.0 is asked by the frame orchestration assigns) | P0′ What don't we know? (T0) | 1 QL |
+| CF2 `(0/1)` | Logos | Janus | 4.1 What must be true? | none | none |
+| CF3 `(0/1/2)` | Eros | Moirai as Klotho | 4.2 What is being done? | P1′ What evidence exists? (T1); P2′ What blocks us? (T2) | 3 S |
+| CF4 `(0/1/2/3)` | Mythos | Mercurius | 4.3 What shape does it take? | P3′ What repeats? (T3) | 5 Rupa |
+| CF5 `(4.0/1-4.4/5)` | Anima, the dispatch | Moirai as Lachesis; Agora fuses into it | none | P4′ What sources inform? (T4) | none |
+| CF6 `(4.5/0)` | Psyche | Agora | 4.4 Where and when in the larger frame? | none | 4 M′ |
+| CF7 `(5/0)` | Sophia | Zeithoven; Moirai as Atropos | 4.5 What was produced? | P5′ What crystallises? (T5) | 2 M |
+
+Gate 6, the collaboration gate, is always the person. It has no row.
+
+Two points are this space's own readings. The roster seats Moirai once, at CF3, as one actor in three modes. The space distributes the modes by the thought each answers, which is how `day-night-pass` assigns them: Klotho at CF3 (T1), Lachesis at CF5 (T4), Atropos at CF7 (T5). Agora stays at CF6 as the roster has it and fuses into CF5.
+
+### 10.2 The depth: six M domains
+
+The same grid is situated in each M domain: Anima_i = M_i × S4′ and Aletheia_i = M_i × S5′; Technē_i := Aletheia_i operating M_i′ (`L5-TECHNE-DUAL-READING-LOCK.md` §15). They are not identities: Aletheia is not Technē, and Guardian_i is neither. The M_i′ instruments are M0′ Project / Wiki / Graph, M1′ Canvas / Constellation, M2′ Relation Field / Timeline, M3′ Journey / Scenes, M4′ Places / World and M5′ Palace. Each depth entry also lists the native operations of its faculty (`native_operations`). The proving positions are `central:position:project:O-I:anima-4` and `central:position:project:O-I:aletheia-5`.
+
+### 10.3 The path: the Vāk block
+
+An act's coordinates in the space are its Vāk block: CPF (2 labels), CT (7, multi-select), CP (6), CF (7), CFP (6 forms and Z), CS (6) and the direction (forward-synthesis, returning-inquiry, or both). Each layer's labels are the enum values that `ql vak compose` accepts; the space does not restate them.
+
+### 10.4 The decision role
+
+At each cell three kinds of participant stand.
+
+- **The face** is the LLM-bodied member. It articulates: it reads, writes, argues and returns.
+- **Decision instruments** are typed frames over the cell's closed label sets. They are `ql.agent-decision-frame/v1` heads with their legal labels, cardinality and ambiguity policy. A small model may answer one.
+- **The engine** validates: `ql vak compose`, the gate rules and the kernel operations accept or refuse.
+
+In the face rig these are three kinds of face (owner direction, 18–19 October 2026). The member is a team face. The helper that answers an instrument is an animal: a Kev decision agent, shown as the creature whose real behaviour matches its type (`Work/face-rig/CREATURE-SPEC.md` Part II). Any member may call any helper; Anima and Aletheia orchestrate the helpers. The engine and the passes it runs, such as the Day/Night′ pass and the gate rules, are processes and show as environs. An animal answers; it does not act in the cell, which is why rule 6 below keeps it apart from the members.
+
+The instruments:
+
+| Organ | Instrument | Labels |
+|---|---|---|
+| Anima | Vāk block (at CF5) | the seven heads of §10.3; CFP Z requires an authorised undertaking |
+| Aletheia | Gate reading, gates 1 to 5 (at the contact's row) | aligned, annotated, hold, redirect |
+| Aletheia | Gate 6 reading | aligned, hold, redirect; person only |
+| Aletheia | Thought reading | T0 to T5 and T0-prime to T5-prime |
+| Aletheia | Gnosis retrieval | grounded, partial, empty |
+| Aletheia | Stack traverse, per layer | healthy, drift, gap, unverified |
+| Aletheia | Plugin integration | fit: redundant, complementary, conflicting; recommendation: adopt, reference only, decline |
+| Aletheia | Improvement proposal | implementation, addendum, owner-issue, no-change |
+| Aletheia | Spread aliveness (Janus, spec C, not built) | live, mute |
+| Anima | Klein telemetry (Sophia), per skill | effective, suboptimal, ineffective |
+
+Klein telemetry belongs to the Anima team in the roster crosswalk (§3) and is listed under Anima in the module. The rules that bind every instrument:
+
+1. A cell with no unresolved head makes no model call.
+2. No instrument is consulted on an ordinary entry or tool path without a measured, bounded admission.
+3. A model answer is evidence for the engine to validate. It is not a receipt and it never overrides an observed fact.
+4. An empty selection is a representable abstention and is kept as given.
+5. An instrument does not referee closure and does not stand in for the person's Recognition.
+6. The decision provider is never resolved from the roster of agents acting in the cell, nor from the team's own members.
+7. Gate 6 is answered by the person. The module refuses a model answer to it, including an abstention.
+
+The module enforces the rules it can: `Instrument::ask` returns nothing when no head is unresolved, and `TeamSpace::admit_answer` refuses a model answer to a person-only instrument, a provider that is acting or a team member, an illegal label and an impossible cardinality. It returns an answer as evidence with no receipt. Every head also passes `scripts/ql_agent_contracts.py` when the test runs where Python and `jsonschema` are present.
+
+### 10.5 Thread forms compose instruments as they compose voices
+
+This mapping is a design choice, not a source statement. A thread form shapes how voices combine; the same form shapes how their instruments combine. The patterns are the face-rig creature patterns (`Work/face-rig/CREATURE-SPEC.md` §21 and §22), whose thread contract has seven fields: Start, Stay, Count, Reach, Link, Join, Change.
+
+| Thread form | Musical role | Pattern | Joined by | Mechanism |
+|---|---|---|---|---|
+| CFP0 | single voice | none | none | one voice, one instrument |
+| CFP1 | chord | Drive | none; Join is All | true. Each lion holds its place in one hunt, as each instrument holds its own head. The instruments answer; they do not write, so Reach is Read here. |
+| CFP2 | melody | Relay | none; Join is None | true. A leg ends and hands its state on. The next instrument is asked only what the last return left unresolved. |
+| CFP3 | fusion | Scout, or Quorum | Agora, weighted | partial. Scouts read, report and are joined by weight, as Agora weighs plural readings. Quorum commits at a count; use it only where Agora's aggregation is a count. |
+| CFP4 | drone | Watch | none | partial. Watch stands and reads and raises an alarm. CFP4 has a stop contract and writes, so Stay is Condition in the engine and the instrument is only the standing reader. |
+| CFP5 | canon | Arm | none; Join is All | partial. An arm takes a goal and decides the detail locally, as a nested composition does. Arm has no imitation of the outer theme. |
+| Z | cycle | Metamorph | none | partial. Metamorph changes scope in stages, as Z moves from compose to recompose. Z recomposes into new ground; Metamorph does not return. |
+
+The Agentset rack has no setting for Join. CFP3 gives it one: a fusion joins by weight through Agora.
+
+### 10.6 Not yet
+
+Spread aliveness (spec C) is specified and not built. The decision provider, its admission and any measured latency belong to the decision-agent programme (`QL-NATIVE-DECISION-AGENT-WAYFINDER.md`); this section fixes the cells and the closed label sets it is asked over, and nothing here elects a model. The Central TEAM.md files and the DLW manual describe the same space as proposals until the owner recognises them.

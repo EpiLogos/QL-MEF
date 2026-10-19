@@ -850,6 +850,32 @@
    ],
    "kind": "computational",
    "header": "c/include/ql/m3.h"
+  },
+  {
+   "path": "crates/ql-mef/src/team_space.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#0-4",
+    "#0-5"
+   ],
+   "rationale": "The team space of the Vāk system's agentic side, inside S4′ Anima and S5′ Aletheia: seven context-frame rows joining each Anima voice, Aletheia member, Day and Night′ question and gate contact; depth M0–M5; the Vāk block as an act's path; and the decision instruments as ql.agent-decision-frame/v1 heads. Read from the existing owners (ContextFrameId, constitutional_voice, Specialist, the skills) like vak_profile.rs; it admits a decision answer only as evidence and keeps gate 6 the person's.",
+   "tests": [
+    "crates/ql-mef/src/team_space/tests.rs",
+    "crates/ql-cli/tests/frontdoor_help.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/team_space/tests.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Controlled conformance helpers and regressions for the associated reviewed module; test fixtures are not live field or native execution evidence.",
+   "tests": [
+    "crates/ql-mef/src/team_space/tests.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
