@@ -417,14 +417,10 @@ pub fn quat_active_state(environment: Quat, codon: Codon64) -> u8 {
     // discarded (HMS Sec.V j/k-symmetry; DR-ENV). w < 0 (opposite
     // hemisphere) reaches the composite state 7. angle in [0, 2*pi]; the
     // &0x07 folds the 2*pi edge back to 0.
-    // (Verbatim port of vendor/epi-kernel/reference/src/m3.c:145-152,
-    // verified 2026-10-06; #312 §5 amendment.)
-    let vmag = (composed.x * composed.x + composed.y * composed.y + composed.z * composed.z).sqrt();
-    let mut angle = 2.0 * vmag.atan2(composed.w);
-    if angle < 0.0 {
-        angle += core::f32::consts::TAU;
-    }
-    ((angle / core::f32::consts::FRAC_PI_4) as u8) & 0x07
+    // (Law of vendor/epi-kernel/reference/src/m3.c:145-152, #312 §5
+    // amendment; read exactly by `quat_argument_bin`, which every platform
+    // quantises the same way.)
+    crate::pole::phase::quat_argument_bin(&composed)
 }
 
 /// The RETIRED i-plane law: the predecessor active-state reader, retained

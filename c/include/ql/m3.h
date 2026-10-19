@@ -89,6 +89,9 @@ QL_M3_Result ql_m3_pose_ordinal(unsigned codon, unsigned slot, uint16_t *out);
 QL_M3_Result ql_m3_minor(unsigned card, uint8_t out[4]);
 const QL_M3_Major *ql_m3_major(unsigned card);
 QL_M3_Result ql_m3_quaternion(unsigned codon, unsigned state, QL_M3_Quaternion *out);
+/* Active rotational bin of a codon (Sum/Difference/Mod seed) under an environment:
+   floor(2*atan2(|v|, w) / 45 degrees) & 7 over all three axes, read exactly; the zero
+   quaternion is refused. Same law and quantiser as Rust quat_active_state. */
 QL_M3_Result ql_m3_active_state(QL_M3_Quaternion environment, unsigned codon, uint8_t *out);
 QL_M3_Result ql_m3_transcribe(unsigned codon, unsigned rna, char out[4]);
 /* Recorded amino slots, NOT an asserted standard biological translation.

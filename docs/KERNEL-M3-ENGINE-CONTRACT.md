@@ -122,6 +122,17 @@ or `lawful-slot` (bins mapped onto the codon's 7 or 8 lawful poses; for a
 non-dual codon bin 7, the collapsed orientation, reads as its mirror bin 0).
 A reading names the laws that produced it.
 
+The bin is `floor(2·atan2(|v|, w) / 45°) & 7` over all three axes, read the same
+way in Rust (`quat_argument_bin`) and C (`ql_m3_active_state`): `|v|²` against
+`w²` at the edges `tan² 22.5° = 3 − 2√2`, `1` and `tan² 67.5° = 3 + 2√2`, with a
+value within `BIN_EDGE` (5·10⁻⁶, relative) of an edge read as on it and an
+on-edge value taking the upper bin. No libm call decides a bin, so every
+platform reads the same pose: the folded 2π edge reads 0, `w = 0` reads 4, and
+an encoder state on the 45° grid reads itself. (The earlier `atan2f` reader put
+15 folded-edge states in bin 7 on macOS and in bin 0 on glibc. The C reader
+also still read the retired i-plane half-angle; both peers now read the
+corrected law, and C/Rust parity covers it over the eight axis environments.)
+
 **DNA/RNA and translation.** Alphabetic transcription substitutes T→U without
 flipping nucleotide polarity. The 37 T-containing source RNA forms retain
 exact refs; 27 forms are shared, giving 101 distinct strings. Source translation

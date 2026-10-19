@@ -176,14 +176,51 @@ pub const fn ring_tick_clock_steps(tick: u32) -> u64 {
 /// module derivation. The retired i-plane quantiser's +4 is this function's
 /// predecessor's diagnostic, retained on
 /// [`quat_argument_bin_retired_i_plane`].
+///
+/// The bin is read by comparing `|v|²` with `w²` at the bin edges
+/// (`tan² 22.5° = 3 − 2√2`, `tan² 45° = 1`, `tan² 67.5° = 3 + 2√2`), not
+/// through `atan2`, and a value within [`BIN_EDGE`] of an edge is read as on
+/// it. On an edge the bin is the upper one, as `floor` gives: the folded 2π
+/// edge (`w < 0, |v| = 0`) reads 0, `w = 0` reads 4, and an encoder state
+/// placed on the 45° grid reads its own state. Squares of the f32 components
+/// are exact in f64, so every platform reads the same bin; a libm `atan2f`
+/// does not (macOS read the folded edge as bin 7, glibc as 0).
 pub fn quat_argument_bin(q: &Quat) -> u8 {
-    let vmag = (q.x * q.x + q.y * q.y + q.z * q.z).sqrt();
-    let mut angle = 2.0 * vmag.atan2(q.w);
-    if angle < 0.0 {
-        angle += core::f32::consts::TAU;
+    const EDGES: [f64; 3] = [
+        3.0 - 2.0 * core::f64::consts::SQRT_2,
+        1.0,
+        3.0 + 2.0 * core::f64::consts::SQRT_2,
+    ];
+    let (w, x, y, z) = (
+        f64::from(q.w),
+        f64::from(q.x),
+        f64::from(q.y),
+        f64::from(q.z),
+    );
+    let r2 = x * x + y * y + z * z;
+    let w2 = w * w;
+    if r2 <= BIN_EDGE * w2 {
+        return 0;
     }
-    ((angle / core::f32::consts::FRAC_PI_4) as u8) & 0x07
+    if w2 <= BIN_EDGE * r2 {
+        return 4;
+    }
+    let on = |t: f64| (r2 - t * w2).abs() <= BIN_EDGE * t * w2;
+    if w > 0.0 {
+        EDGES.iter().map(|&t| u8::from(r2 >= t * w2 || on(t))).sum()
+    } else {
+        7 - EDGES
+            .iter()
+            .map(|&t| u8::from(r2 > t * w2 && !on(t)))
+            .sum::<u8>()
+    }
 }
+
+/// How near a bin edge, relative to it, a composed value is read as on the
+/// edge. It is wider than the f32 rounding of a state placed on the 45° grid
+/// (measured up to 1.0e-6) and narrower than the nearest interior state of
+/// the ring, element and matrix environments (4.0e-5).
+pub const BIN_EDGE: f64 = 5e-6;
 
 /// RETIRED (witness): the i-plane quantiser made total — the raw eight-bin
 /// classifier index of the retired half-angle argument

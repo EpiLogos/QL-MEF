@@ -60,7 +60,7 @@ pub use inverse::{
 };
 pub use nucleotide::Nucleotide;
 pub use phase::{
-    PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
+    BIN_EDGE, PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
     quat_clock_steps_retired_i_plane, quat_rotation_degrees, quat_signed_argument,
     ring_tick_clock_steps,
 };

@@ -69,6 +69,11 @@ pub use pole::{
     all_poses, carrier, det_shadow, monoid, project_site,
 };
 pub use pole::{
+    BIN_EDGE, PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
+    quat_clock_steps_retired_i_plane, quat_rotation_degrees, quat_signed_argument,
+    ring_tick_clock_steps,
+};
+pub use pole::{
     DetOverlay, ICHING_GRAMMAR_REF, M2_ELEMENT_RING_POSITIONS, ORIENTATION_CHAIN_REF,
     POLE_ICHING_GRAMMAR_CONTRACT_REF, Quat, RING_QUATERNION_LUT, Trigram, complement,
     compose_hexagram, det_overlay, element_quaternion, flow_clockwise, integral_symmetry_field,
@@ -80,11 +85,6 @@ pub use pole::{
 pub use pole::{
     GENERATION_CELL_COUNT, GenerationCell, POLE_GENERATION_LAW_REF, TRIGRAM_PAIRS, all_cells,
     generate, generation_cells, trigram_pair,
-};
-pub use pole::{
-    PHASE_BRIDGE_REF, quat_argument_bin, quat_argument_bin_retired_i_plane,
-    quat_clock_steps_retired_i_plane, quat_rotation_degrees, quat_signed_argument,
-    ring_tick_clock_steps,
 };
 pub use position::QlPosition;
 pub use relation_classification::{RelationPairMatch, classify_relation_pair};

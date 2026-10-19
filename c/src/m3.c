@@ -169,9 +169,21 @@ QL_M3_Result ql_m3_active_state(QL_M3_Quaternion env,unsigned codon,uint8_t *out
  if(codon>=64 || !out || !isfinite(env.w) || !isfinite(env.x) || !isfinite(env.y) || !isfinite(env.z)) return QL_M3_INVALID;
  QL_M3_Quaternion q;if(ql_m3_quaternion(codon,0,&q)!=QL_M3_OK) return QL_M3_INVALID;
  q=multiply(env,q);
- if(!isfinite(q.w) || !isfinite(q.x) || (q.w==0 && q.x==0)) return QL_M3_INVALID;
- float angle=atan2f(q.x,q.w);if(angle<0) angle+=6.2831853071795865f;
- *out=(uint8_t)((uint8_t)(angle/0.7853981633974483f)&7u);return QL_M3_OK;
+ if(!isfinite(q.w) || !isfinite(q.x) || !isfinite(q.y) || !isfinite(q.z) || (q.w==0 && q.x==0 && q.y==0 && q.z==0)) return QL_M3_INVALID;
+ /* floor(2*atan2(|v|, w) / 45 degrees) & 7 over all three axes, read as Rust
+  * quat_argument_bin reads it: |v|^2 against w^2 at tan^2 22.5, 45 and 67.5
+  * degrees, a value within the edge band of an edge read as on it, and an
+  * on-edge value taking the upper bin. Squares of the float components are
+  * exact in double, so every platform reads the same bin. */
+ const double edge=5e-6,edges[3]={3.0-2.0*1.41421356237309504880,1.0,3.0+2.0*1.41421356237309504880};
+ double w=q.w,x=q.x,y=q.y,z=q.z,r2=x*x+y*y+z*z,w2=w*w;
+ if(r2<=edge*w2) {*out=0;return QL_M3_OK;}
+ if(w2<=edge*r2) {*out=4;return QL_M3_OK;}
+ unsigned count=0;
+ for(unsigned j=0;j<3;j++) {int on=fabs(r2-edges[j]*w2)<=edge*edges[j]*w2;
+  count+=w>0?(r2>=edges[j]*w2 || on):(r2>edges[j]*w2 && !on);}
+ *out=(uint8_t)(w>0?count:7-count);
+ return QL_M3_OK;
 }
 QL_M3_Result ql_m3_transcribe(unsigned codon,unsigned rna,char out[4]) {
  if(codon>=64 || rna>1 || !out) return QL_M3_INVALID;

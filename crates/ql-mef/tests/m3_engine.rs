@@ -72,6 +72,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 | "pose"
                 | "rotation"
                 | "quaternion"
+                | "active"
                 | "transcription"
                 | "partner"
         );
@@ -223,6 +224,27 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 }
                 v.clone()
             }
+            "active" => {
+                // The eight unit axis environments compose exactly with the
+                // integer codon quaternion, the folded 2π edge among them.
+                let axis = [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [-1.0, 0.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                    [0.0, -1.0, 0.0, 0.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 0.0, -1.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 0.0, -1.0],
+                ][number(&v, 2) as usize];
+                let env = Quat {
+                    w: axis[0],
+                    x: axis[1],
+                    y: axis[2],
+                    z: axis[3],
+                };
+                json!([kind, index, v[2], quat_active_state(env, c)])
+            }
             "transcription" => json!([
                 kind,
                 index,
@@ -313,6 +335,7 @@ fn executed_native_c_equals_rust_across_full_finite_m3_field() {
                 ("pose", 472),
                 ("rotation", 512),
                 ("quaternion", 512),
+                ("active", 512),
                 ("transcription", 128),
                 ("partner", 12),
                 ("minor", 56),

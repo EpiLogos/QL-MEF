@@ -61,6 +61,8 @@ int main(void) {
   for(unsigned r=0;r<8;r++)printf("[\"rotation\",%u,%u,%u,%u,%u,%u,%u,%u,%u,%d]\n",i,r,rot[r].pair1,rot[r].pair2,rot[r].codon,rot[r].positive,rot[r].slot,rot[r].degrees,rot[r].nondual,rot[r].value);
   for(unsigned r=0;r<8;r++){QL_M3_Quaternion q;assert(ql_m3_quaternion(i,r,&q)==QL_M3_OK);printf("[\"quaternion\",%u,%u,%.9g,%.9g,%.9g,%.9g]\n",i,r,(double)q.w,(double)q.x,(double)q.y,(double)q.z);}
   for(unsigned phase=0;phase<2;phase++){char seq[4];assert(ql_m3_transcribe(i,phase,seq)==QL_M3_OK);printf("[\"transcription\",%u,%u,\"%s\"]\n",i,phase,seq);}
+  for(unsigned e=0;e<8;e++){static const float axis[8][4]={{1,0,0,0},{-1,0,0,0},{0,1,0,0},{0,-1,0,0},{0,0,1,0},{0,0,-1,0},{0,0,0,1},{0,0,0,-1}};
+   QL_M3_Quaternion env={axis[e][0],axis[e][1],axis[e][2],axis[e][3]};uint8_t bin;assert(ql_m3_active_state(env,i,&bin)==QL_M3_OK);printf("[\"active\",%u,%u,%u]\n",i,e,bin);}
  }
  for(unsigned m=0;m<3;m++)for(unsigned n=0;n<4;n++){uint8_t p;assert(ql_m3_matrix_partner(m,n,&p)==QL_M3_OK);printf("[\"partner\",%u,%u,%u]\n",m,n,p);}
  for(unsigned i=0;i<56;i++){uint8_t t[4];assert(ql_m3_minor(i,t)==QL_M3_OK);bytes("minor",i,t,4);}

@@ -112,7 +112,9 @@ fn the_two_seeds_read_different_bins_as_measured() {
     assert_eq!(same, 5050, "agreeing states of 11,520");
     // Non-dual codons on bin 7 (no lawful 8th pose), of 7,200 states: the
     // Sum/Difference/Mod seed lands there far more often than the four-charge seed.
-    assert_eq!(non_dual_on_bin7, [200, 15]);
+    // (200 under macOS atan2f, which read 15 folded-edge states as bin 7; the
+    // exact reader folds them to 0 on every platform, as glibc did.)
+    assert_eq!(non_dual_on_bin7, [185, 15]);
 }
 
 #[test]
@@ -145,5 +147,5 @@ fn lawful_slot_keeps_every_reading_inside_the_codons_poses() {
         }
     }
     // The same non-dual bin-7 counts, summed over both seeds.
-    assert_eq!(collapsed_total, 200 + 15);
+    assert_eq!(collapsed_total, 185 + 15);
 }
