@@ -9,8 +9,8 @@
     "fixture": "fixtures/kernel/m3-parent-consumer-v1.json",
     "sha256": "abdd3c397820c02d1cec5d26122e9113d31fa4cd368e75a95b50531b5799a52d",
     "registry_revision": "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77",
-    "finite_proof": "fixtures/kernel/m3-finite-proof-v1.json",
-    "finite_proof_sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
+    "finite_proof": "fixtures/kernel/history/m3-finite-proof-212a4d-v1.json",
+    "finite_proof_sha256": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19",
     "standing": "retained historical acceptance; actual refusal negative under the current source owner"
   },
   "current_source": {
@@ -29,7 +29,7 @@
     },
     {
       "path": "scripts/refresh-m3-parent-consumer.py",
-      "sha256": "09b2e088c2184f13e1ac27d8e18d5da933e0b467e3260074caf8b3dae201c0e0"
+      "sha256": "c654aa0554b4d8e2ec63f136d0c09ebe6b5f8985ac324ac7ba247680bcd2794c"
     }
   ],
   "changed_paths": [
