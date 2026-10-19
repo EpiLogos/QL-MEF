@@ -216,7 +216,8 @@ def main() -> None:
             disagree[c["matrix"]] += 1
     print("cells disagreeing with the law, by matrix:", disagree)
     assert disagree[2] == 0 and disagree[3] == 0, disagree
-    assert disagree[1] == 28, disagree
+    # 28 before the correction (Zhen/Gen swapped in Matrix 1); 0 once it is applied.
+    assert disagree[1] in (0, 28), disagree
 
     # ---- current map state of every cell (for guards and rollback) ----
     current = {}
