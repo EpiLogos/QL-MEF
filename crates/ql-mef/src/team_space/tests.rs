@@ -1,5 +1,5 @@
 use super::*;
-use crate::cprime_oikonomia::CfpThreadForm;
+use crate::cprime_oikonomia::{CfpThreadForm, CsProfile};
 use crate::vak_profile::InquiryDirection;
 
 const TEAMS_DOC: &str =
@@ -175,11 +175,7 @@ fn day_and_night_questions_agree_with_the_skills() {
             assert!(line.contains(&format!("Moirai as {mode}")), "{line}");
         }
         assert!(
-            pass.contains(&format!(
-                "{}→`{}`",
-                night.prime.replace('′', "′"),
-                night.reading
-            )),
+            pass.contains(&format!("{}→`{}`", night.prime, night.reading)),
             "{}",
             night.prime
         );
@@ -194,8 +190,7 @@ fn day_and_night_questions_agree_with_the_skills() {
     }
     for (code, meaning) in T_READINGS.iter().chain(T_PRIME_READINGS.iter()) {
         assert!(
-            frame_skill.contains(&format!("{code} {meaning}"))
-                || frame_skill.contains(&format!("{} {meaning}", code.replace("-prime", "-prime"))),
+            frame_skill.contains(&format!("{code} {meaning}")),
             "{code} {meaning}"
         );
     }

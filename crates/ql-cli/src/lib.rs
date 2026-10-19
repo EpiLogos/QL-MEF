@@ -354,7 +354,7 @@ fn help() -> String {
     format!(
         "Quaternal Logic {} — the semantic kernel: derivation, coverage, and the\nregistry/lens/frame reads built on it. Domain distinctions are preserved;\nthe groups below say who each is for.\n\n\
 Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
-Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n\n\
+Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n\n\
 Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n                                    the continuous-field host binding the Live instrument opens\n  ql scene render <binding-request.json|-> --worker <path> --seconds N --out take.wav [--json]\n                                    the played scene rendered offline through the native host to WAV\n\n\
 Ta-Onta procedural stage (the live scene's procedural owner; one command, one host exchange):\n  ql stage state [--config <binding-request.json|->] [--worker <path>] [--instance <ref>] [--json]\n                                    the stage's scoped disclosure: live slots, their owners and the bindings\n  ql stage evaluate <procedure.json|-> [--config <path|->] [--worker <path>] [--json]\n                                    evaluate one versioned procedure; prints its receipt and the acknowledged field\n  ql stage bind <procedure.json|-> [--max-evaluations N] [--config <path|->] [--worker <path>] [--json]\n                                    bind a determinant-triggered procedure to the live flow within an evaluation budget\n  ql stage unbind <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    remove a binding; the answer names its final standing\n  ql stage retire <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    release one procedure's contributions; retained material stays as the authored state\n                                    the worker is named with --worker <path> or QL_FIELD_WORKER; an example\n                                    procedure lives at fixtures/kernel/stage-procedure-example-v1.json\n\n\
 Music (controller projections of the accepted musical object):\n  ql music janko window [--columns N] [--first-column C] [--lens 0..=11] [--json]\n                                    the six-row surface over one column period\n  ql music janko key --row 0..=5 --column C [--lens 0..=11] [--json]\n                                    one key's sounding class, kernel coordinate and fifths overlay\n  ql music janko touch-points --pitch 0..=11 [--json]\n                                    the three repeated touch-points of one sounding note\n\
@@ -392,6 +392,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "kernel.apply",
             "mef.lenses",
             "context-frame.list",
+            "context-frame.team-space",
             "vak.capabilities",
             "vak.locate",
             "vak.context",
@@ -685,6 +686,14 @@ fn context_frame_command(args: &[String], json: bool) -> Result<String, CliError
                     .map(|frame| format!("{}\t{}\t{}", frame.code, frame.expression, frame.name))
                     .collect::<Vec<_>>()
                     .join("\n"))
+            }
+        }
+        Some("team-space") => {
+            let space = ql_mef::team_space::team_space();
+            if json {
+                serde_json::to_string_pretty(&space).map_err(CliError::from)
+            } else {
+                Ok(space.render_text())
             }
         }
         Some(operation) => Err(CliError(format!(
@@ -1347,6 +1356,24 @@ mod tests {
         assert_eq!(frames["grammarVersion"], CONTEXT_FRAME_GRAMMAR_VERSION);
         assert_eq!(frames["frames"].as_array().unwrap().len(), 7);
         assert_eq!(frames["frames"][4]["code"], "CF5");
+    }
+
+    #[test]
+    fn team_space_is_a_read_only_projection_that_round_trips() {
+        let json =
+            execute_cli(&["context-frame".into(), "team-space".into(), "--json".into()]).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(value["contract"], "ql.vak-team-space/v1");
+        assert_eq!(value["rows"].as_array().unwrap().len(), 7);
+        assert_eq!(value["rows"][4]["anima"]["voice"], "Anima");
+        assert_eq!(
+            value,
+            serde_json::to_value(ql_mef::team_space::team_space()).unwrap()
+        );
+        let text = execute_cli(&["context-frame".into(), "team-space".into()]).unwrap();
+        assert_eq!(text.lines().filter(|l| l.starts_with("CF")).count(), 7);
+        let capabilities = execute_cli(&["capabilities".into(), "--json".into()]).unwrap();
+        assert!(capabilities.contains("context-frame.team-space"));
     }
 
     #[test]

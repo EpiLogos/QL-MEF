@@ -19,7 +19,7 @@ use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
-use crate::cprime_oikonomia::{CfpZStage, CsDirection, CsProfile};
+use crate::cprime_oikonomia::{CfpZStage, CsDirection};
 use crate::epi_agent::{native_faculties, native_operations};
 use crate::vak_profile::{
     ContentPosition, ContentType, ContextSequence, PROFILE_CONTRACT, Participation, ThreadForm,
