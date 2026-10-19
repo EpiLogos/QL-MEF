@@ -112,15 +112,45 @@ matches the reviewed lock; it does not mean that all source/native semantics agr
 | Nuclear register | 60 | Source nuclear strings/coordinates differ from the native inner-line extraction. Both readings are recorded; no convention change or source rewrite is silently inferred. |
 | Pair descriptors | 12 | Frozen source S/D values differ from the existing M3-COIN-1-corrected C table. The audit tests its native comparison values against that actual retained table. |
 | Codon/phase charge records | 112 | Frozen four-charge records differ from the ratified A=6, T=9, C=8, G=7 derivation. Both complete charge vectors remain visible. |
-| Matrix pair endpoints | 114 | `USES_Pair` targets are null in the source. These are unresolved edges, not zero-valued pairs. |
+| Matrix pair endpoints | 114 | `USES_Pair` targets are null in the source. These are unresolved edges, not zero-valued pairs. **Resolved 19 Oct 2026:** the map's M3-3-2 layer is being corrected by the generation-law migration (every cell carries its lower and upper pair and its role); the native law reproduces all 192 cells (see "The generation law" below). |
 | Matrix pair role | 1 | `#3-3-2-2-24` has only its upper-pair edge. |
-| Resonance admissibility | 1 | Source Matrix3 absence is `[6,14,22,30,38,46,54,62]` in relation-derived hexagram addresses; the retained native gap set is `[5,21,26,34,42,53,58,61]`. Both contain eight entries, but they are not the same set. |
+| Resonance admissibility | 1 | Source Matrix3 absence is `[6,14,22,30,38,46,54,62]` in relation-derived hexagram addresses; the retained native gap set is `[5,21,26,34,42,53,58,61]`. Both contain eight entries, but they are not the same set. **Resolved 19 Oct 2026:** both were artefacts. The map lacked the 8 Matrix 3 cells whose lower trigram is Xun (the migration adds them: 192 cells, no absence). The native gap set came from a legacy table (`M3_RES_MATRIX`, 56 identity entries and 8 invented holes) that was not the Same-Quality matrix; it is retired and no native gap set remains. |
 | Orientation count | 1 | Source `#3-4.0-2-8` / TCT says eight states. The native palindromic classifier/profile says seven. The frozen source sums to 473; the existing lawful native surface remains 472. |
 | Legacy clock placeholder warrant | 1 | The old C LUT explicitly used a computed hexagram approximation and zero-valued symbolic placeholders. Those fields and fifteenth-degree flags are not proof of source-backed symbolic projections or independent backbone identities. |
 
 The source code audit is confined to these explicit comparisons. Its full property
 retention is not an assertion that every semantic prose field, biological reading,
 experiential claim or cross-M embodiment has been operationally verified.
+
+## The generation law and the matrix actions
+
+The map's M3-3-2 layer holds one generation cell per matrix and hexagram:
+3 × 64 = 192. A matrix sends each trigram to a nucleotide pair (the palindromic
+trigrams Qian, Kun, Kan, Li go to TT, AA, CC, GG in every matrix; the other four
+go to the two mixed pairs of the matrix's base partition, in both orders). For a
+hexagram with lower pair `ab` and upper pair `cd`, the positive codon is `a·c·d`
+and the negative codon is `a·b·d`; the cell is non-dual exactly when `b = c`.
+Each matrix has 16 non-dual and 48 dual cells; the field has 384 polarity slots,
+336 distinct yields and 96 non-dual slots; the fixed points of the cells are the
+40 non-dual codons. Source: `fixtures/kernel/m3-generation-field-v1.json`;
+kernel: `crates/ql-core/src/pole/generation.rs` and `ql_m3_generate` in C.
+
+The three matrices act on a codon as their base partner at every site:
+Complementary (A↔T, C↔G) `⊕0x15`, Moving/Resting (A↔G, T↔C) `⊕0x3F`,
+Same-Quality (A↔C, T↔G) `⊕0x2A` in the kernel encoding (A = 0b00, T = 0b01,
+C = 0b10, G = 0b11). On a hexagram each matrix sends every trigram to the
+trigram whose pair is the partner of its pair. Matrix 1 ∘ Matrix 2 = Matrix 3 at
+both scales. There are no gaps.
+
+The earlier native operators were wrong and are retired. A March legacy spec
+(FR 2.3.9) built 64/64/56-entry tables from the map's per-matrix cell counts: it
+called `codon ⊕ 0x3F` "Complementary" (that is Matrix 2's partner), called trigram
+exchange "Moving/Resting" (it has no base-partner meaning), and called an
+identity table with 8 holes "Same-Quality", narrating the holes as evolutionary
+gaps. The vendor reference still carries those tables (`vendor/` is frozen); the
+native kernel does not read them. The I Ching's own hexagram complement and
+trigram exchange remain named I Ching relations; they are not the matrices.
+"Equal matrix cardinality is not parity" held here too.
 
 ## Native-engine consumption
 
