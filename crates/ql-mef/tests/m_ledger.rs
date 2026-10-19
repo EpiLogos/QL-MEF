@@ -675,8 +675,6 @@ fn later_strata_do_not_gain_parity_from_an_unrelated_native_comparison() {
 #[test]
 fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabilities() {
     let l = ledger();
-    let historical_registry = native_m_registry().manifest().registry_revision
-        == "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77";
     let tables: Vec<_> = l
         .rows
         .iter()
@@ -687,11 +685,7 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
         for peer in ["c", "rust"] {
             assert_eq!(
                 l.assessments[&r.assessment].readiness[peer].status,
-                if historical_registry {
-                    "structural-index-only"
-                } else {
-                    "unassessed"
-                }
+                "structural-index-only"
             );
             assert!(
                 r.bindings
@@ -703,19 +697,13 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
                             && implementation.stratum == peer
                             && implementation.kind == "structural-index"))
             );
-            if !historical_registry {
-                assert!(
-                    l.assessments[&r.assessment].readiness[peer]
-                        .evidence
-                        .is_empty()
-                );
-                assert!(
-                    l.assessments[&r.assessment]
-                        .parity
-                        .values()
-                        .all(Vec::is_empty)
-                );
-            }
+            // Readiness stands on the published successor proof, never on its own.
+            assert!(
+                l.assessments[&r.assessment].readiness[peer]
+                    .evidence
+                    .iter()
+                    .any(|e| e == "k6-m2:finite-proof")
+            );
         }
     }
     let source: Vec<_> = l
@@ -744,11 +732,7 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
         for peer in ["c", "rust"] {
             assert_eq!(
                 l.assessments[&r.assessment].readiness[peer].status,
-                if historical_registry {
-                    "verified"
-                } else {
-                    "unassessed"
-                }
+                "verified"
             );
             assert!(
                 r.bindings
@@ -760,19 +744,13 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
                             && implementation.stratum == peer
                             && implementation.kind == "computational"))
             );
-            if !historical_registry {
-                assert!(
-                    l.assessments[&r.assessment].readiness[peer]
-                        .evidence
-                        .is_empty()
-                );
-                assert!(
-                    l.assessments[&r.assessment]
-                        .parity
-                        .values()
-                        .all(Vec::is_empty)
-                );
-            }
+            // Readiness stands on the published successor proof, never on its own.
+            assert!(
+                l.assessments[&r.assessment].readiness[peer]
+                    .evidence
+                    .iter()
+                    .any(|e| e == "k6-m2:finite-proof")
+            );
         }
     }
     assert!(
@@ -785,8 +763,6 @@ fn k6_scoped_finite_parity_never_promotes_retained_tables_or_broad_source_capabi
 #[test]
 fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumers() {
     let l = ledger();
-    let historical_registry = native_m_registry().manifest().registry_revision
-        == "2264f5686abd1eb3192ecabd74457ca87086be8cea5f1f29de8b48d02151ef77";
     assert_eq!(
         l.rows
             .iter()
@@ -801,8 +777,9 @@ fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumer
             .iter()
             .filter(|d| d.id.starts_with("k7-source-"))
             .count(),
-        // The July seed audit's findings stay in history beside the map audit's.
-        743
+        // The July seed audit's findings stay in history beside the map audit's,
+        // with the open line-change qualification findings of the K7 catalogue.
+        1048
     );
     let index = l
         .rows
@@ -811,28 +788,16 @@ fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumer
         .unwrap();
     assert_eq!(
         l.assessments[&index.assessment].readiness["c"].status,
-        if historical_registry {
-            "structural-index-only"
-        } else {
-            "unassessed"
-        }
+        "structural-index-only"
     );
     let form = l.rows.iter().find(|r| r.id == "k7-m3:form").unwrap();
     assert_eq!(
         l.assessments[&form.assessment].readiness["c"].status,
-        if historical_registry {
-            "verified"
-        } else {
-            "unassessed"
-        }
+        "verified"
     );
     assert_eq!(
         l.assessments[&form.assessment].readiness["rust"].status,
-        if historical_registry {
-            "verified"
-        } else {
-            "unassessed"
-        }
+        "verified"
     );
     for (row, kind) in [(index, "structural-index"), (form, "computational")] {
         for peer in ["c", "rust"] {
@@ -846,23 +811,12 @@ fn k7_retains_k4_and_m2_while_separating_source_records_finite_laws_and_consumer
                             && implementation.stratum == peer
                             && implementation.kind == kind))
             );
-            if !historical_registry {
-                assert_eq!(
-                    l.assessments[&row.assessment].readiness[peer].status,
-                    "unassessed"
-                );
-                assert!(
-                    l.assessments[&row.assessment].readiness[peer]
-                        .evidence
-                        .is_empty()
-                );
-                assert!(
-                    l.assessments[&row.assessment]
-                        .parity
-                        .values()
-                        .all(Vec::is_empty)
-                );
-            }
+            assert!(
+                l.assessments[&row.assessment].readiness[peer]
+                    .evidence
+                    .iter()
+                    .any(|e| e == "k7-m3:proof")
+            );
         }
     }
     assert_eq!(

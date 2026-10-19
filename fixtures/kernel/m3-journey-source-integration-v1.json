@@ -11,9 +11,9 @@
     "coordinate_registry_revision": "3135754e492f77ec68e7aae4669ad9b986ad0bc31642b5d7aae4f3f4ab5f838a",
     "ledger": {
       "path": "fixtures/kernel/m-ledger-v1.json",
-      "sha256": "693c250edc2269ff06b656db5c5b8f5735dfddef0aa8061bc3ec6f2b333f876a",
-      "revision": "cad603da6697cdb6b8d40ce236b9db1d30d31948db5579ee277b29bec7d50613",
-      "standing": "byte-identical current131 decisions and unassessed broad readiness retained"
+      "sha256": "4e785a5ce3319088b94bcde4ff634aaff98e109ef07784b246294ef4489164dd",
+      "revision": "d8fda849739c80d346e899eaa20614fbb01bc21b2c55da6d1244ce65e1fc839d",
+      "standing": "byte-identical current131 decisions retained; broad readiness unassessed except engines with a published successor proof at the current registry"
     }
   },
   "native_history": {
@@ -308,6 +308,21 @@
         }
       },
       "git_ref": "git:ec33764868b22e98cd6ebff8f6565097f67bdb03:fixtures/kernel/m3-journey-source-integration-v1.json",
+      "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
+    },
+    {
+      "source": {
+        "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
+        "numerical_registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
+        "coordinate_registry_revision": "3135754e492f77ec68e7aae4669ad9b986ad0bc31642b5d7aae4f3f4ab5f838a",
+        "ledger": {
+          "path": "fixtures/kernel/m-ledger-v1.json",
+          "sha256": "693c250edc2269ff06b656db5c5b8f5735dfddef0aa8061bc3ec6f2b333f876a",
+          "revision": "cad603da6697cdb6b8d40ce236b9db1d30d31948db5579ee277b29bec7d50613",
+          "standing": "byte-identical current131 decisions and unassessed broad readiness retained"
+        }
+      },
+      "git_ref": "git:db5c5325a5161c1113c4651d99ff5992b9b7c270:fixtures/kernel/m3-journey-source-integration-v1.json",
       "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
     }
   ],
