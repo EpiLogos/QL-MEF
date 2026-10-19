@@ -47,6 +47,24 @@ def git_bytes(commit: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=ROOT)
 
 
+LINEAGE = Path("fixtures/kernel/k8-build-lineage-v1.json")
+
+
+def lineage_chain(lineage: dict, engine: str, head: str, bases: set[str]) -> str:
+    """Walk an engine's published successors back from ``head`` to one of ``bases``."""
+    if lineage["schema"] != "ql.k8-build-lineage/v1" or lineage["proofs"][engine] != head:
+        raise ValueError("active historical proof is not the published lineage proof: " + engine)
+    current, seen = head, set()
+    while current not in bases:
+        entries = [e for e in lineage["successors"] if e["engine"] == engine and e["sha256"] == current]
+        if (len(entries) != 1 or current in seen or not entries[0].get("reason", "").strip()
+                or not re.fullmatch(r"[0-9a-f]{40}", entries[0].get("accepted_at_revision", ""))):
+            raise ValueError("historical proof successor chain is not published: " + engine)
+        seen.add(current)
+        current = entries[0]["previous_sha256"]
+    return current
+
+
 JOURNEY_RECORD = Path("fixtures/kernel/m3-journey-source-integration-v1.json")
 JOURNEY_LEDGER_STANDING = "byte-identical current131 decisions and unassessed broad readiness retained"
 
@@ -115,12 +133,31 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str, *, 
     active = checked_path(path).read_bytes()
     if active == original:
         return
-    if path != "fixtures/kernel/m3-finite-proof-v1.json":
+    engine = re.fullmatch(r"fixtures/kernel/(m[23])-finite-proof-v1\.json", path)
+    if not engine:
         raise ValueError("unqualified historical proof alias: " + path)
+    engine = engine[1]
 
-    record = json.loads(checked_path("fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
-    if record["schema"] != "ql.published-journey-source-integration/v1":
-        raise ValueError("unqualified historical proof integration record")
+    record = alias = None
+    if engine == "m3":
+        record = json.loads(checked_path("fixtures/kernel/m3-journey-source-integration-v1.json").read_text())
+        if record["schema"] != "ql.published-journey-source-integration/v1":
+            raise ValueError("unqualified historical proof integration record")
+        alias = record["native_history"]["successor"]["sha256"]
+    if sha(active) != alias:
+        # A later successor stands on the lineage its owner published; walk it
+        # back to a proof already qualified here, the original or the alias.
+        lineage = json.loads(checked_path(LINEAGE.as_posix()).read_bytes())
+        published = json.loads(subprocess.check_output(["git", "show", f"{commit}:{LINEAGE.as_posix()}"], cwd=root))
+        if lineage["successors"][:len(published["successors"])] != published["successors"]:
+            raise ValueError("native historical lineage missing or forged")
+        reached = lineage_chain(lineage, engine, sha(active), {digest} | ({alias} if alias else set()))
+        if reached == digest:
+            return
+        alias_bytes = git_source(record["native_history"]["successor"]["git_ref"])
+    else:
+        alias_bytes = active
+
     if standing and journey_source_standing(root) != record["current_source"]:
         raise ValueError("historical integration record has stale current source standing")
 
@@ -133,15 +170,19 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str, *, 
     successor = history["successor"]
     expected_ref = f"git:{record['parents']['incoming']}:{path}"
     if (successor["path"] != path or successor["git_ref"] != expected_ref
-            or successor["sha256"] != sha(active)
-            or git_source(expected_ref) != active):
+            or successor["sha256"] != sha(alias_bytes)
+            or git_source(expected_ref) != alias_bytes):
         raise ValueError("active historical successor differs from published Git source")
 
+    # The alias is qualified by the lineage as it was published with it; the
+    # current lineage may only extend that.
     lock = history["native_lineage"]
-    lineage_bytes = checked_path(lock["path"]).read_bytes()
-    if (lock["path"] != "fixtures/kernel/k8-build-lineage-v1.json"
+    lineage_bytes = git_source(f"git:{record['parents']['incoming']}:{lock['path']}")
+    current_lineage = json.loads(checked_path(lock["path"]).read_bytes())
+    if (lock["path"] != LINEAGE.as_posix()
             or sha(lineage_bytes) != lock["sha256"]
-            or git_source(f"git:{record['parents']['incoming']}:{lock['path']}") != lineage_bytes):
+            or current_lineage["successors"][:len(json.loads(lineage_bytes)["successors"])]
+            != json.loads(lineage_bytes)["successors"]):
         raise ValueError("native historical lineage missing or forged")
     lineage = json.loads(lineage_bytes)
     pointer = re.fullmatch(r"/successors/(\d+)", lock["pointer"])
@@ -149,13 +190,13 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str, *, 
         raise ValueError("unqualified native historical lineage pointer")
     entry = lineage["successors"][int(pointer[1])]
     if (lineage["schema"] != "ql.k8-build-lineage/v1"
-            or lineage["proofs"]["m3"] != sha(active)
+            or lineage["proofs"]["m3"] != sha(alias_bytes)
             or entry["engine"] != "m3" or entry["previous_sha256"] != digest
-            or entry["sha256"] != sha(active)
+            or entry["sha256"] != sha(alias_bytes)
             or entry["accepted_at_revision"] != history["published_ci"]["revision"]):
         raise ValueError("native historical successor is not qualified by its original")
 
-    before, after = json.loads(original), json.loads(active)
+    before, after = json.loads(original), json.loads(alias_bytes)
     changed_input = "crates/ql-core/src/pole/tarot.rs"
     if history["only_proof_input_change"] != "/inputs/" + changed_input:
         raise ValueError("unqualified historical successor input change")
@@ -163,7 +204,7 @@ def verify_historical_proof(root: Path, path: str, digest: str, commit: str, *, 
     restored["inputs"][changed_input] = before["inputs"][changed_input]
     if restored != before or after["inputs"][changed_input] == before["inputs"][changed_input]:
         raise ValueError("historical successor changes more than its naming input")
-    if sha(checked_path(changed_input).read_bytes()) != after["inputs"][changed_input]:
+    if alias_bytes == active and sha(checked_path(changed_input).read_bytes()) != after["inputs"][changed_input]:
         raise ValueError("published historical naming input differs from current source")
 
 
