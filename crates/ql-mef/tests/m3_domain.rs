@@ -204,24 +204,19 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
                 ])
             }
             "active" => {
-                // #312 §5 amendment, re-derived 2026-10-06: the native
-                // reader is the CORRECTED all-axis law (vendor
-                // m3.c:136-152). The k7 C-ABI mirror (c/src/m3.c
-                // ql_m3_active_state) still carries the RETIRED i-plane law
-                // (atan2(x, w)), so this record's parity is asserted against
-                // the retained retired witness — the divergence between the
-                // two laws is the correction itself, counted and pinned
-                // after the loop (re-derived by hand over all 64 codons x 8
-                // slots from the corrected law: 470 of 512 records diverge).
-                // The corrected code is NOT forced to match the obsolete
-                // expected results.
+                // #312 §5 amendment: the native reader is the CORRECTED
+                // all-axis law (vendor m3.c:136-152). The C mirror
+                // (c/src/m3.c ql_m3_active_state) reads it with the same
+                // exact quantiser as Rust, so each record equals
+                // quat_active_state. The retired i-plane witness is counted
+                // for the correction's footprint after the loop.
                 let env = quat_codon_state(Codon64::new(index as u8), extra as u8);
                 let codon = Codon64::new(index as u8);
-                let retired = quat_active_state_retired_i_plane(env, codon);
-                if quat_active_state(env, codon) != retired {
+                let corrected = quat_active_state(env, codon);
+                if corrected != quat_active_state_retired_i_plane(env, codon) {
                     corrected_divergences += 1;
                 }
-                json!([k, index, extra, retired])
+                json!([k, index, extra, corrected])
             }
             "form" => form_values(k, index, 0, &forms[index]),
             "applied" => form_values(
@@ -236,10 +231,10 @@ fn native_source_field_and_all_lawful_forms_equal_rust() {
     }
     assert_eq!(counts.get("active"), Some(&512));
     // The correction's footprint, re-derived by hand (python3, f32
-    // Hamilton products over the corrected coin table, 2026-10-06): of the
-    // 512 codon×slot active records, 470 read a different bin under the
-    // corrected all-axis law than under the retired i-plane law the C
-    // mirror carries.
+    // Hamilton products over the corrected coin table, 2026-10-06) and
+    // unchanged by the exact quantiser: of the 512 codon×slot active
+    // records, 470 read a different bin under the corrected all-axis law
+    // than under the retired i-plane law.
     assert_eq!(corrected_divergences, 470);
     assert_eq!(counts.get("source-node"), Some(&1004));
     assert_eq!(counts.get("source-edge"), Some(&5071));
