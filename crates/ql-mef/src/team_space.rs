@@ -181,16 +181,6 @@ const T_PRIME_READINGS: [(&str, &str); 6] = [
     ("T5-prime", "Integration"),
 ];
 
-/// The M_i′ deep instruments (`docs/L5-TECHNE-DUAL-READING-LOCK.md` §6–§11).
-const M_PRIME_INSTRUMENTS: [&str; 6] = [
-    "Project / Wiki / Graph",
-    "Canvas / Constellation",
-    "Relation Field / Timeline",
-    "Journey / Scenes",
-    "Places / World",
-    "Palace",
-];
-
 // ---------------------------------------------------------------------------
 // The serialised shape.
 // ---------------------------------------------------------------------------
@@ -275,10 +265,8 @@ pub struct Gate {
 pub struct DepthDomain {
     pub m: u8,
     pub faculty: &'static str,
-    pub m_prime: &'static str,
     pub anima: String,
     pub aletheia: String,
-    pub techne: String,
     pub native_operations: Vec<&'static str>,
     pub proving_position: Option<&'static str>,
 }
@@ -1095,10 +1083,8 @@ fn depth() -> Vec<DepthDomain> {
             DepthDomain {
                 m: position,
                 faculty,
-                m_prime: M_PRIME_INSTRUMENTS[usize::from(position)],
                 anima: format!("Anima_{position} = M{position} × S4′"),
                 aletheia: format!("Aletheia_{position} = M{position} × S5′"),
-                techne: format!("Technē_{position} := Aletheia_{position} operating M{position}′"),
                 native_operations: operations,
                 proving_position: match position {
                     4 => Some(ANIMA_PROVING_POSITION),
@@ -1194,7 +1180,6 @@ pub fn team_space() -> TeamSpace {
             "docs/integrations/epi-logos/TA-ONTA-FULL-FIELD-LOCK.md",
             "docs/integrations/epi-logos/QL-NATIVE-DECISION-AGENT-WAYFINDER.md",
             "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md",
-            "docs/L5-TECHNE-DUAL-READING-LOCK.md",
             "skills/day-night-pass/SKILL.md",
             "skills/vak-coordinate-frame/SKILL.md",
         ],
@@ -1542,7 +1527,7 @@ impl TeamSpace {
             "depth: {}",
             self.depth
                 .iter()
-                .map(|d| format!("M{} {}", d.m, d.m_prime))
+                .map(|d| format!("M{} {}", d.m, d.faculty))
                 .collect::<Vec<_>>()
                 .join(" | ")
         ));

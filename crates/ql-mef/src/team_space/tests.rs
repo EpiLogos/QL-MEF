@@ -4,7 +4,6 @@ use crate::vak_profile::InquiryDirection;
 
 const TEAMS_DOC: &str =
     include_str!("../../../../docs/integrations/epi-logos/ANIMA-ALETHEIA-TEAMS.md");
-const L5_LOCK: &str = include_str!("../../../../docs/L5-TECHNE-DUAL-READING-LOCK.md");
 const SOURCE: &str = include_str!("../team_space.rs");
 
 fn space() -> TeamSpace {
@@ -283,13 +282,6 @@ fn depth_covers_the_six_m_domains() {
             domain.native_operations,
             native_operations(position).unwrap()
         );
-        assert!(
-            L5_LOCK.contains(&format!("M{}′ — {}", domain.m, domain.m_prime)),
-            "M{}′ {}",
-            domain.m,
-            domain.m_prime
-        );
-        assert!(domain.techne.contains(&format!("M{}′", domain.m)));
     }
     let proving: Vec<_> = space
         .depth
