@@ -13,6 +13,8 @@ use ql_core::*;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
+mod form_cell;
+
 pub const STATE_SCHEMA: &str = "ql.m3-state/v1";
 pub const REQUEST_SCHEMA: &str = "ql.m3-state-request/v1";
 pub const COMMAND_SCHEMA: &str = "ql.m3-command/v1";
@@ -53,6 +55,14 @@ pub enum M3Operation {
         line: u8,
     },
     ApplyMatrix {
+        family: u8,
+    },
+    /// Chooses the matrix the reading is made under. Unlike `ApplyMatrix` it
+    /// does not turn the form: it sets only the active matrix axis
+    /// (`FoldState::set_matrix_axis`, the selection `M3Request::matrix_axis`
+    /// makes at construction), so the cell of the same hexagram changes with
+    /// the matrix (manual §22.3).
+    SetMatrix {
         family: u8,
     },
     SetPose {
@@ -253,6 +263,10 @@ impl M3State {
                         .ok_or("invalid matrix family")?;
                     next.fold = next.fold.apply_matrix(f);
                 }
+                M3Operation::SetMatrix { family } => {
+                    next.fold
+                        .set_matrix_axis(form_cell::family_of(family)?.axis());
+                }
                 M3Operation::SetPose { pose } => {
                     next.fold.set_rotational_index(pose).map_err(err)?
                 }
@@ -373,6 +387,9 @@ impl M3State {
                     "constituent_ref":engine.node(M3NodeKind::Codon,c.address() as usize).unwrap().source_ref,
                     "pose_ordinal":self.fold.rotational_pose().ordinal(),"state_count":self.fold.state_count(),"address":c.address(),
                     "standing":"explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose"}},
+            "living_form":form_cell::living_form(&self.fold,ref_value(M3NodeKind::Hexagram,c.address() as usize)),
+            "generation":form_cell::generation_reading(self.fold.active_matrix_axis().matrix_family(),c.hexagram_id()),
+            "law":form_cell::law(&self.fold),
             "elemental":{"component_order":["Earth","Fire","Water","Air"],"site_components":efwa,"counts":counts,
                 "standing":"three-site-form-carrier-not-personal-constitution-or-bioquaternion"},
             "aperture":{"static_lenses":16,"total_lenses":18,"index":ap.index(),"division_deg10":ap.division_deg10(),"reciprocal_index":ap.reciprocal().index(),
@@ -391,6 +408,20 @@ impl M3State {
             "source_matrix_cells":linked,"source_discrepancy_templates":source.discrepancies().len(),
             "discrepancy_authority":"ql.m-ledger/v1: current lifecycle, not frozen source templates",
             "readiness":{"discrete":"operative","source":"retained-qualified-reading","continuous_cpp":"consumer-required","personal_identity":"owner-supplied-handles","experiential":"not-claimed"}})
+    }
+    /// The generation reading at a hexagram that need not be the form's (the
+    /// Deck's cast hexagram): the cell under `family` (an index into the
+    /// three matrices; the state's chosen matrix when `None`) and the cells
+    /// of all three. A read: it moves no generation and changes no state.
+    pub fn generation_at(&self, family: Option<u8>, hexagram: u8) -> Result<Value, String> {
+        if hexagram >= 64 {
+            return Err("hexagram outside 0..64".into());
+        }
+        let family = match family {
+            Some(index) => form_cell::family_of(index)?,
+            None => self.fold.active_matrix_axis().matrix_family(),
+        };
+        Ok(form_cell::generation_reading(family, hexagram))
     }
     pub fn source_node(&self, id: MTreeId) -> Option<&'static crate::m3_source::SourceNode> {
         native_m3_source().node(id)
