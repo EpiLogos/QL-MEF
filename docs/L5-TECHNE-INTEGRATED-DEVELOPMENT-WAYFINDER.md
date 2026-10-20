@@ -1,6 +1,6 @@
 # L5 Technē Integrated Development Wayfinder
 
-**Standing:** owner-directed execution map, 2026-09-16.  
+**Standing:** owner-directed execution map, 2026-09-16; Technē's instruments carry no M′ numbers since the owner's ruling of 19 Oct 2026 (the lock's §0).  
 **Conceptual authority:** `docs/L5-TECHNE-DUAL-READING-LOCK.md`.  
 **Execution-language authority:** `docs/integrations/epi-logos/TA-ONTA-VAK-COMPOSITIONAL-EXECUTION-LOCK.md`.  
 **Retained implementation floor:** `docs/L5-TECHNE-INSTRUMENT-WAYFINDER.md` for `ql.techne/v1`, `TechneAdapter`, native ownership, one-subject/selection law, Research Canvas migration, Scene/Expression reuse, Cradle lifecycle and UI convergence except where the dual-reading lock explicitly supersedes its former six-peer grouping.  
@@ -23,15 +23,15 @@ There is one M′ field with two principal application readings.
                                  │
                  ┌───────────────┴───────────────┐
                  │                               │
-          3:3 EXPRESSION                    4:2 TECHNĒ
+          3:3 EXPRESSION                      TECHNĒ
           lived / material                  deep / professional
                  │                               │
-          M1 · M2 · M3                    M0′ Project / Wiki / Graph
-                 │                        M1′ Canvas / Constellation
-          M4 / Nara occasion              M2′ Relation Field / Timeline
-          /             \                  M3′ Journey / Scenes
-      M0 source       M5 Epii              M4′ World / Places
-          depth         depth              M5′ Palace / Integral Whole
+          M1 · M2 · M3                    Project / Wiki / Graph
+                 │                        Canvas / Constellation
+          M4 / Nara occasion              Relation Field / Timeline
+          /             \                  Journey / Scenes
+      M0 source       M5 Epii              World / Places
+          depth         depth              Palace / Integral Whole
                  │                               │
                  └───────────────┬───────────────┘
                                  │
@@ -47,9 +47,9 @@ There is one M′ field with two principal application readings.
 
 The programme does not build two rival products. It makes the already-ratified two readings operational over one selected field.
 
-The six 4:2 professional surfaces are **application projections of `M0′…M5′`**. They are not a renaming of `L5-0…L5-5`. All six are acts of the `L5-5 Technē` generative office through the prior L5 articulation.
+The six professional instruments are named by their work: they are not projections of `M0′…M5′` (withdrawn, 19 Oct 2026) and not a renaming of `L5-0…L5-5`. All six are acts of the `L5-5 Technē` generative office through the prior L5 articulation.
 
-Expression is not the missing sixth 4:2 instrument. It is the principal lived/material body of the conjugate 3:3 reading.
+Expression is not the missing sixth Technē instrument. It is the principal lived/material body of the conjugate 3:3 reading.
 
 ---
 
@@ -58,12 +58,12 @@ Expression is not the missing sixth 4:2 instrument. It is the principal lived/ma
 ## 1. Canonical professional instrument names
 
 ```text
-M0′  Project / Wiki / Graph
-M1′  Canvas / Constellation
-M2′  Relation Field / Timeline
-M3′  Journey / Scenes
-M4′  World / Places
-M5′  Palace / Integral Whole
+Project / Wiki / Graph
+Canvas / Constellation
+Relation Field / Timeline
+Journey / Scenes
+World / Places
+Palace / Integral Whole
 ```
 
 Use these names in new planning, UI intent, acceptance receipts and development discussion unless a later owner decision explicitly supersedes them.
@@ -71,12 +71,12 @@ Use these names in new planning, UI intent, acceptance receipts and development 
 Legacy names remain useful as implementation/source technology:
 
 ```text
-Research Canvas Projects     -> source interaction evidence for M0′, not a new owner
-Research Canvas Canvas       -> source interaction body for M1′
-Research Canvas Timeline     -> temporal projection within M2′
-Research Canvas Story        -> source interaction body for M3′ Journey
-Map / Street / Globe         -> spatial interaction body within M4′ World
-Research Canvas Palace       -> source interaction evidence for M5′
+Research Canvas Projects     -> source interaction evidence for Project, not a new owner
+Research Canvas Canvas       -> source interaction body for Canvas
+Research Canvas Timeline     -> temporal projection within the Relation Field
+Research Canvas Story        -> source interaction body for Journey
+Map / Street / Globe         -> spatial interaction body within World
+Research Canvas Palace       -> source interaction evidence for Palace
 O:I Expressions              -> 3:3 conjugate reading, not a peer M′ instrument
 ```
 
@@ -178,7 +178,7 @@ ql.techne/v1 / TechneAdapter
     ↓
 shared DisclosureSession
     ↓
-3:3 or 4:2 aperture
+3:3 or Technē aperture
     ↓
 human / situated Agency operation
     ↓
@@ -255,7 +255,7 @@ TechneReading
 
   disclosure
     application-cut availability
-    M0′…M5′ availability/reasons
+    the six instruments' availability/reasons
     3:3 Expression availability/reasons
 ```
 
@@ -310,7 +310,6 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
       ┌────────────┬────────────┼────────────┬────────────┬────────────┬────────────┐
       │            │            │            │            │            │            │
     #213         #214         #215         #216         #217         #218         #219
-    M0′          M1′          M2′          M3′          M4′          M5′          X3
  Project       Canvas       Relation      Journey       World        Palace       3:3 /
  Wiki/Graph  Constellation   Timeline      Scenes       Places   Integral Whole   Agency /
                                                                               Desktop cut
@@ -319,13 +318,13 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
                                 │
                               #220
                           T9 JOINED CONVERGENCE
-                        real 0→1→2→3→4→5→0
-                       3:3↔4:2 + Return + H/EX
+                  real Project → … → Palace → Return
+                   3:3↔Technē + Return + H/EX
 ```
 
 #213–#219 may proceed independently against the pinned #212 fixture even when some real providers are not yet installed. Each lane must replace/augment fixture evidence with native-provider evidence before making an operative claim that requires it.
 
-## 9. Lane #213 — M0′ Project / Wiki / Graph
+## 9. Lane #213 — Project / Wiki / Graph
 
 **Meaning:** explicit deep ground/address of the already-existing World/Wiki system.
 
@@ -335,7 +334,7 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
 
 **Must not:** create a new Projects DB, universal filesystem ontology, search engine, graph store or source authority.
 
-## 10. Lane #214 — M1′ Canvas / Constellation
+## 10. Lane #214 — Canvas / Constellation
 
 **Meaning:** constructive determination of selected material.
 
@@ -345,7 +344,7 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
 
 **Must not:** treat layout as semantic truth or create a second graph substrate.
 
-## 11. Lane #215 — M2′ Relation Field / Timeline
+## 11. Lane #215 — Relation Field / Timeline
 
 **Meaning:** becoming, causation, influence, recurrence, opposition, inheritance, transformation, phase and temporal relation.
 
@@ -355,17 +354,17 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
 
 **Must not:** manufacture dates, collapse archetypal/trans-temporal relations into chronology, or upgrade inference into fact.
 
-## 12. Lane #216 — M3′ Journey / Scenes
+## 12. Lane #216 — Journey / Scenes
 
 **Meaning:** formal mediation and authored traversal between deep work and lived Expression.
 
 **Must consume:** current O:I Scene truth first; Research Canvas Story/Journey UX; Vāk/C′ compositional language.
 
-**Must deliver:** Journey editor over real Expression Scene refs; minimal attributable Scene framing; sequence/pacing/source/media/World context; reversible 4:2→Journey→Scene→3:3 Expression→deep Return; meaningful C′ sequencing/thread effects; `Technē_3`.
+**Must deliver:** Journey editor over real Expression Scene refs; minimal attributable Scene framing; sequence/pacing/source/media/World context; reversible Technē→Journey→Scene→3:3 Expression→deep Return; meaningful C′ sequencing/thread effects; `Technē_3`.
 
 **Must not:** retain a shadow Journey scene store.
 
-## 13. Lane #217 — M4′ World / Places
+## 13. Lane #217 — World / Places
 
 **Meaning:** situated whole, geography, reference frame and Earth relation.
 
@@ -375,7 +374,7 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
 
 **Must not:** recompute astronomy/QL/personal truth in the renderer or publish private M4 state by visual association.
 
-## 14. Lane #218 — M5′ Palace / Integral Whole
+## 14. Lane #218 — Palace / Integral Whole
 
 **Meaning:** articulation, inhabitation, memory, pedagogy, Recognition and Return.
 
@@ -397,34 +396,34 @@ A lane may not patch a private version of `TechneReading` because its UI needs o
 
 ---
 
-# V — THE CANONICAL 0→5→0 INTEGRATION SPINE
+# V — THE CANONICAL INTEGRATION SPINE
 
 ## 16. First constructive traversal
 
 The instruments are directly cross-openable; the following is the first canonical integration/acceptance route, not a wizard:
 
 ```text
-M0′ PROJECT / WIKI / GRAPH
+PROJECT / WIKI / GRAPH
     locate existing world / source / bounded whole
           ↓
-M1′ CANVAS / CONSTELLATION
+CANVAS / CONSTELLATION
     construct / arrange / annotate / bound material
           ↓
-M2′ RELATION FIELD / TIMELINE
+RELATION FIELD / TIMELINE
     disclose movement / causation / recurrence / time / phase
           ↓
-M3′ JOURNEY / SCENES
+JOURNEY / SCENES
     author a traversal from the determinations
           ↓
-M4′ WORLD / PLACES
+WORLD / PLACES
     situate it in spatial-temporal-world reference
           ↓
-M5′ PALACE / INTEGRAL WHOLE
+PALACE / INTEGRAL WHOLE
     articulate / inhabit / teach / remember / recognise
           ↓
 RECOGNITION / RETURN
           ↓
-M0′ PROJECT / WIKI / GROUND
+PROJECT / WIKI / GROUND
     renewed attributable ground
 ```
 
@@ -454,7 +453,7 @@ Do not conflate the M′ instrument cycle with the Ta-Onta S′ lifecycle.
 The instrument cycle is:
 
 ```text
-M0′ Project → M1′ Canvas → M2′ Relation → M3′ Journey → M4′ World → M5′ Palace
+Project → Canvas → Relation → Journey → World → Palace
 ```
 
 Any one act inside any one of those instruments may itself pass through:
@@ -658,17 +657,17 @@ Do not create a T9 shadow data model.
 Using one real source-backed subject/whole:
 
 ```text
-M0′ Project/Wiki/Graph
-    -> M1′ Canvas
-    -> M2′ Relation Field/Timeline
-    -> M3′ Journey/Scenes
+Project/Wiki/Graph
+    -> Canvas
+    -> Relation Field/Timeline
+    -> Journey/Scenes
     -> live 3:3 Expression
-    -> return to M3′
-    -> M4′ World/Places
+    -> return to Journey
+    -> World/Places
     -> 3:3 Nara/current-world crossing where authorised
-    -> M5′ Palace/Integral Whole
+    -> Palace/Integral Whole
     -> Recognition / governed Return
-    -> renewed M0′ Project/Wiki/Ground
+    -> renewed Project/Wiki/Ground
 ```
 
 One fixture proves deterministic contract coverage. One real native walk proves the joins.
@@ -680,7 +679,7 @@ At least one coordinate must demonstrate:
 ```text
 Guardian_i remains steward
 Anima_i performs authorised 3:3 act
-Technē_i performs authorised 4:2 investigation/making/Return
+Technē_i performs authorised Technē investigation/making/Return
 both use native refs/Actions
 returned evidence is inspectable by the stewardship context
 ```
@@ -710,9 +709,7 @@ No one class substitutes for the others.
 
 ## 30. QL-MEF #73
 
-The eightfold `4+2 + two` canon remains. This Wayfinder specifies the professional embodiment of the six M′ deep lines while retaining 3:3 Cosmic/Personal parent readings.
-
-M0′ and M5′ remain ambient ground/articulation dimensions **and** explicit deep professional surfaces as Project and Palace respectively.
+The eightfold `4+2 + two` canon remains. This Wayfinder specifies Technē's six professional instruments while retaining 3:3 Cosmic/Personal parent readings. The instruments carry no M′ numbers: Project and Palace are deep professional surfaces, not M0′ and M5′.
 
 ## 31. QL-MEF #74
 
@@ -724,15 +721,15 @@ Guardians remain canonical Agents. Anima_i and Aletheia_i/Technē_i are situated
 
 Do not restart K0–K10. The current kernel/living-instrument/Ta-Onta work is producer ground for this application convergence.
 
-3:3 Expression and 4:2 Technē consume accepted producers rather than redefining them.
+3:3 Expression and Technē consume accepted producers rather than redefining them.
 
 ## 33. QL-MEF #201
 
-Ta-Onta remains the Epi SDK/API over generic O:I Expression. It also supplies the operative Agency grammar across the 4:2 deep instruments. This does not make O:I generic substrate QL-owned.
+Ta-Onta remains the Epi SDK/API over generic O:I Expression. It also supplies the operative Agency grammar across Technē's deep instruments. This does not make O:I generic substrate QL-owned.
 
 ## 34. O:I #306 / #335
 
-The generic Expression world remains O:I-owned and paradigm-neutral. Epi/QL supplies profile/semantic bindings. Expression is the 3:3 conjugate reading, not a peer 4:2 instrument.
+The generic Expression world remains O:I-owned and paradigm-neutral. Epi/QL supplies profile/semantic bindings. Expression is the 3:3 conjugate reading, not a peer Technē instrument.
 
 ## 35. O:I #65
 
@@ -742,7 +739,7 @@ The existing broad C0–C5/current successor experience campaign absorbs final i
 
 # XII — COMPLETION FORM
 
-This development phase is complete when the person can begin from the **real World they already have**, disclose a source-backed subject through M0′ Project/Wiki/Graph, work it through whichever deep instruments are appropriate, enter the living 3:3 Expression reading without object duplication, move between lived and explicit depth with one intelligible Agent/session relation, and Return the resulting difference to its native owner with provenance and authority intact.
+This development phase is complete when the person can begin from the **real World they already have**, disclose a source-backed subject through Project/Wiki/Graph, work it through whichever deep instruments are appropriate, enter the living 3:3 Expression reading without object duplication, move between lived and explicit depth with one intelligible Agent/session relation, and Return the resulting difference to its native owner with provenance and authority intact.
 
 The completed relation is not “Research Canvas inside O:I”, nor “Expressions plus six tools”, nor “six apps wrapped by an agent”.
 
@@ -751,9 +748,9 @@ It is:
 ```text
 existing native World
       ↓
-M0′ address / ground
+Project address / ground
       ↓
-professional Technē articulation through M1′–M5′
+professional Technē articulation through its instruments
       ↕
 conjugate 3:3 lived Expression
       ↓

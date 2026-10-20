@@ -1,5 +1,5 @@
 /**
- * The M0′ Project / Knowledge Map ground model (L5 Technē, amended
+ * The Project / Knowledge Map ground model (L5 Technē, amended
  * geometry) — step 0 of the canonical traversal. The ground is the user's
  * existing Central/ProjectCentral/AIKit world; this aperture discloses the
  * reading's ground identity, its bounded whole, its sources and its native

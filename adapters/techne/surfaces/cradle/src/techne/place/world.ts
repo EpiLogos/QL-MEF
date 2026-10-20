@@ -1,5 +1,5 @@
 /**
- * The World model (L5 Technē M4′ — World / Places) — pure derivation over a
+ * The World model (L5 Technē World / Places) — pure derivation over a
  * `TechneReading` (ql.techne/v1, TB0-1): the instrument is the situated
  * whole — place, reference frame, Earth relation — of which Map, Street and
  * Globe are the concrete spatial interaction body, not the office itself
@@ -201,7 +201,7 @@ export function carriedOccasion(temporal: readonly TechneTemporalFacet[] | undef
 // The reference-frame depth chain — provider-bound, honestly unavailable
 // ---------------------------------------------------------------------------
 
-/** One rung of the M4′ depth ladder (issue #217: M1 → M2 → M3 → M4). */
+/** One rung of the World's depth ladder (issue #217: M1 → M2 → M3 → M4). */
 export type WorldDepth = "m1-harmonic" | "m2-planetary" | "m3-world-clock" | "m4-nara-earthbody";
 
 export type DepthAvailability = "disclosed" | "absent-facet" | "producer-unavailable";
@@ -209,7 +209,7 @@ export type DepthAvailability = "disclosed" | "absent-facet" | "producer-unavail
 export interface DepthState {
   depth: WorldDepth;
   /** The M′ coordinate the depth belongs to; the geography body itself is
-   * this instrument (M4′) and needs no producer. */
+   * this instrument and needs no producer. */
   m_prime: 1 | 2 | 3 | 4;
   availability: DepthAvailability;
   /** What the reading itself discloses at this depth, verbatim, when

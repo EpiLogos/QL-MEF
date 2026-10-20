@@ -183,23 +183,20 @@ def main() -> int:
     else:
         record("G-TB0", "FAIL", "the TB0 fixture lost a required facet or disclosure")
 
-    # G-T — the canonical traversal 0→1→2→3→4→5→0 (amended geometry) -------
-    deep = sorted(
-        (entry for entry in rep["disclosure"]["instruments"]
-         if entry.get("reading") == "4:2-deep"),
-        key=lambda entry: entry.get("m_prime", -1),
-    )
+    # G-T — the canonical traversal through the six instruments and back ----
+    deep = [entry for entry in rep["disclosure"]["instruments"]
+            if entry.get("reading") == "4:2-deep"]
     conjugate = [entry for entry in rep["disclosure"]["instruments"]
                  if entry.get("reading") == "3:3-conjugate"]
     offices = [entry["instrument"] for entry in deep]
     if offices == ["project", "canvas", "timeline", "journey", "place", "palace"] \
-            and [entry.get("m_prime") for entry in deep] == [0, 1, 2, 3, 4, 5] \
             and len(conjugate) == 1 and conjugate[0]["instrument"] == "expressions" \
             and any(action["action_ref"] == "aikit.wiki.stage"
                     and action["authority"] == "governed-write"
                     for action in rep["actions"]):
         record("G-T", "pass",
-               "the reading discloses the six deep instruments bound M0′–M5′ in traversal order plus the "
+               "the reading discloses the six deep instruments in traversal order, named by their work with no "
+               "M′ number, plus the "
                "conjugate 3:3 Expression reading; the Return leg carries a governed-write native Action "
                "(aikit.wiki.stage) — ground_ref (step 0) is contract-pinned by the Rust suite; hop co-reference "
                "across instruments is pinned by the O-I session suite; full desktop traversal remains G8")
@@ -241,14 +238,14 @@ def main() -> int:
                          "authority": "registered-read-action", "summary": None,
                          "expected_effects": ["none — read only"], "input_schema_ref": None}],
             "disclosure": {"instruments": [
-                {"instrument": "project", "available": True, "m_prime": 0, "reading": "4:2-deep"},
-                {"instrument": "canvas", "available": True, "m_prime": 1, "reading": "4:2-deep"},
-                {"instrument": "timeline", "available": True, "m_prime": 2, "reading": "4:2-deep"},
-                {"instrument": "journey", "available": False, "m_prime": 3, "reading": "4:2-deep",
+                {"instrument": "project", "available": True, "reading": "4:2-deep"},
+                {"instrument": "canvas", "available": True, "reading": "4:2-deep"},
+                {"instrument": "timeline", "available": True, "reading": "4:2-deep"},
+                {"instrument": "journey", "available": False, "reading": "4:2-deep",
                  "reason": "no Expression scenes bound to this subject"},
-                {"instrument": "place", "available": False, "m_prime": 4, "reading": "4:2-deep",
+                {"instrument": "place", "available": False, "reading": "4:2-deep",
                  "reason": "no disclosed spatial reading"},
-                {"instrument": "palace", "available": False, "m_prime": 5, "reading": "4:2-deep",
+                {"instrument": "palace", "available": False, "reading": "4:2-deep",
                  "reason": "no Expression composition available for this subject"},
                 {"instrument": "expressions", "available": False, "reading": "3:3-conjugate",
                  "reason": "no Expression is bound to this subject"},

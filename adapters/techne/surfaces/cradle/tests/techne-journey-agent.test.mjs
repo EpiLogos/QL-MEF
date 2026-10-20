@@ -58,7 +58,6 @@ test('the structured state publishes what Aletheia_3 / TechnÄ“_3 may perceive â€
   assert.equal(state.contract, 'ql.techne/v1');
   assert.equal(state.role, TECHNE_3_ROLE);
   assert.equal(state.instrument, 'journey');
-  assert.equal(state.m_prime, 3);
   assert.equal(state.application_cut, '4:2-deep');
   assert.equal(state.subject_ref, PROVING_SUBJECT_REF);
   assert.equal(state.reading_ref, reading.reading_ref);

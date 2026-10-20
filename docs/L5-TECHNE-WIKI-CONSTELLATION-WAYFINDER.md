@@ -29,7 +29,7 @@ What is made returns: native constellations, contextual memberships and delibera
 | Agent staging is the same editable working object. | Actual selected/disclosed context, human edits, agent proposals and revisions are visible through existing native contracts. No separate Technè runtime. |
 | The Return enriches the same field. | Persist whole/member structure and attributable QL relations through their actual owners; index their refs for later discovery and composition. |
 | Kernel resource retention is legitimate. | `TechneAdapter` stays a non-owning adapter but consumes retained owner readings from O:I's existing third-layer state. No-cache comments and fixed-ten conversion paths are not architectural restrictions. |
-| These semantic layers are independent of 3:3/4:2. | Both application readings can expose original sources and constructed constellations. Preserve the canonical M/M′/S/S′ distinctions and existing role bindings. |
+| These semantic layers are independent of 3:3/Technē. | Both application readings can expose original sources and constructed constellations. Preserve the canonical M/M′/S/S′ distinctions and existing role bindings. |
 
 The full fifteen decisions and their reasons remain in the O:I product record and are repeated at host plan/UX entry. Do not let native wire naming or current demo paths silently reduce them. Any necessary change in behaviour is an explicit sourced amendment, not an implementation-local workaround.
 
@@ -59,31 +59,31 @@ Reversible presentation edits proceed within granted bounds. Intentional semanti
 
 ## 4. Instrument-by-instrument work
 
-### M0′ — source field and constructive entry
+### Project — source field and constructive entry
 
 Show the actual connected corpus through the existing Wiki/ProjectMap and exact source links. Support search, filters, passage selection, backlinks and relevant tags as supplied by the native owner. A person can gather a working set, choose a question and initiate a constellation here. Opening a file or passage uses the real source/editor portal and preserves return position.
 
-M0′ is not merely a directory visualisation. It is where source material becomes available for constructive work. It may show existing constellations and their returned QL relationships alongside ordinary source links, with relationship families distinguishable.
+The Project instrument is not merely a directory visualisation. It is where source material becomes available for constructive work. It may show existing constellations and their returned QL relationships alongside ordinary source links, with relationship families distinguishable.
 
-### M1′ — constructive determination in the Expression field
+### Canvas — constructive determination in the Expression field
 
 Implement frame-first/material-first creation, lasso/multiselect, grouping, annotations, membership and role operations, align/snap and authored arrangement, relation creation/reconnection/type/evidence and alternatives. Use glyphs/text/media and line/particle relation presentation in the existing 3D engine. Atomic canonical formation and composite packing have separate responsibilities; physical material moves within the declared structural/presentation constraints.
 
 Source roles, native relations and presentation connections remain distinguishable. Canonical geometry guides and validates structure without preventing legitimate exploratory arrangement or requiring an already-certified constellation to begin.
 
-### M2′ — relationship and becoming
+### Relation Field — relationship and becoming
 
 Operate on the same authored and source-backed relations. Preserve influence/opposition/recurrence/causation, temporal order, evidence and standing as distinct where the native model supports them. Chronology is one projection, not a compulsory timestamp for every relationship. Relation edits remain attributable native proposals or saves, not new meanings inferred from particle motion.
 
-### M3′ — real Scene composition
+### Journey — real Scene composition
 
 Compose selected constellations, source passages, text/media, framing and transitions into actual O:I Expression Scene refs. Scene sequence changes do not change source identity or manufacture Wiki links. Preserve deliberate presentation, current source basis, and an explicit path to the live 3:3 reading.
 
-### M4′ — situation
+### World / Places — situation
 
 Situate the same construction in relevant world/place/occasion facets and preserve their native identity, temporal qualification and evidence. Missing geographic/astronomical facets do not block ordinary constellation work or cause invented coordinates. Consume existing accepted producers rather than reopening their mathematics.
 
-### M5′ — Palace, integration and Return
+### Palace, integration and Return
 
 Compose native constellations, Expressions, Scene/Journey refs, media and sources into an inhabitable whole for inquiry, memory and pedagogy. Reuse the existing Stage and persistence. Return a knowledge difference or new artifact through its actual owner, making it discoverable again in M0′/Wiki. This is the practical M5′→M0′ closure, not a decorative export button.
 
@@ -116,7 +116,7 @@ The extension packages align with the host map:
 - **WC-T1:** native working constellation and contextual role/revision contract; frame-first/material-first proof.
 - **WC-T2:** actual 3D glyph/media/particle relation construction in the current Expression host.
 - **WC-T3:** shared agent staging and structured current-revision operations.
-- **WC-T4:** M0′–M5′ cross-opens, real Scenes and Palace composition.
+- **WC-T4:** cross-opens among the six instruments, real Scenes and Palace composition.
 - **WC-T5:** native Return, indexing and source-change reconciliation with host WC-W5.
 
 Host Wiki packages WC-W1/W2 and native WC-T1/T2 can develop in parallel on their agreed boundary. WC-W4 joins WC-T3; WC-W5 joins WC-T5; the whole walk closes with WC-W6. These labels qualify this extension and do not rename historical T0–T9. Ordinary Wiki performance and local construction do not wait for hosted publication or every instrument producer.

@@ -4,7 +4,6 @@ import {
   crossCutSession,
   disclosedCut,
   instrumentReading,
-  mPrimeOf,
   validateReading,
   validateSession,
 } from '../src/techne/contract.ts';
@@ -107,13 +106,13 @@ test('Anima_i inhabits the 3:3 reading and operates only the Expression reading'
   assert.equal(validateReading({ ...tb0, agency: [{ role: 'anima', m_index: 4, reading: '3:3-conjugate', instrument: 'expressions' }] }).valid, true);
 });
 
-test('Aletheia_i/Technē_i inhabit the 4:2 reading; Technē_i operates its own coordinate', () => {
+test('Aletheia_i/Technē_i inhabit Technē\'s deep reading; Technē_i operates any deep instrument', () => {
   assert.equal(validateReading({ ...tb0, agency: [{ role: 'aletheia', m_index: 2, reading: '3:3-conjugate' }] }).valid, false);
   assert.equal(validateReading({ ...tb0, agency: [{ role: 'techne', m_index: 2, reading: '3:3-conjugate' }] }).valid, false);
-  // Technē_2 operating another coordinate's instrument is refused…
-  assert.equal(validateReading({ ...tb0, agency: [{ role: 'techne', m_index: 2, reading: '4:2-deep', instrument: 'journey' }] }).valid, false);
-  // …including a deep-instrument mismatch of index, and the conjugate aperture.
+  // No deep instrument is bound to a coordinate: Technē_2 may operate the Journey…
+  assert.equal(validateReading({ ...tb0, agency: [{ role: 'techne', m_index: 2, reading: '4:2-deep', instrument: 'journey' }] }).valid, true);
   assert.equal(validateReading({ ...tb0, agency: [{ role: 'techne', m_index: 3, reading: '4:2-deep', instrument: 'journey' }] }).valid, true);
+  // …but never the conjugate aperture.
   assert.equal(validateReading({ ...tb0, agency: [{ role: 'techne', m_index: 2, instrument: 'expressions' }] }).valid, false);
 });
 
@@ -160,8 +159,4 @@ test('crossCutSession refuses a crossing onto the occupied cut, and drifted sess
 test('the reading-kind helpers mirror the canonical binding exactly', () => {
   assert.deepEqual(['project', 'canvas', 'timeline', 'journey', 'place', 'palace'].map(instrumentReading), Array(6).fill('4:2-deep'));
   assert.equal(instrumentReading('expressions'), '3:3-conjugate');
-  assert.deepEqual(
-    ['project', 'canvas', 'timeline', 'journey', 'place', 'palace', 'expressions'].map(mPrimeOf),
-    [0, 1, 2, 3, 4, 5, null],
-  );
 });

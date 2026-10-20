@@ -86,8 +86,11 @@ try {
     const binding = techne.agency.find((role) => role.role === 'techne');
     binding.instrument = 'place';
     checked = validateReading(techne);
-    assert.equal(checked.valid, false, 'Technē_2 cannot operate the M4′ instrument');
-    assert.ok(checked.errors.some((error) => error.includes("operates its own coordinate's deep instrument")));
+    assert.equal(checked.valid, true, 'no deep instrument is bound to a coordinate: Technē_2 may operate Place');
+    binding.instrument = 'expressions';
+    checked = validateReading(techne);
+    assert.equal(checked.valid, false, 'Technē_i never operates the Expression reading');
+    assert.ok(checked.errors.some((error) => error.includes('operates a deep instrument, not the Expression reading')));
   });
 
   // --- hard geography distinctions and honest identity ---------------------

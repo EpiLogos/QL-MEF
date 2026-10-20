@@ -1,5 +1,5 @@
 /**
- * The M0′ Project / Wiki / Graph instrument (L5 Technē, issue #213) — the
+ * The Project / Wiki / Graph instrument (L5 Technē, issue #213) — the
  * deep ground aperture over the ONE shared reading: a ground test, a register
  * entry, and the bounded local-whole instrument (LIST / TREE / GRAPH over a
  * single subject/selection spine, semantic zoom, exact provenance
@@ -349,7 +349,7 @@ export function ProjectGround({ session, selection, reading }: ProjectSurfacePro
   return (
     <div className="oi-techne project-ground">
       <header className="project-head">
-        <span className="project-eyebrow">M0′ Project / Wiki / Graph — ground</span>
+        <span className="project-eyebrow">Project / Wiki / Graph — ground</span>
         <span className="project-subject" title={ground.subject_ref}>{ground.subject_ref}</span>
         <span className="project-meta">
           {ground.native_owner}

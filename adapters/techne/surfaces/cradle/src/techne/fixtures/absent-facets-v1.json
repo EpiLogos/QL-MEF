@@ -66,39 +66,33 @@
       {
         "instrument": "project",
         "available": true,
-        "m_prime": 0,
         "reading": "4:2-deep"
       },
       {
         "instrument": "canvas",
         "available": true,
-        "m_prime": 1,
         "reading": "4:2-deep"
       },
       {
         "instrument": "timeline",
         "available": true,
-        "m_prime": 2,
         "reading": "4:2-deep"
       },
       {
         "instrument": "journey",
         "available": false,
-        "m_prime": 3,
         "reading": "4:2-deep",
         "reason": "no Expression scenes bound to this subject"
       },
       {
         "instrument": "place",
         "available": false,
-        "m_prime": 4,
         "reading": "4:2-deep",
         "reason": "no disclosed spatial reading"
       },
       {
         "instrument": "palace",
         "available": false,
-        "m_prime": 5,
         "reading": "4:2-deep",
         "reason": "no Expression composition available for this subject"
       },

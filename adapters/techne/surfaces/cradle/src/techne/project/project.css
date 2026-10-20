@@ -1,4 +1,4 @@
-/* M0′ Project ground instrument (L5 Technē) — scoped under the opt-in
+/* Project ground instrument (L5 Technē) — scoped under the opt-in
  * .oi-techne host scope; existing --oi-* tokens only. */
 .oi-techne.project-ground {
   display: flex;
@@ -172,7 +172,7 @@
   }
 }
 
-/* --- M0′ projections: controls, list rows, tree, graph, inspector ------- */
+/* --- Project projections: controls, list rows, tree, graph, inspector ------- */
 
 .project-controls {
   display: flex;

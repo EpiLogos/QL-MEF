@@ -196,37 +196,31 @@
       {
         "instrument": "project",
         "available": true,
-        "m_prime": 0,
         "reading": "4:2-deep"
       },
       {
         "instrument": "canvas",
         "available": true,
-        "m_prime": 1,
         "reading": "4:2-deep"
       },
       {
         "instrument": "timeline",
         "available": true,
-        "m_prime": 2,
         "reading": "4:2-deep"
       },
       {
         "instrument": "journey",
         "available": true,
-        "m_prime": 3,
         "reading": "4:2-deep"
       },
       {
         "instrument": "place",
         "available": true,
-        "m_prime": 4,
         "reading": "4:2-deep"
       },
       {
         "instrument": "palace",
         "available": true,
-        "m_prime": 5,
         "reading": "4:2-deep"
       },
       {

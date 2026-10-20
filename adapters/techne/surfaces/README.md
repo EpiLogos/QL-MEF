@@ -5,15 +5,22 @@ The seven Technē apertures of the **one M′ field with two readings**
 L5 / Para Vāk articulation lives, so surface refinement happens next to the
 contract, the Vāk grammar and the conformance fixtures.
 
-| Aperture | M′ office | Reading |
+| Aperture | Office | Reading |
 |---|---|---|
-| `project` | M0′ Project / Wiki / Knowledge Map — ground, step 0 | 4:2-deep |
-| `canvas` | M1′ Canvas / Constellation — authored spatial material | 4:2-deep |
-| `timeline` | M2′ Relation Field — movement, causation, recurrence; chronology its strongest projection | 4:2-deep |
-| `journey` | M3′ Journey / Scenes — formal mediation, the hinge into 3:3 | 4:2-deep |
-| `place` | M4′ Places / World — situation; the solar→Earth→geography→Nara frame chain | 4:2-deep |
-| `palace` | M5′ Palace / Integral Whole — articulation, memory, Return | 4:2-deep |
+| `project` | Project / Wiki / Knowledge Map — ground, step 0 | 4:2-deep |
+| `canvas` | Canvas / Constellation — authored spatial material | 4:2-deep |
+| `timeline` | Relation Field — movement, causation, recurrence; chronology its strongest projection | 4:2-deep |
+| `journey` | Journey / Scenes — formal mediation, the hinge into 3:3 | 4:2-deep |
+| `place` | Places / World — situation; the solar→Earth→geography→Nara frame chain | 4:2-deep |
+| `palace` | Palace / Integral Whole — articulation, memory, Return | 4:2-deep |
 | `expressions` | the conjugate **3:3 Expression reading** (instantiation, composition, M′ embodiment) | 3:3-conjugate |
+
+The instruments carry no M′ numbers: the owner withdrew the four-and-two reading on 19 Oct 2026 (the lock's §0), and
+`ql.techne/v1` no longer carries `m_prime`. The reading's wire names (`4:2-deep`, `3:3-conjugate`) stay because the
+cradle's copy of the contract validates them. The per-instrument agent states here still name their roles by coordinate
+(`techne_1_binding` on the Canvas, `TECHNE_3_ROLE` on the Journey, `technae_0` on the Project, the Technē_2 timeline
+fixture); O:I's cradle copy does the same. Both are renamed together under the sync law below (O-I
+`desktop/cradle/docs/world-shell/wayfinder/tickets/T-AGENCY-the-agent-world-and-the-construction-chain.md` K9).
 
 ## Layout
 

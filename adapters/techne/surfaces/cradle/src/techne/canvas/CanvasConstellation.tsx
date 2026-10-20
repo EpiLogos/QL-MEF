@@ -1,5 +1,5 @@
 /**
- * The Canvas/Constellation instrument (L5 Technē M1′, QL-MEF #214) — the
+ * The Canvas/Constellation instrument (L5 Technē, QL-MEF #214) — the
  * constructive deep instrument over the ONE shared reading. Plain SVG; no
  * three.js, no graph libraries, no second graph substrate: nodes are the
  * reading's whole and members, edges are its typed relations with the

@@ -4,7 +4,7 @@
 **Companion architecture:** `docs/L5-TECHNE-DUAL-READING-LOCK.md`.  
 **Source language:** `EPI-VAK-OPERATIVE-SYNTAX-ARCHITECTURE.md`, `VAK-OIKONOMIA-KNOWLEDGE-RETURN.md`, `TA-ONTA-FULL-FIELD-LOCK.md`.  
 **Accepted producer/consumer ground:** QL-MEF #138 · AIKit #142/#267 · Factory #217 · QL-MEF #201 · Point-Cloud-Demo #6 · O:I #65.  
-**Purpose:** make the dual 3:3 / 4:2 application reading executable through one native language stack, and make the Expression/Technē convergence campaign test that language through real performance rather than metadata conformance alone.
+**Purpose:** make the dual 3:3 / Technē application reading executable through one native language stack, and make the Expression/Technē convergence campaign test that language through real performance rather than metadata conformance alone.
 
 ---
 
@@ -19,7 +19,7 @@ The dual M′ reading gives that action two leading orientations:
     M4 / Nara / S4′ Anima leads
     living · dialogical · material · performative
 
-4:2 TECHNĒ ORIENTATION
+TECHNĒ ORIENTATION
     M5 / Epii / S5′ Aletheia leads
     investigative · articulating · critical · returning
 ```
@@ -35,7 +35,7 @@ Khora → Hen → Pleroma → Chronos → Anima → Aletheia
 The orientation says which pole is foregrounded in the human/Agent experience:
 
 - in the 3:3 Expression world, **Anima performs** a situated composition and Aletheia closes it through actuality/Return;
-- in the 4:2 Technē world, **Aletheia leads inquiry, disclosure and refinement**, while Anima remains the office through which any accepted material change is actually performed.
+- in the Technē world, **Aletheia leads inquiry, disclosure and refinement**, while Anima remains the office through which any accepted material change is actually performed.
 
 This reciprocity is essential:
 
@@ -351,28 +351,28 @@ anima.integration
 
 These are not replacements for C′. They are specialised **performing offices inside a C′-composed act**.
 
-## 10. M5 / Aletheia leads the 4:2 Technē orientation
+## 10. M5 / Aletheia leads the Technē orientation
 
-The 4:2 orientation exposes the same field as a professional/deep research world:
+The Technē orientation exposes the same field as a professional/deep research world:
 
 ```text
-M0′ Project / Wiki / Graph
-M1′ Canvas / Constellation
-M2′ Relation Field / Timeline
-M3′ Journey / Scenes
-M4′ Places / World
-M5′ Palace / integral articulation / Return
+Project / Wiki / Graph
+Canvas / Constellation
+Relation Field / Timeline
+Journey / Scenes
+Places / World
+Palace / integral articulation / Return
 ```
 
 Here Aletheia leads because the object is disclosure, investigation, differentiation, comparison and returned articulation.
 
-For coordinate `M_i′`:
+For coordinate `i`:
 
 ```text
 Aletheia_i = M_i × S5′
 ```
 
-is the operative Technē office while that deep instrument is being used. This is the reason `Technē_i` can name the Aletheia role in the instrument without creating a new Agent identity.
+is the operative Technē office while a deep instrument is being used (no instrument is an M_i′: the owner's ruling of 19 Oct 2026). This is the reason `Technē_i` can name the Aletheia role in the instrument without creating a new Agent identity.
 
 But any consequential edit discovered in Technē still returns through Anima/native Actions for actual performance. Aletheia does not acquire mutation authority merely because it understood the field.
 
@@ -382,7 +382,7 @@ The dual relation is therefore:
 3:3
 Anima leads making → Aletheia returns understanding
 
-4:2
+Technē
 Aletheia leads inquiry → Anima performs accepted differences
 ```
 
@@ -568,7 +568,7 @@ Khora → Hen → Pleroma → Chronos
 
 and return a real editable Expression artifact.
 
-### V4 — 4:2 Technē act
+### V4 — Technē act
 
 The same subject must enter one deep instrument with stable source/selection identity. Aletheia/Technē inquiry proposes a difference; if material mutation is accepted it crosses the real Anima/native Action seam rather than a UI shortcut.
 
@@ -578,7 +578,7 @@ Cross at least one subject:
 
 ```text
 Expression 3:3
-↔ Project/Wiki or M1′–M5′ Technē aperture
+↔ Project/Wiki or another Technē instrument
 ↔ Expression 3:3
 ```
 

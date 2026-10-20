@@ -1,6 +1,6 @@
 ---
 name: aletheia-m-prime-gate
-description: "METHOD: Gate 4 of Aletheia's six — check M′ instrument alignment: artifacts that target the deep instruments M0′–M5′ (the Technē reading) or their Expression reading use the instrument's published native Actions and readings, keep subject and source identity across the 3:3/4:2 relation, and never scrape a surface. Returns aligned, annotated, hold or redirect. Use for Technè work on constellations, Expression artifacts and instrument-facing code."
+description: "METHOD: Gate 4 of Aletheia's six — check M′ instrument alignment: artifacts that target Technē's deep instruments or their Expression reading use the instrument's published native Actions and readings, keep subject and source identity across the 3:3/Technē relation, and never scrape a surface. Returns aligned, annotated, hold or redirect. Use for Technè work on constellations, Expression artifacts and instrument-facing code."
 ---
 
 # Aletheia M′ gate (Gate 4)
@@ -14,7 +14,7 @@ description: "METHOD: Gate 4 of Aletheia's six — check M′ instrument alignme
 
 ## Checks
 
-1. **Right reading.** Expression work is the 3:3 reading (Anima_i); deep-instrument work is the 4:2 reading, performed as Technē_i := Aletheia_i situated in M_i′. The artifact says which, and does not collapse them (Aletheia ≠ L5-5 Technē; Instrument ≠ Agency).
+1. **Right reading.** Expression work is the 3:3 reading (Anima_i); deep-instrument work is Technē's reading, performed as Technē_i := Aletheia_i operating the instrument (no instrument is an M_i′: owner, 19 Oct 2026). The artifact says which, and does not collapse them (Aletheia ≠ L5-5 Technē; Instrument ≠ Agency).
 2. **Native Actions only.** Agent operation uses the same ActionRefs as human operation — never DOM or WebGL scraping, never a private debug handle.
 3. **Published state.** Claims about the instrument rest on what it publishes: current subject/whole, active instrument/cut, selection or viewport, source/revision, available Actions, current Expression/Scene/Place/time focus, authority and disclosure limits.
 4. **Identity.** Exact source and subject identity survive between the Expression and the deep instrument.
@@ -27,9 +27,9 @@ The source's Electron OmniPanel method-name checks (`sessions.list`, `config.loa
 
 ```text
 GATE 4 (M′): <artifact ref> -> <result>
-Reading: 3:3 Expression | 4:2 Technē (M<i>′)  Actions: <refs>  State read: <refs>
+Reading: 3:3 Expression | Technē (<instrument>)  Actions: <refs>  State read: <refs>
 ```
 
 ## Verify
 
-The verdict is verified against the instrument itself: `ql techne reading <target.json> --json` returns the reading the artifact claims (3:3 or 4:2), and every state claim cites the instrument's published disclosure or Action ref listed in the result block. A claim with no published source behind it is `hold`.
+The verdict is verified against the instrument itself: `ql techne reading <target.json> --json` returns the reading the artifact claims (`3:3-conjugate` or `4:2-deep`, the wire names), and every state claim cites the instrument's published disclosure or Action ref listed in the result block. A claim with no published source behind it is `hold`.

@@ -98,12 +98,12 @@ export interface LaneHead {
 /** The seven consumed lanes: exact heads and receipt instants as recorded on
  * the issues (receipt comments) and in the local git history (head commits). */
 export const LANES: readonly LaneHead[] = [
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/213', issue_number: 213, lane: "M0′ Project / Wiki / Graph", branch: 'techne/m0-project-graph', head: '2d4a9360a65965d392592462c11a913871292a44', head_instant: '2026-09-16T23:33:54+01:00', receipt_instant: '2026-09-16T22:35:17Z' },
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/214', issue_number: 214, lane: "M1′ Canvas / Constellation", branch: 'techne/m1-canvas', head: 'aa920e65284aee66b64417254087020d9b087fa4', head_instant: '2026-09-16T23:37:18+01:00', receipt_instant: '2026-09-16T22:38:20Z' },
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/215', issue_number: 215, lane: "M2′ Relation Field / Timeline", branch: 'techne/m2-relation-field', head: '374bf3197a59e42c958b078b913bcdee79cd9584', head_instant: '2026-09-16T23:43:51+01:00', receipt_instant: '2026-09-16T22:45:01Z' },
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/216', issue_number: 216, lane: "M3′ Journey / Scenes", branch: 'techne/m3-journey-scenes', head: '9267e0856de78f3e2291ff04ee66dd7686314b31', head_instant: '2026-09-16T23:44:31+01:00', receipt_instant: '2026-09-16T22:46:13Z' },
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/217', issue_number: 217, lane: "M4′ World / Places", branch: 'techne/m4-world-places', head: '239bc5b94ea87c8ee0fff98f7f57536e0b693018', head_instant: '2026-09-16T23:27:10+01:00', receipt_instant: '2026-09-16T22:27:59Z' },
-  { issue_ref: 'github:EpiLogos/QL-MEF/issues/218', issue_number: 218, lane: "M5′ Palace / Integral Whole", branch: 'techne/m5-palace', head: 'bd891081324a68a21c542126bdbfbefa706671ca', head_instant: '2026-09-16T23:38:52+01:00', receipt_instant: '2026-09-16T22:40:50Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/213', issue_number: 213, lane: "Project / Wiki / Graph", branch: 'techne/m0-project-graph', head: '2d4a9360a65965d392592462c11a913871292a44', head_instant: '2026-09-16T23:33:54+01:00', receipt_instant: '2026-09-16T22:35:17Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/214', issue_number: 214, lane: "Canvas / Constellation", branch: 'techne/m1-canvas', head: 'aa920e65284aee66b64417254087020d9b087fa4', head_instant: '2026-09-16T23:37:18+01:00', receipt_instant: '2026-09-16T22:38:20Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/215', issue_number: 215, lane: "Relation Field / Timeline", branch: 'techne/m2-relation-field', head: '374bf3197a59e42c958b078b913bcdee79cd9584', head_instant: '2026-09-16T23:43:51+01:00', receipt_instant: '2026-09-16T22:45:01Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/216', issue_number: 216, lane: "Journey / Scenes", branch: 'techne/m3-journey-scenes', head: '9267e0856de78f3e2291ff04ee66dd7686314b31', head_instant: '2026-09-16T23:44:31+01:00', receipt_instant: '2026-09-16T22:46:13Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/217', issue_number: 217, lane: "World / Places", branch: 'techne/m4-world-places', head: '239bc5b94ea87c8ee0fff98f7f57536e0b693018', head_instant: '2026-09-16T23:27:10+01:00', receipt_instant: '2026-09-16T22:27:59Z' },
+  { issue_ref: 'github:EpiLogos/QL-MEF/issues/218', issue_number: 218, lane: "Palace / Integral Whole", branch: 'techne/m5-palace', head: 'bd891081324a68a21c542126bdbfbefa706671ca', head_instant: '2026-09-16T23:38:52+01:00', receipt_instant: '2026-09-16T22:40:50Z' },
   { issue_ref: 'github:EpiLogos/QL-MEF/issues/219', issue_number: 219, lane: '3:3 Expression / Agency / desktop cross-cut', branch: 'techne/x3-expression-agency', head: '2ae7537341b76c6b2914c3e19a051a52815c9230', head_instant: '2026-09-16T23:37:55+01:00', receipt_instant: '2026-09-16T22:39:21Z' },
 ];
 
@@ -482,12 +482,12 @@ function groundAgency(): AgencyRole[] {
 
 function groundDisclosure(): TechneDisclosure {
   const instruments: TechneDisclosure['instruments'] = [
-    { instrument: 'project', available: true, m_prime: 0, reading: '4:2-deep' },
-    { instrument: 'canvas', available: true, m_prime: 1, reading: '4:2-deep' },
-    { instrument: 'timeline', available: true, m_prime: 2, reading: '4:2-deep' },
-    { instrument: 'journey', available: true, m_prime: 3, reading: '4:2-deep' },
-    { instrument: 'place', available: true, m_prime: 4, reading: '4:2-deep' },
-    { instrument: 'palace', available: true, m_prime: 5, reading: '4:2-deep' },
+    { instrument: 'project', available: true, reading: '4:2-deep' },
+    { instrument: 'canvas', available: true, reading: '4:2-deep' },
+    { instrument: 'timeline', available: true, reading: '4:2-deep' },
+    { instrument: 'journey', available: true, reading: '4:2-deep' },
+    { instrument: 'place', available: true, reading: '4:2-deep' },
+    { instrument: 'palace', available: true, reading: '4:2-deep' },
     { instrument: 'expressions', available: true, reading: '3:3-conjugate' },
   ];
   return {
@@ -556,7 +556,7 @@ export function composeCentralGroundReading(
       shape_ref: 'ql:shape:1.0.0:6x6:direct-conjugate',
       lens_ref: 'mef:lens:L5@1',
       context_frame_ref: 'mef:context-frame:CF4',
-      refraction_summary: 'The one M′ field read through the L5 office: the six deep instruments M0′–M5′ and the conjugate 3:3 Expression reading over the same converged ground.',
+      refraction_summary: 'The field read through the L5 office: Technē\'s six deep instruments and the 3:3 Expression reading over the same converged ground.',
       vak_source_ref: 'ql:vak:source:daa660cbc1b8c5da83828698665a753852cb0287',
       return_ref: `${QL_REPO}:techne/tb0-surfaces-port@${head.slice(0, 7)}`,
       warrant: {

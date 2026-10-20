@@ -7,16 +7,16 @@
     "OpaqueRef": {"type": "string", "minLength": 1, "description": "Native-owner ref carried verbatim. Adapters must not translate, re-key or shorten it."},
     "NullableRef": {"type": ["string", "null"], "minLength": 1, "description": "Optional native-owner ref: present, absent, or explicitly null — never rewritten."},
     "ContractTag": {"type": "string", "const": "ql.techne/v1"},
-    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"], "description": "Amended 2026-09-16 (owner-ratified): the six 4:2 deep instruments bind M0-prime through M5-prime (project, canvas, timeline, journey, place, palace); expressions is the conjugate 3:3 Expression reading, not a deep instrument. TB0 (2026-09-16) pins these as the canonical contract spellings: Research Canvas transport vocabulary (Story, Place/Map, Projects) maps onto them through the adapter's alias mapping, never by re-keying native refs."},
+    "Instrument": {"type": "string", "enum": ["project", "canvas", "timeline", "journey", "place", "palace", "expressions"], "description": "Technē's six deep instruments (project, canvas, timeline, journey, place, palace), named by their work with no M-prime number (the four-and-two binding to M0-prime through M5-prime was withdrawn by the owner, 19 Oct 2026); expressions is the 3:3 Expression reading, not a deep instrument. TB0 (2026-09-16) pins these as the canonical contract spellings: Research Canvas transport vocabulary (Story, Place/Map, Projects) maps onto them through the adapter's alias mapping, never by re-keying native refs."},
     "AgencyRole": {
       "type": "object",
-      "description": "TB0 situated-Agency role floor (2026-09-16). Structured state from which ordinary Actuation/AIKit machinery constructs a situated Agency: Guardian_i stewardship, Anima_i = M_i x S4-prime expressive role, Aletheia_i = M_i x S5-prime disclosure/Return role, and Technē_i := Aletheia_i while operating the M_i-prime deep instrument. These are role bindings, never new canonical Agent identities; Guardian_i remains the steward and is not renamed.",
+      "description": "TB0 situated-Agency role floor (2026-09-16). Structured state from which ordinary Actuation/AIKit machinery constructs a situated Agency: Guardian_i stewardship, Anima_i = M_i x S4-prime expressive role, Aletheia_i = M_i x S5-prime disclosure/Return role, and Technē_i := Aletheia_i while operating one of Technē's deep instruments (no instrument is bound to the coordinate). These are role bindings, never new canonical Agent identities; Guardian_i remains the steward and is not renamed.",
       "required": ["role", "m_index"],
       "properties": {
         "role": {"type": "string", "enum": ["guardian", "anima", "aletheia", "techne"]},
         "m_index": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The coordinate i this situated role inhabits."},
-        "reading": {"$ref": "#/$defs/TechneReadingKind", "description": "Anima binds the 3:3 conjugate reading; Aletheia/Technē bind the 4:2 deep reading; Guardian stewardship spans both and may leave this absent."},
-        "instrument": {"$ref": "#/$defs/Instrument", "description": "The instrument this role operates: the M_i-prime deep instrument for Technē; the Expression reading for Anima."},
+        "reading": {"$ref": "#/$defs/TechneReadingKind", "description": "Anima binds the 3:3 conjugate reading; Aletheia/Technē bind Technē's deep reading; Guardian stewardship spans both and may leave this absent."},
+        "instrument": {"$ref": "#/$defs/Instrument", "description": "The instrument this role operates: a deep instrument for Technē; the Expression reading for Anima."},
         "guardian_ref": {"$ref": "#/$defs/NullableRef", "description": "The canonical Guardian identity anchoring this situated role (stewardship context). Present does not mean identical: Guardian_i != Anima_i != Technē_i."},
         "agent_session_ref": {"$ref": "#/$defs/NullableRef", "description": "The existing native AgentSession the Agency is situated in; never a new runtime."},
         "profile_ref": {"$ref": "#/$defs/NullableRef", "description": "The AIKit Profile the Agency is constructed through."},
@@ -33,7 +33,7 @@
     "NullableLensRef": {"oneOf": [{"$ref": "#/$defs/LensRef"}, {"type": "null"}]},
     "NullableSublensRef": {"oneOf": [{"$ref": "#/$defs/SublensRef"}, {"type": "null"}]},
     "QlResultClass": {"type": "string", "enum": ["canonical", "deterministic", "semantic-stochastic", "research"]},
-    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"], "description": "Which reading of the one M-prime field this aperture carries. Crossing changes the mode of disclosure and available operations, never the subject."},
+    "TechneReadingKind": {"type": "string", "enum": ["4:2-deep", "3:3-conjugate"], "description": "Which reading this aperture carries: Technē's deep reading (wire name 4:2-deep, kept for compatibility) or the 3:3 Expression reading. Crossing changes the mode of disclosure and available operations, never the subject."},
     "ReadingSnapshot": {
       "type": "object",
       "description": "Shared snapshot/revision basis for one coherent cross-view reading.",
@@ -341,7 +341,6 @@
               "instrument": {"$ref": "#/$defs/Instrument"},
               "available": {"type": "boolean"},
               "reason": {"type": "string", "minLength": 1},
-              "m_prime": {"type": "integer", "minimum": 0, "maximum": 5, "description": "The M-prime office this instrument is the Techne face of. Absent on the conjugate 3:3 reading."},
               "reading": {"$ref": "#/$defs/TechneReadingKind"}
             },
             "additionalProperties": false

@@ -1,5 +1,5 @@
 /**
- * The Canvas direct-manipulation model (L5 Technē M1′, QL-MEF #214) — the
+ * The Canvas direct-manipulation model (L5 Technē, QL-MEF #214) — the
  * PURE geometry of mature canvas interaction: lasso/multi-select, group
  * moves, align, distribute, snap-with-guides, bounding boxes, and semantic
  * zoom thresholds. No React, no DOM, no store: the surface hands this model

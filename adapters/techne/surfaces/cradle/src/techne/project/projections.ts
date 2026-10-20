@@ -1,5 +1,5 @@
 /**
- * The M0′ Project / Wiki / Graph projections (L5 Technē, issue #213) — the
+ * The Project / Wiki / Graph projections (L5 Technē, issue #213) — the
  * ONE subject/selection spine over the reading's bounded whole, projected as
  * LIST / TREE / GRAPH. Modelled on AIKit's bounded relation grammar
  * (`RelationQuery` → one `KnowledgeRelationView` shared by the List/Tree/
@@ -236,7 +236,7 @@ export function projectSelectionRef(subjectRef: string, focusRef: string): strin
   return `ql.techne:selection:${subjectRef}:${focusRef}`;
 }
 
-/** A refocused selection on the SAME subject/reading basis: the M0′ click
+/** A refocused selection on the SAME subject/reading basis: the Project click
  * model. Carries the current selection's source basis over; validates before
  * returning, so drift is refused at the model, not rendered. */
 export function focusSelection(reading: TechneReading, selection: DisclosureSelection, focusRef: string): DisclosureSelection {
