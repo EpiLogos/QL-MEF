@@ -3,8 +3,8 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
-    "m2": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
-    "m3": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70"
+    "m2": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2",
+    "m3": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -118,6 +118,20 @@
       "sha256": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70",
       "accepted_at_revision": "958ef92597fb23e0e1034a5c13d8141fcef3d711",
       "reason": "The controlled M3 basis names the retained historical proof instead of the moving active proof, ending the loop in which each successor staled the basis and the basis staled the proof. Full M3 acceptance executed on Linux CI run 39294404146 at this head."
+    },
+    {
+      "engine": "m2",
+      "previous_sha256": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
+      "sha256": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2",
+      "accepted_at_revision": "847c0ec7b12ab436d6086296466913e02d3716d1",
+      "reason": "S/S′ migration moved the registry to c211a781 (QL-MEF bimba/s-sprime-current); fresh complete Linux acceptance, kernel-m2 run 39424640258 at 847c0ec"
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70",
+      "sha256": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c",
+      "accepted_at_revision": "847c0ec7b12ab436d6086296466913e02d3716d1",
+      "reason": "S/S′ migration moved the registry to c211a781 (QL-MEF bimba/s-sprime-current); fresh complete Linux acceptance, m3-engine run 39424644112 at 847c0ec"
     }
   ]
 }
