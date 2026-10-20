@@ -72,7 +72,7 @@ class M3SourceParityTests(unittest.TestCase):
         self.assertEqual(self.original["source_revision"], self.registry["source_revision"])
         encoded = json.dumps(self.content, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
         self.assertEqual(hashlib.sha256(encoded).hexdigest(), self.original["source_revision"])
-        self.assertEqual((len(self.content["nodes"]), len(self.content["relations"])), (2149, 11929))
+        self.assertEqual((len(self.content["nodes"]), len(self.content["relations"])), (2149, 11837))
         self.assertEqual((len(self.raw_nodes), len(self.raw_edges)), (1004, 5071))
         self.assertEqual(m3.lock_for(self.projection, self.audit), self.lock)
         self.assertEqual(m3.project(self.registry, self.read), self.projection)

@@ -764,7 +764,7 @@ mod sky_source_tests {
 
     fn current_world_sky() -> Value {
         serde_json::from_str(include_str!(
-            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
         ))
         .unwrap()
     }
@@ -843,7 +843,7 @@ mod sky_source_tests {
         assert_eq!(q["native_sun_route"]["chakra_index"], 7);
         // The same occasion bound to the previous registry is stale.
         let previous: Value = serde_json::from_str(include_str!(
-            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json"
+            "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
         ))
         .unwrap();
         assert!(source_binding_qualification(&previous, true).is_err());

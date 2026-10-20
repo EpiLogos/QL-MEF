@@ -1,8 +1,8 @@
 {
   "schema": "ql.m-ledger-source-requalification/v1",
-  "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
-  "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
-  "ledger_revision": "d8fda849739c80d346e899eaa20614fbb01bc21b2c55da6d1244ce65e1fc839d",
+  "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+  "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+  "ledger_revision": "99a08c474ece405817b5308d0438b862a3f6ca481db7cda1008081e62cf79ece",
   "historical": {
     "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
     "ledger_sha256": "55e13ec985f0141172fd7dc41f7e3badffa21e09cb267a6750484fbea0701128",
@@ -182,11 +182,11 @@
     ]
   },
   "current_input_locks": {
-    "fixtures/kernel/m-tree-v1.json": "0ad64001e7db4b4dbe18f12da27d3cd33cf89bb0354b62e6ffc569d5743de3e7",
-    "c/registry/m-tree-source-v1.json": "7ec78f540f4ba0ceef9bac7634c476fee72ea1fe92f7d98512c7cbef998fec54",
-    "c/src/m_tree_data.inc": "d7f674740a68afee2e872a3b8f8ec9baa1de9161df7a30a6cd2ee23ff0526623",
+    "fixtures/kernel/m-tree-v1.json": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82",
+    "c/registry/m-tree-source-v1.json": "0fb8dd4b5c79c301f7a37fa6117d4573e52d6763e4e1bdab71a9e3b332767080",
+    "c/src/m_tree_data.inc": "a16b4511e88d71ffaed57c66c55117d0221704df11160fb9263bb74581c6124e",
     "crates/ql-mef/src/m_tree.rs": "c1b65a51bf675656f9b38a3fd66fa685b3fd9a20a696b765ac1aeee5960fb09a",
-    "crates/ql-mef/tests/native_m_tree.rs": "184b0efaaa9b7badc76fa5e5e138281fabb44c2d2a90bc813e1e273c13d2292d",
+    "crates/ql-mef/tests/native_m_tree.rs": "d574a0590226c85877e4335a5fb846666720df13bb624c7e6aaa829a1d2fa7b4",
     "c/src/m_tree.c": "51cdf88f9869134dccf9accd5579904efe72846786e416bb194d0ec9dbdab1bc",
     "c/src/m1.c": "01014c73b3b39bf4b6cf0ed12c70ee76d8b478e628d1451b6b3e28c0d5f4685e",
     "c/src/m1_state.c": "a7d949e543e52b4e2a7191eb662a0b1af3a793138946c661f8e7a4076955754e",
@@ -204,21 +204,21 @@
     "scripts/check-m1-literals.py": "bfa9a11b752e37fd84b278d7444cef55ef3f2ba050e409f99f4374e65520a91d",
     "scripts/test-m1-engine.sh": "b89bee477fc37907e5017e2d2b6802392c3a879ccac37faaba15c1013b37aab6",
     "scripts/m3-source-parity.py": "e87093bd6253be6c2a0395be083e447eb2d66f07b77db1814f7179178f762ec4",
-    "fixtures/kernel/m3-source-bindings-v1.json": "13cce9fb302f20dab397179b94d2854da56eece9e7d84aa0585951588efe5aff",
+    "fixtures/kernel/m3-source-bindings-v1.json": "0a071bbb9bb34ae038a095d82443172c5c6d8dd17d655712da396d6ecbeb6312",
     "vendor/epi-kernel/corrections/M3-COIN-1.patch": "699d75fe131a515b6b5984da47b6eedf792d564570c2e9965f7093c9ab152c14"
   },
   "replays": [
     {
       "path": "fixtures/kernel/source-requalification/m1-native-c-replay.log",
-      "sha256": "7facc98c52077975f663a53464567f1448dae10289e6325a338dd5375bdaacb3"
+      "sha256": "26835f7d3e4e8ba8c3f129c7133472436695de718f63c23a6396135bc925adb6"
     },
     {
       "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
-      "sha256": "b68d1c0d6dc564957da0957a377b4f2c448b801173566fec03b1a0225f24223c"
+      "sha256": "b86dfc8571495036abbe51115eb22862a955a9a2fd7c756aa749586eeceeeb78"
     },
     {
       "path": "fixtures/kernel/source-requalification/m3-source-audit.json",
-      "sha256": "0570b09a897ea5f2fe01769a882829f7d4ee7b0e8f46117c4ccf48ff98c05929"
+      "sha256": "48ef5c4b8414fbc354d5dc70ff95d9e1ed69438321e32697e4f84c58c561da64"
     }
   ],
   "evidence_mapping": {
@@ -235,20 +235,7 @@
     "fixtures/kernel/m2-finite-proof-v1.json": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
     "fixtures/kernel/m3-finite-proof-v1.json": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
   },
-  "successor_verticals": {
-    "m2": {
-      "proof": "fixtures/kernel/m2-finite-proof-v1.json",
-      "proof_sha256": "555a21dd2e10a9a1bc6f683e2addd64852ea74437df83b15a97f09b4eb418501",
-      "historical_base_sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
-      "accepted_at_revision": "15363786040315c293d9b9b3aec3e133a17c08b2"
-    },
-    "m3": {
-      "proof": "fixtures/kernel/m3-finite-proof-v1.json",
-      "proof_sha256": "4abdda98d9275ec71ee9065ecc71b48a94d32ccff4f111c7d8fccd05f9eb6a70",
-      "historical_base_sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
-      "accepted_at_revision": "958ef92597fb23e0e1034a5c13d8141fcef3d711"
-    }
-  },
+  "successor_verticals": {},
   "standing": "current source/application revalidation; numerical readiness and parity are claimed only where an engine's published successor proof at the current registry backs them (successor_verticals)",
   "not_claimed": [
     "current whole M1/M2/M3 numerical readiness from this bootstrap",

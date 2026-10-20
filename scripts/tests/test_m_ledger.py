@@ -32,7 +32,7 @@ class MLedgerTests(unittest.TestCase):
         cls.native = cls.world / "native.jsonl"
         with cls.native.open("w") as out:
             result = subprocess.run([str(probe)], stdout=out, stderr=subprocess.PIPE, check=True, text=True)
-        if "72127 checks passed" not in result.stderr:  # 71460 at 1883 nodes; +667 for the 8 Matrix 3 cells and their 119 relations
+        if "71667 checks passed" not in result.stderr:  # 72127 at 11011 relations; 71667 after the S/S′ migration replaced 120 M5-2/M5-4 edges with 28
             raise AssertionError(result.stderr)
         cls.lines = cls.native.read_text().splitlines()
 
