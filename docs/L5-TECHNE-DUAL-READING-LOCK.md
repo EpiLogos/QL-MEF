@@ -50,7 +50,7 @@ M0′ M1′ M2′ M3′ M4′ M5′
 
 No M6 or M7 is introduced. The non-numbered 0/1 parent remains the containing Epi relation.
 
-**Withdrawn by the owner, 19 Oct 2026.** This lock first read Technē as a 4:2 cut whose six instruments were M0′–M5′: M1′–M4′ in the foreground, M0′ and M5′ as poles. That reading does not hold what the coordinate system says of those layers. The M′ layers are read from the seeds (Epi-Logos-C-Experiments `Idea/Bimba/Seeds/M/M'-SYSTEM-SPEC.md`): M1-2-3′ sounds and keeps time; M4/5/0′ knows and acts (O:I `docs/dlw/DLW.md` §25). The instruments keep their names, their offices (Part III) and every law below that never depended on the numbering.
+**Withdrawn by the owner, 19 Oct 2026.** This lock first read Technē as a 4:2 cut whose six instruments were M0′–M5′: M1′–M4′ in the foreground, M0′ and M5′ as poles. That reading does not hold what the coordinate system says of those layers. The M′ layers are the app layers of the six M subsystems, held in O:I (the cradle and the DLW, M5-3): Live holds M1′–M3′ (the torus, the synth and the sky, the codon clock and the deck), Expressions is M4′ (of M4 Nara), Technē is M5′ (of M5 Epii), and M0′ is the graph systems and the planetary continuity between local and collective (owner, 20 Oct 2026; the Bimba map's M′ nodes, `migration/bimba-map/2026-10-20-s-sprime-current.cypher`). Technē is one of those layers, so its instruments cannot also be M0′–M5′. The models agents use (language models, Kev) are AIKit (S2) capabilities; the six Epi-Logos agents at M5-4.0–M5-4.5 use them, not exclusively. The instruments keep their names, their offices (Part III) and every law below that never depended on the numbering.
 
 ---
 
