@@ -3,7 +3,7 @@
   "standing": "current-source-qualified controlled lifecycle/transport input; no expected output or live occasion claim",
   "fixture": {
     "path": "fixtures/kernel/m3-parent-consumer-current-v1.json",
-    "sha256": "196e78da55595615acac700f9a3a17cae7018abb335371a7a5aefb555cf69b21"
+    "sha256": "1df9aa2e054d48ce5c2c9ae52e38ada52068b61ce55e7c1b665ae3fb486c9419"
   },
   "historical": {
     "fixture": "fixtures/kernel/m3-parent-consumer-v1.json",
@@ -14,18 +14,18 @@
     "standing": "retained historical acceptance; actual refusal negative under the current source owner"
   },
   "current_source": {
-    "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
-    "registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
-    "m3_catalogue_revision": "0071f1b26868aa9b8d5148e0a508cbd3b530ac37c77c7c86149b658199b8bff2"
+    "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+    "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+    "m3_catalogue_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4"
   },
   "input_locks": [
     {
       "path": "fixtures/kernel/m-tree-v1.json",
-      "sha256": "0ad64001e7db4b4dbe18f12da27d3cd33cf89bb0354b62e6ffc569d5743de3e7"
+      "sha256": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82"
     },
     {
       "path": "fixtures/kernel/m3-domain-v1.json",
-      "sha256": "9386015d0479513fe10befdb326a0605c1438f817454aa42ade165f69512e482"
+      "sha256": "d6e989614f95f3968b19509de4316947d7356892b94a16f997a7b180bbf26023"
     },
     {
       "path": "scripts/refresh-m3-parent-consumer.py",
