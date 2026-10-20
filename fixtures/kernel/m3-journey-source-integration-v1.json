@@ -6,13 +6,13 @@
     "incoming": "74dc6dc066fb5d9854657305045e3a786956b11a"
   },
   "current_source": {
-    "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
-    "numerical_registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
-    "coordinate_registry_revision": "3135754e492f77ec68e7aae4669ad9b986ad0bc31642b5d7aae4f3f4ab5f838a",
+    "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+    "numerical_registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+    "coordinate_registry_revision": "64a827ef8a54933d20b4db9c1d458f9d736c86cef28a5797d955ddc1a89403d9",
     "ledger": {
       "path": "fixtures/kernel/m-ledger-v1.json",
-      "sha256": "4e785a5ce3319088b94bcde4ff634aaff98e109ef07784b246294ef4489164dd",
-      "revision": "d8fda849739c80d346e899eaa20614fbb01bc21b2c55da6d1244ce65e1fc839d",
+      "sha256": "f315939eb892b1cb40c42cf10a95bbbd230130e1e899330dea70a7b593fe75f6",
+      "revision": "99a08c474ece405817b5308d0438b862a3f6ca481db7cda1008081e62cf79ece",
       "standing": "byte-identical current131 decisions retained; broad readiness unassessed except engines with a published successor proof at the current registry"
     }
   },
@@ -323,6 +323,21 @@
         }
       },
       "git_ref": "git:db5c5325a5161c1113c4651d99ff5992b9b7c270:fixtures/kernel/m3-journey-source-integration-v1.json",
+      "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
+    },
+    {
+      "source": {
+        "source_revision": "4afb7c6de1e0a5b0bca26a541ab7b5a655b624e2f476bd3cc70306eba88661a4",
+        "numerical_registry_revision": "83278b28683694cdfe0bb14d6e9c5bcbee96ded95aa63fe2bebf20e7068065f8",
+        "coordinate_registry_revision": "3135754e492f77ec68e7aae4669ad9b986ad0bc31642b5d7aae4f3f4ab5f838a",
+        "ledger": {
+          "path": "fixtures/kernel/m-ledger-v1.json",
+          "sha256": "4e785a5ce3319088b94bcde4ff634aaff98e109ef07784b246294ef4489164dd",
+          "revision": "d8fda849739c80d346e899eaa20614fbb01bc21b2c55da6d1244ce65e1fc839d",
+          "standing": "byte-identical current131 decisions retained; broad readiness unassessed except engines with a published successor proof at the current registry"
+        }
+      },
+      "git_ref": "git:77017b2a14aab27e3c1631c361fa1672a300a609:fixtures/kernel/m3-journey-source-integration-v1.json",
       "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
     }
   ],

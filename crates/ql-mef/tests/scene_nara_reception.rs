@@ -72,7 +72,7 @@ fn constitution(subject: &str, scale: f64) -> PersonalConstitution {
 
 fn open(subject: &str, scale: f64) -> SceneInstrument {
     let sky: serde_json::Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
     ))
     .unwrap();
     let request: ql_mef::scene::WorldRequest = serde_json::from_value(json!({

@@ -32,8 +32,8 @@ class MTreeTests(unittest.TestCase):
         # Counts of the map read the committed extract came from (one record per
         # node and relation; relation types in the map's own spelling).
         self.assertEqual(len(m["nodes"]), 1891)
-        self.assertEqual(len(m["relations"]), 11011)
-        self.assertEqual(len(m["records"]), 12901)
+        self.assertEqual(len(m["relations"]), 10919)
+        self.assertEqual(len(m["records"]), 12809)
         self.assertEqual(len(m["alternate_notation_groups"]), 0)
         by_ref = {n["source_ref"]: n for n in m["nodes"]}
         self.assertEqual([by_ref[f"#{i}"]["subtree_count"] for i in range(6)], [108, 43, 598, 1004, 106, 31])
@@ -47,7 +47,7 @@ class MTreeTests(unittest.TestCase):
         self.assertEqual(sum(r["cross_m"] for r in m["relations"]), 1352)
         # Edges to nodes outside the M tree (S/L/C lattices, primes, "#N" meta).
         outside = [r for r in m["relations"] if r["from_id"] is None or r["to_id"] is None]
-        self.assertEqual(len(outside), 975)
+        self.assertEqual(len(outside), 883)
         self.assertTrue(all(r["from_ref"].startswith("bimba:") or r["to_ref"].startswith("bimba:") for r in outside))
 
     def test_deeper_asymmetric_extension_preserves_existing_ids(self):

@@ -6,7 +6,7 @@ use std::process::{Command, Stdio};
 #[test]
 fn a_dated_sky_composes_through_the_installed_command() {
     let sky: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
     ))
     .unwrap();
     let request = json!({"schema":"ql.scene-request/v1","sky_snapshot":sky,"tick12":3,"cycle":7});
@@ -38,6 +38,7 @@ fn a_dated_sky_composes_through_the_installed_command() {
     for historic in [
         &include_bytes!("../../../fixtures/kernel/sky-snapshot-2026-09-28-v1.json")[..],
         &include_bytes!("../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v2.json")[..],
+        &include_bytes!("../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json")[..],
     ] {
         let old_sky: Value = serde_json::from_slice(historic).unwrap();
         let stale = native_scene(
@@ -74,7 +75,7 @@ fn native_scene(operation: &str, request: &Value) -> std::process::Output {
 #[test]
 fn a_retained_occasion_builds_a_world_without_rewriting_the_sky() {
     let sky: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
     ))
     .unwrap();
     let request = json!({"schema":"ql.scene-world-request/v1",

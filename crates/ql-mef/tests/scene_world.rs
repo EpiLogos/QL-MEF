@@ -6,7 +6,7 @@ use serde_json::{Value, json};
 
 fn request() -> WorldRequest {
     let sky: Value = serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v3.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
     ))
     .unwrap();
     serde_json::from_value(json!({"schema":scene::WORLD_REQUEST,
