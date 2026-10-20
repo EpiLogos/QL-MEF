@@ -15,53 +15,1412 @@
     },
     "deep_instrument": {
       "coordinate": "M1'",
-      "identity": "epi.deep.m1"
+      "identity": "epi.deep.m1",
+      "live_map_node": {
+        "coordinate": "M1'",
+        "name": "Paramasiva'",
+        "description": "The app layer of M1 Paramaśiva: generation. The torus is the only source of sound; Live plays it with M2′ and M3′.",
+        "application_layer": "The torus: generation",
+        "mode": "Live",
+        "promotion_source": "owner ruling 2026-10-20 (claude-code:agency-ground)"
+      }
     }
   },
   "coordinate_tree": {
     "M1-0": {
-      "name": "Bimba / Original",
-      "role": "self-identity / invariant source-form"
+      "name": "Bimba - Original Aspect",
+      "role": "Pole 0 of the (0/1) non-dual binary: pure Prakāśa, unmanifest potential, the unchanging ground. Exerts the pull that draws Pratibimba; holographic tether to the source. An implicate position (one of the two loops), not an explicate side.",
+      "placement": "P1-F0",
+      "historical_name": "Bimba / Original",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_anuttara_inheritance",
+            "extract": "M1-0's ground is the gift it receives: the (0/1) handed up from Anuttara's Svabhava terminus, the Brimming Void's first crystallisation.",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_present_absence_inscribed",
+            "extract": "A second material reading of the Bimba, from File 1's definitional derivation: the 0/1 as present-absence held in in-scription.",
+            "empty": false
+          },
+          {
+            "key": "q_1_the_bimba_pole_itself",
+            "extract": "What M1-0 IS: the Bimba — the Original pole of the (0/1) Non-Dual Binary, pure unmanifest potential (0) as the unchanging self-aware ground.",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_gravitational_pull",
+            "extract": "M1-0 operates by attraction without action.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_unmoving_reference_axis",
+            "extract": "Structurally M1-0 is the fixed axis the system measures from — the ordered tetralemmic ground where +/−0 is held equal to (0/1) while −0, +0, 0, 00 remain latent within that primary equivalence.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_holographic_tether",
+            "extract": "M1-0's telos is to keep the whole connected to its source.",
+            "empty": false
+          },
+          {
+            "key": "q_4_immutable_subject_position",
+            "extract": "The Bimba's deepest teleological ground in File 1's terms: it is the immutable subject-position `0/Ø/X` that all determination presupposes.",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_handed_to_reflection",
+            "extract": "M1-0's synthesis is its own self-giving: the Original completes by casting its reflection.",
+            "empty": false
+          }
+        ]
+      }
     },
     "M1-1": {
-      "name": "Pratibimba / Reflection",
-      "role": "self-inversion / source-traceable difference"
+      "name": "Pratibimba - Reflection Aspect",
+      "role": "Pole 1 of the binary: active Vimarśa, reflective self-awareness. Answers Bimba's pull; Reflective Distinction 0 =/≠ 1 is Spanda's first beat; the 1/0 return-switch is pratyabhijñā. The first explicate side.",
+      "placement": "P1-S1",
+      "historical_name": "Pratibimba / Reflection",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_the_originals_call",
+            "extract": "M1-1's ground is the pull it answers: Bimba's (0) sounding the note that Pratibimba returns.",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_pratyabhijna_return_switch",
+            "extract": "A second material reading of the Pratibimba, from File 1's return-switch: the 1/0 as recognition (pratyābhijñā), not the gaining of a new object.",
+            "empty": false
+          },
+          {
+            "key": "q_1_the_vimarsa_pole_itself",
+            "extract": "What M1-1 IS: the Pratibimba — the Reflective pole of the (0/1) Non-Dual Binary, active reflective self-awareness (1), the dynamic Vimarśa by which consciousness recognises its own Light.",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_opposite_traversal_diverges",
+            "extract": "A second energetic reading of the Pratibimba: its how is divergence — the traversal that tends toward the infinite.",
+            "empty": false
+          },
+          {
+            "key": "q_2_recognition_as_response",
+            "extract": "M1-1 operates by answering.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_one_is_all_fold",
+            "extract": "Structurally M1-1 is the holographic fold — the principle 'One is All': the seed of Unity (1) containing, in reflection, the image of every possible manifestation.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_making_the_light_knowable",
+            "extract": "M1-1's telos is recognition itself — to be the act through which the unmanifest Prakāśa becomes self-aware, the Light that knows it is Light.",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_heartbeat_handed_on",
+            "extract": "M1-1's synthesis is the pulse it generates: Bimba and Pratibimba, held in Reflective Distinction (0 =/≠ 1), tremble — and the tremble is Spanda's first beat.",
+            "empty": false
+          }
+        ]
+      }
     },
     "M1-2": {
-      "name": "Ananda / harmonic relational field",
+      "name": "Ananda",
+      "role": "Ananda, the rhythmic heart: six archetypal vortex matrices plus their six digital-root reflections (twelve), a closed loop; the static picture of Spanda's pulse; 3-6-9 spirit axis; four explicate matrices (1–4) and two implicate (0, 5).",
+      "placement": "P1-S2",
+      "historical_name": "Ananda / harmonic relational field",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_harmonic_plenum",
+            "extract": "M1-2's ground is the dyad already standing: Bimba and Pratibimba sealed, their Reflective Distinction now a heartbeat needing a field to beat coherently within.",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_twelve_matrix_vortex",
+            "extract": "What M1-2 IS: Ananda — the rhythmic heart of Paramasiva, a self-contained fractal system of vortex mathematics, six core archetypal matrices plus their six digital-root reflections, twelve in all…",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_copula_counted_as_four_plus_two",
+            "extract": "A second energetic reading of Ananda, from File 1's derivation of the 4+2 from the copula: bliss as the count the copular act generates.",
+            "empty": false
+          },
+          {
+            "key": "q_2_structuring_the_pulse",
+            "extract": "M1-2 operates by giving rhythm its harmony.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_four_plus_two_in_miniature",
+            "extract": "Structurally M1-2 is the matheme reflected in itself: a 4+2 within the 4+2.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_channels_for_coherent_bliss",
+            "extract": "M1-2's telos is to make vibration blissful rather than chaotic — to provide the bounded-yet-infinite toroidal field within which Spanda can pulse coherently, 'the harmonic structuring arising from…",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_blueprint_for_the_engine",
+            "extract": "M1-2's synthesis is the complete harmonic blueprint, ready to be played: twelve matrices closed into one self-renewing loop, the 3-6-9 axis stable, Matrix 5 holding the (0/1) ± (1/0) paradox that is…",
+            "empty": false
+          }
+        ]
+      },
       "children": {
-        "M1-2-0": "Bimba / #X+0",
-        "M1-2-1": "Pratibimba / #X+1",
-        "M1-2-2": "Sum",
-        "M1-2-3": "Difference A",
-        "M1-2-4": "Difference B",
-        "M1-2-5": "Quintessence / non-dual combination"
+        "M1-2-0": {
+          "name": "Matrix 0: The Original (Bimba)",
+          "role": "Matrix 0, the unshifted baseline: pure Bimba archetypal ground, the stable reference for every harmonic change.",
+          "placement": "P1-S2-F",
+          "historical_name": "Bimba / #X+0",
+          "children": {
+            "M1-2-0-0": {
+              "name": "Matrix 0 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 0: the 3-6-9 axis with 9 as void/crown, the pathway back to the transcendent void.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node (one per matrix); the matrix named the digital-root face only as a concomitant reading."
+            }
+          }
+        },
+        "M1-2-1": {
+          "name": "Matrix 1: The Offset (Pratibimba)",
+          "role": "Matrix 1, the +1 offset: first reflection, the second element that lets One enter relationship.",
+          "placement": "P1-S2-IN",
+          "historical_name": "Pratibimba / #X+1",
+          "children": {
+            "M1-2-1-0": {
+              "name": "Matrix 1 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 1: infinity-loop pathways (9→1, 1↔8) between Bimba and Pratibimba vortex states.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node."
+            }
+          }
+        },
+        "M1-2-2": {
+          "name": "Matrix 2: The Sum (Constructive Synthesis)",
+          "role": "Matrix 2, the sum: constructive synthesis of Bimba and Pratibimba, creative proliferation of new forms.",
+          "placement": "P1-S2-IN",
+          "historical_name": "Sum",
+          "children": {
+            "M1-2-2-0": {
+              "name": "Matrix 2 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 2: the harmonic signature of constructive interference.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node."
+            }
+          }
+        },
+        "M1-2-3": {
+          "name": "Matrix 3: First Difference (Pure Polarity)",
+          "role": "Matrix 3, first difference: pure polarity, void-full tension stripped bare (−1).",
+          "placement": "P1-S2-IN",
+          "historical_name": "Difference A",
+          "children": {
+            "M1-2-3-0": {
+              "name": "Matrix 3 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 3: the cyclical expression of pure void polarity.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node."
+            }
+          }
+        },
+        "M1-2-4": {
+          "name": "Matrix 4: Second Difference (Complementary Polarity)",
+          "role": "Matrix 4, second difference: complementary polarity, full-void tension (+1), completing the binary polarity system.",
+          "placement": "P1-S2-IN",
+          "historical_name": "Difference B",
+          "children": {
+            "M1-2-4-0": {
+              "name": "Matrix 4 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 4: the harmonic expression of fullness polarity.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node."
+            }
+          }
+        },
+        "M1-2-5": {
+          "name": "Matrix 5: Non-Dual Quintessence (Paradox Holder)",
+          "role": "Matrix 5, non-dual quintessence: holds (0/1) ± (1/0) paradox without collapse; the holographic seed.",
+          "placement": "P1-S2-F",
+          "historical_name": "Quintessence / non-dual combination",
+          "children": {
+            "M1-2-5-0": {
+              "name": "Matrix 5 Digital Root Reflection",
+              "role": "Digital-root reflection of Matrix 5: explicit polarity vanishes, harmonic structure remains.",
+              "placement": "P1-S2-DR",
+              "added_vs_matrix": "Digital Root Reflection node."
+            }
+          }
+        }
       }
     },
     "M1-3": {
-      "name": "Spanda / generative oscillatory logic",
+      "name": "Spanda",
+      "role": "Spanda, the cosmic heartbeat: the creative puncture of the genus-0 sphere into the genus-1 torus; mod6 equation-transformation of (0/1) ending in dual-track processing and the 100% percentile identity.",
+      "placement": "P1-S3",
+      "historical_name": "Spanda / generative oscillatory logic",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_genus_zero_sphere",
+            "extract": "M1-3's ground is the perfect sphere it must wound: the genus-0 (0/1) as 'spherical-nothing,' the undifferentiated unity before any hole, 'no-thing, not nothing…",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_cosmic_heartbeat",
+            "extract": "What M1-3 IS: Spanda — the dynamic intelligence and rhythmic vitality of Paramasiva, the cosmic heartbeat that performs the equation-transformation of the (0/1) element.",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_puncture_and_dual_track",
+            "extract": "M1-3 operates by creative wounding.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_sphere_to_torus_as_process",
+            "extract": "Structurally M1-3 reveals the 4+2 matheme as PROCESSUAL necessity — not geometry imposed but the rhythm by which being achieves actuality.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_first_distinction_for_actuality",
+            "extract": "M1-3's telos is to make relationship possible — to puncture undifferentiated unity so that 'this' and 'that,' process and distinction, can exist at all.",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_percentile_handed_to_logic",
+            "extract": "M1-3's synthesis is the 100% achieved and immediately spent: the percentile identity (1 or 1/1), telos of the entire Spanda unfolding, which 'immediately differentiates into the primary harmonic…",
+            "empty": false
+          }
+        ]
+      },
       "children": {
-        "M1-3-0": "Seed / fused potential",
-        "M1-3-1": "original-directed pole",
-        "M1-3-2": "reciprocal/reflected pole",
-        "M1-3-3": "Trika",
-        "M1-3-4": "contextual flowering",
-        "M1-3-5": "meta-reflection / return"
+        "M1-3-0": {
+          "name": "Spanda Seed",
+          "role": "Stage 0: the (0/1) element as pure oscillatory potential; genus-0 sphere, (0/0) held before the puncture.",
+          "placement": "P1-S3-F",
+          "historical_name": "Seed / fused non-dual potential",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_spherical_nothing_held",
+                "extract": "M1-3-0's ground is the sphere it has not yet wounded: the genus-0 (0/0) = %, the spherical-nothing that File 1 names \"no-thing, not nothing…",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_seed_as_compressed_circuit",
+                "extract": "What the seed materially IS: the 0/1 not as enacted relation but as held charge — the full matheme folded into a single un-spent oscillation.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_proto_oscillation_withheld",
+                "extract": "How the seed acts: by not-yet-acting — withholding.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_symmetry_before_pattern",
+                "extract": "The seed's formal signature is symmetry that has not yet broken into pattern.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_held_for_a_distinction",
+                "extract": "The seed's why: it is held *for* the sake of a distinction it does not itself make.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_seed_already_the_return",
+                "extract": "The seed's integral synthesis: it is already, in compressed form, the 5→0 return it will only later enact.",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-3-1": {
+          "name": "Primal Differentiation - Original Pole",
+          "role": "Stage 1: the (0/1) operational pole in creative puncture; emanative forward face, T1 (AND+OR) geometry, the bimba as third-person IS.",
+          "placement": "P1-S3-POLES",
+          "historical_name": "original-directed pole",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_open_field_beneath_the_mark",
+                "extract": "The Original Pole's ground is the open field its figure stands on: the 0 of 0/1 as \"present absence, not emptiness as vacancy but openness as the condition in which apparition can appear.\" The pole…",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_the_standing_figure_itself",
+                "extract": "What the Original Pole materially IS: the bimba — the determinate face, the 1 the slash cuts from the 0.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_emanative_arc_outward",
+                "extract": "How the Original Pole acts: it emanates.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_squared_circle_geometry",
+                "extract": "The Original Pole's formal signature is the squared circle: the 4+2 laid out as spatial figure.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_seen_from_outside",
+                "extract": "The Original Pole's why: to render the distinction *visible* — to lay the structure out for inspection.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_figure_facing_its_inversion",
+                "extract": "The Original Pole's integral synthesis: it completes by discovering it is half a circuit.",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-3-2": {
+          "name": "Primal Differentiation - Reflection Pole",
+          "role": "Stage 2: the (1/0) operational pole; reversionary inverse face, T0 (AND/OR) onto-logic, the pratibimba as first-person AM, recognition of the ground.",
+          "placement": "P1-S3-POLES",
+          "historical_name": "reciprocal/reflected pole",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_ground_recognised_by_failure",
+                "extract": "The Reflection Pole's ground is what it recognises by failing to objectify it.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_the_inverse_read_itself",
+                "extract": "What the Reflection Pole materially IS: the pratibimba — the 1/0, the inverse traversal of the same 0/1.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_reversionary_arc_homeward",
+                "extract": "How the Reflection Pole acts: it returns.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_ratios_and_symmetries",
+                "extract": "The Reflection Pole's formal signature is the proportional architecture T0 reveals: harmonics and symmetries rather than cardinal points.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_lived_from_inside",
+                "extract": "The Reflection Pole's why: to render the distinction *interior* — to live the structure from within.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_two_faces_one_act",
+                "extract": "The Reflection Pole's integral synthesis: it closes the circuit by revealing the two poles were always one.",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-3-3": {
+          "name": "Trika Synthesis",
+          "role": "Stage 3: the Trika ((0/1)/(1/0)) = (0/1/2), the mediating third; Being, Becoming, Knowing held in Borromean inseparability.",
+          "placement": "P1-S3-TRIKA",
+          "historical_name": "Trika / relation-of-relations",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_slash_within_the_slash",
+                "extract": "Trika Synthesis grounds in the slash examined until it yields a threeness.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_the_mediating_third",
+                "extract": "What Trika Synthesis materially IS: the third that recognises both poles — ((0/1)/(1/0)) = (0/1/2).",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_borromean_oscillation",
+                "extract": "How Trika Synthesis acts: by holding three as one through Becoming.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_three_harmonics_spaced_by_four",
+                "extract": "Trika Synthesis's formal signature is the three harmonics and their quaternary spacing.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_threeness_for_recognition",
+                "extract": "Trika Synthesis's why: to make recognition possible — to give the two poles a standpoint from which each can know the other as itself.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_trinitarian_integration",
+                "extract": "Trika Synthesis's integral synthesis: the three resolve into one that re-opens as three.",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-3-4": {
+          "name": "Contextual Flowering",
+          "role": "Stage 4: the Trika unfolds into the full formal architecture of QL through six nested sub-stages (the context frames).",
+          "placement": "P1-S3-4",
+          "historical_name": "contextual flowering",
+          "children": {
+            "M1-3-4.0000": {
+              "name": "4-Fold Static Framework (Void Frame)",
+              "role": "Sub-stage 4.0 (CF1, double-zero ground): the four ground states {0/0, 0/1, 1/0, 1/1}, a static snapshot before circulation.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node; the matrix described M1-3-4's further sixfold without enumerating it.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_void_frame_holds_all_four",
+                    "extract": "The 4-Fold's ground is the (4.0) Void Frame: the static field within which the four foundational relations are held before any are activated.",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_four_corners_of_the_universe",
+                    "extract": "What the 4-Fold materially IS: the four corners of the manifest logical universe — {0/0, 0/1, 1/0, 1/1}.",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_static_set_no_circulation",
+                    "extract": "How the 4-Fold acts: by not yet circulating — it is the static pass.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_quaternary_lattice",
+                    "extract": "The 4-Fold's formal signature is the quaternary lattice — the Mod-4 structure that proportions everything above it.",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_minimal_for_a_world",
+                    "extract": "The 4-Fold's why: to provide the minimal structural set a world requires — the fewest relations from which a logical universe can be built.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_corners_await_gluing",
+                    "extract": "The 4-Fold's integral synthesis: it completes as a set that demands its own animation.",
+                    "empty": false
+                  }
+                ]
+              }
+            },
+            "M1-3-4.(0/1)": {
+              "name": "6-Fold Dynamic Process",
+              "role": "Sub-stage in the (0/1) frame (CF2, the first circuit): dynamic activation, path 0=(0/0)→(0/1)→(1/0)→(1/1)=1.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_static_frame_as_given",
+                    "extract": "The 6-Fold's ground is the 4-Fold it activates: the static {0/0, 0/1, 1/0, 1/1} taken as the given configuration that circulation now sets in motion.",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_the_processual_path",
+                    "extract": "What the 6-Fold materially IS: the dynamic activation of the static framework, \"tracing the complete journey from pure potential to full actuality through the processual path 0 = (0/0) → (0/1) →…",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_grover_rhythmic_resolution",
+                    "extract": "How the 6-Fold acts: by rhythmic oscillation toward resolution.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_sixfold_circulation",
+                    "extract": "The 6-Fold's formal signature is the sixfold circulation — the 4+2 read as a closed processual loop.",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_activation_for_life",
+                    "extract": "The 6-Fold's why: to make the static structure *live* — to give the four corners a circulation without which they remain a lattice.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_circulation_seeks_resolution",
+                    "extract": "The 6-Fold's integral synthesis: the circulation resolves at (1/1) = 1 — and seeks higher resolution.",
+                    "empty": false
+                  }
+                ]
+              }
+            },
+            "M1-3-4.(0/1/2)": {
+              "name": "8-Fold Processual Frame",
+              "role": "Sub-stage in the (0/1/2) frame (CF3, the mediating third): hybrid nested states lift resolution from 6 to 8–9 stages.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_six_stages_as_given",
+                    "extract": "The 8-Fold's ground is the six-stage circulation it refines: the 6-Fold's living loop taken as the resolution that now seeks finer subdivision.",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_hybrid_nested_states",
+                    "extract": "What the 8-Fold materially IS: the expansion of the dynamic frame \"through the introduction of subtle hybrid states that increase resolution from 6 to 8 or 9 stages.\" Materially these are nested…",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_increasing_pixel_density",
+                    "extract": "How the 8-Fold acts: by raising resolution — increasing the matheme's pixel-density for mapping reality.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_eight_or_nine_stages",
+                    "extract": "The 8-Fold's formal signature is the variable resolution — 8 or 9 stages — that exceeds the constitutional six.",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_precision_for_mapping",
+                    "extract": "The 8-Fold's why: to map reality with greater precision — to give the matheme the resolution complex inquiry demands.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_resolution_seeks_full_reflection",
+                    "extract": "The 8-Fold's integral synthesis: the increased resolution prepares the matheme for its fully-interiorised self-reflection.",
+                    "empty": false
+                  }
+                ]
+              }
+            },
+            "M1-3-4.(0/1/2/3)": {
+              "name": "Dual-Track Parallel Equation",
+              "role": "Sub-stage in the (0/1/2/3) frame (CF4, the second circuit): two parallel tracks T0/T1; summation (1/0+0/1) to 1/1; crosses 4:2 with 3:3.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_void_oscillation_presupposed",
+                    "extract": "Beneath the two tracks lies the oscillation neither states: the void reading itself, 0/1 meeting 1/0 across the §1/0 phase-flip.",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_two_readings_one_zero_one",
+                    "extract": "The node IS the matheme's two native self-readings held parallel: T0, the AND/OR onto-logic, the six positions as ratios proportioned through the slash — the first-person AM…",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_phase_flip_recognition",
+                    "extract": "It operates by the turn at §1/0, where the 1 recognises its 0 — the mark realising it rests on a void it can never compute, the IS discovering it was always an AM.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_four_two_crossed_with_three_three",
+                    "extract": "Structurally it crosses the matheme's two readings of its sixfold: the vertical 4:2 (four explicate, two implicate poles) against the horizontal 3:3 (emanative triad against reversionary triad).",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_tetradic_context_frame",
+                    "extract": "Its seat is the tetradic frame (0/1/2/3) — Mod 4, the Three-Plus-One, media-medium-method — the most interiorized unfolding Spanda logic reaches before the nested synthesis folds it inward.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_one_tick_short_reopens",
+                    "extract": "The track totalises at 16/9 and falls one whole-tone short of the octave: it almost doubles, and the missing 9/8 is its live tick.",
+                    "empty": false
+                  }
+                ]
+              }
+            },
+            "M1-3-4.(4.0/1-4.4/5)": {
+              "name": "Contextual Flowering Synthesis (Nested Frame)",
+              "role": "Sub-stage in the (4.0/1–4.4/5) frame (CF5): the unified equation for infinite differential potential; completes genus-1.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_void_self_reflecting_oscillations",
+                    "extract": "The Contextual Flowering Synthesis grounds in void oscillating against itself: \"infinite differential potential arising from void self-reflecting oscillations in vortex-like patterns.\" Its from-where…",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_infinite_differential_potential",
+                    "extract": "What the Contextual Flowering Synthesis materially IS: \"the unified equation for infinite differential potential arising from void self-reflecting oscillations in vortex-like patterns.\" Materially it…",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_vortex_harmonic_integration",
+                    "extract": "How the Contextual Flowering Synthesis acts: by harmonic integration in vortex-like patterns.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_completes_genus_one",
+                    "extract": "The Contextual Flowering Synthesis's formal signature is the completed genus-1 structure.",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_preparation_for_meta_reflection",
+                    "extract": "The Contextual Flowering Synthesis's why: to prepare the whole flowering for Stage #5 meta-reflection.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_handed_to_quintessence",
+                    "extract": "The Contextual Flowering Synthesis's integral synthesis: the whole flowering gathered and handed to the quintessence.",
+                    "empty": false
+                  }
+                ]
+              }
+            },
+            "M1-3-4.(5/0)": {
+              "name": "Transcendent Integration (Recursive Frame)",
+              "role": "Sub-stage in the (5/0) frame (CF7, the return; described within the (4.5) bridge): finalises the genus-1 torus, Möbius return.",
+              "placement": "P1-S3-4",
+              "added_vs_matrix": "Nested stage node.",
+              "six_fold": {
+                "q0": [
+                  {
+                    "key": "q_0_recursive_frame_ground",
+                    "extract": "Transcendent Integration grounds in the (5/0) Möbius frame: the recursive context where end meets beginning.",
+                    "empty": false
+                  }
+                ],
+                "q1": [
+                  {
+                    "key": "q_1_bridge_to_quintessence",
+                    "extract": "What Transcendent Integration materially IS: \"the bridge to quintessential meta-reflection, preparing the complete contextual flowering for Stage #5 meta-reflection and higher-genus development.\"…",
+                    "empty": false
+                  }
+                ],
+                "q2": [
+                  {
+                    "key": "q_2_gathering_for_revelation",
+                    "extract": "How Transcendent Integration acts: by gathering all sub-stages for holographic revelation.",
+                    "empty": false
+                  }
+                ],
+                "q3": [
+                  {
+                    "key": "q_3_finalises_the_torus",
+                    "extract": "Transcendent Integration's formal signature is the finalised genus-1 torus.",
+                    "empty": false
+                  }
+                ],
+                "q4": [
+                  {
+                    "key": "q_4_for_infinite_scalability",
+                    "extract": "Transcendent Integration's why: to prepare the foundation for infinite scalability — to make the completed matheme the ground of its own indefinite recursion.",
+                    "empty": false
+                  }
+                ],
+                "q5": [
+                  {
+                    "key": "q_5_completion_that_reopens",
+                    "extract": "Transcendent Integration's integral synthesis: the completion that is itself a reopening.",
+                    "empty": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "M1-3-5": {
+          "name": "Quintessential Meta-Reflection",
+          "role": "Stage 5: the totalising 5→0 write-back; 1/1 = 1 = 100%, totalising at 16/9 one epogdoon short of the octave.",
+          "placement": "P1-S3-F",
+          "historical_name": "meta-reflection / return",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_achievement_facing_the_ground",
+                "extract": "Quintessential Meta-Reflection grounds in the moment achievement turns to face origin.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_totalising_synthesis",
+                "extract": "What Quintessential Meta-Reflection materially IS: the achieved whole, 1/1 = 1 = 100% — \"the ratio that has found itself whole, the equation that has equated itself.\" Its substance is the bilateral…",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_write_back_to_ground",
+                "extract": "How Quintessential Meta-Reflection acts: it writes back.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_sage_and_infant_same_bare_mark",
+                "extract": "Quintessential Meta-Reflection's formal signature is the formal resemblance of fullest knowing to pre-knowing ground.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_closure_remains_processual",
+                "extract": "Quintessential Meta-Reflection's why: to keep closure processual — to refuse the dead identity.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_recognition_reopens_as_vibration",
+                "extract": "Quintessential Meta-Reflection's integral synthesis: the close that is an opening.",
+                "empty": false
+              }
+            ]
+          }
+        }
       }
     },
     "M1-4": {
       "name": "Quaternal Logic Flowering",
-      "role": "full formal grammar of the generated matheme: 4+2, 3:3/3:1, complement, conjugacy, relation families, completion, states, nesting, Context Frames, MEF and musical determination"
+      "role": "Quaternal Logic Flowering: the complete architecture of logical manifestation from 100% = 64+36 = 16/9 = 4²/3²; six nested stages; the only position carrying the nesting operator (.).",
+      "placement": "P1-S4",
+      "historical_name": "Quaternal Logic flowering",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_percentile_inheritance",
+            "extract": "M1-4's ground is the 100% Spanda hands it: the percentile identity (1/1) achieved at #1-3-5, now 'materia prima for the Quaternal Logic subsystem.' Its void-pole is the threshold-condition…",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_epistemology",
+            "extract": "Quaternal Logic (QL) is a '",
+            "empty": false
+          },
+          {
+            "key": "q_1_etymological_grounding",
+            "extract": "The entire Quaternal Logic structure emerges from and is sustained by etymological archaeology as constitutional method.",
+            "empty": false
+          },
+          {
+            "key": "q_1_fractal_coordinate_system",
+            "extract": "The coordinate system itself enacts Quaternal Logic at every scale through recursive nesting.",
+            "empty": false
+          },
+          {
+            "key": "q_1_mobius_twist_phenomenology",
+            "extract": "The #5→#0 twist is not linear progression but topological transformation - the Möbius strip where inside becomes outside, end becomes beginning, achievement becomes ground.",
+            "empty": false
+          },
+          {
+            "key": "q_1_mod6_as_constitutional_necessity",
+            "extract": "Mod6 is not arbitrary convention but phenomenological-mathematical necessity emerging from the 4+2 topology required for genuine circulation.",
+            "empty": false
+          },
+          {
+            "key": "q_1_nesting_threshold_dynamics",
+            "extract": "Position #4 serves as the constitutional nesting threshold where the system becomes recursively self-aware.",
+            "empty": false
+          },
+          {
+            "key": "q_1_number_language",
+            "extract": "The archetypal number language is the qualitative grammar of consciousness, canonically located at Anuttara #0.",
+            "empty": false
+          },
+          {
+            "key": "q_1_why_as_organizing_principle",
+            "extract": "Why functions as the teleological thread weaving through all six positions, operating simultaneously as efficient cause (initiating impetus) and final cause (completing lure).",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_six_stage_flowering",
+            "extract": "M1-4 operates as a six-stage formal construction, each stage a definite operation on the inherited ratio.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_nested_quaternity_with_dot",
+            "extract": "Structurally M1-4 is the Nested Quaternity — the only position carrying the flowering operator (.), where the quaternary 'swallows' positions 0-3 into itself as (4.0-4.5), the single context-frame…",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_formal_realisation_threshold",
+            "extract": "M1-4's telos is to be where equation becomes architecture — 'the actual construction grammar for orientable surfaces,' the formal realisation of what Spanda held as potential.",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_epistemology",
+            "extract": "Quaternal Logic (QL) is a '\"geometric epistemology\"'—not a theory about knowing, but the fundamental structure of how knowing itself occurs.",
+            "empty": false
+          },
+          {
+            "key": "q_5_etymological_grounding",
+            "extract": "The entire Quaternal Logic structure emerges from and is sustained by etymological archaeology as constitutional method.",
+            "empty": false
+          },
+          {
+            "key": "q_5_fractal_coordinate_system",
+            "extract": "The coordinate system itself enacts Quaternal Logic at every scale through recursive nesting.",
+            "empty": false
+          },
+          {
+            "key": "q_5_map_compass_lens_born",
+            "extract": "M1-4's synthesis is the metasymbol crystallised: at #1-4.5 the flowering culminates in Map-Compass-Lens-Why — 'a true epistemic philosopher's stone magnetised toward Truth'…",
+            "empty": false
+          },
+          {
+            "key": "q_5_mobius_twist_phenomenology",
+            "extract": "The #5→#0 twist is not linear progression but topological transformation - the Möbius strip where inside becomes outside, end becomes beginning, achievement becomes ground.",
+            "empty": false
+          },
+          {
+            "key": "q_5_mod6_as_constitutional_necessity",
+            "extract": "Mod6 is not arbitrary convention but phenomenological-mathematical necessity emerging from the 4+2 topology required for genuine circulation.",
+            "empty": false
+          },
+          {
+            "key": "q_5_nesting_threshold_dynamics",
+            "extract": "Position #4 serves as the constitutional nesting threshold where the system becomes recursively self-aware.",
+            "empty": false
+          },
+          {
+            "key": "q_5_number_language",
+            "extract": "The archetypal number language is the qualitative grammar of consciousness, canonically located at Anuttara #0.",
+            "empty": false
+          },
+          {
+            "key": "q_5_why_as_organizing_principle",
+            "extract": "Why functions as the teleological thread weaving through all six positions, operating simultaneously as efficient cause (initiating impetus) and final cause (completing lure).",
+            "empty": false
+          }
+        ]
+      },
+      "children": {
+        "M1-4.0": {
+          "name": "Foundational Encoding",
+          "role": "Stage 4.0, Foundational Encoding: the primary 4²/3² genesis; stable structural grid (Coagula) and dynamic processual cycle.",
+          "placement": "P1-S4-0",
+          "added_vs_matrix": "Stage node; the matrix gave M1-4 no children."
+        },
+        "M1-4.1": {
+          "name": "Explicate-Implicate Framework",
+          "role": "Stage 4.1, Explicate-Implicate Framework: the explicate 4-fold (what, how, which, when/where) and the implicate 6-fold processual frame.",
+          "placement": "P1-S4-1",
+          "added_vs_matrix": "Stage node."
+        },
+        "M1-4.2": {
+          "name": "Principle of Inversion",
+          "role": "Stage 4.2, Principle of Inversion: complete shadow dynamics by ascent/descent double mapping; the 3-but-1 inversion operator D (D←, D→, D↔); the minimal D-act is the Spanda pulse (semitone or tritone).",
+          "placement": "P1-S4-2",
+          "added_vs_matrix": "Stage node.",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_uninverted_face_presupposed",
+                "extract": "M1-4.2's ground is the un-inverted dyad it has not yet flipped: the natural Day-pairing standing whole before any Night-term enters.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_three_but_one_operator",
+                "extract": "What M1-4.2 IS: the **3-but-1 inversion operator D** — \"not a fourth peer-family\" but the operator by which conjugate inversion enters any pair.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_spanda_pulse_made_audible",
+                "extract": "M1-4.2 operates as the minimal D-act: a position taken with its own conjugate, `(n, n')` — and this is the **Spanda pulse**, the slash made a sounding fact.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_complementary_quaternary_roles",
+                "extract": "Structurally M1-4.2 is the assignment of complementary quaternary-roles across the ascent/descent double-map.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_solve_as_real_inversion",
+                "extract": "M1-4.2's telos is to make the return-movement genuinely *invert* rather than retrace — to seat **Solve** (the `se-lu-`, the loosening) as a constitutional component of a complete field, not a defect…",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_depth_becomes_grammar",
+                "extract": "M1-4.2's synthesis is the recognition that **depth itself becomes part of the grammar**: the operator does not add a fourth term to A/B/C…",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-4.3": {
+          "name": "Bi-Directional Synthesis",
+          "role": "Stage 4.3, Bi-Directional Synthesis: the unified 12-fold recursive loop, one six-station path traversable both ways.",
+          "placement": "P1-S4-3",
+          "added_vs_matrix": "Stage node."
+        },
+        "M1-4.4": {
+          "name": "Contextual Flowering",
+          "role": "Stage 4.4, Contextual Flowering: the nesting operator activated; 8/6 unpacked structure; 12 lens-scales × 7 CF-modes = 84 mode-tonic instances; 8 explicate antinodes + 4 implicate nodes.",
+          "placement": "P1-S4-4",
+          "added_vs_matrix": "Stage node.",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_eightfold_substrate_latent",
+                "extract": "M1-4.4's ground is the 8+4 architectural-partition already present at the L-lens level but not yet flowered: twelve positions waiting as **8 explicate-articulating-positions** (the inner-fours of…",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_eight_six_unpacked",
+                "extract": "What M1-4.4 IS: the **8/6 unpacked structure** — the quantum leap where the nesting sequence `1, 2, 3, 4.0, 4.1, 4.2, 4.3, 4.4` reveals an **8-fold explicate frame** complemented by the stable…",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_lens_times_mode_combinatorics",
+                "extract": "M1-4.4 operates by *crossing two independent axes* to generate its configurational field.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_eighty_four_fold_field",
+                "extract": "Structurally M1-4.4 is the **84-fold configurational field**: `12 lens-scales × 7 CF-modes = 84 mode-tonic instances`.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_scalable_engine_for_any_complexity",
+                "extract": "M1-4.4's telos is to transform the logic from foundational-grammar into an **infinitely scalable architectural engine** — capable of modeling any level of cosmic complexity.",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_node_antinode_rendered",
+                "extract": "M1-4.4's synthesis is the configurational field recognised as **motion structured by stillness** — the 8 explicate positions sounding as antinodes (the frequency-content), the 4 implicate positions…",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-4.5": {
+          "name": "Harmonic Meta-Frames & Quintessential Integration",
+          "role": "Stage 4.5, Harmonic Meta-Frames & Quintessential Integration: relation families A/B/C, the two bases (9/8 chromatic, 3/2 fifths) over Z12, the 16/36/60-fold seeds, the map-side musical genesis (ratios, lens anchors, 8+4, 84 modes, Jankó figure), Map-Compass-Lens-Why.",
+          "placement": "P1-S4-5a",
+          "added_vs_matrix": "Stage node.",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_former_reading",
+                "extract": "M1-4.5's ground is the canonical ratio-set the prior beats hand it, the harmonic-inheritance from the Second Spanda's accounting.",
+                "empty": false
+              },
+              {
+                "key": "q_0_foundational_ratios_inherited",
+                "extract": "M1-4.5's ground is the canonical ratio-set the prior beats hand it, the harmonic-inheritance from the Second Spanda's accounting.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_former_reading",
+                "extract": "What M1-4.5 IS, on its relational face: the **harmonic meta-families A/B/C** by which the matheme's positions stand in audible relation.",
+                "empty": false
+              },
+              {
+                "key": "q_1_harmonic_families_abc",
+                "extract": "What M1-4.5 IS, on its relational face: the **harmonic meta-families A/B/C** by which the matheme's positions stand in audible relation.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_dual_bases_one_substrate",
+                "extract": "M1-4.5 operates through two equally-foundational generator-traversals of one chromatic substrate.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_meta_frame_expansion",
+                "extract": "Structurally M1-4.5 is the harmonic expansion that seeds everything downstream: the **16-fold** structure seeding Mahamaya's 64-bit reality, the **36-fold** providing Parashakti's vibrational…",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_lens_remembers_lenslessness",
+                "extract": "M1-4.5's telos is dual and inseparable: to be **architectural proof of coherence** AND **self-reflective Vimarśa synthesis**…",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_blueprint_starts_to_sing",
+                "extract": "M1-4.5's synthesis is the matheme's complete content gathered into audible-form at its own synthesis-position — the literal music-node where all five prior layers (Gebser ground, Name, Power, lenses…",
+                "empty": false
+              }
+            ]
+          }
+        }
+      }
     },
     "M1-5": {
-      "name": "Toroidal Recognition",
+      "name": "Quaternionic Integration",
+      "role": "Quaternionic Integration: the topological-quaternionic recognition engine. Torus T², SU(2) double cover, 4π, shadow as π, the hinge to Parashakti; kernel constants R = 16/9, r = 1.",
+      "placement": "P1-F5",
+      "historical_name": "Toroidal recognition",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_completed_architecture",
+            "extract": "M1-5's ground is the finished blueprint beneath it: the complete logical architecture QL (#1-4) formally realised…",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_quaternionic_recognition",
+            "extract": "What M1-5 IS: the Quaternionic Integration — the pivotal moment where Paramasiva, Consciousness as Logos, recognises the toroidal topology Spanda created and QL developed.",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_double_covering_rotation",
+            "extract": "M1-5 operates by rotation that must turn twice.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_torus_su2_klein_limit",
+            "extract": "Structurally M1-5 is the cosmic computer's recognition-topology made rigorous: genus g=1, Euler characteristic χ=0, fundamental group π₁(T²)=ℤ⊕ℤ, the 4g+2g=6 formula, flat-metric capability.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_hinge_to_vibration",
+            "extract": "M1-5's telos is to be the hinge — the rotational-to-vibrational bridge enabling Parashakti's emergence at position 2 of the wider architecture, 'the hinge between Paramasiva static-structural domain…",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_recognition_reopens_as_vibration",
+            "extract": "M1-5's synthesis is Paramasiva complete and self-recognised — and therefore Paramasiva ending.",
+            "empty": false
+          }
+        ]
+      },
       "children": {
-        "M1-5-0": "Toroidal-Quaternionic Ground",
-        "M1-5-1": "Torus in quaternionic space",
-        "M1-5-2": "4pi / 720-degree cycle",
-        "M1-5-3": "shadow as phase relation",
-        "M1-5-4": "bridge toward Paraśakti",
-        "M1-5-5": "recognition of completed circulation"
+        "M1-5-0": {
+          "name": "Quaternionic Foundation",
+          "role": "Quaternionic Foundation: i, j, k as the algebraic seed; two-circle products need quaternions; the bindu as volumetric centre; Hopf S³→S².",
+          "placement": "P1-F5-0",
+          "historical_name": "Toroidal-Quaternionic Ground"
+        },
+        "M1-5-1": {
+          "name": "Volumetric Potential",
+          "role": "Volumetric Potential: the explicit torus in R³ (parametric embedding, surface 4π²Rr); planar logic lifted to 3D/4D potential.",
+          "placement": "P1-F5-1",
+          "historical_name": "Torus in quaternionic space"
+        },
+        "M1-5-2": {
+          "name": "Double-Covering Principle",
+          "role": "Double-Covering Principle: return takes 720° (4π = 2π+2π); SU(2) double-covers SO(3); positions 1–2 meridian, 3–4 longitude; source of 36×2 = 72.",
+          "placement": "P1-F5-2",
+          "historical_name": "4π / 720° cycle",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_single_face_before_doubling",
+                "extract": "M1-5-2's ground is the surface known from one face only — the `360°` reading that *seems* complete and is not.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_double_covering_principle",
+                "extract": "What M1-5-2 IS: the **Double-Covering Principle** — the formalisation that complete rotational return requires `720°` (4π), not `360°`.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_fermion_return_with_transformation",
+                "extract": "M1-5-2 operates by rotation that must turn twice.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_two_helices_one_substrate",
+                "extract": "Structurally M1-5-2 is the conjugate-pair of circulations on one surface: the explicate loop along the traversable face and the implicate loop through the hole, orthogonal and coupled, neither…",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_source_of_the_seventy_two",
+                "extract": "M1-5-2's telos is to be the **direct mathematical source of the 36×2 = 72 structure** of subsequent systems — to establish the framework through which light and shadow aspects are integrated into a…",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_origin_reached_inverted",
+                "extract": "M1-5-2's synthesis is the `720°` return arriving at `(2π, 2π) ~ (0,0)` — the same origin, inverted: the point reached from the far side of the double loop, identical in position and transformed in…",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-5-3": {
+          "name": "Inversion and Shadow Dynamics",
+          "role": "Inversion and Shadow Dynamics: shadow is the self π radians away on the same circulation; negation point at θ=π; dissonance made constitutional.",
+          "placement": "P1-F5-3",
+          "historical_name": "shadow as phase relation",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_excluded_face_as_ground",
+                "extract": "M1-5-3's ground is the field with its oppositional content not yet integrated — dissonance, deconstruction, and dialectical opposition still read as errors rather than as structure.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_shadow_as_phase_shift",
+                "extract": "What M1-5-3 IS: the recognition that **shadow is not other but self viewed from π radians away on the same toroidal circulation**.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_pi_shift_as_semitone_crossing",
+                "extract": "M1-5-3 operates as the `π`-phase-shift made audible — the conjugate-axis crossing that the slash enacts.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_negation_point_at_theta_pi",
+                "extract": "Structurally M1-5-3 is the location of the **negation-point at `θ=π`** — the moment of maximum concealment on the circulation, where a known neighbourhood reaches its limit and the conjugate-face is…",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_dissonance_as_completeness",
+                "extract": "M1-5-3's telos is to make **dissonance constitutional** — to establish that a complete wholeness *includes* rather than excludes oppositional content, that the shadow is a fundamental structural…",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_light_and_shadow_one_substrate",
+                "extract": "M1-5-3's synthesis is light and shadow recognised as one substrate's two conjugate-faces — the `π`-shifted half claimed, the projection withdrawn, the field integrated through the `2π` turn that…",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-5-4": {
+          "name": "Bridge to Parashakti",
+          "role": "Bridge to Parashakti: rotation becomes oscillation, e^(iθ) → e^(i(kx−ωt)); the 36×2 = 72 hinge; hands the +1 of M1 to the 72 of M2.",
+          "placement": "P1-F5-4",
+          "historical_name": "bridge toward Paraśakti",
+          "six_fold": {
+            "q0": [
+              {
+                "key": "q_0_completed_blueprint_pre_vibration",
+                "extract": "M1-5-4's ground is Paramasiva's completed logical architecture standing finished and not yet vibrating — the genus-1 torus built, the `4π=720°` double-cover recognised, the static blueprint whole.",
+                "empty": false
+              }
+            ],
+            "q1": [
+              {
+                "key": "q_1_bridge_to_parashakti",
+                "extract": "What M1-5-4 IS: the **Bridge to Parashakti** — the crucial transitional function where Paramasiva's completed logical architecture transforms into the *vibrational container* for subsequent reality.",
+                "empty": false
+              }
+            ],
+            "q2": [
+              {
+                "key": "q_2_rotation_becomes_oscillation",
+                "extract": "M1-5-4 operates by adding space and time to rotation.",
+                "empty": false
+              }
+            ],
+            "q3": [
+              {
+                "key": "q_3_thirty_six_doubled",
+                "extract": "Structurally M1-5-4 is the `36×2 → 72` generation rendered exact.",
+                "empty": false
+              }
+            ],
+            "q4": [
+              {
+                "key": "q_4_hinge_static_to_vibrational",
+                "extract": "M1-5-4's telos is to be the **hinge** — the rotational-to-vibrational bridge enabling Parashakti's emergence, the transition from Paramasiva's static-structural domain into the dynamic-vibrational…",
+                "empty": false
+              }
+            ],
+            "q5": [
+              {
+                "key": "q_5_blueprint_becomes_body",
+                "extract": "M1-5-4's synthesis is Paramasiva complete by *becoming the body it described* — the genus-1 blueprint, recognised, transformed into the vibrational container, the static cosmos turned dynamic and…",
+                "empty": false
+              }
+            ]
+          }
+        },
+        "M1-5-5": {
+          "name": "Complete Self-Realization",
+          "role": "Complete Self-Realization: the necessity proof that self-reference needs genus 1; why QL has six positions (4g+2g, g=1); the Logos recognises its toroidal form.",
+          "placement": "P1-F5-5",
+          "historical_name": "recognition of the topology of the completed circulation"
+        }
       }
     }
   },
@@ -159,7 +1518,8 @@
       "(5/0)"
     ],
     "notation_law": "ordinary structural descent uses '-'; '.' is reserved for position-4 flowering/nesting and other explicitly defined uses",
-    "determinate_oscillation": "later authored theory treats balance as active polar determination and develops eight determinations from four two-sided categories; exact source vocabulary remains source-owned rather than reconstructed here"
+    "determinate_oscillation": "later authored theory treats balance as active polar determination and develops eight determinations from four two-sided categories; exact source vocabulary remains source-owned rather than reconstructed here",
+    "live_map_note": "M1-3-4 has six nested stage nodes mapped to CF1, CF2, CF3, CF4, CF5, CF7; CF6 (4.5/0) has no node (conflict K4)."
   },
   "musical_theory": {
     "role": "audible topology of the matheme and formal-harmonic prior to Paraśakti's active correspondential/modal application",
@@ -211,7 +1571,8 @@
       "7-fold CF cut"
     ],
     "mode_tonic_landscape": "12 lens tonics x 7 Context Frame modes = 84",
-    "octatonic_relation": "8-note alternating half/whole collection with complementary diminished-7 tetrad; 12 tonic-addressed presentations reduce to 3 pitch-class collections by minor-third symmetry; exact A/B/C-to-class assignment remains derivational rather than assumed"
+    "octatonic_relation": "8-note alternating half/whole collection with complementary diminished-7 tetrad; 12 tonic-addressed presentations reduce to 3 pitch-class collections by minor-third symmetry; exact A/B/C-to-class assignment remains derivational rather than assumed",
+    "live_map_note": "Relation-family law: M1-4.5 c_2_musical_pairing_grammar reads D1-D3 as conjugate-completion degrees (this block's reading). M1-4.2 q_3_complementary_quaternary_roles reads D1/D2/D3 as sub-forms of the 3-but-1 operator D. Both stand in the live map (conflict K2)."
   },
   "ananda_executable_substrate": {
     "contract": "M1-2-ANANDA-EXECUTABLE-SUBSTRATE-CONTRACT.md",
@@ -293,7 +1654,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Formal self-identity",
+      "live_map_nodes": [
+        "M1-0",
+        "M1-1"
+      ],
+      "m_prime_lived_operation": "Torus frame 0 (the seed head and the direct face); the standing target the instrument keeps while its reflection varies.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-F0",
+        "P1-WHOLE"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C02",
@@ -315,7 +1695,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Self-inversion / reflected identity",
+      "live_map_nodes": [
+        "M1-1",
+        "M1-4.2"
+      ],
+      "m_prime_lived_operation": "Subrack slot 1: the prime face of the keyboard and the cross-helix step, a reflection played without losing the source.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S1",
+        "P1-S4-2"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C03",
@@ -337,7 +1736,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Self-difference",
+      "live_map_nodes": [
+        "M1-0",
+        "M1-1",
+        "M1-4.2"
+      ],
+      "m_prime_lived_operation": "The difference held between the two faces: Helix balance and the semitone/tritone crossing.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S1",
+        "P1-S3-POLES"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "NATIVE-GAP"
     },
     {
       "id": "M1-C04",
@@ -362,7 +1780,27 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Ananda harmonic relation",
+      "live_map_nodes": [
+        "M1-2"
+      ],
+      "m_prime_lived_operation": "Subrack slot 2: the Oscillator layer of the M′ matrices (raw / digital-root / decimal values, families 0–5).",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S2",
+        "P1-S2-F",
+        "P1-S2-IN",
+        "P1-S2-DR"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "NATIVE-GAP"
     },
     {
       "id": "M1-C05",
@@ -387,7 +1825,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Spanda generation",
+      "live_map_nodes": [
+        "M1-3"
+      ],
+      "m_prime_lived_operation": "Subrack slot 3: the Torus Pulses group (Pulse mix 3·3 ↔ 4·2, Helix balance, Drive) and the 12-tick Cadence.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S3",
+        "P1-S3-POLES",
+        "P1-S4-3"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "NATIVE-GAP"
     },
     {
       "id": "M1-C06",
@@ -415,7 +1872,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "First Spanda / 3:3; Second Spanda / 4:2; Third Spanda / 64+72+1",
+      "live_map_nodes": [
+        "M1-3",
+        "M1-3-5",
+        "M1-5-4"
+      ],
+      "m_prime_lived_operation": "The two partitions are the two pulses; 16/9 is the torus geometry; 137 and the doubled 36/72 field have no view.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S3",
+        "P1-F5-1"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "EPI-GAP"
     },
     {
       "id": "M1-C07",
@@ -437,7 +1913,24 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "QL sixfold / 4+2",
+      "live_map_nodes": [
+        "M1-4"
+      ],
+      "m_prime_lived_operation": "Subrack slot 4: the Torus Determinants (Lens, Context frame, Harmonic basis, M3 transcription).",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S4"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C08",
@@ -461,7 +1954,25 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Complement X+Y=5; Positional Klein quaternity",
+      "live_map_nodes": [
+        "M1-4.5",
+        "M1-4.2"
+      ],
+      "m_prime_lived_operation": "Complement and conjugacy as keys: the Jankó key column Overlay Pair family (A, B, C).",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S4-5b",
+        "P1-S4-2"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "NATIVE-GAP"
     },
     {
       "id": "M1-C09",
@@ -485,7 +1996,18 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "State quaternity; 64 / 64′ / 128 / 4096 fields",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "No instrument slot carries the 36 / 64 / 64′ / 128 / 4096 fields; the 64 codons belong to the M3′ Form layer.",
+      "current_oi_native_owners": [
+        "QL-MEF kernel holds the 64 codons (M3 state); no M1′ slot reads these fields"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "EPI-GAP"
     },
     {
       "id": "M1-C10",
@@ -506,7 +2028,18 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Determinate oscillation",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "No instrument slot: the live map does not carry determinate oscillation (conflict K6); the source is the later theory.",
+      "current_oi_native_owners": [
+        "none: not carried by the map or by a DLW device"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "EPI-GAP"
     },
     {
       "id": "M1-C11",
@@ -528,7 +2061,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Context Frame grammar",
+      "live_map_nodes": [
+        "M1-3-4",
+        "M1-4.4"
+      ],
+      "m_prime_lived_operation": "The Torus Context frame macro CF1 … CF7, one value per nested stage of M1-3-4.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S3-4",
+        "P1-S4"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C12",
@@ -549,7 +2101,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "MEF refraction",
+      "live_map_nodes": [
+        "M1-4.4",
+        "M1-4.5"
+      ],
+      "m_prime_lived_operation": "The Lens macro (twelve lens12 values) and Scale mapping Root; the M′ matrices Reading layer.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S4",
+        "P1-S4-4"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C13",
@@ -575,7 +2146,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Harmonic/musical derivation",
+      "live_map_nodes": [
+        "M1-4.5",
+        "M1-4.4"
+      ],
+      "m_prime_lived_operation": "Scale mapping (84 modes, Chromatic | Fifths), Exact-ratio generators (read-only), Jankó, Clip Scale.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-S4-4",
+        "P1-S4-5a"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C14",
@@ -599,7 +2189,28 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Toroidal / SU(2) recognition",
+      "live_map_nodes": [
+        "M1-5",
+        "M1-5-1",
+        "M1-5-2"
+      ],
+      "m_prime_lived_operation": "Frame 5: the visible torus (R = 16/9, r = 1); the 720° phase is not a Torus reading.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-F5",
+        "P1-F5-1",
+        "P1-F5-2"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C15",
@@ -620,7 +2231,18 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "TDA / shape of activity",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "No instrument slot and no live-map text (research direction); not placed.",
+      "current_oi_native_owners": [
+        "none yet (research direction)"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "RESEARCH-PROPOSITION"
+      ],
+      "readiness": "RESEARCH-ONLY"
     },
     {
       "id": "M1-C16",
@@ -644,7 +2266,25 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Playable matheme",
+      "live_map_nodes": [
+        "M1",
+        "M1'"
+      ],
+      "m_prime_lived_operation": "The whole M1′ Torus with the Jankó keyboard: walk, strike, hear, see and inspect one formal relation.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-WHOLE"
+      ],
+      "standing": [
+        "AUTHORED-POSITION",
+        "IMPLEMENTATION-FACT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C17",
@@ -666,7 +2306,19 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Determinate Agency",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "Serves none of the M1′ rack: an agent reaches the torus through the agent world (manual §25.5: in Live an agent writes clips and automation for the torus).",
+      "current_oi_native_owners": [
+        "Actuation (Agent, determination, Return)",
+        "O:I live-shell (agent writes through the same stage channel)"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C18",
@@ -686,7 +2338,18 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Relational operative persistence",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "Saved state and presets: \"a saved state keeps every parameter\" (manual §21.2 Rules); not an instrument slot.",
+      "current_oi_native_owners": [
+        "O:I parent (preset / saved state); Central for the Project ground"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "READY-TO-COMPOSE"
     },
     {
       "id": "M1-C19",
@@ -708,7 +2371,18 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "Formal return/revision",
+      "live_map_nodes": [],
+      "m_prime_lived_operation": "Serves none of the M1′ rack: the return (5/0) runs from Technē (M5′) into the ground (M0′), manual §25.1.",
+      "current_oi_native_owners": [
+        "Central and AIKit (wiki returns); Factory (Run, Evidence, Recognition) via Technē M5′"
+      ],
+      "dlw_placement_rows": [],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "EPI-GAP"
     },
     {
       "id": "M1-C20",
@@ -738,7 +2412,26 @@
         "original_standing": "preserved; original source/evidence claims do not establish whole installed encounter",
         "installed_observations": [],
         "human_assessment": null
-      }
+      },
+      "md_rows": "M1-C20 (delta)",
+      "live_map_nodes": [
+        "M1-2",
+        "M1-3",
+        "M1-4",
+        "M1-5"
+      ],
+      "m_prime_lived_operation": "Resonator bank apertures and Binding nonets touch the seam; no view follows one relation through number, interval, topology and angular aperture.",
+      "current_oi_native_owners": [
+        "QL-MEF (kernel: torus, m1 engine, music modes, Jankó window)",
+        "O:I parent (Expressions native field owns the reading; live-shell is the face)"
+      ],
+      "dlw_placement_rows": [
+        "P1-F5-1"
+      ],
+      "standing": [
+        "DESIGN-COMMITMENT"
+      ],
+      "readiness": "EPI-GAP"
     }
   ],
   "m_prime_experience": {
@@ -748,7 +2441,9 @@
     "M1-3'": "bi-phasal Spanda pulse",
     "M1-4'": "QL positional/lens/CF navigation",
     "M1-5'": "topology/shape recognition",
-    "whole": "walk, strike, hear, see and inspect the same formal relation through multiple concomitant registers"
+    "whole": "walk, strike, hear, see and inspect the same formal relation through multiple concomitant registers",
+    "historical": true,
+    "live_map": "The live map carries only the app-layer node M1'; the six strata are HISTORICAL. The rack frame and subrack placement in dlw_placement take over their role."
   },
   "cross_system": {
     "integrated_123": "M1 -> M2 -> M3 as one cosmic event while M1', M2' and M3' remain individual deep instruments",
@@ -783,5 +2478,1445 @@
     "coverage": "docs/kernel-rebuild/EPI-WORLD-COORDINATE-COVERAGE-2026-09-30.json",
     "standing": "complete source/requirement account; whole-experience recovery in progress; installed first-delivery proofs pending",
     "human_assessment": null
+  },
+  "draft": {
+    "status": "scratch draft; refresh of the 6 Sep 2026 matrix against the live Bimba map and DLW placement; not adopted; no repository edited",
+    "refreshed": "2026-10-20",
+    "source_files": [
+      "/Users/admin/Central/Work/Quaternal-Logic/docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
+      "/Users/admin/Central/Work/Quaternal-Logic/docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.md"
+    ],
+    "protocol": "docs/integrations/epi-logos/EPI-DEEP-SUBSYSTEM-CAPABILITY-MATRIX-PROTOCOL.md",
+    "readiness_note": "Readiness is assigned from code and manual reading only; this refresh executed nothing, so no row is ALREADY-REAL (protocol §8: only when the Epi whole is actually proved). READY-TO-COMPOSE: the shell code binds the carrier to an existing owner. NATIVE-GAP: the carrier is a catalogue design or manual entry and the shell code names the missing owner, binding or announcement. EPI-GAP: no device, design or manual entry carries the coordinate, or the Epi relation itself is undefined. RESEARCH-ONLY: a research direction with no instrument slot."
+  },
+  "historical": {
+    "note": "Matrix wording of 6 Sep 2026 that the live map no longer carries verbatim. Kept, not deleted.",
+    "coordinate_tree_2026_09_06": {
+      "M1-0": {
+        "name": "Bimba / Original",
+        "role": "self-identity / invariant source-form"
+      },
+      "M1-1": {
+        "name": "Pratibimba / Reflection",
+        "role": "self-inversion / source-traceable difference"
+      },
+      "M1-2": {
+        "name": "Ananda / harmonic relational field",
+        "children": {
+          "M1-2-0": "Bimba / #X+0",
+          "M1-2-1": "Pratibimba / #X+1",
+          "M1-2-2": "Sum",
+          "M1-2-3": "Difference A",
+          "M1-2-4": "Difference B",
+          "M1-2-5": "Quintessence / non-dual combination"
+        }
+      },
+      "M1-3": {
+        "name": "Spanda / generative oscillatory logic",
+        "children": {
+          "M1-3-0": "Seed / fused potential",
+          "M1-3-1": "original-directed pole",
+          "M1-3-2": "reciprocal/reflected pole",
+          "M1-3-3": "Trika",
+          "M1-3-4": "contextual flowering",
+          "M1-3-5": "meta-reflection / return"
+        }
+      },
+      "M1-4": {
+        "name": "Quaternal Logic Flowering",
+        "role": "full formal grammar of the generated matheme: 4+2, 3:3/3:1, complement, conjugacy, relation families, completion, states, nesting, Context Frames, MEF and musical determination"
+      },
+      "M1-5": {
+        "name": "Toroidal Recognition",
+        "children": {
+          "M1-5-0": "Toroidal-Quaternionic Ground",
+          "M1-5-1": "Torus in quaternionic space",
+          "M1-5-2": "4pi / 720-degree cycle",
+          "M1-5-3": "shadow as phase relation",
+          "M1-5-4": "bridge toward Paraśakti",
+          "M1-5-5": "recognition of completed circulation"
+        }
+      }
+    },
+    "m_prime_experience_strata": {
+      "M1-0'": "canonical/source form",
+      "M1-1'": "living instance/reflection",
+      "M1-2'": "harmonic/Ananda engine",
+      "M1-3'": "bi-phasal Spanda pulse",
+      "M1-4'": "QL positional/lens/CF navigation",
+      "M1-5'": "topology/shape recognition",
+      "whole": "walk, strike, hear, see and inspect the same formal relation through multiple concomitant registers"
+    },
+    "pairing_reading_md_section_5": "six pairing families A, B, C, D1 (same-position cross-face), D2 (cross-position cross-face: transformation, requirement, completion), D3 (pratibimba-internal / helix-invariant); see conflicts K2",
+    "not_carried_by_live_map": [
+      "Symbolon (dia-ballein / sym-ballein)",
+      "determinate oscillation (four two-sided categories, eight determinations)",
+      "64 / 64' / 128 / 4096 state fields",
+      "the expanded Third Spanda identity chain (137 itself is carried at M1-5-4 and M2-5)",
+      "TDA / shape of activity",
+      "Epii-on-X pipelines (CPT, RAG)"
+    ]
+  },
+  "coordinate_roots": {
+    "M1": {
+      "name": "Paramasiva",
+      "role": "Subsystem 1: the structural-logical foundation, universal grammar generator. Turns Anuttara's (0/1) into Quaternal Logic by mod6: Ananda harmonic matrices, Spanda engine, QL flowering, quaternionic integration.",
+      "placement": "P1-WHOLE",
+      "six_fold": {
+        "q0": [
+          {
+            "key": "q_0_arises_from_void",
+            "extract": "Form is the first standing-forth from #0's silence — the 1 the slash cuts from the 0.",
+            "empty": false
+          },
+          {
+            "key": "q_0_emerges_from_anuttara",
+            "extract": "M1's ground is Anuttara — Paramasiva is the first emanation from the void, inheriting the (0/1) non-dual element and the 8-fold zero-zero.",
+            "empty": false
+          }
+        ],
+        "q1": [
+          {
+            "key": "q_1_the_determinate_itself",
+            "extract": "Form is the material-definitional position as such — the what, the determinate that simply is what it is.",
+            "empty": false
+          },
+          {
+            "key": "q_1_the_logos_grammar",
+            "extract": "M1 is the structural-logical foundation — the Logos that transforms Anuttara's pure Reality (R) into systematic Order (O) through pre-computational Zero Logic.",
+            "empty": false
+          }
+        ],
+        "q2": [
+          {
+            "key": "q_2_operates_by_delimitation",
+            "extract": "Form works by drawing a line — determination is delimitation, the in-quantum (Eckhart's 'insofar as') that bounds a content while holding it open.",
+            "empty": false
+          },
+          {
+            "key": "q_2_spanda_engine",
+            "extract": "M1 operates through Spanda — the primordial pulsation, the generative engine that drives the (0/1) into systematic unfolding.",
+            "empty": false
+          }
+        ],
+        "q3": [
+          {
+            "key": "q_3_quaternal_logic_architecture",
+            "extract": "M1's structure is Quaternal Logic itself — the 4+2 architecture, the 16/9 = (4/3)^2 flowering, the mod6 frameworks and quaternionic integration that scaffold all of M2–M5.",
+            "empty": false
+          },
+          {
+            "key": "q_3_the_unit_before_counting",
+            "extract": "Form's structure is the unit — the 1 that must exist before 1+1 can be two.",
+            "empty": false
+          }
+        ],
+        "q4": [
+          {
+            "key": "q_4_blueprint_for_manifestation",
+            "extract": "M1 is for blueprint — it exists to bridge unmanifest potential with a coherent plan for cosmic manifestation, providing the frameworks on which Parashakti, Mahamaya, Nara, and Epii are raised.",
+            "empty": false
+          },
+          {
+            "key": "q_4_for_the_sake_of_graspability",
+            "extract": "Form is for determinacy — it gives the field something a hand can close on, a name a question can aim at.",
+            "empty": false
+          }
+        ],
+        "q5": [
+          {
+            "key": "q_5_handed_on_as_ground",
+            "extract": "Form completes by being taken up — it opens into Operation (#2), which moves what Form has fixed, and it sediments back as ground (#0) for the next determination.",
+            "empty": false
+          },
+          {
+            "key": "q_5_quaternionic_integration",
+            "extract": "M1's synthesis is quaternionic integration — the QL flowering culminating where the structural-logical achieves coherent closure and hands its grammar forward to Parashakti's vibration.",
+            "empty": false
+          }
+        ]
+      }
+    },
+    "M1'": {
+      "name": "Paramasiva'",
+      "role": "App layer of M1: generation. The torus is the only source of sound; Live plays it with M2′ and M3′.",
+      "placement": "P1-WHOLE",
+      "added_vs_matrix": "App-layer node (owner ruling 2026-10-20)."
+    }
+  },
+  "dlw_placement": {
+    "owner_rulings_2026_10_20": [
+      "O:I holds six app layers: Live holds M1′, M2′ and M3′ played as one instrument; Expressions is M4′; Technē is M5′; M0′ is the graph systems and the planet (O-I main f78bc6aa4, DLW manual §25.1). The live map records the same six as the nodes M0′…M5′ (promotion_source: owner ruling 2026-10-20).",
+      "Each subsystem is one instrument, \"the device as a whole is encapsulated in the 0/5 layers\"; \"the 0/5 can be the full form with the 1-4 as a subrack\" (Live's rack UI), recursively: each subrack device is itself framed by its own 0 and 5 with its 1–4 inside, as deep as the map goes.",
+      "\"the janko piano should stay in the torus, but just become far more well made at the component level\". The Jankó's two row families are the two helices (QL docs/M-PRIME-PHYSICAL-MUSIC-WAYFINDER.md §0.4.4).",
+      "\"other ql devices should fold into this ontology\"; \"devices in their functional relations express the coordinate system as functionality/techne\"."
+    ],
+    "layer": "M1'",
+    "instrument": "Torus (Live)",
+    "frame": [
+      "M1-0",
+      "M1-5"
+    ],
+    "subrack": [
+      "M1-1",
+      "M1-2",
+      "M1-3",
+      "M1-4"
+    ],
+    "recursion": "each subrack device is framed by its own 0 and 5 with 1-4 inside: M1-2 (M1-2-0 / M1-2-5), M1-3 (M1-3-0 / M1-3-5; stage 4 framed by 4.0000 / (5/0)), M1-4 (M1-4.0 / M1-4.5), M1-5 (M1-5-0 / M1-5-5)",
+    "standing_vocabulary": [
+      "AUTHORED-POSITION",
+      "CURRENT-DOMAIN-SPEC",
+      "DESIGN-COMMITMENT",
+      "IMPLEMENTATION-FACT",
+      "OBSERVED-RESULT",
+      "RESEARCH-PROPOSITION",
+      "HISTORICAL-IMPLEMENTATION-EVIDENCE"
+    ],
+    "readiness_vocabulary": [
+      "ALREADY-REAL",
+      "READY-TO-COMPOSE",
+      "EPI-GAP",
+      "NATIVE-GAP",
+      "RESEARCH-ONLY"
+    ],
+    "readiness_note": "Readiness is assigned from code and manual reading only; this refresh executed nothing, so no row is ALREADY-REAL (protocol §8: only when the Epi whole is actually proved). READY-TO-COMPOSE: the shell code binds the carrier to an existing owner. NATIVE-GAP: the carrier is a catalogue design or manual entry and the shell code names the missing owner, binding or announcement. EPI-GAP: no device, design or manual entry carries the coordinate, or the Epi relation itself is undefined. RESEARCH-ONLY: a research direction with no instrument slot.",
+    "shell": {
+      "path": "/Users/admin/Central/worktrees/env-1/o-i/packages/live-shell/ui/src",
+      "revision": "env-1 checkout, branch dlw/build, HEAD 075785fba"
+    },
+    "manual": "DLW manual (scratchpad copy of docs/dlw/DLW.md)",
+    "rows": [
+      {
+        "id": "P1-WHOLE",
+        "coordinates": [
+          "M1",
+          "M1'"
+        ],
+        "slot": "Whole instrument: the M1′ Torus in Live. Rack frame = M1-0 (seed) and M1-5 (body); subrack = M1-1 … M1-4.",
+        "devices": [
+          "Torus (`live:m1-torus`, design `quaternal-logic:torus`)",
+          "Jankó keyboard (`live/janko/JankoDevice.tsx`)",
+          "Live chain: note devices → Torus → effects"
+        ],
+        "params_views": [
+          "folded · compact (torus + four macros) · whole (Field page, Body page) · full (playable torus with Jankó) · widget / rail tile"
+        ],
+        "standing": [
+          "AUTHORED-POSITION",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live map node M1′ (c_1_description, m_3_application_layer \"The torus: generation\", promotion_source owner ruling 2026-10-20)",
+          "DLW §9, §21.2, §25.1",
+          "live/torusInstrument.ts (one reading handle, owner writes through the stage channel)",
+          "live/torusDevice.ts"
+        ],
+        "note": "The torus is the only generator (manual §21.2 Rules); M2′ and M3′ tune and move it and make no sound of their own.",
+        "gaps": []
+      },
+      {
+        "id": "P1-F0",
+        "coordinates": [
+          "M1-0"
+        ],
+        "slot": "Frame 0, the seed: the rack's standing head and the direct (Bimba, Day) face of the helix pair.",
+        "devices": [
+          "Torus head (light = the owner's standing)",
+          "Jankó keys with coordinate.face = direct",
+          "first helix"
+        ],
+        "params_views": [
+          "Torus `light` and `standing` readout (following · held · opening · manual · unavailable)",
+          "Jankó key `coordinate.face` / row `whole_tone_row_family` 0",
+          "Helix balance, first-helix weight (design only)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "NATIVE-GAP: Helix balance is not announced by the owner (see P1-S3)"
+        ],
+        "evidence": [
+          "live/torusDevice.ts torusDesignValues: light, standing",
+          "live/janko/jankoLayout.ts JankoKey.face = direct | prime",
+          "live M1-0 q_3_unmoving_reference_axis: M1-0 is the #0 implicate position, one of the two loops, not one of the four explicate sides"
+        ],
+        "note": "Working placement refined, not contradicted: see conflict K1 on what the live map calls a helix."
+      },
+      {
+        "id": "P1-S1",
+        "coordinates": [
+          "M1-1"
+        ],
+        "slot": "Subrack slot 1: reflection, the second helix; the prime (Pratibimba, Night) face of the helix pair.",
+        "devices": [
+          "Jankó keys with coordinate.face = prime",
+          "second helix"
+        ],
+        "params_views": [
+          "Jankó key `coordinate.face` / row family 1",
+          "Helix balance, second-helix weight (design only)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "NATIVE-GAP: Helix balance not announced (P1-S3)"
+        ],
+        "evidence": [
+          "live/janko/jankoLayout.ts",
+          "live M1-1 q_3_one_is_all_fold: the #1 explicate position, the first determinate side",
+          "live M1-4.5 c_2_musical_janko_figure: the two interleaved row families ↔ the two chromatic direct/prime helices"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S2",
+        "coordinates": [
+          "M1-2"
+        ],
+        "slot": "Subrack slot 2, Ananda: the M′ matrices device, Oscillator layer. Recursive frame M1-2-0 / M1-2-5, inside M1-2-1…M1-2-4.",
+        "devices": [
+          "M′ matrices (`quaternal-logic:m-prime-matrices`), Matrix = Oscillator"
+        ],
+        "params_views": [
+          "Matrix · Basis · Value form (Raw · Digital root · Decimal) · Family 0–5 · Cell (row 12 × position 12)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: design only. No live-shell binding found; native-field/domain.ts reads ql.m1.engine but the shell does not, and the family manifest holds the face `m-prime-matrices` at admission \"waiting\""
+        ],
+        "evidence": [
+          "catalogue panels/quaternal-logic__m-prime-matrices.tsx (owner m1.*: QL M1 engine `ql kernel m1`, ql.m1.engine/v1, family 0..5, 12×12 cells as [raw, digit root, decimal])",
+          "quaternalLogicFamilyManifest.ts"
+        ],
+        "note": "The live M1-2 is six matrices plus six digital-root reflections; the Oscillator matrix's \"Family 0–5\" and three typed value forms match it one for one."
+      },
+      {
+        "id": "P1-S2-F",
+        "coordinates": [
+          "M1-2-0",
+          "M1-2-5"
+        ],
+        "gaps": [
+          "NATIVE-GAP: as P1-S2 (design only)"
+        ],
+        "slot": "Ananda frame: Family 0 (the Original, unshifted) and Family 5 (the Quintessence, paradox holder).",
+        "devices": [
+          "M′ matrices, Oscillator"
+        ],
+        "params_views": [
+          "Family = 0 and Family = 5"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "m-prime-matrices panel header: \"family 5, the Quintessence, has no scalar, so its cells read none\""
+        ],
+        "note": "Family 5 reads no single value; that is the map's \"paradox holder\", not a missing owner."
+      },
+      {
+        "id": "P1-S2-IN",
+        "coordinates": [
+          "M1-2-1",
+          "M1-2-2",
+          "M1-2-3",
+          "M1-2-4"
+        ],
+        "gaps": [
+          "NATIVE-GAP: as P1-S2 (design only)"
+        ],
+        "slot": "Ananda inside: Families 1–4 (Offset, Sum, First Difference, Second Difference).",
+        "devices": [
+          "M′ matrices, Oscillator"
+        ],
+        "params_views": [
+          "Family = 1 … 4"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "m-prime-matrices panel header"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S2-DR",
+        "coordinates": [
+          "M1-2-0-0",
+          "M1-2-1-0",
+          "M1-2-2-0",
+          "M1-2-3-0",
+          "M1-2-4-0",
+          "M1-2-5-0"
+        ],
+        "gaps": [
+          "NATIVE-GAP: as P1-S2 (design only)"
+        ],
+        "slot": "Digital-root reflection of each matrix.",
+        "devices": [
+          "M′ matrices, Oscillator"
+        ],
+        "params_views": [
+          "Value form = Digital root (typed apart from Raw and Decimal)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "manual §22.6 Rules: a raw value, a digital root and a decimal value are three different things"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S3",
+        "coordinates": [
+          "M1-3"
+        ],
+        "slot": "Subrack slot 3, Spanda pulses: the Torus Pulses group, the 3:3 / 4:2 carrier.",
+        "devices": [
+          "Torus (Body page → Pulses section)"
+        ],
+        "params_views": [
+          "Pulse mix (3·3 ↔ 4·2)",
+          "Helix balance",
+          "Drive (with the sky ring)",
+          "display handles 1 and 2"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: the native field announces only lens, context frame, harmonic basis, M3 transcription, sound, level, cadence and scale; pulseMix, helixBalance and drive are drawn as gaps (TORUS_ABSENT)"
+        ],
+        "evidence": [
+          "catalogue panels/torus.tsx (\"the field announces none of them yet, so they draw their gaps\")",
+          "live/torusDevice.ts TORUS_ABSENT",
+          "live M1-3 c_2_double_cover_reading: T1/T2 are the two helices",
+          "live M1-3-4.(0/1/2/3) q_3: 4:2 crossed with 3:3"
+        ],
+        "note": "Placement is supported by the live map: Spanda holds both partitions and calls T1/T2 the two helices."
+      },
+      {
+        "id": "P1-S3-F",
+        "coordinates": [
+          "M1-3-0",
+          "M1-3-5"
+        ],
+        "slot": "Spanda frame: the Seed and the Quintessential Meta-Reflection.",
+        "devices": [],
+        "params_views": [],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "EPI-GAP",
+        "gaps": [
+          "EPI-GAP: no control or view names the Spanda Seed (pulse at rest) or the 5→0 write-back"
+        ],
+        "evidence": [
+          "torus.tsx, torusDevice.ts"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S3-POLES",
+        "coordinates": [
+          "M1-3-1",
+          "M1-3-2"
+        ],
+        "slot": "Spanda inside: the original pole (T1, direct) and the reflection pole (T0, prime).",
+        "devices": [
+          "Torus Helix balance (design only)"
+        ],
+        "params_views": [
+          "Helix balance"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: Helix balance not announced"
+        ],
+        "evidence": [
+          "live M1-4.5 c_2_musical_spanda_equations: T0/T1 are the two helices sounded as the two whole-tone sixfolds"
+        ],
+        "note": "Mapping the two poles to the two helices is a proposal read from the map's own wording."
+      },
+      {
+        "id": "P1-S3-TRIKA",
+        "coordinates": [
+          "M1-3-3"
+        ],
+        "slot": "Spanda inside: the Trika, the mediating third.",
+        "devices": [],
+        "params_views": [],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "EPI-GAP",
+        "gaps": [
+          "EPI-GAP: Pulse mix balances 3·3 against 4·2, not the Trika; no per-stage control exists"
+        ],
+        "evidence": [],
+        "note": ""
+      },
+      {
+        "id": "P1-S3-4",
+        "coordinates": [
+          "M1-3-4",
+          "M1-3-4.0000",
+          "M1-3-4.(0/1)",
+          "M1-3-4.(0/1/2)",
+          "M1-3-4.(0/1/2/3)",
+          "M1-3-4.(4.0/1-4.4/5)",
+          "M1-3-4.(5/0)"
+        ],
+        "slot": "Spanda inside, stage 4: its nested stages are the context frames CF1…CF7. Sub-frame: 4.0000 (CF1) and (5/0) (CF7) frame; (0/1), (0/1/2), (0/1/2/3) and (4.0/1-4.4/5) inside.",
+        "devices": [
+          "Torus Context frame macro"
+        ],
+        "params_views": [
+          "Context frame CF1 … CF7 (CF1↔4.0000, CF2↔(0/1), CF3↔(0/1/2), CF4↔(0/1/2/3), CF5↔(4.0/1-4.4/5), CF7↔(5/0); CF6 has no node)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "EPI-GAP: CF6 (4.5/0) has no live node"
+        ],
+        "evidence": [
+          "live M1-3-4 c_2_equation_as_frames (CF1…CF5, CF7 mapped to the stages)",
+          "live/torusInstrument.ts LIVE_CONTEXT_FRAME_OPTIONS CF1…CF7, edit kind `context-frame`"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S4",
+        "coordinates": [
+          "M1-4"
+        ],
+        "slot": "Subrack slot 4, QL frames as operators: the Torus Determinants. Recursive frame M1-4.0 / M1-4.5, inside M1-4.1 … M1-4.4.",
+        "devices": [
+          "Torus (compact macros; Field page \"Determinants\")",
+          "Live transport key / root / scale",
+          "Scale mapping"
+        ],
+        "params_views": [
+          "Lens (L0 … L5′)",
+          "Context frame (CF1 … CF7)",
+          "Harmonic basis (B1 … B8 | selected row)",
+          "M3 transcription (DNA | RNA)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/torusInstrument.ts LIVE_TORUS_MACROS (the four determinants), commitLiveInstrumentEdit",
+          "live/torusDevice.ts"
+        ],
+        "note": "Inference, not stated by the code: the eight canonical harmonic bases B1–B8 match by count the eight canonical ratios of M1-4.5 c_2_musical_ratio_field.",
+        "gaps": []
+      },
+      {
+        "id": "P1-S4-0",
+        "coordinates": [
+          "M1-4.0"
+        ],
+        "slot": "QL frame 0: Foundational Encoding (the 16/9 genesis).",
+        "devices": [],
+        "params_views": [],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "EPI-GAP",
+        "gaps": [
+          "EPI-GAP: 16/9 appears only as the Torus geometry R/r (M1-5); no control or view carries the encoding stage"
+        ],
+        "evidence": [
+          "live/torusInstrument.ts LIVE_TORUS_TOPOLOGY"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S4-1",
+        "coordinates": [
+          "M1-4.1"
+        ],
+        "slot": "QL inside: the explicate 4-fold and implicate 6-fold; the 4:2 partition.",
+        "devices": [
+          "Jankó Overlay Partition (manual only)"
+        ],
+        "params_views": [
+          "4 white : 2 black and 3 white : 3 black row-family colouring"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: Partition is drawn by the Live clip design (catalogue clips/live.tsx) from a view setting \"held here until the surface shares it\" (clipBinding.ts); JankoDevice.tsx takes only the mode mask"
+        ],
+        "evidence": [
+          "live M1-4.5 c_2_musical_janko_figure",
+          "catalogue clips/live.tsx lines 51–55 (Partition and Mode are the only overlays with drawing logic)",
+          "live/clipBinding.ts line 107"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S4-2",
+        "coordinates": [
+          "M1-4.2"
+        ],
+        "slot": "QL inside: inversion, the D operator; the minimal D-act is the cross-helix step.",
+        "devices": [
+          "Jankó cross-row semitone"
+        ],
+        "params_views": [
+          "a semitone step across the rows = a step from one helix to the other (manual §21.1)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "NATIVE-GAP: no view names D←, D→, D↔ or the depth-2/3/4 grammar (see P1-S4-5b)"
+        ],
+        "evidence": [
+          "live M1-4.2 q_2_spanda_pulse_made_audible",
+          "manual §21.1 table"
+        ],
+        "note": "The clip tool Invert turns notes upside down within their range; it is pitch inversion, not the conjugate flip, and is not placed here."
+      },
+      {
+        "id": "P1-S4-3",
+        "coordinates": [
+          "M1-4.3"
+        ],
+        "slot": "QL inside: the unified 12-fold recursive loop.",
+        "devices": [
+          "Torus Cadence control",
+          "Jankó (twelve pitch classes on both helices)"
+        ],
+        "params_views": [
+          "Cadence (Hold · 1 tick/s · 12 ticks/s)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/torusInstrument.ts LIVE_CADENCE_OPTIONS",
+          "live M1-4.3 c_1_primary_designation: The Unified 12-Fold Recursive Loop"
+        ],
+        "note": "Placing Cadence at M1-4.3 is a proposal from the 12-state traversal (tick12); the map does not name the control.",
+        "gaps": []
+      },
+      {
+        "id": "P1-S4-4",
+        "coordinates": [
+          "M1-4.4"
+        ],
+        "slot": "QL inside: contextual flowering, 12 lens-scales × 7 CF-modes = 84; the 8 + 4 partition.",
+        "devices": [
+          "Torus Lens and Context frame macros",
+          "Scale mapping (84 modes)",
+          "M′ matrices Reading layer",
+          "Live clip Scale (Root, Mode)",
+          "Jankó mode recolour"
+        ],
+        "params_views": [
+          "Lens × Context frame",
+          "Root · Mode name (Ionian … Locrian)",
+          "Reading matrix: 12 lenses × 7 modes"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "NATIVE-GAP: the 8 + 4 (antinode / node) partition has no DLW view; the twelve M2 sources audio_octet[8] + nodal_quartet[4] are declared modules only (qlModulationSources.ts)"
+        ],
+        "evidence": [
+          "live/designBindings/scaleMappingBinding.ts",
+          "live/modes.ts (84 lens/CF instances per basis; 168 over two bases)",
+          "live M1-4.4 q_3_eighty_four_fold_field, q_5_node_antinode_rendered"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S4-5a",
+        "coordinates": [
+          "M1-4.5"
+        ],
+        "slot": "QL frame 5: harmonic meta-frames: the two bases, the canonical ratio field, lens anchors.",
+        "devices": [
+          "Scale mapping Basis",
+          "Exact-ratio tuning (generators read-only)",
+          "Torus Harmonic basis macro"
+        ],
+        "params_views": [
+          "Basis (Chromatic | Fifths)",
+          "generator ratios 9:8 and 3:2 read from the mode catalogue",
+          "Harmonic basis B1 … B8 | Row"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "gaps": [
+          "NATIVE-GAP: no owner takes a tuning (exact-ratio device has no sounding owner)"
+        ],
+        "evidence": [
+          "live/designBindings/exactRatioBinding.ts",
+          "live M1-4.5 c_2_musical_two_bases, c_2_musical_ratio_field, c_2_musical_lens_anchors"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-S4-5b",
+        "coordinates": [],
+        "aspect": "M1-4.5 relation grammar: A/B/C pairing families and D1–D3 conjugate completion as a playing-surface overlay.",
+        "slot": "QL frame 5 (aspect): relation families and completion degrees on the keys.",
+        "devices": [
+          "Jankó / clip key column Overlay: Pair family, Completion (manual §21.1)"
+        ],
+        "params_views": [
+          "Overlay = Pair family (A, B, C) · Completion (D1 – D3)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: the clip design's Overlay chooser lists Pair family and Completion but draws only Mode and Partition (catalogue clips/live.tsx); JankoDevice.tsx takes only the mode mask"
+        ],
+        "evidence": [
+          "manual §21.1 Editor tabs table (Overlay: Mode · Direct · Partition · Pair family · Completion · Basis)",
+          "catalogue clips/live.tsx lines 44–55 and 339–340",
+          "live/clipBinding.ts line 107"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-F5",
+        "coordinates": [
+          "M1-5"
+        ],
+        "slot": "Frame 5, the body: the visible torus, the whole oscillation state.",
+        "devices": [
+          "Torus picture at every size",
+          "torusFigure outline"
+        ],
+        "params_views": [
+          "folded / compact / whole display; full playable torus"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/torusDevice.ts torusFigure (geometry, not state)",
+          "live/torusInstrument.ts LIVE_TORUS_TOPOLOGY",
+          "live M1-5 c_2_torus_measures"
+        ],
+        "gaps": [],
+        "note": ""
+      },
+      {
+        "id": "P1-F5-0",
+        "coordinates": [
+          "M1-5-0"
+        ],
+        "slot": "Body frame 0: Quaternionic Foundation.",
+        "devices": [],
+        "params_views": [],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "EPI-GAP",
+        "gaps": [
+          "EPI-GAP: the quaternionic algebra has no control or view; it is implicit in the embedding"
+        ],
+        "evidence": [],
+        "note": ""
+      },
+      {
+        "id": "P1-F5-1",
+        "coordinates": [
+          "M1-5-1"
+        ],
+        "slot": "Body inside: Volumetric Potential, the explicit geometry R = 16/9, r = 1.",
+        "devices": [
+          "Torus"
+        ],
+        "params_views": [
+          "LIVE_TORUS_TOPOLOGY (`#1-5-1`, major radius 16/9, minor radius 1): the torus outline and the full view"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/torusInstrument.ts LIVE_TORUS_TOPOLOGY (source: QL-MEF c/src/m1.c ql_m1_torus)",
+          "live M1-5-1 c_1_operational_symbolics (generic R, r); R = 16/9, r = 1 is recorded on the parent M1-5 c_2_torus_measures"
+        ],
+        "note": "Conflict K5: the constants sit on M1-5 in the map; the shell cites #1-5-1 for the embedding.",
+        "gaps": []
+      },
+      {
+        "id": "P1-F5-2",
+        "coordinates": [
+          "M1-5-2"
+        ],
+        "slot": "Body inside: Double-Covering Principle, the 720° return.",
+        "devices": [
+          "Torus design (helices drawn over two turns for one return)",
+          "M3 clock (`clock.degree720`, a different instrument)"
+        ],
+        "params_views": [
+          "no Torus reading of phase; the double-cover degree is the M3 clock's reading"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: the Torus reading carries standing, identity tuple and audio receipt, not a phase or tick (expressions-boundary qlInstrumentReading.ts)"
+        ],
+        "evidence": [
+          "catalogue torus.tsx (\"two turns for one return\")",
+          "ql-m3-clock-binding.test.mjs (clock.degree720)",
+          "live M1-5-2 q_1_double_covering_principle"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-F5-3",
+        "coordinates": [
+          "M1-5-3"
+        ],
+        "slot": "Body inside: Inversion and Shadow Dynamics, shadow as a π phase shift.",
+        "devices": [
+          "Jankó cross-row semitone step"
+        ],
+        "params_views": [
+          "the step from one helix to the other"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live M1-5-3 q_2_pi_shift_as_semitone_crossing",
+          "manual §21.1"
+        ],
+        "gaps": [],
+        "note": ""
+      },
+      {
+        "id": "P1-F5-4",
+        "coordinates": [
+          "M1-5-4"
+        ],
+        "slot": "Body inside: the Bridge to Parashakti, where shape becomes vibration.",
+        "devices": [
+          "Torus Body group",
+          "Body source → M2-2"
+        ],
+        "params_views": [
+          "Strike · Damping · Modes · Agitation · Body source (Declared | Tattva)"
+        ],
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "gaps": [
+          "NATIVE-GAP: strike, damping, modes, agitation, body.source and tattva.* are not announced (TORUS_ABSENT)"
+        ],
+        "evidence": [
+          "live/torusDevice.ts TORUS_ABSENT",
+          "live M1-5-4 q_2_rotation_becomes_oscillation"
+        ],
+        "note": ""
+      },
+      {
+        "id": "P1-F5-5",
+        "coordinates": [
+          "M1-5-5"
+        ],
+        "slot": "Body frame 5: Complete Self-Realization.",
+        "devices": [],
+        "params_views": [],
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "EPI-GAP",
+        "gaps": [
+          "EPI-GAP: the necessity proof (genus 1, 4g+2g = 6) has no view"
+        ],
+        "evidence": [],
+        "note": ""
+      }
+    ],
+    "devices": [
+      {
+        "id": "D-TORUS",
+        "section": "§21.2",
+        "device": "Torus (Live; `live:m1-torus`, design `quaternal-logic:torus`)",
+        "m1": "M1′ whole (generation); M1-3 Pulses group (design only); M1-4 four Determinants macros; M1-5 body picture",
+        "m2": "Body group shows M2-2's tattva fibre constants (Body source Tattva; design only, unbound); Lens macro reads M2-1 lens12",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/torusInstrument.ts (LIVE_TORUS_TOPOLOGY, LIVE_TORUS_MACROS)",
+          "live/torusDevice.ts (TORUS_ABSENT: pulseMix, helixBalance, drive, strike, damping, modes, body.source, tattva.* have no owner reading)",
+          "inhabitants/catalogue/panels/torus.tsx"
+        ]
+      },
+      {
+        "id": "D-JANKO",
+        "section": "§21.1",
+        "device": "Jankó keyboard (`live/janko/JankoDevice.tsx`; also a 4-row sketch inside torus.tsx Full)",
+        "m1": "M1-0 / M1-1 (direct and prime faces = the two row families); M1-4.2 and M1-5-3 (cross-helix semitone step); M1-4.5 (Jankó figure; Overlay Pair family / Completion not drawn)",
+        "m2": "",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/janko/jankoLayout.ts (six rows from `ql.janko-surface/v1`; each key carries coordinate.face direct|prime and whole_tone_row_family)",
+          "JANKO_PLACEMENT_NOTE: excitation-point placement awaits kernel packet K",
+          "torus.tsx Janko(): 4 rows × 14 keys sketch, not the owner's window",
+          "catalogue clips/live.tsx: the clip key column's Overlay chooser draws only Mode and Partition"
+        ]
+      },
+      {
+        "id": "D-SCALE",
+        "section": "§21.3",
+        "device": "Scale mapping (Live note device, before the Torus)",
+        "m1": "M1-4.4 (12 lens anchors × 7 CF modes = 84; mode in force) and M1-4.5 (Basis Chromatic | Fifths)",
+        "m2": "M2-1 (Reading: Root = one of twelve lenses, Mode name, Set by Hand | Sky); M2-4.3 (Source scale: maqām, quarter-tone cents); M2-4.5 (Shem: named, not served); M2-5 (Ficino planetary scales: named, not served; Sky sets the mode from the planet of the hour)",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/designBindings/scaleMappingBinding.ts",
+          "live/modes.ts (ql.music-modes/v1: lens-cf rows, source rows, sources_absent)",
+          "manual §21.3: Ficino and Shem \"not served yet\""
+        ]
+      },
+      {
+        "id": "D-EXACT",
+        "section": "§21.4",
+        "device": "Exact-ratio tuning (Live note device, before the Torus)",
+        "m1": "M1-4.5 (the two bases' generators 9:8 chromatic and 3:2 fifths, read from the mode catalogue; read-only)",
+        "m2": "M2-1 (tuning) and M2-5 (Source ratios: Sun 1:1, Moon 4:3, Mercury 5:4, Venus 9:8, Mars 15:8, Jupiter 5:3, Saturn 3:2, Neptune 9:5, Pluto 9:4): no owner takes a tuning",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "live/designBindings/exactRatioBinding.ts (EXACT_RATIO_ABSENT: refNote, refHz, ratioSet, comma, export, bendRange, source.ratios)"
+        ]
+      },
+      {
+        "id": "D-FX",
+        "section": "§21.5",
+        "device": "Effects: Filter, Dynamics, Delay, Reverb (Live devices after the Torus)",
+        "m1": "",
+        "m2": "",
+        "other": "Serves none of M1/M2 by the map: generic Live devices (the native field's presentation stage). Their parameters are targets the Sky can move (M2-5 routes).",
+        "standing": [
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "n/a",
+        "evidence": [
+          "live/designBindings/torusEffects.ts",
+          "live/designBindings/skyModulation.ts (targets)"
+        ]
+      },
+      {
+        "id": "D-SKY",
+        "section": "§22.1",
+        "device": "Sky (instrument; rail widget in every mode)",
+        "m1": "",
+        "m2": "M2-5 (face of the frame: ten bodies and the Earth anchor; just interval and chakra tie per body); M2-3 (zodiac ring with decans); M2-5-(0/1)-n (planet→centre ties)",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "inhabitants/ql/devices/qlSky.ts (kernel nara_identity transit → ql.sky-snapshot/v1)",
+          "inhabitants/catalogue/panels/quaternal-logic__sky.tsx (TIE: M2-5 map, Uranus none)"
+        ]
+      },
+      {
+        "id": "D-SKYMOD",
+        "section": "§22.2",
+        "device": "Sky modulation (chain effect)",
+        "m1": "",
+        "m2": "M2-5 (routes: planet Position, or Own interval = the planet's M2-5 just interval, on frequency targets)",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "READY-TO-COMPOSE",
+        "evidence": [
+          "live/designBindings/skyModulation.ts (SKY_INTERVAL = the M2-5 map, m2_sky.rs; plan held in the shell; Drive unannounced so no planet can move it)"
+        ]
+      },
+      {
+        "id": "D-CHAKRA",
+        "section": "§22.5",
+        "device": "Chakra (instrument; personal layer of the Studio)",
+        "m1": "",
+        "m2": "M2-5-(0/1)-1…7 (seven centres, ref `#2-5-0/1-n`) and M2-5-(0/1)-0 (Earth grounding); M2-3 (Decan-ruler route); also M4.1 (personal layer, outside this scope)",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "inhabitants/ql/devices/qlChakra.ts (personal layer via kernel nara_elemental)",
+          "quaternalLogicFamilyManifest.ts: today's centres and routes are the scene's (ql.scene/v1), which no owner carries to the shell yet"
+        ]
+      },
+      {
+        "id": "D-MATRICES",
+        "section": "§22.6",
+        "device": "M′ matrices (instrument)",
+        "m1": "M1-2 (Oscillator layer: 12 × 12 source values, Family 0–5, Raw | Digital root | Decimal); M1-4.4 (Reading layer's 84 lens/mode cells)",
+        "m2": "M2-1 (Reading layer: 12 lenses × 7 modes, tuning, modulation)",
+        "other": "Form layer (64 codons) is M3; Situation layer is M4 (\"no source yet\").",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "catalogue panels/quaternal-logic__m-prime-matrices.tsx (owners: `ql kernel m1`, `ql music modes`, `ql.m3-state/v1`)",
+          "quaternalLogicFamilyManifest.ts: face `m-prime-matrices` admission \"waiting\"; no live-shell binding found (native-field/domain.ts reads ql.m1.engine; the shell does not)"
+        ]
+      },
+      {
+        "id": "D-BANK",
+        "section": "§22.7",
+        "device": "Resonator bank (chain effect after the Torus)",
+        "m1": "",
+        "m2": "M2-0 (apertures: \"M2 owns the apertures … M2-0 holds the eighteen\"; the sixteen static cuts in eight reciprocal pairs); the M3 clock draws the cut",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "catalogue panels/quaternal-logic__resonator-bank.tsx (header cites docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md §2)",
+          "no shell binding or family-manifest face found"
+        ]
+      },
+      {
+        "id": "D-BINDING",
+        "section": "§22.8",
+        "device": "Binding (instrument)",
+        "m1": "",
+        "m2": "M2-5 → M3 seam only: nonets of nine M2 positions resolving into eight M3 positions (9:8); Stretch → Q sounds through the M2 Resonance",
+        "other": "Primarily M3 (codons, charges, pairing).",
+        "standing": [
+          "DESIGN-COMMITMENT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "catalogue panels/quaternal-logic__binding.tsx",
+          "no shell binding or family-manifest face found"
+        ]
+      },
+      {
+        "id": "D-PHYSICS",
+        "section": "§20.4",
+        "device": "Physics (Expressions field device)",
+        "m1": "",
+        "m2": "",
+        "other": "Serves none of M1/M2: the Expressions field's motion law (viscosity, vortex, curl, gravity, time scale), M4′.",
+        "standing": [
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "n/a",
+        "evidence": [
+          "inhabitants/catalogue/panels/physics.tsx; components/devices/physicsBinding.ts"
+        ]
+      },
+      {
+        "id": "D-RESONANCE",
+        "section": "§20.14",
+        "device": "Resonance (Expressions field device)",
+        "m1": "",
+        "m2": "M2-2 (Body source Declared | Tattva: element fibre sets Q, Agitation, Edge; unbound) and the M2′ resonant body (a free square plate or box cavity today; the bell-modal body is a gap)",
+        "other": "",
+        "standing": [
+          "DESIGN-COMMITMENT",
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "NATIVE-GAP",
+        "evidence": [
+          "components/devices/fieldDesignBinding.ts (FIELD_ABSENT.resonance: body.source, tattva.* \"No tattva reaches the shell\")",
+          "expressions-app/src/engine/cymaticResonator.ts (plate φ_mn, f_mn = f0(m²+n²); box cavity)"
+        ]
+      },
+      {
+        "id": "D-LIGHT",
+        "section": "§17.10",
+        "device": "Light (Technē effect over the Canvas)",
+        "m1": "",
+        "m2": "",
+        "other": "Serves none of M1/M2: an optical bench over a reading's Canvas (source, lens, prism, sensor), M5′.",
+        "standing": [
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "n/a",
+        "evidence": [
+          "inhabitants/catalogue/panels/techne__light.tsx"
+        ]
+      },
+      {
+        "id": "D-VOICE",
+        "section": "§19.21",
+        "device": "Voice (Actuation effect after the Agent)",
+        "m1": "",
+        "m2": "",
+        "other": "Serves none of M1/M2: how an agent speaks (body, mouth, affect, interrupt, egress).",
+        "standing": [
+          "IMPLEMENTATION-FACT"
+        ],
+        "readiness": "n/a",
+        "evidence": [
+          "inhabitants/catalogue/panels/actuation__voice.tsx"
+        ]
+      }
+    ]
+  },
+  "conflicts": [
+    {
+      "id": "K1",
+      "topic": "What is a helix, and where the Jankó row families sit",
+      "working": "The Jankó's two row families are the two helices: M1-0 Bimba arc and M1-1 Pratibimba arc (QL docs M-PRIME-PHYSICAL-MUSIC-WAYFINDER.md §0.4.4).",
+      "live": "M1-0 is the #0 implicate position, \"one of the two loops, not one of the four explicate sides\" (q_3_unmoving_reference_axis); M1-1 is the first explicate side (q_3_one_is_all_fold). The word helix is carried elsewhere: M1-3 c_2_double_cover_reading (\"T1/T2 are the two helices\"), M1-4.5 c_2_musical_spanda_equations and c_2_musical_janko_figure (the two interleaved whole-tone row families ↔ the two chromatic direct/prime helices, union Z12), M1-5-2 q_3_two_helices_one_substrate (the explicate loop computare and the implicate loop sophia on one surface).",
+      "kind": "refinement",
+      "note": "Bimba and Pratibimba are the poles from which the direct and prime faces come; the helices as pitch collections are voiced at M1-3, M1-4.5 and M1-5-2. Placement rows P1-F0 and P1-S1 keep M1-0 / M1-1 as the faces and cite M1-3 / M1-4.5 for the helices."
+    },
+    {
+      "id": "K2",
+      "topic": "D1–D3: completion degrees or sub-forms of an operator",
+      "working": "Matrix §5 (MD) lists six pairing families A, B, C, D1 (same-position cross-face), D2 (cross-position: transformation, requirement, completion), D3 (pratibimba-internal). Matrix JSON, the wayfinder §2.1 and DLW §21.1 read D1–D3 as degrees of conjugate completion (2, 3, 4 coordinates).",
+      "live": "Both readings are in the live map. M1-4.5 c_2_musical_pairing_grammar: \"D1→D2→D3 are conjugate-completion degrees … NOT a fourth relation family beside A/B/C\" (D1 two coordinates, D2 three, D3 four); the cross operators (CrossSamePosition, CrossTransform, CrossRequire, CrossComplete) are separate relations. M1-4.2 q_3_complementary_quaternary_roles: D is a 3-but-1 inversion operator with faces D←, D→, D↔ (depth 2/3/4), and sub-forms D1 same-position cross, D2 cross-position cross (transform, require, complete), D3 A/B/C within the pratibimba helix.",
+      "kind": "live-map-internal",
+      "note": "Matrix MD §5 follows the M1-4.2 reading; matrix JSON and the DLW follow M1-4.5. Marked HISTORICAL in §5 below; not adjudicated."
+    },
+    {
+      "id": "K3",
+      "topic": "A/B/C letters",
+      "working": "Matrix §5: B offset transition, C converse mirror.",
+      "live": "M1-4.5 q_1_harmonic_families_abc (corrected 2026-09-06): B = {(1,2),(3,4),(5,0)} offset-transition, C = {(0,5),(1,4),(2,3)} converse-mirror. M1-5-3 q_3_negation_point_at_theta_pi still reads \"the C-family crossing-pairs C = {(1,2),(3,4),(5,0)}\", the pre-correction lettering (kept in M1-4.5 q_1_former_reading).",
+      "kind": "live-map-internal",
+      "note": "The matrix agrees with the corrected reading; one live node still carries the old letters."
+    },
+    {
+      "id": "K4",
+      "topic": "Context frame CF6",
+      "working": "Seven context frames: (00/00), (0/1), (0/1/2), (0/1/2/3), (4.0/1-4.4/5), (4.5/0), (5/0).",
+      "live": "M1-3-4 has six nested nodes: 4.0000, (0/1), (0/1/2), (0/1/2/3), (4.0/1-4.4/5), (5/0). c_2_equation_as_frames maps CF1, CF2, CF3, CF4, CF5 and CF7; CF6 has no node, and the (5/0) node is described as \"operating within the (4.5) context frame\".",
+      "kind": "gap",
+      "note": "Torus Context frame macro offers CF1…CF7 (torusInstrument.ts); CF6 has no map node to stand for."
+    },
+    {
+      "id": "K5",
+      "topic": "Where R = 16/9, r = 1 is stored",
+      "working": "M1-5-1 geometry R = 16/9, r = 1.",
+      "live": "M1-5 c_2_torus_measures: \"Kernel constants R = 16/9, r = 1: outer/inner equators (R+r):(R−r) = 25:7 … Villarceau slicing sin θ = 9/16\". M1-5-1 holds the generic embedding and surface area 4π²Rr with symbolic R, r.",
+      "kind": "refinement",
+      "note": "The shell cites #1-5-1 for the embedding (LIVE_TORUS_TOPOLOGY.ref); the numeric constants sit one level up in the map."
+    },
+    {
+      "id": "K6",
+      "topic": "Parts of the matrix the live map does not carry",
+      "working": "Matrix text: Symbolon (dia-ballein / sym-ballein); determinate oscillation (four two-sided categories, eight determinations); the 64 / 64′ / 128 / 4096 state fields; the expanded Third Spanda identity chain; TDA; Epii-on-X pipelines (CPT, RAG).",
+      "live": "No occurrence in the live M1 or M2 properties of: Symbolon, ballein, determinate oscillation, four two-sided, 4096, TDA, QLoRA, CPT. 137 = 64 + 72 + 1 is carried (M1-5-4 q_4_hinge_static_to_vibrational; M2-5 q_2_seventy_two_contribution_to_alpha), not its expanded chain. The six layers of determination are partly carried (M1-4.5 q_5: Gebser ground, Name, Power, lenses, context frames, then the musical node).",
+      "kind": "not-carried",
+      "note": "These remain the matrix's text, marked as sourced from the later theory documents; the map is silent, not contradictory."
+    },
+    {
+      "id": "K7",
+      "topic": "M1-0′ … M1-5′ strata",
+      "working": "Matrix §7 and JSON m_prime_experience list six strata M1-0′ … M1-5′.",
+      "live": "The live map carries the single app-layer node M1′ (\"The torus: generation\"); no M1-n′ child exists.",
+      "kind": "historical",
+      "note": "Marked HISTORICAL; the rack frame / subrack placement (§11) takes over the role."
+    },
+    {
+      "id": "K8",
+      "topic": "The shell's family manifest against its own devices",
+      "working": "Placement treats the Torus, Sky, Chakra and M′ matrices as shell devices.",
+      "live": "quaternalLogicFamilyManifest.ts and ql/devices/qlDevices.ts hold `torus`, `m-prime-matrices` (and, in qlDevices.ts, sky and chakra) at admission \"waiting\", while live/torusDevice.ts and ql/devices/qlSky.ts implement a Torus device and a Sky binding.",
+      "kind": "shell-internal",
+      "note": "Treated as a stale or narrower manifest; torusDevice.ts and qlSky.ts are the evidence used."
+    },
+    {
+      "id": "K9",
+      "topic": "Two Jankó implementations in the shell",
+      "working": "\"the janko piano should stay in the torus, but just become far more well made at the component level\".",
+      "live": "The catalogue's torus.tsx Full view draws a 4-row × 14-key SVG sketch (Janko()); live/janko/JankoDevice.tsx draws the owner's six-row window (ql.janko-surface/v1) with touch-points, pointer / touch / keyboard / MIDI input and mode recolour. The excitation-point placement on the torus \"awaits the kernel derivation (packet K)\".",
+      "kind": "gap",
+      "note": "The component-level gap is the sketch inside torus.tsx and the missing packet K placement; the six-row device already exists."
+    },
+    {
+      "id": "K10",
+      "topic": "The 720° double cover is not a Torus reading",
+      "working": "M1-5-2 double cover 720° on the Torus.",
+      "live": "The Torus reading carries standing, identity tuple and audio receipt (expressions-boundary qlInstrumentReading.ts); the double-cover degree (`clock.degree720`) is the M3 clock's reading.",
+      "kind": "seam",
+      "note": "Row P1-F5-2 records the M3 clock as the present carrier."
+    }
+  ],
+  "confirmed_by_live_map": [
+    "M1-5-1 … M1-5-4 carry the geometry, the 720° double cover, the π-phase shadow and the bridge where rotation becomes oscillation (live names Volumetric Potential, Double-Covering Principle, Inversion and Shadow Dynamics, Bridge to Parashakti).",
+    "M1-2 is six archetypal matrices plus six digital-root reflections, family 5 holding the paradox without a single value: the Oscillator layer of the M′ matrices (families 0–5; Raw / Digital root / Decimal).",
+    "M1-3 holds both partitions (First Spanda 3:3 and Second Spanda 4:2) and names T1/T2 the two helices; M1-4.3 is the unified 12-fold loop; M1-4.2 is inversion; M1-4.4 is the 84-fold field.",
+    "The shell's four Torus macros (Lens L0…L5′, Context frame CF1…CF7, Harmonic basis, M3 transcription) are the QL frames as operators; the CF1…CF7 stages are the nested stages of M1-3-4."
+  ],
+  "live_map_refresh": {
+    "authority": "live Bimba map (bimba-neo4j; bimba-graph skill), read 2026-10-20; the map is recorded, not adjudicated",
+    "counts": {
+      "nodes": 44,
+      "by_family": {
+        "M1": 1,
+        "M1'": 1,
+        "M1-0": 1,
+        "M1-1": 1,
+        "M1-2": 13,
+        "M1-3": 13,
+        "M1-4": 7,
+        "M1-5": 7
+      }
+    },
+    "added_vs_matrix": {
+      "M1'": "App-layer node (owner ruling 2026-10-20).",
+      "M1-2-0-0": "Digital Root Reflection node (one per matrix); the matrix named the digital-root face only as a concomitant reading.",
+      "M1-2-1-0": "Digital Root Reflection node.",
+      "M1-2-2-0": "Digital Root Reflection node.",
+      "M1-2-3-0": "Digital Root Reflection node.",
+      "M1-2-4-0": "Digital Root Reflection node.",
+      "M1-2-5-0": "Digital Root Reflection node.",
+      "M1-3-4.0000": "Nested stage node; the matrix described M1-3-4's further sixfold without enumerating it.",
+      "M1-3-4.(0/1)": "Nested stage node.",
+      "M1-3-4.(0/1/2)": "Nested stage node.",
+      "M1-3-4.(0/1/2/3)": "Nested stage node.",
+      "M1-3-4.(4.0/1-4.4/5)": "Nested stage node.",
+      "M1-3-4.(5/0)": "Nested stage node.",
+      "M1-4.0": "Stage node; the matrix gave M1-4 no children.",
+      "M1-4.1": "Stage node.",
+      "M1-4.2": "Stage node.",
+      "M1-4.3": "Stage node.",
+      "M1-4.4": "Stage node.",
+      "M1-4.5": "Stage node."
+    },
+    "renamed_vs_matrix": {
+      "M1-0": {
+        "matrix": "Bimba / Original",
+        "live": "Bimba - Original Aspect"
+      },
+      "M1-1": {
+        "matrix": "Pratibimba / Reflection",
+        "live": "Pratibimba - Reflection Aspect"
+      },
+      "M1-2": {
+        "matrix": "Ananda / harmonic relational field",
+        "live": "Ananda"
+      },
+      "M1-2-0": {
+        "matrix": "Bimba / #X+0",
+        "live": "Matrix 0: The Original (Bimba)"
+      },
+      "M1-2-1": {
+        "matrix": "Pratibimba / #X+1",
+        "live": "Matrix 1: The Offset (Pratibimba)"
+      },
+      "M1-2-2": {
+        "matrix": "Sum",
+        "live": "Matrix 2: The Sum (Constructive Synthesis)"
+      },
+      "M1-2-3": {
+        "matrix": "Difference A",
+        "live": "Matrix 3: First Difference (Pure Polarity)"
+      },
+      "M1-2-4": {
+        "matrix": "Difference B",
+        "live": "Matrix 4: Second Difference (Complementary Polarity)"
+      },
+      "M1-2-5": {
+        "matrix": "Quintessence / non-dual combination",
+        "live": "Matrix 5: Non-Dual Quintessence (Paradox Holder)"
+      },
+      "M1-3": {
+        "matrix": "Spanda / generative oscillatory logic",
+        "live": "Spanda"
+      },
+      "M1-3-0": {
+        "matrix": "Seed / fused non-dual potential",
+        "live": "Spanda Seed"
+      },
+      "M1-3-1": {
+        "matrix": "original-directed pole",
+        "live": "Primal Differentiation - Original Pole"
+      },
+      "M1-3-2": {
+        "matrix": "reciprocal/reflected pole",
+        "live": "Primal Differentiation - Reflection Pole"
+      },
+      "M1-3-3": {
+        "matrix": "Trika / relation-of-relations",
+        "live": "Trika Synthesis"
+      },
+      "M1-3-4": {
+        "matrix": "contextual flowering",
+        "live": "Contextual Flowering"
+      },
+      "M1-3-5": {
+        "matrix": "meta-reflection / return",
+        "live": "Quintessential Meta-Reflection"
+      },
+      "M1-4": {
+        "matrix": "Quaternal Logic flowering",
+        "live": "Quaternal Logic Flowering"
+      },
+      "M1-5": {
+        "matrix": "Toroidal recognition",
+        "live": "Quaternionic Integration"
+      },
+      "M1-5-0": {
+        "matrix": "Toroidal-Quaternionic Ground",
+        "live": "Quaternionic Foundation"
+      },
+      "M1-5-1": {
+        "matrix": "Torus in quaternionic space",
+        "live": "Volumetric Potential"
+      },
+      "M1-5-2": {
+        "matrix": "4π / 720° cycle",
+        "live": "Double-Covering Principle"
+      },
+      "M1-5-3": {
+        "matrix": "shadow as phase relation",
+        "live": "Inversion and Shadow Dynamics"
+      },
+      "M1-5-4": {
+        "matrix": "bridge toward Paraśakti",
+        "live": "Bridge to Parashakti"
+      },
+      "M1-5-5": {
+        "matrix": "recognition of the topology of the completed circulation",
+        "live": "Complete Self-Realization"
+      }
+    },
+    "q_six_fold": {
+      "carriers": [
+        "M1",
+        "M1-0",
+        "M1-1",
+        "M1-2",
+        "M1-3",
+        "M1-3-0",
+        "M1-3-1",
+        "M1-3-2",
+        "M1-3-3",
+        "M1-3-4.0000",
+        "M1-3-4.(0/1)",
+        "M1-3-4.(0/1/2)",
+        "M1-3-4.(0/1/2/3)",
+        "M1-3-4.(4.0/1-4.4/5)",
+        "M1-3-4.(5/0)",
+        "M1-3-5",
+        "M1-4",
+        "M1-4.2",
+        "M1-4.4",
+        "M1-4.5",
+        "M1-5",
+        "M1-5-2",
+        "M1-5-3",
+        "M1-5-4"
+      ],
+      "without": [
+        "M1'",
+        "M1-2-0",
+        "M1-2-0-0",
+        "M1-2-1",
+        "M1-2-1-0",
+        "M1-2-2",
+        "M1-2-2-0",
+        "M1-2-3",
+        "M1-2-3-0",
+        "M1-2-4",
+        "M1-2-4-0",
+        "M1-2-5",
+        "M1-2-5-0",
+        "M1-3-4",
+        "M1-4.0",
+        "M1-4.1",
+        "M1-4.3",
+        "M1-5-0",
+        "M1-5-1",
+        "M1-5-5"
+      ],
+      "reading": "q_0 ground (from where), q_1 what it is, q_2 how it operates, q_3 its structure, q_4 its telos, q_5 its synthesis / hand-on, as the property text states them"
+    },
+    "unread": [
+      "QL docs/music/JANKO-QL-INSTRUMENT-FIGURE.md, docs/sources/ql-musical-derivation-v3.md, docs/kernel-rebuild/APERTURES-AND-CLOCK-CENTRE.md (cited by the map or the shell; relied on through the map text)",
+      "QL-MEF Rust / C sources (ql_m1_torus, m1_engine.rs, janko.rs): not opened",
+      "shell bodies of the M3 clock, Deck, Torus on-chain plates, MIDI map and note-device modules: not read beyond headers",
+      "DLW §22.3, §22.4: not read"
+    ]
   }
 }

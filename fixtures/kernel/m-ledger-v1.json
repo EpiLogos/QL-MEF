@@ -1,6 +1,6 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "d01a52e48c57eea488b1779a7f212b0b1283fa74136fb113e4220d8e49181073",
+  "ledger_revision": "71fcf170abe646f55f780a83d12a46a5019d7c503522b800cc41f19dce37a894",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
     "sha256": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82",
@@ -11,44 +11,44 @@
       "id": "deep-M1",
       "data": {
         "path": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
-        "sha256": "7e550ee452b282358206dde32a9c9dac3d5dfe0f87f1877b57ff40d3a0734985"
+        "sha256": "e7d37f1a603a8e1ff6e9550a100050c5e655d9e6bc20dc6d0b200e3c74e43bfe"
       },
       "rationale": {
         "path": "docs/origami work/M1/M1-PARAMASIVA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
-        "sha256": "c5ae4a925112ad651d1323242c4b5ecd0ec05da6dd225b0812cdf4fdd36581d8"
+        "sha256": "421cd5a740c05dc19ce6321ea84f27eead3f62951c646b6a359fa927496cffa3"
       }
     },
     {
       "id": "deep-M2",
       "data": {
         "path": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
-        "sha256": "5a8a807727d936e0ff988c6365cfd09dcd7ea8cefb4c485280136749ecd25ade"
+        "sha256": "3b7775819ab86c948d4cda2b36c248be3ec0f313335b98720067c80433e5b93a"
       },
       "rationale": {
         "path": "docs/origami work/M2/M2-PARASHAKTI-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
-        "sha256": "debc9de83563e6aa9bceeebce55b653677b2e7b9f393d62c5ce788bae52bb5f4"
+        "sha256": "0ae16db23d58c0c544e8e2e9b9f75ce69ce9d51d86443887673f634d3a070feb"
       }
     },
     {
       "id": "deep-M3",
       "data": {
         "path": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
-        "sha256": "d8210dc0ecc48f7d817fc8460856e4a8bf4e64dea7762e85a969d22041775983"
+        "sha256": "923331ac6215046c44dfeef856f264d16977457264c6238d062f22e8031122d2"
       },
       "rationale": {
         "path": "docs/origami work/M3/M3-MAHAMAYA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
-        "sha256": "8fd14d7fd9a87cc5590b6ff77e0978f172327098f96dfca1fbd04c2c7ddb00d8"
+        "sha256": "2140dbb4e6fe2a1945d77e20d5655d4795ca3c9a58203cc18d0a8be006b20b58"
       }
     },
     {
       "id": "deep-M4",
       "data": {
         "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.json",
-        "sha256": "45b3a0152a9f5165376ee3a7d1cdeb45d13c15f556e1b85b502c299a2f3b0325"
+        "sha256": "74759b5a31eb002fb11f3f399d750117724a98065064f7bb487c38590c220aa2"
       },
       "rationale": {
         "path": "docs/origami work/M4/M4-NARA-DEEP-CAPABILITY-COORDINATE-MATRIX.md",
-        "sha256": "a24098d211e1a8b30972bb7796073852bdf922de76a05341eb17b7c6230721ba"
+        "sha256": "51ddce841215bf57fdcb92e83342ed543cd2cd79b92255d7c5ccdac5dea9ae3e"
       }
     },
     {
