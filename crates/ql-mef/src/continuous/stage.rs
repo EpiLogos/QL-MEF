@@ -105,6 +105,7 @@ pub enum StageChange {
         operations: Vec<M3Operation>,
     },
     Damping {
+        #[serde(deserialize_with = "super::number::float")]
         per_second: f64,
     },
     Clock {
@@ -113,7 +114,14 @@ pub enum StageChange {
     },
     Strike {
         mode_ref: String,
+        #[serde(deserialize_with = "super::number::pair")]
         amplitude: [f64; 2],
+    },
+    /// A played strike at points of the torus surface: the scene body excites
+    /// every standing voice by its own shape at each point (`strike-at`). Like
+    /// a strike by mode, a momentary performance act that claims no slot.
+    StrikeAt {
+        points: Vec<super::StrikeAtInput>,
     },
 }
 
@@ -127,7 +135,7 @@ impl StageChange {
             Self::Clock { slot, .. } => clock_slot(slot).map(Some).ok_or_else(|| {
                 format!("a clock change addresses clock.inscription or clock.lensing, not {slot}")
             }),
-            Self::Strike { .. } => Ok(None),
+            Self::Strike { .. } | Self::StrikeAt { .. } => Ok(None),
         }
     }
 
@@ -162,6 +170,12 @@ impl StageChange {
                 "mode_ref": mode_ref,
                 "amplitude": amplitude,
                 "warrant": "performance act, not owned state (QL-MEF #281 slice 1); momentary lifetime per the control contract"}),
+            Self::StrikeAt { points } => json!({
+                "determinant": "the played strike at points of the torus",
+                "through": "the scene instrument's strike-at: the body's own shape at each point lowered to one native strike of the standing voices",
+                "effect": format!("momentary modal excitation of the standing voices at {} struck point(s)", points.len()),
+                "points": points,
+                "warrant": "performance act, not owned state (QL-MEF #281); the body's law, not a stage law, decides what each point gives each voice"}),
         }
     }
 }
@@ -455,6 +469,9 @@ pub struct StagePlan {
     /// Momentary played excitations of the standing voices. They claim no
     /// slot: a strike is a performance act, not owned state.
     pub strikes: Vec<super::StrikeInput>,
+    /// Momentary strikes at points of the torus, one act each in plan order. A
+    /// performance act like `strikes`: no slot, no re-evaluation.
+    pub strike_points: Vec<Vec<super::StrikeAtInput>>,
     /// Generated follow-on scenes, each applied by the host as one admitted
     /// M1 form-advance determinant, in passage order.
     pub passage_ticks: u64,
@@ -480,6 +497,13 @@ pub fn receipt(plan: &StagePlan, event_ref: &str, applied: bool) -> Value {
             "key": format!("{}/strike:{}", plan.procedure_ref, s.mode_ref),
             "slot": Value::Null,
             "warrant": json!({"determinant": "the played strike", "mode_ref": s.mode_ref,
+                "standing": "momentary performance act; claims no slot and survives no re-evaluation"}),
+        })).collect::<Vec<_>>(),
+        "momentary_strikes_at": plan.strike_points.iter().enumerate().map(|(act, points)| json!({
+            "schema": STAGE_CONTRIBUTION,
+            "key": format!("{}/strike-at:{act}", plan.procedure_ref),
+            "slot": Value::Null,
+            "warrant": json!({"determinant": "the played strike at points of the torus", "points": points,
                 "standing": "momentary performance act; claims no slot and survives no re-evaluation"}),
         })).collect::<Vec<_>>(),
         "generated_scenes": plan.passage_ticks,
@@ -549,6 +573,7 @@ pub fn evaluate(
         damping: None,
         clock: Vec::new(),
         strikes: Vec::new(),
+        strike_points: Vec::new(),
         passage_ticks: 0,
         contributions: Vec::new(),
     };
@@ -576,6 +601,10 @@ pub fn evaluate(
                     mode_ref: mode_ref.clone(),
                     amplitude: *amplitude,
                 });
+            }
+            StageChange::StrikeAt { points } => {
+                super::StrikeAtInput::validate_act(points)?;
+                plan.strike_points.push(points.clone());
             }
             StageChange::Form { operations } => {
                 if operations.is_empty() || operations.len() > 64 {
@@ -653,6 +682,7 @@ pub fn evaluate(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::continuous::StrikeAtInput;
 
     fn event() -> CoupledInput {
         serde_json::from_str(include_str!(
@@ -1031,6 +1061,127 @@ mod tests {
             evaluate(&infinite, &live, &mut ownership, 1, 0, 0)
                 .unwrap_err()
                 .contains("modal metres")
+        );
+    }
+
+    #[test]
+    fn a_strike_at_points_is_momentary_claims_no_slot_and_names_its_points() {
+        let live = event();
+        let mut ownership = StageOwnership::default();
+        let chord = vec![
+            StrikeAtInput {
+                theta: 1.2,
+                phi: 3.4,
+                amplitude: [0.3, 0.0],
+            },
+            StrikeAtInput {
+                theta: 0.0,
+                phi: 5.5,
+                amplitude: [0.1, -0.1],
+            },
+        ];
+        let mut procedure = procedure(vec![StageChange::StrikeAt {
+            points: chord.clone(),
+        }]);
+        procedure.selector = Vec::new();
+        let plan = evaluate(&procedure, &live, &mut ownership, 1, 0, 0).unwrap();
+        assert_eq!(plan.strike_points, vec![chord.clone()]);
+        assert!(plan.strikes.is_empty(), "points are not named voices");
+        assert_eq!(
+            plan.contributions.len(),
+            0,
+            "a strike at points claims no slot"
+        );
+        assert_eq!(ownership.contributions().count(), 0);
+        let record = receipt(&plan, &live.m1.event_ref, true);
+        let acts = record["momentary_strikes_at"].as_array().unwrap();
+        assert_eq!(acts.len(), 1, "one chord is one act");
+        assert_eq!(acts[0]["slot"], Value::Null);
+        assert_eq!(acts[0]["key"], "ta-onta:stage:clock-fold/strike-at:0");
+        assert_eq!(acts[0]["warrant"]["points"], json!(chord));
+        // The wire shape is the strict change, named by kebab-case.
+        let wire = json!({"change":"strike-at","points":[
+            {"theta":1.2,"phi":3.4,"amplitude":[0.3,0.0]}]});
+        assert!(matches!(
+            serde_json::from_value::<StageChange>(wire).unwrap(),
+            StageChange::StrikeAt { points } if points.len() == 1
+        ));
+        assert!(
+            serde_json::from_value::<StageChange>(json!({"change":"strike-at",
+                "points":[], "mode_ref":"scene:planet/#2-5-4"}))
+            .is_err()
+        );
+        // Out-of-domain points and policy breaches are refused by the stage,
+        // before any transport, in words.
+        for (bad, word) in [(7.0, "theta"), (-0.5, "theta"), (f64::NAN, "theta")] {
+            let mut refused = procedure.clone();
+            refused.changes[0] = StageChange::StrikeAt {
+                points: vec![StrikeAtInput {
+                    theta: bad,
+                    phi: 1.0,
+                    amplitude: [0.1, 0.0],
+                }],
+            };
+            assert!(
+                evaluate(&refused, &live, &mut ownership, 1, 0, 0)
+                    .unwrap_err()
+                    .contains(word)
+            );
+        }
+        let mut loud = procedure.clone();
+        loud.changes[0] = StageChange::StrikeAt {
+            points: vec![StrikeAtInput {
+                theta: 1.0,
+                phi: 1.0,
+                amplitude: [1.5, 0.0],
+            }],
+        };
+        assert!(
+            evaluate(&loud, &live, &mut ownership, 1, 0, 0)
+                .unwrap_err()
+                .contains("amplitude")
+        );
+        let mut empty = procedure;
+        empty.changes[0] = StageChange::StrikeAt { points: Vec::new() };
+        assert!(
+            evaluate(&empty, &live, &mut ownership, 1, 0, 0)
+                .unwrap_err()
+                .contains("1..=64")
+        );
+    }
+
+    /// A procedure file is text (`ql stage evaluate`/`bind`): its fractional
+    /// numbers must reach the internally tagged changes the way they do from a
+    /// `Value` (serde_json's `arbitrary_precision` otherwise hands them over as
+    /// its private Number map).
+    #[test]
+    fn a_procedure_file_with_fractional_numbers_parses_from_text() {
+        let text = r#"{
+            "schema": "ql.stage-procedure/v1",
+            "procedure_ref": "ta-onta:stage:from-text",
+            "revision": 1,
+            "subject_ref": "ql:k2/default-subject",
+            "trigger": {"trigger": "invocation"},
+            "selector": ["material.damping"],
+            "changes": [
+                {"change": "damping", "per_second": 0.5},
+                {"change": "strike", "mode_ref": "scene:planet/#2-5-4", "amplitude": [0.50, 0.0]},
+                {"change": "strike-at", "points": [
+                    {"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 1e-1]}]}
+            ]
+        }"#;
+        let procedure: StageProcedure = serde_json::from_str(text).unwrap();
+        procedure.validate().unwrap();
+        assert!(
+            matches!(procedure.changes[0], StageChange::Damping { per_second } if per_second == 0.5)
+        );
+        assert!(
+            matches!(&procedure.changes[1], StageChange::Strike { amplitude, .. }
+            if *amplitude == [0.5, 0.0])
+        );
+        assert!(
+            matches!(&procedure.changes[2], StageChange::StrikeAt { points }
+            if points.len() == 1 && points[0].amplitude == [0.2, 0.1])
         );
     }
 

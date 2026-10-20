@@ -26,7 +26,10 @@ use serde_json::{Value, json};
 use super::coupled::{
     CoupledBasis, CoupledFieldSession, CoupledInput, SKY_ROOT_HZ, SkyFrequencyBinding,
 };
-use super::{ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput};
+use super::{
+    ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput, STRIKE_CAP_METRES, StrikeAtInput,
+    StrikeInput,
+};
 use crate::m1_engine::M1Engine;
 use crate::m2_engine::{
     CarrierWeight, ContinuousMode, MaterialFibre, PhysicalParameter, ResonatorState,
@@ -39,6 +42,8 @@ use crate::nara::{
 pub const CONFIG: &str = "ql.scene-expression-config/v1";
 pub const PROVIDER: &str = "ql.scene-torus-provider/v1";
 pub const INFLUENCE: &str = "ql.expression-influence/v1";
+/// The receipt of one strike at points of the torus (`strike-at`).
+pub const STRIKE_AT_RECEIPT: &str = "ql.strike-at/v1";
 /// The planets the map tunes, in scalar-degree order: Sun, Venus, Mercury,
 /// Moon, Saturn, Jupiter, Mars, then Neptune and Pluto.
 pub const PLANETS: [&str; 9] = [
@@ -131,6 +136,11 @@ pub struct Voice {
 /// no routing between them, so a key sounds the voices whose own pitch is nearest
 /// its class, the offset disclosed per voice (wayfinder §2.2).
 pub const SCENE_PLAYED_STANDING: &str = "declared-instrument-mapping: a played key sounds the scene voices whose own just-ratio pitch is nearest the key's chromatic class over C3; the sources define the voices' pitches and the surface's classes and define no routing between them, so this routing is declared, bounded and disclosed with each voice's cents offset (wayfinder §2.2); D13 keeps every sounding pitch the voice's own, never the key's equal-tempered class";
+
+/// The law of a strike at points, carried in every `ql.strike-at/v1` receipt.
+const STRIKE_AT_LAW: &str = "each standing voice receives amplitude × χ(voice, φ, θ): the voice's own M2′ double-Fourier Chladni term at the struck point, with the weight the body's mode shapes already carry (frequency over the highest frequency, decision D21) and the voice's anchor at its planet's longitude; summed over the points of one act, so a chord is the sum of its single strikes; no other weighting. The sampled sheet is θ, φ ∈ [0, 2π). The same χ fills the native owner's mode_shapes, so touching a sampled point excites each voice by the shape the owner holds there.";
+/// The standing of a strike at points: what it is and what it does not decide.
+const STRIKE_AT_STANDING: &str = "performance act, not a determinant: pitch, material, clocks and every source reading are unchanged and the owner's influence reading stays current (QL-MEF #281); lowered to the one native strike of the named voices, one generation per act. The placement of a key on the torus is not decided here — the caller names the point.";
 
 /// The chromatic class nearest a frequency over C3, and the signed cents offset.
 fn nearest_class(frequency_hz: f64) -> (u8, f64) {
@@ -394,6 +404,68 @@ impl ShapeBasis {
                     .collect())
             })
             .collect()
+    }
+
+    /// What a strike at points of the torus gives each standing voice: the
+    /// named-voice strike the native owner already admits, one entry per voice
+    /// in scene order. A voice receives `amplitude × χ(voice, φ, θ)` — its own
+    /// shape term at the struck point, weight included, exactly the term
+    /// [`Self::shapes`] hands the native owner as `mode_shapes` — summed over
+    /// the points of the act, so a chord is the sum of its single strikes.
+    /// There is no other weighting: a point on a voice's nodal line gives it
+    /// nothing, and one at its antinode gives it its full shape.
+    ///
+    /// The whole act is refused, in words and before anything is sent, if any
+    /// point lies outside the sampled sheet (θ, φ ∈ [0, 2π)), any impulse is
+    /// outside the material policy, or the summed impulse on any voice would
+    /// pass the declared 1.0 metre cap.
+    pub fn strike_at(&self, points: &[StrikeAtInput]) -> Result<Vec<StrikeInput>, String> {
+        StrikeAtInput::validate_act(points)?;
+        let mut impulses: Vec<StrikeInput> = self
+            .voices
+            .iter()
+            .map(|voice| StrikeInput {
+                mode_ref: voice.mode_ref.clone(),
+                amplitude: [0.0, 0.0],
+            })
+            .collect();
+        for point in points {
+            for (impulse, voice) in impulses.iter_mut().zip(&self.voices) {
+                let shape = chi(voice, point.phi, point.theta);
+                impulse.amplitude[0] += point.amplitude[0] * shape;
+                impulse.amplitude[1] += point.amplitude[1] * shape;
+            }
+        }
+        if let Some(over) = impulses.iter().find(|impulse| {
+            impulse
+                .amplitude
+                .iter()
+                .any(|v| !v.is_finite() || v.abs() > STRIKE_CAP_METRES)
+        }) {
+            return Err(format!(
+                "the points of this strike-at act sum past the declared {STRIKE_CAP_METRES:.1} metre material policy on {}",
+                over.mode_ref
+            ));
+        }
+        Ok(impulses)
+    }
+
+    /// The receipt of a strike at points: the points exactly as struck, and for
+    /// each voice the shape term it met at every point and the impulse it was
+    /// given. `impulses` is what [`Self::strike_at`] returned for `points`.
+    pub fn strike_at_receipt(&self, points: &[StrikeAtInput], impulses: &[StrikeInput]) -> Value {
+        json!({
+            "schema": STRIKE_AT_RECEIPT,
+            "points": points,
+            "voices": self.voices.iter().zip(impulses).map(|(voice, impulse)| json!({
+                "mode_ref": voice.mode_ref,
+                "planet_ref": voice.planet_ref,
+                "coupling": points.iter().map(|point| chi(voice, point.phi, point.theta)).collect::<Vec<_>>(),
+                "amplitude": impulse.amplitude,
+            })).collect::<Vec<_>>(),
+            "law": STRIKE_AT_LAW,
+            "standing": STRIKE_AT_STANDING,
+        })
     }
 
     pub fn samples(&self, geometry: &SceneGeometry) -> Result<Vec<FieldSample>, String> {
@@ -799,6 +871,14 @@ fn rebase_m3_request(
     Ok(())
 }
 
+/// What the native owner acknowledged for a strike at points, and the receipt
+/// that names the points and what each voice was given.
+#[derive(Debug, Clone)]
+pub struct StrikeAtOutcome {
+    pub field: Value,
+    pub receipt: Value,
+}
+
 /// One live scene instrument over one native coupled owner.
 pub struct SceneInstrument {
     instance_ref: String,
@@ -999,6 +1079,21 @@ impl SceneInstrument {
             }
         }
         self.session.strike_field(strikes)
+    }
+
+    /// Played excitation of the torus surface: the performer strikes the body at
+    /// points (θ, φ) — a key's point on its helix, a touch of the surface, a
+    /// collision, a singlet's codon. The body's own law lowers the act to one
+    /// native strike of the nine standing voices ([`ShapeBasis::strike_at`]), so
+    /// a point is refused in words before any transport and a refused act leaves
+    /// the native state exactly as it stood. A performance act, not a
+    /// determinant, like [`Self::strike`]; the outcome carries the field the
+    /// owner acknowledged and the `ql.strike-at/v1` receipt naming the points.
+    pub fn strike_at(&mut self, points: &[StrikeAtInput]) -> Result<StrikeAtOutcome, String> {
+        let impulses = self.shape.strike_at(points)?;
+        let receipt = self.shape.strike_at_receipt(points, &impulses);
+        let field = self.strike(&impulses)?;
+        Ok(StrikeAtOutcome { field, receipt })
     }
 
     /// M1's own advance action, then the whole event is re-read.

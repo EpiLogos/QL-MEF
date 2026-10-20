@@ -11,6 +11,13 @@
 //! conjugate axis. The fifths basis enters only as a second traversal/address
 //! overlay over the same twelve classes, never as a second surface geometry.
 //!
+//! Not here: a key's point on the torus. The surface names each key's helix
+//! (`whole_tone_row_family`: WT₀ bimba, WT₁ pratibimba) and position
+//! (`coordinate`), and the scene body strikes the torus at any point it is
+//! given (`scene_field::ShapeBasis::strike_at`); the sources do not yet fix the
+//! angle of a position on its arc or the second arc's place across the 720°
+//! cover, so no `point` is published (figure §4a, "Standing of the placement").
+//!
 //! Provenance boundary (figure §0): the 3:3 / 4:2 white/black colour counts
 //! are the historical instrument's own facts and their QL reading is a
 //! project-level Figure; neither enters this projection's mathematics.

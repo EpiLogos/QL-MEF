@@ -180,6 +180,18 @@ chord                                       ↔ simultaneous excitation set → 
 
 Playing a key excites the torus at that point; the visible pattern and the sound are observations of the same body. The figure a chord draws is the figure shown for the symbol that harmony belongs to. The historical-instrument provenance boundary of §0 still holds: Jankó did not encode QL. What is new is that the playable surface and the sounding body are one object read flat and read wound. The exact angular placement on the arcs is a kernel derivation (Wayfinder §0.4 item 4), not a layout choice.
 
+### Standing of the placement, 20 October 2026
+
+The striking half is built; the placing half is not, because the sources do not yet determine it.
+
+- **Built.** The scene body takes a strike at a point: `strike-at {points: [{theta, phi, amplitude}]}` (host operation; stage change `strike-at`; `InstrumentSession.strikeAt`). Each standing voice is excited by `amplitude × χ(voice, φ, θ)`, the voice's own shape term with the weight the body's `mode_shapes` carry, summed over the points of one act (`continuous/scene_field.rs`, `ShapeBasis::strike_at`). It names no key: the caller names the point.
+- **Not determined: which point a key is.** Per key the Figure needs `{theta, phi, arc, cover_turn}`. What the sources fix and leave open:
+  - V3 (`docs/sources/ql-musical-derivation-v3.md` lines 21–24, §II-1.1, §II-1.5) fixes which pitch classes lie on which helix (WT₀ = bimba arc = the orientable torus, WT₁ = pratibimba arc = the Klein extension, "one semitone above") and the order along each. It states no angle.
+  - Compiled graph, `M1-5` `c_1_winding` and `M1-5-2` `c_1_connection_to_1_4`: positions 1–2 on the meridian θ₁, positions 3–4 on the longitude θ₂, position 5 at (2π, 2π) ~ (0, 0); `M1-5-3`: the negation points θ₁ = π (between positions 1 and 2) and θ₂ = π (between 3 and 4), and the semitone is the π-phase shift made audible. It gives intervals of the circuit, not the angle of a position inside one, and it speaks of six positions, not twelve keys.
+  - The seed `M1'-SPEC` §10 (not compiled into the graph) puts the chromatic circle on the longitude and the circle of fifths on the meridian, with the two helices as two longitudes offset by a semitone; the graph says nothing of chromatic or fifths, and `docs/kernel-rebuild/m123-scene-map/m1-body.md` records the pair as the open `gate0-m1:chromatic-fifths-axes-unseated`.
+  - Rulings D5 (one tick = 30°) and D6 (the large circle is the ecliptic clock) fix the tick ring and the large circle's use. D17, which sheet carries the anti-periodic content (recommended: the Hopf fibre, `degree720 ≥ 360`), sits against V3, which gives the Klein arc to the pratibimba face. The Klein identification has no QL owner (`m1-body.md` §1b, "K² (what it is here)").
+  - Open for the owner: the circle the helices wind on (meridian or longitude), the angle of each position inside its half-arc, whether the pratibimba arc is laid half a turn on, by the semitone, or on the second sheet of the 720° cover. Until then no key carries a point, and the surface disclosure publishes none.
+
 ## 5. Acceptance for a future Jankó mapping
 
 A controller implementation is faithful when:
