@@ -1,5 +1,5 @@
 /**
- * The M2′ structured state and Expression-crossing gate (QL-MEF #215 §7–§8).
+ * The Relation Field's structured state and Expression-crossing gate (QL-MEF #215 §7–§8).
  *
  * `relationFieldState` is what `Aletheia_2 / Technē_2` reads: the active
  * projection, every relation with its verbatim standing and temporal
@@ -9,7 +9,7 @@
  * operates through these refs and the disclosed Actions, never through DOM
  * scraping.
  *
- * `expressionCrossing` is the M2′ ↔ 3:3 gate. The law (#215 §7): only
+ * `expressionCrossing` is the Relation Field ↔ 3:3 gate. The law (#215 §7): only
  * source-backed or canonically derived relations may drive an Expression
  * profile; a temporal or causal relation does not become sonic/harmonic
  * meaning by default. The gate is mechanical and conservative — it
@@ -57,7 +57,6 @@ export interface RelationStateEntry {
 export interface RelationFieldState {
   schema: typeof RELATION_FIELD_STATE_SCHEMA;
   instrument: "timeline";
-  m_prime: 2;
   projection: RelationProjectionMode;
   subject_ref: string;
   reading_ref: string;
@@ -76,7 +75,7 @@ export interface RelationFieldState {
   agency: AgencyRole[];
 }
 
-/** The structured M2′ state for the situated agency, over one reading.
+/** The structured Relation Field state for the situated agency, over one reading.
  * `timeWindow` is the DisclosureSession's own declared window when one is
  * in force; it is never derived here from zoom/pan (those are presentation
  * state, deliberately inexpressible in the contract). */
@@ -90,7 +89,6 @@ export function relationFieldState(
   return {
     schema: RELATION_FIELD_STATE_SCHEMA,
     instrument: "timeline",
-    m_prime: 2,
     projection,
     subject_ref: reading.subject.subject_ref,
     reading_ref: reading.reading_ref,
@@ -125,7 +123,7 @@ export function relationFieldState(
 }
 
 // ---------------------------------------------------------------------------
-// The M2′ ↔ 3:3 Expression crossing gate
+// The Relation Field ↔ 3:3 Expression crossing gate
 // ---------------------------------------------------------------------------
 
 export type M2ExpressionCrossing =
@@ -141,7 +139,7 @@ export type M2ExpressionCrossing =
 const CROSSING_ACTION_HINT = /expression/i;
 
 /**
- * The mechanical warrant for crossing the focused M2′ selection into the
+ * The mechanical warrant for crossing the focused Relation Field selection into the
  * 3:3 Expression reading. Requires:
  *   1. the reading's own disclosure opens the expressions instrument (or
  *      the 3:3-conjugate cut) — capability comes from the reading, never

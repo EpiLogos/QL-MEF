@@ -1,5 +1,5 @@
 /**
- * The M2′ standing grammar (QL-MEF #215) — how a relation's epistemic
+ * The Relation Field's standing grammar (QL-MEF #215) — how a relation's epistemic
  * standing becomes a VISUAL class without ever upgrading it.
  *
  * The law (#215 §5): sourced fact, source-reported claim, inferred/derived

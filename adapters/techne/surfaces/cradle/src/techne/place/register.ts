@@ -41,7 +41,7 @@ export function selectionForPlace(session: DisclosureSession, placeRef: string):
  * The place the session's shared selection focuses, when it names one this
  * reading discloses: the selection's focus refs first, then the session's
  * spatial focus. This is the reopen seam for cross-instrument focus (e.g. a
- * Journey Scene frame binding a real Place ref — M3′↔M4′, #217 §7): another
+ * Journey Scene frame binding a real Place ref — Journey↔Place, #217 §7): another
  * instrument sets the shared selection, and this aperture honours it instead
  * of substituting its own. Never minted: the ref must match a disclosed
  * facet, else null.

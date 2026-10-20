@@ -1,5 +1,5 @@
 /**
- * The M2′ Relation Field model (QL-MEF #215) — pure projections over a
+ * The Relation Field model (QL-MEF #215) — pure projections over a
  * reading's native typed relations. This is the non-chronological half of
  * the Timeline instrument's office: becoming, efficient relation,
  * transformation, recurrence, opposition, phase.

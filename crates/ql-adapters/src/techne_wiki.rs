@@ -155,7 +155,6 @@ impl<'a> WikiTechneAdapter<'a> {
                 instrument: TechneInstrument::Project,
                 available: true,
                 reason: None,
-                m_prime: Some(0),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
@@ -165,7 +164,6 @@ impl<'a> WikiTechneAdapter<'a> {
                     "no validated shape binding discloses a bounded local whole for this subject"
                         .into(),
                 ),
-                m_prime: Some(1),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
@@ -175,7 +173,6 @@ impl<'a> WikiTechneAdapter<'a> {
                     "no live temporal producer is attached to this subject (native owner: Factory/AIKit T1)"
                         .into(),
                 ),
-                m_prime: Some(2),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
@@ -184,28 +181,24 @@ impl<'a> WikiTechneAdapter<'a> {
                 reason: Some(
                     "no source-backed Expression Scenes are composed for this subject".into(),
                 ),
-                m_prime: Some(3),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
                 instrument: TechneInstrument::Place,
                 available: false,
                 reason: Some("no place facets are disclosed for this subject".into()),
-                m_prime: Some(4),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
                 instrument: TechneInstrument::Palace,
                 available: false,
                 reason: Some("Palace producer is not landed (native owner: O-I #218)".into()),
-                m_prime: Some(5),
                 reading: Some(TechneReadingKind::DeepFourTwo),
             },
             InstrumentDisclosure {
                 instrument: TechneInstrument::Expressions,
                 available: false,
                 reason: Some("no Expression binding is disclosed for this subject".into()),
-                m_prime: None,
                 reading: Some(TechneReadingKind::ConjugateThreeThree),
             },
         ];
@@ -482,7 +475,6 @@ mod tests {
                     instrument.reading,
                     Some(TechneReadingKind::ConjugateThreeThree)
                 );
-                assert!(instrument.m_prime.is_none());
             }
         }
         reading.validate().unwrap();

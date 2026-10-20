@@ -1,7 +1,7 @@
 /**
- * The M0′ situated-Agency operating state (L5 Technē, issue #213 §7) — the
+ * The Project situated-Agency operating state (L5 Technē, issue #213 §7) — the
  * structured state through which `Aletheia_0 / Technē_0` locates, inspects,
- * traverses, proposes and Returns over the M0′ instrument using native refs.
+ * traverses, proposes and Returns over the Project instrument using native refs.
  *
  * Laws kept here (dual-reading lock §16, #213 §7, TB0-1 role floor):
  *   - an Agency reads THIS state (the contract types and the bounded view),
@@ -28,7 +28,7 @@ import {
 } from "../contract.ts";
 import type { ProjectView } from "./projections.ts";
 
-/** The operating state one situated Agency perceives of the M0′ instrument
+/** The operating state one situated Agency perceives of the Project instrument
  * (dual-reading lock §16: current subject/whole, active instrument/cut,
  * selection/aperture, source/revision/provenance, available Actions,
  * authority and disclosure limits). */
@@ -69,7 +69,7 @@ export interface TechnaeOperatingState {
 const M0 = 0;
 
 /**
- * The operating state of the M0′ instrument for one reading/session/view.
+ * The operating state of the Project instrument for one reading/session/view.
  * Pure: reads the contract types only; absence stays absent with a reason.
  */
 export function technaeState(reading: TechneReading, session: DisclosureSession | null, view: ProjectView | null): TechnaeOperatingState {

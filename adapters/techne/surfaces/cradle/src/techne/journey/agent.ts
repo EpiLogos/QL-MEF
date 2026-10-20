@@ -8,7 +8,7 @@
  * available native Actions, current scene focus, authority and disclosure
  * limits — and Agent operation uses the SAME ActionRefs as human operation,
  * never DOM/WebGL scraping, never a private chat loop, never a hidden command
- * queue. This module is that publication for M3′: a pure, deterministic,
+ * queue. This module is that publication for the Journey: a pure, deterministic,
  * JSON-safe reading of the Journey's own state. It executes nothing; the
  * governed operations it exposes go through the same routed ActionRefs the
  * human surface uses (./sequence's reorder proposal, ./compose's composition
@@ -31,7 +31,6 @@ import type { VakBinding, VakTraversal } from "./vak.ts";
 /** The situated role this state addresses: Aletheia_3 = M3 × S5′, whose
  * operative role while inhabiting M3′ is Technē_3. */
 export const TECHNE_3_ROLE = "aletheia_3/techne_3";
-export const JOURNEY_M_PRIME = 3;
 
 /** The structured Journey state an Agency may inspect. JSON-safe throughout:
  * an agent session receives this through the ordinary disclosure channel,
@@ -40,7 +39,6 @@ export interface JourneyAgentState {
   contract: "ql.techne/v1";
   role: typeof TECHNE_3_ROLE;
   instrument: TechneInstrument;
-  m_prime: typeof JOURNEY_M_PRIME;
   application_cut: ReturnType<typeof cutFor>;
   subject_ref: string;
   reading_ref: string;
@@ -116,7 +114,6 @@ export function journeyAgentState(input: {
     contract: "ql.techne/v1",
     role: TECHNE_3_ROLE,
     instrument: "journey",
-    m_prime: JOURNEY_M_PRIME,
     application_cut: cutFor("journey"),
     subject_ref: reading.subject.subject_ref,
     reading_ref: reading.reading_ref,

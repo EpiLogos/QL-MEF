@@ -287,7 +287,7 @@ test('overlapping Agent NOWs stay distinct lanes; a late receipt stays a receipt
         uncertainty: 'Factory orders by revision, not wall-clock; bounds are the handoff-declared activity window',
       },
     ],
-    disclosure: { instruments: [{ instrument: 'timeline', available: true, m_prime: 2, reading: '4:2-deep' }] },
+    disclosure: { instruments: [{ instrument: 'timeline', available: true, reading: '4:2-deep' }] },
   };
   const lanes = buildLanes(reading.temporal);
   const byOwner = new Map(lanes.map((lane) => [lane.owner, lane]));

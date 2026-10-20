@@ -1,5 +1,5 @@
 /**
- * The World / Places instrument surface (L5 Technē M4′, #217) — the
+ * The World / Places instrument surface (L5 Technē, #217) — the
  * situated-whole aperture over `TechnePlaceFacet` readings, of which Map,
  * Street and Globe are the concrete spatial interaction body (presentations
  * of the SAME reading data, `modes.ts`), never the office itself and never a
@@ -318,7 +318,7 @@ export function PlaceInstrument({ session, reading }: TechneSurfaceProps) {
 
   return (
     <div className="oi-techne techne-place">
-      <p className="techne-place-office" aria-label="Instrument office">M4′ · World / Places — situated whole · place · reference frame · Earth relation</p>
+      <p className="techne-place-office" aria-label="Instrument office">World / Places — situated whole · place · reference frame · Earth relation</p>
 
       <div className="techne-place-rail" role="toolbar" aria-label="World presentations, camera and time filter">
         <span className="techne-place-rail-group" role="group" aria-label="Presentation mode">

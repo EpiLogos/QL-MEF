@@ -13,7 +13,7 @@ This production tranche begins **after** the core architecture was built.
 - K9 developed the lived Expression instrument/UX over that engine.
 - K10 developed the meaningful Nara/M4 domain over the same body.
 - #94/AW developed the six-organ Ta-Onta world, full C′/Vāk execution grammar and its native bindings.
-- `L5-TECHNE-DUAL-READING-LOCK.md` fixes the relation between the 3:3 lived Expression reading and the 4:2 professional Technē instruments.
+- `L5-TECHNE-DUAL-READING-LOCK.md` fixes the relation between the 3:3 lived Expression reading and Technē's professional instruments (named by their work, with no M′ numbers, since the owner's ruling of 19 Oct 2026).
 
 Current work must **consume and complete those relations**, not recreate an Expression architecture.
 
@@ -25,15 +25,15 @@ The current M′ field is not six generic view modes applied to one coordinate. 
 
 For the 3:3 lived Expression reading, K8–K10 already bring the central M1′–M4′ engine together, with M0′ Bimba/source depth and M5′ Epii/agent depth participating around that body.
 
-For the 4:2 Technē reading, the owner-ratified mapping remains:
+For the Technē reading, the instruments are:
 
 ```text
-M0′  Project / Wiki / Graph
-M1′  Canvas / Constellation
-M2′  Relation Field / Timeline
-M3′  Journey / Scenes
-M4′  Places / World
-M5′  Palace / integral articulation
+Project / Wiki / Graph
+Canvas / Constellation
+Relation Field / Timeline
+Journey / Scenes
+Places / World
+Palace / integral articulation
 ```
 
 Therefore the immediate production work is to map **actual Bimba coordinates, branches and subsystem relations into the already-defined M′ instruments and Expression grammar**: exact bindings, Profiles, Scenes, source relations, constellation/layout where warranted, actions and artifact generation.
@@ -42,17 +42,17 @@ Do not manufacture a new six-mode `refraction` ontology.
 
 ## 2. Cross-reading relation
 
-The 3:3 Expression and 4:2 Technē readings operate over the same native subjects/refs/sources while exposing different instruments and operations.
+The 3:3 Expression and Technē readings operate over the same native subjects/refs/sources while exposing different instruments and operations.
 
 Keep the established bridges:
 
 ```text
-M0′ Project/Wiki/Graph   ↔ Expression graph/source depth
-M1′ Canvas               ↔ M1′ topology/geometry/material Expression capacity
-M2′ Relation/Timeline    ↔ M2′ dynamic/resonant/material Expression capacity
-M3′ Journey/Scenes       ↔ real Expression Scenes
-M4′ Places/World         ↔ Nara/EarthBody/current situated Expression
-M5′ Palace/Epii          ↔ Epii/Agent depth and Return
+Project/Wiki/Graph   ↔ Expression graph/source depth
+Canvas               ↔ the Expression's topology/geometry/material capacity
+Relation/Timeline    ↔ the Expression's dynamic/resonant/material capacity
+Journey/Scenes       ↔ real Expression Scenes
+Places/World         ↔ Nara/EarthBody/current situated Expression
+Palace/Epii          ↔ Epii/Agent depth and Return
 ```
 
 The exact interpretation of a bridge comes from its existing K/L5/Research-Canvas owners. A visual relation never manufactures graph truth.
@@ -169,7 +169,7 @@ This is a continuity ledger, not a new kernel wave.
 
 The QL parent session should use exactly **three development subagents**:
 
-1. **K/L5 continuity audit** — K8–K10 implementation, M→M′ bindings, 3:3/4:2 cross-reading and native Actions/Profile/Scene seams.
+1. **K/L5 continuity audit** — K8–K10 implementation, M→M′ bindings, 3:3/Technē cross-reading and native Actions/Profile/Scene seams.
 2. **AW/Ta-Onta continuity audit** — S′ contracts, C′/Vāk, constitutional field, specialist dispatch, T/T′/Return and current implementation gaps.
 3. **Bimba Expression production** — source-bound Profile/Scene/artifact generation into the QL/Bimba Point-Cloud collection, using the first two subagents' resolved contracts.
 
@@ -183,7 +183,7 @@ The production alignment is working when:
 
 - current Bimba coordinates/branches resolve into their proper existing M′ instruments without new ontology;
 - K8–K10 engine/UX assumptions remain intact;
-- the 3:3/4:2 relation preserves exact source/subject identity;
+- the 3:3/Technē relation preserves exact source/subject identity;
 - S′ runtime composition uses the accepted Vāk grammar and existing agent field;
 - Bimba Expression artifacts can be generated in the isolated Point-Cloud sandbox and loaded by the same engine in O:I;
 - common runtime/provider/storage authority remains with native owners;

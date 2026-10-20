@@ -1,5 +1,5 @@
 /**
- * The Palace instrument (L5 Technē M5′ Palace / Integral Whole, QL-MEF #218)
+ * The Palace instrument (L5 Technē Palace / Integral Whole, QL-MEF #218)
  * — the inhabitable articulation of the reading's real refs.
  *
  * What the surface does:
@@ -15,7 +15,7 @@
  *     truths stay legible; the reading is never rewritten;
  *   - the Return leg: a governed-write proposal is ROUTED to the disclosed
  *     native owner action (receipt shown, never silent); a refused route
- *     mutates nothing; a routed Return re-opens the M0′ ground on the same
+ *     mutates nothing; a routed Return re-opens the Project ground on the same
  *     session;
  *   - structured state for the situated agencies is exposed through
  *     agent-state.ts (refs, never DOM scraping).
@@ -414,7 +414,6 @@ export function PalaceInstrument({ session, selection, reading }: PalaceSurfaceP
               title={regionArchaeology(reading, region)}
             >
               <span className="oi-palace-region-office">
-                {region.m_prime !== null ? `M′${region.m_prime} · ` : ""}
                 {region.office}
               </span>
               <span className="oi-palace-region-count">
@@ -542,9 +541,9 @@ export function PalaceInstrument({ session, selection, reading }: PalaceSurfaceP
             className="oi-palace-action"
             onClick={reopenGround}
             disabled={!receipt?.routed}
-            title={receipt?.routed ? "Re-open M0′ on the renewed ground" : "Route the Return first; the ground re-opens after the owner accepts the route"}
+            title={receipt?.routed ? "Re-open the Project on the renewed ground" : "Route the Return first; the ground re-opens after the owner accepts the route"}
           >
-            Re-open renewed ground (M0′)
+            Re-open renewed ground (Project)
           </button>
         )}
       </footer>

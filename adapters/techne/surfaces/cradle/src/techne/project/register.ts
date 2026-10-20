@@ -1,5 +1,5 @@
 /**
- * M0′ Project instrument registration (L5 Technē, amended geometry).
+ * Project instrument registration (L5 Technē).
  * Composition only; capability stays with the reading's disclosure. The
  * integration composition root calls `registerProjectSurface()` once.
  */

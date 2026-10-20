@@ -1,5 +1,5 @@
 /**
- * The Canvas structured state for the situated Agencies (L5 Technē M1′,
+ * The Canvas structured state for the situated Agencies (L5 Technē,
  * QL-MEF #214) — what `Aletheia_1 / Technē_1` perceives of this instrument
  * through native refs and typed state, never screenshots or DOM
  * reconstruction (wayfinder §17; TB0 situated-Agency floor).
@@ -22,7 +22,7 @@
  *   - the situated-Agency role bindings carried verbatim from the reading
  *     (including honest absence: a reading that situates Technē_2 does not
  *     become Technē_1 just because Canvas is open);
- *   - cut disclosure, so the M1′ ↔ 3:3 crossing is available as state.
+ *   - cut disclosure, so the Canvas ↔ 3:3 crossing is available as state.
  *
  * Erasable TypeScript: loadable by the renderer, Vite, and `node --test`.
  */
@@ -42,7 +42,6 @@ import { viewAddressedRefs } from "./view.ts";
 
 export interface CanvasAgencyState {
   instrument: "canvas";
-  m_prime: 1;
   application_cut: "4:2-deep";
   subject_ref: string;
   reading_ref: string;
@@ -120,7 +119,6 @@ export function canvasAgencyState(args: {
   const warrant = ql?.warrant;
   return {
     instrument: "canvas",
-    m_prime: 1,
     application_cut: "4:2-deep",
     subject_ref: reading.subject.subject_ref,
     reading_ref: reading.reading_ref,

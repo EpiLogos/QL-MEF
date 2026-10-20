@@ -5,7 +5,6 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   TECHNE_CONTRACT,
-  mPrimeOf,
   instrumentReading,
   validateReading,
   validateSession,
@@ -38,17 +37,14 @@ test('the three T0 fixtures still validate unchanged — purely additive, nothin
   }
 });
 
-test('instrument → application cut and M′ office mappings mirror the canonical binding', () => {
+test('instrument → application cut mapping mirrors the canonical binding; no instrument carries an M′ number', async () => {
   assert.equal(instrumentReading('project'), '4:2-deep');
   assert.equal(instrumentReading('palace'), '4:2-deep');
   assert.equal(instrumentReading('expressions'), '3:3-conjugate');
-  assert.equal(mPrimeOf('project'), 0);
-  assert.equal(mPrimeOf('canvas'), 1);
-  assert.equal(mPrimeOf('timeline'), 2);
-  assert.equal(mPrimeOf('journey'), 3);
-  assert.equal(mPrimeOf('place'), 4);
-  assert.equal(mPrimeOf('palace'), 5);
-  assert.equal(mPrimeOf('expressions'), null);
+  const base = await loadTb0Specimen();
+  const numbered = structuredClone(base);
+  numbered.disclosure.instruments[0].m_prime = 0;
+  assert.match(validateReading(numbered).errors.join(' '), /m_prime/, 'Technē\'s instruments are named by their work, not numbered M0′–M5′');
 });
 
 test('the situated-Agency role law is enforced: readings that break it are refused', async () => {
@@ -58,10 +54,12 @@ test('the situated-Agency role law is enforced: readings that break it are refus
   // Anima inhabits the 3:3 conjugate reading and operates only Expressions.
   assert.match(withRole({ role: 'anima', m_index: 4, reading: '4:2-deep' }).errors.join(' '), /Anima_i inhabits the 3:3/);
   assert.match(withRole({ role: 'anima', m_index: 4, instrument: 'project' }).errors.join(' '), /Anima_i operates the Expression reading/);
-  // Aletheia/Technē inhabit the 4:2 deep reading.
-  assert.match(withRole({ role: 'aletheia', m_index: 0, reading: '3:3-conjugate' }).errors.join(' '), /inhabit the 4:2 deep reading/);
-  // Technē operates its own coordinate's deep instrument.
-  assert.match(withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'timeline' }).errors.join(' '), /Technē_0 operates its own coordinate's deep instrument/);
+  // Aletheia/Technē inhabit Technē's deep reading.
+  assert.match(withRole({ role: 'aletheia', m_index: 0, reading: '3:3-conjugate' }).errors.join(' '), /inhabit Technē's deep reading/);
+  // Technē operates a deep instrument — any of the six; none is bound to a coordinate.
+  assert.match(withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'expressions' }).errors.join(' '), /operates a deep instrument, not the Expression reading/);
+  const unbound = withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'timeline' });
+  assert.equal(unbound.valid, true, unbound.errors.join('; '));
   // The field has M′0–M′5 only.
   assert.match(withRole({ role: 'guardian', m_index: 6 }).errors.join(' '), /M′0–M′5 only/);
   // A lawful Technē_0 binding on the deep project instrument passes.

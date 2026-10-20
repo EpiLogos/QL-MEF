@@ -143,7 +143,7 @@ fn composition_request() -> Value {
 }
 
 #[test]
-fn bimba_identity_survives_from_registry_through_m_prime_instrument_to_aletheia_return() {
+fn bimba_identity_survives_from_registry_through_the_techne_reading_to_aletheia_return() {
     // The registry owns the coordinate: #1-2 with its six real Matrix children.
     let registry_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../fixtures/kernel/m-tree-v1.json");
@@ -177,7 +177,7 @@ fn bimba_identity_survives_from_registry_through_m_prime_instrument_to_aletheia_
     // The registry is generated from the Bimba map; its revision is the map read.
     assert_eq!(registry["source_repository"], "bimba-map");
 
-    // M′ instrument: the production Technē source discloses the ground and
+    // Technē reading: the production Technē source discloses the ground and
     // the bounded whole with byte-exact refs.
     let subjects = ananda_subjects();
     let adapter = WikiTechneAdapter::new(&subjects);

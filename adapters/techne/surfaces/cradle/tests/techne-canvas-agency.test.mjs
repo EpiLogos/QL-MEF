@@ -59,7 +59,6 @@ test('exact refs: subject, whole, reading, snapshot, selection, focus — carrie
   assert.equal(state.selection_ref, 'ql.techne:selection:agency-test');
   assert.deepEqual(state.focus_refs, [tb0.whole.member_refs[0]]);
   assert.equal(state.instrument, 'canvas');
-  assert.equal(state.m_prime, 1);
   assert.equal(state.application_cut, '4:2-deep');
 });
 

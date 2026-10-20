@@ -16,12 +16,13 @@ use serde::{Deserialize, Serialize};
 
 pub const TECHNE_CONTRACT: &str = "ql.techne/v1";
 
-/// The instrument set of the one M′ field's two readings (amended
-/// 2026-09-16, owner-ratified). The six 4:2 deep instruments bind M0′–M5′:
-/// project (ground), canvas, timeline (relation field), journey, place
-/// (world), palace. `Expressions` is the conjugate 3:3 Expression reading —
-/// not a deep instrument. Instrument identity is disclosure vocabulary, not
-/// an application boundary.
+/// The instrument set: Technē's six deep instruments — project (ground),
+/// canvas, timeline (relation field), journey, place (world), palace — and
+/// `Expressions`, the 3:3 Expression reading, which is not a deep instrument.
+/// The instruments are named by their work and carry no M′ numbers: the
+/// four-and-two reading that bound them to M0′–M5′ was withdrawn by the owner
+/// on 19 Oct 2026 (`docs/L5-TECHNE-DUAL-READING-LOCK.md` §0). Instrument
+/// identity is disclosure vocabulary, not an application boundary.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum TechneInstrument {
@@ -34,8 +35,11 @@ pub enum TechneInstrument {
     Expressions,
 }
 
-/// Which reading of the one M′ field an aperture carries. Crossing changes
-/// the mode of disclosure and available operations, never the subject.
+/// Which reading of the field an aperture carries: Technē's deep reading or
+/// the 3:3 Expression reading. Crossing changes the mode of disclosure and
+/// available operations, never the subject. The wire names keep their
+/// historical ratios because the cradle's copy of this contract validates
+/// them; no instrument is numbered by them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TechneReadingKind {
     #[serde(rename = "4:2-deep")]
@@ -45,21 +49,6 @@ pub enum TechneReadingKind {
 }
 
 impl TechneInstrument {
-    /// The M′ office this instrument is the Technē face of. `None` on the
-    /// conjugate 3:3 Expression reading — Expression is not a deep
-    /// instrument and binds no M′ office.
-    pub fn m_prime(self) -> Option<u8> {
-        match self {
-            TechneInstrument::Project => Some(0),
-            TechneInstrument::Canvas => Some(1),
-            TechneInstrument::Timeline => Some(2),
-            TechneInstrument::Journey => Some(3),
-            TechneInstrument::Place => Some(4),
-            TechneInstrument::Palace => Some(5),
-            TechneInstrument::Expressions => None,
-        }
-    }
-
     /// The application cut this instrument belongs to.
     pub fn reading(self) -> TechneReadingKind {
         match self {
@@ -482,10 +471,6 @@ pub struct InstrumentDisclosure {
     pub available: bool,
     #[serde(default)]
     pub reason: Option<String>,
-    /// The M′ office this instrument is the Technē face of. Absent on the
-    /// conjugate 3:3 reading.
-    #[serde(default)]
-    pub m_prime: Option<u8>,
     #[serde(default)]
     pub reading: Option<TechneReadingKind>,
 }
@@ -505,7 +490,7 @@ pub struct DisclosureSuggestion {
     pub reason: String,
 }
 
-/// Cut-level availability: whether the 4:2 deep reading and the 3:3
+/// Cut-level availability: whether Technē's deep reading and the 3:3
 /// conjugate reading can actually be entered for this subject, and why not
 /// when they cannot. TB0 (2026-09-16).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -528,10 +513,10 @@ pub enum AgencyRoleKind {
     /// Anima_i = M_i × S4′, the expressive operator of the 3:3 reading.
     Anima,
     /// Aletheia_i = M_i × S5′, the disclosure/knowledge-metabolism/Return
-    /// operator of the 4:2 reading.
+    /// operator of Technē's deep reading.
     Aletheia,
-    /// Technē_i := Aletheia_i while situated in and operating the M_i′ deep
-    /// instrument.
+    /// Aletheia_i while operating one of Technē's deep instruments. The
+    /// instrument is not bound to the coordinate: no instrument is an M_i′.
     Techne,
 }
 
@@ -548,13 +533,13 @@ pub struct AgencyRole {
     pub role: AgencyRoleKind,
     /// The coordinate i this situated role inhabits (M_i × S4′/S5′).
     pub m_index: u8,
-    /// Anima binds the 3:3 conjugate reading; Aletheia/Techne bind the 4:2
+    /// Anima binds the 3:3 conjugate reading; Aletheia/Techne bind Technē's
     /// deep reading; Guardian stewardship spans both and may leave this
     /// absent.
     #[serde(default)]
     pub reading: Option<TechneReadingKind>,
-    /// The instrument this role operates: the M_i′ deep instrument for
-    /// Techne; the Expression reading for Anima.
+    /// The instrument this role operates: a deep instrument for Techne; the
+    /// Expression reading for Anima.
     #[serde(default)]
     pub instrument: Option<TechneInstrument>,
     /// The canonical Guardian identity anchoring this situated role
@@ -661,14 +646,6 @@ impl TechneReading {
                     instrument.instrument
                 )));
             }
-            if let Some(m_prime) = instrument.m_prime {
-                if m_prime > 5 {
-                    return Err(crate::AdapterError::InvalidTechneReading(format!(
-                        "instrument {:?} binds M′{m_prime}; the field has M′0–M′5 only",
-                        instrument.instrument
-                    )));
-                }
-            }
         }
         for cut in &self.disclosure.application_cuts {
             if !cut.available && cut.reason.is_none() {
@@ -678,10 +655,11 @@ impl TechneReading {
                 )));
             }
         }
-        // The situated-Agency role law: Anima inhabits the 3:3 reading,
-        // Aletheia/Techne the 4:2 reading, Techne operates the deep
-        // instrument of its own coordinate, Anima operates the Expression
-        // reading — and no binding becomes a Guardian replacement.
+        // The situated-Agency role law: Anima inhabits the 3:3 reading and
+        // operates the Expression reading, Aletheia/Techne inhabit Technē's
+        // deep reading, Techne operates a deep instrument (any of the six:
+        // none is bound to a coordinate) — and no binding becomes a Guardian
+        // replacement.
         for role in &self.agency {
             if role.m_index > 5 {
                 return Err(crate::AdapterError::InvalidTechneReading(format!(
@@ -695,7 +673,7 @@ impl TechneReading {
                     if let Some(reading) = role.reading {
                         if reading != TechneReadingKind::ConjugateThreeThree {
                             return Err(crate::AdapterError::InvalidTechneReading(
-                                "Anima_i inhabits the 3:3 conjugate reading, not the 4:2 deep reading"
+                                "Anima_i inhabits the 3:3 conjugate reading, not Technē's deep reading"
                                     .to_string(),
                             ));
                         }
@@ -713,25 +691,18 @@ impl TechneReading {
                     if let Some(reading) = role.reading {
                         if reading != TechneReadingKind::DeepFourTwo {
                             return Err(crate::AdapterError::InvalidTechneReading(
-                                "Aletheia_i/Technē_i inhabit the 4:2 deep reading, not the 3:3 conjugate reading"
+                                "Aletheia_i/Technē_i inhabit Technē's deep reading, not the 3:3 conjugate reading"
                                     .to_string(),
                             ));
                         }
                     }
-                    if role.role == AgencyRoleKind::Techne {
-                        if let Some(instrument) = role.instrument {
-                            let bound = instrument.m_prime();
-                            if bound != Some(role.m_index) {
-                                return Err(crate::AdapterError::InvalidTechneReading(format!(
-                                    "Technē_{} operates its own coordinate's deep instrument (M′{}); the binding names {:?}",
-                                    role.m_index,
-                                    bound
-                                        .map(|m| m.to_string())
-                                        .unwrap_or_else(|| "no M′ office".to_string()),
-                                    instrument
-                                )));
-                            }
-                        }
+                    if role.role == AgencyRoleKind::Techne
+                        && role.instrument == Some(TechneInstrument::Expressions)
+                    {
+                        return Err(crate::AdapterError::InvalidTechneReading(
+                            "Technē_i operates a deep instrument, not the Expression reading"
+                                .to_string(),
+                        ));
                     }
                 }
             }
@@ -849,9 +820,9 @@ pub struct DisclosureSession {
     pub subject_ref: String,
     pub selection: DisclosureSelection,
     pub instrument: TechneInstrument,
-    /// TB0: the active reading of the one M′ field. Consistent with
-    /// `instrument`: expressions ↔ 3:3-conjugate; the six deep instruments
-    /// ↔ 4:2-deep.
+    /// TB0: the active reading. Consistent with `instrument`: expressions ↔
+    /// 3:3-conjugate; the six deep instruments ↔ 4:2-deep (the wire name of
+    /// Technē's deep reading).
     #[serde(default)]
     pub application_cut: Option<TechneReadingKind>,
     /// TB0: the selected bounded whole when the selection is whole-scoped.

@@ -1,5 +1,5 @@
 /**
- * The Canvas lane's presentation stores (L5 Technē M1′, QL-MEF #214) —
+ * The Canvas lane's presentation stores (L5 Technē, QL-MEF #214) —
  * module-level singletons for the two explicit presentation artifacts:
  * saved Canvas Views and typed relation proposals. Cradle-seam state, never
  * a native owner's store: a view/proposal ref is minted in the

@@ -1,5 +1,5 @@
 /**
- * The M2′ Relation Field / Timeline instrument (QL-MEF #215; Wayfinder §7,
+ * The Relation Field / Timeline instrument (QL-MEF #215; Wayfinder §7,
  * Dual-Reading Lock §8) — the office of becoming, efficient relation and
  * transformation. Timeline is its strongest ordinary projection, not its
  * definition: the surface moves among truthful projections over the
@@ -24,7 +24,7 @@
  *   - no lifecycle moves through graphics: a click only narrows the
  *     DisclosureSession selection; zoom/pan/mode are LOCAL presentation
  *     state, never persisted into the session or the reading;
- *   - the M2′ ↔ 3:3 crossing fires only through the mechanical warrant in
+ *   - the Relation Field ↔ 3:3 crossing fires only through the mechanical warrant in
  *     `./state` and the reading's own disclosed crossing Action — a
  *     warranted crossing asserts no harmonic/correspondential meaning;
  *   - structured state for Aletheia_2 / Technē_2 is published below the
@@ -267,7 +267,7 @@ export function TimelineInstrument({ session, selection, reading, capabilities, 
     disclosureSession.setSelection(selectionFocusedOnRelation(session.selection, edge));
   };
 
-  // The M2′ ↔ 3:3 crossing warrant for the current focus.
+  // The Relation Field ↔ 3:3 crossing warrant for the current focus.
   const crossing = useMemo(
     () => (reading ? expressionCrossing(reading, selection, field ?? undefined) : null),
     [reading, selection, field],

@@ -1,6 +1,6 @@
 # L5 Technē Parallel Dispatch Map
 
-**Standing:** execution companion to `L5-TECHNE-INTEGRATED-DEVELOPMENT-WAYFINDER.md`, 2026-09-16.  
+**Standing:** execution companion to `L5-TECHNE-INTEGRATED-DEVELOPMENT-WAYFINDER.md`, 2026-09-16; the instruments carry no M′ numbers since the owner's ruling of 19 Oct 2026 (the lock's §0).  
 **Use:** give each local/remote Agent session one bounded development lane without forcing that session to rediscover the architecture.  
 **Shared prerequisite:** QL-MEF #212 publishes the pinned connective contract/fixture revision.  
 **Parallel fan-out:** #213–#219.  
@@ -17,19 +17,19 @@ Every thread begins with the same orientation:
 ```text
 one M′ field
   ├─ 3:3 Expression reading
-  └─ 4:2 Technē reading
+  └─ Technē reading
 
-4:2 instruments
-  M0′ Project / Wiki / Graph
-  M1′ Canvas / Constellation
-  M2′ Relation Field / Timeline
-  M3′ Journey / Scenes
-  M4′ World / Places
-  M5′ Palace / Integral Whole
+Technē's six instruments
+  Project / Wiki / Graph
+  Canvas / Constellation
+  Relation Field / Timeline
+  Journey / Scenes
+  World / Places
+  Palace / Integral Whole
 
 Expression
   = conjugate 3:3 lived/material reading
-  != sixth 4:2 peer instrument
+  != a sixth Technē instrument
 ```
 
 Every thread preserves:
@@ -110,11 +110,11 @@ Every child session cites this exact revision.
 
 ---
 
-# II — PARALLEL THREAD M0′ / #213
+# II — PARALLEL THREAD PROJECT / #213
 
 ## Mission
 
-Converge existing Central/ProjectCentral + AIKit Wiki/ProjectMap/Search + O:I graph into **Project / Wiki / Graph**, the explicit deep M0′ ground instrument.
+Converge existing Central/ProjectCentral + AIKit Wiki/ProjectMap/Search + O:I graph into **Project / Wiki / Graph**, the explicit deep ground instrument.
 
 ## Primary native owners to inspect
 
@@ -146,7 +146,7 @@ QL-MEF
 - one selection/ref state across list/tree/graph;
 - bounded local whole and controlled expansion;
 - exact source/provenance;
-- direct cross-open to M1′–M5′ and Expression M0 depth;
+- direct cross-open to the other instruments and Expression M0 depth;
 - same refs across deep Project graph, Expression companion and governed SharedField projection;
 - native relation/source Actions;
 - `Technē_0` structured operation.
@@ -157,16 +157,16 @@ QL-MEF
 Project -> Search -> subject -> local whole -> LIST/TREE/GRAPH
 same refs throughout
 
-M0′ graph -> M1′ Canvas -> M0′ Return
+Project graph -> Canvas -> Project Return
 
-M0′ graph -> Expression M0 companion -> M0′ Return
+Project graph -> Expression M0 companion -> Project Return
 
 presentation drag != semantic relation change
 ```
 
 ---
 
-# III — PARALLEL THREAD M1′ / #214
+# III — PARALLEL THREAD CANVAS / #214
 
 ## Mission
 
@@ -200,16 +200,16 @@ layout change -> no semantic mutation
 relation Action -> actual native revision/receipt
 QL layout only where basis is present
 ordinary non-QL relation remains ordinary
-M1′ Canvas <-> 3:3 M1 Expression preserves subject/source
+Canvas <-> 3:3 M1 Expression preserves subject/source
 ```
 
 ---
 
-# IV — PARALLEL THREAD M2′ / #215
+# IV — PARALLEL THREAD RELATION FIELD / #215
 
 ## Mission
 
-Broaden Timeline into **Relation Field / Timeline**, the M2′ instrument of becoming and efficient relation.
+Broaden Timeline into **Relation Field / Timeline**, the instrument of becoming and efficient relation.
 
 ## Primary source/owners
 
@@ -246,16 +246,16 @@ occurrence and receipt stay distinct
 
 relation type/evidence survives Timeline <-> Graph <-> World
 
-M2′ relation -> Expression M2 only with actual semantic basis
+Relation Field -> Expression M2 only with actual semantic basis
 ```
 
 ---
 
-# V — PARALLEL THREAD M3′ / #216
+# V — PARALLEL THREAD JOURNEY / #216
 
 ## Mission
 
-Build **Journey / Scenes** as the formal reversible bridge from 4:2 deep work into 3:3 lived Expression.
+Build **Journey / Scenes** as the formal reversible bridge from Technē's deep work into 3:3 lived Expression.
 
 ## Primary source/owners
 
@@ -291,11 +291,11 @@ no Journey shadow persistence
 
 ---
 
-# VI — PARALLEL THREAD M4′ / #217
+# VI — PARALLEL THREAD WORLD / PLACES / #217
 
 ## Mission
 
-Expand Place into **World / Places**, the M4′ situated Earth/reference-frame instrument.
+Expand Place into **World / Places**, the situated Earth/reference-frame instrument.
 
 ## Primary source/owners
 
@@ -330,12 +330,12 @@ factual vs mythic/claimed place relation visibly distinct
 
 Map <-> Relation/Timeline <-> Graph same refs
 
-M4′ World <-> 3:3 current Nara/Expression same occasion, no private-state leak
+World <-> 3:3 current Nara/Expression same occasion, no private-state leak
 ```
 
 ---
 
-# VII — PARALLEL THREAD M5′ / #218
+# VII — PARALLEL THREAD PALACE / #218
 
 ## Mission
 
@@ -346,7 +346,7 @@ Mature **Palace / Integral Whole** as inhabitable articulation, pedagogy, Recogn
 ```text
 Research Canvas Palace — interaction evidence only until human-tested
 O:I Expression composition / Views / Scenes / Editions
-M0′–M4′ native refs
+the other instruments' native refs
 Epii/Aletheia/Return machinery
 ```
 
@@ -381,7 +381,7 @@ Palace <-> Expression/Epii depth preserves refs
 
 ## Mission
 
-Bind the current **3:3 Expression** world and six 4:2 instruments through native Agency/session/Desktop mechanics.
+Bind the current **3:3 Expression** world and Technē's six instruments through native Agency/session/Desktop mechanics.
 
 ## Primary source/owners
 
@@ -398,7 +398,7 @@ Workcell material bodies
 ## Deliver
 
 - explicit application cut in shared state;
-- six coordinate-preserving 3:3↔4:2 cross-open actions;
+- six identity-preserving 3:3↔Technē cross-open actions;
 - `Anima_i` and `Technē_i` native situated-role construction;
 - one continuing canonical companion/AgentSession relation;
 - Vāk→C′→Ta-Onta→native execution path;
@@ -440,17 +440,17 @@ Consume accepted lane outputs and prove the real whole. Do not rewrite their con
 
 ```text
 real Project / World subject
-  -> M0′ Project/Wiki/Graph
-  -> M1′ Canvas/Constellation
-  -> M2′ Relation Field/Timeline
-  -> M3′ Journey/Scenes
+  -> Project/Wiki/Graph
+  -> Canvas/Constellation
+  -> Relation Field/Timeline
+  -> Journey/Scenes
   -> live 3:3 Expression
-  -> exact Return to M3′
-  -> M4′ World/Places
+  -> exact Return to Journey
+  -> World/Places
   -> authorised current-world/Nara cross-cut
-  -> M5′ Palace/Integral Whole
+  -> Palace/Integral Whole
   -> Recognition / Return
-  -> renewed M0′ ground
+  -> renewed Project ground
 ```
 
 ## Required proof classes
@@ -521,16 +521,16 @@ remaining integration seams
 Do not reopen these while coding:
 
 ```text
-Expression is 3:3, not the sixth 4:2 instrument.
-M0′ Project/Wiki/Graph is the explicit ground instrument.
-M2′ is Relation Field / Timeline, not chronology alone.
-M3′ Journey persists through real Expression Scenes.
-M4′ is World / Places, broader than map pins.
-M5′ Palace is integral articulation/Return, not a second graph/store.
+Expression is 3:3, not a sixth Technē instrument.
+Project/Wiki/Graph is the explicit ground instrument.
+The Relation Field / Timeline is not chronology alone.
+Journey persists through real Expression Scenes.
+World / Places is broader than map pins.
+Palace is integral articulation/Return, not a second graph/store.
 All six M′ instruments are L5-5 Technē acts; they do not map to L5 offices.
 Guardians remain canonical identities.
 Anima_i and Aletheia_i/Technē_i are situated Agencies.
-Crossing 3:3↔4:2 changes disclosure/operation, not subject ontology.
+Crossing 3:3↔Technē changes disclosure/operation, not subject ontology.
 Visual manipulation is not semantic mutation without a native Action.
 Fixtures are not provider evidence.
 Repository green is not human acceptance.

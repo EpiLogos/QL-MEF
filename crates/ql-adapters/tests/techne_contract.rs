@@ -109,15 +109,14 @@ fn absent_facets_fixture_keeps_absence_as_data() {
         );
     }
 
-    // The amended geometry: the six deep instruments carry M′ bindings and
-    // the 4:2 reading; Expressions carries the conjugate 3:3 reading.
+    // The six deep instruments carry Technē's deep reading and no M′
+    // number; Expressions carries the conjugate 3:3 reading.
     let project = reading
         .disclosure
         .instruments
         .iter()
         .find(|entry| entry.instrument == TechneInstrument::Project)
-        .expect("project (M0′ ground) is disclosed");
-    assert_eq!(project.m_prime, Some(0));
+        .expect("project (the ground) is disclosed");
     assert!(matches!(
         project.reading,
         Some(ql_adapters::TechneReadingKind::DeepFourTwo)
@@ -128,10 +127,6 @@ fn absent_facets_fixture_keeps_absence_as_data() {
         .iter()
         .find(|entry| entry.instrument == TechneInstrument::Expressions)
         .expect("expressions (conjugate 3:3) is disclosed");
-    assert_eq!(
-        expressions.m_prime, None,
-        "the conjugate reading binds no M′ office"
-    );
     assert!(matches!(
         expressions.reading,
         Some(ql_adapters::TechneReadingKind::ConjugateThreeThree)
@@ -241,10 +236,13 @@ fn view_state_cannot_ride_the_reading_or_the_session() {
 }
 
 #[test]
-fn m_prime_binding_above_five_is_rejected() {
-    let mut reading = parse(REPRESENTATIVE);
-    reading.disclosure.instruments[0].m_prime = Some(6);
-    assert!(reading.validate().is_err(), "the field has M′0–M′5 only");
+fn an_instrument_disclosure_carries_no_m_prime_number() {
+    let mut value: Value = serde_json::from_str(REPRESENTATIVE).unwrap();
+    value["disclosure"]["instruments"][0]["m_prime"] = serde_json::json!(0);
+    assert!(
+        serde_json::from_value::<TechneReading>(value).is_err(),
+        "Technē's instruments are named by their work, not numbered M0′–M5′"
+    );
 }
 
 #[test]
@@ -263,7 +261,6 @@ fn unavailable_instrument_without_reason_fails_validation() {
         instrument: TechneInstrument::Place,
         available: false,
         reason: None,
-        m_prime: Some(4),
         reading: Some(ql_adapters::TechneReadingKind::DeepFourTwo),
     };
     assert!(reading.validate().is_err());
@@ -435,7 +432,7 @@ fn disclosure_selection_co_reference_holds_across_instruments() {
 fn tb0_connective_fixture_drives_every_lane() {
     let reading = parse(TB0_CONNECTIVE_BASE);
 
-    // M0′ Project/Wiki/Graph identity: real bounded whole over real sources.
+    // Project/Wiki/Graph identity: real bounded whole over real sources.
     let whole = reading.whole.as_ref().expect("bounded whole");
     assert!(!whole.member_refs.is_empty());
     assert!(
@@ -445,7 +442,7 @@ fn tb0_connective_fixture_drives_every_lane() {
             .all(|member| member.starts_with("central:source:control:root:Work/Quaternal-Logic/"))
     );
 
-    // M2′ Relation Field: several distinct non-temporal typed relation
+    // Relation Field: several distinct non-temporal typed relation
     // families, one trans-temporal (no dated qualification, interpretation
     // standing) and one temporal-qualified through a real facet ref.
     let relations = &whole.relations;
@@ -518,7 +515,7 @@ fn tb0_connective_fixture_drives_every_lane() {
         "session carries Return continuity"
     );
 
-    // M4′ World/Places: a dated factual place with uncertainty and hierarchy
+    // World/Places: a dated factual place with uncertainty and hierarchy
     // validity, and a mythic place that is truthfully unlocated.
     assert_eq!(reading.spatial.len(), 2);
     let factual = &reading.spatial[0];
@@ -542,7 +539,7 @@ fn tb0_connective_fixture_drives_every_lane() {
     assert!(reading.provenance.iter().any(|p| p.selector.is_some()));
     assert!(reading.provenance.iter().all(|p| !p.standing.is_none()));
 
-    // M3′ Journey/Scenes + Expression binding.
+    // Journey/Scenes + Expression binding.
     let expression = &reading.expressions[0];
     assert!(expression.scene_ref.is_some());
     assert!(expression.composition_ref.is_some());
@@ -629,7 +626,7 @@ fn agency_role_law_rejects_cross_reading_bindings() {
     reading.agency[1] = anima_as_deep;
     assert!(
         reading.validate().is_err(),
-        "Anima_i cannot inhabit the 4:2 deep reading"
+        "Anima_i cannot inhabit Technē's deep reading"
     );
 
     let mut reading = parse(TB0_CONNECTIVE_BASE);
@@ -642,12 +639,20 @@ fn agency_role_law_rejects_cross_reading_bindings() {
     );
 
     let mut reading = parse(TB0_CONNECTIVE_BASE);
-    let mut techne_wrong_coordinate = reading.agency[3].clone();
-    techne_wrong_coordinate.instrument = Some(TechneInstrument::Journey);
-    reading.agency[3] = techne_wrong_coordinate;
+    let mut techne_on_journey = reading.agency[3].clone();
+    techne_on_journey.instrument = Some(TechneInstrument::Journey);
+    reading.agency[3] = techne_on_journey;
+    reading
+        .validate()
+        .expect("no deep instrument is bound to a coordinate: Technē_2 may operate the Journey");
+
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut techne_on_expressions = reading.agency[3].clone();
+    techne_on_expressions.instrument = Some(TechneInstrument::Expressions);
+    reading.agency[3] = techne_on_expressions;
     assert!(
         reading.validate().is_err(),
-        "Technē_2 cannot operate another coordinate's deep instrument"
+        "Technē_i operates a deep instrument, not the Expression reading"
     );
 
     let mut reading = parse(TB0_CONNECTIVE_BASE);
@@ -682,7 +687,7 @@ fn unavailable_application_cut_requires_a_reason() {
 fn cross_cut_crossing_preserves_identity_and_co_reference() {
     let reading = parse(TB0_CONNECTIVE_BASE);
 
-    // A 4:2 deep session over the fixture subject, situated with an
+    // A deep (Technē) session over the fixture subject, situated with an
     // AgentSession, occasion and Return target.
     let mut session = session_fixture(&reading);
     session.selection.agent_session_ref = Some("aikit:agent-session:fixture:l5-techne".to_string());
@@ -788,7 +793,7 @@ fn session_cut_and_instrument_must_agree() {
     session.application_cut = Some(ql_adapters::TechneReadingKind::ConjugateThreeThree);
     assert!(
         session.validate().is_err(),
-        "a 3:3 cut cannot sit under a 4:2 deep instrument"
+        "a 3:3 cut cannot sit under a deep instrument"
     );
 }
 
@@ -821,13 +826,11 @@ fn transport_aliases_map_onto_canonical_instruments() {
         None
     );
 
-    // The amended geometry is readable off the instrument itself.
-    assert_eq!(TechneInstrument::Expressions.m_prime(), None);
+    // The reading is readable off the instrument itself.
     assert!(matches!(
         TechneInstrument::Expressions.reading(),
         ql_adapters::TechneReadingKind::ConjugateThreeThree
     ));
-    assert_eq!(TechneInstrument::Timeline.m_prime(), Some(2));
     assert!(matches!(
         TechneInstrument::Palace.reading(),
         ql_adapters::TechneReadingKind::DeepFourTwo

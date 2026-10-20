@@ -44,15 +44,13 @@ test('the TB0 specimen composes regions from every disclosed ref family, in trav
   assert.deepEqual(
     regions.map((region) => region.key),
     ['ground', 'canvas', 'relation', 'journey', 'world', 'expression', 'sources', 'agency'],
-    'the canonical M0′→M5′ order, plus the sources/agency closes',
+    'the canonical instrument order, plus the sources/agency closes',
   );
   const byKey = new Map(regions.map((region) => [region.key, region]));
-  // M0′: the bounded whole plus its six members.
-  assert.equal(byKey.get('ground').m_prime, 0);
+  // The ground: the bounded whole plus its six members.
   assert.equal(byKey.get('ground').entries.length, 7);
   assert.ok(byKey.get('ground').entries.some((entry) => entry.ref === 'ql.techne:whole:fixture:l5-techne-contract-ground'));
-  // M1′: the warranted constellation and shape.
-  assert.equal(byKey.get('canvas').m_prime, 1);
+  // The canvas: the warranted constellation and shape.
   assert.deepEqual(
     byKey.get('canvas').entries.map((entry) => entry.ref).sort(),
     ['ql.techne:constellation:fixture:l5-dual-reading', 'ql:shape:1.0.0:6x6:direct-conjugate'],

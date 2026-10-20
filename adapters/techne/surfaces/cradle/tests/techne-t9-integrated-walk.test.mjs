@@ -277,7 +277,6 @@ test("M2′ — dated, trans-temporal, standing, occurrence-vs-receipt, and the 
   // the situated Agency roles verbatim.
   const { session } = openGroundSession();
   const state = relationFieldState(reading, 'relations', session.selection, null);
-  assert.equal(state.m_prime, 2);
   assert.ok(state.disclosed_actions.some((action) => action.action_ref === 'projectcentral.now.return'));
   assert.ok(state.agency.some((role) => role.role === 'techne' && role.instrument === 'palace'));
   // The M2 → 3:3 crossing warrant: focused, source-backed relation warrants;

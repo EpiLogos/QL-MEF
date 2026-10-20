@@ -18,7 +18,7 @@
  * ride the session's own navigation and, where the reading discloses one,
  * the native ActionRef they correspond to.
  */
-import { disclosedCut, instrumentReading, mPrimeOf, type ApplicationCutDisclosure, type DisclosureSession, type TechneDisclosure, type TechneInstrument, type TechneReading, type TechneReadingKind } from "./contract.ts";
+import { disclosedCut, instrumentReading, type ApplicationCutDisclosure, type DisclosureSession, type TechneDisclosure, type TechneInstrument, type TechneReading, type TechneReadingKind } from "./contract.ts";
 import { techneSurfaceBinding } from "./session.ts";
 
 export interface TechneOpenRequest {
@@ -90,8 +90,8 @@ function instrumentEntry(disclosure: TechneDisclosure | null | undefined, instru
  * instrument, else the first available deep instrument, else project ground.
  * Derived from the disclosure only — never hard-coded per route. */
 export function deepEntryInstrument(disclosure: TechneDisclosure | null | undefined): TechneInstrument {
-  const deep = disclosure?.instruments.filter((entry) => mPrimeOf(entry.instrument) !== null);
-  const suggested = disclosure?.suggestions?.map((note) => note.instrument).find((instrument) => mPrimeOf(instrument) !== null);
+  const deep = disclosure?.instruments.filter((entry) => instrumentReading(entry.instrument) === "4:2-deep");
+  const suggested = disclosure?.suggestions?.map((note) => note.instrument).find((instrument) => instrumentReading(instrument) === "4:2-deep");
   if (suggested) return suggested;
   return deep?.find((entry) => entry.available)?.instrument ?? "project";
 }
@@ -150,8 +150,8 @@ export function resolveCrossing(reading: TechneReading, session: DisclosureSessi
       return resolveCutLeg(reading, session, kind, "expressions", disclosedActionRef(reading, "oi.expression.open"), null);
     case "open-deep-instrument": {
       const target = targetInstrument ?? deepEntryInstrument(reading.disclosure);
-      if (mPrimeOf(target) === null) {
-        return { available: false, reason: `${target} is not a deep instrument — the 4:2 entry names one of M0′–M5′` };
+      if (instrumentReading(target) !== "4:2-deep") {
+        return { available: false, reason: `${target} is not a deep instrument — the deep entry names one of Technē's six instruments` };
       }
       return resolveCutLeg(reading, session, kind, target, null, null);
     }

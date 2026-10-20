@@ -20,7 +20,6 @@ test('the structured state carries the projection, verbatim relations, Actions a
   const state = relationFieldState(specimen, 'relations');
   assert.equal(state.schema, 'ql.techne.relation-field-state/v1');
   assert.equal(state.instrument, 'timeline');
-  assert.equal(state.m_prime, 2);
   assert.equal(state.projection, 'relations');
   assert.equal(state.subject_ref, specimen.subject.subject_ref);
   assert.equal(state.reading_ref, specimen.reading_ref);

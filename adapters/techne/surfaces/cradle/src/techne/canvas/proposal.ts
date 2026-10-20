@@ -1,5 +1,5 @@
 /**
- * The typed relation proposal path (L5 Technē M1′, QL-MEF #214) — Canvas as
+ * The typed relation proposal path (L5 Technē, QL-MEF #214) — Canvas as
  * a relation-AUTHORING surface that never mutates semantics itself.
  *
  * The law this module keeps (issue #214 §4; dual-reading lock §7):

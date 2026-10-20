@@ -1,5 +1,5 @@
 /**
- * The Journey instrument surface (M3′ — issue #216, the formal 4:2 ↔ 3:3
+ * The Journey instrument surface (issue #216, the formal Technē ↔ 3:3
  * bridge) — reader/editor over the beats derived from the reading's own
  * Expression bindings (see ./beats). A Journey is an ordered reading of
  * scenes: scene refs, expression refs and revisions are shown verbatim; the

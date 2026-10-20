@@ -1,5 +1,5 @@
 /**
- * The authored Canvas View (L5 Technē M1′, QL-MEF #214) — a saved
+ * The authored Canvas View (L5 Technē, QL-MEF #214) — a saved
  * PRESENTATION composition over one ql.techne/v1 reading. This is the facet
  * the TB0 specimen marks degraded ("a warranted constellation layout is
  * disclosed but no authored presentation view exists yet"); this module is
