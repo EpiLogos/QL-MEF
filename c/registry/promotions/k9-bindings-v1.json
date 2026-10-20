@@ -876,6 +876,21 @@
     "crates/ql-mef/src/team_space/tests.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/m3_state/form_cell.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3-3-2-0",
+    "#3-3-2-1",
+    "#3-3-2-2"
+   ],
+   "rationale": "The M3 reading's living form, generation cell and law (DLW manual §22.3 and §22.8), reported and never computed anew: the form's three folds from Codon64::nucleotides with each base's polarity and mobility, the line law of Codon64::site_of_line, the cell ql_core::generate makes of the form's hexagram under each of the three matrix families (the map's M3-3-2-0..2, as generation.rs carries them), and the QuatSeed and PoseMap the pose is read with. It defines no operator; each section of the reading names the existing operator it is read from in its standing.",
+   "tests": [
+    "crates/ql-mef/tests/m3_form_cell.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
