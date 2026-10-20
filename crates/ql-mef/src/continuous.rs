@@ -23,6 +23,37 @@ use serde_json::{Value, json};
 
 use crate::m2_engine::M2Request;
 
+/// Reads of the floats a played command carries. serde_json is built with
+/// `arbitrary_precision` (exact large integers); under it a fractional number
+/// in JSON *text* reaches a type buffered for an internally tagged enum
+/// (`HostOperation`, `StageChange`) as serde_json's private Number map, and a
+/// plain `f64` refuses it ("invalid type: map, expected f64"). A strike,
+/// a damping edit or a struck point then parsed from a `Value` but never from
+/// the text the host binary reads on stdin or `ql stage` reads from a file.
+/// `serde_json::Number` accepts both forms, so a command parses the same from
+/// either, in every spelling of a number.
+pub(crate) mod number {
+    use serde::de::Error;
+    use serde::{Deserialize, Deserializer};
+    use serde_json::Number;
+
+    fn finite<E: Error>(number: &Number) -> Result<f64, E> {
+        number
+            .as_f64()
+            .filter(|v| v.is_finite())
+            .ok_or_else(|| E::custom("expected a finite number"))
+    }
+
+    pub fn float<'de, D: Deserializer<'de>>(deserializer: D) -> Result<f64, D::Error> {
+        finite(&Number::deserialize(deserializer)?)
+    }
+
+    pub fn pair<'de, D: Deserializer<'de>>(deserializer: D) -> Result<[f64; 2], D::Error> {
+        let [a, b] = <[Number; 2]>::deserialize(deserializer)?;
+        Ok([finite(&a)?, finite(&b)?])
+    }
+}
+
 pub const FIELD_CONTRACT: &str = "ql.continuous-field/v1";
 const MAX_MESSAGE: usize = 32 * 1024 * 1024;
 type Result<T> = std::result::Result<T, String>;
@@ -60,8 +91,71 @@ pub struct FieldUnits {
 #[serde(deny_unknown_fields)]
 pub struct StrikeInput {
     pub mode_ref: String,
+    #[serde(deserialize_with = "number::pair")]
     pub amplitude: [f64; 2],
 }
+/// The most points one strike-at act may name (a chord is several points).
+pub const MAX_STRIKE_POINTS: usize = 64;
+/// The declared scene material policy's cap on any modal amplitude, in metres
+/// (the cap `SceneInstrument::strike` and the stage already hold).
+pub const STRIKE_CAP_METRES: f64 = 1.0;
+
+/// One struck point of the torus surface: an impulse (modal metres, as in
+/// [`StrikeInput`]) given to the body at the point (θ, φ) rather than to a
+/// named mode. θ is the poloidal angle (the small circle, the tube) and φ the
+/// toroidal angle (the large circle), the pair the native torus
+/// `m1::torus(θ, φ)` takes. The sampled sheet is θ, φ ∈ [0, 2π): the mode
+/// shapes are half-angle terms, so they change sign across that seam and an
+/// angle outside the sheet names a different point of the 720° cover — it is
+/// refused, never reduced for the caller. How a point maps to the standing
+/// voices is the scene body's law (`scene_field::ShapeBasis::strike_at`); this
+/// type only carries and bounds the act.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StrikeAtInput {
+    #[serde(deserialize_with = "number::float")]
+    pub theta: f64,
+    #[serde(deserialize_with = "number::float")]
+    pub phi: f64,
+    #[serde(deserialize_with = "number::pair")]
+    pub amplitude: [f64; 2],
+}
+
+impl StrikeAtInput {
+    /// Refuses, in words, a point outside the sampled sheet or an impulse
+    /// outside the declared material policy.
+    pub fn validate(&self) -> Result<()> {
+        for (name, angle) in [("theta", self.theta), ("phi", self.phi)] {
+            if !angle.is_finite() || !(0.0..std::f64::consts::TAU).contains(&angle) {
+                return Err(format!(
+                    "a struck point's {name} must be a finite angle in [0, 2π): that is the sampled sheet of the torus, and the mode shapes change sign across its seam, so an angle outside it names a different point of the double cover and is never reduced for the caller"
+                ));
+            }
+        }
+        if self
+            .amplitude
+            .iter()
+            .any(|v| !v.is_finite() || v.abs() > STRIKE_CAP_METRES)
+        {
+            return Err(format!(
+                "a struck point's amplitude must be two finite modal metres within the declared {STRIKE_CAP_METRES:.1} metre material policy"
+            ));
+        }
+        Ok(())
+    }
+
+    /// One act: 1..=[`MAX_STRIKE_POINTS`] points, every one valid. A single bad
+    /// point refuses the whole act.
+    pub fn validate_act(points: &[Self]) -> Result<()> {
+        if points.is_empty() || points.len() > MAX_STRIKE_POINTS {
+            return Err(format!(
+                "a strike-at act names 1..={MAX_STRIKE_POINTS} points"
+            ));
+        }
+        points.iter().try_for_each(Self::validate)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FieldSample {

@@ -186,3 +186,45 @@ fn a_played_note_strikes_its_routed_voice_and_nodal_addresses_are_refused() {
         .unwrap_err();
     assert!(error.contains("no bound mode"), "{error}");
 }
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_supplied_owner_has_no_torus_shape_to_strike_at_and_says_so() {
+    use ql_mef::continuous::host::{FieldHost, HOST_REQUEST, HostConfig, HostRequest};
+    // A strike at points of the torus belongs to the scene body, which alone
+    // holds the voices' shapes at a point; a supplied field is asked for named
+    // modes. The refusal is in words and the owner is untouched.
+    let mut host = FieldHost::open(
+        &worker(),
+        HostConfig {
+            instance_ref: "test:supplied".into(),
+            basis: input(),
+            field: field("fixture:nara-subject"),
+        },
+        Duration::from_secs(20),
+    )
+    .unwrap();
+    let initial = host.ready()["field"].clone();
+    let refused = host.execute(
+        serde_json::from_value::<HostRequest>(json!({
+            "schema":HOST_REQUEST, "instance_ref":"test:supplied",
+            "event_ref":initial["event_ref"], "subject_ref":initial["subject_ref"],
+            "request_id":"1", "expected_generation":initial["generation"],
+            "expected_samples_elapsed":initial["samples_elapsed"],
+            "command":{"operation":"strike-at",
+                "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}
+        }))
+        .unwrap(),
+    );
+    assert_eq!(refused["status"], "refused");
+    assert!(
+        refused["error"]
+            .as_str()
+            .unwrap()
+            .contains("provider-composed scene owner"),
+        "{}",
+        refused["error"]
+    );
+    assert_eq!(refused["field"], initial);
+    assert!(refused.get("strike_at").is_none());
+}

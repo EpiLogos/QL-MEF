@@ -70,7 +70,7 @@ function setup(options = {}) {
         current.generation = String(BigInt(current.generation) + 1n);
         current.clock[request.command.axis ? 'lensing' : 'inscription'] = request.command.phase;
         current.clock.generation = String(BigInt(current.clock.generation) + 1n);
-      } else if (request.command.operation === 'strike') {
+      } else if (request.command.operation === 'strike' || request.command.operation === 'strike-at') {
         current.generation = String(BigInt(current.generation) + 1n);
         current.amplitudes_metres[0][0] += 0.01;
         current.targets[0].position[2] += 0.25;
@@ -327,6 +327,87 @@ test('a refused played strike leaves the owner admitted and unchanged', async ()
   await session.pump();
   assert.equal(calls.length, 3);
   session.dispose();
+});
+
+const POINT = { theta: 1.25, phi: 4.5, amplitude: [0.4, -0.1] };
+
+test('a strike at points is one performance act: the cursor moves, the samples and the clock do not', async () => {
+  const { session, context, field, calls } = setup(); await session.pump();
+  const end = session.reading.audio.target_context_seconds;
+  const elapsed = session.reading.acknowledged.samples_elapsed;
+  await session.strikeAt([POINT, { theta: 0, phi: 0, amplitude: [0.1, 0] }]);
+  assert.deepEqual(calls.at(-1).command, { operation: 'strike-at',
+    points: [{ theta: 1.25, phi: 4.5, amplitude: [0.4, -0.1] }, { theta: 0, phi: 0, amplitude: [0.1, 0] }] });
+  assert.equal(session.reading.acknowledged.generation, '2', 'a chord of points is one generation');
+  assert.equal(session.reading.acknowledged.samples_elapsed, elapsed, 'a struck point elapses no samples');
+  // A performance act, not a determinant: no influence rides the reply, and
+  // the struck body's targets present at the end of the block like any strike.
+  assert.equal(session.lastInfluence, null);
+  context.currentTime = end; session.present();
+  assert.equal(field.last.targets[0].position[2], 0.25);
+  await session.pump();
+  assert.equal(calls.at(-1).command.operation, 'advance');
+  assert.equal(session.reading.acknowledged.samples_elapsed, String(BigInt(elapsed) + 512n));
+  session.dispose();
+});
+
+test('a strike at points copies its points: the caller cannot reshape the act after the call', async () => {
+  const { session, calls } = setup(); await session.pump();
+  const points = [{ theta: 1, phi: 2, amplitude: [0.2, 0], extra: 'dropped' }];
+  await session.strikeAt(points);
+  points[0].theta = 5; points[0].amplitude[0] = 0.9;
+  assert.deepEqual(calls.at(-1).command.points, [{ theta: 1, phi: 2, amplitude: [0.2, 0] }]);
+  session.dispose();
+});
+
+test('a malformed strike at points is refused before any native exchange', async () => {
+  const { session, calls } = setup(); await session.pump();
+  const TAU = 2 * Math.PI;
+  for (const [bad, message] of [
+    [[], /names 1\.\.64 points/],
+    ['point', /names 1\.\.64 points/],
+    [Array.from({ length: 65 }, () => POINT), /names 1\.\.64 points/],
+    [[null], /theta and phi/],
+    [[{ theta: Number.NaN, phi: 1, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: 1, phi: Infinity, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: -0.1, phi: 1, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: 1, phi: TAU, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: 7, phi: 1, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: '1', phi: 1, amplitude: [0, 0] }], /theta and phi/],
+    [[{ theta: 1, phi: 1, amplitude: [0] }], /two finite metres/],
+    [[{ theta: 1, phi: 1, amplitude: [Number.NaN, 0] }], /two finite metres/],
+    [[{ theta: 1, phi: 1, amplitude: [1.5, 0] }], /two finite metres/],
+    [[POINT, { theta: 1, phi: 1, amplitude: [0, -1.5] }], /two finite metres/],
+  ]) {
+    await assert.rejects(session.strikeAt(bad), message);
+  }
+  await session.strikeAt([{ theta: 0, phi: TAU - 1e-9, amplitude: [1, -1] }]);
+  assert.equal(calls.length, 2, 'only the one admitted point left the owner');
+  assert.equal(session.reading.available, true);
+  session.dispose();
+});
+
+test('a refused strike at points leaves the owner admitted, unchanged and out of the journal', async () => {
+  const { session, port, calls } = setup(); await session.pump();
+  port.refuseOperation = 'strike-at';
+  await assert.rejects(session.strikeAt([POINT]), /controlled refusal/);
+  assert.equal(session.reading.acknowledged.generation, '1');
+  assert.equal(session.reading.available, true, 'a clean refusal is not transport uncertainty');
+  assert.equal(calls.length, 2);
+  assert.deepEqual(session.journal().acts, []);
+  port.refuseOperation = null;
+  await session.strikeAt([POINT]);
+  assert.deepEqual(session.journal().acts.map(act => [act.operation, act.kind]), [['strike-at', 'act']]);
+  assert.deepEqual(session.journal().acts[0].command, { operation: 'strike-at', points: [POINT] });
+  assert.deepEqual(session.journal().acts[0].acknowledged, { generation: '2', samples_elapsed: '512' });
+  session.dispose();
+});
+
+test('a strike at points that did not advance the generation is a cursor disagreement', async () => {
+  const { session, port } = setup(); await session.pump();
+  port.effect = reply => { reply.field.generation = '1'; return reply; };
+  await assert.rejects(session.strikeAt([POINT]), /host operation and native cursor disagree/);
+  assert.equal(session.reading.available, false, 'an unqualified acknowledgement is transport uncertainty');
 });
 
 test('a scene determinant event re-reads the basis through the same serial owner', async () => {

@@ -5,8 +5,8 @@
 use std::path::PathBuf;
 use std::time::Duration;
 
-use ql_mef::continuous::StrikeInput;
-use ql_mef::continuous::scene_field::{PLANETS, SceneConfig, SceneInstrument};
+use ql_mef::continuous::scene_field::{PLANETS, STRIKE_AT_RECEIPT, SceneConfig, SceneInstrument};
+use ql_mef::continuous::{StrikeAtInput, StrikeInput};
 use serde_json::{Value, json};
 
 fn worker() -> PathBuf {
@@ -528,6 +528,416 @@ fn a_played_strike_through_the_host_is_subject_scoped_and_cursor_exact() {
     ));
     assert_eq!(unknown["status"], "refused");
     assert_eq!(unknown["field"], reread["field"]);
+}
+
+/// The resident modal amplitudes a native receipt carries: `[re, im]` per voice.
+fn resident(field: &Value) -> Vec<[f64; 2]> {
+    field["amplitudes_metres"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|a| [a[0].as_f64().unwrap(), a[1].as_f64().unwrap()])
+        .collect()
+}
+
+fn generation(field: &Value) -> u64 {
+    field["generation"].as_str().unwrap().parse().unwrap()
+}
+
+fn near(a: &[[f64; 2]], b: &[[f64; 2]], tolerance: f64, what: &str) {
+    assert_eq!(a.len(), b.len());
+    for (i, (x, y)) in a.iter().zip(b).enumerate() {
+        for part in 0..2 {
+            assert!(
+                (x[part] - y[part]).abs() <= tolerance,
+                "{what}: voice {i} part {part}: {} against {}",
+                x[part],
+                y[part]
+            );
+        }
+    }
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_struck_point_excites_every_voice_by_its_own_shape_and_a_chord_is_the_sum() {
+    let (mut chord, mut singles) = (open(), open());
+    // Two owners over one event hold one quiet ringing body.
+    let seed = chord.session_mut().advance_field(1024, false).unwrap();
+    assert_eq!(
+        seed,
+        singles.session_mut().advance_field(1024, false).unwrap()
+    );
+    let a = StrikeAtInput {
+        theta: 0.8,
+        phi: 1.9,
+        amplitude: [0.2, 0.1],
+    };
+    let b = StrikeAtInput {
+        theta: 2.4,
+        phi: 5.1,
+        amplitude: [0.3, -0.2],
+    };
+    // What the body's own shapes give each voice at these points; the native
+    // owner must have moved each voice's resident amplitude by exactly that.
+    let want = chord.shape().strike_at(&[a, b]).unwrap();
+    assert!(
+        want.iter().all(|w| w.amplitude != [0.0, 0.0]),
+        "the points must reach every voice for the chord to be a test"
+    );
+    let outcome = chord.strike_at(&[a, b]).unwrap();
+    let struck = &outcome.field;
+    // A performance act: the identity, the clock and the sample cursor continue
+    // on the same body, and a chord of two points is one generation.
+    assert_eq!(struck["event_ref"], seed["event_ref"]);
+    assert_eq!(struck["subject_ref"], seed["subject_ref"]);
+    assert_eq!(struck["clock"], seed["clock"]);
+    assert_eq!(struck["samples_elapsed"], seed["samples_elapsed"]);
+    assert_eq!(generation(struck), generation(&seed) + 1);
+    let moved: Vec<[f64; 2]> = resident(struck)
+        .iter()
+        .zip(resident(&seed))
+        .map(|(after, before)| [after[0] - before[0], after[1] - before[1]])
+        .collect();
+    let given: Vec<[f64; 2]> = want.iter().map(|w| w.amplitude).collect();
+    near(
+        &moved,
+        &given,
+        1e-9,
+        "the owner moved each voice by its impulse",
+    );
+    // The receipt names the points and what each voice was given.
+    assert_eq!(outcome.receipt["schema"], STRIKE_AT_RECEIPT);
+    assert_eq!(outcome.receipt["points"], json!([a, b]));
+    for (i, voice) in outcome.receipt["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        assert_eq!(voice["mode_ref"], format!("scene:planet/{}", PLANETS[i]));
+        assert_eq!(voice["amplitude"], json!(given[i]));
+    }
+    // The same two points as two single strikes leave the body where the chord
+    // did: the resident amplitudes add, one generation per act.
+    let first = singles.strike_at(&[a]).unwrap();
+    assert_eq!(generation(&first.field), generation(&seed) + 1);
+    let second = singles.strike_at(&[b]).unwrap();
+    assert_eq!(generation(&second.field), generation(&seed) + 2);
+    near(
+        &resident(struck),
+        &resident(&second.field),
+        1e-9,
+        "chord against two single strikes",
+    );
+    // The struck body sounds and moves on the same state: the next block rings
+    // the points' response, the unstruck twin stays quiet beside it.
+    let mut control = open();
+    control.session_mut().advance_field(1024, false).unwrap();
+    let (rung, quiet) = (
+        chord.session_mut().advance_field(2048, false).unwrap(),
+        control.session_mut().advance_field(2048, false).unwrap(),
+    );
+    assert_ne!(audio(&rung), audio(&quiet), "the struck point did not ring");
+    assert!(
+        max_move(&rung, &quiet) > 0.0,
+        "the struck point did not move the body"
+    );
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_refused_strike_at_leaves_the_native_owner_exactly_as_it_stood() {
+    let mut played = open();
+    played.session_mut().advance_field(1024, false).unwrap();
+    let retained = played.session().last_field().clone();
+    let good = StrikeAtInput {
+        theta: 1.0,
+        phi: 2.0,
+        amplitude: [0.1, 0.0],
+    };
+    // The point where the strongest voice is loudest: sixty-four loud strikes
+    // there sum past the 1.0 metre policy though each is within it.
+    let mut loudest = (0.0f64, good);
+    for j in 0..16 {
+        for i in 0..32 {
+            let at = StrikeAtInput {
+                theta: std::f64::consts::TAU * f64::from(j) / 16.0,
+                phi: std::f64::consts::TAU * f64::from(i) / 32.0,
+                amplitude: [1.0, 0.0],
+            };
+            let peak = played
+                .shape()
+                .strike_at(&[at])
+                .unwrap()
+                .iter()
+                .map(|s| s.amplitude[0].abs())
+                .fold(0.0, f64::max);
+            if peak > loudest.0 {
+                loudest = (peak, at);
+            }
+        }
+    }
+    assert!(
+        loudest.0 > 0.05,
+        "no point of the body is loud enough to test the cap"
+    );
+    let over = StrikeAtInput {
+        amplitude: [0.9, 0.0],
+        ..loudest.1
+    };
+    let refusals: Vec<(Vec<StrikeAtInput>, &str)> = vec![
+        (vec![StrikeAtInput { theta: 7.0, ..good }], "theta"),
+        (vec![StrikeAtInput { phi: -0.1, ..good }], "phi"),
+        (
+            vec![
+                good,
+                StrikeAtInput {
+                    phi: f64::NAN,
+                    ..good
+                },
+            ],
+            "phi",
+        ),
+        (
+            vec![StrikeAtInput {
+                amplitude: [2.0, 0.0],
+                ..good
+            }],
+            "amplitude",
+        ),
+        (vec![], "points"),
+        (vec![over; 64], "material policy"),
+    ];
+    for (act, word) in refusals {
+        let error = played.strike_at(&act).unwrap_err();
+        assert!(error.contains(word), "{word}: {error}");
+        assert_eq!(
+            played.session().last_field(),
+            &retained,
+            "a refused strike at points moved the owner: {error}"
+        );
+    }
+    // The owner is still the same admitted body and takes the next good strike.
+    let admitted = played.strike_at(&[good]).unwrap();
+    assert_eq!(generation(&admitted.field), generation(&retained) + 1);
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_strike_at_through_the_host_names_its_points_and_is_cursor_exact() {
+    use ql_mef::continuous::host::{FieldHost, HOST_REQUEST, HostRequest};
+    let config = config();
+    let instance = config.instance_ref.clone();
+    let mut host = FieldHost::open_scene(&worker(), config, Duration::from_secs(20)).unwrap();
+    let initial = host.ready()["field"].clone();
+    let points = json!([
+        {"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 0.1]},
+        {"theta": 2.4, "phi": 5.1, "amplitude": [0.3, -0.2]}
+    ]);
+    let strike_at = |id: &str, generation: &Value, person: &Value, points: &Value| -> HostRequest {
+        serde_json::from_value(json!({"schema":HOST_REQUEST, "instance_ref":instance,
+            "event_ref":initial["event_ref"], "subject_ref":person, "request_id":id,
+            "expected_generation":generation,
+            "expected_samples_elapsed":initial["samples_elapsed"],
+            "command":{"operation":"strike-at","points":points}}))
+        .unwrap()
+    };
+    // A foreign subject is refused before its sequence is admitted and the
+    // owner is untouched: the same id is then the next admitted request.
+    let foreign = host.execute(strike_at(
+        "1",
+        &initial["generation"],
+        &json!("person:foreign"),
+        &points,
+    ));
+    assert_eq!(foreign["status"], "refused");
+    assert_eq!(foreign["field"], initial);
+    assert!(foreign.get("strike_at").is_none());
+    // The admitted chord: one generation, the clock continues, the receipt of
+    // the act rides beside the field and names the points.
+    let request = strike_at(
+        "1",
+        &initial["generation"],
+        &initial["subject_ref"],
+        &points,
+    );
+    let printed = std::env::var_os("QL_PRINT_STRIKE_AT").is_some();
+    if printed {
+        eprintln!(
+            "STRIKE-AT REQUEST {}",
+            serde_json::to_string_pretty(&serde_json::to_value(&request).unwrap()).unwrap()
+        );
+    }
+    let admitted = host.execute(request);
+    if printed {
+        eprintln!(
+            "STRIKE-AT REPLY {}",
+            serde_json::to_string_pretty(&admitted).unwrap()
+        );
+    }
+    assert_eq!(admitted["status"], "ok", "{}", admitted["error"]);
+    assert_eq!(generation(&admitted["field"]), generation(&initial) + 1);
+    assert_eq!(admitted["field"]["clock"], initial["clock"]);
+    assert_eq!(
+        admitted["field"]["samples_elapsed"],
+        initial["samples_elapsed"]
+    );
+    assert_ne!(
+        admitted["field"]["amplitudes_metres"],
+        initial["amplitudes_metres"]
+    );
+    assert_eq!(admitted["strike_at"]["schema"], STRIKE_AT_RECEIPT);
+    assert_eq!(admitted["strike_at"]["points"], points);
+    assert_eq!(admitted["strike_at"]["voices"].as_array().unwrap().len(), 9);
+    assert!(admitted["strike_at"]["law"].as_str().unwrap().contains("χ"));
+    // A performance act, not a determinant: no influence rides the reply.
+    assert!(
+        admitted.get("influence").is_none(),
+        "a strike at points answered as a determinant"
+    );
+    // The receipt's voices are what the owner moved.
+    let given: Vec<[f64; 2]> = admitted["strike_at"]["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| {
+            [
+                v["amplitude"][0].as_f64().unwrap(),
+                v["amplitude"][1].as_f64().unwrap(),
+            ]
+        })
+        .collect();
+    let moved: Vec<[f64; 2]> = resident(&admitted["field"])
+        .iter()
+        .zip(resident(&initial))
+        .map(|(after, before)| [after[0] - before[0], after[1] - before[1]])
+        .collect();
+    near(
+        &moved,
+        &given,
+        1e-9,
+        "the receipt names what the owner moved",
+    );
+    // A point off the sampled sheet is refused in words, the owner untouched,
+    // and the next request is still admitted at the same cursor.
+    let off = json!([{"theta": 7.0, "phi": 1.0, "amplitude": [0.1, 0.0]}]);
+    let refused = host.execute(strike_at(
+        "2",
+        &admitted["field"]["generation"],
+        &initial["subject_ref"],
+        &off,
+    ));
+    assert_eq!(refused["status"], "refused");
+    assert!(refused["error"].as_str().unwrap().contains("theta"));
+    assert_eq!(refused["field"], admitted["field"]);
+    assert!(refused.get("strike_at").is_none());
+    let stale = host.execute(strike_at(
+        "3",
+        &initial["generation"],
+        &initial["subject_ref"],
+        &points,
+    ));
+    assert_eq!(stale["status"], "refused");
+    assert_eq!(stale["field"], admitted["field"]);
+    let next = host.execute(strike_at(
+        "4",
+        &admitted["field"]["generation"],
+        &initial["subject_ref"],
+        &json!([{"theta": 0.0, "phi": 0.0, "amplitude": [0.05, 0.0]}]),
+    ));
+    assert_eq!(next["status"], "ok", "{}", next["error"]);
+    assert_eq!(
+        generation(&next["field"]),
+        generation(&admitted["field"]) + 1
+    );
+}
+
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn the_host_binary_takes_strikes_at_points_as_the_text_a_client_writes() {
+    // The production path: `ql-field-host` reads one JSON request per line on
+    // stdin. A client writes fractional numbers as plain text (`JSON.stringify`),
+    // and serde_json's `arbitrary_precision` used to refuse every one of them in
+    // a tagged command ("malformed or unknown host request fields"): strike,
+    // set-damping and strike-at alike.
+    use std::io::{BufRead, BufReader, Write};
+    use std::process::{Command, Stdio};
+    let path = std::env::temp_dir().join(format!("ql-strike-at-host-{}.json", std::process::id()));
+    std::fs::write(&path, serde_json::to_vec(&config()).unwrap()).unwrap();
+    let mut child = Command::new(env!("CARGO_BIN_EXE_ql-field-host"))
+        .arg(worker())
+        .arg(&path)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let mut input = child.stdin.take().unwrap();
+    let mut output = BufReader::new(child.stdout.take().unwrap());
+    let mut read = || -> Value {
+        let mut line = String::new();
+        output.read_line(&mut line).unwrap();
+        serde_json::from_str(&line).unwrap()
+    };
+    let ready = read();
+    assert_eq!(ready["status"], "ready");
+    let mut field = ready["field"].clone();
+    let mut id = 0;
+    let mut send = |field: &Value, command: &str| -> Value {
+        id += 1;
+        let line = format!(
+            r#"{{"schema":"ql.field-host-request/v1","instance_ref":{},"event_ref":{},"subject_ref":{},"request_id":"{id}","expected_generation":{},"expected_samples_elapsed":{},"command":{command}}}"#,
+            ready["instance_ref"],
+            field["event_ref"],
+            field["subject_ref"],
+            field["generation"],
+            field["samples_elapsed"],
+        );
+        writeln!(input, "{line}").unwrap();
+        input.flush().unwrap();
+        read()
+    };
+    let chord = r#"{"operation":"strike-at","points":[{"theta":0.8,"phi":1.9,"amplitude":[0.2,0.1]},{"theta":2.4,"phi":5.1,"amplitude":[0.3,-0.2]}]}"#;
+    let struck = send(&field, chord);
+    assert_eq!(struck["status"], "ok", "{}", struck["error"]);
+    assert_eq!(struck["strike_at"]["schema"], STRIKE_AT_RECEIPT);
+    assert_eq!(
+        struck["strike_at"]["points"],
+        json!([
+            {"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 0.1]},
+            {"theta": 2.4, "phi": 5.1, "amplitude": [0.3, -0.2]}
+        ])
+    );
+    assert_eq!(generation(&struck["field"]), generation(&field) + 1);
+    field = struck["field"].clone();
+    // The strike by named voice and the damping edit, which the same defect
+    // refused, take their fractional numbers from text too.
+    let by_voice = send(
+        &field,
+        r#"{"operation":"strike","strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.5,0.0]}]}"#,
+    );
+    assert_eq!(by_voice["status"], "ok", "{}", by_voice["error"]);
+    field = by_voice["field"].clone();
+    let damped = send(&field, r#"{"operation":"set-damping","per_second":0.35}"#);
+    assert_eq!(damped["status"], "ok", "{}", damped["error"]);
+    field = damped["field"].clone();
+    // A point off the sampled sheet is refused in words, by the body, not as
+    // a malformed request: the owner is still admitted afterwards.
+    let off = send(
+        &field,
+        r#"{"operation":"strike-at","points":[{"theta":7.0,"phi":1.0,"amplitude":[0.1,0.0]}]}"#,
+    );
+    assert_eq!(off["status"], "refused");
+    assert!(
+        off["error"].as_str().unwrap().contains("theta"),
+        "{}",
+        off["error"]
+    );
+    assert_eq!(off["field"], field);
+    drop(input);
+    let _ = child.wait();
+    let _ = std::fs::remove_file(&path);
 }
 
 #[test]

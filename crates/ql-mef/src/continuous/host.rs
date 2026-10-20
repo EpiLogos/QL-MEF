@@ -40,6 +40,7 @@ pub enum HostOperation {
     },
     /// scene only: D30 material policy; resident amplitudes and clocks continue.
     SetDamping {
+        #[serde(deserialize_with = "super::number::float")]
         per_second: f64,
     },
     /// A played excitation of named modes on the standing continuation. A
@@ -47,6 +48,14 @@ pub enum HostOperation {
     /// clock continues, so the answer carries the field, not a new influence.
     Strike {
         strikes: Vec<super::StrikeInput>,
+    },
+    /// scene only: a played excitation of the torus surface at points (θ, φ),
+    /// e.g. a key's point on its helix or a touch. The scene body lowers the
+    /// act to one strike of its standing voices by each voice's own shape at
+    /// the point; the answer carries the field and the `ql.strike-at/v1`
+    /// receipt naming the points. A performance act, not a determinant.
+    StrikeAt {
+        points: Vec<super::StrikeAtInput>,
     },
     /// scene only: M1's own advance action, then the whole event is re-read.
     M1Advance {
@@ -297,6 +306,12 @@ impl FieldHost {
         if !plan.strikes.is_empty() {
             applied = Some(apply("strike", instrument.strike(&plan.strikes))?);
         }
+        for (act, points) in plan.strike_points.iter().enumerate() {
+            applied = Some(apply(
+                &format!("strike-at:{act}"),
+                instrument.strike_at(points).map(|outcome| outcome.field),
+            )?);
+        }
         for scene in 1..=plan.passage_ticks {
             applied = Some(apply(
                 &format!("passage-scene:{scene}"),
@@ -384,6 +399,7 @@ impl FieldHost {
                 | HostOperation::Replace { .. }
                 | HostOperation::SetDamping { .. }
                 | HostOperation::Strike { .. }
+                | HostOperation::StrikeAt { .. }
                 | HostOperation::M1Advance { .. }
                 | HostOperation::ReplaceEvent { .. }
                 | HostOperation::Influence {}
@@ -635,6 +651,8 @@ impl FieldHost {
             HostOperation::ReplaceEvent { .. } => Some("replace-event"),
             _ => None,
         };
+        // A strike at points answers with the field and its own receipt.
+        let mut strike_at_receipt: Option<Value> = None;
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
             (HostOperation::Advance { frames, muted }, owner) => {
@@ -647,6 +665,16 @@ impl FieldHost {
             (HostOperation::Strike { strikes }, owner) => {
                 owner.session_mut().strike_field(&strikes)
             }
+            (HostOperation::StrikeAt { points }, Owner::Scene(instrument)) => instrument
+                .strike_at(&points)
+                .map(|outcome| {
+                    strike_at_receipt = Some(outcome.receipt);
+                    outcome.field
+                }),
+            (HostOperation::StrikeAt { .. }, Owner::Supplied(_)) => Err(
+                "a strike at points of the torus belongs to a provider-composed scene owner: only the scene body holds the voices' shapes at a point"
+                    .into(),
+            ),
             (HostOperation::SetAxis { axis, phase }, owner) => {
                 if axis > 1 {
                     Err("unknown independent clock axis".into())
@@ -694,6 +722,9 @@ impl FieldHost {
             Ok(field) => {
                 let mut response = self.response(Some(&request.request_id), "ok", None);
                 response["field"] = field;
+                if let Some(receipt) = strike_at_receipt {
+                    response["strike_at"] = receipt;
+                }
                 if let (true, Owner::Scene(instrument)) = (determinant, &self.session) {
                     response["influence"] = instrument.influence();
                 }
@@ -796,6 +827,95 @@ mod tests {
             "strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.1,0.0]}],"muted":true}))
             .is_err()
         );
+    }
+
+    #[test]
+    fn strike_at_is_admitted_by_name_and_strict_about_its_points() {
+        let strike_at: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
+            "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}))
+        .unwrap();
+        assert!(matches!(&strike_at, HostOperation::StrikeAt { points } if points.len() == 1));
+        for value in [
+            json!({"operation":"strike-at"}),
+            json!({"operation":"strike-at","points":[],"muted":true}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0}]}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,
+                "amplitude":[0.1,0.0],"mode_ref":"scene:planet/#2-5-4"}]}),
+            json!({"operation":"strike-at","strikes":[{"mode_ref":"scene:planet/#2-5-4",
+                "amplitude":[0.1,0.0]}]}),
+        ] {
+            assert!(
+                serde_json::from_value::<HostOperation>(value.clone()).is_err(),
+                "accepted {value}"
+            );
+        }
+    }
+
+    /// The host reads each request line as text (`ql-field-host` stdin). serde_json
+    /// is built with `arbitrary_precision`, under which a fractional number in
+    /// text reaches an internally tagged command as its private Number map; a
+    /// command must parse the same from text as from a `Value`, with the
+    /// number forms a person or a JS `JSON.stringify` writes.
+    #[test]
+    fn commands_with_fractional_numbers_parse_from_the_text_the_host_reads() {
+        let line = |command: &str| {
+            format!(
+                r#"{{"schema":"{HOST_REQUEST}","instance_ref":"i","event_ref":"e","subject_ref":"s","request_id":"1","expected_generation":"1","expected_samples_elapsed":"0","command":{command}}}"#
+            )
+        };
+        let strike = serde_json::from_slice::<HostRequest>(
+            line(r#"{"operation":"strike","strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.5,0.0]}]}"#)
+                .as_bytes(),
+        )
+        .unwrap();
+        assert!(matches!(&strike.command, HostOperation::Strike { strikes }
+            if strikes.len() == 1 && strikes[0].amplitude == [0.5, 0.0]));
+        let damping = serde_json::from_slice::<HostRequest>(
+            line(r#"{"operation":"set-damping","per_second":0.35}"#).as_bytes(),
+        )
+        .unwrap();
+        assert!(
+            matches!(damping.command, HostOperation::SetDamping { per_second } if per_second == 0.35)
+        );
+        // Every spelling of a number: fractional, trailing zeros, exponent,
+        // negative, integer. The angles and impulses of a struck point are
+        // fractional by nature.
+        let strike_at = serde_json::from_slice::<HostRequest>(
+            line(
+                r#"{"operation":"strike-at","points":[
+                {"theta":0.8,"phi":1.9,"amplitude":[0.2,0.1]},
+                {"theta":2.40,"phi":5.1e0,"amplitude":[3e-1,-0.2]},
+                {"theta":0,"phi":6,"amplitude":[1,-1]}]}"#,
+            )
+            .as_bytes(),
+        )
+        .unwrap();
+        let HostOperation::StrikeAt { points } = strike_at.command else {
+            panic!("not a strike-at");
+        };
+        assert_eq!(
+            points
+                .iter()
+                .map(|p| (p.theta, p.phi, p.amplitude))
+                .collect::<Vec<_>>(),
+            vec![
+                (0.8, 1.9, [0.2, 0.1]),
+                (2.4, 5.1, [0.3, -0.2]),
+                (0.0, 6.0, [1.0, -1.0]),
+            ]
+        );
+        // A malformed number is still refused, not read as something else.
+        for bad in [
+            r#"{"operation":"strike-at","points":[{"theta":"1","phi":2.0,"amplitude":[0.1,0.0]}]}"#,
+            r#"{"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,true]}]}"#,
+            r#"{"operation":"strike-at","points":[{"theta":1e999,"phi":2.0,"amplitude":[0.1,0.0]}]}"#,
+            r#"{"operation":"set-damping","per_second":null}"#,
+        ] {
+            assert!(
+                serde_json::from_slice::<HostRequest>(line(bad).as_bytes()).is_err(),
+                "accepted {bad}"
+            );
+        }
     }
 
     #[test]
