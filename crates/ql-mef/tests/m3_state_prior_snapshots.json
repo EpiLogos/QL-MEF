@@ -1,0 +1,5122 @@
+[
+  {
+    "label": "fixture-initial",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 40,
+        "fibonacci_phase60": 59,
+        "index": 2,
+        "reciprocal_division_deg10": 900,
+        "reciprocal_index": 13,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 450
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5"
+        },
+        "clockwise_id": "9bfcc279633903ba",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "93624747e6cfdd67",
+          "ref": "#3-5-5/0-359"
+        },
+        "degree360": 359,
+        "degree720": 359,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 0,
+        "polar720": 179,
+        "polar_id": "ac2f4dfbf7d6f8da",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5",
+          "source_record": 1752,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 359,
+        "tick12": 11,
+        "uniform_hexagram_estimate": 63
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          0,
+          1,
+          1,
+          1
+        ],
+        "site_components": [
+          2,
+          1,
+          3
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 7,
+        "angles_deg10": [
+          225,
+          -225,
+          -225
+        ],
+        "charges_pp_mm_mp_pm": [
+          22,
+          -10,
+          4,
+          8
+        ],
+        "codon": {
+          "id": "32328b4c1d0e46c9",
+          "ref": "#3-2-1-2-4"
+        },
+        "coin_values": [
+          6,
+          9,
+          7
+        ],
+        "hexagram": {
+          "id": "8931c578fe85ae3e",
+          "ref": "#3-1-0-1"
+        },
+        "hinge": 1,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 0,
+              "xyz": [
+                -0.9238795325112867,
+                -0.3826834323650898,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 1,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 3,
+              "xyz": [
+                -0.9238795325112867,
+                0.3826834323650899,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 225,
+              "from": "X",
+              "pair_index": 1,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 1575,
+              "from": "Y",
+              "pair_index": 7,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 0,
+        "nucleotides": [
+          0,
+          1,
+          3
+        ],
+        "orientation_seed_wxyz": [
+          -14.849242,
+          16.263456,
+          -2.828427,
+          -2.828427
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          225,
+          1575
+        ],
+        "pair_xy": {
+          "id": "3b0419d79ae5ef1d",
+          "ref": "#3-2-1-2"
+        },
+        "pair_yz": {
+          "id": "57d6e31984d15f09",
+          "ref": "#3-2-2-4"
+        },
+        "physical_form": {
+          "address": 7,
+          "constituent_ref": "#3-2-1-2-4",
+          "pose_ordinal": 56,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 8,
+          "target_kind": "fold-pose"
+        },
+        "pose": 6,
+        "pose_ordinal": 56,
+        "state_count": 8,
+        "velocities_deg10": [
+          225,
+          225,
+          0
+        ]
+      },
+      "iching": {
+        "complement_address": 56,
+        "line_change_addresses": [
+          6,
+          5,
+          3,
+          15,
+          23,
+          39
+        ],
+        "nuclear_address": 11,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "occurrence_unix_ms": 1789090397000,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400000,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 7,
+            "codon_relations": [
+              "46d36fcba891a620",
+              "3bef75a86ae78f17"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-0-1",
+            "id": "8256254b0dd285fa",
+            "non_dual": false,
+            "pair_relations": [
+              "739ca516c9b2399d",
+              "f742c7488025f876"
+            ],
+            "ref": "#3-3-2-0-11",
+            "resolves_relation": "3c61498569288634"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "8256254b0dd285fa",
+              "from_ref": "#3-3-2-0-11",
+              "id": "46d36fcba891a620",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-11",
+                "c_0_target_coordinate": "M3-2-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:53.448Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8360,
+              "ref": "bimba:relation:6e1b545e7c9d4e2d7056f886",
+              "source_record_index": 9347,
+              "to_id": "b002bd7b6e3a2936",
+              "to_ref": "#3-2-2-1-1"
+            },
+            {
+              "from_id": "8256254b0dd285fa",
+              "from_ref": "#3-3-2-0-11",
+              "id": "3bef75a86ae78f17",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-11",
+                "c_0_target_coordinate": "M3-2-2-2-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:53.464Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8361,
+              "ref": "bimba:relation:f8354da2866df1dd1d7ce76a",
+              "source_record_index": 9348,
+              "to_id": "0357ec7ebe329e9b",
+              "to_ref": "#3-2-2-2-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "8256254b0dd285fa",
+              "from_ref": "#3-3-2-0-11",
+              "id": "739ca516c9b2399d",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-11",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:53.444Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8358,
+              "ref": "bimba:relation:85e14ab7cbd0541e17686df6",
+              "source_record_index": 9345,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            },
+            {
+              "from_id": "8256254b0dd285fa",
+              "from_ref": "#3-3-2-0-11",
+              "id": "f742c7488025f876",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-11",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:53.439Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8359,
+              "ref": "bimba:relation:b4fb7268a6490abb54ce3de5",
+              "source_record_index": 9346,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 7,
+            "codon_relations": [
+              "29c464c82ecf069e",
+              "49abfbf46a6a9c26"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-0-1",
+            "id": "286b363102243c7a",
+            "non_dual": false,
+            "pair_relations": [
+              "6c3f2dd78ca9b5ee",
+              "74a3b876a64f0d78"
+            ],
+            "ref": "#3-3-2-1-11",
+            "resolves_relation": "8f57c07c4e79804c"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "286b363102243c7a",
+              "from_ref": "#3-3-2-1-11",
+              "id": "29c464c82ecf069e",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-11",
+                "c_0_target_coordinate": "M3-2-2-2-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.567Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8795,
+              "ref": "bimba:relation:1045c1cfa1b4c97227cb0432",
+              "source_record_index": 9782,
+              "to_id": "0357ec7ebe329e9b",
+              "to_ref": "#3-2-2-2-1"
+            },
+            {
+              "from_id": "286b363102243c7a",
+              "from_ref": "#3-3-2-1-11",
+              "id": "49abfbf46a6a9c26",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-11",
+                "c_0_target_coordinate": "M3-2-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.563Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8794,
+              "ref": "bimba:relation:f928a5cff50e446fe7adf555",
+              "source_record_index": 9781,
+              "to_id": "b002bd7b6e3a2936",
+              "to_ref": "#3-2-2-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "286b363102243c7a",
+              "from_ref": "#3-3-2-1-11",
+              "id": "6c3f2dd78ca9b5ee",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-11",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.558Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8792,
+              "ref": "bimba:relation:73e8f151e2f61c001f776f20",
+              "source_record_index": 9779,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            },
+            {
+              "from_id": "286b363102243c7a",
+              "from_ref": "#3-3-2-1-11",
+              "id": "74a3b876a64f0d78",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-11",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.554Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8793,
+              "ref": "bimba:relation:be3afc291d00f9574d720163",
+              "source_record_index": 9780,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 7,
+            "codon_relations": [
+              "2e120b161b1a46d3",
+              "74e92d12db0bf4ad"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-0-1",
+            "id": "5eb22e0039c52c0b",
+            "non_dual": false,
+            "pair_relations": [
+              "e33edeecae2c984e",
+              "43dab45ed67315d6"
+            ],
+            "ref": "#3-3-2-2-11",
+            "resolves_relation": "1f2565f9b67c4a4f"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "5eb22e0039c52c0b",
+              "from_ref": "#3-3-2-2-11",
+              "id": "2e120b161b1a46d3",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-11",
+                "c_0_target_coordinate": "M3-2-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.519Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9230,
+              "ref": "bimba:relation:3887768a268a5b6ee5866108",
+              "source_record_index": 10217,
+              "to_id": "b002bd7b6e3a2936",
+              "to_ref": "#3-2-2-1-1"
+            },
+            {
+              "from_id": "5eb22e0039c52c0b",
+              "from_ref": "#3-3-2-2-11",
+              "id": "74e92d12db0bf4ad",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-11",
+                "c_0_target_coordinate": "M3-2-2-2-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.523Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9231,
+              "ref": "bimba:relation:66df6377e7f67ff59f596337",
+              "source_record_index": 10218,
+              "to_id": "0357ec7ebe329e9b",
+              "to_ref": "#3-2-2-2-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "5eb22e0039c52c0b",
+              "from_ref": "#3-3-2-2-11",
+              "id": "e33edeecae2c984e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-11",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.511Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9229,
+              "ref": "bimba:relation:1b3395fa009c91f5c704646a",
+              "source_record_index": 10216,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            },
+            {
+              "from_id": "5eb22e0039c52c0b",
+              "from_ref": "#3-3-2-2-11",
+              "id": "43dab45ed67315d6",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-11",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.515Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9228,
+              "ref": "bimba:relation:55674e495fd0eac93698f713",
+              "source_record_index": 10215,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 4,
+        "codons": [
+          7
+        ],
+        "rank": "Five",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Cups"
+      },
+      "transcription": {
+        "retained_amino_slot": 17,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": false,
+        "sequence": "ATG",
+        "source": {
+          "dna": {
+            "id": "32328b4c1d0e46c9",
+            "parent_id": "3b0419d79ae5ef1d",
+            "properties": {
+              "c_0_core_nature": "The primary start codon that initiates protein synthesis, the gateway between genetic potential and manifest form",
+              "c_0_essence": "The ignition key of genetic manifestation",
+              "c_0_operational_essence": "The ignition key of genetic manifestation",
+              "c_1_consciousness_structure": "The consciousness of beginning, the first breath of protein life",
+              "c_1_description": "ATG stands as the universal initiator, the sacred threshold where genetic information transforms into living protein. Like the cosmic AUM, it marks the beginning of manifestation from potential.",
+              "c_1_name": "Codon_ATG",
+              "c_1_primary_designation": "Codon ATG - The Universal Initiator",
+              "c_2_uuid": "0b7f5e4e-cbfc-5d36-ac36-d70e3d9f73c6",
+              "c_3_architectural_function": "Serves as the universal starting point for protein translation, marking the beginning of genetic expression",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -10,
+              "c_3_inner_charge_np": 4,
+              "c_3_inner_charge_pn": 8,
+              "c_3_inner_charge_pp": 22,
+              "c_3_parent_pair": "AT",
+              "c_3_quality": "Initiation",
+              "c_3_source_dataset": "bimba",
+              "c_3_special_function": "Translation initiation - the alpha point of protein synthesis",
+              "c_3_symmetry_class": "dual",
+              "c_3_translates_to": "Methionine",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-1-2-4",
+              "m_3_2_amino_acid_code": "Met (Methionine) [START]",
+              "p_3_position1": "A",
+              "p_3_position2": "T",
+              "p_3_position3": "G",
+              "p_3_sequence": "ATG",
+              "p_3_third_position": "G"
+            },
+            "record": 835,
+            "ref": "#3-2-1-2-4",
+            "role": "dna-codon",
+            "source_record_index": 972
+          },
+          "expression": [
+            {
+              "from_id": "8332269160a505c4",
+              "from_ref": "#3-4.0-1-4",
+              "id": "730aa104dfb0f00f",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-4",
+                "c_0_target_coordinate": "M3-4-2-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:02.146Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10183,
+              "ref": "bimba:relation:0f6439b7021e00f332f7ea50",
+              "source_record_index": 11170,
+              "to_id": "bd1ff1d1404df023",
+              "to_ref": "#3-4-2-4"
+            },
+            {
+              "from_id": "8332269160a505c4",
+              "from_ref": "#3-4.0-1-4",
+              "id": "4f5afa0e989a91d0",
+              "kind": "POTENTIATES",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-4",
+                "c_0_target_coordinate": "M3-4-(5/0)-0",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "POTENTIATES",
+                "c_3_created_at": "2026-07-28T20:30:02.172Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10184,
+              "ref": "bimba:relation:a6cc898513fb2067e517d6c9",
+              "source_record_index": 11171,
+              "to_id": "fa5299ea42518024",
+              "to_ref": "#3-4-5/0-0"
+            }
+          ],
+          "phase": {
+            "id": "8332269160a505c4",
+            "parent_id": "8ed34a8c2bea36f0",
+            "properties": {
+              "c_0_core_nature": "Loss and renewal cycles (Start codon)",
+              "c_0_essence": "Eight-fold rotation through transformative loss",
+              "c_0_operational_essence": "Eight-fold rotation through transformative loss",
+              "c_1_description": "The ATG codon reflection embodies the Five of Cups loss and renewal, serving as genetic start codon with eight rotational states",
+              "c_1_name": "ATG Codon Reflection - Loss and Renewal",
+              "c_1_primary_designation": "ATG Codon Reflection - Loss and Renewal",
+              "c_2_uuid": "09434705-77e2-566d-b3fe-97e22e63d57b",
+              "c_3_charge_pattern": "nn:-10 np:4 pn:8 pp:22",
+              "c_3_contains_t": true,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -10,
+              "c_3_inner_charge_np": 4,
+              "c_3_inner_charge_pn": 8,
+              "c_3_inner_charge_pp": 22,
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 8,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "full-rotational",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-1-4",
+              "m_3_4_amino_acid_code": "Met (Methionine) [START]",
+              "m_3_4_tarot_card": "Five of Cups",
+              "p_3_sequence": "ATG",
+              "t_3_rna_sequence": "AUG"
+            },
+            "record": 1306,
+            "ref": "#3-4.0-1-4",
+            "role": "phase-codon",
+            "source_record_index": 1443
+          },
+          "rna": {
+            "id": "82606c31415f3872",
+            "parent_id": "3cf5a4bfea97f761",
+            "properties": {
+              "c_1_description": "AU with guanine - universal start codon consciousness",
+              "c_1_name": "AUG Codon",
+              "c_2_uuid": "1cbf1a0a-d7c7-5d5e-859c-88e12b687feb",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_parent_pair": "AU",
+              "c_3_source_dataset": "bimba",
+              "c_3_transcription_source": "ATG→AUG",
+              "c_3_updated_at": "2025-08-11T13:46:49.551000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-3-3-2-4",
+              "p_3_sequence": "AUG"
+            },
+            "record": 1122,
+            "ref": "#3-3-3-2-4",
+            "role": "rna-codon",
+            "source_record_index": 1259
+          },
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "8332269160a505c4",
+              "from_ref": "#3-4.0-1-4",
+              "id": "2f01314b0a03ff05",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-4",
+                "c_0_target_coordinate": "M3-3-4-22",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.142Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10186,
+              "ref": "bimba:relation:3cebce74091359d0854e5264",
+              "source_record_index": 11173,
+              "to_id": "1ab4813ad469fa48",
+              "to_ref": "#3-3-4-22"
+            },
+            {
+              "from_id": "8332269160a505c4",
+              "from_ref": "#3-4.0-1-4",
+              "id": "286e16de96e4feb6",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-4",
+                "c_0_target_coordinate": "M3-3-4-5",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.137Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10187,
+              "ref": "bimba:relation:d89b9cea8e185d1ffcefbb65",
+              "source_record_index": 11174,
+              "to_id": "ade941b68a147134",
+              "to_ref": "#3-3-4-5"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "fixture-after-command-0",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 40,
+        "fibonacci_phase60": 0,
+        "index": 2,
+        "reciprocal_division_deg10": 900,
+        "reciprocal_index": 13,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 450
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0"
+        },
+        "clockwise_id": "ff705b1a7971be36",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "9bfcc279633903ba",
+          "ref": "#3-5-5/0-0/360"
+        },
+        "degree360": 0,
+        "degree720": 360,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 1,
+        "polar720": 540,
+        "polar_id": "4781d00fc79940eb",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0",
+          "source_record": 1726,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 360,
+        "tick12": 0,
+        "uniform_hexagram_estimate": 0
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "site_components": [
+          1,
+          2,
+          0
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 18,
+        "angles_deg10": [
+          -225,
+          225,
+          225
+        ],
+        "charges_pp_mm_mp_pm": [
+          23,
+          -5,
+          11,
+          7
+        ],
+        "codon": {
+          "id": "1db92debadb34429",
+          "ref": "#3-2-2-1-3"
+        },
+        "coin_values": [
+          9,
+          6,
+          8
+        ],
+        "hexagram": {
+          "id": "385fc25644ff30b6",
+          "ref": "#3-1-4-4"
+        },
+        "hinge": 0,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 1,
+              "xyz": [
+                -6.123233995736766e-17,
+                -1.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 0,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 2,
+              "xyz": [
+                0.7071067811865476,
+                0.7071067811865475,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 900,
+              "from": "X",
+              "pair_index": 4,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 450,
+              "from": "Y",
+              "pair_index": 2,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 0,
+        "nucleotides": [
+          1,
+          0,
+          2
+        ],
+        "orientation_seed_wxyz": [
+          -16.970564,
+          15.55635,
+          -3.535534,
+          -3.535534
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          900,
+          450
+        ],
+        "pair_xy": {
+          "id": "df967c6d9b71fd0c",
+          "ref": "#3-2-2-1"
+        },
+        "pair_yz": {
+          "id": "9b78c5f6b5a31238",
+          "ref": "#3-2-1-3"
+        },
+        "physical_form": {
+          "address": 18,
+          "constituent_ref": "#3-2-2-1-3",
+          "pose_ordinal": 138,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 8,
+          "target_kind": "fold-pose"
+        },
+        "pose": 6,
+        "pose_ordinal": 138,
+        "state_count": 8,
+        "velocities_deg10": [
+          225,
+          225,
+          0
+        ]
+      },
+      "iching": {
+        "complement_address": 45,
+        "line_change_addresses": [
+          19,
+          16,
+          22,
+          26,
+          2,
+          50
+        ],
+        "nuclear_address": 33,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 8
+      },
+      "occurrence_unix_ms": 1789090397000,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400000,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 18,
+            "codon_relations": [
+              "412a5605cd5c4693"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-4-4",
+            "id": "857a7bc63241965d",
+            "non_dual": true,
+            "pair_relations": [
+              "0e30211adc7bc580"
+            ],
+            "ref": "#3-3-2-0-29",
+            "resolves_relation": "bf141c6fdb193263"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "857a7bc63241965d",
+              "from_ref": "#3-3-2-0-29",
+              "id": "412a5605cd5c4693",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-29",
+                "c_0_target_coordinate": "M3-2-3-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.035Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8469,
+              "ref": "bimba:relation:2b673da270534c235069ac81",
+              "source_record_index": 9456,
+              "to_id": "fc372b53a706620d",
+              "to_ref": "#3-2-3-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "857a7bc63241965d",
+              "from_ref": "#3-3-2-0-29",
+              "id": "0e30211adc7bc580",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-29",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.029Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8468,
+              "ref": "bimba:relation:f20104359e6acc3f07d93f9e",
+              "source_record_index": 9455,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 18,
+            "codon_relations": [
+              "209b9059b714db27"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-4-4",
+            "id": "678742bfbc0f98a1",
+            "non_dual": true,
+            "pair_relations": [
+              "a00286b09c5ffe8d"
+            ],
+            "ref": "#3-3-2-1-29",
+            "resolves_relation": "b502c03a5ae8f848"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "678742bfbc0f98a1",
+              "from_ref": "#3-3-2-1-29",
+              "id": "209b9059b714db27",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-29",
+                "c_0_target_coordinate": "M3-2-3-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.989Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8901,
+              "ref": "bimba:relation:12e41304abacb6086b09b050",
+              "source_record_index": 9888,
+              "to_id": "fc372b53a706620d",
+              "to_ref": "#3-2-3-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "678742bfbc0f98a1",
+              "from_ref": "#3-3-2-1-29",
+              "id": "a00286b09c5ffe8d",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-29",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.984Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8900,
+              "ref": "bimba:relation:6dc48b7ae6d4cbecd4de1f5a",
+              "source_record_index": 9887,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 18,
+            "codon_relations": [
+              "c5c4cf56c139625f"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-4-4",
+            "id": "d1f00e13a408adba",
+            "non_dual": true,
+            "pair_relations": [
+              "819da86b7407c8b7"
+            ],
+            "ref": "#3-3-2-2-29",
+            "resolves_relation": "64638d74679c81f9"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "d1f00e13a408adba",
+              "from_ref": "#3-3-2-2-29",
+              "id": "c5c4cf56c139625f",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-29",
+                "c_0_target_coordinate": "M3-2-3-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.864Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9337,
+              "ref": "bimba:relation:8e895fd62df6ced0e2b2edab",
+              "source_record_index": 10324,
+              "to_id": "fc372b53a706620d",
+              "to_ref": "#3-2-3-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "d1f00e13a408adba",
+              "from_ref": "#3-3-2-2-29",
+              "id": "819da86b7407c8b7",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-29",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.859Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9336,
+              "ref": "bimba:relation:ec749c236850e872bef8c39e",
+              "source_record_index": 10323,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 18,
+        "codons": [
+          18
+        ],
+        "rank": "Five",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Wands"
+      },
+      "transcription": {
+        "retained_amino_slot": 5,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": true,
+        "sequence": "UAC",
+        "source": {
+          "dna": {
+            "id": "1db92debadb34429",
+            "parent_id": "df967c6d9b71fd0c",
+            "properties": {
+              "c_0_core_nature": "A three-nucleotide sequence encoding a specific instruction in the genetic language",
+              "c_1_name": "Codon_TAC",
+              "c_1_primary_designation": "Codon TAC - Trinitarian Genetic Unit",
+              "c_2_uuid": "be6d873c-ac9e-5ab9-ba02-4e6649e8ff49",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -5,
+              "c_3_inner_charge_np": 11,
+              "c_3_inner_charge_pn": 7,
+              "c_3_inner_charge_pp": 23,
+              "c_3_parent_pair": "TA",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "dual",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-2-1-3",
+              "m_3_2_amino_acid_code": "Tyr (Tyrosine)",
+              "p_3_position1": "T",
+              "p_3_position2": "A",
+              "p_3_position3": "C",
+              "p_3_sequence": "TAC",
+              "p_3_third_position": "C"
+            },
+            "record": 850,
+            "ref": "#3-2-2-1-3",
+            "role": "dna-codon",
+            "source_record_index": 987
+          },
+          "expression": [
+            {
+              "from_id": "ea862aa4b4581992",
+              "from_ref": "#3-4.0-2-4",
+              "id": "cb08aae10716391e",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-4",
+                "c_0_target_coordinate": "M3-4-1-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:02.719Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10275,
+              "ref": "bimba:relation:02a357c58623331503274f66",
+              "source_record_index": 11262,
+              "to_id": "83a1606a33335388",
+              "to_ref": "#3-4-1-4"
+            },
+            {
+              "from_id": "ea862aa4b4581992",
+              "from_ref": "#3-4.0-2-4",
+              "id": "5b6ef250ebca44c2",
+              "kind": "POTENTIATES",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-4",
+                "c_0_target_coordinate": "M3-4-(5/0)-21",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "POTENTIATES",
+                "c_3_created_at": "2026-07-28T20:30:02.729Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10276,
+              "ref": "bimba:relation:7ad350fb824bfb7d91610cae",
+              "source_record_index": 11263,
+              "to_id": "1dd88deceaac2651",
+              "to_ref": "#3-4-5/0-21"
+            }
+          ],
+          "phase": {
+            "id": "ea862aa4b4581992",
+            "parent_id": "368e8c5bb9518d96",
+            "properties": {
+              "c_0_core_nature": "Healthy competition and conflict",
+              "c_0_essence": "Eight-fold rotation through competitive dynamics",
+              "c_0_operational_essence": "Eight-fold rotation through competitive dynamics",
+              "c_1_description": "The TAC codon reflection embodies the Five of Wands healthy competition through eight distinct rotational possibilities",
+              "c_1_name": "TAC Codon Reflection - Healthy Competition",
+              "c_1_primary_designation": "TAC Codon Reflection - Healthy Competition",
+              "c_2_uuid": "f7ea2c4f-930c-51e6-bcc7-f30055bdb057",
+              "c_3_charge_pattern": "nn:-5 np:11 pn:7 pp:23",
+              "c_3_contains_t": true,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -5,
+              "c_3_inner_charge_np": 11,
+              "c_3_inner_charge_pn": 7,
+              "c_3_inner_charge_pp": 23,
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 8,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "full-rotational",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-2-4",
+              "m_3_4_amino_acid_code": "Tyr (Tyrosine)",
+              "m_3_4_tarot_card": "Five of Wands",
+              "p_3_sequence": "TAC",
+              "t_3_rna_sequence": "UAC"
+            },
+            "record": 1323,
+            "ref": "#3-4.0-2-4",
+            "role": "phase-codon",
+            "source_record_index": 1460
+          },
+          "rna": {
+            "id": "6039e034a725b4ad",
+            "parent_id": "d6b8132fc7c9db58",
+            "properties": {
+              "c_1_description": "Reverse partnership with precise aromatic wisdom",
+              "c_1_name": "UAC Codon",
+              "c_2_uuid": "b0e41703-a341-5eae-8930-cc51774dad1a",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_parent_pair": "UA",
+              "c_3_source_dataset": "bimba",
+              "c_3_transcription_source": "TAC→UAC",
+              "c_3_updated_at": "2025-08-11T13:46:35.881000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-3-3-5-1",
+              "p_3_sequence": "UAC"
+            },
+            "record": 1144,
+            "ref": "#3-3-3-5-1",
+            "role": "rna-codon",
+            "source_record_index": 1281
+          },
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "ea862aa4b4581992",
+              "from_ref": "#3-4.0-2-4",
+              "id": "4996491b8bc32d44",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-4",
+                "c_0_target_coordinate": "M3-3-4-12",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.713Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10278,
+              "ref": "bimba:relation:07dfe18a94ce1cf471658505",
+              "source_record_index": 11265,
+              "to_id": "51156fcce89a44c8",
+              "to_ref": "#3-3-4-12"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "fixture-after-command-1",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 900,
+        "fibonacci_phase60": 0,
+        "index": 13,
+        "reciprocal_division_deg10": 40,
+        "reciprocal_index": 2,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 2925
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0"
+        },
+        "clockwise_id": "ff705b1a7971be36",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "9bfcc279633903ba",
+          "ref": "#3-5-5/0-0/360"
+        },
+        "degree360": 0,
+        "degree720": 360,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 1,
+        "polar720": 540,
+        "polar_id": "4781d00fc79940eb",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0",
+          "source_record": 1726,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 360,
+        "tick12": 0,
+        "uniform_hexagram_estimate": 0
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          1,
+          2,
+          0,
+          0
+        ],
+        "site_components": [
+          1,
+          1,
+          0
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 22,
+        "angles_deg10": [
+          -225,
+          -225,
+          225
+        ],
+        "charges_pp_mm_mp_pm": [
+          26,
+          -8,
+          8,
+          10
+        ],
+        "codon": {
+          "id": "b2793e1f8ed29394",
+          "ref": "#3-2-2-2-3"
+        },
+        "coin_values": [
+          9,
+          9,
+          8
+        ],
+        "hexagram": {
+          "id": "1f0bc1fb9a8bb37a",
+          "ref": "#3-1-3-4"
+        },
+        "hinge": 1,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 1,
+              "xyz": [
+                0.3826834323650897,
+                -0.9238795325112867,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 1,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 2,
+              "xyz": [
+                -0.7071067811865475,
+                0.7071067811865476,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 1125,
+              "from": "X",
+              "pair_index": 5,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 1350,
+              "from": "Y",
+              "pair_index": 6,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 0,
+        "nucleotides": [
+          1,
+          1,
+          2
+        ],
+        "orientation_seed_wxyz": [
+          -19.091883,
+          17.677668,
+          -1.4142135,
+          -1.4142135
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          1125,
+          1350
+        ],
+        "pair_xy": {
+          "id": "d3c2cf4b0807d4ef",
+          "ref": "#3-2-2-2"
+        },
+        "pair_yz": {
+          "id": "26abc92341b26a01",
+          "ref": "#3-2-2-3"
+        },
+        "physical_form": {
+          "address": 22,
+          "constituent_ref": "#3-2-2-2-3",
+          "pose_ordinal": 168,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 7,
+          "target_kind": "fold-pose"
+        },
+        "pose": 6,
+        "pose_ordinal": 168,
+        "state_count": 7,
+        "velocities_deg10": [
+          225,
+          225,
+          0
+        ]
+      },
+      "iching": {
+        "complement_address": 41,
+        "line_change_addresses": [
+          23,
+          20,
+          18,
+          30,
+          6,
+          54
+        ],
+        "nuclear_address": 43,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 9
+      },
+      "occurrence_unix_ms": 1789090397001,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400001,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "f4230cc4c298ccf5",
+              "13ea945e1dd2e2bb"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "0bd547fa2ef21301",
+            "non_dual": false,
+            "pair_relations": [
+              "88c92f2665d2a49e",
+              "1abe983dccb513a8"
+            ],
+            "ref": "#3-3-2-0-48",
+            "resolves_relation": "cb2c3d0786520fe9"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "f4230cc4c298ccf5",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.664Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8586,
+              "ref": "bimba:relation:2a0310d879b4b389cfe42f0c",
+              "source_record_index": 9573,
+              "to_id": "fc372b53a706620d",
+              "to_ref": "#3-2-3-3-3"
+            },
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "13ea945e1dd2e2bb",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-4-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.674Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8587,
+              "ref": "bimba:relation:3495f2cd28da55343a42538c",
+              "source_record_index": 9574,
+              "to_id": "f78177c16bf3c67a",
+              "to_ref": "#3-2-3-4-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "88c92f2665d2a49e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.658Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8585,
+              "ref": "bimba:relation:4baacd90b12606bb1848d1c8",
+              "source_record_index": 9572,
+              "to_id": "3fad33cb152f742b",
+              "to_ref": "#3-2-3-4"
+            },
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "1abe983dccb513a8",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.652Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8584,
+              "ref": "bimba:relation:a50543dcbb7a7ad752b99a54",
+              "source_record_index": 9571,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "de63462769f88574",
+              "5eb0ce7e7b8c70d3"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "4c452c2189e6ded6",
+            "non_dual": false,
+            "pair_relations": [
+              "562e0bd05c145c1c",
+              "6c06ca4fb055693e"
+            ],
+            "ref": "#3-3-2-1-48",
+            "resolves_relation": "59b35f09898aa047"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "de63462769f88574",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-1-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.46Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9020,
+              "ref": "bimba:relation:15e85a5125d1f08358b23b50",
+              "source_record_index": 10007,
+              "to_id": "6a11825f1e7e20e1",
+              "to_ref": "#3-2-4-1-3"
+            },
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "5eb0ce7e7b8c70d3",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.464Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9021,
+              "ref": "bimba:relation:51a6893c78aea0803dc923af",
+              "source_record_index": 10008,
+              "to_id": "9bb9be8624c8dd5a",
+              "to_ref": "#3-2-4-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "562e0bd05c145c1c",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.453Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9018,
+              "ref": "bimba:relation:4dab744867f8e0b663f13828",
+              "source_record_index": 10005,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            },
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "6c06ca4fb055693e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.456Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9019,
+              "ref": "bimba:relation:905b27d5f9a669f6915e6cc4",
+              "source_record_index": 10006,
+              "to_id": "756aae2ac8844831",
+              "to_ref": "#3-2-4-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "71a5f456149ce276",
+              "fe4de3ce8e6c3693"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "a4b24b8fdc7a43f7",
+            "non_dual": false,
+            "pair_relations": [
+              "6325245638ebe753",
+              "e972f55725defecc"
+            ],
+            "ref": "#3-3-2-2-48",
+            "resolves_relation": "99188e93706ba3ba"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "71a5f456149ce276",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-4-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9459,
+              "ref": "bimba:relation:1d16e336f1c7ced00999357a",
+              "source_record_index": 10446,
+              "to_id": "03605182e31555e2",
+              "to_ref": "#3-2-2-4-3"
+            },
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "fe4de3ce8e6c3693",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9458,
+              "ref": "bimba:relation:e802335aacbe2536e7331648",
+              "source_record_index": 10445,
+              "to_id": "985ebe26cea091d4",
+              "to_ref": "#3-2-2-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "6325245638ebe753",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9457,
+              "ref": "bimba:relation:01b5a6d5a9b291f925b204ea",
+              "source_record_index": 10444,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            },
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "e972f55725defecc",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9456,
+              "ref": "bimba:relation:5ec5f3b55fcc5e06667bab27",
+              "source_record_index": 10443,
+              "to_id": "57d6e31984d15f09",
+              "to_ref": "#3-2-2-4"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 16,
+        "codons": [
+          22
+        ],
+        "rank": "Three",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Wands"
+      },
+      "transcription": {
+        "retained_amino_slot": 1,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": true,
+        "sequence": "UUC",
+        "source": {
+          "dna": {
+            "id": "b2793e1f8ed29394",
+            "parent_id": "d3c2cf4b0807d4ef",
+            "properties": {
+              "c_0_core_nature": "A three-nucleotide sequence encoding a specific instruction in the genetic language",
+              "c_1_name": "Codon_TTC",
+              "c_1_primary_designation": "Codon TTC - Trinitarian Genetic Unit",
+              "c_2_uuid": "499d1f11-92c7-59bf-9344-99b995af41f3",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -8,
+              "c_3_inner_charge_np": 8,
+              "c_3_inner_charge_pn": 10,
+              "c_3_inner_charge_pp": 26,
+              "c_3_parent_pair": "TT",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "non_palindromic_non_dual",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-2-2-3",
+              "m_3_2_amino_acid_code": "Phe (Phenylalanine)",
+              "p_3_position1": "T",
+              "p_3_position2": "T",
+              "p_3_position3": "C",
+              "p_3_sequence": "TTC",
+              "p_3_third_position": "C"
+            },
+            "record": 855,
+            "ref": "#3-2-2-2-3",
+            "role": "dna-codon",
+            "source_record_index": 992
+          },
+          "expression": [
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "6d71166d9e947347",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-4-1-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:02.679Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10267,
+              "ref": "bimba:relation:dd65ec26c19467725dcf5049",
+              "source_record_index": 11254,
+              "to_id": "89bb08e8d54f8aa6",
+              "to_ref": "#3-4-1-2"
+            },
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "7d51711c134b75ed",
+              "kind": "POTENTIATES",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-4-(5/0)-21",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "POTENTIATES",
+                "c_3_created_at": "2026-07-28T20:30:02.689Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10268,
+              "ref": "bimba:relation:e75d87996addb2ab6471d53e",
+              "source_record_index": 11255,
+              "to_id": "1dd88deceaac2651",
+              "to_ref": "#3-4-5/0-21"
+            }
+          ],
+          "phase": {
+            "id": "56c2c8e3905f4164",
+            "parent_id": "368e8c5bb9518d96",
+            "properties": {
+              "c_0_core_nature": "Expansion and growth dynamics",
+              "c_0_essence": "Seven-fold rotation through expansive states",
+              "c_0_operational_essence": "Seven-fold rotation through expansive states",
+              "c_1_description": "The TTC codon reflection channels the Three of Wands expansion through fire-earth elemental synthesis",
+              "c_1_name": "TTC Codon Reflection - Expansion and Growth",
+              "c_1_primary_designation": "TTC Codon Reflection - Expansion and Growth",
+              "c_2_uuid": "fb31e14e-9647-57f3-be4c-4d8fd7428d0c",
+              "c_3_charge_pattern": "nn:-8 np:8 pn:10 pp:26",
+              "c_3_contains_t": true,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -8,
+              "c_3_inner_charge_np": 8,
+              "c_3_inner_charge_pn": 10,
+              "c_3_inner_charge_pp": 26,
+              "c_3_non_dual_pair": "TT+TC",
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 7,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "non-dual-initiated",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-2-2",
+              "m_3_4_amino_acid_code": "Phe (Phenylalanine)",
+              "m_3_4_tarot_card": "Three of Wands",
+              "p_3_sequence": "TTC",
+              "t_3_rna_sequence": "UUC"
+            },
+            "record": 1321,
+            "ref": "#3-4.0-2-2",
+            "role": "phase-codon",
+            "source_record_index": 1458
+          },
+          "rna": {
+            "id": "628376a3ad6b5c8b",
+            "parent_id": "1ae7b18d3e3b08c5",
+            "properties": {
+              "c_1_description": "UU with cytosine precision - RNA self-reflection with accuracy",
+              "c_1_name": "UUC Codon",
+              "c_2_uuid": "91e76f54-0f89-573b-9399-bb41036942e5",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_parent_pair": "UU",
+              "c_3_source_dataset": "bimba",
+              "c_3_transcription_source": "TTC→UUC",
+              "c_3_updated_at": "2025-08-11T13:46:32.425000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-3-3-(0/1)-1",
+              "p_3_sequence": "UUC"
+            },
+            "record": 1115,
+            "ref": "#3-3-3-0/1-1",
+            "role": "rna-codon",
+            "source_record_index": 1252
+          },
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "a70564d11310f8b0",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-3-4-6",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.674Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10270,
+              "ref": "bimba:relation:8946dc738fa218be3e3056c3",
+              "source_record_index": 11257,
+              "to_id": "e5e218e356b7b510",
+              "to_ref": "#3-3-4-6"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "fixture-after-command-2",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 900,
+        "fibonacci_phase60": 0,
+        "index": 13,
+        "reciprocal_division_deg10": 40,
+        "reciprocal_index": 2,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 2925
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0"
+        },
+        "clockwise_id": "ff705b1a7971be36",
+        "completed_double_covers": 1,
+        "degree": {
+          "id": "9bfcc279633903ba",
+          "ref": "#3-5-5/0-0/360"
+        },
+        "degree360": 0,
+        "degree720": 0,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 0,
+        "polar720": 180,
+        "polar_id": "4781d00fc79940eb",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "acd00829f1e76092",
+          "ref": "#3-5-1-0",
+          "source_record": 1726,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 720,
+        "tick12": 0,
+        "uniform_hexagram_estimate": 0
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          1,
+          2,
+          0,
+          0
+        ],
+        "site_components": [
+          1,
+          1,
+          0
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 22,
+        "angles_deg10": [
+          -225,
+          -225,
+          225
+        ],
+        "charges_pp_mm_mp_pm": [
+          26,
+          -8,
+          8,
+          10
+        ],
+        "codon": {
+          "id": "b2793e1f8ed29394",
+          "ref": "#3-2-2-2-3"
+        },
+        "coin_values": [
+          9,
+          9,
+          8
+        ],
+        "hexagram": {
+          "id": "1f0bc1fb9a8bb37a",
+          "ref": "#3-1-3-4"
+        },
+        "hinge": 1,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 1,
+              "xyz": [
+                0.3826834323650897,
+                -0.9238795325112867,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 1,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 2,
+              "xyz": [
+                -0.7071067811865475,
+                0.7071067811865476,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 1125,
+              "from": "X",
+              "pair_index": 5,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 1350,
+              "from": "Y",
+              "pair_index": 6,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 0,
+        "nucleotides": [
+          1,
+          1,
+          2
+        ],
+        "orientation_seed_wxyz": [
+          26.0,
+          1.0,
+          0.0,
+          2.0
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          1125,
+          1350
+        ],
+        "pair_xy": {
+          "id": "d3c2cf4b0807d4ef",
+          "ref": "#3-2-2-2"
+        },
+        "pair_yz": {
+          "id": "26abc92341b26a01",
+          "ref": "#3-2-2-3"
+        },
+        "physical_form": {
+          "address": 22,
+          "constituent_ref": "#3-2-2-2-3",
+          "pose_ordinal": 162,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 7,
+          "target_kind": "fold-pose"
+        },
+        "pose": 0,
+        "pose_ordinal": 162,
+        "state_count": 7,
+        "velocities_deg10": [
+          225,
+          225,
+          0
+        ]
+      },
+      "iching": {
+        "complement_address": 41,
+        "line_change_addresses": [
+          23,
+          20,
+          18,
+          30,
+          6,
+          54
+        ],
+        "nuclear_address": 43,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 10
+      },
+      "occurrence_unix_ms": 1789090397002,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400002,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "f4230cc4c298ccf5",
+              "13ea945e1dd2e2bb"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "0bd547fa2ef21301",
+            "non_dual": false,
+            "pair_relations": [
+              "88c92f2665d2a49e",
+              "1abe983dccb513a8"
+            ],
+            "ref": "#3-3-2-0-48",
+            "resolves_relation": "cb2c3d0786520fe9"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "f4230cc4c298ccf5",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.664Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8586,
+              "ref": "bimba:relation:2a0310d879b4b389cfe42f0c",
+              "source_record_index": 9573,
+              "to_id": "fc372b53a706620d",
+              "to_ref": "#3-2-3-3-3"
+            },
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "13ea945e1dd2e2bb",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-4-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.674Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8587,
+              "ref": "bimba:relation:3495f2cd28da55343a42538c",
+              "source_record_index": 9574,
+              "to_id": "f78177c16bf3c67a",
+              "to_ref": "#3-2-3-4-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "88c92f2665d2a49e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.658Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8585,
+              "ref": "bimba:relation:4baacd90b12606bb1848d1c8",
+              "source_record_index": 9572,
+              "to_id": "3fad33cb152f742b",
+              "to_ref": "#3-2-3-4"
+            },
+            {
+              "from_id": "0bd547fa2ef21301",
+              "from_ref": "#3-3-2-0-48",
+              "id": "1abe983dccb513a8",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.652Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8584,
+              "ref": "bimba:relation:a50543dcbb7a7ad752b99a54",
+              "source_record_index": 9571,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "de63462769f88574",
+              "5eb0ce7e7b8c70d3"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "4c452c2189e6ded6",
+            "non_dual": false,
+            "pair_relations": [
+              "562e0bd05c145c1c",
+              "6c06ca4fb055693e"
+            ],
+            "ref": "#3-3-2-1-48",
+            "resolves_relation": "59b35f09898aa047"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "de63462769f88574",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-1-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.46Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9020,
+              "ref": "bimba:relation:15e85a5125d1f08358b23b50",
+              "source_record_index": 10007,
+              "to_id": "6a11825f1e7e20e1",
+              "to_ref": "#3-2-4-1-3"
+            },
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "5eb0ce7e7b8c70d3",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.464Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9021,
+              "ref": "bimba:relation:51a6893c78aea0803dc923af",
+              "source_record_index": 10008,
+              "to_id": "9bb9be8624c8dd5a",
+              "to_ref": "#3-2-4-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "562e0bd05c145c1c",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.453Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9018,
+              "ref": "bimba:relation:4dab744867f8e0b663f13828",
+              "source_record_index": 10005,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            },
+            {
+              "from_id": "4c452c2189e6ded6",
+              "from_ref": "#3-3-2-1-48",
+              "id": "6c06ca4fb055693e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-48",
+                "c_0_target_coordinate": "M3-2-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.456Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9019,
+              "ref": "bimba:relation:905b27d5f9a669f6915e6cc4",
+              "source_record_index": 10006,
+              "to_id": "756aae2ac8844831",
+              "to_ref": "#3-2-4-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 22,
+            "codon_relations": [
+              "71a5f456149ce276",
+              "fe4de3ce8e6c3693"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-3-4",
+            "id": "a4b24b8fdc7a43f7",
+            "non_dual": false,
+            "pair_relations": [
+              "6325245638ebe753",
+              "e972f55725defecc"
+            ],
+            "ref": "#3-3-2-2-48",
+            "resolves_relation": "99188e93706ba3ba"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "71a5f456149ce276",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-4-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9459,
+              "ref": "bimba:relation:1d16e336f1c7ced00999357a",
+              "source_record_index": 10446,
+              "to_id": "03605182e31555e2",
+              "to_ref": "#3-2-2-4-3"
+            },
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "fe4de3ce8e6c3693",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9458,
+              "ref": "bimba:relation:e802335aacbe2536e7331648",
+              "source_record_index": 10445,
+              "to_id": "985ebe26cea091d4",
+              "to_ref": "#3-2-2-3-3"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "6325245638ebe753",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-3-3",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9457,
+              "ref": "bimba:relation:01b5a6d5a9b291f925b204ea",
+              "source_record_index": 10444,
+              "to_id": "978e2414ef22de52",
+              "to_ref": "#3-2-3-3"
+            },
+            {
+              "from_id": "a4b24b8fdc7a43f7",
+              "from_ref": "#3-3-2-2-48",
+              "id": "e972f55725defecc",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-48",
+                "c_0_target_coordinate": "M3-2-2-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-10-19T14:53:56.000Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9456,
+              "ref": "bimba:relation:5ec5f3b55fcc5e06667bab27",
+              "source_record_index": 10443,
+              "to_id": "57d6e31984d15f09",
+              "to_ref": "#3-2-2-4"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 16,
+        "codons": [
+          22
+        ],
+        "rank": "Three",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Wands"
+      },
+      "transcription": {
+        "retained_amino_slot": 1,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": true,
+        "sequence": "UUC",
+        "source": {
+          "dna": {
+            "id": "b2793e1f8ed29394",
+            "parent_id": "d3c2cf4b0807d4ef",
+            "properties": {
+              "c_0_core_nature": "A three-nucleotide sequence encoding a specific instruction in the genetic language",
+              "c_1_name": "Codon_TTC",
+              "c_1_primary_designation": "Codon TTC - Trinitarian Genetic Unit",
+              "c_2_uuid": "499d1f11-92c7-59bf-9344-99b995af41f3",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -8,
+              "c_3_inner_charge_np": 8,
+              "c_3_inner_charge_pn": 10,
+              "c_3_inner_charge_pp": 26,
+              "c_3_parent_pair": "TT",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "non_palindromic_non_dual",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-2-2-3",
+              "m_3_2_amino_acid_code": "Phe (Phenylalanine)",
+              "p_3_position1": "T",
+              "p_3_position2": "T",
+              "p_3_position3": "C",
+              "p_3_sequence": "TTC",
+              "p_3_third_position": "C"
+            },
+            "record": 855,
+            "ref": "#3-2-2-2-3",
+            "role": "dna-codon",
+            "source_record_index": 992
+          },
+          "expression": [
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "6d71166d9e947347",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-4-1-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:02.679Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10267,
+              "ref": "bimba:relation:dd65ec26c19467725dcf5049",
+              "source_record_index": 11254,
+              "to_id": "89bb08e8d54f8aa6",
+              "to_ref": "#3-4-1-2"
+            },
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "7d51711c134b75ed",
+              "kind": "POTENTIATES",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-4-(5/0)-21",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "POTENTIATES",
+                "c_3_created_at": "2026-07-28T20:30:02.689Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10268,
+              "ref": "bimba:relation:e75d87996addb2ab6471d53e",
+              "source_record_index": 11255,
+              "to_id": "1dd88deceaac2651",
+              "to_ref": "#3-4-5/0-21"
+            }
+          ],
+          "phase": {
+            "id": "56c2c8e3905f4164",
+            "parent_id": "368e8c5bb9518d96",
+            "properties": {
+              "c_0_core_nature": "Expansion and growth dynamics",
+              "c_0_essence": "Seven-fold rotation through expansive states",
+              "c_0_operational_essence": "Seven-fold rotation through expansive states",
+              "c_1_description": "The TTC codon reflection channels the Three of Wands expansion through fire-earth elemental synthesis",
+              "c_1_name": "TTC Codon Reflection - Expansion and Growth",
+              "c_1_primary_designation": "TTC Codon Reflection - Expansion and Growth",
+              "c_2_uuid": "fb31e14e-9647-57f3-be4c-4d8fd7428d0c",
+              "c_3_charge_pattern": "nn:-8 np:8 pn:10 pp:26",
+              "c_3_contains_t": true,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -8,
+              "c_3_inner_charge_np": 8,
+              "c_3_inner_charge_pn": 10,
+              "c_3_inner_charge_pp": 26,
+              "c_3_non_dual_pair": "TT+TC",
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 7,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "non-dual-initiated",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-2-2",
+              "m_3_4_amino_acid_code": "Phe (Phenylalanine)",
+              "m_3_4_tarot_card": "Three of Wands",
+              "p_3_sequence": "TTC",
+              "t_3_rna_sequence": "UUC"
+            },
+            "record": 1321,
+            "ref": "#3-4.0-2-2",
+            "role": "phase-codon",
+            "source_record_index": 1458
+          },
+          "rna": {
+            "id": "628376a3ad6b5c8b",
+            "parent_id": "1ae7b18d3e3b08c5",
+            "properties": {
+              "c_1_description": "UU with cytosine precision - RNA self-reflection with accuracy",
+              "c_1_name": "UUC Codon",
+              "c_2_uuid": "91e76f54-0f89-573b-9399-bb41036942e5",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_parent_pair": "UU",
+              "c_3_source_dataset": "bimba",
+              "c_3_transcription_source": "TTC→UUC",
+              "c_3_updated_at": "2025-08-11T13:46:32.425000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-3-3-(0/1)-1",
+              "p_3_sequence": "UUC"
+            },
+            "record": 1115,
+            "ref": "#3-3-3-0/1-1",
+            "role": "rna-codon",
+            "source_record_index": 1252
+          },
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "56c2c8e3905f4164",
+              "from_ref": "#3-4.0-2-2",
+              "id": "a70564d11310f8b0",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-2-2",
+                "c_0_target_coordinate": "M3-3-4-6",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.674Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10270,
+              "ref": "bimba:relation:8946dc738fa218be3e3056c3",
+              "source_record_index": 11257,
+              "to_id": "e5e218e356b7b510",
+              "to_ref": "#3-3-4-6"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "address5-moving-resting",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 10,
+        "fibonacci_phase60": 59,
+        "index": 0,
+        "reciprocal_division_deg10": 3600,
+        "reciprocal_index": 15,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 0
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5"
+        },
+        "clockwise_id": "9bfcc279633903ba",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "93624747e6cfdd67",
+          "ref": "#3-5-5/0-359"
+        },
+        "degree360": 359,
+        "degree720": 359,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 0,
+        "polar720": 179,
+        "polar_id": "ac2f4dfbf7d6f8da",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5",
+          "source_record": 1752,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 359,
+        "tick12": 11,
+        "uniform_hexagram_estimate": 63
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          0,
+          2,
+          1,
+          0
+        ],
+        "site_components": [
+          2,
+          1,
+          1
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 5,
+        "angles_deg10": [
+          225,
+          -225,
+          -225
+        ],
+        "charges_pp_mm_mp_pm": [
+          24,
+          -12,
+          6,
+          6
+        ],
+        "codon": {
+          "id": "81311f1f43f16be9",
+          "ref": "#3-2-1-2-2"
+        },
+        "coin_values": [
+          6,
+          9,
+          9
+        ],
+        "hexagram": {
+          "id": "d896eeab43b788b1",
+          "ref": "#3-1-5-1"
+        },
+        "hinge": 1,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 0,
+              "xyz": [
+                -0.9238795325112867,
+                -0.3826834323650898,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 1,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 1,
+              "xyz": [
+                -0.3826834323650897,
+                0.9238795325112867,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 225,
+              "from": "X",
+              "pair_index": 1,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 1125,
+              "from": "Y",
+              "pair_index": 5,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 1,
+        "nucleotides": [
+          0,
+          1,
+          1
+        ],
+        "orientation_seed_wxyz": [
+          24.0,
+          -3.0,
+          0.0,
+          0.0
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          225,
+          1125
+        ],
+        "pair_xy": {
+          "id": "3b0419d79ae5ef1d",
+          "ref": "#3-2-1-2"
+        },
+        "pair_yz": {
+          "id": "d3c2cf4b0807d4ef",
+          "ref": "#3-2-2-2"
+        },
+        "physical_form": {
+          "address": 5,
+          "constituent_ref": "#3-2-1-2-2",
+          "pose_ordinal": 35,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 7,
+          "target_kind": "fold-pose"
+        },
+        "pose": 0,
+        "pose_ordinal": 35,
+        "state_count": 7,
+        "velocities_deg10": [
+          225,
+          225,
+          225
+        ]
+      },
+      "iching": {
+        "complement_address": 58,
+        "line_change_addresses": [
+          4,
+          7,
+          1,
+          13,
+          21,
+          37
+        ],
+        "nuclear_address": 10,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "occurrence_unix_ms": 1789090397000,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400000,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 5,
+            "codon_relations": [
+              "c5ec3080e3ea3f27",
+              "f097208c53970341"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-5-1",
+            "id": "bccad1f71a864f78",
+            "non_dual": false,
+            "pair_relations": [
+              "c97a17c5bec753ef",
+              "f679ab134187177f"
+            ],
+            "ref": "#3-3-2-0-36",
+            "resolves_relation": "9797790fa333b36b"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "bccad1f71a864f78",
+              "from_ref": "#3-3-2-0-36",
+              "id": "c5ec3080e3ea3f27",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-36",
+                "c_0_target_coordinate": "M3-2-4-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.317Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8512,
+              "ref": "bimba:relation:b7f9d3d1920a1ed97b598356",
+              "source_record_index": 9499,
+              "to_id": "207061affb5da713",
+              "to_ref": "#3-2-4-4-1"
+            },
+            {
+              "from_id": "bccad1f71a864f78",
+              "from_ref": "#3-3-2-0-36",
+              "id": "f097208c53970341",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-36",
+                "c_0_target_coordinate": "M3-2-4-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:54.312Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8511,
+              "ref": "bimba:relation:f6fd3bbc618925d4acd7cb12",
+              "source_record_index": 9498,
+              "to_id": "617fb226240139bf",
+              "to_ref": "#3-2-4-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "bccad1f71a864f78",
+              "from_ref": "#3-3-2-0-36",
+              "id": "c97a17c5bec753ef",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-36",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.305Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8509,
+              "ref": "bimba:relation:1f4d28e53e4bb82133eed601",
+              "source_record_index": 9496,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            },
+            {
+              "from_id": "bccad1f71a864f78",
+              "from_ref": "#3-3-2-0-36",
+              "id": "f679ab134187177f",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-36",
+                "c_0_target_coordinate": "M3-2-4-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:54.3Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8510,
+              "ref": "bimba:relation:b360d0b619394845ad8fc65f",
+              "source_record_index": 9497,
+              "to_id": "9ab3be0826982bc0",
+              "to_ref": "#3-2-4-4"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 5,
+            "codon_relations": [
+              "4997a15c9013a70e",
+              "76ce3898295d238e"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-5-1",
+            "id": "19b94f495e92b648",
+            "non_dual": false,
+            "pair_relations": [
+              "35068c5f485b205e",
+              "6be145da1bc382cc"
+            ],
+            "ref": "#3-3-2-1-36",
+            "resolves_relation": "0c3ccf467df56030"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "19b94f495e92b648",
+              "from_ref": "#3-3-2-1-36",
+              "id": "4997a15c9013a70e",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-36",
+                "c_0_target_coordinate": "M3-2-4-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.156Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8946,
+              "ref": "bimba:relation:2fdbfe96c1d7b811bce3a3f3",
+              "source_record_index": 9933,
+              "to_id": "617fb226240139bf",
+              "to_ref": "#3-2-4-1-1"
+            },
+            {
+              "from_id": "19b94f495e92b648",
+              "from_ref": "#3-3-2-1-36",
+              "id": "76ce3898295d238e",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-36",
+                "c_0_target_coordinate": "M3-2-4-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:56.161Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8947,
+              "ref": "bimba:relation:492079ba898840d7546822b3",
+              "source_record_index": 9934,
+              "to_id": "207061affb5da713",
+              "to_ref": "#3-2-4-4-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "19b94f495e92b648",
+              "from_ref": "#3-3-2-1-36",
+              "id": "35068c5f485b205e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-36",
+                "c_0_target_coordinate": "M3-2-4-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.149Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8945,
+              "ref": "bimba:relation:ea483c6eff5aeead02cd24d0",
+              "source_record_index": 9932,
+              "to_id": "9ab3be0826982bc0",
+              "to_ref": "#3-2-4-4"
+            },
+            {
+              "from_id": "19b94f495e92b648",
+              "from_ref": "#3-3-2-1-36",
+              "id": "6be145da1bc382cc",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-36",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:56.152Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8944,
+              "ref": "bimba:relation:ec2354afca9066005403abad",
+              "source_record_index": 9931,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 5,
+            "codon_relations": [
+              "656d11c5f82a3017",
+              "88a9f29635f16fd8"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-5-1",
+            "id": "a434d123d0aea7a1",
+            "non_dual": false,
+            "pair_relations": [
+              "4b1454081ff54285",
+              "b9aed118cb2c07cd"
+            ],
+            "ref": "#3-3-2-2-36",
+            "resolves_relation": "a674a01bf002c81c"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "a434d123d0aea7a1",
+              "from_ref": "#3-3-2-2-36",
+              "id": "656d11c5f82a3017",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-36",
+                "c_0_target_coordinate": "M3-2-4-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:58.014Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9382,
+              "ref": "bimba:relation:09e9c67e719d70691a525fca",
+              "source_record_index": 10369,
+              "to_id": "207061affb5da713",
+              "to_ref": "#3-2-4-4-1"
+            },
+            {
+              "from_id": "a434d123d0aea7a1",
+              "from_ref": "#3-3-2-2-36",
+              "id": "88a9f29635f16fd8",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-36",
+                "c_0_target_coordinate": "M3-2-4-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:58.009Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9381,
+              "ref": "bimba:relation:1b08c8e8083837fe293baf7b",
+              "source_record_index": 10368,
+              "to_id": "617fb226240139bf",
+              "to_ref": "#3-2-4-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "a434d123d0aea7a1",
+              "from_ref": "#3-3-2-2-36",
+              "id": "4b1454081ff54285",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-36",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:58.004Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9379,
+              "ref": "bimba:relation:7647bfc6794c9d79b7badbe8",
+              "source_record_index": 10366,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            },
+            {
+              "from_id": "a434d123d0aea7a1",
+              "from_ref": "#3-3-2-2-36",
+              "id": "b9aed118cb2c07cd",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-36",
+                "c_0_target_coordinate": "M3-2-4-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:58Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9380,
+              "ref": "bimba:relation:e995175e4316e4cd6647e72c",
+              "source_record_index": 10367,
+              "to_id": "9ab3be0826982bc0",
+              "to_ref": "#3-2-4-4"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 8,
+        "codons": [
+          5
+        ],
+        "rank": "Nine",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Cups"
+      },
+      "transcription": {
+        "retained_amino_slot": 0,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": false,
+        "sequence": "ATT",
+        "source": {
+          "dna": {
+            "id": "81311f1f43f16be9",
+            "parent_id": "3b0419d79ae5ef1d",
+            "properties": {
+              "c_0_core_nature": "A three-nucleotide sequence encoding a specific instruction in the genetic language",
+              "c_1_name": "Codon_ATT",
+              "c_1_primary_designation": "Codon ATT - Trinitarian Genetic Unit",
+              "c_2_uuid": "8b9ab278-9e3a-5e8d-8a07-e507bb414111",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -12,
+              "c_3_inner_charge_np": 6,
+              "c_3_inner_charge_pn": 6,
+              "c_3_inner_charge_pp": 24,
+              "c_3_parent_pair": "AT",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "non_palindromic_non_dual",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-1-2-2",
+              "m_3_2_amino_acid_code": "Ile (Isoleucine)",
+              "p_3_position1": "A",
+              "p_3_position2": "T",
+              "p_3_position3": "T",
+              "p_3_sequence": "ATT",
+              "p_3_third_position": "T"
+            },
+            "record": 833,
+            "ref": "#3-2-1-2-2",
+            "role": "dna-codon",
+            "source_record_index": 970
+          },
+          "expression": [
+            {
+              "from_id": "151abefd325fd11f",
+              "from_ref": "#3-4.0-1-8",
+              "id": "48dc089712db1dd0",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-8",
+                "c_0_target_coordinate": "M3-4-2-8",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:02.262Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10198,
+              "ref": "bimba:relation:18662a2e551bc73f46231472",
+              "source_record_index": 11185,
+              "to_id": "3fc88ef5e95b0837",
+              "to_ref": "#3-4-2-8"
+            },
+            {
+              "from_id": "151abefd325fd11f",
+              "from_ref": "#3-4.0-1-8",
+              "id": "3248ac18c9e3d745",
+              "kind": "POTENTIATES",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-8",
+                "c_0_target_coordinate": "M3-4-(5/0)-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "POTENTIATES",
+                "c_3_created_at": "2026-07-28T20:30:02.27Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10199,
+              "ref": "bimba:relation:f375437581a6cf1c9211e67d",
+              "source_record_index": 11186,
+              "to_id": "7963546a92041868",
+              "to_ref": "#3-4-5/0-2"
+            }
+          ],
+          "phase": {
+            "id": "151abefd325fd11f",
+            "parent_id": "8ed34a8c2bea36f0",
+            "properties": {
+              "c_0_core_nature": "Emotional fulfillment and satisfaction",
+              "c_0_essence": "Seven-fold rotation through contentment",
+              "c_0_operational_essence": "Seven-fold rotation through contentment",
+              "c_1_description": "The ATT codon reflection manifests the Nine of Cups emotional fulfillment through water tempered by double fire",
+              "c_1_name": "ATT Codon Reflection - Emotional Fulfillment",
+              "c_1_primary_designation": "ATT Codon Reflection - Emotional Fulfillment",
+              "c_2_uuid": "e3a66342-acf3-5c5b-a5f2-a746b9a91228",
+              "c_3_charge_pattern": "nn:-12 np:6 pn:6 pp:24",
+              "c_3_contains_t": true,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -12,
+              "c_3_inner_charge_np": 6,
+              "c_3_inner_charge_pn": 6,
+              "c_3_inner_charge_pp": 24,
+              "c_3_non_dual_pair": "AT+TT",
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 7,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "non-dual-initiated",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-1-8",
+              "m_3_4_amino_acid_code": "Ile (Isoleucine)",
+              "m_3_4_tarot_card": "Nine of Cups",
+              "p_3_sequence": "ATT",
+              "t_3_rna_sequence": "AUU"
+            },
+            "record": 1310,
+            "ref": "#3-4.0-1-8",
+            "role": "phase-codon",
+            "source_record_index": 1447
+          },
+          "rna": {
+            "id": "0c20606c6ef083ce",
+            "parent_id": "3cf5a4bfea97f761",
+            "properties": {
+              "c_1_description": "AU with double uracil transcriptional emphasis",
+              "c_1_name": "AUU Codon",
+              "c_2_uuid": "d90db0bf-9013-5b17-a8f4-0ba3277a460e",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_parent_pair": "AU",
+              "c_3_source_dataset": "bimba",
+              "c_3_transcription_source": "ATT→AUU",
+              "c_3_updated_at": "2025-08-11T13:46:47.147000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-3-3-2-2",
+              "p_3_sequence": "AUU"
+            },
+            "record": 1120,
+            "ref": "#3-3-3-2-2",
+            "role": "rna-codon",
+            "source_record_index": 1257
+          },
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "151abefd325fd11f",
+              "from_ref": "#3-4.0-1-8",
+              "id": "26769f363c405e05",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-8",
+                "c_0_target_coordinate": "M3-3-4-4",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:02.258Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10201,
+              "ref": "bimba:relation:b97843027ff2b4cb04f4f263",
+              "source_record_index": 11188,
+              "to_id": "abdfe818e2fa41a4",
+              "to_ref": "#3-3-4-4"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "address56-same-quality",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 300,
+        "fibonacci_phase60": 59,
+        "index": 9,
+        "reciprocal_division_deg10": 120,
+        "reciprocal_index": 6,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 2025
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5"
+        },
+        "clockwise_id": "9bfcc279633903ba",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "93624747e6cfdd67",
+          "ref": "#3-5-5/0-359"
+        },
+        "degree360": 359,
+        "degree720": 359,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 0,
+        "polar720": 179,
+        "polar_id": "ac2f4dfbf7d6f8da",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5",
+          "source_record": 1752,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 359,
+        "tick12": 11,
+        "uniform_hexagram_estimate": 63
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          1,
+          0,
+          1,
+          1
+        ],
+        "site_components": [
+          3,
+          0,
+          2
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 56,
+        "angles_deg10": [
+          -225,
+          225,
+          225
+        ],
+        "charges_pp_mm_mp_pm": [
+          21,
+          -7,
+          5,
+          9
+        ],
+        "codon": {
+          "id": "ce64a8fe49d7a17f",
+          "ref": "#3-2-4-3-1"
+        },
+        "coin_values": [
+          7,
+          8,
+          6
+        ],
+        "hexagram": {
+          "id": "9a5369120471a236",
+          "ref": "#3-1-1-0"
+        },
+        "hinge": 2,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 3,
+              "xyz": [
+                -0.7071067811865474,
+                0.7071067811865477,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 2,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 0,
+              "xyz": [
+                -1.0,
+                1.2246467991473532e-16,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 3150,
+              "from": "X",
+              "pair_index": 14,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 1800,
+              "from": "Y",
+              "pair_index": 8,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 2,
+        "nucleotides": [
+          3,
+          2,
+          0
+        ],
+        "orientation_seed_wxyz": [
+          7.1124725,
+          19.784153,
+          -2.7716384,
+          1.1480503
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          3150,
+          1800
+        ],
+        "pair_xy": {
+          "id": "3aca712db1511e49",
+          "ref": "#3-2-4-3"
+        },
+        "pair_yz": {
+          "id": "efc430c8e678684d",
+          "ref": "#3-2-3-1"
+        },
+        "physical_form": {
+          "address": 56,
+          "constituent_ref": "#3-2-4-3-1",
+          "pose_ordinal": 417,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 8,
+          "target_kind": "fold-pose"
+        },
+        "pose": 3,
+        "pose_ordinal": 417,
+        "state_count": 8,
+        "velocities_deg10": [
+          0,
+          0,
+          225
+        ]
+      },
+      "iching": {
+        "complement_address": 7,
+        "line_change_addresses": [
+          57,
+          58,
+          60,
+          48,
+          40,
+          24
+        ],
+        "nuclear_address": 52,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "occurrence_unix_ms": 1789090397000,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400000,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 56,
+            "codon_relations": [
+              "0bdb3cc485d6cf9f",
+              "99fdd02926719979"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-1-0",
+            "id": "5952972f9f2fe667",
+            "non_dual": false,
+            "pair_relations": [
+              "75289f05fb5db48e",
+              "9ee5131f23d00052"
+            ],
+            "ref": "#3-3-2-0-12",
+            "resolves_relation": "5eeb17b6978c44dd"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "5952972f9f2fe667",
+              "from_ref": "#3-3-2-0-12",
+              "id": "0bdb3cc485d6cf9f",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-12",
+                "c_0_target_coordinate": "M3-2-1-1-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:53.502Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8366,
+              "ref": "bimba:relation:4cc8378dfeb9b140ef2211fd",
+              "source_record_index": 9353,
+              "to_id": "260e6e3831387ffb",
+              "to_ref": "#3-2-1-1-2"
+            },
+            {
+              "from_id": "5952972f9f2fe667",
+              "from_ref": "#3-3-2-0-12",
+              "id": "99fdd02926719979",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-12",
+                "c_0_target_coordinate": "M3-2-1-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:53.507Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8367,
+              "ref": "bimba:relation:f90200795d50fecf079f29ab",
+              "source_record_index": 9354,
+              "to_id": "81311f1f43f16be9",
+              "to_ref": "#3-2-1-2-2"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "5952972f9f2fe667",
+              "from_ref": "#3-3-2-0-12",
+              "id": "75289f05fb5db48e",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-12",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:53.498Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8364,
+              "ref": "bimba:relation:419c09783fe1d2c43e49c471",
+              "source_record_index": 9351,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            },
+            {
+              "from_id": "5952972f9f2fe667",
+              "from_ref": "#3-3-2-0-12",
+              "id": "9ee5131f23d00052",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-12",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:53.494Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8365,
+              "ref": "bimba:relation:807ad01e3b6acf19157a4d73",
+              "source_record_index": 9352,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 56,
+            "codon_relations": [
+              "5a821d76cf495afd",
+              "4a2fa4f0f54d0015"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-1-0",
+            "id": "946e79f186ffb61b",
+            "non_dual": false,
+            "pair_relations": [
+              "9f0f87d545d5c80b",
+              "8db98203fc963c79"
+            ],
+            "ref": "#3-3-2-1-12",
+            "resolves_relation": "086594b61997073f"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "946e79f186ffb61b",
+              "from_ref": "#3-3-2-1-12",
+              "id": "5a821d76cf495afd",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-12",
+                "c_0_target_coordinate": "M3-2-1-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.591Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8801,
+              "ref": "bimba:relation:2866e93639eff1c3ab34901a",
+              "source_record_index": 9788,
+              "to_id": "81311f1f43f16be9",
+              "to_ref": "#3-2-1-2-2"
+            },
+            {
+              "from_id": "946e79f186ffb61b",
+              "from_ref": "#3-3-2-1-12",
+              "id": "4a2fa4f0f54d0015",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-12",
+                "c_0_target_coordinate": "M3-2-1-1-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.586Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8800,
+              "ref": "bimba:relation:3db229604fce86410c8122b4",
+              "source_record_index": 9787,
+              "to_id": "260e6e3831387ffb",
+              "to_ref": "#3-2-1-1-2"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "946e79f186ffb61b",
+              "from_ref": "#3-3-2-1-12",
+              "id": "9f0f87d545d5c80b",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-12",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.579Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8799,
+              "ref": "bimba:relation:d08cbfe389bc185bebfba410",
+              "source_record_index": 9786,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            },
+            {
+              "from_id": "946e79f186ffb61b",
+              "from_ref": "#3-3-2-1-12",
+              "id": "8db98203fc963c79",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-12",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.583Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8798,
+              "ref": "bimba:relation:eb48b623599d95284290f319",
+              "source_record_index": 9785,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 56,
+            "codon_relations": [
+              "2d7b830245c7ef85",
+              "284702d1404443d4"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-1-0",
+            "id": "0373c0910f14e324",
+            "non_dual": false,
+            "pair_relations": [
+              "94f7b0f7f6cc7651",
+              "8f2818b1713f7438"
+            ],
+            "ref": "#3-3-2-2-12",
+            "resolves_relation": "5d7340ff819f990f"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "0373c0910f14e324",
+              "from_ref": "#3-3-2-2-12",
+              "id": "2d7b830245c7ef85",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-12",
+                "c_0_target_coordinate": "M3-2-1-1-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "negative",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.538Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9236,
+              "ref": "bimba:relation:00f0cbad73a481aaa3233123",
+              "source_record_index": 10223,
+              "to_id": "260e6e3831387ffb",
+              "to_ref": "#3-2-1-1-2"
+            },
+            {
+              "from_id": "0373c0910f14e324",
+              "from_ref": "#3-3-2-2-12",
+              "id": "284702d1404443d4",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-12",
+                "c_0_target_coordinate": "M3-2-1-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.542Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9237,
+              "ref": "bimba:relation:2d215b0b9745a56b4b1d9f47",
+              "source_record_index": 10224,
+              "to_id": "81311f1f43f16be9",
+              "to_ref": "#3-2-1-2-2"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "0373c0910f14e324",
+              "from_ref": "#3-3-2-2-12",
+              "id": "94f7b0f7f6cc7651",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-12",
+                "c_0_target_coordinate": "M3-2-2-2",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.53Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9235,
+              "ref": "bimba:relation:362082e515580665e6cc6d00",
+              "source_record_index": 10222,
+              "to_id": "d3c2cf4b0807d4ef",
+              "to_ref": "#3-2-2-2"
+            },
+            {
+              "from_id": "0373c0910f14e324",
+              "from_ref": "#3-3-2-2-12",
+              "id": "8f2818b1713f7438",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-12",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.534Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9234,
+              "ref": "bimba:relation:72fbb63e72bd94ae3fed981d",
+              "source_record_index": 10221,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 48,
+        "codons": [
+          56
+        ],
+        "rank": "Seven",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Swords"
+      },
+      "transcription": {
+        "retained_amino_slot": 8,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": false,
+        "sequence": "GCA",
+        "source": {
+          "dna": {
+            "id": "ce64a8fe49d7a17f",
+            "parent_id": "3aca712db1511e49",
+            "properties": {
+              "c_0_core_nature": "A three-nucleotide sequence encoding a specific instruction in the genetic language",
+              "c_1_name": "Codon_GCA",
+              "c_1_primary_designation": "Codon GCA - Trinitarian Genetic Unit",
+              "c_2_uuid": "59a32c3c-b14a-51aa-854f-faa41a0da7ab",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -7,
+              "c_3_inner_charge_np": 5,
+              "c_3_inner_charge_pn": 9,
+              "c_3_inner_charge_pp": 21,
+              "c_3_parent_pair": "GC",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "dual",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-4-3-1",
+              "m_3_2_amino_acid_code": "Ala (Alanine)",
+              "p_3_position1": "G",
+              "p_3_position2": "C",
+              "p_3_position3": "A",
+              "p_3_sequence": "GCA",
+              "p_3_third_position": "A"
+            },
+            "record": 900,
+            "ref": "#3-2-4-3-1",
+            "role": "dna-codon",
+            "source_record_index": 1037
+          },
+          "expression": [
+            {
+              "from_id": "1c6516a2b330cc6c",
+              "from_ref": "#3-4.0-4-6",
+              "id": "4eeb5b9322a620c2",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-4-6",
+                "c_0_target_coordinate": "M3-4-3-6",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:03.519Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10443,
+              "ref": "bimba:relation:e01c0f296ce5d8b267f180cb",
+              "source_record_index": 11430,
+              "to_id": "11487be366cfe02b",
+              "to_ref": "#3-4-3-6"
+            }
+          ],
+          "phase": {
+            "id": "1c6516a2b330cc6c",
+            "parent_id": "be097587980b2bda",
+            "properties": {
+              "c_0_core_nature": "Deception and strategic maneuvering",
+              "c_0_essence": "Eight-fold rotation through cunning adaptation",
+              "c_0_operational_essence": "Eight-fold rotation through cunning adaptation",
+              "c_1_description": "The GCA codon reflection embodies the Seven of Swords deception through eight phases of strategic thinking",
+              "c_1_name": "GCA Codon Reflection - Deception and Strategy",
+              "c_1_primary_designation": "GCA Codon Reflection - Deception and Strategy",
+              "c_2_uuid": "d64e8551-4c09-5998-a735-d0c1ccb7548a",
+              "c_3_charge_pattern": "nn:-7 np:5 pn:9 pp:21",
+              "c_3_contains_t": false,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -7,
+              "c_3_inner_charge_np": 5,
+              "c_3_inner_charge_pn": 9,
+              "c_3_inner_charge_pp": 21,
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 8,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "full-rotational",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-4-6",
+              "m_3_4_amino_acid_code": "Ala (Alanine)",
+              "m_3_4_tarot_card": "Seven of Swords",
+              "p_3_sequence": "GCA"
+            },
+            "record": 1359,
+            "ref": "#3-4.0-4-6",
+            "role": "phase-codon",
+            "source_record_index": 1496
+          },
+          "rna": null,
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "1c6516a2b330cc6c",
+              "from_ref": "#3-4.0-4-6",
+              "id": "414d9c30aea83d54",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-4-6",
+                "c_0_target_coordinate": "M3-3-4-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:03.515Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10445,
+              "ref": "bimba:relation:a35ed449633d21098e8bc4f4",
+              "source_record_index": 11432,
+              "to_id": "49bc20efbe0ab03e",
+              "to_ref": "#3-3-4-1"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "address0-perfect-palindrome",
+    "snapshot": {
+      "aperture": {
+        "division_deg10": 10,
+        "fibonacci_phase60": 59,
+        "index": 0,
+        "reciprocal_division_deg10": 3600,
+        "reciprocal_index": 15,
+        "static_lenses": 16,
+        "total_lenses": 18,
+        "void_ring_orientation_deg10": 0
+      },
+      "bases": {
+        "initial": {
+          "contract_ref": "ql.m3-state-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M3-source"
+        },
+        "m2": {
+          "contract_ref": "ql.m2-engine-request/v1",
+          "identity": {
+            "event_ref": "fixture:current-event",
+            "profile_generation": 7
+          },
+          "source_ref": "fixture:M2-sound-colour-material"
+        },
+        "owner_readings": [
+          {
+            "reference": "fixture:nara/identity-hash",
+            "revision": "rev-1",
+            "role": "identity-hash"
+          },
+          {
+            "reference": "fixture:nara/identity-quaternion",
+            "revision": "rev-1",
+            "role": "identity-quaternion"
+          },
+          {
+            "reference": "fixture:nara/live-composition",
+            "revision": "rev-1",
+            "role": "live-composition"
+          },
+          {
+            "reference": "fixture:nara/bioquaternion-reading",
+            "revision": "rev-1",
+            "role": "bioquaternion-reading"
+          },
+          {
+            "reference": "fixture:nara/human-Day",
+            "revision": "rev-1",
+            "role": "human-Day"
+          },
+          {
+            "reference": "fixture:nara/agent-NOW",
+            "revision": "rev-1",
+            "role": "agent-NOW"
+          },
+          {
+            "reference": "fixture:nara/Flow",
+            "revision": "rev-1",
+            "role": "Flow"
+          },
+          {
+            "reference": "fixture:nara/M1-carrier",
+            "revision": "rev-1",
+            "role": "M1-carrier"
+          }
+        ],
+        "standing": "original-input-generations-retained-not-new-observations"
+      },
+      "clock": {
+        "backbone": {
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5"
+        },
+        "clockwise_id": "9bfcc279633903ba",
+        "completed_double_covers": 0,
+        "degree": {
+          "id": "93624747e6cfdd67",
+          "ref": "#3-5-5/0-359"
+        },
+        "degree360": 359,
+        "degree720": 359,
+        "estimate_standing": "legacy-arithmetic-estimate-not-selected-form-or-source-prototype",
+        "layer": 0,
+        "polar720": 179,
+        "polar_id": "ac2f4dfbf7d6f8da",
+        "source_backbone_prototype": {
+          "codon_address": null,
+          "codon_id": null,
+          "hexagram_address": null,
+          "hexagram_id": null,
+          "id": "dfc8077d52b11a81",
+          "ref": "#3-5-4-5",
+          "source_record": 1752,
+          "standing": "map-embodied-codon; no map backbone-hexagram fact"
+        },
+        "steps": 359,
+        "tick12": 11,
+        "uniform_hexagram_estimate": 63
+      },
+      "consumers": [
+        "epi.cosmic.123",
+        "epi.personal.450",
+        "epi.deep.m3"
+      ],
+      "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
+      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "elemental": {
+        "component_order": [
+          "Earth",
+          "Fire",
+          "Water",
+          "Air"
+        ],
+        "counts": [
+          0,
+          0,
+          3,
+          0
+        ],
+        "site_components": [
+          2,
+          2,
+          2
+        ],
+        "standing": "three-site-form-carrier-not-personal-constitution-or-bioquaternion"
+      },
+      "form": {
+        "address": 0,
+        "angles_deg10": [
+          225,
+          225,
+          225
+        ],
+        "charges_pp_mm_mp_pm": [
+          18,
+          -6,
+          6,
+          6
+        ],
+        "codon": {
+          "id": "f296491ddba82635",
+          "ref": "#3-2-1-1-1"
+        },
+        "coin_values": [
+          6,
+          6,
+          6
+        ],
+        "hexagram": {
+          "id": "173bbdd14e999592",
+          "ref": "#3-1-1-1"
+        },
+        "hinge": 0,
+        "hinge_geometry": {
+          "embedding": "normalized-directed-unit-pair-hinge/v1",
+          "points": [
+            {
+              "id": "X",
+              "nucleotide": 0,
+              "xyz": [
+                -1.0,
+                -0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Y",
+              "nucleotide": 0,
+              "xyz": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "id": "Z",
+              "nucleotide": 0,
+              "xyz": [
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "policy": "Y origin; directed unit segments; positive angles counterclockwise in XY; arbitrary display scale and plane",
+          "schema": "ql.m3-hinge-presentation/v1",
+          "segments": [
+            {
+              "angle_deg10": 0,
+              "from": "X",
+              "pair_index": 0,
+              "to": "Y"
+            },
+            {
+              "angle_deg10": 0,
+              "from": "Y",
+              "pair_index": 0,
+              "to": "Z"
+            }
+          ],
+          "shared_hinge": "Y",
+          "source": "docs/origami work/INTEGRATED-1-2-3-PHYSICAL-POLE-OBJECT.md#54-the-16-pair-field-becomes-hinge-geometry",
+          "standing": "native pair-angle presentation; not a cloth solver, crease dihedral angle, or pose rotation"
+        },
+        "lawful_field": 472,
+        "matrix_axis": 0,
+        "nucleotides": [
+          0,
+          0,
+          0
+        ],
+        "orientation_seed_wxyz": [
+          18.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "orientation_standing": "M3-source-codon-rotation-not-identity-quaternion",
+        "pair_angles_deg10": [
+          0,
+          0
+        ],
+        "pair_xy": {
+          "id": "c5a0d9bd88e80190",
+          "ref": "#3-2-1-1"
+        },
+        "pair_yz": {
+          "id": "c5a0d9bd88e80190",
+          "ref": "#3-2-1-1"
+        },
+        "physical_form": {
+          "address": 0,
+          "constituent_ref": "#3-2-1-1-1",
+          "pose_ordinal": 0,
+          "schema": "ql.m3-physical-form-target/v1",
+          "standing": "explicit-m3-physical-form-target/v1; not orientation_seed; not presentation glyph; not source angles as pose",
+          "state_count": 7,
+          "target_kind": "fold-pose"
+        },
+        "pose": 0,
+        "pose_ordinal": 0,
+        "state_count": 7,
+        "velocities_deg10": [
+          225,
+          225,
+          225
+        ]
+      },
+      "iching": {
+        "complement_address": 63,
+        "line_change_addresses": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32
+        ],
+        "nuclear_address": 0,
+        "standing": "native-six-bit-law-not-uncorrected-source-LINE_CHANGE-claims"
+      },
+      "identity": {
+        "event_ref": "fixture:current-event",
+        "profile_generation": 7
+      },
+      "occurrence_unix_ms": 1789090397000,
+      "readiness": {
+        "continuous_cpp": "consumer-required",
+        "discrete": "operative",
+        "experiential": "not-claimed",
+        "personal_identity": "owner-supplied-handles",
+        "source": "retained-qualified-reading"
+      },
+      "receipt_unix_ms": 1789090400000,
+      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "schema": "ql.m3-state/v1",
+      "source_discrepancy_templates": 487,
+      "source_matrix_cells": [
+        {
+          "cell": {
+            "address": 0,
+            "codon_relations": [
+              "c4a02b1e522b61ac"
+            ],
+            "family": 0,
+            "hexagram_ref": "#3-1-1-1",
+            "id": "c4e0fa35e80d9cae",
+            "non_dual": true,
+            "pair_relations": [
+              "7ef56bf3a3880cc4"
+            ],
+            "ref": "#3-3-2-0-2",
+            "resolves_relation": "1c524f7e32a490e5"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "c4e0fa35e80d9cae",
+              "from_ref": "#3-3-2-0-2",
+              "id": "c4a02b1e522b61ac",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-2",
+                "c_0_target_coordinate": "M3-2-1-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:53.715Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8412,
+              "ref": "bimba:relation:460c86c8f03c759bdfb644b3",
+              "source_record_index": 9399,
+              "to_id": "f296491ddba82635",
+              "to_ref": "#3-2-1-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "c4e0fa35e80d9cae",
+              "from_ref": "#3-3-2-0-2",
+              "id": "7ef56bf3a3880cc4",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-0-2",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:53.699Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8411,
+              "ref": "bimba:relation:d9fe67a10163e2548ed7de66",
+              "source_record_index": 9398,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 0,
+            "codon_relations": [
+              "ffc53f7918dfa8bc"
+            ],
+            "family": 1,
+            "hexagram_ref": "#3-1-1-1",
+            "id": "7a21353dd4329468",
+            "non_dual": true,
+            "pair_relations": [
+              "8db40ccd55f68ddf"
+            ],
+            "ref": "#3-3-2-1-2",
+            "resolves_relation": "e2c115b335759cfe"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "7a21353dd4329468",
+              "from_ref": "#3-3-2-1-2",
+              "id": "ffc53f7918dfa8bc",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-2",
+                "c_0_target_coordinate": "M3-2-1-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:55.758Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8845,
+              "ref": "bimba:relation:9865f104dbaf28a307c4ae56",
+              "source_record_index": 9832,
+              "to_id": "f296491ddba82635",
+              "to_ref": "#3-2-1-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "7a21353dd4329468",
+              "from_ref": "#3-3-2-1-2",
+              "id": "8db40ccd55f68ddf",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-1-2",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:55.754Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 8844,
+              "ref": "bimba:relation:ee2fb3b8f61ae7df989dcd61",
+              "source_record_index": 9831,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        },
+        {
+          "cell": {
+            "address": 0,
+            "codon_relations": [
+              "764573161a4af62a"
+            ],
+            "family": 2,
+            "hexagram_ref": "#3-1-1-1",
+            "id": "f312a1c6f69358ec",
+            "non_dual": true,
+            "pair_relations": [
+              "be1200030350dfda"
+            ],
+            "ref": "#3-3-2-2-2",
+            "resolves_relation": "5ff5c2066dd892ad"
+          },
+          "qualified_codon_relations": [
+            {
+              "from_id": "f312a1c6f69358ec",
+              "from_ref": "#3-3-2-2-2",
+              "id": "764573161a4af62a",
+              "kind": "YIELDS_CODON",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-2",
+                "c_0_target_coordinate": "M3-2-1-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "positive",
+                "c_2_relation_type": "YIELDS_CODON",
+                "c_3_created_at": "2026-07-28T20:29:57.682Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9281,
+              "ref": "bimba:relation:977f8663584c59e09fea1892",
+              "source_record_index": 10268,
+              "to_id": "f296491ddba82635",
+              "to_ref": "#3-2-1-1-1"
+            }
+          ],
+          "qualified_pair_relations": [
+            {
+              "from_id": "f312a1c6f69358ec",
+              "from_ref": "#3-3-2-2-2",
+              "id": "be1200030350dfda",
+              "kind": "USES_PAIR",
+              "properties": {
+                "c_0_source_coordinate": "M3-3-2-2-2",
+                "c_0_target_coordinate": "M3-2-1-1",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_kind": "lower-and-upper",
+                "c_2_relation_type": "USES_PAIR",
+                "c_3_created_at": "2026-07-28T20:29:57.677Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 9280,
+              "ref": "bimba:relation:65e490c4599795afb125f524",
+              "source_record_index": 10267,
+              "to_id": "c5a0d9bd88e80190",
+              "to_ref": "#3-2-1-1"
+            }
+          ]
+        }
+      ],
+      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "subject_ref": "fixture:nara-subject",
+      "tarot": {
+        "card_id": 0,
+        "codons": [
+          0
+        ],
+        "rank": "Ace",
+        "standing": "retained-native-exact-cover-with-source-expression-separately-qualified",
+        "suit": "Cups"
+      },
+      "transcription": {
+        "retained_amino_slot": 14,
+        "retained_slot_standing": "retained-internal-table-not-source-translation-equivalence",
+        "rna": false,
+        "sequence": "AAA",
+        "source": {
+          "dna": {
+            "id": "f296491ddba82635",
+            "parent_id": "c5a0d9bd88e80190",
+            "properties": {
+              "c_0_core_nature": "The triple adenine: Old Yin (Water, feeling) at all three sites, a perfect palindrome",
+              "c_0_essence": "Old Yin tripled: yin moving at every site (Water)",
+              "c_0_operational_essence": "Old Yin tripled: yin moving at every site (Water)",
+              "c_1_description": "AAA is Old Yin taken to its trinitarian extreme: yin, moving, Water at every site. It encodes lysine, the positively charged amino acid that reaches out to form connections.",
+              "c_1_name": "Codon_AAA",
+              "c_1_primary_designation": "Codon AAA - Old Yin Trinity",
+              "c_2_uuid": "b5c07011-173c-58c8-a676-7a45ef57798f",
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -6,
+              "c_3_inner_charge_np": 6,
+              "c_3_inner_charge_pn": 6,
+              "c_3_inner_charge_pp": 18,
+              "c_3_parent_pair": "AA",
+              "c_3_quality": "Old Yin tripled",
+              "c_3_source_dataset": "bimba",
+              "c_3_symmetry_class": "perfect_palindromic",
+              "c_3_updated_at": "2025-08-09T08:23:41.338000000Z",
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_subsystem": 3,
+              "coordinate": "M3-2-1-1-1",
+              "m_3_2_amino_acid_code": "Lys (Lysine)",
+              "p_3_position1": "A",
+              "p_3_position2": "A",
+              "p_3_position3": "A",
+              "p_3_sequence": "AAA",
+              "p_3_third_position": "A"
+            },
+            "record": 827,
+            "ref": "#3-2-1-1-1",
+            "role": "dna-codon",
+            "source_record_index": 964
+          },
+          "expression": [
+            {
+              "from_id": "0d5c93b52f4581c3",
+              "from_ref": "#3-4.0-1-0",
+              "id": "94ee1046104cb309",
+              "kind": "GOVERNS_TAROT_EXPRESSION",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-0",
+                "c_0_target_coordinate": "M3-4-2-0",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "GOVERNS_TAROT_EXPRESSION",
+                "c_3_created_at": "2026-07-28T20:30:01.766Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10146,
+              "ref": "bimba:relation:d882fea37482a5b1a8efd065",
+              "source_record_index": 11133,
+              "to_id": "64f24c07bea56da0",
+              "to_ref": "#3-4-2-0"
+            }
+          ],
+          "phase": {
+            "id": "0d5c93b52f4581c3",
+            "parent_id": "8ed34a8c2bea36f0",
+            "properties": {
+              "c_0_core_nature": "New emotional beginnings",
+              "c_0_essence": "Seven-fold rotation through pure potential",
+              "c_0_operational_essence": "Seven-fold rotation through pure potential",
+              "c_1_description": "The AAA codon reflection manifests as the Ace of Cups, initiating new emotional beginnings through triple adenine purity",
+              "c_1_name": "AAA Codon Reflection - Pure Water Trinity",
+              "c_1_primary_designation": "AAA Codon Reflection - Pure Water Trinity",
+              "c_2_uuid": "a328b0c0-0f41-58ad-9b83-8fbf549771e7",
+              "c_3_charge_pattern": "nn:-6 np:6 pn:6 pp:18",
+              "c_3_contains_t": false,
+              "c_3_court_card": false,
+              "c_3_dataset_branch": "mahamaya-deep",
+              "c_3_dataset_branch_label": "M3 Mahamaya Deep",
+              "c_3_inner_charge_nn": -6,
+              "c_3_inner_charge_np": 6,
+              "c_3_inner_charge_pn": 6,
+              "c_3_inner_charge_pp": 18,
+              "c_3_non_dual_pair": "AA+AA",
+              "c_3_source_dataset": "bimba",
+              "c_3_state_count": 7,
+              "c_4_family": "M",
+              "c_4_layer": "COORDINATE",
+              "c_4_ql_position": 3,
+              "c_4_state_type": "non-dual-initiated",
+              "c_4_subsystem": 3,
+              "coordinate": "M3-4.0-1-0",
+              "m_3_4_amino_acid_code": "Lys (Lysine)",
+              "m_3_4_tarot_card": "Ace of Cups",
+              "p_3_sequence": "AAA"
+            },
+            "record": 1296,
+            "ref": "#3-4.0-1-0",
+            "role": "phase-codon",
+            "source_record_index": 1433
+          },
+          "rna": null,
+          "standing": "source-recorded-translation-not-retained-amino-array-equivalence",
+          "translations": [
+            {
+              "from_id": "0d5c93b52f4581c3",
+              "from_ref": "#3-4.0-1-0",
+              "id": "5d4f64b6912209c4",
+              "kind": "TRANSLATES_TO",
+              "properties": {
+                "c_0_source_coordinate": "M3-4.0-1-0",
+                "c_0_target_coordinate": "M3-3-4-17",
+                "c_1_relation_family": "correspondential",
+                "c_2_relation_type": "TRANSLATES_TO",
+                "c_3_created_at": "2026-07-28T20:30:01.752Z",
+                "c_3_dataset_branch": "mahamaya-deep"
+              },
+              "record": 10148,
+              "ref": "bimba:relation:0882d2199131649bf329daa0",
+              "source_record_index": 11135,
+              "to_id": "2206a22d0b34d0cd",
+              "to_ref": "#3-3-4-17"
+            }
+          ]
+        }
+      }
+    }
+  }
+]
