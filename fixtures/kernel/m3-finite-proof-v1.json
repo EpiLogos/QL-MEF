@@ -10,7 +10,7 @@
     "crates/ql-core/src/m3_clock.rs": "7bdd0e147e2221ec37ef9788cf8823b775289e74e095fce1048980456c48b4a7",
     "crates/ql-mef/src/m3_engine.rs": "5eb86f06f97143d086eaa3c2448f81b8da78c9e9ab25f4a7ca2c10eb2a617b9f",
     "crates/ql-mef/src/m3_source.rs": "fe60137f379718bf8d5feb8adf5e27b1f43397df6e520bac84db56305ee6846b",
-    "crates/ql-mef/src/m3_state.rs": "e70bb150db7ed248a2bda24a65ce3c787d50fe6dde290ef491f025f8650710bb",
+    "crates/ql-mef/src/m3_state.rs": "9447f6cdf411eb7fd20608fb246566fae8694caf7646afac0287458350a4eb61",
     "crates/ql-mef/examples/m3-state.rs": "a0b14019315b79aee1ae8e792bf2bc7bdb9956835305ff27a2c51137c0b4cdec",
     "crates/ql-mef/tests/m3_engine.rs": "50cec33c5f4db232054b260f7a4051872fbc153e1010fa2332cbf612938a425d",
     "crates/ql-mef/tests/m3_domain.rs": "7271352a62110b1b98d626bdbedec8b2c69b66596d33f5b973d75842f41b477e",
@@ -60,8 +60,8 @@
   "outputs": {
     "target/m3-rust/c-rust-parity.jsonl": "61f1891b2871c5db4f1882b49eff825382c70911c143f53a54d26515cb3246de",
     "target/m3-domain/c-rust.jsonl": "95ac62d15a46936e8011d11debb6b68c3323191e80313b27a158de1c5ecfa6c0",
-    "target/m3-parent-consumer/handoff.json": "d2ccd147655733f8bcfb1e8389a765b4661518e9130dd9eb8338ef65d1e41c63",
-    "target/m3-acceptance/replay.json": "8e87a334f0f903a49cdbd3b2830b567b45cc958a76d54b8cdbb93aa78ffc9f1c"
+    "target/m3-parent-consumer/handoff.json": "787f1a5609e902cfed3d912631efeac43469172b4d71cf01d0b12c7e3c1df3bd",
+    "target/m3-acceptance/replay.json": "a5269b1a1f7ebff8ed17e252a4614cb2c9e8014ae062f8fe9c3d189ca2b58903"
   },
   "checks": [
     "retained-native-C-fields-per-executed-compiler-alias",

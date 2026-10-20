@@ -2,7 +2,7 @@
   "schema": "ql.m-ledger-source-requalification/v1",
   "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
   "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
-  "ledger_revision": "71fcf170abe646f55f780a83d12a46a5019d7c503522b800cc41f19dce37a894",
+  "ledger_revision": "2c358d1b494285f651f45e2a71e699a9d5f33bec461cfb837d622646ef438f30",
   "historical": {
     "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
     "ledger_sha256": "55e13ec985f0141172fd7dc41f7e3badffa21e09cb267a6750484fbea0701128",
@@ -244,9 +244,9 @@
     },
     "m3": {
       "proof": "fixtures/kernel/m3-finite-proof-v1.json",
-      "proof_sha256": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c",
+      "proof_sha256": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539",
       "historical_base_sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
-      "accepted_at_revision": "847c0ec7b12ab436d6086296466913e02d3716d1"
+      "accepted_at_revision": "fec500bce4053bd99f0e8b8fff3c26bd3d363a8b"
     }
   },
   "standing": "current source/application revalidation; numerical readiness and parity are claimed only where an engine's published successor proof at the current registry backs them (successor_verticals)",

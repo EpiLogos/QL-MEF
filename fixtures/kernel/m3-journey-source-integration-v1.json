@@ -11,8 +11,8 @@
     "coordinate_registry_revision": "64a827ef8a54933d20b4db9c1d458f9d736c86cef28a5797d955ddc1a89403d9",
     "ledger": {
       "path": "fixtures/kernel/m-ledger-v1.json",
-      "sha256": "6474ca3fd267ca5f2b10db25dbca3aa204535558e52b9393301afc9ac79d8c8b",
-      "revision": "71fcf170abe646f55f780a83d12a46a5019d7c503522b800cc41f19dce37a894",
+      "sha256": "79f153f07b591206037349fb573a1adf1d1b80c2db75449549177213a9b2e52e",
+      "revision": "2c358d1b494285f651f45e2a71e699a9d5f33bec461cfb837d622646ef438f30",
       "standing": "byte-identical current131 decisions retained; broad readiness unassessed except engines with a published successor proof at the current registry"
     }
   },
@@ -368,6 +368,21 @@
         }
       },
       "git_ref": "git:08b7a98af69237a95d5aa806c116521107321409:fixtures/kernel/m3-journey-source-integration-v1.json",
+      "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
+    },
+    {
+      "source": {
+        "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+        "numerical_registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+        "coordinate_registry_revision": "64a827ef8a54933d20b4db9c1d458f9d736c86cef28a5797d955ddc1a89403d9",
+        "ledger": {
+          "path": "fixtures/kernel/m-ledger-v1.json",
+          "sha256": "6474ca3fd267ca5f2b10db25dbca3aa204535558e52b9393301afc9ac79d8c8b",
+          "revision": "71fcf170abe646f55f780a83d12a46a5019d7c503522b800cc41f19dce37a894",
+          "standing": "byte-identical current131 decisions retained; broad readiness unassessed except engines with a published successor proof at the current registry"
+        }
+      },
+      "git_ref": "git:0a9b3ed00169418008c9bd5e7fc8784b72f0a589:fixtures/kernel/m3-journey-source-integration-v1.json",
       "standing": "Dated published source standing; preserved, not retargeted numerical evidence"
     }
   ],

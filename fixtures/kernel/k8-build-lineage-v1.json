@@ -4,7 +4,7 @@
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
     "m2": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2",
-    "m3": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c"
+    "m3": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -132,6 +132,13 @@
       "sha256": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c",
       "accepted_at_revision": "847c0ec7b12ab436d6086296466913e02d3716d1",
       "reason": "S/S′ migration moved the registry to c211a781 (QL-MEF bimba/s-sprime-current); fresh complete Linux acceptance, m3-engine run 39424644112 at 847c0ec"
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "58f7be95f1bb906bf2a2c7dde8af8631b0e8ff35eea7ab95ef36dc5b9344fb9c",
+      "sha256": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539",
+      "accepted_at_revision": "fec500bce4053bd99f0e8b8fff3c26bd3d363a8b",
+      "reason": "MM1 (QL-MEF #340): the M3 reading carries the living form, the generation cell and its law; m3_state.rs and its tests moved. Full M3 acceptance on Linux CI run 39499586792 at fec500bce."
     }
   ]
 }
