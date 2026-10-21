@@ -88,6 +88,10 @@ function setup(options = {}) {
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation };
       if (['stage-state', 'stage-evaluate'].includes(request.command.operation))
         reply.stage = port.stageBody ?? { schema: 'ql.stage-state/v1', subject_ref: current.subject_ref, slots: {} };
+      // Controlled protocol case: retire, bind and unbind answer with their
+      // receipt and the field unchanged (host.rs stage_operation).
+      if (['stage-retire', 'stage-bind', 'stage-unbind'].includes(request.command.operation))
+        reply.stage = port.stageBody ?? { schema: 'ql.stage-receipt/v1', procedure_ref: request.command.procedure_ref ?? request.command.procedure?.procedure_ref, applied: true };
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -544,11 +548,46 @@ test('a stage evaluation whose host reply did not advance is a cursor disagreeme
   assert.equal(session.reading.available, false, 'an unexplained acknowledgement ends this lifetime');
 });
 
-test('stage retire/bind/unbind are not studio-driven: operate admits by exact name', async () => {
-  const { session } = setup();
-  await assert.rejects(session.operate({ operation: 'stage-retire', procedure_ref: 'x' }), /idle admitted owner/);
-  await assert.rejects(session.operate({ operation: 'stage-bind', procedure: {} }), /idle admitted owner/);
-  await assert.rejects(session.operate({ operation: 'stage-unbind', procedure_ref: 'x' }), /idle admitted owner/);
+test('stage retire, bind and unbind are owner acts that leave the field where it was, each keeping its receipt', async () => {
+  const { session, calls } = setup();
+  await session.pump();
+  assert.equal(session.lastStageReceipt, null, 'no stage act yet: no receipt');
+  const procedure = { schema: 'ql.stage-procedure/v1', procedure_ref: 'ta-onta:stage:live-fold', revision: 1, subject_ref: 'controlled:one',
+    trigger: { trigger: 'determinant', operation: 'strike' }, selector: ['material.damping'], changes: [{ change: 'damping', per_second: 0.25 }] };
+  for (const command of [{ operation: 'stage-bind', procedure, max_evaluations: 4 },
+    { operation: 'stage-unbind', procedure_ref: 'ta-onta:stage:live-fold' },
+    { operation: 'stage-retire', procedure_ref: 'ta-onta:stage:live-fold' }]) {
+    const before = session.reading.acknowledged;
+    await session.operate(command);
+    assert.deepEqual(calls.at(-1).command, command, `${command.operation} rides the envelope as asked`);
+    assert.deepEqual(session.reading.acknowledged, before, `${command.operation} advances neither generation nor samples`);
+    assert.deepEqual(session.lastStageReceipt, { schema: 'ql.stage-receipt/v1', procedure_ref: 'ta-onta:stage:live-fold', applied: true });
+    const act = session.journal().acts.at(-1);
+    assert.equal(act.operation, command.operation);
+    assert.equal(act.kind, 'act', 'a stage act is an owner act');
+  }
+  const receipt = session.lastStageReceipt; receipt.applied = false;
+  assert.equal(session.lastStageReceipt.applied, true, 'the receipt is a copy');
+  await assert.rejects(session.operate({ operation: 'stage-forge', procedure_ref: 'x' }), /idle admitted owner/, 'admitted by exact name');
+  session.dispose();
+});
+
+test('a stage retire whose host reply advanced is a cursor disagreement', async () => {
+  const { session, port } = setup();
+  port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(session.operate({ operation: 'stage-retire', procedure_ref: 'x' }), /native cursor disagree/);
+  assert.equal(session.reading.available, false, 'an unexplained acknowledgement ends this lifetime');
+});
+
+test('a refused stage act is no act and keeps the last receipt', async () => {
+  const { session, port } = setup();
+  await session.operate({ operation: 'stage-retire', procedure_ref: 'ta-onta:stage:live-fold' });
+  const acts = session.journal().acts.length;
+  port.refuseOperation = 'stage-unbind';
+  await assert.rejects(session.operate({ operation: 'stage-unbind', procedure_ref: 'nothing-bound' }), /controlled refusal/);
+  assert.equal(session.journal().acts.length, acts, 'the refusal is absent from the journal');
+  assert.equal(session.lastStageReceipt.procedure_ref, 'ta-onta:stage:live-fold', 'the last receipt stands');
+  assert.equal(session.reading.available, true);
   session.dispose();
 });
 
