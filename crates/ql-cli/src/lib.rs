@@ -110,6 +110,9 @@ struct MefLensView {
     name: &'static str,
     face: &'static str,
     square: &'static str,
+    /// The lens's six sublenses in position order, each `{sublensRef,
+    /// position, label}` from the registry (`LensDefinition::sublens`).
+    sublenses: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Serialize)]
@@ -671,7 +674,7 @@ fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
 fn mef_command(args: &[String], json: bool) -> Result<String, CliError> {
     match args.first().map(String::as_str) {
         Some("lenses") => {
-            let view = mef_registry_view();
+            let view = mef_registry_view()?;
             if json {
                 serde_json::to_string_pretty(&view).map_err(CliError::from)
             } else {
@@ -1005,23 +1008,38 @@ fn kernel_view() -> KernelCapabilitiesView {
     }
 }
 
-fn mef_registry_view() -> MefRegistryView {
+fn mef_registry_view() -> Result<MefRegistryView, CliError> {
     let lenses = all_lens_definitions()
         .iter()
         .copied()
-        .map(|definition| MefLensView {
-            lens_ref: definition.reference().to_string(),
-            code: definition.id().code(),
-            name: definition.name(),
-            face: lens_face(definition.id().face()),
-            square: mef_square(definition.square()),
+        .map(|definition| {
+            let sublenses = (0_u8..=5)
+                .map(|position| {
+                    definition.sublens(position).map(|sublens| {
+                        serde_json::json!({
+                            "sublensRef": sublens.reference().to_string(),
+                            "position": position,
+                            "label": sublens.label(),
+                        })
+                    })
+                })
+                .collect::<Result<Vec<_>, _>>()
+                .map_err(|e| CliError(e.to_string()))?;
+            Ok(MefLensView {
+                lens_ref: definition.reference().to_string(),
+                code: definition.id().code(),
+                name: definition.name(),
+                face: lens_face(definition.id().face()),
+                square: mef_square(definition.square()),
+                sublenses,
+            })
         })
-        .collect();
-    MefRegistryView {
+        .collect::<Result<Vec<_>, CliError>>()?;
+    Ok(MefRegistryView {
         registry_version: MEF_REGISTRY_VERSION,
         registry_revision: MEF_REGISTRY_REVISION,
         lenses,
-    }
+    })
 }
 
 fn context_frame_registry_view() -> ContextFrameRegistryView {
@@ -1370,6 +1388,22 @@ mod tests {
         assert_eq!(mef["registryRevision"], MEF_REGISTRY_REVISION);
         assert_eq!(mef["lenses"].as_array().unwrap().len(), 12);
         assert_eq!(mef["lenses"][0]["lensRef"], "mef:lens:L0@1");
+        for lens in mef["lenses"].as_array().unwrap() {
+            let sublenses = lens["sublenses"].as_array().unwrap();
+            assert_eq!(sublenses.len(), 6, "{}: six sublenses", lens["code"]);
+            for (position, sublens) in sublenses.iter().enumerate() {
+                assert_eq!(sublens["position"], position);
+                assert!(
+                    sublens["label"]
+                        .as_str()
+                        .is_some_and(|label| !label.is_empty())
+                );
+            }
+        }
+        let l5 = &mef["lenses"][10];
+        assert_eq!(l5["code"], "L5");
+        assert_eq!(l5["sublenses"][2]["label"], "Paśyantī");
+        assert_eq!(l5["sublenses"][2]["sublensRef"], "mef:sublens:L5.2@1");
 
         let frames =
             execute_cli(&["context-frame".into(), "list".into(), "--json".into()]).unwrap();
