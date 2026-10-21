@@ -218,10 +218,10 @@ impl FieldHost {
     pub fn open_config(worker: &Path, bytes: &[u8], timeout: Duration) -> Result<Self, String> {
         let value: Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if value.get("schema").and_then(Value::as_str) == Some(scene_field::CONFIG) {
-            let config: SceneConfig = serde_json::from_value(value).map_err(|e| e.to_string())?;
+            let config: SceneConfig = super::text::from_value(value).map_err(|e| e.to_string())?;
             return Self::open_scene(worker, config, timeout);
         }
-        let config: HostConfig = serde_json::from_value(value).map_err(|e| e.to_string())?;
+        let config: HostConfig = super::text::from_value(value).map_err(|e| e.to_string())?;
         Self::open(worker, config, timeout)
     }
 
@@ -849,6 +849,37 @@ mod tests {
                 "accepted {value}"
             );
         }
+    }
+
+    /// A replace carries a whole basis: the default scene event's has the sky
+    /// receipt's fractional longitudes and distances. Read the way the host
+    /// binary reads a line (`text::from_slice`), it parses; through serde's
+    /// buffered tag alone each fraction is refused, which is what the O:I
+    /// kernel's native backcheck met at fc8e28a.
+    #[test]
+    fn a_replace_whose_basis_carries_fractions_parses_from_the_text_the_host_reads() {
+        let basis: Value = serde_json::from_str(include_str!(
+            "../../../../fixtures/kernel/scene-default-event-v2.json"
+        ))
+        .unwrap();
+        assert!(basis["source_receipts"].to_string().contains('.'));
+        let line = json!({"schema":HOST_REQUEST,"instance_ref":"i","event_ref":"e",
+            "subject_ref":"s","request_id":"1","expected_generation":"1",
+            "expected_samples_elapsed":"0","command":{"operation":"replace","basis":basis}})
+        .to_string();
+        assert!(serde_json::from_slice::<HostRequest>(line.as_bytes()).is_err());
+        let request = super::super::text::from_slice::<HostRequest>(line.as_bytes()).unwrap();
+        let HostOperation::Replace { basis: parsed } = request.command else {
+            panic!("a replace")
+        };
+        assert_eq!(
+            serde_json::to_value(&*parsed).unwrap()["schema"],
+            basis["schema"]
+        );
+        // An integer keeps its exact form; only a written fraction becomes an f64.
+        let wide: Value =
+            super::super::text::from_slice(b"[18446744073709551615, 0.35, 1e-3, 7]").unwrap();
+        assert_eq!(wide.to_string(), "[18446744073709551615,0.35,0.001,7]");
     }
 
     /// The host reads each request line as text (`ql-field-host` stdin). serde_json

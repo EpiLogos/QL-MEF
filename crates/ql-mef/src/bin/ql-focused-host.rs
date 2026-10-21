@@ -494,7 +494,7 @@ fn run() -> Result<(), String> {
         if count as u64 > MAX_HOST_INPUT || !line.ends_with(b"\n") {
             return Err("focused-host input is oversized or unterminated; closing owner".into());
         }
-        let response = match serde_json::from_slice::<FocusedHostRequest>(&line) {
+        let response = match ql_mef::continuous::text::from_slice::<FocusedHostRequest>(&line) {
             Ok(request) => host.execute(request),
             Err(_) => host.reject_input("malformed or unknown focused-host request fields"),
         };

@@ -54,6 +54,110 @@ pub(crate) mod number {
     }
 }
 
+/// Reading the text a host is handed (a request line on stdin, a config file).
+/// `number` above keeps a played command's own floats; a command also carries
+/// whole bases — a `replace`'s `CoupledInput`, with a sky receipt's longitudes
+/// and an M2 request's coefficients — whose every `f64` met the same private
+/// Number map inside the buffered tagged enum, so a replace was refused as
+/// "malformed or unknown host request fields". The text is read into a `Value`
+/// and the type from that value, with a number written with a fraction or an
+/// exponent handed over as the `f64` it spells; an integer keeps its exact form.
+pub mod text {
+    use serde::de::value::{MapAccessDeserializer, MapDeserializer, SeqDeserializer};
+    use serde::de::{DeserializeOwned, Deserializer, IntoDeserializer, Visitor};
+    use serde_json::{Error, Number, Value};
+
+    pub fn from_slice<T: DeserializeOwned>(bytes: &[u8]) -> Result<T, Error> {
+        from_value(serde_json::from_slice(bytes)?)
+    }
+
+    pub fn from_value<T: DeserializeOwned>(value: Value) -> Result<T, Error> {
+        T::deserialize(Plain(value))
+    }
+
+    struct Plain(Value);
+
+    fn fractional(number: &Number) -> Option<f64> {
+        let text = number.to_string();
+        if text.contains(['.', 'e', 'E']) {
+            number.as_f64()
+        } else {
+            None
+        }
+    }
+
+    fn members(map: serde_json::Map<String, Value>) -> impl Iterator<Item = (String, Plain)> {
+        map.into_iter().map(|(key, value)| (key, Plain(value)))
+    }
+
+    impl<'de> IntoDeserializer<'de, Error> for Plain {
+        type Deserializer = Self;
+        fn into_deserializer(self) -> Self {
+            self
+        }
+    }
+
+    impl<'de> Deserializer<'de> for Plain {
+        type Error = Error;
+
+        fn deserialize_any<V: Visitor<'de>>(self, visitor: V) -> Result<V::Value, Error> {
+            match self.0 {
+                Value::Number(number) => match fractional(&number) {
+                    Some(float) => visitor.visit_f64(float),
+                    None => number.deserialize_any(visitor),
+                },
+                Value::Array(items) => {
+                    let mut seq = SeqDeserializer::new(items.into_iter().map(Plain));
+                    let value = visitor.visit_seq(&mut seq)?;
+                    seq.end()?;
+                    Ok(value)
+                }
+                Value::Object(map) => {
+                    let mut access = MapDeserializer::new(members(map));
+                    let value = visitor.visit_map(&mut access)?;
+                    access.end()?;
+                    Ok(value)
+                }
+                other => other.deserialize_any(visitor),
+            }
+        }
+
+        fn deserialize_option<V: Visitor<'de>>(self, visitor: V) -> Result<V::Value, Error> {
+            match self.0 {
+                Value::Null => visitor.visit_none(),
+                other => visitor.visit_some(Plain(other)),
+            }
+        }
+
+        fn deserialize_enum<V: Visitor<'de>>(
+            self,
+            name: &'static str,
+            variants: &'static [&'static str],
+            visitor: V,
+        ) -> Result<V::Value, Error> {
+            match self.0 {
+                Value::Object(map) => visitor.visit_enum(MapAccessDeserializer::new(
+                    MapDeserializer::new(members(map)),
+                )),
+                other => other.deserialize_enum(name, variants, visitor),
+            }
+        }
+
+        fn deserialize_newtype_struct<V: Visitor<'de>>(
+            self,
+            _name: &'static str,
+            visitor: V,
+        ) -> Result<V::Value, Error> {
+            visitor.visit_newtype_struct(self)
+        }
+
+        serde::forward_to_deserialize_any! {
+            bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string bytes byte_buf
+            unit unit_struct seq tuple tuple_struct map struct identifier ignored_any
+        }
+    }
+}
+
 pub const FIELD_CONTRACT: &str = "ql.continuous-field/v1";
 const MAX_MESSAGE: usize = 32 * 1024 * 1024;
 type Result<T> = std::result::Result<T, String>;
