@@ -573,6 +573,58 @@ fn joined_coordinate_view_retains_source_parentage_relations_and_profiles() {
     );
 }
 
+#[test]
+fn a_coordinate_view_names_its_children_as_the_registry_holds_them() {
+    let l = ledger();
+    let registry = native_m_registry();
+    for reference in ["M3", "M2-5", "M4", "M2-3"] {
+        let view = l.coordinate_view(registry, reference).unwrap();
+        let ids = view["coordinate"]["children"].as_array().unwrap();
+        let children = view["child_coordinates"].as_array().unwrap();
+        assert_eq!(
+            children.len(),
+            ids.len(),
+            "{reference}: every child, in order"
+        );
+        for (id, child) in ids.iter().zip(children) {
+            assert_eq!(child["id"], *id, "{reference}");
+            let node = registry
+                .resolve(child["source_ref"].as_str().unwrap())
+                .unwrap();
+            assert_eq!(
+                serde_json::json!(node.id),
+                *id,
+                "{reference}: the ref resolves to the child"
+            );
+            assert_eq!(child["names"], serde_json::json!(node.names));
+            assert_eq!(
+                child["local_segment"],
+                serde_json::json!(node.local_segment)
+            );
+            assert_eq!(child["separator"], serde_json::json!(node.separator));
+        }
+    }
+    // The map's own segments are kept as it writes them, never reduced to digits.
+    let m25 = l.coordinate_view(registry, "M2-5").unwrap();
+    assert!(
+        m25["child_coordinates"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|c| c["source_ref"] == "#2-5-0/1" && c["names"] == serde_json::json!(["Sun"]))
+    );
+    let m3 = l.coordinate_view(registry, "M3").unwrap();
+    let refs: Vec<&str> = m3["child_coordinates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c["source_ref"].as_str().unwrap())
+        .collect();
+    for position in ["#3-0", "#3-1", "#3-2", "#3-3", "#3-4", "#3-5"] {
+        assert!(refs.contains(&position), "{position}");
+    }
+}
+
 /// A valid readiness assessment and C/Rust comparison do not imply that the
 /// requested stratum participates in that comparison. These are synthetic
 /// evidence declarations for validation tests, not new execution receipts.

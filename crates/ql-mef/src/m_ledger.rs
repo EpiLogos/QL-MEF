@@ -968,9 +968,22 @@ impl MLedger {
             let record = &registry.manifest().records[*index];
             serde_json::json!({"index": index, "record": record, "file": &registry.manifest().files[record.file]})
         }).collect::<Vec<_>>();
+        // The coordinate's children as the registry holds them, by reference and
+        // name: the node itself names them only by id.
+        let child_coordinates = node
+            .children
+            .iter()
+            .filter_map(|id| registry.node(*id))
+            .map(|child| {
+                serde_json::json!({"id": child.id, "source_ref": child.source_ref,
+                    "local_segment": child.local_segment, "separator": child.separator,
+                    "names": child.names})
+            })
+            .collect::<Vec<_>>();
         Ok(
             serde_json::json!({"schema": "ql.m-ledger-view/v1", "ledger_revision": self.ledger_revision,
-            "registry_revision": self.registry.revision, "coordinate": node, "source_records": source_records,
+            "registry_revision": self.registry.revision, "coordinate": node,
+            "child_coordinates": child_coordinates, "source_records": source_records,
             "relations": registry.relations_for(node.id).collect::<Vec<_>>(), "rows": rows}),
         )
     }
