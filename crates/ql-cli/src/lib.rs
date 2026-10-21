@@ -30,6 +30,7 @@ mod shape_command;
 mod stage_command;
 mod techne_command;
 pub mod vak_composition;
+mod wiki_command;
 
 pub const QL_CLI_CONTRACT: &str = "ql.cli/v1";
 pub const VAK_CONTEXT_CONTRACT: &str = "ql.vak-context/v1";
@@ -328,6 +329,7 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
         Some("context-frame") => plain(context_frame_command(&args[1..], json)),
         Some("vak") => plain(vak_command(&args[1..], json)),
         Some("techne") => plain(techne_command::command(&args[1..], json)),
+        Some("wiki") => plain(wiki_command::command(&args[1..], json)),
         Some("shape") => plain(shape_command::command(&args[1..], json)),
         Some("epi-agent") => plain(epi_agent_command::command(&args[1..], json)),
         Some("agent-event") => plain(agent_event_command::command(&args[1..])),
@@ -355,7 +357,7 @@ fn help() -> String {
     format!(
         "Quaternal Logic {} — the semantic kernel: derivation, coverage, and the\nregistry/lens/frame reads built on it. Domain distinctions are preserved;\nthe groups below say who each is for.\n\n\
 Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
-Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame read <request.json|-> [--json]\n                                    the External Context Frame reading of a supplied sixfold mapping and structural probe (descriptive evidence only)\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n\n\
+Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame read <request.json|-> [--json]\n                                    the External Context Frame reading of a supplied sixfold mapping and structural probe (descriptive evidence only)\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n  ql wiki living-plan <request.json|-> [--json]\n                                    the Living Wiki refraction plan: the 5 -> 0 -> 1 entry aperture, then the positions asked for within the budget (orientation only; reads no wiki)\n\n\
 Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n  ql scene world <request.json|-> [--json]\n                                    the dated sky placed on the clock as a world reading\n                                    the continuous-field host binding the Live instrument opens\n  ql scene render <binding-request.json|-> --worker <path> --seconds N --out take.wav [--json]\n                                    the played scene rendered offline through the native host to WAV\n\n\
 Ta-Onta procedural stage (the live scene's procedural owner; one command, one host exchange):\n  ql stage state [--config <binding-request.json|->] [--worker <path>] [--instance <ref>] [--json]\n                                    the stage's scoped disclosure: live slots, their owners and the bindings\n  ql stage evaluate <procedure.json|-> [--config <path|->] [--worker <path>] [--json]\n                                    evaluate one versioned procedure; prints its receipt and the acknowledged field\n  ql stage bind <procedure.json|-> [--max-evaluations N] [--config <path|->] [--worker <path>] [--json]\n                                    bind a determinant-triggered procedure to the live flow within an evaluation budget\n  ql stage unbind <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    remove a binding; the answer names its final standing\n  ql stage retire <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    release one procedure's contributions; retained material stays as the authored state\n                                    the worker is named with --worker <path> or QL_FIELD_WORKER; an example\n                                    procedure lives at fixtures/kernel/stage-procedure-example-v1.json\n\n\
 Music (controller projections of the accepted musical object):\n  ql music janko window [--columns N] [--first-column C] [--lens 0..=11] [--json]\n                                    the six-row surface over one column period\n  ql music janko key --row 0..=5 --column C [--lens 0..=11] [--json]\n                                    one key's sounding class, kernel coordinate and fifths overlay\n  ql music janko touch-points --pitch 0..=11 [--json]\n                                    the three repeated touch-points of one sounding note\n\
@@ -404,6 +406,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "vak.compose",
             "vak.workflow-types",
             "techne.reading",
+            "wiki.living-plan",
             "shape.presentation",
             "epi-agent.constitution",
             "epi-agent.faculty",
