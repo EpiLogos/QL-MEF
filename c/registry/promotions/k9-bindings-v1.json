@@ -891,6 +891,28 @@
     "crates/ql-mef/tests/m3_form_cell.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/src/context_frame_reading.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Bounded JSON CLI transport (`ql context-frame read <request.json|->`) over the existing ql_mef read_external_context_frame: a supplied sixfold mapping and structural probe in, the library's reading out (exact, partial, ambiguous or no reading, with its mapping digest and operator version). Descriptive evidence only; it owns no coordinate, keeps no store and confers no runtime, authority or lifecycle on the target.",
+   "tests": [
+    "crates/ql-cli/tests/context_frame_read.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/tests/context_frame_read.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Front-door binary regressions for `ql context-frame read`: the CLI's reading agrees with read_external_context_frame (digest, operator version, status), partial/ambiguous/absent readings are named, and refusals carry the library's own words.",
+   "tests": [
+    "crates/ql-cli/tests/context_frame_read.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }

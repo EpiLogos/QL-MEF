@@ -25,6 +25,7 @@ A *refraction* is a reading of a subject through a lens. The subject keeps its o
 **Other commands that work now:**
 
 - `ql context-frame list` lists the seven Context Frames, CF1–CF7.
+- `ql context-frame read <request.json|->` reads which Context Frame an external sixfold structure stands in. You supply the mapping of its six members and a structural probe (local position, and optionally unit face and grain). It answers exact, partial, ambiguous or no reading, with the mapping's digest. The reading is descriptive evidence only: it gives the target no runtime standing or authority.
 - `ql vak compose <request.json>` runs a composition over the Vāk registry. That registry has 109 entries and is pinned to a revision of `EpiLogos/Epi-Logos-C-Experiments`. Results the tool works out are marked `DERIVED`, and caller input is marked `PROPOSED`.
 - `ql vak workflow-types` emits the TypeScript types that Software Factory's workflow compiler admits.
 - `ql matheme derive` and `ql matheme shadow` print the definitional arithmetic of the kernel.
