@@ -24,9 +24,11 @@ use ql_wiki::{
 };
 use serde_json::Map;
 
-/// The lens the source refracts through when the caller does not pin one.
-/// The reference lens keeps the reading deterministic; callers needing
-/// another aperture compose their own request through `reading_for_request`.
+/// The lens the source refracts through: `reading_for_target` pins it.
+/// The reference lens keeps the reading deterministic. Callers needing
+/// another aperture compose their own `WikiRefractionRequest` (lenses with
+/// sublenses, a provider mode) and refract it with the same engine
+/// (`ql wiki refract`); there is no Technē reading for such a request.
 pub const SOURCE_LENS_REF: &str = "mef:lens:L1@1";
 
 /// The Wiki owner's subject-resolution handle. The owner keeps its own

@@ -121,7 +121,7 @@ fn refusals_come_in_the_librarys_words() {
     assert!(!output.status.success());
     assert!(
         String::from_utf8_lossy(&output.stderr)
-            .contains("usage: ql wiki living-plan <request.json|-> [--json]")
+            .contains("usage: ql wiki <living-plan|refract> <request.json|-> [--json]")
     );
 }
 
