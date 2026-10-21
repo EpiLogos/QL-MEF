@@ -919,9 +919,10 @@
    "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "rationale": "Bounded JSON CLI transport (`ql wiki living-plan <request.json|->`) over the existing ql_wiki plan_living_wiki_refraction: a mode, the caller's explicit relevance and an optional existing Wiki refraction request in, the library's plan out (the 5->0->1 entry aperture, the admitted and omitted positions, the depth and any carried request). Orientation only; it reads no wiki, infers no relevance, owns no coordinate and keeps no store.",
+   "rationale": "Bounded JSON CLI transport (`ql wiki living-plan <request.json|->`) over the existing ql_wiki plan_living_wiki_refraction: a mode, the caller's explicit relevance and an optional existing Wiki refraction request in, the library's plan out (the 5->0->1 entry aperture, the admitted and omitted positions, the depth and any carried request). Orientation only; it reads no wiki, infers no relevance, owns no coordinate and keeps no store. Also `ql wiki refract <request.json|->`: one existing WikiRefractionRequest (mode, the caller's target, lenses with optional sublenses) refracted by the existing ShapeAwareWikiRefractionEngine over RegistryDisclosureProvider, the library's response out, its refusals in its own words; it reads no wiki and keeps no store.",
    "tests": [
-    "crates/ql-cli/tests/wiki_living_plan.rs"
+    "crates/ql-cli/tests/wiki_living_plan.rs",
+    "crates/ql-cli/tests/wiki_refract.rs"
    ],
    "kind": "computational"
   },
@@ -933,6 +934,17 @@
    "rationale": "Front-door binary regressions for `ql wiki living-plan`: the CLI's plan equals plan_living_wiki_refraction for the stated mode and relevance, the plain reading names admitted and omitted positions, and refusals carry the library's own words.",
    "tests": [
     "crates/ql-cli/tests/wiki_living_plan.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-cli/tests/wiki_refract.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Front-door binary regressions for `ql wiki refract`: the CLI's response equals the shape-aware engine's over the registry provider through the lenses and sublenses named (required, optional, disabled), the plain reading names each lens, and refusals carry the library's own words.",
+   "tests": [
+    "crates/ql-cli/tests/wiki_refract.rs"
    ],
    "kind": "computational"
   }

@@ -46,6 +46,7 @@ fn bare_and_help_print_the_grouped_reference_without_side_effects() {
             "ql vak workflow-types",
             "ql techne reading",
             "ql wiki living-plan",
+            "ql wiki refract",
             "ql epi-agent constitution",
             "ql epi-agent faculty",
             "ql epi-agent invoke",
