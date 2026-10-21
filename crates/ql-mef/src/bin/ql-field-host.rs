@@ -1,6 +1,7 @@
 //! Local supervised stdio body for the existing coupled instrument. No listener,
 //! shell dispatch, graph lookup or audio callback is introduced here.
 use ql_mef::continuous::host::{FieldHost, HostRequest, MAX_HOST_INPUT, MAX_HOST_OUTPUT};
+use ql_mef::continuous::text;
 use serde_json::Value;
 use std::fs::File;
 use std::io::{self, BufRead, Read, Write};
@@ -51,7 +52,7 @@ fn run() -> Result<(), String> {
             // Framing loss cannot be repaired by treating a suffix as a command.
             return Err("host input is oversized or unterminated; closing owner".into());
         }
-        let response = match serde_json::from_slice::<HostRequest>(&line) {
+        let response = match text::from_slice::<HostRequest>(&line) {
             Ok(request) => host.execute(request),
             Err(_) => host.reject_input("malformed or unknown host request fields"),
         };
