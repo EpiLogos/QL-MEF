@@ -10,6 +10,9 @@
 //! - M1's ring state at (tick12, cycle) advances the form (`spanda_field`).
 //! - Each chakra centre under the Sun (`#2-5-0/1-1..7`) receives the planets
 //!   that resonate with it (`PLANETARY_RESONANCE`); Earth `#2-5-0/1-0` observes.
+//!   A centre also carries what the map and the M2 tables hold of it (its name,
+//!   mantra signature, yantra and tattva) and the bodies whose decan ruler
+//!   resonates with it, by the Nara decan-ruler reception's route.
 //!
 //! Every magnitude that is a choice, not a map fact, is a named tunable (D30).
 
@@ -550,6 +553,87 @@ pub struct SceneBody {
     pub voice: Option<Voice>,
 }
 
+/// Where each field of a centre comes from. The map has no typed relation
+/// from a chakra to its tattva, so the element is the retained M2 tables';
+/// the map gives the yantra as text and holds no petal count.
+fn centre_sources() -> Value {
+    json!({
+        "name": "M2-5 map c_1_name (m2_sky)",
+        "mantra": "M2-5 map l_2_mantra_signature (m2_sky)",
+        "yantra": "M2-5 map c_1_yantra_form (m2_sky); no petal count is held",
+        "anatomy": "M2-5 map c_2_anatomical_location (m2_sky)",
+        "element": "retained M2_CHAKRA_LUT.element_id through M2_ELEMENTS to the tattva's registry name (m2::catalogue); none for Ajna and Sahasrara",
+        "receiving": "PLANETARY_RESONANCE or qualified HAS_CHAKRAL_ANCHOR (m2::planet_chakra_route)",
+        "decan": "the body's graph decan ruler and that ruler's centre (m2::decan_planet_route, m2::planet_chakra_route), the route of the Nara decan-ruler reception",
+        "decan_held": "bodies whose decan ruler the map leaves unresolved, or whose ruler reaches no centre; they reach none",
+    })
+}
+
+/// The centre each body's decan ruler resonates with, by the Nara decan-ruler
+/// reception's own route (`nara::decanic_identity`): the graph's `RULED_BY`
+/// ruler of the decan the body stands in, then that ruler's chakra route. A
+/// decan whose ruler the map leaves unresolved, ambiguous or in conflict, or a
+/// ruler with no centre, reaches none; those bodies are held with the reason.
+fn decan_reception(bodies: &[SceneBody]) -> Result<(Vec<Option<u8>>, Vec<Value>), String> {
+    let mut reached = Vec::with_capacity(bodies.len());
+    let mut held = Vec::new();
+    for body in bodies {
+        let route = crate::m2::decan_planet_route(body.placed.longitude_deg)?;
+        let centre = match route.planet_index {
+            Some(ruler) => crate::m2::planet_chakra_route(ruler)?.map(|r| r.chakra_index),
+            None => None,
+        };
+        if centre.is_none() {
+            let status = if route.planet_index.is_some() {
+                "ruler-reaches-no-centre"
+            } else {
+                route.status.as_str()
+            };
+            held.push(
+                json!({"body":body.placed.body, "decan_ref":route.decan_coordinate,
+                "status":status}),
+            );
+        }
+        reached.push(centre);
+    }
+    Ok((reached, held))
+}
+
+/// The tattva of a centre as the retained M2 tables hold it: the chakra row's
+/// `element_id` names a row of `M2_ELEMENTS`, which binds the tattva's
+/// coordinate and names the chakra back. None where the chakra row carries no
+/// element (255: Ajna, Sahasrara). The two tables must agree.
+fn centre_tattva(ordinal: u8) -> Result<Option<(String, String)>, String> {
+    let catalogue = crate::m2::catalogue();
+    let chakras = catalogue.table("chakra")?;
+    let elements = catalogue.table("element")?;
+    let column = |table: &crate::m2::RetainedTable, name: &str| {
+        table
+            .columns()
+            .iter()
+            .position(|c| c == name)
+            .ok_or_else(|| format!("M2 {} table lacks {name}", table.name()))
+    };
+    let element_id = chakras.row(usize::from(ordinal))?[column(chakras, "element_id")?];
+    if element_id == 255 {
+        return Ok(None);
+    }
+    let row = usize::try_from(element_id).map_err(|_| "M2 chakra element exceeds the table")?;
+    if elements.row(row)?[column(elements, "chakra_idx")?] != u64::from(ordinal) {
+        return Err(format!(
+            "M2 chakra {ordinal} and its element row {row} name different chakras"
+        ));
+    }
+    let reference = elements
+        .binding(row)
+        .ok_or("M2 element row has no coordinate")?;
+    let name = crate::m_tree::native_m_registry()
+        .resolve(reference)
+        .and_then(|n| n.names.first().cloned())
+        .ok_or("M2 element coordinate has no registry name")?;
+    Ok(Some((reference.to_string(), name)))
+}
+
 /// Compose the scene from an accepted sky snapshot and M1's (tick12, cycle).
 pub fn compose(
     snapshot: &Value,
@@ -589,7 +673,8 @@ pub fn compose(
             SceneBody { placed, voice }
         })
         .collect();
-    let centres: Vec<Value> = (1..=7)
+    let (decan_centres, decan_held) = decan_reception(&bodies)?;
+    let centres: Vec<Value> = (1..=7u8)
         .map(|i| {
             let centre = format!("#2-5-0/1-{i}");
             let receiving: Vec<&str> = bodies
@@ -597,11 +682,28 @@ pub fn compose(
                 .filter(|b| b.placed.resonant_chakra_ref.as_deref() == Some(centre.as_str()))
                 .map(|b| b.placed.body.as_str())
                 .collect();
-            json!({"centre_ref":centre, "anatomy":crate::m2_sky::node(&centre)
-                .and_then(|n| n.properties.get("c_2_anatomical_location").cloned()),
-                "receiving":receiving})
+            let decan: Vec<&str> = bodies
+                .iter()
+                .zip(&decan_centres)
+                .filter(|(_, reached)| **reached == Some(i))
+                .map(|(b, _)| b.placed.body.as_str())
+                .collect();
+            let map = |key: &str| {
+                crate::m2_sky::node(&centre).and_then(|n| n.properties.get(key).cloned())
+            };
+            let (element_ref, element) = match centre_tattva(i)? {
+                Some((reference, name)) => (json!(reference), json!(name)),
+                None => (Value::Null, Value::Null),
+            };
+            Ok(
+                json!({"centre_ref":centre, "ordinal":i, "name":map("c_1_name"),
+                "element":element, "element_ref":element_ref,
+                "mantra":map("l_2_mantra_signature"), "yantra":map("c_1_yantra_form"),
+                "anatomy":map("c_2_anatomical_location"),
+                "receiving":receiving, "decan":decan}),
+            )
         })
-        .collect();
+        .collect::<Result<_, String>>()?;
     let form = ring_codon_advance(tick12, cycle);
     Ok(json!({
         "schema": SCENE,
@@ -612,10 +714,12 @@ pub fn compose(
         "form": {"codon": form.address(), "advanced_by": "spanda_field::ring_codon_advance"},
         "bodies": bodies,
         "centres": centres,
+        "decan_held": decan_held,
         "tuning": tuning,
         "sources": {
             "sky_revision": crate::m2_sky::sky().map_content_sha256,
             "registry_revision": crate::m2_sky::sky().registry_revision,
+            "centres": centre_sources(),
         },
     }))
 }
@@ -654,6 +758,85 @@ mod tests {
             scene["form"]["codon"],
             json!(ring_codon_advance(3, 7).address())
         );
+    }
+
+    #[test]
+    fn each_centre_carries_what_the_map_and_the_m2_tables_hold() {
+        let scene = compose(&sky(), 3, 7, SceneTuning::default()).unwrap();
+        let centres = scene["centres"].as_array().unwrap();
+        let names: Vec<&str> = centres
+            .iter()
+            .map(|c| c["name"].as_str().unwrap())
+            .collect();
+        assert_eq!(
+            names,
+            [
+                "Mūlādhāra",
+                "Svādhiṣṭhāna",
+                "Maṇipūra",
+                "Anāhata",
+                "Viśuddha",
+                "Ājñā",
+                "Sahasrāra"
+            ]
+        );
+        let ordinals: Vec<u64> = centres
+            .iter()
+            .map(|c| c["ordinal"].as_u64().unwrap())
+            .collect();
+        assert_eq!(ordinals, [1, 2, 3, 4, 5, 6, 7]);
+        // The tattva of the retained M2 tables, by its registry name; the two
+        // highest centres carry none.
+        let elements: Vec<Value> = centres.iter().map(|c| c["element"].clone()).collect();
+        assert_eq!(
+            elements,
+            [
+                json!("Prithvi Tattva"),
+                json!("Jala Tattva"),
+                json!("Agni Tattva"),
+                json!("Vayu Tattva"),
+                json!("Akasha Tattva"),
+                Value::Null,
+                Value::Null
+            ]
+        );
+        assert_eq!(centres[0]["element_ref"], "#2-2-2-5-5");
+        // The map's own words, verbatim: no syllable is cut from the mantra
+        // and no petal count is read out of the yantra.
+        assert_eq!(centres[0]["mantra"], "LAM - earth element activation");
+        assert_eq!(
+            centres[6]["yantra"],
+            "Thousand-petaled lotus with pure light (infinite manifestation)"
+        );
+        assert!(centres.iter().all(|c| c.get("petals").is_none()));
+        // Every body reaches one centre through its decan ruler, or is held.
+        let bodies = scene["bodies"].as_array().unwrap();
+        let held = scene["decan_held"].as_array().unwrap();
+        let routed: Vec<&str> = centres
+            .iter()
+            .flat_map(|c| c["decan"].as_array().unwrap())
+            .map(|b| b.as_str().unwrap())
+            .collect();
+        assert_eq!(routed.len() + held.len(), bodies.len());
+        assert!(held.is_empty(), "the map resolves every decan ruler today");
+        // The route agrees with the decan rulers the placement read by its own
+        // path (the seed's decan, RULED_BY): the ruler resonates with the centre.
+        let planets = crate::m2::catalogue().table("planet").unwrap();
+        for (i, centre) in centres.iter().enumerate() {
+            for body in centre["decan"].as_array().unwrap() {
+                let placed = bodies.iter().find(|b| b["body"] == *body).unwrap();
+                let rulers = placed["decan_rulers"].as_array().unwrap();
+                assert_eq!(rulers.len(), 1, "{body}");
+                let index = (0..10)
+                    .find(|&p| planets.binding(p) == rulers[0].as_str())
+                    .unwrap();
+                let route = crate::m2::planet_chakra_route(index).unwrap().unwrap();
+                assert_eq!(usize::from(route.chakra_index), i + 1, "{body}");
+            }
+        }
+        assert_eq!(centres[0]["decan"], json!(["Mars"]));
+        assert_eq!(centres[6]["decan"], json!(["Saturn"]));
+        assert!(scene["sources"]["centres"]["element"].is_string());
     }
 
     #[test]
