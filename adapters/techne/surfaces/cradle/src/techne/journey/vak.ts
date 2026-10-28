@@ -28,7 +28,7 @@
  *       single traversal — one composition becoming a participant inside
  *       another needs the parent composition owner, not this surface;
  *   CPF participation regime governs agent operation (see ./agent): under
- *       `human-engaged` a Technē_3 proposal is marked for human acceptance;
+ *       `human-engaged` a Technē proposal is marked for human acceptance;
  *   CT  gates what material a composed scene proposal must carry (./compose).
  *
  * The binding lives in the local composition draft until routed; the routed

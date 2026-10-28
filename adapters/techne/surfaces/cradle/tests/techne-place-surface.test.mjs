@@ -71,7 +71,7 @@ try {
     assert.deepEqual(
       place.crossOpenTargets(absent).map((entry) => entry.instrument),
       ['project', 'canvas', 'timeline'],
-      'unavailable instruments carry their reason, they are not offered; the M0′ ground is available',
+      'unavailable instruments carry their reason, they are not offered; the Project ground is available',
     );
     assert.deepEqual(place.crossOpenTargets(null), []);
   });

@@ -1,7 +1,7 @@
 /**
  * The Relation Field's structured state and Expression-crossing gate (QL-MEF #215 §7–§8).
  *
- * `relationFieldState` is what `Aletheia_2 / Technē_2` reads: the active
+ * `relationFieldState` is what the situated Aletheia and Technē roles read: the active
  * projection, every relation with its verbatim standing and temporal
  * qualification, the time window, the derived-vs-native identity split, the
  * reading's own disclosed Actions and Agency role bindings — all carried

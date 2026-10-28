@@ -17,10 +17,11 @@ contract, the Vāk grammar and the conformance fixtures.
 
 The instruments carry no M′ numbers: the owner withdrew the four-and-two reading on 19 Oct 2026 (the lock's §0), and
 `ql.techne/v1` no longer carries `m_prime`. The reading's wire names (`4:2-deep`, `3:3-conjugate`) stay because the
-cradle's copy of the contract validates them. The per-instrument agent states here still name their roles by coordinate
-(`techne_1_binding` on the Canvas, `TECHNE_3_ROLE` on the Journey, `technae_0` on the Project, the Technē_2 timeline
-fixture); O:I's cradle copy does the same. Both are renamed together under the sync law below (O-I
-`desktop/cradle/docs/world-shell/wayfinder/tickets/T-AGENCY-the-agent-world-and-the-construction-chain.md` K9).
+cradle's copy of the contract validates them. The per-instrument agent states find their role by the instrument it
+operates, never by its coordinate: the Canvas's and the Project's `techne_binding`, the Journey's `JOURNEY_ROLE`
+(`aletheia/techne`) and `techne_operation`. This copy and O:I's cradle copy were renamed together (EpiLogos/O-I #753).
+A role's own `m_index` stays: it is the agent's coordinate, and the TB0 specimen's Technē_2 on the timeline is a lawful
+binding of it.
 
 ## Layout
 

@@ -1,7 +1,7 @@
 /**
  * Palace structured state for the situated agencies (L5 Technē, QL-MEF
  * #218 §9) — the structured description of the current composition that
- * Aletheia_5 / Technē_5 (and Epii, the canonical M5 Guardian) co-reference
+ * the situated Aletheia and Technē roles (and the Guardian anchoring them) co-reference
  * instead of scraping any DOM or reconstructing UI text.
  *
  * Laws carried here:

@@ -102,10 +102,10 @@ test('T9 ground — one real subject, one bounded whole, exact revisions', () =>
 });
 
 // ---------------------------------------------------------------------------
-// M0′ — Project / Wiki / Graph over the real ground
+// Project / Wiki / Graph over the real ground
 // ---------------------------------------------------------------------------
 
-test("M0′ — one bounded whole, three projections, same refs, inspectable provenance", () => {
+test("Project — one bounded whole, three projections, same refs, inspectable provenance", () => {
   const query = projectQuery(reading, { depth: 2 });
   assert.equal(query.focus_ref, T9_ISSUE, 'the focus is the reading’s own focus (the #220 subject)');
   const view = boundedView(reading, query);
@@ -183,10 +183,10 @@ test('session — the ground session opens on the real subject with the dual-rea
 });
 
 // ---------------------------------------------------------------------------
-// M1′ — Canvas: pure presentation vs one governed semantic proposal
+// Canvas: pure presentation vs one governed semantic proposal
 // ---------------------------------------------------------------------------
 
-test("M1′ — an authored arrangement leaves the reading byte-identical; a proposal routes through the reading's own Actions", async () => {
+test("Canvas — an authored arrangement leaves the reading byte-identical; a proposal routes through the reading's own Actions", async () => {
   // Pure presentation: an authored View over the real members (placements and
   // frames are view data, never semantics).
   const memberRefs = reading.whole.member_refs.slice(0, 8);
@@ -247,10 +247,10 @@ test("M1′ — an authored arrangement leaves the reading byte-identical; a pro
 });
 
 // ---------------------------------------------------------------------------
-// M2′ — Relation Field / Timeline over real relations
+// Relation Field / Timeline over real relations
 // ---------------------------------------------------------------------------
 
-test("M2′ — dated, trans-temporal, standing, occurrence-vs-receipt, and the crossing warrant", () => {
+test("Relation Field — dated, trans-temporal, standing, occurrence-vs-receipt, and the crossing warrant", () => {
   const field = relationField(reading);
   // One chronological relation: the lane's implemented-in, dated through its
   // own occurrence facet (the real head-commit instant).
@@ -286,7 +286,7 @@ test("M2′ — dated, trans-temporal, standing, occurrence-vs-receipt, and the 
 });
 
 // ---------------------------------------------------------------------------
-// M3′ — Journey / Scenes: compose from real refs, C′ sequence, exact return
+// Journey / Scenes: compose from real refs, C′ sequence, exact return
 // ---------------------------------------------------------------------------
 
 const SCENE_TITLES = [
@@ -310,7 +310,7 @@ function extendedReading() {
   return { ...reading, expressions: [...reading.expressions, ...scenes] };
 }
 
-test("M3′ — composition proposes real scenes; reorder-style composition copies nothing; the crossing returns exactly", () => {
+test("Journey — composition proposes real scenes; reorder-style composition copies nothing; the crossing returns exactly", () => {
   const { session } = openGroundSession();
   // Zero beats before composition: the honest absence.
   const empty = beats(reading);
@@ -386,10 +386,10 @@ test("M3′ — composition proposes real scenes; reorder-style composition copi
 });
 
 // ---------------------------------------------------------------------------
-// M4′ — World / Places: the carried occasion, honest depth chain
+// World / Places: the carried occasion, honest depth chain
 // ---------------------------------------------------------------------------
 
-test("M4′ — the real occasion carries; the scale ladder stands only where the ground stands", () => {
+test("World — the real occasion carries; the scale ladder stands only where the ground stands", () => {
   const occasion = carriedOccasion(reading.temporal);
   assert.ok(occasion.day_refs.includes(capture.day_read.data.day_ref), 'the real DAY rides the carried occasion');
   assert.ok(occasion.now_refs.length > 0, 'real NOW refs ride the carried occasion');
@@ -425,16 +425,16 @@ test("M4′ — the real occasion carries; the scale ladder stands only where th
 });
 
 // ---------------------------------------------------------------------------
-// M5′ — Palace / Integral Whole and the governed Return legs
+// Palace / Integral Whole and the governed Return legs
 // ---------------------------------------------------------------------------
 
-test("M5′ — the integral whole composes the real ref families; the Return routes governed; re-open lands on M0′", () => {
+test("Palace — the integral whole composes the real ref families; the Return routes governed; re-open lands on the Project", () => {
   const { session } = openGroundSession();
   const regions = palaceRegions(reading);
   assert.ok(regions.length >= 5, 'the palace composes the real regions of this ground');
   const regionKeys = regions.map((region) => region.key);
-  assert.ok(regionKeys.includes('ground'), 'the M0′ ground region exists');
-  assert.ok(regionKeys.includes('relation'), 'the M2′ relation region exists');
+  assert.ok(regionKeys.includes('ground'), 'the Project ground region exists');
+  assert.ok(regionKeys.includes('relation'), 'the relation region exists');
   const availability = palaceAvailability(reading);
   assert.equal(availability.available, true, 'the real ground composes an inhabitable whole');
   const elements = palaceElements(reading);
@@ -452,7 +452,7 @@ test("M5′ — the integral whole composes the real ref families; the Return ro
   assert.ok(route, 'the Return route composes from the real composition');
   assert.equal(route.action_ref, 'projectcentral.now.return');
   const reopen = returnCrossing(reading);
-  assert.deepEqual(reopen, { instrument: 'project' }, 'the 5→0 re-open is the M0′ ground instrument');
+  assert.deepEqual(reopen, { instrument: 'project' }, 'the 5→0 re-open is the Project ground instrument');
   assert.equal(session.instrument, 'project');
 });
 
@@ -499,7 +499,7 @@ test('continuity — project → timeline → expressions → palace → project
 // 5→0 — the renewed ground is the live one (runs after the executed Return)
 // ---------------------------------------------------------------------------
 
-test('5→0 — the executed Return is visible in the live project register (renewed M0′ ground)', async () => {
+test('5→0 — the executed Return is visible in the live project register (renewed Project ground)', async () => {
   const { execFile } = await import('node:child_process');
   const { promisify } = await import('node:util');
   const run = promisify(execFile);

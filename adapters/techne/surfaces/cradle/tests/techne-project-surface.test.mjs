@@ -30,7 +30,7 @@ test('the surface mints no stochastic identity and never fabricates a QL coordin
   assert.doesNotMatch(surface, /ql:structural|mef:lens:/, 'the surface must never mint a QL coordinate or lens — warranted readings only');
 });
 
-test('registerProjectSurface mounts the M0′ instrument through the Technē registry and unregisters cleanly', async () => {
+test('registerProjectSurface mounts the Project instrument through the Technē registry and unregisters cleanly', async () => {
   const cradle = fileURLToPath(new URL('..', import.meta.url));
   const server = await createServer({ root: cradle, server: { middlewareMode: true }, appType: 'custom', logLevel: 'error' });
   try {
@@ -39,7 +39,7 @@ test('registerProjectSurface mounts the M0′ instrument through the Technē reg
     assert.equal(registry.techneSurface('project'), undefined, 'nothing is mounted before the lane registers');
     const stop = projectModule.registerProjectSurface();
     const surface = registry.techneSurface('project');
-    assert.ok(surface, 'the M0′ instrument is mounted');
+    assert.ok(surface, 'the Project instrument is mounted');
     assert.throws(() => projectModule.registerProjectSurface(), /already registered/, 'one surface per instrument');
     stop();
     assert.equal(registry.techneSurface('project'), undefined, 'unregistration restores the honest placeholder');
@@ -48,7 +48,7 @@ test('registerProjectSurface mounts the M0′ instrument through the Technē reg
   }
 });
 
-test('the whole M0′ proving leg over the TB0 specimen: ground → bounded view → selection → cross-open → routed action', async () => {
+test('the whole Project proving leg over the TB0 specimen: ground → bounded view → selection → cross-open → routed action', async () => {
   const cradle = fileURLToPath(new URL('..', import.meta.url));
   const server = await createServer({ root: cradle, server: { middlewareMode: true }, appType: 'custom', logLevel: 'error' });
   try {
@@ -95,7 +95,7 @@ test('the whole M0′ proving leg over the TB0 specimen: ground → bounded view
       assert.equal(moved.session_ref, session.session_ref);
       assert.equal(contract.validateSession(moved).valid, true);
 
-      // Cross-open into M1′ Canvas and back — one session, two hops, same subject.
+      // Cross-open into the Canvas and back — one session, two hops, same subject.
       const canvasSession = store.openInInstrument('canvas');
       assert.equal(canvasSession.application_cut, '4:2-deep');
       const backSession = store.openInInstrument('project');
@@ -108,7 +108,7 @@ test('the whole M0′ proving leg over the TB0 specimen: ground → bounded view
       assert.equal(expressionSession.application_cut, '3:3-conjugate');
       assert.equal(expressionSession.subject_ref, session.subject_ref, 'cut crossing preserves the subject');
 
-      // Technē_0 path: locate → traverse → route a disclosed action → owner receipt.
+      // The Technē path: locate → traverse → route a disclosed action → owner receipt.
       const state = agency.technaeState(reading, backSession, view);
       const located = agency.agencyLocate(state, reading);
       assert.equal(located.subject_ref, specimen.subject.subject_ref);

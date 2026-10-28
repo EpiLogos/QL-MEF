@@ -4,7 +4,7 @@
  * entry, and the bounded local-whole instrument (LIST / TREE / GRAPH over a
  * single subject/selection spine, semantic zoom, exact provenance
  * inspection, cross-opening, and the situated-Agency state through which
- * Aletheia_0/Technē_0 works the same native refs).
+ * the situated Aletheia and Technē roles work the same native refs).
  *
  * Laws kept here:
  *   - the ground owns no graph, no store and no identity: every node, edge,
@@ -436,19 +436,19 @@ export function ProjectGround({ session, selection, reading }: ProjectSurfacePro
       </section>
 
       <section className="project-section" aria-label="Situated agency state">
-        <h3 className="project-heading">Aletheia_0 / Technē_0 state</h3>
+        <h3 className="project-heading">Aletheia / Technē state</h3>
         <p className="project-meta">
           cut {agencyState.application_cut} · {agencyState.view.node_count} nodes in view · selection {agencyState.selection_ref ? refTail(agencyState.selection_ref) : "none"}
         </p>
-        {agencyState.technae_0 ? (
+        {agencyState.techne_binding ? (
           <p className="project-meta">
-            Technē_0 bound — instrument {agencyState.technae_0.instrument ?? "undisclosed"}
-            {agencyState.technae_0.guardian_ref ? ` · anchored by ${agencyState.technae_0.guardian_ref}` : ""}
-            {agencyState.technae_0.agent_session_ref ? ` · session ${agencyState.technae_0.agent_session_ref}` : ""}
-            {agencyState.technae_0.authority ? ` · ${agencyState.technae_0.authority}` : ""}
+            {agencyState.techne_binding.role === "techne" ? "Technē" : "Aletheia"}_{agencyState.techne_binding.m_index} bound — instrument {agencyState.techne_binding.instrument ?? "undisclosed"}
+            {agencyState.techne_binding.guardian_ref ? ` · anchored by ${agencyState.techne_binding.guardian_ref}` : ""}
+            {agencyState.techne_binding.agent_session_ref ? ` · session ${agencyState.techne_binding.agent_session_ref}` : ""}
+            {agencyState.techne_binding.authority ? ` · ${agencyState.techne_binding.authority}` : ""}
           </p>
         ) : (
-          <p className="project-meta">Technē_0 absent — {agencyState.technae_0_absence_reason}</p>
+          <p className="project-meta">No role operates the Project — {agencyState.techne_absence_reason}</p>
         )}
         <div className="project-open-row">
           {agencyState.actions.map((action) => (

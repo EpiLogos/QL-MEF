@@ -13,7 +13,7 @@ const tb0 = JSON.parse(
   await readFile(new URL('../../../../../fixtures/techne/tb0-connective-base-v1.json', 'file://' + here), 'utf8'),
 );
 
-// --- The M1′ proving walk, fixture-backed -----------------------------------
+// --- The Canvas proving walk, fixture-backed -------------------------------
 
 test('walk: open the TB0 whole into Canvas with exact refs, basis and session co-reference', () => {
   const store = createDisclosureSessionStore();
@@ -54,7 +54,7 @@ test('walk: rearrange/group/frame without semantic mutation — the reading and 
   assert.equal(tb0.whole.relations.length, 4, 'relation set untouched by framing');
 });
 
-test('walk: cross-open to M2′ and back — subject, source basis and selection preserved', () => {
+test('walk: cross-open to the Relation Field and back — subject, source basis and selection preserved', () => {
   const store = createDisclosureSessionStore();
   const open = store.setSelection({
     selection_ref: `ql.techne:selection:${tb0.subject.subject_ref}:${tb0.whole.member_refs[0]}`,
@@ -78,7 +78,7 @@ test('walk: cross-open to M2′ and back — subject, source basis and selection
   assert.equal(coReferenced(open, back), true);
 });
 
-test('walk: M1′ cross-cut — the 3:3 Expression reading composes through the lane’s public entry points', async () => {
+test('walk: Canvas cross-cut — the 3:3 Expression reading composes through the lane’s public entry points', async () => {
   const store = createDisclosureSessionStore();
   const session = store.setSelection({
     selection_ref: `ql.techne:selection:${tb0.subject.subject_ref}`,
