@@ -16,14 +16,9 @@ pub const LENSES: [&str; 12] = [
 pub type Matrix = [[f64; 6]; 12];
 
 const CELL_MEANINGS: [[&str; 6]; 12] = [
-    [
-        "Why / presupposition",
-        "What",
-        "How",
-        "Whom / Which / When",
-        "Where / When / Why-four",
-        "Why-so / Why-not / analogia",
-    ],
+    // L0 is read from the registry, which carries the owner's ruled form
+    // (EpiLogos/O-I #707); the draft's shifted L0 row is superseded.
+    crate::lens_definition(crate::LensId::L0).sublens_labels(),
     [
         "Svatantrya",
         "Material cause",
@@ -787,5 +782,21 @@ mod tests {
         );
         matrix[8][4] = f64::NAN;
         assert!(elemental_from_matrix(&matrix, &policy).is_err());
+    }
+
+    #[test]
+    fn l0_cell_meanings_are_the_ruled_questions() {
+        // The owner's L0 form (EpiLogos/O-I #707), read from the registry.
+        assert_eq!(
+            CELL_MEANINGS[0],
+            [
+                "Why",
+                "What",
+                "How",
+                "Who/Which/Whereby",
+                "Where/When/Whither",
+                "Why-for/Why-not",
+            ]
+        );
     }
 }
