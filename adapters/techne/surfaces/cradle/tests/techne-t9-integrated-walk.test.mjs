@@ -452,7 +452,7 @@ test("Palace — the integral whole composes the real ref families; the Return r
   assert.ok(route, 'the Return route composes from the real composition');
   assert.equal(route.action_ref, 'projectcentral.now.return');
   const reopen = returnCrossing(reading);
-  assert.deepEqual(reopen, { instrument: 'project' }, 'the 5→0 re-open is the Project ground instrument');
+  assert.deepEqual(reopen, { instrument: 'project' }, 'the return to the ground re-opens the Project');
   assert.equal(session.instrument, 'project');
 });
 
@@ -496,10 +496,10 @@ test('continuity — project → timeline → expressions → palace → project
 });
 
 // ---------------------------------------------------------------------------
-// 5→0 — the renewed ground is the live one (runs after the executed Return)
+// The return to the ground — the renewed ground is the live one (runs after the executed Return)
 // ---------------------------------------------------------------------------
 
-test('5→0 — the executed Return is visible in the live project register (renewed Project ground)', async () => {
+test('the return to the ground — the executed Return is visible in the live project register (renewed Project ground)', async () => {
   const { execFile } = await import('node:child_process');
   const { promisify } = await import('node:util');
   const run = promisify(execFile);
