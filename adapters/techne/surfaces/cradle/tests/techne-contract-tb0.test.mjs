@@ -60,8 +60,11 @@ test('the situated-Agency role law is enforced: readings that break it are refus
   assert.match(withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'expressions' }).errors.join(' '), /operates a deep instrument, not the Expression reading/);
   const unbound = withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'timeline' });
   assert.equal(unbound.valid, true, unbound.errors.join('; '));
-  // The field has M′0–M′5 only.
-  assert.match(withRole({ role: 'guardian', m_index: 6 }).errors.join(' '), /M′0–M′5 only/);
+  // The field has six app layers (O-I DLW §25.1): a coordinate past them is named in the app layers' names, never as a numbered
+  // instrument (O-I #801).
+  const beyond = withRole({ role: 'guardian', m_index: 6 }).errors.join(' ');
+  assert.match(beyond, /M0′ the ground, M1′ to M3′ Live, M4′ Expressions, M5′ Technē/);
+  assert.doesNotMatch(beyond, /M′[0-5]/);
   // A lawful Technē binding on the deep project instrument passes.
   const lawful = withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'project', guardian_ref: 'actuation:agent:anuttara' });
   assert.equal(lawful.valid, true, lawful.errors.join('; '));

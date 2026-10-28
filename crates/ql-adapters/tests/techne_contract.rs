@@ -674,6 +674,29 @@ fn agency_role_law_rejects_cross_reading_bindings() {
 }
 
 #[test]
+fn an_agency_role_out_of_the_field_is_refused_in_the_app_layers_names() {
+    // O-I DLW §25.1: the six are the app layers of the six M subsystems — M0′ the ground, M1′ to
+    // M3′ Live, M4′ Expressions, M5′ Technē. A coordinate past them is named as no app layer, never
+    // as a numbered instrument (O-I #801).
+    let mut reading = parse(TB0_CONNECTIVE_BASE);
+    let mut beyond = reading.agency[0].clone();
+    beyond.m_index = 6;
+    reading.agency[0] = beyond;
+    let refused = reading
+        .validate()
+        .expect_err("M6′ is no app layer")
+        .to_string();
+    assert!(
+        refused.contains("M0′ the ground, M1′ to M3′ Live, M4′ Expressions, M5′ Technē"),
+        "{refused}"
+    );
+    assert!(
+        !refused.contains("M′0") && !refused.contains("M′5"),
+        "{refused}"
+    );
+}
+
+#[test]
 fn unavailable_application_cut_requires_a_reason() {
     let mut reading = parse(TB0_CONNECTIVE_BASE);
     reading.disclosure.application_cuts[0].available = false;

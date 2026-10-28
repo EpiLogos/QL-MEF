@@ -38,7 +38,7 @@ test('the mirror stays strict: unknown fields and bad agency bindings are still 
     ...structuredClone(specimen),
     agency: [{ role: 'techne', m_index: 7 }],
   };
-  assert.ok(!validateReading(badIndex).valid, 'm_index stays bounded 0-5 — the field has M′0–M′5 only');
+  assert.ok(!validateReading(badIndex).valid, 'm_index stays bounded 0-5 — the field has six app layers, M0′ to M5′');
 });
 
 test('the TB0 cut law: the application cut agrees with the instrument, in type and validator', () => {
