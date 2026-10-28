@@ -44,9 +44,9 @@
 | L0.0 | Why (./?) — Insofar as — presuppositional frame |
 | L0.1 | What (./?) — definitional question |
 | L0.2 | How (./?) — operational question |
-| L0.3 | Whom/Which/When (./?) — pattern-identifying question |
-| L0.4 | Where/When/Why-for — contextual question (→ lemniscate) |
-| L0.5 | Why-so/Why-not (./?) — pros hen homonymy, analogia; question questioning itself |
+| L0.3 | Who/Which/Whereby (./?) — pattern-identifying question |
+| L0.4 | Where/When/Whither — contextual question (→ lemniscate) |
+| L0.5 | Why-for/Why-not (./?) — pros hen homonymy, analogia; question questioning itself |
 
 #### L1 — Causal (Aristotle / Icchā Śakti / Schopenhauer, Earth)
 | Sub | Name | Domain |
@@ -173,6 +173,7 @@
 | 2026-08-09 | madhyamā/briefing §8.3 | "That is L3 processual listing" | Replaced with "pre-lens enumeration (the data layer), not a lens register and not a reading." Corrected in skill. |
 | 2026-08-09 | Assessment reply | "L3 facts" used for plain sky data | Category error — data layer is pre-lens. Corrected here. |
 | 2026-08-09 | AGENTS.md refraction table | P5 via L2' listed "Mineral" | Canonical name is Salt (L2-5'), "formerly tabulated as Mineral." Identity signature "Mineral/lapis" carries both names — lapis IS the fixed body. Cell updated to "Salt (Mineral)." |
+| 2026-10-28 | §3 L0 rows (this register, its QL copy, `ql-foundations`, the ql-mef registry) | L0.3–L0.5 taught a shifted form: Whom/Which/When · Where/When/Why-for · Why-so/Why-not | Owner's ruling (EpiLogos/O-I #707): L0.3 Who/Which/Whereby · L0.4 Where/When/Whither · L0.5 Why-for/Why-not — the form of the Quaternal Tarot protocol and the musical derivation. |
 
 ## 5. Notes
 

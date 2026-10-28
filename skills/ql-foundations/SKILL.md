@@ -37,9 +37,9 @@ Raw positions as the six questions; L0.5 is the question questioning itself (Pro
 | L0.0 | Why (./?) — Insofar as | Presuppositional frame; established understanding needed to begin |
 | L0.1 | What (./?) | Definitional question |
 | L0.2 | How (./?) | Operational question |
-| L0.3 | Whom/Which/When (./?) | Pattern-identifying question |
-| L0.4 | Where/When/Why-fo(u)r | Contextual question (points to the lemniscate) |
-| L0.5 | Why-so/Why-not (./?) | Pros Hen Homonymy — Analogia; question questioning itself |
+| L0.3 | Who/Which/Whereby (./?) | Pattern-identifying question |
+| L0.4 | Where/When/Whither | Contextual question (points to the lemniscate) |
+| L0.5 | Why-for/Why-not (./?) | Pros Hen Homonymy — Analogia; question questioning itself |
 
 ## L0′ — Archetypal-Numerical (the numbers)
 

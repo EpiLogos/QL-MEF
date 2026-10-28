@@ -9,9 +9,9 @@ pub const L0: LensDefinition = LensDefinition::new(
         "Why",
         "What",
         "How",
-        "Whom/Which/When",
-        "Where/Why-for",
-        "Why-so/Why-not",
+        "Who/Which/Whereby",
+        "Where/When/Whither",
+        "Why-for/Why-not",
     ],
 );
 
