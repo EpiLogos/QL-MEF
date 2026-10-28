@@ -9,6 +9,7 @@
 #include <array>
 #include <cmath>
 #include <complex>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
@@ -59,6 +60,9 @@ struct Strike {
     std::string mode_ref;
     Complex amplitude_metres;
 };
+// The most played acts one continuation holds admitted but not yet landed. A player schedules ahead by
+// its presentation lookahead, not a whole performance; the bound keeps the pending set finite.
+inline constexpr std::size_t max_pending_strikes = 256;
 inline bool finite(Complex x) { return std::isfinite(x.real()) && std::isfinite(x.imag()); }
 inline void require(bool condition, const char *message) {
     if (!condition) throw std::invalid_argument(message);
@@ -80,10 +84,18 @@ inline void reference(const std::string &s) {
 }
 class ContinuousField {
     struct Prepared { Mode input; Complex step, forcing, state; };
+    // A strike admitted for a later sample: its impulses by prepared mode index, landing as the cursor
+    // reaches `at`. Kept in sample order (admission order within a sample); [0, landed_) have landed.
+    struct Pending { std::uint64_t at; std::vector<std::pair<std::size_t, Complex>> impulses; };
     ContinuationInput source_;
     std::vector<Prepared> modes_;
+    std::vector<Pending> pending_;
+    std::size_t landed_ = 0;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
+    void land(const Pending &act) noexcept {
+        for (const auto &[mode, impulse] : act.impulses) modes_[mode].state += impulse;
+    }
     Prepared prepare(const Mode &m) const {
         reference(m.reference); reference(m.source_coordinate);
         auto node = ql_m_live_resolve(m.source_coordinate.c_str());
@@ -113,6 +125,7 @@ public:
         require(!source_.samples.empty() && source_.samples.size() <= 1048576 &&
                 source_.samples.size() <= 16777216 / source_.modes.size(), "shape-function budget exceeded");
         modes_.reserve(source_.modes.size());
+        pending_.reserve(max_pending_strikes);
         for (std::size_t i = 0; i < source_.modes.size(); ++i) {
             for (std::size_t j = 0; j < i; ++j)
                 require(source_.modes[i].reference != source_.modes[j].reference, "duplicate mode identity");
@@ -187,7 +200,16 @@ public:
     // generation. Validation and the render-budget preflight complete before
     // any state moves, so a refused act leaves the body exactly as it stood.
     // The clock, sample basis, mode identities and z are untouched.
-    void strike(const std::vector<Strike> &strikes) {
+    void strike(const std::vector<Strike> &strikes) { strike(strikes, elapsed_); }
+    // The same act at a sample of the continuation (O-I #809): admitted now, one
+    // generation, and landed by render_audio exactly before sample
+    // `at_samples_elapsed` is rendered (at the cursor, it lands now). A sample
+    // behind the cursor is sound already rendered and is refused, never moved.
+    void strike(const std::vector<Strike> &strikes, std::uint64_t at_samples_elapsed) {
+        require(at_samples_elapsed >= elapsed_,
+                "a strike's sample is behind the continuation cursor: that sound is already rendered");
+        require(at_samples_elapsed == elapsed_ || pending_.size() - landed_ < max_pending_strikes,
+                "too many strikes wait for their samples");
         require(!strikes.empty() && strikes.size() <= modes_.size(), "invalid strike count");
         std::vector<Prepared *> struck;
         struck.reserve(strikes.size());
@@ -205,6 +227,20 @@ public:
             require(found != modes_.end(), "strike names no prepared mode");
             struck.push_back(&*found);
         }
+        if (at_samples_elapsed > elapsed_) {
+            // Allocation completes before the commit; render_audio only reads it.
+            Pending act{at_samples_elapsed, {}};
+            act.impulses.reserve(strikes.size());
+            for (std::size_t i = 0; i < strikes.size(); ++i)
+                act.impulses.emplace_back(std::size_t(struck[i] - modes_.data()), strikes[i].amplitude_metres);
+            pending_.erase(pending_.begin(), pending_.begin() + std::ptrdiff_t(landed_));
+            landed_ = 0;
+            auto place = std::upper_bound(pending_.begin(), pending_.end(), at_samples_elapsed,
+                                          [](std::uint64_t at, const Pending &p) { return at < p.at; });
+            pending_.insert(place, std::move(act));
+            ++source_.generation;
+            return;
+        }
         for (std::size_t i = 0; i < strikes.size(); ++i) {
             const double bound = (std::abs(struck[i]->state) + std::abs(strikes[i].amplitude_metres)) * 1.000000001;
             require(std::isfinite(bound) && bound <= 1e12, "strike exceeds the render state budget");
@@ -212,6 +248,8 @@ public:
         for (std::size_t i = 0; i < strikes.size(); ++i) struck[i]->state += strikes[i].amplitude_metres;
         ++source_.generation;
     }
+    // Strikes admitted for a later sample that have not landed yet.
+    std::size_t pending_strikes() const noexcept { return pending_.size() - landed_; }
     // One buffer is one bounded block. Validation/preflight precedes mutation.
     // Audio gain is explicit linear output gain, not a claim of sound pressure.
     // Muting affects output only. Host must not integrate again per visual view.
@@ -227,11 +265,20 @@ public:
         // Conservative finite-state budget, checked before touching either
         // state or output. Covers cumulative forcing and roundoff growth without
         // pretending an unbounded integration is numerically safe forever.
+        // Strikes landing in this block may all reach any one mode.
+        const std::uint64_t end = elapsed_ + frames;
+        double landing = 0;
+        for (std::size_t i = landed_; i < pending_.size() && pending_[i].at <= end; ++i)
+            for (const auto &impulse : pending_[i].impulses) landing += std::abs(impulse.second);
         for (const auto &m : modes_) {
-            const double bound = (std::abs(m.state) + frames * std::abs(m.forcing)) * 1.000000001;
+            const double bound = (std::abs(m.state) + frames * std::abs(m.forcing) + landing) * 1.000000001;
             if (!std::isfinite(bound) || bound > 1e12) return false;
         }
+        // A pending strike lands exactly before its sample is rendered; one at
+        // the block's end lands as the cursor reaches it.
+        std::size_t due = landed_;
         for (std::size_t sample = 0; sample < frames; ++sample) {
+            while (due < pending_.size() && pending_[due].at == elapsed_ + sample) land(pending_[due++]);
             double value = 0;
             for (auto &m : modes_) {
                 m.state = m.step * m.state + m.forcing;
@@ -240,7 +287,9 @@ public:
             last_ = value;
             output[sample] = muted ? 0.0f : static_cast<float>(value);
         }
-        elapsed_ += frames; source_.clock = next; driver_remainder_ = total % denominator;
+        while (due < pending_.size() && pending_[due].at == end) land(pending_[due++]);
+        landed_ = due;
+        elapsed_ = end; source_.clock = next; driver_remainder_ = total % denominator;
         return true;
     }
     // Target displacement, NOT resident GPU position/velocity integration.

@@ -1053,6 +1053,17 @@ impl SceneInstrument {
     /// metres within the declared material policy (the same 1.0 m cap as
     /// `strike_metres`). Refusals never touch the native state.
     pub fn strike(&mut self, strikes: &[super::StrikeInput]) -> Result<Value, String> {
+        self.strike_when(strikes, None)
+    }
+
+    /// The same played strike landing at sample `at_samples_elapsed` of the
+    /// standing continuation (O-I #809): admitted now, landed by the native
+    /// render exactly before that sample. `None` strikes now.
+    pub fn strike_when(
+        &mut self,
+        strikes: &[super::StrikeInput],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<Value, String> {
         if strikes.is_empty() {
             return Err("a played strike must name at least one voice".into());
         }
@@ -1078,7 +1089,7 @@ impl SceneInstrument {
                 return Err("played strike amplitude must be finite and within the declared 1.0 metre material policy".into());
             }
         }
-        self.session.strike_field(strikes)
+        self.session.strike_field_when(strikes, at_samples_elapsed)
     }
 
     /// Played excitation of the torus surface: the performer strikes the body at
@@ -1090,9 +1101,25 @@ impl SceneInstrument {
     /// determinant, like [`Self::strike`]; the outcome carries the field the
     /// owner acknowledged and the `ql.strike-at/v1` receipt naming the points.
     pub fn strike_at(&mut self, points: &[StrikeAtInput]) -> Result<StrikeAtOutcome, String> {
+        self.strike_at_when(points, None)
+    }
+
+    /// The same strike at points landing at sample `at_samples_elapsed` of the
+    /// standing continuation (O-I #809); `None` strikes now. The receipt names
+    /// the sample the act lands at: the one given, or the cursor it struck at.
+    pub fn strike_at_when(
+        &mut self,
+        points: &[StrikeAtInput],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<StrikeAtOutcome, String> {
         let impulses = self.shape.strike_at(points)?;
-        let receipt = self.shape.strike_at_receipt(points, &impulses);
-        let field = self.strike(&impulses)?;
+        let mut receipt = self.shape.strike_at_receipt(points, &impulses);
+        let lands = match at_samples_elapsed {
+            Some(at) => json!(at.to_string()),
+            None => self.session.last_field()["samples_elapsed"].clone(),
+        };
+        let field = self.strike_when(&impulses, at_samples_elapsed)?;
+        receipt["at_samples_elapsed"] = lands;
         Ok(StrikeAtOutcome { field, receipt })
     }
 

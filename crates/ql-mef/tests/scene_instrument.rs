@@ -854,11 +854,7 @@ fn a_strike_at_through_the_host_names_its_points_and_is_cursor_exact() {
 }
 
 /// One request to `host` at its own last acknowledged cursor.
-fn exchange(
-    host: &mut ql_mef::continuous::host::FieldHost,
-    id: u64,
-    command: Value,
-) -> Value {
+fn exchange(host: &mut ql_mef::continuous::host::FieldHost, id: u64, command: Value) -> Value {
     use ql_mef::continuous::host::{HOST_REQUEST, HostRequest};
     let ready = host.ready();
     let field = &ready["field"];
@@ -920,7 +916,11 @@ fn a_strike_at_a_sample_lands_at_that_sample_through_the_host() {
 
     assert_eq!(landed.len(), 4096);
     assert_eq!(landed, reference, "the act landed at exactly its sample");
-    assert_eq!(landed[..1000], unstruck[..1000], "no sample before it moved");
+    assert_eq!(
+        landed[..1000],
+        unstruck[..1000],
+        "no sample before it moved"
+    );
     assert_ne!(landed[1000], unstruck[1000], "the struck sample sounds");
     assert_eq!(
         scheduled.ready()["field"]["amplitudes_metres"],
@@ -947,7 +947,10 @@ fn a_strike_at_a_sample_lands_at_that_sample_through_the_host() {
             "amplitude":[0.1,0.0]}],"at_samples_elapsed":"5119"}),
     );
     assert!(
-        behind["error"].as_str().unwrap().contains("already rendered"),
+        behind["error"]
+            .as_str()
+            .unwrap()
+            .contains("already rendered"),
         "{}",
         behind["error"]
     );
