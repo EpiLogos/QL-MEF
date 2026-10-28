@@ -41259,7 +41259,7 @@
     },
     {
       "coordinate": "L0-3",
-      "identity": "Whom / Which / When",
+      "identity": "Who / Which / Whereby",
       "uuid": "322b40eb-000b-47fa-bd5c-0d4b3c44ddb6",
       "labels": [
         "Bimba",
@@ -41268,11 +41268,11 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-3",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-3/properties",
       "property_count": 19,
-      "properties_sha256": "c37ce4c74f946a0b930ad9847befea5e2fef04e85b2870b41761a268f1760ddf",
+      "properties_sha256": "6d5658516df7d1a2f7010f50eeaeeef11dd5ffc974dceda49bd522112fb6bb00",
       "source_alias_revision_properties": {
         "coordinate": "L0-3",
         "coordinate_axis": "direct",
@@ -41720,7 +41720,7 @@
     },
     {
       "coordinate": "L0-4",
-      "identity": "Where / When / Why-four",
+      "identity": "Where / When / Whither",
       "uuid": "b669e4f3-fc72-447f-946d-020027643080",
       "labels": [
         "Bimba",
@@ -41729,11 +41729,11 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-4",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-4/properties",
       "property_count": 19,
-      "properties_sha256": "144af76d7a2c564e0e5d1290be967847ecc9e0017e2413869e22294c21591d25",
+      "properties_sha256": "8374024d3ade3c8276c40f8feb4f6ac52b19b140759f00b2c894ae98f7387a8d",
       "source_alias_revision_properties": {
         "coordinate": "L0-4",
         "coordinate_axis": "direct",
@@ -42202,7 +42202,7 @@
     },
     {
       "coordinate": "L0-5",
-      "identity": "Why-so / Why-not",
+      "identity": "Why-for / Why-not",
       "uuid": "769c4489-c14f-40a5-a222-470ece213707",
       "labels": [
         "Bimba",
@@ -42211,11 +42211,11 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "907c46bc8a65b47e12f14aa4d8b444263dc956a1a7b4b6d038e57223d6073288",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-5",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-5/properties",
       "property_count": 19,
-      "properties_sha256": "b0f59ad30963d5af20f53ee5de90d37e2458cb900c503eccd5ccf8a9c4316e92",
+      "properties_sha256": "a8ef5b993f50f93557fff9f9bc55867c6c70f7f1b467c1bc34ba01c4e67e1169",
       "source_alias_revision_properties": {
         "coordinate": "L0-5",
         "coordinate_axis": "direct",

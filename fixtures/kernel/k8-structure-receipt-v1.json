@@ -10,7 +10,7 @@
     "sha256": "4ae05ccd80d46a0f045388f7db21de337bd2fe1e8cc89aa42beeee7cdc8f8889",
     "standing": "owner-ratified-structural-promotion"
   },
-  "base_registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+  "base_registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
   "centre": {
     "id": "f0c7dcb383d337ff",
     "ref": "#3-5-5/0"
@@ -49,8 +49,8 @@
   "preserved_nodes": 1891,
   "preserved_relations": 10919,
   "promotion_id": "K8-APERTURES-CENTRE-2026-09-11",
-  "promotion_sha256": "84deaf1a845d92b9c208a97b320e2b135bc56e650ccc654dd4ce66cd875ea6fc",
-  "registry_revision": "64a827ef8a54933d20b4db9c1d458f9d736c86cef28a5797d955ddc1a89403d9",
+  "promotion_sha256": "3a254cd5b0ef557873927d42483e38b4e98e2c9f36235ce060cf89c2177444c8",
+  "registry_revision": "93fc759229c75b556e1f8fd5db1c0a08a2d29e5bd92e629bf345689a664c10c7",
   "relation_count": 10997,
   "schema": "ql.k8-structural-receipt/v1"
 }

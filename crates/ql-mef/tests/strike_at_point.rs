@@ -69,7 +69,7 @@ fn amplitudes(strikes: &[StrikeInput]) -> Vec<[f64; 2]> {
 
 fn sky() -> Value {
     serde_json::from_str(include_str!(
-        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json"
     ))
     .unwrap()
 }

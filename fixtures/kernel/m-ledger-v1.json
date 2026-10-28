@@ -1,10 +1,10 @@
 {
   "schema": "ql.m-ledger/v1",
-  "ledger_revision": "2c358d1b494285f651f45e2a71e699a9d5f33bec461cfb837d622646ef438f30",
+  "ledger_revision": "db53d1390ffe62651ebb1399ff70861d78ab0ef6aca6de6b7896c184d8960aa9",
   "registry": {
     "path": "fixtures/kernel/m-tree-v1.json",
-    "sha256": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82",
-    "revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86"
+    "sha256": "aaee86426cb437058ba2484ab8564b1b68e02547b5f5dbb42d0a0e6413140e6f",
+    "revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0"
   },
   "matrices": [
     {
@@ -110174,9 +110174,9 @@
       "kind": "source",
       "artifact": {
         "path": "fixtures/kernel/m-tree-v1.json",
-        "sha256": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82"
+        "sha256": "aaee86426cb437058ba2484ab8564b1b68e02547b5f5dbb42d0a0e6413140e6f"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "ql.m-index:M",
         "ql.m-index:M0",
@@ -110201,9 +110201,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/m3-source-audit.json",
-        "sha256": "48ef5c4b8414fbc354d5dc70ff95d9e1ed69438321e32697e4f84c58c561da64"
+        "sha256": "1c58bc4ef2a9caf4b26e8758d699ff5b29d6b326d33f228aaca93045a6304fa2"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k7-source-codon-charge-0573da4e542fca0f",
         "k7-source-codon-charge-079586ea15ef40f1",
@@ -110345,7 +110345,7 @@
         "path": "docs/KERNEL-M1-ENGINE-CONTRACT.md",
         "sha256": "254249f065f7d857deb57b6e6687f881bfa7abffc2aad20e03bab4374d5ce848"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k4-live-spelling-composite-m1-(1, 3, 4, 4, 0)",
         "k4-live-spelling-composite-m1-1-3-4-4-0",
@@ -110367,9 +110367,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
-        "sha256": "b86dfc8571495036abbe51115eb22862a955a9a2fd7c756aa749586eeceeeb78"
+        "sha256": "5d40e1d56aef607751ac3b9faff9bd1045bb7c798b0a42ac1e57bd3d5986f50c"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k-move-m1:retired-lazy-ananda-core",
         "k5-m1:difference-a-dr",
@@ -110392,9 +110392,9 @@
       "kind": "source",
       "artifact": {
         "path": "fixtures/kernel/m-tree-v1.json",
-        "sha256": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82"
+        "sha256": "aaee86426cb437058ba2484ab8564b1b68e02547b5f5dbb42d0a0e6413140e6f"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k4-live-spelling-composite-m0-(0, 4, 4, 0)",
         "k4-live-spelling-composite-m0-0-4-4-0"
@@ -110414,9 +110414,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/source-requalification/native-rust-c-replay.log",
-        "sha256": "b86dfc8571495036abbe51115eb22862a955a9a2fd7c756aa749586eeceeeb78"
+        "sha256": "5d40e1d56aef607751ac3b9faff9bd1045bb7c798b0a42ac1e57bd3d5986f50c"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k4-live-spelling-composite-m0-(0, 4, 4, 0)",
         "k4-live-spelling-composite-m0-0-4-4-0"
@@ -110438,7 +110438,7 @@
         "path": "vendor/epi-kernel/reference/src/m1.c",
         "sha256": "bc94ef302ec5de4d56cc90b86e79a6a2a4aeb984cc8e5d91625fcca146f0de8a"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k-move-m1:retired-lazy-ananda-core"
       ],
@@ -110456,9 +110456,9 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m2-finite-proof-v1.json",
-        "sha256": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2"
+        "sha256": "c97d47b5f34a8be9f558b6080bec4a4ddd2a0a442fbda96875a30e06c4f69b69"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k6-m2:table-carrier",
         "k6-m2:table-mef",
@@ -110543,9 +110543,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/m2-field-census-summary-v1.json",
-        "sha256": "554c2b2c73ab92ed57fa53736f0dbea7706a7fe76852f5c9737f850640df6127"
+        "sha256": "edea80000665469064995f58702cc4b0310d1f2d18477ec4c77ac7ad641cee48"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k6-m2:table-carrier",
         "k6-m2:table-mef",
@@ -110627,9 +110627,9 @@
       "kind": "test-receipt",
       "artifact": {
         "path": "fixtures/kernel/m3-finite-proof-v1.json",
-        "sha256": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539"
+        "sha256": "a9747445a05a22e0002fac79a0e6335d4cc376e020a4bee1fa6564342fcca04c"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k7-m3:source-amino-or-translation-signal",
         "k7-m3:source-clock-backbone",
@@ -110730,9 +110730,9 @@
       "kind": "observation",
       "artifact": {
         "path": "fixtures/kernel/m3-coverage-v1.json",
-        "sha256": "64bfad75a3bbd2190a49ec45f76b71b6d4ba1304cb6c7ae2e31b2ab6675979d6"
+        "sha256": "61a2488e6262e9582082cea8a5bb4771b2c66042ddcc1e95e35b0ae2d6104316"
       },
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "subjects": [
         "k7-m3:source-amino-or-translation-signal",
         "k7-m3:source-clock-backbone",

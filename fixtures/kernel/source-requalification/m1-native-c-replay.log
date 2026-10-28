@@ -3,28 +3,33 @@ M1 source comparison: 1352 equal literal readings, 376 retained differences; no 
 M1: 864 source cells / 1728 literal tokens exactly compiled
 M1 state: 864 source cells; 43 coordinates; 529 incident relations; 2401 rotors; 48 carriers; 384 clock advances; 625 torus positions; 4096 independent state pairs
 Actual C literal-source parity: 1728 exact raw/DR strings
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/primitive.c -o build/primitive.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/holographic.c -o build/holographic.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/kernel.c -o build/kernel.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m_tree.c -o build/m_tree.o
-cc -Ibuild/live -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m_tree_live.c -o build/m_tree_live.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/coupled_clock.c -o build/coupled_clock.o
-cc -Ibuild/live -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m2_aperture.c -o build/m2_aperture.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m1_state.c -o build/m1_state.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m1.c -o build/m1.o
-cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m2.c -o build/m2.o
-cc -Ibuild -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m3.c -o build/m3.o
-cc -Ibuild -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"ca6850a22583ab55f815e4bb035030b6cf787700"' -c src/m3_domain.c -o build/m3_domain.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/primitive.c -o build/primitive.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/holographic.c -o build/holographic.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/kernel.c -o build/kernel.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m_tree.c -o build/m_tree.o
+python3 ../scripts/k8-structure.py --check --out build/live
+K8 current M registry: 1918 nodes, 10997 relations; 93fc759229c75b556e1f8fd5db1c0a08a2d29e5bd92e629bf345689a664c10c7; live graph NOT CLAIMED
+cc -Ibuild/live -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m_tree_live.c -o build/m_tree_live.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/coupled_clock.c -o build/coupled_clock.o
+cc -Ibuild/live -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m2_aperture.c -o build/m2_aperture.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m1_state.c -o build/m1_state.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m1.c -o build/m1.o
+cc  -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m2.c -o build/m2.o
+python3 ../scripts/generate-m3.py --out build/m3_data.inc
+cc -Ibuild -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m3.c -o build/m3.o
+python3 ../scripts/m3-domain.py --c-output build/m3_domain_data.inc
+{"schema": "ql.m3-domain/v1", "revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c", "nodes": 1004, "relations": 5071, "backbones": 24, "matrix_cells": 192}
+cc -Ibuild -std=c11 -O2 -Wall -Wextra -Werror -pedantic -Iinclude -DQL_C_SOURCE_REVISION='"7ad44649486ca50b8b70e8be2a575b6f54b42a23"' -c src/m3_domain.c -o build/m3_domain.o
 ar rcs build/libql-mef-c.a build/primitive.o build/holographic.o build/kernel.o build/m_tree.o build/m_tree_live.o build/coupled_clock.o build/m2_aperture.o build/m1_state.o build/m1.o build/m2.o build/m3.o build/m3_domain.o
 test -f ../fixtures/kernel/holographic-kernel-contract-v1.tsv
-mkdir -p /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/lib /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c
-cp include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h include/ql/m_tree_live.h include/ql/coupled_clock.h include/ql/m2_aperture.h include/ql/m1.h include/ql/m2.h include/ql/m3.h include/ql/m3_domain.h /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql/
-cp build/libql-mef-c.a /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/lib/libql-mef-c.a
-cp ../fixtures/kernel/m-tree-v1.json /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v1.json
-cp build/live/m-tree-v2.json /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v2.json
-cp build/live/k8-structure-receipt-v1.json /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/k8-structure-receipt-v1.json
-cp ../fixtures/kernel/holographic-kernel-contract-v1.tsv /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv
-printf '%s\n' '0.1.0' > /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/api-version.txt
-printf '%s\n' '1.1.0' > /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/kernel-contract-version.txt
-cp build/source-revision.txt /Users/admin/Central/worktrees/env-1/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/source-revision.txt
+mkdir -p /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/lib /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c
+cp include/ql/primitive.h include/ql/holographic.h include/ql/kernel.h include/ql/m_tree.h include/ql/m_tree_live.h include/ql/coupled_clock.h include/ql/m2_aperture.h include/ql/m1.h include/ql/m2.h include/ql/m3.h include/ql/m3_domain.h /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/include/ql/
+cp build/libql-mef-c.a /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/lib/libql-mef-c.a
+cp ../fixtures/kernel/m-tree-v1.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v1.json
+cp build/live/m-tree-v2.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/m-tree-v2.json
+cp build/live/k8-structure-receipt-v1.json /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/k8-structure-receipt-v1.json
+cp ../fixtures/kernel/holographic-kernel-contract-v1.tsv /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/holographic-kernel-contract-v1.tsv
+printf '%s\n' '0.1.0' > /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/api-version.txt
+printf '%s\n' '1.1.0' > /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/kernel-contract-version.txt
+cp build/source-revision.txt /Users/admin/Central/worktrees/env-2/ql-mef/target/m1-engine/installed/ql-mef-c/share/ql-mef-c/source-revision.txt
 M1 native sanitizers and installed C++ consumer passed (not C++ instrument parity).

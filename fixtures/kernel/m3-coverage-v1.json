@@ -1,7 +1,7 @@
 {
   "schema": "ql.m3-coverage/v1",
-  "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
-  "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+  "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
+  "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
   "accepted_k4": "5b24b95d17234ab5d23d84e658c0cc06434b41a3",
   "coordinates": [
     {

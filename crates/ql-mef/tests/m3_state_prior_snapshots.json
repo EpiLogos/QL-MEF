@@ -110,7 +110,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -279,7 +279,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400000,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -593,7 +593,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 4,
@@ -912,7 +912,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -1081,7 +1081,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400000,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -1269,7 +1269,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 18,
@@ -1561,7 +1561,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -1730,7 +1730,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400001,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -2044,7 +2044,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 16,
@@ -2337,7 +2337,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -2506,7 +2506,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400002,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -2820,7 +2820,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 16,
@@ -3113,7 +3113,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -3282,7 +3282,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400000,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -3596,7 +3596,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 8,
@@ -3889,7 +3889,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -4058,7 +4058,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400000,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -4372,7 +4372,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 48,
@@ -4620,7 +4620,7 @@
         "epi.deep.m3"
       ],
       "discrepancy_authority": "ql.m-ledger/v1: current lifecycle, not frozen source templates",
-      "domain_revision": "56df2b12fb76c4433b5c0113010ca613003d5b5ee3f9b86b4d77b82a999203e4",
+      "domain_revision": "88c9be6a5c0e0210da623b682ceeb517f48ac12cbaa8b472b9bbee79403dfd0c",
       "elemental": {
         "component_order": [
           "Earth",
@@ -4789,7 +4789,7 @@
         "source": "retained-qualified-reading"
       },
       "receipt_unix_ms": 1789090400000,
-      "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+      "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
       "schema": "ql.m3-state/v1",
       "source_discrepancy_templates": 487,
       "source_matrix_cells": [
@@ -4977,7 +4977,7 @@
           ]
         }
       ],
-      "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "subject_ref": "fixture:nara-subject",
       "tarot": {
         "card_id": 0,
