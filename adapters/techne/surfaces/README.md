@@ -55,7 +55,7 @@ TB0 `techne/tb0-connective-base` @ `2c704dc`, contract tag `ql.techne/v1`.
 ```sh
 cd adapters/techne/surfaces/cradle
 npm install
-npm test          # 130 techne tests, including the conformance fixtures
+npm test          # every techne test (tests/*.test.mjs), the conformance fixtures among them
 npm run typecheck # strict tsc over the whole ported tree
 ```
 

@@ -663,7 +663,7 @@ impl TechneReading {
         for role in &self.agency {
             if role.m_index > 5 {
                 return Err(crate::AdapterError::InvalidTechneReading(format!(
-                    "agency role {:?} binds M′{}; the field has M′0–M′5 only",
+                    "agency role {:?} stands on M{}′, which is no app layer: the field's six are M0′ the ground, M1′ to M3′ Live, M4′ Expressions, M5′ Technē",
                     role.role, role.m_index
                 )));
             }
