@@ -388,6 +388,24 @@ impl ReceiptGuard {
                     value["clock"] == previous["clock"],
                     "a strike changed the clock",
                 )?;
+                // A strike at a sample (O-I #809) is admitted now and lands in
+                // the render at that sample: one behind the cursor was already
+                // rendered, and one ahead of it moves nothing yet.
+                if let Some(at) = request.get("at_samples_elapsed") {
+                    let at = unsigned(at)?;
+                    let cursor = unsigned(&previous["samples_elapsed"])?;
+                    require(
+                        at >= cursor,
+                        "a strike's sample is behind the cursor: that sound is already rendered",
+                    )?;
+                    if at > cursor {
+                        require(
+                            value["amplitudes_metres"] == previous["amplitudes_metres"]
+                                && value["targets"] == previous["targets"],
+                            "a strike moved the body before its sample",
+                        )?;
+                    }
+                }
             }
             "set-axis" => {
                 let axis = request["axis"]

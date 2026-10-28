@@ -407,6 +407,34 @@ test('a refused strike at points leaves the owner admitted, unchanged and out of
   session.dispose();
 });
 
+test('a strike names the sample it lands at: the owner takes the exact cursor, one generation, no samples', async () => {
+  // O-I #809: a player schedules ahead on the audio clock. The act is admitted now and the owner lands it in
+  // its render at that sample; absent, the strike lands at the owner's cursor, as before.
+  const { session, calls } = setup(); await session.pump();
+  assert.equal(session.reading.acknowledged.samples_elapsed, '512');
+  await session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.5, 0] }], { at_samples_elapsed: '24512' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'strike',
+    strikes: [{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.5, 0] }], at_samples_elapsed: '24512' });
+  await session.strikeAt([POINT], { at_samples_elapsed: '512' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'strike-at', points: [POINT], at_samples_elapsed: '512' });
+  assert.deepEqual(session.reading.acknowledged, { generation: '3', samples_elapsed: '512' });
+  assert.deepEqual(session.journal().acts.map(act => act.command.at_samples_elapsed), ['24512', '512']);
+  session.dispose();
+});
+
+test('a sample behind the acknowledged cursor, or not an exact cursor, is refused before any exchange', async () => {
+  const { session, calls } = setup(); await session.pump();
+  for (const at of ['511', '0', '0512', '', '-1', '18446744073709551616', 512, 512n, null]) {
+    await assert.rejects(session.strike([{ mode_ref: 'scene:planet/#2-5-4', amplitude: [0.1, 0] }], { at_samples_elapsed: at }),
+      /already rendered|exact sample cursor/, String(at));
+    await assert.rejects(session.strikeAt([POINT], { at_samples_elapsed: at }), /already rendered|exact sample cursor/, String(at));
+  }
+  await assert.rejects(session.strikeAt([POINT], { at_samples_elapsed: '511' }), /behind the owner's cursor 512/);
+  assert.equal(calls.length, 1, 'no exchange left the admitted owner');
+  assert.equal(session.reading.available, true);
+  session.dispose();
+});
+
 test('a strike at points that did not advance the generation is a cursor disagreement', async () => {
   const { session, port } = setup(); await session.pump();
   port.effect = reply => { reply.field.generation = '1'; return reply; };

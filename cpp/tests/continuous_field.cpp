@@ -210,9 +210,54 @@ int main() {
     played.strike({{"mode:earth", {0.005, 0}}});
     played.strike({{"mode:earth", {0.005, 0}}});
     assert(played.amplitude(0) == after0 + Complex(0.01, 0));
+    // A strike at a sample (O-I #809): the act is admitted now, one generation, and lands inside
+    // render_audio exactly before that sample is rendered. Its PCM is bit-identical to rendering up to
+    // the sample, striking now and rendering on; every sample before it is the unstruck body's.
+    ql::ContinuousField scheduled(voiced), stepped(voiced), quiet(voiced);
+    advance(scheduled, 1024, 512); advance(stepped, 1024, 512); advance(quiet, 1024, 512);
+    const auto start = scheduled.receipt();
+    const std::uint64_t at = start.samples_elapsed + 1000;
+    scheduled.strike({{"mode:earth-two", impulse}}, at);
+    assert(scheduled.receipt().generation == start.generation + 1);
+    assert(scheduled.receipt().samples_elapsed == start.samples_elapsed);
+    assert(scheduled.amplitude(1) == quiet.amplitude(1) && scheduled.pending_strikes() == 1);
+    std::array<float, 4096> landed{}, reference{}, unstruck{};
+    assert(scheduled.render_audio(landed.data(), landed.size()));
+    assert(stepped.render_audio(reference.data(), 1000));
+    stepped.strike({{"mode:earth-two", impulse}});
+    assert(stepped.render_audio(reference.data() + 1000, reference.size() - 1000));
+    assert(quiet.render_audio(unstruck.data(), unstruck.size()));
+    assert(landed == reference);
+    assert(std::equal(landed.begin(), landed.begin() + 1000, unstruck.begin()) && landed[1000] != unstruck[1000]);
+    assert(scheduled.pending_strikes() == 0 && scheduled.amplitude(1) == stepped.amplitude(1));
+    // A sample at a block's end lands as the cursor reaches it; acts at one sample land in admission order;
+    // a sample at the cursor is struck now.
+    const auto edge = scheduled.receipt().samples_elapsed + 512;
+    scheduled.strike({{"mode:earth", {0.01, 0}}}, edge);
+    scheduled.strike({{"mode:earth", {0.02, 0}}}, edge);
+    assert(scheduled.render_audio(landed.data(), 512) && scheduled.pending_strikes() == 0);
+    assert(stepped.render_audio(reference.data(), 512));
+    stepped.strike({{"mode:earth", {0.01, 0}}}); stepped.strike({{"mode:earth", {0.02, 0}}});
+    assert(scheduled.amplitude(0) == stepped.amplitude(0));
+    const Complex now0 = scheduled.amplitude(0);
+    scheduled.strike({{"mode:earth", {0.01, 0}}}, scheduled.receipt().samples_elapsed);
+    assert(scheduled.amplitude(0) == now0 + Complex(0.01, 0) && scheduled.pending_strikes() == 0);
+    // A sample behind the cursor is sound already rendered: refused, nothing moves. The pending acts are bounded.
+    const auto held_generation = scheduled.receipt().generation;
+    const auto cursor = scheduled.receipt().samples_elapsed;
+    bool behind = false;
+    try { scheduled.strike({{"mode:earth", impulse}}, cursor - 1); } catch (const std::invalid_argument &) { behind = true; }
+    assert(behind && scheduled.receipt().generation == held_generation && scheduled.pending_strikes() == 0);
+    for (std::uint64_t i = 1; i <= ql::max_pending_strikes; ++i) scheduled.strike({{"mode:earth", {1e-6, 0}}}, cursor + i);
+    assert(scheduled.pending_strikes() == ql::max_pending_strikes);
+    bool full = false;
+    try { scheduled.strike({{"mode:earth", {1e-6, 0}}}, cursor + 1); } catch (const std::invalid_argument &) { full = true; }
+    assert(full && scheduled.receipt().generation == held_generation + ql::max_pending_strikes);
+    assert(scheduled.render_audio(landed.data(), ql::max_pending_strikes) && scheduled.pending_strikes() == 0);
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
                  "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
-                 "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true}\n";
+                 "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true,"
+                 "\"strike_lands_at_its_sample\":true}\n";
 }

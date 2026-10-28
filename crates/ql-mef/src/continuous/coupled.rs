@@ -693,7 +693,16 @@ impl CoupledFieldSession {
     /// the resident modal state carries the played impulse. Returns the compact
     /// field acknowledgement like `replace_field`.
     pub fn strike_field(&mut self, strikes: &[super::StrikeInput]) -> Result<Value, String> {
-        self.field.strike(strikes)?;
+        self.strike_field_when(strikes, None)
+    }
+    /// The same act landing at sample `at_samples_elapsed` of the continuation
+    /// (O-I #809; `FieldSession::strike_when`); `None` strikes now.
+    pub fn strike_field_when(
+        &mut self,
+        strikes: &[super::StrikeInput],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<Value, String> {
+        self.field.strike_when(strikes, at_samples_elapsed)?;
         Ok(self.last_field().clone())
     }
     pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {

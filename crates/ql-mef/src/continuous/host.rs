@@ -46,16 +46,24 @@ pub enum HostOperation {
     /// A played excitation of named modes on the standing continuation. A
     /// performance act, not a determinant: no source reading changes and the
     /// clock continues, so the answer carries the field, not a new influence.
+    /// `at_samples_elapsed` (an exact cursor, O-I #809) names the sample the
+    /// act lands at: admitted now, landed by the native render exactly before
+    /// that sample. Absent, it is struck at the cursor.
     Strike {
         strikes: Vec<super::StrikeInput>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        at_samples_elapsed: Option<String>,
     },
     /// scene only: a played excitation of the torus surface at points (θ, φ),
     /// e.g. a key's point on its helix or a touch. The scene body lowers the
     /// act to one strike of its standing voices by each voice's own shape at
     /// the point; the answer carries the field and the `ql.strike-at/v1`
-    /// receipt naming the points. A performance act, not a determinant.
+    /// receipt naming the points and the sample they land at. A performance
+    /// act, not a determinant; `at_samples_elapsed` as for `strike`.
     StrikeAt {
         points: Vec<super::StrikeAtInput>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        at_samples_elapsed: Option<String>,
     },
     /// scene only: M1's own advance action, then the whole event is re-read.
     M1Advance {
@@ -131,6 +139,17 @@ fn exact_cursor(text: &str) -> Result<u64, String> {
         return Err("noncanonical host cursor".into());
     }
     Ok(value)
+}
+
+/// The sample a played act lands at, read as an exact host cursor.
+fn landing(at_samples_elapsed: Option<&str>) -> Result<Option<u64>, String> {
+    at_samples_elapsed
+        .map(|text| {
+            exact_cursor(text).map_err(|error| {
+                format!("a strike's at_samples_elapsed must be an exact sample cursor: {error}")
+            })
+        })
+        .transpose()
 }
 
 /// The one owner a host holds: a fully supplied coupled field, or the scene
@@ -662,11 +681,22 @@ impl FieldHost {
                     owner.session_mut().advance_field(frames, muted)
                 }
             }
-            (HostOperation::Strike { strikes }, owner) => {
-                owner.session_mut().strike_field(&strikes)
-            }
-            (HostOperation::StrikeAt { points }, Owner::Scene(instrument)) => instrument
-                .strike_at(&points)
+            (
+                HostOperation::Strike {
+                    strikes,
+                    at_samples_elapsed,
+                },
+                owner,
+            ) => landing(at_samples_elapsed.as_deref())
+                .and_then(|at| owner.session_mut().strike_field_when(&strikes, at)),
+            (
+                HostOperation::StrikeAt {
+                    points,
+                    at_samples_elapsed,
+                },
+                Owner::Scene(instrument),
+            ) => landing(at_samples_elapsed.as_deref())
+                .and_then(|at| instrument.strike_at_when(&points, at))
                 .map(|outcome| {
                     strike_at_receipt = Some(outcome.receipt);
                     outcome.field
@@ -829,12 +859,55 @@ mod tests {
         );
     }
 
+    /// O-I #809: a played act may name the sample it lands at, as the exact
+    /// cursor string every host cursor is; absent, it is struck now.
+    #[test]
+    fn a_strike_names_the_sample_it_lands_at_as_an_exact_cursor() {
+        let strike: HostOperation = serde_json::from_value(json!({"operation":"strike",
+            "strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.1,0.0]}],
+            "at_samples_elapsed":"48000"}))
+        .unwrap();
+        assert!(matches!(&strike,
+            HostOperation::Strike { at_samples_elapsed: Some(at), .. } if at == "48000"));
+        let strike_at: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
+            "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+            "at_samples_elapsed":"18446744073709551615"}))
+        .unwrap();
+        assert!(matches!(&strike_at,
+            HostOperation::StrikeAt { at_samples_elapsed: Some(at), .. } if at == "18446744073709551615"));
+        let now: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
+            "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}))
+        .unwrap();
+        assert!(matches!(
+            &now,
+            HostOperation::StrikeAt {
+                at_samples_elapsed: None,
+                ..
+            }
+        ));
+        for value in [
+            json!({"operation":"strike","strikes":[{"mode_ref":"m","amplitude":[0.1,0.0]}],
+                "at_samples_elapsed":48000}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+                "at_samples_elapsed":true}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+                "at":"48000"}),
+        ] {
+            assert!(
+                serde_json::from_value::<HostOperation>(value.clone()).is_err(),
+                "accepted {value}"
+            );
+        }
+    }
+
     #[test]
     fn strike_at_is_admitted_by_name_and_strict_about_its_points() {
         let strike_at: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
             "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}))
         .unwrap();
-        assert!(matches!(&strike_at, HostOperation::StrikeAt { points } if points.len() == 1));
+        assert!(
+            matches!(&strike_at, HostOperation::StrikeAt { points, at_samples_elapsed: None } if points.len() == 1)
+        );
         for value in [
             json!({"operation":"strike-at"}),
             json!({"operation":"strike-at","points":[],"muted":true}),
@@ -899,8 +972,10 @@ mod tests {
                 .as_bytes(),
         )
         .unwrap();
-        assert!(matches!(&strike.command, HostOperation::Strike { strikes }
-            if strikes.len() == 1 && strikes[0].amplitude == [0.5, 0.0]));
+        assert!(
+            matches!(&strike.command, HostOperation::Strike { strikes, .. }
+            if strikes.len() == 1 && strikes[0].amplitude == [0.5, 0.0])
+        );
         let damping = serde_json::from_slice::<HostRequest>(
             line(r#"{"operation":"set-damping","per_second":0.35}"#).as_bytes(),
         )
@@ -921,7 +996,7 @@ mod tests {
             .as_bytes(),
         )
         .unwrap();
-        let HostOperation::StrikeAt { points } = strike_at.command else {
+        let HostOperation::StrikeAt { points, .. } = strike_at.command else {
             panic!("not a strike-at");
         };
         assert_eq!(

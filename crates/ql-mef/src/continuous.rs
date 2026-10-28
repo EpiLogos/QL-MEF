@@ -526,6 +526,29 @@ impl FieldSession {
     /// resident state and its targets move. Malformed acts are refused here
     /// without transport; the worker re-validates and resolves the references.
     pub fn strike(&mut self, strikes: &[StrikeInput]) -> Result<Value> {
+        self.strike_when(strikes, None)
+    }
+    /// The same act at a sample of the continuation (O-I #809): admitted now as
+    /// one generation, and landed by the native render exactly before sample
+    /// `at_samples_elapsed` is rendered. `None`, or the current cursor, strikes
+    /// now. A sample behind the cursor is sound already rendered: refused here
+    /// without transport, as the worker refuses it.
+    pub fn strike_when(
+        &mut self,
+        strikes: &[StrikeInput],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<Value> {
+        if let Some(at) = at_samples_elapsed {
+            let cursor: u64 = self.receipt["samples_elapsed"]
+                .as_str()
+                .and_then(|text| text.parse().ok())
+                .ok_or("invalid acknowledged native cursor")?;
+            if at < cursor {
+                return Err(format!(
+                    "a strike at sample {at} is behind the owner's cursor {cursor}: that sound is already rendered"
+                ));
+            }
+        }
         if strikes.is_empty() {
             return Err("a strike act must name at least one mode".into());
         }
@@ -544,7 +567,11 @@ impl FieldSession {
                 return Err("strike amplitude must be finite and within 1e6 metres".into());
             }
         }
-        self.operation("strike", json!({"strikes":strikes}))
+        let mut act = json!({"strikes":strikes});
+        if let Some(at) = at_samples_elapsed {
+            act["at_samples_elapsed"] = json!(at.to_string());
+        }
+        self.operation("strike", act)
     }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))

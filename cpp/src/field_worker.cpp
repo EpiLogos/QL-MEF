@@ -199,7 +199,11 @@ int main() {
                     auto next = shapes(get(request.get(), "shapes"), field->samples().size(), field->source().modes.size());
                     field->replace_shapes(field->receipt().generation, next); shape_ref.swap(next_ref); committed = true;
                 } else if (op == "strike") {
-                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "strikes"});
+                    // Optional at_samples_elapsed: the sample the act lands at (O-I #809); absent, it lands now.
+                    const bool timed = json_object_object_get_ex(request.get(), "at_samples_elapsed", nullptr);
+                    if (timed) keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "strikes", "at_samples_elapsed"});
+                    else keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "strikes"});
+                    const auto landing = timed ? decimal<std::uint64_t>(get(request.get(), "at_samples_elapsed")) : field->receipt().samples_elapsed;
                     J *items = get(request.get(), "strikes");
                     auto n = count(items, field->source().modes.size());
                     std::vector<ql::Strike> strikes; strikes.reserve(n);
@@ -208,7 +212,7 @@ int main() {
                         keys(act, {"mode_ref", "amplitude"});
                         strikes.push_back({text(get(act, "mode_ref")), pair(get(act, "amplitude"))});
                     }
-                    field->strike(strikes); committed = true;
+                    field->strike(strikes, landing); committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));
