@@ -28,7 +28,7 @@ class SkyExportTests(unittest.TestCase):
 
     def run_sky(self, interpreter):
         self.env['QL_SKY_PYTHON'] = str(interpreter)
-        request = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json').read_text())['request']
+        request = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json').read_text())['request']
         return subprocess.run([str(self.command), '-'], input=json.dumps(request),
                               capture_output=True, text=True, env=self.env, timeout=60)
 
@@ -64,7 +64,7 @@ class SkyExportTests(unittest.TestCase):
         self.assertEqual(sky['provider']['wrapper_version'], '2.10.3.2')
         self.assertEqual(sky['provider']['adapter_sha256'], hashlib.sha256((ROOT / 'providers/sky/kerykeion_snapshot.py').read_bytes()).hexdigest())
         self.assertEqual(sky['source_binding']['header_sha256'], hashlib.sha256((ROOT / 'vendor/epi-kernel/reference/include/m2.h').read_bytes()).hexdigest())
-        retained = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json').read_text())
+        retained = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json').read_text())
         self.assertEqual(sky['request'], retained['request'])
         self.assertEqual([body['native_planet_id'] for body in sky['bodies']],
                          [body['native_planet_id'] for body in retained['bodies']])
@@ -84,7 +84,7 @@ class SkyExportTests(unittest.TestCase):
         self.env.update(PATH='/usr/bin:/bin', UV_OFFLINE='1', UV_NO_CONFIG='1',
                         UV_CACHE_DIR=str(Path(os.environ['HOME']) / '.cache/uv'),
                         UV_PYTHON_INSTALL_DIR=str(Path(interpreter).resolve().parents[2]))
-        request = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json').read_text())['request']
+        request = json.loads((ROOT / 'fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json').read_text())['request']
         run = subprocess.run([str(self.command), '-'], input=json.dumps(request),
                              capture_output=True, text=True, env=self.env, timeout=60)
         self.assertEqual(run.returncode, 0, run.stderr)

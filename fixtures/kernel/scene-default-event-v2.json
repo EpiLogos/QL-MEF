@@ -20,7 +20,7 @@
     "tick12": 7
   },
   "m2": {
-    "at_unix_ms": 1792499089638,
+    "at_unix_ms": 1793218544247,
     "condition": {
       "active_mef_condition": 0,
       "maqam_index": 3,
@@ -327,7 +327,7 @@
         -1
       ]
     ],
-    "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+    "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
     "resonator": null,
     "schema": "ql.m2-engine-request/v1",
     "selections": [
@@ -386,72 +386,72 @@
     "world_observations": [
       {
         "longitude_degrees": 172.74523965112377,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 0,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 226.25864579108324,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 1,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 188.054991599874,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 2,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 213.1680554903231,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 3,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 112.47478161934649,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 4,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 136.6779290712138,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 5,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 12.743725967790677,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 6,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 65.68717724406402,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 7,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 3.2875905266743977,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 8,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       },
       {
         "longitude_degrees": 303.280394584856,
-        "observed_at_unix_ms": 1792499089638,
+        "observed_at_unix_ms": 1793218544247,
         "planet_id": 9,
-        "provider_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+        "provider_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
         "source_revision": "b1c29e68a11052bd152e03b4f437584534cbbbd8fb489f535413073631bac19e"
       }
     ]
@@ -472,8 +472,8 @@
     "matrix_axis": 0,
     "occurrence_unix_ms": 1789479981000,
     "pose": 6,
-    "receipt_unix_ms": 1792499089638,
-    "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+    "receipt_unix_ms": 1793218544247,
+    "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
     "rna": false,
     "schema": "ql.m3-state-request/v1",
     "stamp": {
@@ -667,8 +667,8 @@
         "wrapper_version": "2.10.3.2"
       },
       "receipt_clock": "host-utc-clock",
-      "receipt_unix_ms": 1792499089638,
-      "receipt_utc": "2026-10-20T12:24:49.638903Z",
+      "receipt_unix_ms": 1793218544247,
+      "receipt_utc": "2026-10-28T20:15:44.247593Z",
       "reference_frame": "ecliptic-of-date",
       "request": {
         "ayanamsha": null,
@@ -684,7 +684,7 @@
       },
       "schema": "ql.sky-snapshot/v1",
       "scope": "shared-geocentric",
-      "snapshot_ref": "sha256:5d08071b1121843859458b9790243e7f61b351c6f250f9b88f1276044c4a9970",
+      "snapshot_ref": "sha256:a1d0e2819dd9c57b0f5f445685d6c0f8329b2bca8fed4ab45904e17d5c2412b3",
       "source_binding": {
         "earth_body": {
           "is_eighth_chakra": false,
@@ -701,7 +701,7 @@
         "native_table": "M2_PLANET_LUT",
         "non_sun_operators": 9,
         "receiving_chakras": 7,
-        "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+        "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
         "scope": "#2-5",
         "standing": "retained-symbolic-model-not-astronomical-measurement",
         "sun_role": "solar-parent",

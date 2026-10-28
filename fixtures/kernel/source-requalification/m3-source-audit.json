@@ -24451,10 +24451,10 @@
       "to_peer": "rust"
     }
   ],
-  "projection_sha256": "56bcf065d4a32720294f223ae5618a04ebfcc74d52d909622093e1baa359f23d",
-  "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+  "projection_sha256": "a2b5ba28777edc293833561e1cc6be18da47fefa115bac978421b090f868f746",
+  "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
   "schema": "ql.m3-source-audit/v1",
-  "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
+  "source_revision": "2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107",
   "standing": {
     "K4_acceptance": "not-claimed",
     "c_rust_execution": "not-claimed-by-this-source-audit",

@@ -1394,7 +1394,7 @@ mod scene_tests {
     #[test]
     fn a_historical_sky_replaces_the_receipt_and_preserves_epoch_vs_acquisition() {
         let sky: Value = serde_json::from_str(include_str!(
-            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json"
         ))
         .unwrap();
         let mut event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
@@ -1437,7 +1437,7 @@ mod scene_tests {
     #[test]
     fn historical_embedded_event_is_refused_against_the_current_source_sky() {
         let sky: Value = serde_json::from_str(include_str!(
-            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v4.json"
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json"
         ))
         .unwrap();
         let result = binding(BindingRequest {

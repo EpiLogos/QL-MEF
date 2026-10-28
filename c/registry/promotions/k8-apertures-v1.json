@@ -1,7 +1,7 @@
 {
   "schema": "ql.m-structural-promotion/v1",
   "id": "K8-APERTURES-CENTRE-2026-09-11",
-  "base_registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86",
+  "base_registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
   "authority": {
     "repository": "EpiLogos/QL-MEF",
     "revision": "efa599661aab171033769d33a3c2b6233c86eca5",

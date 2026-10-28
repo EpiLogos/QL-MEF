@@ -2,10 +2,10 @@
   "schema": "ql.m-tree/v1",
   "id_scheme": "first-64-bits-sha256-domain-NUL-exact-source-spelling",
   "source_repository": "bimba-map",
-  "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
-  "source_dataset_tree": "FB:kcwQmaxjOZ6CT7+cxvaAEzWE/MlV/pA=",
-  "source_snapshot_sha256": "dd683305bb4ffeff32095d1c08283103b359e1e26db918936dd0c614b4eb931e",
-  "source_lock_sha256": "073ccda2e10f9224e07058b9148581e21d7e2eff58f1875cf3856c70d1030d9e",
+  "source_revision": "2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107",
+  "source_dataset_tree": "FB:kcwQmaxjOZ6CT7+cxvaAEzWE/MlV/5A=",
+  "source_snapshot_sha256": "6d26c633d055547ea581caf63f6c82d19c355b90ceeed12dbf25161f4250534b",
+  "source_lock_sha256": "5ee66585aa43f3f6046139071a0d613815801262ea3d06a5c7d2669d7a89698c",
   "compiler_sha256": {"scripts/bimba_map.py":"eca19180e69928084dd7bc77d5d580696e3f71f434458d65da5f3b5774dbb22b","scripts/generate-m-tree.py":"2a1047516cf75325df57f38ea18e641b0764de9311e877f7980d308a5c34fcd2"},
   "master_id": "931c108ea8e5d0f3",
   "roots": [
@@ -17,7 +17,7 @@
     "087de153db58ef44"
   ],
   "files": [
-    {"bytes":39652336,"git_blob":"0b038aadcf2735af6403957b18213c037d5b0ffa","path":"bimba-map:http://100.92.62.101:7474","record_class":"bimba-map-read","sha256":"0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a"}
+    {"bytes":39652341,"git_blob":"ddb57c242e7ed8193770d2e801bd0d2887eedb30","path":"bimba-map:http://100.92.62.101:7474","record_class":"bimba-map-read","sha256":"2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107"}
   ],
   "records": [
     {"file":0,"payload_sha256":"4a021c3c56008465cec817ff6b17e40004cd5507cdc1b2befb71f3fdb6084974","property_keys":["c_0_architectural_function","c_0_essence","c_0_operational_essence","c_1_consciousness_structure","c_1_description","c_1_internal_structure","c_1_key_principles","c_1_name","c_1_primary_designation","c_1_structure","c_2_id","c_2_notion_page_id","c_2_uuid","c_3_context_frame","c_3_dataset_branch","c_3_dataset_branch_label","c_3_practical_applications","c_3_related_coordinates","c_3_source_dataset","c_3_updated_at","c_4_access_level","c_4_family","c_4_flags","c_4_inversion_state","c_4_layer","c_4_ql_category","c_4_ql_operator_types","c_4_ql_position","c_4_subsystem","c_4_topo_mode","c_4_weave_state","c_5_resonances","coordinate","q_0_absolute_ground","q_0_implicate_ground","q_1_para_vak_silence","q_1_vak_alphabet_reportable_surface","q_1_void_pole_origin","q_2_grounds_and_conditions","q_2_zero_zero_operation","q_3_eight_fold_void_structure","q_3_void_loop_of_the_torus","q_4_foundation_for_all","q_4_the_from_where","q_5_completion_always_present","q_5_receiving_face_of_the_mobius"],"record_index":133},
@@ -25662,5 +25662,5 @@
   "parent_discrepancies": [
     {"coordinate":"#2-4","source_parent_refs":["#2","#2-4.5"],"standing":"non-tree-parent-assertion-retained-as-source-relation","tree_parent":"#2"}
   ],
-  "registry_revision": "c211a781094dae3138c691a1f10dd9637399b5c7243ec0646c71a82428e24c86"
+  "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6"
 }
