@@ -69,7 +69,7 @@ import {
   type VakBinding,
   type VakTraversal,
 } from "./vak";
-import { journeyAgentState, techne3OperationStanding } from "./agent";
+import { journeyAgentState, techneOperationStanding } from "./agent";
 import "./journey.css";
 
 /** One Expression's beats, in binding order. */
@@ -739,8 +739,8 @@ export function JourneyInstrument({ session, selection, reading }: TechneSurface
 
       {agentState && (
         <details className="techne-journey-agent" aria-label="Technē 3 structured journey state">
-          <summary>Technē_3 · structured journey state</summary>
-          <p className="techne-absent">{techne3OperationStanding(agentState).note}</p>
+          <summary>Technē · structured journey state</summary>
+          <p className="techne-absent">{techneOperationStanding(agentState).note}</p>
           <pre className="techne-journey-agent-state">{JSON.stringify(agentState, null, 2)}</pre>
         </details>
       )}

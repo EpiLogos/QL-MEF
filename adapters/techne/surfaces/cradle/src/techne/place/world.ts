@@ -370,7 +370,7 @@ export function referenceFrameLadder(reading: TechneReading | null): LadderRung[
 }
 
 // ---------------------------------------------------------------------------
-// Structured World state for Aletheia_4 / Technē_4
+// Structured World state for the situated Aletheia and Technē roles
 // ---------------------------------------------------------------------------
 
 export interface SelectedPlaceState {
@@ -428,7 +428,7 @@ function selectedState(facet: TechnePlaceFacet): SelectedPlaceState {
 }
 
 /**
- * The structured M4′ state an Aletheia_4 / Technē_4 agency perceives (#217
+ * The structured World state the situated Aletheia and Technē roles perceive (#217
  * §8): selected place/world relation, active presentation body, validity and
  * uncertainty, the carried world occasion, the provider-bound depth chain,
  * source/standing, privacy constraints, disclosed cuts, cross-open targets

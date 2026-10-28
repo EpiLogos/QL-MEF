@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { beats } from '../src/techne/journey/beats.ts';
 import { draftFromBeats, moveBeat } from '../src/techne/journey/sequence.ts';
-import { journeyAgentState, techne3OperationStanding, TECHNE_3_ROLE } from '../src/techne/journey/agent.ts';
+import { journeyAgentState, techneOperationStanding, JOURNEY_ROLE } from '../src/techne/journey/agent.ts';
 import { bindVak, applyVakTraversal } from '../src/techne/journey/vak.ts';
 import {
   PROVING_CONTEXT_FRAME,
@@ -46,7 +46,7 @@ function vakBound() {
   return gate.binding;
 }
 
-test('the structured state publishes what Aletheia_3 / Technē_3 may perceive — identity, cut, position, basis', () => {
+test('the structured state publishes what the situated Aletheia and Technē roles may perceive — identity, cut, position, basis', () => {
   const state = journeyAgentState({
     reading,
     selection: selection(),
@@ -56,7 +56,8 @@ test('the structured state publishes what Aletheia_3 / Technē_3 may perceive �
     vak: null,
   });
   assert.equal(state.contract, 'ql.techne/v1');
-  assert.equal(state.role, TECHNE_3_ROLE);
+  assert.equal(state.role, JOURNEY_ROLE);
+  assert.equal(state.role, 'aletheia/techne', 'the role kinds this state addresses, bound to no coordinate');
   assert.equal(state.instrument, 'journey');
   assert.equal(state.application_cut, '4:2-deep');
   assert.equal(state.subject_ref, PROVING_SUBJECT_REF);
@@ -100,7 +101,8 @@ test('C′ appears where actually bound, with visited and unvisited scenes; gove
   const unbound = journeyAgentState({ reading, selection: selection(), beats: model.beats, drafts: {}, currentSceneRef: null, vak: null });
   assert.equal(unbound.c_prime, null);
   assert.equal(unbound.governance.cpf_regime, null);
-  assert.equal(unbound.governance.techne_3_operation, 'unavailable');
+  assert.equal(unbound.governance.techne_operation, 'unavailable');
+  assert.equal('techne_3_operation' in unbound.governance, false, 'the coordinate-numbered key is gone');
 
   const binding = vakBound();
   const vak = { binding, traversal: applyVakTraversal(binding, model.beats) };
@@ -110,22 +112,22 @@ test('C′ appears where actually bound, with visited and unvisited scenes; gove
   assert.deepEqual(state.c_prime.visited_scene_refs, [PROVING_SCENE_GROUND, PROVING_SCENE_RETURN, PROVING_SCENE_CROSSING]);
   assert.deepEqual(state.c_prime.unvisited_scene_refs, []);
   assert.equal(state.governance.cpf_regime, 'human-engaged');
-  assert.equal(state.governance.techne_3_operation, 'propose-await-human-acceptance');
+  assert.equal(state.governance.techne_operation, 'propose-await-human-acceptance');
 
   const autonomous = journeyAgentState({
     reading, selection: selection(), beats: model.beats, drafts: {}, currentSceneRef: null,
     vak: { binding: { ...binding, cpf: 'authorised-autonomous' }, traversal: vak.traversal },
   });
-  assert.equal(autonomous.governance.techne_3_operation, 'commissioned');
+  assert.equal(autonomous.governance.techne_operation, 'commissioned');
 });
 
 test('the regime note distinguishes proposal from commission — authority stays the owner', () => {
   const state = journeyAgentState({ reading, selection: selection(), beats: model.beats, drafts: {}, currentSceneRef: null, vak: null });
-  assert.match(techne3OperationStanding(state).note, /unavailable|inspectable/);
-  const humanEngaged = { ...state, governance: { ...state.governance, techne_3_operation: 'propose-await-human-acceptance' } };
-  assert.match(techne3OperationStanding(humanEngaged).note, /human accepts or refuses/);
-  const commissioned = { ...state, governance: { ...state.governance, techne_3_operation: 'commissioned' } };
-  assert.match(techne3OperationStanding(commissioned).note, /routes through the owner/);
+  assert.match(techneOperationStanding(state).note, /unavailable|inspectable/);
+  const humanEngaged = { ...state, governance: { ...state.governance, techne_operation: 'propose-await-human-acceptance' } };
+  assert.match(techneOperationStanding(humanEngaged).note, /human accepts or refuses/);
+  const commissioned = { ...state, governance: { ...state.governance, techne_operation: 'commissioned' } };
+  assert.match(techneOperationStanding(commissioned).note, /routes through the owner/);
 });
 
 test('the state is JSON-safe — an agent session receives it through the ordinary disclosure channel', () => {

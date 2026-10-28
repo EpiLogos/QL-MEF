@@ -38,7 +38,7 @@ try {
 
   test('the World surface mounts under the place registration; duplicates are refused', () => {
     const stop = registerPlaceSurface();
-    assert.equal(typeof registry.techneSurface('place'), 'function', 'the M4′ World body mounts as the place instrument');
+    assert.equal(typeof registry.techneSurface('place'), 'function', 'the World body mounts as the place instrument');
     assert.throws(() => registerPlaceSurface(), /already registered/);
     stop();
     assert.equal(registry.techneSurface('place'), undefined);
@@ -226,7 +226,7 @@ try {
     assert.equal(empty[2].availability, 'absent-facet');
   });
 
-  // --- structured World state for Aletheia_4 / Technē_4 --------------------
+  // --- structured World state for the situated Aletheia and Technē roles ---
 
   test('worldState exposes the selected relation, validity, uncertainty, occasion, privacy, cuts and Actions', () => {
     const state = worldState(tb0, { mode: 'map', window: { from: null, to: null }, selectedRef: greenwich.place_ref });
@@ -248,7 +248,7 @@ try {
     assert.equal(avalonState.selected.uncertainty, avalon.uncertainty);
   });
 
-  test('Technē_4 native operation routes disclosed Actions and refuses undisclosed ones — never executes', () => {
+  test('Technē native operation routes disclosed Actions and refuses undisclosed ones — never executes', () => {
     const state = worldState(tb0, { mode: 'map', window: null, selectedRef: null });
     const dayRead = state.actions.find((action) => action.action_ref === 'central.day.read');
     assert.ok(dayRead, 'the reading discloses the Central read legs');
@@ -332,7 +332,7 @@ try {
 
   test('a Journey-style shared focus reopens the exact place in the World aperture', () => {
     const store = createDisclosureSessionStore();
-    // What a Journey Scene frame does (M3′): set the shared selection’s focus
+    // What a Journey Scene frame does: set the shared selection’s focus
     // to a real Place ref and open the World aperture.
     const base = store.setSelection({
       selection_ref: 'ql.techne:selection:scene-frame',

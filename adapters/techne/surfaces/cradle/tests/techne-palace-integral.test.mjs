@@ -55,14 +55,14 @@ test('the TB0 specimen composes regions from every disclosed ref family, in trav
     byKey.get('canvas').entries.map((entry) => entry.ref).sort(),
     ['ql.techne:constellation:fixture:l5-dual-reading', 'ql:shape:1.0.0:6x6:direct-conjugate'],
   );
-  // M2′: day, now, session, run, attempt and Return continuity refs.
+  // The relation field: day, now, session, run, attempt and Return continuity refs.
   assert.deepEqual(
     byKey.get('relation').entries.map((entry) => entry.label).sort(),
     ['attempt', 'day', 'now', 'return', 'run', 'session'],
   );
   assert.ok(byKey.get('relation').entries.some((entry) => entry.ref === 'factory:run:01JBD3Z4X7Q9M2A6K4P8T3W5NQ#attempt-1'));
   assert.ok(byKey.get('relation').entries.some((entry) => entry.ref === 'factory:run:01JBD3Z4X7Q9M2A6K4P8T3W5NQ/return'));
-  // M3′: the bound scene; M4′: both place readings with their native relations.
+  // The journey: the bound scene; the world: both place readings with their native relations.
   assert.deepEqual(byKey.get('journey').entries.map((entry) => entry.ref), ['oi:expression:l5-dual-reading/scene/crossing']);
   assert.deepEqual(
     byKey.get('world').entries.map((entry) => entry.note),
@@ -229,7 +229,7 @@ test('the Return leg routes the disclosed governed-write action; refusal mutates
   assert.match(refused.reason, /not disclosed/);
   assert.equal(JSON.stringify(tb0), before, 'the reading is byte-identical after both legs');
 
-  // After the routed Return, the renewed ground re-opens into M0′.
+  // After the routed Return, the renewed ground re-opens into the Project.
   assert.deepEqual(returnCrossing(tb0), { instrument: 'project' });
   resetPalaceCompositions();
 });

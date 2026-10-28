@@ -31,7 +31,7 @@
  *     occasion and session basis; private Nara state stays private — only
  *     its constraint is named;
  *   - native Actions are ROUTED, never executed: receipts show owner,
- *     authority and effects (the Technē_4 operation path);
+ *     authority and effects (the Technē operation path);
  *   - absent facets are data: an empty honest state, never an error.
  */
 import { useEffect, useId, useMemo, useState } from "react";
@@ -604,7 +604,7 @@ export function PlaceInstrument({ session, reading }: TechneSurfaceProps) {
               <p className="techne-absent">Private situated state is never rendered here — only its disclosed constraint is named.</p>
             </div>
 
-            <div className="techne-place-world-block" aria-label="Technē_4 native actions and crossing">
+            <div className="techne-place-world-block" aria-label="Technē native actions and crossing">
               <p className="techne-eyebrow">native Actions — routed, never executed</p>
               {world.actions.length === 0
                 ? <p className="techne-absent">The reading discloses no native Actions.</p>

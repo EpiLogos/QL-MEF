@@ -27,7 +27,7 @@
  *   - the Relation Field ↔ 3:3 crossing fires only through the mechanical warrant in
  *     `./state` and the reading's own disclosed crossing Action — a
  *     warranted crossing asserts no harmonic/correspondential meaning;
- *   - structured state for Aletheia_2 / Technē_2 is published below the
+ *   - structured state for the situated Aletheia and Technē roles is published below the
  *     surface (`relationFieldState`), refs and Actions verbatim;
  *   - absent facets are honest empty states — the instrument fabricates
  *     nothing.
@@ -279,7 +279,7 @@ export function TimelineInstrument({ session, selection, reading, capabilities, 
 
   const focusedRefs = selection?.focus_refs ?? [];
 
-  // Structured state for Aletheia_2 / Technē_2 — refs and Actions verbatim.
+  // Structured state for the situated Aletheia and Technē roles — refs and Actions verbatim.
   const agencyState = useMemo(
     () => (reading ? relationFieldState(reading, mode, selection, session?.time_window ?? null) : null),
     [reading, mode, selection, session],
@@ -798,8 +798,8 @@ export function TimelineInstrument({ session, selection, reading, capabilities, 
         </nav>
       )}
       {agencyState && (
-        <details className="techne-structure" aria-label="Technē 2 structured state">
-          <summary>Technē_2 structured state ({agencyState.relations.length} relations, projection {agencyState.projection})</summary>
+        <details className="techne-structure" aria-label="Technē structured state">
+          <summary>Technē structured state ({agencyState.relations.length} relations, projection {agencyState.projection})</summary>
           <pre>{JSON.stringify(agencyState, null, 2)}</pre>
         </details>
       )}

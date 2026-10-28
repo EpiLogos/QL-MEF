@@ -200,7 +200,7 @@ export function palaceRegions(reading: TechneReading): PalaceRegion[] {
       agency.push({
         kind: "agency",
         ref,
-        label: `${binding.role} M′${binding.m_index}`,
+        label: `${binding.role} M${binding.m_index}`,
         open_instrument: null,
         note: binding.role,
       });

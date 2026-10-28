@@ -45,14 +45,15 @@ test('the operating state discloses what the Agency may perceive — subject, vi
   assert.deepEqual(state.disclosure.cuts.map((cut) => cut.cut), ['4:2-deep', '3:3-conjugate']);
 });
 
-test('the reading’s own agency bindings ride verbatim; an absent Technē_0 is absent with a reason, never minted', () => {
+test('the reading’s own agency bindings ride verbatim; an absent Project binding is absent with a reason, never minted', () => {
   const state = technaeState(specimen, session, view);
   assert.deepEqual(state.agency, specimen.agency, 'the role floor is the owner’s disclosure');
-  assert.equal(state.technae_0, null, 'the specimen binds Technē_2, not Technē_0 — none is invented');
-  assert.match(state.technae_0_absence_reason, /none is an Aletheia_0\/Technē_0/);
+  assert.equal(state.techne_binding, null, 'the specimen binds Technē_2 to the timeline, not to the Project — none is invented');
+  assert.match(state.techne_absence_reason, /none is a Technē or Aletheia role operating the Project/);
+  assert.equal('technae_0' in state, false, 'the coordinate-numbered key is gone');
 });
 
-test('a lawful Technē_0 binding is exposed as the operating role; route input names it', async () => {
+test('a lawful Technē binding on the Project is exposed as the operating role; route input names it', async () => {
   const bound = {
     ...specimen,
     agency: [...specimen.agency, {
@@ -62,19 +63,31 @@ test('a lawful Technē_0 binding is exposed as the operating role; route input n
       instrument: 'project',
       guardian_ref: 'actuation:agent:anuttara',
       agent_session_ref: 'aikit:agent-session:fixture:l5-techne',
-      authority: 'locates, traverses and proposes governed returns over the M0′ instrument',
+      authority: 'locates, traverses and proposes governed returns over the Project instrument',
       privacy: null,
     }],
   };
   assert.equal(validateReading(bound).valid, true);
   const state = technaeState(bound, session, view);
-  assert.equal(state.technae_0.role, 'techne');
-  assert.equal(state.technae_0.m_index, 0);
-  assert.equal(state.technae_0.instrument, 'project');
-  assert.equal(state.technae_0.guardian_ref, 'actuation:agent:anuttara', 'the Guardian anchors the role without becoming it');
-  assert.equal(state.technae_0_absence_reason, null);
+  assert.equal(state.techne_binding.role, 'techne');
+  assert.equal(state.techne_binding.m_index, 0);
+  assert.equal(state.techne_binding.instrument, 'project');
+  assert.equal(state.techne_binding.guardian_ref, 'actuation:agent:anuttara', 'the Guardian anchors the role without becoming it');
+  assert.equal(state.techne_absence_reason, null);
   const route = agencyRoute(state, 'aikit.wiki.stage');
   assert.equal(route.input.acting_role, 'agency:techne:M0');
+});
+
+test('the Project binding is the role that operates the Project, whatever its coordinate — no instrument is bound to one', () => {
+  const role = { role: 'techne', m_index: 3, reading: '4:2-deep', instrument: 'project', agent_session_ref: 'aikit:agent-session:fixture:project' };
+  const bound = { ...specimen, agency: [...specimen.agency, role] };
+  assert.equal(validateReading(bound).valid, true, 'the contract binds Technē_i to no coordinate’s instrument');
+  const state = technaeState(bound, session, view);
+  assert.deepEqual(state.techne_binding, role);
+  assert.equal(agencyRoute(state, 'aikit.wiki.stage').input.acting_role, 'agency:techne:M3');
+  const unbound = technaeState({ ...specimen, agency: [{ role: 'aletheia', m_index: 0, reading: '4:2-deep' }] }, session, view);
+  assert.equal(unbound.techne_binding, null, 'a role at coordinate 0 that operates no instrument is not the Project’s');
+  assert.equal(agencyRoute(unbound, 'aikit.wiki.stage').input.acting_role, 'project-surface');
 });
 
 test('LOCATE returns the attributable answer: identity, standing and exact sources', () => {

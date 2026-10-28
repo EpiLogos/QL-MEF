@@ -25,7 +25,7 @@
  *     nothing else — `disclosureSession.openInInstrument` for available
  *     instruments, honest refusal otherwise;
  *   - the provenance inspector is one panel away, per the reading;
- *   - the structured Technē_1/Aletheia_1 state is exposed as data
+ *   - the structured state for the situated Technē and Aletheia roles is exposed as data
  *     (`canvasAgencyState`), never reconstructed from the DOM;
  *   - pan, zoom, arrangement, frames and views live and die as component
  *     or presentation-store state; the reading and session are never
@@ -1002,7 +1002,7 @@ export function CanvasConstellation({ session, reading, capabilities }: TechneSu
           )}
 
           <details className="techne-canvas-panel">
-            <summary>Technē state (structured, for Aletheia_1 / Technē_1)</summary>
+            <summary>Technē state (structured, for the situated Aletheia and Technē roles)</summary>
             <p className="techne-canvas-muted">
               Exact refs, view/bounds, semantic-vs-presentation split, disclosed Actions and warrants — the data an Agency operates through; no screenshot or DOM reconstruction.
             </p>

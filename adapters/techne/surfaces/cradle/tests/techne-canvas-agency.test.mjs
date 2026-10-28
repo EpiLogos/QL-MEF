@@ -100,14 +100,29 @@ test('the warranted QL reading is exposed with its warrant — and the honest no
   assert.match(state.warranted_ql_note, /canonical/);
 });
 
-test('agency role bindings are verbatim, and the Technē_1 binding is honestly absent when the reading situates none', () => {
+test('agency role bindings are verbatim, and the Canvas\'s Technē binding is honestly absent when the reading situates none on it', () => {
   assert.deepEqual(state.agency_roles, tb0.agency);
-  assert.equal(state.techne_1_binding, null);
-  assert.match(state.techne_1_note, /no Technē_1 canvas binding/);
-  assert.match(state.techne_1_note, /techne@M2\/timeline/, 'the roles that ARE situated are named');
+  assert.equal(state.techne_binding, null);
+  assert.match(state.techne_note, /no Technē role on the canvas/);
+  assert.match(state.techne_note, /techne@M2\/timeline/, 'the roles that ARE situated are named');
 });
 
-test('cut disclosure rides in the state — the M1′ ↔ 3:3 crossing is available as data', () => {
+test('a Technē role of any coordinate operating the canvas is the Canvas\'s binding — no instrument is bound to a coordinate', () => {
+  const role = { role: 'techne', m_index: 2, reading: '4:2-deep', instrument: 'canvas', agent_session_ref: 'aikit:agent-session:canvas' };
+  const bound = canvasAgencyState({
+    reading: { ...tb0, agency: [...tb0.agency, role] },
+    selection: null,
+    view: null,
+    placedRefs: new Set(),
+    arrangedNodes: [],
+    proposals: [],
+  });
+  assert.deepEqual(bound.techne_binding, role);
+  assert.match(bound.techne_note, /Technē_2 operates the canvas by the reading \(session aikit:agent-session:canvas\)/);
+  assert.equal('techne_1_binding' in bound, false, 'the coordinate-numbered key is gone');
+});
+
+test('cut disclosure rides in the state — the Canvas ↔ 3:3 crossing is available as data', () => {
   const cuts = state.disclosure.application_cuts.map((cut) => cut.cut).sort();
   assert.deepEqual(cuts, ['3:3-conjugate', '4:2-deep']);
   const expressionsEntry = state.disclosure.instruments.find((entry) => entry.instrument === 'expressions');

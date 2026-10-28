@@ -23,7 +23,7 @@ test('the TB0 rich specimen validates against the mirrored contract (the mechani
   const checked = validateReading(specimen);
   assert.deepEqual(checked.errors, [], checked.errors.join('; '));
   assert.equal(checked.valid, true);
-  // The TB0-1 facets the M0′ spine consumes actually ride.
+  // The TB0-1 facets the Project spine consumes actually ride.
   assert.equal(specimen.contract, TECHNE_CONTRACT);
   assert.ok(specimen.whole.relations.every((relation) => typeof relation.relation_ref === 'string'), 'every relation carries its stable identity');
   assert.ok(specimen.whole.relations.some((relation) => relation.standing === 'interpretation'), 'standing rides verbatim');
@@ -62,7 +62,7 @@ test('the situated-Agency role law is enforced: readings that break it are refus
   assert.equal(unbound.valid, true, unbound.errors.join('; '));
   // The field has M′0–M′5 only.
   assert.match(withRole({ role: 'guardian', m_index: 6 }).errors.join(' '), /M′0–M′5 only/);
-  // A lawful Technē_0 binding on the deep project instrument passes.
+  // A lawful Technē binding on the deep project instrument passes.
   const lawful = withRole({ role: 'techne', m_index: 0, reading: '4:2-deep', instrument: 'project', guardian_ref: 'actuation:agent:anuttara' });
   assert.equal(lawful.valid, true, lawful.errors.join('; '));
 });

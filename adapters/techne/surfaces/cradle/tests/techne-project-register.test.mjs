@@ -9,7 +9,7 @@ try {
   const registry = await server.ssrLoadModule('/src/techne/registry.tsx');
   const { registerProjectSurface } = await server.ssrLoadModule('/src/techne/project/register.ts');
 
-  test('the M0′ project surface claims the project mount and yields it on unregister', () => {
+  test('the Project surface claims the project mount and yields it on unregister', () => {
     assert.equal(registry.techneSurface('project'), undefined, 'clean registry before the claim');
     const unregister = registerProjectSurface();
     assert.ok(registry.techneSurface('project'), 'the project surface is mounted');
