@@ -176,8 +176,8 @@
     "wrapper_version": "2.10.3.2"
   },
   "receipt_clock": "host-utc-clock",
-  "receipt_unix_ms": 1793218463049,
-  "receipt_utc": "2026-10-28T20:14:23.049210Z",
+  "receipt_unix_ms": 1793219322914,
+  "receipt_utc": "2026-10-28T20:28:42.914175Z",
   "reference_frame": "ecliptic-of-date",
   "request": {
     "ayanamsha": null,
@@ -193,7 +193,7 @@
   },
   "schema": "ql.sky-snapshot/v1",
   "scope": "shared-geocentric",
-  "snapshot_ref": "sha256:be96b86868e9e859b24dbba1bc38dad0921a243228a0a118471960738ccee913",
+  "snapshot_ref": "sha256:3d91d83675407c3548fd56d1c3e8a9b33d3946d593892834a32ab0f0b562ab31",
   "source_binding": {
     "earth_body": {
       "is_eighth_chakra": false,
@@ -210,7 +210,7 @@
     "native_table": "M2_PLANET_LUT",
     "non_sun_operators": 9,
     "receiving_chakras": 7,
-    "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
+    "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
     "scope": "#2-5",
     "standing": "retained-symbolic-model-not-astronomical-measurement",
     "sun_role": "solar-parent",

@@ -41268,7 +41268,7 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-3",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-3/properties",
       "property_count": 19,
@@ -41729,7 +41729,7 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-4",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-4/properties",
       "property_count": 19,
@@ -42211,7 +42211,7 @@
         "SynthesisAttribute",
         "Tattva"
       ],
-      "source_revision": "2b55ccd4df440239f16d8252d2ec4aa67339abd9a8cfb08edeb80507aa4e0107",
+      "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
       "full_source_ref": "bimba-source:L0-5",
       "full_properties_ref": "fixtures/kernel/bimba-content-v1.json#/content/nodes/L0-5/properties",
       "property_count": 19,

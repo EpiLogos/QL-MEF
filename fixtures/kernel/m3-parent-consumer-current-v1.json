@@ -1,7 +1,7 @@
 {
   "request": {
     "schema": "ql.m3-state-request/v1",
-    "registry_revision": "e82a8165660930a59e598ca0e49b5338c945a6354e356a0719393adfa39de0b6",
+    "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
     "stamp": {
       "identity": {
         "event_ref": "fixture:current-event",

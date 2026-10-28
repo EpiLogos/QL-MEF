@@ -1,5 +1,5 @@
    Compiling ql-mef v0.1.0 (/Users/admin/Central/worktrees/env-2/ql-mef/crates/ql-mef)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.08s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.13s
      Running tests/bimba_content.rs (/Users/admin/.cache/oi-build-lane-721m-target/debug/deps/bimba_content-34e82c68cd984fe7)
 
 running 3 tests
@@ -7,21 +7,21 @@ test a_changed_payload_cannot_keep_the_original_source_revision ... ok
 test native_source_preserves_personal_identity_and_directional_qualified_relations ... ok
 test every_advertised_inventory_entrance_opens_its_exact_full_source ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.02s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.96s
 
      Running tests/m1_engine.rs (/Users/admin/.cache/oi-build-lane-721m-target/debug/deps/m1_engine-6d27a19ba682e760)
 
 running 8 tests
 test phase_fiber_spinor_and_legacy_ring_are_separate ... ok
-test retained_ratios_join_current_matheme_without_a_new_music_grammar ... ok
-test reversed_d2_keeps_expansion_on_the_observed_endpoint ... ok
 test three_registers_and_quintessence_contributors_remain_distinct ... ok
 test boundaries_are_checked_not_truncated_or_silently_wrapped ... ok
+test reversed_d2_keeps_expansion_on_the_observed_endpoint ... ok
+test retained_ratios_join_current_matheme_without_a_new_music_grammar ... ok
 test json_boundary_keeps_full_precision_and_rejects_malformed_requests ... ok
 test every_actual_walk_retains_all_families_direction_and_completion ... ok
 test actual_native_c_matches_rust_and_retained_c_return ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.41s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.40s
 
      Running tests/m1_state.rs (/Users/admin/.cache/oi-build-lane-721m-target/debug/deps/m1_state-9fa633ad6193f80f)
 
@@ -30,12 +30,12 @@ test literal_and_numeric_registers_survive_as_distinct_exact_values ... ok
 test clock_carrier_and_opposition_keep_four_phase_fibre_combinations ... ok
 test json_transport_round_trips_and_rejects_invented_identity_or_authority ... ok
 test state_changes_are_atomic_revision_checked_and_event_preserving ... ok
-test every_k4_coordinate_returns_its_own_source_and_computation ... ok
 test finite_state_field_retains_independent_words_and_existing_sixfold_order ... ok
+test every_k4_coordinate_returns_its_own_source_and_computation ... ok
 test each_configured_basis_lens_and_context_frame_uses_the_existing_tonal_derivation ... ok
 test actual_c_source_relation_and_state_match_independent_rust ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.02s
 
      Running tests/native_m_tree.rs (/Users/admin/.cache/oi-build-lane-721m-target/debug/deps/native_m_tree-12f2b8c95ef963e0)
 
@@ -46,5 +46,5 @@ test missing_implementation_cannot_erase_or_invent_source_existence ... ok
 test actual_c_descriptors_equal_every_rust_manifest_record ... ok
 test malformed_registry_and_id_boundaries_fail_closed ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.73s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.70s
 
