@@ -2,7 +2,7 @@
   "schema": "ql.m-ledger-source-requalification/v1",
   "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
   "registry_revision": "c8dc7a61731b879ec68915af45217e96488283045d74f779dcf6123569aa98c0",
-  "ledger_revision": "71102621f95c5608b8fbf95a76d2abab936b755794250c03ff58135ec560f900",
+  "ledger_revision": "db53d1390ffe62651ebb1399ff70861d78ab0ef6aca6de6b7896c184d8960aa9",
   "historical": {
     "ledger_revision": "66a1a97d4ef3583bb8b741c2d4ef0f3851ae9d5e9f0b2ab3faec98d0abd46f06",
     "ledger_sha256": "55e13ec985f0141172fd7dc41f7e3badffa21e09cb267a6750484fbea0701128",
@@ -235,7 +235,20 @@
     "fixtures/kernel/m2-finite-proof-v1.json": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
     "fixtures/kernel/m3-finite-proof-v1.json": "d0ff6cec988f5de52076efd339f155f3faa68fcbcfbc3fba937326f26da98d19"
   },
-  "successor_verticals": {},
+  "successor_verticals": {
+    "m2": {
+      "proof": "fixtures/kernel/m2-finite-proof-v1.json",
+      "proof_sha256": "c97d47b5f34a8be9f558b6080bec4a4ddd2a0a442fbda96875a30e06c4f69b69",
+      "historical_base_sha256": "1a0ed967f1c99300ce1965f8c4084f55cf71e48bc2c1af6d924e563befc4a085",
+      "accepted_at_revision": "ab7171a831734f8f10091d983f63a2830959eb91"
+    },
+    "m3": {
+      "proof": "fixtures/kernel/m3-finite-proof-v1.json",
+      "proof_sha256": "a9747445a05a22e0002fac79a0e6335d4cc376e020a4bee1fa6564342fcca04c",
+      "historical_base_sha256": "de46e4f12eb9bba7bb697f578567c1331ecfdf1bb3f0374c7e90f52b3af19232",
+      "accepted_at_revision": "ab7171a831734f8f10091d983f63a2830959eb91"
+    }
+  },
   "standing": "current source/application revalidation; numerical readiness and parity are claimed only where an engine's published successor proof at the current registry backs them (successor_verticals)",
   "not_claimed": [
     "current whole M1/M2/M3 numerical readiness from this bootstrap",

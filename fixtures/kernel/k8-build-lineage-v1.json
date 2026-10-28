@@ -3,8 +3,8 @@
   "authority": "docs/kernel-rebuild/K8-STRUCTURAL-CONTRACT.md",
   "base_revision": "efa599661aab171033769d33a3c2b6233c86eca5",
   "proofs": {
-    "m2": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2",
-    "m3": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539"
+    "m2": "c97d47b5f34a8be9f558b6080bec4a4ddd2a0a442fbda96875a30e06c4f69b69",
+    "m3": "a9747445a05a22e0002fac79a0e6335d4cc376e020a4bee1fa6564342fcca04c"
   },
   "integration_input": {
     "path": "c/Makefile",
@@ -139,6 +139,20 @@
       "sha256": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539",
       "accepted_at_revision": "fec500bce4053bd99f0e8b8fff3c26bd3d363a8b",
       "reason": "MM1 (QL-MEF #340): the M3 reading carries the living form, the generation cell and its law; m3_state.rs and its tests moved. Full M3 acceptance on Linux CI run 39499586792 at fec500bce."
+    },
+    {
+      "engine": "m2",
+      "previous_sha256": "6eeaafc594896216390ac23914625ff50557a3b43316da1099131a5c162aafe2",
+      "sha256": "c97d47b5f34a8be9f558b6080bec4a4ddd2a0a442fbda96875a30e06c4f69b69",
+      "accepted_at_revision": "ab7171a831734f8f10091d983f63a2830959eb91",
+      "reason": "L0 question-word migration (O-I #721) moved the registry to c8dc7a61 (QL-MEF fix/l0-bimba-map-721); fresh complete Linux acceptance, kernel-m2 run 40764498543 at ab7171a"
+    },
+    {
+      "engine": "m3",
+      "previous_sha256": "a27da44acf313b03e34fe5bbab8a461570d9c9dba4393dba27d82a4bae8a8539",
+      "sha256": "a9747445a05a22e0002fac79a0e6335d4cc376e020a4bee1fa6564342fcca04c",
+      "accepted_at_revision": "ab7171a831734f8f10091d983f63a2830959eb91",
+      "reason": "L0 question-word migration (O-I #721) moved the registry to c8dc7a61 (QL-MEF fix/l0-bimba-map-721); fresh complete Linux acceptance, m3-engine run 40764503686 at ab7171a"
     }
   ]
 }

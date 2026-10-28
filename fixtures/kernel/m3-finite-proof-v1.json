@@ -15,12 +15,12 @@
     "crates/ql-mef/tests/m3_engine.rs": "50cec33c5f4db232054b260f7a4051872fbc153e1010fa2332cbf612938a425d",
     "crates/ql-mef/tests/m3_domain.rs": "7271352a62110b1b98d626bdbedec8b2c69b66596d33f5b973d75842f41b477e",
     "crates/ql-mef/tests/m3_state.rs": "78321d647ce5be0aa4786afec0da69a994f3a9e63ad35964502a0118b547c10d",
-    "fixtures/kernel/m3-domain-v1.json": "d6e989614f95f3968b19509de4316947d7356892b94a16f997a7b180bbf26023",
+    "fixtures/kernel/m3-domain-v1.json": "d04cd0a24f48d01c7b169ee77a88db93bbd4afbf616d978c199f706140c4b7ef",
     "fixtures/kernel/m3-parent-consumer-v1.json": "abdd3c397820c02d1cec5d26122e9113d31fa4cd368e75a95b50531b5799a52d",
-    "fixtures/kernel/m3-parent-consumer-current-v1.json": "1df9aa2e054d48ce5c2c9ae52e38ada52068b61ce55e7c1b665ae3fb486c9419",
-    "fixtures/kernel/m3-parent-consumer-current-v1.basis.json": "85e476652722ee161fbdb6e606782376a6973e591ad3b4f3c9ce61e4fc28dd13",
-    "fixtures/kernel/m-tree-v1.json": "8808d1a843333e64a100c10444264188d2e5f6f4cbf3ce164ee7adeb7031df82",
-    "fixtures/kernel/bimba-content-v1.json": "246d9d2f1516b14c590fc9fd92b1b2e4e8f76bfb3c00059ac02dd24bed347327",
+    "fixtures/kernel/m3-parent-consumer-current-v1.json": "4c67274c33de5941f1aa1989b15b3c81fb18f70454d3bf7c347ac6434031c1b5",
+    "fixtures/kernel/m3-parent-consumer-current-v1.basis.json": "f79fed3f502710568c9ddf4be5fb8e7ffc3622b0a1a9fc2bcb294508e46ded16",
+    "fixtures/kernel/m-tree-v1.json": "aaee86426cb437058ba2484ab8564b1b68e02547b5f5dbb42d0a0e6413140e6f",
+    "fixtures/kernel/bimba-content-v1.json": "719c3e3770da96d05e8fab9ab64b7d459dfed60e0d524e2e9037f0f87baafec3",
     "migration/epi-kernel/k7-m3-oracle.c": "7c15f043a917c61508e2d790f3c3b8e1833c402a3ed302d502a45188d656bb38",
     "migration/epi-kernel/k7-m3-probe.c": "056366a81c66ba135a993d28520d0af763cf3a32e94ffadedf84990023ce69ee",
     "migration/epi-kernel/k7-m3-domain-probe.c": "dffe06c74d19da19e2f8e804ec3cb0b66902241e0d734b53d51019d1e5fc4aaa",
@@ -59,9 +59,9 @@
   },
   "outputs": {
     "target/m3-rust/c-rust-parity.jsonl": "61f1891b2871c5db4f1882b49eff825382c70911c143f53a54d26515cb3246de",
-    "target/m3-domain/c-rust.jsonl": "95ac62d15a46936e8011d11debb6b68c3323191e80313b27a158de1c5ecfa6c0",
-    "target/m3-parent-consumer/handoff.json": "787f1a5609e902cfed3d912631efeac43469172b4d71cf01d0b12c7e3c1df3bd",
-    "target/m3-acceptance/replay.json": "a5269b1a1f7ebff8ed17e252a4614cb2c9e8014ae062f8fe9c3d189ca2b58903"
+    "target/m3-domain/c-rust.jsonl": "d369690410dcaaad22a85ee1cb1ff6dd62c617e5083b12cb8bff5f574aee6b36",
+    "target/m3-parent-consumer/handoff.json": "414e85b6dc5cc8586770a864194c25bfc9f685229cf65642293e7112204accd0",
+    "target/m3-acceptance/replay.json": "06c6b39831d295abb20aaeaff7b9eb0e2456dd2caacb7e8f001a05d51a99b632"
   },
   "checks": [
     "retained-native-C-fields-per-executed-compiler-alias",
@@ -79,8 +79,8 @@
   ],
   "current_source": {
     "fixture": "fixtures/kernel/bimba-content-v1.json",
-    "source_revision": "0ceaa5552398b9eb16238461a7d5f9e9c7126cda40cc9346983dfce54015cc8a",
-    "fixture_sha256": "246d9d2f1516b14c590fc9fd92b1b2e4e8f76bfb3c00059ac02dd24bed347327",
+    "source_revision": "c564dfb29452c1d183d95927646592329f0208a4d37440a044b5f27b0eaaeb53",
+    "fixture_sha256": "719c3e3770da96d05e8fab9ab64b7d459dfed60e0d524e2e9037f0f87baafec3",
     "nodes": 1004,
     "qualified_relations": 5071,
     "line_change_edges": 383,
@@ -126,23 +126,23 @@
   "execution": {
     "command_owner": "scripts/test-m3-acceptance.sh",
     "command_owner_sha256": "b7f497f77a551cd7e6c52f955401a3d127f16d4e02c5948ad0c4492a10236b67",
-    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.43",
     "machine": "x86_64",
     "compiler_identity": {
       "cc": {
         "path": "/usr/bin/cc",
-        "version": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-        "sha256": "1b99826121ae6682a634e5efe09bd3e3df58ce58e0b28f849114ab5b89139c26"
+        "version": "cc (Ubuntu 15.2.0-16ubuntu1) 15.2.0\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "sha256": "864711037b900acdb7a449cf48d912cefa935b527fb60c767ccb956779e66136"
       },
       "clang": {
         "path": "/usr/bin/clang",
-        "version": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin",
-        "sha256": "8ef402d453d1ba4902e4ee0f0f847f6cfa01400c95aa43c24e97818b9c0e3f45"
+        "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin",
+        "sha256": "78e9dd2ccc9e88859b3a29109a44bfab00e3d6cb70f00f3daae063eed3d05251"
       },
       "c++": {
         "path": "/usr/bin/c++",
-        "version": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-        "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+        "version": "c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "sha256": "fd8730a05275b1f8a149b7df3e38ef67cf7a21ec817a706206955cd2929b900b"
       },
       "rustc": {
         "path": "/home/runner/.cargo/bin/rustc",
