@@ -853,6 +853,106 @@ fn a_strike_at_through_the_host_names_its_points_and_is_cursor_exact() {
     );
 }
 
+/// One request to `host` at its own last acknowledged cursor.
+fn exchange(
+    host: &mut ql_mef::continuous::host::FieldHost,
+    id: u64,
+    command: Value,
+) -> Value {
+    use ql_mef::continuous::host::{HOST_REQUEST, HostRequest};
+    let ready = host.ready();
+    let field = &ready["field"];
+    let request: HostRequest = serde_json::from_value(json!({"schema":HOST_REQUEST,
+        "instance_ref":ready["instance_ref"], "event_ref":field["event_ref"],
+        "subject_ref":field["subject_ref"], "request_id":id.to_string(),
+        "expected_generation":field["generation"],
+        "expected_samples_elapsed":field["samples_elapsed"], "command":command}))
+    .unwrap();
+    host.execute(request)
+}
+
+/// O-I #809: a strike at points names the sample it lands at. It is admitted
+/// now and lands inside the next advance, at exactly that sample: the PCM is
+/// bit-identical to advancing to the sample, striking there and advancing on,
+/// and every sample before it is the unstruck body's.
+#[test]
+#[ignore = "requires the installed ql-field-worker"]
+fn a_strike_at_a_sample_lands_at_that_sample_through_the_host() {
+    use ql_mef::continuous::host::FieldHost;
+    let open = || FieldHost::open_scene(&worker(), config(), Duration::from_secs(20)).unwrap();
+    let (mut scheduled, mut stepped, mut quiet) = (open(), open(), open());
+    let advance = |frames: u32| json!({"operation":"advance","frames":frames,"muted":false});
+    let points = json!([{"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 0.1]}]);
+    for host in [&mut scheduled, &mut stepped, &mut quiet] {
+        assert_eq!(exchange(host, 1, advance(1024))["status"], "ok");
+    }
+    let before = scheduled.ready()["field"].clone();
+    assert_eq!(before["samples_elapsed"], "1024");
+    let admitted = exchange(
+        &mut scheduled,
+        2,
+        json!({"operation":"strike-at","points":points,"at_samples_elapsed":"2024"}),
+    );
+    assert_eq!(admitted["status"], "ok", "{}", admitted["error"]);
+    assert_eq!(generation(&admitted["field"]), generation(&before) + 1);
+    assert_eq!(admitted["field"]["samples_elapsed"], "1024");
+    assert_eq!(
+        admitted["field"]["amplitudes_metres"], before["amplitudes_metres"],
+        "nothing lands before its sample"
+    );
+    assert_eq!(admitted["strike_at"]["at_samples_elapsed"], "2024");
+    assert_eq!(admitted["strike_at"]["points"], points);
+    let landed = audio(&exchange(&mut scheduled, 3, advance(4096))["field"]);
+
+    let mut reference = audio(&exchange(&mut stepped, 2, advance(1000))["field"]);
+    let now = exchange(
+        &mut stepped,
+        3,
+        json!({"operation":"strike-at","points":points}),
+    );
+    assert_eq!(now["status"], "ok", "{}", now["error"]);
+    assert_eq!(
+        now["strike_at"]["at_samples_elapsed"], "2024",
+        "a strike now lands at the cursor"
+    );
+    reference.extend(audio(&exchange(&mut stepped, 4, advance(3096))["field"]));
+    let unstruck = audio(&exchange(&mut quiet, 2, advance(4096))["field"]);
+
+    assert_eq!(landed.len(), 4096);
+    assert_eq!(landed, reference, "the act landed at exactly its sample");
+    assert_eq!(landed[..1000], unstruck[..1000], "no sample before it moved");
+    assert_ne!(landed[1000], unstruck[1000], "the struck sample sounds");
+    assert_eq!(
+        scheduled.ready()["field"]["amplitudes_metres"],
+        stepped.ready()["field"]["amplitudes_metres"]
+    );
+
+    // A sample behind the cursor was already rendered: refused in words, the
+    // owner untouched. A cursor that is not exact is refused the same way.
+    let held = scheduled.ready()["field"].clone();
+    for (id, cursor) in [(4, "5119"), (5, "0"), (6, "05121"), (7, "")] {
+        let refused = exchange(
+            &mut scheduled,
+            id,
+            json!({"operation":"strike-at","points":points,"at_samples_elapsed":cursor}),
+        );
+        assert_eq!(refused["status"], "refused", "{cursor}");
+        assert_eq!(refused["field"], held, "{cursor}");
+        assert!(refused.get("strike_at").is_none());
+    }
+    let behind = exchange(
+        &mut scheduled,
+        8,
+        json!({"operation":"strike","strikes":[{"mode_ref":admitted["strike_at"]["voices"][0]["mode_ref"],
+            "amplitude":[0.1,0.0]}],"at_samples_elapsed":"5119"}),
+    );
+    assert!(
+        behind["error"].as_str().unwrap().contains("already rendered"),
+        "{}",
+        behind["error"]
+    );
+}
+
 #[test]
 #[ignore = "requires the installed ql-field-worker"]
 fn the_host_binary_takes_strikes_at_points_as_the_text_a_client_writes() {

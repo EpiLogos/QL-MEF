@@ -829,6 +829,47 @@ mod tests {
         );
     }
 
+    /// O-I #809: a played act may name the sample it lands at, as the exact
+    /// cursor string every host cursor is; absent, it is struck now.
+    #[test]
+    fn a_strike_names_the_sample_it_lands_at_as_an_exact_cursor() {
+        let strike: HostOperation = serde_json::from_value(json!({"operation":"strike",
+            "strikes":[{"mode_ref":"scene:planet/#2-5-4","amplitude":[0.1,0.0]}],
+            "at_samples_elapsed":"48000"}))
+        .unwrap();
+        assert!(matches!(&strike,
+            HostOperation::Strike { at_samples_elapsed: Some(at), .. } if at == "48000"));
+        let strike_at: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
+            "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+            "at_samples_elapsed":"18446744073709551615"}))
+        .unwrap();
+        assert!(matches!(&strike_at,
+            HostOperation::StrikeAt { at_samples_elapsed: Some(at), .. } if at == "18446744073709551615"));
+        let now: HostOperation = serde_json::from_value(json!({"operation":"strike-at",
+            "points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}))
+        .unwrap();
+        assert!(matches!(
+            &now,
+            HostOperation::StrikeAt {
+                at_samples_elapsed: None,
+                ..
+            }
+        ));
+        for value in [
+            json!({"operation":"strike","strikes":[{"mode_ref":"m","amplitude":[0.1,0.0]}],
+                "at_samples_elapsed":48000}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+                "at_samples_elapsed":true}),
+            json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}],
+                "at":"48000"}),
+        ] {
+            assert!(
+                serde_json::from_value::<HostOperation>(value.clone()).is_err(),
+                "accepted {value}"
+            );
+        }
+    }
+
     #[test]
     fn strike_at_is_admitted_by_name_and_strict_about_its_points() {
         let strike_at: HostOperation = serde_json::from_value(json!({"operation":"strike-at",

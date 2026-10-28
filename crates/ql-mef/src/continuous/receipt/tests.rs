@@ -233,6 +233,59 @@ fn played_strike_ack_moves_resident_state_and_nothing_else() {
     }
 }
 
+/// O-I #809: a strike at a later sample is admitted now (one generation) and
+/// lands when the render reaches it, so its acknowledgement moves nothing yet.
+/// A strike at the cursor is struck now; one behind it was already rendered.
+#[test]
+fn a_strike_at_a_later_sample_is_admitted_now_and_moves_nothing_until_it_lands() {
+    let (_, _, guard, mut receipt) = fixture();
+    receipt["samples_elapsed"] = json!("512");
+    let at = |cursor: Value| {
+        json!({"operation":"strike","strikes":[
+            {"mode_ref":"controlled:mode/0","amplitude":[0.02,-0.01]}],"at_samples_elapsed":cursor})
+    };
+    let mut admitted = receipt.clone();
+    admitted["generation"] = json!("2");
+    guard
+        .validate(&at(json!("1512")), Some(&receipt), &admitted)
+        .unwrap();
+    for (path, moved) in [
+        ("/amplitudes_metres/0/0", json!(0.025)),
+        ("/targets/0/position/0", json!(0.025)),
+    ] {
+        let mut bad = admitted.clone();
+        *bad.pointer_mut(path).unwrap() = moved;
+        assert!(
+            guard
+                .validate(&at(json!("1512")), Some(&receipt), &bad)
+                .is_err(),
+            "a scheduled strike moved {path} before its sample"
+        );
+    }
+    let mut struck = admitted.clone();
+    struck["amplitudes_metres"][0][0] = json!(0.025);
+    struck["targets"][0]["position"][0] = json!(0.025);
+    guard
+        .validate(&at(json!("512")), Some(&receipt), &struck)
+        .unwrap();
+    for cursor in [
+        json!("511"),
+        json!("0"),
+        json!("0512"),
+        json!(""),
+        json!("18446744073709551616"),
+        json!(1512),
+        json!(null),
+    ] {
+        assert!(
+            guard
+                .validate(&at(cursor.clone()), Some(&receipt), &admitted)
+                .is_err(),
+            "accepted a strike at {cursor}"
+        );
+    }
+}
+
 #[test]
 fn exact_cursor_strings_reject_aliases_and_overflow_without_panicking() {
     for text in [
