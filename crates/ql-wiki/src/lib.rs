@@ -53,8 +53,10 @@ pub use refraction::{
 };
 pub use registry_provider::RegistryDisclosureProvider;
 pub use shape_binding::{
-    ShapeAwareWikiRefractionEngine, WIKI_SHAPE_BINDING_EXTENSION, WikiShapeBindingProvenance,
-    WikiShapeBindingView, WikiShapeMember, attach_shape_binding, shape_binding_from_target,
+    SHAPE_BIND_VERSION, ShapeAwareWikiRefractionEngine, ShapeBindConstraints, ShapeBindReading,
+    ShapeBindRequest, ShapeGenerationSite, WIKI_SHAPE_BINDING_EXTENSION,
+    WikiShapeBindingProvenance, WikiShapeBindingView, WikiShapeMember, attach_shape_binding,
+    bind_shape, shape_binding_from_target,
 };
 
 use std::collections::{BTreeMap, BTreeSet};
